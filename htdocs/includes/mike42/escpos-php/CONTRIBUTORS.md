@@ -22,4 +22,3 @@ Via fork: [ronisaha/php-esc-pos](https://github.com/ronisaha/php-esc-pos):
 - [Roni Saha](https://github.com/ronisaha)
 - [Gergely Radics](https://github.com/Gerifield)
 - [vharo](https://github.com/vharo)
-

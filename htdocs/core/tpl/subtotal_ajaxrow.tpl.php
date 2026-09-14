@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 '
+@phan-var-force CommonObject $object
 @phan-var-force ?string $fk_element
 @phan-var-force ?Task[] $tasksarray
 ';
@@ -69,6 +70,7 @@ if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1 && $conf->browser-
 <script>
 function openDialog() {
 	jQuery(function() {
+		console.log("open dialog");
 		jQuery("#notification-message").dialog({
 			resizable: false,
 			modal: true,
@@ -85,17 +87,18 @@ function init(){
 	$(".imgupforline").hide();
 	$(".imgdownforline").hide();
 	$(".lineupdown").removeAttr('href');
-	console.log($(".tdlineupdown"));
+
+	console.log("init() Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
+
 	$(".tdlineupdown").each(function (tdindex, tdline) {
 		var gripimg = tdline.dataset.gripimg ?? 'grip.png';
-		console.log(gripimg);
+
 		$(tdline).css("background-image",'url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'; ?>' + gripimg + ')');
 		$(tdline).css("background-repeat","no-repeat");
 		$(tdline).css("background-position","center center");
-		console.log($(".tdlineupdown")[tdindex], tdline);
+		/* console.log($(".tdlineupdown")[tdindex], tdline); */
 	})
 
-	console.log("Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
 	var inital_table = $("#<?php echo $tagidfortablednd; ?> .drag").map((_, el) => $(el)[0]).get();
 	var rowsToMove = [];
 	$("#<?php echo $tagidfortablednd; ?>").tableDnD({
@@ -173,7 +176,7 @@ function init(){
 						// remove action parameter from URL
 						$redirectURL = preg_replace('/(&|\?)action=[^&#]*/', '', $redirectURL);
 						?>
-						location.href = '<?php echo dol_escape_js($redirectURL); ?>';
+						location.href = <?php echo "'".dol_escape_js($redirectURL)."'"; ?>;
 					}
 				});
 		},

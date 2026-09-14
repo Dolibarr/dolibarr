@@ -1,5 +1,6 @@
 #!/bin/bash
-# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2010-2026	Laurent Destailleur 		<eldy@users.sourceforge.net>
+# Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
 
 #------------------------------------------------------
 # Script to purge and initialize a database with demo values.
@@ -11,8 +12,8 @@
 # Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
-# Usage: initdemo.sh confirm
-# usage: initdemo.sh confirm mysqldump_dolibarr_x.x.x.sql database port login pass
+# Usage: initdemo.sh confirm|confirmcleanblockedlog
+# usage: initdemo.sh confirm|confirmcleanblockedlog mysqldump_dolibarr_x.x.x.sql database port login pass
 #------------------------------------------------------
 
 
@@ -37,18 +38,22 @@ fi
 # ----------------------------- command line params
 confirm=$1
 dumpfile=$2
-base=$3
-port=$4
+base="${3:-dolibarrdemo}"
+port="${4:-3306}"
 admin=$5
 passwd=$6
 
 # ----------------------------- check params
-if [ "$confirm" != "confirm" ]
+if [ "$confirm" != "confirm" ] && [ "$confirm" != "confirmcleanblockedlog" ]
 then
 	echo "----- $0 -----"
-	echo "Usage: initdemo.sh confirm "
+	echo "Usage: initdemo.sh confirm|confirmcleanblockedlog"
 	echo " or"
-	echo "Usage: initdemo.sh confirm [mysqldump_dolibarr_x.x.x.sql database port login pass]"
+	echo "Usage: initdemo.sh confirm|confirmcleanblockedlog [mysqldump_dolibarr_x.x.x.sql database port login pass]"
+	echo
+	echo "confirm:                To reload database"
+	echo "confirmcleanblockedlog: To reload database and reset blocked log"
+	echo
 	exit
 fi
 
@@ -91,7 +96,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 dolibarrdemo 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 "$base" 2> "$fichtemp"
 	valret=$?
 	case $valret in
 		0)
@@ -107,7 +112,7 @@ then
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306):" 16 55 3306 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306):" 16 55 "$port" 2> "$fichtemp"
 	valret=$?
 
 	case $valret in
@@ -161,7 +166,7 @@ then
 
 
 	# ---------------------------- confirmation
-	$DIALOG --title "Init Dolibarr with demo values" --clear --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
+	$DIALOG --title "Erase Dolibarr with demo values" --clear --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
 
 	case $? in
 		0)      echo "Ok, start process..." ;;
@@ -172,7 +177,7 @@ then
 fi
 
 
-# ---------------------------- run sql file
+# ---------------------------- Run sql file
 if [ "$passwd" != "" ]
 then
 	export passwd="-p$passwd"
@@ -181,8 +186,11 @@ fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 #echo "drop old table"
-echo "drop table"
+echo "drop table if exists llx_accounting_account;"
 echo "drop table if exists llx_accounting_account;" | mysql "-P$port" "-u$admin" "$passwd" "$base"
+echo "drop table if exists llx_accounting_system;"
+echo "drop table if exists llx_accounting_system;" | mysql "-P$port" "-u$admin" "$passwd" "$base"
+
 echo "mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
 mysql "-P$port" "-u$admin" "$passwd" "$base" < "$mydir/$dumpfile"
 export res=$?
@@ -192,10 +200,24 @@ if [ $res -ne 0 ]; then
 	exit
 fi
 
+
+# ---------------------------- Run update of demo data
+echo
+echo Run script updatedemo.php confirm
 "$mydir/updatedemo.php" confirm
 export res=$?
 
-# ---------------------------- copy demo files
+
+# ---------------------------- Run update of demo data
+if [ "$confirm" == "confirmcleanblockedlog" ]; then
+	echo
+	echo Run script updatedemo.php confirmcleanblockedlog
+	"$mydir/updatedemo.php" confirmcleanblockedlog
+	export res=$?
+fi
+
+
+# ---------------------------- Copy demo files
 export documentdir
 # shellcheck disable=2016
 documentdir=$(< "$mydir/../../htdocs/conf/conf.php" grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g')
@@ -246,8 +268,8 @@ fi
 
 if [ "$res" = "0" ]
 then
-	echo "Success, file successfully loaded."
+	echo "Success, file successfully loaded: Note that crypted data need to have dolibarr_main_instance_unique_id=11f3c81e86fc9e3b3fd11d81c9a31bd0 with this data set to be readable."
 else
-	echo "Error, load failed."
+	echo "Error, 1 step of script has failed."
 fi
 echo

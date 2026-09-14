@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,10 @@
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
+if (!defined('SUBTOTALS_SPECIAL_CODE')) {
+	define('SUBTOTALS_SPECIAL_CODE', 81);
+}
+
 /**
  *		Description and activation class for module subtotals
  */
@@ -45,8 +50,6 @@ class modSubtotals extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user; // Required by some include code
-
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -62,9 +65,9 @@ class modSubtotals extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Subtotal and title lines for certain documents";
+		$this->description = "SubTotalModuleDesc";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -75,7 +78,6 @@ class modSubtotals extends DolibarrModules
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array("/subtotals/temp");
-		$r = 0;
 
 		// Config pages
 		$this->config_page_url = array("subtotals.php");
@@ -93,7 +95,24 @@ class modSubtotals extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-		$r = 0;
+
+		// Dictionaries
+		$this->dictionaries = array(
+			'langs' => 'subtotals',
+			'tabname' => array("c_subtotals_titles", "c_subtotals_texts"),
+			'tablib' => array("SubtotalsPredefinedTitles", "SubtotalsPredefinedTexts"),
+			'tabsql' => array(
+				'SELECT rowid, code, label, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_titles WHERE entity IN ('.getEntity('c_subtotals_titles').')',
+				'SELECT rowid, code, label, content, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_texts WHERE entity IN ('.getEntity('c_subtotals_texts').')',
+			),
+			'tabsqlsort' => array("label ASC", "label ASC"),
+			'tabfield' => array("code,label", "code,label,content"),
+			'tabfieldvalue' => array("code,label", "code,label,content"),
+			'tabfieldinsert' => array("code,label,entity", "code,label,content,entity"),
+			'tabrowid' => array("rowid", "rowid"),
+			'tabcond' => array(isModEnabled('subtotals'), isModEnabled('subtotals')),
+			'tabhelp' => array(array(), array()),
+		);
 
 		// Array to add new pages in new tabs
 		//$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');	// We avoid to get one tab for each module. RH data are already in RH tab.
@@ -101,27 +120,15 @@ class modSubtotals extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array(); // List of boxes
-		$r = 0;
-
-		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
-		// Example:
-		//$this->boxes[$r][1] = "myboxa.php";
-		//$r++;
-		//$this->boxes[$r][1] = "myboxb.php";
-		//$r++;
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;
 
 		// Menus
 		//-------
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 		$this->module_parts = array('substitutions' => 1);
-
-		// Exports
-		$r = 0;
 	}
 
 	/**
@@ -134,29 +141,13 @@ class modSubtotals extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
+		$result = $this->_load_tables('/install/mysql/', 'subtotals');
+		if ($result < 0) {
+			return -1; // Do not activate module if error occurred while loading module SQL queries
+		}
 
 		// Permissions
 		$this->remove($options);
-
-		//ODT template
-		/*$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/holiday/template_holiday.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/holiday';
-		$dest=$dirodt.'/template_order.odt';
-
-		if (file_exists($src) && ! file_exists($dest))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_mkdir($dirodt);
-			$result=dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
-				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
-				return 0;
-			}
-		}
-		*/
 
 		$sql = array(
 			//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".((int) $conf->entity),

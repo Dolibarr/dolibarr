@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2014-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'members', 'errors', 'other'));
@@ -84,7 +83,7 @@ if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^mod_barcode_thirdparty_.*php$/', $file)) {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					try {
 						dol_include_once($dirroot.$file.'.php');
@@ -189,7 +188,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					if ($file == getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						try {
@@ -295,7 +294,7 @@ if ($action == 'initbarcodeproducts' && $user->hasRight('produit', 'lire')) {
 llxHeader('', $langs->trans("MassBarcodeInit"), '', '', 0, 0, '', '', '', 'mod-barcode page-codeinit');
 
 if (!GETPOST('dol_openinpopup', 'aZ')) {
-	print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
+	print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup');
 	print '<br>';
 }
 
@@ -307,7 +306,7 @@ print '<br>';
 // Example 1 : Adding jquery code
 print '<script type="text/javascript">
 function confirm_erase() {
-	return confirm("'.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'");
+	return confirm(\''.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'\');
 }
 </script>';
 

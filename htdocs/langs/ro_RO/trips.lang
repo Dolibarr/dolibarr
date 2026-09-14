@@ -121,7 +121,6 @@ ValideTrip=Aprobă raport de cheltuieli
 ExpenseReportPayments=Plăți rapoarte de cheltuieli
 TaxUndefinedForThisCategory = Taxa este nedefinită pentru această categorie
 errorComputeTtcOnMileageExpense=Eroare la calculul cheltuielilor cu combustibilul
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Doar elementele aflate în starea de schiță pot fi șterse în acțiuni în masă
 
 ## Dictionary
 EX_BRE=Mic dejun
@@ -159,3 +158,4 @@ TF_TRAIN=Tren
 TF_TRIP=Transport
 FailedToSetPaid=Eșec la setare ca plătit
 FailedToSetToCancel=Eșec anulare
+NobodyHasPermissionToValidateExpenseReport=Nimeni nu are permisiune de validare raport de cheltuieli

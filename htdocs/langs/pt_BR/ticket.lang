@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - ticket
 Permission56002=Alterar tickets
 Permission56003=Excluir tickets
-Permission56004=Gerenciar tickets
 Permission56005=Ver tickets de todos os terceiros (não eficaz para usuários externos, sempre limitados a terceiros ao qual dependem)
 Permission56006=Exportar tickets
 TicketDictType=Ticket - Tipos
@@ -136,7 +135,6 @@ TicketChangeStatus=Alterar status
 TicketConfirmChangeStatus=Confirma alteração de status para %s ?
 TicketLogStatusChanged=Status modificado de %s para %s
 Unread=Não lido
-TicketNotCreatedFromPublicInterface=Não disponível. O ticket não foi criado a partir da interface pública.
 TicketsDelayForFirstResponseTooLong=Muito tempo se passou desde a abertura do ticket sem nenhuma resposta.
 TicketNoContractFoundToLink=Nenhum contrato foi encontrado para ser vinculado automaticamente a este ticket. Por favor, vincule um contrato manualmente.
 TicketManyContractsLinked=Muitos contratos foram vinculados automaticamente a este ticket. Certifique-se de verificar qual deve ser escolhido.
@@ -192,4 +190,3 @@ BoxNumberOfTicketByDay=Número de novos Tickets por dia
 BoxNewTicketVSClose=Número de Tickets versus Tickets fechados (hoje)
 TicketCreatedToday=Ticket criado hoje
 TicketClosedToday=Ticket fechado hoje
-KMFoundForTicketGroup=Encontramos tópicos e perguntas frequentes que podem responder à sua pergunta, por favor verifique-os antes de enviar o ticket.

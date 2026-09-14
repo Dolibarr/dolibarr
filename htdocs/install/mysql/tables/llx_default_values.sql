@@ -26,5 +26,3 @@ create table llx_default_values
   param           varchar(255),                     -- parameter
   value		      varchar(128)                      -- value
 )ENGINE=innodb;
-
-

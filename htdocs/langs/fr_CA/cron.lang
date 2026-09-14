@@ -62,5 +62,3 @@ JobXMustBeEnabled=La tâche %s doit être activée
 EmailIfError=Courriel d'avertissement en cas d'erreur
 JobNotFound=Le travail %s n'a pas été trouvé dans la liste des travaux (essayez de désactiver/activer le module)
 LastExecutedScheduledJob=Dernière tâche planifiée exécutée
-NextScheduledJobExecute=Prochaine tâche planifiée à exécuter
-NumberScheduledJobError=Nombre de tâches planifiées en erreur

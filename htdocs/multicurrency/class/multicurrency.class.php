@@ -4,8 +4,8 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,11 +74,6 @@ class MultiCurrency extends CommonObject
 	public $name;
 
 	/**
-	 * @var int 			The environment ID when using a multicompany module
-	 */
-	public $entity;
-
-	/**
 	 * @var mixed Sample property 2
 	 */
 	public $date_create;
@@ -92,6 +87,11 @@ class MultiCurrency extends CommonObject
 	 * @var ?CurrencyRate 	The currency rate
 	 */
 	public $rate;
+
+	/**
+	 * @var ?CurrencyRate 	The currency rate direct
+	 */
+	public $rate_direct;
 
 	/**
 	 * @var string			URL endpoint for update of currency
@@ -544,7 +544,7 @@ class MultiCurrency extends CommonObject
 	 */
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = 0)
 	{
-		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
+		$sql1 = "SELECT m.rowid, mc.rate, mc.rate_direct FROM ".MAIN_DB_PREFIX."multicurrency m";
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
 		$sql1 .= " WHERE m.code = '".$dbs->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
@@ -564,7 +564,7 @@ class MultiCurrency extends CommonObject
 			if (getDolGlobalString('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE')) {
 				$resql = $dbs->query($sql1.$sql3);
 				if ($resql && $obj = $dbs->fetch_object($resql)) {
-					return array($obj->rowid, $obj->rate);
+					return array($obj->rowid, $obj->rate, $obj->rate_direct);
 				}
 			}
 
@@ -638,8 +638,8 @@ class MultiCurrency extends CommonObject
 	{
 		global $conf;
 
-		if ($conf->currency != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
-			$alternate_source = 'USD'.$conf->currency;
+		if (getDolCurrency() != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
+			$alternate_source = 'USD'.getDolCurrency();
 			if (!empty($TRate->$alternate_source)) {
 				$coef = 1 / $TRate->$alternate_source;
 				foreach ($TRate as $attr => &$rate) {
@@ -674,6 +674,7 @@ class MultiCurrency extends CommonObject
 			} else {
 				setEventMessages($langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER'), null, 'errors');
 			}
+			$this->errors[] = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
 			return -1;
 		}
 
@@ -688,7 +689,10 @@ class MultiCurrency extends CommonObject
 		$resget = getURLContent($urlendpoint, 'GET', '', 1, $addheaders);
 
 		// Example of result with https://currencylayer.com/live and https://api.apilayer.com/currency_data/live
-		// 'content' => string '{"success":true,"terms":"https:\/\/currencylayer.com\/terms","privacy":"https:\/\/currencylayer.com\/privacy","timestamp":1742562251,"source":"USD","quotes":{"USDAED":3.67302,"USDAFN":70.6213,"USDALL":91.042287,"USDAMD":390.984233,"USDANG":1.802039,"USDAOA":913.498241,"USDARS":1068.745088,"USDAUD":1.591824,"USDAWG":1.8,"USDAZN":1.699323,"USDBAM":1.80224,"USDBBD":2.018881,"USDBDT":121.488567,"USDBGN":1.802745,"USDBHD":0.376878,"USDBIF":2963.403228,"USDBMD":1,"USDBND":1.333573,"USDBOB":6.909262,"USDBRL":5.721'... (length=3337)
+		// 'content' => string '{"success":true,"terms":"https:\/\/currencylayer.com\/terms","privacy":"https:\/\/currencylayer.com\/privacy","timestamp":1742562
+		// 251,"source":"USD","quotes":{"USDAED":3.67302,"USDAFN":70.6213,"USDALL":91.042287,"USDAMD":390.984233,"USDANG":1.802039,"USDAOA":913.498241,"USDARS":1
+		// 068.745088,"USDAUD":1.591824,"USDAWG":1.8,"USDAZN":1.699323,"USDBAM":1.80224,"USDBBD":2.018881,"USDBDT":121.488567,"USDBGN":1.802745,"USDBHD":0.376878
+		// ,"USDBIF":2963.403228,"USDBMD":1,"USDBND":1.333573,"USDBOB":6.909262,"USDBRL":5.721'... (length=3337)
 		//var_dump($urlendpoint);
 		//var_dump($resget);
 
@@ -718,7 +722,7 @@ class MultiCurrency extends CommonObject
 				}
 				return 1;
 			} else {
-				if (isset($response->error->info)) {
+				if (isset($response->error->info)) {  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
 					$error_info_syslog = $response->error->info;  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
 					$error_info = $error_info_syslog;
 				} else {
@@ -733,11 +737,13 @@ class MultiCurrency extends CommonObject
 				dol_syslog("Failed to call endpoint ".$error_info_syslog, LOG_WARNING);
 
 				$this->output = $langs->trans('multicurrency_syncronize_error', $error_info);
+				$this->errors[] = $this->output;
 
 				return -1;
 			}
 		} else {
 			$this->output = $resget['curl_error_msg'];
+			$this->errors[] = $this->output;
 
 			return -1;
 		}

@@ -24,6 +24,11 @@ if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	require_once './master.inc.php';
 } // Load master if not already loaded
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
@@ -38,6 +43,11 @@ $l = GETPOST('l', 'aZ09');
 $limit = GETPOSTINT('limit');
 if ($limit <= 0 || $limit > 100) {
 	$limit = 20;
+}
+
+// Security check
+if ($hashp == 'shared') {
+	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
 }
 
 // Parameters for RSS
@@ -146,7 +156,7 @@ if ($rss) {
 	$format = 'rss';
 	$type = '';
 	$filename = $original_file;
-	$dir_temp = $conf->website->dir_temp;
+	$dir_temp = (string) $conf->website->dir_temp;
 
 	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
@@ -257,7 +267,7 @@ if ($rss) {
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 	}
 
-	// Ajout directives pour resoudre bug IE
+	// Add directives to fix IE bug
 	//header('Cache-Control: Public, must-revalidate');
 	//header('Pragma: public');
 	if ($cachedelay) {
@@ -285,7 +295,7 @@ if ($rss) {
 	$accessallowed              = empty($check_access['accessallowed']) ? '' : $check_access['accessallowed'];
 	$sqlprotectagainstexternals = empty($check_access['sqlprotectagainstexternals']) ? '' : $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = empty($check_access['original_file']) ? '' : $check_access['original_file']; // $fullpath_original_file is now a full path name
-	if ($hashp) {
+	if (!empty($hashp) && $hashp != 'shared') {
 		$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 		$sqlprotectagainstexternals = '';
 	}

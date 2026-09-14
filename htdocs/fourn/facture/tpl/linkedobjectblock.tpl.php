@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2015      Charlie Benke <charlie@patas-monkey.com>
- * Copyright (C) 2016      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2011  Regis Houssin 			<regis.houssin@inodbox.com>
+ * Copyright (C) 2014       Marcos García 			<marcosgdf@gmail.com>
+ * Copyright (C) 2015       Charlie Benke 			<charlie@patas-monkey.com>
+ * Copyright (C) 2016       Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,23 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	fourn
+ *  \brief		Template to show objects linked to purchase invoices
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var FactureFournisseur[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -28,33 +46,29 @@ if (empty($conf) || !is_object($conf)) {
 
 print "<!-- BEGIN PHP TEMPLATE fourn/facture/tpl/linkedobjectblock.tpl.php -->\n";
 
-
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'
-@phan-var-force array<string,CommonObject> $linkedObjectBlock
-';
-
-
 $langs->load("bills");
 
 $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
+	$refSupplierWithThirdparty = $objectlink->ref_supplier ? dolPrintHTML($objectlink->ref_supplier).'<br>' : '';
+
+	$objectlink->fetch_thirdparty();
+
+	$refSupplierWithThirdparty = '<span class="small">'.$refSupplierWithThirdparty;
+	$refSupplierWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refSupplierWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
-		<td><?php echo $langs->trans("SupplierInvoice"); ?></td>
-		<td><a href="<?php echo DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowBill"), "bill").' '.$objectlink->ref; ?></a></td>
-		<td class="left linkedcol-ref tdoverflowmax150"><?php echo $objectlink->ref_supplier; ?></td>
+		<td class="tdoverflowmax125"><?php echo $langs->trans("SupplierInvoice"); ?></td>
+
+		<td><?php echo $objectlink->getNomUrl(1) ?></td>
+		<td class="left linkedcol-ref tdoverflowmax125 nopaddingtopimp nopaddingbottomimp" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo $refSupplierWithThirdparty; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
@@ -62,7 +76,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 				$sign = -1;
 			}
-			if ($objectlink->statut != 3) {
+			if ($objectlink->status != 3) {
 				// If not abandoned
 				$total += $sign * $objectlink->total_ht;
 				echo price($objectlink->total_ht);

@@ -34,4 +34,3 @@ class YamlFormat extends DependentFormat
         return Yaml::parse($data);
     }
 }
-

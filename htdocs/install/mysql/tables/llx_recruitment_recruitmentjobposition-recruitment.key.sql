@@ -29,4 +29,3 @@ ALTER TABLE llx_recruitment_recruitmentjobposition ADD INDEX idx_recruitment_rec
 --ALTER TABLE llx_recruitment_recruitmentjobposition ADD UNIQUE INDEX uk_recruitment_recruitmentjobposition_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_recruitment_recruitmentjobposition ADD CONSTRAINT llx_recruitment_recruitmentjobposition_fk_field FOREIGN KEY (fk_field) REFERENCES llx_recruitment_myotherobject(rowid);
-

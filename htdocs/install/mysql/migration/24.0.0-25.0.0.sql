@@ -1,0 +1,223 @@
+--
+-- This file is executed by calling /install/index.php page
+-- when current version is higher than the name of this file.
+-- Be carefull in the position of each SQL request.
+--
+-- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
+-- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
+-- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
+--                          Note that "RENAME TO" is both compatible with mysql/postgesql, not the "RENAME" alone.
+--                          Also you must complete with renaming the sequence for PGSQL with -- VPGSQL8.2 ALTER SEQUENCE llx_table_rowid_seq RENAME TO llx_table_new_rowid_seq;
+-- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
+-- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
+-- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
+-- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
+-- To drop a foreign key or constraint:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
+-- To create a unique index:              ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
+-- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex ON llx_table;
+-- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex;
+-- To make pk to be auto increment (mysql):
+-- -- VMYSQL4.3 ALTER TABLE llx_table ADD PRIMARY KEY(rowid);
+-- -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (postgres):
+-- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
+-- -- VPGSQL8.2 ALTER TABLE llx_table ADD PRIMARY KEY (rowid);
+-- -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN rowid SET DEFAULT nextval('llx_table_rowid_seq');
+-- -- VPGSQL8.2 SELECT setval('llx_table_rowid_seq', MAX(rowid)) FROM llx_table;
+-- To set a field as NULL:                     -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NULL;
+-- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
+-- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
+-- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
+-- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
+-- Note: fields with type BLOB/TEXT can't have default value.
+-- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
+-- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
+
+
+--noqa:disable=LT09
+--noqa:disable=RF03
+
+
+-- V24 forgotten
+
+
+-- v25 migration
+
+-- Add per entity payment terms/modes and bank account (issue #39146)
+ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
+ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement integer DEFAULT NULL;
+ALTER TABLE llx_societe_perentity ADD COLUMN cond_reglement tinyint DEFAULT NULL;
+ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement_supplier tinyint DEFAULT NULL;
+ALTER TABLE llx_societe_perentity ADD COLUMN cond_reglement_supplier tinyint DEFAULT NULL;
+
+-- extrafields for links
+CREATE TABLE llx_links_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                             -- import key
+) ENGINE=innodb;
+ALTER TABLE llx_links_extrafields ADD UNIQUE INDEX uk_links_extrafields (fk_object);
+
+-- Add user/tms information to element_element
+ALTER TABLE llx_element_element ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_element_element ADD COLUMN date_creation datetime;
+ALTER TABLE llx_element_element ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_element_element ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_c_action_trigger ADD COLUMN enabled varchar(255);
+
+-- Fix #37658 - pu_ttc for supplier invoices now flags a line entered including tax (0 when entered excluding
+-- tax). Before this change it was stored unconditionally (pu_ttc = total_ttc / qty), so reset it on existing
+-- lines to keep them behaving as excluding tax; it is set again when a line is re-entered including tax.
+-- Guarded on MAIN_VERSION_LAST_UPGRADE < major 25 (integer compare, not lexicographic; __DECRYPT handles the
+-- encrypted-const case).
+-- VMYSQL4.3 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_UPGRADE' AND CAST(SUBSTRING_INDEX(__DECRYPT('value')__, '.', 1) AS UNSIGNED) < 25);
+-- VPGSQL8.2 UPDATE llx_facture_fourn_det SET pu_ttc = 0 WHERE pu_ttc <> 0 AND EXISTS (SELECT rowid FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_UPGRADE' AND CAST(split_part(__DECRYPT('value')__, '.', 1) AS INTEGER) < 25);
+
+-- Explicit contact address mode flag. NULL keeps the legacy resolution for existing records,
+-- so an existing alternative contact address stays independent from its thirdparty address.
+-- VMYSQL4.1 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL AFTER fk_soc;
+-- VPGSQL8.2 ALTER TABLE llx_socpeople ADD COLUMN use_thirdparty_address smallint DEFAULT NULL;
+
+-- Add user information to const
+ALTER TABLE llx_const ADD COLUMN fk_user_creat integer;
+ALTER TABLE llx_const ADD COLUMN fk_user_modif integer;
+
+-- Switch all azur templates into cyan
+UPDATE llx_propal SET model_pdf = 'cyan' WHERE model_pdf = 'azur';
+UPDATE llx_const SET value = 'cyan' WHERE value = 'azur' AND name ='PROPALE_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'cyan' WHERE nom = 'azur' AND type = 'propal' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'cyan' AND type = 'propal') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'azur' AND type = 'propal';
+
+-- Switch all einstein templates into eratosthene
+UPDATE llx_commande SET model_pdf = 'eratosthene' WHERE model_pdf = 'einstein';
+UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='COMMANDE_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
+
+-- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
+ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
+
+-- Indexes on llx_product for the most common product/service list filters
+ALTER TABLE llx_product ADD INDEX idx_product_entity_tosell (entity, tosell);
+ALTER TABLE llx_product ADD INDEX idx_product_entity_tobuy (entity, tobuy);
+ALTER TABLE llx_product ADD INDEX idx_product_datec (datec);
+ALTER TABLE llx_product ADD INDEX idx_product_tms (tms);
+
+-- Optional fine position for rights_def, used by rights filed into another module's
+-- section via module_origin (KEY_MODULE) to sort next to a given native right of that module
+ALTER TABLE llx_rights_def ADD COLUMN right_position integer DEFAULT 0 NOT NULL AFTER family_position;
+
+-- Add supplier ref on reception lines (standalone receptions)
+ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER cost_price;
+
+-- Rename bookcal availabilities date columns: "end" is a reserved word in
+-- PostgreSQL so "CREATE TABLE ... end date ..." never worked there. The
+-- PostgreSQL variant must quote "end".
+-- VMYSQL ALTER TABLE llx_bookcal_availabilities CHANGE COLUMN start date_start date;
+-- VMYSQL ALTER TABLE llx_bookcal_availabilities CHANGE COLUMN end date_end date;
+-- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
+-- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
+
+-- Inventory: add last_main_doc used to save the relative path of last generated main document
+ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
+
+ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
+ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
+
+-- Short-lived tombstone log of deleted objects (see llx_deletion_log.sql).
+CREATE TABLE llx_deletion_log(
+	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity			integer NOT NULL DEFAULT 1,
+	element_type	varchar(64) NOT NULL,
+	fk_object		integer NOT NULL,
+	date_deletion	datetime NOT NULL,
+	fk_user			integer NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_element (element_type, entity, date_deletion);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_deletion);
+
+
+
+-- Add contract type field (0=customer, 1=supplier)
+ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_ext;
+
+-- Table to persist the data an online payment return page needs, server side, instead of relying
+-- on the PHP session, which is lost when the browser drops the cookie on the cross site return.
+create table llx_onlinepayment_session
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  ext_payment_site  varchar(64) NOT NULL,
+  ext_payment_id    varchar(128),
+  data              text,
+  date_creation     datetime NOT NULL,
+  tms               timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  entity            integer DEFAULT 1 NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_ext_payment_id (ext_payment_id);
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_date_creation (date_creation);
+ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_entity (entity);
+
+-- Human Resources Management(HRM): Add `country_job_id` and `state_job_id` to the `llx_user` table to store the workplace location, enabling vacation filtering by workplace.
+ALTER TABLE llx_user ADD COLUMN country_job_id integer DEFAULT NULL;
+ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
+
+-- end of migration - nothing after this line
+
+-- Variants: allow standard import/export of variants (attributes, values, combinations,
+-- attribute/value links and price levels). The import engine writes import_key
+-- unconditionally and resolves an existing record with a SELECT on the update keys.
+
+ALTER TABLE llx_product_attribute ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_attribute_value ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_attribute_combination ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_attribute_combination2val ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_attribute_combination_price_level ADD COLUMN import_key varchar(14);
+
+-- The columns were nullable, so existing rows may hold NULL and the MODIFY below would then
+-- be rejected in strict mode. Normalize before altering, never after.
+UPDATE llx_product_attribute_combination SET variation_price = 0 WHERE variation_price IS NULL;
+UPDATE llx_product_attribute_combination SET variation_weight = 0 WHERE variation_weight IS NULL;
+UPDATE llx_product_attribute_combination_price_level SET variation_price = 0 WHERE variation_price IS NULL;
+
+ALTER TABLE llx_product_attribute_combination MODIFY COLUMN variation_price DOUBLE(24,8) DEFAULT 0 NOT NULL;
+ALTER TABLE llx_product_attribute_combination MODIFY COLUMN variation_weight REAL DEFAULT 0 NOT NULL;
+ALTER TABLE llx_product_attribute_combination_price_level MODIFY COLUMN variation_price DOUBLE(24,8) DEFAULT 0 NOT NULL;
+
+-- Remove the dangling rows the foreign keys below would reject. These rows are already broken:
+-- they reference a parent product, a combination, an attribute or a value that no longer exists.
+-- fk_product_child = 0 is excluded: createProductCombination() fills the column after the insert,
+-- so 0 is a legitimate transient value and no foreign key is added on that column.
+DELETE FROM llx_product_attribute_combination WHERE fk_product_parent NOT IN (SELECT rowid FROM llx_product);
+DELETE FROM llx_product_attribute_combination WHERE fk_product_child <> 0 AND fk_product_child NOT IN (SELECT rowid FROM llx_product);
+DELETE FROM llx_product_attribute_value WHERE fk_product_attribute NOT IN (SELECT rowid FROM llx_product_attribute);
+DELETE FROM llx_product_attribute_combination2val WHERE fk_prod_combination NOT IN (SELECT rowid FROM llx_product_attribute_combination);
+DELETE FROM llx_product_attribute_combination2val WHERE fk_prod_attr NOT IN (SELECT rowid FROM llx_product_attribute);
+DELETE FROM llx_product_attribute_combination2val WHERE fk_prod_attr_val NOT IN (SELECT rowid FROM llx_product_attribute_value);
+DELETE FROM llx_product_attribute_combination_price_level WHERE fk_product_attribute_combination NOT IN (SELECT rowid FROM llx_product_attribute_combination);
+
+-- A combination must not carry twice the same attribute. No unique index ever protected this
+-- table, so existing databases may hold duplicated rows: remove them before adding the index.
+-- This runs after the cleanup above on purpose: a duplicated couple may hold one broken row and
+-- one sane row, and keeping the lowest rowid before the cleanup would destroy the sane one.
+-- When both rows are sane and carry different values, the row of lowest rowid is the one kept.
+DELETE FROM llx_product_attribute_combination2val WHERE rowid NOT IN (SELECT rowid FROM (SELECT MIN(rowid) as rowid FROM llx_product_attribute_combination2val GROUP BY fk_prod_combination, fk_prod_attr) as tmp);
+
+ALTER TABLE llx_product_attribute_combination2val ADD UNIQUE INDEX uk_product_att_com2v (fk_prod_combination, fk_prod_attr);
+
+ALTER TABLE llx_product_attribute_value ADD CONSTRAINT fk_product_attribute_value_fk_product_attribute FOREIGN KEY (fk_product_attribute) REFERENCES llx_product_attribute (rowid);
+ALTER TABLE llx_product_attribute_combination ADD CONSTRAINT fk_product_att_com_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
+ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_combination FOREIGN KEY (fk_prod_combination) REFERENCES llx_product_attribute_combination (rowid);
+ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr FOREIGN KEY (fk_prod_attr) REFERENCES llx_product_attribute (rowid);
+ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr_val FOREIGN KEY (fk_prod_attr_val) REFERENCES llx_product_attribute_value (rowid);
+ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod_att_comb_price_level_combination FOREIGN KEY (fk_product_attribute_combination) REFERENCES llx_product_attribute_combination (rowid);
+
+-- llx_notify_def.entity was never written, every row kept its DEFAULT 1, so filtering the
+-- notification queries on it would hide the existing subscriptions. Give each row the entity of the
+-- third party or the user it belongs to. Rows tied to neither keep their current value.
+UPDATE llx_notify_def INNER JOIN llx_societe ON llx_notify_def.fk_soc = llx_societe.rowid SET llx_notify_def.entity = llx_societe.entity WHERE llx_notify_def.fk_soc > 0;
+UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;

@@ -73,6 +73,8 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PARTNERSHIP_SENTBYMAIL','Mails sent from partnership file','Executed when you send email from partnership file','partnership',58004);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PARTNERSHIP_DELETE','Partnership deleted','Executed when a partnership is deleted','partnership',58006);
 
+-- perf User::fetchAll
+ALTER TABLE llx_user ADD INDEX idx_user_status_employee(statut, employee);
 
 -- amount was removed in v12
 ALTER TABLE llx_facture DROP COLUMN amount;

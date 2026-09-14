@@ -27,9 +27,6 @@
 
 // Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron'));
@@ -73,7 +72,7 @@ if (!empty($actionsave)) {
 $help_url = '';
 llxHeader('', '', $help_url);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("CronSetup"), $linkback, 'title_setup');
 
 // Configuration header
@@ -103,9 +102,10 @@ $disabled = '';
 if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') > 0) {
 	$disabled = ' disabled="disabled"';
 }
+$cronkeytoshow = (GETPOST('CRON_KEY') ? GETPOST('CRON_KEY') : getDolGlobalString('CRON_KEY'));
 print '<td>';
 if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') != 1) {
-	print '<input type="text" class="flat minwidth300 widthcentpercentminusx"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ? GETPOST('CRON_KEY') : getDolGlobalString('CRON_KEY')).'">';
+	print '<input type="text" class="flat minwidth300 widthcentpercentminusx"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.dol_escape_htmltag($cronkeytoshow).'">';
 	if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') == 0) {
 		if (!empty($conf->use_javascript_ajax)) {
 			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
@@ -115,8 +115,8 @@ if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') != 1) {
 		print '&nbsp;'.img_picto($langs->trans("WarningChangingThisMayBreakStopTaskScheduler"), 'info');
 	}
 } else {
-	print getDolGlobalString('CRON_KEY');
-	print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ? GETPOST('CRON_KEY') : getDolGlobalString('CRON_KEY')).'">';
+	print dol_escape_htmltag(getDolGlobalString('CRON_KEY'));
+	print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.dol_escape_htmltag($cronkeytoshow).'">';
 }
 print '</td>';
 print '<td>&nbsp;</td>';

@@ -36,4 +36,3 @@ then
 	wmctrl -i -r $1 -e 0,0,0,$width,$height
 	echo Size of windows $1 modified to $width x $height
 fi
-

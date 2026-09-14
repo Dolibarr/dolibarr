@@ -2,6 +2,7 @@
 Mailing=Mailversand
 MailCard=E-Mail-Kampagnenkarte
 MailErrorsTo=Fehler an
+MailTopicShort=Thema
 MailText=E-Mail-Text
 MailMessage=E-Mail Text
 MailingStatusSent=Gesendet

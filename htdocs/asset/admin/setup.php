@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Alexandre Spangaro   <alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
  * \brief	Asset setup page.
  */
 
+// Load Dolibarr environment
+require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -31,9 +33,6 @@
  * @var Translate $langs
  * @var User $user
  */
-
-// Load Dolibarr environment
-require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 
@@ -56,9 +55,22 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'asset';
 
+// Day count conventions available to compute the prorata temporis of a depreciation.
+// Note: the deprecated setup ASSET_DEPRECIATION_DURATION_PER_YEAR is not editable anymore. It let a
+// count of real calendar days be divided by 360, which is not a convention but a calculation error
+// (it overestimates every partial period by about 1.39%). It is still read to deduce the convention
+// of an installation that has never saved this page (see getAssetDepreciationDayCountConvention()).
+$arrayofdaycountconventions = array();
+foreach (getAssetDepreciationDayCountConventions() as $conventioncode => $conventionlabelkey) {
+	$arrayofdaycountconventions[$conventioncode] = $langs->trans($conventionlabelkey);
+}
+
+/**
+ * @var array<string,array{type:string,enabled:int,arrayofkeyval?:array<int|string,string>,default?:string,css?:string}> $arrayofparameters
+ */
 $arrayofparameters = array(
 	'ASSET_ACCOUNTANCY_CATEGORY' => array('type' => 'accountancy_category', 'enabled' => 1),
-	'ASSET_DEPRECIATION_DURATION_PER_YEAR' => array('type' => 'string', 'css' => 'minwidth200', 'enabled' => 1),
+	'ASSET_DEPRECIATION_DAY_COUNT_CONVENTION' => array('type' => 'select', 'arrayofkeyval' => $arrayofdaycountconventions, 'default' => getAssetDepreciationDayCountConvention(), 'css' => 'minwidth300', 'enabled' => 1),
 	//'ASSET_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
 	//'ASSET_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	//'ASSET_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
@@ -69,13 +81,13 @@ $arrayofparameters = array(
 );
 
 $error = 0;
-$setupnotempty = 0;
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $moduledir = 'asset';
-$myTmpObjects = array();
-$myTmpObjects['asset'] = array('label' => 'Asset', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Asset');
+$myTmpObjects = [
+	'asset' => array('label' => 'Asset', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Asset')
+];
 
 $tmpobjectkey = GETPOST('object', 'aZ09');
 if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
@@ -197,7 +209,7 @@ $page_name = "AssetSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -210,8 +222,6 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		/*
 		 * Assets Numbering model
 		 */
-		$setupnotempty++;
-
 		print load_fiche_titre($langs->trans("AssetNumberingModules", $myTmpObjectKey), '', '');
 
 		print '<table class="noborder centpercent">';
@@ -232,8 +242,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				$handle = opendir($dir);
 				if (is_resource($handle)) {
 					while (($file = readdir($handle)) !== false) {
-						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-							$file = substr($file, 0, dol_strlen($file) - 4);
+						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+							$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 							require_once $dir.'/'.$file.'.php';
 
@@ -321,17 +331,17 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		/*
 		 * Document templates generators
 		 */
-		$setupnotempty++;
 		$type = strtolower($myTmpObjectKey);
 
 		print load_fiche_titre($langs->trans("DocumentModules", $myTmpObjectKey), '', '');
 
 		// Load array def with activated templates
+		// TODO Replace with $def = getListOfModels($db, $type);
 		$def = array();
 		$sql = "SELECT nom";
 		$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 		$sql .= " WHERE type = '".$db->escape($type)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -377,8 +387,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 						foreach ($filelist as $file) {
 							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 								if (file_exists($dir.'/'.$file)) {
-									$name = substr($file, 4, dol_strlen($file) - 16);
-									$classname = substr($file, 0, dol_strlen($file) - 12);
+									$name = dol_substr($file, 4, dol_strlen($file) - 16);
+									$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
@@ -468,7 +478,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 }
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -477,13 +487,20 @@ if ($action == 'edit') {
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled'] == 1) {
-			$setupnotempty++;
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
 			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
 			print '</td><td>';
 
-			if ($val['type'] == 'textarea') {
+			if ($val['type'] == 'select') {
+				$selected = getDolGlobalString($constname, isset($val['default']) ? $val['default'] : '');
+				if (!isset($val['arrayofkeyval'][$selected])) {
+					// A value stored outside the list (forged post, deprecated setup) must show the value
+					// really in use, not silently the first entry of the list
+					$selected = isset($val['default']) ? $val['default'] : '';
+				}
+				print $form->selectarray($constname, $val['arrayofkeyval'], $selected, 0, 0, 0, '', 0, 0, 0, '', (empty($val['css']) ? 'minwidth200' : $val['css']));
+			} elseif ($val['type'] == 'textarea') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
 				print getDolGlobalString($constname);
 				print "</textarea>\n";
@@ -592,13 +609,15 @@ if ($action == 'edit') {
 
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled'] == 1) {
-				$setupnotempty++;
 				print '<tr class="oddeven"><td>';
 				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
 				print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
 				print '</td><td>';
 
-				if ($val['type'] == 'textarea') {
+				if ($val['type'] == 'select') {
+					$selected = getDolGlobalString($constname, isset($val['default']) ? $val['default'] : '');
+					print isset($val['arrayofkeyval'][$selected]) ? $val['arrayofkeyval'][$selected] : dol_escape_htmltag($selected);
+				} elseif ($val['type'] == 'textarea') {
 					print dol_nl2br(getDolGlobalString($constname));
 				} elseif ($val['type'] == 'html') {
 					print getDolGlobalString($constname);
@@ -621,7 +640,7 @@ if ($action == 'edit') {
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					} elseif ($result > 0) {
-						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+						$ways = $c->print_all_ways('auto', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 						$toprint = array();
 						foreach ($ways as $way) {
 							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
@@ -644,7 +663,7 @@ if ($action == 'edit') {
 					if ($resprod > 0) {
 						print $product->ref;
 					} elseif ($resprod < 0) {
-						setEventMessages(null, $object->errors, "errors");
+						setEventMessages(null, $product->errors, "errors");
 					}
 				} elseif ($val['type'] == 'accountancy_code') {
 					if (isModEnabled('accounting')) {
@@ -673,9 +692,6 @@ if ($action == 'edit') {
 	}
 }
 
-if (empty($setupnotempty)) {
-	print '<br>'.$langs->trans("NothingToSetup");
-}
 
 // Page end
 print dol_get_fiche_end();

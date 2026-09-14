@@ -51,9 +51,12 @@ DateReceived=Data di consegna ricevuto
 ClassifyReception=Classificare ricevuto
 SendShippingByEMail=Invia spedizione via EMail
 SendShippingRef=Invio della spedizione %s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=Azioni sulla spedizione
 LinkToTrackYourPackage=Link per monitorare la spedizione
-ShipmentCreationIsDoneFromOrder=Per il momento, la creazione di una nuova spedizione viene eseguita dal record dell'ordine di vendita.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=Filiera di spedizione
 ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
 ProductQtyInSuppliersOrdersRunning=Quantità prodotto inserita in ordini d'acquisto in corso
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=Opzione dal flusso di lavoro modulo, per impo
 NoWarehouseInBase=Nessun magazzino nella base
 ShipmentUpdated=Spedizione aggiornata con successo
 ShipmentIncrementStockOnDelete = Aumentare lo stock in caso di eliminazione
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Consegna
+DeliveryRef=Ref Delivery
+DeliveryCard=Ordine di consegna
+DeliveryOrder=Ordine di consegna
+DeliveryDate=Data di spedizione
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Stato di consegna salvato
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Imposta la data di spedizione
+ValidateDeliveryReceipt=Convalida la ricevuta di consegna
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Eliminare ricevuta di consegna
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Metodo di consegna
+TrackingNumber=Numero di tracking
+DeliveryNotValidated=Consegna non convalidata
+StatusDeliveryCanceled=Annullata
+StatusDeliveryDraft=Bozza
+StatusDeliveryValidated=Ricevuto
+NameAndSignature=Name and Signature:
+ToAndDate=A___________________________________ il ____/_____/__________
+GoodStatusDeclaration=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
+Deliverer=Chi consegna:
+Sender=Mittente
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Mostra lo stato di spedizione
+ShowReceiving=Mostra ricevuta di consegna
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantità di stock già allocate su righe precedenti
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=Distribuzione delle spedizioni
 ErrorTooManyCombinationBatchcode=Nessuna spedizione per linea %s poiché troppe combinazioni di magazzino, prodotto, è stato trovato il batch codice (%s).
 ErrorNoCombinationBatchcode=Impossibile salvare linea %s come combinazione di magazzino-prodotto- lotto/seriale (%s, %s, %s) non è stato trovato in azione.
 ErrorTooMuchShipped=La quantità spedita non deve essere superiore alla quantità ordinata per linea %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Rappresentante seguire-up spedizione
 TypeContact_shipping_external_BILLING=Contatto per la fatturazione

@@ -32,6 +32,7 @@
 dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
@@ -105,7 +106,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+			$this->emetteur->country_code = dol_substr($langs->defaultlang, -2); // By default if not defined
 		}
 	}
 
@@ -148,7 +149,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				unset($listofdir[$key]);
 				continue;
 			}
-			if (!is_dir($tmpdir)) {
+			if (!dol_is_dir($tmpdir)) {
 				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), '');
 			} else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
@@ -299,7 +300,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 
 				// Get extension (ods or odt)
-				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
+				$newfileformat = dol_substr($newfile, strrpos($newfile, '.') + 1);
 				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
 					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
@@ -316,7 +317,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->mymodule->dir_temp);
-				if (!is_writable($conf->mymodule->dir_temp)) {
+				if (!dol_is_writable($conf->mymodule->dir_temp)) {
 					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->mymodule->dir_temp);
 					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
@@ -422,7 +423,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 				// retrieve the constant to apply a ratio for image size or set the ratio to 1
 				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
-					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
 				} else {
 					$ratio = 1;
 				}

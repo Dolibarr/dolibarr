@@ -14,7 +14,7 @@ FreeFont works with any system using the free font rasterizer FreeType
 * Debian GNU/Linux
 
 Users of Debian GNU/Linux system will probably want to use the Debian package,
-available from the Debian site, 
+available from the Debian site,
 
 	<http://packages.debian.org/unstable/x11/ttf-freefont.html>,
 
@@ -26,7 +26,7 @@ Install them by issuing the command
 
 * KDE local installation
 
-Users of KDE can install .ttf files on a per-user basis using the KDE 
+Users of KDE can install .ttf files on a per-user basis using the KDE
 Control Center module "kcmfontinst", which may appear in the menu as
 
 	Settings -> System Administration -> Font Installer

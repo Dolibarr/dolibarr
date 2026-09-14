@@ -25,4 +25,3 @@ create table llx_c_stcommcontact
   picto    varchar(128),
   active   tinyint default 1  NOT NULL
 )ENGINE=innodb;
-

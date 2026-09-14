@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,9 +103,11 @@ class DoliDBTest extends CommonClassTest
 		$savnull = '';
 		$resql = $db->DDLDescTable($db->prefix().'c_paper_format', 'code');
 		while ($obj = $db->fetch_object($resql)) {
-			if ($obj->Field == 'code') {
-				$savtype = $obj->Type;
-				$savnull = $obj->Null;
+			// MySQL SHOW COLUMNS returns "Field", PostgreSQL DDLDescTable returns "attname"
+			$fieldname = $obj->Field ?? ($obj->attname ?? '');
+			if ($fieldname == 'code') {
+				$savtype = $obj->Type ?? '';
+				$savnull = $obj->Null ?? '';
 			}
 		}
 

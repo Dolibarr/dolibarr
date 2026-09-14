@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class box_services_expired extends ModeleBoxes
 	public $boxcode = "expiredservices"; // id of box
 	public $boximg = "object_contract";
 	public $boxlabel = "BoxOldestExpiredServices";
-	public $depends = array("contrat"); // conf->propal->enabled
+	public $depends = array("contract");
 
 	/**
 	 *  Constructor
@@ -41,7 +41,7 @@ class box_services_expired extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -84,7 +84,7 @@ class box_services_expired extends ModeleBoxes
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$this->db->idate($now)."'";
-			$sql .= " AND c.entity = ".$conf->entity;
+			$sql .= " AND c.entity = ".((int) $conf->entity);
 			$sql .= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
 			if ($user->socid) {
 				$sql .= ' AND c.fk_soc = '.((int) $user->socid);

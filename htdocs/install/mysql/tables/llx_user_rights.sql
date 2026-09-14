@@ -24,4 +24,3 @@ create table llx_user_rights
   fk_user		integer NOT NULL,
   fk_id			integer NOT NULL
 )ENGINE=innodb;
-

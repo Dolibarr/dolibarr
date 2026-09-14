@@ -121,7 +121,6 @@ ValideTrip=อนุมัติรายงานค่าใช้จ่าย
 ExpenseReportPayments=รายงานค่าใช้จ่ายการชำระเงิน
 TaxUndefinedForThisCategory = ภาษีไม่ได้ถูกกำหนดไว้สำหรับหมวดหมู่นี้
 errorComputeTtcOnMileageExpense=ข้อผิดพลาดในการคำนวณค่าใช้จ่ายระยะทาง
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=สามารถลบได้เฉพาะองค์ประกอบในสถานะร่างในการดำเนินการเป็นกลุ่มเท่านั้น
 
 ## Dictionary
 EX_BRE=อาหารเช้า
@@ -159,3 +158,4 @@ TF_TRAIN=รถไฟ
 TF_TRIP=การขนส่ง
 FailedToSetPaid=ไม่สามารถตั้งค่าให้ชำระเงินได้
 FailedToSetToCancel=การยกเลิกล้มเหลว
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

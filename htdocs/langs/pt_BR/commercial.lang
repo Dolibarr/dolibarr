@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Comercial
 CommercialArea=Área comercial
+Prospect=Cliente em Potencial
 Prospects=Clientes em Potencial
 DeleteAction=Excluir um evento
 AddAction=Adicionar evento
@@ -74,3 +75,4 @@ SignatureContractRef=Assinatura do contrato %s
 SignatureFichinterRef=Assinatura da intervenção %s
 FeatureOnlineSignDisabled=Recurso para assinatura on-line desabilitado ou documento gerado antes que o recurso fosse ativado
 SignStatus=Estado da assinatura
+DocumentUnsigned=Documento não assinado

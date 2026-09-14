@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - blockedlog
 Fingerprints=Eventos archivados y huellas digitales
+BLOCKEDLOG_REGISTRATION_NAME=Nombre de la empresa
+StatusValid=Válido

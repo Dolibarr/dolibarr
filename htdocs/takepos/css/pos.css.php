@@ -5,6 +5,8 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,19 +54,21 @@ define('ISLOADEDBYSTEELSHEET', '1');
 session_cache_limiter('public');
 
 require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
+/**
+ * @var Conf $conf
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
+header('Cache-Control: max-age=10800, public, must-revalidate');
+
+
+$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+if ($theme_vars_file) {
+	include $theme_vars_file;
 }
-
-
-include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 if (defined('THEME_ONLY_CONSTANT')) {
 	return;
 }
@@ -81,6 +85,32 @@ html,body {
 
 .bodytakepos {
 	background-color: var(--colorbackgrey);
+}
+
+/* Fix dropdown user menu clipped by overflow:hidden on body and #topnav under MD theme */
+.bodytakepos#topmenu-login-dropdown.dropdown-menu{
+	position:fixed;
+	top:45px;
+	left:auto;
+	right:0;
+	overflow-y:auto;
+	max-height:calc(100vh-50px);
+}
+
+/* Fix dropdown user-header layout missing .side-nav-vert context under TakePOS */
+.bodytakepos #topmenu-login-dropdown .dropdown-menu {
+	line-height: 1.3em;
+}
+
+.bodytakepos #topmenu-login-dropdown .dropdown-menu > .user-header {
+	min-height: 100px;
+	padding: 10px;
+	text-align: center;
+	white-space: normal;
+}
+
+.bodytakepos div.login_block_user {
+	text-align: right;
 }
 
 .center {
@@ -116,7 +146,7 @@ button.calcbutton {
 	border-width: 0;
 	margin: 1px;
 	font-size: 14pt;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 
 div.wrapper, div.wrapper2 {
@@ -140,7 +170,7 @@ button.calcbutton2 {
 	font-weight: bold;
 	font-size: 10pt;
 	margin: 1px;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 button.calcbutton2.clicked {
 	background-color: #8855AA;
@@ -162,7 +192,7 @@ button.calcbutton3 {
 	height: calc(25% - 2px);
 	font-size: 14pt;
 	margin: 1px;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 
 button.productbutton {
@@ -183,21 +213,18 @@ button.productbutton {
 	border-width: 0;
 	margin: 1px;
 	font-size: 14pt;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 
 button.actionbutton {
-	background: #EABCA6;
+	background: #EACCC6;
 	color: #222;
-	border: 2px solid #EEE;
+	/* border: 2px solid #EEE; */
 	min-height: 40px;
-	border-radius: 3px;
-}
-
-button.actionbutton {
+	border-radius: 4px;
+	padding: 12px;
 	display: inline-block;
 	position: relative;
-	padding: 0;
 	line-height: normal;
 	cursor: pointer;
 	vertical-align: middle;
@@ -206,7 +233,7 @@ button.actionbutton {
 	width: calc(33.33% - 2px);
 	height: calc(25% - 2px);
 	margin: 1px;
-	   border-width: 0;
+	border-width: 0;
 }
 
 button.item_value {
@@ -232,8 +259,14 @@ div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
 	border-width: 0;
 }
 
+.takepos #search {
+	height: unset;
+	margin-bottom: 4px !important;
+}
+
 .takepospay {
 	font-size: 1.5em;
+	height: 40px !important;
 }
 
 .fa.fa-trash:before {
@@ -443,6 +476,14 @@ div.paymentbordline
 	padding-bottom:10px;
 }
 
+/* When the categories column is hidden (TAKEPOS_HIDE_CATEGORIES), index.php gives the
+ * products area the centpercent class so it takes the whole row, but the generic
+ * .centpercent rule of the theme loses against .div5 above, which is loaded later:
+ * make the intent explicit. */
+.div5.centpercent {
+	width: 100%;
+}
+
 .div1, .div2, .div3, .div4, .div5 {
 	padding-right: 5px;
 	padding-left: 5px;
@@ -505,10 +546,10 @@ div.description_content {
 	padding-right: 2px;
 }
 
-.header{
+.header {
 	margin: 0 auto;
 	width: 100%;
-	height: 52px;
+	min-height: 52px;
 	background: rgb(60,70,100);
 }
 
@@ -577,7 +618,7 @@ div.description_content {
 	margin: 8px;
 	margin-left: 5px;
 	margin-right: 5px;
-	border-radius: 3px;
+	border-radius: 4px;
 }
 .topnav-left a:hover:not(.nohover), .topnav .login_block_other a:hover:not(.nohover) {
 	background-color: #ddd;
@@ -884,7 +925,8 @@ div#moreinfo, div#infowarehouse {
 		margin-left: 2px;
 	}
 
-	.div4 .wrapper.divempty, .div4 img, .div4 .wrapper:nth-last-child(1), .div4 .wrapper:nth-last-child(2), #prodiv22, #prodiv23, .catwatermark {
+	<?php $maxproductgrid = getDolGlobalInt('TAKEPOS_NB_MAXPRODUCT', 24); ?>
+	.div4 .wrapper.divempty, .div4 img, .div4 .wrapper:nth-last-child(1), .div4 .wrapper:nth-last-child(2), #prodiv<?php echo $maxproductgrid - 2; ?>, #prodiv<?php echo $maxproductgrid - 1; ?>, .catwatermark {
 		display: none!important;
 	}
 

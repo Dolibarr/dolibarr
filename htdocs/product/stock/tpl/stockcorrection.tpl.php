@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ if (empty($conf) || !is_object($conf)) {
 $productref = '';
 if ($object->element == 'product') {
 	/** @var Product $object */
-	$productref = $object->ref;
+	$productref = (string) $object->ref;
 }
 
 $langs->load("productbatch");
@@ -123,8 +124,8 @@ print '<script type="text/javascript">
 
 if ($disableSellBy == 0 || $disableEatBy == 0) {
 	print '
-			var disableSellBy = '.dol_escape_js((string) $disableSellBy).';
-			var disableEatBy = '.dol_escape_js((string) $disableSellBy).';
+			var disableSellBy = \''.dol_escape_js((string) $disableSellBy).'\';
+			var disableEatBy = \''.dol_escape_js((string) $disableSellBy).'\';
 			jQuery("#batch_number").change(function(event) {
 				var batch = jQuery(this).val();
 				jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.currentToken().'&product_id='.$id.'&batch="+batch, function(data) {
@@ -225,14 +226,16 @@ if (isModEnabled('productbatch') &&
 
 	print '<tr>';
 	if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-		print '<td'.($sellByCss ? ' class="'.$sellByCss.'"' : '').'>'.$langs->trans("SellByDate").'</td><td>';
+		// print '<td'.($sellByCss ? ' class="'.$sellByCss.'"' : '').'>'.$langs->trans("SellByDate").'</td><td>';
+		print '<td>'.$langs->trans("SellByDate").'</td><td>';
 		$sellbyselected = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 		// If form was opened for a specific pdluoid, field is disabled
 		print $form->selectDate(($pdluo->id > 0 ? $pdluo->sellby : $sellbyselected), 'sellby', 0, 0, 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
 		print '</td>';
 	}
 	if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-		print '<td'.($eatByCss ? ' class="'.$eatByCss.'"' : '').'>'.$langs->trans("EatByDate").'</td><td>';
+		// print '<td'.($eatByCss ? ' class="'.$eatByCss.'"' : '').'>'.$langs->trans("EatByDate").'</td><td>';
+		print '<td>'.$langs->trans("EatByDate").'</td><td>';
 		$eatbyselected = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
 		// If form was opened for a specific pdluoid, field is disabled
 		print $form->selectDate(($pdluo->id > 0 ? $pdluo->eatby : $eatbyselected), 'eatby', 0, 0, 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0));
@@ -263,7 +266,8 @@ print '<input type="text" name="label" class="minwidth400" value="'.dol_escape_h
 print '</td>';
 print '<td>'.$langs->trans("InventoryCode").'</td>';
 print '<td>';
-print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+// Prefix the default inventory code so corrections can be told apart from other movement batches
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : getDolGlobalString('STOCK_CORRECTION_CODE_PREFIX', 'COR-').dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
 print '</td>';
 print '</tr>';
 

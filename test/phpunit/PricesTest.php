@@ -3,6 +3,7 @@
  * Copyright (C) 2015 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 class PricesTest extends CommonClassTest
 {
 	/**
-	 * Test function calcul_price_total
+	 * Test function for calculating price total
 	 *
 	 * @return 	boolean
 	 * @see		http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
@@ -203,7 +204,7 @@ class PricesTest extends CommonClassTest
 
 
 		/*
-		 * Country Côte d'Ivoire
+		 * Country Ivory Coast
 		 */
 
 		// 10 * 10 HT - 0% discount with 18% vat, seller using localtax1 type 2, not localtax2 (method we provide value)

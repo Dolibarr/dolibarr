@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-MenuNewVariousPayment=Nieuw Diversen Betaling
 BalanceMinimalAllowed=Minimaal toegestaan saldo
 ShowAllTimeBalance=Toon saldo sinds begin
 SwiftValid=BIC/SWIFT geldig
@@ -22,6 +21,4 @@ CheckRejected=Teruggekeerde cheque
 DocumentModelBan=Sjabloon om een pagina met BAN-informatie af te drukken.
 NewVariousPayment=Nieuwe diverse betaling
 VariousPayment=Diversen betaling
-ShowVariousPayment=Toon diverse betaling
-AddVariousPayment=Voeg diverse betaling toe
 AlreadyOneBankAccount=Al één bankrekening gedefinieerd

@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Subtotales
+SubTotalModuleDesc=Subtotales y líneas de título para ciertos documentos
+#
+# Admin
+#
+SubtotalSetup=Configuración del módulo de subtotales
+MaxSubtotalLevel=Nivel máximo
+SubtotalLineBackColor=Color de fondo de las líneas de nivel %s
+NotSupportedByAllPDF=Funcionará con archivos PDF más nuevos, pero no con los antiguos. %s
+
+#
+# Card
+#
+AddTitleLine=Añadir línea de título
+AddSubtotalLine=Agregar línea de subtotal
+TitleNeedDesc=Debe ingresar una descripción válida para crear un título.
+TitleAddedLevelTooHigh=Se agregó un nivel de título demasiado alto (en su lugar se agregó con el nivel %s).
+TitleEditedLevelTooHigh=El nivel del título editado es demasiado alto (en su lugar se editó con el nivel %s).
+DeleteSubtotalLine=Eliminar línea de subtotal
+ConfirmDeleteSubtotalLine=¿Está seguro de que desea eliminar esta línea de subtotal?
+DeleteTitleLine=Eliminar línea de título
+ConfirmDeleteTitleLine=¿Está seguro de que desea eliminar esta línea de título?
+DeleteCorrespondingSubtotalLine=¿Borrar la línea de subtotal correspondiente?
+SubtotalLevel=Nivel %s
+SubtotalLineDesc=Descripción de línea
+SubtotalLineLevel=Nivel de línea
+ShowUPOnPDF=Mostrar precio unitario en PDF
+ShowTotalExludingVATOnPDF=Mostrar el total sin IVA en el PDF
+ForcePageBreak=Forzar salto de página antes del título
+NoTitleError=No tiene línea de título o ya todos tienen una línea de subtotal correspondiente
+CorrespondingTitleLine=Línea de título correspondiente
+SelectVATRate=Seleccione el tipo de IVA
+EnterRemisePercent=Introduzca el porcentaje de descuento
+ApplyVATForBlock=Aplicar IVA para este bloque
+ApplyDiscountForBlock=Aplicar descuento para este bloque
+TitleUnderSameLevelSTLine=El título del mismo nivel debe estar debajo de la línea de subtotal del título anterior.
+TitleUnderSameLevelOrGreater=El título debe estar bajo un título del mismo nivel o superior.
+TitleAfterStLineOfSameLevelTitle=El título debe estar después de la línea de subtotal del título anterior.
+PreviousTitleLevelTooHigh=El título anterior es dos niveles o más mayor que la línea movida.
+STLineUnderCorrespondingTitleDesc=La línea de subtotal debe estar debajo de un título con el mismo nivel que tenga la misma descripción.
+STLineUnderCorrespondingTitle=La línea de subtotal debe estar debajo de un título del mismo nivel y la misma descripción.
+STLineUnderTitle=La línea de subtotal debe estar debajo de su título
+UnsupportedModuleError=No puedes agregar una línea de subtotales en un módulo no compatible
+CorrespondingTitleNotFound=No se encontró el título correspondiente
+
+#
+# PDF
+#
+SubtotalOf=Subtotal de %s:

@@ -10,6 +10,7 @@
  * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2025		Hannes Hieronimi		<hannes@innwerk.org>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +32,6 @@
  *  \brief      Page with bank journal
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,6 +40,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "compta", "banks", "bills", "donations", "loan", "accountancy", "trips", "salaries", "hrm", "members"));
@@ -626,7 +626,7 @@ if ($resql) {
 				} else {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=cs.rowid";
 				}
-				$sql .= " WHERE cs.entity = ".$conf->entity; // We don't share object for accountancy, we use source object sharing
+				$sql .= " WHERE cs.entity = ".((int) $conf->entity); // We don't share object for accountancy, we use source object sharing
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
@@ -694,7 +694,7 @@ if ($resql) {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=t.rowid";
 				}
 				$sql .= " WHERE bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				// $sql .= " AND t.entity = " . $conf->entity; // TODO when entity is managed in tva
+				// $sql .= " AND t.entity = " . ((int) $conf->entity); // TODO when entity is managed in tva
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
@@ -827,7 +827,7 @@ if ($resql) {
 				} else {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=l.rowid";
 				}
-				$sql .= " WHERE l.entity = ".$conf->entity; // We don't share object for accountancy, we use source object sharing
+				$sql .= " WHERE l.entity = ".((int) $conf->entity); // We don't share object for accountancy, we use source object sharing
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
@@ -1206,15 +1206,15 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 					$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
 					if ($idx < $nb_operation) {
 						$amount = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
-						$total_operation += $amount;
+						$total_operation += (float) $amount;
 					} else {
 						$amount = $payment_total_ht - $total_operation;
 					}
-					$total_check -= $amount;
+					$total_check -= (float) $amount;
 
 					$bookkeepingToCreate = new BookKeeping($db);
 					//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
-					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
+					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), - (float) $amount, $journal, $journal_label, '');
 					if ($result < 0) {
 						$errorforline++;
 
@@ -1482,11 +1482,11 @@ if (empty($action) || $action == 'view') {
 				if (!empty($operation['total_ht'])) {
 					if ($idx < $nb_operation) {
 						$value = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
-						$total_operation += $value;
+						$total_operation += (float) $value;
 					} else {
 						$value = $payment_total_ht - $total_operation;
 					}
-					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), $payment['type_payment'], -$value);
+					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], (string) $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), $payment['type_payment'], - (float) $value);
 				}
 				$idx++;
 			}

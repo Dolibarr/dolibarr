@@ -57,3 +57,7 @@ donAnonymous=匿名の寄付
 AnonymousDonationTooltip=寄付を匿名で行いたい場合は、このボックスにチェックを入れてください。個人情報は尋ねられません。
 publicDonationFieldHelp=%s は私の寄付を公開登録簿に公開できます
 listOfPublicDonations=公的寄付のリスト
+donationErrorMessageContactEmail=エラーが発生した。寄付を完了するには、%s までご連絡願う。
+descDonationLineInInvoice=寄付と貢献
+companyBusinessNumber=事業者登録番号
+companyTIN=納税者番号

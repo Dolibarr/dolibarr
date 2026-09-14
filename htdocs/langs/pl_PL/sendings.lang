@@ -51,9 +51,12 @@ DateReceived=Data otrzymania dostawy
 ClassifyReception=Sklasyfikuj jako odebrane
 SendShippingByEMail=Wyślij przesyłkę e-mailem
 SendShippingRef=Złożenie przesyłki% s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=Zdarzenia na wysyłce
 LinkToTrackYourPackage=Link do strony śledzenia twojej paczki
-ShipmentCreationIsDoneFromOrder=Na chwilę obecną rejestracja nowych wysyłek dokonywana jest z poziomu Zamówienia sprzedażowego.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=Pozycja wysyłki
 ProductQtyInCustomersOrdersRunning=Ilość produktów z otwartych zamówień sprzedaży
 ProductQtyInSuppliersOrdersRunning=Liczba produktów z otwartych zleceń zakupu
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=Opcja z modułu Workflow pozwalająca na auto
 NoWarehouseInBase=Brak magazynu w bazie
 ShipmentUpdated=Przesyłka została pomyślnie zaktualizowana
 ShipmentIncrementStockOnDelete = Zwiększ zapas przy usuwaniu
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Przy dostawie
+DeliveryRef=Numer referencyjny dostawy
+DeliveryCard=Kwit dostawy
+DeliveryOrder=Kwit dostawy
+DeliveryDate=Data dostawy
+CreateDeliveryOrder=Generuj przyjęcie dostawy
+DeliveryStateSaved=Stan dostawy zapisany
+SetDeliveryDate=Ustaw szacowaną datę dostawy
+SetShippingDate=Ustaw datę dostawy
+ValidateDeliveryReceipt=Potwierdzenie otrzymania dostawy
+ValidateDeliveryReceiptConfirm=Czy jesteś pewny, że chcesz zatwierdzić to przyjęcie dostawy?
+DeleteDeliveryReceipt=Usuń potwierdzenia dostarczenia
+DeleteDeliveryReceiptConfirm=Czy jesteś pewien, że chcesz usunąć przyjęcie dostawy <b>%s</b>?
+DeliveryMethod=Metoda dostawy
+TrackingNumber=Numer przesyłki
+DeliveryNotValidated=Dostawa nie zatwierdzona
+StatusDeliveryCanceled=Anulowany
+StatusDeliveryDraft=Szkic
+StatusDeliveryValidated=Odebrano
+NameAndSignature=Imię i nazwisko oraz podpis:
+ToAndDate=To___________________________________ na ____ / _____ / __________
+GoodStatusDeclaration=Otrzymano towary w dobrym stanie,
+Deliverer=Dostawca:
+Sender=Nadawca
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=Brak wystarczającego zapasu w magazynie
+Shippable=Możliwa wysyłka
+NonShippable=Nie do wysyłki
+ShowShippableStatus=Pokaż status do wysyłki
+ShowReceiving=Pokaż przyjęte dostawy
+NonExistentOrder=Nieistniejące zamówienie
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=Dystrybucja przesyłek
 ErrorTooManyCombinationBatchcode=Brak wysyłki dla linii %s, ponieważ znaleziono zbyt wiele kombinacji magazynu, produktu, kodu partii (%s).
 ErrorNoCombinationBatchcode=Nie można zapisać wiersza %s jako kombinacji magazynu-produktu-partia/serial (%s, %s, %s) nie został znaleziony w magazynie.
 ErrorTooMuchShipped=Ilość wysłana nie powinna być większa niż ilość zamówiona na pozycji%s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Przedstawiciela w ślad za koszty
 TypeContact_shipping_external_BILLING=Kontakt do faktury klienta

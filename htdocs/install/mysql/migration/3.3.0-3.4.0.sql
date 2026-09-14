@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 3.4.0 or higher. 
+-- when current version is 3.4.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -102,8 +102,8 @@ ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_shipping_method;
 ALTER TABLE llx_expedition DROP INDEX idx_expedition_fk_expedition_methode;
 ALTER TABLE llx_expedition CHANGE COLUMN fk_expedition_methode fk_shipping_method integer;
 
--- This table and constraint should not exists as it appears in more recent version, but we may have it if we load an old dump 
--- on a newly created database and we want to be sure upgrade of rowid into autoincrement done later will works. 
+-- This table and constraint should not exists as it appears in more recent version, but we may have it if we load an old dump
+-- on a newly created database and we want to be sure upgrade of rowid into autoincrement done later will works.
 ALTER TABLE llx_reception DROP FOREIGN KEY fk_reception_fk_shipping_method;
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(255) NOT NULL DEFAULT '' AFTER description;
@@ -191,18 +191,18 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN info_bits integer NOT NULL 
 ALTER TABLE llx_actioncomm ADD COLUMN code varchar(32) NULL after fk_action;
 
 
-ALTER TABLE llx_holiday ADD COLUMN note text; 
+ALTER TABLE llx_holiday ADD COLUMN note text;
 ALTER TABLE llx_holiday ADD COLUMN note_public text;
 
--- Add new trigger on Invoice BILL_UNVALIDATE + Index 
+-- Add new trigger on Invoice BILL_UNVALIDATE + Index
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (28,'BILL_UNVALIDATE','Customer invoice unvalidated','Executed when a customer invoice status set back to draft','facture',10);
-ALTER TABLE llx_c_action_trigger ADD INDEX idx_action_trigger_rang (rang); 
+ALTER TABLE llx_c_action_trigger ADD INDEX idx_action_trigger_rang (rang);
 
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_code_ventilation integer DEFAULT 0 NOT NULL;
 ALTER TABLE llx_facturedet DROP COLUMN fk_export_compta;
 
-CREATE TABLE llx_cronjob 
+CREATE TABLE llx_cronjob
 (
 	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
 	tms 			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -246,12 +246,12 @@ ALTER TABLE llx_user ADD COLUMN color             varchar(6);
 ALTER TABLE llx_product_price ADD COLUMN import_key varchar(14) AFTER price_by_qty;
 
 DROP TABLE llx_printer_ipp;
-CREATE TABLE llx_printer_ipp 
+CREATE TABLE llx_printer_ipp
 (
 	rowid integer AUTO_INCREMENT PRIMARY KEY,
 	tms 	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	datec 	datetime,
-	printer_name text NOT NULL, 
+	printer_name text NOT NULL,
 	printer_location text NOT NULL,
 	printer_uri varchar(255) NOT NULL,
 	copy integer NOT NULL DEFAULT '1',
@@ -278,7 +278,7 @@ ALTER TABLE llx_actioncomm ADD COLUMN transparency integer after fk_user_action;
 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) VALUES (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);
 
-ALTER TABLE llx_adherent ADD COLUMN canvas varchar(32) after fk_user_valid; 
+ALTER TABLE llx_adherent ADD COLUMN canvas varchar(32) after fk_user_valid;
 
 ALTER TABLE llx_expedition CHANGE COLUMN note note_private text;
 ALTER TABLE llx_expedition ADD COLUMN note_public text after note_private;

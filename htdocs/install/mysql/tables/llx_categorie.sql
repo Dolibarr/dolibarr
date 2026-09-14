@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2005		Brice Davoleau		<e1davole@iu-vannes.fr>
 -- Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
--- Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+-- Copyright (C) 2005-2025	Regis Houssin		<regis.houssin@inodbox.com>
 -- Copyright (C) 2017-2024  Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -29,12 +29,13 @@ create table llx_categorie
 	type	        integer DEFAULT 1 NOT NULL,			-- Category type (0=product, 1=supplier, 2=customer, 3=member, ...). See array $MAP_ID into categorie.class.php for possible values.
 	description 	text,								-- description of the category
     color           varchar(8),                         -- Color
-	position        integer DEFAULT 0,                  -- Position
 	fk_soc          integer DEFAULT NULL,				-- Not used by default. Used when option CATEGORY_ASSIGNED_TO_A_CUSTOMER is set.
+	extraparams		varchar(255),						-- to stock other parameters in json format
+	date_creation	datetime,							-- Creation date
+	fk_user_creat	integer,							-- User id making creation
+	fk_user_modif	integer,							-- User id making last change
+	tms     		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,	-- Last modification date
 	visible         tinyint DEFAULT 1 NOT NULL,			-- Determine if the products are visible or not
-    date_creation	datetime,							-- Creation date
-    tms     		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,	-- Last modification date
-    fk_user_creat	integer,							-- User id making creation
-    fk_user_modif	integer,							-- User id making last change
-    import_key      varchar(14)							-- Import key
+	position        integer DEFAULT 0,                  -- Position
+	import_key      varchar(14)							-- Import key
 )ENGINE=innodb;

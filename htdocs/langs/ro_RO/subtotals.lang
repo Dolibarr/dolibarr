@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Subtotaluri
+SubTotalModuleDesc=Linii de subtotal și de titlu pentru anumite documente
+#
+# Admin
+#
+SubtotalSetup=Configurare modul Subtotaluri
+MaxSubtotalLevel=Nivel maxim
+SubtotalLineBackColor=Culoarea de fundal a liniilor de nivel %s
+NotSupportedByAllPDF=Funcționează cu PDF-uri mai noi, dar nu și cu cele vechi %s
+
+#
+# Card
+#
+AddTitleLine=Adăugare linie titlu
+AddSubtotalLine=Adăugare linie subtotal
+TitleNeedDesc=Trebuie să introduci o descriere validă pentru a crea un titlu.
+TitleAddedLevelTooHigh=Nivelul titlului adăugat este prea ridicat (adăugat în schimb cu nivelul %s).
+TitleEditedLevelTooHigh=Nivelul titlului editat este prea ridicat (editat cu nivelul %s).
+DeleteSubtotalLine=Ștergere linie de subtotal
+ConfirmDeleteSubtotalLine=Sigur vrei să ștergi această linie de subtotal?
+DeleteTitleLine=Șterge linie de titlu
+ConfirmDeleteTitleLine=Sigur vrei să ștergi această linie de titlu?
+DeleteCorrespondingSubtotalLine=Ștergi linia de subtotal corespondentă ?
+SubtotalLevel=Nivel %s
+SubtotalLineDesc=Descriere linie
+SubtotalLineLevel=Nivel linie
+ShowUPOnPDF=Afișare preț unitar în PDF
+ShowTotalExludingVATOnPDF=Afișare total fără TVA în PDF
+ForcePageBreak=Forțare sfârșit de pagină înainte de titlu
+NoTitleError=Nu ai o linie de titlu sau toate au deja o linie de subtotal corespondentă.
+CorrespondingTitleLine=Linia de titlu corespondentă
+SelectVATRate=Selectare cotă TVA
+EnterRemisePercent=Introdu procentul de discount
+ApplyVATForBlock=Aplică cota TVA pentru acest bloc
+ApplyDiscountForBlock=Aplică reducerea pentru acest bloc
+TitleUnderSameLevelSTLine=Titlul de același nivel trebuie să fie sub linia de subtotal a titlului anterior.
+TitleUnderSameLevelOrGreater=Titlul trebuie să fie sub un titlu de același nivel sau superior.
+TitleAfterStLineOfSameLevelTitle=Titlul trebuie să fie plasat după linia de subtotal a titlului anterior.
+PreviousTitleLevelTooHigh=Titlul anterior este cu două niveluri sau mai mare decât linia mutată.
+STLineUnderCorrespondingTitleDesc=Linia de subtotal trebuie să fie sub un titlu cu același nivel care are aceeași descriere.
+STLineUnderCorrespondingTitle=Linia de subtotal trebuie să fie sub un titlu de același nivel și cu aceeași descriere.
+STLineUnderTitle=Linia de subtotal trebuie să fie sub titlul său
+UnsupportedModuleError=Nu poți adăuga o linie de subtotaluri într-un modul neacceptat
+CorrespondingTitleNotFound=Titlul corespondent nu a fost găsit
+
+#
+# PDF
+#
+SubtotalOf=Subtotal la %s:

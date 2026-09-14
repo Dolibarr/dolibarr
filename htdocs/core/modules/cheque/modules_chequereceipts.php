@@ -118,12 +118,12 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	 *	Fonction to generate document on disk
 	 *
 	 *	@param	RemiseCheque	$object			Object RemiseCheque
+	 *	@param	Translate		$outputlangs	Lang output object
 	 *	@param	string			$_dir			Directory
 	 *	@param	string			$number			Number
-	 *	@param	Translate		$outputlangs	Lang output object
 	 *	@return	int<-1,1>  						1=ok, 0=ko
 	 */
-	abstract public function write_file($object, $_dir, $number, $outputlangs);
+	abstract public function write_file($object, $outputlangs, $_dir, $number);
 	// phpcs:enable
 }
 
@@ -146,7 +146,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/cheque/doc/";
 
-	// Positionne modele sur le nom du modele a utiliser
+	// Set model to the name of the model to use
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('CHEQUERECEIPT_ADDON_PDF')) {
 			$modele = getDolGlobalString('CHEQUERECEIPT_ADDON_PDF');

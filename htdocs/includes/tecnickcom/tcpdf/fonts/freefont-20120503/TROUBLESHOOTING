@@ -26,7 +26,7 @@ a different font.
 
 First double-check that the font in question really contains the character
 in question.  If you don't have font development software, this can be
-tricky.  In the case of FreeFont, you can check if a given character 
+tricky.  In the case of FreeFont, you can check if a given character
 range is supported: <http://www.gnu.org/software/freefont/coverage.html>
 
 Next double-check that your application (web browser, text editor, etc)
@@ -42,7 +42,7 @@ Modern Linux systems use a system called fontconfig, which maintains a font
 cache, for efficiency.
 
 The font cache can really complicate font installation and troubleshooting
-however.  It can happen that when a font is newly installed, what is 
+however.  It can happen that when a font is newly installed, what is
 displayed is coming out of an old cache entry rather than the new font.
 
 Just what to do depends on how and where the font was installed.
@@ -56,7 +56,7 @@ Fonts installed just for one user account will typically be in
 and the cache will be
 	~/.fontconfig/
 
-You can clean your local cache merely by emptying the directory 
+You can clean your local cache merely by emptying the directory
 	~/.fontconfig/
 In any case, to clean the cache, you can use the fontconfig command
 	fc-cache -vf
@@ -74,7 +74,7 @@ The procedure for system-wide fonts is:
 
 LibreOffice / OpenOffice
 ========================
-These products have their own font rendering libraries, which have 
+These products have their own font rendering libraries, which have
 idiosyncratic behavior.
 
 It has recently been reported that as of LibreOffice 3.5.1, font features
@@ -109,7 +109,7 @@ reporting problems
 If you really think you're seeing a bug in FreeFont, or if you have
 a suggestion, consider opening a problem report at
 	https://savannah.gnu.org/bugs/?group=freefont
-It is best that you make a Savannah account and log in with that, so 
+It is best that you make a Savannah account and log in with that, so
 you can be e-mailed whenever changes are made to your report.
 
 $Id: troubleshooting.txt,v 1.10 2011-07-16 08:38:06 Stevan_White Exp $

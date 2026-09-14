@@ -1,20 +1,22 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 
 /* PHP 7.0 */
 $finder = (new PhpCsFixer\Finder())
-->in(__DIR__)
-->exclude([
-	'core/includes',
-	'custom',
-	'documents',
-	'doctemplates',
-	'vendor',
-	'install/doctemplates',
-	'htdocs/custom',
-	'htdocs/includes',
-	'htdocs/install/doctemplates',
-])
-->notPath('vendor');
+	->in(__DIR__)
+	->exclude([
+		'core/includes',
+		'custom',
+		'documents',
+		'doctemplates',
+		'vendor',
+		'install/doctemplates',
+		'htdocs/custom',
+		'htdocs/includes',
+		'htdocs/install/doctemplates',
+	])
+	->notPath('vendor');
 
 
 /* PHP 7.4+ */
@@ -43,8 +45,11 @@ return (new PhpCsFixer\Config())
 		// So we use target PHP70 for the moment.
 		'@PHP70Migration' => true,
 		//'@PHP71Migration' => true,
-                // Avoid adding public to const (incompatible with PHP 7.0):
-                'visibility_required' => ['elements'=>['property', 'method']],
+				// Avoid adding public to const (incompatible with PHP 7.0):
+				'visibility_required' => ['elements' => ['property', 'method']],
+		// Replace deprecated 'visibility_required'
+		'modifier_keywords' => ['elements' => ['property', 'method']],
+
 
 		//'strict_param' => true,
 		//'array_syntax' => ['syntax' => 'short'],
@@ -59,5 +64,4 @@ return (new PhpCsFixer\Config())
 	->setIndent("\t")
 	// All files MUST use the Unix LF line ending only
 	// https://www.php-fig.org/psr/psr-12/#22-files
-	->setLineEnding("\n")
-;
+	->setLineEnding("\n");

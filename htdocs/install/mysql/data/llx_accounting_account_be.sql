@@ -1373,4 +1373,3 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 10863, 'MAR-VERKORT', 'INCOME', '792', '10860', 'Onttrekking aan de reserves', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 10864, 'MAR-VERKORT', 'INCOME', '793', '10860', 'Over te dragen verlies', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 10865, 'MAR-VERKORT', 'INCOME', '794', '10860', 'Tussenkomst van vennoten (of van de eigenaar) in het verlies', 1);
-

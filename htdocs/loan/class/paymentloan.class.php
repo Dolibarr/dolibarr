@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2024  Frédéric France      		<frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST      		<maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,17 +48,17 @@ class PaymentLoan extends CommonObject
 	public $picto = 'money-bill-alt';
 
 	/**
-	 * @var int Loan ID
+	 * @var ?int Loan ID
 	 */
 	public $fk_loan;
 
 	/**
-	 * @var string Create date
+	 * @var int|'' Create date
 	 */
 	public $datec = '';
 
 	/**
-	 * @var string Payment date
+	 * @var int|'' Payment date
 	 */
 	public $datep = '';
 
@@ -68,12 +68,12 @@ class PaymentLoan extends CommonObject
 	public $amounts = array();
 
 	/**
-	 * @var float|int  Total amount of payment
+	 * @var null|float|int  Total amount of payment
 	 */
 	public $amount_capital;
 
 	/**
-	 * @var float|int
+	 * @var null|float|int
 	 */
 	public $amount_insurance;
 
@@ -83,28 +83,28 @@ class PaymentLoan extends CommonObject
 	public $amount_interest;
 
 	/**
-	 * @var int Payment mode ID
+	 * @var ?int Payment mode ID
 	 */
 	public $fk_typepayment;
 
 	/**
-	 * @var string      Payment reference
+	 * @var ?string      Payment reference
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
 	/**
-	 * @var int Bank ID
+	 * @var ?int Bank ID
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int User ID
+	 * @var ?int User ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int user ID
+	 * @var ?int user ID
 	 */
 	public $fk_user_modif;
 
@@ -112,14 +112,17 @@ class PaymentLoan extends CommonObject
 	 * @var string
 	 */
 	public $type_code;
+
 	/**
 	 * @var string
 	 */
 	public $type_label;
+
 	/**
 	 * @var int
 	 */
 	public $chid;
+
 	/**
 	 * @var string
 	 */
@@ -219,12 +222,12 @@ class PaymentLoan extends CommonObject
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_loan (fk_loan, datec, datep, amount_capital, amount_insurance, amount_interest,";
 			$sql .= " fk_typepayment, num_payment, note_private, note_public, fk_user_creat, fk_bank)";
-			$sql .= " VALUES (".$this->chid.", '".$this->db->idate($now)."',";
+			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($this->amount_capital).",";
 			$sql .= " ".price2num($this->amount_insurance).",";
 			$sql .= " ".price2num($this->amount_interest).",";
-			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
+			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -369,14 +372,14 @@ class PaymentLoan extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET";
-		$sql .= " fk_loan=".(isset($this->fk_loan) ? $this->fk_loan : "null").",";
+		$sql .= " fk_loan=".(isset($this->fk_loan) ? ((int) $this->fk_loan) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql .= " amount_capital=".(isset($this->amount_capital) ? $this->amount_capital : "null").",";
-		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? $this->amount_insurance : "null").",";
-		$sql .= " amount_interest=".(isset($this->amount_interest) ? $this->amount_interest : "null").",";
-		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
+		$sql .= " amount_capital=".(isset($this->amount_capital) ? ((float) $this->amount_capital) : "null").",";
+		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? ((float) $this->amount_insurance) : "null").",";
+		$sql .= " amount_interest=".(isset($this->amount_interest) ? ((float) $this->amount_interest) : "null").",";
+		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? ((int) $this->fk_typepayment) : "null").",";
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
@@ -522,7 +525,7 @@ class PaymentLoan extends CommonObject
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total = $this->amount_capital;
+			$total = (float) $this->amount_capital;
 			if ($mode == 'payment_loan') {
 				$total = -$total;
 			}
@@ -651,15 +654,17 @@ class PaymentLoan extends CommonObject
 			$label .= ' - '.$moretitle;
 		}
 
-		$url = DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/loan/payment/card.php';
+		$query = ['id' => $this->id];
 
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
+			$query += ['save_lastsearch_values' => 1];
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';

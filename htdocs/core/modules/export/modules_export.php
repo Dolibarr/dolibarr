@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,6 +93,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	public $enclosure;
 
 	/**
+	 * @var string separator
+	 */
+	public $separator;
+
+	/**
 	 * @var int col
 	 */
 	public $col;
@@ -117,7 +123,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
 		$handle = opendir($dir);
 
-		// Recherche des fichiers drivers exports disponibles
+		// Search for available export driver files
 		$i = 0;
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {

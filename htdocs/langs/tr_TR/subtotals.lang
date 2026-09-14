@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Ara toplamlar
+SubTotalModuleDesc=Belirli belgeler için ara toplam ve başlık satırları
+#
+# Admin
+#
+SubtotalSetup=Ara toplamlar modül kurulumu
+MaxSubtotalLevel=Maksimum seviye
+SubtotalLineBackColor= %s Seviye çizgilerin arka plan rengi
+NotSupportedByAllPDF=Daha yeni PDF'lerle çalışır ancak eskileriyle çalışmaz %s
+
+#
+# Card
+#
+AddTitleLine=Başlık satırı ekle
+AddSubtotalLine=Ara toplam satırı ekle
+TitleNeedDesc=Başlık oluşturmak için geçerli bir açıklama girmelisiniz.
+TitleAddedLevelTooHigh=Başlık seviyesi çok yüksek (bunun yerine%s seviye eklendi).
+TitleEditedLevelTooHigh=Düzenlenen başlık seviyesi çok yüksek (bunun yerine %sseviye ile düzenlendi).
+DeleteSubtotalLine=Ara toplam satırını sil
+ConfirmDeleteSubtotalLine=Bu ara toplam satırını silmek istediğinizden emin misiniz?
+DeleteTitleLine=Başlık satırını sil
+ConfirmDeleteTitleLine=Bu başlık satırını silmek istediğinizden emin misiniz?
+DeleteCorrespondingSubtotalLine=İlgili ara toplam satırını silin ?
+SubtotalLevel=%s Seviye
+SubtotalLineDesc=Satır açıklaması
+SubtotalLineLevel=Satır seviyesi
+ShowUPOnPDF=Birim fiyatı PDF olarak göster
+ShowTotalExludingVATOnPDF=PDF'de KDV hariç toplamı göster
+ForcePageBreak=Başlıktan önce sayfa sonunu zorla
+NoTitleError=Başlık satırınız yok veya hepsinin karşılık gelen bir ara toplam satırı var
+CorrespondingTitleLine=İlgili başlık satırı
+SelectVATRate=KDV oranını seçin
+EnterRemisePercent=İndirim yüzdesini girin
+ApplyVATForBlock=Bu blok için KDV uygulayın
+ApplyDiscountForBlock=Bu blok için indirim uygula
+TitleUnderSameLevelSTLine=Aynı seviyedeki başlık, bir önceki başlığın ara toplam satırının altında yer almalıdır.
+TitleUnderSameLevelOrGreater=Başlık aynı seviyede veya daha üst seviyede bir başlığın altında olmalıdır.
+TitleAfterStLineOfSameLevelTitle=Başlık, bir önceki başlığın ara toplam satırından sonra olmalıdır.
+PreviousTitleLevelTooHigh=Önceki başlık, taşınan satırdan iki seviye veya daha fazla büyüktür.
+STLineUnderCorrespondingTitleDesc=Ara toplam satırı aynı düzeyde ve aynı açıklamaya sahip bir başlığın altında olmalıdır.
+STLineUnderCorrespondingTitle=Ara toplam satırı aynı seviyede ve aynı açıklamada olan bir başlığın altında olmalıdır.
+STLineUnderTitle=Ara toplam satırı başlığının altında olmalıdır
+UnsupportedModuleError=Desteklenmeyen modüle ara toplamlar satırı ekleyemezsiniz
+CorrespondingTitleNotFound=İlgili başlık bulunamadı
+
+#
+# PDF
+#
+SubtotalOf=%s Ara toplamı :

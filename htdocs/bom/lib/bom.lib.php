@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019       Maxime Kohlhaas         <maxime@atm-consulting.fr>
- * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,8 @@
  */
 function bomAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $extrafields;
 
-	global $db;
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bom_bom');
 	$extrafields->fetch_name_optionals_label('bom_bomline');
 
@@ -42,12 +40,12 @@ function bomAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/bom.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/bom.php");
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/bom_extrafields.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bom_bom'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = (isset($extrafields->attributes['bom_bom']['label']) && is_countable($extrafields->attributes['bom_bom']['label'])) ? count($extrafields->attributes['bom_bom']['label']) : 0;
 	if ($nbExtrafields > 0) {
@@ -56,7 +54,7 @@ function bomAdminPrepareHead()
 	$head[$h][2] = 'bom_extrafields';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/bomline_extrafields.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bom_bomline'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = (isset($extrafields->attributes['bom_bomline']['label']) && is_countable($extrafields->attributes['bom_bomline']['label'])) ? count($extrafields->attributes['bom_bomline']['label']) : 0;
 	if ($nbExtrafields > 0) {
@@ -98,12 +96,12 @@ function bomPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/bom/bom_card.php?id=".$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/bom/bom_card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("BOM");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/bom/bom_net_needs.php?id=".$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/bom/bom_net_needs.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("BOMNetNeeds");
 	$head[$h][2] = 'net_needs';
 	$h++;
@@ -116,7 +114,7 @@ function bomPrepareHead($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/bom/bom_note.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/bom/bom_note.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
@@ -127,10 +125,10 @@ function bomPrepareHead($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->bom->dir_output."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = getMultidirOutput($object) . "/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/bom/bom_document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/bom/bom_document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
@@ -138,7 +136,7 @@ function bomPrepareHead($object)
 	$head[$h][2] = 'document';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/bom/bom_agenda.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/bom/bom_agenda.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	$head[$h][2] = 'agenda';
 	$h++;
@@ -167,7 +165,7 @@ function mrpCollapseBomManagement()
 {
 	?>
 
-	<script type="text/javascript" language="javascript">
+	<script type="text/javascript">
 
 		$(document).ready(function () {
 			function folderManage(element, onClose = 0) {
@@ -176,7 +174,7 @@ function mrpCollapseBomManagement()
 
 				if(element.html().indexOf('folder-open') <= 0 && onClose < 1) {
 					$('[parentid="'+ id_bom_line +'"]').show();
-					element.html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+					element.html(<?php echo "'".dol_escape_js(img_picto('', 'folder-open'))."'" ; ?>);
 				}
 				else {
 					for (let i = 0; i < TSubLines.length; i++) {
@@ -188,7 +186,7 @@ function mrpCollapseBomManagement()
 						}
 					}
 					TSubLines.hide();
-					element.html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+					element.html(<?php echo "'".dol_escape_js(img_picto('', 'folder'))."'" ; ?>);
 				}
 			}
 
@@ -202,7 +200,7 @@ function mrpCollapseBomManagement()
 			$("#show_all").click(function() {
 				console.log("We click on show all");
 				$("[class^=sub_bom_lines]").show();
-				$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+				$("[class^=collapse_bom]").html(<?php echo "'".dol_escape_js(img_picto('', 'folder-open'))."'" ; ?>);
 				return false;
 			});
 
@@ -210,7 +208,7 @@ function mrpCollapseBomManagement()
 			$("#hide_all").click(function() {
 				console.log("We click on hide all");
 				$("[class^=sub_bom_lines]").hide();
-				$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+				$("[class^=collapse_bom]").html(<?php echo "'".dol_escape_js(img_picto('', 'folder'))."'" ; ?>);
 				return false;
 			});
 		});

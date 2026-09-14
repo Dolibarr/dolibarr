@@ -26,9 +26,6 @@
 
 // Load Dolibarr environment
 require_once "../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
 // Translations
 $langs->loadLangs(array("admin", "hrm", "other", "website"));
@@ -55,6 +54,8 @@ if (empty($action)) {
 if (!$user->admin) {
 	accessforbidden();
 }
+
+$object = new stdClass();
 
 
 /*
@@ -78,8 +79,16 @@ if (preg_match('/^(set|del)_([A-Z_]+)$/', $action, $regs)) {
 }
 
 if ($action == 'updatecss') {
-	dolibarr_set_const($db, "WEBPORTAL_CUSTOM_CSS", GETPOST('WEBPORTAL_CUSTOM_CSS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "WEBPORTAL_PARAMS_REV", ((int) $conf->global->WEBPORTAL_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
+	$csscontent = GETPOST('WEBPORTAL_CUSTOM_CSS', 'restricthtml');	// Will return a sanitized HTML content (so with double spaes that may be replaced with one, ...
+	$csscontent = dol_string_nohtmltag($csscontent, 2, 'UTF-8', 0, 0);
+
+	dolibarr_set_const($db, "WEBPORTAL_CUSTOM_CSS", $csscontent, 'chaine', 0, '', $conf->entity);
+
+	setEventMessages($langs->trans("RecordSaved"), null);
+
+	if (GETPOST('dol_resetcache')) {
+		dolibarr_set_const($db, "WEBPORTAL_PARAMS_REV", getDolGlobalInt('WEBPORTAL_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 

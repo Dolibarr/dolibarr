@@ -31,9 +31,9 @@ UseDiscountOnTotal=Дар маҷмӯъ
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Муайян мекунад, ки агар тахфифи умумиҷаҳонӣ ҳамчун маҳсулот, хидмат ё танҳо дар маҷмӯъ барои ҳисобкунии маржа ҳисоб карда шавад.
 MARGIN_TYPE=Харид/Нархи арзиши пешфарз барои ҳисобкунии маржа
 MargeType1=Маржа аз беҳтарин нархи фурӯшанда
-MargeType2=Маржа аз рӯи нархи миёнавазн (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Маржа оид ба нарх
-MarginTypeDesc=* Маржа аз нархи беҳтари харид = Нархи фурӯш - Беҳтарин фурӯшанда дар корти маҳсулот муайян карда шудааст <br> дар бораи Арзиши нарх = Нархи фурӯш - Нархи арзиши дар корти маҳсулот ё WAP муайяншуда, агар нархи хароҷот муайян нашуда бошад, ё беҳтарин нархи фурӯшанда, агар WAP ҳанӯз муайян нашуда бошад
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Нархи арзиши
 UnitCharges=Хароҷоти воҳид
 Charges=Пардохтҳо

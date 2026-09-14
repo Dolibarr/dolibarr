@@ -121,7 +121,6 @@ ValideTrip=Одобри извештај за трошоци
 ExpenseReportPayments=Исплати на извештај за трошоци
 TaxUndefinedForThisCategory = Данокот е недефиниран за оваа категорија
 errorComputeTtcOnMileageExpense=Грешка при пресметување на трошоците за километражата
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Само елементите во статусот на нацрт може да се избришат при масовно дејство
 
 ## Dictionary
 EX_BRE=Појадок
@@ -157,3 +156,6 @@ TF_PEAGE=патарина
 TF_TAXI=Такси
 TF_TRAIN=Воз
 TF_TRIP=Транспорт
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

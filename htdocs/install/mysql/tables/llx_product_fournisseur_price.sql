@@ -29,7 +29,7 @@ create table llx_product_fournisseur_price
   fk_soc				integer,
   ref_fourn				varchar(128),
   desc_fourn            text,
-  fk_availability		integer,	   
+  fk_availability		integer,
   price					double(24,8) DEFAULT 0,		-- price without tax for quantity
   quantity				double,
   remise_percent		double NOT NULL DEFAULT 0,

@@ -25,4 +25,3 @@ create table llx_c_hrm_function
   c_level   tinyint DEFAULT 0 NOT NULL,
   active  	tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
-

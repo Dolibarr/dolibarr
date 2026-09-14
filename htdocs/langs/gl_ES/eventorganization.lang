@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Conferencia ou Stand
 AmountPaid = Cantidade xa paga
 DateOfRegistration = Data de rexistro
 ConferenceOrBoothAttendee = Asistente á conferencia ou stand
+ConferenceOrBoothAttendeesShort = Asistentes a conferencias ou stands
 ApplicantOrVisitor=Solicitante ou visitante
 Speaker=Ponente
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Listaxe de asistentes a proxectos do evento
 ListOfConfOrBoothOfEvent=Listaxe de conferencias ou stands de proxectos de eventos
 DownloadICSLink=Descargar ficheiro ICS
 EVENTORGANIZATION_SECUREKEY=Semente para asegurar a chave da páxina pública de rexistro para suxerir unha conferencia
-SERVICE_BOOTH_LOCATION=Servizo empregado para a fila de facturas sobre a situación do stand
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Servizo utilizado para a fila da factura sobre a subscrición dun asistente a un evento
+SERVICE_BOOTH_LOCATION=Servizo para usar na liña de factura para a venda dun stand.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Servizo a usar na liña de factura para as taxas de participación.
 NbVotes=Número de votos
 # Status
 EvntOrgDraft = Non validada
@@ -122,7 +123,7 @@ NewSubscription=Rexistro
 OrganizationEventConfRequestWasReceived=A súa suxestión para unha conferencia foi recibida
 OrganizationEventBoothRequestWasReceived=A súa solicitude para un stand foi recibida
 OrganizationEventPaymentOfBoothWasReceived=O seu pagamento polo seu stand rexistrouse
-OrganizationEventPaymentOfRegistrationWasReceived=O seu pagamento pola inscrición ao evento rexistrouse
+OrganizationEventPaymentOfRegistrationWasReceived=O seu pagamento pola inscrición ao evento foi rexistrado
 OrganizationEventBulkMailToAttendees=Esta é unha lembranza da súa participación no evento como asistente
 OrganizationEventBulkMailToSpeakers=Esta é unha lembranza da súa participación no evento como ponente
 OrganizationEventLinkToThirdParty=Ligazón a terceiros (cliente, provedor ou asociado)

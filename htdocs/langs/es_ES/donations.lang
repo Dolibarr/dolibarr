@@ -57,3 +57,7 @@ donAnonymous=Donación anónima
 AnonymousDonationTooltip=Marque esta casilla si desea que su donación permanezca anónima. No se le solicitará información personal.
 publicDonationFieldHelp=%s puede publicar mi donación en el registro público
 listOfPublicDonations=Lista de donaciones públicas
+donationErrorMessageContactEmail=Se ha producido un error. Para completar su donación, contáctenos en %s
+descDonationLineInInvoice=Donación y contribución
+companyBusinessNumber=Número de registro comercial
+companyTIN=Número de identificación fiscal

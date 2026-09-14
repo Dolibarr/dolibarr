@@ -17,14 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
- * $object (asset, assetmodel, ...)
- * $assetaccountancycodes
- * $action
- * $conf
- * $langs
- *
- * $parameters
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode.
  */
 
 /**
@@ -32,8 +25,12 @@
  * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
- * @var AssetDepreciationOptions $assetdepreciationoptions
  * @var Translate $langs
+ *
+ * @var Object $object		Asset, AssetModel, ...
+ * @var	string	$action
+ * @var array<string,mixed> $parameters
+ * @var AssetDepreciationOptions $assetdepreciationoptions
  * @var ?array<array{mode_key:string,field_key:string,value:string,target:string}> $enabled_field_info
  */
 '
@@ -112,6 +109,11 @@ if (empty($reshook)) {
 			if (array_key_exists('enabled', $field_info) && isset($field_info['enabled']) && !verifCond($field_info['enabled'])) {
 				continue; // We don't want this field
 			}
+			// This loop walks the raw definition of the fields, not the one filtered by
+			// setInfosForMode(), so the fields reserved to an asset must be discarded here too
+			if (!empty($field_info['only_on_asset']) && !empty($class_type)) {
+				continue;
+			}
 
 
 			$html_name = $prefix_html_name . $field_key;
@@ -159,8 +161,6 @@ if (empty($reshook)) {
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, $check) : $assetdepreciationoptions->$field_key;
 			} elseif ($field_info['type'] == 'price') {
 				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name)) : ($assetdepreciationoptions->$field_key ? price2num($assetdepreciationoptions->$field_key) : (!empty($field_info['default']) ? dol_eval((string) $field_info['default'], 1) : 0));
-			} elseif ($field_key == 'lang') {
-				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, 'aZ09') : $assetdepreciationoptions->lang;
 			} else {
 				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, 'alpha') : $assetdepreciationoptions->$field_key;
 			}

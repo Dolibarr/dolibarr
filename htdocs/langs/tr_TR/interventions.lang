@@ -10,7 +10,6 @@ ActionsOnFicheInter=Müdahale eylemleri
 LastInterventions=Son %s müdahale
 AllInterventions=Tüm müdahaleler
 CreateDraftIntervention=Taslak oluştur
-InterventionContact=Müdahale ilgilisi
 DeleteIntervention=Müdahale sil
 ValidateIntervention=Müdahale doğrula
 SignIntervention=Müdahaleyi imzala

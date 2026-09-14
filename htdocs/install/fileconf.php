@@ -6,7 +6,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025  		Charlene Benke          <charlene@patas-monkey.com>
  *
@@ -32,6 +32,9 @@
 
 include_once 'inc.php';
 /**
+ * @var string $conffile
+ * @var string $conffiletoshow
+ *
  * @var Translate $langs
  *
  * @var string $dolibarr_main_db_host
@@ -40,8 +43,6 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_encrypted_pass
- * @var string $conffile
- * @var string $conffiletoshow
  */
 '
 @phan-var-force string $dolibarr_main_db_host
@@ -88,6 +89,9 @@ dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 // install.forced.php into directory htdocs/install (This is the case with some wizard
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
+if (!isset($force_install_distrib)) {
+	$force_install_distrib = 'undefined';
+}
 if (!isset($force_install_noedit)) {
 	$force_install_noedit = ''; // 1=To block vars specific to distrib, 2 to block all technical parameters, 3 to block all technical parameters excepted main_url
 }
@@ -151,6 +155,10 @@ if (!is_writable($conffile)) {
 	exit;
 }
 
+if (!empty($force_install_distrib)) {
+	print '<!-- $force_install_distrib = '.dol_escape_htmltag($force_install_distrib).' -->';
+}
+
 if (!empty($force_install_message)) {
 	print '<div><br>'.$langs->trans($force_install_message).'</div>';
 
@@ -178,7 +186,7 @@ if (!empty($force_install_message)) {
 
 	<tr>
 		<td colspan="3" class="label">
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
 		</td>
 	</tr>
 
@@ -222,6 +230,11 @@ if (!empty($force_install_noedit)) {
 		if (empty($dolibarr_main_data_root)) {
 			$dolibarr_main_data_root = GETPOSTISSET('main_data_dir') ? GETPOST('main_data_dir') : detect_dolibarr_main_data_root($dolibarr_main_document_root);
 		}
+		// Correct value if dolibarr_main_data_root contains '..'
+		if (strpos($dolibarr_main_data_root, '..') !== false) {
+			$dolibarr_main_data_root = dirname($dolibarr_main_document_root).'/documents';
+		}
+
 		?>
 		<td class="label">
 			<input type="text"
@@ -250,6 +263,7 @@ if (!empty($force_install_noedit)) {
 	<?php
 	if (empty($dolibarr_main_url_root)) {
 		$dolibarr_main_url_root = GETPOSTISSET('main_url') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
+		$dolibarr_main_url_root = trim($dolibarr_main_url_root);
 	}
 	?>
 	<tr>
@@ -260,7 +274,7 @@ if (!empty($force_install_noedit)) {
 				   class="minwidth300"
 				   id="main_url"
 				   name="main_url"
-				   value="<?php print $dolibarr_main_url_root; ?> "
+				   value="<?php print $dolibarr_main_url_root; ?>"
 <?php if (!empty($force_install_noedit) && $force_install_noedit != 3) {
 	print ' disabled';
 }
@@ -305,7 +319,7 @@ if (!empty($force_install_noedit)) {
 
 	<tr>
 		<td colspan="3" class="label"><br>
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
 		</td>
 	</tr>
 
@@ -350,7 +364,7 @@ if (!empty($force_install_noedit)) {
 		$nbok = $nbko = 0;
 		$option = '';
 
-		// Scan les drivers
+		// Scan the drivers
 		$dir = DOL_DOCUMENT_ROOT.'/core/db';
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
@@ -469,10 +483,10 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_port"><?php echo $langs->trans("Port"); ?></label></td>
 		<td class="label">
-			<input type="text"
+			<input type="text" class="width75"
 				   name="db_port"
 				   id="db_port"
-				   value="<?php print (!empty($force_install_port)) ? $force_install_port : $dolibarr_main_db_port; ?>"
+				   value="<?php print (!empty($force_install_port)) ? (int) $force_install_port : (empty($dolibarr_main_db_port) ? "" : $dolibarr_main_db_port); ?>"
 				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_port !== null) {
 					print ' disabled';
 				} ?>
@@ -590,7 +604,7 @@ if (!empty($force_install_noedit)) {
 	?>
 	<tr class="hidesqlite hideroot">
 		<td colspan="3" class="label"><br>
-		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
 		</td>
 	</tr>
 
@@ -694,45 +708,45 @@ function jscheckparam()
 	if (document.forminstall.main_dir.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("WebPagesDirectory"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("WebPagesDirectory")))."'" ; ?>);
 	}
 	else if (document.forminstall.main_data_dir.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DocumentsDirectory"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DocumentsDirectory")))."'" ; ?>);
 	}
 	else if (document.forminstall.main_url.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("URLRoot"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("URLRoot")))."'" ; ?>);
 	}
 	else if (document.forminstall.db_host.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("Server"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("Server")))."'" ; ?>);
 	}
 	else if (document.forminstall.db_name.value == '')
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatabaseName")))."'" ; ?>);
 	}
 	else if (! checkDatabaseName(document.forminstall.db_name.value))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentitiesnoconv("DatabaseName")))."'" ; ?>);
 	}
 	// If create database asked
 	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired"))."'" ; ?>);
 		init_needroot();
 	}
 	// If create user asked
 	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');
+		alert(<?php echo "'".dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired"))."'" ; ?>);
 		init_needroot();
 	}
 

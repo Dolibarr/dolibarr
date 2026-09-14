@@ -4,10 +4,10 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,13 +32,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
-require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
-require_once './lib/replenishment.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +39,12 @@ require_once './lib/replenishment.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+require_once './lib/replenishment.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
@@ -57,8 +56,6 @@ if ($user->socid) {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
-
-$result = restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
@@ -88,7 +85,7 @@ while ($tmpobj = $db->fetch_object($resWar)) {
 		$listofqualifiedwarehousesid .= ",";
 	}
 	$listofqualifiedwarehousesid .= $tmpobj->rowid;
-	$lastWarehouseID = $tmpobj->rowid;
+	$lastWarehouseID = (int) $tmpobj->rowid;
 	$count++;
 }
 
@@ -143,16 +140,27 @@ if ($mode == 'virtual') {
 	$usevirtualstock = 1;
 }
 
-$parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$object = new CommandeFournisseur($db);
+
+if (!isModEnabled('stock')) {
+	accessforbidden("Module stock must be enabled to use this feature");
 }
+if (!$user->hasRight('stock', 'read')) {
+	accessforbidden("You need permission to read stock to access this feature");
+}
+
+restrictedArea($user, 'produit|service');
 
 
 /*
  * Actions
  */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = '';
@@ -185,10 +193,25 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$box = $i;
 				$supplierpriceid = GETPOSTINT('fourn'.$i);
 				//get all the parameters needed to create a line
+
 				$qty = GETPOSTFLOAT('tobuy'.$i);
-				$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
+
+				// Resolve the product and the supplier of the selected price line first. Without them,
+				// get_buyprice() falls back to a search with no product and no supplier filter, and can
+				// return a price row of another supplier for another product (see #40182).
+				$tmpprodfourn = new ProductFournisseur($db);
+				if ($tmpprodfourn->fetch_product_fournisseur_price($supplierpriceid) > 0) {
+					$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty, $tmpprodfourn->product_id, 'none', $tmpprodfourn->fourn_id);
+				} else {
+					$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
+				}
+
 				$res = $productsupplier->fetch($idprod);
-				if ($res && $idprod > 0) {
+				if ($res && $idprod > 0 && $fk_supplier > 0 && (int) $productsupplier->fourn_socid !== (int) $fk_supplier) {
+					// Safety net: never let a line be attached to a supplier different from the one filtered on.
+					dol_syslog("replenish.php: get_buyprice returned fourn_socid=".$productsupplier->fourn_socid." for fk_product=".$idprod." instead of expected fk_supplier=".$fk_supplier." (line $i, product_fournisseur_price id $supplierpriceid, qty $qty)", LOG_WARNING);
+					$errorQty++;
+				} elseif ($res && $idprod > 0) {
 					if ($qty) {
 						//might need some value checks
 						$line = new CommandeFournisseurLigne($db);
@@ -251,6 +274,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 		//we now know how many orders we need and what lines they have
 		$i = 0;
 		$fail = 0;
+		$id = 0;
 		$orders = array();
 		$suppliersid = array_keys($suppliers);	// array of ids of suppliers
 		foreach ($suppliers as $supplier) {
@@ -269,6 +293,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$order->fetch($obj->rowid);
 				$order->fetch_thirdparty();
 
+				$result = 0;	// Stays 0 when the supplier has no line, so the test below is not done on an undefined value
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
@@ -295,6 +320,9 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						$line->fk_unit,
 						$line->multicurrency_subprice
 					);
+					if ($result < 0) {
+						break;
+					}
 				}
 				if ($result < 0) {
 					$fail++;
@@ -364,10 +392,10 @@ $prod = new Product($db);
 $title = $langs->trans('MissingStocks');
 
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
-	$sqldesiredtock = $db->ifsql("pse.desiredstock IS NULL", "p.desiredstock", "pse.desiredstock");
+	$sqldesiredstock = $db->ifsql("pse.desiredstock IS NULL", "p.desiredstock", "pse.desiredstock");
 	$sqlalertstock = $db->ifsql("pse.seuil_stock_alerte IS NULL", "p.seuil_stock_alerte", "pse.seuil_stock_alerte");
 } else {
-	$sqldesiredtock = 'p.desiredstock';
+	$sqldesiredstock = 'p.desiredstock';
 	$sqlalertstock = 'p.seuil_stock_alerte';
 }
 
@@ -378,7 +406,7 @@ $sql .= ' p.desiredstock, p.seuil_stock_alerte,';
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
 	$sql .= ' pse.desiredstock as desiredstockpse, pse.seuil_stock_alerte as seuil_stock_alertepse,';
 }
-$sql .= " " . $sqldesiredtock . " as desiredstockcombined, " . $sqlalertstock . " as seuil_stock_alertecombined,";
+$sql .= " " . $sqldesiredstock . " as desiredstockcombined, " . $sqlalertstock . " as seuil_stock_alertecombined,";
 $sql .= ' s.fk_product,';
 $sql .= " SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
@@ -432,7 +460,7 @@ if (isModEnabled('variants') && !getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMEN
 	$sql .= ' AND p.rowid NOT IN (SELECT pac.fk_product_parent FROM '.MAIN_DB_PREFIX.'product_attribute_combination as pac WHERE pac.entity IN ('.getEntity('product').'))';
 }
 if ($fk_supplier > 0) {
-	$sql .= ' AND EXISTS (SELECT pfp.rowid FROM ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid AND pfp.fk_soc = ' . ((int) $fk_supplier) . ' AND pfp.entity IN (' . getEntity('product_fournisseur_price') . '))';
+	$sql .= ' AND EXISTS (SELECT pfp.rowid FROM ' . MAIN_DB_PREFIX . 'product_fournisseur_price as pfp WHERE pfp.fk_product = p.rowid AND pfp.fk_soc = ' . ((int) $fk_supplier) . ' AND pfp.entity IN (' . getEntity('productsupplierprice') . '))';
 }
 // Add where from hooks
 $parameters = array();
@@ -525,7 +553,7 @@ if ($usevirtualstock) {
 	}
 
 	$sql .= ' HAVING (';
-	$sql .= " (" . $sqldesiredtock . " >= 0 AND (" . $sqldesiredtock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')';
+	$sql .= " (" . $sqldesiredstock . " >= 0 AND (" . $sqldesiredstock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')';
 	$sql .= " - (" . $sqlCommandesCli . " - " . $sqlExpeditionsCli . ") + (" . $sqlCommandesFourn . " - " . $sqlReceptionFourn . ") + (" . $sqlProductionToProduce . " - " . $sqlProductionToConsume . ") + ".$sqlHookVirtualStock."))";
 	$sql .= ' OR';
 	if ($includeproductswithoutdesiredqty == 'on') {
@@ -553,7 +581,7 @@ if ($usevirtualstock) {
 	}
 } else {
 	$sql .= ' HAVING (';
-	$sql .= "(" . $sqldesiredtock . " >= 0 AND (" . $sqldesiredtock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ")))";
+	$sql .= "(" . $sqldesiredstock . " >= 0 AND (" . $sqldesiredstock . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ")))";
 	$sql .= ' OR';
 	if ($includeproductswithoutdesiredqty == 'on') {
 		$sql .= " ((" . $sqlalertstock . " >= 0 OR " . $sqlalertstock . " IS NULL) AND (" . $db->ifsql($sqlalertstock . " IS NULL", "0", $sqlalertstock) . " > SUM(" . $db->ifsql("s.reel IS NULL", "0", "s.reel") . ')))';
@@ -587,7 +615,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {
+	if (($page * $limit) > (int) $nbtotalofrecords) {
 		$page = 0;
 		$offset = 0;
 	}
@@ -662,7 +690,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE')) {
 	print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-	print $langs->trans('Warehouse') . ' ' . $formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
+	print $langs->trans('Warehouse') . ' ' . $formproduct->selectWarehouses((int) $fk_entrepot, 'fk_entrepot', '', 1);
 	print '</div>';
 }
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
@@ -892,16 +920,17 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$stock = $prod->stock_theorique;
 			//if conf active, stock virtual by warehouse is calculated
 			if (getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
-				$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->virtual;
+				$stockwarehouse = $prod->stock_warehouse[(int) $fk_entrepot]->virtual;
 			}
 		} else {
 			$stock = $prod->stock_reel;
 			if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
-				$stockwarehouse = $prod->stock_warehouse[$fk_entrepot]->real;
+				$stockwarehouse = $prod->stock_warehouse[(int) $fk_entrepot]->real;
 			}
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
+		$result = null;
 		if (isset($draftchecked)) {
 			$result = $prod->load_stats_commande_fournisseur(0, '0,1,2,3,4');
 		} elseif (!$usevirtualstock) {
@@ -990,7 +1019,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="right">'.((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? ($objp->seuil_stock_alertepse ? $alertstockwarehouse : img_info($langs->trans('ProductValuesUsedBecauseNoValuesForThisWarehouse')) . '0') : $alertstock).'</td>';
 
 		// Current stock (all warehouses)
-		print '<td class="right">' . $warning . $stock;
+		print '<td class="right">' . $warning . price(price2num($stock, 'MS'));
 		print '<!-- stock returned by main sql is ' . $objp->stock_physique . ' -->';
 		print '</td>';
 

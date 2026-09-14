@@ -37,7 +37,7 @@ like Arabic, Indic, Khmer, Chinese, Japanese or Korean, in one document, but
 will also form the basis for future developments in other areas, such as
 native color support and hypertext features. ... Fonts for UT1 (omlgc family)
 and UT2 (omah family) are under development: these fonts are in PostScript
-format and visually close to Times and Helvetica font families. 
+format and visually close to Times and Helvetica font families.
 Omega fonts are available subject to GPL
 
 	Latin Extended-B                        (U+0180-U+024F)
@@ -89,7 +89,7 @@ etc. would result in too thick math symbols, in my opinion. In the TX
 fonts, these glyphs are thinner than those of original Times
 fonts. That is, the rule thickness of these glyphs is around 85% of
 that of the Times fonts, but still thicker than that of the CM fonts."
-TX fonts are are distributed under the GNU public license (GPL). 
+TX fonts are are distributed under the GNU public license (GPL).
 <http://www.ctan.org/tex-archive/fonts/txfonts/>.
 
 	Arrows					(U+2190-U+21FF)
@@ -210,7 +210,7 @@ languages."
 * Prasad A. Chodavarapu <chprasad AT hotmail.com>
 
 Prasad A. Chodavarapu created Tikkana, a Telugu font available in Type
-1 and TrueType format on <http://chaitanya.bhaavana.net/fonts/>. 
+1 and TrueType format on <http://chaitanya.bhaavana.net/fonts/>.
 Tikkana exceeds the Unicode Telugu range with some composite glyphs.
 Available under the GNU General Public License.
 
@@ -237,7 +237,7 @@ redundant control points with PfaEdit.
 In 1991, Hardip Singh Pannu has created a free Gurmukhi TrueType font,
 available as regular, bold, oblique and bold oblique form. Its license
 says "Please remember that these fonts are copyrighted (by me) and are
-for non-profit use only." 
+for non-profit use only."
 
 	Gurmukhi				(U+0A00-U+0A7F)
 
@@ -343,7 +343,7 @@ please contact mssridhar AT vsnl.com.
 	Oriya					(U+0B00-U+0B7F)
 	Tamil					(U+0B80-U+0BFF)
 	Telugu					(U+0C00-U+0C7F)
-	Kannada					(U+0C80-U+0CFF)	
+	Kannada					(U+0C80-U+0CFF)
 	Malayalam				(U+0D00-U+0D7F)
 
 
@@ -363,7 +363,7 @@ Finally the range was completely replaced by glyphs from the sinh TeX
 font, with much help and advice from Harshula Jayasuriya.
 
 	Sinhala					(U+0D80-U+0DFF)
-       
+
 
 * Daniel Shurovich Chirkov <dansh AT chirkov.com>
 
@@ -397,7 +397,7 @@ has released "Rachana Normal" fonts with approximately 900 glyphs required
 to typeset traditional Malayalam. R. Chitrajan apparently encoded the
 glyphs in the OpenType table.
 
-In 2008, the Malayalam ranges in FreeSerif were updated under the advise 
+In 2008, the Malayalam ranges in FreeSerif were updated under the advise
 and supervision of Hiran Venugopalan of Swathanthra Malayalam Computing,
 to reflect the revised edition Rachana_04.
 
@@ -486,7 +486,7 @@ created the following UCS blocks:
 
 * Mark Williamson
 
-Made the MPH 2 Damase font, from which 
+Made the MPH 2 Damase font, from which
 	Hanunóo                                 (U+1720-U+173F)
 	Buginese                                (U+1A00-U+1A1F)
 	Tai Le                                  (U+1950-U+197F)
@@ -499,7 +499,7 @@ Submitted a very thorough survey of glyph problems and other suggestions.
 
 * Alexey Kryukov
 
-Made the TemporaLCGUni fonts, based on the URW++ fonts, from which at one 
+Made the TemporaLCGUni fonts, based on the URW++ fonts, from which at one
 point FreeSerif Cyrillic, and some of the Greek, was drawn.  He also provided
 valuable direction about Cyrillic and Greek typesetting.
 
@@ -511,7 +511,7 @@ of ancient sources.
 
 	Aegean:   Phoenecian
 	Analecta: Gothic                        (U+10330-U+1034F)
-	Musical:  Byzantine & Western                  
+	Musical:  Byzantine & Western
 	Unicode:  many Miscellaneous Symbols, Miscellaneous Technical,
 	          supplemental Symbols, and Mathematical Alphanumeric symbols,
 		  Mah Jong, and the outline of the Domino.

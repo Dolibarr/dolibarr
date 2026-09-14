@@ -10,7 +10,6 @@ ActionsOnFicheInter=Azioni di intervento
 LastInterventions=Ultimi %s interventi
 AllInterventions=Tutti gli interventi
 CreateDraftIntervention=Crea bozza
-InterventionContact=Contatto per l'intervento
 DeleteIntervention=Elimina intervento
 ValidateIntervention=Convalida intervento
 SignIntervention=Firmare l'intervento

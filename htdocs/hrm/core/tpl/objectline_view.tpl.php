@@ -11,7 +11,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,8 @@
  * $conf
  * $langs
  * $dateSelector
- * $forceall (0 by default, 1 for supplier invoices/orders)
  * $element     (used to test $user->rights->$element->creer)
  * $permtoedit  (used to replace test $user->rights->$element->creer)
- * $senderissupplier (0 by default, 1 for supplier invoices/orders)
- * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
- * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  * $disableedit, $disablemove, $disableremove
  *
@@ -44,18 +40,21 @@
  */
 
 /**
+ * @var string $action
+ * @var int $i
+ * @var int $permissiontoadd
+ * @var CommonObjectLine $line
+ * @var CommonObject $this
+ * @var ?Conf $conf
  * @var Form $form
  * @var Translate $langs
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object)) {
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
-global $mysoc;
-global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';

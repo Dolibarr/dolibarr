@@ -44,7 +44,7 @@ $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$toselect   = GETPOST('toselect', 'array');
+$toselect   = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'margindetail'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $optioncss  = GETPOST('optioncss', 'alpha');
@@ -231,6 +231,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."facture as f ";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as d ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
+
 $sql .= " AND f.entity IN (".getEntity('invoice').") ";
 if (!empty($startdate)) {
 	$sql .= " AND f.datef >= '".$db->idate($startdate)."'";
@@ -242,6 +243,13 @@ if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
+
+
+$parameters = array();
+$hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action);
+$sql .= $hookmanager->resPrint;
+
+
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
@@ -249,7 +257,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -282,7 +290,7 @@ if ($result) {
 	print '<table class="tagtable noborder nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre liste_titre_search">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		$searchpitco = $form->showFilterButtons();
 		print $searchpitco;
@@ -294,7 +302,7 @@ if ($result) {
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		$searchpitco = $form->showFilterButtons();
 		print $searchpitco;
@@ -303,7 +311,7 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -312,7 +320,7 @@ if ($result) {
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 	print "</tr>\n";
@@ -323,7 +331,7 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 
@@ -368,7 +376,7 @@ if ($result) {
 		print '<span class="amount">'.price($objp->total_ht).'</span>';
 		print '</td>';
 
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 

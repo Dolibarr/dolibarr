@@ -93,5 +93,3 @@ if __name__ == '__main__':
     options, arguments = parser.parse_args()
     sys.argv[:] = arguments
     main(options, arguments)
-    
-    

@@ -32,7 +32,7 @@ class GdEscposImage extends EscposImage
             /* Set to blank image */
             return parent::loadImageData($filename);
         }
-        
+
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         switch ($ext) {
             case "png":
@@ -58,7 +58,7 @@ class GdEscposImage extends EscposImage
      */
     public function readImageFromGdResource($im)
     {
-        if (!is_resource($im)) {
+        if (!is_resource($im) && !($im instanceof \GdImage)) {
             throw new Exception("Failed to load image.");
         } elseif (!EscposImage::isGdLoaded()) {
             throw new Exception(__FUNCTION__ . " requires 'gd' extension.");

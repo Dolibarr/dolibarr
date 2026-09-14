@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 SuperAdmin
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,16 +80,16 @@ class modTakePos extends DolibarrModules
 		// for specific path of parts (eg: /takepos/core/modules/barcode)
 		// for specific css file (eg: /takepos/css/takepos.css.php)
 		$this->module_parts = array(
-									'triggers' => 0, // Set this to 1 if module has its own trigger directory (core/triggers)
-									'login' => 0, // Set this to 1 if module has its own login method file (core/login)
-									'substitutions' => 1, // Set this to 1 if module has its own substitution function file (core/substitutions)
-									'menus' => 0, // Set this to 1 if module has its own menus handler directory (core/menus)
-									'theme' => 0, // Set this to 1 if module has its own theme directory (theme)
-									'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
-									'barcode' => 0, // Set this to 1 if module has its own barcode directory (core/modules/barcode)
-									'models' => 0, // Set this to 1 if module has its own models directory (core/modules/xxx)
-									'hooks' => array() 	                                // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
-								);
+			'triggers' => 0, // Set this to 1 if module has its own trigger directory (core/triggers)
+			'login' => 0, // Set this to 1 if module has its own login method file (core/login)
+			'substitutions' => 1, // Set this to 1 if module has its own substitution function file (core/substitutions)
+			'menus' => 0, // Set this to 1 if module has its own menus handler directory (core/menus)
+			'theme' => 0, // Set this to 1 if module has its own theme directory (theme)
+			'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
+			'barcode' => 0, // Set this to 1 if module has its own barcode directory (core/modules/barcode)
+			'models' => 0, // Set this to 1 if module has its own models directory (core/modules/xxx)
+			'hooks' => array() 	                                // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+		);
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/takepos/temp","/takepos/subdir");
@@ -107,10 +107,9 @@ class modTakePos extends DolibarrModules
 		$this->langfiles = array("cashdesk");
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(4, 0); // Minimum version of Dolibarr required by module
-		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw'); // Warning to show when we activate module. array('always'='text') or array('FR'='text')
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array('FR' => array('WarningNoteModulePOSForFrenchLaw', 'WarningNoteModulePOSForFrenchLaw2', 'WarningNoteModulePOSForFrenchLaw3')); // Warning to show when we activate module. array('always' => 'text') or array('FR' => array('text1', 'text2))
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'TakePosWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -205,7 +204,6 @@ class modTakePos extends DolibarrModules
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'editorderedlines';
-
 
 		// Main menu entries
 		$this->menu = array(); // List of menus to add

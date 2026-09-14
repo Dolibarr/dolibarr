@@ -58,7 +58,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         self.hide();
                     });
                 });
-                
+
             this.addSearch();
 
             this.$overlay = $('<div />').addClass(csscls('overlay')).hide().appendTo('body');
@@ -72,7 +72,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.$loadmorebtn.show();
             this.find({}, 0, this.handleFind.bind(this));
         },
-        
+
         addSearch: function(){
             var self = this;
             var searchBtn = $('<button />')
@@ -113,7 +113,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                        });
                        e.preventDefault();
                     });
-                    
+
                 var method = $('<a />')
                     .text(meta['method'])
                     .on('click', function(e) {
@@ -147,7 +147,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
                         self.find({uri: meta['uri']}, 0, self.handleFind.bind(self));
                         e.preventDefault();
                     });
-                    
+
                 $('<tr />')
                     .append('<td>' + meta['datetime'] + '</td>')
                     .append('<td>' + meta['method'] + '</td>')

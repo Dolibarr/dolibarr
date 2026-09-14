@@ -43,5 +43,9 @@ CREATE TABLE llx_ecm_files
   fk_user_m			integer,
   note_private		text,
   note_public		text,
-  acl				text							-- for future permission 'per file'
+  acl				text,							-- for future permission 'per file'
+  geolat            double(24,8)   DEFAULT NULL,
+  geolong           double(24,8)   DEFAULT NULL,
+  geopoint          point DEFAULT NULL,
+  georesultcode     varchar(16)
 ) ENGINE=innodb;

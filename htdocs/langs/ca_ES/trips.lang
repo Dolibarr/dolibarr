@@ -121,7 +121,6 @@ ValideTrip=Aprova l'informe de despeses
 ExpenseReportPayments=Pagaments de l'informe de despeses
 TaxUndefinedForThisCategory = L'impost no està definit per a aquesta categoria
 errorComputeTtcOnMileageExpense=Error en calcular la despesa del quilometratge
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Només els elements en estat d'esborrany es poden suprimir en accions massives
 
 ## Dictionary
 EX_BRE=Esmorzar
@@ -159,3 +158,4 @@ TF_TRAIN=Tren
 TF_TRIP=Transport
 FailedToSetPaid=No s'ha pogut establir com a pagat
 FailedToSetToCancel=No s'ha pogut cancel·lar
+NobodyHasPermissionToValidateExpenseReport=Ningú té permís per validar l'informe de despeses

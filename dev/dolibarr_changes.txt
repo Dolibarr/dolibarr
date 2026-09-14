@@ -1,6 +1,6 @@
 
-This file describes changes made on external libraries after being included
-in Dolibarr root.
+This file describes the changes made on external libraries to fix some bugs, after they were included
+in Dolibarr external vendor dir (htdocs/includes).
 
 
 
@@ -16,15 +16,6 @@ Replace
 	touch($p_entry['filename'], $p_entry['mtime']);
 With
 	@touch($p_entry['filename'], $p_entry['mtime']);
-
-
-
-PHP PrestaShopWebservice:
--------------------------
-Replace
-	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
-With
-	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop', 'date');
 
 
 
@@ -63,6 +54,11 @@ Replace
 	private $connector;
 With
 	protected $connector;
+
+Replace
+	if (!is_resource($im)) {
+With
+	if (!is_resource($im) && !($im instanceof \GdImage)) {
 
 
 
@@ -234,7 +230,7 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 
 PHP TCPDI:
 ----------
-Add file fpdf_tpl.php 1.2
+Add file fpdf_tpl.php 1.2.3
 
 Add file tcpdi.php
 
@@ -259,11 +255,36 @@ with
 with
 	if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
 
+* Replace
+	public function Error($msg) {
+        die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
+    }
+with
+	public function Error($msg) {
+        // Respect K_TCPDF_THROW_EXCEPTION_ERROR like TCPDF does
+        if (defined('K_TCPDF_THROW_EXCEPTION_ERROR') && K_TCPDF_THROW_EXCEPTION_ERROR) {
+            throw new \Exception("TCPDI_PARSER ERROR [{$this->uniqueid}]: ".$msg);
+        }
+        // Default: exit program and print error
+        die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
+    }
 
 
 PHP JQUERYFILETREE:
 -------------------
-* Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
+* Remove directory htdocs/public/includes/jquery/plugins/jqueryFileTree/connectors
+
+
+
+PHP Mobile_DETECT:
+------------------
+Remplacer:
+
+array $headers = null,
+
+par
+
+$headers = null,
 
 
 
@@ -394,6 +415,18 @@ Modify function
 		return new Uri($url);
 	}
 
+Into OAuth/Common/HTTP/Client/CurlClient.php, add code
+
+        // @CHANGE DOL_LDR Add log
+        if (function_exists('getDolGlobalString') && getDolGlobalString('OAUTH_DEBUG')) {
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $endpoint->getAbsoluteUri()."\n", FILE_APPEND);
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $requestBody."\n", FILE_APPEND);
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $method."\n", FILE_APPEND);
+        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", var_export($extraHeaders, true)."\n", FILE_APPEND);
+        	if (function_exists('dolChmod')) {
+        		dolChmod(DOL_DATA_ROOT . "/dolibarr_oauth.log");
+        	}
+        }
 
 
 JS JSGANTT:
@@ -434,3 +467,13 @@ Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug:
 JS JCROP:
 ----------
 * Remove analytics tag into file index.html
+
+
+PHP MIKE42 ESCPOS:
+------------------
+* In htdocs/includes/mike42/escpos-php/src/Mike42/Escpos/GdEscposImage.php
+Replace:
+	if (!is_resource($im)) {
+With:
+	if (!($im instanceof \GdImage) && !is_resource($im)) {
+PHP 8.0+ returns GdImage objects from imagecreate*; the upstream guard with is_resource() alone fails on PHP 8 and throws 'Failed to load image' on receipts that contain an image.

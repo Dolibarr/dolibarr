@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on this accountancy file
+$langs->loadLangs(array('products', 'accountancy'));
 
 $id = GETPOSTINT('id');
 $eid = GETPOSTINT('eid');
@@ -204,7 +204,7 @@ print dol_get_fiche_end();
 //Buttons
 print '<div class="center">';
 print '<input type="submit" class="butAction button-save" value="'.$langs->trans("Save").'">';
-print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
+print '<span id="back" class="butAction">'.$langs->trans("GoBack").'</span>';
 if ($eid == 0) {
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 } else {

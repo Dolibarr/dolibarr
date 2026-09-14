@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		//Begin barcode with key: for barcode with key (EAN13...) calculate and substitute the last  character (* or ?) used in the mask by the key
 		if ((substr($numFinal, -1) == '*') or (substr($numFinal, -1) == '?')) { // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
 			$literaltype = '';
-			$literaltype = $this->literalBarcodeType($db, $type);//get literal_Barcode_Type
+			$literaltype = $this->literalBarcodeType($db, (int) $type);//get literal_Barcode_Type
 			switch ($literaltype) {
 				case 'EAN13': //EAN13 rowid = 2
 					if (strlen($numFinal) == 13) {// be sure that the mask length is correct for EAN13
@@ -300,7 +300,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$sql .= " AND entity IN (".getEntity('product').")";
 
 		if ($product->id > 0) {
-			$sql .= " AND rowid <> ".$product->id;
+			$sql .= " AND rowid <> ".((int) $product->id);
 		}
 
 		$resql = $db->query($sql);
@@ -326,12 +326,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	public function verif_syntax($codefortest, $typefortest)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$result = 0;
 
 		// Get Mask value
-		$mask = !getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK') ? '' : $conf->global->BARCODE_STANDARD_PRODUCT_MASK;
+		$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');
 		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return -1;

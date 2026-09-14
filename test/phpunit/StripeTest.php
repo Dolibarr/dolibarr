@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/stripe/lib/stripe.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/stripe/class/stripe.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -92,5 +93,49 @@ class StripeTest extends CommonClassTest
 		$this->assertEquals(200, $result['http_code']);
 
 		return $result;
+	}
+
+	/**
+	 * testStripeOk
+	 *
+	 * @return	void
+	 */
+	public function testStripeConvertAmount()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$stripe = new Stripe($db);
+
+		$amount = $stripe->convertAmount(79.99, 'EUR', 0);
+		print __METHOD__." amount=".$amount."\n";
+		$this->assertEquals(7999, $amount);
+
+		$amount = $stripe->convertAmount((float) 79.99, 'EUR', 0);
+		print __METHOD__." amount=".$amount."\n";
+		$this->assertEquals(7999, $amount);
+
+		$amount = $stripe->convertAmount('79.99', 'EUR', 0);
+		print __METHOD__." amount=".$amount."\n";
+		$this->assertEquals(7999, $amount);
+
+		$amount = $stripe->convertAmount('79.99', 'JPY', 0);
+		print __METHOD__." amount=".$amount."\n";
+		$this->assertEquals(79.99, $amount);
+
+		$amount = $stripe->convertAmount((int) 7999, 'EUR', 1);
+		print __METHOD__." amount=".$amount."\n";
+		$this->assertEquals(79.99, $amount);
+
+		$amount = $stripe->convertAmount((float) 7999, 'EUR', 1);
+		print __METHOD__." amount=".$amount."\n";
+		$this->assertEquals(79.99, $amount);
+
+		$amount = $stripe->convertAmount(7999, 'JPY', 1);
+		print __METHOD__." amount=".$amount."\n";
+		$this->assertEquals(7999, $amount);
 	}
 }

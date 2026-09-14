@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,10 +78,11 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 *  Assign custom values for canvas
 	 *
 	 *  @param	string		$action    	Type of action
-	 *  @param	int			$id				Id
+	 *  @param	int			$id			Id
+	 * 	@param	string		$ref		Object ref (if id not provided) / Unused here
 	 *  @return	void
 	 */
-	public function assign_values(&$action, $id)
+	public function assign_values(&$action, $id, $ref = '')
 	{
 		// phpcs:enable
 		global $conf, $db, $langs, $user;
@@ -88,7 +90,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 		$ret = $this->getObject($id);
 
-		parent::assign_values($action, $id);
+		parent::assign_values($action, $id, $ref);
 
 		$this->tpl['title'] = $this->getTitle($action);
 		$this->tpl['error'] = $this->error;

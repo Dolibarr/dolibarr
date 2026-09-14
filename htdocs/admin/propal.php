@@ -7,8 +7,8 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			   <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,11 +33,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +41,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "errors", "propal"));
@@ -61,6 +60,9 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'propal';
+
+$propal = new Propal($db);
+
 
 /*
  * Actions
@@ -91,7 +93,6 @@ if ($action == 'updateMask') {
 } elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
-	$propal = new Propal($db);
 	$propal->initAsSpecimen();
 
 	// Search template files
@@ -162,6 +163,18 @@ if ($action == 'updateMask') {
 			$error++;
 		}
 	}
+	if (GETPOSTISSET('PROPOSAL_ALLOW_ONLINESIGN')) {
+		$result = dolibarr_set_const($db, "PROPOSAL_ALLOW_ONLINESIGN", GETPOST('PROPOSAL_ALLOW_ONLINESIGN', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!($result > 0)) {
+			$error++;
+		}
+	}
+	if (GETPOSTISSET('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN')) {
+		$result = dolibarr_set_const($db, "PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN", GETPOST('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!($result > 0)) {
+			$error++;
+		}
+	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -186,7 +199,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->PROPALE_ADDON_PDF == "$value") {
+		if (getDolGlobalString('PROPALE_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'PROPALE_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -251,7 +264,8 @@ llxHeader('', $langs->trans("PropalSetup"), '', '', 0, 0, '', '', '', 'mod-admin
 
 //if ($mesg) print $mesg;
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("PropalSetup"), $linkback, 'title_setup');
 
 $head = propal_admin_prepare_head();
@@ -261,255 +275,24 @@ print dol_get_fiche_head($head, 'general', $langs->trans("Proposals"), -1, 'prop
 /*
  *  Module numerotation
  */
-print load_fiche_titre($langs->trans("ProposalsNumberingModules"), '', '');
+$propal = new Propal($db);
+$propal->initAsSpecimen();
+$propal->type = 0;
 
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name")."</td>\n";
-print '<td>'.$langs->trans("Description")."</td>\n";
-print '<td class="nowrap">'.$langs->trans("Example")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-print '</tr>'."\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/propale");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 12) == 'mod_propale_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
-
-					require_once $dir.'/'.$file.'.php';
-
-					$module = new $file();
-
-					'@phan-var-force ModeleNumRefPropales $module';
-
-					// Show modules according to features level
-					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-						continue;
-					}
-					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-						continue;
-					}
-
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering module
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-						} else {
-							print $tmp;
-						}
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if ($conf->global->PROPALE_ADDON == "$file") {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
-							print img_picto($langs->trans("Disabled"), 'switch_off');
-							print '</a>';
-						}
-						print '</td>';
-
-						$propal = new Propal($db);
-						$propal->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$propal->type = 0;
-						$nextval = $module->getNextValue($mysoc, $propal);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-									$nextval = $langs->trans($nextval);
-								}
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 'info');
-						print '</td>';
-
-						print "</tr>\n";
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-print "</table><br>\n";
+printNumberingModuleList('propale', 'mod_propale_', 'PROPALE_ADDON', $langs->trans("ProposalsNumberingModules"), $propal);
 
 
 /*
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("ProposalsPDFModules"), '', '');
-
-// Load array def with activated templates
-$def = array();
-$sql = "SELECT nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
-$resql = $db->query($sql);
-if ($resql) {
-	$i = 0;
-	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		if (is_array($array)) {
-			array_push($def, $array[0]);
-		}
-		$i++;
-	}
-} else {
-	dol_print_error($db);
-}
-
-
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td>".$langs->trans("Name")."</td>\n";
-print "  <td>".$langs->trans("Description")."</td>\n";
-print '<td align="center" width="40">'.$langs->trans("Status")."</td>\n";
-print '<td align="center" width="40">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	foreach (array('', '/doc') as $valdir) {
-		$realpath = $reldir."core/modules/propale".$valdir;
-		$dir = dol_buildpath($realpath);
-
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				$filelist = array();
-				while (($file = readdir($handle)) !== false) {
-					$filelist[] = $file;
-				}
-				closedir($handle);
-				arsort($filelist);
-
-				foreach ($filelist as $file) {
-					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
-
-							require_once $dir.'/'.$file;
-							$module = new $classname($db);
-
-							'@phan-var-force ModelePDFPropales $module';
-
-							$modulequalified = 1;
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								$modulequalified = 0;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								$modulequalified = 0;
-							}
-
-							if ($modulequalified) {
-								print '<tr class="oddeven"><td width="100">';
-								print(empty($module->name) ? $name : $module->name);
-								print "</td><td>\n";
-								if (method_exists($module, 'info')) {
-									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
-								} else {
-									print $module->description;
-								}
-								print '</td>';
-
-								// Active
-								if (in_array($name, $def)) {
-									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
-									print img_picto($langs->trans("Enabled"), 'switch_on');
-									print '</a>';
-									print '</td>';
-								} else {
-									print "<td align=\"center\">\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-									print "</td>";
-								}
-
-								// Default
-								print "<td align=\"center\">";
-								if ($conf->global->PROPALE_ADDON_PDF == "$name") {
-									print img_picto($langs->trans("Default"), 'on');
-								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-								}
-								print '</td>';
-
-								// Info
-								$htmltooltip = $langs->trans("Name").': '.$module->name;
-								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf') {
-									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-								}
-								$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
-
-								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-								//$htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
-								//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-								$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark, 1, 1);
-
-
-								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 'info');
-								print '</td>';
-
-								// Preview
-								print '<td class="center">';
-								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
-								} else {
-									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
-								}
-								print '</td>';
-
-								print "</tr>\n";
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-print '</table>';
+printDocumentModelList($type, 'propale', 'PROPALE_ADDON_PDF', $langs->trans("ProposalsPDFModules"), array(
+	'Logo' => 'option_logo',
+	'PaymentMode' => 'option_modereg',
+	'PaymentConditions' => 'option_condreg',
+	'MultiLanguage' => 'option_multilang',
+	'WatermarkOnDraftProposal' => 'option_draft_watermark',
+));
 
 
 /*
@@ -519,7 +302,7 @@ print '</table>';
 print '<br>';
 print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 
 print '<table class="noborder centpercent">';
@@ -556,7 +339,7 @@ if (!isModEnabled('invoice')) {
 					$row = $db->fetch_row($resql);
 
 					print '<option value="'.$row[0].'"';
-					print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected' : '';
+					print getDolGlobalString('FACTURE_RIB_NUMBER') == $row[0] ? ' selected' : '';
 					print '>'.$row[1].'</option>';
 
 					$i++;
@@ -596,7 +379,7 @@ if (!isModEnabled('invoice')) {
 			$row = $db->fetch_row($resql);
 
 			print '<option value="'.$row[0].'"';
-			print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected' : '';
+			print getDolGlobalString('FACTURE_CHQ_NUMBER') == $row[0] ? ' selected' : '';
 			print '>'.$langs->trans("OwnerOfBankAccount", $row[1]).'</option>';
 
 			$i++;
@@ -620,7 +403,7 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="action" value="update">';
@@ -628,16 +411,16 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
+print '<td class="center"></td>'."\n";
 print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
-print '<td width="60" align="center">';
+print '<td>';
 print "<input size=\"3\" class=\"flat\" type=\"text\" name=\"PROPALE_VALIDITY_DURATION\" value=\"" . getDolGlobalString('PROPALE_VALIDITY_DURATION')."\"></td>";
 print '</tr>';
 
-$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray = pdf_getSubstitutionArray($langs, null, $propal, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach ($substitutionarray as $key => $val) {
@@ -670,48 +453,43 @@ print "</tr>\n";
 // Allow external download
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
-print '<td class="center">';
+print '<td>';
 print ajax_constantonoff('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 
 // Allow OnLine Sign
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
-print '<td class="center">';
-print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
+print '<td>';
+print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 1, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", "https://www.dolistore.com"));
 print '</td></tr>';
 
-
-/* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
-if (isModEnabled('facture'))
-{
-
+/*
+if (getDolGlobalString('PROPOSAL_ALLOW_ONLINESIGN')) {
 	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
-	if (!empty($conf->use_javascript_ajax))
-	{
-		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');
-	}
-	else
-	{
-		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL))
-		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		}
-		else
-		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-		}
+	print $langs->trans("SecurityToken").'</td><td>';
+	print '<input class="minwidth300"  type="text" id="PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN" name="PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN" value="' . getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN').'" spellcheck="false">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 	}
 	print '</td></tr>';
 }
-else
-{
-
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
-}
 */
+
+// Notifications
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Notifications").'</td>';
+print '<td>';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification");
+print '</td></tr>';
+
+// More PDF options
+print '<tr class="oddeven">';
+print '<td>'.img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("MoreOptionsRelatedToPDF").'</td>';
+print '<td>';
+print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/admin/pdf_other.php">'.$langs->trans("SeeInPDFSetupPage").'</a>';
+print '</td></tr>';
+
 
 print '</table>';
 
@@ -721,24 +499,12 @@ print '</form>';
 
 print "</table>\n<br>";
 
+$constname = 'PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN';
 
-print '<br><br>';
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword($constname);
 
-
-/*
- * Other
- */
-
-print '<table class="noborder centpercent">';
-
-print "<tr class=\"oddeven trfirstline\">\n  <td>".$langs->trans("PathToDocuments")."</td>\n  <td>".$conf->propal->multidir_output[$conf->entity]."</td>\n</tr>\n";
-
-print '<tr class="oddeven lastline"><td>';
-print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-print '</td><td class="right">';
-print "</td></tr>\n";
-
-print '</table>';
 
 // End of page
 llxFooter();

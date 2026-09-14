@@ -23,9 +23,9 @@
  *
  *   mailto:thomas.harding@laposte.net
  *   Thomas Harding, 56 rue de la bourie rouge, 45 000 ORLEANS -- FRANCE
- *   
+ *
  */
-    
+
 /*
 
     This class is intended to implement Internet Printing Protocol on client side.
@@ -61,7 +61,7 @@ class PrintIPP extends BasicIPP
 
         if (is_readable($this->data))
         {
-            self::_putDebug( _("Printing a FILE\n"),3); 
+            self::_putDebug( _("Printing a FILE\n"),3);
 
             $this->output = $this->stringjob;
 
@@ -81,13 +81,13 @@ class PrintIPP extends BasicIPP
         }
         else
         {
-            self::_putDebug( _("Printing DATA\n"),3); 
+            self::_putDebug( _("Printing DATA\n"),3);
 
             $this->output = $this->stringjob;
-            $this->output .= $this->datahead;    
+            $this->output .= $this->datahead;
             $this->output .= $this->data;
             $this->output .= $this->datatail;
-            
+
             $post_values = array( "Content-Type" => "application/ipp",
                                   "Data" => $this->output);
         }
@@ -126,7 +126,7 @@ class PrintIPP extends BasicIPP
                     $this->serveroutput->status));
                 }
             }
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -149,7 +149,7 @@ class PrintIPP extends BasicIPP
             return FALSE;
         }
 
-        self::_putDebug( _("Cancelling Job $job_uri\n"),3); 
+        self::_putDebug( _("Cancelling Job $job_uri\n"),3);
 
         $this->output = $this->stringjob;
 
@@ -173,7 +173,7 @@ class PrintIPP extends BasicIPP
             {
                 self::_errorLog("cancelling job $job_uri: ".$this->serveroutput->status,1);
             }
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -191,7 +191,7 @@ class PrintIPP extends BasicIPP
 
         self::_putDebug( sprintf("*************************\nDate: %s\n*************************\n\n",date('Y-m-d H:i:s')));
 
-        self::_putDebug( _("Validate Job\n"),2); 
+        self::_putDebug( _("Validate Job\n"),2);
 
         if (!isset($this->setup->charset))
         {
@@ -339,7 +339,7 @@ class PrintIPP extends BasicIPP
             {
                 self::_errorLog("validate job: ".$this->serveroutput->status,1);
             }
-            return $this->serveroutput->status; 
+            return $this->serveroutput->status;
         }
 
         $this->status = array_merge($this->status,array("OPERATION FAILED"));
@@ -408,7 +408,7 @@ class PrintIPP extends BasicIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("Getting printer attributes of %s\n"),$this->printer_uri),2); 
+        self::_putDebug(sprintf(_("Getting printer attributes of %s\n"),$this->printer_uri),2);
 
         $this->output = $this->stringjob;
 
@@ -419,7 +419,7 @@ class PrintIPP extends BasicIPP
         {
             if (self::_parseServerOutput())
             {
-                self::_parsePrinterAttributes(); 
+                self::_parsePrinterAttributes();
             }
         }
 
@@ -434,7 +434,7 @@ class PrintIPP extends BasicIPP
                 self::_errorLog(sprintf(_("getting printer attributes of %s: %s"),$this->printer_uri,
                                                                         $this->serveroutput->status),3);
             }
-            else 
+            else
             {
                 self::_errorLog(sprintf(_("getting printer attributes of %s: %s"),$this->printer_uri,
                                                                         $this->serveroutput->status),1);
@@ -545,7 +545,7 @@ class PrintIPP extends BasicIPP
                          . $this->meta->printer_uri
                          . $this->meta->username
                          . $this->meta->limit
-                         . $this->meta->which_jobs 
+                         . $this->meta->which_jobs
                          . $this->meta->my_jobs;
        if ($subset)
        {
@@ -584,7 +584,7 @@ class PrintIPP extends BasicIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("getting jobs of %s\n"),$this->printer_uri),2); 
+        self::_putDebug(sprintf(_("getting jobs of %s\n"),$this->printer_uri),2);
 
         $this->output = $this->stringjob;
 
@@ -743,7 +743,7 @@ class PrintIPP extends BasicIPP
 
         self::_putDebug(sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
 
-        self::_putDebug(sprintf(_("getting jobs of %s\n"),$this->printer_uri),2); 
+        self::_putDebug(sprintf(_("getting jobs of %s\n"),$this->printer_uri),2);
 
         $this->output = $this->stringjob;
 
@@ -792,7 +792,7 @@ class PrintIPP extends BasicIPP
         // placeholder for vendor extension operation (getAvailablePrinters for CUPS)
         $this->jobs = array_merge($this->jobs,array(''));
         $this->jobs_uri = array_merge($this->jobs_uri,array(''));
-        $this->status = array_merge($this->status,array(''));    
+        $this->status = array_merge($this->status,array(''));
     }
 
     public function generateError ($error)
@@ -809,7 +809,7 @@ class PrintIPP extends BasicIPP
 
         trigger_error(sprintf(_('Setting Error %s'),$error),E_USER_NOTICE);
     }
-    
+
     public function resetError ($error)
     {
         unset ($this->error_generation->$error);
@@ -824,7 +824,7 @@ class PrintIPP extends BasicIPP
             $this->meta->operation_id = self::_integerBuild($this->operation_id);
             self::_putDebug( "operation id is: ".$this->operation_id."\n",2);
     }
-    
+
     protected function _setJobId()
     {
 
@@ -838,7 +838,7 @@ class PrintIPP extends BasicIPP
 
     return $prepend.$this->meta->jobid;
     }
-    
+
     protected function _setJobUri ($job_uri)
     {
         $this->meta->job_uri = chr(0x45) // type uri
@@ -847,7 +847,7 @@ class PrintIPP extends BasicIPP
                              //. chr(0x00).chr(strlen($job_uri))
                              . self::_giveMeStringLength($job_uri)
                              . $job_uri;
-        
+
         self::_putDebug( "job-uri is: ".$job_uri."\n",2);
     }
 
@@ -915,7 +915,7 @@ class PrintIPP extends BasicIPP
             {
                 $job ++;
             }
-            $k = -1; 
+            $k = -1;
             for ($j = 0 ; $j < (count($this->serveroutput->response[$i]) - 1) ; $j ++)
             {
                 if (!empty($this->serveroutput->response[$i][$j]['name']))
@@ -1043,7 +1043,7 @@ class PrintIPP extends BasicIPP
                     $this->attribute_name = $attribute_name;
                 }
                 $value = self::_readValue ($tag,$attributes_type,$j);
-                $this->serveroutput->response[$attributes_type][$j]['value'] = 
+                $this->serveroutput->response[$attributes_type][$j]['value'] =
                 self::_interpretAttribute($attribute_name,$tag,$this->serveroutput->response[$attributes_type][$j]['value']);
                 break;
         }
@@ -1148,19 +1148,19 @@ class PrintIPP extends BasicIPP
                 $tag = "extended type";
                 break;
             default:
-                if ($tag >= 0x14 && $tag < 0x15 && $tag > 0x17 && $tag <= 0x1f) 
+                if ($tag >= 0x14 && $tag < 0x15 && $tag > 0x17 && $tag <= 0x1f)
                 {
                     $tag = "out-of-band";
                 }
-                elseif (0x24 <= $tag && $tag <= 0x2f) 
+                elseif (0x24 <= $tag && $tag <= 0x2f)
                 {
                     $tag = "new integer type";
                 }
-                elseif (0x38 <= $tag && $tag <= 0x3F) 
+                elseif (0x38 <= $tag && $tag <= 0x3F)
                 {
                     $tag = "new octet-stream type";
                 }
-                elseif (0x4B <= $tag && $tag <= 0x5F) 
+                elseif (0x4B <= $tag && $tag <= 0x5F)
                 {
                     $tag = "new character string type";
                 }
@@ -1172,10 +1172,10 @@ class PrintIPP extends BasicIPP
                 {
                     $tag = sprintf("UNKNOWN: 0x%x (%u)",$tag,$tag);
                 }
-                break;                                                            
+                break;
         }
 
-        return $tag; 
+        return $tag;
     }
 
     protected function _readCollection($attributes_type,$j)
@@ -1329,14 +1329,14 @@ class PrintIPP extends BasicIPP
 
         self::_putDebug( "name " . $name . "\n");
 
-        return $name;   
+        return $name;
     }
 
     protected function _readValue ($type,$attributes_type,$j,$write=1)
     {
         $value_length = ord($this->serveroutput->body[$this->_parsing->offset]) *  256
                       +  ord($this->serveroutput->body[$this->_parsing->offset + 1]);
-        
+
         self::_putDebug( "value_length ".$this->serveroutput->body[ $this->_parsing->offset]
                                        . $this->serveroutput->body[$this->_parsing->offset + 1]
                                        .": "
@@ -1715,34 +1715,34 @@ class PrintIPP extends BasicIPP
                     case 0x0021:
                         $value = sprintf('Unknown (reserved IETF "operations"): 0x%x',ord($value));
                         break;
-                    case 0x0022: 
+                    case 0x0022:
                         $value = 'Enable-Printer';
                         break;
-                    case 0x0023: 
+                    case 0x0023:
                         $value = 'Disable-Printer';
                         break;
-                    case 0x0024: 
+                    case 0x0024:
                         $value = 'Pause-Printer-After-Current-Job';
                         break;
-                    case 0x0025: 
+                    case 0x0025:
                         $value = 'Hold-New-Jobs';
                         break;
-                    case 0x0026: 
+                    case 0x0026:
                         $value = 'Release-Held-New-Jobs';
                         break;
-                    case 0x0027: 
+                    case 0x0027:
                         $value = 'Deactivate-Printer';
                         break;
-                    case 0x0028: 
+                    case 0x0028:
                         $value = 'Activate-Printer';
                         break;
-                    case 0x0029: 
+                    case 0x0029:
                         $value = 'Restart-Printer';
                         break;
-                    case 0x002A: 
+                    case 0x002A:
                         $value = 'Shutdown-Printer';
                         break;
-                    case 0x002B: 
+                    case 0x002B:
                         $value = 'Startup-Printer';
                         break;
                 }
@@ -1993,11 +1993,11 @@ class PrintIPP extends BasicIPP
                         $this->printers_uri = array_merge($this->printers_uri,array($this->serveroutput->response[$i][$j]['value']));
 
                         return;
-                        
+
                         }
 
         $this->printers_uri = array_merge($this->printers_uri,array(''));
- 
+
     }
 
     */
@@ -2005,7 +2005,7 @@ class PrintIPP extends BasicIPP
     // REQUEST BUILDING
     protected function _stringCancel ($job_uri)
     {
-    
+
         if (!isset($this->setup->charset))
         {
             self::setCharset();
@@ -2018,7 +2018,7 @@ class PrintIPP extends BasicIPP
         {
             self::setLanguage('en_us');
         }
-        if (!$this->requesting_user)   
+        if (!$this->requesting_user)
         {
             self::setUserName();
         }
@@ -2047,7 +2047,7 @@ class PrintIPP extends BasicIPP
                          . $this->meta->username
                          . $this->meta->message
                          . chr(0x03); // end-of-attributes | end-of-attributes-tag
-                         
+
         self::_putDebug( sprintf(_("String sent to the server is:\n%s\n"), $this->stringjob));
         return TRUE;
     }

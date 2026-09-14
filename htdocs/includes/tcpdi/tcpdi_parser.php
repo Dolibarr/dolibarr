@@ -1441,7 +1441,11 @@ class tcpdi_parser {
      * @since 1.0.000 (2011-05-23)
      */
     public function Error($msg) {
-        // exit program and print error
+        // Respect K_TCPDF_THROW_EXCEPTION_ERROR like TCPDF does
+        if (defined('K_TCPDF_THROW_EXCEPTION_ERROR') && K_TCPDF_THROW_EXCEPTION_ERROR) {
+            throw new \Exception("TCPDI_PARSER ERROR [{$this->uniqueid}]: ".$msg);
+        }
+        // Default: exit program and print error
         die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
     }
 

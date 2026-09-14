@@ -131,8 +131,6 @@ class Fiscalyear extends CommonObject
 	{
 		global $conf;
 
-		$error = 0;
-
 		$now = dol_now();
 
 		// Check for date overlaps with existing fiscal years
@@ -220,14 +218,19 @@ class Fiscalyear extends CommonObject
 	/**
 	 * Load an object from database
 	 *
-	 * @param	int		$id		Id of record to load
-	 * @return	int				Return integer <0 if KO, >0 if OK
+	 * @param	int		$idorref	Id of record to load
+	 * @param   string	$label		Label of fiscal year
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id)
+	public function fetch($idorref, $label = '')
 	{
 		$sql = "SELECT rowid, label, date_start, date_end, statut as status";
 		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear";
-		$sql .= " WHERE rowid = ".((int) $id);
+		if ($label) {
+			$sql .= " WHERE label = '".$this->db->escape($label)."'";
+		} else {
+			$sql .= " WHERE rowid = ".((int) $idorref);
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -236,9 +239,9 @@ class Fiscalyear extends CommonObject
 
 			$this->id = $obj->rowid;
 			$this->ref = $obj->rowid;
+			$this->label = $obj->label;
 			$this->date_start	= $this->db->jdate($obj->date_start);
 			$this->date_end = $this->db->jdate($obj->date_end);
-			$this->label = $obj->label;
 			$this->statut = $obj->status;
 			$this->status = $obj->status;
 
@@ -507,8 +510,6 @@ class Fiscalyear extends CommonObject
 	 */
 	public function getAccountancyEntriesByFiscalYear($datestart = '', $dateend = '')
 	{
-		global $conf;
-
 		if (empty($datestart)) {
 			$datestart = $this->date_start;
 		}
@@ -542,8 +543,6 @@ class Fiscalyear extends CommonObject
 	 */
 	public function getAccountancyMovementsByFiscalYear($datestart = '', $dateend = '')
 	{
-		global $conf;
-
 		if (empty($datestart)) {
 			$datestart = $this->date_start;
 		}

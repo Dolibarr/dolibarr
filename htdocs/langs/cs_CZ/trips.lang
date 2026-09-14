@@ -77,10 +77,10 @@ ExpenseReportWaitingForReApprovalMessage2=Klikněte zde pro ověření: %s
 ExpenseReportsIk=Konfigurace poplatků za kilometry
 ExpenseReportsRules=Pravidla pro výkaz výdajů
 ExpenseReportsToApprove=Zprávy o výdajích ke schválení
-ExpenseReportsToPay=Zprávy o výdajích placeno
+ExpenseReportsToPay=Zprávy o výdajích k úhradě
 ExpensesArea=Oblast vyúčtování výdajů
 FeesKilometersOrAmout=Množství nebo kilometrů
-LastExpenseReports=Nejnovější %szprávy o výdajích
+LastExpenseReports=Nejnovější %s zprávy o výdajích
 ListOfFees=Sazebník poplatků
 ListOfTrips=Seznam vyúčtování výdajů
 ListToApprove=Čekání na schválení
@@ -121,7 +121,6 @@ ValideTrip=Schválit zprávu o výdajích
 ExpenseReportPayments=Platby podle výkazu výdajů
 TaxUndefinedForThisCategory = Daň pro tuto kategorii není definována
 errorComputeTtcOnMileageExpense=Chyba při výpočtu nákladů na kilometry
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=V hromadné akci lze smazat pouze prvky ve stavu konceptu.
 
 ## Dictionary
 EX_BRE=Snídaně
@@ -159,3 +158,4 @@ TF_TRAIN=Vlak
 TF_TRIP=Doprava
 FailedToSetPaid=Nepodařilo se nastavit jako placené
 FailedToSetToCancel=Zrušení se nepodařilo
+NobodyHasPermissionToValidateExpenseReport=Nikdo nemá oprávnění k ověření výkazu výdajů

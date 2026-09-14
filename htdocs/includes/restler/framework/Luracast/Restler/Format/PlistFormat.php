@@ -101,4 +101,3 @@ class PlistFormat extends DependentMultiFormat
         );
     }
 }
-

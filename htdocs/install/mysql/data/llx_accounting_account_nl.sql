@@ -31,7 +31,7 @@
 -- ADD 7006000 to rowid # Do no remove this comment --
 --
 
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1000, 'NL_VERKORT', 'BALANS', '0050', '', 'Bedrijfspand en woning', 1);
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1000, 'NL-VERKORT', 'BALANS', '0050', '', 'Bedrijfspand en woning', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1001, 'NL-VERKORT', 'BALANS', '0055', '', 'Afschrijving bedrijfspand en woning', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1002, 'NL-VERKORT', 'BALANS', '0100', '', 'Inventaris', 1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1003, 'NL-VERKORT', 'BALANS', '0105', '', 'Afschrijving inventaris', 1);

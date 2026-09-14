@@ -26,7 +26,7 @@
 -- Note (US-BASE): CAPITAL = EQUITY
 --
 --
--- !! Do not place comments at the end of the line, 
+-- !! Do not place comments at the end of the line,
 -- as this file is parsed during installation and all '--' acronyms are removed.
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
@@ -35,7 +35,7 @@
 -- Note: To replace a string that is '__, 0' into an increasing number, you can use vi with comment
 -- :let @a=1 | %s/__, 0/\='__, '.(@a+setreg('a',@a+1))/g
 
--- Description of charts of accounts US-BASE 
+-- Description of charts of accounts US-BASE
 -- Descriptif des plans comptables USA US-BASE
 -- ID 1000 - 9999
 -- ID 10000 - 10999

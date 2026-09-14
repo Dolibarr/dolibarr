@@ -1,8 +1,8 @@
 <?php
 /* Copyright (c) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +119,10 @@ class DolGraph
 	/**
 	 * @var bool
 	 */
+	public $hideYValues = false;
+	/**
+	 * @var bool
+	 */
 	public $hideYGrid = false;
 
 	/**
@@ -219,8 +223,8 @@ class DolGraph
 		}
 
 		// Load color of the theme
-		$color_file = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
-		if (is_readable($color_file)) {
+		$color_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($color_file && is_readable($color_file)) {
 			include $color_file;
 			if (isset($theme_bordercolor)) {
 				$this->bordercolor = $theme_bordercolor;
@@ -306,6 +310,18 @@ class DolGraph
 	public function setHideXValues($bool)
 	{
 		$this->hideXValues = $bool;
+		return true;
+	}
+
+	/**
+	 * Hide Y Values
+	 *
+	 * @param	bool		$bool	YValues or not
+	 * @return	bool				true
+	 */
+	public function setHideYValues($bool)
+	{
+		$this->hideYValues = $bool;
 		return true;
 	}
 
@@ -921,7 +937,7 @@ class DolGraph
 			if (isset($this->type[$firstlot]) && in_array($this->type[$firstlot], array('pie', 'piesemicircle', 'polar'))) {
 				foreach ($values as $x => $y) {
 					if (isset($y)) {
-						$series[$i] .= 'd' . $i . '.push({"label":"' . dol_escape_js($legends[$x]) . '", "data":' . $y . '});' . "\n";
+						$series[$i] .= 'd' . $i . '.push({"label":\'' . dol_escape_js($legends[$x]) . '\', "data":' . $y . '});' . "\n";
 					}
 				}
 			} else {
@@ -1115,7 +1131,7 @@ class DolGraph
 				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) {
 					$this->stringtoshow .= 'lines: { show: true, fill: false }, points: { show: ' . ($this->type[$i] == 'linesnopoint' ? 'false' : 'true') . ' }, ';
 				}
-				$this->stringtoshow .= 'color: "#' . $color . '", label: "' . (isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '') . '", data: d' . $i . ' }';
+				$this->stringtoshow .= 'color: "#' . $color . '", label: \'' . dol_escape_js(isset($this->Legend[$i]) ? $this->Legend[$i] : '') . '\', data: d' . $i . ' }';
 				$i++;
 			}
 			// shadowSize: 0 -> Drawing is faster without shadows
@@ -1213,9 +1229,10 @@ class DolGraph
 				$legends[$x] = (array_key_exists('label', $valarray) ? $valarray['label'] : $valarray[0]);
 				$array_of_ykeys = array_keys($valarray);
 				$alabelexists = 1;
-				$tmpykey = explode('_', (string) ($array_of_ykeys[$i + ($alabelexists ? 1 : 0)]), 3);
+				$ykeyindex = $i + ($alabelexists ? 1 : 0);
+				$tmpykey = isset($array_of_ykeys[$ykeyindex]) ? explode('_', (string) $array_of_ykeys[$ykeyindex], 3) : array();
 				if (isset($tmpykey[2]) && (!empty($tmpykey[2]) || $tmpykey[2] == '0')) {		// This is a 'Group by' array
-					$tmpvalue = (array_key_exists('y_' . $tmpykey[1] . '_' . $tmpykey[2], $valarray) ? $valarray['y_' . $tmpykey[1] . '_' . $tmpykey[2]] : $valarray[$i + 1]);
+					$tmpvalue = (array_key_exists('y_' . $tmpykey[1] . '_' . $tmpykey[2], $valarray) ? $valarray['y_' . $tmpykey[1] . '_' . $tmpykey[2]] : ($valarray[$i + 1] ?? null));
 					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
 					$arrayofgroupslegend[$i] = array(
 						'stacknum' => (int) $tmpykey[1],
@@ -1223,7 +1240,7 @@ class DolGraph
 						'legendwithgroup' => ($this->Legend[$tmpykey[1]] ?? '') . ' - ' . $tmpykey[2]
 					);
 				} else {
-					$tmpvalue = (array_key_exists('y_' . $i, $valarray) ? $valarray['y_' . $i] : $valarray[$i + 1]);
+					$tmpvalue = (array_key_exists('y_' . $i, $valarray) ? $valarray['y_' . $i] : ($valarray[$i + 1] ?? null));
 					//var_dump($i.'_'.$x.'_'.$tmpvalue);
 					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
 				}
@@ -1268,7 +1285,9 @@ class DolGraph
 		if (isset($this->type[$firstlot])) {
 			$cssfordiv .= ' dolgraphchar' . $this->type[$firstlot];
 		}
-		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos((string) $this->height, '%') > 0 ? '' : 'px').'; max-height: '.(strpos((string) $this->height, '%') > 0 ? $this->height : ((int) $this->height + 100) . 'px').'; width:'.$this->width.(strpos((string) $this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center">'."\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos((string) $this->height, '%') > 0 ? '' : 'px').'; max-height: '.(strpos((string) $this->height, '%') > 0 ? $this->height : ((int) $this->height + 100) . 'px').'; width:'
+			.$this->width.(strpos((string) $this->width, '%') > 0 ? '' : 'px').';" class="'
+			.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center">'."\n";
 		$this->stringtoshow .= '<canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
@@ -1319,8 +1338,8 @@ class DolGraph
 
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
-				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
-				$this->stringtoshow .= 'rotation: -Math.PI,' . "\n";
+				$this->stringtoshow .= 'circumference: 180,' . "\n";
+				$this->stringtoshow .= 'rotation: -90,' . "\n";
 			}
 			$this->stringtoshow .= 'elements: { arc: {' . "\n";
 			// Color of each arc
@@ -1470,24 +1489,20 @@ class DolGraph
 			}
 			$this->stringtoshow .= "}, \n";
 
-			/* For Chartjs v2.9 */
-			/*
-			 $this->stringtoshow .= 'scales: { xAxis: [{ ';
-			if ($this->hideXValues) {
-				$this->stringtoshow .= ' ticks: { display: false }, display: true,';
+			// Hide the X or Y values
+			if ($this->hideYValues || $this->hideXValues) {
+				$this->stringtoshow .= 'scales: { ';
+				if ($this->hideXValues) {
+					$this->stringtoshow .= 'x: { display: false }';
+				}
+				if ($this->hideYValues && $this->hideXValues) {
+					$this->stringtoshow .= ', ';
+				}
+				if ($this->hideYValues) {
+					$this->stringtoshow .= 'y: { display: false }';
+				}
+				$this->stringtoshow .= '}, ';
 			}
-			//$this->stringtoshow .= 'type: \'time\', ';		// Need Moment.js
-			$this->stringtoshow .= 'distribution: \'linear\'';
-			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', stacked: true';
-			}
-			$this->stringtoshow .= ' }]';
-			$this->stringtoshow .= ', yAxis: [{ ticks: { beginAtZero: true }';
-			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
-				$this->stringtoshow .= ', stacked: true';
-			}
-			$this->stringtoshow .= ' }] }';
-			*/
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
@@ -1633,6 +1648,9 @@ class DolGraph
 
 				$this->stringtoshow .= $this->mirrorGraphValues ? '[-' . $series[$i] . ',' . $series[$i] . ']' : $series[$i];
 				$this->stringtoshow .= ']';
+
+				//$this->stringtoshow .= ', barThickness: 15';
+
 				$this->stringtoshow .= '}' . "\n";
 
 				$i++;
@@ -1703,7 +1721,7 @@ class DolGraph
 			if (empty($conf->dol_optimize_smallscreen)) {
 				return ($defaultsize ? $defaultsize : 500);
 			} else {
-				return (empty($_SESSION['dol_screenwidth']) ? 280 : ($_SESSION['dol_screenwidth'] - 40));
+				return (empty($_SESSION['dol_screenwidth']) ? 280 : (int) ($_SESSION['dol_screenwidth'] - 40));
 			}
 		} elseif ($direction == 'height') {
 			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : 220) : 200);

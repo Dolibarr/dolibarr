@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024-2025	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('bookmarks', 'other'));
+$langs->loadLangs(array('other'));
 
 
 // Get Parameters
@@ -226,7 +226,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, $object->picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/bookmarks/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -251,7 +251,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	print '</td><td>';
 	if ($action == 'edit') {
-		print '<input class="flat minwidth250" name="title" value="'.(GETPOSTISSET("title") ? GETPOST("title", '', 2) : $object->title).'">';
+		print '<input class="flat minwidth250" name="title" value="'.(GETPOSTISSET("title") ? GETPOST("title", 'alphanohtml', 2) : $object->title).'">';
 	} else {
 		print dol_escape_htmltag($object->title);
 	}

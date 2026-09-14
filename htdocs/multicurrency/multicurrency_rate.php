@@ -11,7 +11,7 @@
  * Copyright (C) 2013       Adolfo segura           <adolfo.segura@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
- * Copyright (C) 2023       Lenin Rivas		    	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2023-2026  Lenin Rivas		    	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
@@ -56,7 +56,7 @@ $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode       = GETPOST('mode', 'aZ'); // The display mode ('list', 'kanban', 'hierarchy', 'calendar', 'gantt', ...)
@@ -86,12 +86,12 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_date_sync = dol_mktime(0, 0, 0, GETPOSTINT('search_date_syncmonth'), GETPOSTINT('search_date_syncday'), GETPOSTINT('search_date_syncyear'));
 $search_date_sync_end = dol_mktime(0, 0, 0, GETPOSTINT('search_date_sync_endmonth'), GETPOSTINT('search_date_sync_endday'), GETPOSTINT('search_date_sync_endyear'));
 $search_rate = GETPOST('search_rate', 'alpha');
-$search_rate_indirect = GETPOST('search_rate_indirect', 'alpha');
+$search_rate_direct = GETPOST('search_rate_direct', 'alpha');
 $search_code = GETPOST('search_code', 'alpha');
 $multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 $dateinput = dol_mktime(0, 0, 0, GETPOSTINT('dateinputmonth'), GETPOSTINT('dateinputday'), GETPOSTINT('dateinputyear'));
 $rateinput = (float) price2num(GETPOST('rateinput', 'alpha'));
-$rateindirectinput = (float) price2num(GETPOST('rateinidirectinput', 'alpha'));
+$ratedirectinput = (float) price2num(GETPOST('ratedirectinput', 'alpha')); // Fix Direct
 $type = '';
 $texte = '';
 $newcardbutton = '';
@@ -110,7 +110,7 @@ if (empty($action)) {
 $fieldstosearchall = array(
 	'cr.date_sync' => "date_sync",
 	'cr.rate' => "rate",
-	'cr.rate_indirect' => "rate_indirect",
+	'cr.rate_direct' => "rate_direct",
 	'm.code' => "code",
 );
 
@@ -118,7 +118,7 @@ $fieldstosearchall = array(
 $arrayfields = array(
 	'cr.date_sync' => array('label' => 'Date', 'checked' => '1'),
 	'cr.rate' => array('label' => 'Rate', 'checked' => '1'),
-	'cr.rate_indirect' => array('label' => 'RateIndirect', 'checked' => '0', 'enabled' => (!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? '0' : '1')),
+	'cr.rate_direct' => array('label' => 'RateDirect', 'checked' => '0', 'enabled' => (!getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT') ? '0' : '1')),
 	'm.code' => array('label' => 'Code', 'checked' => '1'),
 );
 
@@ -162,7 +162,7 @@ if ($action == "create" && $user->hasRight('multicurrency', 'currency', 'read'))
 		$currencyRate_static->entity = $conf->entity;
 		$currencyRate_static->date_sync = $dateinput;
 		$currencyRate_static->rate = $rateinput;
-		$currencyRate_static->rate_indirect = $rateindirectinput;
+		$currencyRate_static->rate_direct = $ratedirectinput;
 
 		$result = $currencyRate_static->create($user, intval($fk_currency));
 		if ($result > 0) {
@@ -183,6 +183,7 @@ if ($action == 'update' && $user->hasRight('multicurrency', 'currency', 'read'))
 		$currencyRate->date_sync = $dateinput;
 		$currencyRate->fk_multicurrency = $fk_currency;
 		$currencyRate->rate = $rateinput;
+		$currencyRate->rate_direct = $ratedirectinput;
 		$res = $currencyRate->update($user);
 		if ($res) {
 			setEventMessages($langs->trans('successUpdateRate'), null);
@@ -284,7 +285,7 @@ $help_url = '';
 
 llxHeader('', $title, $help_url, '');
 // Subheader
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
@@ -306,13 +307,36 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print '</td>';
 
 	print '<td> '.$langs->trans('Currency').'</td>';
-	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, " code != '".$db->escape($conf->currency)."'", true).'</td>';
+	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, "(code:<>:'".$db->escape(getDolCurrency())."')", true).'</td>';
 
-	print ' <td>'.$langs->trans('Rate').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
+	print ' <td>'.$langs->trans('Rate').' / '.$langs->getCurrencySymbol(getDolCurrency()).'</td>';
 	print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateinput" name="rateinput" value="'.dol_escape_htmltag((string) $rateinput).'"></td>';
 
-	if (getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT')) {
-		print ' <td>'.$langs->trans('RateIndirect').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
+	/**
+	* Direct	: 	1 Divisa Currency = X Currency Main.
+	* Indirect	: 	1 Currency Main = X Divisa Currency.
+	* Then for Dolibarr use is Indirect for default
+	* MULTICURRENCY_USE_RATE_INDIRECT <-- is deprecated
+	*/
+	if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT')) {
+		print ' <td>'.$langs->trans('RateDirect').' / '.$langs->getCurrencySymbol(getDolCurrency()).'</td>';
+		print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="ratedirectinput" name="ratedirectinput" value="'.dol_escape_htmltag((string) $ratedirectinput).'"></td>';
+		// LRR Calculate Rate Direct
+		print '<script type="text/javascript">';
+		print 'jQuery(document).ready(function () {
+				//alert("TC");
+				jQuery("#ratedirectinput").keyup(function () {
+					var valdirect = jQuery(this).val();
+					valindirect = 1 / parseFloat(valdirect);
+					jQuery("#rateinput").val(valindirect);
+					console.log("Rate Indirect:"+valindirect)
+				});
+			});';
+		print '</script>';
+	}
+
+	/* if (getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT')) {
+		print ' <td>'.$langs->trans('RateIndirect').' / '.$langs->getCurrencySymbol(getDolCurrency()).'</td>';
 		print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateindirectinput" name="rateindirectinput" value="'.dol_escape_htmltag((string) $rateindirectinput).'"></td>';
 		// LRR Calculate Rate Direct
 		print '<script type="text/javascript">';
@@ -326,7 +350,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 				});
 			});';
 		print '</script>';
-	}
+	} */
 
 	print '<td>';
 	print '<input type="hidden" name="action" value="create">';
@@ -344,7 +368,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 
 
 
-$sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.rate_indirect, cr.entity, m.code, m.name';
+$sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.rate_direct, cr.entity, m.code, m.name';
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -366,13 +390,13 @@ if ($search_code) {
 	$sql .= natural_search('m.code', $search_code);
 }
 $sql .= " WHERE cr.entity IN (".getEntity('multicurrency').")";
-$sql .= " AND m.code <> '".$db->escape($conf->currency)."'";
+$sql .= " AND m.code <> '".$db->escape(getDolCurrency())."'";
 
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY cr.rowid, cr.date_sync, cr.rate, cr.rate_indirect, m.code, cr.entity, m.code, m.name";
+$sql .= " GROUP BY cr.rowid, cr.date_sync, cr.rate, cr.rate_direct, m.code, cr.entity, m.code, m.name";
 
 // Add fields from hooks
 $parameters = array();
@@ -388,7 +412,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 	if ($result) {
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -514,13 +538,19 @@ if ($resql) {
 	// code
 	if (!empty($arrayfields['m.code']['checked'])) {
 		print '<td class="liste_titre" align="left">';
-		print  $form->selectMultiCurrency($multicurrency_code, 'search_code', 1, " code != '".$conf->currency."'", true);
+		print  $form->selectMultiCurrency($multicurrency_code, 'search_code', 1, "(code:<>:'".getDolCurrency()."')", true);
 		print '</td>';
 	}
 	// rate
 	if (!empty($arrayfields['cr.rate']['checked'])) {
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat maxwidth75" type="text" name="search_rate" value="'.dol_escape_htmltag($search_rate).'">';
+		print '</td>';
+	}
+	// rate
+	if (!empty($arrayfields['cr.rate_direct']['checked'])) {
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat maxwidth75" type="text" name="search_rate_direct" value="'.dol_escape_htmltag($search_rate_direct).'">';
 		print '</td>';
 	}
 
@@ -553,6 +583,9 @@ if ($resql) {
 	if (!empty($arrayfields['cr.rate']['checked'])) {
 		print_liste_field_titre($arrayfields['cr.rate']['label'], $_SERVER["PHP_SELF"], "cr.rate", "", $param, "", $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['cr.rate_direct']['checked'])) {
+		print_liste_field_titre($arrayfields['cr.rate_direct']['label'], $_SERVER["PHP_SELF"], "cr.rate_direct", "", $param, "", $sortfield, $sortorder);
+	}
 
 	// Hook fields
 	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
@@ -579,7 +612,7 @@ if ($resql) {
 				print '</td>';
 			}
 			print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
-			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
+			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, "(code:<>:'".getDolCurrency()."')", true) . '</td>';
 			print '<td><input type="text" min="0" step="any" class="maxwidth100" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '">';
 			print '<input type="hidden" name="page" value="'.dol_escape_htmltag((string) $page).'">';
 			print '<input type="hidden" name="id_rate" value="'.dol_escape_htmltag($obj->rowid).'">';
@@ -641,10 +674,10 @@ if ($resql) {
 				}
 			}
 
-			// rate indirect
-			if (!empty($arrayfields['cr.rate_indirect']['checked'])) {
+			// rate direct
+			if (!empty($arrayfields['cr.rate_direct']['checked'])) {
 				print '<td class="tdoverflowmax200">';
-				print $obj->rate_indirect;
+				print $obj->rate_direct;
 				print "</td>\n";
 				if (! $i) {
 					$totalarray['nbfield']++;

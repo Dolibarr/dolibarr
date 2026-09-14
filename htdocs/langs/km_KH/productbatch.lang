@@ -22,7 +22,7 @@ printSellby=លក់ដោយ៖ %s
 printQty=Qty៖ %d
 printPlannedWarehouse=ឃ្លាំង៖ %s
 AddDispatchBatchLine=បន្ថែមបន្ទាត់សម្រាប់ការបញ្ជូនជីវិតធ្នើ
-WhenProductBatchModuleOnOptionAreForced=នៅពេលដែលម៉ូឌុល Lot/Serial ត្រូវបានបើក ការថយចុះភាគហ៊ុនដោយស្វ័យប្រវត្តិត្រូវបានបង្ខំឱ្យ '%s' ហើយរបៀបបង្កើនដោយស្វ័យប្រវត្តិត្រូវបានបង្ខំឱ្យ '%s ' ជម្រើសមួយចំនួនប្រហែលជាមិនមានទេ។ ជម្រើសផ្សេងទៀតអាចត្រូវបានកំណត់តាមដែលអ្នកចង់បាន។
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, some modes for automatic stock decrease or increase may be not available. The other options have no restriction.
 ProductDoesNotUseBatchSerial=ផលិតផលនេះមិនប្រើលេខ/សៀរៀលទេ។
 ProductLotSetup=ការដំឡើងម៉ូឌុល lot/serial
 ShowCurrentStockOfLot=បង្ហាញស្តុកបច្ចុប្បន្នសម្រាប់ផលិតផល/ឡូតិ៍
@@ -50,3 +50,6 @@ ToReplace=ជំនួស
 CantMoveNonExistantSerial=កំហុស។ អ្នកស្នើសុំការផ្លាស់ប្តូរនៅលើកំណត់ត្រាសម្រាប់ស៊េរីដែលមិនមានទៀតទេ។ ប្រហែលជាអ្នកយកស៊េរីដូចគ្នានៅលើឃ្លាំងដូចគ្នាច្រើនដងក្នុងការដឹកជញ្ជូនដូចគ្នា ឬវាត្រូវបានប្រើដោយការដឹកជញ្ជូនផ្សេងទៀត។ ដកការដឹកជញ្ជូននេះចេញ ហើយរៀបចំមួយផ្សេងទៀត។
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=តារាងឡូតិ៍ដំណើរការជួសជុលមិនពេញលេញជាមួយប៉ារ៉ាម៉ែត្រ '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= តម្រូវ​ឱ្យ​មាន​ការ​កែ​តម្រូវ​ដោយ​សារ​តែ​លេខ​សៀរៀល​តែ​មួយ​គត់។
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
+BatchInformationNotfound=Batch information not found

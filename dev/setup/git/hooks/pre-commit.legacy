@@ -33,7 +33,7 @@ do
 
 	result1=$?
 
-	if [ "x$result1" != "x0" ]
+	if [ "$result1" != "0" ]
 	then
 		echo "Fix the error before commit." 1>&2
 		exit 1
@@ -56,10 +56,10 @@ then
 
 	result2=$?
 
-	if [ "x$result2" != "x0" ]
+	if [ "$result2" != "0" ]
 	then
 		# Fix standard errors
-		if [ "x$AUTOFIX" != "x0" ]
+		if [ "$AUTOFIX" != "0" ]
 		then
 			# shellcheck disable=2086,2090
 			"${DIRPHPCS}phpcbf" -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES

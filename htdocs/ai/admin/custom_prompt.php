@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
- * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 
 $langs->loadLangs(array("admin", "website", "other"));
 
@@ -46,7 +46,7 @@ $arrayofai = getListOfAIServices();
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $functioncode = GETPOST('functioncode', 'alpha');
@@ -67,7 +67,9 @@ $setupnotempty = 0;
 if (!$user->admin) {
 	accessforbidden();
 }
-
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not activated.');
+}
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -76,19 +78,24 @@ if (!class_exists('FormSetup')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
 
+$form = new Form($db);
 $formSetup = new FormSetup($db);
 $aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
 // Setup conf for AI model
 $formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
 foreach ($arrayofaifeatures as $featurekey => $feature) {
-	$newkey = $featurekey;
+	$newfeaturekey = $featurekey;
 	if (preg_match('/^text/', $featurekey)) {
-		$newkey = 'textgeneration';
+		$newfeaturekey = 'textgeneration';
 	}
 	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$feature["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
-	if ($arrayofai[$aiservice][$newkey] != 'na') {
-		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newkey].')</span>';
+	if (!empty($arrayofai[$aiservice][$newfeaturekey]['default']) && $arrayofai[$aiservice][$newfeaturekey]['default'] != 'na') {
+		$item->nameText = '<span class="valignmiddle">'.$langs->trans("AI_API_MODEL_".$feature["function"]).' </span><span class="opacitymedium valignmiddle">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newfeaturekey]['default'].')</span>';
+		if (!empty($arrayofai[$aiservice][$newfeaturekey]['examples'])) {
+			$htmltooltip = $langs->trans("Example").': '.$arrayofai[$aiservice][$newfeaturekey]['examples'];
+			$item->nameText .= $form->textwithpicto('', $htmltooltip);
+		}
 	} else {
 		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
 	}
@@ -206,7 +213,6 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
  * View
  */
 
-$form = new Form($db);
 $formai = new FormAI($db);
 
 $help_url = '';
@@ -214,8 +220,7 @@ $title = "AiSetup";
 
 llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-ai page-admin_custom_prompt');
 
-// Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
@@ -246,8 +251,6 @@ if ($action == 'deleteproperty') {
 	print $formconfirm;
 }
 
-print '<br>';
-
 if ($action == 'create') {
 	$out = '<div class="addcustomprompt">';
 
@@ -276,7 +279,7 @@ if ($action == 'create') {
 	foreach ($arrayofaifeatures as $featurekey => $feature) {
 		$labelhtml = $langs->trans($arrayofaifeatures[$featurekey]['label']).($arrayofaifeatures[$featurekey]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
 		$labeltext = $langs->trans($arrayofaifeatures[$featurekey]['label']);
-		$out .= '<option value="'.dol_escape_js($featurekey).'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
+		$out .= '<option value="'.dolPrintHTMLForAttribute($featurekey).'" data-html="'.dolPrintHTMLForAttribute($labelhtml).'">'.dolPrintHTML($labeltext).'</option>';
 	}
 	$out .= '</select>';
 	$out .= ajax_combobox("functioncode");
@@ -288,10 +291,10 @@ if ($action == 'create') {
 				console.log(changedValue);
 				var arrayplaceholder = {';
 	foreach ($arrayofaifeatures as $featurekey => $feature) {
-		$out .= dol_escape_js($featurekey).': \''.dol_escape_js(empty($feature['placeholder']) ? '' : $feature['placeholder']).'\',';
+		$out .= dol_sanitizeKeyCode($featurekey).': \''.dol_escape_js(empty($feature['placeholder']) ? '' : $feature['placeholder']).'\',';
 	}
 	$out .= '}
-				jQuery("#prePromptInput'.dol_escape_js($key).'").val(arrayplaceholder[changedValue]);
+				jQuery("#prePromptInput'.dol_sanitizeKeyCode($key).'").val(arrayplaceholder[changedValue]);
 			});
 		});
 		</script>
@@ -336,17 +339,28 @@ if ($action == 'create') {
 	$out .= $form->buttonsSaveCancel("Add", "");
 	$out .= '</form>';
 
-	$out .= '<br><br><br>';
+	$out .= "<br>";
+	$out .= "<br>";
+
 	$out .= '</div>';
 
 	print $out;
 }
 
-
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	$out = '';
 
-	if (!empty($currentConfigurations)) {
+	if (empty($currentConfigurations)) {
+		if ($action != 'create') {
+			print '<!-- no custom prompt-->'."\n";
+			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			print '<br>';
+			print '<br>';
+		}
+		print '<br>';
+	} else {
+		print '<br>';
+
 		foreach ($currentConfigurations as $confkey => $config) {
 			if (!empty($confkey) && !preg_match('/^[a-z]+$/i', $confkey)) {	// Ignore empty saved setup
 				continue;
@@ -432,9 +446,32 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print '<br>';
 }
 
+// Availability alert: when the adapter recorded a runtime "model not found /
+// retired" provider error, warn on screen on the page where the models are
+// actually fixed, suggesting the closest model currently offered. Warn only —
+// nothing is changed automatically.
+$runfail = json_decode(getDolGlobalString('AI_MODEL_RUNTIME_FAILURE'), true);
+if (is_array($runfail) && !empty($runfail['model'])) {
+	$msg = $langs->trans(
+		"AIModelRuntimeFailureBanner",
+		dol_escape_htmltag((string) $runfail['model']),
+		dol_print_date((int) ($runfail['ts'] ?? 0), 'dayhour'),
+		dol_escape_htmltag((string) ($runfail['message'] ?? ''))
+	);
+	$modellist = getAiProviderModelList($db);
+	if (!empty($modellist['models'])) {
+		$suggest = aiSuggestClosestModel((string) $runfail['model'], $modellist['models']);
+		if ($suggest !== '') {
+			$msg .= ' '.dol_escape_htmltag($langs->trans("AIModelClosestAvailable", $suggest));
+		}
+	}
+	print info_admin($msg, 0, 0, 'warning');
+}
 
+// Custom models
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
+
 	print $formSetup->generateOutput(true);
 }
 
@@ -443,6 +480,42 @@ if (empty($setupnotempty)) {
 	print '<br>'.$langs->trans("NothingToSetup");
 }
 
+
+// Datalist of the provider's available model ids (fed by ajax/list_models.php,
+// cached 1h server-side): every *_MODEL_* text input gets autocompletion, which
+// avoids typos in the seven free-text model fields. The fields stay plain free
+// text (a datalist only suggests, never constrains — required for local AI
+// providers with no model-listing API, where this whole block is a no-op).
+// Active check: a saved model absent from the provider's current list gets a
+// warning picto — warn only, never block, since a listing can be incomplete
+// (aliases, fine-tunes) while the value still works.
+print '<datalist id="ai-model-ids"></datalist>'."\n";
+print '<script nonce="'.getNonce().'">
+fetch("'.dol_buildpath('/ai/ajax/list_models.php', 1).'").then(function (r) { return r.json(); }).then(function (j) {
+	if (!j || !j.models || !j.models.length) return;
+	var dl = document.getElementById("ai-model-ids");
+	j.models.forEach(function (id) { var o = document.createElement("option"); o.value = id; dl.appendChild(o); });
+	document.querySelectorAll("input[name*=\'_MODEL_\']").forEach(function (i) {
+		i.setAttribute("list", "ai-model-ids");
+		if (i.value && j.models.indexOf(i.value) < 0) {
+			// Closest-match suggestion: longest shared prefix with an offered id
+			var v = i.value.toLowerCase(), best = "", bestlen = 0;
+			j.models.forEach(function (m) {
+				var b = m.toLowerCase(), n = 0;
+				while (n < v.length && n < b.length && v.charAt(n) === b.charAt(n)) n++;
+				if (n > bestlen) { bestlen = n; best = m; }
+			});
+			var w = document.createElement("span");
+			w.className = "fas fa-exclamation-triangle pictowarning paddingleft";
+			w.title = \''.dol_escape_js($langs->trans("AIModelNotInProviderList")).'\';
+			if (best && bestlen >= 4) {
+				w.title += \' \' + \''.dol_escape_js($langs->trans("AIModelClosestAvailable", '{m}')).'\'.replace("{m}", best);
+			}
+			i.insertAdjacentElement("afterend", w);
+		}
+	});
+}).catch(function () {});
+</script>'."\n";
 
 // Page end
 print dol_get_fiche_end();

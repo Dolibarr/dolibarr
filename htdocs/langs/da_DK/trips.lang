@@ -121,7 +121,6 @@ ValideTrip=Godkendelse af udgiftsrapport
 ExpenseReportPayments=Udgiftsrapport betalinger
 TaxUndefinedForThisCategory = Skat er udefineret for denne kategori
 errorComputeTtcOnMileageExpense=Fejl ved beregning af kilometerudgifter
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Kun elementer i udkaststatus kan slettes i masseaktion
 
 ## Dictionary
 EX_BRE=Morgenmad

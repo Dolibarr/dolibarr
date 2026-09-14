@@ -62,7 +62,7 @@ class AccountingAccountTest extends CommonClassTest
 
 		if (!isModEnabled('accounting')) {
 			print __METHOD__." module accounting must be enabled.\n";
-			exit(-1);
+			exit(1);
 		}
 
 		print __METHOD__."\n";

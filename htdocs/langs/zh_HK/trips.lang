@@ -121,7 +121,6 @@ ValideTrip=審批費用報告
 ExpenseReportPayments=費用報告付款
 TaxUndefinedForThisCategory = 此分類尚未定義稅項
 errorComputeTtcOnMileageExpense=計算里程費用時出錯
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=只有草稿狀態的項目可以批量刪除
 
 ## Dictionary
 EX_BRE=早餐
@@ -157,3 +156,6 @@ TF_PEAGE=隧道費/過橋費
 TF_TAXI=計程車
 TF_TRAIN=火車
 TF_TRIP=交通
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

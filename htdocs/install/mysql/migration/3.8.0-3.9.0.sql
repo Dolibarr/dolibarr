@@ -25,18 +25,18 @@
 insert into llx_const (name, value, type, note, visible, entity) values (__ENCRYPT('MAIN_ENABLE_LOG_TO_HTML')__,__ENCRYPT('0')__,'chaine','If this option is set to 1, it is possible to see log output at end of HTML sources by adding paramater logtohtml=1 on URL',1,0);
 
 
--- Was done into a 3.8 fix, so we must do it also in 3.9 
+-- Was done into a 3.8 fix, so we must do it also in 3.9
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 
 
-ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
-ALTER TABLE llx_product_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
-ALTER TABLE llx_product_customer_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
-ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
-ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
+ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
+ALTER TABLE llx_product_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx;
 
 
 UPDATE llx_user set api_key = null where api_key = '';
@@ -48,7 +48,7 @@ ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(255) after email_tocc;
 
 
 ALTER TABLE llx_user MODIFY COLUMN pass varchar(128);
-ALTER TABLE llx_user MODIFY COLUMN pass_temp varchar(128); 
+ALTER TABLE llx_user MODIFY COLUMN pass_temp varchar(128);
 
 ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
 ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
@@ -266,7 +266,7 @@ create table llx_stock_lotserial
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
-  import_key    integer  
+  import_key    integer
 ) ENGINE=innodb;
 
 
@@ -278,14 +278,14 @@ create table llx_budget
   entity		integer NOT NULL DEFAULT 1,
   label         varchar(255) NOT NULL,
   status        integer,
-  note			text,	
+  note			text,
   date_start	date,
   date_end		date,
   datec         datetime,
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
-  import_key    integer  
+  import_key    integer
 )ENGINE=innodb;
 
 
@@ -299,7 +299,7 @@ create table llx_budget_lines
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
-  import_key    integer  
+  import_key    integer
 )ENGINE=innodb;
 
 ALTER TABLE llx_budget_lines ADD UNIQUE INDEX uk_budget_lines (fk_budget, fk_project_ids);

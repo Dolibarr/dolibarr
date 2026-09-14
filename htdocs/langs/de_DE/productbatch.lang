@@ -22,7 +22,7 @@ printSellby=Verfallsdatum: %s
 printQty=Menge: %d
 printPlannedWarehouse=Warenlager: %s
 AddDispatchBatchLine=Fügen Sie eine Zeile für den Versand bis Haltbarkeit hinzu
-WhenProductBatchModuleOnOptionAreForced=Wenn das Modul Chargen/Serien eingeschaltet ist, wird die automatische Bestandsverringerung auf „%s“ und der automatische Erhöhungsmodus auf „%s“ erzwungen. Einige Auswahlmöglichkeiten sind möglicherweise nicht verfügbar. Andere Optionen können nach Belieben definiert werden.
+WhenProductBatchModuleOnOptionAreForced=Wenn das Modul Chargen/Seriennummern aktiviert ist, sind einige Modi für die automatische Funktion zur Verringerung/Erhöhung der Lagerbestände möglicherweise nicht verfügbar. Die anderen Optionen unterliegen keinen Einschränkungen.
 ProductDoesNotUseBatchSerial=Dieses Produkt hat keine Chargen-/Seriennummer
 ProductLotSetup=Einstellungen des Moduls "Produkt-Chargen und Serien"
 ShowCurrentStockOfLot=Lagerbestand für diese Chargen-/Seriennummer anzeigen
@@ -50,5 +50,6 @@ ToReplace=Ersetzen
 CantMoveNonExistantSerial=Fehler. Sie bitten um die Versendung für einen Datensatzes mit einer Seriennummer, die nicht mehr existiert. Möglicherweise verwenden Sie dieselbe Seriennummer mehrmals in derselben Sendung aus demselben Lager oder sie wurde von einer anderen Sendung verwendet. Entfernen Sie diese Sendung und bereiten Sie eine andere vor.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Chargen-Tabelle unvollständig, Reparatur mit URL-Parameter '...repair.php?standard=confirmed' durchführen
 IlligalQtyForSerialNumbers= Lagerbestandskorrektur erforderlich, da eindeutige Seriennummer.
-ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ErrorBatchesNeedStockManagement=Fehler. Ein Produkt mit Batch-/Chargen-Verwaltung muss auch in der Lagerverwaltung geführt werden.
 ForceBatchesNeedStockManagement=Ein Produkt mit Los-/Chargen-Management muss im Lagerbestand verwaltet werden (Lagerbestand-Management auf „Ja“ setzen).
+BatchInformationNotfound=Chargen-Informationen nicht gefunden

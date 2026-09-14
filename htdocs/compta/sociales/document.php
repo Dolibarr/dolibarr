@@ -125,7 +125,7 @@ if ($object->id) {
 
 	$head = tax_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("SocialContribution"), -1, 'bill');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("SocialContribution"), -1, $object->picto);
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution

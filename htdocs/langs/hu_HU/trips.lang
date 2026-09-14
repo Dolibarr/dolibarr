@@ -121,7 +121,6 @@ ValideTrip=Költségjelentés jóváhagyása
 ExpenseReportPayments=Költségjelentés kifizetések
 TaxUndefinedForThisCategory = Az adó ebben a kategóriában nincs meghatározva
 errorComputeTtcOnMileageExpense=Hiba a kilométerköltség kiszámításakor
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Csak a piszkozat állapotú elemek törölhetők tömeges akcióban
 
 ## Dictionary
 EX_BRE=Reggeli
@@ -159,3 +158,4 @@ TF_TRAIN=Vonat
 TF_TRIP=Szállítás
 FailedToSetPaid=Nem sikerült fizetettként beállítani
 FailedToSetToCancel=Nem sikerült megszakítani
+NobodyHasPermissionToValidateExpenseReport=Senkinek nincs engedélye a kiadáskimutatás érvényesítésére

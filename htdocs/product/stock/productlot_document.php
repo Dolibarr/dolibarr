@@ -8,7 +8,7 @@
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		All-3kcis				<contact@all-3kcis.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,7 +99,7 @@ if ($id || $ref) {
 	$object->fetch($id, $productid, $batch);
 
 	if (isModEnabled('productbatch')) {
-		$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
+		$upload_dir = $conf->productbatch->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
 		$filearray = dol_dir_list($upload_dir, "files");
 	}
 }
@@ -126,7 +126,7 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'productbatch');
+//restrictedArea($user, 'productbatch');
 if (!$permissiontoread) {
 	accessforbidden();
 }

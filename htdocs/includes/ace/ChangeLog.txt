@@ -5,7 +5,7 @@
 2021.09.30 Version 1.4.13
 * added useStrictCSP global option to use in environments where dynamic style creation is disabled
   see demo/csp.html for an example of a page which loads external css files instead of generating styles with javascript
-* updated vim mode, added support for gqq command 
+* updated vim mode, added support for gqq command
 
 2020.07.06 Version 1.4.12
 * removed unused es5-shim
@@ -17,7 +17,7 @@
 * added code folding support for vbscript mode
 
 2020.04.01 Version 1.4.9
-* added option to disable autoindent 
+* added option to disable autoindent
 * added new language modes
 * fixed backspace not working with some mobile keyboards
 
@@ -36,7 +36,7 @@
 * fix backspace handling on mobile
 
 2019.06.17 Version 1.4.5
-* improve scrolling and selection on mobile 
+* improve scrolling and selection on mobile
 * improve type definitions
 
 2019.04.24 Version 1.4.4
@@ -62,7 +62,7 @@
 * remove usage of innerHTML
 * improved handling of textinput for IME and mobile
 * add support for relative line numbers
-* improve autocompletion popup 
+* improve autocompletion popup
 
 2018.03.26 Version 1.3.3
 * fix regession in static-highlight extension
@@ -78,7 +78,7 @@
 
 2018.01.31 Version 1.3.0
 
-* added copy copyWithEmptySelection option 
+* added copy copyWithEmptySelection option
 * improved undoManager
 * improved settings_menu plugin
 * improved handling of files with very long lines
@@ -126,7 +126,7 @@
 * Bugfixes
   - fix memory leak in setSession (Tyler Stalder)
   - double click not working on linux/mac
-  
+
 * new language modes
   - reStructuredText (Robin Jarry)
   - NSIS (Jan T. Sott)
@@ -150,7 +150,7 @@
 
 * new language modes
   - SQLServer (Morgan Yarbrough)
-  
+
 2015.04.03 Version 1.1.9
 
   - Small Enhancements and Bugfixes
@@ -159,14 +159,14 @@
 
 * API Changes
   - `editor.commands.commandKeyBinding` now contains direct map from keys to commands instead of grouping them by hashid
-  
+
 * New Features
   - Improved autoindent for html and php modes (Adam Jimenez)
   - Find All from searchbox (Colton Voege)
-  
+
 * new language modes
   - Elixir, Elm
- 
+
 2014.09.21 Version 1.1.7
 
 * Bugfixes
@@ -176,9 +176,9 @@
 2014.08.17 Version 1.1.6
 
 * Bugfixes
-  - fix regression in double tap to highlight 
+  - fix regression in double tap to highlight
   - Improved Latex Mode (Daniel Felder)
-  
+
 * API Changes
   - editor.destroy destroys editor.session too (call editor.setSession(null) to prevent that)
 
@@ -186,7 +186,7 @@
  - Praat (José Joaquín Atria)
  - Eiffel (Victorien Elvinger)
  - G-code (Adam Joseph Cook)
- 
+
 2014.07.09 Version 1.1.5
 
 * Bugfixes
@@ -194,7 +194,7 @@
 
 * new language modes
  - gitignore (Devon Carew)
- 
+
 2014.07.01 Version 1.1.4
 
 * New Features
@@ -212,7 +212,7 @@
   - Add ColdFusion behavior (Abram Adams)
   - add showLineNumbers option
   - Add html syntax checker (danyaPostfactum)
- 
+
 * new language modes
   - Gherkin (Patrick Nevels)
   - Smarty
@@ -231,7 +231,7 @@
   - add option to merge similar changes in undo history
   - add scrollPastEnd option
   - use html5 dragndrop for text dragging (danyaPostfactum)
-  
+
 * API Changes
   - fixed typo in HashHandler commmandManager
 
@@ -289,10 +289,10 @@
   - Added suppoert for Delete and SelectAll from context menu (danyaPostfactum)
 
   - Make wrapping behavior optional
-  - Selective bracket insertion/skipping 
-    
-  - Added commands for increase/decrease numbers, sort lines (Vlad Zinculescu)    
-  - Folding for Markdown, Lua, LaTeX    
+  - Selective bracket insertion/skipping
+
+  - Added commands for increase/decrease numbers, sort lines (Vlad Zinculescu)
+  - Folding for Markdown, Lua, LaTeX
   - Selective bracket insertion/skipping for C-like languages
 
 * Many new languages
@@ -301,19 +301,19 @@
   - FreeMarker (nguillaumin)
   - Tiny Mushcode (h3rb)
   - Velocity (Ryan Griffith)
-  - TOML (Garen Torikian) 
+  - TOML (Garen Torikian)
   - LSL (Nemurimasu Neiro, Builders Brewery)
   - Curly (Libo Cannici)
-  - vbScript (Jan Jongboom) 
-  - R (RStudio) 
+  - vbScript (Jan Jongboom)
+  - R (RStudio)
   - ABAP
   - Lucene (Graham Scott)
   - Haml (Garen Torikian)
-  - Objective-C (Garen Torikian) 
-  - Makefile (Garen Torikian) 
-  - TypeScript (Garen Torikian) 
-  - Lisp (Garen Torikian) 
-  - Stylus (Garen Torikian) 
+  - Objective-C (Garen Torikian)
+  - Makefile (Garen Torikian)
+  - TypeScript (Garen Torikian)
+  - Lisp (Garen Torikian)
+  - Stylus (Garen Torikian)
   - Dart (Garen Torikian)
 
 * Live syntax checks
@@ -321,9 +321,9 @@
   - Lua
 
 * New Themes
-  - Chaos 
-  - Terminal 
-   
+  - Chaos
+  - Terminal
+
 2012.09.17, Version 1.0.0
 
 * New Features
@@ -367,7 +367,7 @@
   - XCode
 
 * Many Small Enhancements and Bugfixes
- 
+
 2011.08.02, Version 0.2.0
 
 * Split view (Julian Viereck)
@@ -395,7 +395,7 @@
   - SVG
   - Textile (Kelley van Evert)
   - SCAD (Jacob Hansson)
-  
+
 * Live syntax checks
   - Lint for CSS using CSS Lint <http://csslint.net/>
   - CoffeeScript
@@ -431,7 +431,7 @@
 2011.02.14, Version 0.1.6
 
 * Floating Anchors
-  - An Anchor is a floating pointer in the document. 
+  - An Anchor is a floating pointer in the document.
   - Whenever text is inserted or deleted before the cursor, the position of
     the cursor is updated
   - Usesd for the cursor and selection
@@ -442,7 +442,7 @@
   - remove to end/start of line
   - split line
   - transpose letters
-* Refator markers  
+* Refator markers
   - Custom code can be used to render markers
   - Markers can be in front or behind the text
   - Markers are now stored in the session (was in the renderer)

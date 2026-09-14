@@ -18,6 +18,7 @@ IPP_State_reason=Statusgrund
 IPP_State_reason1=Statusgrund1
 IPP_BW=schwarz / weiss
 IPP_Media=Druckmedium
+STATE_IPP_none=Keine Mutterfirma
 DirectPrintingJobsDesc=Hier siehst du die laufenden Druckjobs aller verfügbaren Drucker.
 GoogleAuthNotConfigured=Google OAuth ist nicht konfiguriert. Aktiviere das Modul OAuth und trage dort Google ID / Secret ein.
 GoogleAuthConfigured=Die Google OAuth - Zugangsdaten sind im Modul OAuth eingetragen.

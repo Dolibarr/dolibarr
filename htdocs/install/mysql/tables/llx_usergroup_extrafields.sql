@@ -22,5 +22,3 @@ CREATE TABLE llx_usergroup_extrafields (
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 )ENGINE=innodb;
-
-

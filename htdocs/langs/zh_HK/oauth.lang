@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=前往<a class="notasortlink" href="%s" target="_blank"
 OAUTH_STRIPE_TEST_NAME=Stripe 測試環境
 OAUTH_STRIPE_LIVE_NAME=Stripe 正式環境
 OAUTH_ID=OAuth 客戶端 ID
-OAUTH_SECRET=OAuth 密匙
-OAUTH_TENANT=OAuth 租户
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=已添加 OAuth 提供者
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=此提供者和标签的 OAuth 记录已存在
 URLOfOAuthServiceEndpoints=OAuth 服務端點的基底 URL
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=OAuth 服務提供的驗證網址
 Scopes=權限（範圍）
 ScopeUndefined=權限（範圍）未定義（請參閱上一頁籤）
-ScopesDesc=範例：使用 Mastodon 進行讀、寫
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=完整 Token（物件）
 AccessToken=訪問 Token
 TokenExpired=已過期
@@ -50,3 +50,4 @@ RefreshToken=刷新 Token
 RefreshTokenHelp=使用刷新 Token 獲取新的訪問 Token
 OldTokenWasExpiredItHasBeenRefresh=舊 Token 已過期，已刷新
 OldTokenWasNotExpiredButItHasBeenRefresh=舊 Token 未過期，但已刷新
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

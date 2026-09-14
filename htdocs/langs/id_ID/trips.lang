@@ -121,7 +121,6 @@ ValideTrip=Menyetujui laporan pengeluaran
 ExpenseReportPayments=Pembayaran laporan biaya
 TaxUndefinedForThisCategory = Pajak tidak ditentukan untuk kategori ini
 errorComputeTtcOnMileageExpense=Kesalahan dalam menghitung biaya jarak tempuh
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Hanya unsur-unsur yang berstatus draf yang dapat dihapus dalam aksi massal
 
 ## Dictionary
 EX_BRE=Sarapan
@@ -159,3 +158,4 @@ TF_TRAIN=Melatih
 TF_TRIP=Angkutan
 FailedToSetPaid=Gagal ditetapkan sebagai berbayar
 FailedToSetToCancel=Gagal membatalkan
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

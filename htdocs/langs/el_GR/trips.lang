@@ -121,7 +121,6 @@ ValideTrip=Έγκριση αναφοράς εξόδων
 ExpenseReportPayments=πληρωμές αναφορών εξόδων
 TaxUndefinedForThisCategory = Ο φόρος δεν έχει καθοριστεί για αυτήν την κατηγορία
 errorComputeTtcOnMileageExpense=Σφάλμα κατά τον υπολογισμό του κόστους ταξιδιού
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Μόνο τα στοιχεία σε κατάσταση πρόχειρου μπορούν να διαγραφούν στη μαζική δράση
 
 ## Dictionary
 EX_BRE=Πρωινό γεύμα
@@ -159,3 +158,4 @@ TF_TRAIN=Τρένο
 TF_TRIP=Μεταφορικά
 FailedToSetPaid=Αποτυχία ορισμού ως πληρωμένο
 FailedToSetToCancel=Η ακύρωση απέτυχε
+NobodyHasPermissionToValidateExpenseReport=Κανείς δεν έχει άδεια επικύρωσης αναφοράς εξόδων.

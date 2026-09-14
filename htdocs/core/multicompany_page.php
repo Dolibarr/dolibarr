@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -76,7 +76,7 @@ if (!isModEnabled('multicompany')) {
  */
 
 if ($action == 'switchentity') {	// Test on permission not required here. Test will be done on the targeted page.
-	if (is_object($mc)) {
+	if (isset($mc) && is_object($mc)) {
 		$mc->switchEntity($entityid);
 	}
 
@@ -119,7 +119,7 @@ if (!isModEnabled('multicompany')) {
 	// Instantiate hooks of thirdparty module
 	$hookmanager->initHooks(array('multicompany'));
 
-	if (is_object($mc)) {
+	if (isset($mc) && is_object($mc)) {
 		$listofentities = $mc->getEntitiesList(true, false, true);
 	} else {
 		$listofentities = array();

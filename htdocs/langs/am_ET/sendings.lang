@@ -51,9 +51,12 @@ DateReceived=የተደረሰበት ቀን
 ClassifyReception=መድብ ተቀብሏል
 SendShippingByEMail=ጭነት በኢሜል ይላኩ።
 SendShippingRef=የማጓጓዣ ማስረከብ %s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=በማጓጓዝ ላይ ያሉ ክስተቶች
 LinkToTrackYourPackage=ጥቅልዎን ለመከታተል አገናኝ
 ShipmentCreationIsDoneFromOrder=ለጊዜው፣ አዲስ ጭነት መፍጠር የሚከናወነው ከሽያጭ ትዕዛዝ መዝገብ ነው።
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=የማጓጓዣ መስመር
 ProductQtyInCustomersOrdersRunning=ከተከፈቱ የሽያጭ ትዕዛዞች የምርት ብዛት
 ProductQtyInSuppliersOrdersRunning=ከክፍት የግዢ ትዕዛዞች የምርት ብዛት
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending t
 NoWarehouseInBase=No warehouse in base
 ShipmentUpdated=Shipment successfully updated
 ShipmentIncrementStockOnDelete = Increase stock on deletion
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Delivery
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Delivery date
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Set shipping date
+ValidateDeliveryReceipt=Validate delivery receipt
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Delete delivery receipt
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Delivery method
+TrackingNumber=Tracking number
+DeliveryNotValidated=Delivery not validated
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer:
+Sender=Sender
+Recipient=Recipient
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=የማጓጓዣ ስርጭት
 ErrorTooManyCombinationBatchcode=ለመስመር ምንም መላኪያ የለም %s እንደ ብዙ የመጋዘን፣ የምርት፣ የባች ኮድ ጥምረት አልተገኘም (%s)።
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 ErrorTooMuchShipped=የተላከው መጠን ለመስመር %s ከታዘዘው መጠን መብለጥ የለበትም።
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
 TypeContact_shipping_external_BILLING=Customer invoice contact
