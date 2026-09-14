@@ -4,7 +4,7 @@
 With the payment mode of Mistral, the credential is stored into the OS system and not into the .vibe/.env directory so is not available into another docker container.
 So you must first get it from your OS system keystore with:
 ````
-secret-tool lookup xdg:schema org.freedesktop.Secret.Generic
+secret-tool search --all xdg:schema org.freedesktop.Secret.Generic
 ````
 And then copy the value in entry "secret" for section "MISTRAL_API_KEY" into the .vibe/.env file
 ````

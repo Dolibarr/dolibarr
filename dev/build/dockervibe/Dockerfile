@@ -9,6 +9,7 @@ RUN apt-get update \
         vim \
 		wget \
 		curl \
+        dialog \
 		phpunit \
 		php \
 		python3 \
