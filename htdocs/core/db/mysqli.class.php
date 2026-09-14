@@ -60,7 +60,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    int		$port		Port of database server
 	 *	@param	    bool	$forcenew	Not used by this driver: mysqli always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)  // @phpstan-ignore constructor.unusedParameter
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)  // @phpstan-ignore constructor.unusedParameter, constructor.unusedParameter
 	{
 		global $conf, $langs;
 
