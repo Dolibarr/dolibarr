@@ -3283,21 +3283,19 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for salaries. The subdirectory is the id of the salary, see salaries/document.php.
 		if ($fuser->hasRight('salaries', $read) || $fuser->hasRight('salaries', 'readall') || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
-			// The 'read' permission is labelled "yours only" and salaries/list.php enforces it on fk_user.
-			// checkUserAccessToObject() only tests the entity for this feature, so the ownership has to be
-			// checked here: without it any holder of salaries->read downloads every payslip.
+			// The 'read' permission is labelled "yours only" and the two screens leading to this
+			// download, salaries/card.php and salaries/document.php, do enforce it on fk_user.
+			// checkUserAccessToObject() only tests the entity for this feature, so the same rule has to
+			// be applied here: without it any holder of salaries->read downloads every payslip.
 			if ($refname && !$fuser->hasRight('salaries', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 				$tmpsalary = new Salary($db);
-				$accessallowed = 0;
-				if ($tmpsalary->fetch((int) $refname) > 0) {
-					if ($fuser->hasRight('salaries', 'readchild')) {
-						// Same rule as the list: the employee and the users below them in the hierarchy
-						$accessallowed = in_array($tmpsalary->fk_user, $fuser->getAllChildIds(1)) ? 1 : 0;
-					} else {
-						$accessallowed = ($tmpsalary->fk_user == $fuser->id) ? 1 : 0;
-					}
-				}
+				$tmpsalary->fetch((int) $refname);
+				// Same condition as salaries/card.php and salaries/document.php, word for word.
+				// getAllChildIds(1) includes the current user, so this covers their own payslip as well
+				// as those of the users below them. The test on fk_user also closes the case of an id
+				// that matches no salary, Salary::fetch() returning 1 even then.
+				$accessallowed = ($tmpsalary->fk_user > 0 && in_array($tmpsalary->fk_user, $fuser->getAllChildIds(1))) ? 1 : 0;
 			}
 		}
 		$original_file = $conf->salaries->dir_output.'/'.$original_file;
