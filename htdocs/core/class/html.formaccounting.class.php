@@ -631,7 +631,7 @@ class FormAccounting extends Form
 		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {
 			$out .= '<script nonce="'.getNonce().'">
 		        jQuery(document).ready(() => {
-		            $("#'.dol_escape_js($htmlname).'").on("select2:select", function(e) {
+		            $(\'#'.dol_escape_js($htmlname).'\').on("select2:select", function(e) {
 		                var match = /\(([^)]+)\)/.exec(e.params.data.text);
 		                if (match) { $("input[name=\"'.dol_escape_js($labelhtmlname).'\"]").val(match[1]); }
 		            });

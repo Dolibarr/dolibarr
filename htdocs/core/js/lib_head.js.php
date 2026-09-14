@@ -223,8 +223,8 @@ var select2arrayoflanguage = {
 	inputTooShort: function (input) {
 		var n = input.minimum;
 		/*console.log(input); console.log(input.minimum);*/
-		if (n > 1) return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")." '"); ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters"))."'"; ?>;
-			else return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")." '"); ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter"))."'"; ?>
+		if (n > 1) return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters"))."'"; ?>;
+			else return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter"))."'"; ?>
 		},
 	loadMore: function (pageNumber) { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2LoadingMoreResults"))."'"; ?>; },
 	searching: function () { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2SearchInProgress"))."'"; ?>; }
