@@ -243,9 +243,10 @@ class Inventory extends CommonObject
 	 * @param  	User 	$user      				User that creates
 	 * @param	int 	$notrigger 				0=launch triggers after, 1=disable triggers
 	 * @param	int		$include_sub_warehouse	Include sub warehouses
+	 * @param	int		$no_prefill				1=Do not prefill lines from current stock (start an empty inventory)
 	 * @return 	int             				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function validate(User $user, $notrigger = 0, $include_sub_warehouse = 0)
+	public function validate(User $user, $notrigger = 0, $include_sub_warehouse = 0, $no_prefill = 0)
 	{
 		$this->db->begin();
 
@@ -259,6 +260,17 @@ class Inventory extends CommonObject
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
+			}
+
+			if (!empty($no_prefill)) {
+				// Start with an empty inventory: lines will be added manually or with a barcode scanner while counting
+				$result = $this->setStatut($this::STATUS_VALIDATED, null, '', 'INVENTORY_VALIDATED');
+				if ($result > 0) {
+					$this->db->commit();
+				} else {
+					$this->db->rollback();
+				}
+				return $result;
 			}
 
 			// Scan existing stock to prefill the inventory
