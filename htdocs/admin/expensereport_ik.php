@@ -126,7 +126,7 @@ print dol_get_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), 
 echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportIkDesc').'</span>';
 print '<br><br>';
 
-echo '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+echo '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" spellcheck="false">';
 echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
 if ($action == 'edit') {

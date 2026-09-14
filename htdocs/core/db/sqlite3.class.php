@@ -62,12 +62,13 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *  @param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *  @param	    string	$host		Address of database server
-	 *  @param	    string	$user		Nom de l'utilisateur autorise
+	 *  @param	    string	$user		Name of the authorized user
 	 *  @param	    string	$pass		Password
 	 *  @param	    string	$name		Nom de la database
 	 *  @param	    int		$port		Port of database server
+	 *  @param	    bool	$forcenew	Not used by this driver: sqlite3 always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf;
 
@@ -321,10 +322,11 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string			$passwd		password
 	 *	@param		string			$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		integer			$port		Port of database server
+	 *	@param		bool			$forcenew	Not used by this driver: sqlite3 always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 *	@return		SQLite3|false				Database access handler
 	 *	@see		close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0)
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
 		global $main_data_dir;
 
@@ -342,7 +344,7 @@ class DoliDBSqlite3 extends DoliDB
 			//$this->db = new PDO("sqlite:".$dir.'/database_'.$name.'.sdb');
 			$this->db = new SQLite3($database_name);
 			//$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$this->error = self::LABEL.' '.$e->getMessage().' current dir='.$database_name;
 			return false;
 		}
@@ -474,19 +476,19 @@ class DoliDBSqlite3 extends DoliDB
 			}
 		}
 
-		// Ordre SQL ne necessitant pas de connection a une base (example: CREATE DATABASE)
+		// SQL statement that does not require a connection to a database (example: CREATE DATABASE)
 		try {
 			//$ret = $this->db->exec($query);
 			$ret = $this->db->query($query); // $ret is a Sqlite3Result
 			if ($ret) {
 				$this->queryString = $query;
 			}
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$this->error = $this->db->lastErrorMsg();
 		}
 
 		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) {
-			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
+			// If it is a user query, save it along with its resultset
 			if (!is_object($ret) || $this->error) {
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
@@ -516,13 +518,13 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 * 	Returns the current line (as an object) for the resultset cursor
 	 *
-	 *	@param	SQLite3Result	$resultset  Curseur de la requete voulue
+	 *	@param	SQLite3Result	$resultset  Cursor of the desired query
 	 *	@return	false|object				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
 	{
 		// phpcs:enable
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connection
+		// If the resultset is not provided, use the last one used on this connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -636,7 +638,7 @@ class DoliDBSqlite3 extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		// Si resultset en est un, on libere la memoire
+		// If resultset is one, free the memory
 		if ($resultset && is_object($resultset)) {
 			$resultset->finalize();
 		}
@@ -672,7 +674,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide.
+			// If the connection failed, $this->db is not valid.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert error code to a generic Dolibarr error code
@@ -726,7 +728,7 @@ class DoliDBSqlite3 extends DoliDB
 				}
 			}
 			if ($errno > 1) {
-				// TODO Voir la liste des messages d'erreur
+				// TODO See the list of error messages
 			}
 
 			return ($errno ? 'DB_ERROR_'.$errno : '0');
@@ -741,7 +743,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function error()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide pour sqlite_error.
+			// If the connection failed, $this->db is not valid for sqlite_error.
 			return 'Not connected. Check setup parameters in conf/conf.php file and your sqlite version';
 		} else {
 			return $this->error;
@@ -1110,7 +1112,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
 		// phpcs:enable
-		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// keys looked up in the descriptions array (field_desc): type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
 

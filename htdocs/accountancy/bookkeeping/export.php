@@ -726,7 +726,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		} else {
 			header('Content-Disposition: inline; filename="'.$downloadFileFullName.'"');
 		}
-		// Ajout directives pour resoudre bug IE
+		// Add directives to fix IE bug
 		header('Cache-Control: Public, must-revalidate');
 		header('Pragma: public');
 		header('Content-Length: ' . dol_filesize($downloadFilePath));

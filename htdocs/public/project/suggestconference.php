@@ -249,6 +249,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 
+	$tmpcode = '';
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
@@ -539,7 +540,7 @@ if ($project->date_start_event || $project->date_end_event) {
 if ($project->date_start_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_start_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_start_event, $format);
@@ -550,7 +551,7 @@ if ($project->date_start_event && $project->date_end_event) {
 if ($project->date_end_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_end_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_end_event, $format);

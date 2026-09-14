@@ -100,6 +100,11 @@ class ToolInvoices extends McpTool
 						"limit" => [
 							"type" => "integer",
 							"default" => 10
+						],
+						"ids" => [
+							"type" => "array",
+							"items" => ["type" => "integer"],
+							"description" => "Restrict to these invoice ids (e.g. the rows the user selected on a list). The result then includes count and total sums."
 						]
 					]
 				]
@@ -112,6 +117,38 @@ class ToolInvoices extends McpTool
 					"properties" => [
 						"ref" => ["type" => "string", "description" => "Invoice Ref (e.g. FA2401-001)"],
 						"id" => ["type" => "integer", "description" => "Invoice ID"]
+					],
+					"oneOf" => [
+						["required" => ["ref"]],
+						["required" => ["id"]]
+					]
+				]
+			],
+			[
+				"name" => "search_supplier_invoice",
+				"description" => "Search SUPPLIER (vendor/purchase) invoices by supplier name, ref, or payment status. Use for supplier invoices only; for customer invoices use search_invoice.",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"query" => ["type" => "string", "description" => "Supplier name, invoice ref or supplier's own ref (optional)"],
+						"status" => ["type" => "string", "enum" => ["draft", "unpaid", "paid"], "description" => "Filter by status (optional)"],
+						"limit" => ["type" => "integer", "default" => 10],
+						"ids" => [
+							"type" => "array",
+							"items" => ["type" => "integer"],
+							"description" => "Restrict to these supplier invoice ids (e.g. the rows the user selected on a list). The result then includes count and total sums."
+						]
+					]
+				]
+			],
+			[
+				"name" => "get_supplier_invoice",
+				"description" => "Get details of a specific SUPPLIER (vendor/purchase) invoice by ID or Reference. For customer invoices use get_invoice.",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"ref" => ["type" => "string", "description" => "Supplier invoice Ref"],
+						"id" => ["type" => "integer", "description" => "Supplier invoice ID"]
 					],
 					"oneOf" => [
 						["required" => ["ref"]],
@@ -172,6 +209,10 @@ class ToolInvoices extends McpTool
 			case 'search_invoices':
 				return $this->searchInvoices($args);
 
+			case 'search_supplier_invoice':
+				return $this->searchSupplierInvoices($args);
+			case 'get_supplier_invoice':
+				return $this->getSupplierInvoice($args);
 			case 'get_invoice':
 				return $this->getInvoice($args);
 
@@ -191,7 +232,7 @@ class ToolInvoices extends McpTool
 	 *
 	 * @param array<string, mixed> $args Input filters (limit, status, customer)
 	 *
-	 * @return array<int, array<string, mixed>>|array<string, string>
+	 * @return array<int|string, mixed>
 	 */
 	private function searchInvoices($args)
 	{
@@ -207,13 +248,33 @@ class ToolInvoices extends McpTool
 			return ["error" => "DB Error"];
 		}
 
-		$sql = "SELECT f.rowid, f.ref, f.total_ttc, f.fk_statut, f.paye, f.datef, s.nom
+		$sql = "SELECT f.rowid, f.ref, f.total_ht, f.total_ttc, f.fk_statut, f.paye, f.datef, s.nom
 				FROM " . MAIN_DB_PREFIX . "facture as f
 				LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON f.fk_soc = s.rowid
 				WHERE f.entity IN (" . getEntity('facture') . ")";
 
-		// Status filtering
-		if ($status === 'draft') {
+		// Selection mode: restrict to explicit ids (e.g. the user's checked
+		// rows) and let the server do the arithmetic the single-shot LLM
+		// architecture cannot: the model never sees tool results, so sums
+		// must be computed here. Status filtering is bypassed - a selection
+		// means these exact records, drafts included.
+		$onlyIds = array();
+		if (!empty($args['ids']) && is_array($args['ids'])) {
+			foreach ($args['ids'] as $selId) {
+				if ((int) $selId > 0 && count($onlyIds) < 100) {
+					$onlyIds[] = (int) $selId;
+				}
+			}
+			if (!empty($onlyIds)) {
+				$sql .= " AND f.rowid IN (".$this->db->sanitize(implode(',', $onlyIds)).")";
+				$status = 'ids';
+			}
+		}
+
+		// Status filtering (bypassed entirely in selection mode: the ids ARE the filter)
+		if ($status === 'ids') {
+			// no status clause
+		} elseif ($status === 'draft') {
 			// Explicitly asking for drafts
 			$sql .= " AND f.fk_statut = 0";
 		} elseif ($status === 'paid') {
@@ -242,11 +303,13 @@ class ToolInvoices extends McpTool
 
 		$resql = $this->db->query($sql);
 		$list = [];
+		$sumHt = 0.0;
+		$sumTtc = 0.0;
 
 		if ($resql) {
 			while ($r = $this->db->fetch_object($resql)) {
 				// Double check to ensure no PROV/Drafts slip through unless asked
-				if ($status !== 'draft' && $r->fk_statut == 0) {
+				if (!in_array($status, array('draft', 'ids')) && $r->fk_statut == 0) {
 					continue;
 				}
 
@@ -264,6 +327,8 @@ class ToolInvoices extends McpTool
 					$statusLabel = "Abandoned";
 				}
 
+				$sumHt += (float) $r->total_ht;
+				$sumTtc += (float) $r->total_ttc;
 				$list[] = [
 					"ref" => $ref,
 					"date" => dol_print_date($this->db->jdate($r->datef), 'day'),
@@ -278,6 +343,17 @@ class ToolInvoices extends McpTool
 
 		if (empty($list)) {
 			return ["info" => "No " . $status . " invoices found matching your criteria."];
+		}
+
+		if ($status === 'ids') {
+			// Selection mode: hand back the aggregate the user actually asked
+			// for, next to the rows themselves.
+			return [
+				"count" => count($list),
+				"total_ht" => price($sumHt),
+				"total_ttc" => price($sumTtc),
+				"invoices" => $list
+			];
 		}
 
 		return $list;
@@ -438,6 +514,158 @@ class ToolInvoices extends McpTool
 			"remaining_due" => price($remaining - $amount),
 			"status" => ($remaining - $amount <= 0) ? "Fully Paid" : "Partially Paid",
 			"payment_url" => DOL_URL_ROOT . "/compta/paiement/card.php?id=" . $paymentId
+		];
+	}
+
+	/**
+	 * Search supplier invoices.
+	 *
+	 * @param array<string, mixed> $args  query, status, limit
+	 * @return array<int|string, mixed>
+	 */
+	private function searchSupplierInvoices($args)
+	{
+		if (!$this->user->hasRight('fournisseur', 'facture', 'lire')) {
+			return ["error" => "Permission denied: supplier invoice read right is missing."];
+		}
+
+		$limit = min(25, max(1, (int) ($args['limit'] ?? 10)));
+		$query = trim((string) ($args['query'] ?? ''));
+		$status = (string) ($args['status'] ?? '');
+
+		$sql = "SELECT f.rowid FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+		$sql .= " WHERE f.entity IN (".getEntity('facture_fourn').")";
+		$onlyIds = array();
+		if (!empty($args['ids']) && is_array($args['ids'])) {
+			foreach ($args['ids'] as $selId) {
+				if ((int) $selId > 0 && count($onlyIds) < 100) {
+					$onlyIds[] = (int) $selId;
+				}
+			}
+			if (!empty($onlyIds)) {
+				$sql .= " AND f.rowid IN (".$this->db->sanitize(implode(',', $onlyIds)).")";
+			}
+		}
+		if ($query !== '') {
+			$q = $this->db->escape($this->db->escapeforlike($query));
+			$sql .= " AND (f.ref LIKE '%".$this->db->escape($q)."%' OR f.ref_supplier LIKE '%".$this->db->escape($q)."%' OR s.nom LIKE '%".$this->db->escape($q)."%')";
+		}
+		if ($status === 'draft') {
+			$sql .= " AND f.fk_statut = 0";
+		} elseif ($status === 'unpaid') {
+			$sql .= " AND f.fk_statut = 1 AND f.paye = 0";
+		} elseif ($status === 'paid') {
+			$sql .= " AND f.paye = 1";
+		}
+		$sql .= " ORDER BY f.datef DESC";
+		$sql .= " LIMIT ".((int) $limit);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_syslog("AiToolsInvoices::searchSupplierInvoices sql error", LOG_ERR);
+			return ["error" => "Search failed."];
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+		$out = [];
+		while ($obj = $this->db->fetch_object($resql)) {
+			$inv = new FactureFournisseur($this->db);
+			if ($inv->fetch((int) $obj->rowid) > 0) {
+				$inv->fetch_thirdparty();
+				$out[] = [
+					"id" => $inv->id,
+					"ref" => $inv->ref,
+					"ref_supplier" => $inv->ref_supplier,
+					"supplier" => is_object($inv->thirdparty) ? $inv->thirdparty->name : '',
+					"date" => dol_print_date($inv->date, 'day'),
+					"status" => $inv->getLibStatut(1),
+					"total_ttc" => price($inv->total_ttc),
+					"_ht" => (float) $inv->total_ht,
+					"_ttc" => (float) $inv->total_ttc,
+					"url" => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$inv->id
+				];
+			}
+		}
+
+		if (!empty($out) && !empty($onlyIds)) {
+			$sumHt = 0.0;
+			$sumTtc = 0.0;
+			foreach ($out as $row) {
+				$sumHt += $row['_ht'];
+				$sumTtc += $row['_ttc'];
+			}
+			foreach ($out as $k => $row) {
+				unset($out[$k]['_ht'], $out[$k]['_ttc']);
+			}
+			return [
+				"count" => count($out),
+				"total_ht" => price($sumHt),
+				"total_ttc" => price($sumTtc),
+				"invoices" => $out
+			];
+		}
+		foreach ($out as $k => $row) {
+			unset($out[$k]['_ht'], $out[$k]['_ttc']);
+		}
+
+		return empty($out) ? ["message" => "No supplier invoices found."] : $out;
+	}
+
+	/**
+	 * Get one supplier invoice with lines.
+	 *
+	 * @param array<string, mixed> $args  ref or id
+	 * @return array<string, mixed>
+	 */
+	private function getSupplierInvoice($args)
+	{
+		if (!$this->user->hasRight('fournisseur', 'facture', 'lire')) {
+			return ["error" => "Permission denied: supplier invoice read right is missing."];
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+		$inv = new FactureFournisseur($this->db);
+		$res = 0;
+		if (!empty($args['id'])) {
+			$res = $inv->fetch((int) $args['id']);
+		} elseif (!empty($args['ref'])) {
+			$res = $inv->fetch(0, (string) $args['ref']);
+		}
+		if ($res <= 0 || empty($inv->id)) {
+			return ["error" => "Supplier invoice not found."];
+		}
+		if (!in_array((int) $inv->entity, explode(',', getEntity('facture_fourn')))) {
+			return ["error" => "Supplier invoice not found."];
+		}
+
+		$inv->fetch_thirdparty();
+		$inv->fetch_lines();
+
+		$lines = [];
+		foreach ($inv->lines as $l) {
+			$lvars = get_object_vars($l);
+			$lines[] = [
+				"product" => !empty($l->product_ref) ? $l->product_ref : '',
+				"desc" => dol_html_entity_decode(strip_tags((string) $l->description), ENT_QUOTES),
+				"qty" => (float) $l->qty,
+				"price" => price($lvars['pu_ht'] ?? $lvars['subprice'] ?? 0),
+				"total_line" => price($l->total_ht),
+				"vat" => $l->tva_tx."%"
+			];
+		}
+
+		return [
+			"id" => $inv->id,
+			"ref" => $inv->ref,
+			"ref_supplier" => $inv->ref_supplier,
+			"date" => dol_print_date($inv->date, 'day'),
+			"status" => $inv->getLibStatut(1),
+			"supplier" => is_object($inv->thirdparty) ? $inv->thirdparty->name : '',
+			"total_ht" => price($inv->total_ht),
+			"total_ttc" => price($inv->total_ttc),
+			"lines" => $lines,
+			"url" => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$inv->id
 		];
 	}
 

@@ -5,7 +5,7 @@
  * Copyright (C) 2012-2018	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,6 +103,9 @@ $arrayfields = array(
 	'oat.datec' => array('label' => "DateCreation", 'checked' => '1'),
 	'oat.tms' => array('label' => "DateModification", 'checked' => '1'),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 /*
  *	Action
@@ -204,7 +207,7 @@ $sql = "SELECT oat.rowid, oat.tokenstring, oat.entity, oat.state as rights, oat.
 $sql .= " oat.lastaccess, oat.apicount_total";
 $sql .= " FROM ".MAIN_DB_PREFIX."oauth_token as oat";
 $sql .= " WHERE service = 'dolibarr_rest_api'";
-$sql .= " AND EXISTS(SELECT 'exist' FROM llx_user as u WHERE u.api_key IS NOT NULL AND u.rowid = oat.fk_user)";
+$sql .= " AND EXISTS(SELECT 'exist' FROM ".MAIN_DB_PREFIX."user as u WHERE u.api_key IS NOT NULL AND u.rowid = oat.fk_user)";
 if ($search_user) {
 	$sql .= " AND EXISTS (SELECT 'exist' FROM ".MAIN_DB_PREFIX."user u";
 	$sql .= " WHERE (u.lastname LIKE '%".$db->escape($search_user)."%'";

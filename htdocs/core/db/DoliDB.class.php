@@ -384,7 +384,7 @@ abstract class DoliDB implements Database
 	 */
 	public function lasterror()
 	{
-		return $this->lasterror;
+		return (string) $this->lasterror;
 	}
 
 	/**

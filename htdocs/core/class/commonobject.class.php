@@ -22,7 +22,9 @@
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
-*
+ * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
+
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -173,6 +175,7 @@ abstract class CommonObject
 	 * noteditable?: int<0, 1>,
 	 * alwayseditable?: int<0, 1>|string,
 	 * default?: string|int,
+	 * description?: string,
 	 * index?: int<0, 1>,
 	 * foreignkey?: string,
 	 * searchall?: int<0, 1>,
@@ -233,6 +236,7 @@ abstract class CommonObject
 	 * 'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 * 'description' is a description of the field that must be set to help the MCP server.
 	 *
 	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -259,6 +263,11 @@ abstract class CommonObject
 	 * @var mixed		Array of linked objects, set and used when calling ->create() to be able to create links during the creation of object
 	 */
 	public $linked_objects;
+
+	/**
+	 * @var array<string,int>|null		Array of external linked objects (set by hooks or external modules) to merge into during creation
+	 */
+	public $other_linked_objects;
 
 	/**
 	 * @var array<string,array<int,int>>	Array of linked objects ids. Loaded by ->fetchObjectLinked
@@ -366,6 +375,12 @@ abstract class CommonObject
 	 * @see fetch_product()
 	 */
 	public $product;
+
+	/**
+	 * @var ?Entrepot 	A related warehouse object
+	 * @see fetch_warehouse()
+	 */
+	public $warehouse;
 
 	/**
 	 * @var string 		The type of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
@@ -1343,8 +1358,10 @@ abstract class CommonObject
 			return -2;
 		}
 
+		// socid is checked: @phan-suppress-next-line PhanUndeclaredProperty
 		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && $user->id > 0 && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
+			// socid is checked: @phan-suppress-next-line PhanUndeclaredProperty
 			$sql_allowed_contacts .= ' WHERE sc.fk_soc = '.(int) $this->socid;
 			$sql_allowed_contacts .= ' AND sc.fk_user = '.(int) $user->id;
 
@@ -1664,7 +1681,7 @@ abstract class CommonObject
 
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+					$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
 					$tab[$i] = array(
 						'parentId' => $this->id,
 						'source' => $obj->source,
@@ -1686,7 +1703,7 @@ abstract class CommonObject
 						'statuscontact' => $obj->statuscontact,
 						'rowid' => $obj->rowid,
 						'code' => $obj->code,
-						'libelle' => $libelle_type,
+						'libelle' => $label_type,
 						'status' => (int) $obj->statuslink,
 						'fk_c_type_contact' => $obj->fk_c_type_contact
 					);
@@ -1791,13 +1808,13 @@ abstract class CommonObject
 			$obj = $this->db->fetch_object($resql);
 
 			$transkey = "TypeContact_".$this->element."_".$source."_".$obj->code;
-			$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $langs->trans($obj->type_label));
+			$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $langs->trans($obj->type_label));
 			if (empty($option)) {
-				$tab[$obj->rowid] = $libelle_type;
+				$tab[$obj->rowid] = $label_type;
 			} elseif ($option == 1) {
-				$tab[$obj->code] = $libelle_type;
+				$tab[$obj->code] = $label_type;
 			} else {
-				$tab[$obj->rowid] = array('id' => $obj->rowid, 'code' => $obj->code, 'label' => $libelle_type);
+				$tab[$obj->rowid] = array('id' => $obj->rowid, 'code' => $obj->code, 'label' => $label_type);
 			}
 			$i++;
 		}
@@ -1872,11 +1889,11 @@ abstract class CommonObject
 						$modulename = 'fournisseur';
 					}
 					if (isModEnabled($modulename)) {
-						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
+						$label_element = $langs->trans('ContactDefault_'.$obj->element);
 						$tmpelement = $obj->element;
 						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
-						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
-						$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
+						$label_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+						$tab[$obj->rowid] = $label_element.' - '.$label_type;
 					}
 				}
 			}
@@ -2194,6 +2211,41 @@ abstract class CommonObject
 
 		$this->product = $product;
 		return $result;
+	}
+
+	/**
+	 *	Load the warehouse of object, from id $this->warehouse_id or $this->fk_warehouse, into this->warehouse
+	 *
+	 *	@param		int<0,1>	$force_warehouse_id	Force warehouse id
+	 *	@return		int<-1,1>						Return integer <0 if KO, >0 if OK
+	 */
+	public function fetchWarehouse($force_warehouse_id = 0)
+	{
+		// testing through empty: @phan-suppress-next-line PhanUndeclaredProperty
+		if (empty($this->warehouse_id) && empty($this->fk_warehouse) && empty($force_warehouse_id)) {
+			return 0;
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
+		// testing through isset: @phan-suppress-next-line PhanUndeclaredProperty
+		$idtofetch = isset($this->warehouse_id) ? $this->warehouse_id : (isset($this->fk_warehouse) ? $this->fk_warehouse : 0);
+		if (!empty($force_warehouse_id)) {
+			$idtofetch = $force_warehouse_id;
+		}
+
+		if ($idtofetch) {
+			$warehouse = new Entrepot($this->db);
+			$result = $warehouse->fetch($idtofetch);
+			if ($result < 0) {
+				$this->errors = array_merge($this->errors, $warehouse->errors);
+			}
+			$this->warehouse = $warehouse;
+
+			return $result;
+		} else {
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2555,6 +2607,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < ".((int) $this->id);
 		} elseif ($fieldid == 'label') {
+			// Suppose caller is not in error @phan-suppress-next-line PhanUndeclaredProperty
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < '".$this->db->escape((string) $this->label)."'";
 		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
@@ -2636,6 +2689,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > ".((int) $this->id);
 		} elseif ($fieldid == 'label') {
+			// Suppose caller is not in error @phan-suppress-next-line PhanUndeclaredProperty
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > '".$this->db->escape((string) $this->label)."'";
 		} else {	// Should be 'ref' or any other string field
 			$sql .= " WHERE te.".$this->db->sanitize($fieldid)." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
@@ -3067,8 +3121,8 @@ abstract class CommonObject
 									$line->fk_unit,
 									$line->multicurrency_subprice,
 									0,
-									$line->date_start,
-									$line->date_end,
+									$line->date_start,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
+									$line->date_end,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
 									$line->fk_fournprice,
 									$line->pa_ht,
 									$line->fk_parent_line
@@ -4287,7 +4341,7 @@ abstract class CommonObject
 				'@phan-var-force Facture $this';
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';  // Note: possibly useless as $this is normally already Facture, so the class file should be loaded
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
-					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 						$prev_sits = $this->get_prev_sits();
 
 						foreach ($prev_sits as $sit) {                // $sit is an object Facture loaded with a fetch.
@@ -4691,7 +4745,7 @@ abstract class CommonObject
 									$object = new $className($this->db);
 									'@phan-var-force CommonObject $object';
 									$ret = $object->fetch($objectid);
-									if ($ret >= 0) {
+									if ($ret > 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;
 									}
 								}
@@ -5636,7 +5690,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string      		$action				GET/POST action
-	 *	@param  CommonObjectLine 	$line			    Selected object line to output
+	 *	@param  CommonObjectLine|CommonObject|stdClass 	$line			    Selected object line to output
 	 *	@param  ''		    		$var               	Not used
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
@@ -5666,6 +5720,7 @@ abstract class CommonObject
 				$product_static->fetch($line->fk_product);
 
 				$product_static->ref = (string) $line->ref; //can change ref in hook
+				// label is checked with empty @phan-suppress-next-line PhanUndeclaredProperty
 				$product_static->label = !empty($line->label) ? $line->label : ""; //can change label in hook
 
 				$text = $product_static->getNomUrl(1);
@@ -5683,7 +5738,7 @@ abstract class CommonObject
 
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE') && empty($newlang) && is_object($this->thirdparty)) {
@@ -5699,6 +5754,7 @@ abstract class CommonObject
 					$label = $line->product_label;
 				}
 
+				// label is checked with empty @phan-suppress-next-line PhanUndeclaredProperty
 				$text .= ' - '.(!empty($line->label) ? $line->label : $label);
 				$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
@@ -5708,6 +5764,7 @@ abstract class CommonObject
 				// So we calculate an estimated value just to show something on screen.
 				// Not: the unit price is always for 100% of line, it is not a prorata of situation invoice (when total is)
 				if ($line->remise_percent != 100) {
+					// Suppose situation_percent is defined @phan-suppress-next-line PhanUndeclaredProperty
 					$line->subprice_ttc = (float) price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / $line->qty / (1 - $line->remise_percent / 100), 'MU');
 				} else {
 					// Other method is less accurate
@@ -5721,7 +5778,8 @@ abstract class CommonObject
 			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
 
 			$qty_shipped = 0;
-			if (isset($this->expeditions[$line->id])) {
+			if (isset($this->expeditions[$line->id])) { // @phan-suppress-current-line PhanUndeclaredProperty
+				// Suppose existence of expeditions is tested @phan-suppress-next-line PhanUndeclaredProperty
 				$qty_shipped = $this->expeditions[$line->id];
 			}
 			$disableedit = ($qty_shipped > 0) && ($qty_shipped >= $line->qty);
@@ -5750,6 +5808,7 @@ abstract class CommonObject
 
 		// Line in update mode
 		if ($this->status == 0 && $action == 'editline' && $selected == $line->id) {
+			// label is tested @phan-suppress-next-line PhanUndeclaredProperty
 			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
 
 			$line->subprice_ttc = (float) price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
@@ -5843,7 +5902,7 @@ abstract class CommonObject
 	 *  If lines are into a template, titles must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	CommonObjectLine	$line				Line
+	 * 	@param	CommonObjectLine|CommonObject|stdClass	$line				Line
 	 * 	@param	string				$var				Not used
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
@@ -5885,7 +5944,9 @@ abstract class CommonObject
 		if (((int) $line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
 			$discount = new DiscountAbsolute($this->db);
 			if (property_exists($this, 'socid')) {
+				// Tested if socid exists @phan-suppress-next-line PhanUndeclaredProperty
 				$discount->fk_soc = $this->socid;
+				// Tested if socid exists @phan-suppress-next-line PhanUndeclaredProperty
 				$discount->socid = $this->socid;
 			}
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
@@ -5900,6 +5961,7 @@ abstract class CommonObject
 			}
 
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
+			// Existence of $line->label is tested @phan-suppress-next-line PhanUndeclaredProperty
 			$this->tpl['label'] .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 			// Dates
 			if ($line->product_type == 1 && ($date_start || $date_end)) {
@@ -5910,6 +5972,7 @@ abstract class CommonObject
 			if (!empty($line->desc)) {
 				$this->tpl['label'] .= $line->desc;
 			} else {
+				// Supposes existence of $line->label @phan-suppress-next-line PhanUndeclaredProperty
 				$this->tpl['label'] .= ($line->label ? '&nbsp;'.$line->label : '');
 			}
 
@@ -6151,6 +6214,11 @@ abstract class CommonObject
 		if (!empty($tmp[1])) {
 			$modele = $tmp[0];
 			$srctemplatepath = $tmp[1];
+
+			if (!preg_match('/^'.preg_quote(DOL_DATA_ROOT, '/').'\/(ecm|doctemplates)/', $srctemplatepath)) {
+				$this->error = 'BadDirForTemplateFile';
+				return -1;
+			}
 		}
 
 		// Search template files
@@ -7149,7 +7217,11 @@ abstract class CommonObject
 
 							$obj = $this->db->getRow($sqlFetchObject);
 
-							if ($obj !== false) {
+							// getRow() returns an object on success, int 0 when the query succeeded but
+							// returned no row, and false on SQL failure. Testing "!== false" let the 0
+							// through as a success: $obj->rowid on an int is null, $res was set to 1 and
+							// null was stored in the column while a success was reported.
+							if (is_object($obj)) {
 								$objectId = $obj->rowid;
 								$res = 1;
 							} else {
@@ -7288,7 +7360,7 @@ abstract class CommonObject
 		// Update also the user of last modification in parent table
 		if (!$error && !empty($this->fields['fk_user_modif'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET fk_user_modif = ".(int) $user->id;
+			$sql .= " SET fk_user_modif = ".(int) $userused->id;
 			$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 			$this->db->query($sql);
 		}
@@ -7727,7 +7799,7 @@ abstract class CommonObject
 			// Update also the user of last modification in parent table
 			if (!$error && !empty($this->fields['fk_user_modif'])) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-				$sql .= " SET fk_user_modif = ".(int) $user->id;
+				$sql .= " SET fk_user_modif = ".(int) $userused->id;
 				$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 				$this->db->query($sql);
 			}
@@ -8007,7 +8079,9 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', (string) $type)) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($placeholder ? ' placeholder="'.dolPrintHTMLForAttribute($placeholder).'"' : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif (in_array($type, array('email', 'mail', 'phone', 'url', 'ip'))) {
+		} elseif ($type == 'phone' && !preg_match('/search_/', $keyprefix)) {
+			$out = $form->showPhoneInput($value, $keyprefix.$key.$keysuffix, !empty($this->country_id) ? $this->country_id : 0);
+		} elseif (in_array($type, array('email', 'mail', 'url', 'ip'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', (string) $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -8720,11 +8794,11 @@ abstract class CommonObject
 				$out .= '
 					<script nonce="'.getNonce().'">
 					$(document).ready(function() {
-						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
-							$("'.dol_escape_js($newInput).'").insertBefore(this);
+						$(\'a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add\').click(function() {
+							$(\''.dol_escape_js($newInput).'\').insertBefore(this);
 						});
 
-						$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
+						$(document).on("click", \'a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del\', function() {
 							$(this).parent().remove();
 						});
 					});
@@ -9863,7 +9937,7 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value, '', $this->table_element);
 								break;
 							case "create":
-								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
+								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,ip,password'));
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
@@ -10067,6 +10141,68 @@ abstract class CommonObject
 					return true; // TODO Not enough. If there is A-B on kept product and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
 				//$this->errors = $db->lasterror();
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Function used to replace a contact id with another one.
+	 * This function is meant to be called from replaceContact with the appropriate tables.
+	 * The column storing the contact id is 'fk_socpeople' on some tables and 'fk_contact' on others,
+	 * hence the $fieldname parameter.
+	 *
+	 * @param  DoliDB	$dbs			Database handler
+	 * @param  int		$origin_id		Old contact id (the contact to delete)
+	 * @param  int		$dest_id		New contact id (the contact that will receive elements of the other)
+	 * @param  string[]	$tables			Tables that need to be changed
+	 * @param  string	$fieldname		Name of the column storing the contact id ('fk_socpeople' or 'fk_contact')
+	 * @param  int<0,1>	$ignoreerrors	Ignore errors. Return true even if errors.
+	 * @return bool						True if success, False if error
+	 */
+	public static function commonReplaceContact(DoliDB $dbs, $origin_id, $dest_id, array $tables, $fieldname = 'fk_socpeople', $ignoreerrors = 0)
+	{
+		global $hookmanager;
+
+		// Table and column names are concatenated into the SQL, so they are validated as a defence in
+		// depth: this method is public and static, hence callable from any module.
+		if (!preg_match('/^[a-z0-9_]+$/', $fieldname)) {
+			dol_syslog(__METHOD__.' Refused an invalid column name: '.$fieldname, LOG_ERR);
+			return false;
+		}
+
+		$parameters = array(
+			'origin_id' => $origin_id,
+			'dest_id' => $dest_id,
+			'tables' => $tables,
+			'fieldname' => $fieldname,
+		);
+		$reshook = $hookmanager->executeHooks('commonReplaceContact', $parameters);
+		if ($reshook > 0) {
+			return true; // replacement code
+		} elseif ($reshook < 0) {
+			return $ignoreerrors === 1; // failure
+		} // reshook = 0 => execute normal code
+
+		foreach ($tables as $table) {
+			if (!preg_match('/^[a-z0-9_]+$/', $table)) {
+				dol_syslog(__METHOD__.' Refused an invalid table name: '.$table, LOG_ERR);
+				return false;
+			}
+
+			$sanitizedtable = $dbs->sanitize($table);
+			$sanitizedfieldname = $dbs->sanitize($fieldname);
+
+			$sql = "UPDATE ".$dbs->prefix().$sanitizedtable;
+			$sql .= " SET ".$sanitizedfieldname." = ".((int) $dest_id);
+			$sql .= " WHERE ".$sanitizedfieldname." = ".((int) $origin_id);
+
+			if (!$dbs->query($sql)) {
+				if ($ignoreerrors) {
+					return true;
+				}
 				return false;
 			}
 		}
@@ -10686,7 +10822,7 @@ abstract class CommonObject
 				$queryarray[$field] = $this->{$field};  // @phan-suppress-current-line SqlInjection
 			}
 
-			if (array_key_exists('type', $info) && $info['type'] == 'timestamp' && empty($queryarray[$field])) {
+			if (is_array($info) && array_key_exists('type', $info) && !empty($info['type']) && $info['type'] == 'timestamp' && empty($queryarray[$field])) {
 				unset($queryarray[$field]);
 			}
 			if (!empty($info['notnull']) && $info['notnull'] == -1 && empty($queryarray[$field])) {
@@ -10935,7 +11071,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = "INSERT INTO ".$this->db->prefix().$this->table_element;
+			$sql = "INSERT INTO ".$this->db->prefix().$this->db->sanitize($this->table_element);
 			$sql .= " (".implode(", ", $sanitized_keys).')';
 			$sql .= " VALUES (".implode(", ", $sanitized_values).")";		// $sanitized_values can contains 'abc' or 123
 
@@ -10958,7 +11094,8 @@ abstract class CommonObject
 		if (!$error) {
 			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 			if (array_key_exists('ref', $this->fields) && array_key_exists('notnull', $this->fields['ref']) && $this->fields['ref']['notnull'] > 0 && array_key_exists('default', $this->fields['ref']) && $this->fields['ref']['default'] == '(PROV)') {
-				$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET ref = '(PROV".((int) $this->id).")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
+				$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
+				$sql .= " SET ref = '(PROV".((int) $this->id).")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 
 				if ($resqlupdate === false) {
@@ -11110,7 +11247,7 @@ abstract class CommonObject
 		'@phan-var-force CommonObjectLine $objectline';
 
 		$sql = "SELECT ".$objectline->getFieldList('l');
-		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
+		$sql .= " FROM ".$this->db->prefix().$this->db->sanitize($objectline->table_element)." as l";
 		$sql .= " WHERE l.fk_".$this->db->sanitize($this->element)." = ".((int) $this->id);
 		if ($morewhere) {
 			$sql .= $morewhere;
@@ -11210,18 +11347,18 @@ abstract class CommonObject
 			$value = $this->fields[$k];
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$values[$k] = $this->quote($v, $value);
-			if (($value["type"] == "text") && !empty($value['arrayofkeyval']) && is_array($value['arrayofkeyval'])) {
+			if ((!empty($value["type"]) && $value["type"] == "text") && !empty($value['arrayofkeyval']) && is_array($value['arrayofkeyval'])) {
 				// Clean values for text with selectbox
 				$v = preg_replace('/\s/', ',', $v);
 				$v = preg_replace('/,+/', ',', $v);
 			}
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, SqlInjection
-			$sanitized_tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
+			$sanitized_tmp[] = $this->db->sanitize($k).'='.$this->quote($v, $this->fields[$k]);
 		}
 
 		// Clean and check mandatory fields
 		foreach ($keys as $key) {
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') {
+			if (!empty($this->fields[$key]['type']) && preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') {
 				$values[$key] = ''; // This is an implicit foreign key field
 			}
 			if (!empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') {
@@ -11237,7 +11374,9 @@ abstract class CommonObject
 			 }*/
 		}
 
-		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(', ', $sanitized_tmp).' WHERE rowid='.((int) $this->id);
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
+		$sql .= " SET ".implode(', ', $sanitized_tmp);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -11295,7 +11434,8 @@ abstract class CommonObject
 
 		if ($forcechilddeletion) {	// Force also delete of childtables that should lock deletion in standard case when option force is off
 			foreach ($this->childtables as $table) {
-				$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($table)." WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+				$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($table);
+				$sql .= " WHERE ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->error = $this->db->lasterror();
@@ -11407,7 +11547,8 @@ abstract class CommonObject
 		}
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element.' WHERE rowid='.((int) $this->id);
+			$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($this->table_element);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -11468,7 +11609,7 @@ abstract class CommonObject
 
 			$this->db->begin();
 
-			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($this->table_element);
 			$sql .= " WHERE ".$this->db->sanitize($parentField)." = ".(int) $parentId;
 
 			// Manage filter
@@ -11540,7 +11681,7 @@ abstract class CommonObject
 		// End call triggers
 
 		if (empty($error)) {
-			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element_line;
+			$sql = "DELETE FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
 			$sql .= " WHERE rowid = ".((int) $idline);
 
 			$resql = $this->db->query($sql);
@@ -11596,7 +11737,7 @@ abstract class CommonObject
 			$statusfield = 'fk_statut';
 		}
 
-		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
 		$sql .= " SET ".$this->db->sanitize($statusfield)." = ".((int) $status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

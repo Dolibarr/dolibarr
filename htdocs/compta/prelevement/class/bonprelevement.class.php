@@ -58,7 +58,7 @@ class BonPrelevement extends CommonObject
 	public $table_element = 'prelevement_bons';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon
 	 */
 	public $picto = 'payment';
 
@@ -1825,7 +1825,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "notify_def";
-		$sql .= " WHERE fk_user=" . ((int) $userid) . " AND fk_action='" . $this->db->escape($action) . "'";
+		$sql .= " WHERE fk_user = " . ((int) $userid) . " AND fk_action = " . ((int) $action);
 
 		if ($this->db->query($sql)) {
 			return 0;
@@ -1857,8 +1857,8 @@ class BonPrelevement extends CommonObject
 		if ($this->deleteNotification($user, $action) == 0) {
 			$now = dol_now();
 
-			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
-			$sql .= " VALUES ('" . $this->db->idate($now) . "', " . ((int) $userid) . ", 'NULL', 'NULL', '" . $this->db->escape($action) . "')";
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "notify_def (datec, fk_user, fk_soc, fk_contact, fk_action)";
+			$sql .= " VALUES ('" . $this->db->idate($now) . "', " . ((int) $userid) . ", NULL, NULL, " . ((int) $action) . ")";
 
 			dol_syslog("adnotiff: " . $sql);
 			if ($this->db->query($sql)) {

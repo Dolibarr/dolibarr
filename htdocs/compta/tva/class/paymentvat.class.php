@@ -120,13 +120,6 @@ class PaymentVAT extends CommonObject
 	public $chid;
 
 	/**
-	 * @var string lib
-	 * @deprecated
-	 * @see $label
-	 */
-	public $lib;
-
-	/**
 	 * @var int|string datepaye
 	 */
 	public $datepaye;
@@ -369,7 +362,6 @@ class PaymentVAT extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -759,30 +751,14 @@ class PaymentVAT extends CommonObject
 
 		$result = '';
 
-		if (empty($this->ref)) {
-			$this->ref = $this->lib;
-		}
-
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("VATPayment").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (!empty($this->label)) {
-			$labeltoshow = $this->label;
-			$reg = array();
-			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
-				if ($reg[1] == 'paiement') {
-					$reg[1] = 'Payment';
-				}
-				$labeltoshow = $langs->trans($reg[1]);
-			}
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
-		}
 		if ($this->datep) {
 			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
 		}
 
 		if (!empty($this->id)) {
-			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$this->id.'" title="'.dolPrintHTMLForAttribute($label).'" class="classfortooltip">';
 			$linkend = '</a>';
 
 			if ($withpicto) {

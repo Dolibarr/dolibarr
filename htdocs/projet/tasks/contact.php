@@ -433,7 +433,7 @@ if ($id > 0 || !empty($ref)) {
 			print '</td>';
 
 			print '<td>';
-			// On recupere les id des users deja selectionnes
+			// Retrieve ids of already selected users
 			if ($object->project->public) {
 				$contactsofproject = ''; // Everybody
 			} else {

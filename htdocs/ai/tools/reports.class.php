@@ -2,7 +2,7 @@
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,8 +72,8 @@ class ToolReports extends McpTool
 					"properties" => [
 						"thirdparty_id" => ["type" => "integer", "description" => "The unique ID of the thirdparty."],
 						"thirdparty_name" => ["type" => "string", "description" => "The name of the thirdparty."],
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."],
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
 						"transaction_type" => [
 							"type" => "string",
 							"enum" => ["all", "invoices", "orders", "proposals"],
@@ -97,8 +97,8 @@ class ToolReports extends McpTool
 							"type" => "integer",
 							"description" => "Optional: The ID of the customer."
 						],
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."],
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
 						"group_by" => [
 							"type" => "string",
 							"enum" => ["thirdparty", "product", "month"],
@@ -119,8 +119,8 @@ class ToolReports extends McpTool
 							"type" => "integer",
 							"description" => "Optional: The ID of the supplier."
 						],
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."],
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
 						"group_by" => [
 							"type" => "string",
 							"enum" => ["supplier", "product", "month"],
@@ -149,8 +149,8 @@ class ToolReports extends McpTool
 				"inputSchema" => [
 					"type" => "object",
 					"properties" => [
-						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD)."],
-						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD)."]
+						"date_start" => ["type" => "string", "description" => "Start date (YYYY-MM-DD). Compute it from the current date when the user says a relative period like this month."],
+						"date_end" => ["type" => "string", "description" => "End date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."]
 					],
 					"required" => ["date_start", "date_end"]
 				]

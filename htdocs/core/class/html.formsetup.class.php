@@ -1197,12 +1197,12 @@ class FormSetupItem
 			if ($gen == 'none') {
 				$gen = 'standard';
 			}
-			$nomclass = "modGeneratePass".ucfirst($gen);
-			$nomfichier = $nomclass.".class.php";
-			require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
-			$genhandler = new $nomclass($this->db, $conf, $langs, $user);
-			$min = $genhandler->length;
-			$max = $genhandler->length2;
+			require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/modules_genpassword.php";
+			$genhandler = ModeleGenPassword::loadAndInstantiate($gen, $this->db, $conf, $langs, $user);
+			if ($genhandler) {
+				$min = $genhandler->length;
+				$max = $genhandler->length2;
+			}
 		}
 		$out = '<input required="required" type="password" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
 		if ($min) {

@@ -249,7 +249,7 @@ if ($result < 0) {
 		//var_dump($datas);
 		//exit;
 
-		// Fabrication tableau 1
+		// Build array 1
 		$file = $conf->bank->dir_temp."/balance".$account."-".$year.$month.".png";
 		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.$month.".png";
 		$title = $langs->transnoentities("Balance").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
@@ -647,7 +647,7 @@ if ($result < 0) {
 			$datamin[$i] = $object->min_desired;
 		}
 
-		// Fabrication tableau 4a
+		// Build array 4a
 		$file = $conf->bank->dir_temp."/movement".$account."-".$year.$month.".png";
 		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.$month.".png";
 		$title = $langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
@@ -748,7 +748,7 @@ if ($result < 0) {
 			$datamin[$i] = $object->min_desired;
 		}
 
-		// Fabrication tableau 4b
+		// Build array 4b
 		$file = $conf->bank->dir_temp."/movement".$account."-".$year.".png";
 		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.".png";
 		$title = $langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Year").': '.$year;

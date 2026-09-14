@@ -3,8 +3,9 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -337,7 +338,6 @@ class Inventory extends CommonObject
 					} else {
 						$inventoryline->qty_stock = $obj->reel;
 					}
-					//var_dump($obj->batch.' '.$obj->qty.' '.$obj->reel.' '.$this->error);exit;
 
 					$resultline = $inventoryline->create($user);
 					if ($resultline <= 0) {
@@ -775,6 +775,93 @@ class Inventory extends CommonObject
 		} else {
 			return -1;
 		}
+	}
+
+
+	/**
+	 *  Returns the reference to the following non used object depending on the active numbering module.
+	 *  When no numbering module is configured, returns an empty string: the reference is typed freely.
+	 *
+	 *  @return string		Object free reference, or '' when the reference is manual
+	 */
+	public function getNextNumRef()
+	{
+		global $langs, $conf;
+		$langs->load("stocks");
+
+		if (!getDolGlobalString('INVENTORY_ADDON')) {
+			return '';	// Free reference, typed by the user (historical behaviour)
+		}
+
+		$mybool = false;
+
+		$file = getDolGlobalString('INVENTORY_ADDON').".php";
+		$classname = getDolGlobalString('INVENTORY_ADDON');
+
+		// Include file with class
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$dir = dol_buildpath($reldir."core/modules/inventory/");
+
+			// Load file with numbering class (if found)
+			$mybool = ((bool) @include_once $dir.$file) || $mybool;
+		}
+
+		if (!$mybool) {
+			dol_print_error(null, "Failed to include file ".$file);
+			return '';
+		}
+
+		if (class_exists($classname)) {
+			$obj = new $classname();
+			'@phan-var-force ModeleNumRefInventory $obj';
+			$numref = $obj->getNextValue($this);
+
+			if ($numref != '' && $numref != '-1') {
+				return $numref;
+			} else {
+				$this->error = $obj->error;
+				return '';
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	Object lang to use for translations
+	 *  @param  int<0,1>	$hidedetails    Hide details of lines
+	 *  @param  int<0,1>	$hidedesc       Hide description
+	 *  @param  int<0,1>	$hideref        Hide ref
+	 *  @param  ?array<string,mixed>	$moreparams		Array to provide more information
+	 *  @return int<-1,1>				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("stocks");
+
+		if (!dol_strlen($modele)) {
+			$modele = ''; // Remove this once a pdf_standard.php exists.
+
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('INVENTORY_ADDON_PDF')) {
+				$modele = getDolGlobalString('INVENTORY_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/inventory/doc/";
+
+		if (empty($modele)) {
+			return 1; // Remove this once a pdf_standard.php exists.
+		}
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 }
 

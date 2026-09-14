@@ -79,8 +79,9 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string	$pass		Password
 	 *	@param	    string	$name		Database name
 	 *	@param	    int		$port		Port of database server
+	 *	@param	    bool	$forcenew	Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (see connect())
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $langs;
 
@@ -118,7 +119,7 @@ class DoliDBPgsql extends DoliDB
 
 		// Try server connection
 		//print "$host, $user, $pass, $name, $port";
-		$this->db = $this->connect($host, $user, $pass, $name, $port);
+		$this->db = $this->connect($host, $user, $pass, $name, $port, $forcenew);
 
 		if ($this->db) {
 			$this->connected = true;
@@ -407,10 +408,16 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string		$passwd		Password
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
 	 *	@param		integer		$port		Port of database server
+	 *	@param		bool		$forcenew	Force opening of a genuinely new connection instead of reusing one already opened to the same connection string in this process.
+	 *										By default, pg_connect() silently returns an existing connection resource when called again with an identical connection string within
+	 *										the same PHP process. This is dangerous whenever code intentionally opens a second, independent DoliDB instance to the same database
+	 *										(for example to run a piece of work on its own transaction) and later closes it: without $forcenew, that close() would actually close
+	 *										the shared underlying connection still in use by the original DoliDB instance, causing later queries on it to fail with
+	 *										"PostgreSQL connection has already been closed". Pass true whenever the caller needs a truly independent connection.
 	 *	@return		false|resource			Database access handler
 	 *	@see		close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0)
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
 		// use pg_pconnect() instead of pg_connect() if you want to use persistent connection costing 1ms, instead of 30ms for non persistent
 
@@ -427,12 +434,17 @@ class DoliDBPgsql extends DoliDB
 			$name = "postgres"; // When try to connect using admin user
 		}
 
+		$connectflags = $forcenew ? PGSQL_CONNECT_FORCE_NEW : 0;
+
 		// try first Unix domain socket (local)
 		if ((!empty($host) && $host == "socket") && !defined('NOLOCALSOCKETPGCONNECT')) {
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'"; // $name may be empty
 			try {
-				$this->db = @pg_connect($con_string);
-			} catch (Exception $e) {
+				// PGSQL_CONNECT_FORCE_NEW is required: pg_connect() otherwise returns the connection already
+				// opened for the same connection string, so a second handle would share the main one and
+				// closing it would close the connection still in use by the caller.
+				$this->db = @pg_connect($con_string, $connectflags);
+			} catch (Throwable $e) {
 				// No message
 			}
 		}
@@ -448,8 +460,8 @@ class DoliDBPgsql extends DoliDB
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
 			try {
-				$this->db = @pg_connect($con_string);
-			} catch (Exception $e) {
+				$this->db = @pg_connect($con_string, $connectflags);
+			} catch (Throwable $e) {
 				print $e->getMessage();
 			}
 		}
@@ -563,7 +575,7 @@ class DoliDBPgsql extends DoliDB
 		$ret = @pg_query($this->db, $query);
 
 		//print $query;
-		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) { // Si requete utilisateur, on la sauvegarde ainsi que son resultset
+		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) { // If it is a user query, save it along with its resultset
 			if (!$ret) {
 				if ($this->errno() != 'DB_ERROR_25P02') {	// Do not overwrite errors if this is a consecutive error
 					$this->lastqueryerror = $query;
@@ -791,7 +803,7 @@ class DoliDBPgsql extends DoliDB
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide.
+			// If the connection failed, $this->db is not valid.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert error code to a generic Dolibarr error code
@@ -1215,7 +1227,7 @@ class DoliDBPgsql extends DoliDB
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
 		// phpcs:enable
-		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// keys looked up in the descriptions array (field_desc): type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
 
@@ -1472,7 +1484,7 @@ class DoliDBPgsql extends DoliDB
 		if (file_exists('/usr/bin/'.$tool)) {
 			$fullpathofdump = '/usr/bin/'.$tool;
 		} else {
-			// TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
+			// TODO The database user must be a superadmin to run this command
 			$resql = $this->query('SHOW data_directory');
 			if ($resql) {
 				$liste = $this->fetch_array($resql);

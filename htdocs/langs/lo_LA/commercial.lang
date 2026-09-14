@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=ນີ້ແມ່ນຂໍ້ມູ�
 ThisIsInformationOnDocumentToSignSociete_rib=ນີ້ແມ່ນຂໍ້ມູນໃນໃບມອບສິດ SEPA ທີ່ຈະເຊັນ
 ThisIsInformationOnDocumentToSignExpedition= ນີ້ແມ່ນຂໍ້ມູນໃນການຈັດສົ່ງທີ່ຈະເຊັນ
 SignatureProposalRef=ເຊັນໃບສະເໜີລາຄາ %s
+SignatureOrderRef=ລາຍເຊັນຂອງໃບສັ່ງຂາຍ %s
 SignatureContractRef=ເຊັນສັນຍາ %s
 SignatureFichinterRef=ເຊັນການລົງພື້ນທີ່ %s
 SignatureSociete_ribRef=ເຊັນໃບມອບສິດ SEPA %s

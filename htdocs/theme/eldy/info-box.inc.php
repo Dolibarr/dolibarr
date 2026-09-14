@@ -45,7 +45,7 @@ if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("payment
 	background: var(--colorbacklineimpair2);
 	width: 100%;
 	<?php
-	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2 && empty($conf->dol_optimize_smallscreen)) { ?>
 	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
 	<?php } ?>
 	border-radius: 5px;

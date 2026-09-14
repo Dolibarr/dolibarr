@@ -47,14 +47,6 @@ if (!defined('NOCSRFCHECK')) {
 }
 
 require "../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
-require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
-
-require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
-//require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -62,6 +54,13 @@ require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
+require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
+
+require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
+//require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
 
 $user = new User($db);
 if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != '') {
@@ -233,7 +232,7 @@ if (isset($baseUri)) {
 
 // Add authentication function
 if ((!getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')
-	|| !preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
+	|| !preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', Sabre\Uri\normalize($_SERVER["PHP_SELF"])))
 	&& !preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
 ) {
 	//var_dump($_SERVER["QUERY_STRING"]);exit;

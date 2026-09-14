@@ -34,11 +34,11 @@ There is a lot of different solutions to install Dolibarr.
 
 ### Using packages 
 
-If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge) :
+If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just a few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge):
 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
 - [DoliDeb for Debian, Ubuntu](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
-- DoliRpm for Red Hat, Fedora, OpenSuse, Mandriva or Mageia
+- DoliRpm for Red Hat, Fedora, openSUSE, Mandriva or Mageia
 - The Docker image (see chapter "Using Docker")
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
@@ -88,11 +88,11 @@ Dolibarr supports upgrading, usually without the need for any (commercial) suppo
 
 Follow these step-by-step instructions to seamlessly upgrade Dolibarr to the latest version:
 
-- At first make a backup of your Dolibarr files & then [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
+- First, make a backup of your Dolibarr files, then see [the upgrade guide](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
 - Verify that your installed PHP version is supported by the new version [see PHP support](https://wiki.dolibarr.org/index.php/Releases).
 - Overwrite all old files from the 'dolibarr' directory with files provided in the new version's package.
-- At your next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
-  If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file in the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
+- On your next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
+  If an `install.lock` file exists (which locks any other upgrade process), the application will ask you to remove the file manually (you should find the `install.lock` file in the directory used to store generated and uploaded documents; in most cases, this is the directory called "*documents*").
 
 
 ## WHAT'S NEW
@@ -242,13 +242,13 @@ Administrator, user, developer and translator's documentation are available alon
 ## CONTRIBUTING AND RELEASE PROCESS
 
 This project exists thanks to all the people who contribute.
-Please read the instructions on how to contribute (report a bug/error, a feature request, send code, ...)  [[Contributing](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)]
+Please read the instructions on how to contribute (report a bug/error, a feature request, send code, ...)  [Contributing](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)
 
 A View on Contributors:
 
 [![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
 
-The release process is described into the file dev/build/makepack-howto.md
+The release process is described in the file dev/build/makepack-howto.md
 
 
 ## CREDITS
@@ -275,4 +275,4 @@ Follow Dolibarr project on:
 
 ## Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here. 🙏 [[Become a sponsor/backer](https://opencollective.com/dolibarr#backer)]
+Support this project by becoming a sponsor. Your logo will show up here. 🙏 [Become a sponsor/backer](https://opencollective.com/dolibarr#backer)]
