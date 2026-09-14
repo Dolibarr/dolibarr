@@ -2010,6 +2010,8 @@ if (!$conf->main_checkbox_left_column) {
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
+} elseif ($contextpage == 'poslist') {
+	print '<td class="liste_titre center actioncolumn"></td>';
 }
 print "</tr>\n";
 
@@ -2257,6 +2259,9 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
+} elseif ($contextpage == 'poslist') {
+	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center actioncolumn ');
+	$totalarray['nbfield']++;
 }
 
 print "</tr>\n";
@@ -2433,7 +2438,7 @@ if ($num > 0) {
 			$j = 0;
 			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'"';
 			if ($contextpage == 'poslist') {
-				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
+				print ' onclick="if (event.target.closest(\'.dropdown, .actioncolumn, a, input\')) return; parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
 				if (strpos($obj->ref, 'PROV') !== false) {
 					//If is a draft invoice, load var to be able to add products
 					$place = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
@@ -3167,6 +3172,15 @@ if ($num > 0) {
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
+			} elseif ($contextpage == 'poslist') {
+				print '<td class="nowrap center actioncolumn">';
+				if ($obj->module_source == 'takepos' && in_array($obj->status, array(Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED)) && $obj->type != Facture::TYPE_CREDIT_NOTE && $user->hasRight('takepos', 'run')) {
+					print '<a class="valignmiddle" href="#" onclick="event.stopPropagation(); parent.CloneTicket('.((int) $obj->id).'); parent.$.colorbox.close(); return false;" title="'.dol_escape_htmltag($langs->trans('CloneTicket')).'">'.img_picto($langs->trans('CloneTicket'), 'clone').'</a>';
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
 			}
 
 			print "</tr>\n";
@@ -3190,6 +3204,9 @@ if ($num == 0) {
 		if (!empty($val['checked'])) {
 			$colspan++;
 		}
+	}
+	if ($contextpage == 'poslist' && $conf->main_checkbox_left_column) {
+		$colspan++;
 	}
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
