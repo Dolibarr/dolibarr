@@ -935,17 +935,17 @@ class Product extends CommonObject
 	public function check()
 	{
 		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-			$this->ref = trim($this->ref);
+			$this->ref = trim((string) $this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
 		}
 
 		$err = 0;
-		if (dol_strlen(trim($this->ref)) == 0) {
+		if (dol_strlen(trim((string) $this->ref)) == 0) {
 			$err++;
 		}
 
-		if (dol_strlen(trim($this->label)) == 0) {
+		if (dol_strlen(trim((string) $this->label)) == 0) {
 			$err++;
 		}
 
@@ -971,16 +971,16 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-			$this->ref = trim($this->ref);
+			$this->ref = trim((string) $this->ref);
 		} else {
-			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim((string) $this->ref)));
 		}
-		$this->label = trim($this->label);
+		$this->label = trim((string) $this->label);
 		$this->price_ttc = (float) price2num($this->price_ttc);
 		$this->price = (float) price2num($this->price);
 		$this->price_min_ttc = (float) price2num($this->price_min_ttc);
 		$this->price_min = (float) price2num($this->price_min);
-		$this->price_label = trim($this->price_label);
+		$this->price_label = trim((string) $this->price_label);
 		if (empty($this->tva_tx)) {
 			$this->tva_tx = 0;
 		}
@@ -1075,7 +1075,7 @@ class Product extends CommonObject
 		}
 
 		// Barcode value
-		$this->barcode = trim($this->barcode);
+		$this->barcode = trim((string) $this->barcode);
 		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
 		// Check parameters
 		if (empty($this->label)) {
@@ -1316,7 +1316,7 @@ class Product extends CommonObject
 		$this->errors = array();
 
 		$result = 0;
-		$this->ref = trim($this->ref);
+		$this->ref = trim((string) $this->ref);
 
 		if (!$this->ref) {
 			$this->errors[] = 'ErrorBadRef';
@@ -1413,12 +1413,12 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-			$this->ref = trim($this->ref);
+			$this->ref = trim((string) $this->ref);
 		} else {
-			$this->ref = dol_string_nospecial(trim($this->ref));
+			$this->ref = dol_string_nospecial(trim((string) $this->ref));
 		}
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
 		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : null);
 		$this->net_measure = price2num($this->net_measure);
@@ -1503,12 +1503,12 @@ class Product extends CommonObject
 		// Barcode value
 		$this->barcode = (empty($this->barcode) ? '' : trim($this->barcode));
 
-		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
+		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
 		$this->accountancy_code_buy_intra = (!empty($this->accountancy_code_buy_intra) ? trim($this->accountancy_code_buy_intra) : '');
-		$this->accountancy_code_buy_export = trim($this->accountancy_code_buy_export);
-		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
-		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
-		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
+		$this->accountancy_code_buy_export = trim((string) $this->accountancy_code_buy_export);
+		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
+		$this->accountancy_code_sell_intra = trim((string) $this->accountancy_code_sell_intra);
+		$this->accountancy_code_sell_export = trim((string) $this->accountancy_code_sell_export);
 
 		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
 		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
@@ -1943,6 +1943,21 @@ class Product extends CommonObject
 				if (!$error && ($prodcomb->fetchByFkProductChild($this->id) > 0) && ($prodcomb->delete($user) < 0)) {
 					$error++;
 					$this->errors[] = 'Error deleting child combination';
+				}
+			}
+
+			// Rows may survive the deactivation of the module, and the foreign key on
+			// fk_product_parent would then refuse to delete the product. Only the links are
+			// removed here, never a product: deleting variant products silently is the job of the
+			// block above, which runs when the user can actually see them. Missing tables are
+			// tolerated by deleteLinksByProduct(): they only exist once the module was enabled.
+			if (!$error) {
+				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+
+				$prodcomb = new ProductCombination($this->db);
+				if ($prodcomb->deleteLinksByProduct($this->id) < 0) {
+					$error++;
+					$this->errors[] = $prodcomb->error;
 				}
 			}
 
@@ -6582,6 +6597,7 @@ class Product extends CommonObject
 		$horizoninDays = getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS');
 		$dateofvirtualstockmin = 0;
 		if (empty($dateofvirtualstock) && $horizoninDays !== '') {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';	// dol_time_plus_duree/dol_get_first_hour are not loaded in CLI/webservice contexts
 			$dateofvirtualstock = dol_time_plus_duree(dol_now(), max(0, (int) $horizoninDays), 'd');
 			$dateofvirtualstockmin = dol_get_first_hour(dol_now());	// The horizon is a window: supply expected before today did not arrive as planned
 		}

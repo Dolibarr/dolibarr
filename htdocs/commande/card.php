@@ -279,8 +279,9 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
-		// Remove order
-		$result = $object->delete($user);
+		// Remove order. idwarehouse stays empty when the user picked "no stock action", and delete()
+		// then leaves the stock untouched, which is the plain database cleanup case.
+		$result = $object->delete($user, 0, GETPOSTINT('idwarehouse'));
 		if ($result > 0) {
 			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
@@ -2673,9 +2674,9 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
 
 			if (isModEnabled("multicurrency")) {
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code).'</td></tr>';
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code)."</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code)."</td></tr>";
 			}
 		}
 
@@ -2769,7 +2770,7 @@ if ($action == 'create' && $usercancreate) {
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOSTINT('idwarehouse') ? GETPOSTINT('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOSTINT('idwarehouse') ? GETPOSTINT('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"), 0, $forcecombo))
 				);
 			}
 
@@ -2947,7 +2948,8 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Confirmation of cancellation
-		if ($action == 'cancel') {
+		// Both actions may put the stock back, so they share the warehouse question
+		if ($action == 'cancel' || $action == 'delete') {
 			$qualified_for_stock_change = 0;
 			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
@@ -2955,7 +2957,16 @@ if ($action == 'create' && $usercancreate) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
-			$text = $langs->trans('ConfirmCancelOrder', $object->ref);
+			if ($action == 'cancel') {
+				$text = $langs->trans('ConfirmCancelOrder', $object->ref);
+				$title = $langs->trans("Cancel");
+				$confirmaction = 'confirm_cancel';
+			} else {
+				$text = $langs->trans('ConfirmDeleteOrder', $object->ref);
+				$title = $langs->trans('DeleteOrder');
+				$confirmaction = 'confirm_delete';
+			}
+
 			$formquestion = array();
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
@@ -2971,7 +2982,7 @@ if ($action == 'create' && $usercancreate) {
 				);
 			}
 
-			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans("Cancel"), $text, 'confirm_cancel', $formquestion, 0, 1);
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $title, $text, $confirmaction, $formquestion, 0, 1);
 		}
 
 		// Confirmation to delete line

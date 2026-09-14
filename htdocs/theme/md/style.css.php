@@ -963,6 +963,10 @@ input.pageplusone {
 .opacitytransp {
 	opacity: 0;
 }
+.spantitle {
+	opacity: 0.5;
+	font-size: 0.95em;
+}
 .noopacity {
 	opacity: unset !important;
 }
@@ -1251,8 +1255,14 @@ textarea.centpercent {
 	font-size: 95%;
 	font-weight: bold;
 }
+.tdlineheightsmall {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	vertical-align: middle;
+}
 .lineheightsmall {
 	line-height: 1.2em;
+	vertical-align: middle;
 }
 .lineheightmedium {
 	line-height: 1.5em;

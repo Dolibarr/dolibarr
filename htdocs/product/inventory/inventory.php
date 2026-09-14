@@ -805,11 +805,16 @@ if ($action == 'updatebyscaning') {
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
 							if(product.hasOwnProperty("reelqty")){
 								$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-									data: { "token":"'.currentToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
+									data: { "token":"'.currentToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":\''.dol_escape_js((string) $object->id).'\', "fk_product":product.fk_product, "reelqty":product.reelqty},
 									type: \'POST\',
 									async: false,
 									success: function(response) {
-										if (typeof response === "string") { response = JSON.parse(response); }
+										if (typeof response == "object") {
+											console.log("response is already type object, no need to parse it");
+										} else {
+											console.log("response is type "+(typeof response));
+											response = JSON.parse(response);
+										}
 										if(response.status == "success"){
 											console.log(response.message);
 											$("<input type=\'text\' value=\'"+product.Qty+"\' />")
@@ -829,33 +834,33 @@ if ($action == 'updatebyscaning') {
 							}
 						}
 					});
-					jQuery("#scantoolmessage").text("'.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\n");
+					jQuery("#scantoolmessage").text(\''.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\'+"\n");
 					/* document.forms["formrecord"].submit(); */
 				} else {
 					let stringerror = "";
 					if (Object.keys(errortab1).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': \';
 						errortab1.forEach(element => {
 							stringerror += (element + ", ")
 						});
 						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 					}
 					if (Object.keys(errortab2).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': \';
 						errortab2.forEach(element => {
 							stringerror += (element + ", ")
 						});
 						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 					}
 					if (Object.keys(errortab3).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': \';
 						errortab3.forEach(element => {
 							stringerror += (element + ", ")
 						});
 						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 					}
 					if (Object.keys(errortab4).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': \';
 						errortab4.forEach(element => {
 							stringerror += (element + ", ")
 						});
@@ -863,7 +868,7 @@ if ($action == 'updatebyscaning') {
 					}
 
 					jQuery("#scantoolmessage").html(\''.dol_escape_js($langs->transnoentities("ErrorOnElementsInventory")).'\' + stringerror);
-					//alert("'.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n" + stringerror);
+					//alert(\''.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n\' + stringerror);
 				}
 			}
 
@@ -880,7 +885,12 @@ if ($action == 'updatebyscaning') {
 					type: \'POST\',
 					async: false,
 					success: function(response) {
-						if (typeof response === "string") { response = JSON.parse(response); }
+						if (typeof response == "object") {
+							console.log("response is already type object, no need to parse it");
+						} else {
+							console.log("response is type "+(typeof response));
+							response = JSON.parse(response);
+						}
 						if (response.status == "success"){
 							console.log(response.message);
 							if(!newproductrow){

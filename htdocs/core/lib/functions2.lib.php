@@ -2711,6 +2711,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'eventorganization';
 	} elseif ($moduleobject == 'holidays') {
 		$moduledirforclass = 'holiday';
+	} elseif ($moduleobject == 'resources' || $moduleobject == 'dolresources') {
+		$moduledirforclass = 'resource';
 	}
 
 	return $moduledirforclass;
@@ -3175,17 +3177,17 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 						}
 						?>
 						hash_algo: 'dol_hash-<?php echo $algo; ?>',
-						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
+						hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>,
 						version: '<?php echo (float) DOL_VERSION; ?>',
 						version_full: '<?php echo DOL_VERSION; ?>',
 						versionblockedlog: '<?php echo (float) getBlockedLogVersionToShow(); ?>',
 						versionblockedlog_full: '<?php echo getBlockedLogVersionToShow(); ?>',
 						instance_entity: '<?php echo (int) $conf->entity; ?>',
-						dbtype: '<?php echo dol_escape_js($db->type); ?>',
-						php_version: '<?php echo dol_escape_js(phpversion()); ?>',
-						os_version: '<?php echo dol_escape_js(version_os('smr')); ?>',
-						db_version: '<?php echo dol_escape_js(version_db()); ?>',
-						distrib: '<?php echo dol_escape_js($distrib); ?>',
+						dbtype: <?php echo "'".dol_escape_js($db->type)."'"; ?>,
+						php_version: <?php echo "'".dol_escape_js(phpversion())."'"; ?>,
+						os_version: <?php echo "'".dol_escape_js(version_os('smr'))."'"; ?>,
+						db_version: <?php echo "'".dol_escape_js(version_db())."'"; ?>,
+						distrib: <?php echo "'".dol_escape_js($distrib)."'"; ?>,
 						token: 'notrequired'
 					},
 					success: function (data, status, xhr) {   // success callback function (data contains body of response)
@@ -3195,7 +3197,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavefirstok ?>', token: '<?php echo currentToken(); ?>' },	// for update
+								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>, action: '<?php echo $constanttosavefirstok ?>', token: <?php echo "'".currentToken()."'"; ?> },	// for update
 							});
 					},
 					error: function (data,status,xhr) {   // error callback function
@@ -3205,7 +3207,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: '<?php echo $constanttosavelastko ?>', token: '<?php echo currentToken(); ?>' },
+								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>, action: '<?php echo $constanttosavelastko ?>', token: <?php echo "'".currentToken()."'"; ?> },
 							});
 					}
 				});

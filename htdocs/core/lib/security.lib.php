@@ -270,6 +270,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	if ($features == 'payment_vat') {
+		$tableandshare = 'payment_vat';
+		$parentfortableentity = 'fk_tva@tva';
+	}
 
 	// if commonObjectLine : Using many2one related commonObject
 	// @see commonObjectLine::parentElement
@@ -408,6 +412,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif ($feature == 'payment_sc') {
+			if (!$user->hasRight('tax', 'charges', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_vat') {
 			if (!$user->hasRight('tax', 'charges', 'lire')) {
 				$readok = 0;
 				$nbko++;

@@ -264,10 +264,11 @@ interface Database
 	 * @param   string 			$passwd 					Password
 	 * @param   string 			$name 						Name of database (not used for mysql, used for pgsql)
 	 * @param   int    			$port 						Port of database server
+	 * @param   bool			$forcenew					Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (relevant for pgsql only, see DoliDBPgsql::connect())
 	 * @return  false|resource|mysqli|mysqliDoli|PgSql\Connection|SQLite3    Database access handler
 	 * @see     close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0);
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false);
 
 	/**
 	 *    Define limits and offset of request

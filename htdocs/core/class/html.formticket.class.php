@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023-2025  Charlene Benke	        <charlene.r@patas-monkey.com>
@@ -396,7 +396,7 @@ class FormTicket
 
                     	jQuery("#email").change(function() {
                             jQuery("#contact_search_line").show();
-                            jQuery("#contact_search_result").html("'.dol_escape_js($langs->trans('Select2SearchInProgress')).'");
+                            jQuery("#contact_search_result").html(\''.dol_escape_js($langs->trans('Select2SearchInProgress')).'\');
                             jQuery("#contact_id").val("");
                             jQuery("#contact_lastname").val("");
                             jQuery("#contact_firstname").val("");
@@ -404,7 +404,7 @@ class FormTicket
                             jQuery("#contact_phone").val("");
 
                             jQuery.getJSON(
-                                "'.dol_escape_js(dol_buildpath('/public/ticket/ajax/ajax.php', 1)).'",
+                                \''.dol_escape_js(dol_buildpath('/public/ticket/ajax/ajax.php', 1)).'\',
 								{
 									action: "getContacts",
 									token: "'.currentToken().'",
@@ -427,7 +427,7 @@ class FormTicket
 									}
 								}
                             ).fail(function(jqxhr, textStatus, error) {
-    							var error_msg = "'.dol_escape_js($langs->trans('ErrorAjaxRequestFailed')).'"+" ["+textStatus+"] : "+error;
+    							var error_msg = \''.dol_escape_js($langs->trans('ErrorAjaxRequestFailed')).'\'+" ["+textStatus+"] : "+error;
                                 jQuery("#contact_search_result").html("<span class=\"error\">"+error_msg+"</span>");
                             });
                         });
@@ -1256,7 +1256,7 @@ class FormTicket
 							}
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid - 1) : '').'").val() == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid - 1) : '').'").val() == \''.dol_escape_js($groupcodefather).'\'){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show child tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -1514,7 +1514,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1573,7 +1573,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {

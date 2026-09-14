@@ -706,14 +706,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							});
 
 							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
-								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
-								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
-								console.log("Set state_id to '.dol_escape_js((string) $objsoc->state_id).'");
-								$(\'select[name="state_id"]\').val("'.dol_escape_js((string) $objsoc->state_id).'").trigger("change");
+								$(\'textarea[name="address"]\').val(\''.dol_escape_js($objsoc->address).'\');
+								$(\'input[name="zipcode"]\').val(\''.dol_escape_js($objsoc->zip).'\');
+								$(\'input[name="town"]\').val(\''.dol_escape_js($objsoc->town).'\');
+								console.log(\'Set state_id to '.dol_escape_js((string) $objsoc->state_id).'\');
+								$(\'select[name="state_id"]\').val(\''.dol_escape_js((string) $objsoc->state_id).'\').trigger("change");
 								/* set country at end because it will trigger page refresh */
-								console.log("Set country id to '.dol_escape_js((string) $objsoc->country_id).'");
-								$(\'select[name="country_id"]\').val("'.dol_escape_js((string) $objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
+								console.log(\'Set country id to '.dol_escape_js((string) $objsoc->country_id).'\');
+								$(\'select[name="country_id"]\').val(\''.dol_escape_js((string) $objsoc->country_id).'\').trigger("change");   /* trigger required to update select2 components */
                             });
 						})'."\n";
 				print '</script>'."\n";
@@ -1017,14 +1017,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							});
 
 							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
-								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
-								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
-								console.log("Set state_id to '.dol_escape_js((string) $objsoc->state_id).'");
-								$(\'select[name="state_id"]\').val("'.dol_escape_js((string) $objsoc->state_id).'").trigger("change");
+								$(\'textarea[name="address"]\').val(\''.dol_escape_js($objsoc->address).'\');
+								$(\'input[name="zipcode"]\').val(\''.dol_escape_js($objsoc->zip).'\');
+								$(\'input[name="town"]\').val(\''.dol_escape_js($objsoc->town).'\');
+								console.log(\'Set state_id to '.dol_escape_js((string) $objsoc->state_id).'\');
+								$(\'select[name="state_id"]\').val(\''.dol_escape_js((string) $objsoc->state_id).'\').trigger("change");
 								/* set country at end because it will trigger page refresh */
-								console.log("Set country id to '.dol_escape_js((string) $objsoc->country_id).'");
-								$(\'select[name="country_id"]\').val("'.dol_escape_js((string) $objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
+								console.log(\'Set country id to '.dol_escape_js((string) $objsoc->country_id).'\');
+								$(\'select[name="country_id"]\').val(\''.dol_escape_js((string) $objsoc->country_id).'\').trigger("change");   /* trigger required to update select2 components */
 							});
 						})'."\n";
 				print '</script>'."\n";

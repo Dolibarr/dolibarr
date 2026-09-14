@@ -238,61 +238,230 @@ class ToolApiBridge extends McpTool
 			'label' => 'commercial proposals (quotes / devis)',
 			'methods' => [
 				'index' => [
+					'default_properties' => 'id,ref,socid,datep,fin_validite,total_ht,total_ttc,fk_statut',
+					'description' => "Statuses (t.fk_statut): 0=draft, 1=validated (open, awaiting answer), 2=signed/accepted, 3=not signed/refused, 4=billed. Dates are unix timestamps: datep (proposal date), fin_validite (validity end — expired open proposals: fk_statut=1 plus sqlfilters \"(t.fin_validite:<:'YYYY-MM-DD')\"). Useful sqlfilters fields: t.ref, t.datep, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
 					'params' => [
-						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5')."
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'loadlinkedobjects' => "1 to include linked objects (orders, invoices) — slower, default 0.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many proposals match."
 					]
 				],
-				'get' => []
+				'get' => [
+					'description' => "One proposal with its lines (product, qty, unit price, discount, line totals), status and validity date.",
+					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One proposal by its exact reference (e.g. 'PR2401-0001').",
+					'params' => ['ref' => "Exact proposal reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				]
 			]
 		],
 		'tickets' => [
 			'label' => 'support tickets',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,track_id,subject,fk_soc,fk_statut,severity_code,type_code,datec',
+					'description' => "Statuses (t.fk_statut): 0=not read, 1=read, 2=assigned, 3=in progress, 5=needs more info, 7=waiting, 8=closed, 9=canceled. Open tickets = fk_statut < 8. Severity in severity_code (LOW, NORMAL, HIGH, BLOCKING), nature in type_code (COM=commercial, ISSUE=incident, ...). Useful sqlfilters fields: t.subject, t.fk_statut, t.severity_code, t.type_code, t.datec (creation), t.fk_user_assign (assigned user rowid).",
+					'params' => [
+						'socid' => "Third-party rowid to restrict tickets to one customer (0 = all).",
+						'loadcontacts' => "1 to include linked contacts per ticket, 0 (default, faster) without.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One ticket with its subject, full message, status, severity, assigned user and linked third party. The public tracking id is in track_id."
+				],
+				'getByTrackId' => [
+					'suffix' => 'get_by_track_id',
+					'description' => "One ticket by its public tracking id (the hash customers receive by email).",
+					'params' => ['track_id' => "Public tracking id of the ticket."]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One ticket by its exact internal reference (e.g. 'TS2401-0001').",
+					'params' => ['ref' => "Exact ticket reference."]
+				]
+			]
 		],
 		'projects' => [
 			'label' => 'projects (including opportunities/leads)',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,title,fk_soc,public,date_start,date_end,fk_statut,opp_status,opp_amount',
+					'description' => "Statuses (t.fk_statut): 0=draft, 1=open, 2=closed. A project used as a sales opportunity carries opp_status (pipeline step rowid), opp_percent (probability) and opp_amount. Dates are unix timestamps: date_start (dateo), date_end (datee). Useful sqlfilters fields: t.ref, t.title, t.fk_soc, t.fk_statut, t.dateo, t.datee, t.public (1=visible to everyone). Tasks of a project: use api_tasks_list with sqlfilters \"(t.fk_projet:=:'ID')\".",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5').",
+						'category' => "Rowid of a project category (tag) to restrict the list to.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One project with its dates, status, budget, opportunity data and linked third party."
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One project by its exact reference (e.g. 'PJ2401-0001').",
+					'params' => ['ref' => "Exact project reference."]
+				]
+			]
 		],
 		'tasks' => [
 			'label' => 'project tasks',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,label,fk_projet,progress,planned_workload,duration_effective,date_start,date_end',
+					'description' => "Tasks belong to a project (fk_projet — filter one project with sqlfilters \"(t.fk_projet:=:'ID')\"). progress is a percentage (0-100); planned_workload and duration_effective (time already spent) are in SECONDS — divide by 3600 for hours. fk_task_parent > 0 for subtasks. Useful sqlfilters fields: t.label, t.fk_projet, t.progress, t.dateo (start), t.datee (end).",
+					'params' => [
+						'includetimespent' => "1 to also load the time-spent summary per task (slower).",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One task with its project, planned workload, progress and dates (durations in seconds).",
+					'params' => ['includetimespent' => "1 to include the detail of time spent records."]
+				],
+				'getTimespent' => [
+					'suffix' => 'timespent_list',
+					'description' => "Time records logged on one task: date, duration in seconds, user and note. Sum task_duration for the total.",
+					'params' => ['id' => "Rowid of the task."]
+				]
+			]
 		],
 		'agendaevents' => [
 			'label' => 'agenda / calendar events (meetings, calls)',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,label,type_code,datep,datef,fulldayevent,percentage,fk_soc,userownerid',
+					'description' => "Default sortfield is t.id — pass sortfield 't.datep' with sortorder 'ASC' for chronological order. Nature in type_code (AC_RDV=meeting, AC_TEL=phone call, AC_EMAIL=email, AC_OTH=other, AC_OTH_AUTO=automatic log). percentage: -1 = plain event, 0-99 = to-do in progress, 100 = done. Dates are unix timestamps: datep (start), datef (end). Upcoming events: sqlfilters \"(t.datep:>=:'YYYY-MM-DD')\". Other useful fields: t.label, t.fk_soc, t.fk_element/t.elementtype (linked business object).",
+					'params' => [
+						'user_ids' => "Comma-separated user rowids to restrict to events owned by these users (e.g. '1,3').",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One event with its type, start/end dates, owner, linked third party/contact and note."
+				]
+			]
 		],
 		'interventions' => [
 			'label' => 'field service interventions',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,fk_statut,description,datec,duration',
+					'description' => "Statuses (t.fk_statut): 0=draft, 1=validated, 2=billed, 3=done/closed. duration is in SECONDS (divide by 3600 for hours). Useful sqlfilters fields: t.ref, t.fk_soc, t.fk_statut, t.datec, t.description.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5').",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One intervention with its lines (each line = one on-site work entry with date, duration in seconds and description)."
+				]
+			]
 		],
 		'contracts' => [
 			'label' => 'contracts (recurring services)',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,date_contrat,statut',
+					'description' => "Contract statuses (t.statut): 0=draft, 1=validated. What matters is usually the LINE status (each line is one service): 0=inactive/draft, 4=active/running, 5=closed. Set withLines=false for lists (lines are large), then read one contract with api_contracts_get or its lines with api_contracts_lines_list. Useful sqlfilters fields: t.ref, t.fk_soc, t.statut, t.date_contrat.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5').",
+						'withLines' => "false to omit the service lines from each record (recommended for lists).",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One contract with its service lines: per line fk_product, description, date_start/date_end (unix timestamps) and statut (0=inactive, 4=active, 5=closed).",
+					'params' => ['withLines' => "false to omit the lines."]
+				],
+				'getLines' => [
+					'suffix' => 'lines_list',
+					'description' => "Service lines of one contract, with their own pagination and sqlfilters (fields prefixed 'd.', e.g. \"(d.statut:=:'4')\" for active services).",
+					'params' => ['id' => "Rowid of the contract."]
+				]
+			]
 		],
 		'members' => [
 			'label' => 'foundation/association members',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,firstname,lastname,societe,email,typeid,statut,datefin',
+					'description' => "Statuses (t.statut): -1=draft, 1=validated (member), 0=membership terminated (resiliated), -2=excluded. Whether the subscription is up to date is in datefin (unix timestamp of the paid-up end date): late members = statut 1 plus sqlfilters \"(t.datefin:<:'YYYY-MM-DD')\" (or datefin null). Useful sqlfilters fields: t.firstname, t.lastname, t.societe, t.email, t.statut, t.datefin.",
+					'params' => [
+						'typeid' => "Rowid of a member type to restrict the list to.",
+						'category' => "Rowid of a member category (tag) to restrict the list to.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One member with identity, member type, status, linked third party and paid-up end date (datefin)."
+				],
+				'getSubscriptions' => [
+					'suffix' => 'subscriptions_list',
+					'description' => "Subscription (membership fee) history of one member: period start/end and amount per payment.",
+					'params' => ['id' => "Rowid of the member."]
+				]
+			]
 		],
 		'subscriptions' => [
 			'label' => 'member subscriptions',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'description' => "All membership fee payments across members: fk_adherent (member rowid), dateh (period start), datef (period end), amount. NB: the default sortfield here is 'dateadh' WITHOUT the 't.' prefix (API quirk). To get the fees of one member prefer api_members_subscriptions_list.",
+					'params' => [
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One subscription payment with its member, period and amount."
+				]
+			]
 		],
 		'stockmovements' => [
 			'label' => 'stock movements (in/out/transfer history)',
 			'methods' => [
 				'index' => [
-					'description' => "History of physical stock changes; each movement carries product, warehouse, qty (signed) and date."
+					'default_properties' => 'id,product_id,warehouse_id,qty,date,type,label,inventorycode',
+					'description' => "History of physical stock changes; each movement carries product_id, warehouse_id, qty (SIGNED: positive=in, negative=out), date and label. Movements of one product: sqlfilters \"(t.fk_product:=:'ID')\"; of one warehouse: \"(t.fk_entrepot:=:'ID')\"; over a period: \"(t.datem:>=:'YYYY-MM-DD')\". The source document (reception, shipment, inventory...) is in origintype/fk_origin when set.",
+					'params' => [
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
 				],
 				'get' => []
 			]
 		],
 		'warehouses' => [
 			'label' => 'warehouses',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'description' => "Warehouses/locations: ref (name), lieu (short location), statut (1=open, 0=closed). Search by name with sqlfilters on t.ref. Per-product stock by warehouse is NOT here — use api_products_get with includestockdata=1.",
+					'params' => [
+						'category' => "Rowid of a warehouse category (tag) to restrict the list to.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One warehouse with its address, status and description."
+				]
+			]
 		],
 		'expensereports' => [
 			'label' => 'employee expense reports (notes de frais)',
-			'methods' => ['index' => [], 'get' => []]
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,fk_user_author,date_debut,date_fin,total_ht,total_ttc,fk_statut',
+					'description' => "Statuses (t.fk_statut): 0=draft, 2=validated (waiting approval), 4=canceled, 5=approved, 6=paid, 99=refused. The employee is fk_user_author (a USER rowid, not a third party). Period: date_debut/date_fin (unix timestamps). Useful sqlfilters fields: t.ref, t.fk_user_author, t.fk_statut, t.date_debut, t.total_ttc.",
+					'params' => [
+						'user_ids' => "Comma-separated user rowids to restrict to the reports of these employees (e.g. '1,3').",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
+					]
+				],
+				'get' => [
+					'description' => "One expense report with its lines: per line the date, expense type code (type_fees_code: TRA_TRIP=transport, TRA_MEAL=meal, ...), VAT and amounts."
+				]
+			]
 		],
 		'products' => [
 			'label' => 'products and services catalog',
@@ -359,11 +528,11 @@ class ToolApiBridge extends McpTool
 	 * @var array<string, string>
 	 */
 	private $commonParamDocs = [
-		'sortfield' => "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.ref', 't.datec').",
+		'sortfield' => "Field to sort on, prefixed with 't.' (e.g. 't.rowid', 't.ref', 't.datec'). Use the SQL column names: creation date is 't.datec' (NEVER 'date_creation') and last modification 't.tms' (never 'date_modification').",
 		'sortorder' => "Sort direction: 'ASC' or 'DESC'.",
 		'limit' => "Maximum number of records to return.",
 		'page' => "Zero-based page index for pagination.",
-		'sqlfilters' => "Universal search filter. Example: \"(t.ref:like:'PR%') and (t.datec:>=:'2026-01-01')\". Field names are prefixed with 't.'; operators: =, !=, <, <=, >, >=, like, is; combine clauses with 'and'/'or' and parentheses.",
+		'sqlfilters' => "Universal search filter. Syntax: (t.field:operator:'value'); operators: =, !=, <, <=, >, >=, like, is; combine clauses with 'and'/'or' and parentheses. Example: \"(t.ref:like:'PR%') and (t.datec:>=:'2026-01-01')\". 'like' is case-insensitive; the IN operator is NOT supported (use 'or'); dates as 'YYYY-MM-DD'.",
 		'properties' => "Comma-separated list of properties to include in the response, to reduce its size (e.g. 'id,ref,label').",
 		'id' => "Rowid (numeric technical id) of the record."
 	];
@@ -680,10 +849,18 @@ class ToolApiBridge extends McpTool
 			$ptype = isset($paramDocs[$pname]) ? $this->docTypeToJson($paramDocs[$pname]['type']) : 'string';
 			// Parameter doc priority: hand-written per-method enrichment, then the
 			// description guessed from the docblock, then the shared common docs.
+			// Exception for the two syntax-bearing params (sqlfilters, sortfield):
+			// their API docblocks carry a thin per-endpoint example that would win
+			// over — and hide — the full syntax contract (operators, and/or, the
+			// unsupported IN, the datec/tms column names), so there the common doc
+			// is APPENDED to the docblock description instead of being shadowed.
 			if (isset($meta['params'][$pname])) {
 				$pdesc = $meta['params'][$pname];
 			} elseif (!empty($paramDocs[$pname]['desc'])) {
 				$pdesc = $paramDocs[$pname]['desc'];
+				if (in_array($pname, ['sqlfilters', 'sortfield'], true) && !empty($this->commonParamDocs[$pname])) {
+					$pdesc = rtrim($pdesc, '. ').'. '.$this->commonParamDocs[$pname];
+				}
 			} else {
 				$pdesc = $this->commonParamDocs[$pname] ?? '';
 			}

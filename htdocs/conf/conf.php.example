@@ -506,6 +506,16 @@ $dolibarr_cron_allow_cli='0';
 // Examples:
 // $dolibarr_main_limit_users='0';
 
+// dolibarr_main_limit_sessions_per_user
+// ====================================
+// Can set a limit on the number of concurrent sessions per user. Only effective when
+// sessions are stored in database ($php_session_save_handler='db'). When a user opens a
+// new session above this limit, its oldest sessions are removed, which logs those other
+// browsers out on their next request. Set it to 1 to allow a single session per user.
+// Default value: 0 (unlimited)
+// Examples:
+// $dolibarr_main_limit_sessions_per_user='0';
+
 // dolibarr_strict_mode
 // ====================
 // Set this to 1 to enable the PHP strict mode. For dev environment only.

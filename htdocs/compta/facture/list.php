@@ -2953,32 +2953,39 @@ if ($num > 0) {
 			// Currency rate
 			if (!empty($arrayfields['f.multicurrency_tx']['checked'])) {
 				print '<td class="nowraponall">';
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->id, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
+			$currencykey = !empty($obj->multicurrency_code) ? $obj->multicurrency_code : $conf->currency;
 			// Amount HT
 			if (!empty($arrayfields['f.multicurrency_total_ht']['checked'])) {
 				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ht)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
+					$totalarray['pospercurrency'][$totalarray['nbfield']] = 'f.multicurrency_total_ht';
 				}
+				$totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ht'] = ($totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ht'] ?? 0) + $obj->multicurrency_total_ht;
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.multicurrency_total_vat']['checked'])) {
 				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_vat)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
+					$totalarray['pospercurrency'][$totalarray['nbfield']] = 'f.multicurrency_total_vat';
 				}
+				$totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_vat'] = ($totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_vat'] ?? 0) + $obj->multicurrency_total_vat;
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.multicurrency_total_ttc']['checked'])) {
 				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ttc)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
+					$totalarray['pospercurrency'][$totalarray['nbfield']] = 'f.multicurrency_total_ttc';
 				}
+				$totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ttc'] = ($totalarray['valpercurrency'][$currencykey]['f.multicurrency_total_ttc'] ?? 0) + $obj->multicurrency_total_ttc;
 			}
 			// Dyn amount
 			if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {

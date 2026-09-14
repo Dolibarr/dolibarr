@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,16 @@
  * @var Translate $langs
  *
  * @var string $action
- * @var string $elementtype
+ * @var ?string $elementtype
  * @var string $textobject
+ * @var ?string $pagekey
  */
+'
+ * @phan-var-force string $action
+ * @phan-var-force ?string $elementtype
+ * @phan-var-force string $textobject
+ * @phan-var-force ?string $pagekey
+';
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -153,7 +160,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				langfile.removeAttr('disabled');required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); emptyonclone.removeAttr('disabled'); list.removeAttr('disabled');
 			}
 		}
-		init_typeoffields('<?php echo dol_escape_js(GETPOST('type', 'alpha')); ?>');
+		init_typeoffields(<?php echo "'".dol_escape_js(GETPOST('type', 'alpha'))."'"; ?>);
 		jQuery("#type").change(function() {
 			init_typeoffields($(this).val());
 		});
@@ -244,11 +251,11 @@ if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 <!-- AI Prompt -->
 <tr class="extra_ai_prompt">
 	<td><?php
-	if ($elementtype == "projet") {
-		$elementtype = "project";
+	if ($pagekeyforurl == "projet") {
+		$pagekeyforurl = "project";
 	}
-	$elementprop = getElementProperties($elementtype);
-	$object = fetchObjectByElement(0, $elementtype);
+	$elementprop = getElementProperties((string) $pagekeyforurl);
+	$object = fetchObjectByElement(0, (string) $pagekeyforurl);
 	if ($elementprop["module"] == "adherent") {
 		$elementprop["module"] = "member";
 	}
@@ -282,7 +289,7 @@ if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 <!-- Empty on clone -->
 <tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo((GETPOST('emptyonclone', 'alpha')) ? ' checked' : ''); ?>></td></tr>
 <!-- Personal Data (RGPD) -->
-<tr class="extra_personal_data"><td><?php echo $form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")); ?></td><td class="valeur"><input id="personal_data" type="checkbox" name="personal_data" value="1"<?php echo (GETPOST('personal_data', 'alpha') ? ' checked' : ''); ?>></td></tr>
+<tr class="extra_personal_data"><td><?php echo $form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")); ?></td><td class="valeur"><input id="personal_data" type="checkbox" name="personal_data" value="1"<?php echo(GETPOST('personal_data', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
 </td><td class="valeur"><input id="list" class="minwidth200" type="text" name="list" value="<?php echo dol_escape_htmltag(GETPOSTISSET('list') ? GETPOST('list') : '1'); ?>"></td></tr>
