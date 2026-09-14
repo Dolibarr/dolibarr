@@ -1620,14 +1620,14 @@ function getNewsDetailsById($postId)
 
 	// Security: Filter by entity and published status
 	// Join with website table to get entity, and filter by entity and status
-	$sql = "SELECT p.title, p.description, p.date_creation, p.image, p.fk_user_creat, w.entity as website_entity
-            FROM ".MAIN_DB_PREFIX."website_page as p
-            INNER JOIN ".MAIN_DB_PREFIX."website as w ON p.fk_website = w.rowid
-            WHERE p.rowid = ".(intval($postId));
-	
+	$sql = "SELECT p.title, p.description, p.date_creation, p.image, p.fk_user_creat, w.entity as website_entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as p";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."website as w ON p.fk_website = w.rowid";
+	$sql .= " WHERE p.rowid = ".((int) $postId);
+
 	// Add entity filter
 	$sql .= " AND w.entity IN (".getEntity('website').")";
-	
+
 	// Only show published pages (status = 1) unless user has write permission
 	if (!$user->hasRight('website', 'write')) {
 		$sql .= " AND p.status = 1";
