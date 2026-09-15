@@ -482,8 +482,8 @@ class FactureFournisseur extends CommonInvoice
 			if (! $this->type) {
 				$this->type = self::TYPE_STANDARD;
 			}
-			$this->note_public = trim($this->note_public);
-			$this->note_private = trim($this->note_private);
+			$this->note_public = trim((string) $this->note_public);
+			$this->note_private = trim((string) $this->note_private);
 			$this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->title));
 
 			$this->array_options = $_facrec->array_options;
