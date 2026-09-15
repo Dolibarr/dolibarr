@@ -438,14 +438,15 @@ if ($resql) {
 				// Expense reports
 				//------------------------------------------
 				$sql = "SELECT er.rowid, er.ref, er.total_ht AS expense_report_total_ht, er.total_ttc AS expense_report_total_ttc,";
-				$sql .= " per.amount AS amount_payment,";
+				$sql .= " perer.amount AS amount_payment,";
 				$sql .= " erf.rowid AS row_id, erf.total_ht, erf.total_tva, erf.total_localtax1, erf.total_localtax2, erf.tva_tx, erf.total_ttc, erf.vat_src_code,";
 				$sql .= " ctf.accountancy_code,";
 				$sql .= " aa.label as accountancy_code_label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."expensereport_det as erf";
 				$sql .= " INNER JOIN ".$db->prefix()."expensereport as er ON er.rowid = erf.fk_expensereport";
-				$sql .= " INNER JOIN ".$db->prefix()."payment_expensereport as per ON per.fk_expensereport = er.rowid";
+				$sql .= " INNER JOIN ".$db->prefix()."paymentexpensereport_expensereport as perer ON perer.fk_expensereport = er.rowid";
+				$sql .= " INNER JOIN ".$db->prefix()."payment_expensereport as per ON per.rowid = perer.fk_payment";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = per.rowid AND bu.type = '".$db->escape($type)."'";
 				$sql .= " LEFT JOIN ".$db->prefix()."c_type_fees as ctf ON ctf.id = erf.fk_c_type_fees";
 				$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.account_number = ctf.accountancy_code";
