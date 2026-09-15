@@ -1117,7 +1117,7 @@ textarea.centpercent {
 	vertical-align: middle;
 }
 .lineheightsmall {
-	line-height: 1.2em;
+	line-height: 1.3em;
 	vertical-align: middle;
 }
 .lineheightmedium {
