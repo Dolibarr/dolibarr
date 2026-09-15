@@ -3,6 +3,52 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 24.0.1 compared to 24.0.0 *****
+
+FIX: $arrayfields used before definition in don/list.php
+FIX: #38963 enforce website write right on legacy filemanager (v18) (#39731)
+FIX: #39053 + compatibility with multicompany (#39648) prevent non-admin users deleting admin accounts (backport PR #39119)
+FIX: #39396 Reject enclosing leave requests (#39798)
+FIX: #39658 shorten accounting template FK name (#39688)
+FIX: #39690 Division by zero in turnover collected report (#39706)
+FIX: #39733 Map variant attribute elements (#39755)
+FIX: #39756 Use configured printer for template test (#39900)
+FIX: #39763 Default for product is "no template/doc" generated.
+FIX: #39768 Preserve template sender after attachment (#39918)
+FIX: #39816 Fix donation table creation
+FIX: #39848 Honor SEPA mandate output directory (#39857)
+FIX: #39933 localize edited line quantity (#39945)
+FIX: #39938 restore email sender field references (#39940)
+FIX: Access denied when changing account type on bank account creation form (#39931)
+FIX: Added support for the 'date' data type in the Form editfieldval class (#39815)
+FIX: Advanced target selector fails to insert too long links.
+FIX: Alignment for combolist of widgets
+FIX: An upload refused by dol_move_uploaded_file() was reported as a success (#40086)
+FIX: API setup, the switch to enable the count of API calls had no effect (#40093)
+FIX: Bug in tidy that change the LC_NUMERIC locale
+FIX: Cast price2num() result to float for mass payment remain to pay
+FIX: Chmod
+FIX: Clone link uses filesystem path instead of URL in various_payment/card.php (#39707)
+FIX: Combo list of partnership status is empty.
+FIX: Contract clone: third-party filter excluded pure supplier companies (#39696)
+FIX: Contract service lines have no background on card (#39937)
+FIX: Correct broken SQL concatenations (missing space/comma/AND) (#39616)
+FIX: CRFS on cheque deposit and bad filter
+FIX: cron list keep search filters after launching a job (#39611)
+FIX: Dictionary rows of another entity were editable from a child entity (#39742)
+FIX: Donation - Missing statistics page
+FIX: Enable multientity support for Localtax class (#39649)
+FIX: fetch_lines() wrongly ran date_start/date_end through jdate() (#39812)
+FIX: Fix #39830 Wrong hardcoded 'llx_' prefix on contratdet subqueries in contract list (#39832)
+FIX: Fix #39831 Wrong hardcoded 'llx_' prefix in API token list and ticket contact check (#39833)
+FIX: Fix fatal error in_array() on null in fourn/paiement/list.php (#39776)
+FIX: Hardcoded "llx_" table prefix in a few queries (#39837)
+FIX: Install SQL scripts that never created their table (#39836)
+FIX: Intervention - Missing new statistics presentation
+FIX: log too large
+FIX: manage event in select_company with AJAX search option on
+FIX: Mo::processBOM() ignores qty value for qty_frozen BOM lines (#39941)
+
 
 ***** ChangeLog for 24.0.0 compared to 23.0 *****
 

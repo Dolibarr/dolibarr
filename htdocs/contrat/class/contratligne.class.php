@@ -91,6 +91,11 @@ class ContratLigne extends CommonObjectLine
 	public $fk_product;
 
 	/**
+	 * @var int|null ID of parent line
+	 */
+	public $fk_parent_line;
+
+	/**
 	 * @var int 0 inactive, 4 active, 5 closed
 	 */
 	public $statut;

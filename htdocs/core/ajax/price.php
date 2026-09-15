@@ -63,7 +63,7 @@ top_httphead();
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Load original field value
-if (!empty($output) && isset($amount) && isset($tva_tx)) {
+if (!empty($output) && isset($amount) && $tva_tx !== '') {
 	$return = array();
 	$price = '';
 

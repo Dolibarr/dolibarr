@@ -175,7 +175,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 </script>
 
 <!-- Form to edit an extra field -->
-<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>&elementtype=<?php echo urlencode($pagekeyforurl); ?>" id="formeditextrafield" method="post">
+<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>&elementtype=<?php echo urlencode($pagekeyforurl); ?>" id="formeditextrafield" method="POST" spellcheck="false">
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="attrname" value="<?php echo dol_escape_htmltag($attrname); ?>">
 <input type="hidden" name="action" value="update">

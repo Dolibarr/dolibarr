@@ -83,7 +83,6 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
 $toselect = GETPOST('toselect', 'array:int');
-$arrayofselected = is_array($toselect) ? $toselect : array();
 
 if (empty($page) || $page == -1) {
 	$page = 0; // If $page is not defined, or '' or -1
@@ -96,7 +95,9 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "p.datep";
+	// rowid is needed as a tiebreaker: many payments share the same date, and without it
+	// the order of those rows is undefined, so paging can repeat or skip records.
+	$sortfield = "p.datep,p.rowid";
 }
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
@@ -150,7 +151,7 @@ if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('
 	accessforbidden();
 }
 
-$arrayofselected = !empty($arrayofselected) && is_array($arrayofselected) ? $arrayofselected : array();
+$arrayofselected = !empty($arrayofselected) ? $arrayofselected : array();
 
 
 /*

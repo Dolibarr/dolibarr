@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,7 @@
  * \ingroup modulebuilder
  * \brief   Text engine for the BEGIN/END MODULEBUILDER PERMISSIONS section of a module descriptor.
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
 /**
  * Text engine for the BEGIN/END MODULEBUILDER PERMISSIONS section of a module descriptor.
@@ -119,8 +121,8 @@ final class PermissionsBlock
 			throw new \RuntimeException('Cannot find the start and/or end comments of the permissions section in '.$file);
 		}
 
-		$start = $posBegin + strlen(self::BEGIN_MARKER);
-		$innerBlock = substr($content, $start, $posEnd - $start);
+		$start = $posBegin + dol_strlen(self::BEGIN_MARKER);
+		$innerBlock = dol_substr($content, $start, $posEnd - $start);
 
 		return new self($file, $innerBlock);
 	}

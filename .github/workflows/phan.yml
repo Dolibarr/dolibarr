@@ -2,6 +2,7 @@
 # This is a basic workflow to check code with PHPSTAN tool
 name: Phan
 
+
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:

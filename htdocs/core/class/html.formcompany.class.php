@@ -788,7 +788,7 @@ class FormCompany extends Form
 			if ($resql) {
 				print '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . '"';
 				if ($conf->use_javascript_ajax) {
-					$javaScript = "window.location='" . dol_escape_js($_SERVER['PHP_SELF']) . "?" . $var_id . "=" . ($forceid > 0 ? $forceid : $object->id) . $moreparam . "&" . $htmlname . "=' + form." . $htmlname . ".options[form." . $htmlname . ".selectedIndex].value;";
+					$javaScript = "window.location='" . dol_escape_js($_SERVER['PHP_SELF']) . "?" . $var_id . "=" . ($forceid > 0 ? $forceid : $object->id) . $moreparam . "&" . $htmlname . "=' + form." . $htmlname . ".options[form." . $htmlname . ".selectedIndex].value;";   // Quoting for dol_escape_js is ok @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 					print ' onChange="' . $javaScript . '"';
 				}
 				print '>';
@@ -919,6 +919,8 @@ class FormCompany extends Form
 				}
 				if (count($newselected) > 0) {
 					$selected = $newselected;
+				} else {
+					$selected = array();
 				}
 			}
 			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss, 0, '90%', '', '', $placeholder);

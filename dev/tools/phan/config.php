@@ -360,6 +360,7 @@ return [
 	//	should be added to the `directory_list` as
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
+		'dev/tools/',
 		'htdocs/includes/',
 		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library

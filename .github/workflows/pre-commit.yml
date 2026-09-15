@@ -1,6 +1,7 @@
 ---
 name: pre-commit
 
+
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:
@@ -8,6 +9,13 @@ on:
       gh_event:
         required: true
         type: string
+    outputs:
+      travis_changed:
+        description: >-
+          "false" when the changed files can not change the result of the
+          travis build (doc, images, styles, translations, tooling...).
+          Empty when it could not be computed (not a pull_request event).
+        value: ${{ jobs.pre-commit.outputs.travis_changed }}
   # can run job manually
   workflow_dispatch:
 
@@ -21,6 +29,9 @@ env:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
+    # Reused by the parent workflow to know if the travis build is required
+    outputs:
+      travis_changed: ${{ steps.changed-php.outputs.travis_changed }}
     env:
       RAW_LOG: pre-commit.log
       CS_XML: pre-commit.xml
@@ -60,7 +71,9 @@ jobs:
         run: ./.github/scripts/get_changed_php.sh
 
       - name: Print changed files
-        run: echo "Changed files are ${{ steps.changed-php.outputs.all_changed_files }}"
+        run: |-
+          echo "Changed files are ${{ steps.changed-php.outputs.all_changed_files }}"
+          echo "Travis build required = ${{ steps.changed-php.outputs.travis_changed }}"
 
       # Action setup-python needs a requirements.txt or pyproject.toml
       # This ensures one of them exists.

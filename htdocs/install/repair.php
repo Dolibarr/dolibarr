@@ -391,7 +391,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		print '<tr><td class="nowrap">*** ';
 		print $langs->trans("Script").'</td><td class="right">'.$file.'</td></tr>';
 
-		$name = substr($file, 0, dol_strlen($file) - 4);
+		$name = dol_substr($file, 0, dol_strlen($file) - 4);
 
 		// Run sql script
 		$ok = run_sql($dir.$file, 0, 0, 1);

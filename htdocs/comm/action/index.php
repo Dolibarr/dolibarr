@@ -1087,7 +1087,7 @@ if (count($listofextcals)) {
 					$event->ref = (string) $event->id;
 					$userId = $userstatic->findUserIdByEmail($namecal);
 					if (!empty($userId) && $userId > 0) {
-						$event->userassigned[$userId] = $userId;
+						$event->userassigned[$userId] = array('id' => $userId, 'transparency' => 1);
 						$event->percentage = -1;
 					}
 
@@ -1232,8 +1232,8 @@ $theme_datacolor = array(
 );
 
 // Define theme_datacolor array
-$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
-if (is_readable($color_file)) {
+$color_file = dol_getThemeFilePath('theme_vars.inc.php');
+if ($color_file && is_readable($color_file)) {
 	global $theme_datacolor;
 	include $color_file;
 	/** @var array<int,mixed> $theme_datacolor */

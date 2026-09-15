@@ -242,13 +242,13 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				// An entity with no directory declared used to return an undefined index, so a relative path
-				// that made the caller read or write under the web root. Answer the error instead.
+				// An entity with no declared directory returned an undefined index, so an empty path that
+				// made the caller read or write a relative path under the web root. Answer the error instead.
 				$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
 				if (!isset($conf->$module->multidir_output[$entity])) {
-					return 'error-diroutput-not-defined-for-this-object='.$module;
+					return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
 				}
-				$s = $conf->$module->multidir_output[$entity].$subdirectory;
+				$s = $conf->$module->multidir_output[$entity] . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -264,20 +264,20 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			}
 			return dol_sanitizePathName($s);
 		} else {
-			return 'error-diroutput-not-defined-for-this-object=' . $module;
+			return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
 			// Same guard as the 'output' mode above, see the comment there
 			$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
 			if (!isset($conf->$module->multidir_temp[$entity])) {
-				return 'error-dirtemp-not-defined-for-this-object='.$module;
+				return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 			}
 			return dol_sanitizePathName($conf->$module->multidir_temp[$entity]);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
 			return dol_sanitizePathName($conf->$module->dir_temp);
 		} else {
-			return 'error-dirtemp-not-defined-for-this-object=' . $module;
+			return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 		}
 	} else {
 		return 'error-bad-value-for-mode';
@@ -604,7 +604,7 @@ function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
 function isDolTms($timestamp)
 {
 	if ($timestamp === '') {
-		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page ' . $_SERVER["PHP_SELF"] . getCallerInfoString(), LOG_NOTICE);
+		dol_syslog('Using empty string for a timestamp is deprecated, prefer use of null when calling page ' . $_SERVER["PHP_SELF"] . getCallerInfoString(), LOG_DEBUG);
 		return false;
 	}
 	if (is_null($timestamp) || !is_numeric($timestamp)) {
@@ -623,14 +623,15 @@ function isDolTms($timestamp)
  * @param	string	$pass		Password (clear)
  * @param	string	$name		Name of database
  * @param	int		$port		Port of database server
+ * @param	bool	$forcenew	Force opening of a genuinely new connection instead of reusing one already opened to the same server/database in this process (only meaningful for drivers, like pgsql, that may otherwise transparently reuse a matching connection)
  * @return	DoliDB				A DoliDB instance
  */
-function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
+function getDoliDBInstance($type, $host, $user, $pass, $name, $port, $forcenew = false)
 {
 	require_once DOL_DOCUMENT_ROOT . "/core/db/" . $type . '.class.php';
 
 	$class = 'DoliDB' . ucfirst($type);
-	$db = new $class($type, $host, $user, $pass, $name, $port);
+	$db = new $class($type, $host, $user, $pass, $name, $port, $forcenew);
 	return $db;
 }
 
@@ -1773,6 +1774,49 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 }
 
 /**
+ * Return the full filesystem path of a file located in the currently selected theme directory.
+ * The standard theme directory (DOL_DOCUMENT_ROOT/theme/<theme>) is searched first, then the theme
+ * directories provided by modules (registered into $conf->modules_parts['theme']). This allows a
+ * theme shipped inside an external module to be found the same way as a native theme.
+ * When no module registers a theme directory (the usual case), the native path is returned as-is
+ * without any file_exists() check.
+ *
+ * @param	string	$file	Relative file name to look for into the theme directory (ex: 'theme_vars.inc.php')
+ * @param	string	$theme	Theme name to use. Default is $conf->theme.
+ * @return	string			Full filesystem path to the file, or '' if it was not found.
+ * @see dol_buildpath()
+ */
+function dol_getThemeFilePath($file, $theme = '')
+{
+	global $conf;
+
+	if (empty($theme)) {
+		$theme = $conf->theme;
+	}
+	$file = '/theme/'.$theme.'/'.preg_replace('/^\//', '', $file);
+
+	// No module registers a theme directory: the file can only be the native one.
+	// Return it directly without an extra file_exists() call, like the historical code.
+	if (empty($conf->modules_parts['theme'])) {
+		return DOL_DOCUMENT_ROOT.$file;
+	}
+
+	// A module may provide or override the theme: look into the native directory
+	// first, then into the module-provided theme directories.
+	if (file_exists(DOL_DOCUMENT_ROOT.$file)) {
+		return DOL_DOCUMENT_ROOT.$file;
+	}
+	foreach ($conf->modules_parts['theme'] as $reldir) {
+		$tmp = dol_buildpath($reldir.$file, 0, 1);
+		if ($tmp) {
+			return $tmp;
+		}
+	}
+
+	return '';
+}
+
+/**
  * Return path of url.
  *
  * @param	string							$url				Relative path to file
@@ -2545,7 +2589,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			$ospid = sprintf("%7s", dol_trunc((string) getmypid(), 7, 'right', 'UTF-8', 1));
 			$osuser = " " . sprintf("%6s", dol_trunc(function_exists('posix_getuid') ? posix_getuid() : '', 6, 'right', 'UTF-8', 1));
 
-			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S") . " " . sprintf("%-7s", $logLevels[$level]) . " " . $ospid . " " . $osuser . " " . $message;
+			$conf->logbuffer[] = dol_print_date(dol_now(), "%Y-%m-%d %H:%M:%S") . " " . sprintf("%-7s", $logLevels[$level]) . " " . $ospid . " " . $osuser . " " . $message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -3860,6 +3904,10 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 			} else { //ex: +91_ABCDE_FGHIJ
 				$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 5) . $separ . substr($newphone, 8, 5);
 			}
+		}
+	} elseif (strtoupper($countrycode) == "CI") { //Ivory cost
+		if (dol_strlen($phone) == 14) { //ex : +225_AB_CD_EF_GH_IJ
+			$newphone = substr($newphone, 0, 4) . $separ.substr($newphone, 4, 2) . $separ.substr($newphone, 6, 2) . $separ.substr($newphone, 8, 2) . $separ.substr($newphone, 10, 2) . $separ.substr($newphone, 12, 2);
 		}
 	}
 
@@ -6258,6 +6306,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 /**
  * Sanitize a HTML to remove js, dangerous content and external links.
  * This function is used by dolPrintHTML... function for example.
+ * This function is tested by test/phpunit/SecurityTest.php
  *
  * @param	string	$stringtoencode				String to encode
  * @param	int     $nouseofiframesandbox		0=Default, 1=Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing (not yet working)
@@ -6275,8 +6324,16 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 	} else {
 		$out = $stringtoencode;
 
+		$antiinfinitloop = 0;
+
 		// First clean HTML content
 		do {
+			if ($antiinfinitloop >= 20) {
+				dol_print_error(null, "Infinite loop detected after ".$antiinfinitloop." iterations in dol_htmlwithnojs");
+				die;	// We must not break and we must not return a string for security issue. This should never happen.
+			}
+			$antiinfinitloop++;
+
 			$oldstringtoclean = $out;
 
 			$outishtml = 0;
@@ -6295,18 +6352,11 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						libxml_disable_entity_loader(true);
 					}
 
-					$dom = new DOMDocument();
-					// Add a trick '<div class="tricktoremove">' to solve pb with text without parent tag
-					//  like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
-					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
-					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
-					// I don't know what the xml encoding is the trick for
-
 					if (!$outishtml) {
 						$out = preg_replace('/&(?![a-zA-Z0-9#]+;)/', '__AMPINTEXT__', $out);
-
-						$out = dol_nl2br($out);
 					}
+
+					$dom = new DOMDocument();
 
 					// Note: <a href="https://__[aaa]__/aaa.html"> is transformed into <a href="https://__[aaa]__/aaa.html">
 					// We don't want that, so we protect __[xxx]__ by replacing [ and ] before loadHTML and restore them after saveHTML
@@ -6365,6 +6415,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					foreach ($wrapper->childNodes as $child) {
 						$result .= $dom->saveHTML($child);
 					}
+
 					$out = trim($result);
 
 					// Restore [ and ] that were protected before loadHTML
@@ -7750,7 +7801,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  *  @param	string		$text	      					Source string in which we must do substitution
  *  @param  array<string,null|string|float|int>	$substitutionarray	Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
  *  @param	?Translate	$outputlangs					Output language
- *  @param	int<0,1>	$converttextinhtmlifnecessary	0=Convert only value into HTML if text is already in HTML
+ *  @param	int<0,1>	$converttextinhtmlifnecessary	0=Convert the substitution value into HTML if the original text is already in HTML
  *  													1=Will also convert initial $text into HTML if we try to insert one value that is HTML
  * 	@return string  		    						Output string after substitutions
  *  @see	complete_substitutions_array(), getCommonSubstitutionArray()
@@ -7789,18 +7840,19 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				// convert $newval into HTML is necessary
 				$text = preg_replace('/__\(' . preg_quote($reg[1], '/') . '\)__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 			} else {
-				if (! $msgishtml) {
-					$valueishtml = dol_textishtml($value, 1);
-					//var_dump("valueishtml=".$valueishtml);
+				if (preg_match('/__\(' . preg_quote($reg[1], '/') . '\)__/', $text)) {		// If found, so replacement will be done later
+					if (! $msgishtml) {
+						$valueishtml = dol_textishtml($value, 1);
+						//var_dump("valueishtml=".$valueishtml);
 
-					if ($valueishtml) {
-						$text = dol_htmlentitiesbr($text);
-						$msgishtml = 1;
+						if ($valueishtml) {
+							$text = dol_htmlentitiesbr($text);
+							$msgishtml = 1;
+						}
+					} else {
+						$value = dol_nl2br((string) $value);
 					}
-				} else {
-					$value = dol_nl2br((string) $value);
 				}
-
 				$text = preg_replace('/__\(' . preg_quote($reg[1], '/') . '\)__/', $value, $text);
 			}
 		}
@@ -7827,17 +7879,18 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			// convert $newval into HTML is necessary
 			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 		} else {
-			if (! $msgishtml) {
-				$valueishtml = dol_textishtml($value, 1);
+			if (preg_match('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $text)) {		// If found, so replacement will be done later
+				if (! $msgishtml) {
+					$valueishtml = dol_textishtml($value, 1);
 
-				if ($valueishtml) {
-					$text = dol_htmlentitiesbr($text);
-					$msgishtml = 1;
+					if ($valueishtml) {
+						$text = dol_htmlentitiesbr($text);
+						$msgishtml = 1;
+					}
+				} else {
+					$value = dol_nl2br((string) $value);
 				}
-			} else {
-				$value = dol_nl2br((string) $value);
 			}
-
 			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $value, $text);
 		}
 	}
@@ -7851,21 +7904,22 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 		if (getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN') && ($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__')) {
 			$value = ''; // Protection
 		}
-
 		if (empty($converttextinhtmlifnecessary)) {
 			$text = str_replace((string) $key, (string) $value, $text); // Cast to string is needed when value is 123.5 for example
 		} else {
-			if (! $msgishtml) {
-				$valueishtml = dol_textishtml($value, 1);
+			if (strpos($text, (string) $key) !== false) {		// If found, so replacement will be done later
+				if (! $msgishtml) {
+					$valueishtml = dol_textishtml($value, 1);
 
-				if ($valueishtml) {
-					$text = dol_htmlentitiesbr($text);
-					$msgishtml = 1;
+					if ($valueishtml) {
+						$text = dol_htmlentitiesbr($text);
+						$msgishtml = 1;
+					}
+				} else {
+					$value = dol_nl2br((string) $value);
 				}
-			} else {
-				$value = dol_nl2br((string) $value);
 			}
-			$text = str_replace((string) $key, (string) $value, $text); // Cast to string is needed 123.5 for example
+			$text = str_replace((string) $key, (string) $value, $text); // Cast to string is needed, for 123.5 for example
 		}
 	}
 
@@ -7884,7 +7938,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 	foreach ($substitutionarray as $key => $value) {
 		$lazy_load_arr = array();
 		if (preg_match('/(__[A-Z\_]+__)@lazyload$/', $key, $lazy_load_arr)) {
-			if (isset($lazy_load_arr[1]) && !empty($lazy_load_arr[1])) {
+			if (!empty($lazy_load_arr[1])) {
 				$key_to_substitute = $lazy_load_arr[1];
 				if (preg_match('/' . preg_quote($key_to_substitute, '/') . '/', $text)) {
 					$param_arr = explode(':', (string) $value);
@@ -7909,7 +7963,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 						}
 
 						// fetch object and set substitution
-						if (isset($memory_object_list[$class]) && isset($memory_object_list[$class]['list'])) {
+						if (isset($memory_object_list[$class]['list'])) {
 							if (method_exists($class, $method)) {
 								if (!isset($memory_object_list[$class]['list'][$id])) {
 									$tmpobj = new $class($db);
@@ -9766,8 +9820,8 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 						$tmpafter = '%';
 						$tmps = '';
 
-						if ($isSellist) {
-							$newres .= $field . " IN (SELECT t." . $key . " FROM " . $db->prefix() . $table . " AS t WHERE t." . $label . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
+						if ($isSellist && $key && $table && $label) {
+							$newres .= $field . " IN (SELECT t." . $db->sanitize((string) $key) . " FROM " . $db->prefix() . $db->sanitize((string) $table) . " AS t WHERE t." . $db->sanitize((string) $label) . " LIKE '%" . $db->escape($tmpcrit2) . "%')";
 						} else {
 							if (preg_match('/^!/', $tmpcrit)) {
 								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
@@ -9795,7 +9849,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 							$newres .= $tmpafter;
 							$newres .= "'";
 							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
-								$newres .= " OR " . $field . " IS NULL)";
+								$newres .= " OR " . $db->sanitize($field) . " IS NULL)";
 							}
 						}
 					}
@@ -9808,7 +9862,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 		}
 
 		if ($sqltoadd) {
-			$newres .= ($newres ? '' : ' OR ').str_replace('__KEYTOSEARCH__', $crit, $sqltoadd);
+			$newres .= ($newres ? '' : ' OR ').str_replace('__KEYTOSEARCH__', $db->escape($crit), $sqltoadd);
 		}
 
 		if ($newres) {
@@ -9919,6 +9973,10 @@ function dolIsAllowedForPreview($file)
 	if (getDolGlobalString('MAIN_ALLOW_SVG_FILES_AS_IMAGES')) {
 		$mime_preview[] = 'svg+xml';
 	}
+	if (getDolGlobalString('MAIN_ALLOW_XML_FILES_AS_PREVIEW')) {
+		$mime_preview[] = 'xml';
+	}
+
 	//$mime_preview[]='vnd.oasis.opendocument.presentation';
 	//$mime_preview[]='archive';
 	$num_mime = array_search(dol_mimetype($file, '', 1), $mime_preview);
@@ -10672,6 +10730,14 @@ function getElementProperties($elementType)
 		$subelement = '';
 		$classname = 'FactureFournisseur';
 		$table_element = 'facture_fourn';
+	} elseif ($elementType == 'invoice_supplier_rec' || $elementType == 'supplier_invoice_rec' || $elementType == 'facture_fourn_rec') {
+		$classpath = 'fourn/class';
+		$module = 'fournisseur';
+		$classfile = 'fournisseur.facture-rec';
+		$element = 'invoice_supplier_rec';
+		$subelement = '';
+		$classname = 'FactureFournisseurRec';
+		$table_element = 'facture_fourn_rec';
 	} elseif ($elementType == 'facture_fourn_det') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
@@ -10850,6 +10916,31 @@ function getElementProperties($elementType)
 		$classname = 'RecruitmentJobPosition';
 		$subelement = 'recruitmentjobposition';
 		$subdir = '/recruitmentjobposition';
+	} elseif ($elementType == 'product_attribute_combination') {
+		$module = 'variants';
+		$classpath = 'variants/class';
+		$classfile = 'ProductCombination';
+		$classname = 'ProductCombination';
+		$element = 'productcombination';
+		$subelement = '';
+		$table_element = 'product_attribute_combination';
+	} elseif ($elementType == 'product_attribute_combination2val') {
+		$module = 'variants';
+		$classpath = 'variants/class';
+		$classfile = 'ProductCombination2ValuePair';
+		$classname = 'ProductCombination2ValuePair';
+		$element = 'productcombination2valuepair';
+		$subelement = '';
+		$table_element = 'product_attribute_combination2val';
+	} elseif ($elementType == 'product_attribute_combination_price_level') {
+		// Class ProductCombinationLevel is declared inside ProductCombination.class.php
+		$module = 'variants';
+		$classpath = 'variants/class';
+		$classfile = 'ProductCombination';
+		$classname = 'ProductCombinationLevel';
+		$element = 'productcombinationlevel';
+		$subelement = '';
+		$table_element = 'product_attribute_combination_price_level';
 	}
 
 
@@ -10998,10 +11089,24 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			return $conf->cache['fetchObjectByElement'][$element_type][$element_id];
 		}
 
-		dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
+		$includeresult = dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
+		if ($includeresult === false) {
+			dol_syslog('fetchObjectByElement: class file /' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php not found for element ' . $element_type, LOG_WARNING);
+		}
 
 		if (class_exists($element_prop['classname'])) {
 			$className = $element_prop['classname'];
+			// Never instantiate a PHP internal class: the name can only be a collision with a
+			// class of the language (for example an element resolved to the native 'Attribute').
+			try {
+				$isinternalclass = (new ReflectionClass($className))->isInternal();
+			} catch (ReflectionException $e) {
+				$isinternalclass = false;
+			}
+			if ($isinternalclass) {
+				dol_syslog('fetchObjectByElement: refuse to instantiate PHP internal class ' . $className . ' for element ' . $element_type, LOG_ERR);
+				return -1;
+			}
 			$objecttmp = new $className($db);
 			'@phan-var-force CommonObject $objecttmp';
 			/** @var CommonObject $objecttmp */
@@ -11499,7 +11604,8 @@ function dolForgeSQLCriteriaCallback($matches)
 			$tmpelem = trim($tmpelem);
 			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
 				$tmpelemarray[$tmpkey] = "'" . $db->escape($db->sanitize($reg[1], 2, 1, 1, 1)) . "'";
-			} elseif (ctype_digit((string) $tmpelem)) {	// if only 0-9 chars, no .
+				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 2, 1, 1, 1))."'";
+			} elseif (preg_match('/^[0-9]+$/', (string) $tmpelem)) {	// if only 0-9 chars, no .
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
@@ -11526,7 +11632,7 @@ function dolForgeSQLCriteriaCallback($matches)
 	} else {
 		if (strtoupper($tmpescaped) == 'NULL') {
 			$tmpescaped = 'NULL';
-		} elseif (ctype_digit((string) $tmpescaped)) {	// if only 0-9 chars, no .
+		} elseif (preg_match('/^[0-9]+$/', (string) $tmpescaped)) {	// if only 0-9 chars, no .
 			$tmpescaped = (int) $tmpescaped;
 		} elseif (is_numeric((string) $tmpescaped)) {	// it can be a float with a .
 			$tmpescaped = (float) $tmpescaped;

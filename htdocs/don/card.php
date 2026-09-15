@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -689,8 +690,7 @@ if (!empty($id) && $action != 'edit') {
 
 	$result = $object->fetch($id);
 	if ($result < 0) {
-		dol_print_error($db, $object->error);
-		exit;
+		recordNotFound('', 0);
 	}
 	$result = $object->fetch_optionals();
 	if ($result < 0) {

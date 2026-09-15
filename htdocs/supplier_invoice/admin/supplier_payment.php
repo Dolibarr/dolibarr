@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2016       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Maxime DEMAREST             <maxime@indelog.fr>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
@@ -236,7 +236,7 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
+				if (!is_dir($dir.$file) || (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS')) {
 					$filebis = $file;
 					$classname = preg_replace('/\.php$/', '', $file);
 					// For compatibility
@@ -252,7 +252,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					$classname = preg_replace('/\-.*$/', '', $classname);
-					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
+					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && dol_substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
 						// Charging the numbering class
 						require_once $dir.$filebis;
 
@@ -371,8 +371,8 @@ foreach ($dirmodels as $reldir) {
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-					$name = substr($file, 4, dol_strlen($file) - 16);
-					$classname = substr($file, 0, dol_strlen($file) - 12);
+					$name = dol_substr($file, 4, dol_strlen($file) - 16);
+					$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 					require_once $dir.'/'.$file;
 					$module = new $classname($db);

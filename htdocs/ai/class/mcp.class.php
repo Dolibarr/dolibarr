@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,13 +54,13 @@ class McpHandler
 	/**
 	 * @var McpTool[] Array of loaded tool instances, keyed by their base filename or class name.
 	 */
-	private $loadedTools = [];
+	public $loadedTools = [];
 
 	/**
 	 * @var McpTool[] Associative array mapping tool *names* (from schema) to their instances.
 	 * This provides O(1) lookup for execution.
 	 */
-	private $toolsByName = [];
+	public $toolsByName = [];
 
 
 	/**
@@ -90,8 +90,6 @@ class McpHandler
 		$this->conf = $conf_obj;
 
 		$this->toolcontext = (!empty($toolcontext)) ? $toolcontext : self::CTX_ASSISTANT;
-
-		$this->loadTools();
 	}
 
 	/**
@@ -131,7 +129,7 @@ class McpHandler
 			$constName = 'AI_ASSISTANT_ALLOWED_TOOLS';
 		}
 
-		$raw = getDolGlobalString($constName);
+		$raw = getDolGlobalString($constName);		// Return the list (separated by coma) of all enabled tools
 
 		if ($raw === '') {
 			// Constant not yet configured — allow everything
@@ -173,13 +171,14 @@ class McpHandler
 	 *
 	 * This method scans the ai/tools directory for native tools and executes the
 	 * 'addMcpTools' hook to allow external modules to register their own tools.
+	 * This fill array ->loadedTools and ->toolsByName
 	 *
 	 * @return void
 	 */
-	private function loadTools()
+	public function loadTools()
 	{
-		$this->loadNativeTools();
-		$this->loadExternalTools();
+		$this->loadNativeTools();		// Tools found into directory ai/tools/
+		$this->loadExternalTools();		// Tools provided by external module and hook addMcpTools
 	}
 
 	/**
@@ -262,6 +261,14 @@ class McpHandler
 			}
 
 			foreach ($hookmanager->resArray as $moduleTools) {
+				if ($moduleTools instanceof McpTool) {
+					// Tolerance: a module that set results = array($tool)
+					// instead of array(array($tool)) still works - the
+					// HookManager flattens results into resArray, so bare
+					// instances are the natural mistake to make.
+					$this->registerTool(get_class($moduleTools), $moduleTools);
+					continue;
+				}
 				if (!is_array($moduleTools)) {
 					continue;
 				}
@@ -325,7 +332,9 @@ class McpHandler
 			foreach ($tool->getDefinitions() as $def) {
 				$def['is_system']  = $isSystem;
 				$def['class_name'] = $className;
-				$def['categories'] = $tool->getCategories();
+				if (empty($def['categories'])) {
+					$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+				}
 				$schema[] = $def;
 			}
 		}
@@ -347,7 +356,7 @@ class McpHandler
 	 */
 	public function getToolsSchema(): array
 	{
-		$allowed = $this->getAllowedToolsList();
+		$allowed = $this->getAllowedToolsList();	// Return list of "allowed" tools for the current context $this->toolcontext (Chat or MCP)
 		$schema  = [];
 
 		foreach ($this->loadedTools as $tool) {
@@ -362,7 +371,9 @@ class McpHandler
 					// for the validation check (executeTool must still be able to
 					// run respond_to_user, ask_for_clarification, etc.).
 					$def['is_system']  = true;
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 					continue;
 				}
@@ -371,13 +382,17 @@ class McpHandler
 
 				if (empty($allowed)) {
 					// No restriction configured — include everything
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 					continue;
 				}
 
 				if (in_array($name, $allowed, true)) {
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 				}
 				// Not in $allowed — silently omitted; LLM never sees this tool
@@ -426,13 +441,17 @@ class McpHandler
 
 				if (empty($allowed)) {
 					// No restriction configured — include everything
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 					continue;
 				}
 
 				if (in_array($name, $allowed, true)) {
-					$def['categories'] = $tool->getCategories();
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
 					$schema[] = $def;
 				}
 			}
@@ -455,7 +474,30 @@ class McpHandler
 	public function executeTool(string $toolName, array $args): array
 	{
 		if (!isset($this->toolsByName[$toolName])) {
-			return ["error" => "Tool '{$toolName}' not found."];
+			// LLMs routinely emit near-miss tool names (create_invoice for
+			// create_customer_invoice). Recover when the real name is
+			// UNAMBIGUOUS: same action verb (segment before the first '_')
+			// and every underscore token of the requested name appears in the
+			// candidate. Exactly one match executes (logged); zero or several
+			// keep the clean error - never guess between candidates.
+			$reqTokens = explode('_', dol_strtolower($toolName));
+			$verb = $reqTokens[0];
+			$candidates = array();
+			foreach (array_keys($this->toolsByName) as $realName) {
+				if (strpos($realName, $verb.'_') !== 0 || $this->isSystemTool($this->toolsByName[$realName])) {
+					continue;
+				}
+				$realTokens = explode('_', $realName);
+				if (!array_diff($reqTokens, $realTokens)) {
+					$candidates[] = $realName;
+				}
+			}
+			if (count($candidates) === 1) {
+				dol_syslog("[McpHandler] Tool name '".$toolName."' recovered to '".$candidates[0]."'.", LOG_INFO);
+				$toolName = $candidates[0];
+			} else {
+				return ["error" => "Tool '{$toolName}' not found."];
+			}
 		}
 
 		$toolInstance = $this->toolsByName[$toolName];

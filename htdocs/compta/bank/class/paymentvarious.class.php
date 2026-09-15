@@ -141,6 +141,11 @@ class PaymentVarious extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int|string	Third party ID
+	 */
+	public $socid;
+
+	/**
 	 * @var int transaction category
 	 */
 	public $categorie_transaction;
