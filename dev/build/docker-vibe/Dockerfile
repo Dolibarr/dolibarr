@@ -15,6 +15,7 @@ RUN apt-get update \
 		php \
 		python3 \
 		python3-pip \
+		openssh-client \
         ca-certificates \
         git \
     && rm -rf /var/lib/apt/lists/*
