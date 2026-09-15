@@ -36,7 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	int			$type_user	0=Menu for backoffice, 1=Menu for front office
  * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}> $tabMenu		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu		Object Menu to return back list of menu entries
- * @param	int<0,1>	$noout		1=Disable output (Initialise &$menu only).
+ * @param	int<0,1>
+	$noout		1=Disable output (Initialise &$menu only).
  * @param	string		$mode		'top', 'topnb', 'left', 'jmobile'
  * @return	int						0
  */
@@ -72,6 +73,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	$num = count($newTabMenu);
 	for ($i = 0; $i < $num; $i++) {
 		//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
+		// @phpstan-ignore-next-line
 		$idsel = (empty($newTabMenu[$i]['mainmenu']) ? 'none' : $newTabMenu[$i]['mainmenu']);
 
 		$shorturl = '';
@@ -81,7 +83,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
 
 			// Phan issue #4881 requires that we reforce the type
-			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $newTabMenu';
+			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,
+2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $newTabMenu';
 
 			// url = url from host, shorturl = relative path into dolibarr sources
 			$url = $shorturl = $newTabMenu[$i]['url'];
@@ -111,7 +114,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 			// Modify URL for the case we are using the option showtopmenuinframe
 			'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> $newTabMenu';
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
+			// @phan-suppress-next-line PhanTypeInvalidDimOf
+fset
 			if ($newTabMenu[$i]['showtopmenuinframe']) {
 				if (preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {
 					$url = '/core/frames.php?idmenu='.$newTabMenu[$i]['rowid'];
@@ -160,7 +164,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 	// Show logo company
 	if (!getDolGlobalString('MAIN_MENU_INVERT') && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
+		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$c
+onf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
 		$mysoc->logo_squarred_mini = (!getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI') ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
 
 		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
@@ -196,7 +201,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		print_end_menu_entry_auguria($menuval['enabled']);
 	}
 
-	if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	if (!getDolGlobalString('MAIN_OPTIMIZEFORTEX
+TBROWSER')) {
 		$showmode = 1;
 		print_start_menu_entry_auguria('', 'class="tmenuend"', $showmode);
 		print_end_menu_entry_auguria($showmode);
@@ -256,7 +262,8 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 	$classnametxt = str_replace('class="', 'class="tmenulabel ', $classname);
 
 	if ($showmode == 1) {
-		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).
+'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage">';
 		$reg = array();
 		if (!empty($menuval['prefix']) && strpos($menuval['prefix'], '<span') === 0) {
@@ -317,7 +324,8 @@ function print_end_menu_entry_auguria($showmode)
 function print_end_menu_array_auguria()
 {
 	print '</ul>';
-	print '</div>';
+	print '</di
+v>';
 	print "\n";
 }
 
@@ -336,7 +344,8 @@ function print_end_menu_array_auguria()
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all). If value come being '', we change it to value in session and 'none' if not defined in session.
  * @param	?array<string,string>	$moredata	An array with more data to output
- * @param 	int<0,1>	$type_user     		0=Menu for backoffice, 1=Menu for front office
+ * @param 	int<0,1>	$type_user     		0=Menu for backoffice, 1=Menu fo
+r front office
  * @return	int								Nb of menu entries
  */
 function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
@@ -382,7 +391,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " WHERE entity
+ = ".((int) $conf->entity);
 		$sql .= " AND clos = 0";
 		$sql .= " ORDER BY label";
 
@@ -434,7 +444,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					$nature = '';
 
 					// Must match array $sourceList defined into journals_list.php
-					if ($objp->nature == 2 && isModEnabled('invoice') && !getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_SALES')) {
+					if ($objp->nature == 2 && isModEnabled('invoice') && !getDolGlobalString('AC
+COUNTING_DISABLE_BINDING_ON_SALES')) {
 						$nature = "sells";
 					}
 					if ($objp->nature == 3
@@ -489,7 +500,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	}
 
 	if (isModEnabled('ftp') && $mainmenu == 'ftp') {	// Entry for FTP
-		$MAXFTP = 20;
+	
+	$MAXFTP = 20;
 		$i = 1;
 		while ($i <= $MAXFTP) {
 			$paramkey = 'FTP_NAME_'.$i;
@@ -544,7 +556,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 	// Phan has a hard time tracking the type, for instance because it get hookmanager->results
 	// Force the typing at this point to get useful analysis below:
-	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,prefix:string,level:int}> $menu_array';
+	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,positio
+n:int,showtopmenuinframe:int,prefix:string,level:int}> $menu_array';
 
 	// Show menu
 	$invert = !getDolGlobalString('MAIN_MENU_INVERT') ? "" : "invert";
@@ -596,7 +609,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				$param = (isset($tmp[1]) ? $tmp[1] : ''); // params in url of the menu link
 
 				// Complete param to force leftmenu to '' to close open menu when we click on a link with no leftmenu defined.
-				if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param)) && !empty($menu_array[$i]['mainmenu'])) {
+				if ((!preg_match('/mainmenu/i
+', $param)) && (!preg_match('/leftmenu/i', $param)) && !empty($menu_array[$i]['mainmenu'])) {
 					$param .= ($param ? '&' : '').'mainmenu='.$menu_array[$i]['mainmenu'].'&leftmenu=';
 				}
 				if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param)) && empty($menu_array[$i]['mainmenu'])) {
@@ -620,6 +634,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					} else {
 						print '<span class="vmenu">';
 					}
+					// @phpstan-ignore-next-line
 					if (!empty($menu_array[$i]['prefix'])) {
 						$reg = array();
 						if (preg_match('/^(fa[rsb]? )?fa-/', $menu_array[$i]['prefix'], $reg)) {
@@ -638,7 +653,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					}
 					print '</div>'."\n";
 					$lastlevel0 = 'enabled';
-				} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
+				} elseif ($sho
+wmenu) {                 // Not enabled but visible (so greyed)
 					print '<div class="menu_titre">'.$tabstring;
 					print '<span class="vmenudisabled">';
 					if (!empty($menu_array[$i]['prefix'])) {
@@ -691,6 +707,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					print '</div>'."\n";
 				}
 			}
+
 
 			// If next is a new block or if there is nothing after
 			if (empty($menu_array[$i + 1]['level'])) {               // End menu block
@@ -745,7 +762,8 @@ function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexterna
 		return 0; // No permissions and user is external
 	}
 	if (!$menuentry['perms'] && getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED')) {
-		return 0; // No permissions and option to hide when not allowed, even for internal user, is on
+		return 0; // No permissions and option to hi
+de when not allowed, even for internal user, is on
 	}
 	if (!$menuentry['perms']) {
 		return 2; // No permissions and user is external
