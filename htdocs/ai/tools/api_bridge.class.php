@@ -924,13 +924,15 @@ class ToolApiBridge extends McpTool
 	 * PHP class, {@from} names the HTTP source, which in-process calls have no
 	 * use for) are removed from the text and otherwise ignored.
 	 *
-	 * @param string $desc Parameter description, as written in the docblock
+	 * @param ?string $desc Parameter description, as written in the docblock (may be null)
 	 * @param string $ptype JSON Schema type already determined for this parameter
 	 * @param array<string, mixed> $constraints Filled with the JSON Schema constraints found
 	 * @return string The description with every inline tag removed
 	 */
-	private function liftInlineTags(string $desc, string $ptype, array &$constraints): string
+	private function liftInlineTags($desc, string $ptype, array &$constraints): string
 	{
+		$desc = (string) $desc;
+
 		if (strpos($desc, '{@') === false) {
 			return $desc;
 		}
@@ -942,15 +944,15 @@ class ToolApiBridge extends McpTool
 				$value = trim($tag[2]);
 
 				if ($name === 'min' && is_numeric($value)) {
-					$constraints['minimum'] = $value + 0;
+					$constraints['minimum'] = $this->tagValueToNumber($value);
 				} elseif ($name === 'max' && is_numeric($value)) {
-					$constraints['maximum'] = $value + 0;
+					$constraints['maximum'] = $this->tagValueToNumber($value);
 				} elseif ($name === 'choice' && $value !== '') {
 					$choices = array_map('trim', explode(',', $value));
 					if ($ptype === 'integer' || $ptype === 'number') {
 						foreach ($choices as $i => $choice) {
 							if (is_numeric($choice)) {
-								$choices[$i] = $choice + 0;
+								$choices[$i] = $this->tagValueToNumber($choice);
 							}
 						}
 					}
@@ -969,6 +971,20 @@ class ToolApiBridge extends McpTool
 		$desc = preg_replace('/\s*\{@\w[\w-]*[^}]*\}/', '', $desc);
 
 		return trim(preg_replace('/\s{2,}/', ' ', (string) $desc));
+	}
+
+	/**
+	 * Convert a numeric tag value to the PHP number JSON encodes as a number.
+	 *
+	 * {@min 0} must reach the model as 0, not "0": a JSON Schema minimum given
+	 * as a string is not a minimum.
+	 *
+	 * @param string $value Numeric tag value, already checked with is_numeric()
+	 * @return int|float
+	 */
+	private function tagValueToNumber(string $value)
+	{
+		return (strpos($value, '.') === false) ? (int) $value : (float) $value;
 	}
 
 	/**
@@ -991,14 +1007,14 @@ class ToolApiBridge extends McpTool
 			return '';	// not delimited: not a PCRE literal, leave it in the description
 		}
 
-		$pattern = $reg[2];
+		$expression = $reg[2];
 		$flags = $reg[3];
 
-		if ($flags !== '' && !($flags === 'i' && !preg_match('/[a-zA-Z]/', $pattern))) {
+		if ($flags !== '' && !($flags === 'i' && !preg_match('/[a-zA-Z]/', $expression))) {
 			return '';
 		}
 
-		return $pattern;
+		return $expression;
 	}
 
 	/**
