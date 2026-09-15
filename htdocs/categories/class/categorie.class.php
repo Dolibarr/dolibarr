@@ -557,14 +557,14 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::create', LOG_DEBUG);
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->color = trim($this->color);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->color = trim((string) $this->color);
 		$this->position = (int) $this->position;
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
-		$this->ref_ext = trim($this->ref_ext);
+		$this->ref_ext = trim((string) $this->ref_ext);
 		if (empty($this->visible)) {
 			$this->visible = 0;
 		}
@@ -671,9 +671,9 @@ class Categorie extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->ref_ext = trim($this->ref_ext);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->ref_ext = trim((string) $this->ref_ext);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
