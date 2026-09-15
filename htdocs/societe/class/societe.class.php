@@ -143,10 +143,10 @@ class Societe extends CommonObject
 	public $restrictiononfksoc = 1;
 
 	/**
-	 * array of supplier categories
+	 * array of supplier categories. TODO Remove this.
 	 * @var string[]
 	 */
-	public $SupplierCategories = array();
+	public $supplierCategories = array();
 
 	/**
 	 * prefixCustomerIsRequired
@@ -4676,7 +4676,7 @@ class Societe extends CommonObject
 	public function LoadSupplierCateg()
 	{
 		// phpcs:enable
-		$this->SupplierCategories = array();
+		$this->supplierCategories = array();
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE type = ".Categorie::TYPE_SUPPLIER;
@@ -4684,7 +4684,7 @@ class Societe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->SupplierCategories[$obj->rowid] = $obj->label;
+				$this->supplierCategories[$obj->rowid] = $obj->label;
 			}
 			return 0;
 		} else {
