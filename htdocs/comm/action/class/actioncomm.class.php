@@ -2822,7 +2822,7 @@ class ActionComm extends CommonObject
 		$this->reminders = array();
 
 		//Select all action comm reminders for event
-		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user, fk_email_template, lasterror";
+		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user, fk_soc, fk_contact, fk_email_template, lasterror";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 		if ($onlypast) {
@@ -2854,6 +2854,8 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->offsetunit = $obj->offsetunit;
 				$tmpactioncommreminder->status = $obj->status;
 				$tmpactioncommreminder->fk_user = $obj->fk_user;
+				$tmpactioncommreminder->fk_soc = $obj->fk_soc;
+				$tmpactioncommreminder->fk_contact = $obj->fk_contact;
 				$tmpactioncommreminder->fk_email_template = $obj->fk_email_template;
 				$tmpactioncommreminder->lasterror = $obj->lasterror;
 				$tmpactioncommreminder->fk_actioncomm = $this->id;
@@ -2948,18 +2950,50 @@ class ActionComm extends CommonObject
 						$sendTopic = make_substitutions($sendTopic, $substitutionarray);
 
 						// Recipient
-						$recipient = new User($this->db);
-						$res = $recipient->fetch($actionCommReminder->fk_user);
-						if ($res > 0) {
-							if (!empty($recipient->email)) {
-								$to = $recipient->email;
+						if (!empty($actionCommReminder->fk_soc)) {
+							require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+							$recipient = new Societe($this->db);
+							$res = $recipient->fetch($actionCommReminder->fk_soc);
+							if ($res > 0) {
+								if (!empty($recipient->email)) {
+									$to = $recipient->email;
+								} else {
+									$errormesg = "Failed to send remind to thirdparty id=" . $actionCommReminder->fk_soc . ". No email defined for thirdparty.";
+									$error++;
+								}
 							} else {
-								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
+								$errormesg = "Failed to load recipient with thirdparty id=" . $actionCommReminder->fk_soc;
+								$error++;
+							}
+						} elseif (!empty($actionCommReminder->fk_contact)) {
+							require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+							$recipient = new Contact($this->db);
+							$res = $recipient->fetch($actionCommReminder->fk_contact);
+							if ($res > 0) {
+								if (!empty($recipient->email)) {
+									$to = $recipient->email;
+								} else {
+									$errormesg = "Failed to send remind to contact id=" . $actionCommReminder->fk_contact . ". No email defined for contact.";
+									$error++;
+								}
+							} else {
+								$errormesg = "Failed to load recipient with contact id=" . $actionCommReminder->fk_contact;
 								$error++;
 							}
 						} else {
-							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
-							$error++;
+							$recipient = new User($this->db);
+							$res = $recipient->fetch($actionCommReminder->fk_user);
+							if ($res > 0) {
+								if (!empty($recipient->email)) {
+									$to = $recipient->email;
+								} else {
+									$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
+									$error++;
+								}
+							} else {
+								$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
+								$error++;
+							}
 						}
 
 						// Sender
