@@ -19,6 +19,13 @@ RUN apt-get update \
         git \
     && rm -rf /var/lib/apt/lists/*
 
+# Install RTK - Rust Token Killer
+RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh \
+    && cp /root/.local/bin/rtk /usr/local/bin/rtk \
+    && chmod +x /usr/local/bin/rtk \
+    && rtk --version \
+    && rtk gain
+
 WORKDIR /workspace
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh

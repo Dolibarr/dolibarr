@@ -2008,7 +2008,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr class="morefields">';
 				print '<td>'.$langs->trans('ParentCompany').'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print img_picto('', 'company', 'class="paddingrightonly"');
+				print img_picto('', 'company', 'class="pictofixedwidth"');
 				print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 				print '</td></tr>';
 			}
@@ -2019,7 +2019,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : array($user->id)));
-			print img_picto('', 'user').$form->select_dolusers($selected, 'commercial', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'quatrevingtpercent widthcentpercentminusx', 1, 0, true);
+			print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($selected, 'commercial', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'quatrevingtpercent widthcentpercentminusx', 1, 0, true);
 			print '</td></tr>';
 
 			// Add logo

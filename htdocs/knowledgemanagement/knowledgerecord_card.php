@@ -251,6 +251,40 @@ if ($action == 'create') {
 	$out = $doleditor->Create(1);
 	print $out;
 
+	// Prefill AI instructions with question text on create form
+	if (isModEnabled('ai')) {
+		$aipromptprefix = $langs->transnoentities('SuggestAnswerToQuestion');
+
+		print '<script nonce="'.getNonce().'" type="text/javascript">
+		$(document).ready(function() {
+			$("#linkforaiprompttextgenerationemail").on("click", function() {
+				setTimeout(function() {
+					var instructionField = $("#ai_instructionsanswer");
+					if (!instructionField.is(":visible")) {
+						return;
+					}
+					var prefix = \''.dol_escape_js($aipromptprefix).'\';
+					var currentVal = instructionField.val();
+					var question = "";
+					if (typeof CKEDITOR !== "undefined" && CKEDITOR.instances && CKEDITOR.instances["question"]) {
+						question = $("<div>").html(CKEDITOR.instances["question"].getData()).text().trim();
+					} else {
+						question = $("#question").val() ? $.trim($("#question").val()) : "";
+					}
+					if (currentVal === "" || currentVal === prefix || currentVal.indexOf(prefix) === 0) {
+						if (question) {
+							instructionField.val(prefix + " " + question);
+						} else {
+							instructionField.val(prefix);
+						}
+						$("#generate_buttonanswer").prop("disabled", (instructionField.val() === ""));
+					}
+				}, 50);
+			});
+		});
+		</script>';
+	}
+
 	print dol_get_fiche_end();
 
 	print $form->buttonsSaveCancel('Create');
@@ -530,7 +564,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%', 1);
 		$out = $doleditor->Create(1);
 	} else {
-		$out = '<div class="content">';
+		$out = '<div class="content kmcontent">';
 		$out .= $object->answer;
 		$out .= '</div>';
 	}
