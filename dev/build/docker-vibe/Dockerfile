@@ -10,6 +10,7 @@ RUN apt-get update \
 		wget \
 		curl \
         dialog \
+		hurl \
 		phpunit \
 		php \
 		python3 \
@@ -17,6 +18,13 @@ RUN apt-get update \
         ca-certificates \
         git \
     && rm -rf /var/lib/apt/lists/*
+
+# Install RTK - Rust Token Killer
+RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh \
+    && cp /root/.local/bin/rtk /usr/local/bin/rtk \
+    && chmod +x /usr/local/bin/rtk \
+    && rtk --version \
+    && rtk gain
 
 WORKDIR /workspace
 

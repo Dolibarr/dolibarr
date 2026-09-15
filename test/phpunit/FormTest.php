@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,5 +148,284 @@ class FormTest extends CommonClassTest
 		$this->assertStringNotContainsString('KEYWORD', $visibleText);
 		$this->assertStringContainsString('PVC Pipe 1/2" Standard Quality', $searchText);
 		$this->assertStringContainsString('KEYWORD', $searchText);
+	}
+
+	/**
+	 * testSelectDolusersFilterKey
+	 *
+	 * select_dolusers() must restrict the returned users to those whose
+	 * firstname, lastname or login matches the $filterkey search string
+	 * (used by the user/ajax/users.php autocomplete endpoint).
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersFilterKey()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$db->begin();
+
+		$uniq = 'zttestselusr'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
+		$tmpuser = new User($db);
+		$tmpuser->lastname = 'Zorglub'.$uniq;
+		$tmpuser->firstname = 'Filterkey';
+		$tmpuser->login = $uniq;
+		$tmpuser->email = $uniq.'@example.com';
+		$resultcreate = $tmpuser->create($user);
+		$this->assertGreaterThan(0, $resultcreate, 'Failed to create test user: '.$tmpuser->error);
+
+		$form = new Form($db);
+
+		// A matching key returns the user
+		$match = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, $uniq);
+		$this->assertIsArray($match);
+		$this->assertArrayHasKey($tmpuser->id, $match, 'select_dolusers did not return the user matching the filterkey');
+
+		// A non-matching key does not return the user
+		$nomatch = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, 'nobodyxyz'.$uniq);
+		$this->assertIsArray($nomatch);
+		$this->assertArrayNotHasKey($tmpuser->id, $nomatch, 'select_dolusers ignored the filterkey and returned a non-matching user');
+
+		$db->rollback();
+	}
+
+	/**
+	 * testSelectDolusersLimit
+	 *
+	 * select_dolusers() must cap the number of returned users to the $limit
+	 * argument (used by the user/ajax/users.php endpoint in "infinite list" mode).
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersLimit()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$db->begin();
+
+		$uniq = 'zttestlimusr'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		for ($i = 1; $i <= 3; $i++) {
+			$tmpuser = new User($db);
+			$tmpuser->lastname = 'Limit'.$i.$uniq;
+			$tmpuser->firstname = 'User';
+			$tmpuser->login = $uniq.$i;
+			$tmpuser->email = $uniq.$i.'@example.com';
+			$this->assertGreaterThan(0, $tmpuser->create($user), 'Failed to create test user: '.$tmpuser->error);
+		}
+
+		$form = new Form($db);
+
+		// Without limit: the 3 users match the filterkey
+		$all = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, $uniq, 0);
+		$this->assertIsArray($all);
+		$this->assertGreaterThanOrEqual(3, count($all), 'Expected at least the 3 created users without a limit');
+
+		// With limit=2: at most 2 rows are returned
+		$limited = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, $uniq, 2);
+		$this->assertIsArray($limited);
+		$this->assertLessThanOrEqual(2, count($limited), 'select_dolusers did not honour the $limit argument');
+
+		$db->rollback();
+	}
+
+	/**
+	 * testSelectDolusersMultipleSearchToSelect
+	 *
+	 * When USER_USE_SEARCH_TO_SELECT is enabled, select_dolusers() in multiple
+	 * mode must render an ajax select2 bound to user/ajax/users.php with only
+	 * the preselected users as <option>, instead of loading the whole llx_user
+	 * table. With the constant unset it must keep the full-list <select multiple>.
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersMultipleSearchToSelect()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+
+		$db->begin();
+
+		$uniq = 'zttestmulusr'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
+		$user1 = new User($db);
+		$user1->lastname = 'Selected'.$uniq;
+		$user1->firstname = 'User';
+		$user1->login = $uniq.'a';
+		$user1->email = $uniq.'a@example.com';
+		$this->assertGreaterThan(0, $user1->create($user), 'Failed to create test user: '.$user1->error);
+
+		$user2 = new User($db);
+		$user2->lastname = 'NotSelected'.$uniq;
+		$user2->firstname = 'User';
+		$user2->login = $uniq.'b';
+		$user2->email = $uniq.'b@example.com';
+		$this->assertGreaterThan(0, $user2->create($user), 'Failed to create test user: '.$user2->error);
+
+		$form = new Form($db);
+
+		// Ajax "search to select" mode ON
+		$conf->global->USER_USE_SEARCH_TO_SELECT = 2;
+		$out = $form->select_dolusers(array($user1->id), 'commercial', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'morecss', 1, 0, true);
+		$this->assertIsString($out);
+		$this->assertStringContainsString('name="commercial[]"', $out, 'multiple mode must add [] to the element name');
+		$this->assertStringContainsString('multiple', $out, 'multiple attribute must be present');
+		$this->assertStringContainsString('user/ajax/users.php', $out, 'multiple + search-to-select must bind select2 to the ajax endpoint');
+		$this->assertStringContainsString('<option value="'.$user1->id.'"', $out, 'the preselected user must be rendered as an <option>');
+		$this->assertStringNotContainsString('<option value="'.$user2->id.'"', $out, 'the full user list must not be rendered in ajax mode');
+
+		// Ajax "search to select" mode OFF -> full list
+		unset($conf->global->USER_USE_SEARCH_TO_SELECT);
+		$outfull = $form->select_dolusers(array($user1->id), 'commercial', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'morecss', 1, 0, true);
+		$this->assertIsString($outfull);
+		$this->assertStringNotContainsString('user/ajax/users.php', $outfull, 'without the constant the ajax endpoint must not be used');
+		$this->assertStringContainsString('<option value="'.$user2->id.'"', $outfull, 'without the constant the full user list must be rendered');
+
+		$db->rollback();
+	}
+
+	/**
+	 * testUserComboMorefilterAllowlist
+	 *
+	 * Only the known-safe expressions of Form::$user_combo_allowed_morefilters may be
+	 * forwarded to the user/ajax/users.php endpoint; any other $morefilter is rejected.
+	 *
+	 * @return void
+	 */
+	public function testUserComboMorefilterAllowlist()
+	{
+		$this->assertTrue(Form::isUserComboMorefilterAllowed('u.statut:=:1'));
+		$this->assertTrue(Form::isUserComboMorefilterAllowed('(statut:=:1)'));
+		$this->assertTrue(Form::isUserComboMorefilterAllowed('employee:=:1'));
+		$this->assertTrue(Form::isUserComboMorefilterAllowed('(admin:=:1) AND (statut:=:1)'));
+		// surrounding whitespace is tolerated
+		$this->assertTrue(Form::isUserComboMorefilterAllowed('  employee:=:1  '));
+
+		$this->assertFalse(Form::isUserComboMorefilterAllowed(''));
+		$this->assertFalse(Form::isUserComboMorefilterAllowed('(rowid:=:1) OR (1=1)'));
+		$this->assertFalse(Form::isUserComboMorefilterAllowed('employee:=:1 OR 1=1'));
+		$this->assertFalse(Form::isUserComboMorefilterAllowed('(pass_crypted:like:%)'));
+	}
+
+	/**
+	 * testSelectDolusersAjaxMorefilterForwarded
+	 *
+	 * In "search to select" mode, an allow-listed $morefilter is forwarded to the ajax
+	 * endpoint URL; a non allow-listed one is dropped (not exposed in the page).
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersAjaxMorefilterForwarded()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+		$conf->global->USER_USE_SEARCH_TO_SELECT = 2;
+
+		$form = new Form($db);
+
+		// Allow-listed morefilter -> present in the ajax URL
+		$out = $form->select_dolusers('', 'userid', 0, null, 0, '', '', '0', 0, 0, 'employee:=:1', 0, '', '', 0, 0, false);
+		$this->assertIsString($out);
+		$this->assertStringContainsString('user/ajax/users.php', $out);
+		$this->assertStringContainsString('morefilter='.urlencode('employee:=:1'), $out, 'an allow-listed morefilter must be forwarded to the ajax endpoint');
+
+		// Arbitrary morefilter -> never forwarded
+		$outbad = $form->select_dolusers('', 'userid', 0, null, 0, '', '', '0', 0, 0, '(rowid:=:1) OR (1=1)', 0, '', '', 0, 0, false);
+		$this->assertIsString($outbad);
+		$this->assertStringNotContainsString('morefilter=', $outbad, 'a non allow-listed morefilter must not be exposed in the page');
+
+		unset($conf->global->USER_USE_SEARCH_TO_SELECT);
+	}
+
+	/**
+	 * testSelectDolusersLimitOffset
+	 *
+	 * select_dolusers() must offset the result set by the $limitoffset argument, so the
+	 * user/ajax/users.php endpoint can page through the list (select2 infinite scroll).
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersLimitOffset()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$db->begin();
+
+		$uniq = 'zttestoffusr'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		for ($i = 1; $i <= 3; $i++) {
+			$tmpuser = new User($db);
+			$tmpuser->lastname = 'Offset'.$i.$uniq;
+			$tmpuser->firstname = 'User';
+			$tmpuser->login = $uniq.$i;
+			$tmpuser->email = $uniq.$i.'@example.com';
+			$this->assertGreaterThan(0, $tmpuser->create($user), 'Failed to create test user: '.$tmpuser->error);
+		}
+
+		$form = new Form($db);
+
+		// Page 1: first 2 rows
+		$page1 = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, $uniq, 2, 0);
+		// Page 2: same limit, offset by 2
+		$page2 = $form->select_dolusers(-1, 'userid', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 2, false, 0, $uniq, 2, 2);
+
+		$this->assertIsArray($page1);
+		$this->assertIsArray($page2);
+		$this->assertLessThanOrEqual(2, count($page1));
+		$this->assertNotEmpty($page2, 'the offset page must still return the remaining user(s)');
+		$this->assertEmpty(array_intersect(array_keys($page1), array_keys($page2)), 'offset page must not repeat rows from page 1');
+
+		$db->rollback();
+	}
+
+	/**
+	 * testSelectDolusersAjaxMultiplePagination
+	 *
+	 * The multiple "search to select" combo must let select2 page through the endpoint:
+	 * the data callback sends the page number and processResults reports whether more
+	 * rows are available.
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersAjaxMultiplePagination()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+		$conf->global->USER_USE_SEARCH_TO_SELECT = 'infinite';
+
+		$form = new Form($db);
+		$out = $form->select_dolusers(array(), 'commercial', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'morecss', 1, 0, true);
+
+		$this->assertIsString($out);
+		$this->assertStringContainsString('d.page = params.page', $out, 'the ajax data callback must forward the select2 page number');
+		$this->assertStringContainsString('pagination: { more:', $out, 'processResults must tell select2 whether more rows are available');
+
+		unset($conf->global->USER_USE_SEARCH_TO_SELECT);
 	}
 }
