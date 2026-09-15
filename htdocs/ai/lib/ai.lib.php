@@ -357,6 +357,32 @@ function ai_validate_attachments(array $attachments, &$error)
 }
 
 /**
+ * Trim a payload for the request log, keeping the beginning and the end.
+ *
+ * Request payloads start with the tool schemas and end with what a human
+ * actually looks for: the system rules, the user query and the page context.
+ * A plain head cut removes the interesting half, so keep both sides and state
+ * how much was dropped in between.
+ *
+ * @param string $text Payload to trim.
+ * @param int    $max  Maximum number of characters to keep.
+ * @return string Trimmed payload, unchanged when short enough.
+ */
+function aiTruncateForLog($text, $max = 60000)
+{
+	$len = dol_strlen($text);
+	if ($len <= $max) {
+		return $text;
+	}
+	$head = (int) floor($max / 2);
+	$tail = $max - $head;
+
+	return dol_substr($text, 0, $head)
+		."\n... [Truncated ".($len - $max)." chars] ...\n"
+		.dol_substr($text, $len - $tail, $tail);
+}
+
+/**
  * Log AI Request with Raw Payloads
  *
  * @param   DoliDB                  $db         Database object
@@ -382,14 +408,12 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 
 	$tool = isset($response['tool']) ? (string) $response['tool'] : '';
 
-	if (dol_strlen($rawReq) > 60000) {
-		$rawReq = dol_substr($rawReq, 0, 60000) . '... [Truncated]';
-	}
-
-	$rawResStr = (string) $rawRes;
-	if (dol_strlen($rawResStr) > 60000) {
-		$rawResStr = dol_substr($rawResStr, 0, 60000) . '... [Truncated]';
-	}
+	// Keep both ends when trimming: a request payload starts with the tool
+	// schemas (tens of kB, identical on every call) and ends with the system
+	// rules, the user query and the page context - the part anyone reads a
+	// log for. Cutting only the tail threw exactly that away.
+	$rawReq = aiTruncateForLog($rawReq, 60000);
+	$rawResStr = aiTruncateForLog((string) $rawRes, 60000);
 
 	$sql = "INSERT INTO " . MAIN_DB_PREFIX . "ai_request_log (";
 	$sql .= "entity, date_request, fk_user, query_text, tool_name, provider, ";
@@ -996,4 +1020,57 @@ function aiCheckCsrfToken($context = '')
 		echo json_encode(array('error' => 'Invalid CSRF token'));
 		exit;
 	}
+}
+
+/**
+ * Remove extrafields flagged as personal data from an API-shaped payload.
+ *
+ * Dolibarr lets an administrator mark an extrafield as personal data
+ * (GDPR). Such values must not travel to an AI provider, but the
+ * REST objects the bridge returns carry every extrafield in array_options,
+ * and the assistant tools that read array_options directly do the same.
+ * This walks an already-serialized payload (single object or list) and drops
+ * those keys, leaving everything else untouched.
+ *
+ * @param DoliDB              $db          Database handler.
+ * @param array<mixed>|mixed  $payload     Serialized API output (object or list of objects).
+ * @param string              $elementtype Element type as used by ExtraFields (e.g. 'facture').
+ * @return array<mixed>|mixed Payload without personal-data extrafields.
+ */
+function aiStripPersonalExtrafields($db, $payload, $elementtype)
+{
+	if (!is_array($payload) || $elementtype === '') {
+		return $payload;
+	}
+
+	static $cache = array();
+	if (!isset($cache[$elementtype])) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($db);
+		$extrafields->fetch_name_optionals_label($elementtype);
+		$attrs = $extrafields->attributes[$elementtype] ?? array();
+		$personal = array();
+		foreach (($attrs['personal_data'] ?? array()) as $code => $flag) {
+			if (!empty($flag)) {
+				$personal[] = 'options_'.$code;
+			}
+		}
+		$cache[$elementtype] = $personal;
+	}
+	if (empty($cache[$elementtype])) {
+		return $payload;
+	}
+
+	foreach ($payload as $key => $value) {
+		if ($key === 'array_options' && is_array($value)) {
+			foreach ($cache[$elementtype] as $personalKey) {
+				unset($payload[$key][$personalKey]);
+			}
+		} elseif (is_array($value)) {
+			// List responses: each row carries its own array_options.
+			$payload[$key] = aiStripPersonalExtrafields($db, $value, $elementtype);
+		}
+	}
+
+	return $payload;
 }
