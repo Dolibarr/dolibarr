@@ -353,10 +353,10 @@ class PaymentLoan extends CommonObject
 			$this->num_payment = trim($this->num_payment);
 		}
 		if (isset($this->note_private)) {
-			$this->note = trim($this->note_private);
+			$this->note_private = trim($this->note_private);
 		}
 		if (isset($this->note_public)) {
-			$this->note = trim($this->note_public);
+			$this->note_public = trim($this->note_public);
 		}
 		if (isset($this->fk_bank)) {
 			$this->fk_bank = (int) $this->fk_bank;
