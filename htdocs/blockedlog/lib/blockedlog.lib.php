@@ -457,37 +457,59 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 		dol_syslog("callApiToGetObfuscationKey call remote URL idprod1=".dol_sanitizeKeyCode($idprof1), LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-	try {
-		$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array());
-		usleep(10000);
 
-		// Add a warning in log in case of error
-		if ($tmpresult['http_code'] == 0 && !empty($tmpresult['curl_error_msg'])) {
-			$logerrormessage = 'Error: '.$tmpresult['curl_error_msg'];
-			$obfuscationkey .= ' '.$tmpresult['curl_error_msg'];
-			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
-			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
-		} elseif ($tmpresult['http_code'] != 200) {
-			$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
-			$obfuscationkey .= ' '.$tmpresult['http_code'].' '.$tmpresult['content'];
-			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
-			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
-		} else {
-			$reg = array();
-			if (preg_match('/(DOLOBFUSCKEY.*)/', $tmpresult['content'], $reg)) {		// gitleaks:allow  $tmpresult['content'] may contains text comments before the line 'DOLOBFUSCKEY1...,DOLOBFUSCKEY2...'
-				$obfuscationkey = $reg[1];
-				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG);
-				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
+		$maxretry = 3;
+		$retrydelay = 300000;	// 300ms, in microseconds
+
+	for ($tryid = 1; $tryid <= $maxretry; $tryid++) {
+		$retryable = false;
+
+		try {
+			$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array());
+			usleep(10000);
+
+			// Add a warning in log in case of error
+			if ($tmpresult['http_code'] == 0 && !empty($tmpresult['curl_error_msg'])) {
+				$logerrormessage = 'Error: '.$tmpresult['curl_error_msg'];
+				$obfuscationkey = 'ERROR '.$tmpresult['curl_error_msg'];
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key (try ".$tryid."/".$maxretry."): ".$logerrormessage, LOG_WARNING);
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key (try ".$tryid."/".$maxretry."): ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+				$retryable = true;	// No connection / timeout, worth retrying
+			} elseif ($tmpresult['http_code'] >= 500) {
+				$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+				$obfuscationkey = 'ERROR '.$tmpresult['http_code'].' '.$tmpresult['content'];
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key (try ".$tryid."/".$maxretry."): ".$logerrormessage, LOG_WARNING);
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key (try ".$tryid."/".$maxretry."): ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+				$retryable = true;	// Remote server error, may be transient
+			} elseif ($tmpresult['http_code'] != 200) {
+				$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+				$obfuscationkey = 'ERROR '.$tmpresult['http_code'].' '.$tmpresult['content'];
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
 			} else {
-				$obfuscationkey .= ' '.$tmpresult['content'];
-				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING);
-				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+				$reg = array();
+				if (preg_match('/(DOLOBFUSCKEY.*)/', $tmpresult['content'], $reg)) {		// gitleaks:allow  $tmpresult['content'] may contains text comments before the line 'DOLOBFUSCKEY1...,DOLOBFUSCKEY2...'
+					$obfuscationkey = $reg[1];
+					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG);
+					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
+				} else {
+					$obfuscationkey = 'ERROR '.$tmpresult['content'];
+					dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING);
+					dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+				}
 			}
+		} catch (Exception $e) {
+			$obfuscationkey = 'ERROR '.$e->getMessage();
+			dol_syslog("callApiToGetObfuscationKey result error (try ".$tryid."/".$maxretry."): ".$e->getMessage(), LOG_ERR);
+			dol_syslog("callApiToGetObfuscationKey result error (try ".$tryid."/".$maxretry."): ".$e->getMessage(), LOG_ERR, 0, '_dolibarrgetkeyobfuscation');
+			$retryable = true;	// Network exception, worth retrying
 		}
-	} catch (Exception $e) {
-		$obfuscationkey .= ' '.$e->getMessage();
-		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR);
-		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR, 0, '_dolibarrgetkeyobfuscation');
+
+		if (!$retryable || $tryid == $maxretry) {
+			break;
+		}
+
+		usleep($retrydelay);
 	}
 
 	return $obfuscationkey;
