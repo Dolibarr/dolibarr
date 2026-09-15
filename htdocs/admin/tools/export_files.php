@@ -180,6 +180,8 @@ if ($compression == 'zip') {
 } elseif (in_array($compression, array('gz', 'bz', 'zstd'))) {
 	$userlogin = ($user->login ? $user->login : 'unknown');
 
+	dol_mkdir($conf->admin->dir_temp);	// May have been removed by a "Clean temporary files" purge
+
 	$outputfile = $conf->admin->dir_temp.'/'.dol_sanitizeFileName('export_files.'.$userlogin.'.out'); // File used with popen method
 
 	$file .= '.tar';
