@@ -559,7 +559,7 @@ class FormTicket
 		}
 
 		// Message
-		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
+		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td class="tdtop">';
 
 		// If public form, display more information
 		$toolbarname = 'dolibarr_notes';
@@ -570,6 +570,34 @@ class FormTicket
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = false;
 		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= ($this->ispublic ? 2 : 1));		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+
+		// Add layout and AI tools for message (only for backoffice users)
+		if (!$this->ispublic) {
+			$out = '';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($this->db);
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+			$formai = new FormAI($this->db);
+
+			$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
+			//$formmail->withlayout = ($ckeditorenabledforticket) ? 'email' : '';
+			$formmail->withaiprompt = (isModEnabled('ai')) ? 'text' : '';
+
+			$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
+			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+			$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
+			$showlinktoailabel = $langs->trans("AIEnhancements");
+			$htmlname = 'message';
+
+			$formai->substit = $this->substit;
+
+			// Fill $out
+			$db = $this->db;
+			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+			print $out;
+			print '<br>';
+		}
+
 		if (!$ckeditorenabledforticket) {
 			$msg = dol_string_nohtmltag($msg, 2);
 		}
