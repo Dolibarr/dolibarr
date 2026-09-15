@@ -128,3 +128,7 @@ ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
+PropalSignedCantDelete=This proposal is accepted (signed) and cannot be deleted
+PropalLinkedToOrderCantDelete=This proposal has a linked order and cannot be deleted
+ErrorPropalSignedCantDelete=Deletion is not allowed: this proposal is accepted (signed)
+ErrorPropalLinkedToOrderCantDelete=Deletion is not allowed: this proposal is linked to an order
