@@ -59,7 +59,11 @@ if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibeignore" ]; then
 	echo "Create link $WORKDIR/.vibeignore"
 	ln -fs .agentsignore .vibeignore 2>/dev/null
 fi
+if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibe" ]; then
+	echo "Create link $WORKDIR/.vibe"
+	ln -fs .agents .vibe 2>/dev/null
+fi
 
 # Execute order
-exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i -c 'vibe; exec bash'
+exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power; exec bash'
 #exec "$@"
