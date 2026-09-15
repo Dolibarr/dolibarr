@@ -563,7 +563,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%', 1);
 		$out = $doleditor->Create(1);
 	} else {
-		$out = '<div class="content">';
+		$out = '<div class="content kmcontent">';
 		$out .= $object->answer;
 		$out .= '</div>';
 	}

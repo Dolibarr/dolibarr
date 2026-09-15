@@ -1391,6 +1391,14 @@ td.wordbreak img, td.wordbreakimp img {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+div.kmcontent {
+	border: 1px solid #E0E0E0;
+	background-color: var(--colorbacklineimpair2);
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
 
 div.urllink {
 	padding: 5px;
@@ -6211,7 +6219,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 }
 
 
-	/* ============================================================================== */
+/* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
 
