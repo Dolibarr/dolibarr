@@ -13,6 +13,7 @@ display_help() {
 Usage: $0 [OPTIONS] [TEST_FILTERS]
 
 Run hurl tests on Dolibarr API, GUI, and public endpoints.
+WARNING: API module must be set with "Production mode" to "On".
 
 Options:
   --host=HOST          Specify the host address of the Dolibarr server.
