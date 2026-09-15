@@ -169,7 +169,7 @@ class Website extends CommonObject
 			$this->date_modification = $now;
 		}
 		// Remove spaces and be sure we have main language only
-		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+		$this->lang = preg_replace('/[_-].*$/', '', trim((string) $this->lang)); // en_US or en-US -> en
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
@@ -510,7 +510,7 @@ class Website extends CommonObject
 		}
 
 		// Remove spaces and be sure we have main language only
-		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+		$this->lang = preg_replace('/[_-].*$/', '', trim((string) $this->lang)); // en_US or en-US -> en
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
