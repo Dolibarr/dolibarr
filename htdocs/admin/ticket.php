@@ -233,7 +233,7 @@ if ($action == 'updateMask') {
 
 	$notification_email_template = GETPOST('TICKET_NOTIFICATION_EMAIL_TEMPLATE', 'alpha');
 	$notification_email_template_description = 'Template email for ticket create notification';
-	if (!empty($notification_email_to)) {
+	if (!empty($notification_email_template)) {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', $notification_email_template, 'chaine', 0, $notification_email_template_description, $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', '', 'chaine', 0, $notification_email_template_description, $conf->entity);
