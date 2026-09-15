@@ -84,6 +84,34 @@ class TicketTest extends CommonClassTest
 	}
 
 	/**
+	 * Test Tickets::_ticketContactTypeExists via reflection.
+	 *
+	 * @return	void
+	 */
+	public function testTicketContactTypeExists()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once dirname(__FILE__).'/../../htdocs/ticket/class/api_tickets.class.php';
+
+		$api = new Tickets();
+		$method = new ReflectionMethod('Tickets', '_ticketContactTypeExists');
+		$method->setAccessible(true);
+
+		// Known active seed types for element 'ticket'
+		$this->assertTrue($method->invoke($api, 'SUPPORTTEC', 'internal'), 'SUPPORTTEC/internal should exist');
+		$this->assertTrue($method->invoke($api, 'SUPPORTCLI', 'external'), 'SUPPORTCLI/external should exist');
+		// Wrong source for the code (SUPPORTTEC is internal only)
+		$this->assertFalse($method->invoke($api, 'SUPPORTTEC', 'external'), 'SUPPORTTEC is internal only');
+		// Unknown code
+		$this->assertFalse($method->invoke($api, 'NOT_A_REAL_CODE', 'external'), 'Unknown code must be false');
+	}
+
+	/**
 	 * testTicketFetch
 	 *
 	 * @param	int		$id		Id of ticket
