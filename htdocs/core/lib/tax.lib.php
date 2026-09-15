@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2009  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2006-2007  Yannick Warnier     <ywarnier@beeznest.org>
  * Copyright (C) 2011	    Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2017  Juanjo Menent       <jmenent@2byte.es>
@@ -116,7 +117,8 @@ function tax_prepare_head(ChargeSociales $object)
  */
 function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $direction, $m = 0, $q = 0)
 {
-	global $conf;
+	global $conf, $hookmanager;
+	$hookmanager->initHooks(array('taxvatlist'));
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
@@ -217,6 +219,10 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -275,6 +281,10 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture).", pf.rowid";
 	}
 
@@ -414,6 +424,10 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -676,7 +690,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
  */
 function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m = 0)
 {
-	global $conf;
+	global $conf, $hookmanager;
+	$hookmanager->initHooks(array('taxvatlist'));
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
 	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
@@ -773,6 +788,10 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
@@ -953,6 +972,10 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
 		}
+		// Add SQL restrictions from hooks (context taxvatlist), e.g. a deposit pivot date restricting deposits by their date
+		$parameters = array('invoicealias' => 'f', 'issupplier' => ($direction == 'buy' ? 1 : 0), 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY d.rowid, d.".$db->sanitize($fk_facture);
 	} else {
 		// Count on payments date
