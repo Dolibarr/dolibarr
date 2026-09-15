@@ -255,6 +255,9 @@ class Project extends CommonObject
 	 */
 	public $weekWorkLoadPerTask; // Used to store workload details of tasks of a projet
 
+	/** @var int Used to store target status when changing status */
+	public $targetstatus;
+
 	/**
 	 * @var array<string,int> Used to store workload details of a projet
 	 */
@@ -400,6 +403,16 @@ class Project extends CommonObject
 	 */
 	const STATUS_CLOSED = 2;
 
+	/**
+	 * In Progress status (extended states, see PROJECT_EXTENDED_STATES option)
+	 */
+	const STATUS_INPROGRESS = 3;
+
+	/**
+	 * Canceled status (extended states, see PROJECT_EXTENDED_STATES option)
+	 */
+	const STATUS_CANCELED = 6;
+
 
 	/**
 	 *  Constructor
@@ -415,8 +428,25 @@ class Project extends CommonObject
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
 
-		$this->labelStatusShort = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
-		$this->labelStatus = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
+		if (getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+			$this->labelStatusShort = array(
+				self::STATUS_DRAFT      => 'ProjectStatusDraftShort',
+				self::STATUS_VALIDATED  => 'ProjectStatusValidatedShort',
+				self::STATUS_INPROGRESS => 'ProjectStatusInProgressShort',
+				self::STATUS_CLOSED     => 'ProjectStatusClosedShort',
+				self::STATUS_CANCELED   => 'ProjectStatusCanceledShort',
+			);
+			$this->labelStatus = array(
+				self::STATUS_DRAFT      => 'ProjectStatusDraft',
+				self::STATUS_VALIDATED  => 'ProjectStatusValidated',
+				self::STATUS_INPROGRESS => 'ProjectStatusInProgress',
+				self::STATUS_CLOSED     => 'ProjectStatusClosed',
+				self::STATUS_CANCELED   => 'ProjectStatusCanceled',
+			);
+		} else {
+			$this->labelStatusShort = array(0 => 'ProjectStatusDraftShort', 1 => 'ProjectStatusValidatedShort', 2 => 'ProjectStatusClosedShort');
+			$this->labelStatus = array(0 => 'ProjectStatusDraft', 1 => 'ProjectStatusValidated', 2 => 'ProjectStatusClosed');
+		}
 
 		global $conf;
 
@@ -1210,21 +1240,22 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * 		Validate a project
+	 * Validate a project (or set to a specific open status when extended states are enabled)
 	 *
-	 * 		@param		User	$user		   User that validate
-	 *      @param      int     $notrigger     1=Disable triggers
-	 * 		@return		int					   Return integer <0 if KO, 0=Nothing done, >0 if KO
+	 * @param  User  $user          User that validates
+	 * @param  int   $notrigger     1=Disable triggers
+	 * @param  int   $targetstatus  Target status (default STATUS_VALIDATED; use STATUS_INPROGRESS for extended states)
+	 * @return int                  Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function setValid($user, $notrigger = 0)
+	public function setValid($user, $notrigger = 0, int $targetstatus = self::STATUS_VALIDATED)
 	{
 		global $langs;
 
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
+		if ($this->status == $targetstatus) {
+			dol_syslog(get_class($this)."::validate action abandoned: already at target status", LOG_WARNING);
 			return 0;
 		}
 
@@ -1237,7 +1268,7 @@ class Project extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-		$sql .= " SET fk_statut = ".self::STATUS_VALIDATED;
+		$sql .= " SET fk_statut = ".((int) $targetstatus);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		//$sql .= " AND entity = ".((int) $conf->entity);	// Disabled, when we use the ID for the where, we must not add any other search condition
 
@@ -1254,8 +1285,8 @@ class Project extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = 1;
-				$this->status = 1;
+				$this->statut = $targetstatus;
+				$this->status = $targetstatus;
 				$this->db->commit();
 				return 1;
 			} else {
@@ -1272,24 +1303,31 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * 		Close a project
+	 * Close a project
 	 *
-	 * 		@param		User	$user		User that close project
-	 * 		@return		int					Return integer <0 if KO, 0 if already closed, >0 if OK
+	 * @param  User  $user          User that closes the project
+	 * @param  int   $notrigger     1=Disable triggers
+	 * @param  int   $targetstatus  Target status (default STATUS_CLOSED; use STATUS_CANCELED for extended states)
+	 * @return int                  Return integer <0 if KO, 0 if already closed, >0 if OK
 	 */
-	public function setClose($user)
+	public function setClose($user, $notrigger = 0, int $targetstatus = self::STATUS_CLOSED)
 	{
 		$now = dol_now();
 
 		$error = 0;
 
-		if ($this->status != self::STATUS_CLOSED) {
+		if (!in_array($this->status, array(self::STATUS_CLOSED, self::STATUS_CANCELED))) {
 			$this->db->begin();
+			$this->targetstatus = $targetstatus;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
+			$sql .= " SET fk_statut = ".((int) $targetstatus).", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+			if (getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+				$sql .= " AND fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_INPROGRESS.")";
+			} else {
+				$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+			}
 
 			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				// TODO What to do if fk_opp_status is not code 'WON' or 'LOST'
@@ -1298,15 +1336,20 @@ class Project extends CommonObject
 			dol_syslog(get_class($this)."::setClose", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				// Call trigger
-				$result = $this->call_trigger('PROJECT_CLOSE', $user);
-				if ($result < 0) {
-					$error++;
+				if (empty($notrigger)) {
+					$this->context['targetstatus'] = $targetstatus;
+					$this->context['close_note']   = isset($this->close_note) ? $this->close_note : '';
+					// Call trigger
+					$result = $this->call_trigger('PROJECT_CLOSE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 				}
-				// End call triggers
 
 				if (!$error) {
-					$this->status = 2;
+					$this->statut = $targetstatus;
+					$this->status = $targetstatus;
 					$this->db->commit();
 					return 1;
 				} else {
@@ -1353,18 +1396,30 @@ class Project extends CommonObject
 			return '';
 		}
 
+		$langs->load('projects');
+
 		$statustrans = array(
-			0 => 'status0',
-			1 => 'status4',
-			2 => 'status6',
+			self::STATUS_DRAFT      => 'status0',
+			self::STATUS_VALIDATED  => 'status4',
+			self::STATUS_CLOSED     => 'status6',
+			self::STATUS_INPROGRESS => 'status2',
+			self::STATUS_CANCELED   => 'status8',
 		);
 
-		$statusClass = 'status0';
-		if (!empty($statustrans[$status])) {
-			$statusClass = $statustrans[$status];
+		// Fallback: when extended states is disabled but DB still has projects with those statuses,
+		// map to nearest equivalent so display doesn't go blank
+		$displayStatus = $status;
+		if (!isset($this->labelStatus[$displayStatus])) {
+			$fallback = array(
+				self::STATUS_INPROGRESS => self::STATUS_VALIDATED,
+				self::STATUS_CANCELED   => self::STATUS_CLOSED,
+			);
+			$displayStatus = $fallback[$displayStatus] ?? self::STATUS_DRAFT;
 		}
 
-		return dolGetStatus($langs->transnoentitiesnoconv($this->labelStatus[$status]), $langs->transnoentitiesnoconv($this->labelStatusShort[$status]), '', $statusClass, $mode);
+		$statusClass = isset($statustrans[$displayStatus]) ? $statustrans[$displayStatus] : 'status0';
+
+		return dolGetStatus($langs->transnoentitiesnoconv($this->labelStatus[$displayStatus] ?? ''), $langs->transnoentitiesnoconv($this->labelStatusShort[$displayStatus] ?? ''), '', $statusClass, $mode);
 	}
 
 	/**
