@@ -429,6 +429,8 @@ if (empty($reshook)) {
 				// Log action in ticket logs table
 				$object->fetch_user($usertoassign);
 				setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('TicketUnassigned'), null, 'mesgs');
 			}
 			header("Location: card.php?track_id=" . $object->track_id);
 			exit;
