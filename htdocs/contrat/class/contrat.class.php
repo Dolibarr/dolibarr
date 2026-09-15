@@ -1717,8 +1717,7 @@ class Contrat extends CommonObject
 
 		// Clean parameters
 		$qty = trim((string) $qty);
-		$desc = trim($desc);
-		$desc = trim($desc);
+		$desc = trim((string) $desc);
 		$subprice = price2num($pu);
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
