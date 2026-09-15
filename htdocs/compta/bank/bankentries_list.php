@@ -791,7 +791,7 @@ if ($resql) {
 	}
 
 	// Lines of title fields
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="search_form" spellcheck="false">'."\n";
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}

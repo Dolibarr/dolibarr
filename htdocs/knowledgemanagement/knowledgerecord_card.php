@@ -253,7 +253,8 @@ if ($action == 'create') {
 
 	// Prefill AI instructions with question text on create form
 	if (isModEnabled('ai')) {
-		$aipromptprefix = dol_escape_js($langs->transnoentities('SuggestAnswerToQuestion'));
+		$aipromptprefix = $langs->transnoentities('SuggestAnswerToQuestion');
+
 		print '<script nonce="'.getNonce().'" type="text/javascript">
 		$(document).ready(function() {
 			$("#linkforaiprompttextgenerationemail").on("click", function() {
@@ -262,7 +263,7 @@ if ($action == 'create') {
 					if (!instructionField.is(":visible")) {
 						return;
 					}
-					var prefix = "'.$aipromptprefix.'";
+					var prefix = \''.dol_escape_js($aipromptprefix).'\';
 					var currentVal = instructionField.val();
 					var question = "";
 					if (typeof CKEDITOR !== "undefined" && CKEDITOR.instances && CKEDITOR.instances["question"]) {
@@ -563,7 +564,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%', 1);
 		$out = $doleditor->Create(1);
 	} else {
-		$out = '<div class="content">';
+		$out = '<div class="content kmcontent">';
 		$out .= $object->answer;
 		$out .= '</div>';
 	}
