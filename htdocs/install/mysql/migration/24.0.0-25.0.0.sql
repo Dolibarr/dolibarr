@@ -145,6 +145,7 @@ ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_dele
 -- Add contract type field (0=customer, 1=supplier)
 ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_ext;
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_warehouse integer DEFAULT NULL;
 -- Table to persist the data an online payment return page needs, server side, instead of relying
 -- on the PHP session, which is lost when the browser drops the cookie on the cross site return.
 create table llx_onlinepayment_session
