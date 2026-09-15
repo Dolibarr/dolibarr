@@ -286,19 +286,18 @@ class McpAuth
 	 */
 	private function fetchUserIdFromApiKey($credential)
 	{
-		$escaped = "'".$this->db->escape($credential)."'";
-		$escapedencrypted = "'".$this->db->escape(dolEncrypt($credential, '', '', 'dolibarr'))."'";
-
 		if (getDolGlobalString('API_IN_TOKEN_TABLE')) {
 			$sql = "SELECT u.rowid, u.login, u.statut, oat.tokenstring as storedkey";
 			$sql .= " FROM ".$this->db->prefix()."oauth_token as oat";
 			$sql .= " INNER JOIN ".$this->db->prefix()."user as u ON u.rowid = oat.fk_user";
-			$sql .= " WHERE (oat.tokenstring = ".$escaped." OR oat.tokenstring = ".$escapedencrypted.")";
+			$sql .= " WHERE (oat.tokenstring = '".$this->db->escape($credential)."'";
+			$sql .= " OR oat.tokenstring = '".$this->db->escape(dolEncrypt($credential, '', '', 'dolibarr'))."')";
 			$sql .= " AND oat.service = 'dolibarr_rest_api'";
 		} else {
 			$sql = "SELECT u.rowid, u.login, u.statut, u.api_key as storedkey";
 			$sql .= " FROM ".$this->db->prefix()."user as u";
-			$sql .= " WHERE u.api_key = ".$escaped." OR u.api_key = ".$escapedencrypted;
+			$sql .= " WHERE u.api_key = '".$this->db->escape($credential)."'";
+			$sql .= " OR u.api_key = '".$this->db->escape(dolEncrypt($credential, '', '', 'dolibarr'))."'";
 		}
 
 		$resql = $this->db->query($sql);
