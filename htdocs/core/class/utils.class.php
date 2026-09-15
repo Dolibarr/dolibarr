@@ -225,7 +225,7 @@ class Utils
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);
-		
+
 		//return $count;
 		return 0; // This function can be called by cron so must return 0 if OK
 	}
