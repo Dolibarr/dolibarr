@@ -15,13 +15,13 @@ Usage: $0 [OPTIONS] [TEST_FILTERS]
 Run hurl tests on Dolibarr API, GUI, and public endpoints.
 
 Options:
-  --cookiefile=FILE    Specify the cookie file to use for GUI tests.
-  --port=PORT          Specify the port number of the Dolibarr server.
   --host=HOST          Specify the host address of the Dolibarr server.
+  --port=PORT          Specify the port number of the Dolibarr server.
+  --suburl=SUBURL      Specify the suburl of the Dolibarr server.
+  --apikey=APIKEY      Specify the API key for API tests.
   --user=USERNAME      Specify the username for GUI tests.
   --pass=PASSWORD      Specify the password for GUI tests.
-  --apikey=APIKEY      Specify the API key for API tests.
-  --suburl=SUBURL      Specify the suburl of the Dolibarr server.
+  --cookiefile=FILE    Specify the cookie file to use for GUI tests.
   --exclude=PATTERN    Exclude tests that match the specified pattern.
   --verbose | -v       Verbose hurl output
   --very-verbose       Very verbose hurl output
@@ -37,7 +37,7 @@ Exclude Patterns:
   For example: $0 --exclude=setup_modules --exclude=status
 
 Examples:
-  $0 --cookiefile=/path/to/cookie.jar --port=8080 --host=http://example.net --user=foobar --pass=topsecret --apikey=your_api_key --suburl=/dolibarr setup_modules
+  $0 --cookiefile=/path/to/cookie.jar --port=8080 --host=localhost --user=foobar --pass=topsecret --apikey=your_api_key --suburl=/dolibarr setup_modules
   $0 --exclude=setup_modules --exclude=status
   $0 setup_modules status
 EOHELP
@@ -109,10 +109,27 @@ for arg in "$@"; do
 	esac
 done
 
+# If DOLAPIKEY is set (from environment or --apikey=), ensure it has the header format "DOLAPIKEY: <key>"
+if [[ -n "${DOLAPIKEY}" && "${DOLAPIKEY}" != *": "* ]]; then
+	DOLAPIKEY="DOLAPIKEY: ${DOLAPIKEY}"
+fi
+
 if [[ -z ${DOLIHOST+x} ]]; then
 	DOLIHOST="localhost"
 fi
-hostnport="${DOLIHOST}"
+
+# Split DOLIHOST into base (scheme://host or host) and path (everything after the first /)
+hostbase="${DOLIHOST}"
+hostpath=""
+if [[ "${DOLIHOST}" =~ ^([a-zA-Z]+://[^/]+)(/.*)?$ ]]; then
+	hostbase="${BASH_REMATCH[1]}"
+	hostpath="${BASH_REMATCH[2]:-}"
+elif [[ "${DOLIHOST}" =~ ^([^:/]+)(/.*)?$ ]]; then
+	hostbase="${BASH_REMATCH[1]}"
+	hostpath="${BASH_REMATCH[2]:-}"
+fi
+
+hostnport="${hostbase}"
 if [[ -z ${DOLIPORT+x} ]]; then
 	hostnport="${hostnport}:8080"
 else
@@ -121,9 +138,13 @@ fi
 if [[ -z ${DOLISUBURL+x} ]]; then
 	DOLISUBURL=""
 fi
+if [[ -n "${hostpath}" ]]; then
+	hostnport="${hostnport}${hostpath}"
+fi
 if [[ "" != "${DOLISUBURL}" ]]; then
 	hostnport="${hostnport}/${DOLISUBURL}"
 fi
+echo "hostnport=$hostnport"
 
 # Clean up test filters to remove anything up to 'hurl' and the directory separator following it included
 for i in "${!test_filters[@]}"; do
