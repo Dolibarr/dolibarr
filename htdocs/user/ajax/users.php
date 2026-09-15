@@ -34,9 +34,9 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
+// if (!defined('NOREQUIRESOC')) { // avoid warnings in hooks
+// 	define('NOREQUIRESOC', '1');
+// }
 
 // Load Dolibarr environment
 require '../../main.inc.php';
