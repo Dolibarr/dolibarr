@@ -4,31 +4,38 @@ FROM ubuntu:26.04
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-		bash \
-		bash-completion \
+        bash \
+        bash-completion \
         vim \
-		wget \
-		curl \
+        wget \
+        curl \
         dialog \
-		hurl \
-		phpunit \
-		php \
-		python3 \
-		python3-pip \
+        hurl \
+        phpunit \
+        php \
+        python3 \
+        python3-pip \
         ca-certificates \
         git \
     && rm -rf /var/lib/apt/lists/*
 
+# Install RTK - Rust Token Killer
+RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh \
+    && cp /root/.local/bin/rtk /usr/local/bin/rtk \
+    && chmod +x /usr/local/bin/rtk \
+    && rtk --version \
+    && rtk gain
+
 WORKDIR /workspace
 
-RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
+RUN curl -LsSf https://astral.sh/uv/install.sh \
+    | UV_INSTALL_DIR=/usr/local/bin sh
 
 RUN mkdir -p /opt/vibe \
     && uv venv /opt/vibe \
     && uv pip install --python /opt/vibe/bin/python mistral-vibe
 
 ENV PATH="/opt/vibe/bin:$PATH"
-
 
 # Prompt
 RUN cat >> /etc/bash.bashrc <<'EOF'
@@ -46,9 +53,12 @@ alias ll='ls -alF'
 alias ls='ls --color=auto'
 
 PS1='\[\e[1;31m\][CONTAINER]\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \[\e[1;32m\]$(git_branch)\[\e[0m\] \$ '
+
 EOF
 
 # Add the launcher
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
