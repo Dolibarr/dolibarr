@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -69,7 +69,7 @@ function loan_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
-		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
+		$head[$tab][0] = DOL_URL_ROOT."/core/note.php?element=loan&id=".$object->id;
 		$head[$tab][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ function emailing_prepare_head(Mailing $object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/note.php?id=".$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'mailing', 'id' => $object->id]);
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
 	$h++;
