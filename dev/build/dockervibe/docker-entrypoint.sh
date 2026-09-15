@@ -49,7 +49,16 @@ fi
 
 echo "Running as $USER_NAME ($USER_ID:$GROUP_ID)"
 
-ln -fs /dolibarr_dev /dolibarr 2>/dev/null
+WORKDIR="$(pwd)"
+
+if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR" ]; then
+	echo "Create link /dolibarr"
+	ln -fs $WORKDIR /dolibarr 2>/dev/null
+fi
+if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibeignore" ]; then
+	echo "Create link $WORKDIR/.vibeignore"
+	ln -fs .agentsignore .vibeignore 2>/dev/null
+fi
 
 # Execute order
 exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i -c 'vibe; exec bash'
