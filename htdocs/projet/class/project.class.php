@@ -2372,12 +2372,12 @@ class Project extends CommonObject
 			return '';
 		}
 
-		$wonlost = $tablealiastouse.".fk_opp_status IN (SELECT rowid FROM ".$this->db->prefix()."c_lead_status WHERE code IN ('WON', 'LOST'))";
+		$sanitizedwonlost = $tablealiastouse.".fk_opp_status IN (SELECT rowid FROM ".$this->db->prefix()."c_lead_status WHERE code IN ('WON', 'LOST'))";
 
 		if ($view == 'openedopp') {
-			return "(".$tablealiastouse.".usage_opportunity = 1 AND (".$tablealiastouse.".fk_opp_status IS NULL OR NOT ".$wonlost."))";
+			return "(".$tablealiastouse.".usage_opportunity = 1 AND (".$tablealiastouse.".fk_opp_status IS NULL OR NOT ".$sanitizedwonlost."))";
 		} elseif ($view == 'notopenedopp') {
-			return "(".$tablealiastouse.".usage_opportunity IS NULL OR ".$tablealiastouse.".usage_opportunity <> 1 OR ".$wonlost.")";
+			return "(".$tablealiastouse.".usage_opportunity IS NULL OR ".$tablealiastouse.".usage_opportunity <> 1 OR ".$sanitizedwonlost.")";
 		}
 
 		return '';
