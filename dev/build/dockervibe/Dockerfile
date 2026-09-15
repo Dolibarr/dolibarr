@@ -10,6 +10,7 @@ RUN apt-get update \
 		wget \
 		curl \
         dialog \
+		hurl \
 		phpunit \
 		php \
 		python3 \
