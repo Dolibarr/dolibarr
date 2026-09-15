@@ -105,12 +105,19 @@ class DolibarrApiAccess implements iAuthenticate
 
 		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
 		$api_key = '';
+		if (isset($_GET['api_key']) || isset($_GET['DOLAPIKEY'])) {
+			// A key passed in the query string ends up in the web server access log, in proxy logs, in the
+			// browser history and in the Referer header of any outgoing link. Setting API_DISABLE_KEY_IN_URL
+			// refuses it instead of accepting it, so that a client still using that form is corrected rather
+			// than leaking the key silently. Off by default, for backward compatibility.
+			if (getDolGlobalString('API_DISABLE_KEY_IN_URL')) {
+				throw new RestException(401, 'The API key must be sent in the DOLAPIKEY header, not in the URL (API_DISABLE_KEY_IN_URL is set)');
+			}
+		}
 		if (isset($_GET['api_key'])) {	// For backward compatibility. Keep $_GET here.
-			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['api_key'];
 		}
 		if (isset($_GET['DOLAPIKEY'])) {
-			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['DOLAPIKEY']; // With GET method
 		}
 
