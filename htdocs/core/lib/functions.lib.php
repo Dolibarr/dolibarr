@@ -4632,7 +4632,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *  should be roundtext2num().
  *
  *	@param	int|float|string|null	$amount		Amount to convert/clean or round
- *	@param	''|'MU'|'MT'|'MS'|'CU'|'CT'|'CR'|int<0,max>	$rounding		''=No rounding
+ *	@param	''|'MU'|'MT'|'MS'|'CU'|'CT'|'CR'|int<0,max>	$rounding	''=No rounding
  *                                                                  'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *                                                                  'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *                                                                  'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
