@@ -360,8 +360,10 @@ class ToolThirdParty extends McpTool
 				"email"   => (string) $soc->email,
 				"phone"   => (string) $soc->phone,
 				"vat"     => (string) $soc->tva_intra,
-				// getLibStatut(2) returns the status label (short). Cast to string just in case.
-				"status"  => (string) $soc->getLibStatut(2),
+				// Mode 0: the plain label. Modes 2-5 return a <span class="badge">
+				// markup that the chat renders as raw HTML (and that the model
+				// would read as content), so they must not be used here.
+				"status"  => (string) $soc->getLibStatut(0),
 				"url"     => DOL_URL_ROOT . "/societe/card.php?socid=" . $soc->id
 			];
 		}

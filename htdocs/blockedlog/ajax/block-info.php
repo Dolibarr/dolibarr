@@ -218,7 +218,7 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		//var_dump($newobjtoshow);
 		foreach ($newobjtoshow as $key => $val) {
 			if (!is_object($val) && !is_array($val)) {
-				// TODO $val can be '__PHP_Incomplete_Class', the is_object return false
+				// $val can be '__PHP_Incomplete_Class', the is_object return false
 				$s .= '<tr>';
 
 				// Field code

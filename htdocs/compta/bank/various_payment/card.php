@@ -330,6 +330,11 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 			$object->datev = $newdatepayment;
 		}
 
+		if (GETPOSTINT('selectclone_accountid') > 0) {
+			$object->fk_account = GETPOSTINT('selectclone_accountid');
+			$object->accountid = $object->fk_account;
+		}
+
 		if (GETPOSTISSET("clone_sens")) {
 			$object->sens = GETPOSTINT("clone_sens");
 		} // else { $object->sens = $object->sens; }
@@ -625,7 +630,7 @@ if ($id) {
 			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
 			array('type' => 'date', 'tdclass' => 'fieldrequired', 'name' => 'clone_date_payment', 'label' => $langs->trans("DatePayment"), 'value' => -1),
 			array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1),
-			array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'clone_accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($object->fk_account, "accountid", 0, '', 1, '', 0, 'minwidth200', 1)),
+			array('type' => 'other', 'tdclass' => 'fieldrequired', 'name' => 'selectclone_accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($object->fk_account, "clone_accountid", 0, '', 1, '', 0, 'minwidth200', 1)),
 			array('type' => 'text', 'name' => 'clone_amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount)),
 			array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens").' ' . $set_value_help, 'values' => $sensarray, 'default' => (string) $object->sens),
 		);

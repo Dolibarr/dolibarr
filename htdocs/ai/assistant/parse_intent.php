@@ -121,6 +121,7 @@ try {
 	// one-line description is added to the system prompt so the model can
 	// resolve "this invoice" into real tool arguments.
 	$aiPageContextLine = '';
+	$ctxNamesToMask = array();
 	if (!empty($data['context']) && is_array($data['context'])) {
 		$ctxElement = isset($data['context']['element']) ? (string) $data['context']['element'] : '';
 		$ctxId = isset($data['context']['id']) ? (int) $data['context']['id'] : 0;
@@ -203,6 +204,13 @@ try {
 				// Under redaction, elements whose ref IS a personal/company name
 				// (societe: ref = company name) must not leak it - the privacy
 				// guard is pattern-based and cannot recognize arbitrary names.
+				$ctxNamesToMask[] = (string) $ctxObj->ref;
+				if (!empty($ctxObj->label)) {
+					$ctxNamesToMask[] = (string) $ctxObj->label;
+				}
+				if (!empty($ctxObj->name)) {
+					$ctxNamesToMask[] = (string) $ctxObj->name;
+				}
 				$ctxRefPart = " with ref \"".$ctxObj->ref."\"";
 				if (!empty($doRedact) && in_array($ctxElement, array('societe', 'contact'), true)) {
 					$ctxRefPart = "";
@@ -237,6 +245,9 @@ try {
 					continue;
 				}
 				$parts[] = $fk."='".dol_string_nohtmltag(dol_substr($fv, 0, 120))."'";
+				// Search values are names the user typed against real records:
+				// same class of arbitrary string as a thirdparty name.
+				$ctxNamesToMask[] = dol_string_nohtmltag(dol_substr($fv, 0, 120));
 				if (++$n >= 12) {
 					break;
 				}
@@ -568,7 +579,13 @@ try {
 			// Masked like the query itself: under enforced redaction the ref
 			// becomes a placeholder that is restored server-side in tool
 			// arguments; the numeric ids the tools need stay usable.
-			$systemPrompt .= "\n\nPage context: ".(!empty($doRedact) && !empty($guard) ? $guard->mask($aiPageContextLine) : $aiPageContextLine);
+			// Mask once, use for both the system line and the user anchor:
+			// names first (dictionary - arbitrary strings the patterns cannot
+			// see), then the pattern pass for refs, emails, IBANs and the rest.
+			if (!empty($doRedact) && !empty($guard)) {
+				$aiPageContextLine = $guard->mask($guard->maskNames($aiPageContextLine, $ctxNamesToMask));
+			}
+			$systemPrompt .= "\n\nPage context: ".$aiPageContextLine;
 		}
 		$systemPrompt .= " Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.";
 
@@ -639,7 +656,7 @@ try {
 				// hallucinated tool names appeared with the long form). The
 				// full coaching stays in the system Page-context line above.
 				$aiPageContextShort = strtok($aiPageContextLine, ".").".";
-				$query .= "\n\n(Context: ".(!empty($doRedact) && !empty($guard) ? $guard->mask($aiPageContextShort) : $aiPageContextShort).")";
+				$query .= "\n\n(Context: ".$aiPageContextShort.")";
 			}
 
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments);
@@ -719,6 +736,23 @@ try {
 				// Validation check: Check if the AI selected a tool that actually exists in our filtered schema.
 				if ($intentJSON && isset($intentJSON['tool'])) {
 					$validToolNames = array_column($allToolsSchema, 'name');
+					if (!in_array($intentJSON['tool'], $validToolNames)) {
+						// Near-miss name: recover only on a single match, same verb, all tokens present.
+						$reqTokens = explode('_', dol_strtolower((string) $intentJSON['tool']));
+						$candidates = array();
+						foreach ($validToolNames as $realName) {
+							if (strpos($realName, $reqTokens[0].'_') !== 0) {
+								continue;
+							}
+							if (!array_diff($reqTokens, explode('_', $realName))) {
+								$candidates[] = $realName;
+							}
+						}
+						if (count($candidates) === 1) {
+							dol_syslog("AI Validation: tool '".$intentJSON['tool']."' recovered to '".$candidates[0]."'.", LOG_INFO);
+							$intentJSON['tool'] = $candidates[0];
+						}
+					}
 					if (!in_array($intentJSON['tool'], $validToolNames)) {
 						dol_syslog("AI Validation: Tool '" . $intentJSON['tool'] . "' not found in filtered schema. Send error message via respond_to_user.", LOG_WARNING);
 

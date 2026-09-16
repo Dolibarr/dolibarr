@@ -254,7 +254,8 @@ if ($action == 'create') {
 
 	// Prefill AI instructions with question text on create form
 	if (isModEnabled('ai')) {
-		$aipromptprefix = "'".dol_escape_js($langs->transnoentities('SuggestAnswerToQuestion'))."'";
+		$aipromptprefix = $langs->transnoentities('SuggestAnswerToQuestion');
+
 		print '<script nonce="'.getNonce().'" type="text/javascript">
 		$(document).ready(function() {
 			$("#linkforaiprompttextgenerationemail").on("click", function() {
@@ -263,7 +264,7 @@ if ($action == 'create') {
 					if (!instructionField.is(":visible")) {
 						return;
 					}
-					var prefix = '.$aipromptprefix.';
+					var prefix = \''.dol_escape_js($aipromptprefix).'\';
 					var currentVal = instructionField.val();
 					var question = "";
 					if (typeof CKEDITOR !== "undefined" && CKEDITOR.instances && CKEDITOR.instances["question"]) {
