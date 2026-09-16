@@ -64,6 +64,15 @@ if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibe" ]; then
 	ln -fs .agents .vibe 2>/dev/null
 fi
 
+
+install -d -m 700 -o "$USER_NAME" -g "$USER_NAME" "/home/$USER_NAME/.ssh"
+
+su -s /bin/sh "$USER_NAME" -c \
+    'ssh-keyscan -t ed25519,rsa github.com > "$HOME/.ssh/known_hosts" 2>/dev/null'
+
+chmod 644 "/home/$USER_NAME/.ssh/known_hosts"
+
+
 # Execute order
 exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power; exec bash'
 #exec "$@"
