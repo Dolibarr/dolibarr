@@ -238,23 +238,23 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
  * Return if the application is executed with the LNE requirements on.
  * This function can be used to block some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
- * @param	int		$blockedlogtestalreadydone		Test on blockedlog used already done and we suppose it is true.
- * @param	int		$blockedlogmodulealreadydone	Test on blockedlog module already done and we suppose it is true.
- * @return 	boolean									True or false
+ * @param	int		$blockedlogusagealreadychecked		Test on blockedlog used already done and we suppose it is true.
+ * @param	int		$blockedlogmoduleonalreadychecked	Test on blockedlog module already done and we suppose it is true.
+ * @return 	boolean										True or false
  */
-function isALNERunningVersion($blockedlogtestalreadydone = 0, $blockedlogmodulealreadydone = 0)
+function isALNERunningVersion($blockedlogusagealreadychecked = 0, $blockedlogmoduleonalreadychecked = 0)
 {
 	// For Debug help: Constant CERTIF_LNE can be set 2 by developers get mode 1 compliant with dev env.
 	// Note that you can force, with this constant, the enabling of the restrictions,
 	// but there is no way to force the disabling of a restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2		// Value is 2 for debug purpose to enable restriction except https for dev env.
-		&& ($blockedlogmodulealreadydone || isModEnabled('blockedlog'))
-		&& ($blockedlogtestalreadydone || isBlockedLogUsed())) {
+		&& ($blockedlogmoduleonalreadychecked || isModEnabled('blockedlog'))
+		&& ($blockedlogusagealreadychecked || isBlockedLogUsed())) {
 		return true;
 	}
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 1		// Value is 1 when version is certified
-		&& ($blockedlogmodulealreadydone || isModEnabled('blockedlog'))
-		&& ($blockedlogtestalreadydone || isBlockedLogUsed())) {
+		&& ($blockedlogmoduleonalreadychecked || isModEnabled('blockedlog'))
+		&& ($blockedlogusagealreadychecked || isBlockedLogUsed())) {
 		return true;
 	}
 
@@ -513,7 +513,7 @@ function callApiToPushCounter($id, $signature, $datecreation, $test, $previousid
 
 	if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
 		// Push last rowid + signature to remote dolibarr server
-		// TODO Do it only for selected events: BILL_VALIDATE ?
+		// Do it only for selected events: BILL_VALIDATE ?
 
 		// Code here is similar to the one into printCodeForPing(), except that message code/properties/fields may differ.
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
@@ -738,7 +738,7 @@ function migrate_blockedlog_add_end_file()
 		}
 
 		// Update or create the .end flag file.
-		if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
+		if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {		// If we want to store the .end flag into a files instead of database (not used, may be for a future need)
 			$lockhandle = fopen($lockfile, 'w+');
 			if ($lockhandle) {
 				if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {

@@ -231,7 +231,7 @@ class modBlockedLog extends DolibarrModules
 			$obfuscationkey = '';
 			if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
 				try {
-					$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory or remote server. If not found, we retrieve it.
+					$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory or remote server. If not found in memory, we retrieve it from remote.
 					//$obfuscationkey = '';		// Uncomment this to test if obfuscation key can't be retrieved.
 				} catch (Exception $e) {
 					$error++;
