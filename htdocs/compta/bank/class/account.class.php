@@ -117,6 +117,12 @@ class Account extends CommonObject
 	public $url;
 
 	/**
+	 * Third party ID (set by subclass CompanyBankAccount, used by getCountryCode())
+	 * @var int
+	 */
+	public $socid;
+
+	/**
 	 * Bank number. If in SEPA area, you should move to IBAN field
 	 * @var string
 	 */
@@ -1380,7 +1386,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account = ".((int) $this->id);
 		if ($option == 1) {
-			$sql .= " AND ".$this->db->escape($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
+			$sql .= " AND ".$this->db->sanitize($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
 		}
 
 		$resql = $this->db->query($sql);
@@ -1663,6 +1669,16 @@ class Account extends CommonObject
 			$result .= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
 		}
 		$result .= $linkend;
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -2850,6 +2866,16 @@ class AccountLine extends CommonObjectLine
 		}
 		if ($option == 'showall' || $option == 'showconciliated' || $option == 'showconciliatedandaccounted') {
 			$result .= ')</span>';
+		}
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 
 		return $result;

@@ -20,7 +20,6 @@ printSellby=البيع قبل: %s
 printQty=الكمية: %d
 printPlannedWarehouse=المخزن: %s
 AddDispatchBatchLine=إضافة سطر لتوزيع العمر الافتراضي
-WhenProductBatchModuleOnOptionAreForced=عند تفعيل وحدة اللوت/التسلسل، يتم إجبار الإنقاص التلقائي للمخزون على '%s' وطريقة الزيادة التلقائية على '%s'. قد لا تكون بعض الخيارات متاحة. يمكن تعريف خيارات أخرى حسب الرغبة.
 ProductDoesNotUseBatchSerial=هذا المنتج لا يستخدم رقم لوت/تسلسلي
 ProductLotSetup=إعداد وحدة اللوت/التسلسل
 ShowCurrentStockOfLot=عرض المخزون الحالي للمنتج واللوت

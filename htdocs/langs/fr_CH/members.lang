@@ -108,4 +108,3 @@ NoEmailSentToMember=Aucun e-mail envoyé au membre
 EmailSentToMember=Email envoyé au membre à %s
 MembershipPaid=Cotisation payée pour la période en cours (jusqu'au %s)
 XMembersClosed=%s membre(s) résilié(s)
-MergeOriginMemberIsMAndatory=Origin member is mendatory for merging

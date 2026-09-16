@@ -130,8 +130,8 @@ $server->wsdl->addComplexType(
 		'admin' => array('name' => 'admin', 'type' => 'xsd:string'),
 		'login' => array('name' => 'login', 'type' => 'xsd:string'),
 		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
-		'pass_indatabase' => array('name' => 'pass_indatabase', 'type' => 'xsd:string'),
-		'pass_indatabase_crypted' => array('name' => 'pass_indatabase_crypted', 'type' => 'xsd:string'),
+		//'pass_indatabase' => array('name' => 'pass_indatabase', 'type' => 'xsd:string'),
+		//'pass_indatabase_crypted' => array('name' => 'pass_indatabase_crypted', 'type' => 'xsd:string'),
 		'datec' => array('name' => 'datec', 'type' => 'xsd:dateTime'),
 		'datem' => array('name' => 'datem', 'type' => 'xsd:dateTime'),
 		'fk_thirdparty' => array('name' => 'fk_thirdparty', 'type' => 'xsd:string'),
@@ -384,8 +384,8 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'admin' => $user->admin,
 						'login' => $user->login,
 						'entity' => $user->entity,
-						'pass_indatabase' => $user->pass_indatabase,
-						'pass_indatabase_crypted' => $user->pass_indatabase_crypted,
+						//'pass_indatabase' => $user->pass_indatabase,
+						//'pass_indatabase_crypted' => $user->pass_indatabase_crypted,
 						'datec' => dol_print_date($user->datec, 'dayhourrfc'),
 						'datem' => dol_print_date($user->datem, 'dayhourrfc'),
 						'fk_thirdparty' => $user->socid,
@@ -393,7 +393,6 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),
 						'datepreviouslogin' => dol_print_date($user->datepreviouslogin, 'dayhourrfc'),
-						'statut' => (int) $user->statut,
 						'status' => (int) $user->status,
 						'photo' => $user->photo,
 						'lang' => $user->lang,
@@ -710,10 +709,6 @@ function setUserPassword($authentication, $shortuser)
 	$error = 0;
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
-
-	if ($fuser->socid) {
-		$socid = $fuser->socid;
-	}
 
 	if (!$error && !$shortuser) {
 		$error++;

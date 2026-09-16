@@ -56,8 +56,6 @@ $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre access paiement
-//restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentVAT($db);
 if ($id > 0) {
@@ -66,6 +64,8 @@ if ($id > 0) {
 		dol_print_error($db, 'Failed to get payment id '.$id);
 	}
 }
+
+restrictedArea($user, 'payment_vat', $object, '');
 
 
 /*

@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -1399,6 +1399,79 @@ class ActionComm extends CommonObject
 	}
 
 	/**
+	 *  Check if any resource attached to this event would become double-booked if the
+	 *  event's dates were changed to the given range. Only checks when the
+	 *  RESOURCE_USED_IN_EVENT_CHECK option is enabled and $this->element is 'action';
+	 *  returns no conflict otherwise.
+	 *
+	 *  @param	int		$newdatep	New start date to check (Unix timestamp)
+	 *  @param	int		$newdatef	New end date to check (Unix timestamp), 0 if none
+	 *  @return	array<int,array{r_ref:string,ac_id:int,ac_label:string}>|int<-1,-1>	Array of conflicting resource/event pairs (empty array = no conflict), -1 if a DB error occurred (check $this->error)
+	 */
+	public function checkResourceConflicts($newdatep, $newdatef)
+	{
+		if (!getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') || $this->element != 'action') {
+			return array();
+		}
+
+		$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$this->db->escape($this->element)."'";
+		$sql .= " WHERE ac.id <> ".((int) $this->id);
+		$sql .= " AND er.resource_id IN (";
+		$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
+		$sql .= " WHERE element_id = ".((int) $this->id);
+		$sql .= " AND element_type = '".$this->db->escape($this->element)."'";
+		$sql .= " AND busy = 1";
+		$sql .= ")";
+		$sql .= " AND er.busy = 1";
+		$sql .= " AND (";
+		$sql .= " (ac.datep <= '".$this->db->idate($newdatep)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$this->db->idate($newdatep)."'))";
+		if (!empty($newdatef)) {
+			$sql .= " OR (ac.datep <= '".$this->db->idate($newdatef)."' AND (ac.datep2 >= '".$this->db->idate($newdatef)."'))";
+		}
+		$sql .= " OR (";
+		$sql .= "ac.datep >= '".$this->db->idate($newdatep)."'";
+		if (!empty($newdatef)) {
+			$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$this->db->idate($newdatef)."')";
+		}
+		$sql .= ")";
+		$sql .= ")";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$conflicts = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$conflicts[] = array('r_ref' => $obj->r_ref, 'ac_id' => (int) $obj->ac_id, 'ac_label' => $obj->ac_label);
+		}
+		$this->db->free($resql);
+
+		return $conflicts;
+	}
+
+	/**
+	 *  Format an array of resource conflicts (as returned by checkResourceConflicts()) into a
+	 *  translated, HTML-formatted error message.
+	 *
+	 *  @param	array<int,array{r_ref:string,ac_id:int,ac_label:string}>	$conflicts	Conflicts array
+	 *  @param	Translate	$langs	Translate object to use for translation
+	 *  @return	string	Translated HTML message listing the conflicts
+	 */
+	public function formatResourceConflicts($conflicts, $langs)
+	{
+		$message = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+		foreach ($conflicts as $conflict) {
+			$message .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $conflict['r_ref'], $conflict['ac_label'].' ['.$conflict['ac_id'].']');
+		}
+		return $message;
+	}
+
+	/**
 	 *  Load all objects with filters.
 	 *  This is used by the showactions used into the main tab of objects to show the last n actions.
 	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join, like done into show_actions_done.
@@ -2642,6 +2715,61 @@ class ActionComm extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 *  Function used to replace a contact id with another one when merging two contacts.
+	 *  llx_actioncomm_resources with element_type = 'socpeople' is where the contacts assigned to an
+	 *  event are really stored, llx_actioncomm.fk_contact being deprecated but still filled.
+	 *
+	 *  @param	DoliDB	$dbs		Database handler
+	 *  @param	int		$origin_id	Old contact id (the contact to delete)
+	 *  @param	int		$dest_id	New contact id (the contact that will receive elements of the other)
+	 *  @return	bool				True if success, False if error
+	 */
+	public static function replaceContact(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		// llx_actioncomm_resources: UNIQUE(fk_actioncomm, element_type, fk_element)
+		$sql = 'DELETE FROM '.$dbs->prefix().'actioncomm_resources WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'actioncomm_resources as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'actioncomm_resources as dest';
+		$sql .= '   ON dest.fk_actioncomm = origin.fk_actioncomm AND dest.element_type = origin.element_type';
+		$sql .= "  WHERE origin.element_type = 'socpeople'";
+		$sql .= '   AND origin.fk_element = '.((int) $origin_id).' AND dest.fk_element = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		$sql = 'UPDATE '.$dbs->prefix().'actioncomm_resources SET fk_element = '.((int) $dest_id);
+		$sql .= " WHERE element_type = 'socpeople' AND fk_element = ".((int) $origin_id);
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		// llx_actioncomm_reminder: UNIQUE(fk_actioncomm, fk_user, fk_soc, fk_contact, typeremind, offsetvalue, offsetunit)
+		$sql = 'DELETE FROM '.$dbs->prefix().'actioncomm_reminder WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'actioncomm_reminder as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'actioncomm_reminder as dest';
+		$sql .= '   ON dest.fk_actioncomm = origin.fk_actioncomm AND dest.typeremind = origin.typeremind';
+		$sql .= '   AND dest.offsetvalue = origin.offsetvalue AND dest.offsetunit = origin.offsetunit';
+		// fk_user and fk_soc are part of the unique key and are nullable, hence the NULL safe
+		// comparisons: the MySQL <=> operator is not portable to PostgreSQL
+		$sql .= '   AND (dest.fk_user = origin.fk_user OR (dest.fk_user IS NULL AND origin.fk_user IS NULL))';
+		$sql .= '   AND (dest.fk_soc = origin.fk_soc OR (dest.fk_soc IS NULL AND origin.fk_soc IS NULL))';
+		$sql .= '  WHERE origin.fk_contact = '.((int) $origin_id).' AND dest.fk_contact = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		$tables = array(
+			'actioncomm', 'actioncomm_reminder'
+		);
+
+		return CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, $tables, 'fk_contact');
 	}
 
 	/**

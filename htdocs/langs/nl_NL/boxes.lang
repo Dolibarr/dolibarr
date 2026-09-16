@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Laatste klantzendingen
 BoxTitleLastCustomerShipments=Laatste %s gewijzigde Klant zendingen
 BoxTitleLastLeaveRequests=Laatste %s aangepaste verlofverzoeken
 NoRecordedShipments=Geen geregistreerde klantverzending
+NoUpcomingEvent=Geen aankomende evenementen
 BoxCustomersOutstandingBillReached=Klanten met openstaande limiet bereikt
 BoxTitleLastFediverseInfos=Laatste %s berichten van %s
 BoxLastFediverseInfos=Laatste Fediverse-updates: nieuws en trends

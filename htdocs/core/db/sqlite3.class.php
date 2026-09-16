@@ -62,12 +62,13 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *  @param      string	$type		Type of database (mysql, pgsql...). Not used.
 	 *  @param	    string	$host		Address of database server
-	 *  @param	    string	$user		Nom de l'utilisateur autorise
+	 *  @param	    string	$user		Name of the authorized user
 	 *  @param	    string	$pass		Password
 	 *  @param	    string	$name		Nom de la database
 	 *  @param	    int		$port		Port of database server
+	 *  @param	    bool	$forcenew	Not used by this driver: sqlite3 always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0, $forcenew = false)  // @phpstan-ignore constructor.unusedParameter, constructor.unusedParameter
 	{
 		global $conf;
 
@@ -321,10 +322,11 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param	    string			$passwd		password
 	 *	@param		string			$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		integer			$port		Port of database server
+	 *	@param		bool			$forcenew	Not used by this driver: sqlite3 always opens a genuinely new connection. Kept for signature parity with the Database interface.
 	 *	@return		SQLite3|false				Database access handler
 	 *	@see		close()
 	 */
-	public function connect($host, $login, $passwd, $name, $port = 0)
+	public function connect($host, $login, $passwd, $name, $port = 0, $forcenew = false)
 	{
 		global $main_data_dir;
 
@@ -342,7 +344,7 @@ class DoliDBSqlite3 extends DoliDB
 			//$this->db = new PDO("sqlite:".$dir.'/database_'.$name.'.sdb');
 			$this->db = new SQLite3($database_name);
 			//$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$this->error = self::LABEL.' '.$e->getMessage().' current dir='.$database_name;
 			return false;
 		}
@@ -474,19 +476,19 @@ class DoliDBSqlite3 extends DoliDB
 			}
 		}
 
-		// Ordre SQL ne necessitant pas de connection a une base (example: CREATE DATABASE)
+		// SQL statement that does not require a connection to a database (example: CREATE DATABASE)
 		try {
 			//$ret = $this->db->exec($query);
 			$ret = $this->db->query($query); // $ret is a Sqlite3Result
 			if ($ret) {
 				$this->queryString = $query;
 			}
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$this->error = $this->db->lastErrorMsg();
 		}
 
 		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) {
-			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
+			// If it is a user query, save it along with its resultset
 			if (!is_object($ret) || $this->error) {
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
@@ -516,13 +518,13 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 * 	Returns the current line (as an object) for the resultset cursor
 	 *
-	 *	@param	SQLite3Result	$resultset  Curseur de la requete voulue
+	 *	@param	SQLite3Result	$resultset  Cursor of the desired query
 	 *	@return	false|object				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
 	{
 		// phpcs:enable
-		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connection
+		// If the resultset is not provided, use the last one used on this connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
@@ -636,7 +638,7 @@ class DoliDBSqlite3 extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		// Si resultset en est un, on libere la memoire
+		// If resultset is one, free the memory
 		if ($resultset && is_object($resultset)) {
 			$resultset->finalize();
 		}
@@ -672,7 +674,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function errno()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide.
+			// If the connection failed, $this->db is not valid.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
 		} else {
 			// Constants to convert error code to a generic Dolibarr error code
@@ -726,7 +728,7 @@ class DoliDBSqlite3 extends DoliDB
 				}
 			}
 			if ($errno > 1) {
-				// TODO Voir la liste des messages d'erreur
+				// TODO See the list of error messages
 			}
 
 			return ($errno ? 'DB_ERROR_'.$errno : '0');
@@ -741,7 +743,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function error()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide pour sqlite_error.
+			// If the connection failed, $this->db is not valid for sqlite_error.
 			return 'Not connected. Check setup parameters in conf/conf.php file and your sqlite version';
 		} else {
 			return $this->error;
@@ -766,9 +768,9 @@ class DoliDBSqlite3 extends DoliDB
 	 * Encrypt sensitive data in database
 	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param	string		$fieldorvalue	Field name or value to encrypt
+	 * @param	int<1,1>	$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string						XXX(field) or XXX('value') or field or 'value'
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
@@ -859,8 +861,8 @@ class DoliDBSqlite3 extends DoliDB
 		}
 
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-		$sql = "CREATE DATABASE ".$this->escape($database);
-		$sql .= " DEFAULT CHARACTER SET ".$this->escape($charset)." DEFAULT COLLATE ".$this->escape($collation);
+		$sql = "CREATE DATABASE ".$this->sanitize($database);
+		$sql .= " DEFAULT CHARACTER SET ".$this->sanitize($charset)." DEFAULT COLLATE ".$this->sanitize($collation);
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
@@ -1110,7 +1112,7 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
 		// phpcs:enable
-		// cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
+		// keys looked up in the descriptions array (field_desc): type,value,attribute,null,default,extra
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$this->sanitize($table)." ADD ".$this->sanitize($field_name)." ";
 
@@ -1434,6 +1436,87 @@ class DoliDBSqlite3 extends DoliDB
 				$this->error = "unable to create custom function '$name'";
 			}
 		}
+	}
+
+	/**
+	 * Prepare a SQL statement for execution. Use '?' as the placeholder for every bound value.
+	 *
+	 * @param string $sql SQL query with '?' placeholders
+	 * @return SQLite3Stmt|false
+	 * @see execute()
+	 */
+	public function prepare($sql)
+	{
+		$sql = $this->convertSQLFromMysql($sql);
+
+		dol_syslog(get_class($this)."::prepare sql=".$sql, LOG_DEBUG);
+
+		try {
+			$stmt = $this->db->prepare($sql);
+		} catch (Throwable $e) {
+			$stmt = false;
+			$this->error = $e->getMessage();
+		}
+		if (!($stmt instanceof SQLite3Stmt)) {
+			$this->lasterror = $this->error ? $this->error : $this->db->lastErrorMsg();
+			$this->lastqueryerror = $sql;
+			return false;
+		}
+		// Keep the query text so num_rows()/affected_rows() can tell a SELECT from the rest
+		$this->queryString = $sql;
+
+		return $stmt;
+	}
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * @param SQLite3Stmt      $stmt   Statement returned by prepare()
+	 * @param array<int,mixed> $params Ordered list of values for the '?' placeholders
+	 * @return SQLite3Result|bool      A SQLite3Result (usable with fetch_object()/num_rows()/free())
+	 *                                 for a SELECT, true for another successful statement, false on error
+	 * @see prepare()
+	 */
+	public function execute($stmt, $params = array())
+	{
+		if (!($stmt instanceof SQLite3Stmt)) {
+			$this->lasterror = 'execute() called with an invalid statement';
+			return false;
+		}
+
+		$this->lasterror = '';
+		$this->error = '';
+
+		$i = 1;
+		foreach (array_values($params) as $v) {
+			if (is_int($v) || is_bool($v)) {
+				$stmt->bindValue($i, (int) $v, SQLITE3_INTEGER);
+			} elseif (is_float($v)) {
+				$stmt->bindValue($i, $v, SQLITE3_FLOAT);
+			} elseif (is_null($v)) {
+				$stmt->bindValue($i, null, SQLITE3_NULL);
+			} else {
+				$stmt->bindValue($i, (string) $v, SQLITE3_TEXT);
+			}
+			$i++;
+		}
+
+		dol_syslog(get_class($this)."::execute (".($i - 1)." bound param(s))", LOG_DEBUG);
+
+		try {
+			$res = $stmt->execute();
+		} catch (Throwable $e) {
+			$res = false;
+			$this->error = $e->getMessage();
+		}
+		if (!($res instanceof SQLite3Result)) {
+			$this->lasterror = $this->error ? $this->error : $this->db->lastErrorMsg();
+			return false;
+		}
+
+		$this->_results = $res;
+
+		return ($res->numColumns() > 0) ? $res : true;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -23,6 +23,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 
 /**
@@ -1302,6 +1303,13 @@ class BlockedLog
 		if (empty($this->object_data)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBlockLogNeedObject");
+			dol_syslog($this->error, LOG_WARNING);
+			return -2;
+		}
+
+		if (empty($this->date_object)) {	// date_object is a critical field, it is included into the line signature
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBlockLogNeedDateObject");
 			dol_syslog($this->error, LOG_WARNING);
 			return -2;
 		}

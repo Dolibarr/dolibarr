@@ -258,7 +258,7 @@ OtherFilteredTasks=Boshqa filtrlangan vazifalar
 NoAssignedTasks=Belgilangan vazifalar topilmadi (loyihani / vazifalarni joriy foydalanuvchiga vaqtni belgilash uchun yuqori tanlangan maydonchadan belgilang)
 ThirdPartyRequiredToGenerateIntervention=Aralashuvni yaratish uchun loyihada uchinchi tomon belgilanishi kerak.
 ThirdPartyRequiredToGenerateInvoice=Hisob-kitob qilish imkoniyatiga ega bo'lish uchun loyihada uchinchi shaxs aniqlanishi kerak.
-ChooseANotYetAssignedTask=Sizga hali tayinlanmagan vazifani tanlang
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Vazifalar bo'yicha foydalanuvchi sharhlariga ruxsat berish
 AllowCommentOnProject=Foydalanuvchilarning loyihalar bo'yicha sharhlariga ruxsat berish

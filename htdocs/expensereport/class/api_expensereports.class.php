@@ -241,7 +241,16 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 
-			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->expensereport->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->expensereport);
+				}
+				continue;
+			}
+
+			if (!in_array($field, array('fk_statut', 'fk_user_approve'))) {	// Exclude properties that must be set by other workflow methods
+				$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			}
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -532,7 +541,9 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 
-			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			if (!in_array($field, array('fk_statut', 'fk_user_approve'))) {	// Exclude properties that must be set by other workflow methods
+				$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			}
 		}
 
 		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0) {

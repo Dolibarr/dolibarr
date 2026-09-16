@@ -315,12 +315,12 @@ if ($action == 'install' && $allowonlineinstall) {
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
 							print $dir." ".$file."\n<br>";
-							if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-								$modName = substr($file, 0, dol_strlen($file) - 10);
+							if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+								$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 								if ($modName) {
 									try {
 										$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
-										$modName = substr($file, 0, dol_strlen($file) - 10);
+										$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 										if ($modName) {
 											if (class_exists($modName)) {
 												$objMod = new $modName($db);
@@ -569,8 +569,8 @@ foreach ($modulesdir as $dir) {
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
 			//print "$i ".$file."\n<br>";
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-				$modName = substr($file, 0, dol_strlen($file) - 10);
+			if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+				$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 
 				if ($modName) {
 					if (!empty($modNameLoaded[$modName])) {   // In cache of already loaded modules ?
@@ -781,7 +781,7 @@ $head = modules_prepare_head($nbofactivatedmodules, count($modules), $nbmodulesn
 if ($mode == 'common' || $mode == 'commonkanban') {
 	dol_set_focus('#search_keyword');
 
-	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if (isset($optioncss) && $optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -804,7 +804,15 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter = '<div class="valignmiddle">';
 
 	$moreforfilter .= '<div class="floatright right pagination paddingtop --module-list"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br><br>'.img_warning('', '', 'paddingright').$langs->trans('CheckForModuleUpdateHelp').' '.$langs->trans('CheckForModuleUpdateHelp2', DolibarrModules::URL_FOR_BLACKLISTED_MODULES).'<br>'.$langs->trans("YourIPWillBeRevealedToThisExternalProviders"), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss' => 'reposition'));
+	$moreforfilter .= dolGetButtonTitle(
+		$langs->trans('CheckForModuleUpdate'),
+		$langs->trans('CheckForModuleUpdate').'<br><br>'.img_warning('', '', 'paddingright').$langs->trans('CheckForModuleUpdateHelp').' '.$langs->trans('CheckForModuleUpdateHelp2', DolibarrModules::URL_FOR_BLACKLISTED_MODULES).'<br>'.$langs->trans("YourIPWillBeRevealedToThisExternalProviders"),
+		'fa fa-sync',
+		$_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param,
+		'',
+		1,
+		array('morecss' => 'reposition')
+	);
 	$moreforfilter .= dolGetButtonTitleSeparator();
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss' => 'reposition'));
@@ -1462,7 +1470,7 @@ if ($mode == 'marketplace') {
 
 		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
-		$products_list = $remotestore->getProducts($options);	// Get list of product from all sources
+		$products_list = $remotestore->getProducts($options, $modules);	// Get list of product from all sources
 
 		$previouslink = $remotestore->get_previous_link();
 
@@ -1471,7 +1479,7 @@ if ($mode == 'marketplace') {
 
 		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="">';
 
-		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'" spellcheck="false">'; ?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
 					<input type="hidden" name="page_y" value="">
@@ -1589,7 +1597,7 @@ if ($mode == 'deploy') {
 		}
 
 		if ($allowfromweb == 1) {
-			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall" spellcheck="false">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
@@ -1656,7 +1664,7 @@ if ($mode == 'deploy') {
 				$(document).ready(function() {
 					jQuery("#fileinstall").on("change", function() {
 						if(this.files[0].size > '.($maxmin * 1024).') {
-							alert("'.dol_escape_js($langs->transnoentitiesnoconv("ErrorFileSizeTooLarge")).'");
+							alert(\''.dol_escape_js($langs->transnoentitiesnoconv("ErrorFileSizeTooLarge")).'\');
 							this.value = "";
 						}
 					});

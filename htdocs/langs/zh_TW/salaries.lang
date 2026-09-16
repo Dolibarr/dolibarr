@@ -1,39 +1,67 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=默認支付薪資的會計帳戶
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=預設,當建立薪資時將"自動建立所有支付"選項留空
 Salary=薪資
-Salaries=薪資
-NewSalary=新薪資
+Salaries=薪資紀錄
+NewSalary=新增薪資
 AddSalary=新增薪資
-NewSalaryPayment=新薪資卡
-AddSalaryPayment=新增支付薪資
-SalaryID=Salary ID
-SalaryAmount=Salary amount
-SalaryPayment=支付薪資
-SalariesPayments=支付薪資
-SalariesPaymentsOf=%s 的薪資支付
-ShowSalaryPayment=顯示支付薪資
-THM=平均時薪
-TJM=平均日薪
+NewSalaryPayment=新增薪資明細
+AddSalaryPayment=新增薪資付款
+SalaryPayment=薪資付款
+SalariesPayments=薪資付款紀錄
+SalariesPaymentsOf=%s 的薪資付款
+ShowSalaryPayment=顯示薪資付款
+SalaryID=薪資編號
+SalaryAmount=薪資金額
+SalaryDate=Salary date
+SalaryPaid=Salary paid
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=實付淨額
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=薪資中「用戶」預設使用的會計科目(依會計科目表)
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=專用會計科目會在用戶卡片上定義，僅用於分戶會計。此科目用於總帳，若用戶未定義專用分戶會計科目，則以此為預設值。
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=薪資發放預設會計科目
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=建立薪資時，預設取消勾選「自動建立薪資總付款」
+
+# Stats / Info
 CurrentSalary=目前薪資
-THMDescription=如果使用此模組項目，則此值可用於計算用戶輸入的項目所花費的時間成本
-TJMDescription=目前數值僅用於提供信息，不用於任何計算
-LastSalaries=最新%s筆支付薪資
-AllSalaries=所有薪資
+LastSalaries=最近 %s 筆薪資
+AllSalaries=所有薪資紀錄
 SalariesStatistics=薪資統計
-SalariesAndPayments=薪資與支付
-ConfirmDeleteSalaryPayment=您要刪除此筆薪資支付嗎?
-FillFieldFirst=先填寫員工欄位
-UpdateAmountWithLastSalary=設定為最新一筆薪資的金額
-MakeTransferRequest=建立匯款請求
-VirementOrder=匯款請求
-WithdrawalReceipt=貸方轉帳訂單
+SalariesAndPayments=薪資與付款
+UserPaySlip=薪資單
+PayPeriod=Pay period
+
+# THM / TJM
+THM=平均時薪
+THMDescription=若啟用專案模組，該值可用來計算用戶在專案上所花費時間的成本
+TJM=平均日薪
+TJMDescription=目前僅供參考，未用於任何計算
+
+# Other actions
+ConfirmDeleteSalaryPayment=確定要刪除此薪資付款嗎？
+FillFieldFirst=請先填寫員工欄位
+UpdateAmountWithLastSalary=以最近薪資金額更新
+MakeTransferRequest=建立轉帳請求
+VirementOrder=信用轉帳請求
+WithdrawalReceipt=信用轉帳單
 OrderWaiting=待處理訂單
-FillEndOfMonth=End of month
-PreviousMonthShort=前一個月
-CurrentMonthShort=目前月份
-PreviousWeekShort=Previous week
-CurrentWeekShort=Current week
-UserPaySlip=Pay Slip
+FillEndOfMonth=月底
+
+# Shortcuts
+PreviousMonthShort=上月
+CurrentMonthShort=本月
+NextMonthShort=下個月
+PreviousWeekShort=上週
+CurrentWeekShort=本週

@@ -35,12 +35,15 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', 1);
 }
-if (!defined('NOCSRFCHECK')) {		// TODO Enable the CSRF check
+// The payload is read from the raw php://input body, so the CSRF token cannot be checked by
+// main.inc.php. It is checked explicitly below by aiCheckCsrfToken().
+if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', 1);
 }
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/class/mcp.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ai/lib/ai.lib.php';
 
 // Security check
 if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
@@ -53,6 +56,10 @@ global $db, $user, $conf;
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	accessforbidden();
 }
+
+// This endpoint creates, updates and deletes documents, so it must not be reachable from
+// another site. Must stay after the login is done by main.inc.php (the session is needed).
+aiCheckCsrfToken('ai/assistant/execute_tool.php');
 
 top_httphead('application/json');
 
@@ -68,6 +75,7 @@ try {
 	// Initialize Handler with the private assistant context so that the correct
 	// allow-list (AI_ASSISTANT_ALLOWED_TOOLS) is enforced on both schema and execution.
 	$mcp = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
+	$mcp->loadTools();
 
 	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
 

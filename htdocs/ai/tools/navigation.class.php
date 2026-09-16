@@ -18,7 +18,6 @@
  */
 /* htdocs/ai/tools/navigation.php */
 
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 /**
