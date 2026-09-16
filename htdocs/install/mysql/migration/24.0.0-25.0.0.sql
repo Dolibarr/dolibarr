@@ -219,5 +219,7 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod
 -- llx_notify_def.entity was never written, every row kept its DEFAULT 1, so filtering the
 -- notification queries on it would hide the existing subscriptions. Give each row the entity of the
 -- third party or the user it belongs to. Rows tied to neither keep their current value.
-UPDATE llx_notify_def INNER JOIN llx_societe ON llx_notify_def.fk_soc = llx_societe.rowid SET llx_notify_def.entity = llx_societe.entity WHERE llx_notify_def.fk_soc > 0;
-UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
+-- VMYSQL10.3 UPDATE llx_notify_def INNER JOIN llx_societe ON llx_notify_def.fk_soc = llx_societe.rowid SET llx_notify_def.entity = llx_societe.entity WHERE llx_notify_def.fk_soc > 0;
+-- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_societe.entity FROM llx_societe WHERE llx_notify_def.fk_soc = llx_societe.rowid AND llx_notify_def.fk_soc > 0;
+-- VMYSQL10.3 UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
+-- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_user.entity FROM llx_user WHERE llx_notify_def.fk_user = llx_user.rowid AND llx_notify_def.fk_user > 0;

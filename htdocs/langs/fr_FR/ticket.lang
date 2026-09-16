@@ -183,6 +183,7 @@ MarkAsRead=Marquer le ticket comme lu
 TicketHistory=Historique des tickets
 AssignUser=Assigner à l'utilisateur
 TicketAssigned=Le ticket est à présent assigné
+TicketUnassigned=Le ticket n'est plus assigné
 TicketChangeType=Changer le type
 TicketChangeCategory=Changer le code analytique
 TicketChangeSeverity=Changer la sévérité
