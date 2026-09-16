@@ -458,7 +458,7 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		$maxretry = getDolGlobalIng('BLOCKEDLOG_MAX_TRY_FOR_REMOTE_OBFUSCATION_KEY', 2);
+		$maxretry = getDolGlobalInt('BLOCKEDLOG_MAX_TRY_FOR_REMOTE_OBFUSCATION_KEY', 2);
 		$retrydelay = 300000;	// 300ms, in microseconds
 
 	for ($tryid = 1; $tryid <= $maxretry; $tryid++) {
