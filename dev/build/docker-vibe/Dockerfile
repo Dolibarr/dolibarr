@@ -46,7 +46,7 @@ ENV PATH="/opt/vibe/bin:$PATH"
 RUN mkdir -p /opt/php-tools \
 	&& composer require \
     --working-dir=/opt/php-tools \
-    phan/phan:^5.5 \
+    phan/phan \
     phpstan/phpstan:^2.2 \
     --ignore-platform-reqs \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \

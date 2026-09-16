@@ -204,9 +204,9 @@ Before any modification, verify:
 ### Code check
 
 - If making a major change or adding an important function, add or update PHPUnit test files into `test/phpunit/` (check to have the entry into file `test/phpunit/AllTests.php`).
-- If you need to validate code change with `phan`, you must add the parameter `--exclude-directory-list=dev/tools,mymodule/test/,mymodule/vendor/` to the phan command line. For example:
+- If code validation whith `phan` is expected, you must add the parameter `--exclude-directory-list=dev/tools,mymodule/test/,mymodule/vendor/` to the phan command line. For example:
 	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --analyze-twice --minimum-target-php-version 7.2 --exclude-directory-list=dev/tools,mymodule/test/,mymodule/vendor/ --output-mode=checkstyle [list_of_modified_file.php ...]`
-- If you need to validate code change with `phpstan`, you must add the parameter `-a dev/build/phpstan/bootstrap_action.php` to the phpstan command line. For example:
+- If code change with `phpstan`, you must add the parameter `-a dev/build/phpstan/bootstrap_action.php` to the phpstan command line. For example:
 	`phpstan analyse --allow-older --no-progress --error-format=checkstyle -a dev/build/phpstan/bootstrap_action.php  [list_of_modified_file.php ...]`
 
 ### Local Dolibarr Online test — Page Access
