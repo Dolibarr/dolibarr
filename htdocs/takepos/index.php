@@ -726,7 +726,7 @@ function CreditList() {
 		height: "85%",
 		transition: "none",
 		iframe: "true",
-		title: "<?php echo dol_escape_js($langs->trans('TakeposManageCredits')); ?>"
+		title: '<?php echo dol_escape_js($langs->trans('TakeposManageCredits')); ?>'
 	});
 }
 

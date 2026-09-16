@@ -396,12 +396,12 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	// Open the credit apply page in a colorbox (parent window's colorbox)
 	function OpenCreditApply() {
 		parent.$.colorbox({
-			href: "creditnote_apply.php?invoiceid=<?php echo $invoiceid; ?>&place=<?php echo dol_escape_js($place); ?>&token=<?php echo currentToken(); ?>",
+			href: 'creditnote_apply.php?invoiceid=<?php echo $invoiceid; ?>&place=<?php echo dol_escape_js($place); ?>&token=<?php echo currentToken(); ?>',
 			width: "70%",
 			height: "80%",
 			transition: "none",
 			iframe: "true",
-			title: "<?php echo dol_escape_js($langs->trans('TakeposApplyAvailableCredit')); ?>"
+			title: '<?php echo dol_escape_js($langs->trans('TakeposApplyAvailableCredit')); ?>'
 		});
 	}
 

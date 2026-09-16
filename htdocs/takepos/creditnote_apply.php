@@ -109,6 +109,9 @@ if ($action == 'confirm_applycredit' && $discountid > 0 && !empty($_POST['token'
 			/** @var DiscountAbsolute $newDiscount2 */
 			$newDiscount2 = $newDiscounts[1];
 
+			$newid1 = 0;
+			$newid2 = 0;
+
 			// Delete the original before creating the two parts (same pattern as remx.php)
 			$discount->fk_facture_source = 0;
 			$discount->fk_invoice_supplier_source = 0;
@@ -193,7 +196,7 @@ if ($successmsg) {
 	</div>
 	<script>
 	// Reload parent invoice view and close this colorbox
-	parent.$("#poslines").load("invoice.php?place=<?php echo dol_escape_js($place); ?>&invoiceid=<?php echo $invoiceid; ?>&token=<?php echo currentToken(); ?>", function() {
+	parent.$("#poslines").load('invoice.php?place=<?php echo dol_escape_js($place); ?>&invoiceid=<?php echo $invoiceid; ?>&token=<?php echo currentToken(); ?>', function() {
 		parent.$.colorbox.close();
 	});
 	</script>
@@ -248,6 +251,7 @@ if ($action == 'applycredit' && $discountid > 0 && empty($error)) {
 		<?php } else { ?>
 			<?php if ($willSplit) {
 				$remainder = price2num($creditamount - $remaintopay, 'MT');
+				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 				echo '<p class="warning">'.sprintf(
 					$langs->transnoentities('TakeposCreditSplitAuto'),
 					'<strong>'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</strong>',
