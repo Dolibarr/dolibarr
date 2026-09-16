@@ -247,13 +247,13 @@ if ($action == 'applycredit' && $discountid > 0 && empty($error)) {
 			</div>
 		<?php } else { ?>
 			<?php if ($willSplit) {
-			$remainder = price2num($creditamount - $remaintopay, 'MT');
-			echo '<p class="warning">'.sprintf(
-				$langs->transnoentities('TakeposCreditSplitAuto'),
-				'<strong>'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</strong>',
-				'<strong>'.price($remainder, 1, $langs, 1, -1, -1, $conf->currency).'</strong>'
-			).'</p>';
-		} ?>
+				$remainder = price2num($creditamount - $remaintopay, 'MT');
+				echo '<p class="warning">'.sprintf(
+					$langs->transnoentities('TakeposCreditSplitAuto'),
+					'<strong>'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</strong>',
+					'<strong>'.price($remainder, 1, $langs, 1, -1, -1, $conf->currency).'</strong>'
+				).'</p>';
+			} ?>
 
 		<table class="noborder" style="width:100%;">
 			<tr class="liste_titre">
@@ -352,7 +352,7 @@ if ($action == 'applycredit' && $discountid > 0 && empty($error)) {
 						if ($remaintopay <= 0) {
 							echo '<span class="opacitymedium">'.$langs->trans('TakeposNoRemainToPay').'</span>';
 						} else {
-						?>
+							?>
 							<form method="POST" action="creditnote_apply.php" style="display:inline;">
 								<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 								<input type="hidden" name="action" value="applycredit">

@@ -3165,11 +3165,7 @@ if ($num > 0) {
 				}
 				if ($contextpage == 'poslist') {
 					// Button to preview the full ticket detail in a colorbox without leaving the history list
-					print '<a href="#" onclick="parent.$.colorbox({'
-						. 'href: \''.DOL_URL_ROOT.'/takepos/receipt.php?facid='.$obj->id.'&token='.newToken().'\','
-						. 'width: \'40%\', height: \'90%\', transition: \'none\', iframe: \'true\','
-						. 'title: \''.dol_escape_js($langs->trans('TakeposTicketDetail')).'\''
-						. '}); return false;" class="butActionSmall" title="'.dol_escape_htmltag($langs->trans('TakeposTicketDetail')).'">'
+					print '<a href="#" onclick="parent.$.colorbox({href: \''.DOL_URL_ROOT.'/takepos/receipt.php?facid='.$obj->id.'&token='.newToken().'\', width: \'40%\', height: \'90%\', transition: \'none\', iframe: \'true\', title: \''.dol_escape_js($langs->trans('TakeposTicketDetail')).'\'}); return false;" class="butActionSmall" title="'.dol_escape_htmltag($langs->trans('TakeposTicketDetail')).'">'
 						. img_picto($langs->trans('TakeposTicketDetail'), 'search')
 						. '</a>';
 				}
