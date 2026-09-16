@@ -2260,7 +2260,7 @@ if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 } elseif ($contextpage == 'poslist') {
-	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center actioncolumn ');
+	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center actioncolumn ');
 	$totalarray['nbfield']++;
 }
 
