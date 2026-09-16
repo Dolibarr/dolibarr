@@ -96,7 +96,10 @@ if ($action == 'confirm_applycredit' && $discountid > 0 && !empty($_POST['token'
 		$remaintopay = (float) price2num($invoice->getRemainToPay(0), 'MT');
 		$creditamount = (float) price2num($discount->amount_ttc, 'MT');
 
-		if ($creditamount > $remaintopay) {
+		if ($remaintopay <= 0) {
+			$error++;
+			setEventMessages($langs->trans('TakeposNoRemainToPay'), null, 'errors');
+		} elseif ($creditamount > $remaintopay) {
 			// Auto split: credit is larger than remain_to_pay
 			$remainder = (float) price2num($creditamount - $remaintopay, 'MT');
 
@@ -235,7 +238,15 @@ if ($action == 'applycredit' && $discountid > 0 && empty($error)) {
 	<div style="padding:20px;">
 		<h3><?php echo $langs->trans('TakeposConfirmApplyCredit'); ?></h3>
 
-		<?php if ($willSplit) {
+		<?php if ($remaintopay <= 0) { ?>
+			<p class="error"><?php echo $langs->trans('TakeposNoRemainToPay'); ?></p>
+			<div style="text-align:center; margin-top:20px;">
+				<button type="button" class="butActionDelete" onclick="parent.$.colorbox.close();">
+					<?php echo $langs->trans('Close'); ?>
+				</button>
+			</div>
+		<?php } else { ?>
+			<?php if ($willSplit) {
 			$remainder = price2num($creditamount - $remaintopay, 'MT');
 			echo '<p class="warning">'.sprintf(
 				$langs->transnoentities('TakeposCreditSplitAuto'),
@@ -291,6 +302,7 @@ if ($action == 'applycredit' && $discountid > 0 && empty($error)) {
 				</button>
 			</div>
 		</form>
+		<?php } ?>
 	</div>
 	<?php
 
@@ -335,16 +347,23 @@ if ($action == 'applycredit' && $discountid > 0 && empty($error)) {
 					<td class="center"><?php echo dol_print_date($db->jdate($disc->datec), 'day'); ?></td>
 					<td class="right"><strong><?php echo price($disc->amount_ttc, 1, $langs, 1, -1, -1, $conf->currency); ?></strong></td>
 					<td class="center">
-						<form method="POST" action="creditnote_apply.php" style="display:inline;">
-							<input type="hidden" name="token" value="<?php echo newToken(); ?>">
-							<input type="hidden" name="action" value="applycredit">
-							<input type="hidden" name="invoiceid" value="<?php echo $invoiceid; ?>">
-							<input type="hidden" name="discountid" value="<?php echo (int) $disc->rowid; ?>">
-							<input type="hidden" name="place" value="<?php echo dol_escape_htmltag($place); ?>">
-							<button type="submit" class="butAction" style="padding:4px 10px;">
-								<?php echo $langs->trans('TakeposApplyThisCredit'); ?>
-							</button>
-						</form>
+						<?php
+						$remaintopay = ($invoice->id > 0) ? (float) price2num($invoice->getRemainToPay(0), 'MT') : 0;
+						if ($remaintopay <= 0) {
+							echo '<span class="opacitymedium">'.$langs->trans('TakeposNoRemainToPay').'</span>';
+						} else {
+						?>
+							<form method="POST" action="creditnote_apply.php" style="display:inline;">
+								<input type="hidden" name="token" value="<?php echo newToken(); ?>">
+								<input type="hidden" name="action" value="applycredit">
+								<input type="hidden" name="invoiceid" value="<?php echo $invoiceid; ?>">
+								<input type="hidden" name="discountid" value="<?php echo (int) $disc->rowid; ?>">
+								<input type="hidden" name="place" value="<?php echo dol_escape_htmltag($place); ?>">
+								<button type="submit" class="butAction" style="padding:4px 10px;">
+									<?php echo $langs->trans('TakeposApplyThisCredit'); ?>
+								</button>
+							</form>
+						<?php } ?>
 					</td>
 				</tr>
 			<?php } ?>
