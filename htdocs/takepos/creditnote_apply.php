@@ -196,7 +196,7 @@ if ($successmsg) {
 	</div>
 	<script>
 	// Reload parent invoice view and close this colorbox
-	parent.$("#poslines").load('invoice.php?place=<?php echo dol_escape_js($place); ?>&invoiceid=<?php echo $invoiceid; ?>&token=<?php echo currentToken(); ?>', function() {
+	parent.$("#poslines").load("invoice.php?place=" + <?php echo "'".dol_escape_js($place)."'"; ?> + "&invoiceid=<?php echo $invoiceid; ?>&token=<?php echo currentToken(); ?>", function() {
 		parent.$.colorbox.close();
 	});
 	</script>
