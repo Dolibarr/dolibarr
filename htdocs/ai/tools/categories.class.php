@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-
+require_once DOL_DOCUMENT_ROOT . '/ai/lib/ai.lib.php';
 /**
  * Class ToolCategories
  *
@@ -633,10 +633,12 @@ class ToolCategories extends McpTool
 			$linked_objects_summary = "{$linked_objects_count} item" . ($linked_objects_count != 1 ? "s" : "") . " tagged with this category";
 		}
 
-		// Load extrafields
+		// Load extrafields. Values flagged as personal data (GDPR) are dropped:
+		// they must not reach an AI provider.
 		$extrafields = [];
 		if (!empty($cat->array_options) && is_array($cat->array_options)) {
-			foreach ($cat->array_options as $key => $value) {
+			$filtered = aiStripPersonalExtrafields($this->db, ['array_options' => $cat->array_options], 'categorie');
+			foreach (($filtered['array_options'] ?? []) as $key => $value) {
 				if ($value !== null && $value !== '') {
 					$clean_key = preg_replace('/^options_/', '', $key);
 					$extrafields[$clean_key] = $value;
