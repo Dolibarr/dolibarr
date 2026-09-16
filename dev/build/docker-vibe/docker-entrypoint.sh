@@ -53,7 +53,7 @@ WORKDIR="$(pwd)"
 
 if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR" ]; then
 	echo "Create link /dolibarr"
-	ln -fs $WORKDIR /dolibarr 2>/dev/null
+	ln -fs "$WORKDIR" /dolibarr 2>/dev/null
 fi
 if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibeignore" ]; then
 	echo "Create link $WORKDIR/.vibeignore"

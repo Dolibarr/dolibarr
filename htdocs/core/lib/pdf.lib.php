@@ -1992,14 +1992,30 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Set desc
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
 			$textwasnotmodified = false;
+			$textdiffersonlybymarkup = false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
 				$textwasnotmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);
+			} elseif (!empty($desc) && !empty($prodser->description) && dol_textishtml($desc) != dol_textishtml($prodser->description)) {
+				// One side is HTML and the other is not. This happens as soon as a line is saved while the
+				// WYSIWYG editor is enabled on line details: the plain product description becomes "<p>...</p>".
+				// Comparing the raw strings would then report a manual change and silently drop the translation,
+				// so compare the text content instead.
+				$desctextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($desc, 1), ENT_QUOTES | ENT_HTML5));
+				$prodtextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($prodser->description, 1), ENT_QUOTES | ENT_HTML5));
+				$textwasnotmodified = ($prodtextonly !== '' && strpos($desctextonly, $prodtextonly) !== false);
+				$textdiffersonlybymarkup = ($textwasnotmodified && $desctextonly === $prodtextonly);
 			} else {
 				$textwasnotmodified = ($desc == $prodser->description);
 			}
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) {
 				if ($textwasnotmodified) {
-					$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					if ($textdiffersonlybymarkup && strpos($desc, $prodser->description) === false) {
+						// Same text, but wrapped in tags or written with HTML entities: the product description
+						// is not present verbatim, so the str_replace below would find nothing to replace.
+						$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
+					} else {
+						$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					}
 				} elseif ($translatealsoifmodified) {
 					$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
 				}

@@ -1145,7 +1145,7 @@ class Reception extends CommonObject
 			}
 
 			$qty = (float) $qty;
-			$description = trim($description);
+			$description = trim((string) $description);
 
 			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new ReceptionLineBatch($this->db);
