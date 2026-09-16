@@ -3,6 +3,15 @@ display_name = "Agent Power"
 description = "Auto-approves bash and write files, asks for everything else."
 safety = "neutral"
 
+bypass_tool_permissions = false   # skip all permission prompts, including the shell-syntax gate
+
+instructions = """
+When running bash commands, keep them plain so they can be auto-approved:
+- Use literal paths, never shell variables ($VAR, ${VAR}) or $(...) substitutions.
+- Never use output redirection (> or >>). Write files with the write_file tool,
+  or pipe the output to tee instead.
+"""
+
 
 [tools.bash]
 permission = "always"
