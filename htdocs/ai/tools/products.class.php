@@ -553,7 +553,7 @@ class ToolProducts extends McpTool
 		$categories = [];
 		$staticCat = new Categorie($this->db);
 
-		$cats = $staticCat->get_categories($product_id);
+		$cats = $staticCat->containing($product_id, Categorie::TYPE_PRODUCT);
 
 		if (is_array($cats) && count($cats) > 0) {
 			foreach ($cats as $cat) {
