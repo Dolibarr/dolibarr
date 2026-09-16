@@ -21,6 +21,8 @@ RUN apt-get update \
 		php-ast \
 		python3 \
 		python3-pip \
+		unzip \
+		zip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install RTK - Rust Token Killer
@@ -39,6 +41,15 @@ RUN mkdir -p /opt/vibe \
     && uv pip install --python /opt/vibe/bin/python mistral-vibe
 
 ENV PATH="/opt/vibe/bin:$PATH"
+
+
+RUN mkdir -p /opt/php-tools \
+	&& composer require \
+    --working-dir=/opt/php-tools \
+    phan/phan \
+    phpstan/phpstan \
+	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
+	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan
 
 
 # Prompt
