@@ -1,6 +1,10 @@
 includes:
 	- dev/build/phpstan/phpstan-baseline.neon
 parameters:
+	bootstrapFiles:
+		- dev/build/phpstan/bootstrap_action.php
+	#autoload_files:
+	#	- dev/build/phpstan/bootstrap_action.php
 	phpVersion: 80200 # PHP 8.2
 	tmpDir: ./.github/tmp
 	parallel:

@@ -452,8 +452,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_module_source = '';
 	$search_pos_source = '';
 	$search_town = '';
-	$search_zip = "";
-	$search_state = "";
+	$search_zip = '';
+	$search_state = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
 	$search_customer_code = '';
@@ -1026,10 +1026,10 @@ if ($search_datelimit_end) {
 	$sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 }
 if ($search_note_public) {
-	$sql .= " AND p.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+	$sql .= " AND f.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
 }
 if ($search_note_private) {
-	$sql .= " AND p.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
+	$sql .= " AND f.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
 }
 if ($search_datec_start) {
 	$sql .= " AND f.datec >= '".$db->idate($search_datec_start)."'";
@@ -1694,7 +1694,7 @@ if (!empty($arrayfields['f.type']['checked'])) {
 }
 // Invoice Subtype
 if (!empty($arrayfields['f.subtype']['checked'])) {
-	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectarray('search_subtype', $subtypearray, $search_subtype, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	print '</td>';
 }
@@ -1851,7 +1851,7 @@ if (!empty($arrayfields['f.total_ttc']['checked'])) {
 }
 if (!empty($arrayfields['u.login']['checked'])) {
 	// Author
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 	print '</td>';
 }
@@ -2023,7 +2023,7 @@ $totalarray['nbfield'] = 0;
 print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
 if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
@@ -2540,7 +2540,7 @@ if ($num > 0) {
 
 			// Date
 			if (!empty($arrayfields['f.datef']['checked'])) {
-				print '<td align="center" class="nowraponall">';
+				print '<td class="nowraponall center">';
 				print dol_print_date($db->jdate($obj->datef), 'day');
 				print '</td>';
 				if (!$i) {
@@ -2550,7 +2550,7 @@ if ($num > 0) {
 
 			// Date
 			if (!empty($arrayfields['f.date_valid']['checked'])) {
-				print '<td align="center" class="nowraponall">';
+				print '<td class="nowraponall center">';
 				print dol_print_date($db->jdate($obj->date_valid), 'day');
 				print '</td>';
 				if (!$i) {
@@ -2560,7 +2560,7 @@ if ($num > 0) {
 
 			// Date limit
 			if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
-				print '<td align="center" class="nowraponall">'.dol_print_date($datelimit, 'day');
+				print '<td class="nowraponall center">'.dol_print_date($datelimit, 'day');
 				if ($facturestatic->hasDelay()) {
 					print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
 				}

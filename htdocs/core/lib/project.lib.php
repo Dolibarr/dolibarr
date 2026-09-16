@@ -3009,13 +3009,15 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 	$progressBarClass = 'progress-bar-info';
 	$progressCalculated = 0;
 	if ($task->planned_workload) {
-		$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
+		if (is_numeric($task->duration_effective)) {
+			$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
+		}
 
 		// this conf is actually hidden, by default we use 10% for "be careful or warning"
-		$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
+		$warningRatio = getDolGlobalInt('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + getDolGlobalInt('PROJECT_TIME_SPEND_WARNING_PERCENT') / 100) : 1.10;
 
 		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.(isset($task->progress) ? '%' : '');
-		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.(isset($progressCalculated) ? '%' : '');
+		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.(is_numeric($task->duration_effective) ? $progressCalculated.'%' : '');
 
 		//var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.floatval($task->progress * $warningRatio));
 		if ((float) $progressCalculated > (float) ($task->progress * $warningRatio)) {
