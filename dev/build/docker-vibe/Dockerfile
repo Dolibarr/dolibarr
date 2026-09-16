@@ -6,17 +6,19 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
 		bash \
 		bash-completion \
+		ca-certificates \
         vim \
 		wget \
 		curl \
         dialog \
+		gh \
+		git \
 		hurl \
+		openssh-client \
 		phpunit \
 		php \
 		python3 \
 		python3-pip \
-        ca-certificates \
-        git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install RTK - Rust Token Killer

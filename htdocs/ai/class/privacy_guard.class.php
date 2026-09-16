@@ -38,6 +38,11 @@ class PrivacyGuard
 	private $map = [];
 
 	/**
+	 * @var string Per-request salt appended to every token (see createToken).
+	 */
+	private $salt = '';
+
+	/**
 	 * @var int Counter for generating unique token indices
 	 */
 	private $index = 0;
@@ -52,8 +57,7 @@ class PrivacyGuard
 	 */
 	public function mask($text)
 	{
-		$this->map = [];
-		$this->index = 0;
+		$this->startSession();
 
 		// References / IDs (e.g. FA24-001, CUS-999)
 		// Must contain letters and numbers and separators
@@ -587,18 +591,87 @@ class PrivacyGuard
 	}
 
 	/**
+	 * Start the masking session for this guard instance, once.
+	 *
+	 * @return void
+	 */
+	private function startSession()
+	{
+		// One masking session per guard instance: mask() and maskNames() may
+		// be called several times for one request (query, context line), and
+		// every token they issue must survive in the same map until unmask.
+		if ($this->salt !== '') {
+			return;
+		}
+		$this->map = [];
+		$this->index = 0;
+		$this->salt = dol_substr(dol_hash(uniqid((string) mt_rand(), true), 'md5'), 0, 4);
+	}
+
+	/**
 	 * Create a unique token and store the original value in the map.
 	 *
 	 * @param string $value The original sensitive value.
-	 * @param string $type The type of data (e.g., 'EMAIL').
-	 * @return string The generated token (e.g., [[EMAIL_1]]).
+	 * @param string $type  The type of data (e.g., 'EMAIL').
+	 * @return string The generated token (e.g., [[EMAIL_1a2b]]).
 	 */
 	private function createToken($value, $type)
 	{
+		// Reuse the token already issued for this value in this request, so
+		// the same entity reads as the same placeholder throughout the prompt.
+		$existing = array_search($value, $this->map, true);
+		if ($existing !== false) {
+			return (string) $existing;
+		}
+
 		$this->index++;
-		// Format: [[EMAIL_1]]
-		$token = "[[{$type}_{$this->index}]]";
+		// Format: [[EMAIL_1a2b3c]]. The per-request salt keeps placeholders
+		// unpredictable (a provider cannot correlate "entity 1" across
+		// requests) and prevents collisions with literal [[TYPE_n]] text.
+		$token = "[[{$type}_{$this->index}{$this->salt}]]";
 		$this->map[$token] = $value;
 		return $token;
+	}
+
+	/**
+	 * Mask the names of the objects carried in this payload.
+	 *
+	 * Thirdparty and product names are arbitrary strings: no pattern can
+	 * recognize them, so they are masked from a dictionary built out of the
+	 * values actually present in the text. Longest first, so "ACME Ltd" is
+	 * replaced before "ACME".
+	 *
+	 * @param string        $text  Text to mask.
+	 * @param array<string> $names Candidate names to look for.
+	 * @return string Masked text.
+	 */
+	public function maskNames($text, $names)
+	{
+		$this->startSession();
+
+		$clean = array();
+		foreach ($names as $name) {
+			$name = trim((string) $name);
+			// Very short names would shred unrelated words.
+			if (dol_strlen($name) >= 4) {
+				$clean[] = $name;
+			}
+		}
+		if (empty($clean)) {
+			return $text;
+		}
+		$clean = array_unique($clean);
+		usort($clean, function (string $a, string $b) {
+			return dol_strlen($b) - dol_strlen($a);
+		});
+		foreach ($clean as $name) {
+			if (stripos($text, $name) === false) {
+				continue;
+			}
+			$token = $this->createToken($name, 'NAME');
+			$text = str_ireplace($name, $token, $text);
+		}
+
+		return $text;
 	}
 }

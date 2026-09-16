@@ -40,6 +40,12 @@
 
 -- V24 forgotten
 
+ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
+ALTER TABLE llx_blockedlog ADD COLUMN signature_backward varchar(100) DEFAULT '';
+ALTER TABLE llx_blockedlog ADD COLUMN type_code varchar(8) DEFAULT '';
+ALTER TABLE llx_blockedlog ADD COLUMN note varchar(128) DEFAULT NULL;
+
+
 
 -- v25 migration
 
@@ -215,6 +221,7 @@ ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_
 ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr FOREIGN KEY (fk_prod_attr) REFERENCES llx_product_attribute (rowid);
 ALTER TABLE llx_product_attribute_combination2val ADD CONSTRAINT fk_product_att_com2v_prod_attr_val FOREIGN KEY (fk_prod_attr_val) REFERENCES llx_product_attribute_value (rowid);
 ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod_att_comb_price_level_combination FOREIGN KEY (fk_product_attribute_combination) REFERENCES llx_product_attribute_combination (rowid);
+
 
 -- llx_notify_def.entity was never written, every row kept its DEFAULT 1, so filtering the
 -- notification queries on it would hide the existing subscriptions. Give each row the entity of the
