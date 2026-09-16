@@ -6874,8 +6874,8 @@ abstract class CommonObject
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
 								// We set a global variable to $objectoffield so we can use it inside computed formula
-								$objectoffield = dol_clone($this, 2);
 								global $objectoffield;
+								$objectoffield = dol_clone($this, 2);
 								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
