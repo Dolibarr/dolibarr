@@ -51,6 +51,7 @@ require '../main.inc.php'; // Load $user and permissions
  */
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 // Load translation files required by the page
@@ -390,6 +391,18 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		});
 
 		return true;
+	}
+
+	// Open the credit apply page in a colorbox (parent window's colorbox)
+	function OpenCreditApply() {
+		parent.$.colorbox({
+			href: "creditnote_apply.php?invoiceid=<?php echo $invoiceid; ?>&place=<?php echo dol_escape_js($place); ?>&token=<?php echo currentToken(); ?>",
+			width: "70%",
+			height: "80%",
+			transition: "none",
+			iframe: "true",
+			title: "<?php echo dol_escape_js($langs->trans('TakeposApplyAvailableCredit')); ?>"
+		});
 	}
 
 	function fetchPaymentIntentClientSecret(amount, invoiceid) {
@@ -747,6 +760,22 @@ while ($i < count($arrayOfValidPaymentModes)) {
 
 	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
 	$i += 1;
+}
+
+// Show "Available credit" button when the customer has credits and this is not a credit note
+if ($invoice->socid > 0 && $invoice->type != Facture::TYPE_CREDIT_NOTE) {
+	$invoice->fetch_thirdparty();
+	if (is_object($invoice->thirdparty)) {
+		$discountCheck = new DiscountAbsolute($db);
+		$availableCredit = $discountCheck->getAvailableDiscounts($invoice->thirdparty, null, '', 0, 0, 0);
+		if ($availableCredit > 0) {
+			print '<button type="button" class="calcbutton2" onclick="OpenCreditApply()">';
+			print '<span class="fa fa-2x fa-wallet iconwithlabel"></span><br>';
+			print $langs->trans('TakeposAvailableCredit').'<br>';
+			print '<span style="font-size:0.85em;">'.price($availableCredit, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+			print '</button>';
+		}
+	}
 }
 
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {

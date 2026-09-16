@@ -201,3 +201,24 @@ DefaultCashPOSLabel=Compte Espèce pour point de vente
 
 TakeposValidateCreditNoteOnCreation=Valider l'avoir dès sa création
 TakeposValidateCreditNoteOnCreationDesc=Si activé, les avoirs créés dans TakePOS seront immédiatement validés. Si désactivé, ils resteront à l'état de brouillon pour permettre la modification des quantités avant paiement.
+
+TakeposAvailableCredit=Crédit disponible
+TakeposAvailableCredits=Crédits disponibles
+TakeposApplyAvailableCredit=Appliquer un crédit disponible
+TakeposCreditApplied=Crédit appliqué avec succès
+TakeposCreditSplitAuto=Le crédit est supérieur au reste à payer. Il sera fractionné automatiquement : %s seront appliqués, et %s resteront disponibles.
+TakeposNoCreditAvailable=Aucun crédit disponible pour ce client
+TakeposManageCredits=Gérer les crédits disponibles
+TakeposSelectCreditToApply=Sélectionnez un crédit à appliquer
+TakeposCreditOrigin=Origine du crédit
+TakeposCreditAmount=Montant du crédit
+TakeposCreditDate=Date du crédit
+TakeposApplyThisCredit=Appliquer ce crédit
+TakeposConfirmApplyCredit=Confirmer l'application du crédit
+TakeposTicketDetail=Détail du ticket
+TakeposSplitCredit=Fractionner le crédit
+TakeposSplitCreditDesc=Saisissez deux montants dont la somme doit être égale au montant total du crédit (%s).
+TakeposAmount1=Montant 1
+TakeposAmount2=Montant 2 (automatique)
+TakeposCreditSplitSuccess=Crédit fractionné avec succès
+TakeposCreditSplitError=Erreur lors du fractionnement : la somme des deux montants doit être égale au montant d'origine (%s)

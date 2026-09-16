@@ -1223,10 +1223,10 @@ if (empty($reshook)) {
 					}
 
 					$discount->tva_tx = abs((float) $tva_tx);
-					$discount->localtax1_tx = $taxes['localtax1'];
-					$discount->localtax1_type = $taxes['localtax1_type'];
-					$discount->localtax2_tx = $taxes['localtax2'];
-					$discount->localtax2_type = $taxes['localtax2_type'];
+					$discount->localtax1_tx = !empty($taxes['localtax1']) ? $taxes['localtax1'] : 0;
+					$discount->localtax1_type = !empty($taxes['localtax1_type']) ? $taxes['localtax1_type'] : 0;
+					$discount->localtax2_tx = !empty($taxes['localtax2']) ? $taxes['localtax2'] : 0;
+					$discount->localtax2_type = !empty($taxes['localtax2_type']) ? $taxes['localtax2_type'] : 0;
 					$discount->vat_src_code = $vat_src_code;
 
 					$result = $discount->create($user);

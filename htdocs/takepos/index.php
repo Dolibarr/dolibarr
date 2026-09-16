@@ -717,6 +717,19 @@ function Reduction() {
 	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
+function CreditList() {
+	invoiceid = $("#invoiceid").val();
+	console.log("Open popup to manage customer credits for invoiceid="+invoiceid);
+	$.colorbox({
+		href: "creditnote_apply.php?place="+place+"&invoiceid="+invoiceid+"&token=<?php echo currentToken(); ?>",
+		width: "80%",
+		height: "85%",
+		transition: "none",
+		iframe: "true",
+		title: "<?php echo dol_escape_js($langs->trans('TakeposManageCredits')); ?>"
+	});
+}
+
 var closeBillParams="";
 function CloseBill() {
 	<?php
@@ -1602,6 +1615,9 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 
 // Add a discount
 $menus[$r++] = array('title' => '<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("InvoiceDiscountShort").'</div>', 'action' => 'Reduction();');
+
+// Manage available customer credits (credit notes converted to credit, deposits, etc.)
+$menus[$r++] = array('title' => '<span class="fa fa-wallet paddingrightonly"></span><div class="trunc">'.$langs->trans("TakeposAvailableCredits").'</div>', 'action' => 'CreditList();');
 
 if (!getDolGlobalString('TAKEPOS_NO_SPLIT_SALE')) {
 	$menus[$r++] = array('title' => '<span class="fas fa-cut paddingrightonly"></span><div class="trunc">'.$langs->trans("SplitSale").'</div>', 'action' => 'Split();');
