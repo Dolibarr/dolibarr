@@ -1,0 +1,18 @@
+agent_type = "agent"
+display_name = "Agent Power"
+description = "Auto-approves bash and write files, asks for everything else."
+safety = "neutral"
+
+
+[tools.bash]
+permission = "always"
+deny = ["rm -rf *", "sudo *"]
+
+
+[tools.search_replace]
+permission = "always"
+
+
+[tools.write_file]
+permission = "always"
+
