@@ -1176,6 +1176,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 						}
 						try {
 							$odfHandler->mergeSegment($listlines);
+						} catch (OdfExceptionSegmentNotFound $e) {
+							// Do nothing
 						} catch (OdfException $e) {
 							$this->error = $e->getMessage();
 							dol_syslog($this->error, LOG_WARNING);

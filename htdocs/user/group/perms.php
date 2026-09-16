@@ -427,7 +427,7 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
-		if (empty($obj->family)) {
+		if (empty($obj->family) || empty($familyinfo[$obj->family])) {
 			$obj->family = 'other';
 		}
 
