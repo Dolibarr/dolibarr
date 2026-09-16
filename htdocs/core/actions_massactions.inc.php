@@ -1936,7 +1936,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	if (empty($newproject->public)) {
 		$tmps = $newproject->getProjectsAuthorizedForUser($user, 0, 1, 0, '(fk_statut:=:1)');	// We check only open project (cloning on closed is not allowed)
 		$tmparray = explode(',', $tmps);
-		if (!in_array($newproject->id, $tmparray)) {
+		if (in_array($newproject->id, $tmparray)) {
 			$iscontactofnewproject = 1;
 		}
 	}
@@ -1950,8 +1950,28 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	if ($permisstiontoadd) {
 		$taskidsmapping = array();		// old task id => new cloned task id
 		$clonedtaskoldparent = array();	// new cloned task id => old parent task id
+
+		// Build the list of projects the current user is allowed to read, used to authorize
+		// every source task against its actual project before cloning it (the previous fix for
+		// CVE-2026-77923 only validated the destination project).
+		$authorizedsourceprojects = null;
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			$sourceprojectstatic = new Project($db);
+			$tmps = $sourceprojectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+			$authorizedsourceprojects = explode(',', $tmps);
+		}
+
 		foreach (GETPOST('selected') as $task) {
-			$origin_task->fetch($task, '', 0);
+			if ($origin_task->fetch($task, '', 0) <= 0) {
+				continue;	// Source task not found, skip it
+			}
+
+			// Authorize the source task against its actual project before cloning it
+			if (is_array($authorizedsourceprojects) && !in_array($origin_task->fk_project, $authorizedsourceprojects)) {
+				setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
+				$error++;
+				break;
+			}
 
 			$defaultref = '';
 			$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
