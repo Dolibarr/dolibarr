@@ -207,8 +207,9 @@ TakeposTerminalDisabledHelp=If set, this terminal is no longer proposed on the t
 
 TakeposAvailableCredit=Available credit
 TakeposAvailableCredits=Available credits
-TakeposApplyAvailableCredit=Apply available credit
+TakeposApplyAvailableCredit=Apply an available credit
 TakeposCreditApplied=Credit applied successfully
+TakeposNoRemainToPay=Cannot apply credit because the remaining amount to pay is zero (0.00).
 TakeposCreditSplitAuto=The credit is greater than the amount remaining to pay. It will be split automatically: %s will be applied, and %s will remain available.
 TakeposNoCreditAvailable=No credit available for this customer
 TakeposManageCredits=Manage available credits
