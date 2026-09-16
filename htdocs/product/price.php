@@ -838,10 +838,12 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_customer_price' && $prodcustprice !== null && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
+	if ($action == 'confirm_remove_customer_price' && $prodcustprice !== null && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
 		// Delete price by customer
-		$prodcustprice->id = GETPOSTINT('lineid');
-		$result = $prodcustprice->delete($user);
+		$update_child_soc = GETPOSTINT('updatechildprice');
+
+		$prodcustprice->fetch(GETPOSTINT('lineid'));
+		$result = $prodcustprice->delete($user, 0, $update_child_soc);
 
 		if ($result > 0) {
 			$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_customer_price_extrafields WHERE fk_object = ".((int) $prodcustprice->id));
@@ -1012,6 +1014,14 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 }
 
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs mod-product page-price');
+
+if ($action == 'ask_remove_customer_price' && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
+	$formquestion = array(
+		array('type' => 'checkbox', 'name' => 'updatechildprice', 'label' => $langs->trans('ForceDeleteChildPriceSoc'), 'value' => 0),
+	);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.GETPOSTINT('lineid'), $langs->trans('DeleteCustomerPrice'), $langs->trans('ConfirmDeleteCustomerPrice'), 'confirm_remove_customer_price', $formquestion, 0, 1);
+	print $formconfirm;
+}
 
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct".$object->type);
@@ -2709,7 +2719,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
-					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
+					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=ask_remove_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';
