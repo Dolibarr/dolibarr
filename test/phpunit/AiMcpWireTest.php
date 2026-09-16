@@ -299,5 +299,4 @@ class AiMcpWireTest extends CommonClassTest
 		$this->assertArrayHasKey('result', $response);
 		$this->assertArrayNotHasKey('error', $response);
 	}
-
 }
