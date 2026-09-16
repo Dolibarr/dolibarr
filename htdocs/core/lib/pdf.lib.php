@@ -176,10 +176,12 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 
 	// Load TCPDF
 	require_once TCPDF_PATH.'tcpdf.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doltcpdf.class.php';
 
 	// We need to instantiate tcpdi object (instead of tcpdf) to use merging features. But we can disable it (this will break all merge features).
 	if (!getDolGlobalString('MAIN_DISABLE_TCPDI')) {
 		require_once TCPDI_PATH.'tcpdi.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doltcpdi.class.php';
 	}
 
 	//$arrayformat=pdf_getFormat();
@@ -190,9 +192,9 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// PDF/A-1 ou PDF/A-3
 
 	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
-		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
+		$pdf = new DolTCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	} else {
-		$pdf = new TCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
+		$pdf = new DolTCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	}
 
 	// Protection and encryption of pdf
