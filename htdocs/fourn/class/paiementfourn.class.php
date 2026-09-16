@@ -206,7 +206,7 @@ class PaiementFourn extends Paiement
 			$invoice_multicurrency_tx = $this->multicurrency_tx[$key] ?? '';
 			if (empty($invoice_multicurrency_code) || empty($invoice_multicurrency_tx)) {
 				$tmparray = MultiCurrency::getInvoiceRate($key, 'facture_fourn');
-				if ($tmparray !== false) {
+				if ($tmparray !== false && is_array($tmparray)) {
 					if (empty($invoice_multicurrency_code)) {
 						$invoice_multicurrency_code = $tmparray['invoice_multicurrency_code'];
 					}
