@@ -287,7 +287,7 @@ print $langs->trans("URLToGetObfuscationkey").'<br>';
 print '<div class="urllink"><input type="text" id="forcegetkeyobfuscation" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urltogetkeyobfuscation.'"><a class="reposition" href="'.$urltogetkeyobfuscation.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
 print ajax_autoselect('forcegetkeyobfuscation');
 
-if (GETPOST('forcegetkeyobfuscation')) {
+if (GETPOST('forcegetkeyobfuscation')) {		// Mode to force the retrieval and recording of HMAC with obfuscation.
 	unset($_SESSION['hmac_secret_key']);
 	unset($conf->cache['hmac_secret_key']);
 

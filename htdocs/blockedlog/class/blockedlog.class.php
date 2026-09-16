@@ -1856,6 +1856,7 @@ class BlockedLog
 
 	/**
 	 * Save the HMAC secret key into database.
+	 * Parameter may be set by caller to "dolcrypt", or "dolibfuscation" if "isALNERunningVersion(1) && $mysoc->country_code == 'FR'"
 	 *
 	 * @param	string		$hmac_secret_key		HMAC secret key ('BLOCKEDLOG_HMAC_KEY...')
 	 * @param	string		$obfuscationmode		Obfuscation mode ('dolcrypt', 'dolobfuscationv1-SIREN')
@@ -2038,6 +2039,7 @@ class BlockedLog
 
 	/**
 	 * Get the HMAC secret key.
+	 * Note: The HMAC key has been saved by saveHMACSecretKey().
 	 *
 	 * @param 	string	$hmac_encoded_secret_key	HMAC encode string retrieved with getEncodedHMACSecretKey()
 	 * @return 	string								Encoded HMAC secret key.

@@ -272,7 +272,7 @@ if ($action == 'update') {
 			//$hmac_secret_key = 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A';
 
 			$obfuscationkey = '';
-			if (isALNERunningVersion(1)) {		// Note we are here if registration page requested, so for all french users, even if not assujeti.
+			if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {	// Note we are here if registration page requested, so for all french users ($mysoc->country_code is always 'FR'), even if not assujeti.
 				try {
 					$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory or remote server. If not found, we retrieve it.
 					//$obfuscationkey = '';		// Uncomment this to test if obfuscation key can't be retrieved.
