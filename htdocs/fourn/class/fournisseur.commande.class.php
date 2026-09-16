@@ -2884,12 +2884,9 @@ class CommandeFournisseur extends CommonOrder
 				$newStatus = 2; // Ordered->Approved
 			} elseif ($this->status == 4) {
 				$newStatus = 3;
-			} elseif ($this->status == 5) {
-				//$newstatus=2;    // Ordered
-				// TODO Can we set it to submitted ?
-				//$newstatus=3;  // Submitted
-				// TODO If there is at least one reception, we can set to Received->Received partially
-				$newStatus = 4; // Received partially
+			} elseif ($this->status == self::STATUS_RECEIVED_COMPLETELY) {
+				// Only the dispatched quantities may qualify an order as partially received
+				$newStatus = ($this->getStatusFromDispatchedQty() == self::STATUS_RECEIVED_PARTIALLY) ? self::STATUS_RECEIVED_PARTIALLY : self::STATUS_ORDERSENT;
 			} elseif ($this->status == 6) {
 				$newStatus = 2; // Canceled->Approved
 			} elseif ($this->status == 7) {
@@ -3755,6 +3752,87 @@ class CommandeFournisseur extends CommonOrder
 
 
 	/**
+	 * Compute the reception status of the order from the dispatched quantities. Nothing is saved.
+	 *
+	 * @return		int						Return integer <0 if KO, 0 if nothing dispatched, self::STATUS_RECEIVED_PARTIALLY or self::STATUS_RECEIVED_COMPLETELY
+	 */
+	public function getStatusFromDispatchedQty(): int
+	{
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+
+		$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
+
+		$filter = array('t.fk_element' => $this->id);
+		if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
+			$filter['t.status'] = 1; // Restrict to lines with status validated
+		}
+
+		$ret = $supplierorderdispatch->fetchAll('', '', 0, 0, $filter);
+		if ($ret < 0) {
+			$this->error = $supplierorderdispatch->error;
+			$this->errors = $supplierorderdispatch->errors;
+			return $ret;
+		}
+
+		if (!is_array($supplierorderdispatch->lines) || count($supplierorderdispatch->lines) == 0) {
+			return 0;
+		}
+
+		if (empty($this->lines) && $this->fetch_lines() < 0) {
+			return -1;
+		}
+
+		$qtydelivered = array();
+		$qtywished = array();
+
+		// Build array with quantity delivered by product
+		foreach ($supplierorderdispatch->lines as $line) {
+			if (array_key_exists($line->fk_product, $qtydelivered)) {
+				$qtydelivered[$line->fk_product] += $line->qty;
+			} else {
+				$qtydelivered[$line->fk_product] = $line->qty;
+			}
+		}
+		foreach ($this->lines as $line) {
+			// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
+			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) {
+				continue;
+			}
+			if (array_key_exists($line->fk_product, $qtywished)) {
+				$qtywished[$line->fk_product] += $line->qty;
+			} else {
+				$qtywished[$line->fk_product] = $line->qty;
+			}
+		}
+
+		// Compare array
+		$diff_array = array_diff_assoc($qtydelivered, $qtywished); // Warning: $diff_array is done only on common keys.
+		$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
+		$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
+
+		if (count($diff_array) == 0 && count($keysinwishednotindelivered) == 0 && count($keysindeliverednotinwished) == 0) {
+			return self::STATUS_RECEIVED_COMPLETELY;
+		}
+
+		if (getDolGlobalString('SUPPLIER_ORDER_MORE_THAN_WISHED')) {
+			// Set to received if more products received than wished
+			$close = 0;
+			foreach ($diff_array as $key => $value) {
+				// If the quantity delivered is greater or equal to wish quantity  @phan-suppress-next-line PhanTypeInvalidDimOffset
+				if ($qtydelivered[$key] >= $qtywished[$key]) {
+					$close++;
+				}
+			}
+
+			if ($close == count($diff_array)) {
+				return self::STATUS_RECEIVED_COMPLETELY;
+			}
+		}
+
+		return self::STATUS_RECEIVED_PARTIALLY;
+	}
+
+	/**
 	 * Calc status regarding to dispatched stock
 	 *
 	 * @param 		User 	$user                   User action
@@ -3764,132 +3842,33 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function calcAndSetStatusDispatch(User $user, $closeopenorder = 1, $comment = '')
 	{
-		if (isModEnabled("supplier_order")) {
-			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
-
-			$qtydelivered = array();
-			$qtywished = array();
-
-			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
-
-			$filter = array('t.fk_element' => $this->id);
-			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
-				$filter['t.status'] = 1; // Restrict to lines with status validated
-			}
-
-			$ret = $supplierorderdispatch->fetchAll('', '', 0, 0, $filter);
-			if ($ret < 0) {
-				$this->error = $supplierorderdispatch->error;
-				$this->errors = $supplierorderdispatch->errors;
-				return $ret;
-			} else {
-				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0) {
-					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-					$date_liv = dol_now();
-
-					// Build array with quantity deliverd by product
-					foreach ($supplierorderdispatch->lines as $line) {
-						if (array_key_exists($line->fk_product, $qtydelivered)) {
-							$qtydelivered[$line->fk_product] += $line->qty;
-						} else {
-							$qtydelivered[$line->fk_product] = $line->qty;
-						}
-					}
-					foreach ($this->lines as $line) {
-						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
-						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) {
-							continue;
-						}
-						if (array_key_exists($line->fk_product, $qtywished)) {
-							$qtywished[$line->fk_product] += $line->qty;
-						} else {
-							$qtywished[$line->fk_product] = $line->qty;
-						}
-					}
-
-					//Compare array
-					$diff_array = array_diff_assoc($qtydelivered, $qtywished); // Warning: $diff_array is done only on common keys.
-					$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
-					$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
-					//var_dump(array_keys($qtydelivered));
-					//var_dump(array_keys($qtywished));
-					//var_dump($diff_array);
-					//var_dump($keysinwishednotindelivered);
-					//var_dump($keysindeliverednotinwished);
-					//exit;
-
-					if (count($diff_array) == 0 && count($keysinwishednotindelivered) == 0 && count($keysindeliverednotinwished) == 0) { //No diff => mean everything is received
-						if ($closeopenorder) {
-							//$ret=$this->setStatus($user,5);
-							$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // $type is 'tot', 'par', 'nev', 'can'
-							if ($ret < 0) {
-								return -1;
-							}
-							return 5;
-						} else {
-							//Diff => received partially
-							//$ret=$this->setStatus($user,4);
-							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
-							if ($ret < 0) {
-								return -1;
-							}
-							return 4;
-						}
-					} elseif (getDolGlobalString('SUPPLIER_ORDER_MORE_THAN_WISHED')) {
-						//set livraison to 'tot' if more products received than wished. (and if $closeopenorder is set to 1 of course...)
-
-						$close = 0;
-
-						if (count($diff_array) > 0) {
-							//there are some difference between  the two arrays
-
-							//scan the array of results
-							foreach ($diff_array as $key => $value) {
-								//if the quantity delivered is greater or equal to wish quantity  @phan-suppress-next-line PhanTypeInvalidDimOffset
-								if ($qtydelivered[$key] >= $qtywished[$key]) {
-									$close++;
-								}
-							}
-						}
-
-
-						if ($close == count($diff_array)) {
-							//all the products are received equal or more than the wished quantity
-							if ($closeopenorder) {
-								$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // $type is 'tot', 'par', 'nev', 'can'
-								if ($ret < 0) {
-									return -1;
-								}
-								return 5;
-							} else {
-								//Diff => received partially
-								$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
-								if ($ret < 0) {
-									return -1;
-								}
-								return 4;
-							}
-						} else {
-							//all the products are not received
-							$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
-							if ($ret < 0) {
-								return -1;
-							}
-							return 4;
-						}
-					} else {
-						//Diff => received partially
-						$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
-						if ($ret < 0) {
-							return -1;
-						}
-						return 4;
-					}
-				}
-				return 1;
-			}
+		if (!isModEnabled("supplier_order")) {
+			return 0;
 		}
-		return 0;
+
+		$statusfromdispatch = $this->getStatusFromDispatchedQty();
+		if ($statusfromdispatch < 0) {
+			return $statusfromdispatch;
+		}
+		if ($statusfromdispatch == 0) {
+			return 1; // Nothing dispatched yet, status is left untouched
+		}
+
+		$date_liv = dol_now();
+
+		if ($statusfromdispatch == self::STATUS_RECEIVED_COMPLETELY && $closeopenorder) {
+			$ret = $this->Livraison($user, $date_liv, 'tot', $comment); // $type is 'tot', 'par', 'nev', 'can'
+			if ($ret < 0) {
+				return -1;
+			}
+			return 5;
+		}
+
+		$ret = $this->Livraison($user, $date_liv, 'par', $comment); // $type is 'tot', 'par', 'nev', 'can'
+		if ($ret < 0) {
+			return -1;
+		}
+		return 4;
 	}
 
 	/**
