@@ -169,7 +169,7 @@ WARNING: AI IS OFTEN DOING NON ATOMIC PR AND NON ATOMIC PR WILL BE REJECTED, SO 
 
 * When submitting a pull request, use same rule as [Commits](#commits) for the message. If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
 
-* A screenshot will be always required for any PR of change/addition of a GUI behavior.
+* A screenshot is mandatory for any PR of change/addition related to the User Interface.
 
 Also, some code changes need a prior approbation:
 
