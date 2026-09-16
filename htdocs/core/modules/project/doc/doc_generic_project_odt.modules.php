@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -1176,8 +1176,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 						}
 						try {
 							$odfHandler->mergeSegment($listlines);
-						} catch (OdfExceptionSegmentNotFound $e) {
-							// Do nothing
 						} catch (OdfException $e) {
 							$this->error = $e->getMessage();
 							dol_syslog($this->error, LOG_WARNING);
