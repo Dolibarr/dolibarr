@@ -125,7 +125,7 @@ class AccountancyExport
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$this->db = $db;
 		$this->separator = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');

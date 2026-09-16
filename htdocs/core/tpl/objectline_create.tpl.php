@@ -666,8 +666,8 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 		?>
 		function prefill_service_dates()
 		{
-			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
-			$('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, 'day')); ?>").trigger('change');
+			$('#date_start').val(<?php echo "'".dol_escape_js(dol_print_date($date_start_prefill, 'day'))."'"; ?>).trigger('change');
+			$('#date_end').val(<?php echo "'".dol_escape_js(dol_print_date($date_end_prefill, 'day'))."'"; ?>).trigger('change');
 
 			return false; // Prevent default link behaviour (which is go to href URL)
 		}
@@ -1318,7 +1318,7 @@ if (!empty($object->thirdparty)) {
 							}
 							options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
 						});
-						options += '<option value="inputprice" price="'+defaultprice+'"><?php echo dol_escape_js($langs->trans("InputPrice").'...'); ?></option>';
+						options += '<option value="inputprice" price="'+defaultprice+'"><?php echo dolPrintHTML($langs->trans("InputPrice").'...'); ?></option>';
 
 						console.log("finally selected defaultkey="+defaultkey+" defaultprice for buying price="+defaultprice);
 

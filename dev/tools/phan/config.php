@@ -405,8 +405,8 @@ return [
 		'/^dol_now$/' => [0, '{^(?:auto|gmt|tz(?:server|ref|user(?:rel)?))$}',"InvalidDolNowArgument"],
 		'/^dol_mktime$/' => [6, '{^(?:|0|1|auto|gmt|tz(?:server|ref|user(?:rel)?|,[+a-zA-Z-/]+))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
 		'/^dol_print_date$/' => [2, '{^(?:|0|1|auto|gmt|tz(?:server|user(?:rel)?))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
-		'/^GETPOSTFLOAT$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidGetPostFloatRounding"],
-		'/^price2num$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidPrice2NumRounding"],
+		'/^GETPOSTFLOAT$/' => [1, '{^(?:|M[UTS]|C[UTR]|\d+)$}',"InvalidGetPostFloatRounding"],
+		'/^price2num$/' => [1, '{^(?:|M[UTS]|C[UTR]|\d+)$}',"InvalidPrice2NumRounding"],
 	],
 	'SqlInjectionPlugin' => ['debug' => false],
 	'plugins' => [

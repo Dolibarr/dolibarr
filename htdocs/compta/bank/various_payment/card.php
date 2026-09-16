@@ -5,6 +5,7 @@
  * Copyright (C) 2023       Joachim Kueter          <git-jk@bloxera.com>
  * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Solution Libre SAS      <contact@solution-libre.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -386,8 +387,7 @@ if ($id) {
 	$object = new PaymentVarious($db);
 	$result = $object->fetch($id);
 	if ($result <= 0) {
-		dol_print_error($db);
-		exit;
+		recordNotFound();
 	}
 }
 

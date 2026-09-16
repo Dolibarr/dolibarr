@@ -265,7 +265,7 @@ abstract class CommonObject
 	public $linked_objects;
 
 	/**
-	 * @var array<string,int>|null		Array of external linked objects (set by hooks or external modules) to merge into $linked_objects during creation
+	 * @var array<string,int>|null		Array of external linked objects (set by hooks or external modules) to merge into during creation
 	 */
 	public $other_linked_objects;
 
@@ -8794,11 +8794,11 @@ abstract class CommonObject
 				$out .= '
 					<script nonce="'.getNonce().'">
 					$(document).ready(function() {
-						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
-							$("'.dol_escape_js($newInput).'").insertBefore(this);
+						$(\'a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add\').click(function() {
+							$(\''.dol_escape_js($newInput).'\').insertBefore(this);
 						});
 
-						$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
+						$(document).on("click", \'a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del\', function() {
 							$(this).parent().remove();
 						});
 					});
@@ -11375,8 +11375,8 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
-		$sql.= " SET ".implode(', ', $sanitized_tmp);
-		$sql.= " WHERE rowid = ".((int) $this->id);
+		$sql .= " SET ".implode(', ', $sanitized_tmp);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 

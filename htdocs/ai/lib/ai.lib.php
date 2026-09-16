@@ -479,21 +479,21 @@ function aiAdminPrepareHead()
 	$head[$h][2] = 'custom';
 	$h++;
 
-	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$head[$h][0] = dol_buildpath("/ai/admin/assistant.php", 1);
 		$head[$h][1] = $langs->trans("Assistant");
 		$head[$h][2] = 'assistant';
 		$h++;
 	}
 
-	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$head[$h][0] = dol_buildpath("/ai/admin/server_mcp.php", 1);
 		$head[$h][1] = $langs->trans("MCPServer");
 		$head[$h][2] = 'servermcp';
 		$h++;
 	}
 
-	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$head[$h][0] = dol_buildpath("/ai/admin/configure_tools.php", 1);
 		$head[$h][1] = $langs->trans("ToolAccessControl");
 		$head[$h][2] = 'tools';
@@ -673,6 +673,7 @@ function getAiChatAssistantConfig()
 
 	$keys = array(
 		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
+		'AIAttachmentBlockedByPrivacy', 'MissingInformation', 'CouldYouClarify',
 		'AIAttachmentBlockedByPrivacy',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
@@ -936,4 +937,63 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '</div>';
 
 	return $out;
+}
+
+/**
+ * Check the anti-CSRF token of a request sent to one of the AI Assistant endpoints.
+ *
+ * The check cannot be delegated to main.inc.php for those endpoints:
+ *  - it only runs when MAIN_SECURITY_CSRF_WITH_TOKEN is enabled (it is optional),
+ *  - it reads the token from $_GET/$_POST only,
+ *  - and when the token is present but invalid it merely clears $_POST, which does not
+ *    protect an endpoint reading its payload from the raw php://input body.
+ *
+ * The token is read from the X-CSRF-Token header, then from the 'token' parameter (the chat
+ * frontend appends it to the endpoint URL, see getAiChatAssistantConfig() and epUrl() in
+ * ai/js/ai_assistant.js). It is compared to both session tokens because the endpoints define
+ * NOTOKENRENEWAL and therefore never rotate them: 'newtoken' is the value handed to the
+ * frontend by newToken(), 'token' is the value it has been promoted to by a page that does
+ * rotate. Both are legitimate for a call issued from a page of the current session.
+ * (Port of #39393 to develop.)
+ *
+ * @param	string	$context	Endpoint name, used for logging only
+ * @return	void				Emits a 403 JSON response and exits when the token is invalid
+ */
+function aiCheckCsrfToken($context = '')
+{
+	$token = '';
+	if (!empty($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+		$token = (string) $_SERVER['HTTP_X_CSRF_TOKEN'];
+	} else {
+		$token = GETPOST('token', 'alpha');
+	}
+
+	$sessiontokens = array();
+	if (!empty($_SESSION['token'])) {
+		$sessiontokens[] = (string) $_SESSION['token'];
+	}
+	if (!empty($_SESSION['newtoken'])) {
+		$sessiontokens[] = (string) $_SESSION['newtoken'];
+	}
+
+	$valid = false;
+	foreach ($sessiontokens as $sessiontoken) {
+		if (!empty($token) && hash_equals($sessiontoken, $token)) {
+			$valid = true;
+			break;
+		}
+	}
+
+	if (!$valid) {
+		dol_syslog(
+			'[AI] Request to '.($context !== '' ? $context : $_SERVER['PHP_SELF'])
+			.' refused by CSRF protection (invalid or missing token).',
+			LOG_WARNING
+		);
+
+		http_response_code(403);
+		header('Content-Type: application/json');
+		echo json_encode(array('error' => 'Invalid CSRF token'));
+		exit;
+	}
 }

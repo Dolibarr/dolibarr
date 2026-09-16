@@ -145,6 +145,22 @@ class AssetDepreciationOptions extends CommonObject
 	 * @var int<0,1>
 	 */
 	public $accelerated_depreciation_option;
+	/**
+	 * @var float	Depreciation rate, computed by getRate() and not stored in database
+	 */
+	public $rate;
+	/**
+	 * @var float
+	 */
+	public $amount_base_depreciation_ht;
+	/**
+	 * @var float
+	 */
+	public $amount_base_deductible_ht;
+	/**
+	 * @var float
+	 */
+	public $total_amount_last_depreciation_ht;
 
 	/**
 	 * Constructor
@@ -197,7 +213,8 @@ class AssetDepreciationOptions extends CommonObject
 				// Unset required option (notnull) if field disabled
 				if (!empty($field_info['enabled_field'])) {
 					$info = explode(':', $field_info['enabled_field']);
-					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
+					// Use isset() + strict string compare, not empty(), because the gating value can legitimately be '0' (e.g. depreciation_type=0 for Linear)
+					if (isset($this->deprecation_options[$info[0]][$info[1]]) && (string) $this->deprecation_options[$info[0]][$info[1]] !== (string) $info[2] && isset($this->fields[$field_key]['notnull'])) {
 						unset($this->fields[$field_key]['notnull']);
 					}
 				}
@@ -219,6 +236,33 @@ class AssetDepreciationOptions extends CommonObject
 	}
 
 	/**
+	 * Return whether an 'enabled_field' condition ("mode_key:field_key:value") is satisfied by the
+	 * data of the submitted form.
+	 *
+	 * @param	string	$enabledfield	Condition, as "mode_key:field_key:value"
+	 * @return	bool					True when the driving field was submitted with the expected value
+	 */
+	protected function isEnabledFieldSatisfiedFromPost($enabledfield)
+	{
+		$info = explode(':', $enabledfield);
+		if (count($info) < 3) {
+			return true;
+		}
+
+		$htmlname = $info[0] . '_' . $info[1];
+		if (!GETPOSTISSET($htmlname)) {
+			return false;	// An unchecked checkbox is not submitted at all
+		}
+
+		$value = GETPOST($htmlname, 'alphanohtml');
+		if ($value === 'on') {
+			$value = '1';	// A checked checkbox may be submitted as 'on'
+		}
+
+		return ((string) $value === (string) $info[2]);
+	}
+
+	/**
 	 *  Fill deprecation_options property of object (using for data sent by forms)
 	 *
 	 * @param	int<0,1>			$class_type	Type (0:asset, 1:asset model)
@@ -232,10 +276,23 @@ class AssetDepreciationOptions extends CommonObject
 
 		$deprecation_options = array();
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
+			// A mode disabled by its enabled_field must not be validated at all. The form submits the
+			// fields of the hidden block anyway, empty, so a required field of that block (the
+			// degressive coefficient) makes the whole page fail. The block is dropped further below,
+			// but only after its fields have been validated, which is too late.
+			if (!empty($mode_info['enabled_field']) && !$this->isEnabledFieldSatisfiedFromPost($mode_info['enabled_field'])) {
+				continue;
+			}
+
 			$this->setInfosForMode($mode_key, $class_type);
 
 			foreach ($mode_info['fields'] as $field_key => $field_info) {
 				if (!empty($field_info['computed'])) {
+					continue;
+				}
+				// Same thing for a single field hidden by its own enabled_field: the degressive
+				// coefficient is required but hidden as soon as the depreciation type is not degressive
+				if (!empty($field_info['enabled_field']) && !$this->isEnabledFieldSatisfiedFromPost($field_info['enabled_field'])) {
 					continue;
 				}
 
@@ -290,6 +347,7 @@ class AssetDepreciationOptions extends CommonObject
 
 				//var_dump($field_key.' '.$value.' '.$field_info['type']);
 				$field_value = $value;
+
 				if ($field_info['notnull'] > 0 && $field_value == '' && !is_null($field_info['default']) && $field_info['default'] == '(PROV)') {
 					$field_value = '(PROV)';
 				} elseif ((!empty($field_info['required']) || $field_info['notnull'] > 0) && $field_value == '' && !empty($field_info['default'])) {
@@ -388,7 +446,8 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if (!empty($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
+				// Use isset() + strict string compare, not empty(), because the gating value can legitimately be '0' (e.g. accelerated_depreciation_option=0)
+				if (isset($deprecation_options[$info[0]][$info[1]]) && (string) $deprecation_options[$info[0]][$info[1]] !== (string) $info[2]) {
 					unset($deprecation_options[$mode_key]);
 				}
 			}

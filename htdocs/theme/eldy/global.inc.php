@@ -815,6 +815,10 @@ input.pageplusone {
 .noopacity {
 	opacity: unset !important;
 }
+.spantitle {
+	opacity: 0.6;
+	font-size: 0.95em;
+}
 .colorwhite {
 	color: var(--colorwhite);
 }
@@ -1107,8 +1111,14 @@ textarea.centpercent {
 	font-size: 95%;
 	font-weight: bold;
 }
+.tdlineheightsmall {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	vertical-align: middle;
+}
 .lineheightsmall {
-	line-height: 1.2em;
+	line-height: 1.3em;
+	vertical-align: middle;
 }
 .lineheightmedium {
 	line-height: 1.5em;
@@ -1380,6 +1390,14 @@ td.wordbreak img, td.wordbreakimp img {
 .overflowellipsis .shortmessagecut, .overflowellipsis .longmessagecut {
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+div.kmcontent {
+	border: 1px solid #E0E0E0;
+	background-color: var(--colorbacklineimpair2);
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 div.urllink {
@@ -6201,7 +6219,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 }
 
 
-	/* ============================================================================== */
+/* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
 
