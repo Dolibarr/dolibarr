@@ -7,6 +7,7 @@ RUN apt-get update \
 		bash \
 		bash-completion \
 		ca-certificates \
+		composer \
         vim \
 		wget \
 		curl \
@@ -17,6 +18,7 @@ RUN apt-get update \
 		openssh-client \
 		phpunit \
 		php \
+		php-ast \
 		python3 \
 		python3-pip \
     && rm -rf /var/lib/apt/lists/*
