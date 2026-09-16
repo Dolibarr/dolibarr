@@ -251,6 +251,7 @@ The following changes may create regressions for some external modules, but were
 * Library jeditable was not used by the core (used by a hidden option with no security rules), so it has been removed.
 * Old deprecated module Paybox has been removed.
 * Old deprecated module Deplacement has been removed.
+* If you want/need to use the title of contacts (Mr, Dr, Sir, ...), you must set MAIN_USE_TITLE_FOR_CONTACT to 1 in home - setup - other.
 
 
 
