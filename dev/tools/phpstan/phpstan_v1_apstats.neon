@@ -1,6 +1,10 @@
 # PHPStan config for PHPStan 2.2
 
 parameters:
+	bootstrapFiles:
+		- dev/build/phpstan/bootstrap_action.php
+	#autoload_files:
+	#	- dev/build/phpstan/bootstrap_action.php
 	phpVersion: 80200 # PHP 8.2
 	tmpDir: ./.github/tmp
 	parallel:
@@ -12,7 +16,7 @@ parameters:
 		# minimumNumberOfJobsPerProcess: 2  # default is 2
 		# buffer: 134217728 # 128 MB  # Not documented
 	customRulesetUsed: true
-	level: 9
+	level: 10
 	fileExtensions:
 		- php
 	paths:
