@@ -145,6 +145,9 @@ if (empty($reshook)) {
 			$error++;
 		}
 		$companybankaccount->fetch($id);
+		if ($companybankaccount->socid != $object->id) {
+			accessforbidden('Bank account does not belong to this thirdparty');
+		}
 		if ($companybankaccount->needIBAN() == 1) {
 			if (!GETPOST('iban')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
@@ -232,6 +235,9 @@ if (empty($reshook)) {
 		}
 
 		$companypaymentmode->fetch($id);
+		if ($companypaymentmode->fk_soc != $object->id) {
+			accessforbidden('Payment card does not belong to this thirdparty');
+		}
 		if (!$error) {
 			$companybankaccount->oldcopy = dol_clone($companybankaccount);
 
