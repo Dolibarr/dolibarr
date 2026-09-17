@@ -51,6 +51,17 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class AccountingAccountTest extends CommonClassTest
 {
 	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		self::assertTrue(isModEnabled('accounting'), " module double party accounting must be enabled");
+		parent::setUpBeforeClass();
+	}
+
+	/**
 	 * testAccountingAccountCreate
 	 *
 	 * @return  int		Id of created object
