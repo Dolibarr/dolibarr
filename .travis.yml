@@ -428,7 +428,7 @@ script:
 
 # Disabled, there is already a check done in CodingPHPTest.php
 #  - |
-#    echo "Checking missing debug (only for 1 version to not overload travis and avoid duplicate tests)"
+#    echo "Checking missing debug"
 #    # Ensure we catch errors
 #    set -e
 #    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "latest" ]; then
