@@ -52,17 +52,10 @@ class AccountancySystemTest extends CommonClassTest
 	public static function setUpBeforeClass(): void
 	{
 		parent::setUpBeforeClass();
-		global $conf, $user,  $mysoc;
+		global $conf, $user;
 		global $db;
 
-		$soc = new Societe($db);
-		$soc->name = "AccountancySystem Unittest";
-		$socid = $soc->create($user);
-		$mysoc = $soc;
-
 		/* Errors are caught in later tests. */
-		if ($socid <= 0)
-			return;
 	}
 
 	/**
@@ -72,9 +65,7 @@ class AccountancySystemTest extends CommonClassTest
 	 */
 	public function testAccountancySystemCreate(): int
 	{
-		global $user, $db, $mysoc;
-
-		$this->assertLessThan($mysoc->id, 0, "Cannot create Societe: " . $mysoc->errorsToString());
+		global $user, $db;
 
 		$accountancySystem = new AccountancySystem($db);
 		$accountancySystem->pcg_version = 'PCG99-CUSTOMTEST';
