@@ -1678,10 +1678,6 @@ class FunctionsLibTest extends CommonClassTest
 	public function testGetDefaultTva()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		// Sellers
 		$companyfrnovat = new Societe($db);
@@ -1796,10 +1792,6 @@ class FunctionsLibTest extends CommonClassTest
 	public function testGetDefaultTvaForBuyerState()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		// Make sure the ecommerce directive left on by a previous test does not interfere with VATRULE 2
 		unset($conf->global->SERVICE_ARE_ECOMMERCE_200238EC);
@@ -1870,10 +1862,6 @@ class FunctionsLibTest extends CommonClassTest
 	public function testGetDefaultLocalTax()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		$companyfrnovat = new Societe($db);
 		$companyfrnovat->country_code = 'FR';
