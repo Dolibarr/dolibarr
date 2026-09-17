@@ -40,6 +40,8 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
+$conf->country_code = 'BE';
+
 $langs->load("main");
 
 
