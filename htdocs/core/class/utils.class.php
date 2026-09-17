@@ -84,7 +84,7 @@ class Utils
 
 		$langs->load("admin");
 
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		if (empty($choices)) {
 			$choices = 'tempfilesold+logfiles';
@@ -93,12 +93,12 @@ class Utils
 			$choices = 'allfilesold';
 		}
 
-		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
+		dol_syslog("Utils::purgeFiles choice=" . $choices, LOG_DEBUG);
 
 		// For dangerous action, we check the user is admin
 		if (in_array($choices, array('allfiles', 'allfilesold'))) {
 			if (empty($user->admin)) {
-				$this->output = 'Error: to erase data files, user running the batch (currently '.$user->login.') must be an admin user';
+				$this->output = 'Error: to erase data files, user running the batch (currently ' . $user->login . ') must be an admin user';
 				return 1;
 			}
 		}
@@ -202,7 +202,7 @@ class Utils
 
 				// Update cachenbofdoc
 				if (isModEnabled('ecm') && $choice == 'allfiles') {
-					require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+					require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
 					$ecmdirstatic = new EcmDirectory($this->db);
 					$result = $ecmdirstatic->refreshcachenboffile(1);
 				}
@@ -213,10 +213,10 @@ class Utils
 			$langs->load("admin");
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
 			if ($count > $countdeleted) {
-				$this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
+				$this->output .= '<br>' . $langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
 			}
 		} else {
-			$this->output = $langs->trans("PurgeNothingToDelete").(in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
+			$this->output = $langs->trans("PurgeNothingToDelete") . (in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
 		}
 
 		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
@@ -248,11 +248,14 @@ class Utils
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
 		global $dolibarr_main_db_character_set;
+		/** @var DoliDB $db */
+
+		$dbtouse = !empty($this->db) ? $this->db : $db;
 
 		$langs->load("admin");
 
-		dol_syslog("Utils::dumpDatabase type=".$type." compression=".$compression." file=".$file, LOG_DEBUG);
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		dol_syslog("Utils::dumpDatabase type=" . $type . " compression=" . $compression . " file=" . $file, LOG_DEBUG);
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		// Clean data
 		$file = dol_sanitizeFileName($file);
@@ -266,7 +269,7 @@ class Utils
 
 		// Check type parameter
 		if ($type == 'auto') {
-			$type = $this->db->type;
+			$type = $dbtouse->type;
 		}
 		if (!in_array($type, array('postgresql', 'pgsql', 'mysql', 'mysqli', 'mysqlnobin'))) {
 			$langs->load("errors");
@@ -285,17 +288,17 @@ class Utils
 			if (in_array($type, array('pgsql'))) {
 				$prefix = 'pg_dump';
 			}
-			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
+			$file = $prefix . '_' . $dolibarr_main_db_name . '_' . dol_sanitizeFileName(DOL_VERSION) . '_' . dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser') . '.' . $ext;
 		}
 
-		$outputdir = $conf->admin->dir_output.'/backup';
+		$outputdir = $conf->admin->dir_output . '/backup';
 		$result = dol_mkdir($outputdir);
 		$errormsg = '';
 
 		// MYSQL
 		if ($type == 'mysql' || $type == 'mysqli') {
 			if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
-				$cmddump = $db->getPathOfDump();
+				$cmddump = $dbtouse->getPathOfDump();
 			} else {
 				$cmddump = getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP');
 			}
@@ -304,7 +307,7 @@ class Utils
 				return -1;
 			}
 
-			$outputfile = $outputdir.'/'.$file;
+			$outputfile = $outputdir . '/' . $file;
 			// for compression format, we add extension
 			$compression = $compression ? $compression : 'none';
 			if ($compression == 'gz') {
@@ -314,8 +317,8 @@ class Utils
 			} elseif ($compression == 'zstd') {
 				$outputfile .= '.zst';
 			}
-			$outputerror = $outputfile.'.err';
-			dol_mkdir($conf->admin->dir_output.'/backup');
+			$outputerror = $outputfile . '.err';
+			dol_mkdir($conf->admin->dir_output . '/backup');
 
 			// Parameters execution
 			$command = $cmddump;
@@ -325,10 +328,10 @@ class Utils
 			}
 
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
-			$param = $dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
-			$param .= " -u ".$dolibarr_main_db_user;
+			$param = $dolibarr_main_db_name . " -h " . $dolibarr_main_db_host;
+			$param .= " -u " . $dolibarr_main_db_user;
 			if (!empty($dolibarr_main_db_port)) {
-				$param .= " -P ".$dolibarr_main_db_port." --protocol=tcp";
+				$param .= " -P " . $dolibarr_main_db_port . " --protocol=tcp";
 			}
 			if (GETPOST("use_transaction", "alpha")) {
 				$param .= " --single-transaction";
@@ -337,7 +340,7 @@ class Utils
 				$param .= " -K";
 			}
 			if (GETPOST("sql_compat", "alpha") && GETPOST("sql_compat", "alpha") != 'NONE') {
-				$param .= " --compatible=".escapeshellarg(GETPOST("sql_compat", "alpha"));
+				$param .= " --compatible=" . escapeshellarg(GETPOST("sql_compat", "alpha"));
 			}
 			if (GETPOST("drop_database", "alpha")) {
 				$param .= " --add-drop-database";
@@ -391,15 +394,15 @@ class Utils
 			$paramcrypted = $param;
 			$paramclear = $param;
 			if (!empty($dolibarr_main_db_pass)) {
-				$paramcrypted .= ' -p"'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'"';
-				$paramclear .= ' -p"'.str_replace(array('"', '`', '$'), array('\"', '\`', '\$'), $dolibarr_main_db_pass).'"';
+				$paramcrypted .= ' -p"' . preg_replace('/./i', '*', $dolibarr_main_db_pass) . '"';
+				$paramclear .= ' -p"' . str_replace(array('"', '`', '$'), array('\"', '\`', '\$'), $dolibarr_main_db_pass) . '"';
 			}
 
 			$handle = '';
 
 			// Start call method to execute dump
-			$fullcommandcrypted = $command." ".$paramcrypted." 2>&1";
-			$fullcommandclear = $command." ".$paramclear." 2>&1";
+			$fullcommandcrypted = $command . " " . $paramcrypted . " 2>&1";
+			$fullcommandclear = $command . " " . $paramclear . " 2>&1";
 			if (!$lowmemorydump) {
 				if ($compression == 'none') {
 					$handle = fopen($outputfile, 'w');
@@ -412,22 +415,22 @@ class Utils
 				}
 			} else {
 				if ($compression == 'none') {
-					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "' . dol_sanitizePathName($outputfile) . '"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "' . dol_sanitizePathName($outputfile) . '"';
 					$handle = 1;
 				} elseif ($compression == 'gz') {
-					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "' . dol_sanitizePathName($outputfile) . '"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "' . dol_sanitizePathName($outputfile) . '"';
 					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip';
 					$handle = 1;
 				} elseif ($compression == 'bz') {
-					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "' . dol_sanitizePathName($outputfile) . '"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "' . dol_sanitizePathName($outputfile) . '"';
 					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2';
 					$handle = 1;
 				} elseif ($compression == 'zstd') {
-					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "' . dol_sanitizePathName($outputfile) . '"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "' . dol_sanitizePathName($outputfile) . '"';
 					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd';
 					$handle = 1;
 				}
@@ -442,7 +445,7 @@ class Utils
 					$execmethod = 1;
 				}
 
-				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_INFO);
+				dol_syslog("Utils::dumpDatabase execmethod=" . $execmethod . " command:" . $fullcommandcrypted, LOG_INFO);
 
 
 				/* If value has been forced with a php_admin_value, this has no effect. Example of value: '512M' */
@@ -465,8 +468,8 @@ class Utils
 
 					if ($retval != 0) {
 						$langs->load("errors");
-						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
-						$errormsg = 'Error '.$retval;
+						dol_syslog("Datadump retval after exec=" . $retval, LOG_ERR);
+						$errormsg = 'Error ' . $retval;
 						$ok = 0;
 					} else {
 						$i = 0;
@@ -479,10 +482,10 @@ class Utils
 								// Now check into the result file, that the file end with "-- Dump completed"
 								// This is possible only if $output_arr is the clear dump file, so not possible with $lowmemorydump set because file is already compressed.
 								if (!$lowmemorydump) {
-									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
-									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
+									fwrite($handle, $read . ($execmethod == 2 ? '' : "\n"));
+									if (preg_match('/' . preg_quote('-- Dump completed', '/') . '/i', $read)) {
 										$ok = 1;
-									} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
+									} elseif (preg_match('/' . preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/') . '/i', $read)) {
 										$ok = 1;
 									}
 								} else {
@@ -507,9 +510,9 @@ class Utils
 								continue;
 							}
 							fwrite($handle, $read);
-							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
+							if (preg_match('/' . preg_quote('-- Dump completed') . '/i', $read)) {
 								$ok = 1;
-							} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
+							} elseif (preg_match('/' . preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES') . '/i', $read)) {
 								$ok = 1;
 							}
 						}
@@ -532,7 +535,7 @@ class Utils
 				dolChmod($outputfile);
 			} else {
 				$langs->load("errors");
-				dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
+				dol_syslog("Failed to open file " . $outputfile, LOG_ERR);
 				$errormsg = $langs->trans("ErrorFailedToWriteInDir");
 			}
 
@@ -579,14 +582,14 @@ class Utils
 
 			$this->output = $errormsg;
 			$this->error = $errormsg;
-			$this->result = array("commandbackuplastdone" => $command." ".$paramcrypted, "commandbackuptorun" => "");
+			$this->result = array("commandbackuplastdone" => $command . " " . $paramcrypted, "commandbackuptorun" => "");
 			//if (empty($this->output)) $this->output=$this->result['commandbackuplastdone'];
 		}
 
 		// MYSQL NO BIN
 		if ($type == 'mysqlnobin') {
-			$outputfile = $outputdir.'/'.$file;
-			$outputfiletemp = $outputfile.'-TMP.sql';
+			$outputfile = $outputdir . '/' . $file;
+			$outputfiletemp = $outputfile . '-TMP.sql';
 			// for compression format, we add extension
 			$compression = $compression ? $compression : 'none';
 			if ($compression == 'gz') {
@@ -595,8 +598,8 @@ class Utils
 			if ($compression == 'bz') {
 				$outputfile .= '.bz2';
 			}
-			$outputerror = $outputfile.'.err';
-			dol_mkdir($conf->admin->dir_output.'/backup');
+			$outputerror = $outputfile . '.err';
+			dol_mkdir($conf->admin->dir_output . '/backup');
 
 			if ($compression == 'gz' or $compression == 'bz') {
 				$this->backupTables($outputfiletemp);
@@ -614,7 +617,7 @@ class Utils
 		if ($type == 'postgresql' || $type == 'pgsql') {
 			$cmddump = getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP');
 
-			$outputfile = $outputdir.'/'.$file;
+			$outputfile = $outputdir . '/' . $file;
 			// for compression format, we add extension
 			$compression = $compression ? $compression : 'none';
 			if ($compression == 'gz') {
@@ -623,8 +626,8 @@ class Utils
 			if ($compression == 'bz') {
 				$outputfile .= '.bz2';
 			}
-			$outputerror = $outputfile.'.err';
-			dol_mkdir($conf->admin->dir_output.'/backup');
+			$outputerror = $outputfile . '.err';
+			dol_mkdir($conf->admin->dir_output . '/backup');
 
 			// Parameters execution
 			$command = $cmddump;
@@ -636,10 +639,10 @@ class Utils
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 			//$param="-F c";
 			$param = "-F p";
-			$param .= " --no-tablespaces --inserts -h ".$dolibarr_main_db_host;
-			$param .= " -U ".$dolibarr_main_db_user;
+			$param .= " --no-tablespaces --inserts -h " . $dolibarr_main_db_host;
+			$param .= " -U " . $dolibarr_main_db_user;
 			if (!empty($dolibarr_main_db_port)) {
-				$param .= " -p ".$dolibarr_main_db_port;
+				$param .= " -p " . $dolibarr_main_db_port;
 			}
 			if (GETPOST("sql_compat") && GETPOST("sql_compat") == 'ANSI') {
 				$param .= "  --disable-dollar-quoting";
@@ -663,7 +666,7 @@ class Utils
 					$param .= " -c";
 				}
 			}
-			$param .= ' -f "'.$outputfile.'"';
+			$param .= ' -f "' . $outputfile . '"';
 			//if ($compression == 'none')
 			if ($compression == 'gz') {
 				$param .= ' -Z 9';
@@ -676,16 +679,16 @@ class Utils
 			 $paramcrypted.=" -W".preg_replace('/./i','*',$dolibarr_main_db_pass);
 			 $paramclear.=" -W".$dolibarr_main_db_pass;
 			 }*/
-			$paramcrypted .= " -w ".$dolibarr_main_db_name;
-			$paramclear .= " -w ".$dolibarr_main_db_name;
+			$paramcrypted .= " -w " . $dolibarr_main_db_name;
+			$paramclear .= " -w " . $dolibarr_main_db_name;
 
 			$this->output = "";
-			$this->result = array("commandbackuplastdone" => "", "commandbackuptorun" => $command." ".$paramcrypted);
+			$this->result = array("commandbackuplastdone" => "", "commandbackuptorun" => $command . " " . $paramcrypted);
 		}
 
 		// Clean old files
 		if (!$errormsg && $keeplastnfiles > 0) {
-			$tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
+			$tmpfiles = dol_dir_list($conf->admin->dir_output . '/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
 			$i = 0;
 			if (is_array($tmpfiles)) {
 				foreach ($tmpfiles as $key => $val) {
@@ -729,12 +732,12 @@ class Utils
 		}
 
 		if ($redirectionfile) {
-			$command .= " > ".dol_sanitizePathName($redirectionfile);
+			$command .= " > " . dol_sanitizePathName($redirectionfile);
 		}
 
 		if ($redirectionfileerr && ($redirectionfileerr != $redirectionfile)) {
 			// If we ask a redirect of stderr on a given file not already used for stdout
-			$command .= " 2> ".dol_sanitizePathName($redirectionfileerr);
+			$command .= " 2> " . dol_sanitizePathName($redirectionfileerr);
 		} else {
 			$command .= " 2>&1";
 		}
@@ -746,7 +749,7 @@ class Utils
 			$execmethod = 1;
 		}
 		//$execmethod=1;
-		dol_syslog("Utils::executeCLI execmethod=".$execmethod." command=".$command, LOG_DEBUG);
+		dol_syslog("Utils::executeCLI execmethod=" . $execmethod . " command=" . $command, LOG_DEBUG);
 		$output_arr = array();
 
 		if ($execmethod == 1) {
@@ -755,14 +758,14 @@ class Utils
 			$result = $retval;
 			if ($retval != 0) {
 				$langs->load("errors");
-				dol_syslog("Utils::executeCLI retval after exec=".$retval, LOG_ERR);
-				$error = 'Error '.$retval;
+				dol_syslog("Utils::executeCLI retval after exec=" . $retval, LOG_ERR);
+				$error = 'Error ' . $retval;
 			}
 		}
 		if ($execmethod == 2) {	// With this method, there is no way to get the return code, only output
 			$handle = fopen($outputfile, 'w+b');
 			if ($handle) {
-				dol_syslog("Utils::executeCLI run command ".$command);
+				dol_syslog("Utils::executeCLI run command " . $command);
 				$handlein = popen($command, 'r');
 				while (!feof($handlein)) {
 					$read = fgets($handlein);
@@ -778,11 +781,11 @@ class Utils
 		// Update with result
 		if (is_array($output_arr) && count($output_arr) > 0) {
 			foreach ($output_arr as $val) {
-				$output .= $val.($execmethod == 2 ? '' : "\n");
+				$output .= $val . ($execmethod == 2 ? '' : "\n");
 			}
 		}
 
-		dol_syslog("Utils::executeCLI result=".$result." output=".$output." error=".$error, LOG_DEBUG);
+		dol_syslog("Utils::executeCLI result=" . $result . " output=" . $output . " error=" . $error, LOG_DEBUG);
 
 		return array('result' => $result, 'output' => $output, 'error' => $error);
 	}
@@ -804,13 +807,13 @@ class Utils
 		$now = dol_now();
 
 		// Dir for module
-		$dir = $dirins.'/'.$modulelowercase;
+		$dir = $dirins . '/' . $modulelowercase;
 		// Zip file to build
 		$FILENAMEDOC = '';
 
 		// Load module
-		dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
-		$class = 'mod'.$module;
+		dol_include_once($modulelowercase . '/core/modules/mod' . $module . '.class.php');
+		$class = 'mod' . $module;
 
 		if (class_exists($class)) {
 			try {
@@ -828,14 +831,14 @@ class Utils
 
 		$arrayversion = explode('.', $moduleobj->version, 3);
 		if (count($arrayversion)) {
-			$FILENAMEASCII = strtolower($module).'.asciidoc';
-			$FILENAMEDOC = strtolower($module).'.html';
-			$FILENAMEDOCPDF = strtolower($module).'.pdf';
+			$FILENAMEASCII = strtolower($module) . '.asciidoc';
+			$FILENAMEDOC = strtolower($module) . '.html';
+			$FILENAMEDOCPDF = strtolower($module) . '.pdf';
 
 			$dirofmodule = dol_buildpath(strtolower($module), 0);
-			$dirofmoduledoc = dol_buildpath(strtolower($module), 0).'/doc';
-			$dirofmoduletmp = dol_buildpath(strtolower($module), 0).'/doc/temp';
-			$outputfiledoc = $dirofmoduledoc.'/'.$FILENAMEDOC;
+			$dirofmoduledoc = dol_buildpath(strtolower($module), 0) . '/doc';
+			$dirofmoduletmp = dol_buildpath(strtolower($module), 0) . '/doc/temp';
+			$outputfiledoc = $dirofmoduledoc . '/' . $FILENAMEDOC;
 			if ($dirofmoduledoc) {
 				if (!dol_is_dir($dirofmoduledoc)) {
 					dol_mkdir($dirofmoduledoc);
@@ -844,7 +847,7 @@ class Utils
 					dol_mkdir($dirofmoduletmp);
 				}
 				if (!is_writable($dirofmoduletmp)) {
-					$this->error = 'Dir '.$dirofmoduletmp.' does not exists or is not writable';
+					$this->error = 'Dir ' . $dirofmoduletmp . ' does not exists or is not writable';
 					return -1;
 				}
 
@@ -854,23 +857,23 @@ class Utils
 				}
 
 				// Copy some files into temp directory, so instruction include::ChangeLog.md[] will works inside the asciidoc file.
-				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', '0', 1);
-				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', '0', 1);
+				dol_copy($dirofmodule . '/README.md', $dirofmoduletmp . '/README.md', '0', 1);
+				dol_copy($dirofmodule . '/ChangeLog.md', $dirofmoduletmp . '/ChangeLog.md', '0', 1);
 
 				// Replace into README.md and ChangeLog.md (in case they are included into documentation with tag __README__ or __CHANGELOG__)
 				$arrayreplacement = array();
 				$arrayreplacement['/^#\s.*/m'] = ''; // Remove first level of title into .md files
 				$arrayreplacement['/^#/m'] = '##'; // Add on # to increase level
 
-				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', '0', 0, 1);
-				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', '0', 0, 1);
+				dolReplaceInFile($dirofmoduletmp . '/README.md', $arrayreplacement, '', '0', 0, 1);
+				dolReplaceInFile($dirofmoduletmp . '/ChangeLog.md', $arrayreplacement, '', '0', 0, 1);
 
 
-				$destfile = $dirofmoduletmp.'/'.$FILENAMEASCII;
+				$destfile = $dirofmoduletmp . '/' . $FILENAMEASCII;
 
 				$fhandle = fopen($destfile, 'w+');
 				if ($fhandle) {
-					$specs = dol_dir_list(dol_buildpath(strtolower($module).'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$', array('\/temp\/'));
+					$specs = dol_dir_list(dol_buildpath(strtolower($module) . '/doc', 0), 'files', 1, '(\.md|\.asciidoc)$', array('\/temp\/'));
 
 					$i = 0;
 					foreach ($specs as $spec) {
@@ -884,7 +887,7 @@ class Utils
 							continue; // Discard file
 						}
 
-						$pathtofile = strtolower($module).'/doc/'.$spec['relativename'];
+						$pathtofile = strtolower($module) . '/doc/' . $spec['relativename'];
 						$format = 'asciidoc';
 						if (preg_match('/\.md$/i', $spec['name'])) {
 							$format = 'markdown';
@@ -892,9 +895,9 @@ class Utils
 
 						$filecursor = @file_get_contents($spec['fullname']);
 						if ($filecursor) {
-							fwrite($fhandle, ($i ? "\n<<<\n\n" : "").$filecursor."\n");
+							fwrite($fhandle, ($i ? "\n<<<\n\n" : "") . $filecursor . "\n");
 						} else {
-							$this->error = 'Failed to concat content of file '.$spec['fullname'];
+							$this->error = 'Failed to concat content of file ' . $spec['fullname'];
 							return -1;
 						}
 
@@ -903,10 +906,10 @@ class Utils
 
 					fclose($fhandle);
 
-					$contentreadme = file_get_contents($dirofmoduletmp.'/README.md');
-					$contentchangelog = file_get_contents($dirofmoduletmp.'/ChangeLog.md');
+					$contentreadme = file_get_contents($dirofmoduletmp . '/README.md');
+					$contentchangelog = file_get_contents($dirofmoduletmp . '/ChangeLog.md');
 
-					include DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+					include DOL_DOCUMENT_ROOT . '/core/lib/parsemd.lib.php';
 
 					//var_dump($phpfileval['fullname']);
 					$arrayreplacement = array(
@@ -923,7 +926,7 @@ class Utils
 						'__USER_FULLNAME__' => $user->getFullName($langs),
 						'__USER_EMAIL__' => $user->email,
 						'__YYYY-MM-DD__' => dol_print_date($now, 'dayrfc'),
-						'---Put here your own copyright and developer email---' => dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
+						'---Put here your own copyright and developer email---' => dol_print_date($now, 'dayrfc') . ' ' . $user->getFullName($langs) . ($user->email ? ' <' . $user->email . '>' : ''),
 						'__DATA_SPECIFICATION__' => 'Not yet available',
 						'__README__' => dolMd2Asciidoc($contentreadme),
 						'__CHANGELOG__' => dolMd2Asciidoc($contentchangelog),
@@ -937,16 +940,16 @@ class Utils
 				$currentdir = getcwd();
 				chdir($dirofmodule);
 
-				require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/core/class/utils.class.php';
 				$utils = new Utils($this->db);
 
 				// Build HTML doc
-				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
-				$outfile = $dirofmoduletmp.'/out.tmp';
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR') . ' ' . $destfile . ' -n -o ' . $dirofmoduledoc . '/' . $FILENAMEDOC;
+				$outfile = $dirofmoduletmp . '/out.tmp';
 
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {
-					$this->error = $resarray['error'].' '.$resarray['output'];
+					$this->error = $resarray['error'] . ' ' . $resarray['output'];
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
@@ -956,11 +959,11 @@ class Utils
 				}
 
 				// Build PDF doc
-				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
-				$outfile = $dirofmoduletmp.'/outpdf.tmp';
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF') . ' ' . $destfile . ' -n -o ' . $dirofmoduledoc . '/' . $FILENAMEDOCPDF;
+				$outfile = $dirofmoduletmp . '/outpdf.tmp';
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {
-					$this->error = $resarray['error'].' '.$resarray['output'];
+					$this->error = $resarray['error'] . ' ' . $resarray['output'];
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
@@ -1028,17 +1031,17 @@ class Utils
 			$logname = $file['name'];
 			$logpath = $file['path'];
 
-			if (dol_is_file($logpath.'/'.$logname) && dol_filesize($logpath.'/'.$logname) > 0) {	// If log file exists and is not empty
+			if (dol_is_file($logpath . '/' . $logname) && dol_filesize($logpath . '/' . $logname) > 0) {	// If log file exists and is not empty
 				// Handle already compressed files to rename them and add +1
 
-				$filter = '^'.preg_quote($logname, '/').'\.([0-9]+)\.gz$';
+				$filter = '^' . preg_quote($logname, '/') . '\.([0-9]+)\.gz$';
 
 				$gzfilestmp = dol_dir_list($logpath, 'files', 0, $filter);
 				$gzfiles = array();
 
 				foreach ($gzfilestmp as $gzfile) {
 					$tabmatches = array();
-					preg_match('/'.$filter.'/i', $gzfile['name'], $tabmatches);
+					preg_match('/' . $filter . '/i', $gzfile['name'], $tabmatches);
 
 					$numsave = intval($tabmatches[1]);
 
@@ -1048,31 +1051,31 @@ class Utils
 				krsort($gzfiles, SORT_NUMERIC);
 
 				foreach ($gzfiles as $numsave => $dummy) {
-					if (dol_is_file($logpath.'/'.$logname.'.'.($numsave + 1).'.gz')) {
+					if (dol_is_file($logpath . '/' . $logname . '.' . ($numsave + 1) . '.gz')) {
 						return -2;
 					}
 
 					if ($numsave >= $nbSaves) {
-						dol_delete_file($logpath.'/'.$logname.'.'.$numsave.'.gz', 0, 0, 0, null, false, 0);
+						dol_delete_file($logpath . '/' . $logname . '.' . $numsave . '.gz', 0, 0, 0, null, false, 0);
 					} else {
-						dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave + 1).'.gz', '0', 1, 0, 0);
+						dol_move($logpath . '/' . $logname . '.' . $numsave . '.gz', $logpath . '/' . $logname . '.' . ($numsave + 1) . '.gz', '0', 1, 0, 0);
 					}
 				}
 
 				// Compress current file and recreate it
 
 				if ($nbSaves > 0) {			// If $nbSaves is 1, we keep 1 archive .gz file, If 2, we keep 2 .gz files
-					$gzfilehandle = gzopen($logpath.'/'.$logname.'.1.gz', 'wb9');
+					$gzfilehandle = gzopen($logpath . '/' . $logname . '.1.gz', 'wb9');
 
 					if (empty($gzfilehandle)) {
-						$this->error = 'Failted to open file '.$logpath.'/'.$logname.'.1.gz';
+						$this->error = 'Failted to open file ' . $logpath . '/' . $logname . '.1.gz';
 						return -3;
 					}
 
-					$sourcehandle = fopen($logpath.'/'.$logname, 'r');
+					$sourcehandle = fopen($logpath . '/' . $logname, 'r');
 
 					if (empty($sourcehandle)) {
-						$this->error = 'Failed to open file '.$logpath.'/'.$logname;
+						$this->error = 'Failed to open file ' . $logpath . '/' . $logname;
 						return -4;
 					}
 
@@ -1083,21 +1086,21 @@ class Utils
 					fclose($sourcehandle);
 					gzclose($gzfilehandle);
 
-					dolChmod($logpath.'/'.$logname.'.1.gz');
+					dolChmod($logpath . '/' . $logname . '.1.gz');
 				}
 
-				dol_delete_file($logpath.'/'.$logname, 0, 0, 0, null, false, 0);
+				dol_delete_file($logpath . '/' . $logname, 0, 0, 0, null, false, 0);
 
 				// Create empty file
-				$newlog = fopen($logpath.'/'.$logname, 'a+');
+				$newlog = fopen($logpath . '/' . $logname, 'a+');
 				fclose($newlog);
 
 				//var_dump($logpath.'/'.$logname." - ".octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));
-				dolChmod($logpath.'/'.$logname);
+				dolChmod($logpath . '/' . $logname);
 			}
 		}
 
-		$this->output = 'Archive log files (keeping last SYSLOG_FILE_SAVES='.$nbSaves.' files) done.';
+		$this->output = 'Archive log files (keeping last SYSLOG_FILE_SAVES=' . $nbSaves . ' files) done.';
 		return 0;
 	}
 
@@ -1141,18 +1144,18 @@ class Utils
 		$handle = fopen($outputfile, 'w+');
 		if (fwrite($handle, '') === false) {
 			$langs->load("errors");
-			dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
+			dol_syslog("Failed to open file " . $outputfile, LOG_ERR);
 			$errormsg = $langs->trans("ErrorFailedToWriteInDir");
 			return -1;
 		}
 
 		// Print headers and global mysql config vars
 		$sqlhead = '';
-		$sqlhead .= "-- ".$db::LABEL." dump via php with Dolibarr ".DOL_VERSION."
+		$sqlhead .= "-- " . $db::LABEL . " dump via php with Dolibarr " . DOL_VERSION . "
 --
--- Host: ".$db->db->host_info."    Database: ".$db->database_name."
+-- Host: " . $db->db->host_info . "    Database: " . $db->database_name . "
 -- ------------------------------------------------------
--- Server version	".$db->db->server_info."
+-- Server version	" . $db->db->server_info . "
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -1189,37 +1192,37 @@ class Utils
 		// Process each table and print their definition + their datas
 		foreach ($tables as $table) {
 			// Saving the table structure
-			fwrite($handle, "\n--\n-- Table structure for table `".$table."`\n--\n");
+			fwrite($handle, "\n--\n-- Table structure for table `" . $table . "`\n--\n");
 
 			if (GETPOST("nobin_drop")) {
-				fwrite($handle, "DROP TABLE IF EXISTS `".$table."`;\n"); // Dropping table if exists prior to re create it
+				fwrite($handle, "DROP TABLE IF EXISTS `" . $table . "`;\n"); // Dropping table if exists prior to re create it
 			}
 			fwrite($handle, "/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
 			fwrite($handle, "/*!40101 SET character_set_client = utf8 */;\n");
-			$resqldrop = $db->query('SHOW CREATE TABLE '.$table);
+			$resqldrop = $db->query('SHOW CREATE TABLE ' . $table);
 			$row2 = $db->fetch_row($resqldrop);
 			if (empty($row2[1])) {
-				fwrite($handle, "\n-- WARNING: Show create table ".$table." return empty string when it should not.\n");
+				fwrite($handle, "\n-- WARNING: Show create table " . $table . " return empty string when it should not.\n");
 			} else {
-				fwrite($handle, $row2[1].";\n");
+				fwrite($handle, $row2[1] . ";\n");
 				//fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
 
 				// Dumping the data (locking the table and disabling the keys check while doing the process)
-				fwrite($handle, "\n--\n-- Dumping data for table `".$table."`\n--\n");
+				fwrite($handle, "\n--\n-- Dumping data for table `" . $table . "`\n--\n");
 				if (!GETPOST("nobin_nolocks")) {
-					fwrite($handle, "LOCK TABLES `".$table."` WRITE;\n"); // Lock the table before inserting data (when the data will be imported back)
+					fwrite($handle, "LOCK TABLES `" . $table . "` WRITE;\n"); // Lock the table before inserting data (when the data will be imported back)
 				}
 				if (GETPOST("nobin_disable_fk")) {
-					fwrite($handle, "ALTER TABLE `".$table."` DISABLE KEYS;\n");
+					fwrite($handle, "ALTER TABLE `" . $table . "` DISABLE KEYS;\n");
 				} else {
-					fwrite($handle, "/*!40000 ALTER TABLE `".$table."` DISABLE KEYS */;\n");
+					fwrite($handle, "/*!40000 ALTER TABLE `" . $table . "` DISABLE KEYS */;\n");
 				}
 
-				$sql = "SELECT * FROM ".$table; // Here SELECT * is allowed because we don't have definition of columns to take
+				$sql = "SELECT * FROM " . $table; // Here SELECT * is allowed because we don't have definition of columns to take
 				$result = $db->query($sql);
 				while ($row = $db->fetch_row($result)) {
 					// For each row of data we print a line of INSERT
-					fwrite($handle, "INSERT ".$delayed.$ignore."INTO ".$table." VALUES (");
+					fwrite($handle, "INSERT " . $delayed . $ignore . "INTO " . $table . " VALUES (");
 					$columns = count($row);
 					for ($j = 0; $j < $columns; $j++) {
 						// Processing each columns of the row to ensure that we correctly save the value (eg: add quotes for string - in fact we add quotes for everything, it's easier)
@@ -1235,13 +1238,13 @@ class Utils
 						} else { // else for all other cases we escape the value and put quotes around
 							$row[$j] = addslashes($row[$j]);
 							$row[$j] = preg_replace("#\n#", "\\n", $row[$j]);
-							$row[$j] = "'".$row[$j]."'";
+							$row[$j] = "'" . $row[$j] . "'";
 						}
 					}
-					fwrite($handle, implode(',', $row).");\n");
+					fwrite($handle, implode(',', $row) . ");\n");
 				}
 				if (GETPOST("nobin_disable_fk")) {
-					fwrite($handle, "ALTER TABLE `".$table."` ENABLE KEYS;\n"); // Enabling back the keys/index checking
+					fwrite($handle, "ALTER TABLE `" . $table . "` ENABLE KEYS;\n"); // Enabling back the keys/index checking
 				}
 				if (!GETPOST("nobin_nolocks")) {
 					fwrite($handle, "UNLOCK TABLES;\n"); // Unlocking the table
@@ -1277,7 +1280,7 @@ class Utils
 		if (GETPOST("nobin_disable_fk")) {
 			$sqlfooter .= "SET FOREIGN_KEY_CHECKS=1;\n";
 		}
-		$sqlfooter .= "\n\n-- Dump completed on ".date('Y-m-d G-i-s');
+		$sqlfooter .= "\n\n-- Dump completed on " . date('Y-m-d G-i-s');
 		fwrite($handle, $sqlfooter);
 
 		fclose($handle);
@@ -1336,13 +1339,13 @@ class Utils
 		}
 
 		$tmpfiles = array();
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 		if ($filename) {
-			if (dol_is_file($conf->admin->dir_output.'/backup/'.$filename)) {
-				$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filename);
+			if (dol_is_file($conf->admin->dir_output . '/backup/' . $filename)) {
+				$tmpfiles = dol_most_recent_file($conf->admin->dir_output . '/backup', $filename);
 			}
 		} else {
-			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filter);
+			$tmpfiles = dol_most_recent_file($conf->admin->dir_output . '/backup', $filter);
 		}
 		if ($tmpfiles && is_array($tmpfiles)) {
 			foreach ($tmpfiles as $key => $val) {
@@ -1361,9 +1364,9 @@ class Utils
 
 		if ($filepath) {
 			if ($filesize > $sizelimit) {
-				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
-				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
-				$message .= '<br><a href='.$documenturl.'>Download link</a>';
+				$message .= '<br>' . $langs->trans("BackupIsTooLargeSend");
+				$documenturl =  $dolibarr_main_url_root . '/document.php?modulepart=systemtools&atachement=1&file=backup/' . urlencode($filename[0]);
+				$message .= '<br><a href=' . $documenturl . '>Download link</a>';
 				$filepath = '';
 				$mimetype = '';
 				$filename = '';
@@ -1395,7 +1398,7 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = "Error sending backup file ".((string) $error);
+		$this->error = "Error sending backup file " . ((string) $error);
 		$this->output = $output;
 
 		if ($result) {
@@ -1415,46 +1418,63 @@ class Utils
 	public function cleanUnfinishedCronjob()
 	{
 		global $db, $user;
+		/** @var DoliDB $db */
+		/** @var User $user */
+
+		$dbtouse = !empty($this->db) ? $this->db : $db;
+
 		dol_syslog("Utils::cleanUnfinishedCronjob Starting cleaning");
 
 		// Import Cronjob class if not present
 		require_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
 		// Get this job object
-		$this_job = new Cronjob($db);
+		$this_job = new Cronjob($dbtouse);
 		$this_job->fetch(-1, 'Utils', 'cleanUnfinishedCronjob');
 		if (empty($this_job->id) || !empty($this_job->error)) {
-			dol_syslog("Utils::cleanUnfinishedCronjob Unable to fetch himself: ".$this_job->error, LOG_ERR);
+			dol_syslog("Utils::cleanUnfinishedCronjob Unable to fetch himself: " . $this_job->error, LOG_ERR);
 			return -1;
 		}
 
 		// Set this job processing to 0 to avoid being locked by his processing state
 		$this_job->processing = 0;
 		if ($this_job->update($user) < 0) {
-			dol_syslog("Utils::cleanUnfinishedCronjob Unable to update himself: ".implode(', ', $this_job->errors), LOG_ERR);
+			dol_syslog("Utils::cleanUnfinishedCronjob Unable to update himself: " . implode(', ', $this_job->errors), LOG_ERR);
 			return -1;
 		}
 
-		$cron_job = new Cronjob($db);
+		$cron_job = new Cronjob($dbtouse);
 		$cron_job->fetchAll('DESC', 't.rowid', 100, 0, 1, [], 1);	// Fetch jobs that are currently running
 
 		// Iterate over all jobs in processing (this can't be this job since his state is set to 0 before)
 		foreach ($cron_job->lines as $job_line) {
 			// Avoid job with no PID
 			if (empty($job_line->pid)) {
-				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." don't have a PID", LOG_DEBUG);
+				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob " . $job_line->id . " don't have a PID", LOG_DEBUG);
 				continue;
 			}
 
-			$job = new Cronjob($db);
+			$job = new Cronjob($dbtouse);
 			$job->fetch($job_line->id);
 			if (empty($job->id) || !empty($job->error)) {
-				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." can't be fetch: ".$job->error, LOG_ERR);
+				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob " . $job_line->id . " can't be fetch: " . $job->error, LOG_ERR);
 				continue;
 			}
 
-			// Calling posix_kill with the 0 kill signal will return true if the process is running, false otherwise.
-			if (! posix_kill($job->pid, 0)) {
+			$is_running = false;
+			if (function_exists('posix_kill')) {
+				// Calling posix_kill with the 0 kill signal will return true if the process is running, false otherwise.
+				$is_running = posix_kill((int) $job->pid, 0);
+			} else {
+				// Fallback for Windows or systems without posix extension
+				if (stripos(PHP_OS, 'WIN') === 0 && function_exists('exec')) {
+					$output = array();
+					@exec('tasklist /FI "PID eq ' . ((int) $job->pid) . '" 2>NUL', $output);
+					$is_running = (count($output) > 1 && stripos(implode(' ', $output), (string) $job->pid) !== false);
+				}
+			}
+
+			if (!$is_running) {
 				// Clean processing and pid values
 				$job->processing = 0;
 				$job->pid = null;
@@ -1464,10 +1484,10 @@ class Utils
 				$job->lastoutput = 'Job killed by job cleanUnfinishedCronjob';
 
 				if ($job->update($user) < 0) {
-					dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." can't be updated: ".implode(', ', $job->errors), LOG_ERR);
+					dol_syslog("Utils::cleanUnfinishedCronjob Cronjob " . $job_line->id . " can't be updated: " . implode(', ', $job->errors), LOG_ERR);
 					continue;
 				}
-				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." cleaned");
+				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob " . $job_line->id . " cleaned");
 			}
 		}
 
