@@ -445,7 +445,7 @@ class Products extends DolibarrApi
 			$updatetype = true;
 		}
 
-		$result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update', $updatetype);
+		$result = $this->product->update($id, DolibarrApiAccess::$user, 0, 'update', $updatetype);
 
 		// If price mode is 1 price per product or price by client
 		if ($result > 0 && (getDolGlobalString('PRODUCT_PRICE_UNIQ') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES'))) {
