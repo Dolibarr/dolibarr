@@ -419,11 +419,14 @@ if (empty($reshook)) {
 					}
 				}
 
-				if ($error) {
-					// Move files from the dir of the third party to delete into the dir of the third party to keep
-					if (!empty($conf->product->multidir_output[$productOrigin->entity ?? 1])) {
-						$srcdir = $conf->product->multidir_output[$productOrigin->entity ?? 1]."/".$productOrigin->ref;
-						$destdir = $conf->product->multidir_output[$object->entity ?? $conf->entity]."/".$object->ref;
+				if (!$error) {
+					// Move files from the dir of the product being deleted into the dir of the product kept.
+					// This must happen on success only: the filesystem is not part of the transaction, so
+					// moving the files on the failing path stripped the origin product of its documents
+					// while the database was rolled back, and left them orphaned on the successful one.
+					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
+						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
+						$destdir = $conf->product->multidir_output[$object->entity]."/".$object->ref;
 
 						if (dol_is_dir($srcdir)) {
 							$dirlist = dol_dir_list($srcdir, 'files', 1);
@@ -435,9 +438,7 @@ if (empty($reshook)) {
 							//exit;
 						}
 					}
-				}
 
-				if (!$error) {
 					setEventMessages($langs->trans('ProductsMergeSuccess'), null, 'mesgs');
 					$db->commit();
 				} else {
