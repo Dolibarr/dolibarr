@@ -147,7 +147,13 @@ class modAi extends DolibarrModules
 		// Example: $this->const=array(1 => array('BOOKCAL_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('BOOKCAL_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array();
+		$this->const = array(
+			1 => array('AI_EMAILCLEANER_ENABLED', 'yesno', '0', 'Enable AI cleaner hook for EmailCollector (no business decision)', 0, 'current'),
+			2 => array('AI_EMAILCLEANER_MAX_INPUT', 'integer', '16000', 'Max input size for EmailCleaner prompt', 0, 'current'),
+			3 => array('AI_EMAILCLEANER_MIN_CONFIDENCE', 'chaine', '0.60', 'Minimum confidence to trust AI cleaned text', 0, 'current'),
+			4 => array('AI_EMAILCLEANER_EXPOSE_OPERATION', 'yesno', '0', 'Expose AI Email Cleaner operation in EmailCollector card', 0, 'current'),
+			5 => array('AI_EMAILCLEANER_ISOLATED_MODE', 'yesno', '1', 'Force isolated cleaner runtime (no business decision / no cross-module side effects)', 0, 'current'),
+		);
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
