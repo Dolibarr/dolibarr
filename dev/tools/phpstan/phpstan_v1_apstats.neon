@@ -1,3 +1,5 @@
+# PHPStan config for PHPStan 2.2
+
 parameters:
 	phpVersion: 80200 # PHP 8.2
 	tmpDir: ./.github/tmp
@@ -83,7 +85,7 @@ parameters:
 		- '#is always#'
 	internalErrorsCountLimit: 50
 	cache:
-		nodesByFileCountMax: 512
+		#nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:
