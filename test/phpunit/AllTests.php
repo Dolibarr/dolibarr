@@ -383,6 +383,11 @@ class AllTests
 		}
 
 
+		global $db;
+		print "bbbbbbbbbbbbbbbbbbbbbbbb\n";
+		print var_export($db, true);
+
+
 		require_once dirname(__FILE__).'/ExportTest.php';
 		$suite->addTestSuite('ExportTest');
 		require_once dirname(__FILE__).'/ImportTest.php';
