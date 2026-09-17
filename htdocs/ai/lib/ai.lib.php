@@ -1032,6 +1032,9 @@ function aiCheckCsrfToken($context = '')
  * This walks an already-serialized payload (single object or list) and drops
  * those keys, leaving everything else untouched.
  *
+ * The per-element list is cached for the life of the process: a change to the
+ * personal_data flag is honored from the next request on.
+ *
  * @param DoliDB              $db          Database handler.
  * @param array<mixed>|mixed  $payload     Serialized API output (object or list of objects).
  * @param string              $elementtype Element type as used by ExtraFields (e.g. 'facture').
