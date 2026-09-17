@@ -24,7 +24,7 @@
  * \brief   PHPUnit test for the BlockedLog and LNE class.
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -40,7 +40,7 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$conf->country_code = 'BE';
+$mysoc->country_code = 'BE';
 
 $langs->load("main");
 
