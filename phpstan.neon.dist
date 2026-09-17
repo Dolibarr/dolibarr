@@ -1,3 +1,5 @@
+# PHPStan config for PHPStan 2.2
+
 includes:
 	- dev/build/phpstan/phpstan-baseline.neon
 parameters:
