@@ -1056,6 +1056,42 @@ class ToolApiBridge extends McpTool
 		return array_values(array_unique($all));
 	}
 	/**
+	 * Map a bridge endpoint key to the element type ExtraFields uses.
+	 *
+	 * @param string $key Endpoint key from the enrichment map.
+	 * @return string ExtraFields element type, '' when the objects carry none.
+	 */
+	private function extrafieldsElementForEndpoint($key)
+	{
+		$map = array(
+			'thirdparties' => 'societe',
+			'contacts' => 'socpeople',
+			'invoices' => 'facture',
+			'supplierinvoices' => 'facture_fourn',
+			'orders' => 'commande',
+			'supplierorders' => 'commande_fournisseur',
+			'proposals' => 'propal',
+			'supplierproposals' => 'supplier_proposal',
+			'products' => 'product',
+			'contracts' => 'contrat',
+			'interventions' => 'fichinter',
+			'tickets' => 'ticket',
+			'projects' => 'projet',
+			'tasks' => 'project_task',
+			'members' => 'adherent',
+			'expensereports' => 'expensereport',
+			'shipments' => 'expedition',
+			'receptions' => 'reception',
+			'agendaevents' => 'actioncomm',
+			'warehouses' => 'stock',
+			'categories' => 'categorie',
+			'bankaccounts' => 'bank_account'
+		);
+
+		return $map[$key] ?? '';
+	}
+
+	/**
 	 * Execute a bridged tool: authenticate the acting user, call the API method
 	 * in-process with positional arguments, catch RestException.
 	 *
@@ -1144,6 +1180,13 @@ class ToolApiBridge extends McpTool
 					"http_status" => ($code > 0 ? $code : 500)
 				];
 			}
+		}
+
+		// Extrafields flagged as personal data (GDPR) must not reach an AI provider.
+		$elementForExtrafields = $this->extrafieldsElementForEndpoint($key);
+		if ($elementForExtrafields !== '') {
+			require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
+			$output = aiStripPersonalExtrafields($this->db, $output, $elementForExtrafields);
 		}
 
 		// Restore the caller's context (single exit point).
