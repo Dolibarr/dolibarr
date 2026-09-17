@@ -73,7 +73,7 @@ class BlockedLogAndLNETest extends CommonClassTest
 
 		$moduleiniterror = 0;
 
-		print 'BlockedLogAndLNETest var_dump(mysoc) = '.var_dump($mysoc)."\n";
+		print 'BlockedLogAndLNETest var_dump(mysoc) = '.var_export($mysoc, true)."\n";
 		print 'BlockedLogAndLNETest mysoc country_code = '.$mysoc->country_code."\n";
 
 		//$result = $blockedlogmodule->remove();
