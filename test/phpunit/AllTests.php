@@ -437,8 +437,8 @@ class AllTests
 
 		// --- At very end, the LAST ONE.
 
-		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
-		// For example, this call init that run DDL functionsand break commit/rollback features.
+		// Also enabling and disabling modules is changing really in database some variables (so we must run it at end)
+		// For example, this call init that run DDL functions and break commit/rollback features.
 		require_once dirname(__FILE__).'/ModulesTest.php';
 		$suite->addTestSuite('ModulesTest');
 

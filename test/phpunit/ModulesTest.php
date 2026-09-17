@@ -66,7 +66,7 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 			print get_called_class()."::".__FUNCTION__.PHP_EOL;
 		}
 
-		print 'mysoc country_code = '.$mysoc->country_code."\n";
+		print 'ModulesTest mysoc country_code = '.$mysoc->country_code."\n";
 		//$infotable = $db->DDLListTablesFull($db->database_name);
 		//print "List of existing tables before running test ModulesTest\n";
 		//print var_export($infotable, true)."\n";
