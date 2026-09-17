@@ -443,7 +443,7 @@ if ($resql) {
 	if ($mysoc->useLocalTax(1)) {
 		print '<br>'.$langs->trans("TotalLT1").' : <div class="inline-block amount width100"></div><div class="inline-block amount width100">'.price($totallocaltax1).'</div>';
 	}
-	if ($mysoc->useLocalTax(1)) {
+	if ($mysoc->useLocalTax(2)) {
 		print '<br>'.$langs->trans("TotalLT2").' : <div class="inline-block amount width100"></div><div class="inline-block amount width100">'.price($totallocaltax2).'</div>';
 	}
 
