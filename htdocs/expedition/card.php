@@ -2553,7 +2553,8 @@ if ($action == 'create' && $usercancreate) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}
 							} elseif ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
-								// A service has no stock, so neither a preselected warehouse nor STOCK_DISALLOW_NEGATIVE_TRANSFER is relevant here.
+								// If we are here, it means STOCK_SUPPORTS_SERVICES is off (otherwise the previous test would be true)
+								// So a service has no stock here, so neither a preselected warehouse nor STOCK_DISALLOW_NEGATIVE_TRANSFER is relevant here.
 								$disabled = '';
 								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
