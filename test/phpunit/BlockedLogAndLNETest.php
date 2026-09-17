@@ -66,7 +66,38 @@ class BlockedLogAndLNETest extends CommonClassTest
 		// We disable module blocked log to avoid interference with tests
 		global $db;
 		$blockedlogmodule = new modBlockedLog($db);
-		$blockedlogmodule->init();
+
+		$moduleiniterror = 0;
+
+		//$result = $blockedlogmodule->remove();
+		$result = $blockedlogmodule->init();
+		if ($result <= 0) {
+			$moduleiniterror++;
+		}
+
+		// Check that entry BLOCKEDLOG_HMAC_KEY exists in llx_const
+		$key = 'BLOCKEDLOG_HMAC_KEY';
+		$sql = "SELECT rowid, value FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($key)."'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			if ($num == 0) {
+				print "Failed to find entry BLOCKEDLOG_HMAC_KEY in llx_const. We can't start test.\n";
+				if ($moduleiniterror) {
+					print "May be because of failure to init/load module BlockedLog: ".$blockedlogmodule->error.". We can't start test.\n";
+					exit -1;
+				}
+				exit -1;
+			} else {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					print 'The entry key BLOCKEDLOG_HMAC_KEY exists in llx_const with value '.$obj->value.". We can start test.\n";
+				}
+			}
+		} else {
+			print "Failed to check if entry BLOCKEDLOG_HMAC_KEY exists in llx_const: ".$db->lasterror().". We can't start test.\n";
+			exit -1;
+		}
 	}
 
 	/**
