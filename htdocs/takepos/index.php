@@ -721,7 +721,7 @@ function CloneTicket(sourceinvoiceid) {
 	$.getJSON("<?php print DOL_URL_ROOT; ?>/takepos/invoice.php?action=cloneticket&format=json&token=<?php echo currentToken(); ?>&sourceinvoiceid="+sourceinvoiceid)
 		.done(function(data) {
 			if (!data.success) {
-				alert(data.message || '<?php echo dol_escape_js($langs->trans('ErrorFailedToCloneTicket')); ?>');
+				alert(data.message || <?php "'".echo dol_escape_js($langs->trans('ErrorFailedToCloneTicket'))."'"; ?>);
 				return;
 			}
 
@@ -734,7 +734,7 @@ function CloneTicket(sourceinvoiceid) {
 			}
 		})
 		.fail(function() {
-			alert('<?php echo dol_escape_js($langs->trans('ErrorFailedToCloneTicket')); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->trans('ErrorFailedToCloneTicket'))."'"; ?>);
 		});
 	return true;
 }
