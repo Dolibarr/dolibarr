@@ -335,6 +335,13 @@ function ai_validate_attachments(array $attachments, &$error)
 	}
 
 	$allowedmimes = array('application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp');
+	// HEIC/HEIF reach this point only through the native-send fallback of the
+	// chat (browser unable to transcode): acceptable solely when the active
+	// provider consumes them (Gemini); other providers 400 on the MIME.
+	if ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google') {
+		$allowedmimes[] = 'image/heic';
+		$allowedmimes[] = 'image/heif';
+	}
 	$maxbytes = getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) * 1024 * 1024;
 	$totalbytes = 0;
 	foreach ($attachments as $att) {
@@ -697,8 +704,7 @@ function getAiChatAssistantConfig()
 
 	$keys = array(
 		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
-		'AIAttachmentBlockedByPrivacy', 'MissingInformation', 'CouldYouClarify',
-		'AIAttachmentBlockedByPrivacy',
+		'AIAttachmentBlockedByPrivacy', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
 		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
@@ -810,6 +816,9 @@ function getAiChatAssistantConfig()
 		// Presentation context for tool results: money, date and label
 		// formatting happen client-side on raw API data.
 		'privacyRedaction' => getDolGlobalInt('AI_PRIVACY_REDACTION', 0),
+		// Gemini is the only wired provider taking HEIC natively; the chat JS
+		// falls back to it when the browser cannot transcode HEIC to JPEG.
+		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
 		'currency' => $conf->currency,
 		'locale' => str_replace('_', '-', $langs->getDefaultLang()),
 		'urlRoot' => DOL_URL_ROOT,
@@ -938,7 +947,7 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<div class="chat-input-pill">';
 	// Upload Wrapper (always visible: documents can be attached in any mode)
 	$out .= '<div id="upload-wrapper" class="upload-wrapper">';
-	$out .= '<input type="file" id="file-upload" accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
+	$out .= '<input type="file" id="file-upload" multiple accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.heic,.heif,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
 	$out .= '<button type="button" id="upload-btn" class="round-btn" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AttachFile")).'">'.img_picto('', 'fa-paperclip').'</button>';
 	$out .= '</div>';
 	// Microphone Wrapper (Visible only in Voice modes)
