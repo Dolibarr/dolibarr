@@ -785,6 +785,13 @@ if (empty($reshook)) {
 		} else {
 			$realeurpaid = (float) $object->getSommePaiement(0) + (float) $object->getSumCreditNotesUsed(0) + (float) $object->getSumDepositsUsed(0);
 			$foreignpaid = (float) $object->getSommePaiement(1) + (float) $object->getSumCreditNotesUsed(1) + (float) $object->getSumDepositsUsed(1);
+			// Credits applied on the invoice as lines (deposits, credit notes) are settled too: count them at their own value in both currencies
+			foreach ((array) $object->lines as $creditline) {
+				if (!empty($creditline->fk_remise_except)) {
+					$realeurpaid -= (float) $creditline->total_ttc;
+					$foreignpaid -= (float) $creditline->multicurrency_total_ttc;
+				}
+			}
 			if ($realeurpaid != 0 && $foreignpaid != 0) {
 				$neweffectivetx = (float) round($foreignpaid / $realeurpaid, 8); // 8 = max precision of multicurrency_tx column, to minimize the residual exchange difference
 				$db->begin();
@@ -3398,6 +3405,13 @@ if ($action == 'create') {
 		if ($action == 'realignmulticurrencyrate') {
 			$realeurpaidtmp = (float) $object->getSommePaiement(0) + (float) $object->getSumCreditNotesUsed(0) + (float) $object->getSumDepositsUsed(0);
 			$foreignpaidtmp = (float) $object->getSommePaiement(1) + (float) $object->getSumCreditNotesUsed(1) + (float) $object->getSumDepositsUsed(1);
+			// Credits applied on the invoice as lines (deposits, credit notes) are settled too: count them at their own value in both currencies
+			foreach ((array) $object->lines as $creditline) {
+				if (!empty($creditline->fk_remise_except)) {
+					$realeurpaidtmp -= (float) $creditline->total_ttc;
+					$foreignpaidtmp -= (float) $creditline->multicurrency_total_ttc;
+				}
+			}
 			$neweffectivetxtmp = ($realeurpaidtmp != 0) ? round($foreignpaidtmp / $realeurpaidtmp, 8) : 0;
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id, $langs->trans('RealignInvoiceRateOnRealRate'), $langs->trans('ConfirmRealignInvoiceRate', price2num($object->multicurrency_tx, 'MU'), $neweffectivetxtmp), 'confirm_realignmulticurrencyrate', '', 'yes', 1);
 		}
@@ -4029,6 +4043,13 @@ if ($action == 'create') {
 				&& !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency) {
 				$realeurpaidtmp = (float) $object->getSommePaiement(0) + (float) $object->getSumCreditNotesUsed(0) + (float) $object->getSumDepositsUsed(0);
 				$foreignpaidtmp = (float) $object->getSommePaiement(1) + (float) $object->getSumCreditNotesUsed(1) + (float) $object->getSumDepositsUsed(1);
+				// Credits applied on the invoice as lines (deposits, credit notes) are settled too: count them at their own value in both currencies
+				foreach ((array) $object->lines as $creditline) {
+					if (!empty($creditline->fk_remise_except)) {
+						$realeurpaidtmp -= (float) $creditline->total_ttc;
+						$foreignpaidtmp -= (float) $creditline->multicurrency_total_ttc;
+					}
+				}
 				$exchangedifftmp = (!empty($object->multicurrency_tx)) ? price2num(($foreignpaidtmp / $object->multicurrency_tx) - $realeurpaidtmp, 'MT') : 0;
 				$canrealign = ($usercancreate && ($object->status == FactureFournisseur::STATUS_VALIDATED || !empty($object->paye)) && $object->getVentilExportCompta() == 0);
 				if ($foreignpaidtmp != 0 && (float) $exchangedifftmp != 0) {
@@ -4422,6 +4443,13 @@ if ($action == 'create') {
 						&& !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency) {
 						$realeurpaidexch = (float) $object->getSommePaiement(0) + (float) $object->getSumCreditNotesUsed(0) + (float) $object->getSumDepositsUsed(0);
 						$foreignpaidexch = (float) $object->getSommePaiement(1) + (float) $object->getSumCreditNotesUsed(1) + (float) $object->getSumDepositsUsed(1);
+						// Credits applied on the invoice as lines (deposits, credit notes) are settled too: count them at their own value in both currencies
+						foreach ((array) $object->lines as $creditline) {
+							if (!empty($creditline->fk_remise_except)) {
+								$realeurpaidexch -= (float) $creditline->total_ttc;
+								$foreignpaidexch -= (float) $creditline->multicurrency_total_ttc;
+							}
+						}
 						$exchangediffline = (!empty($object->multicurrency_tx)) ? price2num(($foreignpaidexch / $object->multicurrency_tx) - $realeurpaidexch, 'MT') : 0;
 					if ($foreignpaidexch != 0 && (float) $exchangediffline != 0) {
 							$exchangecolor = ((float) $exchangediffline >= 0) ? '#e67e22' : '#c0392b'; // orange = exchange gain, red = exchange loss
