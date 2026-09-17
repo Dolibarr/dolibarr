@@ -89,7 +89,7 @@ class BonPrelevementTest extends CommonClassTest
 	/** @var string Error message collected in setUpBeforeClass() if a fixture failed to be created */
 	protected static $setUpError = '';
 	/** @var ?Societe Global $mysoc as it was before this test class forced it into a SEPA country */
-	protected static $savmysoc;
+	protected static $savmysoctest;
 
 	/**
 	 * setUpBeforeClass
@@ -113,7 +113,7 @@ class BonPrelevementTest extends CommonClassTest
 		// not restored between test classes by CommonClassTest). Some other test class run
 		// earlier in the same PHPUnit process (e.g. PricesTest) may have left it on a
 		// non-SEPA country, so force it here and restore it in tearDownAfterClass().
-		self::$savmysoc = clone $mysoc;
+		self::$savmysoctest = clone $mysoc;
 		$mysoc->country_code = 'FR';
 		$mysoc->country_id = 1;
 
@@ -229,7 +229,7 @@ class BonPrelevementTest extends CommonClassTest
 	public static function tearDownAfterClass(): void
 	{
 		global $mysoc;
-		$mysoc = self::$savmysoc;
+		$mysoc = self::$savmysoctest;
 
 		parent::tearDownAfterClass(); // Rolls back the parent transaction ($db->rollback())
 	}
@@ -302,6 +302,8 @@ class BonPrelevementTest extends CommonClassTest
 		// Create one invoice for COMPANY_A (100) and one for COMPANY_B (300)
 		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
 		$facB = $this->createValidatedInvoice(self::$socidB, 300.0);
+
+		// $facA is a Societe object. But $facA->thidparty is not loaded
 
 		// Link each invoice to its specific bank account (not the default)
 		$demAId = $this->createPaymentRequest($facA, 100.0, self::$ribASpecificId);
