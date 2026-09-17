@@ -140,7 +140,7 @@ class UniversalLLMAdapter
 			"temperature" => 0.1
 		);
 		if (!empty($attachments)) {
-			$data["max_tokens"] = 4096;	// document extraction answers are much longer than intent JSON
+			$data["max_tokens"] = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
 		}
 
 		// Only force JSON mode if explicitly requested
@@ -187,7 +187,7 @@ class UniversalLLMAdapter
 				);
 			}
 			$userContent[] = array("type" => "text", "text" => $msg);
-			$maxTokens = 4096;	// document extraction answers are much longer than intent JSON
+			$maxTokens = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
 		}
 
 		$data = array(
@@ -238,7 +238,7 @@ class UniversalLLMAdapter
 			"contents" => array(
 				array("parts" => $parts)
 			),
-			"generationConfig" => (empty($attachments) ? array("temperature" => 0.1) : array("temperature" => 0.1, "maxOutputTokens" => 4096))
+			"generationConfig" => (empty($attachments) ? array("temperature" => 0.1) : array("temperature" => 0.1, "maxOutputTokens" => 16384))	// thinking models count their reasoning tokens INSIDE maxOutputTokens: at 4096 a multi-line reception intent came back finishReason=MAX_TOKENS, cut mid-JSON
 		);
 
 		$this->lastRequest = $this->encodeRequestForLog($data);
