@@ -1069,7 +1069,7 @@ function classifyIntentUniversal(string $query, Translate $langs)
 	$isLatin = !isComplexScript($query);
 	$searchQuery = $isLatin ? strtolower(dol_string_unaccent($query)) : $query;
 
-	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict"));
+	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict", "sendings", "receptions"));
 
 	$intentMap = [
 		'billing' => [
@@ -1077,8 +1077,13 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue']
 		],
 		'commercial' => [
-			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft'],
-			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote']
+			// 'Reception' and 'Shipment' matter: create_other_document (the tool
+			// that creates receptions/shipments) is categorized 'commercial', so a
+			// query like "create a reception from this delivery note" must light
+			// this category up or the creation tool is filtered out of the prompt
+			// and the model honestly answers it cannot create receptions.
+			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft', 'Reception', 'Shipment', 'Delivery'],
+			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive']
 		],
 		'thirdparty' => [
 			'keys'     => ['ThirdParty', 'Customer', 'Supplier', 'Contact', 'Company'],
