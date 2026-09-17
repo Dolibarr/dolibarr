@@ -49,6 +49,7 @@ jobs:
       - TRAVIS_TYPE=push
       - TRAVIS_RUN_PARALLELLINT=yes
       - TRAVIS_RUN_PHPCS=yes
+      - TRAVIS_RUN_PHPUNIT_SOURCE_SCAN=yes
     # Disable travis for php 8.5 in push, we already do it at each pull_requet.
     #- stage: Test on push PHP 8.5
     #  if: type = push and commit_message !~ /latest php/ and (branch =~ /^develop/ OR branch =~ /^[0-9]+/)
@@ -59,6 +60,7 @@ jobs:
     #  - TRAVIS_TYPE=push
     #  - TRAVIS_RUN_PARALLELLINT=no
     #  - TRAVIS_RUN_PHPCS=no
+    #  - TRAVIS_RUN_PHPUNIT_SOURCE_SCAN=no
     - stage: Test latest PHP on push or cron
       if: type = cron or (type = push AND commit_message =~ /latest php/)
       php: 'latest'
@@ -69,6 +71,7 @@ jobs:
       - TRAVIS_TYPE=push
       - TRAVIS_RUN_PARALLELLINT=no
       - TRAVIS_RUN_PHPCS=no
+      - TRAVIS_RUN_PHPUNIT_SOURCE_SCAN=no
     - stage: Test on pull_request
       if: type = pull_request
       php: '8.5'
@@ -78,6 +81,7 @@ jobs:
       - TRAVIS_TYPE=pull_request
       - TRAVIS_RUN_PARALLELLINT=no
       - TRAVIS_RUN_PHPCS=no
+      - TRAVIS_RUN_PHPUNIT_SOURCE_SCAN=yes
 
 notifications:
   email:
@@ -393,7 +397,7 @@ script:
     echo
 
   - |
-    echo "Checking PHP syntax errors (only in PUSH for 1 PHP version to save CPU and avoid duplicate tests)"
+    echo "Checking PHP syntax errors"
     # Ensure we catch errors
     set -e
     if [ "x$TRAVIS_RUN_PARALLELLINT" = "xyes" ]; then
@@ -416,13 +420,15 @@ script:
     # Exclusions are defined in the ruleset.xml file
     if [ "x$TRAVIS_RUN_PHPCS" = "xyes" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
+    else
+      echo "Skipped"
     fi
     set +e
     echo
 
 # Disabled, there is already a check done in CodingPHPTest.php
 #  - |
-#    echo "Checking missing debug (only for 1 version to not overload travis and avoid duplicate tests)"
+#    echo "Checking missing debug"
 #    # Ensure we catch errors
 #    set -e
 #    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "latest" ]; then
@@ -582,7 +588,7 @@ script:
   - |
     echo "Unit testing"
     # Execute phpunit, check its exit status and that the phpunit output shows a test summary
-    if [ "$TRAVIS_PHP_VERSION" = "8.5" ]; then
+    if [ "x$TRAVIS_RUN_PHPUNIT_SOURCE_SCAN" = "xyes" ]; then
       phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
     else
       PHPUNIT_DISABLE_SOURCE_SCAN=1 phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))

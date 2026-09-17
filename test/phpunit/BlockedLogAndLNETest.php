@@ -24,7 +24,7 @@
  * \brief   PHPUnit test for the BlockedLog and LNE class.
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -40,7 +40,7 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
-$conf->country_code = 'BE';
+$mysoc->country_code = 'BE';
 
 $langs->load("main");
 
@@ -61,6 +61,8 @@ class BlockedLogAndLNETest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
+		global $mysoc;
+
 		self::assertTrue(isModEnabled('invoice'), " module customer invoice must be enabled");
 		self::assertFalse(isModEnabled('ecotaxdeee'), " module ecotaxdeee must not be enabled");
 		parent::setUpBeforeClass();
@@ -70,6 +72,9 @@ class BlockedLogAndLNETest extends CommonClassTest
 		$blockedlogmodule = new modBlockedLog($db);
 
 		$moduleiniterror = 0;
+
+		print 'BlockedLogAndLNETest var_dump(mysoc) = '.var_export($mysoc, true)."\n";
+		print 'BlockedLogAndLNETest mysoc country_code = '.$mysoc->country_code."\n";
 
 		//$result = $blockedlogmodule->remove();
 		$result = $blockedlogmodule->init();
