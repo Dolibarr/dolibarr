@@ -1411,6 +1411,8 @@ class ProductAttribute extends CommonObject
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
+						/** @var CommonObject $object */
+						'@phan-var-force CommonObject $object';
 						$object->formAddObjectLine(1, $mysoc, $buyer);
 					}
 				}
