@@ -51,25 +51,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class AccountingAccountTest extends CommonClassTest
 {
 	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		if (!isModEnabled('accounting')) {
-			print __METHOD__." module accounting must be enabled.\n";
-			exit(1);
-		}
-
-		print __METHOD__."\n";
-	}
-
-
-	/**
 	 * testAccountingAccountCreate
 	 *
 	 * @return  int		Id of created object

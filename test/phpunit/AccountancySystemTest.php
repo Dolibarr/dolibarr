@@ -45,27 +45,17 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class AccountancySystemTest extends CommonClassTest
 {
 	/**
-	 * Setup some global objects before the test.
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		parent::setUpBeforeClass();
-		global $conf, $user;
-		global $db;
-
-		/* Errors are caught in later tests. */
-	}
-
-	/**
 	 * testAccountancySystemCreate
 	 *
 	 * @return int		the ID of the created object
 	 */
 	public function testAccountancySystemCreate(): int
 	{
-		global $user, $db;
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$accountancySystem = new AccountancySystem($db);
 		$accountancySystem->pcg_version = 'PCG99-CUSTOMTEST';
@@ -88,7 +78,11 @@ class AccountancySystemTest extends CommonClassTest
 	 */
 	public function testAccountancySystemFetch($id)
 	{
-		global $db;
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$accountancySystem = new AccountancySystem($db);
 		$result = $accountancySystem->fetch($id);
