@@ -61,6 +61,8 @@ class BlockedLogAndLNETest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
+		global $mysoc;
+
 		self::assertTrue(isModEnabled('invoice'), " module customer invoice must be enabled");
 		self::assertFalse(isModEnabled('ecotaxdeee'), " module ecotaxdeee must not be enabled");
 		parent::setUpBeforeClass();
@@ -70,6 +72,8 @@ class BlockedLogAndLNETest extends CommonClassTest
 		$blockedlogmodule = new modBlockedLog($db);
 
 		$moduleiniterror = 0;
+
+		print 'mysoc country_code = '.$mysoc->country_code."\n";
 
 		//$result = $blockedlogmodule->remove();
 		$result = $blockedlogmodule->init();
