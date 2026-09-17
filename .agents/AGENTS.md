@@ -201,14 +201,13 @@ Before any modification, verify:
 - User rights enforcement (`$user->hasRight("module", "permission")` or `$user->hasRight("module", "objectname", "permission")`)
 - Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
 
-### If adding a unit test was explicitely requested
+### Code check
 
-If you want to make an online test, you can find the URL of instance info file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
-You can ignore and bypass the warning about HTTPS certificate when URL is localhost. Ask the password if you need one without trying to get it from database.
-
-- If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
-- If you need to validate code change or if it is explicitely requested, you can check code and dev syntax rules by running the following command on modified files (it takes a long time):
-	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --analyze-twice --minimum-target-php-version 7.2 --exclude-directory-list=dev/tools,mymodule/test/,mymodule/vendor/ --output-mode=checkstyle filemodified1.php filemodified2.php ...`
+- If making a major change or adding an important function, add or update PHPUnit test files into `test/phpunit/` (check to have the entry into file `test/phpunit/AllTests.php`).
+- If code validation whith `phan` is expected, you must add the parameter `--exclude-directory-list=dev/tools,mymodule/test/,mymodule/vendor/` to the phan command line. For example:
+	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --analyze-twice --minimum-target-php-version 7.2 --exclude-directory-list=dev/tools,mymodule/test/,mymodule/vendor/ --output-mode=checkstyle [list_of_modified_file.php ...]`
+- If code change with `phpstan`, you must add the parameter `-a dev/build/phpstan/bootstrap_action.php` to the phpstan command line. For example:
+	`phpstan analyse --allow-older --no-progress --error-format=checkstyle -a dev/build/phpstan/bootstrap_action.php  [list_of_modified_file.php ...]`
 
 ### Local Dolibarr Online test — Page Access
 

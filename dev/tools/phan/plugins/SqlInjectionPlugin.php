@@ -458,7 +458,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 				// Determine the required quote type based on parameter value and quote map
 				// Cast to int to handle string representations of numbers
 				$paramValue = $paramValue !== null ? (int) $paramValue : null;
-				$requiredQuote = array_key_exists($paramValue, $quoteMap) ? $quoteMap[$paramValue] : $defaultQuote;
+				$requiredQuote = ($paramValue !== null && array_key_exists($paramValue, $quoteMap)) ? $quoteMap[$paramValue] : $defaultQuote;
 
 				// Only check if a specific quote is required
 				if ($requiredQuote !== null) {
