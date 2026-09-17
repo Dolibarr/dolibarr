@@ -504,7 +504,7 @@ class CUnits extends CommonDict
 		}
 
 		$sql = "SELECT rowid, scale, unit_type FROM ".$this->db->prefix()."c_units";
-		$sql .= " WHERE rowid IN (".$fk_unit.", ".$fk_new_unit.")";
+		$sql .= " WHERE rowid IN (".$this->db->sanitize($fk_unit.", ".$fk_new_unit).")";
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
