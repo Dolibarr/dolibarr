@@ -1557,16 +1557,42 @@ class BOM extends CommonObject
 						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty);
 					}
 				} else {
-					if (empty($TNetNeeds[$line->fk_product]['qty'])) {
-						$TNetNeeds[$line->fk_product]['qty'] = 0.0;
+					if (!isset($TNetNeeds[$line->fk_product])) {
+						$TNetNeeds[$line->fk_product] = array();
 					}
-					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
-					// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
-					$TNetNeeds[$line->fk_product]['fk_unit'] = $line->fk_unit;
-					$TNetNeeds[$line->fk_product]['qty'] += $line->qty * $qty;
+					$this->cumulateNetNeed($TNetNeeds[$line->fk_product], $line->qty * $qty, $line->fk_unit);
 				}
 			}
 		}
+	}
+
+	/**
+	 * Cumulate a qty into a net need of a product
+	 *
+	 * @param	array<string,mixed>	$netneed	Net need to update. Its 'qty' is always expressed into its 'fk_unit'.
+	 * @param	float				$qty		Qty to cumulate, expressed into $fk_unit
+	 * @param	?int				$fk_unit	Unit of $qty
+	 * @return	void
+	 */
+	private function cumulateNetNeed(&$netneed, $qty, $fk_unit)
+	{
+		if (!isset($netneed['qty'])) {
+			$netneed['qty'] = 0.0;
+			$netneed['fk_unit'] = $fk_unit;
+		}
+
+		// A same product can be used with 2 different units in the tree, so the qty must be converted into the
+		// unit of the net need before being cumulated. Units of 2 different unit types stay cumulated as they are.
+		if ($fk_unit != $netneed['fk_unit']) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+			$cunits = new CUnits($this->db);
+			$convertedqty = $cunits->unitConverterSameType($qty, $fk_unit, $netneed['fk_unit']);
+			if ($convertedqty !== false) {
+				$qty = $convertedqty;
+			}
+		}
+
+		$netneed['qty'] += $qty;
 	}
 
 	/**
@@ -1593,19 +1619,13 @@ class BOM extends CommonObject
 						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty, $level + 1);
 					}
 				} else {
-					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
-					// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
 					if (!isset($TNetNeeds[$this->id]['product'])) {
 						$TNetNeeds[$this->id]['product'] = array();
 					}
 					if (!isset($TNetNeeds[$this->id]['product'][$line->fk_product])) {
 						$TNetNeeds[$this->id]['product'][$line->fk_product] = array();
 					}
-					$TNetNeeds[$this->id]['product'][$line->fk_product]['fk_unit'] = $line->fk_unit;
-					if (!isset($TNetNeeds[$this->id]['product'][$line->fk_product]['qty'])) {
-						$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] = 0.0;
-					}
-					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
+					$this->cumulateNetNeed($TNetNeeds[$this->id]['product'][$line->fk_product], $line->qty * $qty, $line->fk_unit);
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
 				}
 			}
