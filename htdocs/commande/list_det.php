@@ -1490,9 +1490,9 @@ if ($resql) {
 	$total = 0;
 	$subtotal = 0;
 	$productstat_cache = array();
-	'@phan-var-force array<int,array{stats_order_customer?:float|int,stats_order_supplier?:float|int}> $product_stat_cache';
+	'@phan-var-force array<int,array{stock_reel:float|int,stats_order_customer?:float|int,stats_order_supplier?:float|int}> $productstat_cache';
 	$productstat_cachevirtual = array();
-	'@phan-var-force array<int,array{stats_order_customer?:float|int,stats_order_supplier?:float|int}> $product_stat_cachevirtual';
+	'@phan-var-force array<int,array{stock_reel:float|int}> $productstat_cachevirtual';
 	$getNomUrl_cache = array();
 
 	$generic_commande = new Commande($db);
@@ -1910,7 +1910,7 @@ if ($resql) {
 		// Currency rate
 		if (!empty($arrayfields['c.multicurrency_tx']['checked'])) {
 			print '<td class="nowrap">';
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->c_rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -434,7 +434,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 			print 'Failed to init printer with ID='.getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term);
 		}
 	}
-} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('takepos', 'run') && $user->hasRight('facture', 'lire')) {
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0 && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/html');
 
 	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
@@ -484,6 +484,11 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	if ($id > 0) {
 		$object->fetch($id);
 	}
+
+	// Remove sensitive internal properties before serialization to avoid
+	// leaking the database connection parameters and the schema metadata.
+	unset($object->db);
+	unset($object->fields);
 
 	echo json_encode($object);
 } elseif ($action == 'thecheck' && $user->hasRight('takepos', 'run')) {

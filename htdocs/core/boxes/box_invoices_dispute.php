@@ -36,8 +36,6 @@ class box_invoices_dispute extends ModeleBoxes
 	public $boxlabel = 'BoxInvoicesDispute';
 	public $depends = array("invoice");
 
-	public $enabled = 1;
-
 	/**
 	 *  Constructor
 	 *
@@ -46,11 +44,9 @@ class box_invoices_dispute extends ModeleBoxes
 	 */
 	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
-
-		$this->enabled = getDolGlobalInt('MAIN_FEATURES_LEVEL'); // Not enabled by default due to bugs (see previous comments)
 
 		$this->hidden = !(isModEnabled('invoice') && $user->hasRight('facture', 'read'));
 	}

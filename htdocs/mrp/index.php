@@ -126,7 +126,10 @@ if (isModEnabled('mrp') && $conf->use_javascript_ajax) {
 		 * @var string $badgeStatus8
 		 * @var string $badgeStatus9
 		 */
-		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($theme_vars_file) {
+			include $theme_vars_file;
+		}
 
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);

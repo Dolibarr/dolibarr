@@ -26,6 +26,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 
 /**
  * Class for Asset
@@ -564,14 +565,13 @@ class Asset extends CommonObject
 		if ($result > 0 && $this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model) {
 			$result = $this->setDataFromAssetModel($user, $notrigger);
 		}
-		if ($result > 0 && (
+		if ($result > 0 && is_object($this->oldcopy) && (
 			$this->date_start != $this->oldcopy->date_start ||
-				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
-				$this->reversal_date != $this->oldcopy->reversal_date ||
-				$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
-				($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
-		)
-		) {
+			$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
+			$this->reversal_date != $this->oldcopy->reversal_date ||
+			$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
+			($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
+		)) {
 			$result = $this->calculationDepreciation();
 		}
 
@@ -666,6 +666,12 @@ class Asset extends CommonObject
 				foreach ($options_model->deprecation_options as $mode_key => $fields) {
 					foreach ($fields as $field_key => $value) {
 						$options->deprecation_options[$mode_key][$field_key] = $value;
+					}
+					// 'amount_base_depreciation_ht' only exists on the asset (not on the model, see 'only_on_asset'),
+					// so it is never part of $fields above and must be computed from the asset itself, otherwise
+					// it stays at 0 and all depreciation lines are calculated on a zero base.
+					if (!array_key_exists('amount_base_depreciation_ht', $options->deprecation_options[$mode_key])) {
+						$options->deprecation_options[$mode_key]['amount_base_depreciation_ht'] = $this->reversal_amount_ht > 0 ? $this->reversal_amount_ht : $this->acquisition_value_ht;
 					}
 				}
 
@@ -1096,8 +1102,7 @@ class Asset extends CommonObject
 
 				// futures depreciation lines
 				//-----------------------------------------------------
-				$nb_days_in_year = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_YEAR', 360);
-				$nb_days_in_month = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_MONTH', 30);
+				$day_count_convention = getAssetDepreciationDayCountConvention();
 				$period_amount = (float) ($fields['duration'] > 0 ? price2num($depreciation_period_amount / $fields['duration'], 'MT') : 0);
 				$first_period_found = false;
 
@@ -1136,22 +1141,41 @@ class Asset extends CommonObject
 						if ($fields['duration_type'] == 2) { // Daily
 							$depreciation_ht = $period_amount;
 						} elseif ($fields['duration_type'] == 1) { // Monthly
-							$nb_days = min($nb_days_in_month, num_between_day($begin_date, $end_date, 1));
-							if ($nb_days >= 28) {
-								$date_temp = dol_getdate($begin_date);
-								if ($date_temp['mon'] == 2) {
-									$nb_days = 30;
+							// Same rule as the annual branch: the count of the days and the length of a full
+							// month must come from the same day count convention. Counting the real calendar
+							// days then dividing them by a conventional month of 30 made the depreciation of a
+							// partial month depend on the length of that month, and required a special case to
+							// give a full February a whole monthly amount.
+							$period_fraction = getAssetDepreciationMonthFraction($begin_date, $end_date, $day_count_convention, 'gmt');
+							$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
+						} else { // Annually, taking care for adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
+							// A standard fiscal year lasts 365 days, or 366 when it covers a leap day. Anything else
+							// is a shortened or an extended fiscal year (e.g. 9 or 15 months), whose depreciation is
+							// prorated with no upper limit.
+							$nb_days_fiscal_period = num_between_day($fiscal_period_start, $fiscal_period_end, 1);
+							$is_standard_fiscal_period = ($nb_days_fiscal_period >= 365 && $nb_days_fiscal_period <= 366);
+
+							if ($is_standard_fiscal_period && $begin_date <= $fiscal_period_start && $end_date >= $fiscal_period_end) {
+								// The asset is depreciated over the whole fiscal year: full annuity, whatever the
+								// convention. Computing a prorata here would give slightly less than a full annuity
+								// with THIRTY_360 when the fiscal year ends in February (a 30/360 count ending on
+								// Feb 28th or 29th is 358 or 359 days instead of 360).
+								$period_fraction = 1;
+							} else {
+								// The count of the days and the number of days of a full year must always come from
+								// the same day count convention, otherwise every partial period (so the first and the
+								// last year of every asset) is over or under evaluated. Counting the real calendar
+								// days then dividing them by 360 overestimated every prorata by about 1.39% (365/360).
+								// The bounds are anchored on GMT midnight, so the calendar decomposition of
+								// THIRTY_360 and ACT_ACT must be read in GMT too, otherwise a partial period is
+								// prorated on a day shifted by the UTC offset of the server.
+								$period_fraction = getAssetDepreciationPeriodFraction($begin_date, $end_date, $day_count_convention, 'gmt');
+								if ($is_standard_fiscal_period) {
+									// Never more than a full annuity on a standard fiscal year
+									$period_fraction = min(1, $period_fraction);
 								}
 							}
-							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
-						} else { // Annually, taking care for adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
-							$nb_days_real = num_between_day($begin_date, $end_date, 1);
-							if (($nb_days_real > 366) || (num_between_day($fiscal_period_start, $fiscal_period_end, 1) < $nb_days_in_year)) { // FY Period changed
-								$nb_days = $nb_days_real;
-							} else {
-								$nb_days = min($nb_days_in_year, $nb_days_real);
-							}
-							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+							$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
 						}
 						if (getDolGlobalInt('ASSET_ROUND_INTEGER_NUMBER_UPWARDS') == 1) {
 							if ($idx_loop < $max_loop) { // avoid last depreciation value
@@ -1499,7 +1523,7 @@ class Asset extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -1765,7 +1789,7 @@ class Asset extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'asset/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'asset/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;

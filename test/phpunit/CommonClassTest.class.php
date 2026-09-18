@@ -71,6 +71,8 @@ abstract class CommonClassTest extends TestCase
 	protected $savlangs;
 	/** @var \DoliDB */
 	protected $savdb;
+	/** @var \Societe */
+	protected $savmysoc;
 
 	/**
 	 * Number of Dolibarr log lines to show in case of error
@@ -106,11 +108,12 @@ abstract class CommonClassTest extends TestCase
 		parent::__construct($name, $data, $dataName);
 
 		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$this->savconf = $conf;
 		$this->savuser = $user;
 		$this->savlangs = $langs;
 		$this->savdb = $db;
+		$this->savmysoc = $mysoc;
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
 			print get_called_class()." db->type=".$db->type." user->id=".$user->id.PHP_EOL;

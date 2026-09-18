@@ -169,7 +169,7 @@ class Website extends CommonObject
 			$this->date_modification = $now;
 		}
 		// Remove spaces and be sure we have main language only
-		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+		$this->lang = preg_replace('/[_-].*$/', '', trim((string) $this->lang)); // en_US or en-US -> en
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
@@ -510,7 +510,7 @@ class Website extends CommonObject
 		}
 
 		// Remove spaces and be sure we have main language only
-		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
+		$this->lang = preg_replace('/[_-].*$/', '', trim((string) $this->lang)); // en_US or en-US -> en
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
@@ -1342,7 +1342,7 @@ class Website extends CommonObject
 
 
 		// Make replacement in htmlheader.html (replace dolSaveHtmlHeader)
-		$htmldeaderinsrcdir = $conf->website->dir_output.'/'.$object->ref.'/containers/htmlheader.html';
+		$htmldeaderinsrcdir = $conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html';
 		$result = dolReplaceInFile($htmldeaderinsrcdir, $arrayreplacement);
 
 		// Test if imported html page contains dynamic PHP content

@@ -1,5 +1,6 @@
 name: "CI-PUSH"
 
+
 on:
   push:
     # Executer only on push of the main repository, not on fork.
@@ -7,6 +8,8 @@ on:
       - develop
       - master
       - '=.0'
+    paths-ignore:
+      - '.agents/**'
 
 jobs:
   pre-commit:
@@ -33,12 +36,14 @@ jobs:
   #  uses: ./.github/workflows/windows-ci.yml
   #  with:
   #    gh_event: ${{ github.event_name }}
-  # gh-travis:  # Runs travis script on github runner (not on travis)
-  #   if: false
-  #   # needs: [pre-commit, phan]
-  #   # needs: [windows-ci]
-  #   secrets: inherit
-  #   needs: [pre-commit, phan, phpstan]
-  #   uses: ./.github/workflows/gh-travis.yml
-  #   with:
-  #     gh_event: ${{ github.event_name }}
+  # Runs travis script on github runner (not on travis). Still disabled, see
+  # ci-on-pull_request.yml. On the reference branches there is no need for a
+  # condition: the push stages of .travis.yml do more than the pull_request one
+  # (php lint, phpcs) and pushes here are far less frequent.
+  #gh-travis:
+  #  # needs: [windows-ci]
+  #  secrets: inherit
+  #  needs: [pre-commit, phan, phpstan]
+  #  uses: ./.github/workflows/gh-travis.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}

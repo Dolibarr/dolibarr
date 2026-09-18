@@ -17,7 +17,7 @@
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
  * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
@@ -1125,6 +1125,12 @@ if (!defined('NOLOGIN')) {
 		}
 
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
+
+		// Enforce the max number of concurrent sessions per user (only when sessions are stored in database).
+		// Opening this new session evicts the user's oldest sessions above the limit, logging those browsers out.
+		if (!empty($php_session_save_handler) && $php_session_save_handler == 'db' && !empty($conf->file->main_limit_sessions_per_user) && (int) $conf->file->main_limit_sessions_per_user > 0) {
+			dolSessionsLimitForUser($user->id, (int) $conf->file->main_limit_sessions_per_user, session_id());
+		}
 
 		$db->begin();
 
@@ -2859,7 +2865,7 @@ function top_menu_ai()
 				})
 				.then(function (htmlcontent) {
 					body.innerHTML = htmlcontent;
-					return import("'.dol_escape_js($aijsurl).'").then(function (mod) {
+					return import(\''.dol_escape_js($aijsurl).'\').then(function (mod) {
 						mod.initAiAssistant(body.querySelector(".ai-chat-container"));
 					});
 				})
@@ -2869,7 +2875,7 @@ function top_menu_ai()
 				})
 				.catch(function (e) {
 					console.error("AI Assistant popover load failed", e);
-					body.innerHTML = "<div class=\"ai-popover-loading\">'.dol_escape_js($langs->trans('Error')).'</div>";
+					body.innerHTML = \'<div class="ai-popover-loading">'.dol_escape_js($langs->trans('Error')).'</div>\';
 				})
 				.finally(function () { loading = false; });
 		}
@@ -4022,7 +4028,7 @@ if (!function_exists("llxFooter")) {
 									id: <?php echo $object->id; ?>
 									, element: '<?php echo dol_escape_js($object->element) ?>'
 									, action: 'DOC_PREVIEW'
-									, lang: '<?php echo dol_escape_js($langs->defaultlang); ?>'
+									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);
@@ -4034,7 +4040,7 @@ if (!function_exists("llxFooter")) {
 									id: <?php echo $object->id; ?>
 									, element: '<?php echo dol_escape_js($object->element) ?>'
 									, action: 'DOC_DOWNLOAD'
-									, lang: '<?php echo dol_escape_js($langs->defaultlang); ?>'
+									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
 									, token: '<?php echo currentToken(); ?>'
 								}
 						);

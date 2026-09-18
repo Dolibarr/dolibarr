@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022-2026  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,16 +259,16 @@ function show_array_actions_to_do($max = 5)
 			// Date
 			print '<td width="100" class="right tddate">'.dol_print_date($datep, 'day').'&nbsp;';
 			$late = 0;
-			if ($obj->percent == 0 && $datep && $datep < time()) {
+			if ($obj->percent == 0 && $datep && $datep < dol_now()) {
 				$late = 1;
 			}
-			if ($obj->percent == 0 && !$datep && $datep2 && $datep2 < time()) {
+			if ($obj->percent == 0 && !$datep && $datep2 && $datep2 < dol_now()) {
 				$late = 1;
 			}
-			if ($obj->percent > 0 && $obj->percent < 100 && $datep2 && $datep2 < time()) {
+			if ($obj->percent > 0 && $obj->percent < 100 && $datep2 && $datep2 < dol_now()) {
 				$late = 1;
 			}
-			if ($obj->percent > 0 && $obj->percent < 100 && !$datep2 && $datep && $datep < time()) {
+			if ($obj->percent > 0 && $obj->percent < 100 && !$datep2 && $datep && $datep < dol_now()) {
 				$late = 1;
 			}
 			if ($late) {

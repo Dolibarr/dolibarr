@@ -9,7 +9,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,7 +292,7 @@ class FormFile
 				$out .= '<td>'.$options.'</td>';
 			}
 			$out .= '<td valign="middle" class="nowrap">';
-			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> ';
+			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dolPrintHTMLForAttribute($savingdocmask).'"> ';
 			$out .= '<label class="opacitymedium small" for="savingdocmask">';
 			$out .= $langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
 			$out .= '</label>';
@@ -536,13 +536,13 @@ class FormFile
 						{
 							jQuery(\'#'.$modulepart.'_table\').hide();
 							jQuery(\'#togglemassfilesarea\').attr("ref", "hidden");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Show")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Show")).')\');
 						}
 						else
 						{
 							jQuery(\'#'.$modulepart.'_table\').show();
 							jQuery(\'#togglemassfilesarea\').attr("ref","shown");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Hide")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Hide")).')\');
 						}
 						return false;
 					});
@@ -886,7 +886,7 @@ class FormFile
 
 			if (!empty($hookmanager->hooks['formfile'])) {
 				foreach ($hookmanager->hooks['formfile'] as $module) {
-					if (method_exists($module, 'formBuilddocLineOptions')) {
+					if (is_object($module) && method_exists($module, 'formBuilddocLineOptions')) {
 						$colspanmore++;
 						$out .= '<th></th>';
 					}
@@ -1076,7 +1076,6 @@ class FormFile
 					if (is_object($hookmanager)) {
 						$addcolumforpicto = ($delallowed || $printer || $morepicto);
 						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
-						$colspanmore = 0;
 						$parameters = array('tmpout' => &$tmpout, 'colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {
@@ -1113,13 +1112,18 @@ class FormFile
 					if ($delallowed || $printer || $morepicto) {
 						$out .= '<td></td>';
 					}
+					if ($colspanmore) {
+						$out .= '<td colspan="'.$colspanmore.'"></td>';
+					}
 					$out .= '</tr>'."\n";
 				}
 				$this->numoffiles++;
 			}
 
 			if (count($file_list) == 0 && count($link_list) == 0 && $headershown) {
-				$out .= '<tr><td colspan="'.(3 + ($addcolumforpicto ? 1 : 0)).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
+				$addcolumforpicto = ($delallowed || $printer || $morepicto);
+				$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+				$out .= '<tr><td colspan="'.($colspan + $colspanmore).'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>'."\n";
 			}
 		}
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -475,6 +475,7 @@ function encodedecode_dbpassconf($level = 0)
  * @param       int        		$length                	Length of random string (Used only if $generic is true)
  * @return		string		    						New value for password
  * @see dol_hash(), dolJSToSetRandomPassword()
+ * @phan-suppress DolibarrForbiddenFunctionPlugin
  */
 function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)
 {
@@ -586,19 +587,19 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		$out .= "\n".'<!-- Js code to suggest a security key -->';
 		$out .= '<script nonce="'.getNonce().'" type="text/javascript">';
 		$out .= 'jQuery(document).ready(function () {
-            jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
+            jQuery(\'#'.dol_escape_js($htmlnameofbutton).'\').click(function() {
 				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
-				console.log("dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				console.log(\'dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is \'+currenttoken+\'. We will fill '.dol_escape_js($htmlname).'\');
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',
 					token: currenttoken
 				},
 				function(result) {
-					if (jQuery("input#'.dol_escape_js($htmlname).'").attr("type") == "password") {
-						jQuery("input#'.dol_escape_js($htmlname).'").attr("type", "text");
+					if (jQuery(\'input#'.dol_escape_js($htmlname).'\').attr("type") == "password") {
+						jQuery(\'input#'.dol_escape_js($htmlname).'\').attr("type", "text");
 					}
-					jQuery("#'.dol_escape_js($htmlname).'").val(result);
+					jQuery(\'#'.dol_escape_js($htmlname).'\').val(result);
 				});
             });
 		});'."\n";
