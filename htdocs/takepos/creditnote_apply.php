@@ -251,9 +251,8 @@ if ($action == 'applycredit' && $discountid > 0 && empty($error)) {
 		<?php } else { ?>
 			<?php if ($willSplit) {
 				$remainder = price2num($creditamount - $remaintopay, 'MT');
-				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
-				echo '<p class="warning">'.sprintf(
-					$langs->transnoentities('TakeposCreditSplitAuto'),
+				echo '<p class="warning">'.$langs->transnoentities(
+					'TakeposCreditSplitAuto',
 					'<strong>'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</strong>',
 					'<strong>'.price($remainder, 1, $langs, 1, -1, -1, $conf->currency).'</strong>'
 				).'</p>';
