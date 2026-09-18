@@ -186,6 +186,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		}
 
 		$db->free($resql);
+		$resql = null;	// so the free() at the end of the page does not run on an already closed result
 	} else {
 		dol_print_error($db);
 	}
@@ -253,6 +254,7 @@ if ($date && $dateIsValid) {
 		}
 
 		$db->free($resql);
+		$resql = null;	// so the free() at the end of the page does not run on an already closed result
 	} else {
 		dol_print_error($db);
 	}
