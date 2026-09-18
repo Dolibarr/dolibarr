@@ -666,14 +666,14 @@ if (empty($reshook)) {
 						}
 						$targetcompany = ((float) $object->multicurrency_tx > 0 ? ($foreigngoods - $foreigncredits) / (float) $object->multicurrency_tx : 0) + $companycredits;
 						if ($foreigngoods > 0 && $targetcompany > 0) {
-							$neweffectivetx = round($foreigngoods / $targetcompany, 8);
+							$neweffectivetx = (float) price2num($foreigngoods / $targetcompany, 'CR');
 							if (abs($neweffectivetx - (float) $object->multicurrency_tx) >= 0.00000001) {
 								$resrate = $object->setMulticurrencyRate($neweffectivetx, 1);
 								if ($resrate < 0) {
 									$error++;
 									setEventMessages($object->error, $object->errors, 'errors');
 								} else {
-									setEventMessages($langs->trans('InvoiceRateRealigned', price2num($neweffectivetx, 'MU')), null, 'mesgs');
+									setEventMessages($langs->trans('InvoiceRateRealigned', price2num($neweffectivetx, 'CR')), null, 'mesgs');
 								}
 							}
 						}
