@@ -17,14 +17,27 @@ When running bash commands, keep them plain so they can be auto-approved:
 permission = "always"
 deny = ["rm -rf *", "sudo *"]
 
+[tools.grep]
+permission = "always"
 
 [tools.search_replace]
 permission = "always"
 
+[tools.read_file]
+permission = "always"
 
 [tools.write_file]
 permission = "always"
 
-[tools.read_file]
+[tools.edit]
+permission = "always"
+
+[tools.web_fetch]
+permission = "always"
+
+[tools.web_search]
+permission = "always"
+
+[tools.connector_github_app_pull_request_read]
 permission = "always"
 

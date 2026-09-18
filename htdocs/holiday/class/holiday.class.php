@@ -456,10 +456,12 @@ class Holiday extends CommonObject
 				$this->fk_user = (int) $obj->fk_user;
 				$this->date_create = $this->db->jdate($obj->date_create);
 				$this->description = $obj->description;
+
 				$this->date_debut = $this->db->jdate($obj->date_debut);
 				$this->date_fin = $this->db->jdate($obj->date_fin);
 				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
 				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
+
 				$this->halfday = (int) $obj->halfday;
 				$this->status = (int) $obj->status;
 				$this->statut = (int) $obj->status;	// deprecated
@@ -777,7 +779,13 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
+
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, 0, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -901,7 +909,13 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
+
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, 0, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -1029,7 +1043,13 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT && $this->status != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
+
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, 0, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';

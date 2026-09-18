@@ -21,6 +21,8 @@ RUN apt-get update \
 		php-ast \
 		python3 \
 		python3-pip \
+		shellcheck \
+		sshpass \
 		unzip \
 		zip \
     && rm -rf /var/lib/apt/lists/*

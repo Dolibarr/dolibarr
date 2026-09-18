@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2023		Alexandre Janniaux			<alexandre.janniaux@gmail.com>
  * Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +49,107 @@ $langs->load("main");
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  * @phan-file-suppress PhanCompatibleVoidTypePHP70
  */
-class MyObjectTest extends CommonClassTest
+class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current-line PhanUndeclaredExtendedClass
 {
+	// Note: Class must not inherit CommonClassTest like other core uit test as it is for a module store into a different dir.
+	/**
+	 * @var Conf Saved configuration object
+	 */
+	protected $savconf;
+	/**
+	 * @var User Saved User object
+	 */
+	protected $savuser;
+	/**
+	 * @var Translate Saved translations object (from $langs)
+	 */
+	protected $savlangs;
+	/**
+	 * @var DoliDB Saved database object
+	 */
+	protected $savdb;
+	/**
+	 * @var Societe Saved database object
+	 */
+	protected $savmysoc;
+
+	/**
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @param 	string	$name		Name
+	 */
+	public function __construct($name = '')
+	{
+		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
+
+		//$this->sharedFixture
+		global $conf, $user, $langs, $db, $mysoc;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
+		$this->savmysoc = $mysoc;
+
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
+
+	/**
+	 * Global test setup
+	 *
+	 * @return void No return value
+	 */
+	public static function setUpBeforeClass(): void
+	{
+		global $conf, $user, $langs, $db, $mysoc;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+
+		print __METHOD__."\n";
+	}
+
+	/**
+	 * Unit test setup
+	 *
+	 * @return void No return value
+	 */
+	protected function setUp(): void
+	{
+		global $conf, $user, $langs, $db, $mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
+
+		print __METHOD__."\n";
+	}
+
+	/**
+	 * Unit test teardown
+	 *
+	 * @return void  No return value
+	 */
+	protected function tearDown(): void
+	{
+		print __METHOD__."\n";
+	}
+
+	/**
+	 * Global test teardown
+	 *
+	 * @return void No return value
+	 */
+	public static function tearDownAfterClass(): void
+	{
+		global $conf, $user, $langs, $db, $mysoc;
+		$db->rollback();
+
+		print __METHOD__."\n";
+	}
+
+
 	/**
 	 * A sample test
 	 *
@@ -58,11 +158,12 @@ class MyObjectTest extends CommonClassTest
 	 */
 	public function testSomething()
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$result = true;
 
@@ -80,11 +181,12 @@ class MyObjectTest extends CommonClassTest
 	 */
 	public function testMyObjectCreate()
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new MyObject($this->savdb);
 		$localobject->initAsSpecimen();
@@ -108,11 +210,12 @@ class MyObjectTest extends CommonClassTest
 	 */
 	public function testMyObjectDelete($id)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new MyObject($this->savdb);
 		$result = $localobject->fetch($id);
