@@ -319,7 +319,7 @@ if (empty($reshook)) {
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
 				$sql .= " SET module_source = 'takepos', pos_source = '".$db->escape((string) $takeposterminal)."',";
-				$sql .= " ref = '".$db->escape("(PROV-POS".((string) $takeposterminal).'-'.$cloneplace.")")."'";
+				$sql .= " ref = '".$db->escape("(PROV-POS".((string) $takeposterminal)."-".$cloneplace.")")."'";
 				$sql .= " WHERE rowid = ".((int) $cloneid);
 				$result = $db->query($sql);
 
