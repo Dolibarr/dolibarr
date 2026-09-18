@@ -4302,6 +4302,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 	$keywords = array();
 	$textforfulltextindex = '';
 	$cmd = '';
+	$message = '';
 
 	if (empty($useFullTextIndexation)) {
 		$useFullTextIndexation = 'pdftotext';
@@ -4325,6 +4326,7 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 		}
 
 		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT can be for example: "/usr/bin/pdftotext"
+		// It is for the moment a hidden constant.
 		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext'))) . " " . $params ." '".escapeshellcmd($filetoprocess)."' - ";
 		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
@@ -4343,6 +4345,8 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 				}
 			}
 		} else {
+			$message .= $resultexec['output'];
+			$message .= ($message ? "\n" : "").$resultexec['error'];
 			dol_syslog($resultexec['error']);
 			$error++;
 		}
@@ -4372,12 +4376,14 @@ function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $opt
 			//}
 			$textforfulltextindex = $txt;
 		} else {
+			$message .= $resultexec['output'];
+			$message .= ($message ? "\n" : "").$resultexec['error'];
 			dol_syslog($resultexec['error']);
 			$error++;
 		}
 	}
 
-	return array('error' => $error, 'keywords' => $keywords, 'content' => $textforfulltextindex, 'cmd' => $cmd);
+	return array('error' => $error, 'message' => $message, 'keywords' => $keywords, 'content' => $textforfulltextindex, 'cmd' => $cmd);
 }
 
 /**

@@ -351,17 +351,24 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 						console.log(data);
 						$("#ajax-result").val(JSON.stringify(data, null, 2));
 						$(".progress-bar").css("width", "100%");
+
 						// Submit the form
 						//$("#form-result").submit();
+
+						// or show the button Next
+						$("#ajax-result-message").html("<div class=\"ok\">Your file has been analyzed by the AI service.</div>");
 						$("#form-result-submit").show();
 					} else {
+						console.log("We received an error");
+
 						// Display error if status is not 200
-						$("#ajax-result").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
+						$("#ajax-result-message").html("<div class=\"error\">Error: HTTP status " + jqXHR.status + "</div>");
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					// Display error
-					$("#ajax-result").html("<div class=\"error\">Error: " + (jqXHR.responseText || errorThrown || "Unknown error") + "</div>");
+					console.log("We received an error");
+					$("#ajax-result-message").html("<div class=\"error\">Error: " + (jqXHR.responseText || errorThrown || "Unknown error") + "</div>");
 					$(".progress-bar").css("width", "100%");
 				}
 			});
@@ -461,8 +468,10 @@ if ($action == 'uploadfile' || $action == 'showsummary') {
 	print '<input type="hidden" name="prodid" value="'.$prodid.'">';
 	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
 	print '<input type="hidden" name="jsonstring" id="ajax-result" value="jsonstringtoreplace">';	// Fill by the ajax answer
+	print '<div id="ajax-result-message"></div>';
 	if ($action == 'uploadfile') {
-		print '<input type="submit" name="form-result-submit" class="" value="'.$langs->trans("Next").'">';		// TODO Hide.
+		print '<br>';
+		print '<input type="submit" name="form-result-submit" id="form-result-submit" class="button" value="'.$langs->trans("Next").'">';		// TODO Hide.
 	}
 	print '</form>'."\n";
 	print "\n";
@@ -473,11 +482,13 @@ if ($action == 'showsummary') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="addobject">';
 	print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
-	print '<input type="hidden" name="socid" value="'.$socid.'">';
-	print '<input type="hidden" name="prodid" value="'.$prodid.'">';
 	print '<input type="hidden" name="originalfilename" value="'.$fullnewname.'">';
 	print '<input type="hidden" name="jsonstring" id="ajax-result" value="'.GETPOST('jsonstring', 'restricthtml').'">';
-	print '<br>';
+	print '<div id="ajax-result-message"></div>';
+	//print '<br>';
+
+	print load_fiche_titre('Summary', '', 'upload');
+
 	print '<div class="neutral">';
 
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -494,17 +505,22 @@ if ($action == 'showsummary') {
 	}
 
 	if ($modulepart == 'invoice_supplier') {
+		// Parse JSON to get information for an invoice
+		$invoiceindoc = $ai->decodeJsonIntoArray($json, 'supplier_invoice');
+
+		//var_dump($json, $invoiceindoc);
+
 		print '<div id="supplierinvoice" class="">';
 
 		//print '<div class="inline-block">'.img_picto('', 'bill', '').' '.$langs->trans("SupplierInvoice").'</div>';
 		//print '<br><br>';
 
-		$nameindoc = $json['vendor']['name'];
-		$addressindoc = $json['vendor']['address'];
-		$idprof1indoc = $json['professional_id']['siren'];
-		$idprof2indoc = $json['supplier']['siret'];
-		$emailindoc = $json['email'];
-		$vatnumberindoc = $json['vat_number'];
+		$nameindoc = (string) $invoiceindoc['vendor_name'];
+		$addressindoc = (string) $invoiceindoc['vendor_address'];
+		$idprof1indoc = (string) $invoiceindoc['vendor_profid1'];
+		$idprof2indoc = (string) $invoiceindoc['vendor_profid2'];
+		$emailindoc = (string) $invoiceindoc['vendor_email'];
+		$vatnumberindoc = (string) $invoiceindoc['vendor_vat_number'];
 
 		// Thirdparty
 		$tmpthirdparty = new Societe($db);
@@ -517,15 +533,24 @@ if ($action == 'showsummary') {
 			$result = $tmpthirdparty->findNearest(0, $nameindoc, '', '', $idprof1indoc, $idprof2indoc, '', '', '', '', $emailindoc, $vatnumberindoc, 0, 0, '1');
 
 			if ($result > 0) {
-				$tmpthirdparty->id = $result;
+				$tmpthirdparty->fetch($result);
 			}
 		}
 
-		print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
-		print $nameindoc.', &nbsp;'.implode(', ', $addressindoc);
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		$s = $nameindoc;
+		if (!empty($addressindoc)) {
+			$s .= ', &nbsp;'.$addressindoc;
+		}
+		if (!$s) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		}
+		print $s;
 		print '<br>';
 		if (empty($tmpthirdparty->id)) {
-			print '<span class="opacitymedium">'.$langs->trans("NotFoundInDatabase").'</span><br>';
+			if ($s) {
+				print '<span class="warning">'.$langs->trans("NotFoundInDatabase").'</span><br>';
+			}
 			print $langs->trans("ChooseTheThirdPartyTouse").' ';
 			print $form->select_company($socid, 'socid', '(statut:=:0)', $langs->trans("Name"), 0, 0, array(), 0, 'maxwidth200 disableautoopen');
 			//print ' &nbsp; '.$langs->trans("or").' &nbsp; <input type="checkbox" name="createthirdparty" id="createthirdparty" value="1" checked><label for="createthirdparty"> '.$langs->trans("CreateIt").'</label>';
@@ -536,10 +561,10 @@ if ($action == 'showsummary') {
 		}
 
 
-		print '<br><br>';
+		print '<br><br><hr><br>';
 
 
-		$nameprodindoc = $json['items'][0]['description'];
+		$nameprodindoc = $invoiceindoc['items'][0]['description'];
 
 
 		// Product
@@ -556,12 +581,20 @@ if ($action == 'showsummary') {
 			//$tmpproduct->ref = $json['ref'];
 		}
 
-		print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
-		print $nameprodindoc;
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		$s = $nameprodindoc;
+		if (!$s) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		}
+		print $s;
 		print '<br>';
 		if (empty($tmpproduct->id)) {
 			print $langs->trans("ChooseTheProductTouse").' ';
 			print $form->select_produits_fournisseurs(0, $prodid, 'prodid', '', '', array(), 1, 1, 'maxwidth200 disableautoopen', $prodtext, 1);
+
+			print '<br>';
+			print $langs->trans("TotalTTC").' ';
+			print '<input type="text" class="width100 right" name="amount_ttc" id="amount_ttc" value="'.(GETPOSTFLOAT('amount_ttc', '', 2) ? price(GETPOSTFLOAT('amount_ttc', '', 2)) : '').'">';
 
 			// TODO On selection of product, refresh next section with the product price ref
 		} else {
@@ -571,20 +604,28 @@ if ($action == 'showsummary') {
 		}
 
 
-		print '<br><br>';
+		print '<br><br><hr><br>';
 
+
+		// Supplier invoice
 		$tmpinvoice = new FactureFournisseur($db);
-
-		$invoiceindoc = $ai->decodeJsonIntoArray($json, 'supplier_invoice');
 
 		print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SupplierInvoice").'<br>';
 
-		print '<span class="opacitymedium">'.$langs->trans("FoundInDocument").' :</span> ';
-		print $invoiceindoc['supplierref'].' - '.$invoiceindoc['due_date'].' - '.$invoiceindoc['issue_date'];
-		print ' - '.$invoiceindoc['currency_code'];
-		print '<br>';
+		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
+		$tmpvalue = array();
+		$invoiceindoc['supplierref'] ? $tmpvalue[] = $invoiceindoc['supplierref'] : '';
+		$invoiceindoc['due_date'] ? $tmpvalue[] = dol_print_date($invoiceindoc['due_date'], 'day', 'tzuserrel') : '';
+		$invoiceindoc['issue_date'] ? $tmpvalue[] = dol_print_date($invoiceindoc['issue_date'], 'day', 'tzuserrel') : '';
+		$invoiceindoc['currency_code'] ? $tmpvalue[] = $invoiceindoc['currency_code'] : '';
+		$invoiceindoc['invoice_label'] ? $tmpvalue[] = $invoiceindoc['invoice_label'] : '';
 
-		// Supplier invoice
+		$s = implode(', ', $tmpvalue);
+		if (!$s) {
+			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
+		}
+		print $s;
+		print '<br>';
 		if (!empty($invoiceindoc['supplierref'])) {
 			// Try to find supplier invoice
 
@@ -607,9 +648,15 @@ if ($action == 'showsummary') {
 
 		if (empty($tmpinvoice->id)) {
 			print $langs->trans("InvoiceWillBeCreated");
+			print '<input type="hidden" name="supplierref" value="'.$invoiceindoc['supplierref'].'">';
+			print '<input type="hidden" name="due_date" value="'.$invoiceindoc['due_date'].'">';
+			print '<input type="hidden" name="issue_date" value="'.$invoiceindoc['issue_date'].'">';
+			print '<input type="hidden" name="currency_code" value="'.$invoiceindoc['currency_code'].'">';
+			print '<input type="hidden" name="currency_code" value="'.$invoiceindoc['currency_code'].'">';
+			print '<input type="hidden" name="invoice_label" value="'.$invoiceindoc['invoice_label'].'">';
 		} else {
 			print $tmpinvoice->getNomUrl(1);
-			print '<input type="hidden name="invoiceid" value="'.$tmpinvoice->id.'">';
+			print '<input type="hidden" name="invoiceid" value="'.$tmpinvoice->id.'">';
 		}
 
 		print '<br>

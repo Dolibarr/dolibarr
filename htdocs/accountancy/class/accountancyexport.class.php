@@ -1594,7 +1594,7 @@ class AccountancyExport
 				$tab[] = price2fec($line->credit);
 
 				// FEC:EcritureLet
-				$line->lettering_code = str_replace(array("\t", "\n", "\r"), " ", $line->lettering_code);
+				$line->lettering_code = str_replace(array("\t", "\n", "\r"), " ", (string) $line->lettering_code);
 				$tab[] = $line->lettering_code;
 
 				// FEC:DateLet
@@ -1838,7 +1838,7 @@ class AccountancyExport
 				$tab[] = price2fec($line->credit);
 
 				// FEC:EcritureLet
-				$line->lettering_code = str_replace(array("\t", "\n", "\r"), " ", $line->lettering_code);
+				$line->lettering_code = str_replace(array("\t", "\n", "\r"), " ", (string) $line->lettering_code);
 				$tab[] = $line->lettering_code;
 
 				// FEC:DateLet
