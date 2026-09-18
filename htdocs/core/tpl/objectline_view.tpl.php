@@ -11,6 +11,7 @@
  * Copyright (C) 2024-2026  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -639,29 +640,42 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
 		$coldisplay++;
+		// The line qualifies either by the accounting codes carried by its product, or by the
+		// account it has actually been bound to: a line can be bound to an asset account while
+		// its product is not set up for it, or while it has no product at all.
+		$boundaccount = empty($line->fk_code_ventilation) ? 0 : (int) $line->fk_code_ventilation;
 		if (
-			$product_static !== null
-			&&
+			$boundaccount > 0
+			||
 			(
-				!empty($product_static->accountancy_code_buy) ||
-				!empty($product_static->accountancy_code_buy_intra) ||
-				!empty($product_static->accountancy_code_buy_export)
+				$product_static !== null
+				&&
+				(
+					!empty($product_static->accountancy_code_buy) ||
+					!empty($product_static->accountancy_code_buy_intra) ||
+					!empty($product_static->accountancy_code_buy_export)
+				)
 			)
 		) {
 			$accountancy_category_asset = getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY');
 			$sanitized_filters = array();
-			if (!empty($product_static->accountancy_code_buy)) {
-				$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
+			if ($product_static !== null) {
+				if (!empty($product_static->accountancy_code_buy)) {
+					$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
+				}
+				if (!empty($product_static->accountancy_code_buy_intra)) {
+					$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
+				}
+				if (!empty($product_static->accountancy_code_buy_export)) {
+					$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+				}
 			}
-			if (!empty($product_static->accountancy_code_buy_intra)) {
-				$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
-			}
-			if (!empty($product_static->accountancy_code_buy_export)) {
-				$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+			if ($boundaccount > 0) {
+				$sanitized_filters[] = "rowid = " . ((int) $boundaccount);
 			}
 			$sql = "SELECT COUNT(*) AS found";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account";
-			$sql .= " WHERE pcg_type = '" . $this->db->escape($conf->global->ASSET_ACCOUNTANCY_CATEGORY) . "'";
+			$sql .= " WHERE pcg_type = '" . $this->db->escape($accountancy_category_asset) . "'";
 			$sql .= " AND (" . implode(' OR ', $sanitized_filters). ")";
 			$resql_asset = $this->db->query($sql);
 			if (!$resql_asset) {
