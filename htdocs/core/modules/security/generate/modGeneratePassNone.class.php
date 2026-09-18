@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,16 @@ class modGeneratePassNone extends ModeleGenPassword
 		$this->conf = $conf;
 		$this->langs = $langs;
 		$this->user = $user;
+	}
+
+	/**
+	 *		Return if a module can be used or not
+	 *
+	 *		@return		boolean		true if module can be used
+	 */
+	public function isEnabled()
+	{
+		return isPasswordGenerationNoneForbidden() ? false : true;
 	}
 
 	/**
