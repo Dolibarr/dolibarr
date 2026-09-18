@@ -133,19 +133,26 @@ ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFT
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
--- Short-lived tombstone log of deleted objects (see llx_deletion_log.sql).
+-- Short-lived tombstone log of deleted agenda events (see llx_deletion_log.sql).
 CREATE TABLE llx_deletion_log(
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity			integer NOT NULL DEFAULT 1,
-	element_type	varchar(64) NOT NULL,
-	fk_object		integer NOT NULL,
+	fk_actioncomm	integer NOT NULL,
+	uid				char(36) NULL,
+	fk_user_action	integer NULL,
+	assigned_users	varchar(255) NULL,
 	date_deletion	datetime NOT NULL,
 	fk_user			integer NULL
 ) ENGINE=innodb;
 
-ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_element (element_type, entity, date_deletion);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_entity_date (entity, date_deletion);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_uid (uid);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_fk_user_action (fk_user_action);
 ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_deletion);
 
+-- Stable unique identifier of an agenda event, kept in llx_deletion_log after the event is deleted.
+ALTER TABLE llx_actioncomm ADD COLUMN uid char(36) NULL AFTER ref_ext;
+ALTER TABLE llx_actioncomm ADD UNIQUE INDEX uk_actioncomm_uid (uid);
 
 
 -- Add contract type field (0=customer, 1=supplier)
