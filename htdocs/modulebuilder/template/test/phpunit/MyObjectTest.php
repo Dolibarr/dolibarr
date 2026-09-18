@@ -83,7 +83,7 @@ class MyObjectTest extends PHPUnit\Framework\TestCase  // @phan-suppress-current
 		parent::__construct($name);  // @phan-suppress-current-line PhanUndeclaredClass
 
 		//$this->sharedFixture
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs, $db, $mysoc;
 		$this->savconf = $conf;
 		$this->savuser = $user;
 		$this->savlangs = $langs;

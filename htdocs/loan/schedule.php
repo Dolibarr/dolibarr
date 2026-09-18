@@ -383,7 +383,7 @@ if (empty($pay_without_schedule) && $permissiontoadd) {
 	print '<div class="marginbottomonly inline-block valignmiddle">';
 	print '<span class="opacitymedium">'.$langs->trans("GracePeriodMonths").': </span>';
 	print '<input type="number" id="grace_period_months" min="1" max="'.max(1, $object->nbterm - 1).'" value="1" class="width50 right"> ';
-	print '<input type="button" id="btn_apply_grace_period" class="button valignmiddle" value="'.$langs->trans("ApplyGracePeriod").'">';
+	print '<input type="button" id="btn_apply_grace_period" class="button valignmiddle" value="'.$langs->trans("Apply").'">';
 	print '</div>';
 	print '<br><br>';
 }
