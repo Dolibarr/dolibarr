@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT .'/recruitment/class/recruitmentcandidature.class
 require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';                      // Third-Party
 require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';  // Supplier Proposal
 require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';                        // Ticket
+require_once DOL_DOCUMENT_ROOT .'/adherents/class/adherent.class.php';             		 // Member/Adherent
 //require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport.class.php';        // Expense Report
 //require_once DOL_DOCUMENT_ROOT .'/holiday/class/holiday.class.php';                    // Holidays (leave request)
 
@@ -3398,7 +3399,7 @@ class EmailCollector extends CommonObject
 									include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 									$hookmanager = new HookManager($this->db);
 								}
-								$hookmanager->initHooks(array('emailcolector'));
+								$hookmanager->initHooks(array('emailcolector', 'emailcollector'));
 								$parameters = array('arrayobject' => $arrayobject);
 								$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
 								if ($reshook > 0) {
@@ -3870,7 +3871,7 @@ class EmailCollector extends CommonObject
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
 							}
-							$hookmanager->initHooks(['emailcolector']);
+							$hookmanager->initHooks(array('emailcolector', 'emailcollector'));
 
 							$parameters = array(
 								'connection' =>  $connection,

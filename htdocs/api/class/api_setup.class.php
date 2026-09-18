@@ -2686,7 +2686,7 @@ class Setup extends DolibarrApi
 	 */
 	public function getCompany()
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (!DolibarrApiAccess::$user->admin
 			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY'))) {
@@ -2726,6 +2726,9 @@ class Setup extends DolibarrApi
 		unset($mysoc->fk_incoterms);
 		unset($mysoc->label_incoterms);
 		unset($mysoc->location_incoterms);
+
+		unset($mysoc->supplierCategories);
+		unset($mysoc->prefixCustomerIsRequired);
 
 		return $this->_cleanObjectDatas($mysoc);
 	}

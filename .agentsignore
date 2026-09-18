@@ -9,11 +9,11 @@
 .txs
 .vscode
 vendor
-documents
 node_modules
 cache
-dev
-doc
+/dev/
+/doc/
+/documents/
 tmp
 htdocs/custom
 htdocs/includes

@@ -256,6 +256,7 @@ if (empty($reshook)) {
 
 			$object = new User($db);
 			$object->fetch($id);
+
 			if ($object->admin && empty($user->admin)) {
 				// If user to delete is an admin user and if logged user is not admin, we deny the operation.
 				$error++;
@@ -426,7 +427,12 @@ if (empty($reshook)) {
 					}
 					$db->commit();
 
-					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+					if (!empty($backtopage)) {
+						$url = str_replace('__ID__', (string) $id, $backtopage);
+					} else {
+						$url = $_SERVER['PHP_SELF'].'?id='.$id;
+					}
+					header("Location: ".$url);
 					exit;
 				}
 			} else {
@@ -690,7 +696,8 @@ if (empty($reshook)) {
 							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
 
-							if (!($result > 0)) {
+							// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+							if (!is_numeric($result) || $result <= 0) {
 								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 							} else {
 								// Create thumbs
@@ -1062,6 +1069,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	if (!empty($backtopage)) {
+		print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
+	}
+	if (!empty($backtopageforcancel)) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+	}
 	if (!empty($ldap_sid)) {
 		print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
 	}
@@ -2214,10 +2227,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
 				print '<td>';
 				if ($object->datepreviouslogin) {
-					print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+					print $form->textwithpicto(dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel"), $langs->trans("Previous"));
 				}
 				if ($object->datelastlogin) {
-					print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+					if ($object->datepreviouslogin) {
+						print ' &nbsp; &nbsp; ';
+					}
+					print $form->textwithpicto(dol_print_date($object->datelastlogin, "dayhour", "tzuserrel"), $langs->trans("Currently"));
 				}
 				print '</td>';
 				print "</tr>\n";

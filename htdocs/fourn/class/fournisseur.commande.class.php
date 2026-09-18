@@ -2081,8 +2081,9 @@ class CommandeFournisseur extends CommonOrder
 			} else {
 				$pu = $pu_ttc;
 			}
+
 			$label = trim((string) $label);
-			$desc = trim($desc);
+			$desc = trim((string) $desc);
 			if ($desc === '' && $label !== '') {
 				$desc = $label;
 			}

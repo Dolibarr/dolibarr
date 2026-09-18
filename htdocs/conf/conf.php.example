@@ -327,12 +327,12 @@ $dolibarr_main_prod='1';
 // ==================================
 // To restrict commands you can execute by the backup feature, enter allowed command here.
 // Note: If you can, defining permission on OS linux (using SELinux for example) may be a better choice.
-// Default value: 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump'
+// Default value: 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, ls'
 // Examples:
 // $dolibarr_main_restrict_os_commands='mysqldump, /usr/local/bin/otherdumptool';
-// $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
+// $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls';
 //
-$dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
+$dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls';
 
 // dolibarr_main_restrict_eval_methods
 // ===================================

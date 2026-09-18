@@ -260,6 +260,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	if ($features == 'payment_vat') {
+		$tableandshare = 'payment_vat';
+		$parentfortableentity = 'fk_tva@tva';
+	}
 
 	// if commonObjectLine : Using many2one related commonObject
 	// @see commonObjectLine::parentElement
@@ -398,6 +402,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif ($feature == 'payment_sc') {
+			if (!$user->hasRight('tax', 'charges', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_vat') {
 			if (!$user->hasRight('tax', 'charges', 'lire')) {
 				$readok = 0;
 				$nbko++;
@@ -783,12 +792,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$objectid = (string) $object->fk_charge;
 		}
 
-		$checkonentitydone = 0;
+		$checkonentityready = 0;
 
 		// Array to define rules of checks to do
 		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
-		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
+		$checkparentsoc = array('agenda', 'contact', 'contrat', 'ticket'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
 		$checktask = array('projet_task', 'project_task'); // Test for task object
 		$checkhierarchy = array('expensereport', 'holiday', 'hrm');	// check permission among the hierarchy of user
@@ -840,7 +849,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				}
 			}
-			$checkonentitydone = 1;
+			$checkonentityready = 1;
 		}
 
 		if (in_array($feature, $checksoc) && !empty($objectid)) {	// We check feature = checksoc. For $objectid = 0, no check
@@ -874,15 +883,16 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			}
 
-			$checkonentitydone = 1;
+			$checkonentityready = 1;
 		}
 		if (in_array($feature, $checkparentsoc) && !empty($objectid)) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
-			// If external user: Check permission for external users
 			if ($user->socid > 0) {
+				// If external user: Check permission for external users (limtited to their company, even object with company link that is null must remain not visible)
 				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";	// Link to third party
+				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);											// Third party must be user company
 			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
@@ -899,7 +909,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 
-			$checkonentitydone = 1;
+			$checkonentityready = 1;
 		}
 		if (in_array($feature, $checkproject) && !empty($objectid)) {
 			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
@@ -919,7 +929,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
-			$checkonentitydone = 1;
+			$checkonentityready = 1;
 		}
 		if (in_array($feature, $checktask) && !empty($objectid)) {
 			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
@@ -946,11 +956,11 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 
-			$checkonentitydone = 1;
+			$checkonentityready = 1;
 		}
 		//var_dump($sql);
 
-		if (!$checkonentitydone && !in_array($feature, $nocheck) && !empty($objectid)) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
+		if (!$checkonentityready && !in_array($feature, $nocheck) && !empty($objectid)) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if (empty($dbt_keyfield)) {

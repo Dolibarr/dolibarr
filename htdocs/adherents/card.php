@@ -448,7 +448,9 @@ if (empty($reshook)) {
 
 							if (@is_dir($dir)) {
 								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-								if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
+								$resultupload = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
+								// Note: $resultupload is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+								if (!is_numeric($resultupload) || $resultupload <= 0) {
 									setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 								} else {
 									// Create thumbs

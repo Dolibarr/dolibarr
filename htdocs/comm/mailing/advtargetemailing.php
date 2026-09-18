@@ -632,6 +632,39 @@ if ($object->fetch($id) >= 0) {
 		@phan-var-force array<string,string|int|string[]> $array_query
 		';
 
+		// Backfill keys the form below reads unconditionally. $array_query may be a fresh
+		// empty array() (new mailing, no filter yet) or come from json_decode() of a saved
+		// filter that predates one of these fields, either way missing keys must not trigger
+		// "Undefined array key" warnings. += only fills keys not already present.
+		$array_query += array(
+			'type_of_target' => '',
+			'cust_name' => '',
+			'cust_adress' => '',
+			'cust_zip' => '',
+			'cust_city' => '',
+			'cust_state' => array(),
+			'cust_country' => array(),
+			'cust_status' => array(),
+			'cust_mothercompany' => '',
+			'cust_typecust' => array(),
+			'cust_prospect_status' => array(),
+			'cust_comm_status' => array(),
+			'cust_typeent' => array(),
+			'cust_effectif_id' => array(),
+			'cust_saleman' => array(),
+			'cust_language' => array(),
+			'contact_status' => array(),
+			'contact_civility' => '',
+			'contact_lastname' => '',
+			'contact_firstname' => '',
+			'contact_country' => array(),
+			'contact_no_email' => '',
+			'contact_create_st_dt' => '',
+			'contact_create_end_dt' => '',
+			'contact_update_st_dt' => '',
+			'contact_update_end_dt' => '',
+		);
+
 		print '<script>
 			$(document).ready(function() {
 
@@ -902,6 +935,9 @@ if ($object->fetch($id) >= 0) {
 					if (isset($extrafieldinfo['langfile'][$key])) {
 						$langs->load($extrafieldinfo['langfile'][$key]);
 					}
+					if (!isset($array_query['options_'.$key])) {
+						$array_query['options_'.$key] = '';
+					}
 					print '<tr><td>'.$langs->trans($extrafieldinfo['label'][$key]);
 					if (!empty($array_query['options_'.$key]) || (is_array($array_query['options_'.$key]) && count($array_query['options_'.$key]) > 0)) {
 						print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
@@ -1097,6 +1133,9 @@ if ($object->fetch($id) >= 0) {
 			}
 			if (!empty($extrafieldinfo['label'])) {
 				foreach ($extrafieldinfo['label'] as $key => $val) {
+					if (!isset($array_query['options_'.$key.'_cnct'])) {
+						$array_query['options_'.$key.'_cnct'] = '';
+					}
 					print '<tr><td>'.$extrafieldinfo['label'][$key];
 					if ($array_query['options_'.$key.'_cnct'] != '' || (is_array($array_query['options_'.$key.'_cnct']) && count($array_query['options_'.$key.'_cnct']) > 0)) {
 						print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');

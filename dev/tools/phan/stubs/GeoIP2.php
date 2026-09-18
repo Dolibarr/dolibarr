@@ -299,7 +299,7 @@ namespace GeoIp2\Exception {
 		/**
 		 * The URI queried.
 		 */
-		public string $uri;
+		public $uri;
 		public function __construct(string $message, int $httpStatus, string $uri, \Exception $previous = null)
 		{
 		}
@@ -313,7 +313,7 @@ namespace GeoIp2\Exception {
 		/**
 		 * The code returned by the MaxMind web service.
 		 */
-		public string $error;
+		public $error;
 		public function __construct(string $message, string $error, int $httpStatus, string $uri, \Exception $previous = null)
 		{
 		}

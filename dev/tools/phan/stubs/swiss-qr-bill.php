@@ -26,7 +26,10 @@ final class ValidCreditorInformationPaymentReferenceCombinationValidator extends
  */
 final class ValidCreditorReference extends \Symfony\Component\Validator\Constraint
 {
-	public string $message = 'The string "{{ string }}" is not a valid Creditor Reference.';
+	/**
+	 * @var string
+	 */
+	public $message = 'The string "{{ string }}" is not a valid Creditor Reference.';
 }
 /**
  * @internal

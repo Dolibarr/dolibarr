@@ -1995,6 +1995,12 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$newstring."\n";
 		$this->assertEquals($newstring, "This is a text with<br>\nNew line<br>\nThen<br>\nNo html<br>\nThen<br>\n<b>HTML</b>", 'Test on make_substitutions with full conversion of text accepted');
 
+
+		// Try mix HTML into not HTML but no replaement is done
+		$newstring = make_substitutions('¿Necesitas ayuda para empezar con GLPI?', array('__SENDEREMAIL_SIGNATURE__' => '<br><strong>HTML content</strong>'), $langs, 1);
+		print __METHOD__." ".$newstring."\n";
+		$this->assertEquals($newstring, '¿Necesitas ayuda para empezar con GLPI?');
+
 		return true;
 	}
 

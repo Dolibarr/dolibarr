@@ -1462,7 +1462,7 @@ if ($mode == 'marketplace') {
 
 		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
-		$products_list = $remotestore->getProducts($options);	// Get list of product from all sources
+		$products_list = $remotestore->getProducts($options, $modules);	// Get list of product from all sources
 
 		$previouslink = $remotestore->get_previous_link();
 

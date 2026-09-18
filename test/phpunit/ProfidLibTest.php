@@ -202,4 +202,22 @@ class ProfidLibTest extends CommonClassTest
 		// Tests for bad syntax
 		$this->assertEquals(0, isValidTinForES("12345"));			// invalid regex for both NIF, CIF and NIE
 	}
+
+
+
+	/**
+	 * testIsProfIdWithoutSpace
+	 *
+	 * @return void
+	 */
+	public function testIsProfIdWithoutSpace()
+	{
+		$this->assertTrue(isProfIdWithoutSpace(1, 'FR'));	// SIREN
+		$this->assertTrue(isProfIdWithoutSpace(2, 'FR'));	// SIRET
+		$this->assertTrue(isProfIdWithoutSpace(1, 'fr'));	// country code is case insensitive
+		$this->assertFalse(isProfIdWithoutSpace(3, 'FR'));	// NAF/APE, not checked by isValidProfIds()
+		$this->assertFalse(isProfIdWithoutSpace(4, 'FR'));	// RCS/RM, free text holding spaces
+		$this->assertFalse(isProfIdWithoutSpace(2, 'ES'));	// NASS, not checked by isValidProfIds()
+		$this->assertFalse(isProfIdWithoutSpace(1, 'GB'));	// no rule known for this country
+	}
 }

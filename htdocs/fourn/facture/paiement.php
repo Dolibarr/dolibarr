@@ -126,6 +126,15 @@ $arrayfields = array();
 
 $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 
+// Check the user is allowed on the supplier invoice this payment page is opened for. Same check as
+// compta/paiement.php does for customer invoices, and as fourn/facture/card.php does for this object.
+// Without it, the page displays and lets a payment be posted on any supplier invoice of any third
+// party, since FactureFournisseur::fetch() does not filter on the entity nor on the assigned customers.
+$invoicetocheck = new FactureFournisseur($db);
+if ($facid > 0 && $invoicetocheck->fetch($facid) > 0) {
+	restrictedArea($user, 'fournisseur', $invoicetocheck->id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', (($invoicetocheck->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0));
+}
+
 
 /*
  * Actions
@@ -191,6 +200,8 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than $facid
+				restrictedArea($user, 'fournisseur', $tmpinvoice->id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', (($tmpinvoice->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0));
 				$amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement());
 				if ($amounts[$cursorfacid]) {
 					// Check amount
@@ -218,6 +229,8 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than $facid
+				restrictedArea($user, 'fournisseur', $tmpinvoice->id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', (($tmpinvoice->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0));
 				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->multicurrency_total_ttc - $tmpinvoice->getSommePaiement(1));
 				if ($multicurrency_amounts[$cursorfacid]) {
 					// Check amount
@@ -644,7 +657,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '<th class="center">' . $langs->trans('Type') . '</th>';
 						}
 						print '<th class="center">'.$langs->trans('Date').'</th>';
-						print '<th class="center">'.$langs->trans('DateMaxPayment').'</th>';
+						print '<th class="center">'.$langs->trans('DateDue').'</th>';
 						if (isModEnabled("multicurrency")) {
 							$langs->load("multicurrency");
 							$labeltoshow = '<span class="small nowraponall">'.$langs->trans("MulticurrencyOriginalCurrency").'</span>';
@@ -696,8 +709,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								$multicurrency_payment = $invoice->getSommePaiement(1);
 								$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
 								$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
-								$multicurrency_alreadypayed = price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
-								$multicurrency_remaintopay = price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
+								$multicurrency_alreadypayed = (float) price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
+								$multicurrency_remaintopay = (float) price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
 							}
 
 							print '<tr data-row-type="'.$objp->type.'" class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
@@ -706,7 +719,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '<td data-col="object-name" class="nowraponall">';
 							print '<div class="inline-block lineheightsmall">';
 							print $invoicesupplierstatic->getNomUrl(1);
-							print '<br><span class="opacitymedium small" title="'.$langs->trans("RefSupplier").'">';
+							print '<br><span class="opacitymedium spantitle" title="'.$langs->trans("RefSupplier").'">';
 							print dolPrintHTML($objp->ref_supplier);
 							print '</span>';
 							print '</div>';
