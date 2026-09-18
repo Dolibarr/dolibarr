@@ -1554,6 +1554,40 @@ class Reception extends CommonObject
 		}
 	}
 
+	/**
+	 *	Delete a line of the reception. Only allowed while the reception is a draft.
+	 *
+	 *	@param	User	$user		User that deletes
+	 *	@param	int		$lineid		Id of the line to delete (llx_receptiondet_batch.rowid)
+	 *	@return	int					>0 if OK, <0 if KO
+	 */
+	public function deleteLine($user, $lineid)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		$line = new ReceptionLineBatch($this->db);
+		if ($line->fetch($lineid) <= 0) {
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+		if ($line->fk_reception != $this->id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
+		$this->db->begin();
+		if ($line->delete($user) > 0) {
+			$this->db->commit();
+			return 1;
+		}
+		$this->error = $line->error;
+		$this->db->rollback();
+		return -1;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load lines
