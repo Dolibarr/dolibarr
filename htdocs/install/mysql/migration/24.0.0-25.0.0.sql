@@ -230,3 +230,12 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_societe.entity FROM llx_societe WHERE llx_notify_def.fk_soc = llx_societe.rowid AND llx_notify_def.fk_soc > 0;
 -- VMYSQL10.3 UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_user.entity FROM llx_user WHERE llx_notify_def.fk_user = llx_user.rowid AND llx_notify_def.fk_user > 0;
+
+-- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
+-- Empty strings must become NULL first: the unique index does not tolerate them like NULL.
+UPDATE llx_product_lot SET barcode = NULL WHERE barcode = '';
+
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
+ALTER TABLE llx_product_lot ADD CONSTRAINT fk_product_lot_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type (rowid);
