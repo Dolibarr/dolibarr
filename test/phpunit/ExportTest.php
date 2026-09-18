@@ -383,7 +383,7 @@ class ExportTest extends CommonClassTest
 
 		print "ccccccccccccccccc\n";
 		print var_export($db, true);
-		print var_export($mysoc, true);
+		print var_export($mysoc->db, true);
 
 		$filterdatatoexport = '';
 		//$filterdatatoexport='';
