@@ -145,12 +145,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $label;
 
 	/**
-	 * @var string 	Label of line
-	 * @deprecated	Use $label
-	 */
-	public $libelle;
-
-	/**
 	 * Description of the line
 	 * @var string
 	 * @deprecated		Use $desc
