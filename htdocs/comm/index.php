@@ -840,6 +840,7 @@ if (isModEnabled('propal') && is_object($propalstatic)) {
 			}
 		}
 
+		addSummaryTableLine(4, $num);
 		finishSimpleTable(true);
 		$db->free($resql);
 	} else {
