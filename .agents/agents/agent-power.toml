@@ -44,5 +44,3 @@ permission = "always"
 
 [tools.web_search]
 permission = "always"
-
-
