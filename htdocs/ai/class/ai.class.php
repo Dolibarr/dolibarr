@@ -618,29 +618,23 @@ class Ai
 						$tmparray['lines'][$i]['desc'] = $item['service'];
 					}
 
-					if (!empty($item['service'])) {
-						$tmparray['lines'][$i]['qty'] = $item['quantity'];
-						$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'];
-						//$tmparray['lines'][$i]['vat_amount'] = $item['tax']['amount'];
-						$tmparray['lines'][$i]['subprice'] = $item['unit_price'];
-						$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'];
-						$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'];
-					} else {
-						$tmparray['lines'][$i]['qty'] = $item['quantity'];
-						$tmparray['lines'][$i]['vat_rate'] = $item['tax']['rate'];
-						$tmparray['lines'][$i]['vat_amount'] = $item['tax']['amount'];
-						$tmparray['lines'][$i]['subprice'] = $item['unit_price'];
-						$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'];
-						$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'];
-					}
+					$tmparray['lines'][$i]['qty'] = $item['quantity'] ?? 1;
+					$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'] ?? null;
+					$tmparray['lines'][$i]['total_vat'] = $item['tax']['amount'] ?? null;
+					$tmparray['lines'][$i]['subprice'] = $item['unit_price'] ?? null;
+					$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'] ?? null;
+					$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'] ?? null;
+
 					if (!empty($item['period_start'])) {
 						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period_start'], 'tzuserrel');
 					}
 					if (!empty($item['period_end'])) {
 						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period_end'], 'tzuserrel');
 					}
-					if (!empty($item['period'])) {
+					if (!empty($item['period']) && !empty($item['period']['start_date'])) {
 						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period']['start_date'], 'tzuserrel');
+					}
+					if (!empty($item['period']) && !empty($item['period']['end_date'])) {
 						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period']['end_date'], 'tzuserrel');
 					}
 				}
