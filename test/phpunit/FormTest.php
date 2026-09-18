@@ -428,4 +428,80 @@ class FormTest extends CommonClassTest
 
 		unset($conf->global->USER_USE_SEARCH_TO_SELECT);
 	}
+
+	/**
+	 * testSelectDolusersSingleSearchToSelectUsesSelect2Pagination
+	 *
+	 * The single-select "search to select" combo must use select2 bound to
+	 * user/ajax/users.php with the same page/pagination.more wiring as the multiple
+	 * combo, instead of the old jQuery UI ajax_autocompleter() (which has no
+	 * pagination concept and caps "infinite list" mode at the first page forever).
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersSingleSearchToSelectUsesSelect2Pagination()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+		$conf->global->USER_USE_SEARCH_TO_SELECT = 'infinite';
+
+		$form = new Form($db);
+		$out = $form->select_dolusers(-1, 'fk_user_assign', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 0, false);
+
+		$this->assertIsString($out);
+		$this->assertStringContainsString('user/ajax/users.php', $out, 'single select-to-select must bind select2 to the ajax endpoint');
+		$this->assertStringContainsString('.select2({', $out, 'single select-to-select must use select2, not the old jQuery UI autocomplete');
+		$this->assertStringContainsString('d.page = params.page', $out, 'the ajax data callback must forward the select2 page number');
+		$this->assertStringContainsString('pagination: { more:', $out, 'processResults must tell select2 whether more rows are available');
+		$this->assertStringContainsString('<select', $out, 'single select-to-select must render a <select> element');
+		$this->assertStringNotContainsString('multiple', $out, 'single select-to-select must not render the multiple attribute');
+		$this->assertStringNotContainsString('ui-autocomplete', $out, 'the old jQuery UI autocomplete markup must be gone');
+
+		unset($conf->global->USER_USE_SEARCH_TO_SELECT);
+	}
+
+	/**
+	 * testSelectDolusersSingleSearchToSelectPreselectedOption
+	 *
+	 * The single-select "search to select" combo must render the preselected user as
+	 * an <option selected> of the select2-backed <select>, like the multiple combo does
+	 * for its preselected users.
+	 *
+	 * @return void
+	 */
+	public function testSelectDolusersSingleSearchToSelectPreselectedOption()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+		$conf->global->USER_USE_SEARCH_TO_SELECT = 'infinite';
+
+		$db->begin();
+
+		$uniq = 'zttestpreselusr'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$tmpuser = new User($db);
+		$tmpuser->lastname = 'Preselected'.$uniq;
+		$tmpuser->firstname = 'User';
+		$tmpuser->login = $uniq;
+		$tmpuser->email = $uniq.'@example.com';
+		$this->assertGreaterThan(0, $tmpuser->create($user), 'Failed to create test user: '.$tmpuser->error);
+
+		$form = new Form($db);
+		$out = $form->select_dolusers($tmpuser->id, 'fk_user_assign', 0, null, 0, '', '', '', 0, 0, '', 0, '', '', 0, 0, false);
+
+		$this->assertIsString($out);
+		$this->assertStringContainsString('<option value="'.$tmpuser->id.'" selected>', $out, 'the preselected user must be rendered as a selected <option>');
+
+		unset($conf->global->USER_USE_SEARCH_TO_SELECT);
+		$db->rollback();
+	}
 }
