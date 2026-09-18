@@ -2108,6 +2108,8 @@ abstract class CommonObject
 				$idtype = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 			} elseif ($this->element == 'societe') {
 				$idtype = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
+			} elseif ($this->element == 'productlot' && getDolGlobalString('PRODUCTLOT_DEFAULT_BARCODE_TYPE')) {
+				$idtype = getDolGlobalString('PRODUCTLOT_DEFAULT_BARCODE_TYPE');
 			} else {
 				dol_syslog('Call fetchBarCode with barcode_type not defined and cannot be guessed', LOG_WARNING);
 			}
