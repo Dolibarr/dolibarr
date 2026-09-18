@@ -3150,7 +3150,7 @@ class EmailCollector extends CommonObject
 										include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 										$hookmanager = new HookManager($this->db);
 									}
-									$hookmanager->initHooks(array('emailcolector'));
+									$hookmanager->initHooks(array('emailcolector', 'emailcollector'));
 									$parameters = array('arrayobject' => $arrayobject);
 									$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
 									if ($reshook > 0) {
@@ -3620,7 +3620,7 @@ class EmailCollector extends CommonObject
 									include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 									$hookmanager = new HookManager($this->db);
 								}
-								$hookmanager->initHooks(['emailcolector']);
+								$hookmanager->initHooks(array('emailcolector', 'emailcollector'));
 
 								$parameters = array(
 									'connection' =>  $connection,

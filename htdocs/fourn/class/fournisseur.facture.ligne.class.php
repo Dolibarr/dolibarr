@@ -127,7 +127,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Unit price including taxes
-	 * @var float
+	 * @var float|null
 	 */
 	public $subprice_ttc;
 
@@ -143,6 +143,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @deprecated  Use $product_label
 	 */
 	public $label;
+
+	/**
+	 * @var string 	Label of line
+	 * @deprecated	Use $label
+	 */
+	public $libelle;
 
 	/**
 	 * Description of the line
