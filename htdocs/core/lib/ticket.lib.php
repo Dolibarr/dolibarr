@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Benjamin Falière	<benjamin@faliere.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -252,7 +252,7 @@ function generate_random_id($car = 16)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	$max = strlen($chaine) - 1;
+	$max = strlen($chaine) - 1;   // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 
 	for ($i = 0; $i < $car; $i++) {
 		try {
