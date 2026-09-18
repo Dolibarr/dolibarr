@@ -401,6 +401,18 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	}
 
 	/**
+	 * Per-object-type rights are checked inside this class (PERM_MAP / delete map),
+	 * including the two permission namespaces Dolibarr uses for the same action.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return string RIGHTS_ENFORCED_DOWNSTREAM
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return self::RIGHTS_ENFORCED_DOWNSTREAM;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *
