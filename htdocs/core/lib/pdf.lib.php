@@ -2923,6 +2923,69 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 }
 
 /**
+ * Return the sum, over the group of lines summarized by a situation subtotal line, of the
+ * amounts a PDF model computes for the situation-progress columns (the amount before progress
+ * and the amount at the last situation): same group walk as
+ * CommonSubtotal::getSubtotalLineAmountValue() (up from the subtotal line, stopping at the
+ * title line that opened the group, skipping nested title/subtotal lines), but summing the
+ * per-line info returned by the PDF model instead of total_ht.
+ *
+ * These two amounts are specific to the situation-invoice columns some PDF models add on top of
+ * the standard ones (for example Octopus's "btpsomme" and "prev_progress_amount" columns) and
+ * are not part of CommonSubtotal: they need getInfosLineLastSituation(), which reads PDF-model
+ * state (the previous situation's lines) built while the document is generated, so this stays a
+ * plain pdf.lib.php helper rather than a CommonSubtotal method. Any PDF model can reuse it by
+ * implementing a getInfosLineLastSituation($object, $line) method with the same contract as
+ * pdf_octopus::getInfosLineLastSituation().
+ *
+ * @param	CommonDocGenerator	$pdfmodel	PDF model; must implement getInfosLineLastSituation($object, $line)
+ * @param	CommonObject		$object		Object owning $line (Facture)
+ * @param	CommonObjectLine	$line		Subtotal line that needs its group amounts
+ * @return	array{total_ht_without_progress:float,prev_total_ht:float}
+ */
+function pdf_getSituationSubtotalGroupAmounts(&$pdfmodel, $object, $line)
+{
+	$res = array(
+		'total_ht_without_progress' => 0.0,
+		'prev_total_ht' => 0.0,
+	);
+
+	if (!method_exists($pdfmodel, 'getInfosLineLastSituation')) {
+		return $res;
+	}
+
+	$abovelines = array();
+	$aboverangs = array();
+	foreach ($object->lines as $l) {
+		if (!is_object($l) || $l->rang >= $line->rang) {
+			continue;
+		}
+		$aboverangs[] = (int) $l->rang;
+		$abovelines[] = $l;
+	}
+	// Scan the lines above the current one from the nearest to the farthest.
+	array_multisort($aboverangs, SORT_DESC, SORT_NUMERIC, $abovelines);
+
+	foreach ($abovelines as $l) {
+		if ($l->special_code == SUBTOTALS_SPECIAL_CODE) {
+			if ($l->qty > 0 && $l->qty <= abs($line->qty)) {
+				break;	// Title line that opened the group: we stop here
+			}
+			continue;	// Nested title or nested subtotal: not a real line, skip it
+		}
+
+		// @phan-suppress-next-line PhanUndeclaredMethod
+		$infoprev = $pdfmodel->getInfosLineLastSituation($object, $l);
+		if (is_array($infoprev)) {
+			$res['total_ht_without_progress'] += (float) $infoprev['total_ht_without_progress'];
+			$res['prev_total_ht'] += (float) $infoprev['total_ht'];
+		}
+	}
+
+	return $res;
+}
+
+/**
  *	Return line total excluding tax
  *
  *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal	$object				Object
