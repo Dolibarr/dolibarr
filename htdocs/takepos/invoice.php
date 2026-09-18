@@ -3,7 +3,7 @@
  * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -104,8 +104,8 @@ if (empty($takeposterminal)) {
 		$takeposterminal = $_SESSION["takeposterminal"];
 	} else {
 		print <<<SCRIPT
-<script language="javascript">
-	$( document ).ready(function() {
+<script type="text/javascript">
+	jQuery(function() {
 		ModalBox('ModalTerminal');
 	});
 </script>
@@ -309,7 +309,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to record a payment on a TakePOS invoice
-	if ($action == 'valid' && $user->hasRight('facture', 'creer')) {
+	if ($action == 'valid' && $user->hasRight('takepos', 'run')) {
 		$bankaccount = 0;
 		$error = 0;
 
@@ -547,7 +547,7 @@ if (empty($reshook)) {
 	}
 
 	$creditnote = null;
-	if ($action == 'creditnote' && $user->hasRight('facture', 'creer')) {
+	if ($action == 'creditnote' && $user->hasRight('takepos', 'run')) {
 		$db->begin();
 
 		$creditnote = new Facture($db);
@@ -1745,7 +1745,7 @@ if ($action == "search") {
 function SendTicket(id)
 {
 	console.log("Open box to select the Print/Send form");
-	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
+	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:<?php echo "'".dol_escape_js($langs->trans("SendTicket"))."'" ; ?>});
 	return true;
 }
 
@@ -1759,7 +1759,7 @@ function PrintBox(id, action) {
 /* Open the popup of the receipt to allow printing */
 function PrintByBrowser(id, gift) {
 	console.log("Call PrintByBrowser() to generate the receipt.");
-	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
+	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:<?php echo "'".dol_escape_js($langs->trans("PrintTicket"))."'" ; ?>});
 	return true;
 }
 
@@ -1804,10 +1804,10 @@ function PrintByESCPOS(id) {
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.currentToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 		success: function(){
-				showPrintResultPopup('<?php echo dol_escape_js($langs->trans("SentToPrinter").' '.$nameOfPrinter); ?>', 2000);
+				showPrintResultPopup(<?php echo "'".dol_escape_js($langs->trans("SentToPrinter").' '.$nameOfPrinter)."'" ; ?>, 2000);
 			},
 		error: function(){
-				showPrintResultPopup("<?php echo dol_escape_js($langs->trans("FailedToSendToPrinter")); ?>", 2000);
+				showPrintResultPopup(<?php echo "'".dol_escape_js($langs->trans("FailedToSendToPrinter"))."'" ; ?>, 2000);
 		}
 	});
 	return true;
@@ -1827,12 +1827,12 @@ function showPrintResultPopup(message, duration) {
 // Call url to generate a credit note (with same lines) from existing invoice
 var creditNoteParams="";
 function CreditNote() {
-    <?php
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('paramsForCreditNote', $parameters, $invoice, $action);?>
+	<?php
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('paramsForCreditNote', $parameters, $invoice, $action);?>
 	$("#poslines").load("<?php
-        print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid+creditNoteParams, function() {	});
-        return true;
+	print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid+creditNoteParams, function() {	});
+		return true;
 }
 
 // Call url to add notes
@@ -1989,7 +1989,7 @@ $( document ).ready(function() {
 		$s .= '</span>';
 	}
 	?>
-	$("#moreinfo").html('<?php print dol_escape_js($s); ?>');
+	$("#moreinfo").html(<?php print "'".dol_escape_js($s)."'" ; ?>);
 
 });
 

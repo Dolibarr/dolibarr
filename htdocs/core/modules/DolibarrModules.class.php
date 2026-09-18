@@ -250,7 +250,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $dictionaries = array();
 
 	/**
-	 * @var array<string|array{data:string,entity:int}> tabs description
+	 * @var array<string|array{data:string,entity?:int}> tabs description
 	 */
 	public $tabs;
 
@@ -383,6 +383,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * @var array<array<string,string>>
 	 */
 	public $import_updatekeys_array;
+	/**
+	 * @var array<int,string[]>	Update keys preselected on the screen, as field aliases
+	 */
+	public $import_preselected_updatekeys_array;
 	/**
 	 * @var array<int,array<int,string>>
 	 */
@@ -2832,7 +2836,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$versionTitle .= '<br>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
 			}
 
-			$return .=  '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
+			$return .=  '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dolPrintHTMLForAttribute($versionTitle).'" >';
 			$return .=  $this->getVersion(1);
 			$return .=  '</span>';
 		}

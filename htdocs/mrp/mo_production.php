@@ -2038,7 +2038,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print "</form>\n";
 	} ?>
 
-		<script  type="text/javascript" language="javascript">
+		<script type="text/javascript">
 
 			$(document).ready(function() {
 				//Consumption : When a warehouse is selected, only the lot/serial numbers that are available in it are offered

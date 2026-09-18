@@ -265,6 +265,11 @@ abstract class CommonObject
 	public $linked_objects;
 
 	/**
+	 * @var array<string,int>|null		Array of external linked objects (set by hooks or external modules) to merge into during creation
+	 */
+	public $other_linked_objects;
+
+	/**
 	 * @var array<string,array<int,int>>	Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
@@ -2927,7 +2932,8 @@ abstract class CommonObject
 	}
 
 	/**
-	 *  Change the payments methods
+	 *  Change the payments methods.
+	 *  Can be used on invoice, supplier invoice, salary, company, vat, ...
 	 *
 	 *  @param		int		$id		Id of new payment method
 	 *  @return		int				>0 if OK, <0 if KO
@@ -5800,7 +5806,7 @@ abstract class CommonObject
 
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE') && empty($newlang) && is_object($this->thirdparty)) {
@@ -6997,9 +7003,9 @@ abstract class CommonObject
 						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								// We set a global variable to $objectoffield so we can use it inside computed formula
-								$objectoffield = dol_clone($this, 2);
+								// We set a global variable to $objectoffield so we can use it inside computed formula (must be before the assignment)
 								global $objectoffield;
+								$objectoffield = dol_clone($this, 2);
 								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
@@ -8141,7 +8147,9 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', (string) $type)) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($placeholder ? ' placeholder="'.dolPrintHTMLForAttribute($placeholder).'"' : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif (in_array($type, array('email', 'mail', 'phone', 'url', 'ip'))) {
+		} elseif ($type == 'phone' && !preg_match('/search_/', $keyprefix)) {
+			$out = $form->showPhoneInput($value, $keyprefix.$key.$keysuffix, !empty($this->country_id) ? $this->country_id : 0);
+		} elseif (in_array($type, array('email', 'mail', 'url', 'ip'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', (string) $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -8854,11 +8862,11 @@ abstract class CommonObject
 				$out .= '
 					<script nonce="'.getNonce().'">
 					$(document).ready(function() {
-						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
-							$("'.dol_escape_js($newInput).'").insertBefore(this);
+						$(\'a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add\').click(function() {
+							$(\''.dol_escape_js($newInput).'\').insertBefore(this);
 						});
 
-						$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
+						$(document).on("click", \'a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del\', function() {
 							$(this).parent().remove();
 						});
 					});
@@ -9997,7 +10005,7 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value, '', $this->table_element);
 								break;
 							case "create":
-								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
+								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,ip,password'));
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
@@ -11614,8 +11622,8 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
-		$sql.= " SET ".implode(', ', $sanitized_tmp);
-		$sql.= " WHERE rowid = ".((int) $this->id);
+		$sql .= " SET ".implode(', ', $sanitized_tmp);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 

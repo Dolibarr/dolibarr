@@ -126,6 +126,15 @@ $arrayfields = array();
 
 $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 
+// Check the user is allowed on the supplier invoice this payment page is opened for. Same check as
+// compta/paiement.php does for customer invoices, and as fourn/facture/card.php does for this object.
+// Without it, the page displays and lets a payment be posted on any supplier invoice of any third
+// party, since FactureFournisseur::fetch() does not filter on the entity nor on the assigned customers.
+$invoicetocheck = new FactureFournisseur($db);
+if ($facid > 0 && $invoicetocheck->fetch($facid) > 0) {
+	restrictedArea($user, 'fournisseur', $invoicetocheck->id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', (($invoicetocheck->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0));
+}
+
 
 /*
  * Actions
@@ -191,6 +200,8 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than $facid
+				restrictedArea($user, 'fournisseur', $tmpinvoice->id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', (($tmpinvoice->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0));
 				$amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement());
 				if ($amounts[$cursorfacid]) {
 					// Check amount
@@ -218,6 +229,8 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than $facid
+				restrictedArea($user, 'fournisseur', $tmpinvoice->id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', (($tmpinvoice->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0));
 				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->multicurrency_total_ttc - $tmpinvoice->getSommePaiement(1));
 				if ($multicurrency_amounts[$cursorfacid]) {
 					// Check amount
@@ -710,7 +723,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print '<span data-field="ref">';
 							print $invoicesupplierstatic->getNomUrl(1);
 							print '</span> ';
-							print '<br class="paiement-line-break-for-ref"><span class="opacitymedium small" data-field="ref-supplier" title="'.$langs->trans("RefSupplier").'">';
+							print '<br class="paiement-line-break-for-ref">';
+							print '<span class="spantitle" data-field="ref-supplier" title="'.$langs->trans("RefSupplier").'">';
 							print showValueWithClipboardCPButton($objp->ref_supplier);
 							print '</span>';
 							print '</div>';

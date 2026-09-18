@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2017       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
@@ -261,6 +262,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
 	}
+	// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+	$hookmanager->initHooks(array('turnoverreport'));
+	$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+	$sql .= $hookmanager->resPrint;
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);

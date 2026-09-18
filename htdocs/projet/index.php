@@ -167,7 +167,10 @@ print_barre_liste($form->textwithpicto($title, $htmltooltip), 0, $_SERVER["PHP_S
 
 
 // Get list of ponderated percent and colors for each status
-include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+if ($theme_vars_file) {
+	include $theme_vars_file;
+}
 /**
  * @var string $badgeStatus0
  * @var string $badgeStatus1

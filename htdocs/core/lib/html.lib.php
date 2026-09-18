@@ -41,6 +41,7 @@
  * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  * @return	string							String ready for HTML output
  * @see dolPrintText()
+ * @example <span><?php echo dolPrintLabel($object->name); ?></span>
  */
 function dolPrintLabel($s, $escapeonlyhtmltags = 0)
 {
@@ -54,6 +55,7 @@ function dolPrintLabel($s, $escapeonlyhtmltags = 0)
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
  * @see dolPrintLabel(), dolPrintHTML()
+ * @example <div class="description"><?php echo dolPrintText($object->description); ?></div>
  */
 function dolPrintText($s)
 {
@@ -70,6 +72,7 @@ function dolPrintText($s)
  * @param 	string[] 			$moreallowedtags 	Array of extra allowed tags (in addition to 'common' list)
  * @return	string									String ready for HTML output (sanitized and escape)
  * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea(), dolPrintText()
+ * @example <div class="rich-text"><?php echo dolPrintHTML($object->note); ?></div>
  */
 function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
 {
@@ -96,6 +99,7 @@ function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
  * @param	string[]	$allowothertags			List of other tags allowed
  * @return	string								String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
+ * @example <span title="<?php echo dolPrintHTMLForAttribute($tooltip); ?>">?</span>
  */
 function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags = array())
 {
@@ -119,6 +123,7 @@ function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags =
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
+ * @example <a href="<?php echo dolPrintHTMLForAttributeUrl($url); ?>">Link</a>
  */
 function dolPrintHTMLForAttributeUrl($s)
 {
@@ -136,6 +141,7 @@ function dolPrintHTMLForAttributeUrl($s)
  * @param	int		$allowiframe	Allow iframe tags
  * @return	string					String ready for HTML output into a textarea
  * @see dolPrintHTML(), dolPrintHTMLForAttribute()
+ * @example <textarea><?php echo dolPrintHTMLForTextArea($content); ?></textarea>
  */
 function dolPrintHTMLForTextArea($s, $allowiframe = 0)
 {
@@ -147,6 +153,7 @@ function dolPrintHTMLForTextArea($s, $allowiframe = 0)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
+ * @example <input type="text" value="<?php echo dolPrintPassword($masked); ?>">
  */
 function dolPrintPassword($s)
 {
@@ -161,7 +168,7 @@ function dolPrintPassword($s)
  *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(...), 1, 1, 1, 0)), 1, 1, 'common', 0, 1) for notes or descriptions into textarea, add 'common' if into a html content
  *        - dolPrintPassword that is a simple htmlspecialchars(... , ENT_COMPAT, 'UTF-8') for passwords.
  *
- *  @param      string		$stringtoescape			String to escape
+ *  @param      ?string		$stringtoescape			String to escape (treated as '' if null)
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' (escape all html tags) or 'common' (do not escape some common tags) or 'common,a,b,c' or list of tags to not escape.
@@ -169,9 +176,13 @@ function dolPrintPassword($s)
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_onlythesehtmltags(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
+ *  @example <div data-value="<?php echo dol_escape_htmltag($value, 0, 0, '', 1, 1); ?>"></div>
  */
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
+	if ($stringtoescape === null) {
+		return '';
+	}
 	$reg = array();
 	if (preg_match('/^common([a-z,]*)/', $noescapetags, $reg)) {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
@@ -374,12 +385,12 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
 	$out .= '      modal: true,';
 	$out .= '      height: 290,';
 	$out .= '      width: "40%",';
-	$out .= '      title: "' . dol_escape_js($label) . '",';
+	$out .= '      title: \'' . dol_escape_js($label) . '\',';
 	$out .= '    });';
 
 	// Simulate a click on the original "submit" input to export the site.
 	$out .= '    jQuery("#export-site-' . $name . '").click(function () {';
-	$out .= '      console.log("Clic on exportsite.");';
+	$out .= '      console.log("Click on exportsite.");';
 	$out .= '      var target = jQuery("input[name=\'' . dol_escape_js($exportSiteName) . '\']");';
 	$out .= '      console.log("element founded:", target.length > 0);';
 	$out .= '      if (target.length > 0) { target.click(); }';
@@ -494,6 +505,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
  *  @param	string	$moretabssuffix		A suffix to use when you have several dol_get_fiche_head() in same page
  * 	@return	void
  *  @deprecated Use print dol_get_fiche_head() instead
+ *  @example <?php dol_fiche_head(['card.php?id='.$id=>$langs->trans("Card")], 'card.php?id='.$id, $langs->trans("Title"), 0, 'generic'); ?>
  */
 function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0, $picto = '', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limittoshow = 0, $moretabssuffix = '')
 {
@@ -703,6 +715,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
  *  @param	int<-1,1>	$notab       -1 or 0=Add tab footer, 1=no tab footer
  *  @return	void
  *  @deprecated Use print dol_get_fiche_end() instead
+ *  @example <?php dol_fiche_end(); ?>
  */
 function dol_fiche_end($notab = 0)
 {
@@ -742,6 +755,7 @@ function dol_get_fiche_end($notab = 0)
  *  @param  int     	$onlybanner     Put this to 1, if the card will contains only a banner (this add css 'arearefnobottom' on div)
  *	@param	string		$morehtmlright	More html code to show before navigation arrows
  *  @return	void
+ *  @example <?php dol_banner_tab($supplier, 'rowid', '', 1, 'rowid', 'ref', '', '', 0, '', '', '', ''); ?>
  */
 function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $onlybanner = 0, $morehtmlright = '')
 {
@@ -1288,6 +1302,7 @@ function getPictoForType($key, $morecss = '')
  *  @param		string[]	$allowothertags			List of other tags allowed in title and alt attribute
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
+ *  @example <a href="edit.php?id=<?php echo $id; ?>"><?php echo img_picto($langs->trans("Edit"), 'edit', 'class="valignmiddle"'); ?></a>
  */
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2, $allowothertags = array())
 {
@@ -1922,6 +1937,7 @@ function getImgPictoConv($mode = 'fa')
  *  @param	string[]	$allowothertags		List of other tags allowed in title attribute
  *	@return	string							Return img tag
  *	@see	img_picto(), img_picto_common()
+ *  @example <div class="logo"><?php echo img_object($langs->trans("Company"), 'company', 'class="pictofixedwidth"'); ?></div>
  */
 function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $allowothertags = array())
 {
@@ -2054,6 +2070,7 @@ function img_action($titlealt, $numaction, $picto = '', $moreatt = '')
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
  *	@return string      		Return tag img
+ *  @example <div><?php echo img_edit_add($langs->trans("Add"), 'class="inline-block"'); ?></div>
  */
 function img_edit_add($titlealt = 'default', $other = '')
 {
@@ -2071,6 +2088,7 @@ function img_edit_add($titlealt = 'default', $other = '')
  *	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
  *	@return string      		Return tag img
+ *  @example <div><?php echo img_edit_remove($langs->trans("Remove")); ?></div>
  */
 function img_edit_remove($titlealt = 'default', $other = '')
 {
@@ -2090,6 +2108,7 @@ function img_edit_remove($titlealt = 'default', $other = '')
  *	@param  integer	$float      If you have to put the style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
+ *  @example <td><?php echo img_edit($langs->transnoentitiesnoconv("Edit"), 0, 'class="paddingleft"'); ?></td>
  */
 function img_edit($titlealt = 'default', $float = 0, $other = '')
 {
@@ -2109,6 +2128,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  *	@param  integer	$float      If you have to put the style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
+ *  @example <td><?php echo img_view($langs->transnoentitiesnoconv("View")); ?></td>
  */
 function img_view($titlealt = 'default', $float = 0, $other = 'class="valignmiddle"')
 {
@@ -2130,6 +2150,7 @@ function img_view($titlealt = 'default', $float = 0, $other = 'class="valignmidd
  *	@param  string	$other      Add more attributes on img
  *  @param	string	$morecss	More CSS
  *  @return string      		Retourne tag img
+ *  @example <td><?php echo img_delete($langs->transnoentitiesnoconv("Delete"), 'class="pictodelete"', 'width20'); ?></td>
  */
 function img_delete($titlealt = 'default', $other = 'class="pictodelete"', $morecss = '')
 {
@@ -2182,6 +2203,7 @@ function img_split($titlealt = 'default', $other = 'class="pictosplit"')
  * 	@param	int              	$usehelpcursor		1=Use help cursor, 2=Use click pointer cursor, 0=No specific cursor
  * 	@param	int|string	        $usealttitle		Text to use as alt title
  * 	@return string            	           			Return tag img
+ *  @example <span class="help"><?php echo img_help(1, 1); ?></span>
  */
 function img_help($usehelpcursor = 1, $usealttitle = 1)
 {
@@ -2203,6 +2225,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
+ *  @example <td><?php echo img_info($langs->trans("Info")); ?></td>
  */
 function img_info($titlealt = 'default')
 {
@@ -2222,6 +2245,7 @@ function img_info($titlealt = 'default')
  *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1, add float: right. Can't be "class" attribute.
  *  @param	string  $morecss	Add more CSS
  *	@return string      		Return img tag
+ *  @example <div class="alert"><?php echo img_warning($langs->trans("Warning")); ?></div>
  */
 function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarning')
 {
@@ -2240,6 +2264,7 @@ function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarn
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
+ *  @example <div class="error"><?php echo img_error($langs->trans("Error")); ?></div>
  */
 function img_error($titlealt = 'default')
 {
@@ -2556,6 +2581,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
  *  @param		string[]|null   $errors		Array of errors
  *	@return 	void
  *  @see    	dol_htmloutput_errors()
+ *  @example <?php dol_print_error($db, $object->error, $object->errors); ?>
  */
 function dol_print_error($db = null, $error = '', $errors = null)
 {
@@ -2894,6 +2920,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
  *  @return	void
  *  @deprecated						Use load_fiche_titre instead
  *  @see load_fiche_titre()
+ *  @example <?php print_titre($langs->trans("MySection")); ?>
  */
 function print_titre($title)
 {
@@ -2912,6 +2939,7 @@ function print_titre($title)
  * 	@param	string	$id					To force an id on html objects by example id="name" where name is id
  * 	@return	void
  *  @deprecated Use print load_fiche_titre instead
+ *  @example <?php print_fiche_titre($langs->trans("Invoice"), $mesg, 'bill'); ?>
  */
 function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullpath = 0, $id = '')
 {
@@ -2984,6 +3012,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
  *  @param  int			$pagenavastextinput 1=Do not suggest list of pages to navigate but suggest the page number into an input field.
  *  @param	string		$morehtmlrightbeforearrow	More html to show (before arrows)
  *	@return	void
+ *  @example <?php print_barre_liste($langs->trans("List"), $page, $_SERVER['PHP_SELF'], $sortfield, $sortorder); ?>
  */
 function print_barre_liste($title, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $selectlimitsuffix = 0, $hidenavigation = 0, $pagenavastextinput = 0, $morehtmlrightbeforearrow = '')
 {
@@ -3343,6 +3372,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  *	@param	integer|string	$format						1=Yes/No, 0=yes/no, 2=Disabled/enabled checkbox, 3=Disabled/enabled checkbox + Yes/No, 4 or Text=Use picto
  *	@param	int				$color						0=texte only, 1=Text is formatted with a color font style ('ok' or 'error'), 2=Text is formatted with 'ok' color.
  *	@return	string										HTML string
+ *  @example <td><?php echo yn($object->active, 1, 1); ?></td>
  */
 function yn($yesno, $format = 1, $color = 0)
 {
@@ -3405,6 +3435,7 @@ function yn($yesno, $format = 1, $color = 0)
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
  *  @return	void
  *  @see	dol_htmloutput_events()
+ *  @example <?php setEventMessage($langs->trans("RecordSaved"), 'mesgs', 0, 0); ?>
  */
 function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
 {
@@ -3452,6 +3483,7 @@ function setEventMessage($mesgs, $style = 'mesgs', $noduplicate = 0, $attop = 0)
  *  @param	int				$attop			Add the message in the top of the stack (at bottom by default)
  *  @return	void
  *  @see	dol_htmloutput_events()
+ *  @example <?php setEventMessages($langs->trans("Saved"), [], 'mesgs'); ?>
  */
 function setEventMessages($mesg, $mesgs, $style = 'mesgs', $messagekey = '', $noduplicate = 0, $attop = 0)
 {
@@ -4055,7 +4087,7 @@ function printCommonFooter($zone = 'private')
 function dol_set_focus($selector)
 {
 	print "\n" . '<!-- Set focus onto a specific field -->' . "\n";
-	print '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery("' . dol_escape_js($selector) . '").focus(); });</script>' . "\n";
+	print '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery(\'' . dol_escape_js($selector) . '\').focus(); });</script>' . "\n";
 }
 
 
@@ -4247,6 +4279,7 @@ function ajax_autoselect($htmlname, $addlink = '', $textonlink = 'Link')
  * @param   string  			$url        the url for link
  * @param   array{attr?:array{class:string,title:string},css?:string}	$params		Various params for future : recommended rather than adding more function arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              			Html badge
+ *  @example <div><?php echo dolGetBadge($langs->trans("New"), '', 'primary'); ?></div>
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
@@ -4316,6 +4349,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
  * @param   string  			$url				The url for link
  * @param   array<string,mixed>	$params				Various params. Example: array('tooltip'=>'no|...', 'badgeParams'=>...)
  * @return  string									Html status string
+ *  @example <div><?php echo dolGetStatus($langs->trans("Validated"), $langs->trans("Valid"), '', 'status4'); ?></div>
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
@@ -4441,6 +4475,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                                                                                                                                                                                                                                                                                                                      ]
  * // phpcs:enable
  * @return string               		html button
+ *  @example <div><?php echo dolGetButtonAction($langs->trans("Save"), '', 'default', 'save.php'); ?></div>
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
@@ -4625,7 +4660,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
 			// Deprecated, forbidden.
 			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
-		} elseif ($key == 'href') {
+		} elseif (in_array($key, ['href', 'data-confirm-url'])) {
 			$value = dolPrintHTMLForAttributeUrl($value);
 		} else {
 			$value = dolPrintHTMLForAttribute($value);
@@ -4716,7 +4751,7 @@ function commonHtmlAttributeBuilder($attr, array $unescapedAttr = [])
 		if (!empty($unescapedAttr) && in_array($key, $unescapedAttr)) {
 			// Not recommended
 			$value = dol_htmlentities((string) $value, ENT_QUOTES | ENT_SUBSTITUTE);
-		} elseif ($key == 'href') {
+		} elseif (in_array($key, ['href', 'data-confirm-url'])) {
 			$value = dolPrintHTMLForAttributeUrl((string) $value);
 		} else {
 			$value = dolPrintHTMLForAttribute((string) $value);

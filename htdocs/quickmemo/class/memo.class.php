@@ -1660,7 +1660,7 @@ class Memo extends CommonObject
 			'elementId' => 0,
 			'elementType' => '',
 			'context' => null,
-			'token' => newToken(),
+			'token' => currentToken(),
 			'colors' => Memo::getColorPreset(),
 			'userReadRight' => $user->hasRight('quickmemo', 'memo', 'read'),
 			'userWriteRight' => $user->hasRight('quickmemo', 'memo', 'write'),

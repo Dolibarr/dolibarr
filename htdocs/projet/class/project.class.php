@@ -342,10 +342,10 @@ class Project extends CommonObject
 	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 12),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 15, 'searchall' => 1),
 		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1, 'csslist' => 'tdoverflowmax250'),
+		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 18),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'dateo' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => -1, 'position' => 30),
@@ -2345,6 +2345,42 @@ class Project extends CommonObject
 
 		$this->error = $this->db->error();
 		return -1;
+	}
+
+	/**
+	 * Build the SQL WHERE fragment that tells apart an open opportunity from a record that is not one.
+	 *
+	 * The two fragments are an exhaustive and mutually exclusive partition of the projet table:
+	 *  - 'openedopp'    : an open opportunity, i.e. usage_opportunity is set and the opportunity status
+	 *                     is neither WON nor LOST (a status not set yet counts as open);
+	 *  - 'notopenedopp' : everything else, i.e. a record not used as an opportunity, or an opportunity
+	 *                     whose status is already WON or LOST. This is not the same as "is a project":
+	 *                     a WON or LOST opportunity is reported here too.
+	 *
+	 * @param	string	$view	View to filter on, 'openedopp' or 'notopenedopp'
+	 * @param	string	$alias	SQL alias of the projet table, 'p' or 't'
+	 * @return	string			SQL fragment with no leading 'AND', empty string if $view or $alias is unknown
+	 */
+	public function getViewFilterSQL(string $view, string $alias = 'p'): string
+	{
+		// $tablealiastouse holds a literal of this method, never the caller input.
+		if ($alias == 'p') {
+			$tablealiastouse = 'p';
+		} elseif ($alias == 't') {
+			$tablealiastouse = 't';
+		} else {
+			return '';
+		}
+
+		$sanitizedwonlost = $tablealiastouse.".fk_opp_status IN (SELECT rowid FROM ".$this->db->prefix()."c_lead_status WHERE code IN ('WON', 'LOST'))";
+
+		if ($view == 'openedopp') {
+			return "(".$tablealiastouse.".usage_opportunity = 1 AND (".$tablealiastouse.".fk_opp_status IS NULL OR NOT ".$sanitizedwonlost."))";
+		} elseif ($view == 'notopenedopp') {
+			return "(".$tablealiastouse.".usage_opportunity IS NULL OR ".$tablealiastouse.".usage_opportunity <> 1 OR ".$sanitizedwonlost.")";
+		}
+
+		return '';
 	}
 
 	/**

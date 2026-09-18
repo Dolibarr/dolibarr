@@ -45,24 +45,14 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class AccountancySystemTest extends CommonClassTest
 {
 	/**
-	 * Setup some global objects before the test.
+	 * setUpBeforeClass
 	 *
 	 * @return void
 	 */
 	public static function setUpBeforeClass(): void
 	{
+		self::assertTrue(isModEnabled('accounting'), " module double party accounting must be enabled");
 		parent::setUpBeforeClass();
-		global $conf, $user,  $mysoc;
-		global $db;
-
-		$soc = new Societe($db);
-		$soc->name = "AccountancySystem Unittest";
-		$socid = $soc->create($user);
-		$mysoc = $soc;
-
-		/* Errors are caught in later tests. */
-		if ($socid <= 0)
-			return;
 	}
 
 	/**
@@ -72,9 +62,11 @@ class AccountancySystemTest extends CommonClassTest
 	 */
 	public function testAccountancySystemCreate(): int
 	{
-		global $user, $db, $mysoc;
-
-		$this->assertLessThan($mysoc->id, 0, "Cannot create Societe: " . $mysoc->errorsToString());
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$accountancySystem = new AccountancySystem($db);
 		$accountancySystem->pcg_version = 'PCG99-CUSTOMTEST';
@@ -97,7 +89,11 @@ class AccountancySystemTest extends CommonClassTest
 	 */
 	public function testAccountancySystemFetch($id)
 	{
-		global $db;
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$accountancySystem = new AccountancySystem($db);
 		$result = $accountancySystem->fetch($id);

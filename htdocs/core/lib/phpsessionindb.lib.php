@@ -276,6 +276,74 @@ function dolSessionGC($max_lifetime)
 	}
 }
 
+/**
+ * Enforce a maximum number of concurrent database sessions for a given user.
+ *
+ * Called when a new authenticated session is being established. The existing rows
+ * of that user in llx_session are kept only for the ($keepcount - 1) most recently
+ * accessed ones, so that adding the session being established brings the total back
+ * to $keepcount. The other (older) sessions are deleted, which logs those browsers
+ * out on their next request (dolSessionRead() then finds no row).
+ *
+ * @param	int		$fk_user			Id of the user that just logged in
+ * @param	int		$keepcount			Max number of concurrent sessions for this user (<= 0 disables the feature)
+ * @param	string	$currentsessionid	Id of the session being established (never deleted)
+ * @return	int							Number of sessions that were evicted
+ */
+function dolSessionsLimitForUser($fk_user, $keepcount, $currentsessionid)
+{
+	global $dbsession;
+
+	$fk_user = (int) $fk_user;
+	$keepcount = (int) $keepcount;
+	if ($fk_user <= 0 || $keepcount <= 0) {
+		return 0;
+	}
+
+	// List the other sessions of this user, most recently accessed first.
+	$sql = "SELECT session_id FROM ".MAIN_DB_PREFIX."session";
+	$sql .= " WHERE fk_user = ".((int) $fk_user);
+	$sql .= " AND session_id <> '".$dbsession->escape($currentsessionid)."'";
+	$sql .= " ORDER BY last_accessed DESC, session_id DESC";
+
+	$resql = $dbsession->query($sql);
+	if (!$resql) {
+		dol_syslog("dolSessionsLimitForUser failed to list sessions: ".$dbsession->lasterror(), LOG_WARNING);
+		return 0;
+	}
+
+	$idstodelete = array();
+	$rank = 0;
+	while ($obj = $dbsession->fetch_object($resql)) {
+		$rank++;
+		if ($rank >= $keepcount) {	// Keep the ($keepcount - 1) most recent ones, evict the rest
+			$idstodelete[] = $obj->session_id;
+		}
+	}
+
+	if (empty($idstodelete)) {
+		return 0;
+	}
+
+	$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."session WHERE session_id IN (";
+	$i = 0;
+	foreach ($idstodelete as $idtodelete) {
+		$sqldel .= ($i > 0 ? ", " : "")."'".$dbsession->escape($idtodelete)."'";
+		$i++;
+	}
+	$sqldel .= ")";
+
+	$resqldel = $dbsession->query($sqldel);
+	if (!$resqldel) {
+		dol_syslog("dolSessionsLimitForUser failed to purge sessions: ".$dbsession->lasterror(), LOG_WARNING);
+		return 0;
+	}
+
+	dol_syslog("dolSessionsLimitForUser evicted ".count($idstodelete)." session(s) for fk_user=".$fk_user." to enforce a limit of ".$keepcount, LOG_NOTICE);
+
+	return count($idstodelete);
+}
+
 // Call to register user call back functions.
 session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC"); // @phpstan-ignore-line
 

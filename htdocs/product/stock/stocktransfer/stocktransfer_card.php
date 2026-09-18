@@ -428,7 +428,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock-s
 
 
 // Example: Adding jQuery code
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {';
 
 // Show alert for planned departure date if the transfer is related

@@ -2645,6 +2645,10 @@ class FactureLigneRec extends CommonInvoiceLine
 	 */
 	public $fk_contract_line;
 
+	/**
+	 * @var int Skip update price total for special lines
+	 */
+	public $skip_update_total;
 
 	/**
 	 * 	Delete line in database

@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2019       Nicolas ZABOURI             <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                    <support@open-dsi.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,7 @@ class Contact extends CommonObject
 	 *               of the llx_mailing_unsubscribe table. photo is excluded on purpose: the file is
 	 *               moved once the transaction is committed and may be renamed on a name collision.
 	 */
-	public const MERGE_FIELDS_FILL_IF_EMPTY = array(
+	const MERGE_FIELDS_FILL_IF_EMPTY = array(
 		'civility_code', 'lastname', 'firstname', 'name_alias', 'address', 'zip', 'town',
 		'state_id', 'country_id', 'poste', 'phone_pro', 'phone_perso', 'phone_mobile', 'fax',
 		'email', 'socialnetworks', 'birthday', 'default_lang', 'ref_ext',
@@ -69,13 +69,13 @@ class Contact extends CommonObject
 	/**
 	 * @var string[] Properties concatenated when merging two contacts.
 	 */
-	public const MERGE_FIELDS_CONCAT = array('note_public', 'note_private');
+	const MERGE_FIELDS_CONCAT = array('note_public', 'note_private');
 
 	/**
 	 * @var int Maximum depth walked when looking for the ancestors of a contact, to avoid an
 	 *          infinite loop should the parent hierarchy already contain a cycle.
 	 */
-	public const MERGE_MAX_PARENT_DEPTH = 100;
+	const MERGE_MAX_PARENT_DEPTH = 100;
 
 	/**
 	 * @var string ID to identify managed object
@@ -521,9 +521,9 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->name_alias = trim($this->name_alias);
-		$this->lastname = $this->lastname ? trim($this->lastname) : trim($this->name);
-		$this->firstname = trim($this->firstname);
+		$this->name_alias = trim((string) $this->name_alias);
+		$this->lastname = $this->lastname ? trim((string) $this->lastname) : trim((string) $this->name);
+		$this->firstname = trim((string) $this->firstname);
 		$this->setUpperOrLowerCase();
 		if (empty($this->socid)) {
 			$this->socid = 0;
@@ -649,18 +649,18 @@ class Contact extends CommonObject
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 		// Clean parameters
-		$this->ref_ext = (empty($this->ref_ext) ? '' : trim($this->ref_ext));
-		$this->name_alias = trim($this->name_alias);
-		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
-		$this->firstname = trim($this->firstname);
+		$this->ref_ext = (empty($this->ref_ext) ? '' : trim((string) $this->ref_ext));
+		$this->name_alias = trim((string) $this->name_alias);
+		$this->lastname = $this->lastname ? trim((string) $this->lastname) : trim((string) $this->name);
+		$this->firstname = trim((string) $this->firstname);
 		$this->email = trim($this->email ?? '');
-		$this->phone_pro = trim($this->phone_pro);
-		$this->phone_perso = trim($this->phone_perso);
-		$this->phone_mobile = trim($this->phone_mobile);
-		$this->photo = trim($this->photo);
-		$this->fax = trim($this->fax);
-		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
-		$this->town = (empty($this->town) ? '' : trim($this->town));
+		$this->phone_pro = trim((string) $this->phone_pro);
+		$this->phone_perso = trim((string) $this->phone_perso);
+		$this->phone_mobile = trim((string) $this->phone_mobile);
+		$this->photo = trim((string) $this->photo);
+		$this->fax = trim((string) $this->fax);
+		$this->zip = (empty($this->zip) ? '' : trim((string) $this->zip));
+		$this->town = (empty($this->town) ? '' : trim((string) $this->town));
 		$this->country_id = (empty($this->country_id) || $this->country_id < 0) ? 0 : $this->country_id;
 		if (!empty($this->statut) && empty($this->status)) {
 			$this->status = 1;
@@ -1142,10 +1142,10 @@ class Contact extends CommonObject
 				$this->statut_commercial = $label_sale_status; // libelle statut commercial
 				$this->stcomm_picto = $obj->stcomm_picto; // Picto statut commercial
 
-				$this->phone_pro = trim($obj->phone);
-				$this->fax = trim($obj->fax);
-				$this->phone_perso = trim($obj->phone_perso);
-				$this->phone_mobile = trim($obj->phone_mobile);
+				$this->phone_pro = trim((string) $obj->phone);
+				$this->fax = trim((string) $obj->fax);
+				$this->phone_perso = trim((string) $obj->phone_perso);
+				$this->phone_mobile = trim((string) $obj->phone_mobile);
 
 				$this->email			= $obj->email;
 				$this->socialnetworks	= ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());

@@ -193,10 +193,25 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$box = $i;
 				$supplierpriceid = GETPOSTINT('fourn'.$i);
 				//get all the parameters needed to create a line
+
 				$qty = GETPOSTFLOAT('tobuy'.$i);
-				$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
+
+				// Resolve the product and the supplier of the selected price line first. Without them,
+				// get_buyprice() falls back to a search with no product and no supplier filter, and can
+				// return a price row of another supplier for another product (see #40182).
+				$tmpprodfourn = new ProductFournisseur($db);
+				if ($tmpprodfourn->fetch_product_fournisseur_price($supplierpriceid) > 0) {
+					$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty, $tmpprodfourn->product_id, 'none', $tmpprodfourn->fourn_id);
+				} else {
+					$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
+				}
+
 				$res = $productsupplier->fetch($idprod);
-				if ($res && $idprod > 0) {
+				if ($res && $idprod > 0 && $fk_supplier > 0 && (int) $productsupplier->fourn_socid !== (int) $fk_supplier) {
+					// Safety net: never let a line be attached to a supplier different from the one filtered on.
+					dol_syslog("replenish.php: get_buyprice returned fourn_socid=".$productsupplier->fourn_socid." for fk_product=".$idprod." instead of expected fk_supplier=".$fk_supplier." (line $i, product_fournisseur_price id $supplierpriceid, qty $qty)", LOG_WARNING);
+					$errorQty++;
+				} elseif ($res && $idprod > 0) {
 					if ($qty) {
 						//might need some value checks
 						$line = new CommandeFournisseurLigne($db);
@@ -278,7 +293,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$order->fetch($obj->rowid);
 				$order->fetch_thirdparty();
 
-				$result = 0;
+				$result = 0;	// Stays 0 when the supplier has no line, so the test below is not done on an undefined value
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
