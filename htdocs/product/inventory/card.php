@@ -53,6 +53,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'in
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
+$no_prefill = !empty(GETPOST('no_prefill')) ? 1 : 0;
 
 $hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -310,13 +311,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action == 'validate') {
 		$form = new Form($db);
-		$formquestion = '';
+		$formquestion = array(
+			array('type' => 'checkbox', 'name' => 'no_prefill', 'label' => $form->textwithpicto($langs->trans("DoNotPrefillInventoryLines"), $langs->trans("DoNotPrefillInventoryLinesHelp")), 'value' => 0, 'size' => '10'),
+		);
+		$text = $langs->trans('ConfirmStartInventory');
 		if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
-			$formquestion = array(
-				array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10'),
-			);
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $langs->trans('IncludeSubWarehouseExplanation'), 'confirm_validate', $formquestion, '', 1);
+			$formquestion[] = array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10');
+			$text .= '<br>'.$langs->trans('IncludeSubWarehouseExplanation');
 		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $text, 'confirm_validate', $formquestion, '', 1);
 	}
 
 	// Call Hook formConfirm
@@ -442,11 +445,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_CANCELED) {
 				if ($permissiontoadd) {
-					if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
-					} else {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
-					}
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
 				}
 			}
 
