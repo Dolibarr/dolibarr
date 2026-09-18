@@ -382,12 +382,6 @@ class AllTests
 			print "Check on API has been disabled by parameter or env var 'PHPUNIT_DISABLE_API'.\n";
 		}
 
-
-		global $db;
-		print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
-		print var_export($db, true);
-
-
 		require_once dirname(__FILE__).'/ExportTest.php';
 		$suite->addTestSuite('ExportTest');
 		require_once dirname(__FILE__).'/ImportTest.php';
