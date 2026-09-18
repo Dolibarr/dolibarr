@@ -594,9 +594,10 @@ function calendars_prepare_head($param)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @param	int<-1,1>	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
  * @param	array{}|array{help:'toreporttype',0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	array<string,string[]>|null	$hourlybuckets	 Hourly buckets to collect HTML output of events by time slot (keyed by 'allday' or HHMM format)
  * @return	void
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array(), ?array &$hourlybuckets = null) // @phpstan-ignore-line missingType.iterableValue
 {
 	global $user, $conf, $langs;
 	global $action, $mode, $filter, $filtert, $status, $actioncode, $usergroup; // Filters used into search form
@@ -632,7 +633,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		if (empty($hourminsec) || !preg_match('/^[0-9]{6}$/', $hourminsec)) {
 			$hourminsec = '100000';
 		}
-		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"] . '?' . $newparam);
 	}
 
 	// Line with title of day
@@ -664,8 +665,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	}
 
 	// Line with td contains all div of each events
-	print '<div class="tagtr">';
-	print '<div class="tagtd centpercent agendacell sortable">';
+	if ($hourlybuckets === null) {
+		print '<div class="tagtr">';
+		print '<div class="tagtd centpercent agendacell sortable">';
+	}
 
 	//$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
 	$i = 0;
@@ -821,6 +824,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$nowrapontd = 0;
 					}
 
+					if ($hourlybuckets !== null) {
+						ob_start();
+					}
+
 					// Show event box
 					print "\n";
 					print '<!-- start event '.$i.' -->'."\n";
@@ -855,7 +862,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					//print ' style="height: 100px;';
 					//print ' position: absolute; top: 40px; width: 50%;';
 					//print '"';
-					print '>';
+					// Only real actioncomm-backed events get a stable polling id - birthdate/holiday/icalevent
+					// entries reuse $event->id from unrelated id spaces (contact id, holiday id, 0 for ical),
+					// which would otherwise collide with a real event's id and cause the autorefresh JS to
+					// remove the wrong DOM element.
+					print(in_array($event->type, array('birthdate', 'holiday', 'icalevent'), true) ? '>' : ' data-agenda-event-id="'.((int) $event->id).'">');
 
 					//var_dump($event->userassigned);
 					//var_dump($event->transparency);
@@ -1079,6 +1090,38 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					print '</td></tr></table>';
 					print '</div><!-- end event '.$i.' -->'."\n";
 
+					if ($hourlybuckets !== null) {
+						$eventhtml = ob_get_clean();
+
+						// Note: type_code alone (AC_OTH_AUTO/HOLIDAY/BIRTHDAY/ICALEVENT) is NOT used here - it only
+						// drives the (unchanged) unmovable/movable css class above. Placement in the all-day row
+						// is strictly about whether the event IS conceptually all-day: birthdays/holidays/full-day
+						// ICS entries already carry fulldayevent=1 (forced elsewhere) so they're still caught below;
+						// an AC_OTH_AUTO system-log entry (e.g. "Record modified") has a real, specific timestamp
+						// and belongs in its own time slot like any other event, just marked unmovable there.
+						$isallday = false;
+						if ($event->fulldayevent) {
+							$isallday = true;
+						} elseif ($event->date_start_in_calendar && $event->date_end_in_calendar && date('Ymd', $event->date_start_in_calendar) != date('Ymd', $event->date_end_in_calendar)) {
+							$isallday = true;
+						}
+
+						if ($isallday) {
+							$slotkey = 'allday';
+							// Day view's all-day row is fixed; week view's all-day row (rendered separately,
+							// see the show_week branch) must stay draggable between days - do not remove this guard.
+							if ($mode == 'show_day') {
+								$eventhtml = str_replace(' movable cursormove', ' unmovable', $eventhtml);
+							}
+						} else {
+							$eventhour = (int) dol_print_date($event->date_start_in_calendar, '%H', 'tzuserrel');
+							$eventmin = (int) dol_print_date($event->date_start_in_calendar, '%M', 'tzuserrel');
+							$slotkey = sprintf('%02d', $eventhour).($eventmin < 30 ? '00' : '30');
+						}
+
+						$hourlybuckets[$slotkey][] = $eventhtml;
+					}
+
 					$i++;
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode='.$mode.'&maxprint=0&month='.((int) $monthshown).'&year='.((int) $year);
@@ -1097,11 +1140,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 			break;
 		}
 	}
-	if (!$i) {	// No events
+	if ($hourlybuckets === null && !$i) {	// No events
 		print '&nbsp;';
 	}
 
-	if (getDolGlobalString('MAIN_JS_SWITCH_AGENDA') && $itoshow > $ireallyshown && $maxprint) {
+	if ($hourlybuckets === null && getDolGlobalString('MAIN_JS_SWITCH_AGENDA') && $itoshow > $ireallyshown && $maxprint) {
 		print '<div class="center cursorpointer cal_showmore" id="more_'.$ymd.'">'.img_picto("All", "angle-double-down", 'class="warning"').' +'.($itoshow - $ireallyshown).'</div>';
 		//print ' +'.(count($eventarray[$daykey])-$maxprint);
 
@@ -1122,9 +1165,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		print '</script>'."\n";
 	}
 
-	print '</div></div>'; // td tr
+	if ($hourlybuckets === null) {
+		print '</div></div>'; // td tr
+	}
 
-	print '</div>'; // table
+	print '</div>'; // dayevent tagtable wrapper opened unconditionally at the top of this function
 	print "\n";
 }
 
@@ -1150,10 +1195,11 @@ function dol_color_minus($color, $minus, $minusunit = 16)
 	return $newcolor;
 }
 
+
 /**
  * Build $eventarray (list of ActionComm objects, indexed by day) for the agenda calendar views
  * (month/week/day), applying the exact same date-range and filter logic the calendar page itself uses.
- * Extracted from htdocs/comm/action/index.php so the same logic can be shared by other agenda views.
+ * Extracted from htdocs/comm/action/index.php so it can be reused by ajax/ajaxrefreshevents.php.
  *
  * @param	DoliDB			$db					Database handler
  * @param	HookManager		$hookmanager		Hook manager
