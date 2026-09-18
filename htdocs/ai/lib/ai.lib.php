@@ -780,6 +780,7 @@ function getAiChatAssistantConfig()
 		'AIError',
 		'EmptyAIResponse',
 		'BrowserNotSupported',
+		'AISessionExpiredReload',
 
 		// Actions & Dialogs
 		'YesProceed',

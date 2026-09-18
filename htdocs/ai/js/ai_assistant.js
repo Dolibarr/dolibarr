@@ -1410,7 +1410,7 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingIntent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
             appendMsg('bot', formatResult(result, false, pendingIntent.tool));
@@ -1419,6 +1419,22 @@ export function initAiAssistant(container) {
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
+    }
+
+    // Parse a fetch Response that must be JSON. When the Dolibarr session has
+    // expired, the endpoints answer with the HTML login form (HTTP 200), which
+    // used to surface as a cryptic "Unexpected token '<'" network error: detect
+    // that case and tell the user to sign back in instead.
+    async function aiJson(response) {
+        const raw = await response.text();
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            if (/<\s*(!doctype|html|form|body)[\s>]/i.test(raw)) {
+                throw new Error(t('AISessionExpiredReload'));
+            }
+            throw e;
+        }
     }
 
     async function handleQuery() {
@@ -1477,7 +1493,7 @@ export function initAiAssistant(container) {
                     })()
                 ))
             });
-            const intent = await intentRes.json();
+            const intent = await aiJson(intentRes);
             loadingMsg.remove();
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
@@ -1491,7 +1507,7 @@ export function initAiAssistant(container) {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await navRes.json();
+                const nav = await aiJson(navRes);
                 loadingNav.remove();
                 if (nav.error) { appendMsg('error', nav.error); }
                 else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fa fa-external-link"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
@@ -1504,7 +1520,7 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(intent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingData.remove();
             lastResult = { data: result, tool: intent.tool, query: query };
             appendMsg('bot', formatResult(result, false, intent.tool));
