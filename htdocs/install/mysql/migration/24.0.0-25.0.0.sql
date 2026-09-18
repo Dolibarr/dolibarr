@@ -237,3 +237,24 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_societe.entity FROM llx_societe WHERE llx_notify_def.fk_soc = llx_societe.rowid AND llx_notify_def.fk_soc > 0;
 -- VMYSQL10.3 UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_user.entity FROM llx_user WHERE llx_notify_def.fk_user = llx_user.rowid AND llx_notify_def.fk_user > 0;
+
+
+-- Payment tables predate the modulebuilder convention of always adding import_key, so unlike
+-- most other object tables they never got it. Add it so a future import profile for payments
+-- (see htdocs/core/modules/mod*.class.php import_tables_array) is possible.
+ALTER TABLE llx_paiement ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_paiementfourn ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_paiementcharge ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_various ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_salary ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_loan ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
+
+-- llx_paiement_facture (the n-n link between a payment and the invoice(s) it pays) is also
+-- needed as an import target, for a "which invoices does this payment apply to" dataset: the
+-- generic import engine unconditionally writes import_key on every table of a dataset
+-- (modules_import.class.php), including link tables, once they are actually used as a target -
+-- unlike llx_element_element/llx_actioncomm_resources, which no current dataset targets.
+ALTER TABLE llx_paiement_facture ADD COLUMN import_key varchar(14);
