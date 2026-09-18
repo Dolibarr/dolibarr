@@ -67,6 +67,7 @@ fi
 
 install -d -m 700 -o "$USER_NAME" -g "$USER_NAME" "/home/$USER_NAME/.ssh"
 
+# shellcheck disable=SC2016  # $HOME must expand in the su subshell, not here
 su -s /bin/sh "$USER_NAME" -c \
     'ssh-keyscan -t ed25519,rsa github.com > "$HOME/.ssh/known_hosts" 2>/dev/null'
 

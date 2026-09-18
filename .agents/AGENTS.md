@@ -201,7 +201,7 @@ Before any modification, verify:
 - User rights enforcement (`$user->hasRight("module", "permission")` or `$user->hasRight("module", "objectname", "permission")`)
 - Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
 
-### If adding a unit test was explicitely requested
+### Code check
 
 - If making a major change or adding an important function, add or update PHPUnit test files into `test/phpunit/` (check to have the entry into file `test/phpunit/AllTests.php`).
 - If code validation whith `phan` is expected, you must add the parameter `-k .phan/config.php -B dev/tools/phan/baseline.txt --quick` to the phan command line. For example:
