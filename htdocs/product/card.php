@@ -406,14 +406,9 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// Delete the product
-					if ($productOrigin->delete($user) < 1) {
-						$error++;
-					}
-				}
-
-				if ($error) {
-					// Move files from the dir of the third party to delete into the dir of the third party to keep
+					// Move the files of the merged product into the dir of the product we keep, before deleting it:
+					// delete() removes that directory, and the filesystem is not part of the transaction, so this
+					// must run on the success path and before the deletion.
 					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
 						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
 						$destdir = $conf->product->multidir_output[$object->entity]."/".$object->ref;
@@ -422,11 +417,14 @@ if (empty($reshook)) {
 							$dirlist = dol_dir_list($srcdir, 'files', 1);
 							foreach ($dirlist as $filetomove) {
 								$destfile = $destdir.'/'.$filetomove['relativename'];
-								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
 								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
 							}
-							//exit;
 						}
+					}
+
+					// Delete the product
+					if ($productOrigin->delete($user) < 1) {
+						$error++;
 					}
 				}
 
