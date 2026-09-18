@@ -107,12 +107,30 @@ if ($action == 'add_payment' && $permissiontoadd) {
 		$paymentid = 0;
 		// $total = 0;
 
-		// Read possible payments
-		foreach ($_POST as $key => $value) {
-			if (substr($key, 0, 7) == 'amount_') {
-				if (GETPOST($key)) {
-					$amounts[$expensereport->fk_user_author] = (float) price2num(GETPOST($key));
-					// $total += price2num(GETPOST($key));
+		// Read possible payments.
+		// The key of $amounts is the expense report ID.
+		foreach ($_POST as $postkey => $value) {
+			if (preg_match('/^amount_([0-9]+)$/', $postkey, $matches)) {
+				$expensereportid = (int) $matches[1];
+
+				if (GETPOST($postkey) === '') {
+					continue;
+				}
+
+				$amount = (float) price2num(GETPOST($postkey), 'MT');
+
+				if ($amount < 0) {
+					$error++;
+					setEventMessages(
+						$langs->trans("ErrorBadValueForParameter", $postkey),
+						null,
+						'errors'
+					);
+					continue;
+				}
+
+				if ($amount != 0) {
+					$amounts[$expensereportid] = $amount;
 				}
 			}
 		}
@@ -120,6 +138,104 @@ if ($action == 'add_payment' && $permissiontoadd) {
 		if (count($amounts) <= 0) {
 			$error++;
 			setEventMessages('ErrorNoPaymentDefined', null, 'errors');
+		}
+
+		$expensereportsToPay = array();
+
+		/*
+		 * Server-side validation of every expense report submitted.
+		 */
+		if (!$error) {
+			foreach ($amounts as $expensereportid => $amount) {
+				$tmpExpenseReport = new ExpenseReport($db);
+
+				$result = $tmpExpenseReport->fetch((int) $expensereportid);
+
+				if ($result <= 0) {
+					$error++;
+					setEventMessages(
+						'Expense report '.$expensereportid.' not found',
+						null,
+						'errors'
+					);
+					break;
+				}
+
+				// All reports of one payment must belong to the same user.
+				if ((int) $tmpExpenseReport->fk_user_author !== (int) $expensereport->fk_user_author) {
+					$error++;
+					setEventMessages(
+						'Expense report '.$tmpExpenseReport->ref.' belongs to another user',
+						null,
+						'errors'
+					);
+					break;
+				}
+
+				// Keep the payment inside the same entity.
+				if ((int) $tmpExpenseReport->entity !== (int) $expensereport->entity) {
+					$error++;
+					setEventMessages(
+						'Expense report '.$tmpExpenseReport->ref.' belongs to another entity',
+						null,
+						'errors'
+					);
+					break;
+				}
+
+				// Only approved, unpaid reports can receive a payment here.
+				if (
+					(int) $tmpExpenseReport->status !== ExpenseReport::STATUS_APPROVED
+					|| !empty($tmpExpenseReport->paid)
+				) {
+					$error++;
+					setEventMessages(
+						'Expense report '.$tmpExpenseReport->ref.' is not available for payment',
+						null,
+						'errors'
+					);
+					break;
+				}
+
+				$sumpaidtmp = $tmpExpenseReport->getSumPayments();
+
+				if ($sumpaidtmp < 0) {
+					$error++;
+					setEventMessages(
+						$tmpExpenseReport->error,
+						$tmpExpenseReport->errors,
+						'errors'
+					);
+					break;
+				}
+
+				$remaintopay = price2num(
+					$tmpExpenseReport->total_ttc - $sumpaidtmp,
+					'MT'
+				);
+
+				if ($remaintopay <= 0) {
+					$error++;
+					setEventMessages(
+						'Expense report '.$tmpExpenseReport->ref.' has no amount remaining to pay',
+						null,
+						'errors'
+					);
+					break;
+				}
+
+				if ((float) $amount > (float) $remaintopay) {
+					$error++;
+					setEventMessages(
+						$langs->trans("PaymentHigherThanReminderToPay"),
+						null,
+						'errors'
+					);
+					break;
+				}
+
+				$expensereportsToPay[$expensereportid] = $tmpExpenseReport;
+			}
 		}
 
 		if (!$error) {
@@ -154,12 +270,40 @@ if ($action == 'add_payment' && $permissiontoadd) {
 			}
 
 			if (!$error) {
-				$payment->fetch($paymentid);
-				if ($expensereport->total_ttc - $payment->amount == 0) {
-					$result = $expensereport->setPaid($expensereport->id, $user);
-					if (!($result > 0)) {
-						setEventMessages($payment->error, $payment->errors, 'errors');
+				foreach ($expensereportsToPay as $expensereportid => $tmpExpenseReport) {
+					// Recalculate after inserting the new payment relation.
+					$sumpaidtmp = $tmpExpenseReport->getSumPayments();
+
+					if ($sumpaidtmp < 0) {
+						setEventMessages(
+							$tmpExpenseReport->error,
+							$tmpExpenseReport->errors,
+							'errors'
+						);
 						$error++;
+						break;
+					}
+
+					$remaintopay = price2num(
+						$tmpExpenseReport->total_ttc - $sumpaidtmp,
+						'MT'
+					);
+
+					if ($remaintopay == 0) {
+						$result = $tmpExpenseReport->setPaid(
+							$tmpExpenseReport->id,
+							$user
+						);
+
+						if ($result <= 0) {
+							setEventMessages(
+								$tmpExpenseReport->error,
+								$tmpExpenseReport->errors,
+								'errors'
+							);
+							$error++;
+							break;
+						}
 					}
 				}
 			}
@@ -231,17 +375,14 @@ if ($action == 'create' || empty($action)) {
 	print '<tr><td class="titlefield">'.$langs->trans("Period").'</td><td>'.get_date_range($expensereport->date_debut, $expensereport->date_fin, "", $langs, 0).'</td></tr>';
 	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($expensereport->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 
-	$sql = "SELECT sum(p.amount) as total";
-	$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
-	$sql .= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".((int) $id);
-	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
-	$sumpaid = 0;
-	$resql = $db->query($sql);
-	if ($resql) {
-		$obj = $db->fetch_object($resql);
-		$sumpaid = $obj->total;
-		$db->free($resql);
+
+	$sumpaid = $expensereport->getSumPayments();
+
+	if ($sumpaid < 0) {
+		dol_print_error($db, $expensereport->error);
+		$sumpaid = 0;
 	}
+
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td><span class="amount">'.price($sumpaid, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td><span class="amount">'.price($total - $sumpaid, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 
@@ -295,8 +436,7 @@ if ($action == 'create' || empty($action)) {
 
 	print '<br>';
 
-	// List of expenses ereport not already paid completely
-	$num = 1;
+	// List of expense reports of the same user not already paid completely
 	$i = 0;
 
 	print '<table class="noborder centpercent">';
@@ -311,48 +451,101 @@ if ($action == 'create' || empty($action)) {
 	$total_ttc = 0;
 	$totalrecu = 0;
 
-	while ($i < $num) {
-		$objp = $expensereport;
+	/*
+	 * Get all approved and unpaid expense reports for the same user.
+	 *
+	 * The expense report used to enter this page is shown first.
+	 */
+	$sql = "SELECT";
+	$sql .= " e.rowid,";
+	$sql .= " e.ref,";
+	$sql .= " e.total_ttc,";
+	$sql .= " e.date_debut,";
+	$sql .= " COALESCE(SUM(per.amount), 0) as total_paid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paymentexpensereport_expensereport as per";
+	$sql .= " ON per.fk_expensereport = e.rowid";
+	$sql .= " WHERE e.fk_user_author = ".((int) $expensereport->fk_user_author);
+	$sql .= " AND e.entity = ".((int) $expensereport->entity);
+	$sql .= " AND e.fk_statut = ".ExpenseReport::STATUS_APPROVED;
+	$sql .= " AND e.paid = 0";
+	$sql .= " GROUP BY e.rowid, e.ref, e.total_ttc, e.date_debut";
+	$sql .= " HAVING (e.total_ttc - COALESCE(SUM(per.amount), 0)) > 0";
+	$sql .= " ORDER BY";
+	$sql .= " CASE WHEN e.rowid = ".((int) $expensereport->id)." THEN 0 ELSE 1 END,";
+	$sql .= " e.date_debut DESC,";
+	$sql .= " e.rowid DESC";
 
-		print '<tr class="oddeven">';
+	$resql = $db->query($sql);
 
-		print '<td>'.$expensereport->getNomUrl(1)."</td>";
-		print '<td class="right">'.price($objp->total_ttc)."</td>";
-		print '<td class="right">'.price($sumpaid)."</td>";
-		print '<td class="right">'.price($objp->total_ttc - $sumpaid)."</td>";
-		print '<td class="center">';
-		if ($sumpaid < $objp->total_ttc) {
-			$namef = "amount_".$objp->id;
-			$nameRemain = "remain_".$objp->id; // autofill remainder amount
-			if (!empty($conf->use_javascript_ajax)) { // autofill remainder amount
-				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+	if ($resql) {
+		while ($objp = $db->fetch_object($resql)) {
+			$tmpExpenseReport = new ExpenseReport($db);
+			$tmpExpenseReport->id = $objp->rowid;
+			$tmpExpenseReport->ref = $objp->ref;
+
+			$sumpaidrow = (float) $objp->total_paid;
+			$remaintopay = price2num($objp->total_ttc - $sumpaidrow, 'MT');
+
+			print '<tr class="oddeven'.($objp->rowid == $expensereport->id ? ' highlight' : '').'">';
+
+			print '<td>'.$tmpExpenseReport->getNomUrl(1).'</td>';
+
+			print '<td class="right">'.price($objp->total_ttc).'</td>';
+
+			print '<td class="right">'.price($sumpaidrow).'</td>';
+
+			print '<td class="right">'.price($remaintopay).'</td>';
+
+			print '<td class="center nowraponall">';
+
+			$namef = 'amount_'.$objp->rowid;
+			$nameRemain = 'remain_'.$objp->rowid;
+
+			if ($remaintopay > 0) {
+				if (!empty($conf->use_javascript_ajax)) {
+					print img_picto(
+						"Auto fill",
+						'rightarrow.png',
+						"class='AutoFillAmount' data-rowid='".$namef."' data-value='".$remaintopay."'"
+					);
+				}
+
+				print '<input type="hidden" class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
+
+				print '<input type="text" class="width75"';
+				print ' name="'.$namef.'"';
+				print ' id="'.$namef.'"';
+				print ' value="'.dol_escape_htmltag(GETPOST($namef)).'">';
+			} else {
+				print '-';
 			}
-			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
-			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount
-			print '<input type="text" class="width75" name="'.$namef.'" id="'.$namef.'" value="'.GETPOST($namef).'">';
-		} else {
-			print '-';
+
+			print '</td>';
+
+			print "</tr>\n";
+
+			$total_ttc += (float) $objp->total_ttc;
+			$totalrecu += $sumpaidrow;
+			$i++;
 		}
-		print "</td>";
 
-		print "</tr>\n";
-
-		$total_ttc += $objp->total_ttc;
-		$totalrecu += $sumpaid;
-		$i++;
+		$db->free($resql);
+	} else {
+		dol_print_error($db);
 	}
+
 	if ($i > 1) {
-		// Print total
-		print '<tr class="oddeven">';
-		print '<td colspan="2" class="left">'.$langs->trans("Total").':</td>';
+		print '<tr class="liste_total">';
+		print '<td>'.$langs->trans("Total").'</td>';
 		print '<td class="right"><b>'.price($total_ttc).'</b></td>';
 		print '<td class="right"><b>'.price($totalrecu).'</b></td>';
 		print '<td class="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
-		print '<td class="center">&nbsp;</td>';
-		print "</tr>\n";
+		print '<td>&nbsp;</td>';
+		print '</tr>';
 	}
 
-	print "</table>";
+	print '</table>';
 
 	print $form->buttonsSaveCancel();
 

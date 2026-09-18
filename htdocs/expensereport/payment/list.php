@@ -197,7 +197,6 @@ $sql = 'SELECT pndf.rowid, pndf.rowid as ref, pndf.datep, pndf.amount as pamount
 $sql .= ', u.rowid as userid, u.login, u.email, u.lastname, u.firstname, u.photo';
 $sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
 $sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
-$sql .= ', SUM(pndf.amount)';
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -207,7 +206,10 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport AS pndf';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport AS ndf ON ndf.rowid=pndf.fk_expensereport';
+$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'paymentexpensereport_expensereport AS per';
+$sql .= ' ON per.fk_payment = pndf.rowid';
+$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport AS ndf';
+$sql .= ' ON ndf.rowid = per.fk_expensereport';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON pndf.fk_typepayment = c.id';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON u.rowid = ndf.fk_user_author';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON pndf.fk_bank = b.rowid';
@@ -263,7 +265,7 @@ $sql .= ' ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.iban_pref
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(DISTINCT pndf.rowid) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 
 	$resql = $db->query($sqlforcount);
