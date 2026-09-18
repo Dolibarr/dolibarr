@@ -445,6 +445,8 @@ class Products extends DolibarrApi
 			$updatetype = true;
 		}
 
+		$this->db->begin();
+
 		$result = $this->product->update($id, DolibarrApiAccess::$user, 0, 'update', $updatetype);
 
 		// If price mode is 1 price per product or price by client
@@ -546,8 +548,11 @@ class Products extends DolibarrApi
 		}
 
 		if ($result <= 0) {
+			$this->db->rollback();
 			throw new RestException(500, "Error updating product", array_merge(array($this->product->error), $this->product->errors));
 		}
+
+		$this->db->commit();
 
 		return $this->get($id);
 	}
