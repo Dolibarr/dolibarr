@@ -29,7 +29,6 @@ ApplyGracePeriod=Apply grace period
 TermPaidAllreadyPaid = This term is already paid
 CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
-GracePeriodMonths=Number of months of grace period
 # Admin
 ConfigLoan=Configuration of the module loan
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
