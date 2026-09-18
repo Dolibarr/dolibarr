@@ -519,41 +519,87 @@ class Ai
 				$tmparray['title'] = $json['document_info']['title'];
 			}
 
-			if (!empty($json['document_info']['issue_date']) && preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $json['document_info']['issue_date'])) {
+			// Issue date
+			if (!empty($json['document_info']['issue_date']) && preg_match('/^[0-9]{4})-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['issue_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['issue_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['submission_date']) && preg_match('/^[0-9]{4})-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['submission_date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['submission_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['date'], 'tzuserrel');
 			}
+
+			// Due date
 			if (!empty($json['document_info']['due_date']) && preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $json['document_info']['due_date'])) {
 				$tmparray['due_date'] = dol_stringtotime($json['document_info']['due_date'], 'tzuserrel');
 			}
+
 			// Currency
 			if ($json['summary']['currency'] == '€') {
 				$tmparray['currency_code'] = 'EUR';
 			} elseif (strlen($json['summary']['currency']) == 3) {
 				$tmparray['currency_code'] = $json['summary']['currency'];
+			} elseif (strlen($json['document_info']['currency_code']) == 3) {
+				$tmparray['currency_code'] = $json['document_info']['currency_code'];
+			}
+
+			// Note
+			if (!empty($json['notes'])) {
+				if (is_scalar($json['notes'])) {
+					$tmparray['note_public'] = $json['notes'];
+				} elseif (is_array($json['notes'])) {
+					// Loop on each note
+					$tmparray['note_public'] = '';
+					foreach ($json['notes'] as $val) {
+						if (is_scalar($val)) {
+							$tmparray['note_public'] = dol_concat($tmparray['note_public'], $val);
+						} elseif (is_array($val)) {
+							foreach ($val as $val2) {
+								if (is_scalar($val2)) {
+									$tmparray['note_public'] = dol_concat($tmparray['note_public'], $val2);
+								}
+							}
+						}
+					}
+				}
 			}
 
 			// Vendor
 			if (!empty($json['document_info']['vendor'])) {
-				if (!empty($json['document_info']['vendor']['name'])) {
-					$tmparray['vendor_name'] = $json['document_info']['vendor']['name'];
+				$arrayforthirdparty = $json['document_info']['vendor'];
+			} elseif (!empty($json['vendor'])) {
+				$arrayforthirdparty = $json['vendor'];
+			} elseif (!empty($json['issuer'])) {
+				$arrayforthirdparty = $json['issuer'];
+			}
+			if (!empty($arrayforthirdparty)) {
+				if (!empty($arrayforthirdparty['name'])) {
+					$tmparray['vendor_name'] = $arrayforthirdparty['name'];
 				}
-				if (!empty($json['document_info']['vendor']['siren'])) {
-					$tmparray['vendor_profid1'] = $json['document_info']['vendor']['siren'];
+				if (!empty($arrayforthirdparty['siren'])) {
+					$tmparray['vendor_profid1'] = $arrayforthirdparty['siren'];
 				}
-				if (!empty($json['document_info']['vendor']['siret'])) {
-					$tmparray['vendor_profid2'] = $json['document_info']['vendor']['siret'];
+				if (!empty($arrayforthirdparty['siret'])) {
+					$tmparray['vendor_profid2'] = $arrayforthirdparty['siret'];
 				}
-				if (!empty($json['document_info']['vendor']['email'])) {
-					$tmparray['vendor_email'] = $json['document_info']['vendor']['email'];
+				if (!empty($arrayforthirdparty['email'])) {
+					$tmparray['vendor_email'] = $arrayforthirdparty['email'];
 				}
-				if (!empty($json['document_info']['vendor']['professional_id'])) {
-					$tmparray['vendor_profid1'] = $json['document_info']['vendor']['professional_id']['siren'];
+				if (!empty($arrayforthirdparty['professional_id'])) {
+					$tmparray['vendor_profid1'] = $arrayforthirdparty['professional_id']['siren'];
 				}
-				if (!empty($json['document_info']['vendor']['vat_number'])) {
-					$tmparray['vendor_vat_number'] = $json['document_info']['vendor']['vat_number'];
+				if (!empty($arrayforthirdparty['vat_number'])) {
+					$tmparray['vendor_vat_number'] = $arrayforthirdparty['vat_number'];
+				} elseif (!empty($arrayforthirdparty['tva_num'])) {
+					$tmparray['vendor_vat_number'] = $arrayforthirdparty['tva_num'];
 				}
 			}
 
+			// Invoice
+			if (!empty($json['recipient']['description'])) {
+				$tmparray['invoice_label'] = $json['recipient']['description'];
+			}
+
+			// Items
 			if (empty($json['items'])) {
 				if (!empty($json['summary']['subtotal_excluding_tax'])) {
 					$tmparray['description'] = 'Undefined';
