@@ -8004,7 +8004,8 @@ abstract class CommonObject
 		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
 		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$list = (!empty($this->fields[$key]['list']) ? $this->fields[$key]['list'] : 0);
-		$hidden = (in_array(abs($this->fields[$key]['visible']), array(0, 2)) ? 1 : 0);
+		// 'visible' may hold an expression instead of an int, so it must be evaluated before abs()
+		$hidden = (in_array(abs((int) dol_eval((string) $this->fields[$key]['visible'], 1)), array(0, 2)) ? 1 : 0);
 
 		$objectid = $this->id;
 
