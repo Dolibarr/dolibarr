@@ -487,7 +487,7 @@ if ($action == 'showsummary') {
 	print '<div id="ajax-result-message"></div>';
 	//print '<br>';
 
-	print_fiche_titre('Summary');
+	print load_fiche_titre('Summary', '', 'upload');
 
 	print '<div class="neutral">';
 
@@ -515,12 +515,12 @@ if ($action == 'showsummary') {
 		//print '<div class="inline-block">'.img_picto('', 'bill', '').' '.$langs->trans("SupplierInvoice").'</div>';
 		//print '<br><br>';
 
-		$nameindoc = $invoiceindoc['vendor_name'];
-		$addressindoc = $invoiceindoc['vendor_address'];
-		$idprof1indoc = $invoiceindoc['vendor_profid1'];
-		$idprof2indoc = $invoiceindoc['vendor_profid2'];
-		$emailindoc = $invoiceindoc['vendor_email'];
-		$vatnumberindoc = $invoiceindoc['vendor_vat_number'];
+		$nameindoc = (string) $invoiceindoc['vendor_name'];
+		$addressindoc = (string) $invoiceindoc['vendor_address'];
+		$idprof1indoc = (string) $invoiceindoc['vendor_profid1'];
+		$idprof2indoc = (string) $invoiceindoc['vendor_profid2'];
+		$emailindoc = (string) $invoiceindoc['vendor_email'];
+		$vatnumberindoc = (string) $invoiceindoc['vendor_vat_number'];
 
 		// Thirdparty
 		$tmpthirdparty = new Societe($db);
@@ -540,7 +540,7 @@ if ($action == 'showsummary') {
 		print '<span class="opacitymedium">'.$langs->trans("KeyDataFoundInDocument").' :</span> ';
 		$s = $nameindoc;
 		if (!empty($addressindoc)) {
-			$s .= ', &nbsp;'.implode(', ', $addressindoc);
+			$s .= ', &nbsp;'.$addressindoc;
 		}
 		if (!$s) {
 			print '<span class="warning">'.$langs->trans("NoDataRelatedTo").'</span>';
