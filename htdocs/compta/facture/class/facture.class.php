@@ -5886,8 +5886,25 @@ class Facture extends CommonInvoice
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
-						$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
-						return 0;
+						if (is_numeric($template)) {
+							// The cron was started with a template id and that id cannot be
+							// resolved at all. This is almost certainly a global setup error
+							// (template deleted or wrong id passed to the cron), and every
+							// remaining invoice in this batch would fail the same way. Stop
+							// here so the operator can fix the setup before retrying, instead
+							// of flooding the cron output with one identical error per
+							// invoice (per @eldy's review of PR #38547).
+							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+							return 0;
+						}
+						// The cron was started with a template label and getEMailTemplate
+						// also filters by the recipient's language (see html.formmail.class.php
+						// line 1786). Only the invoices for thirdparties whose default_lang
+						// has no matching template fail; the rest of the batch is fine.
+						// Log the error and continue so a single missing translation does
+						// not stop reminders for everyone else (see issue #34656).
+						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						continue;
 					}
 
 					// PREPARE EMAIL
