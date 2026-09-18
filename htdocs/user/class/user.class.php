@@ -4000,7 +4000,7 @@ class User extends CommonObject
 			$childids = $this->cache_childids[$this->id];
 		} else {
 			// Init this->users
-			$this->get_full_tree();
+			$treeresult = $this->get_full_tree();
 
 			$idtoscan = $this->id;
 
@@ -4010,6 +4010,14 @@ class User extends CommonObject
 				if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) {
 					$childids[$val['id']] = $val['id'];
 				}
+			}
+
+			// A loop anywhere in the hierarchy aborts get_full_tree(), leaving the branches it had not
+			// walked yet with an empty fullpath, so they silently drop out of the list above. Do not
+			// cache such a truncated result, it would be reused for the whole request.
+			if ($treeresult < 0) {
+				dol_syslog(get_class($this)."::getAllChildIds got a truncated tree: ".$this->error, LOG_WARNING);
+				return $addcurrentuser ? array($this->id => $this->id) : $childids;
 			}
 		}
 		$this->cache_childids[$this->id] = $childids;

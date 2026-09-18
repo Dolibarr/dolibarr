@@ -821,6 +821,11 @@ if ($filter && $filter != -1) {
 	$aFilter = explode(',', $filter);
 	foreach ($aFilter as $fil) {
 		$filt = explode(':', $fil);
+		// The parameter comes from the URL: without a colon there is no value to compare to,
+		// and $filt[1] would be an undefined key passed to trim(), deprecated since PHP 8.1.
+		if (count($filt) < 2) {
+			continue;
+		}
 		$sql .= " AND ".$db->escape(trim($filt[0]))." = '".$db->escape(trim($filt[1]))."'";
 	}
 }
