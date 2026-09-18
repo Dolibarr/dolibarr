@@ -168,7 +168,7 @@ function dolPrintPassword($s)
  *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(...), 1, 1, 1, 0)), 1, 1, 'common', 0, 1) for notes or descriptions into textarea, add 'common' if into a html content
  *        - dolPrintPassword that is a simple htmlspecialchars(... , ENT_COMPAT, 'UTF-8') for passwords.
  *
- *  @param      string		$stringtoescape			String to escape
+ *  @param      ?string		$stringtoescape			String to escape (treated as '' if null)
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' (escape all html tags) or 'common' (do not escape some common tags) or 'common,a,b,c' or list of tags to not escape.
@@ -180,6 +180,9 @@ function dolPrintPassword($s)
  */
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
+	if ($stringtoescape === null) {
+		return '';
+	}
 	$reg = array();
 	if (preg_match('/^common([a-z,]*)/', $noescapetags, $reg)) {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
@@ -3567,7 +3570,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	$divstart = $divend = '';
 
 	// If inline message with no format, we add it.
-	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
+	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || defined('DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
 		$divstart = '<div class="' . $style . ' clearboth">';
 		$divend = '</div>';
 	}
@@ -3592,7 +3595,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	}
 
 	if ($out) {
-		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
+		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
 			if ($style == "ok") {
 				// For success messages (green), allow manual click to close immediately without fade
 				$return = '<script nonce="' . getNonce() . '">

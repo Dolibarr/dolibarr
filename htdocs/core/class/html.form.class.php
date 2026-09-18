@@ -2765,6 +2765,50 @@ class Form
 		return $urloption;
 	}
 
+	/**
+	 * Build the select2 initialization script shared by the single and multiple "search to select"
+	 * user combos. Both page through user/ajax/users.php the same way (select2's ajax.data sends
+	 * the page number, processResults reports pagination.more from the page size).
+	 *
+	 * @param string	$htmlname			Name of the HTML select element
+	 * @param string	$urloption			URL-encoded query string returned by buildSelectDolusersAjaxUrlOption() (no leading '?')
+	 * @param int		$minlengthforajax	select2 minimumInputLength (0 in "infinite list" mode)
+	 * @param int		$ajaxpagesize		Page size of the ajax endpoint (USER_LIMIT_SIZE)
+	 * @return string							HTML <script> block
+	 */
+	private function buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize)
+	{
+		$htmlnamejs = str_replace('.', '\\\\.', $htmlname);
+		return '<script nonce="'.getNonce().'">jQuery(function() {
+				jQuery("#'.$htmlnamejs.'").select2({
+					theme: "default",
+					language: (typeof select2arrayoflanguage === "undefined") ? "en" : select2arrayoflanguage,
+					containerCssClass: ":all:",
+					placeholder: "",
+					minimumInputLength: '.((int) $minlengthforajax).',
+					ajax: {
+						url: "'.DOL_URL_ROOT.'/user/ajax/users.php?'.$urloption.'",
+						dataType: "json",
+						delay: 250,
+						data: function(params) {
+							var d = {};
+							d['.json_encode($htmlname).'] = params.term;
+							d.page = params.page || 1;
+							return d;
+						},
+						processResults: function(data) {
+							var result = [];
+							jQuery.each(data, function(i, val) {
+								result.push({ id: val.key, text: val.value });
+							});
+							return { results: result, pagination: { more: data.length >= '.((int) $ajaxpagesize).' } };
+						},
+						cache: true
+					}
+				});
+			});</script>';
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
@@ -2864,17 +2908,15 @@ class Form
 		$outarray = array();
 		$outarray2 = array();
 
-		// If the ajax "search to select" mode is enabled for users (constant USER_USE_SEARCH_TO_SELECT), we output an
-		// autocomplete widget calling user/ajax/users.php instead of loading the full list of users.
-		// This is limited to the HTML output: array output, forced combo, pseudo-entries (showalso) and per-line
-		// enabling (enableonly) keep the full-list behaviour. Single select renders a jQuery UI autocomplete input,
-		// multiple select renders a select2 combo bound to the same ajax endpoint (see just after this block).
+		// If the ajax "search to select" mode is enabled for users (constant USER_USE_SEARCH_TO_SELECT), we output a
+		// select2 combo calling user/ajax/users.php instead of loading the full list of users. This is limited to
+		// the HTML output: array output, forced combo, pseudo-entries (showalso) and per-line enabling (enableonly)
+		// keep the full-list behaviour. Both single and multiple select page through the same endpoint (see
+		// buildSelectDolusersAjaxSelect2Script()); only the <select> markup (single option vs multiple/[]) differs.
 		$canajaxsearchtoselect = !empty($conf->use_javascript_ajax) && getDolGlobalString('USER_USE_SEARCH_TO_SELECT') && !$forcecombo && empty($outputmode)
 			&& empty($showalso) && !(is_array($enableonly) && count($enableonly)) && $filterkey === '';
 
 		if ($canajaxsearchtoselect && !$multiple) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-
 			$preselected = 0;
 			if (!empty($selected)) {
 				$firstval = reset($selected);
@@ -2883,42 +2925,40 @@ class Form
 				}
 			}
 
-			$selected_input_value = '';
+			$preselectedlabel = '';
 			if ($preselected > 0) {
 				$usertmpselect = new User($this->db);
 				if ($usertmpselect->fetch($preselected) > 0) {
 					$fullNameMode = getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION') ? 0 : 1;
-					$selected_input_value = $usertmpselect->getFullName($langs, $fullNameMode, -1, $maxlength);
-					if ($selected_input_value === '') {
-						$selected_input_value = $usertmpselect->login;
+					$preselectedlabel = $usertmpselect->getFullName($langs, $fullNameMode, -1, $maxlength);
+					if ($preselectedlabel === '') {
+						$preselectedlabel = $usertmpselect->login;
 					}
 				}
 				unset($usertmpselect);
 			}
 
+			$out .= '<select class="flat'.($morecss ? ' '.$morecss : ' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled ? ' disabled' : '').'>';
+			if ($preselected > 0) {
+				$out .= '<option value="'.$preselected.'" selected>'.dol_escape_htmltag($preselectedlabel).'</option>';
+			}
+			$out .= '</select>';
+
 			// Propagate the filters to the ajax endpoint so it returns the same subset as the full combo would
 			$urloption = $this->buildSelectDolusersAjaxUrlOption($htmlname, $exclude, $include, $force_entity, $showstatus, $notdisabled, $maxlength, $morefilter);
 
-			// A non-numeric value ('infinite', so getDolGlobalInt() returns 0) means "infinite list": ajax mode but
-			// no minimum number of chars, the list opens as soon as the field gets the focus. ajax_autocompleter()
-			// forces minLength >= 1, so we pass 1 and relax the widget option to 0 with a small script below.
-			$isinfinitelist = (getDolGlobalInt('USER_USE_SEARCH_TO_SELECT') < 1);
-			$minlengthforajax = $isinfinitelist ? 1 : getDolGlobalInt('USER_USE_SEARCH_TO_SELECT');
-
-			$out .= ajax_autocompleter((string) $preselected, $htmlname, DOL_URL_ROOT.'/user/ajax/users.php', $urloption, $minlengthforajax, 0);
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
-			$out .= '<input type="text" class="'.dol_escape_htmltag($morecss).'"'.($disabled ? ' disabled="disabled"' : '').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.dol_escape_htmltag($selected_input_value).'" />';
-
-			if ($isinfinitelist) {
-				$htmlnamejs = str_replace('.', '\\\\.', $htmlname);
-				$out .= '<script nonce="'.getNonce().'">jQuery(function() {
-					var elem = jQuery("input#search_'.$htmlnamejs.'");
-					if (elem.length && elem.data("ui-autocomplete")) {
-						elem.autocomplete("option", "minLength", 0);
-						elem.on("focus", function() { if (jQuery(this).val() === "") { jQuery(this).autocomplete("search", ""); } });
-					}
-				});</script>';
+			// A non-numeric value ('infinite') means "infinite list": no minimum number of chars, the list
+			// opens as soon as the field gets the focus (select2 queries the endpoint with an empty term).
+			$minlengthforajax = getDolGlobalInt('USER_USE_SEARCH_TO_SELECT');
+			if ($minlengthforajax < 1) {
+				$minlengthforajax = 0;
 			}
+			// Page size of the ajax endpoint (USER_LIMIT_SIZE): select2 keeps asking for the next page
+			// while the endpoint returns a full page, so the whole list stays browsable by scrolling.
+			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
+
+			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
 
 			return $out;
 		}
@@ -2963,35 +3003,7 @@ class Form
 			// while the endpoint returns a full page, so the whole list stays browsable by scrolling.
 			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
 
-			$htmlnamejs = str_replace('.', '\\\\.', $htmlname);
-			$out .= '<script nonce="'.getNonce().'">jQuery(function() {
-				jQuery("#'.$htmlnamejs.'").select2({
-					theme: "default",
-					language: (typeof select2arrayoflanguage === "undefined") ? "en" : select2arrayoflanguage,
-					containerCssClass: ":all:",
-					placeholder: "",
-					minimumInputLength: '.((int) $minlengthforajax).',
-					ajax: {
-						url: "'.DOL_URL_ROOT.'/user/ajax/users.php?'.$urloption.'",
-						dataType: "json",
-						delay: 250,
-						data: function(params) {
-							var d = {};
-							d['.json_encode($htmlname).'] = params.term;
-							d.page = params.page || 1;
-							return d;
-						},
-						processResults: function(data) {
-							var result = [];
-							jQuery.each(data, function(i, val) {
-								result.push({ id: val.key, text: val.value });
-							});
-							return { results: result, pagination: { more: data.length >= '.((int) $ajaxpagesize).' } };
-						},
-						cache: true
-					}
-				});
-			});</script>';
+			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
 
 			return $out;
@@ -7837,7 +7849,7 @@ class Form
 			print '<form method="POST" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			print '<input type="text" class="maxwidth75" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CU')) : 1) . '" spellcheck="false" /> ';
+			print '<input type="text" class="maxwidth75" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CR')) : 1) . '" spellcheck="false" /> ';
 			print '<select name="calculation_mode" id="calculation_mode">';
 			print '<option value="1">Change ' . $langs->trans("PriceUHT") . ' of lines</option>';
 			print '<option value="2">Change ' . $langs->trans("PriceUHTCurrency") . ' of lines</option>';

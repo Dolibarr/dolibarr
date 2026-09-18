@@ -49,8 +49,31 @@ fi
 
 echo "Running as $USER_NAME ($USER_ID:$GROUP_ID)"
 
-ln -fs /dolibarr_dev /dolibarr 2>/dev/null
+WORKDIR="$(pwd)"
+
+if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR" ]; then
+	echo "Create link /dolibarr"
+	ln -fs "$WORKDIR" /dolibarr 2>/dev/null
+fi
+if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibeignore" ]; then
+	echo "Create link $WORKDIR/.vibeignore"
+	ln -fs .agentsignore .vibeignore 2>/dev/null
+fi
+if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibe" ]; then
+	echo "Create link $WORKDIR/.vibe"
+	ln -fs .agents .vibe 2>/dev/null
+fi
+
+
+install -d -m 700 -o "$USER_NAME" -g "$USER_NAME" "/home/$USER_NAME/.ssh"
+
+# shellcheck disable=SC2016  # $HOME must expand in the su subshell, not here
+su -s /bin/sh "$USER_NAME" -c \
+    'ssh-keyscan -t ed25519,rsa github.com > "$HOME/.ssh/known_hosts" 2>/dev/null'
+
+chmod 644 "/home/$USER_NAME/.ssh/known_hosts"
+
 
 # Execute order
-exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i -c 'vibe; exec bash'
+exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power; exec bash'
 #exec "$@"

@@ -1,0 +1,43 @@
+agent_type = "agent"
+display_name = "Agent Power"
+description = "Auto-approves bash and write files, asks for everything else."
+safety = "neutral"
+
+bypass_tool_permissions = false   # skip all permission prompts, including the shell-syntax gate
+
+instructions = """
+When running bash commands, keep them plain so they can be auto-approved:
+- Use literal paths, never shell variables ($VAR, ${VAR}) or $(...) substitutions.
+- Never use output redirection (> or >>). Write files with the write_file tool,
+  or pipe the output to tee instead.
+"""
+
+
+[tools.bash]
+permission = "always"
+deny = ["rm -rf *", "sudo *"]
+
+[tools.grep]
+permission = "always"
+
+[tools.search_replace]
+permission = "always"
+
+[tools.read_file]
+permission = "always"
+
+[tools.write_file]
+permission = "always"
+
+[tools.edit]
+permission = "always"
+
+[tools.web_fetch]
+permission = "always"
+
+[tools.web_search]
+permission = "always"
+
+[tools.connector_github_app_pull_request_read]
+permission = "always"
+

@@ -2348,6 +2348,42 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * Build the SQL WHERE fragment that tells apart an open opportunity from a record that is not one.
+	 *
+	 * The two fragments are an exhaustive and mutually exclusive partition of the projet table:
+	 *  - 'openedopp'    : an open opportunity, i.e. usage_opportunity is set and the opportunity status
+	 *                     is neither WON nor LOST (a status not set yet counts as open);
+	 *  - 'notopenedopp' : everything else, i.e. a record not used as an opportunity, or an opportunity
+	 *                     whose status is already WON or LOST. This is not the same as "is a project":
+	 *                     a WON or LOST opportunity is reported here too.
+	 *
+	 * @param	string	$view	View to filter on, 'openedopp' or 'notopenedopp'
+	 * @param	string	$alias	SQL alias of the projet table, 'p' or 't'
+	 * @return	string			SQL fragment with no leading 'AND', empty string if $view or $alias is unknown
+	 */
+	public function getViewFilterSQL(string $view, string $alias = 'p'): string
+	{
+		// $tablealiastouse holds a literal of this method, never the caller input.
+		if ($alias == 'p') {
+			$tablealiastouse = 'p';
+		} elseif ($alias == 't') {
+			$tablealiastouse = 't';
+		} else {
+			return '';
+		}
+
+		$sanitizedwonlost = $tablealiastouse.".fk_opp_status IN (SELECT rowid FROM ".$this->db->prefix()."c_lead_status WHERE code IN ('WON', 'LOST'))";
+
+		if ($view == 'openedopp') {
+			return "(".$tablealiastouse.".usage_opportunity = 1 AND (".$tablealiastouse.".fk_opp_status IS NULL OR NOT ".$sanitizedwonlost."))";
+		} elseif ($view == 'notopenedopp') {
+			return "(".$tablealiastouse.".usage_opportunity IS NULL OR ".$tablealiastouse.".usage_opportunity <> 1 OR ".$sanitizedwonlost.")";
+		}
+
+		return '';
+	}
+
+	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
 	 * @param DoliDB $dbs 		Database handler

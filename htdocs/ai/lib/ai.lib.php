@@ -335,6 +335,13 @@ function ai_validate_attachments(array $attachments, &$error)
 	}
 
 	$allowedmimes = array('application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp');
+	// HEIC/HEIF reach this point only through the native-send fallback of the
+	// chat (browser unable to transcode): acceptable solely when the active
+	// provider consumes them (Gemini); other providers 400 on the MIME.
+	if ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google') {
+		$allowedmimes[] = 'image/heic';
+		$allowedmimes[] = 'image/heif';
+	}
 	$maxbytes = getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) * 1024 * 1024;
 	$totalbytes = 0;
 	foreach ($attachments as $att) {
@@ -357,6 +364,32 @@ function ai_validate_attachments(array $attachments, &$error)
 }
 
 /**
+ * Trim a payload for the request log, keeping the beginning and the end.
+ *
+ * Request payloads start with the tool schemas and end with what a human
+ * actually looks for: the system rules, the user query and the page context.
+ * A plain head cut removes the interesting half, so keep both sides and state
+ * how much was dropped in between.
+ *
+ * @param string $text Payload to trim.
+ * @param int    $max  Maximum number of characters to keep.
+ * @return string Trimmed payload, unchanged when short enough.
+ */
+function aiTruncateForLog($text, $max = 60000)
+{
+	$len = dol_strlen($text);
+	if ($len <= $max) {
+		return $text;
+	}
+	$head = (int) floor($max / 2);
+	$tail = $max - $head;
+
+	return dol_substr($text, 0, $head)
+		."\n... [Truncated ".($len - $max)." chars] ...\n"
+		.dol_substr($text, $len - $tail, $tail);
+}
+
+/**
  * Log AI Request with Raw Payloads
  *
  * @param   DoliDB                  $db         Database object
@@ -370,11 +403,16 @@ function ai_validate_attachments(array $attachments, &$error)
  * @param   string                  $error      Error message, if any
  * @param   string                  $rawReq     Raw request payload
  * @param   string                  $rawRes     Raw response payload
+ * @param   array{fk_actioncomm?:int,input_hash?:string,output_hash?:string,security_hash?:string,preserve_payloads?:bool} $context Optional event link and audit metadata
+ * @param   int|null                $logId      Output: inserted row id, or 0 when logging is disabled or fails
+ * @param-out int                   $logId
  * @return  int									Return 0
  */
-function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '')
+function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '', array $context = array(), &$logId = null)
 {
 	global $conf;
+
+	$logId = 0;
 
 	if (!getDolGlobalInt('AI_LOG_REQUESTS')) {
 		return 0;
@@ -382,18 +420,23 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 
 	$tool = isset($response['tool']) ? (string) $response['tool'] : '';
 
-	if (dol_strlen($rawReq) > 60000) {
-		$rawReq = dol_substr($rawReq, 0, 60000) . '... [Truncated]';
-	}
-
+	// Keep both ends when trimming: a request payload starts with the tool
+	// schemas (tens of kB, identical on every call) and ends with the system
+	// rules, the user query and the page context - the part anyone reads a
+	// log for. Cutting only the tail threw exactly that away.
+	// Structured tool output must remain valid JSON for subsequent reads.
 	$rawResStr = (string) $rawRes;
-	if (dol_strlen($rawResStr) > 60000) {
-		$rawResStr = dol_substr($rawResStr, 0, 60000) . '... [Truncated]';
+	if (empty($context['preserve_payloads'])) {
+		$rawReq = aiTruncateForLog($rawReq, 60000);
+		$rawResStr = aiTruncateForLog($rawResStr, 60000);
 	}
 
-	$sql = "INSERT INTO " . MAIN_DB_PREFIX . "ai_request_log (";
+	$sql = "INSERT INTO " . $db->prefix() . "ai_request_log (";
 	$sql .= "entity, date_request, fk_user, query_text, tool_name, provider, ";
 	$sql .= "execution_time, confidence, status, error_msg, raw_request_payload, raw_response_payload";
+	if (!empty($context)) {
+		$sql .= ", fk_actioncomm, input_hash, output_hash, security_hash";
+	}
 	$sql .= ") VALUES (";
 	$sql .= ((int) $conf->entity) . ", ";
 	$sql .= "'" . $db->idate(dol_now()) . "', ";
@@ -407,11 +450,19 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql .= "'" . $db->escape($error) . "', ";
 	$sql .= "'" . $db->escape($rawReq) . "', ";
 	$sql .= "'" . $db->escape($rawResStr) . "'";
+	if (!empty($context)) {
+		$sql .= ", ".(!empty($context['fk_actioncomm']) && $context['fk_actioncomm'] > 0 ? (int) $context['fk_actioncomm'] : 'NULL');
+		$sql .= ", '".$db->escape($context['input_hash'] ?? '')."'";
+		$sql .= ", '".$db->escape($context['output_hash'] ?? '')."'";
+		$sql .= ", '".$db->escape($context['security_hash'] ?? '')."'";
+	}
 	$sql .= ")";
 
 	$resql = $db->query($sql);
 	if (!$resql) {
-		dol_print_error($db);
+		dol_syslog(__FUNCTION__.": ".$db->lasterror(), LOG_ERR);
+	} else {
+		$logId = (int) $db->last_insert_id($db->prefix()."ai_request_log");
 	}
 
 	return 0;
@@ -479,21 +530,21 @@ function aiAdminPrepareHead()
 	$head[$h][2] = 'custom';
 	$h++;
 
-	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$head[$h][0] = dol_buildpath("/ai/admin/assistant.php", 1);
 		$head[$h][1] = $langs->trans("Assistant");
 		$head[$h][2] = 'assistant';
 		$h++;
 	}
 
-	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$head[$h][0] = dol_buildpath("/ai/admin/server_mcp.php", 1);
 		$head[$h][1] = $langs->trans("MCPServer");
 		$head[$h][2] = 'servermcp';
 		$h++;
 	}
 
-	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$head[$h][0] = dol_buildpath("/ai/admin/configure_tools.php", 1);
 		$head[$h][1] = $langs->trans("ToolAccessControl");
 		$head[$h][2] = 'tools';
@@ -673,8 +724,7 @@ function getAiChatAssistantConfig()
 
 	$keys = array(
 		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
-		'AIAttachmentBlockedByPrivacy', 'MissingInformation', 'CouldYouClarify',
-		'AIAttachmentBlockedByPrivacy',
+		'AIAttachmentBlockedByPrivacy', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
 		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
@@ -786,6 +836,9 @@ function getAiChatAssistantConfig()
 		// Presentation context for tool results: money, date and label
 		// formatting happen client-side on raw API data.
 		'privacyRedaction' => getDolGlobalInt('AI_PRIVACY_REDACTION', 0),
+		// Gemini is the only wired provider taking HEIC natively; the chat JS
+		// falls back to it when the browser cannot transcode HEIC to JPEG.
+		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
 		'currency' => $conf->currency,
 		'locale' => str_replace('_', '-', $langs->getDefaultLang()),
 		'urlRoot' => DOL_URL_ROOT,
@@ -914,7 +967,7 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<div class="chat-input-pill">';
 	// Upload Wrapper (always visible: documents can be attached in any mode)
 	$out .= '<div id="upload-wrapper" class="upload-wrapper">';
-	$out .= '<input type="file" id="file-upload" accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
+	$out .= '<input type="file" id="file-upload" multiple accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.heic,.heif,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
 	$out .= '<button type="button" id="upload-btn" class="round-btn" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AttachFile")).'">'.img_picto('', 'fa-paperclip').'</button>';
 	$out .= '</div>';
 	// Microphone Wrapper (Visible only in Voice modes)
@@ -996,4 +1049,60 @@ function aiCheckCsrfToken($context = '')
 		echo json_encode(array('error' => 'Invalid CSRF token'));
 		exit;
 	}
+}
+
+/**
+ * Remove extrafields flagged as personal data from an API-shaped payload.
+ *
+ * Dolibarr lets an administrator mark an extrafield as personal data
+ * (GDPR). Such values must not travel to an AI provider, but the
+ * REST objects the bridge returns carry every extrafield in array_options,
+ * and the assistant tools that read array_options directly do the same.
+ * This walks an already-serialized payload (single object or list) and drops
+ * those keys, leaving everything else untouched.
+ *
+ * The per-element list is cached for the life of the process: a change to the
+ * personal_data flag is honored from the next request on.
+ *
+ * @param DoliDB              $db          Database handler.
+ * @param array<mixed>|mixed  $payload     Serialized API output (object or list of objects).
+ * @param string              $elementtype Element type as used by ExtraFields (e.g. 'facture').
+ * @return array<mixed>|mixed Payload without personal-data extrafields.
+ */
+function aiStripPersonalExtrafields($db, $payload, $elementtype)
+{
+	if (!is_array($payload) || $elementtype === '') {
+		return $payload;
+	}
+
+	static $cache = array();
+	if (!isset($cache[$elementtype])) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($db);
+		$extrafields->fetch_name_optionals_label($elementtype);
+		$attrs = $extrafields->attributes[$elementtype] ?? array();
+		$personal = array();
+		foreach (($attrs['personal_data'] ?? array()) as $code => $flag) {
+			if (!empty($flag)) {
+				$personal[] = 'options_'.$code;
+			}
+		}
+		$cache[$elementtype] = $personal;
+	}
+	if (empty($cache[$elementtype])) {
+		return $payload;
+	}
+
+	foreach ($payload as $key => $value) {
+		if ($key === 'array_options' && is_array($value)) {
+			foreach ($cache[$elementtype] as $personalKey) {
+				unset($payload[$key][$personalKey]);
+			}
+		} elseif (is_array($value)) {
+			// List responses: each row carries its own array_options.
+			$payload[$key] = aiStripPersonalExtrafields($db, $value, $elementtype);
+		}
+	}
+
+	return $payload;
 }

@@ -253,4 +253,50 @@ class AiMcpWireTest extends CommonClassTest
 			$this->assertFalse($own <= -32020 && $own >= -32099, 'own code '.$own.' sits in the reserved band');
 		}
 	}
+	/**
+	 * A tool that ran and failed must come back as a successful response
+	 * carrying isError, not as a JSON-RPC error: raising it discarded the
+	 * message and told the caller the server had broken.
+	 *
+	 * @return void
+	 */
+	public function testFailingToolIsReportedInTheResult()
+	{
+		$server = $this->getServer();
+
+		$response = $server->handleRequest(array(
+			'jsonrpc' => '2.0',
+			'id' => 1,
+			'method' => 'tools/call',
+			'params' => array('name' => 'no_such_tool_zzz', 'arguments' => array()),
+		));
+
+		$this->assertArrayNotHasKey('error', $response, 'A tool failure must not surface as a protocol error');
+		$this->assertArrayHasKey('result', $response);
+		$this->assertTrue($response['result']['isError'], 'The result must be flagged as an error');
+		$this->assertStringContainsString(
+			'no_such_tool_zzz',
+			$response['result']['content'][0]['text'],
+			'The reason must reach the caller, not be replaced by a generic message'
+		);
+	}
+
+	/**
+	 * The success path must keep saying isError false.
+	 *
+	 * @return void
+	 */
+	public function testSucceedingToolIsNotFlaggedAsError()
+	{
+		$server = $this->getServer();
+
+		$response = $server->handleRequest(array(
+			'jsonrpc' => '2.0',
+			'id' => 1,
+			'method' => 'tools/list',
+		));
+
+		$this->assertArrayHasKey('result', $response);
+		$this->assertArrayNotHasKey('error', $response);
+	}
 }

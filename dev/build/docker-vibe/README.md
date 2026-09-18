@@ -12,19 +12,24 @@ MISTRAL_API_KEY='<your_api_key>'
 ````
 So now when running the container, the .vibe/.env file has your paid key that will be used to set the environment variable MISTRAL_API_KEY.
 
-## You can add an alias into your /etc/bash.bashrc the line
+## You can add an alias into your /etc/bash.bashrc or ~/.bashrc the line
 ````
-alias vibes='dev/build/dockervibe/vibes.sh'
+alias vibes='dev/build/docker-vibe/vibes.sh'
 ````
  
 
 ## Run vibe into a container
-dev/build/dockervibe/runvibe.sh
+````
+alias vibes='dev/build/docker-vibe/vibes.sh'
+or
+dev/build/docker-vibe/vibes.sh
+````
+
 
 This script will build the docker image, and then run it with the current directory mounted into the container and launch vibe.
 
 ### Build (or rebuild) image of the container. 
-sudo docker build -dev/build/dockervibe -t dockervibe --no-cache
+sudo docker build -dev/build/docker-vibe -t dockervibe --no-cache
 
 ### Run image
 GIT_DIR=`basename $PWD` sudo docker run --rm -it -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e HOST_USER="$(id -un)" --network=host -v "$HOME/git/test:/test" -v "$HOME/.vibe:/home/$(id -un)/.vibe" --mount type=bind,src="$HOME/git/$GIT_DIR",dst=/$GIT_DIR -w /$GIT_DIR dockervibe bash

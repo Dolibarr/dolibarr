@@ -1067,9 +1067,9 @@ class Asset extends CommonObject
 				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
 				$finish_date = $disposal_date !== "" ? $disposal_date : $depreciation_date_end;
 				$accountancy_code_depreciation_debit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_debit'];
-				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key];
+				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key] ?? '';
 				$accountancy_code_depreciation_credit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_credit'];
-				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key];
+				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key] ?? '';
 
 				// Reversal depreciation line
 				//-----------------------------------------------------
@@ -1789,7 +1789,7 @@ class Asset extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'asset/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'asset/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;

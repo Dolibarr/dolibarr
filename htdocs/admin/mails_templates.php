@@ -1022,7 +1022,7 @@ if ($action == 'create') {
 
 			$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
 			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
-			$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai') ? 'textgenerationemail' : '');
+			$showlinktoai = (isModEnabled('ai') ? 'textgenerationemail' : '');
 			$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
 			$htmlname = 'content';
 			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -1364,7 +1364,7 @@ if ($action != 'create') {
 
 								$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
 								$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
-								$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai') ? 'textgenerationemail' : '');
+								$showlinktoai = (isModEnabled('ai') ? 'textgenerationemail' : '');
 								$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
 								$htmlname = 'content_'.$rowid;
 								include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';

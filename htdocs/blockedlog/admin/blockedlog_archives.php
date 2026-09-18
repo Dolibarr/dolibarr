@@ -701,15 +701,6 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 				$object->label = 'Export unalterable logs';
 
-				/*
-				$object->total_billed = $totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT");
-				$object->total_collected = $totalamountalllines['PAYMENT_CUSTOMER'];
-				$object->totallifetime_billed = $totalhtamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT");
-				$object->totallifetime_collected = ($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
-				*/
-				// TODO: Add total_billed, total_collected, totallifetime_billed, totallifetime_collected
-
-
 				$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
 				// There is no trigger for export of archive files, so we force the action code here

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 Nick Fragoulis
+ * Copyright (C) 2026 Braito <braito4@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,83 @@
  */
 class ActionsAi
 {
+	/**
+	 * @var DoliDB
+	 */
+	public $db;
+
+	/**
+	 * @var string
+	 */
+	public $error = '';
+
+	/**
+	 * @var array<string,mixed>
+	 */
+	public $results = array();
+
+	/**
+	 * Constructor.
+	 *
+	 * @param DoliDB|null $db Database handler
+	 */
+	public function __construct($db = null)
+	{
+		$this->db = $db;
+	}
+
+	/**
+	 * Add AI Email Cleaner action in EmailCollector operations.
+	 *
+	 * @param array<string,mixed> $parameters Hook context parameters
+	 * @param CommonObject $object Email collector object
+	 * @param string $action Current action code
+	 * @param HookManager $hookmanager Hook manager
+	 * @return int
+	 */
+	public function addMoreActionsEmailCollector($parameters, &$object, &$action, $hookmanager)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/emailcleaner.class.php';
+
+		if (!EmailCleaner::isRuntimeAvailable()) return 0;
+		if (!getDolGlobalInt('AI_EMAILCLEANER_EXPOSE_OPERATION', 0)) return 0;
+
+		$arrayoftypes = (!empty($parameters['arrayoftypes']) && is_array($parameters['arrayoftypes'])) ? $parameters['arrayoftypes'] : array();
+		$langs->load('ai');
+		$arrayoftypes['hook_ai_emailcleaner'] = $langs->trans('AIEmailCleanerOperation');
+		$this->results = $arrayoftypes;
+
+		return 1;
+	}
+
+	/**
+	 * Execute AI cleaner when EmailCollector operation type is "hook_ai_emailcleaner".
+	 *
+	 * @param array<string,mixed> $parameters Hook context parameters
+	 * @param CommonObject $object Email collector object
+	 * @param string $action Current action code
+	 * @param HookManager $hookmanager Hook manager
+	 * @return int
+	 */
+	public function doCollectImapOneCollector($parameters, &$object, &$action, $hookmanager)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/emailcleaner.class.php';
+
+		if (!EmailCleaner::isRuntimeAvailable()) return 0;
+		if (!EmailCleaner::isEmailCollectorHookAction($action)) return 0;
+		if (!getDolGlobalInt('AI_EMAILCLEANER_ENABLED', 0)) return 0;
+
+		$emailCleaner = new EmailCleaner($this->db);
+		$result = $emailCleaner->processEmailCollectorMessage($parameters, $object);
+		if (!empty($result['file'])) {
+			$this->results['ai_emailcleaner_file'] = (string) $result['file'];
+		}
+
+		return 0;
+	}
+
 	/**
 	 * @var string[] Errors
 	 */
@@ -132,8 +210,11 @@ class ActionsAi
 			// List/dashboard pages: no single object, but the user's own active
 			// filters are context enough - emitted uninterpreted, the model
 			// maps them onto tool arguments (which validate as always).
+			// Dolibarr's list search form submits by POST, so a filter the user
+			// just typed never appears in $_GET: read both, GET last so a
+			// bookmarked/paginated URL wins over a stale POST body.
 			$filters = array();
-			foreach ($_GET as $k => $v) {
+			foreach (array_merge($_POST, $_GET) as $k => $v) {
 				if (!is_string($v) || $v === '' || strlen($v) > 200) {
 					continue;
 				}

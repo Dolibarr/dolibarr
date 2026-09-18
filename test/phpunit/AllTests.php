@@ -116,6 +116,8 @@ class AllTests
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeTest');
 		require_once dirname(__FILE__).'/AiMcpWireTest.php';
 		$suite->addTestSuite('AiMcpWireTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
@@ -380,7 +382,6 @@ class AllTests
 			print "Check on API has been disabled by parameter or env var 'PHPUNIT_DISABLE_API'.\n";
 		}
 
-
 		require_once dirname(__FILE__).'/ExportTest.php';
 		$suite->addTestSuite('ExportTest');
 		require_once dirname(__FILE__).'/ImportTest.php';
@@ -405,6 +406,8 @@ class AllTests
 		// Email collector
 		require_once dirname(__FILE__).'/EmailCollectorTest.php';
 		$suite->addTestSuite('EmailCollectorTest');
+		require_once dirname(__FILE__).'/EmailCleanerTest.php';
+		$suite->addTestSuite('EmailCleanerTest');
 
 		// Website
 		require_once dirname(__FILE__).'/WebsiteTest.php';
@@ -435,8 +438,8 @@ class AllTests
 
 		// --- At very end, the LAST ONE.
 
-		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
-		// For example, this call init that run DDL functionsand break commit/rollback features.
+		// Also enabling and disabling modules is changing really in database some variables (so we must run it at end)
+		// For example, this call init that run DDL functions and break commit/rollback features.
 		require_once dirname(__FILE__).'/ModulesTest.php';
 		$suite->addTestSuite('ModulesTest');
 

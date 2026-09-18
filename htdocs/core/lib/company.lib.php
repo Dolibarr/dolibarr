@@ -2888,7 +2888,8 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 }
 
 /**
- *  Add Mailing Event Type SQL
+ *  Add Mailing Event Type SQL.
+ *  This generate a part of SQL that may be used into show_actions_done(). Be sure that it returns samenumber of columns than the code that include it.
  *
  *  @param	string	    $actioncode		Action code
  *  @param	Contact		$objcon		    objcon
@@ -2903,7 +2904,7 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 	if (isModEnabled('mailing') && !empty($objcon->email) && (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
 		$sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
 		$sql2 .= ", null as fk_element, '' as elementtype, null as contact_id";
-		$sql2 .= ", 'AC_EMAILING' as code, 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
+		$sql2 .= ", 'AC_EMAILING' as code, '0' as fulldayevent, 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
 		$sql2 .= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {
 			$sql2 .= ", '' as lastname, '' as firstname";
