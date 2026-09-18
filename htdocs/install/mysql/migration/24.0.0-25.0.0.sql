@@ -133,19 +133,26 @@ ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFT
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
--- Short-lived tombstone log of deleted objects (see llx_deletion_log.sql).
+-- Short-lived tombstone log of deleted agenda events (see llx_deletion_log.sql).
 CREATE TABLE llx_deletion_log(
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity			integer NOT NULL DEFAULT 1,
-	element_type	varchar(64) NOT NULL,
-	fk_object		integer NOT NULL,
+	fk_actioncomm	integer NOT NULL,
+	uid				char(36) NULL,
+	fk_user_action	integer NULL,
+	assigned_users	varchar(255) NULL,
 	date_deletion	datetime NOT NULL,
 	fk_user			integer NULL
 ) ENGINE=innodb;
 
-ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_element (element_type, entity, date_deletion);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_entity_date (entity, date_deletion);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_uid (uid);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_fk_user_action (fk_user_action);
 ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_deletion);
 
+-- Stable unique identifier of an agenda event, kept in llx_deletion_log after the event is deleted.
+ALTER TABLE llx_actioncomm ADD COLUMN uid char(36) NULL AFTER ref_ext;
+ALTER TABLE llx_actioncomm ADD UNIQUE INDEX uk_actioncomm_uid (uid);
 
 
 -- Add contract type field (0=customer, 1=supplier)
@@ -230,3 +237,24 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_societe.entity FROM llx_societe WHERE llx_notify_def.fk_soc = llx_societe.rowid AND llx_notify_def.fk_soc > 0;
 -- VMYSQL10.3 UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_user.entity FROM llx_user WHERE llx_notify_def.fk_user = llx_user.rowid AND llx_notify_def.fk_user > 0;
+
+
+-- Payment tables predate the modulebuilder convention of always adding import_key, so unlike
+-- most other object tables they never got it. Add it so a future import profile for payments
+-- (see htdocs/core/modules/mod*.class.php import_tables_array) is possible.
+ALTER TABLE llx_paiement ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_paiementfourn ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_paiementcharge ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_various ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_salary ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_loan ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
+
+-- llx_paiement_facture (the n-n link between a payment and the invoice(s) it pays) is also
+-- needed as an import target, for a "which invoices does this payment apply to" dataset: the
+-- generic import engine unconditionally writes import_key on every table of a dataset
+-- (modules_import.class.php), including link tables, once they are actually used as a target -
+-- unlike llx_element_element/llx_actioncomm_resources, which no current dataset targets.
+ALTER TABLE llx_paiement_facture ADD COLUMN import_key varchar(14);
