@@ -2695,7 +2695,7 @@ if ($action == 'create' && $usercancreate) {
 	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('NO_AUTO_RESTOCK_ON_SHIPMENT_DELETE')) {
 			$formquestion = array(
 				array(
 					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
