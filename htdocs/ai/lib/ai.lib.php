@@ -335,6 +335,13 @@ function ai_validate_attachments(array $attachments, &$error)
 	}
 
 	$allowedmimes = array('application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp');
+	// HEIC/HEIF reach this point only through the native-send fallback of the
+	// chat (browser unable to transcode): acceptable solely when the active
+	// provider consumes them (Gemini); other providers 400 on the MIME.
+	if ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google') {
+		$allowedmimes[] = 'image/heic';
+		$allowedmimes[] = 'image/heif';
+	}
 	$maxbytes = getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) * 1024 * 1024;
 	$totalbytes = 0;
 	foreach ($attachments as $att) {
@@ -396,11 +403,16 @@ function aiTruncateForLog($text, $max = 60000)
  * @param   string                  $error      Error message, if any
  * @param   string                  $rawReq     Raw request payload
  * @param   string                  $rawRes     Raw response payload
+ * @param   array{fk_actioncomm?:int,input_hash?:string,output_hash?:string,security_hash?:string,preserve_payloads?:bool} $context Optional event link and audit metadata
+ * @param   int|null                $logId      Output: inserted row id, or 0 when logging is disabled or fails
+ * @param-out int                   $logId
  * @return  int									Return 0
  */
-function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '')
+function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '', array $context = array(), &$logId = null)
 {
 	global $conf;
+
+	$logId = 0;
 
 	if (!getDolGlobalInt('AI_LOG_REQUESTS')) {
 		return 0;
@@ -412,12 +424,19 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	// schemas (tens of kB, identical on every call) and ends with the system
 	// rules, the user query and the page context - the part anyone reads a
 	// log for. Cutting only the tail threw exactly that away.
-	$rawReq = aiTruncateForLog($rawReq, 60000);
-	$rawResStr = aiTruncateForLog((string) $rawRes, 60000);
+	// Structured tool output must remain valid JSON for subsequent reads.
+	$rawResStr = (string) $rawRes;
+	if (empty($context['preserve_payloads'])) {
+		$rawReq = aiTruncateForLog($rawReq, 60000);
+		$rawResStr = aiTruncateForLog($rawResStr, 60000);
+	}
 
-	$sql = "INSERT INTO " . MAIN_DB_PREFIX . "ai_request_log (";
+	$sql = "INSERT INTO " . $db->prefix() . "ai_request_log (";
 	$sql .= "entity, date_request, fk_user, query_text, tool_name, provider, ";
 	$sql .= "execution_time, confidence, status, error_msg, raw_request_payload, raw_response_payload";
+	if (!empty($context)) {
+		$sql .= ", fk_actioncomm, input_hash, output_hash, security_hash";
+	}
 	$sql .= ") VALUES (";
 	$sql .= ((int) $conf->entity) . ", ";
 	$sql .= "'" . $db->idate(dol_now()) . "', ";
@@ -431,11 +450,19 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql .= "'" . $db->escape($error) . "', ";
 	$sql .= "'" . $db->escape($rawReq) . "', ";
 	$sql .= "'" . $db->escape($rawResStr) . "'";
+	if (!empty($context)) {
+		$sql .= ", ".(!empty($context['fk_actioncomm']) && $context['fk_actioncomm'] > 0 ? (int) $context['fk_actioncomm'] : 'NULL');
+		$sql .= ", '".$db->escape($context['input_hash'] ?? '')."'";
+		$sql .= ", '".$db->escape($context['output_hash'] ?? '')."'";
+		$sql .= ", '".$db->escape($context['security_hash'] ?? '')."'";
+	}
 	$sql .= ")";
 
 	$resql = $db->query($sql);
 	if (!$resql) {
-		dol_print_error($db);
+		dol_syslog(__FUNCTION__.": ".$db->lasterror(), LOG_ERR);
+	} else {
+		$logId = (int) $db->last_insert_id($db->prefix()."ai_request_log");
 	}
 
 	return 0;
@@ -697,8 +724,7 @@ function getAiChatAssistantConfig()
 
 	$keys = array(
 		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
-		'AIAttachmentBlockedByPrivacy', 'MissingInformation', 'CouldYouClarify',
-		'AIAttachmentBlockedByPrivacy',
+		'AIAttachmentBlockedByPrivacy', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
 		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
@@ -810,6 +836,9 @@ function getAiChatAssistantConfig()
 		// Presentation context for tool results: money, date and label
 		// formatting happen client-side on raw API data.
 		'privacyRedaction' => getDolGlobalInt('AI_PRIVACY_REDACTION', 0),
+		// Gemini is the only wired provider taking HEIC natively; the chat JS
+		// falls back to it when the browser cannot transcode HEIC to JPEG.
+		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
 		'currency' => $conf->currency,
 		'locale' => str_replace('_', '-', $langs->getDefaultLang()),
 		'urlRoot' => DOL_URL_ROOT,
@@ -938,7 +967,7 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<div class="chat-input-pill">';
 	// Upload Wrapper (always visible: documents can be attached in any mode)
 	$out .= '<div id="upload-wrapper" class="upload-wrapper">';
-	$out .= '<input type="file" id="file-upload" accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
+	$out .= '<input type="file" id="file-upload" multiple accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.heic,.heif,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
 	$out .= '<button type="button" id="upload-btn" class="round-btn" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AttachFile")).'">'.img_picto('', 'fa-paperclip').'</button>';
 	$out .= '</div>';
 	// Microphone Wrapper (Visible only in Voice modes)
@@ -1031,6 +1060,9 @@ function aiCheckCsrfToken($context = '')
  * and the assistant tools that read array_options directly do the same.
  * This walks an already-serialized payload (single object or list) and drops
  * those keys, leaving everything else untouched.
+ *
+ * The per-element list is cached for the life of the process: a change to the
+ * personal_data flag is honored from the next request on.
  *
  * @param DoliDB              $db          Database handler.
  * @param array<mixed>|mixed  $payload     Serialized API output (object or list of objects).

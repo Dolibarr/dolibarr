@@ -274,7 +274,7 @@ class CDavLibTest extends CommonClassTest
 
 		try {
 			// Check if user has permission to read agenda
-			if (empty($user->rights->agenda->myactions->read)) {
+			if (!$user->hasRight('agenda', 'myactions', 'read')) {
 				$this->markTestSkipped('User does not have permission to read agenda (myactions->read)');
 			}
 

@@ -18,13 +18,31 @@ permission = "always"
 deny = ["rm -rf *", "sudo *"]
 
 
+[tools.grep]
+permission = "always"
+
+
 [tools.search_replace]
+permission = "always"
+
+
+[tools.read_file]
 permission = "always"
 
 
 [tools.write_file]
 permission = "always"
 
-[tools.read_file]
+
+[tools.edit]
 permission = "always"
+
+
+[tools.web_fetch]
+permission = "always"
+
+
+[tools.web_search]
+permission = "always"
+
 
