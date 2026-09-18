@@ -839,11 +839,13 @@ class EcmFiles extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User 	$user      	User that deletes
+	 * @param ?User $user      	User that deletes (may be null, e.g. when called from a context with no logged
+	 *                          user such as install/repair.php - call_trigger()/run_triggers() already fall back
+	 *                          to an empty User in that case, the row must still be removed from llx_ecmfile)
 	 * @param int 	$notrigger 	0=launch triggers after, 1=disable triggers
 	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
