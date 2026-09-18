@@ -2974,6 +2974,7 @@ function pdf_getSituationSubtotalGroupAmounts(&$pdfmodel, $object, $line)
 			continue;	// Nested title or nested subtotal: not a real line, skip it
 		}
 
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$infoprev = $pdfmodel->getInfosLineLastSituation($object, $l);
 		if (is_array($infoprev)) {
 			$res['total_ht_without_progress'] += (float) $infoprev['total_ht_without_progress'];
