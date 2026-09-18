@@ -83,11 +83,6 @@ class ExportTest extends CommonClassTest
 	{
 		global $conf,$user,$langs,$db;
 
-
-		print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
-		print var_export($db, true);
-
-
 		$model = 'csvutf8';
 
 		$conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
@@ -176,6 +171,9 @@ class ExportTest extends CommonClassTest
 	public function testExportOther()
 	{
 		global $conf,$user,$langs,$db;
+
+		print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
+		print var_export($db, true);
 
 		$model = 'csviso';
 
@@ -384,6 +382,9 @@ class ExportTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$model = 'csviso';
+
+		print "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n";
+		print var_export($db, true);
 
 		$filterdatatoexport = '';
 		//$filterdatatoexport='';

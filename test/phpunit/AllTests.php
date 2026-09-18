@@ -384,7 +384,7 @@ class AllTests
 
 
 		global $db;
-		print "bbbbbbbbbbbbbbbbbbbbbbbb\n";
+		print "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
 		print var_export($db, true);
 
 
