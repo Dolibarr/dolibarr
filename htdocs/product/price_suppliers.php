@@ -634,8 +634,8 @@ if ($id > 0 || $ref) {
 			$mysoc2 = clone $mysoc;
 			$mysoc2->name = 'Fictive seller with same country';
 			$mysoc2->tva_assuj = 1;
-			$default_vat = get_default_tva($mysoc2, $mysoc, $object->id, 0);
-			$default_npr = get_default_npr($mysoc2, $mysoc, $object->id, 0);
+			$default_vat = get_default_tva($mysoc2, $mysoc, 0, 0); // use standard country VAT rate, not product sale VAT rate (accounting non-sense for purchases)
+			$default_npr = get_default_npr($mysoc2, $mysoc, 0, 0);
 			if (empty($default_vat)) {
 				$default_npr = $default_vat;
 			}
@@ -648,10 +648,6 @@ if ($id > 0 || $ref) {
 				$tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
 				$default_vat = $tmpproductsupplier->fourn_tva_tx;
 				$default_npr = $tmpproductsupplier->fourn_tva_npr;
-			} else {
-				if (empty($default_vat)) {
-					$default_vat = $object->tva_tx;
-				}
 			}
 			$vattosuggest = (GETPOSTISSET("tva_tx") ? vatrate(GETPOST("tva_tx")) : ($default_vat != '' ? vatrate($default_vat) : ''));
 			$vattosuggest = preg_replace('/\s*\(.*\)$/', '', $vattosuggest);
@@ -696,14 +692,14 @@ if ($id > 0 || $ref) {
 				print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
 				print '<td>';
 				$currencycodetouse = GETPOST('multicurrency_code') ? GETPOST('multicurrency_code') : (isset($object->fourn_multicurrency_code) ? $object->fourn_multicurrency_code : '');
-				if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) {
+				if (empty($currencycodetouse)) { // always default to company currency, not just when tx=1
 					$currencycodetouse = $conf->currency;
 				}
 				print $form->selectMultiCurrency((string) $currencycodetouse, "multicurrency_code", 1);
 				print ' &nbsp; &nbsp; '.$langs->trans("CurrencyRate").' ';
 				print '<input class="flat width50" name="multicurrency_tx" value="';
 				print GETPOST('multicurrency_tx');
-				$vatratetoshow = GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '');
+				$vatratetoshow = GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '1'); // change: default rate to 1
 				if ($vatratetoshow !== '') {
 					print vatrate($vatratetoshow);
 				}
