@@ -13,6 +13,7 @@ sudo docker run --rm -it \
   -e HOST_GID="$(id -g)" \
   -e HOST_USER="$(id -un)" \
   -e HOST_GROUP="$(id -un)" \
+  -e GH_TOKEN="$(gh auth token)" \
   --network=host \
   --mount "type=bind,src=$HOME/git/$GIT_DIR,dst=/$GIT_DIR" \
   --mount "type=bind,src=$HOME/.vibe,dst=/home/$(id -un)/.vibe" \
