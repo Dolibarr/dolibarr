@@ -1390,6 +1390,12 @@ class AccountancyExport
 				// FEC:EcritureLib
 				// Clean label operation to prevent problem on export with tab separator & other character
 				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
+				// The separator of this export is a tab, so every free text field must be stripped of it,
+				// otherwise the line gains a column and the whole file is rejected.
+				$labeljournal = str_replace(array("\t", "\n", "\r"), " ", $labeljournal);
+				$line->label_compte = str_replace(array("\t", "\n", "\r"), " ", $line->label_compte);
+				$line->subledger_label = str_replace(array("\t", "\n", "\r"), " ", $line->subledger_label);
+				$line->lettering_code = str_replace(array("\t", "\n", "\r"), " ", $line->lettering_code);
 				$tab[] = dol_string_unaccent($line->label_operation);
 
 				// FEC:Debit
@@ -1538,6 +1544,12 @@ class AccountancyExport
 				// FEC:EcritureLib
 				// Clean label operation to prevent problem on export with tab separator & other character
 				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
+				// The separator of this export is a tab, so every free text field must be stripped of it,
+				// otherwise the line gains a column and the whole file is rejected.
+				$labeljournal = str_replace(array("\t", "\n", "\r"), " ", $labeljournal);
+				$line->label_compte = str_replace(array("\t", "\n", "\r"), " ", $line->label_compte);
+				$line->subledger_label = str_replace(array("\t", "\n", "\r"), " ", $line->subledger_label);
+				$line->lettering_code = str_replace(array("\t", "\n", "\r"), " ", $line->lettering_code);
 				$tab[] = dol_string_unaccent($line->label_operation);
 
 				// FEC:Debit
