@@ -755,3 +755,7 @@ CreditNotesCreated=%s credit note(s) created
 ThisMassActionIsOnlyForInvoices=This mass action is only available for invoices
 # Deposit/credit split in the invoice currency (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
 DepositSplitAutomaticallyApplied=The available credit was larger than the remaining amount to pay and was split automatically: %s applied to this invoice, %s kept as an available credit for later use.
+
+# Multicurrency payment entered with real amounts (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+WarningPaymentDerivedRateFarFromInvoiceRate=For invoice %s, the exchange rate %s derived from the amounts entered differs by more than 50%% from the invoice rate %s. Please check that the two amounts have not been swapped.
+ErrorPaymentRealAmountsMustHaveSameSign=For invoice %s, the amount in the invoice currency and the real amount in the company currency must have the same sign.
