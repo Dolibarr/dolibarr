@@ -219,7 +219,7 @@ if (isModEnabled('category')) {
 if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
 	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
 } else {
-	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : (GETPOSTISSET('search_all') ? '' : '0,1'));
+	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : (GETPOSTISSET('search_all') ? '' : '0,1,3'));
 }
 
 $search_option = GETPOST('search_option', 'alpha');
@@ -748,7 +748,11 @@ if ($search_all) {
 }
 if ($search_status != '' && $search_status != '-1') {
 	if ($search_status == 99) {
-		$sql .= " AND p.fk_statut IN (0,1)";
+		// Always include in-progress (3) as active; fallback when extended states is disabled
+		$sql .= " AND p.fk_statut IN (0,1,3)";
+	} elseif ($search_status == 2 && !getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+		// When extended states is off, treat canceled (6) as equivalent to closed
+		$sql .= " AND p.fk_statut IN (2,6)";
 	} else {
 		$sql .= " AND p.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 	}
