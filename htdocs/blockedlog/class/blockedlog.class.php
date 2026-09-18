@@ -141,7 +141,7 @@ class BlockedLog
 	public $date_modification;
 
 	/**
-	 * @var int
+	 * @var int				UTC date of object (date of invoice, payment, ...)
 	 */
 	public $date_object = 0;
 
