@@ -191,6 +191,25 @@ class ToolProducts extends McpTool
 	}
 
 	/**
+	 * Catalog reads, supplier prices and stock forecast.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'search_products' => array(array('produit', 'lire')),
+			'get_product_details' => array(array('produit', 'lire')),
+			'get_supplier_prices' => array(array('produit', 'lire'), array('fournisseur', 'lire')),
+			'analyze_stock_forecast' => array(array('produit', 'lire'), array('stock', 'lire')),
+			'create_product' => array(array('produit', 'creer'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *

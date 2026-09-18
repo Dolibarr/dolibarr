@@ -169,6 +169,27 @@ class ToolThirdParty extends McpTool
 	}
 
 	/**
+	 * Third-party reads and writes.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'search_thirdparties' => array(array('societe', 'lire')),
+			'count_thirdparties' => array(array('societe', 'lire')),
+			'get_thirdparty_details' => array(array('societe', 'lire')),
+			'list_thirdparty_contacts' => array(array('societe', 'contact', 'lire')),
+			'create_thirdparty' => array(array('societe', 'creer')),
+			'update_thirdparty' => array(array('societe', 'creer')),
+			'add_thirdparty_contact' => array(array('societe', 'contact', 'creer'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *

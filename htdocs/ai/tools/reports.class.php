@@ -159,6 +159,25 @@ class ToolReports extends McpTool
 	}
 
 	/**
+	 * Aggregated reports: the widest data reach of any tool class.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'get_sales_report' => array(array('facture', 'lire')),
+			'get_purchase_report' => array(array('fournisseur', 'facture', 'lire')),
+			'get_inventory_report' => array(array('produit', 'lire'), array('stock', 'lire')),
+			'get_financial_report' => array(array('facture', 'lire'), array('fournisseur', 'facture', 'lire')),
+			'get_thirdparty_transactions' => array(array('societe', 'lire'), array('facture', 'lire'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *
