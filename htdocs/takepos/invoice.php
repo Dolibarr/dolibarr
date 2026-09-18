@@ -317,16 +317,17 @@ if (empty($reshook)) {
 					$cloneplace = '0-'.($max_sale + 1);
 				}
 
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-				$sql .= " SET module_source = 'takepos', pos_source = '".$db->escape((string) $takeposterminal)."', ref = '(PROV-POS".$db->escape((string) $takeposterminal).'-'.$db->escape($cloneplace).")'";
-				$sql .= ' WHERE rowid = '.((int) $cloneid);
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+				$sql .= " SET module_source = 'takepos', pos_source = '".$db->escape((string) $takeposterminal)."',";
+				$sql .= " ref = '(PROV-POS".$db->escape((string) $takeposterminal).'-'.$db->escape($cloneplace).")'";
+				$sql .= " WHERE rowid = ".((int) $cloneid);
 				$result = $db->query($sql);
 
 				if ($result && isModEnabled('productbatch') && isModEnabled('stock')) {
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet';
+					$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
 					$sql .= " SET batch = NULL, fk_warehouse = NULL";
-					$sql .= ' WHERE fk_facture = '.((int) $cloneid);
-					$sql .= ' AND fk_product IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'product WHERE tobatch > 0)';
+					$sql .= " WHERE fk_facture = ".((int) $cloneid);
+					$sql .= " AND fk_product IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE tobatch > 0)";
 					$result = $db->query($sql);
 				}
 			}
