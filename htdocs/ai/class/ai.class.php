@@ -498,8 +498,8 @@ class Ai
 	/**
 	 * Decode JSON into array
 	 *
-	 * @param array{document_info?:array{reference?:string,invoice_number?:string,title?:string,issue_date?:string,due_date?:string,vendor?:array{name?:string,siren?:string,siret?:string,email?:string,professional_id?:array{siren?:string},vat_number?:string}}|null,summary?:array{currency?:string,subtotal_excluding_tax?:float,tax?:array{rate?:float,amount?:float}},items?:array<int|string,array{description?:string,service?:string,quantity?:float,tax?:array{vat_rate?:float,rate?:float,amount?:float},unit_price?:float,total_excluding_tax?:float,total_including_tax?:float,period_start?:string,period_end?:string,period?:array{start_date?:string,end_date?:string}}>}	$json JSON
-	 * @param string	$type	Type of document to get ('supplier_invoice', 'thirdparty', ...)
+	 * @param array<string,mixed>		$json 		JSON (The structure of this var can't be guess, it change at each call, depending on AI, so we must se a strict type for it)
+	 * @param string					$type		Type of document to get ('supplier_invoice', 'thirdparty', ...)
 	 * @return array<string,string|float>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
