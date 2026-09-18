@@ -426,7 +426,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		// on this object before calling insert(). This INSERT is the path used by
 		// standalone receptions; keep these columns in sync with create(), which
 		// carries them too (they were lost once already in a rewrite of this method).
-		$sql .= ", ".(!isset($this->cost_price) ? '0' : (float) $this->cost_price);
+		$sql .= ", ".(!isset($this->cost_price) ? 'null' : (float) $this->cost_price);
 		$sql .= ", ".(empty($this->ref_fourn) ? 'NULL' : "'".$this->db->escape($this->ref_fourn)."'");
 		$sql .= ")";
 
