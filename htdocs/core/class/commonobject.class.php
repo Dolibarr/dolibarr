@@ -2865,7 +2865,8 @@ abstract class CommonObject
 	}
 
 	/**
-	 *  Change the payments methods
+	 *  Change the payments methods.
+	 *  Can be used on invoice, supplier invoice, salary, company, vat, ...
 	 *
 	 *  @param		int		$id		Id of new payment method
 	 *  @return		int				>0 if OK, <0 if KO

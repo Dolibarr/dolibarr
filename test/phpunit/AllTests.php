@@ -382,7 +382,6 @@ class AllTests
 			print "Check on API has been disabled by parameter or env var 'PHPUNIT_DISABLE_API'.\n";
 		}
 
-
 		require_once dirname(__FILE__).'/ExportTest.php';
 		$suite->addTestSuite('ExportTest');
 		require_once dirname(__FILE__).'/ImportTest.php';
@@ -407,6 +406,8 @@ class AllTests
 		// Email collector
 		require_once dirname(__FILE__).'/EmailCollectorTest.php';
 		$suite->addTestSuite('EmailCollectorTest');
+		require_once dirname(__FILE__).'/EmailCleanerTest.php';
+		$suite->addTestSuite('EmailCleanerTest');
 
 		// Website
 		require_once dirname(__FILE__).'/WebsiteTest.php';

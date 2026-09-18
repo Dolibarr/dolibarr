@@ -102,6 +102,17 @@ class ToolConversation extends McpTool
 	}
 
 	/**
+	 * Protocol tools: no business data.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Empty: no right required.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return array();
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *

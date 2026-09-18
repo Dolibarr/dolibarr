@@ -1039,6 +1039,17 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Rights are enforced by the REST API classes themselves.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return string RIGHTS_ENFORCED_DOWNSTREAM
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return self::RIGHTS_ENFORCED_DOWNSTREAM;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 *
 	 * @return array<string> List of categories
