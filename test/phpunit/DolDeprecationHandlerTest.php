@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,13 +86,6 @@ class DolDeprecationHandlerTest extends CommonClassTest
 			private $privateVarShouldTrigger;
 
 			/**
-			 * @var string Private deprecated var to check that magic
-			 *             is triggered.
-			 * @deprecated
-			 */
-			private $privateDeprecated;
-
-			/**
 			 * Define deprecated properties.
 			 *
 			 * @return array<string,string>
@@ -101,7 +94,6 @@ class DolDeprecationHandlerTest extends CommonClassTest
 			{
 				return [
 					'oldProperty' => 'newProperty',
-					'privateDeprecated' => 'newProperty',
 				];
 			}
 
@@ -251,9 +243,6 @@ class DolDeprecationHandlerTest extends CommonClassTest
 	{
 		$this->handler->oldProperty = "TestOld";
 		$this->assertEquals("TestOld", $this->handler->newProperty);
-
-		$this->handler->privateDeprecated = "Deprecated";
-		$this->assertEquals("Deprecated", $this->handler->newProperty);
 	}
 
 	/**
@@ -302,9 +291,6 @@ class DolDeprecationHandlerTest extends CommonClassTest
 		// Enable E_USER_NOTICE in error_reporting
 		$this->expectExceptionMessage("Undefined property 'privateVarShouldTrigger'");
 		$this->handler->privateVarShouldTrigger;
-
-		$this->expectExceptionMessage("Accessing deprecated property 'privateDeprecated'");
-		$this->handler->privateDeprecated;
 
 		// Restore error_reporting
 		error_reporting($oldErrorReporting);
@@ -384,5 +370,139 @@ class DolDeprecationHandlerTest extends CommonClassTest
 		$this->dynHandler->unsetProperty = "TestUnset";
 		unset($this->dynHandler->unsetProperty);
 		$this->assertFalse(isset($this->dynHandler->unsetProperty));
+	}
+
+	/**
+	 * Test that verification triggers error when old property exists
+	 *
+	 * @return void
+	 */
+	public function testDeprecationVerificationTriggersErrorForOldProperty()
+	{
+		// Create a handler class that has an old property defined
+		$badHandler = new class () {
+			use DolDeprecationHandler;
+
+			/**
+			 * @var string Old property that should not exist
+			 */
+			public $oldPropertyThatExists;
+
+			/**
+			 * @var string New property
+			 */
+			public $newPropertyThatExists;
+
+			/**
+			 * Define deprecated properties.
+			 *
+			 * @return array<string,string>
+			 */
+			protected function deprecatedProperties()
+			{
+				return [
+					'oldPropertyThatExists' => 'newPropertyThatExists',
+				];
+			}
+
+			/**
+			 * Define deprecated methods.
+			 *
+			 * @return array<string,string>
+			 */
+			protected function deprecatedMethods()
+			{
+				return [];
+			}
+
+			/**
+			 * Make verifyDeprecatedItemsRemoved accessible for testing
+			 *
+			 * @return void
+			 */
+			public function testVerifyDeprecatedItemsRemoved()
+			{
+				$this->verifyDeprecatedItemsRemoved();
+			}
+		};
+
+		// Expect the exception (changed from expectError to expectException due to PHP 8.4 deprecation)
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage("Old property 'oldPropertyThatExists' still exists");
+
+		// Call the verification method directly
+		$badHandler->testVerifyDeprecatedItemsRemoved();
+	}
+
+	/**
+	 * Test that verification triggers error when old method exists
+	 *
+	 * @return void
+	 */
+	public function testDeprecationVerificationTriggersErrorForOldMethod()
+	{
+		// Create a handler class that has an old method defined
+		$badHandler = new class () {
+			use DolDeprecationHandler;
+
+			/**
+			 * Old method that should not exist
+			 *
+			 * @return string
+			 */
+			public function oldMethodThatExists()
+			{
+				return "old";
+			}
+
+			/**
+			 * New method
+			 *
+			 * @return string
+			 */
+			public function newMethodThatExists()
+			{
+				return "new";
+			}
+
+			/**
+			 * Define deprecated properties.
+			 *
+			 * @return array<string,string>
+			 */
+			protected function deprecatedProperties()
+			{
+				return [];
+			}
+
+			/**
+			 * Define deprecated methods.
+			 *
+			 * @return array<string,string>
+			 */
+			protected function deprecatedMethods()
+			{
+				return [
+					'oldMethodThatExists' => 'newMethodThatExists',
+				];
+			}
+
+			/**
+			 * Make verifyDeprecatedItemsRemoved accessible for testing
+			 *
+			 * @return void
+			 */
+			public function testVerifyDeprecatedItemsRemoved()
+			{
+				$this->verifyDeprecatedItemsRemoved();
+			}
+		};
+
+		// Expect the exception (changed from expectError to expectException due to PHP 8.4 deprecation)
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage("Old method 'oldMethodThatExists' still exists");
+
+		// Call the verification method directly
+		$badHandler->testVerifyDeprecatedItemsRemoved();
 	}
 }
