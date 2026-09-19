@@ -96,6 +96,7 @@ if ($type == 'proposal') {
 }
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
+	// Link may have expired because of a change into the keys used to forge the signature.
 	httponly_accessforbidden('Bad value for securitykey. Value provided ' . dol_escape_htmltag($SECUREKEY) . ' does not match expected value for ref=' . dol_escape_htmltag($ref), 403);
 }
 
@@ -296,13 +297,21 @@ if ($action == "importSignature") {
 					$sql .= ", online_sign_name = '" . $db->escape($online_sign_name) . "'";
 				}
 				$sql .= " WHERE rowid = " . ((int) $object->id);
+				$sql .= " AND fk_statut = ".((int) $object::STATUS_VALIDATED);		// Protection so we can't sign a document that is no more with status validated.
 
 				dol_syslog(__FILE__, LOG_DEBUG);
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
+					$response = "error sql";
 				} else {
 					$num = $db->affected_rows($resql);
+					if ($num <= 0) {
+						$error++;
+						$langs->load("errors");
+						//setEventMessages($langs->trans("ErrorCantSignDocument"), null, 'errors');
+						print $langs->transnoentitiesnoconv("ErrorCantSignDocument");	// Must be a print that is shown by ajavascript alert().
+					}
 				}
 
 				if (!$error) {
@@ -327,15 +336,12 @@ if ($action == "importSignature") {
 					} else {
 						$response = "success";
 					}
-				} else {
-					$error++;
-					$response = "error sql";
 				}
 
 				if (!$error) {
 					$db->commit();
 					$response = "success";
-					setEventMessages("PropalSigned", null, 'warnings');
+					setEventMessages("PropalSigned", null, 'mesgs');
 				} else {
 					$db->rollback();
 				}
