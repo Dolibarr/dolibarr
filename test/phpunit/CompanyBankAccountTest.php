@@ -2,6 +2,7 @@
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Nathan Pixodeo          <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/companybankaccount.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -98,6 +100,51 @@ class CompanyBankAccountTest extends CommonClassTest
 		$result = $localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
+		return $localobject;
+	}
+
+	/**
+	 * Test that SEPA mandate generation honors the output directory passed through the object context.
+	 *
+	 * @param	CompanyBankAccount	$localobject	Bank account object
+	 * @return	CompanyBankAccount				Bank account object
+	 *
+	 * @depends	testCompanyBankAccountFetch
+	 */
+	public function testSepaMandateForcedOutputDirectory($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$soc = new Societe($db);
+		$result = $soc->fetch($localobject->socid);
+		$this->assertGreaterThan(0, $result, $soc->errorsToString());
+
+		$outputdir = $conf->societe->multidir_output[$soc->entity ?? $conf->entity].'/'.dol_sanitizeFileName((string) $soc->id);
+		$moreparams = array(
+			'use_companybankid' => $localobject->id,
+			'force_dir_output' => $outputdir,
+		);
+		$langs->load('withdrawals');
+		$objectref = dol_sanitizeFileName($localobject->ref);
+		$expectedfile = $outputdir.'/'.$langs->transnoentitiesnoconv('SepaMandateShort').' '.$objectref.'-'.dol_sanitizeFileName($localobject->rum).'.pdf';
+		if (file_exists($expectedfile)) {
+			dol_delete_file($expectedfile);
+		}
+
+		try {
+			$result = $soc->generateDocument('sepamandate', $langs, 0, 0, 0, $moreparams);
+			$this->assertGreaterThan(0, $result, $soc->errorsToString());
+			$this->assertFileExists($expectedfile);
+		} finally {
+			if (file_exists($expectedfile)) {
+				dol_delete_file($expectedfile);
+			}
+		}
+
 		return $localobject;
 	}
 

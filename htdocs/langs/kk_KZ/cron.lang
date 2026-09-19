@@ -77,6 +77,7 @@ CronType=Жұмыс түрі
 CronType_method=PHP класының шақыру әдісі
 CronType_command=Shell командасы
 CronCannotLoadClass=%s сынып файлын жүктеу мүмкін емес (%s класын пайдалану үшін)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=%s сынып файлы жүктелді, бірақ оған %s нысаны табылмады
 UseMenuModuleToolsToAddCronJobs=Жоспарланған тапсырмаларды көру және өңдеу үшін «<a href="%s"> Басты бет - Әкімші құралдары - </a> жоспарланған тапсырмалар» мәзіріне өтіңіз.
 JobDisabled=Жұмыс өшірілген

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
@@ -191,6 +191,7 @@ if ($user->socid > 0) {
 $sql .= " GROUP BY t.fk_statut";
 
 $dataseries = array();
+$colorseries = array();
 $result = $db->query($sql);
 if ($result) {
 	while ($objp = $db->fetch_object($result)) {
@@ -231,9 +232,10 @@ if ($result) {
 	 * @var string $badgeStatus8
 	 * @var string $badgeStatus9
 	 */
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
-
-	$colorseries = array();
+	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($theme_vars_file) {
+		include $theme_vars_file;	// This define $badgeStatusX
+	}
 
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
 	$colorseries[Ticket::STATUS_NOT_READ] = '-'.$badgeStatus0;

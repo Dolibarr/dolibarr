@@ -102,3 +102,7 @@ XNewLinesConciliated=%s nouvelle(s) ligne(s) conciliée(s)
 CountryIsInSepa=Pays de la zone SEPA
 BankAccountForcedOnRequest=Ce compte bancaire a été défini lors de la préparation de la demande de virement. Supprimez-le et reprenez la préparation depuis l'objet source si vous devez le modifier.
 BankAccountUsedByDefault=Il s’agit du compte bancaire par défaut du tiers.
+PendingDirectDebitToCompleteShort=Prélèvements automatiques à clôturer
+PendingDirectDebitToComplete=Prélèvements automatiques à clôturer
+PendingCreditTransferToCompleteShort=Les virements de crédit doivent être clôturés.
+PendingCreditTransferToComplete=Les virements de crédit doivent être clôturés.

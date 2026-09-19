@@ -78,7 +78,7 @@ if ($id) {
 
 	$head = fiscalyear_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), -1, $object->picto, 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), -1, $object->picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/fiscalyear.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

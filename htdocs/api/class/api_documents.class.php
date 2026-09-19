@@ -5,7 +5,7 @@
  * Copyright (C) 2016   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   	Romain Neil             <contact@romain-neil.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
  *
@@ -449,7 +449,7 @@ class Documents extends DolibarrApi
 	 * @param	string	$content_type	Filter on content-type (example 'application/pdf' or 'application/pdf,image/jpeg'))
 	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array					Array of documents with path
-	 * @phan-return array<array<string,int|string>>
+	 * @phan-return array{data:array<mixed,array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>,pagination:array{total:int,page:int,page_count:int,limit:int}}|array<mixed,array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>
 	 * @phpstan-return array<array<string,int|string>>
 	 *
 	 * @url GET /
@@ -458,7 +458,7 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Object (Thirdparty, User, Member, Order, Invoice, Proposal...) not found
 	 * @throws	RestException	500		Error while fetching object
-	 * @throws	RestException	503		Error when retrieve ecm list
+	 * @throws	RestException	503		Error when retrieving ecm list
 	 */
 	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '', $limit = 100, $page = 0, $content_type = '', $pagination_data = false)
 	{
@@ -472,11 +472,10 @@ class Documents extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
-
 		// Define $object
-		$object = fetchObjectByElement($id, $modulepart, $ref);
+		$object = fetchObjectByElement($id, $modulepart, $ref);		// Note that we don't mind id and ref, we want to get a valid instantiated $object but not necessarily initialized
 		if (!is_object($object)) {
-			throw new RestException(404, 'Object with (id, ref) = ('.$id.', '.$ref.') not found or not allowed for modulepart = '.$modulepart);
+			throw new RestException(404, 'Module for modulepart = '.$modulepart." is not enabled (or not yet supported by API");
 		}
 
 		// Define $upload_dir to scan
@@ -612,15 +611,14 @@ class Documents extends DolibarrApi
 			$objectType = $object->table_element;
 		}
 
-		$filearraytmp = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 
-		$filearray = $filearraytmp;		// We store answer into an array that we will extends with ecm data
-		/** @var $filearray array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,ref:string,label:string,filepath:string,filename:string,fullpath_orig:string,position:int,gen_or_uploaded:int,description:string,keywords:string,cover:int,share:int,date_c:string,agenda_id:int,fk_user_c:int,fk_user_m:int,note_private:string,note_public:string,content-type:string}> */
-		$countarray = count($filearray);
-		$filearray = array_slice($filearray, $limit * $page, $limit);
+		$countarray = is_array($filearray) ? count($filearray) : 0;
+
 		if (empty($filearray)) {
-			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
+			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$id.(!empty($ref) ? ' or Ref '.$ref : '').' does not return any document.');
 		} else {
+			$filearray = array_slice($filearray, $limit * $page, $limit);
 			if (($object->id) > 0 && !empty($modulepart)) {
 				require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$ecmfile = new EcmFiles($this->db);
@@ -628,54 +626,69 @@ class Documents extends DolibarrApi
 				if ($result < 0) {
 					throw new RestException(503, 'Error when retrieve ecm list : '.$this->db->lasterror());
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
-					$count = count($filearray);
-					for ($i = 0 ; $i < $count ; $i++) {
+					foreach ($filearray as &$fileitem) {
 						foreach ($ecmfile->lines as $line) {
-							if ($filearray[$i]['name'] == $line->filename) {
+							if ($fileitem['name'] == $line->filename) {
 								// Next line converts EcmFilesLine properties to array
-								//$filearray[$i] = array_merge($filearray[$i], (array) $line);
-								$filearray[$i]['ref'] = $line->ref;
-								$filearray[$i]['label'] = $line->label;
-								$filearray[$i]['filepath'] = $line->filepath;
-								$filearray[$i]['filename'] = $line->filename;
-								$filearray[$i]['fullpath_orig'] = $line->fullpath_orig;
-								$filearray[$i]['position'] = $line->position;
-								$filearray[$i]['gen_or_uploaded'] = $line->gen_or_uploaded;
-								$filearray[$i]['description'] = $line->desc;
-								$filearray[$i]['keywords'] = $line->keywords;
-								$filearray[$i]['cover'] = $line->cover;
-								$filearray[$i]['share'] = $line->share;
-								$filearray[$i]['date_c'] = $line->date_c;
-								$filearray[$i]['agenda_id'] = $line->agenda_id;
-								$filearray[$i]['fk_user_c'] = $line->fk_user_c;
-								$filearray[$i]['fk_user_m'] = $line->fk_user_m;
-								$filearray[$i]['note_private'] = $line->note_private;
-								$filearray[$i]['note_public'] = $line->note_public;
+								//$fileitem = array_merge($fileitem, (array) $line);
+								$fileitem['ref'] = $line->ref;
+								$fileitem['label'] = $line->label;
+								$fileitem['filepath'] = $line->filepath;
+								$fileitem['filename'] = $line->filename;
+								$fileitem['fullpath_orig'] = $line->fullpath_orig;
+								$fileitem['position'] = $line->position;
+								$fileitem['gen_or_uploaded'] = $line->gen_or_uploaded;
+								$fileitem['description'] = $line->desc;
+								$fileitem['keywords'] = $line->keywords;
+								$fileitem['cover'] = $line->cover;
+								$fileitem['share'] = $line->share;
+								$fileitem['date_c'] = $line->date_c;
+								$fileitem['agenda_id'] = $line->agenda_id;
+								$fileitem['fk_user_c'] = $line->fk_user_c;
+								$fileitem['fk_user_m'] = $line->fk_user_m;
+								$fileitem['note_private'] = $line->note_private;
+								$fileitem['note_public'] = $line->note_public;
 							}
 						}
-						if (isset($filearray[$i]['relativename'])) {
-							$filearray[$i]['content-type'] = dol_mimetype((string) $filearray[$i]['relativename']);
+						if (isset($fileitem['relativename'])) {
+							$fileitem['content-type'] = dol_mimetype((string) $fileitem['relativename']);
 						}
-						$arraycontenttype = explode(",", $content_type);
-						if (!empty($content_type) && isset($filearray[$i]['relativename']) && !in_array(dol_mimetype((string) $filearray[$i]['relativename']), $arraycontenttype)) {
-							unset($filearray[$i]);
-							$countarray -= 1;
-						}
+					}
+
+					// Select only files that match the requested $content_type, if provided
+					$arraycontenttype = explode(",", $content_type);
+					if (!empty($content_type)) {
+						$filearray = array_filter(
+							$filearray,
+							/**
+							 * @param array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,content-type?:string} $fileitem  Item to check for content type (for filtering)
+							 * @return bool True if file matches a content type
+							 */
+							static function ($fileitem) use (&$arraycontenttype) {
+								return in_array(($fileitem['content-type'] ?: 'UNKNOWN'), $arraycontenttype);
+							}
+						);
 					}
 				}
 			}
 		}
 
+		// Clean result from fullname
+		foreach ($filearray as $tmpkey => $tmpval) {
+			unset($filearray[$tmpkey]['path']);
+			unset($filearray[$tmpkey]['fullname']);
+		}
+
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
-			$tmp = $filearray;
-			$filearray = [];
-			$filearray['data'] = $tmp;
-			$filearray['pagination'] = [
-				'total' => (int) $countarray,
-				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $countarray / $limit),
-				'limit' => $limit
+			$filearray = [
+				'data' => $filearray,
+				'pagination' => [
+					'total' => (int) $countarray,
+					'page' => $page, // count starts from 0
+					'page_count' => (int) ceil((int) $countarray / $limit),
+					'limit' => $limit
+				]
 			];
 		}
 
@@ -715,11 +728,12 @@ class Documents extends DolibarrApi
 	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
-	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
+	 * @param   int 	$createdirifnotexists  	Create subdirectories if they doesn't exists (1 by default)
 	 * @param   int     $position               Position
 	 * @param   string  $cover                  Cover info
 	 * @param   array   $array_options          Array for extrafields of ECM index table
 	 * @param	int		$generateThumbs			1=Will generate the small and mini thumbs if applicable
+	 * @param   int     $share                  1=Make the file public by generating a share key into the ECM table (0 by default)
 	 * @return  string
 	 *
 	 * @phan-param   array<string,string>   $array_options
@@ -732,7 +746,7 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	404		Object not found
 	 * @throws	RestException	500		Error on file operation
 	 */
-	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0)
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0, $share = 0)
 	{
 		global $conf;
 
@@ -842,12 +856,12 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$object = new Societe($this->db);
 				$fetchbyid = true;
-			} elseif ($modulepart == 'knowledgemanagement' ) {
+			} elseif ($modulepart == 'knowledgemanagement') {
 				$modulepart = 'knowledgemanagement';
 				require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 				$object = new KnowledgeRecord($this->db);
 				$fetchbyid = true;
-			} elseif ($modulepart == 'ticket' ) {
+			} elseif ($modulepart == 'ticket') {
 				$modulepart = 'ticket';
 				require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 				$object = new Ticket($this->db);
@@ -1043,6 +1057,10 @@ class Documents extends DolibarrApi
 		if (!empty($cover)) {
 			$moreinfo = array_merge($moreinfo, ["cover" => $cover]);
 		}
+		if (!empty($share)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$moreinfo = array_merge($moreinfo, ["share" => getRandomPassword(true)]);
+		}
 		$moreinfo['gen_or_uploaded'] = 'api';
 
 		// Move the temporary file at its final emplacement
@@ -1053,6 +1071,7 @@ class Documents extends DolibarrApi
 
 		if (is_object($object) && $generateThumbs) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';	// image_format_supported() is defined here
 			if (image_format_supported($dest_file)) {
 				$object->addThumbs($dest_file);
 			}

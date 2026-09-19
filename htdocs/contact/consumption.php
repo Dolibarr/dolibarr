@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -162,9 +162,11 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 // Civility
-print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
-print $object->getCivilityLabel();
-print '</td></tr>';
+if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+	print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
+	print $object->getCivilityLabel();
+	print '</td></tr>';
+}
 
 $thirdTypeArray = array();
 $elementTypeArray = array();
@@ -540,7 +542,7 @@ if ($sql_select && $documentstatic !== null) {
 
 				$outputlangs = $langs;
 				$newlang = '';
-				if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (empty($newlang)) {

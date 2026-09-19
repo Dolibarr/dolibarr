@@ -145,16 +145,16 @@ if (empty($reshook)) {
 
 	$triggermodname = 'BOOKCAL_AVAILABILITIES_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	$startday = GETPOSTINT('startday');
-	$startmonth = GETPOSTINT('startmonth');
-	$startyear = GETPOSTINT('startyear');
+	$startday = GETPOSTINT('date_startday');
+	$startmonth = GETPOSTINT('date_startmonth');
+	$startyear = GETPOSTINT('date_startyear');
 	$starthour = GETPOSTINT('startHour');
 
 	$dateStartTimestamp = dol_mktime($starthour, 0, 0, $startmonth, $startday, $startyear);
 
-	$endday = GETPOSTINT('endday');
-	$endmonth = GETPOSTINT('endmonth');
-	$endyear = GETPOSTINT('endyear');
+	$endday = GETPOSTINT('date_endday');
+	$endmonth = GETPOSTINT('date_endmonth');
+	$endyear = GETPOSTINT('date_endyear');
 	$endhour = GETPOSTINT('endHour');
 
 	$dateEndTimestamp = dol_mktime($endhour, 0, 0, $endmonth, $endday, $endyear);

@@ -68,3 +68,4 @@ ApplyJobCandidature=Aplikoni për këtë punë
 ErrorRecruitmmentCandidatureAlreadyExists= Kandidatura për rekrutim ekziston tashmë me email %s
 RecruitmentCandidatureSaved=Kandidatura për rekrutim u ruajt me sukses
 NoOpenJobOffer=Nuk ka oferta pune të hapura për momentin
+ShowPositionToBeFilled=Show Position to be filled

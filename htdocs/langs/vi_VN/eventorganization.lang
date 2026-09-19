@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Hội nghị hoặc gian hàng
 AmountPaid = Số tiền đã trả
 DateOfRegistration = Ngày đăng ký
 ConferenceOrBoothAttendee = Người tham dự hội nghị hoặc gian hàng
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Người nộp đơn hoặc khách truy cập
 Speaker=Loa
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Danh sách người tham dự sự kiện dự án
 ListOfConfOrBoothOfEvent=Danh sách các hội nghị hoặc gian hàng của các dự án sự kiện
 DownloadICSLink=Tải xuống tệp ICS
 EVENTORGANIZATION_SECUREKEY=Seed để bảo mật key cho trang đăng ký công khai để đề xuất hội nghị
-SERVICE_BOOTH_LOCATION=Dịch vụ sử dụng cho dòng hóa đơn về địa điểm gian hàng
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Dịch vụ được sử dụng cho hàng hóa đơn về việc đăng ký người tham dự một sự kiện
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Số phiếu bầu
 # Status
 EvntOrgDraft = Dự thảo
@@ -122,7 +123,7 @@ NewSubscription=Sự đăng ký
 OrganizationEventConfRequestWasReceived=Đề xuất của bạn cho một hội nghị đã được nhận
 OrganizationEventBoothRequestWasReceived=Yêu cầu gian hàng của bạn đã được nhận
 OrganizationEventPaymentOfBoothWasReceived=thanh toán cho gian hàng của bạn đã được ghi lại
-OrganizationEventPaymentOfRegistrationWasReceived=thanh toán đăng ký sự kiện của bạn đã được ghi lại
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=Đây là lời nhắc nhở về việc bạn tham gia sự kiện với tư cách là người tham dự
 OrganizationEventBulkMailToSpeakers=Đây là lời nhắc nhở về việc bạn tham gia sự kiện với tư cách là diễn giả
 OrganizationEventLinkToThirdParty=Liên kết với bên thứ ba (khách hàng, nhà cung cấp hoặc đối tác)

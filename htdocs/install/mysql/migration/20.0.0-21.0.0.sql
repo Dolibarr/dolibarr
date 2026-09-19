@@ -133,6 +133,28 @@ ALTER TABLE llx_commande ADD COLUMN signed_status smallint DEFAULT NULL AFTER to
 
 ALTER TABLE llx_notify_def ADD COLUMN entity integer DEFAULT 1;
 
+-- Product attribut extrafields
+CREATE TABLE llx_product_attribute_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          -- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_attribute_extrafields ADD INDEX idx_product_attribute_extrafields (fk_object);
+
+-- Product attribut value extrafields
+CREATE TABLE llx_product_attribute_value_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          -- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_attribute_value_extrafields ADD INDEX idx_product_attribute_value_extrafields (fk_object);
+
 -- A dictionary can not have entity = 0
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday;
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday2;

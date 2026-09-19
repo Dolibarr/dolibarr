@@ -258,7 +258,7 @@ OtherFilteredTasks=Digər filtrlənmiş tapşırıqlar
 NoAssignedTasks=Heç bir təyin edilmiş tapşırıq tapılmadı (vaxt daxil etmək üçün yuxarıdakı seçim qutusundan cari istifadəçiyə layihə/tapşırıqlar təyin edin)
 ThirdPartyRequiredToGenerateIntervention=Müdaxilə yarada bilmək üçün layihədə üçüncü tərəf müəyyən edilməlidir.
 ThirdPartyRequiredToGenerateInvoice=Layihənin hesab-fakturasını təqdim etmək üçün layihədə üçüncü tərəf müəyyən edilməlidir.
-ChooseANotYetAssignedTask=Hələ sizə təyin edilməmiş bir tapşırıq seçin
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Tapşırıqlar haqqında istifadəçi şərhlərinə icazə verin
 AllowCommentOnProject=Layihələr haqqında istifadəçi şərhlərinə icazə verin

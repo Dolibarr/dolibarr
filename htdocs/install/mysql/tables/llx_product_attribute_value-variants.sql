@@ -26,5 +26,6 @@ CREATE TABLE llx_product_attribute_value
   ref					VARCHAR(180)	NOT NULL,
   value					VARCHAR(255)	NOT NULL,
   entity				INTEGER			DEFAULT 1 NOT NULL,
-  position				INTEGER			NOT NULL DEFAULT 0
+  position				INTEGER			NOT NULL DEFAULT 0,
+  import_key			VARCHAR(14)				-- import key
 )ENGINE=innodb;

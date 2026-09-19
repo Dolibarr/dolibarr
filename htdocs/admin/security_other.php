@@ -112,12 +112,11 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', '
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("MiscellaneousDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("MiscellaneousDesc")."</div>\n";
 
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 

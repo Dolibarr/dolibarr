@@ -77,6 +77,7 @@ CronType=வேலை வகை
 CronType_method=PHP வகுப்பின் அழைப்பு முறை
 CronType_command=ஷெல் கட்டளை
 CronCannotLoadClass=%s வகுப்பு கோப்பை ஏற்ற முடியவில்லை (வகுப்பை %s பயன்படுத்த)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=வகுப்பு கோப்பு %s ஏற்றப்பட்டது, ஆனால் ஆப்ஜெக்ட் %s அதில் காணப்படவில்லை
 UseMenuModuleToolsToAddCronJobs=திட்டமிடப்பட்ட வேலைகளைப் பார்க்கவும் திருத்தவும் " <a href="%s"> முகப்பு - நிர்வாகக் கருவிகள் - திட்டமிடப்பட்ட வேலைகள் </a> " என்ற மெனுவிற்குச் செல்லவும்.
 JobDisabled=வேலை முடக்கப்பட்டது

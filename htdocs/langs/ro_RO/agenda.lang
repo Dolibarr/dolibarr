@@ -29,6 +29,7 @@ ViewWeek=Vedere săptămânală
 ViewPerUser=Vedere pe utilizator
 ViewPerType=Vizualizare pe tip
 AutoActions= Completare automată
+ManualActions=Creat manual de un utilizator
 AgendaAutoActionDesc= Aici puteți defini evenimentele pe care doriți ca Dolibarr să le creeze automat în Agendă. Dacă nu este bifat nimic, numai acțiunile manuale vor fi incluse în jurnale și afișate în Agendă. Urmărirea automată a acțiunilor de afaceri efectuate pe obiecte (validare, schimbare de stare) nu va fi salvată.
 AgendaSetupOtherDesc= Această pagină oferă opțiuni pentru a permite exportul evenimentelor Dolibarr într-un calendar extern (Thunderbird, Google Calendar etc.)
 AgendaExtSitesDesc=Această pagină vă permite să declaraţi sursele externe de calendare pentru a vedea evenimentele lor în agenda Dolibarr.
@@ -215,3 +216,8 @@ EventPartOfARecurringSerie=Evenimentul face parte dintr-o serie recurentă cu ID
 BookCalSystem=Rezervare online
 BookCalInitHelp=Pentru început, accesează meniul pentru a crea un nou Calendar cu disponibilități...
 PublicLinkForBooking=Link public pentru rezervare
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

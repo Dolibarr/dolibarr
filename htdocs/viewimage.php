@@ -179,6 +179,9 @@ if (empty($modulepart) && empty($hashp)) {
 if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') {
 	httponly_accessforbidden('Bad link. Missing identification to find file (param file or hashp)', 400);
 }
+if ($hashp == 'shared') {
+	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
+}
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
 }
@@ -209,7 +212,7 @@ if ($cachestring) {
 }
 
 // If we have a hash public (hashp), we guess the original_file.
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$ecmfile = new EcmFiles($db);
@@ -294,7 +297,7 @@ $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
 } elseif (GETPOSTINT("publictakepos")) {
@@ -331,7 +334,7 @@ if (!$accessallowed) {
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+// We forbid directory traversal as well as pipes in file names.
 if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {
 	dol_syslog("Refused to deliver file ".$fullpath_original_file);
 	print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);

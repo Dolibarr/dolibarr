@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Senaste kundleveranser
 BoxTitleLastCustomerShipments=Senaste %s modifierade kundleveranser
 BoxTitleLastLeaveRequests=Senaste %s ändrade ledighetsansökningar
 NoRecordedShipments=Inga leveranser har skapats
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Kunder med utestående gräns har nåtts
 BoxTitleLastFediverseInfos=Senaste %s inläggen från %s
 BoxLastFediverseInfos=Senaste Fediverse-uppdateringarna: Nyheter och trender

@@ -141,6 +141,9 @@ foreach ($object->fields as $key => $val) {
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // Complete arrayfields with special fields
 /*$arrayfields = array_merge($arrayfields, array(
@@ -223,7 +226,7 @@ if (empty($reshook)) {
 	// You can add more action here
 	// if ($action == 'xxx' && $permissiontoxxx) ...
 
-	if ($massaction === 'unarchive') {
+	if ($massaction === 'unarchive' && $permissiontoadd) {
 		if (!empty($toselect)) {
 			$countUnarchived = 0;
 			foreach ($toselect as $idMemo) {
@@ -240,7 +243,7 @@ if (empty($reshook)) {
 					continue;
 				}
 
-				if ($user->id != $selectdModel->fk_user_creat && $selectdModel->private_tpl) {
+				if ($user->id != $selectdModel->fk_user_creat && $selectdModel->private) {
 					setEventMessage($langs->trans('QuickMemoCantChangeThisPrivateNote').' : '. (int) $idMemo, 'errors');
 					continue;
 				}
@@ -545,7 +548,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
