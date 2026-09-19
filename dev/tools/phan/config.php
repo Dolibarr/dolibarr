@@ -472,6 +472,11 @@ return [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
 		'PhanDeprecatedImplicitNullableParam',
+		// TCPDF >= 6.11 marks the whole library deprecated (in favor of tecnickcom/tc-lib-pdf)
+		// in its own class docblocks; Dolibarr intentionally keeps using it (TCPDI and all
+		// local patches depend on TCPDF internals), so don't flag every TCPDF/TCPDFBarcode/
+		// TCPDF2DBarcode usage across the codebase for it.
+		'PhanDeprecatedClass',
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
