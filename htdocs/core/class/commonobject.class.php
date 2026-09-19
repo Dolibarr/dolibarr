@@ -2373,6 +2373,13 @@ abstract class CommonObject
 
 
 	/**
+	 * @var array<string,bool> Fields currently being processed by setFieldValue(), keyed by field name.
+	 *                         Used to detect and break infinite recursion that could be caused by
+	 *                         onFieldValueChanged() side effects calling setFieldValue() back.
+	 */
+	protected $fieldValueBeingSet = array();
+
+	/**
 	 * Set a value for a dynamic field on the current object.
 	 *
 	 * This method performs multiple safety checks before assigning the value:
@@ -2380,7 +2387,9 @@ abstract class CommonObject
 	 * - checks if the user is allowed to edit the field
 	 * - optionally validates the value if validation is required
 	 *
-	 * If all checks pass, the value is assigned dynamically to the property.
+	 * If all checks pass, the value is assigned dynamically to the property, and
+	 * onFieldValueChanged() is called so child classes can recompute dependent fields
+	 * (for example recalculating a TTC amount when the HT amount of a line changes).
 	 *
 	 * @param User 		$user					The user attempting to modify the field.
 	 * @param string 	$fieldKey 	 			The name of the field to modify.
@@ -2392,6 +2401,13 @@ abstract class CommonObject
 	public function setFieldValue(User $user, $fieldKey, $value, $byPassUserPermission = false)
 	{
 		global $langs;
+
+		if (!empty($this->fieldValueBeingSet[$fieldKey])) {
+			// A side effect (onFieldValueChanged) is trying to set this same field again while it is
+			// still being processed higher up the call stack: this would cause infinite recursion.
+			dol_syslog(get_class($this)."::setFieldValue recursive call detected on field '".$fieldKey."', aborting to avoid infinite loop", LOG_WARNING);
+			return false;
+		}
 
 		if (!$this->isFieldDefined($fieldKey)) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
@@ -2415,6 +2431,8 @@ abstract class CommonObject
 		if (is_object($this->oldcopy) && property_exists($this, $fieldKey) && property_exists($this->oldcopy, $fieldKey)) {
 			$this->oldcopy->$fieldKey = $this->$fieldKey;
 		}
+
+		$this->fieldValueBeingSet[$fieldKey] = true;
 
 		// Set new value
 		$this->$fieldKey = $value;
@@ -2440,7 +2458,31 @@ abstract class CommonObject
 			}
 		}
 
+		// Let child classes recompute dependent fields (ex: TTC amount when HT amount changes on a line).
+		// Left as a no-op by default in CommonObject, which is shared by every kind of object.
+		$this->onFieldValueChanged($fieldKey, $value);
+
+		unset($this->fieldValueBeingSet[$fieldKey]);
+
 		return true;
+	}
+
+	/**
+	 * Hook called by setFieldValue() after a field has been successfully assigned.
+	 * Override in child classes to recompute fields that depend on the one that just changed
+	 * (for example recalculating total_ttc when subprice or tva_tx changes on a line).
+	 *
+	 * Warning: to avoid infinite recursion, dependent fields should be assigned directly
+	 * (ex: $this->total_ttc = ...) rather than through a recursive call to setFieldValue().
+	 * setFieldValue() also guards against re-entrant calls on the same field as a safety net.
+	 *
+	 * @param string $fieldKey The name of the field that was just modified.
+	 * @param mixed  $value    The new value that was assigned to the field.
+	 * @return void
+	 */
+	protected function onFieldValueChanged($fieldKey, $value)
+	{
+		// Nothing to do by default.
 	}
 
 	/**

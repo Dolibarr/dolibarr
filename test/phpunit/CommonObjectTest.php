@@ -264,4 +264,150 @@ class CommonObjectTest extends CommonClassTest
 
 		print __METHOD__." OK\n";
 	}
+
+	/**
+	 * onFieldValueChanged() must be called after a field is set, so that dependent fields
+	 * (ex: a TTC amount recomputed from an HT amount on a line) can be recalculated.
+	 * The recommended pattern is a direct property assignment in the hook, not a recursive
+	 * call to setFieldValue().
+	 *
+	 * @return void
+	 */
+	public function testSetFieldValueTriggersOnFieldValueChangedHook()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db) extends CommonObject {
+			/**
+			 * @var string Element name
+			 */
+			public $element = 'testline';
+			/**
+			 * @var string Table name
+			 */
+			public $table_element = 'testline';
+			/**
+			 * @var array<string,array{type:string,label:string,enabled:int}> Fields definition
+			 */
+			public $fields = array(
+				'total_ht' => array('type' => 'double', 'label' => 'Total HT', 'enabled' => 1),
+			);
+			/**
+			 * @var float Simulated VAT-included amount, recomputed from total_ht
+			 */
+			public $total_ttc = 0.0;
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+			}
+
+			/**
+			 * Recompute total_ttc directly (no recursive call to setFieldValue()) when total_ht changes.
+			 *
+			 * @param string $fieldKey Name of the field that was just modified
+			 * @param mixed  $value    New value assigned to the field
+			 * @return void
+			 */
+			protected function onFieldValueChanged($fieldKey, $value)
+			{
+				if ($fieldKey === 'total_ht') {
+					$this->total_ttc = ((float) $value) * 1.2;
+				}
+			}
+		};
+
+		$result = $localobject->setFieldValue($user, 'total_ht', 100.0, true);
+
+		$this->assertTrue($result);
+		$this->assertSame(100.0, $localobject->total_ht);
+		$this->assertSame(120.0, $localobject->total_ttc, 'total_ttc must be recomputed from total_ht by onFieldValueChanged');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * setFieldValue() must protect itself against an infinite loop if onFieldValueChanged()
+	 * is (incorrectly, or after a future evolution) implemented with a recursive call back
+	 * into setFieldValue() for a field that is still being processed.
+	 *
+	 * @return void
+	 */
+	public function testSetFieldValueBlocksRecursiveSideEffectLoop()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db) extends CommonObject {
+			/**
+			 * @var string Element name
+			 */
+			public $element = 'testline';
+			/**
+			 * @var string Table name
+			 */
+			public $table_element = 'testline';
+			/**
+			 * @var array<string,array{type:string,label:string,enabled:int}> Fields definition
+			 */
+			public $fields = array(
+				'total_ht' => array('type' => 'double', 'label' => 'Total HT', 'enabled' => 1),
+				'total_ttc' => array('type' => 'double', 'label' => 'Total TTC', 'enabled' => 1),
+			);
+			/**
+			 * @var int Number of times onFieldValueChanged() ran, to prove there is no infinite loop
+			 */
+			public $hookCallCount = 0;
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+			}
+
+			/**
+			 * Deliberately buggy: ping-pongs between total_ht and total_ttc through setFieldValue()
+			 * itself, to check that the re-entrancy guard in setFieldValue() breaks the cycle.
+			 *
+			 * @param string $fieldKey Name of the field that was just modified
+			 * @param mixed  $value    New value assigned to the field
+			 * @return void
+			 */
+			protected function onFieldValueChanged($fieldKey, $value)
+			{
+				global $user;
+
+				$this->hookCallCount++;
+
+				if ($fieldKey === 'total_ht') {
+					$this->setFieldValue($user, 'total_ttc', ((float) $value) * 1.2, true);
+				} elseif ($fieldKey === 'total_ttc') {
+					$this->setFieldValue($user, 'total_ht', ((float) $value) / 1.2, true);
+				}
+			}
+		};
+
+		$result = $localobject->setFieldValue($user, 'total_ht', 100.0, true);
+
+		$this->assertTrue($result, 'the initial call must still succeed');
+		$this->assertSame(2, $localobject->hookCallCount, 'the loop must be broken after the second (recursive) call');
+
+		print __METHOD__." OK\n";
+	}
 }
