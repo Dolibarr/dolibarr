@@ -11,6 +11,7 @@
  * Copyright (C) 2024-2026  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -461,7 +462,12 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	if (empty($line->fk_remise_except)) {
 		print price($sign * $line->multicurrency_subprice);
 	} else {
-		print '<!-- '.price($sign * $line->multicurrency_subprice).' -->';
+		// Credit line (deposit, credit note, discount): show its value in the invoice currency and the rate it was paid at,
+		// which may differ from the invoice rate. Its company-currency unit price stays hidden like for any credit line.
+		print '<span class="opacitymedium">'.price($sign * $line->multicurrency_subprice).'</span>';
+		if (!empty($line->subprice) && !empty($line->multicurrency_subprice)) {
+			print '<div class="opacitymedium small nowraponall">'.$langs->trans("Rate").' : '.price2num(abs((float) $line->multicurrency_subprice / (float) $line->subprice), 'CR').' '.$this->multicurrency_code.'/'.$conf->currency.'</div>';
+		}
 	}
 	?>
 	</td>
@@ -496,6 +502,9 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	}
 	if (empty($line->fk_remise_except)) {
 		print(isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));		// if upinctax can't be known, we show subprice excl ta
+	} else {
+		// Credit line: its value in the invoice currency, tax included (see the excl. tax cell for the rate it was paid at)
+		print '<span class="opacitymedium">'.(isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice)).'</span>';
 	}
 	?></td>
 <?php } ?>
