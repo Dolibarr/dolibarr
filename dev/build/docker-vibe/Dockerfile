@@ -15,6 +15,7 @@ RUN apt-get update \
 		gh \
 		git \
 		hurl \
+		mysql-client \
 		openssh-client \
 		phpunit \
 		php \
@@ -24,6 +25,7 @@ RUN apt-get update \
 		shellcheck \
 		sshpass \
 		unzip \
+		w3m \
 		zip \
     && rm -rf /var/lib/apt/lists/*
 
