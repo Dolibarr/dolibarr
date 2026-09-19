@@ -839,9 +839,12 @@ class ToolApiBridge extends McpTool
 	 * writable temp directory exists. The state signature is part of the file
 	 * name, so any relevant change - a module (de)activated, a Dolibarr
 	 * upgrade, another entity, an edit of this file (which holds the
-	 * enrichments and method allowlists) - simply points to a different file:
-	 * no explicit invalidation hook to maintain. External-module API updates
-	 * that change none of these are covered by the TTL.
+	 * enrichments), or a change of the DB-driven restrictions
+	 * (AI_MCP_API_BRIDGE, AI_MCP_API_BRIDGE_METHODS) - simply points to a
+	 * different file: no explicit invalidation hook to maintain, and an
+	 * administrator RESTRICTING what the AI may reach takes effect on the
+	 * very next request (review sonikf). External-module API updates that
+	 * change none of these are covered by the TTL.
 	 *
 	 * @return string Absolute cache file path, or '' to skip caching
 	 */
@@ -862,6 +865,11 @@ class ToolApiBridge extends McpTool
 		$modules = array_map('strval', array_values((array) $conf->modules));
 		sort($modules);
 		$signature = implode(',', $modules).'|'.DOL_VERSION.'|'.((int) $conf->entity).'|'.((int) @filemtime(__FILE__)).'|'.DOL_DOCUMENT_ROOT;
+		// Security-relevant runtime restrictions live in the DATABASE, not in
+		// this file: they must be part of the signature too, or restricting
+		// them would silently keep serving the wider cached toolset for up to
+		// a full TTL (review sonikf on the initial version).
+		$signature .= '|'.getDolGlobalInt('AI_MCP_API_BRIDGE').'|'.getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
 
 		return rtrim($dir, '/').'/bridge_tooldefs_'.md5($signature).'.json';
 	}
