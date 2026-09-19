@@ -364,6 +364,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIDocumentTest');
 			require_once dirname(__FILE__).'/RestAPIMoTest.php';
 			$suite->addTestSuite('RestAPIMoTest');
+			require_once dirname(__FILE__).'/RestAPICronJobTest.php';
+			$suite->addTestSuite('RestAPICronJobTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
