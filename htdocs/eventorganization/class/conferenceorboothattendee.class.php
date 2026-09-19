@@ -702,9 +702,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+		/* Done with DolDeprecationHandler
 		if (empty($this->fk_project) && !empty($this->fk_projet)) {
 			$this->fk_project = $this->fk_projet; // For backward compatibility
 		}
+		*/
 		if (empty($this->fk_project)) {
 			return 0;
 		}
