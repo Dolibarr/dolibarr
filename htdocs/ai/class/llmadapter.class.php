@@ -342,6 +342,10 @@ class UniversalLLMAdapter
 		$body         = (string) ($result['content'] ?? '');
 		$httpCode     = (int) ($result['http_code'] ?? 0);
 		$effectiveUrl = (string) ($result['url'] ?? $url);
+		// The Gemini key travels as a ?key= query parameter: mask it before the
+		// URL lands in lastResponse, which is persisted into llx_ai_request_log
+		// and shown by the admin Log Viewer - a secret must never sit in a log.
+		$effectiveUrl = preg_replace('/([?&]key=)[^&\s]+/', '$1***', $effectiveUrl);
 		// Store an enriched payload so the admin Log Viewer ("VIEW LOGS" in the AI Server
 		// MCP setup page) shows something actionable when something goes wrong, not just
 		// a bare "Invalid JSON response from API." with an empty body.
