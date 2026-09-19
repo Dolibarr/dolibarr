@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,7 +173,8 @@ trait DolDeprecationHandler
 				trigger_error("Replacement method '".$newMethod."' not implemented.", E_USER_NOTICE);
 			}
 		}
-		trigger_error("Call to undefined method '".$name."'.".self::getCallerInfoString(), E_USER_ERROR);
+		// Use Exception instead of trigger_error with E_USER_ERROR (deprecated in PHP 8.4)
+		throw new Exception("Call to undefined method '".$name."'.".self::getCallerInfoString());
 	}
 
 
@@ -269,5 +270,46 @@ trait DolDeprecationHandler
 			}
 		}
 		return $msg;
+	}
+
+	/**
+	 * Verify that deprecated properties and methods have been removed
+	 * This is called automatically in test environments via __destruct
+	 *
+	 * @return void
+	 */
+	protected function verifyDeprecatedItemsRemoved()
+	{
+		// Check deprecated properties
+		$deprecatedProperties = $this->deprecatedProperties();
+		foreach ($deprecatedProperties as $oldProperty => $newProperty) {
+			if (property_exists($this, $oldProperty)) {
+				// Use Exception instead of trigger_error with E_USER_ERROR (deprecated in PHP 8.4)
+				throw new Exception("DolDeprecationHandler: Old property '$oldProperty' still exists on class " . get_class($this) . ". It should be removed since it is mapped as deprecated.");
+			}
+		}
+
+		// Check deprecated methods
+		$deprecatedMethods = $this->deprecatedMethods();
+		foreach ($deprecatedMethods as $oldMethod => $newMethod) {
+			if (method_exists($this, $oldMethod)) {
+				// Use Exception instead of trigger_error with E_USER_ERROR (deprecated in PHP 8.4)
+				throw new Exception("DolDeprecationHandler: Old method '$oldMethod' still exists on class " . get_class($this) . ". It should be removed since it is mapped as deprecated.");
+			}
+		}
+	}
+
+	/**
+	 * Destructor that verifies deprecated properties and methods have been removed
+	 * This verification only runs in test environments
+	 *
+	 * @return void
+	 */
+	public function __destruct()
+	{
+		// Only verify in test environment
+		if (class_exists('PHPUnit\Framework\TestSuite')) {
+			$this->verifyDeprecatedItemsRemoved();
+		}
 	}
 }
