@@ -1095,6 +1095,17 @@ class Paiement extends CommonObject
 			$result = $this->db->query($sql);
 			if ($result) {
 				$this->num_payment = $this->db->escape($num_payment);
+
+				// Update Num in bank
+				$type = $this->element;
+				$sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
+				$sql .= " SET num_chq = '".$this->db->escape($num_payment)."'";
+				$sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".((int) $this->id).")";
+				$sql .= " AND rappro = 0";
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$this->error = 'Error -1 '.$this->db->error();
+				}
 				return 0;
 			} else {
 				$this->error = 'Error -1 '.$this->db->error();
