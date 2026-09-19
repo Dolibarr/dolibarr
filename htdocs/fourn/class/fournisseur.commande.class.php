@@ -120,12 +120,12 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $ref_fourn;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var ?int<0,9>
 	 * @deprecated see $status
 	 * @see $status
 	 */
-	public $statut; // 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
+	// public $statut; // 0=Draft -> 1=Validated -> 2=Approved -> 3=Ordered/Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//                                                                                          -> 7=Canceled/Never received -> (reopen) 3=Process running
 	//									                            -> 6=Canceled -> (reopen) 2=Approved
 	//  		                                      -> 9=Refused  -> (reopen) 1=Validated

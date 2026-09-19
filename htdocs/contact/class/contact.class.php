@@ -249,11 +249,12 @@ class Contact extends CommonObject
 	 */
 	public $socname;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var int  Status 0=inactive, 1=active
 	 * @deprecated Use $status
+	 * @see $status
 	 */
-	public $statut;
+	// public $statut;
 
 	/**
 	 * @var string

@@ -12,7 +12,7 @@
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
@@ -129,12 +129,13 @@ class Contrat extends CommonObject
 	 */
 	public $societe;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * Status of the contract
 	 * @var ?int
-	 * @deprecated
+	 * @deprecated Use $status
+	 * @see $status
 	 */
-	public $statut = 0;
+	// public $statut = 0;
 
 	/**
 	 * Status of the contract (0=Draft, 1=Validated)

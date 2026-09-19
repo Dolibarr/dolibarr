@@ -77,10 +77,10 @@ class Entrepot extends CommonObject
 	 */
 	public $fk_departement;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var int
 	 */
-	public $statut;
+	//public $statut;
 
 	/**
 	 * @var string Place

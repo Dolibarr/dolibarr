@@ -205,11 +205,12 @@ class Project extends CommonObject
 	 */
 	public $max_attendees;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var int status
 	 * @deprecated Use $status
+	 * @see $status
 	 */
-	public $statut; // 0=draft, 1=opened, 2=closed
+	// public $statut; // 0=draft, 1=opened, 2=closed
 
 	/**
 	 * @var int opportunity status

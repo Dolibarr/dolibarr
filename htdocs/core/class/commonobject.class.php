@@ -340,12 +340,12 @@ abstract class CommonObject
 	 */
 	public $fk_project;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var int
-	 * @deprecated  		Use $fk_project instead.
+	 * @deprecated  	Use $fk_project instead.
 	 * @see $fk_project
 	 */
-	public $fk_projet;
+	// public $fk_projet;
 
 	/**
 	 * @var Contact|null 	A related contact object
@@ -415,22 +415,21 @@ abstract class CommonObject
 	 * @deprecated Use $origin_object instead.
 	 * @see $origin_object
 	 */
-	private $expedition;
+	// private $expedition;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var CommonObject
 	 * @deprecated Use $origin_object instead.
 	 * @see $origin_object
 	 */
-	private $livraison;
+	// private $livraison;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var CommonObject
 	 * @deprecated Use $origin_object instead.
 	 * @see $origin_object
 	 */
-	private $commandeFournisseur;
-
+	// private $commandeFournisseur;
 
 	/**
 	 * @var ?string 		The object's reference
@@ -457,13 +456,13 @@ abstract class CommonObject
 	 */
 	public $newref;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var null|int|array<int, string>      The object's status. Use status instead.
 	 * @deprecated  Use $status instead.
 	 * @see $status
 	 * @see setStatut(), $status
 	 */
-	public $statut;
+	// public $statut;
 
 	/**
 	 * @var null|int|array<int, string>   The object's status (an int).
@@ -853,11 +852,11 @@ abstract class CommonObject
 	public $sendtoid;
 
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var	?float			Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
 	 */
-	public $alreadypaid;
+	// public $alreadypaid;
 
 	/**
 	 * @var	?float			Amount already paid from getSommePaiement()

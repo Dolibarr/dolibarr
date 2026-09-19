@@ -905,12 +905,12 @@ class Societe extends CommonObject
 	 */
 	public $bank_account;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @deprecated
 	 * Accounting code for client
 	 * @var ?string
 	 */
-	public $code_compta;
+	// public $code_compta;
 
 
 	const STATUS_CEASED = 0;

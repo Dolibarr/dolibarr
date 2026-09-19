@@ -117,11 +117,12 @@ class SupplierProposal extends CommonObject
 	 */
 	public $ref_supplier;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var int
-	 * @deprecated
+	 * @deprecated Use $status
+	 * @see $status
 	 */
-	public $statut; // 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
+	// public $statut; // 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
 
 	/**
 	 * @var int|string Date of proposal

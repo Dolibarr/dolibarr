@@ -126,12 +126,13 @@ class Commande extends CommonOrder
 	 */
 	public $contactid;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * Status of the order
 	 * @var int
 	 * @deprecated Use status
+	 * @see $status
 	 */
-	public $statut;
+	// public $statut;
 
 	/**
 	 * Status of the order
@@ -159,7 +160,7 @@ class Commande extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var string|float 	Deposit percent for payment terms. Populated by $CommonObject->setPaymentTerms().
+	 * @var string|float 	Deposit percent for payment terms. Populated by->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
