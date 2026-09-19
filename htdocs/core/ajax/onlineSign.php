@@ -176,7 +176,12 @@ if ($action == "importSignature") {
 
 						if (empty($reshook)) {
 							// We build the new PDF
-							$pdf = pdf_getInstance();
+							$formatarray = pdf_getFormat();
+							$page_largeur = $formatarray['width'];
+							$page_hauteur = $formatarray['height'];
+							$format = array($page_largeur, $page_hauteur);
+
+							$pdf = pdf_getInstance($format);
 							if (class_exists('TCPDF')) {
 								$pdf->setPrintHeader(false);
 								$pdf->setPrintFooter(false);
@@ -201,8 +206,10 @@ if ($action == "importSignature") {
 								try {
 									$tppl = $pdf->importPage($i);
 									$s = $pdf->getTemplatesize($tppl);
-									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$format = array($s['w'], $s['h']);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L', $format);
 									$pdf->useTemplate($tppl);
+
 									if ($propalsignonspecificpage < 0) {
 										$propalsignonspecificpage = $pagecount - abs($propalsignonspecificpage);
 									}
