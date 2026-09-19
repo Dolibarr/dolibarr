@@ -404,7 +404,7 @@ script:
     head -n 200 test.html
     sudo cat /var/log/apache2/travis_error_log
     set +e
-    echo ===== $(date) =====
+    echo ===== $(date) end =====
     echo
 
   - |
@@ -421,7 +421,7 @@ script:
       echo "Skipped"
     fi
     set +e
-    echo ===== $(date) =====
+    echo ===== $(date) end =====
     echo
 
   - |
@@ -436,7 +436,7 @@ script:
       echo "Skipped"
     fi
     set +e
-    echo ===== $(date) =====
+    echo ===== $(date) end =====
     echo
 
 # Disabled, there is already a check done in CodingPHPTest.php
@@ -476,7 +476,7 @@ script:
     echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
     echo '$'force_install_main_data_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $INSTALL_FORCED_FILE
     #cat $INSTALL_FORCED_FILE
-    echo ===== $(date) =====
+    echo ===== $(date) end =====
     echo
 
   - |
@@ -597,8 +597,8 @@ script:
     set +e
     echo
     #cat /tmp/dolibarr_install.log
-    echo ===== $(date) end =====
     cat $TRAVIS_BUILD_DIR/enablemodule.log
+    echo ===== $(date) end =====
     echo
 
   - |
@@ -629,7 +629,7 @@ after_script:
 
 after_success:
   - |
-    echo ===== $(date) =====
+    echo ===== $(date) Show success =====
     echo Success
 
 after_failure:
