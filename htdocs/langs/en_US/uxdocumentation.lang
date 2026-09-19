@@ -202,3 +202,15 @@ LangsLocalChangedTo = Language locale changed to %s. Translations will now use t
 CacheCleared = Cache cleared
 
 JSDolibarrhooksAjaxSpecial = Dom reloaded Hook
+
+# Dialog
+DocUiDialogDescription=Replaced legacy jQuery UI modals with native HTML <dialog> elements for improved performance and reduced dependencies.
+UiDolibarrDialog=Native modals
+UiDolibarrDialogCenter=Center Dialog
+UiDolibarrDialogRight=Right Dialog
+DocUiDialogTitle=New Dialog Modal
+DocDialogHeaderAndFooter=Header & Footer
+DocDialogData=How to pass variables to a dialog?
+DocDialogForms=How to use forms in a dialog?
+DocDialogSize=Size Control
+DocDialogOthers=Other parameters
