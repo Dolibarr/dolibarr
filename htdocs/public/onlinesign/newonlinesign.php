@@ -220,12 +220,10 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on permiss
 
 		$message = 'refused';
 		setEventMessages("PropalRefused", null, 'warnings');
-		if (method_exists($object, 'call_trigger')) {
-			$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
-			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
-			if ($result < 0) {
-				$error++;
-			}
+		$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+		$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
+		if ($result < 0) {
+			$error++;
 		}
 	} else {
 		$db->rollback();
