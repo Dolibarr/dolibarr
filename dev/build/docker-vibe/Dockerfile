@@ -19,6 +19,17 @@ RUN apt-get update \
 		phpunit \
 		php \
 		php-ast \
+		php-curl \
+		php-mysql \
+		php-mbstring \
+		php-xml \
+		php-gd \
+		php-zip \
+		php-intl \
+		php-soap \
+		php-ldap \
+		php-imagick \
+		php-cli \
 		python3 \
 		python3-pip \
 		shellcheck \
