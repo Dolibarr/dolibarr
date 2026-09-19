@@ -1093,9 +1093,11 @@ body.ai-fullpage {
 .file-chip.chip-inline { margin-bottom: 4px; }
 
 /* --- Context pins: opt-in selection of past exchanges resent to the model --- */
-.msg .ctx-pin { position: absolute; top: 4px; right: 4px; border: 0; background: none; cursor: pointer; opacity: 0; font-size: 0.85em; color: inherit; padding: 2px; transition: opacity .15s; }
-.msg .msg-bubble { position: relative; }
-.msg:hover .ctx-pin { opacity: .45; }
+/* Always faintly visible (discoverability: hover-only was invisible on touch
+   and nobody found it), full opacity on hover or when pinned. */
+.msg .ctx-pin { position: absolute; top: 2px; right: 2px; border: 0; background: none; cursor: pointer; opacity: .3; font-size: 0.85em; color: inherit; padding: 3px 5px; transition: opacity .15s; }
+.msg .msg-bubble { position: relative; padding-right: 24px; }
+.msg:hover .ctx-pin { opacity: .8; }
 .msg .ctx-pin:hover { opacity: 1; }
 .msg.ctx-pinned .ctx-pin { opacity: 1; color: #2c62ac; }
 .msg.ctx-pinned .msg-bubble { box-shadow: 0 0 0 2px rgba(44, 98, 172, 0.45); }
