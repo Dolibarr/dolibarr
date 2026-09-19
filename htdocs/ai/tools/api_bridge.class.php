@@ -47,10 +47,15 @@
  *     only as a complement, never a full rewrite.
  *
  * Remaining WIP limitations (POC scope):
- *   - Schemas come from a light docblock parser; TODO reuse Restler's
- *     CommentParser/Routes metadata (what generates swagger.json).
- *   - Tool definitions are rebuilt on every request; TODO cache them,
- *     invalidated on module (de)activation.
+ *   - Schemas come from a light docblock parser; reusing Restler's
+ *     CommentParser/Routes metadata was measured and rejected (see the
+ *     discussion in #38356).
+ *
+ * Tool definitions are cached across requests in the module temp directory
+ * (see defsCacheFile(): keyed on the enabled-modules list, so a module
+ * (de)activation switches to a fresh cache file; editing this file - where
+ * the enrichments live - invalidates it too). AI_MCP_BRIDGE_DEFS_CACHE_TTL
+ * tunes the lifetime in seconds (default 86400, 0 disables the cache).
  *
  * Disabled unless the constant AI_MCP_API_BRIDGE is set to 1.
  */
@@ -754,6 +759,27 @@ class ToolApiBridge extends McpTool
 		if ($this->defs !== null) {
 			return $this->defs;
 		}
+
+		// Cross-request cache of the generated definitions: the directory scans
+		// and the per-method reflection/docblock work below produce the same
+		// result for a given set of enabled modules, so it is generated once
+		// and reread from a JSON file until something relevant changes. The
+		// routes and the endpoint map ride along because execute() needs them
+		// (the endpoint class itself is still required lazily at call time).
+		$cachettl = getDolGlobalInt('AI_MCP_BRIDGE_DEFS_CACHE_TTL', 86400);
+		$cachefile = ($cachettl > 0) ? $this->defsCacheFile() : '';
+		if ($cachefile !== '' && is_readable($cachefile) && (dol_now() - (int) filemtime($cachefile)) < $cachettl) {
+			$payload = json_decode((string) file_get_contents($cachefile), true);
+			if (is_array($payload) && isset($payload['defs'], $payload['routes'], $payload['endpoints'])
+				&& is_array($payload['defs']) && is_array($payload['routes']) && is_array($payload['endpoints'])) {
+				$this->defs = $payload['defs'];
+				$this->routes = $payload['routes'];
+				$this->endpoints = $payload['endpoints'];
+
+				return $this->defs;
+			}
+		}
+
 		$this->loadApiRuntime();
 
 		$this->defs = [];
@@ -801,7 +827,69 @@ class ToolApiBridge extends McpTool
 			}
 		}
 
+		if ($cachefile !== '') {
+			$this->writeDefsCache($cachefile);
+		}
+
 		return $this->defs;
+	}
+
+	/**
+	 * Path of the definitions cache file for the CURRENT state, or '' when no
+	 * writable temp directory exists. The state signature is part of the file
+	 * name, so any relevant change - a module (de)activated, a Dolibarr
+	 * upgrade, another entity, an edit of this file (which holds the
+	 * enrichments and method whitelists) - simply points to a different file:
+	 * no explicit invalidation hook to maintain. External-module API updates
+	 * that change none of these are covered by the TTL.
+	 *
+	 * @return string Absolute cache file path, or '' to skip caching
+	 */
+	private function defsCacheFile()
+	{
+		global $conf;
+
+		$dir = '';
+		if (!empty($conf->ai->multidir_temp[$conf->entity])) {
+			$dir = $conf->ai->multidir_temp[$conf->entity];
+		} elseif (!empty($conf->ai->dir_temp)) {
+			$dir = $conf->ai->dir_temp;
+		}
+		if (empty($dir) || dol_mkdir($dir) < 0) {
+			return '';
+		}
+
+		$modules = array_map('strval', array_values((array) $conf->modules));
+		sort($modules);
+		$signature = implode(',', $modules).'|'.DOL_VERSION.'|'.((int) $conf->entity).'|'.((int) @filemtime(__FILE__)).'|'.DOL_DOCUMENT_ROOT;
+
+		return rtrim($dir, '/').'/bridge_tooldefs_'.md5($signature).'.json';
+	}
+
+	/**
+	 * Persist the generated definitions/routes/endpoints, pruning cache files
+	 * of previous states so stale signatures do not pile up. Written to a
+	 * temporary name then renamed, so a concurrent reader never sees a
+	 * truncated file.
+	 *
+	 * @param string $cachefile Target file from defsCacheFile()
+	 * @return void
+	 */
+	private function writeDefsCache(string $cachefile)
+	{
+		$payload = json_encode(array('defs' => $this->defs, 'routes' => $this->routes, 'endpoints' => $this->endpoints));
+		if (!is_string($payload)) {
+			return;
+		}
+		foreach ((array) glob(dirname($cachefile).'/bridge_tooldefs_*.json') as $old) {
+			if (is_string($old) && $old !== $cachefile) {
+				@unlink($old);
+			}
+		}
+		$tmpfile = $cachefile.'.tmp.'.getmypid();
+		if (file_put_contents($tmpfile, $payload) !== false) {
+			@rename($tmpfile, $cachefile);
+		}
 	}
 
 	/**
