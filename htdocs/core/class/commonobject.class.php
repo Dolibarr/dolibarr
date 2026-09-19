@@ -10338,7 +10338,7 @@ abstract class CommonObject
 	 */
 	private function isFieldEnabled($field)
 	{
-		return !isset($this->fields[$field]['enabled']) || (int) dol_eval((string) $this->fields[$field]['enabled']);
+		return !isset($this->fields[$field]['enabled']) || (bool) (int) dol_eval((string) $this->fields[$field]['enabled']);
 	}
 
 	/**
@@ -10366,7 +10366,7 @@ abstract class CommonObject
 	private function isFieldBlockedByObjectState($field)
 	{
 		return (
-			($this->status != 0 && $this->statut != 0)
+			($this->status != 0 || $this->statut != 0)
 			&& (empty($this->fields[$field]['alwayseditable']))
 		);
 	}

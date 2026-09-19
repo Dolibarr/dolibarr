@@ -484,4 +484,5 @@ ErrorBadParametersForDirectDebitFileCreate=Can't create bank transfer file: expe
 ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: IDs of existing payment requests are not provided.
 ErrorFieldIsNotEditable = Error field is not editable
 FieldNotAllowedForEdit = Field not allowed for edit
+FieldNotFoundInObject = Field not found in object
 ErrorExpeditionQtyTooHigh=Shipped quantity (%s) exceeds the remaining quantity to deliver (%s) for product %s.
