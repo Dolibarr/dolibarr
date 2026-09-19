@@ -334,6 +334,15 @@ function ai_validate_attachments(array $attachments, &$error)
 		return false;
 	}
 
+	// Cap the number of attachments server-side too: the chat enforces it
+	// client-side only, and other callers may not. 0 means unlimited.
+	$maxfiles = getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5);
+	if ($maxfiles > 0 && count($attachments) > $maxfiles) {
+		$error = $langs->trans("AIAttachmentTooMany", (string) $maxfiles);
+
+		return false;
+	}
+
 	$allowedmimes = array('application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp');
 	// HEIC/HEIF reach this point only through the native-send fallback of the
 	// chat (browser unable to transcode): acceptable solely when the active
@@ -837,6 +846,9 @@ function getAiChatAssistantConfig()
 		// Presentation context for tool results: money, date and label
 		// formatting happen client-side on raw API data.
 		'privacyRedaction' => getDolGlobalInt('AI_PRIVACY_REDACTION', 0),
+		// Attachment count cap, so the client mirrors the server-side guard
+		// of ai_validate_attachments() instead of hardcoding its own.
+		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),

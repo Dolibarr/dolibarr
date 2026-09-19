@@ -80,7 +80,9 @@ export function initAiAssistant(container) {
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
-    const MAX_ATTACHED_DOCS = 5;  // context-size guard; the per-file/total size caps live server-side
+    // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
+    // the per-file/total size caps live server-side too.
+    const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
