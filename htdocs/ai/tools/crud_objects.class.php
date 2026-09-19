@@ -1114,6 +1114,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		// Supplier price line - only where the document's thirdparty IS a supplier.
 		$supplierSideTypes = array('reception', 'supplier_order', 'supplier_invoice', 'supplier_proposal');
+		// @phan-suppress-next-line PhanUndeclaredProperty -- every business class here carries socid/fk_soc, CommonObject just does not declare them
 		$socid = ! empty($object->socid) ? (int) $object->socid : (int) (empty($object->fk_soc) ? 0 : $object->fk_soc);
 		if ($price !== null && $price > 0 && $socid > 0 && in_array((string) $args['object_type'], $supplierSideTypes, true)) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
