@@ -561,7 +561,7 @@ if ($refresh === true) {
 
 	$sql .= "SELECT SUM(amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'claimed' as mode";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "tva as tva";
-	$sql .= " WHERE tva.entity = " . $conf->entity;
+	$sql .= " WHERE tva.entity = " . ((int) $conf->entity);
 	$sql .= " AND (tva.datev >= '" . $db->idate($date_start) . "' AND tva.datev <= '" . $db->idate($date_end) . "')";
 	$sql .= " GROUP BY dm";
 
@@ -570,7 +570,7 @@ if ($refresh === true) {
 	$sql .= "SELECT SUM(ptva.amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'paid' as mode";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "tva as tva";
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "payment_vat as ptva ON (tva.rowid = ptva.fk_tva)";
-	$sql .= " WHERE tva.entity = " . $conf->entity;
+	$sql .= " WHERE tva.entity = " . ((int) $conf->entity);
 	$sql .= " AND (tva.datev >= '" . $db->idate($date_start) . "' AND tva.datev <= '" . $db->idate($date_end) . "')";
 	$sql .= " GROUP BY dm";
 

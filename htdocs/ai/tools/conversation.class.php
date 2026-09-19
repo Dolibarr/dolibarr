@@ -102,6 +102,17 @@ class ToolConversation extends McpTool
 	}
 
 	/**
+	 * Protocol tools: no business data.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Empty: no right required.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return array();
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *
@@ -110,6 +121,24 @@ class ToolConversation extends McpTool
 	public function getCategories(): array
 	{
 		return ['global'];
+	}
+
+	/**
+	 * Conversation tools are system-level infrastructure.
+	 * They must always be available so the assistant can communicate with the
+	 * user (send replies, ask clarifying questions, request confirmation for
+	 * destructive actions, reject out-of-scope queries) regardless of which
+	 * tools are enabled or disabled in the admin allow-list.
+	 *
+	 * McpHandler reads this at runtime — no tool names are hardcoded there.
+	 * Any future tool class that provides similar infrastructure simply overrides
+	 * this method to return true; no other file needs to change.
+	 *
+	 * @return bool
+	 */
+	public function isSystem()
+	{
+		return true;
 	}
 
 	/**

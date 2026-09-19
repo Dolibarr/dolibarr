@@ -103,6 +103,5 @@ ComputedField=Campo computado
 SelectFilterFields=Si desea filtrar por algunos valores, solo ingrese los valores aquí.
 FilteredFieldsValues=Valor para filtro
 FormatControlRule=Regla de control de formato
-KeysToUseForUpdates=Clave (columna) que se utilizará para <b> actualizando </b> datos existentes
 NbInsert=Número de líneas insertadas: %s
 WarningFirstImportedLine=La(s) primera(s) línea(s) no se importarán con la selección actual

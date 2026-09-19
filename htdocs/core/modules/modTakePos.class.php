@@ -205,7 +205,6 @@ class modTakePos extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'editorderedlines';
 
-
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
 		$r = 0;

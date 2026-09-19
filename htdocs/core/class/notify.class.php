@@ -285,6 +285,7 @@ class Notify
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql .= " AND entity IN (".getEntity('notify_def').")";
 
 			if (!$this->db->query($sql)) {
 				$error++;
@@ -310,6 +311,8 @@ class Notify
 	 */
 	public function create($user = null, $notrigger = 0)
 	{
+		global $conf;
+
 		$now = dol_now();
 
 		$error = 0;
@@ -327,8 +330,8 @@ class Notify
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (fk_soc, fk_action, fk_contact, type, datec)";
-		$sql .= " VALUES (".((int) $this->socid).", ".((int) $this->event).", ".((int) $this->contact_id).",";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (entity, fk_soc, fk_action, fk_contact, type, datec)";
+		$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->socid).", ".((int) $this->event).", ".((int) $this->contact_id).",";
 		$sql .= "'".$this->db->escape($this->type)."', '".$this->db->idate($this->datec)."')";
 
 		$resql = $this->db->query($sql);
@@ -432,6 +435,7 @@ class Notify
 		$sql .= ",fk_action = ".((int) $this->event);
 		$sql .= ",fk_contact = ".((int) $this->contact_id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " AND entity IN (".getEntity('notify_def').")";
 
 		$result = $this->db->query($sql);
 		if (!$result) {
@@ -498,6 +502,7 @@ class Notify
 				$sql .= " AND n.fk_soc = s.rowid";
 				$sql .= $sqlnotifcode;
 				$sql .= " AND s.entity IN (".getEntity('societe').")";
+				$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 				if ($socid > 0) {
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
@@ -538,6 +543,7 @@ class Notify
 				$sql .= " AND a.rowid = n.fk_action";
 				$sql .= $sqlnotifcode;
 				$sql .= " AND c.entity IN (".getEntity('user').")";
+				$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 				if ($userid > 0) {
 					$sql .= " AND c.rowid = ".((int) $userid);
 				}
@@ -693,6 +699,7 @@ class Notify
 			$sql .= " ".$this->db->prefix()."notify_def as n,";
 			$sql .= " ".$this->db->prefix()."societe as s";
 			$sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+			$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 			$sql .= " AND n.fk_soc = s.rowid";
 			$sql .= " AND c.statut = 1";
 			if (is_numeric($notifcode)) {
@@ -713,6 +720,7 @@ class Notify
 		$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 		$sql .= " ".$this->db->prefix()."notify_def as n";
 		$sql .= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
+		$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 		$sql .= " AND c.statut = 1";
 		if (is_numeric($notifcode)) {
 			$sql .= " AND n.fk_action = ".((int) $notifcode); // Old usage
@@ -827,26 +835,26 @@ class Notify
 							case 'FICHINTER_ADD_CONTACT':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 								break;
 							case 'FICHINTER_MODIFY':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 								break;
 							case 'FICHINTER_CLOSE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 								break;
 							case 'ORDER_SUPPLIER_VALIDATE':
@@ -1141,26 +1149,26 @@ class Notify
 					case 'FICHINTER_ADD_CONTACT':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->ficheinter->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 						break;
 					case 'FICHINTER_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->facture->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 						break;
 					case 'FICHINTER_MODIFY':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->ficheinter->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 						break;
 					case 'FICHINTER_CLOSE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->facture->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 						break;
 					case 'ORDER_SUPPLIER_CANCEL':
@@ -1260,7 +1268,7 @@ class Notify
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
-				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
+				$pdf_path = $dir_output."/".$ref.".pdf";
 				if (!dol_is_file($pdf_path)) {
 					// We can't add PDF as it is not generated yet.
 					$filepdf = '';

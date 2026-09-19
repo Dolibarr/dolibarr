@@ -515,6 +515,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$modCodeClient = new $module($db);
 			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
 
+			$tmpcode = '';
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
 			}
@@ -684,19 +685,22 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
-			$sendto = $thirdparty->email;
+			$sendto = !empty($thirdparty->email) ? $thirdparty->email :
+				$confattendee->email;
+
 			$from = getDolGlobalString('MAILING_EMAIL_FROM');
 			$urlback = $_SERVER["REQUEST_URI"];
 
 			$ishtml = dol_textishtml($texttosend); // May contain urls
 
-			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
-
-			$result = $mailfile->sendfile();
-			if ($result) {
-				dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-			} else {
-				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+			if (!empty($sendto)) {
+				$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
+				$result = $mailfile->sendfile();
+				if ($result) {
+					dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+				} else {
+					dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+				}
 			}
 
 			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
@@ -745,7 +749,7 @@ if ($project->date_start_event || $project->date_end_event) {
 if ($project->date_start_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_start_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_start_event, $format);
@@ -756,7 +760,7 @@ if ($project->date_start_event && $project->date_end_event) {
 if ($project->date_end_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_end_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_end_event, $format);

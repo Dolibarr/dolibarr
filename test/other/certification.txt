@@ -34,7 +34,8 @@ UPDATE llx_user set flagdelsessionsbefore = NULL WHERE flagdelsessionsbefore IS 
 
 ***** To restore current date
 sudo timedatectl set-ntp true; sudo timedatectl status;
-
+ou
+systemctl stop/start ntp
 
 
 

@@ -272,9 +272,6 @@ table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	line-height: 18px;
 }
 
-.listofchoicesdesc {
-	color: #999 !important;
-}
 .blinkwait {
 	font-weight: bold;
 	text-decoration:blink !important;
@@ -292,10 +289,58 @@ table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	color: rgb(0,113,121) !important;
 }
 
+.left {
+    text-align: left;
+}
+.right {
+    text-align: right;
+}
+
+
+div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
+    padding-top: 16px;
+    padding-left: 20px;
+    padding-right: 10px;
+    padding-bottom: 16px;
+    margin: 1em 0em 1em 0em;
+    border-radius: 5px;
+}
+
+div.info, div.warning, div.neutral, div.green {
+    box-shadow: 1px 1px 6px #d4d4d4;
+    margin: 1em 0em 1.2em 0em;
+}
+
+div.warning, div.warningborder, section.warning, section.warningborder {
+    border-left: solid 5px #f2cf87;
+}
+
+/* Neutral message */
+div.neutral, section.neutral {
+    background: #f8f8f8;
+}
+
+/* Info message */
+div.info {
+    background: #eff8fc;
+    color: #558;
+}
+
+
 /* OK */
 div.ok, span.ok {
 	color: rgb(0,113,121)
 }
+
+
+.div-table-responsive, .div-table-responsive-no-min {
+    overflow-x: auto;
+    min-height: 0.01%;
+}
+.div-table-responsive {
+    line-height: var(--heightrow);
+}
+
 
 span.okinversed {
 	color: #fff;
@@ -309,7 +354,16 @@ span.okinversed {
 
 /* Warning */
 div.warning, span.warning {
-	color: #777711;
+	color: #776611;
+}
+div.warningbackground {
+	padding-top: 16px;
+	padding-left: 20px;
+	padding-right: 10px;
+	padding-bottom: 16px;
+	margin: 1em 0em 1em 0em;
+	border-radius: 5px;
+	background: #fcf8e3;
 }
 
 /* Error */

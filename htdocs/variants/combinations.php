@@ -168,7 +168,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 		$weight_impact = price2num($weight_impact);
 		$price_impact = price2num($price_impact);
 
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 		}
@@ -282,7 +282,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	}
 } elseif ($action === 'update' && $combination_id > 0 && $usercancreate) {
-	if ($prodcomb->fetch($combination_id) < 0) {
+	if ($prodcomb->fetch($combination_id) <= 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}
@@ -368,7 +368,7 @@ if ($action === 'confirm_deletecombination' && $usercancreate) {
 		$action = '';
 	}
 } elseif ($action === 'edit' && $usercancreate) {
-	if ($prodcomb->fetch($combination_id) < 0) {
+	if ($prodcomb->fetch($combination_id) <= 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}
@@ -722,7 +722,7 @@ if (!empty($id) || !empty($ref)) {
 				   <td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>" spellcheck="false"></td>
 			</tr>
 			<?php
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>

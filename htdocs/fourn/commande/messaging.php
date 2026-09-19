@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Valentin Grimal         <valentin.grimal@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -95,8 +95,8 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check
-if ($user->socid > 0) {
-	$socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of order and assignment.
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();    // For external user, no check is done on company because readability is managed by public status of order and assignment.
 }
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande', 'fk_soc', 'rowid', $isdraft);

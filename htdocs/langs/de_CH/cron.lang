@@ -6,4 +6,5 @@ CronList=Geplante Aufträge
 CronDelete=cronjobs löschen
 CronPriority=Rang
 JobFinished=Job gestarted und beendet
+CronStatusInactiveBtn=Deaktivieren
 MakeLocalDatabaseDumpShort=Lokale Datenbanksicherung

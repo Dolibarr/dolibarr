@@ -171,7 +171,7 @@ class Entrepot extends CommonObject
 	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 15),
 		'ref' => array('type' => 'varchar(255)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 25, 'searchall' => 1),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => -2, 'position' => 35, 'searchall' => 1),
@@ -372,8 +372,8 @@ class Entrepot extends CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix()."entrepot";
 		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
-		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
-		$sql .= ", fk_project = ".(($this->fk_project > 0) ? $this->fk_project : "NULL");
+		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? ((int) $this->fk_parent) : "NULL");
+		$sql .= ", fk_project = ".(($this->fk_project > 0) ? ((int) $this->fk_project) : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
 		$sql .= ", statut = ".((int) $this->statut);
 		$sql .= ", lieu = '".$this->db->escape($this->lieu)."'";
@@ -723,19 +723,21 @@ class Entrepot extends CommonObject
 		}
 
 		if ($separatedPMP) {
-			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * pa.pmp) as value";
+			// COALESCE: a product may have no row yet in llx_product_perentity (rows are created on
+			// the first stock movement), so fall back on the global p.pmp like Product::fetch() does,
+			// instead of valuing such a product at 0.
+			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * COALESCE(pa.pmp, p.pmp)) as value";
 		} else {
 			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
 		}
 		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
 		$sql .= ", ".$this->db->prefix()."product as p";
 		if ($separatedPMP) {
-			$sql .= ", ".$this->db->prefix()."product_perentity as pa";
+			// LEFT JOIN (not an inner join): a product with no llx_product_perentity row must still
+			// be counted in nb and valued using the global p.pmp.
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = ".((int) $conf->entity);
 		}
 		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
-		if ($separatedPMP) {
-			$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
-		}
 		$sql .= " AND ps.fk_product = p.rowid";
 		//print $sql;
 		$result = $this->db->query($sql);

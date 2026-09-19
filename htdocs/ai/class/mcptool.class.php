@@ -31,6 +31,13 @@
  */
 abstract class McpTool
 {
+	const RIGHTS_ENFORCED_DOWNSTREAM = 'downstream';
+
+	/**
+	 * Default of getRequiredRights(): the class never declared anything, deny.
+	 */
+	const RIGHTS_UNDECLARED = 'undeclared';
+
 	/** @var DoliDB Database handler */
 	protected $db;
 
@@ -86,5 +93,44 @@ abstract class McpTool
 	public function getCategories(): array
 	{
 		return ['global']; // Default
+	}
+
+	/**
+	 * Return true if this is a system/infrastructure tool that must always
+	 * remain visible and executable regardless of the admin allow-list.
+	 *
+	 * The default is false. Override and return true in any tool class that
+	 * provides core assistant communication functions (clarification,
+	 * confirmation, responses, etc.).
+	 *
+	 * McpHandler calls this method at runtime — no tool names are hardcoded
+	 * anywhere. Adding a new system tool class in the future requires only
+	 * overriding this method in that class; no changes to McpHandler are needed.
+	 *
+	 * @return bool
+	 */
+	public function isSystem()
+	{
+		return false;
+	}
+
+	/**
+	 * Rights the caller must hold to run a tool of this class.
+	 *
+	 * Returns a list of [module, permission, sub-permission] triples; all of
+	 * them must hold. Three answers are meaningful:
+	 *  - array()                            the tool reads no business data
+	 *  - array(array('facture', 'lire'))    checked before the tool runs
+	 *  - self::RIGHTS_ENFORCED_DOWNSTREAM   the callee checks (REST API classes)
+	 *
+	 * Tools that do not override this are denied: a caller authenticates as a
+	 * real user since #40425, so a missing declaration must fail closed.
+	 *
+	 * @param string $toolName Tool being executed, for classes exposing several.
+	 * @return array<int,array<int,string>>|string Triples, or RIGHTS_ENFORCED_DOWNSTREAM.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return self::RIGHTS_UNDECLARED;
 	}
 }

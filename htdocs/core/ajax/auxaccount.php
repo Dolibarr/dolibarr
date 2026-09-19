@@ -88,7 +88,7 @@ if (strlen($searchkey) >= $minLength) {
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
 			if (!empty($obj->code_client)) {
-				$key = $obj->code_client;
+				$key = (string) $obj->code_client;
 				$results[$key] = array(
 					'key'           => $key,
 					'value'         => $key.' ('.$obj->name.')',      // value shown in input once selected
@@ -97,7 +97,7 @@ if (strlen($searchkey) >= $minLength) {
 				);
 			}
 			if (!empty($obj->code_fourn) && !isset($results[$obj->code_fourn])) {
-				$key = $obj->code_fourn;
+				$key = (string) $obj->code_fourn;
 				$results[$key] = array(
 					'key'           => $key,
 					'value'         => $key.' ('.$obj->name.')',
@@ -126,7 +126,7 @@ if (strlen($searchkey) >= $minLength) {
 	if ($resql2) {
 		while ($obj = $db->fetch_object($resql2)) {
 			if (!empty($obj->accountancy_code) && !isset($results[$obj->accountancy_code])) {
-				$key = $obj->accountancy_code;
+				$key = (string) $obj->accountancy_code;
 				$fullname = dolGetFirstLastname($obj->firstname, $obj->lastname);
 				$results[$key] = array(
 					'key'           => $key,

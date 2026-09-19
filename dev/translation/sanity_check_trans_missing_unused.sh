@@ -63,9 +63,8 @@ exit_code=0
 grep --no-filename -r -oP -- '^([^#=]+?)(?=\s*=.*)' "${LANG_DIR}" \
 	| grep -x -v -F -f "${EXCLUDE_KEYS_SRC_FILE}" \
 	| sort > "${AVAILABLE_FILE_NODEDUP}"
-sort -u \
-	< "${AVAILABLE_FILE_NODEDUP}" \
-	> "${AVAILABLE_FILE}"
+# sort -u is buggued in ubutnu 26.04. The line StatusProspect-1 and StatusProspect1 are treated as similar lines Replaced with "uniq".
+uniq < "${AVAILABLE_FILE_NODEDUP}" > "${AVAILABLE_FILE}"
 
 
 # Combine strings found in sources with pre-determined dynamic string values.
@@ -132,9 +131,11 @@ diff "${AVAILABLE_FILE}" "${EXPECTED_FILE}" \
 	> "${MISSING_AND_UNUSED_FILE}"
 
 rm -f "${UNUSED_FILE}.grep" >/dev/null 2>&1
-sed -n 's@< \(.*\)@^\1\\s*=@p' \
-	< "${MISSING_AND_UNUSED_FILE}" \
-	> "${UNUSED_FILE}.grep"
+if [ "$1" == "--showunused" ]; then
+	sed -n 's@< \(.*\)@^\1\\s*=@p' \
+		< "${MISSING_AND_UNUSED_FILE}" \
+		> "${UNUSED_FILE}.grep"
+fi
 
 
 # Prepare file with exact matches for use with `git grep`, supposing " quotes

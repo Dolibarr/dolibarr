@@ -97,11 +97,11 @@ if (isModEnabled("reception")) {
 $permissionnote = $user->hasRight('reception', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // TODO Test on reception module on only
-if ($origin == 'reception') {
-	$result = restrictedArea($user, $origin, $object->id);
+if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
+	$result = restrictedArea($user, 'reception', $object->id);
 } else {
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
-		$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
+		$result = restrictedArea($user, 'fournisseur', $object->origin_id, 'commande_fournisseur', 'commande');
 	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
 		accessforbidden();
 	}

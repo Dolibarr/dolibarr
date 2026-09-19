@@ -1,37 +1,70 @@
+/* Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026	Nick Fragoulis
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ */
 /**
  * \file htdocs/ai/js/ai_assistant.js
  * \brief Frontend logic for the AI Assistant
  * \ingroup ai
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+/**
+ * Initialize the AI Assistant chat on a given container (.ai-chat-container).
+ * Called explicitly by the topbar popover bootstrap (main.inc.php) after AJAX
+ * injection, or automatically for server-rendered containers carrying the
+ * data-ai-autoinit attribute (standalone page ai/assistant/index.php).
+ *
+ * @param {HTMLElement} container The .ai-chat-container element
+ */
+export function initAiAssistant(container) {
+    if (!container || container.dataset.aiInit) return;
+    container.dataset.aiInit = '1';
 
     // =========================================================================
     // CONFIGURATION & INITIALIZATION
     // =========================================================================
 
-    // 1. Load configuration passed from PHP
-    const config = window.AI_CONFIG || {};
+    // 1. Load configuration emitted by PHP (getAiChatAssistantConfig) as a data
+    // attribute: inline <script> config cannot travel inside an innerHTML fragment.
+    let config = {};
+    try {
+        config = JSON.parse(container.dataset.aiConfig || '{}');
+    } catch (e) {
+        console.error('AI Assistant: invalid data-ai-config attribute', e);
+    }
+    if (!config.labels && window.AI_CONFIG) config = window.AI_CONFIG; // Legacy fallback
     const CONFIG_MODE = config.mode || 'text';
     const aiLabels = config.labels || {};
 
     // Helper for safe translation retrieval
     const t = (key) => aiLabels[key] || key;
 
-    // 2. Select DOM Elements
-    const micBtn = document.getElementById('mic-btn');
-    const micWrapper = document.getElementById('mic-wrapper');
+    // Absolute endpoint URL: the chat may run injected into any Dolibarr page
+    // (topbar popover), so relative URLs would resolve against the wrong path.
+    const epUrl = (file) => (config.baseUrl || '') + file + (config.token ? '?token=' + encodeURIComponent(config.token) : '');
 
-    const uploadBtn = document.getElementById('upload-btn');
-    const uploadWrapper = document.getElementById('upload-wrapper');
-    const fileInput = document.getElementById('file-upload');
+    // 2. Select DOM Elements (scoped to the container so several chat instances
+    // can coexist on the same page, e.g. popover opened over the standalone page)
+    const micBtn = container.querySelector('#mic-btn');
+    const micWrapper = container.querySelector('#mic-wrapper');
 
-    const clearBtn = document.getElementById('clear-btn');
-    const engineSelect = document.getElementById('engine-select');
-    const input = document.getElementById('user-input');
-    const chat = document.getElementById('chat-history');
-    const statusBar = document.getElementById('status-bar');
-    const sendBtn = document.getElementById('send-btn');
+    const uploadBtn = container.querySelector('#upload-btn');
+    const uploadWrapper = container.querySelector('#upload-wrapper');
+    const fileInput = container.querySelector('#file-upload');
+    const chipArea = container.querySelector('#file-chip-area');
+
+    const clearBtn = container.querySelector('#clear-btn');
+    const engineSelect = container.querySelector('#engine-select');
+    const modelSelect = container.querySelector('#model-select');
+    const input = container.querySelector('#user-input');
+    const chat = container.querySelector('#chat-history');
+    const statusBar = container.querySelector('#status-bar');
+    const sendBtn = container.querySelector('#send-btn');
+    const welcome = container.querySelector('.chat-welcome'); // empty-state screen (full page only)
 
     // 3. Application State
     let isRecording = false;
@@ -44,6 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastResult = { data: null, tool: '', query: '' };
     let pendingIntent = null;     // Stores action waiting for confirmation
     let clarificationContext = null;
+    // Document attached via the paperclip: {name, payload}. Sent as context with
+    // the NEXT message; only a small chip (icon + name) is shown in the UI.
+    let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
+    // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
+    // the per-file/total size caps live server-side too.
+    const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -63,15 +102,42 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     // BOOTSTRAP
     // -------------------------------------------------------------------------
+    // Full page only: make the chat fill exactly from its top down to the
+    // viewport bottom, whatever the real top menu bar height is (no magic
+    // offset, so no scrollbar nor blank strip). The popover sizes itself.
+    if (!container.classList.contains('ai-in-popover')) {
+        const fitPageHeight = () => {
+            const top = container.getBoundingClientRect().top;
+            // clientHeight excludes any scrollbar, so the chat fits exactly
+            // without re-triggering a page scrollbar.
+            const vh = document.documentElement.clientHeight;
+            container.style.height = Math.max(420, vh - top) + 'px';
+        };
+        fitPageHeight();
+        window.addEventListener('resize', fitPageHeight);
+    }
+
     input.focus();
     engineSelect.value = CONFIG_MODE;
     updateInterfaceMode(CONFIG_MODE);
 
+    // Welcome screen quick cards: send the localized ready-made prompt on click
+    container.querySelectorAll('.ai-quick-card').forEach((card) => {
+        card.addEventListener('click', () => {
+            input.value = card.dataset.prompt || '';
+            handleQuery();
+        });
+    });
+
     // Initialize Doc Parsing UI Listeners
     initDocParsingUI();
 
+    // Initialize the model picker (presets + dynamic provider model list)
+    initModelPicker();
+
     // Listen for custom event to trigger PDF download from buttons
-    document.addEventListener('triggerPdf', () => {
+    // (scoped to the container: each chat instance reacts only to its own buttons)
+    container.addEventListener('triggerPdf', () => {
         if (lastResult.data) {
             downloadPdf(lastResult);
         } else {
@@ -84,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
 
     const autoResizeInput = () => {
-        const input = document.getElementById('user-input');
         if (!input) return;
 
         // 1. Reset height to 'auto' to shrink the box if text is deleted
@@ -124,13 +189,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
 
     /**
-     * Update UI visibility based on selected engine
-     * @param {string} mode - 'text', 'cloud', 'whisper', 'local_docs', 'cloud_docs'
+     * Update UI visibility based on selected engine.
+     * The paperclip (uploadWrapper) is ALWAYS visible: documents can be attached
+     * in any mode, like in modern chat UIs. The legacy 'local_docs'/'cloud_docs'
+     * selector modes are gone — routing local/cloud is automatic on attach.
+     * @param {string} mode - 'text', 'cloud', 'whisper'
      */
     function updateInterfaceMode(mode) {
-        // Reset all wrappers
-        micWrapper.classList.add('hidden');
-        uploadWrapper.classList.add('hidden');
+        micWrapper.classList.add('ai-hidden');
 
         if (mode === 'text') {
             input.placeholder = t('TypeYourQuestion');
@@ -138,23 +204,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else if (mode === 'cloud' || mode === 'whisper') {
             // Voice Modes
-            micWrapper.classList.remove('hidden');
+            micWrapper.classList.remove('ai-hidden');
             input.placeholder = 'Type or speak...';
             initEngine(mode);
-        }
-        else if (mode === 'local_docs' || mode === 'cloud_docs') {
-            // Document Modes
-            uploadWrapper.classList.remove('hidden');
-            input.placeholder = mode === 'local_docs'
-                ? t('UploadLocalDoc')
-                : t('UploadCloudDoc');
         }
     }
 
     // Clear Chat History
     clearBtn.addEventListener('click', () => {
         if (confirm(t('ClearChatHistoryTitle'))) {
-            chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+            // Remove conversation messages; keep the welcome element so it can be
+            // shown again on the full page (the popover has no welcome screen).
+            chat.querySelectorAll('.msg').forEach((n) => n.remove());
+            if (welcome) {
+                welcome.style.display = '';
+            } else {
+                chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+            }
             lastResult = { data: null, tool: '', query: '' };
             clarificationContext = null;
             input.focus();
@@ -196,18 +262,91 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadBtn.addEventListener('click', () => fileInput.click());
 
         fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+            const files = Array.from(e.target.files || []);
+            if (!files.length) return;
 
-            const mode = engineSelect.value;
-            statusBar.innerText = t('ProcessingFile') + ` ${file.name} (${mode})...`;
+            for (const file of files) {
+                if (attachedDocs.filter((d) => !d.error).length >= MAX_ATTACHED_DOCS) {
+                    statusBar.innerText = t('AIAttachmentTooMany').replace('%s', String(MAX_ATTACHED_DOCS));
+                    break;
+                }
+                await attachOneFile(file);
+            }
+
+            fileInput.value = '';
+        });
+    }
+
+    /** Process one selected file and add it to the attached-documents list. */
+    async function attachOneFile(file) {
+            renderChips({ name: file.name, loading: true });
+            statusBar.innerText = t('ProcessingFile') + ` ${file.name}...`;
 
             try {
-                let contentPayload = "";
+                // Automatic routing: try the in-browser extraction first, then
+                // fall back to server-side cloud parsing (multimodal) when the
+                // local result is empty or too short to be useful — typically a
+                // photographed PDF with no text layer.
+                //
+                // Two guards keep the chip from spinning for minutes:
+                // - a large image goes straight to cloud parsing (browser OCR on a
+                //   multi-MB photo downloads Tesseract + a language model and can
+                //   take minutes for a poor result);
+                // - any local extraction is capped by a hard timeout, after which
+                //   we fall back to cloud parsing (the orphan extraction result,
+                //   if it ever completes, is simply ignored).
+                const LOCAL_EXTRACT_TIMEOUT_MS = 20000;
+                const LOCAL_IMAGE_MAX_BYTES = 1500000;
+                const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|gif|bmp|webp)$/i.test(file.name);
 
-                if (mode === 'local_docs') {
-                    contentPayload = await processLocalFile(file);
-                } else if (mode === 'cloud_docs') {
+                // HEIC/HEIF (iPhone photos): no provider-agnostic path exists — the
+                // in-browser OCR cannot decode it, Anthropic/OpenAI reject the MIME
+                // and only Gemini takes it natively. Route: transcode to JPEG via
+                // canvas where the browser can decode HEIC (Safari/iOS — precisely
+                // where those photos come from); otherwise send natively when the
+                // configured provider accepts it; otherwise explain clearly.
+                if (isHeic(file)) {
+                    let heicPayload = '';
+                    try {
+                        heicPayload = await transcodeImageToJpegMarker(file);
+                    } catch (errHeic) {
+                        if (parseInt(config.providerAcceptsHeic || 0, 10)) {
+                            const b64 = String(await fileToBase64(file)).split(',').pop();
+                            heicPayload = `__FILE_ATTACHMENT__[image/heic]::${b64}`;
+                        } else {
+                            throw new Error(t('AIAttachmentHeicUnsupported'));
+                        }
+                    }
+                    attachedDocs.push({ name: file.name, payload: heicPayload });
+                    renderChips();
+                    statusBar.innerText = '';
+                    input.focus();
+                    return;
+                }
+                // Enforced privacy redaction: document contents cannot be masked,
+                // so the cloud-attachment fallback is off the table. Local
+                // extraction becomes the only route - attempt it even for large
+                // images (slow OCR beats a policy bypass), and fail with the
+                // policy message instead of silently shipping the file.
+                const redactOnly = !!parseInt(config.privacyRedaction || 0, 10);
+
+                let contentPayload = '';
+                if (redactOnly || !(isImage && file.size > LOCAL_IMAGE_MAX_BYTES)) {
+                    try {
+                        contentPayload = await Promise.race([
+                            processLocalFile(file),
+                            new Promise((resolve) => setTimeout(() => resolve(''), LOCAL_EXTRACT_TIMEOUT_MS))
+                        ]);
+                    } catch (errLocal) {
+                        contentPayload = '';
+                    }
+                }
+                const usefulChars = (contentPayload || '').replace(/\s+/g, '').length;
+                if (usefulChars < 120) {
+                    if (redactOnly) {
+                        throw new Error(t('AIAttachmentBlockedByPrivacy'));
+                    }
+                    statusBar.innerText = t('ProcessingFile') + ` ${file.name} (cloud)...`;
                     contentPayload = await processCloudFile(file);
                 }
 
@@ -215,30 +354,207 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(t('UnsupportedFileType'));
                 }
 
-                const docContext = `${t('DocContextIntro')}
-
-		${contentPayload}
-
-		--- ${t('DocContextOutro')} ---
-		`;
-
-                input.value = docContext;
-                setTimeout(autoResizeInput, 0); // Trigger resize so the text is visible
-
-                // Update placeholder to guide the user
-                //input.placeholder = "Document loaded. Ask something (e.g., 'Summarize this', 'Create an invoice for line 2')...";
-
-                // Focus input so user can type immediately
+                // The content NEVER goes into the input nor the conversation:
+                // it is kept aside and sent as context with the next message.
+                attachedDocs.push({ name: file.name, payload: contentPayload });
+                renderChips();
+                statusBar.innerText = '';
                 input.focus();
-                statusBar.innerText = t('DocLoaded');
-
             } catch (err) {
                 console.error(err);
+                // Keep an error chip so the user sees WHICH file failed in a
+                // multi-selection; it is excluded from sending and removable.
+                attachedDocs.push({ name: file.name, payload: '', error: true });
+                renderChips();
                 statusBar.innerText = t('Error') + ": " + err.message;
             }
+    }
 
-            fileInput.value = '';
+    /** HEIC/HEIF detection: browsers often report an empty MIME for those. */
+    function isHeic(file) {
+        return file.type === 'image/heic' || file.type === 'image/heif' || /\.(heic|heif)$/i.test(file.name);
+    }
+
+    /**
+     * Transcode an image file to a JPEG cloud-attachment marker via canvas.
+     * Only works where the browser can decode the source format (HEIC: Safari).
+     */
+    async function transcodeImageToJpegMarker(file) {
+        const bitmap = await createImageBitmap(file);	// throws where HEIC is not decodable
+        const canvas = document.createElement('canvas');
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        canvas.getContext('2d').drawImage(bitmap, 0, 0);
+        const blob = await new Promise((resolve, reject) => {
+            canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.85);
         });
+        const base64 = String(await fileToBase64(blob)).split(',').pop();
+        return `__FILE_ATTACHMENT__[image/jpeg]::${base64}`;
+    }
+
+    /** Pick a FontAwesome icon class from a file name extension. */
+    function chipIcon(name) {
+        const ext = (String(name).split('.').pop() || '').toLowerCase();
+        if (ext === 'pdf') return 'fa-file-pdf';
+        if (['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].indexOf(ext) !== -1) return 'fa-file-image';
+        if (['xls', 'xlsx', 'ods'].indexOf(ext) !== -1) return 'fa-file-excel';
+        if (['doc', 'docx', 'odt'].indexOf(ext) !== -1) return 'fa-file-word';
+        return 'fa-file-alt';
+    }
+
+    /** Minimal HTML escaping (appendMsg uses innerHTML). */
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+    }
+
+    /**
+     * Render the attached-file chips above the input pill from attachedDocs,
+     * optionally appending a transient spinner chip for a file being processed.
+     * Each chip carries its own remove cross (by index).
+     */
+    function renderChips(processing) {
+        if (!chipArea) return;
+        if (!attachedDocs.length && !processing) {
+            chipArea.innerHTML = '';
+            chipArea.classList.add('ai-hidden');
+            return;
+        }
+        chipArea.classList.remove('ai-hidden');
+        let html = '';
+        attachedDocs.forEach((doc, idx) => {
+            html += '<span class="file-chip' + (doc.error ? ' chip-error' : '') + '">'
+                + '<i class="fa ' + chipIcon(doc.name) + ' chip-icon"></i>'
+                + '<span class="chip-name">' + escapeHtml(doc.name) + '</span>'
+                + '<button type="button" class="chip-x" data-idx="' + idx + '" title="' + escapeHtml(t('Cancel')) + '">&times;</button>'
+                + '</span>';
+        });
+        if (processing) {
+            html += '<span class="file-chip">'
+                + '<i class="fa fa-spinner fa-spin chip-icon"></i>'
+                + '<span class="chip-name">' + escapeHtml(processing.name) + '</span>'
+                + '</span>';
+        }
+        chipArea.innerHTML = html;
+        chipArea.querySelectorAll('.chip-x').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                attachedDocs.splice(parseInt(btn.getAttribute('data-idx'), 10), 1);
+                renderChips();
+            });
+        });
+    }
+
+    /** Forget every attached document and hide the chip area. */
+    function clearChip() {
+        attachedDocs = [];
+        renderChips();
+    }
+
+    /** Inline (read-only) chip markup shown inside a sent user message. */
+    function chipHtmlFor(name) {
+        return '<span class="file-chip chip-inline"><i class="fa ' + chipIcon(name) + ' chip-icon"></i>'
+            + '<span class="chip-name">' + escapeHtml(name) + '</span></span>';
+    }
+
+    /**
+     * Light markdown rendering for free-text LLM answers: the models reply with
+     * markdown (bold, lists, line breaks) that innerHTML would otherwise flatten
+     * into one unreadable block with literal asterisks. HTML is escaped FIRST,
+     * so the LLM cannot inject markup.
+     * @param {string} text Raw model answer
+     * @return {string} Safe HTML
+     */
+    function renderMarkdownLite(text) {
+        let s = escapeHtml(String(text));
+        s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
+        s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+        // Numbered/bulleted list items get their own line even when the model
+        // packed them into a single paragraph ("… 5,20 € 2. **Référence** …").
+        // Conservative: only break before "N. **Header**" items (the pattern the
+        // model actually emits); "\S" also matched prose like "version 2. is out".
+        s = s.replace(/\s(\d{1,2}\.\s)(?=<strong>)/g, '<br>$1');
+        s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
+        s = s.replace(/\n/g, '<br>');
+        return s;
+    }
+
+    // =========================================================================
+    // MODEL PICKER
+    // =========================================================================
+
+    let modelList = [];   // model ids fetched from the provider (via list_models.php)
+
+    /** Populate the model pill: Auto + presets, then the provider's model list. */
+    function initModelPicker() {
+        if (!modelSelect) return;
+        let saved = '';
+        try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
+
+        const presets = [
+            ['preset:fast', '⚡ ' + t('AIModelFast')],
+            ['preset:balanced', '⚖️ ' + t('AIModelBalanced')],
+            ['preset:deep', '🧠 ' + t('AIModelDeep')]
+        ];
+        presets.forEach(([val, label]) => {
+            const o = document.createElement('option');
+            o.value = val; o.textContent = label;
+            modelSelect.appendChild(o);
+        });
+
+        const applySaved = () => {
+            if (saved && Array.prototype.some.call(modelSelect.options, (o) => o.value === saved)) {
+                modelSelect.value = saved;
+            }
+        };
+        applySaved();
+
+        fetch(epUrl('../ajax/list_models.php'))
+            .then((r) => r.json())
+            .then((j) => {
+                modelList = (j && j.models) || [];
+                if (modelList.length) {
+                    const grp = document.createElement('optgroup');
+                    grp.label = '──';
+                    modelList.forEach((id) => {
+                        const o = document.createElement('option');
+                        o.value = id; o.textContent = id;
+                        grp.appendChild(o);
+                    });
+                    modelSelect.appendChild(grp);
+                    // Saved model no longer offered by the provider: fall back to
+                    // Auto, forget the stale choice, and tell the user ONCE (so the
+                    // picker never looks silently ignored, cf. review on #39878).
+                    if (saved && saved.indexOf('preset:') !== 0 && modelList.indexOf(saved) < 0) {
+                        appendMsg('system', escapeHtml(t('AIModelSavedGone').replace('%s', saved)));
+                        try { localStorage.removeItem('aiModelChoice'); } catch (e) { /* ignore */ }
+                        saved = '';
+                    }
+                }
+                applySaved();
+            })
+            .catch(() => { /* provider unreachable: keep Auto + presets */ });
+
+        modelSelect.addEventListener('change', () => {
+            try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
+        });
+    }
+
+    /**
+     * Resolve the picker value to a concrete model id ('' = provider default).
+     * Presets map onto the dynamic list with a heuristic regex on the id.
+     */
+    function resolveModel() {
+        if (!modelSelect) return '';
+        const v = modelSelect.value;
+        if (!v) return '';
+        if (v.indexOf('preset:') === 0) {
+            const kind = v.substring(7);
+            const re = (kind === 'fast') ? /haiku|mini|flash|lite|instant/i
+                : ((kind === 'balanced') ? /sonnet|4o|medium|small/i : /opus|o1|pro|large/i);
+            const hit = modelList.find((id) => re.test(id));
+            return hit || '';
+        }
+        return v;
     }
 
     // =========================================================================
@@ -624,7 +940,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function processCloudFile(file) {
-        const base64 = await fileToBase64(file);
+        // fileToBase64 resolves the FULL data URL ("data:image/png;base64,AAAA…").
+        // Strip the prefix: the server-side extractor (parse_intent.php) expects
+        // pure base64 after '::' and hands it to the LLM as a native multimodal
+        // part — with the prefix left in, the marker is never recognized.
+        const base64 = String(await fileToBase64(file)).split(',').pop();
         return `__FILE_ATTACHMENT__[${file.type}]::${base64}`;
     }
 
@@ -662,7 +982,10 @@ document.addEventListener('DOMContentLoaded', () => {
             cloudRecognition.lang = navigator.language || 'en-US';
 
             cloudRecognition.onstart = () => { setMicState('listening'); statusBar.innerText = t('Listening'); };
-            cloudRecognition.onend = () => { if (isRecording && engineSelect.value === 'cloud') stopRecording(); };
+            // When recognition ends without a result (user stopped, or silence
+            // timeout), return to idle instead of looping on stopRecording (which
+            // left the button stuck in the orange 'processing' state).
+            cloudRecognition.onend = () => { if (engineSelect.value === 'cloud' && isRecording) { resetUI(); } };
             cloudRecognition.onerror = (event) => {
                 console.error('Speech recognition error:', event.error);
                 let errorMsg = t('Error') + ": " + event.error;
@@ -677,7 +1000,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cloudRecognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 input.value = transcript;
-                setMicState('idle');
+                resetUI(); // clears isRecording/isProcessing so onend won't re-fire a reset
                 statusBar.innerText = t('Transcribed');
                 handleQuery();
             };
@@ -883,7 +1206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         micBtn.classList.remove('listening', 'processing', 'cancelling');
         micBtn.disabled = false;
         if (state === 'listening') { micBtn.classList.add('listening'); micBtn.innerHTML = '<span class="fa fa-microphone"></span>'; }
-        else if (state === 'processing') { micBtn.classList.add('processing'); micBtn.innerHTML = '<span class="fa fa-circle-o-notch fa-spin"></span>'; }
+        else if (state === 'processing') { micBtn.classList.add('processing'); micBtn.innerHTML = '<span class="fa fa-circle-notch fa-spin"></span>'; }
         else { micBtn.innerHTML = '<span class="fa fa-microphone"></span>'; micBtn.title = "Start Recording"; }
     }
 
@@ -891,32 +1214,75 @@ document.addEventListener('DOMContentLoaded', () => {
     // CHAT UI RENDERING
     // =========================================================================
 
+    // Build the contextual action buttons row (e.g. "Download PDF", "Open record")
+    function buildActions(actions) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'msg-actions';
+        actions.forEach(action => {
+            const btn = document.createElement('button');
+            btn.className = `msg-action-btn ${action.class || ''}`;
+            btn.innerHTML = action.icon ? `<span class="fa ${action.icon}"></span> ${action.text}` : action.text;
+            btn.onclick = action.onclick;
+            actionsDiv.appendChild(btn);
+        });
+        return actionsDiv;
+    }
+
+    // Build the avatar element shown next to user/bot messages
+    function buildAvatar(type) {
+        const avatar = document.createElement('div');
+        avatar.className = `msg-avatar ${type}`;
+        avatar.innerHTML = (type === 'bot')
+            ? '<span class="fa fa-robot"></span>'
+            : (config.userInitial || '<span class="fa fa-user"></span>');
+        return avatar;
+    }
+
     function appendMsg(type, html, actions = null) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
-        div.innerHTML = html;
-        if (actions) {
-            const actionsDiv = document.createElement('div'); actionsDiv.className = 'msg-actions';
-            actions.forEach(action => {
-                const btn = document.createElement('button');
-                btn.className = `msg-action-btn ${action.class || ''}`;
-                btn.innerHTML = action.icon ? `<span class="fa ${action.icon}"></span> ${action.text}` : action.text;
-                btn.onclick = action.onclick;
-                actionsDiv.appendChild(btn);
-            });
-            div.appendChild(actionsDiv);
+
+        if (type === 'user' || type === 'bot') {
+            // Row layout: avatar + bubble (CSS reverses the row for the user)
+            const bubble = document.createElement('div');
+            bubble.className = 'msg-bubble';
+            bubble.innerHTML = html;
+            if (actions) bubble.appendChild(buildActions(actions));
+            div.appendChild(buildAvatar(type));
+            div.appendChild(bubble);
+        } else {
+            // system / error / clarification / confirmation: flat, centered, no avatar
+            div.innerHTML = html;
+            if (actions) div.appendChild(buildActions(actions));
         }
+
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
     }
 
+    // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
+    function appendTyping() {
+        const div = document.createElement('div');
+        div.className = 'msg bot typing-indicator';
+        div.appendChild(buildAvatar('bot'));
+        const bubble = document.createElement('div');
+        bubble.className = 'msg-bubble';
+        bubble.innerHTML = '<span></span><span></span><span></span>';
+        div.appendChild(bubble);
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+        return div;
+    }
+
     function handleClarification(question, context) {
         clarificationContext = context;
-        let html = `<div><strong>${question}</strong></div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
+        // No outer <strong>: the question may itself contain **bold**, which
+        // renderMarkdownLite turns into <strong> — nesting produces invalid HTML.
+        let html = `<div style="font-weight:600">${renderMarkdownLite(question)}</div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
         const actions = [
             {
                 text: t('Submit'), class: 'primary', icon: 'fa-check', onclick: () => {
-                    const response = document.getElementById('clarification-input').value;
+                    const response = container.querySelector('#clarification-input').value;
                     if (response.trim()) {
                         const msg = chat.lastElementChild;
                         if (msg && msg.classList.contains('clarification')) msg.remove();
@@ -934,18 +1300,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         ];
         appendMsg('clarification', html, actions);
-        const clarInput = document.getElementById('clarification-input');
+        const clarInput = container.querySelector('#clarification-input');
         if (clarInput) clarInput.focus();
     }
 
     function handleResponse(message) {
         if (!message) message = t('EmptyAIResponse');
-        appendMsg('bot', message);
+        appendMsg('bot', renderMarkdownLite(message));
     }
 
     function handleConfirmation(action, details, originalIntent) {
-        pendingIntent = originalIntent.arguments.original_intent || originalIntent;
-        const toolName = pendingIntent.tool || 'unknown tool';
+		// original_intent must be provided by parse_intent.php.
+		// If missing, treat as a malformed confirmation and abort.
+		if (!originalIntent.arguments || !originalIntent.arguments.original_intent) {
+			appendMsg('error', t('AIError') + ': malformed confirmation response (missing original_intent). Please try again.');
+			input.disabled = false;
+			input.focus();
+			return;
+		}
+		pendingIntent = originalIntent.arguments.original_intent;
+		const toolName = pendingIntent.tool || 'unknown tool';
         let template = t('ConfirmAiAction');
         let messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
         let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
@@ -1005,7 +1379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showVoiceFeedback(message) {
-        const dialog = document.querySelector('.confirmation-dialog .confirmation-body');
+        const dialog = container.querySelector('.confirmation-dialog .confirmation-body');
         if (dialog) {
             let fb = dialog.querySelector('.voice-feedback');
             if (!fb) { fb = document.createElement('div'); fb.className = 'voice-feedback'; dialog.appendChild(fb); }
@@ -1022,50 +1396,120 @@ document.addEventListener('DOMContentLoaded', () => {
         appendMsg('system', `<span class="fa fa-circle-notch fa-spin"></span> ${t('ExecutingTool')} ${pendingIntent.tool || ''}...`);
         const loadingMsg = chat.lastElementChild;
         input.disabled = true;
+		// PendingIntent must be a real action tool, never a system tool.
+		// This catches the edge case where handleConfirmation stored the wrong intent.
+		const systemTools = ['ask_for_confirmation', 'ask_for_clarification', 'respond_to_user', 'reject_general_question'];
+		if (!pendingIntent || !pendingIntent.tool || systemTools.includes(pendingIntent.tool)) {
+			loadingMsg.remove();
+			appendMsg('error', t('AIError') + ': cannot execute system tool "' + (pendingIntent && pendingIntent.tool || 'unknown') + '" as an action. Please try again.');
+			pendingIntent = null;
+			input.disabled = false;
+			input.focus();
+			return;
+		}
         try {
-            const toolRes = await fetch('execute_tool.php', {
+            const toolRes = await fetch(epUrl('execute_tool.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingIntent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
-            appendMsg('bot', formatResult(result));
+            appendMsg('bot', formatResult(result, false, pendingIntent.tool));
+            resolveThirdpartyNames(chat.lastElementChild);
             pendingIntent = null;
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
     }
 
+    // Parse a fetch Response that must be JSON. When the Dolibarr session has
+    // expired, the endpoints answer with the HTML login form (HTTP 200), which
+    // used to surface as a cryptic "Unexpected token '<'" network error: detect
+    // that case and tell the user to sign back in instead.
+    async function aiJson(response) {
+        const raw = await response.text();
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            if (/<\s*(!doctype|html|form|body)[\s>]/i.test(raw)) {
+                throw new Error(t('AISessionExpiredReload'));
+            }
+            throw e;
+        }
+    }
+
     async function handleQuery() {
         const query = input.value.trim();
-        if (!query) return;
-        appendMsg('user', query);
+        const readyDocs = attachedDocs.filter((d) => !d.error);
+        if (!query && !readyDocs.length) return;
+        if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
+
+        // What is SENT = document context + question; what is DISPLAYED = chip + question.
+        let sentQuery = query;
+        let displayHtml = escapeHtml(query);
+        if (readyDocs.length) {
+            // One wrapped context block per document, so each keeps its own
+            // intro/outro delimiters whatever mix of text and markers is sent.
+            // The trailing space after the payload matters: the server-side marker
+            // regex consumes trailing newlines as part of the base64 run, which
+            // used to glue '[attached document]' to the outro line in the logs.
+            const docContext = readyDocs.map((d) => `${t('DocContextIntro')}\n\n${d.payload} \n\n--- ${t('DocContextOutro')} ---`).join('\n') + '\n';
+            sentQuery = docContext + (query ? '\n' + query : '');
+            displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
+        }
+
+        appendMsg('user', displayHtml);
+        clearChip();
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
-        appendMsg('system', '<span class="fa fa-circle-notch fa-spin"></span> Thinking...');
+        appendTyping();
         const loadingMsg = chat.lastElementChild;
         try {
-            const intentRes = await fetch('parse_intent.php', {
+            const chosenModel = resolveModel();
+            const intentRes = await fetch(epUrl('parse_intent.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query })
+                // Page context (set by the printCommonFooter hook on card pages)
+                // lets the server resolve "this invoice" - it re-validates the
+                // ids against the user's rights before trusting them.
+                body: JSON.stringify(Object.assign(
+                    chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                    (function () {
+                        const ctx = window.aiPageContext;
+                        if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
+                        // On list pages, the mass-action checkboxes carry the row
+                        // ids: checked ones are the user's live selection.
+                        if (ctx.list) {
+                            // The mass-action checkboxes carry rowids by core
+                            // convention on every list - a uniform source that
+                            // sidesteps the per-list SQL alias zoo server-side.
+                            const all = Array.from(document.querySelectorAll('.checkforselect'))
+                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
+                            if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
+                            const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
+                            if (sel.length) ctx.selected = sel;
+                        }
+                        return { context: ctx };
+                    })()
+                ))
             });
-            const intent = await intentRes.json();
+            const intent = await aiJson(intentRes);
             loadingMsg.remove();
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
-            if (intent.tool === 'ask_for_clarification') { handleClarification(intent.arguments.question, query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const msg = (intent.arguments && intent.arguments.message) ? intent.arguments.message : t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
+            if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
+            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'generate_navigation_url') {
                 appendMsg('system', t('GeneratingLink'));
                 const loadingNav = chat.lastElementChild;
-                const navRes = await fetch('execute_tool.php', {
+                const navRes = await fetch(epUrl('execute_tool.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await navRes.json();
+                const nav = await aiJson(navRes);
                 loadingNav.remove();
                 if (nav.error) { appendMsg('error', nav.error); }
                 else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fa fa-external-link"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
@@ -1074,14 +1518,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             appendMsg('system', t('FetchingData'));
             const loadingData = chat.lastElementChild;
-            const toolRes = await fetch('execute_tool.php', {
+            const toolRes = await fetch(epUrl('execute_tool.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(intent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingData.remove();
             lastResult = { data: result, tool: intent.tool, query: query };
-            appendMsg('bot', formatResult(result));
+            appendMsg('bot', formatResult(result, false, intent.tool));
+            resolveThirdpartyNames(chat.lastElementChild);
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
@@ -1100,11 +1545,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else { reportTitle = resultObj.tool.replace(/_/g, ' '); }
         let filename = reportTitle.replace(/[\/\\:*?"<>|]/g, '_').substring(0, 50) + '_' + new Date().toISOString().slice(0, 10) + '.pdf';
         const form = document.createElement('form');
-        form.method = 'POST'; form.action = 'download_pdf.php'; form.target = '_blank';
+        form.method = 'POST'; form.action = epUrl('download_pdf.php'); form.target = '_blank';
         const addField = (name, val) => {
             const i = document.createElement('input'); i.type = 'hidden'; i.name = name; i.value = val; form.appendChild(i);
         };
-        addField('data', JSON.stringify(resultObj.data));
+        addField('content', JSON.stringify(resultObj.data));	// field name must stay 'content': allowlisted for GETPOST 'none' server-side
         addField('title', reportTitle);
         addField('filename', filename);
         document.body.appendChild(form);
@@ -1112,7 +1557,95 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.removeChild(form);
     }
 
-    function formatResult(data, isRecursive = false) {
+    // ---- Tool-result presentation: raw API data -> localized display ----
+
+    // API field -> translation key for table headers; fallback prettifies the raw name.
+    const FIELD_LABELS = {
+        ref: 'Ref', label: 'Label', name: 'ThirdParty', socid: 'Customer', fk_soc: 'Customer',
+        paye: 'Paid', status: 'Status', type: 'Type', email: 'Email', town: 'Town',
+        date: 'DateInvoice', datef: 'DateInvoice', date_lim_reglement: 'DateMaxPayment',
+        total_ht: 'TotalHT', total_ttc: 'TotalTTC', total_tva: 'AmountVAT',
+        remaintopay: 'RemainderToPay', price: 'Price', price_ttc: 'PriceTTC', tva_tx: 'VATRate',
+        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier'
+    };
+    const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
+        'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
+        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva']);
+    const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
+
+    function fieldLabel(k) {
+        if (FIELD_LABELS[k] && t(FIELD_LABELS[k]) !== FIELD_LABELS[k]) return t(FIELD_LABELS[k]);
+        if (FIELD_LABELS[k]) return t(FIELD_LABELS[k]);
+        return k.replace(/_/g, ' ').toUpperCase();
+    }
+    function fmtMoney(v) {
+        const n = parseFloat(v);
+        if (isNaN(n)) return v;
+        try {
+            return new Intl.NumberFormat(config.locale || undefined, { style: 'currency', currency: config.currency || 'EUR' }).format(n);
+        } catch (e) { return n.toFixed(2); }
+    }
+    function fmtDate(v) {
+        const n = parseInt(v, 10);
+        if (isNaN(n) || n < 100000000 || n > 9999999999) return v; // not a plausible unix timestamp
+        try {
+            return new Intl.DateTimeFormat(config.locale || undefined).format(new Date(n * 1000));
+        } catch (e) { return v; }
+    }
+    // Which Dolibarr card a tool's rows open; %id% replaced per row.
+    const TOOL_CARD_URLS = {
+        api_invoices: '/compta/facture/card.php?facid=%id%',
+        api_thirdparties: '/societe/card.php?socid=%id%',
+        api_products: '/product/card.php?id=%id%',
+        api_proposals: '/comm/propal/card.php?id=%id%',
+        api_orders: '/commande/card.php?id=%id%',
+        api_projects: '/projet/card.php?id=%id%',
+        api_contracts: '/contrat/card.php?id=%id%',
+        api_tickets: '/ticket/card.php?id=%id%'
+    };
+    function cardUrlFor(tool, id) {
+        if (!tool || !id) return null;
+        const prefix = Object.keys(TOOL_CARD_URLS).find(p => tool.indexOf(p) === 0);
+        return prefix ? (config.urlRoot || '') + TOOL_CARD_URLS[prefix].replace('%id%', encodeURIComponent(id)) : null;
+    }
+    function formatCell(k, v) {
+        if (v === null || v === undefined || v === '') return '-';
+        // Hand-written report tools legitimately embed a single link around a
+        // ref (server-generated, same origin): pass it through instead of
+        // escaping it into visible markup.
+        if (typeof v === 'string' && /^<a\s[^>]*href="[^"]*"[^>]*>[^<]*<\/a>$/i.test(v.trim())) return v.trim();
+        if (typeof v === 'object') return '…'; // nested structures are noise in a summary table
+        if (MONEY_FIELDS.has(k)) return fmtMoney(v);
+        if (isDateField(k)) return fmtDate(v);
+        if (k === 'paye') return (String(v) === '1' ? '✓' : '✗');
+        return escapeHtml(String(v));
+    }
+    // socid -> customer name, resolved once per render through the bridge.
+    async function resolveThirdpartyNames(container) {
+        const cells = container.querySelectorAll('td[data-socid]');
+        if (!cells.length) return;
+        const ids = [...new Set([...cells].map(c => c.getAttribute('data-socid')))].filter(x => x && x !== '0');
+        if (!ids.length) return;
+        try {
+            const filters = '(t.rowid:in:' + ids.join(',') + ')';	// UFS 'in' takes a bare list: value part may not contain parentheses
+            const res = await fetch(epUrl('execute_tool.php'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tool: 'api_thirdparties_list', arguments: { sqlfilters: filters, properties: 'id,name', limit: 100 } })
+            });
+            const rows = await res.json();
+            if (!Array.isArray(rows)) return;
+            const names = {};
+            rows.forEach(r => { names[String(r.id)] = r.name; });
+            cells.forEach(c => {
+                const id = c.getAttribute('data-socid');
+                if (names[id]) {
+                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(names[id])}</a>`;
+                }
+            });
+        } catch (e) { /* names stay as ids */ }
+    }
+
+    function formatResult(data, isRecursive = false, toolName = '') {
         if (!data) return t('NoDataAvailable');
         if (data.error) return `<span style="color:red">${t('error')}: ${data.error}</span>`;
         let content = '';
@@ -1124,17 +1657,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid');
-            content += '<div style="overflow-x:auto;"><table class="chat-table"><thead><tr>';
-            keys.forEach(k => content += `<th>${k.replace(/_/g, ' ').toUpperCase()}</th>`);
+            content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
+            keys.forEach(k => content += `<th>${fieldLabel(k)}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
                 content += '<tr>';
                 keys.forEach(k => {
-                    let val = row[k];
-                    if (row.url && ['ref', 'name', 'nom', 'label', 'customer', 'supplier', 'subject'].includes(k)) {
-                        val = `<a href="${row.url}" target="_blank" style="color:#0055aa; text-decoration:none; font-weight:bold;">${val}</a>`;
+                    let val = formatCell(k, row[k]);
+                    const cardUrl = row.url || cardUrlFor(toolName, row.id || row.rowid);
+                    if (cardUrl && val.indexOf('<a ') !== 0 && ['ref', 'name', 'nom', 'label', 'customer', 'supplier', 'subject'].includes(k)) {
+                        val = `<a href="${cardUrl}" target="_blank" class="chat-link">${val}</a>`;
                     }
-                    content += `<td>${val}</td>`;
+                    if ((k === 'socid' || k === 'fk_soc') && row[k]) {
+                        content += `<td data-socid="${escapeHtml(String(row[k]))}">${val}</td>`;
+                    } else {
+                        content += `<td>${val}</td>`;
+                    }
                 });
                 content += '</tr>';
             });
@@ -1143,10 +1681,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (typeof data === 'object') {
             isObject = true;
             objectUrl = data.url || null;
-            content += '<div style="background:#f9f9f9; padding:10px; border-radius:5px;"><ul style="padding-left:20px; margin:0;">';
+            content += '<div class="chat-object"><ul>';
             for (const [key, value] of Object.entries(data)) {
                 if (key === 'url') continue;
-                if (typeof value !== 'object') { content += `<li><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</li>`; }
+                if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
             }
             content += '</ul></div>';
         }
@@ -1155,12 +1693,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isRecursive) {
             let toolbarContent = '';
             if (isArray) {
-                toolbarContent = `<button class="msg-action-btn" onclick="document.dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
+                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
             } else if (isObject && objectUrl) {
-                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" style="display:inline-flex; align-items:center; gap:5px; text-decoration:none;" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
+                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
             }
-            if (toolbarContent) { content += `<div style="margin-top:8px; border-top:1px solid #eee; padding-top:5px; text-align:right;">${toolbarContent}</div>`; }
+            if (toolbarContent) { content += `<div class="msg-toolbar">${toolbarContent}</div>`; }
         }
         return content;
     }
-});
+}
+
+// Auto-init for server-rendered containers (standalone page mode). The topbar
+// popover path calls initAiAssistant() explicitly after the AJAX injection.
+// Module scripts are deferred, so the DOM may already be ready when this runs.
+function aiAutoInit() {
+    document.querySelectorAll('.ai-chat-container[data-ai-autoinit]').forEach((el) => initAiAssistant(el));
+}
+if (document.readyState !== 'loading') {
+    aiAutoInit();
+} else {
+    document.addEventListener('DOMContentLoaded', aiAutoInit);
+}

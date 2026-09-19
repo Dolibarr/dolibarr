@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2026   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +33,15 @@ require_once DOL_DOCUMENT_ROOT . "/ai/class/mcptool.class.php";
  * the Model Context Protocol. It supports both native tools from the ai/tools directory
  * and external tools registered via hooks.
  *
+ * Context-aware: pass McpHandler::CTX_ASSISTANT (default) or McpHandler::CTX_MCP_SERVER
+ * to the constructor so that the correct allow-list constant is applied.
  */
 class McpHandler
 {
+	const CTX_ASSISTANT = 'assistant';
+
+	const CTX_MCP_SERVER = 'mcp_server';
+
 	/** @var DoliDB Database handler */
 	private $db;
 
@@ -47,43 +54,131 @@ class McpHandler
 	/**
 	 * @var McpTool[] Array of loaded tool instances, keyed by their base filename or class name.
 	 */
-	private $loadedTools = [];
+	public $loadedTools = [];
 
 	/**
 	 * @var McpTool[] Associative array mapping tool *names* (from schema) to their instances.
 	 * This provides O(1) lookup for execution.
 	 */
-	private $toolsByName = [];
+	public $toolsByName = [];
+
+
+	/**
+	 * The active tool context. Determines which allow-list constant is read.
+	 * @var string
+	 */
+	private $toolcontext;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param DoliDB $db   Database handler object
-	 * @param User   $user User object
+	 * @param DoliDB    $db      Database handler object
+	 * @param User      $user    User object
+	 * @param Conf|null $conf_obj	Configuration object. Falls back to global $conf when null.
+	 * @param string    $toolcontext Pass McpHandler::CTX_ASSISTANT or McpHandler::CTX_MCP_SERVER.
+	 *                               Defaults to CTX_ASSISTANT when empty.
 	 */
-	public function __construct($db, $user)
+	public function __construct($db, $user, $conf_obj = null, $toolcontext = '')
 	{
 		$this->db = $db;
 		$this->user = $user;
 
-		global $conf;
-		$this->conf = $conf;
+		if ($conf_obj === null) {
+			global $conf;
+			$conf_obj = $conf;
+		}
+		$this->conf = $conf_obj;
 
-		$this->loadTools();
+		$this->toolcontext = (!empty($toolcontext)) ? $toolcontext : self::CTX_ASSISTANT;
 	}
+
+	/**
+	 * Returns true if the given tool instance declares itself as a system tool.
+	 *
+	 * Detection is entirely delegated to the tool class via isSystem() — no tool
+	 * names are hardcoded here. Any tool class that overrides isSystem() returning
+	 * true is treated as a system tool automatically.
+	 *
+	 * @param McpTool $toolInstance The tool instance to evaluate.
+	 * @return bool
+	 */
+	private function isSystemTool($toolInstance)
+	{
+		return (method_exists($toolInstance, 'isSystem') && $toolInstance->isSystem());
+	}
+
+	/**
+	 * Returns the configured allow-list for the current context as an array of
+	 * tool names.
+	 *
+	 * Logic:
+	 *   constant not set / empty string → no restriction → returns array()
+	 *   constant = 'NONE'               → all blocked    → returns array('__blocked__')
+	 *   otherwise                       → returns the list of allowed names
+	 *
+	 * The sentinel '__blocked__' will never match any real tool name so
+	 * in_array() checks against it always return false.
+	 *
+	 * @return string[]
+	 */
+	private function getAllowedToolsList()
+	{
+		if ($this->toolcontext === self::CTX_MCP_SERVER) {
+			$constName = 'AI_MCP_SERVER_ALLOWED_TOOLS';
+		} else {
+			$constName = 'AI_ASSISTANT_ALLOWED_TOOLS';
+		}
+
+		$raw = getDolGlobalString($constName);		// Return the list (separated by coma) of all enabled tools
+
+		if ($raw === '') {
+			// Constant not yet configured — allow everything
+			return array();
+		}
+
+		if ($raw === 'NONE') {
+			// Admin explicitly disabled all tools via the preset button
+			return array('__blocked__');
+		}
+
+		return array_values(array_filter(array_map('trim', explode(',', $raw))));
+	}
+
+	/**
+	 * Resolves a raw allow-list constant value into an explicit PHP array of tool names.
+	 *
+	 * @param string   $raw                Raw value of the constant from getDolGlobalString().
+	 * @param string[] $allDiscoveredTools Full list of all non-system tool names discovered.
+	 * @return string[] Explicit list of currently allowed tool names.
+	 */
+	public static function resolveAllowList($raw, $allDiscoveredTools)
+	{
+		if ($raw === '') {
+			// Not yet configured → implicitly all tools are allowed
+			return $allDiscoveredTools;
+		}
+		if ($raw === 'NONE') {
+			// Admin explicitly disabled everything
+			return array();
+		}
+		// Explicit list stored by a previous save
+		return array_values(array_filter(array_map('trim', explode(',', $raw))));
+	}
+
 
 	/**
 	 * Load all available MCP tools.
 	 *
 	 * This method scans the ai/tools directory for native tools and executes the
 	 * 'addMcpTools' hook to allow external modules to register their own tools.
+	 * This fill array ->loadedTools and ->toolsByName
 	 *
 	 * @return void
 	 */
-	private function loadTools()
+	public function loadTools()
 	{
-		$this->loadNativeTools();
-		$this->loadExternalTools();
+		$this->loadNativeTools();		// Tools found into directory ai/tools/
+		$this->loadExternalTools();		// Tools provided by external module and hook addMcpTools
 	}
 
 	/**
@@ -166,6 +261,14 @@ class McpHandler
 			}
 
 			foreach ($hookmanager->resArray as $moduleTools) {
+				if ($moduleTools instanceof McpTool) {
+					// Tolerance: a module that set results = array($tool)
+					// instead of array(array($tool)) still works - the
+					// HookManager flattens results into resArray, so bare
+					// instances are the natural mistake to make.
+					$this->registerTool(get_class($moduleTools), $moduleTools);
+					continue;
+				}
 				if (!is_array($moduleTools)) {
 					continue;
 				}
@@ -211,24 +314,197 @@ class McpHandler
 	}
 
 	/**
-	 * Get the combined schema of all loaded tools.
+	 * Returns the full schema of every loaded tool with no allow-list filtering.
+	 * Adds is_system and class_name metadata needed by admin/configure_tools.php.
+	 *
+	 * Must not be called from any user-facing entry point — admin use only.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function getToolsSchemaUnfiltered()
+	{
+		$schema = array();
+
+		foreach ($this->loadedTools as $tool) {
+			$isSystem  = $this->isSystemTool($tool);
+			$className = get_class($tool);
+
+			foreach ($tool->getDefinitions() as $def) {
+				$def['is_system']  = $isSystem;
+				$def['class_name'] = $className;
+				if (empty($def['categories'])) {
+					$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+				}
+				$schema[] = $def;
+			}
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * Returns the schema of all tools permitted in the current context.
+	 *
+	 * System tools (isSystem() = true) are always included and tagged with
+	 * is_system = true so callers can identify and exclude them from the schema
+	 * sent to the LLM (system tools are parse_intent.php infrastructure —
+	 * they must never be called directly by the model).
+	 *
+	 * All other tools are filtered against the tool context allow-list.
 	 *
 	 * @return array<int, array<string, mixed>> Array of tool schemas
 	 */
 	public function getToolsSchema(): array
 	{
-		$schema = [];
+		$allowed = $this->getAllowedToolsList();	// Return list of "allowed" tools for the current context $this->toolcontext (Chat or MCP)
+		$schema  = [];
+
 		foreach ($this->loadedTools as $tool) {
+			$isSystem = $this->isSystemTool($tool);
+
 			foreach ($tool->getDefinitions() as $def) {
-				$def['categories'] = $tool->getCategories();
-				$schema[] = $def;
+				$name = isset($def['name']) ? $def['name'] : '';
+
+				if ($isSystem) {
+					// Always include system tools but tag them so parse_intent.php
+					// can strip them from $toolsForLLM while keeping them available
+					// for the validation check (executeTool must still be able to
+					// run respond_to_user, ask_for_clarification, etc.).
+					$def['is_system']  = true;
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
+					$schema[] = $def;
+					continue;
+				}
+
+				$def['is_system'] = false;
+
+				if (empty($allowed)) {
+					// No restriction configured — include everything
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
+					$schema[] = $def;
+					continue;
+				}
+
+				if (in_array($name, $allowed, true)) {
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
+					$schema[] = $def;
+				}
+				// Not in $allowed — silently omitted; LLM never sees this tool
 			}
 		}
+
 		return $schema;
 	}
 
 	/**
+	 * Returns the schema of tools permitted in the current context, with system
+	 * tools completely excluded. This is the exact list sent to the LLM.
+	 *
+	 * System tools (ask_for_confirmation, respond_to_user, etc.) must NEVER be
+	 * visible to the model. If the LLM sees ask_for_confirmation in its schema
+	 * it will call it directly with wrong arguments instead of the real action
+	 * tool, causing an infinite confirmation loop on the client side.
+	 *
+	 * parse_intent.php uses this method to build $toolsForLLM, and keeps
+	 * getToolsSchema() separately only for the post-LLM validation step
+	 * (where system tools must still be accepted as valid responses).
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function getToolsSchemaForLLM()
+	{
+		$allowed = $this->getAllowedToolsList();
+		$schema  = array();
+
+		foreach ($this->loadedTools as $tool) {
+			// Check isSystem() class method first (requires conversation.class.php
+			// to implement it). This is the preferred path for future extensibility.
+			if ($this->isSystemTool($tool)) {
+				continue;
+			}
+
+			foreach ($tool->getDefinitions() as $def) {
+				$name = isset($def['name']) ? $def['name'] : '';
+
+				// Check is_system flag in the definition array itself.
+				// This is set directly in conversation.class.php getDefinitions()
+				// and works even if the isSystem() class method is not yet deployed.
+				if (!empty($def['is_system'])) {
+					continue;
+				}
+
+				// Do not advertise what this user cannot run.
+				if ($this->checkToolRights($tool, $name) !== '') {
+					continue;
+				}
+
+				if (empty($allowed)) {
+					// No restriction configured — include everything
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
+					$schema[] = $def;
+					continue;
+				}
+
+				if (in_array($name, $allowed, true)) {
+					if (empty($def['categories'])) {
+						$def['categories'] = $tool->getCategories();	// class-level fallback; a tool may set finer per-definition categories
+					}
+					$schema[] = $def;
+				}
+			}
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * Check the rights a tool declared for the acting user.
+	 *
+	 * @param McpTool $tool     Tool instance.
+	 * @param string  $toolName Tool being checked.
+	 * @return string '' when allowed, otherwise the missing right as "module/perm".
+	 */
+	private function checkToolRights($tool, $toolName)
+	{
+		if ($this->isSystemTool($tool)) {
+			return '';
+		}
+
+		$declared = method_exists($tool, 'getRequiredRights') ? $tool->getRequiredRights($toolName) : McpTool::RIGHTS_UNDECLARED;
+
+		if ($declared === McpTool::RIGHTS_ENFORCED_DOWNSTREAM) {
+			return '';	// REST API classes check DolibarrApiAccess::$user themselves
+		}
+		if ($declared === McpTool::RIGHTS_UNDECLARED) {
+			dol_syslog("[McpHandler] Tool '".$toolName."' declares no rights: denied.", LOG_WARNING);
+
+			return 'undeclared';
+		}
+		foreach ((array) $declared as $right) {
+			$right = (array) $right;
+			$module = isset($right[0]) ? $right[0] : '';
+			$perm = isset($right[1]) ? $right[1] : '';
+			$subperm = isset($right[2]) ? $right[2] : '';
+			if ($module === '' || !$this->user->hasRight($module, $perm, $subperm)) {
+				return $module.'/'.$perm.($subperm !== '' ? '/'.$subperm : '');
+			}
+		}
+
+		return '';
+	}
+	/**
 	 * Execute a specific tool by its name.
+	 *
+	 * Enforces the tool context allow-list as a second gate so that even a crafted
+	 * direct request cannot run a tool that was disabled in the admin UI.
 	 *
 	 * @param string               $toolName The name of the tool to execute.
 	 * @param array<string, mixed> $args     The arguments to pass to the tool.
@@ -238,12 +514,57 @@ class McpHandler
 	public function executeTool(string $toolName, array $args): array
 	{
 		if (!isset($this->toolsByName[$toolName])) {
-			return ["error" => "Tool '{$toolName}' not found."];
+			// LLMs routinely emit near-miss tool names (create_invoice for
+			// create_customer_invoice). Recover when the real name is
+			// UNAMBIGUOUS: same action verb (segment before the first '_')
+			// and every underscore token of the requested name appears in the
+			// candidate. Exactly one match executes (logged); zero or several
+			// keep the clean error - never guess between candidates.
+			$reqTokens = explode('_', dol_strtolower($toolName));
+			$verb = $reqTokens[0];
+			$candidates = array();
+			foreach (array_keys($this->toolsByName) as $realName) {
+				if (strpos($realName, $verb.'_') !== 0 || $this->isSystemTool($this->toolsByName[$realName])) {
+					continue;
+				}
+				$realTokens = explode('_', $realName);
+				if (!array_diff($reqTokens, $realTokens)) {
+					$candidates[] = $realName;
+				}
+			}
+			if (count($candidates) === 1) {
+				dol_syslog("[McpHandler] Tool name '".$toolName."' recovered to '".$candidates[0]."'.", LOG_INFO);
+				$toolName = $candidates[0];
+			} else {
+				return ["error" => "Tool '{$toolName}' not found."];
+			}
 		}
 
+		$toolInstance = $this->toolsByName[$toolName];
+
+		// enforce tool context allow-list (system tools always pass through)
+		if (!$this->isSystemTool($toolInstance)) {
+			$allowed = $this->getAllowedToolsList();
+
+			if (!empty($allowed) && !in_array($toolName, $allowed, true)) {
+				dol_syslog(
+					"[McpHandler] Blocked execution of tool '$toolName' in tool context '{$this->toolcontext}' (not in allow-list).",
+					LOG_WARNING
+				);
+				return array('error' => "Tool '" . $toolName . "' is not available in this tool context.");
+			}
+		}
+
+		// execute
 		try {
-			$toolInstance = $this->toolsByName[$toolName];
 			dol_syslog('[McpHandler] Executing tool \'' . $toolName . '\' with args: ' . json_encode($args), LOG_INFO);
+			$missingRight = $this->checkToolRights($toolInstance, $toolName);
+			if ($missingRight !== '') {
+				return array('error' => ($missingRight === 'undeclared')
+					? "Tool '".$toolName."' cannot run: it declares no required rights."
+					: "Permission denied: '".$toolName."' requires the right ".$missingRight.".");
+			}
+
 			$result = $toolInstance->execute($toolName, $args);
 			dol_syslog('[McpHandler] Tool \'' . $toolName . '\' executed successfully.', LOG_INFO);
 			return $result;

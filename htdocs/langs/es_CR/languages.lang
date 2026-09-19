@@ -1,8 +1,13 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_ar_EG=Arabe (Egipto)
+Language_ar_LB=Árabe (Líbano)
 Language_fi_FI=Finlandés
 Language_fy_NL=Frisón
+Language_ku_IQ=Kurdo
 Language_lv_LV=Letón
+Language_mr_IN=Maratí
 Language_nl_BE=Holandés (Bélgica)
+Language_si_LK=Cingalés
+Language_sw_KE=Suajili
 Language_uk_UA=Ucraniano
 Language_uz_UZ=Uzbeko

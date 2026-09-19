@@ -399,13 +399,13 @@ class Lettering extends BookKeeping
 				if ($resql) {
 					if ($obj = $this->db->fetch_object($resql)) {
 						if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
-							$this->errors[] = 'Total not exacts ' . round(abs($obj->deb), 2) . ' vs ' . round(abs($obj->cred), 2);
+							$this->errors[] = $langs->trans('ErrorMatchingUnbalanced', price(price2num(abs($obj->deb), 'MT')), price(price2num(abs($obj->cred), 'MT')));
 							$error++;
 						}
 					}
 					$this->db->free($resql);
 				} else {
-					$this->errors[] = 'Erreur sql' . $this->db->lasterror();
+					$this->errors[] = 'SQL Error message: ' . $this->db->lasterror();
 					$error++;
 				}
 			}
@@ -516,10 +516,12 @@ class Lettering extends BookKeeping
 
 	/**
 	 * Update the matching on general account
+	 *
 	 * @param	int[]		$ids			ids array
+	 * @param   bool        $partial        Partial lettering
 	 * @return	int
 	 */
-	public function updateGeneralMatching(array $ids = [])
+	public function updateGeneralMatching(array $ids = [], $partial = false)
 	{
 		global $conf, $langs;
 
@@ -527,8 +529,8 @@ class Lettering extends BookKeeping
 		$error = 0;
 		$affected_rows = 0;
 
-		// Generate a string with n char 'A' (for manual/auto matching)
-		$letter = str_repeat('A', getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3));
+		// Generate a string with n char 'A' (for manual/auto reconcile) or 'a' (for partial reconcile) where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA'/'aa', 'AAA'/'aaa', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
+		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), $partial ? 'a' : 'A');
 
 		// Check for unreconcilable accounts
 		$pcgId = getDolGlobalInt('CHARTOFACCOUNTS');
@@ -610,25 +612,45 @@ class Lettering extends BookKeeping
 		$fiscalYearStart = $this->db->jdate($fiscalYear->date_start);
 		$fiscalYearEnd   = $this->db->jdate($fiscalYear->date_end);
 
-		// Get next code
-		$idlist = implode(',', array_map('intval', $ids));
-		$sql = "SELECT DISTINCT ab2.lettering_code";
-		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
-		$sql .= " LEFT JOIN " . $this->db->prefix() . "accounting_bookkeeping AS ab2 ON ab2.numero_compte = ab.numero_compte";
-		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
-		$sql .= " AND ab2.lettering_code != ''";
-		$sql .= " AND ab2.matching_general = 1";
-		$sql .= " AND ab2.doc_date BETWEEN '"  . $this->db->idate($fiscalYearStart) . "' AND '" . $this->db->idate($fiscalYearEnd) . "'";
-		$sql .= " ORDER BY ab2.lettering_code DESC";
+		$this->db->begin();
 
-		dol_syslog(__METHOD__ . " - Get next code", LOG_DEBUG);
+		// Check partial / normal lettering case
+		$idlist = implode(',', array_map('intval', $ids));
+		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+		$sql .= " GROUP BY ab.lettering_code";
+		$sql .= " ORDER BY ab.lettering_code DESC";
+
+		dol_syslog(__METHOD__ . " - Check partial / normal lettering case", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->lettering_code) && preg_match('/^[A-Z]+$/', $obj->lettering_code)) {
-					$letter = $obj->lettering_code;
-					$letter++;
-					break;
+				if (empty($obj->lettering_code)) {
+					continue;
+				}
+
+				// Remove normal lettering code if set partial lettering
+				if ($partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)) {
+					if (!empty($obj->bookkeeping_ids)) {
+						$ids = array_diff($ids, explode(',', $obj->bookkeeping_ids));
+					}
+				} elseif (!$partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) {
+					// Delete partial lettering code if set normal lettering
+					$sql2 = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
+					$sql2 .= " matching_general = 1";
+					$sql2 .= ", lettering_code = NULL";
+					$sql2 .= ", date_lettering = NULL";
+					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+					$sql2 .= " AND lettering_code = '" . $this->db->escape($obj->lettering_code) . "'";
+
+					dol_syslog(__METHOD__ . " - Remove partial lettering", LOG_DEBUG);
+					$resql2 = $this->db->query($sql2);
+					if (!$resql2) {
+						$this->errors[] = 'Error' . $this->db->lasterror();
+						$error++;
+						break;
+					}
 				}
 			}
 			$this->db->free($resql);
@@ -637,47 +659,79 @@ class Lettering extends BookKeeping
 			$error++;
 		}
 
-		// Test amount integrity
-		if (!$error) {
+		if (!$error && !empty($ids)) {
+			// Get next code
 			$idlist = implode(',', array_map('intval', $ids));
-			$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred";
-			$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping";
-			$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
-			$sql .=	" AND lettering_code IS NULL";
+			$sql = "SELECT DISTINCT ab2.lettering_code";
+			$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "accounting_bookkeeping AS ab2 ON ab2.numero_compte = ab.numero_compte";
+			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+			$sql .= " AND ab2.lettering_code != ''";
+			$sql .= " AND ab2.matching_general = 1";
+			$sql .= " AND ab2.doc_date BETWEEN '" . $this->db->idate($fiscalYearStart) . "' AND '" . $this->db->idate($fiscalYearEnd) . "'";
+			$sql .= " ORDER BY ab2.lettering_code DESC";
 
-			dol_syslog(__METHOD__ . " - Test amount integrity", LOG_DEBUG);
+			dol_syslog(__METHOD__ . " - Get next code", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($obj = $this->db->fetch_object($resql)) {
-					if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
-						$this->errors[] = 'Total not exacts ' . round(abs($obj->deb), 2) . ' vs ' . round(abs($obj->cred), 2);
-						$error++;
+				while ($obj = $this->db->fetch_object($resql)) {
+					if (!empty($obj->lettering_code) &&
+						(($partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) ||
+							(!$partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)))
+					) {
+						$letter = $obj->lettering_code;
+						$letter++;
+						break;
 					}
 				}
 				$this->db->free($resql);
 			} else {
-				$this->errors[] = 'Erreur sql' . $this->db->lasterror();
+				$this->errors[] = 'Error' . $this->db->lasterror();
 				$error++;
 			}
-		}
 
-		// Update matching code
-		if (!$error) {
-			$idlist = implode(',', array_map('intval', $ids));
-			$sql = "UPDATE " . $this->db->prefix() . "accounting_bookkeeping SET";
-			$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
-			$sql .= ", date_lettering = '" . $this->db->idate($now) . "'";
-			$sql .= ", matching_general = 1";
-			$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
-			$sql .= " AND lettering_code IS NULL";
+			// Test amount integrity
+			if (!$error && !$partial) {
+				$idlist = implode(',', array_map('intval', $ids));
+				$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred";
+				$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping";
+				$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
+				$sql .= " AND lettering_code IS NULL";
 
-			dol_syslog(__METHOD__ . " - Update gl lettering code", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = "Error " . $this->db->lasterror();
-			} else {
-				$affected_rows = $this->db->affected_rows($resql);
+				dol_syslog(__METHOD__ . " - Test amount integrity", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					if ($obj = $this->db->fetch_object($resql)) {
+						if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
+							$this->errors[] = $langs->trans('ErrorMatchingUnbalanced', price(price2num(abs($obj->deb), 'MT')), price(price2num(abs($obj->cred), 'MT')));
+							$error++;
+						}
+					}
+					$this->db->free($resql);
+				} else {
+					$this->errors[] = 'SQL Error message: ' . $this->db->lasterror();
+					$error++;
+				}
+			}
+
+			// Update matching code
+			if (!$error) {
+				$idlist = implode(',', array_map('intval', $ids));
+				$sql = "UPDATE " . $this->db->prefix() . "accounting_bookkeeping SET";
+				$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
+				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'";
+				$sql .= ", matching_general = 1";
+				$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
+				$sql .= " AND lettering_code IS NULL";
+
+				dol_syslog(__METHOD__ . " - Update general lettering code", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = "Error " . $this->db->lasterror();
+				} else {
+					$affected_rows = $this->db->affected_rows($resql);
+				}
 			}
 		}
 

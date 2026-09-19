@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Marc Barilley           <marc@ocebo.com>
  * Copyright (C) 2011-2013  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
@@ -177,9 +177,8 @@ function supplierorder_prepare_head(CommandeFournisseur $object)
  */
 function supplier_order_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('commande_fournisseur');
 	$extrafields->fetch_name_optionals_label('commande_fournisseurdet');
 
@@ -193,7 +192,7 @@ function supplier_order_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplierorder_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_order/admin/supplierorder_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commande_fournisseur'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
 	$nbExtrafields = $extrafields->attributes['commande_fournisseur']['count'];
 	if ($nbExtrafields > 0) {
@@ -202,7 +201,7 @@ function supplier_order_admin_prepare_head()
 	$head[$h][2] = 'supplierorder';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_order/admin/supplierorderdet_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'commande_fournisseurdet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
 	$nbExtrafields = $extrafields->attributes['commande_fournisseurdet']['count'];
 	if ($nbExtrafields > 0) {

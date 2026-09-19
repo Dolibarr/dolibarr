@@ -10,7 +10,6 @@ ActionsOnFicheInter=Aralashish bo'yicha harakatlar
 LastInterventions=Oxirgi %s aralashuvlari
 AllInterventions=Barcha aralashuvlar
 CreateDraftIntervention=Qoralama yarating
-InterventionContact=Interventsiya aloqasi
 DeleteIntervention=Aralashuvni o'chirib tashlang
 ValidateIntervention=Aralashuvni tasdiqlang
 SignIntervention=Imzo aralashuvi

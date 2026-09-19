@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2023       Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2026   	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,7 +83,6 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new FactureFournisseur($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = getMultidirTemp($object).'/massgeneration/'.$user->id;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context

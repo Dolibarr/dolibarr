@@ -129,10 +129,10 @@ if ($mode == 'memberbycountry') {
 	//print $sql;
 } elseif ($mode == 'memberbyregion') {
 	$label = $langs->trans("Country");
-	$label2 = $langs->trans("Region"); //département
-	$tab = 'statsregion'; //onglet
+	$label2 = $langs->trans("Region"); // department
+	$tab = 'statsregion'; // tab
 
-	$data = array(); //tableau de donnée
+	$data = array(); // data array
 	$sql = "SELECT COUNT(DISTINCT d.rowid) as nb, COUNT(s.rowid) as nbsubscriptions, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
@@ -252,8 +252,8 @@ if (!count($data)) {
 // Show graphics
 if (getDolGlobalString("GOOGLE_SHOW_COUNTRY_GRAPH") && $mode == 'memberbycountry') {
 	global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
-	$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-	if (is_readable($color_file)) {
+	$color_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($color_file && is_readable($color_file)) {
 		include $color_file;
 	}
 

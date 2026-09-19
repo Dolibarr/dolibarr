@@ -83,6 +83,7 @@ SuspenseAccountNotDefined=La cuenta en suspenso no está definida
 BoxLastCustomerShipments=Últimos envíos de clientes
 BoxTitleLastLeaveRequests=Últimas solicitudes de permiso modificadas de %s
 NoRecordedShipments=Sin envío de cliente registrado
+BoxTitleLastFediverseInfos=Últimas publicaciones de %s
 UsersHome=Usuarios y grupos domésticos
 MembersHome=Membresía de inicio
 ThirdpartiesHome=Inicio Terceros

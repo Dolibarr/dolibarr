@@ -30,12 +30,13 @@
  * @var string		$sql
  * @var string		$sqlfields
  * @var string		$moreinfoontotal
- * @var array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
+ * @var array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>,pospercurrency?:array<int,string>,valpercurrency?:array<string,array<string,float>>} $totalarray
  */
 '
-@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
+@phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>,pospercurrency?:array<int,string>,valpercurrency?:array<string,array<string,float>>} $totalarray
 @phan-var-force string $sql
 @phan-var-force ?string $sqlfields
+@phan-var-force int	$num
 @phan-var-force ?int	$limit
 ';
 
@@ -121,19 +122,38 @@ if (isset($totalarray['pos'])) {
 	}
 	print '</tr>';
 
+	// Show one line per currency when the list holds documents in several currencies
+	if (!empty($totalarray['valpercurrency']) && count($totalarray['valpercurrency']) > 1) {
+		foreach ($totalarray['valpercurrency'] as $currencycode => $valpercurrency) {
+			print '<tr class="liste_total'.(empty($trforbreaknobg) ? '' : ' trforbreaknobg').'">';
+			$i = 0;
+			while ($i < $totalarray['nbfield']) {
+				$i++;
+				if (!empty($totalarray['pospercurrency'][$i]) && isset($valpercurrency[$totalarray['pospercurrency'][$i]])) {
+					printTotalValCell($totalarray['type'][$i] ?? '', (string) $valpercurrency[$totalarray['pospercurrency'][$i]]);
+				} elseif ($i == 1) {
+					print '<td>'.$langs->trans("Total").' '.dol_escape_htmltag($currencycode).'</td>';
+				} else {
+					print '<td></td>';
+				}
+			}
+			print '</tr>';
+		}
+	}
+
 	// Add grand total if necessary ie only if different of page total already printed above
 	if (getDolGlobalString('MAIN_GRANDTOTAL_LIST_SHOW') && (!(is_null($limit) || $num < $limit))) {
 		if (isset($totalarray['pos']) && is_array($totalarray['pos']) && count($totalarray['pos']) > 0) {
 			$sumsarray = false;
-			$tbsumfields = [];
+			$sanitized_tbsumfields = [];
 			foreach ($totalarray['pos'] as $field) {
-				$fieldforsum = preg_replace('/[^a-z0-9]/', '', $field);
-				$tbsumfields[] = "sum($field) as $fieldforsum";
+				$sanitized_fieldforsum = preg_replace('/[^a-z0-9]/', '', $field);
+				$sanitized_tbsumfields[] = "sum($field) as $sanitized_fieldforsum";
 			}
 			if (isset($sqlfields)) { // In project, commande list, this var is defined
-				$sqlforgrandtotal = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT '. implode(",", $tbsumfields), $sql);
+				$sqlforgrandtotal = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT '. implode(",", $sanitized_tbsumfields), $sql);
 			} else {
-				$sqlforgrandtotal = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT '. implode(",", $tbsumfields). ' FROM ', $sql);
+				$sqlforgrandtotal = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT '. implode(",", $sanitized_tbsumfields). ' FROM ', $sql);
 			}
 			$sqlforgrandtotal = preg_replace('/GROUP BY .*$/', '', $sqlforgrandtotal). '';
 			$resql = $db->query($sqlforgrandtotal);
@@ -149,7 +169,7 @@ if (isset($totalarray['pos'])) {
 					$i++;
 					if (!empty($totalarray['pos'][$i])) {
 						$fieldname = preg_replace('/[^a-z0-9]/', '', $totalarray['pos'][$i]);
-						printTotalValCell($totalarray['type'][$i], $sumsarray[$fieldname]);
+						printTotalValCell($totalarray['type'][$i] ?? '', $sumsarray[$fieldname]);
 					} else {
 						if ($i == 1) {
 							print '<td>';

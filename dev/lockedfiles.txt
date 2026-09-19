@@ -7,5 +7,5 @@ dev/build/generate_filelist_xml.php release=auto
 
 Version		Scope name					Algo		Signature that must remain unchanged for this couple version/scope
 
-x.0.0		unalterable_files			sha256		123456
+2.0.0		unalterable_files			sha256		fbcbe97a4269868ee37ad341633129e644ae69ec2e72c95da46bfffcf3b95599
 y.0.0		unalterable_files			sha256		456789

@@ -16,6 +16,7 @@ AddLoan=Crear préstamo
 FinancialCommitment=Compromiso financiero
 InterestAmount=Interesar
 CapitalRemain=El capital permanece
+TermPaidAllreadyPaid =Este plazo ya está pagado
 CantModifyInterestIfScheduleIsUsed =No puede modificar el interés si usa el horario
 ConfigLoan=Configuración del préstamo del módulo
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cuenta (del plan de cuentas) que se usará por defecto para el capital (módulo de préstamos)
