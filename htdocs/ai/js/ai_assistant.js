@@ -1238,7 +1238,7 @@ export function initAiAssistant(container) {
         return avatar;
     }
 
-    function appendMsg(type, html, actions = null) {
+    function appendMsg(type, html, actions = null, rawText = null) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
 
@@ -1248,6 +1248,23 @@ export function initAiAssistant(container) {
             bubble.className = 'msg-bubble';
             bubble.innerHTML = html;
             if (actions) bubble.appendChild(buildActions(actions));
+            // Context pin: the user explicitly selects which past exchanges are
+            // sent back to the model (opt-in context = visible token cost).
+            if (rawText) {
+                div.dataset.aiRaw = String(rawText).slice(0, 4000);
+                div.dataset.aiRole = (type === 'bot') ? 'assistant' : 'user';
+                const pin = document.createElement('button');
+                pin.type = 'button';
+                pin.className = 'ctx-pin';
+                pin.title = t('AIContextPin');
+                pin.innerHTML = '<span class="fa fa-thumb-tack"></span>';
+                pin.onclick = (ev) => {
+                    ev.stopPropagation();
+                    div.classList.toggle('ctx-pinned');
+                    updateContextBar();
+                };
+                bubble.appendChild(pin);
+            }
             div.appendChild(buildAvatar(type));
             div.appendChild(bubble);
         } else {
@@ -1306,7 +1323,7 @@ export function initAiAssistant(container) {
 
     function handleResponse(message) {
         if (!message) message = t('EmptyAIResponse');
-        appendMsg('bot', renderMarkdownLite(message));
+        appendMsg('bot', renderMarkdownLite(message), null, message);
     }
 
     function handleConfirmation(action, details, originalIntent) {
@@ -1415,7 +1432,7 @@ export function initAiAssistant(container) {
             const result = await aiJson(toolRes);
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
-            appendMsg('bot', formatResult(result, false, pendingIntent.tool));
+            appendMsg('bot', formatResult(result, false, pendingIntent.tool), null, contextSnippetOf(result, pendingIntent.tool));
             resolveThirdpartyNames(chat.lastElementChild);
             pendingIntent = null;
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
@@ -1427,6 +1444,47 @@ export function initAiAssistant(container) {
     // expired, the endpoints answer with the HTML login form (HTTP 200), which
     // used to surface as a cryptic "Unexpected token '<'" network error: detect
     // that case and tell the user to sign back in instead.
+    // Compact, model-oriented snippet of a tool result for the pinned context:
+    // the model needs the shape and the ids, not the full rendered table.
+    function contextSnippetOf(result, toolName) {
+        let s = '';
+        try { s = JSON.stringify(result); } catch (e) { s = String(result); }
+        if (s.length > 1500) s = s.slice(0, 1500) + '…';
+        return '[' + (toolName || 'tool') + ' result] ' + s;
+    }
+
+    function collectPinnedContext() {
+        return Array.from(chat.querySelectorAll('.msg.ctx-pinned'))
+            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }))
+            .filter((p) => p.text);
+    }
+
+    // Small bar above the input: how many exchanges are pinned and their rough
+    // token weight (chars/4) - the cost of the selected context stays visible.
+    function updateContextBar() {
+        let bar = container.querySelector('#ai-ctx-bar');
+        const pinned = collectPinnedContext();
+        if (!pinned.length) { if (bar) bar.remove(); return; }
+        const tokens = Math.round(pinned.reduce((n, p) => n + p.text.length, 0) / 4);
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'ai-ctx-bar';
+            const pill = input.closest('.chat-input-pill') || input.parentElement;
+            pill.insertAdjacentElement('beforebegin', bar);
+        }
+        bar.innerHTML = '<span class="fa fa-thumb-tack"></span> ' +
+            t('AIContextCounter').replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+            ' <a href="#" id="ai-ctx-clear">' + t('AIContextClear') + '</a>';
+        const clear = bar.querySelector('#ai-ctx-clear');
+        if (clear) {
+            clear.onclick = (ev) => {
+                ev.preventDefault();
+                chat.querySelectorAll('.msg.ctx-pinned').forEach((m) => m.classList.remove('ctx-pinned'));
+                updateContextBar();
+            };
+        }
+    }
+
     async function aiJson(response) {
         const raw = await response.text();
         try {
@@ -1459,7 +1517,7 @@ export function initAiAssistant(container) {
             displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
         }
 
-        appendMsg('user', displayHtml);
+        appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
         clearChip();
         input.value = '';
         input.style.height = '44px';
@@ -1475,6 +1533,11 @@ export function initAiAssistant(container) {
                 // ids against the user's rights before trusting them.
                 body: JSON.stringify(Object.assign(
                     chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                    (function () {
+                        // Pinned exchanges only: context is opt-in, its cost visible in the bar.
+                        const pinned = collectPinnedContext();
+                        return pinned.length ? { history: pinned } : {};
+                    })(),
                     (function () {
                         const ctx = window.aiPageContext;
                         if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
@@ -1525,7 +1588,7 @@ export function initAiAssistant(container) {
             const result = await aiJson(toolRes);
             loadingData.remove();
             lastResult = { data: result, tool: intent.tool, query: query };
-            appendMsg('bot', formatResult(result, false, intent.tool));
+            appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
             resolveThirdpartyNames(chat.lastElementChild);
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;

@@ -76,17 +76,18 @@ class UniversalLLMAdapter
 	 * @param string $userMsg  The specific user query
 	 * @param string $mode     'json' for strict JSON (MCP), 'text' for legacy (default)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional documents/images, each entry is array('mime' => 'image/png', 'data' => '<base64>')
+	 * @param array<int,array{role:string,text:string}> $history     Optional prior conversation turns (role 'user'|'assistant'), sent as native multi-turn messages before the current query. Caller sanitizes and caps them.
 	 * @return string|null     The text response from the AI or null on failure
 	 */
-	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array()): ?string
+	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array(), array $history = array()): ?string
 	{
 		switch ($this->type) {
 			case 'anthropic':
-				return $this->callAnthropic($system, $userMsg, $mode, $attachments);
+				return $this->callAnthropic($system, $userMsg, $mode, $attachments, $history);
 			case 'google':
-				return $this->callGoogle($system, $userMsg, $mode, $attachments);
+				return $this->callGoogle($system, $userMsg, $mode, $attachments, $history);
 			default:
-				return $this->callOpenAI($system, $userMsg, $mode, $attachments);
+				return $this->callOpenAI($system, $userMsg, $mode, $attachments, $history);
 		}
 	}
 
@@ -97,9 +98,10 @@ class UniversalLLMAdapter
 	 * @param string $msg User message
 	 * @param string $mode 'json' or 'text'
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
+	 * @param array<int,array{role:string,text:string}> $history Optional prior turns inserted before the current query
 	 * @return string|null Response content or null on failure
 	 */
-	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array()): ?string
+	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array()): ?string
 	{
 		$url = $this->baseUrl;
 		if (strpos($url, '/chat/completions') === false && strpos($url, '/generate') === false) {
@@ -131,12 +133,15 @@ class UniversalLLMAdapter
 			}
 		}
 
+		$messages = array(array("role" => "system", "content" => $sys));
+		foreach ($history as $turn) {
+			$messages[] = array("role" => (($turn['role'] ?? '') === 'assistant' ? 'assistant' : 'user'), "content" => (string) $turn['text']);
+		}
+		$messages[] = array("role" => "user", "content" => $userContent);
+
 		$data = array(
 			"model" => $this->model,
-			"messages" => array(
-				array("role" => "system", "content" => $sys),
-				array("role" => "user", "content" => $userContent)
-			),
+			"messages" => $messages,
 			"temperature" => 0.1
 		);
 		if (!empty($attachments)) {
@@ -164,10 +169,11 @@ class UniversalLLMAdapter
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
+	 * @param array<int,array{role:string,text:string}> $history Optional prior turns inserted before the current query
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callAnthropic(string $sys, string $msg, string $mode = 'text', array $attachments = array())
+	private function callAnthropic(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array())
 	{
 
 		$url = $this->baseUrl . (strpos($this->baseUrl, '/messages') === false ? '/messages' : '');
@@ -190,10 +196,16 @@ class UniversalLLMAdapter
 			$maxTokens = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
 		}
 
+		$messages = array();
+		foreach ($history as $turn) {
+			$messages[] = array("role" => (($turn['role'] ?? '') === 'assistant' ? 'assistant' : 'user'), "content" => (string) $turn['text']);
+		}
+		$messages[] = array("role" => "user", "content" => $userContent);
+
 		$data = array(
 			"model" => $this->model,
 			"system" => $sys,
-			"messages" => array(array("role" => "user", "content" => $userContent)),
+			"messages" => $messages,
 			"max_tokens" => $maxTokens
 		);
 
@@ -209,10 +221,11 @@ class UniversalLLMAdapter
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
+	 * @param array<int,array{role:string,text:string}> $history Optional prior turns inserted before the current query
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callGoogle(string $sys, string $msg, string $mode = 'text', array $attachments = array())
+	private function callGoogle(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array())
 	{
 		$url = $this->baseUrl;
 
@@ -234,10 +247,25 @@ class UniversalLLMAdapter
 		}
 		$parts[] = array("text" => $sys . "\nUser: " . $msg);
 
+		// Single-turn payload stays exactly as before (no 'role' key) so the
+		// historical behavior is untouched; only a non-empty history switches
+		// to Gemini's multi-turn format, where every content needs its role
+		// ('model' is Gemini's name for the assistant role).
+		$contents = array();
+		if (!empty($history)) {
+			foreach ($history as $turn) {
+				$contents[] = array(
+					"role" => (($turn['role'] ?? '') === 'assistant' ? 'model' : 'user'),
+					"parts" => array(array("text" => (string) $turn['text']))
+				);
+			}
+			$contents[] = array("role" => "user", "parts" => $parts);
+		} else {
+			$contents[] = array("parts" => $parts);
+		}
+
 		$data = array(
-			"contents" => array(
-				array("parts" => $parts)
-			),
+			"contents" => $contents,
 			"generationConfig" => (empty($attachments) ? array("temperature" => 0.1) : array("temperature" => 0.1, "maxOutputTokens" => 16384))	// thinking models count their reasoning tokens INSIDE maxOutputTokens: at 4096 a multi-line reception intent came back finishReason=MAX_TOKENS, cut mid-JSON
 		);
 

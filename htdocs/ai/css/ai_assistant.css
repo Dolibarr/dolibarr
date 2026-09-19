@@ -1091,3 +1091,13 @@ body.ai-fullpage {
 .file-chip .chip-x:hover { opacity: 1; }
 .file-chip.chip-error { border-color: #d9534f; color: #d9534f; }
 .file-chip.chip-inline { margin-bottom: 4px; }
+
+/* --- Context pins: opt-in selection of past exchanges resent to the model --- */
+.msg .ctx-pin { position: absolute; top: 4px; right: 4px; border: 0; background: none; cursor: pointer; opacity: 0; font-size: 0.85em; color: inherit; padding: 2px; transition: opacity .15s; }
+.msg .msg-bubble { position: relative; }
+.msg:hover .ctx-pin { opacity: .45; }
+.msg .ctx-pin:hover { opacity: 1; }
+.msg.ctx-pinned .ctx-pin { opacity: 1; color: #2c62ac; }
+.msg.ctx-pinned .msg-bubble { box-shadow: 0 0 0 2px rgba(44, 98, 172, 0.45); }
+#ai-ctx-bar { font-size: 0.85em; opacity: .85; padding: 3px 10px; margin: 0 6px 4px; border-radius: 10px; background: rgba(44, 98, 172, 0.08); }
+#ai-ctx-bar a { margin-left: 8px; }
