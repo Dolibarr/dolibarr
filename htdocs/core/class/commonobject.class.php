@@ -2419,17 +2419,23 @@ abstract class CommonObject
 		// Set new value
 		$this->$fieldKey = $value;
 
+		// Some deprecated/replacement property pairs (ex: statut/status, alreadypaid/totalpaid) are still
+		// both declared as real properties on the object for backward compatibility, so PHP never triggers
+		// DolDeprecationHandler magic methods for them (magic only fires for undefined/inaccessible properties).
+		// We must keep such pairs manually in sync, but only the pair that actually matches $fieldKey.
 		$deprecatedProperties = $this->deprecatedProperties();
-		if (isset($deprecatedProperties) && !empty($deprecatedProperties) && is_array($deprecatedProperties)) {
-			foreach ($deprecatedProperties as $deprecatedProperty) {
-				// Copy/propagate old data
-				if (property_exists($this->oldcopy, $deprecatedProperty) && property_exists($this->oldcopy, $fieldKey)) {
-					$this->oldcopy->$deprecatedProperty = $this->oldcopy->$fieldKey ;
-				}
-
-				// set and propagate new data
-				if (property_exists($this, $deprecatedProperty)) {
-					$this->$deprecatedProperty = $this->$fieldKey;
+		if (!empty($deprecatedProperties) && is_array($deprecatedProperties)) {
+			foreach ($deprecatedProperties as $oldProperty => $newProperty) {
+				if ($fieldKey === $oldProperty && property_exists($this, $newProperty)) {
+					if (is_object($this->oldcopy) && property_exists($this->oldcopy, $newProperty) && property_exists($this->oldcopy, $oldProperty)) {
+						$this->oldcopy->$newProperty = $this->oldcopy->$oldProperty;
+					}
+					$this->$newProperty = $value;
+				} elseif ($fieldKey === $newProperty && property_exists($this, $oldProperty)) {
+					if (is_object($this->oldcopy) && property_exists($this->oldcopy, $oldProperty) && property_exists($this->oldcopy, $newProperty)) {
+						$this->oldcopy->$oldProperty = $this->oldcopy->$newProperty;
+					}
+					$this->$oldProperty = $value;
 				}
 			}
 		}

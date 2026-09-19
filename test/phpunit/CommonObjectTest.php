@@ -151,4 +151,117 @@ class CommonObjectTest extends CommonClassTest
 
 		print __METHOD__." OK\n";
 	}
+
+	/**
+	 * setFieldValue() must only alter the targeted field/property.
+	 * Regression test: a previous implementation iterated over the values of
+	 * deprecatedProperties() (status, totalpaid, fk_project, project, origin_object, ...)
+	 * regardless of the field being set, corrupting all of these unrelated properties
+	 * on every single call.
+	 *
+	 * @return void
+	 */
+	public function testSetFieldValueDoesNotCorruptUnrelatedProperties()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db) extends CommonObject {
+			/**
+			 * @var string Element name
+			 */
+			public $element = 'testobject';
+			/**
+			 * @var string Table name
+			 */
+			public $table_element = 'testobject';
+			/**
+			 * @var array<string,array{type:string,label:string,enabled:int}> Fields definition
+			 */
+			public $fields = array(
+				'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1),
+			);
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+			}
+		};
+
+		$localobject->status = 1;
+		$localobject->project = null;
+		$localobject->fk_project = 42;
+		$localobject->origin_object = null;
+		$localobject->totalpaid = 100;
+
+		$result = $localobject->setFieldValue($user, 'ref', 'AA2501-0001', true);
+
+		$this->assertTrue($result);
+		$this->assertSame('AA2501-0001', $localobject->ref);
+		$this->assertSame(1, $localobject->status, 'status must not be altered when setting an unrelated field');
+		$this->assertSame(42, $localobject->fk_project, 'fk_project must not be altered when setting an unrelated field');
+		$this->assertSame(100, $localobject->totalpaid, 'totalpaid must not be altered when setting an unrelated field');
+		$this->assertNull($localobject->origin_object, 'origin_object must not be altered when setting an unrelated field');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * setFieldValue() must keep the deprecated 'statut' property in sync with 'status'
+	 * since both are still declared as real properties on CommonObject (DolDeprecationHandler
+	 * magic methods are never triggered for them).
+	 *
+	 * @return void
+	 */
+	public function testSetFieldValuePropagatesDeprecatedStatutAlias()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db) extends CommonObject {
+			/**
+			 * @var string Element name
+			 */
+			public $element = 'testobject';
+			/**
+			 * @var string Table name
+			 */
+			public $table_element = 'testobject';
+			/**
+			 * @var array<string,array{type:string,label:string,enabled:int}> Fields definition
+			 */
+			public $fields = array(
+				'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1),
+			);
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+			}
+		};
+
+		$result = $localobject->setFieldValue($user, 'status', 2, true);
+
+		$this->assertTrue($result);
+		$this->assertSame(2, $localobject->status);
+		$this->assertSame(2, $localobject->statut, 'deprecated statut property must stay in sync with status');
+
+		print __METHOD__." OK\n";
+	}
 }
