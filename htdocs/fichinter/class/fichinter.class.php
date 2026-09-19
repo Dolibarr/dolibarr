@@ -162,11 +162,12 @@ class Fichinter extends CommonObject
 	 */
 	public $duration;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var int|null status
 	 * @deprecated Use $status instead
+	 * @see $status
 	 */
-	public $statut = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate
+	// public $statut = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
 	/**
 	 * @var int|null status

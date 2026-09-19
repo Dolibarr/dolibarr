@@ -101,11 +101,11 @@ class Holiday extends CommonObject
 	 */
 	public $halfday = '';
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var int Status 1=draft, 2=validated, 3=approved, 4 canceled, 5 refused
 	 * @deprecated
 	 */
-	public $statut = 0;
+	//public $statut = 0;
 
 	/**
 	 * @var int 	ID of user that must approve. Real user for approval is fk_user_valid (old version) or fk_user_approve (new versions)
@@ -2747,7 +2747,7 @@ class Holiday extends CommonObject
 			$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;">';
 			$outputarrayleaves .= $outputlangs->trans($label);
 			if ($key == 'date_end') {
-				$outputarrayleaves .=" (".$langs->trans("Included").")";
+				$outputarrayleaves .= " (".$langs->trans("Included").")";
 			}
 			$outputarrayleaves .= '</td>';
 		}

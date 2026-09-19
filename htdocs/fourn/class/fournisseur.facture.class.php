@@ -125,13 +125,13 @@ class FactureFournisseur extends CommonInvoice
 	//Check constants for types
 	public $type = self::TYPE_STANDARD;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * Supplier invoice status
 	 * @var int
-	 * @deprecated
+	 * @deprecated Use $status
 	 * @see $status
 	 */
-	public $statut;
+	// public $statut;
 
 	/**
 	 * Supplier invoice status

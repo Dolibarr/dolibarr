@@ -130,13 +130,14 @@ class Propal extends CommonObject
 	 */
 	public $ref_customer;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * Status of the quote
 	 * @var ?int
 	 * @deprecated Try to use $status now
 	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
+	 * @see $status
 	 */
-	public $statut;
+	// public $statut;
 
 	/**
 	 * Status of the quote
@@ -233,10 +234,12 @@ class Propal extends CommonObject
 	 */
 	public $cond_reglement_code;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var string payment conditions label
+	 * @deprecated Use $depr_cond_reglement instead
+	 * @see CommonObject::$depr_cond_reglement
 	 */
-	public $cond_reglement;
+	// public $cond_reglement;
 
 	/**
 	 * @var string payment conditions label doc

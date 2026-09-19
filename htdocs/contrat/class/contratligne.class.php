@@ -95,10 +95,12 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $fk_parent_line;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var int 0 inactive, 4 active, 5 closed
+	 * @deprecated Use $status
+	 * @see $status
 	 */
-	public $statut;
+	// public $statut;
 
 	/**
 	 * @var int 0 for product, 1 for service

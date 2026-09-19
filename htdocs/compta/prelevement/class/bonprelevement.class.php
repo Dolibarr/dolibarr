@@ -243,11 +243,12 @@ class BonPrelevement extends CommonObject
 	 */
 	public $amount;
 
-	/**
+	/* @phan-suppress-current-line PhanPluginPHPDocInWrongComment
 	 * @var int|null	Status
 	 * @deprecated Use $status
+	 * @see $status
 	 */
-	public $statut;
+	// public $statut;
 	/**
 	 * @var int|null	Status
 	 */
