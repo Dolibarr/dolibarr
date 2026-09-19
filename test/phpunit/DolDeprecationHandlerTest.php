@@ -284,14 +284,15 @@ class DolDeprecationHandlerTest extends CommonClassTest
 			throw new Exception($errstr, $errno);
 		}, E_ALL);
 
+		$this->handler->enableDynamicProperties = false;
 		// Enable E_USER_NOTICE in error_reporting
 		$this->expectExceptionMessage("Undefined property 'privateVarShouldTrigger'");
 		$this->handler->privateVarShouldTrigger;
 
+		restore_error_handler();
+
 		// Restore error_reporting
 		error_reporting($oldErrorReporting);
-
-		restore_error_handler();
 	}
 
 	/**
