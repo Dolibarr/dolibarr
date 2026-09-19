@@ -1121,10 +1121,16 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			$supplier = new Societe($this->db);
 			if ($pf->fetch($newprod->id) > 0 && $supplier->fetch($socid) > 0) {
 				$reffourn = trim((string) ($args['product_ref'] ?? ''));
+				// The supplier price line carries its own barcode: the EAN read on
+				// THIS supplier's document belongs here. product->barcode (set at
+				// creation) stays the product's main EAN; a later second supplier
+				// with a different EAN would get his own on his own price line.
+				$supplierbarcode = trim((string) ($args['barcode'] ?? ''));
+				$supplierbarcodetype = ($supplierbarcode !== '') ? getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE') : 0;
 				// The multicurrency price must carry the same value (tx=1, company
 				// currency): with the multicurrency module enabled, update_buyprice()
 				// recomputes $buyprice from it - left at 0, it would zero the price.
-				if ($pf->update_buyprice(1, (float) $price, $this->user, 'HT', $supplier, 0, $reffourn, (float) $vat, 0, 0, 0, 0, 0, '', array(), '', (float) $price, 'HT', 1, (string) $conf->currency) < 0) {
+				if ($pf->update_buyprice(1, (float) $price, $this->user, 'HT', $supplier, 0, $reffourn, (float) $vat, 0, 0, 0, 0, 0, '', array(), '', (float) $price, 'HT', 1, (string) $conf->currency, '', $supplierbarcode, $supplierbarcodetype) < 0) {
 					dol_syslog('[ToolCrudObjects] update_buyprice failed for new product '.$newprod->id.': '.$pf->error, LOG_WARNING);
 				}
 			}
