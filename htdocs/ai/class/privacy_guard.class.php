@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -661,7 +662,7 @@ class PrivacyGuard
 			return $text;
 		}
 		$clean = array_unique($clean);
-		usort($clean, function (string $a, string $b) {
+		usort($clean, /** @return int */ function (string $a, string $b) {
 			return dol_strlen($b) - dol_strlen($a);
 		});
 		foreach ($clean as $name) {
