@@ -15,6 +15,7 @@ RUN apt-get update \
 		gh \
 		git \
 		hurl \
+		mysql-client \
 		openssh-client \
 		phpunit \
 		php \
@@ -35,6 +36,7 @@ RUN apt-get update \
 		shellcheck \
 		sshpass \
 		unzip \
+		w3m \
 		zip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -58,10 +60,10 @@ ENV PATH="/opt/vibe/bin:$PATH"
 
 RUN mkdir -p /opt/php-tools \
 	&& composer require \
-	--working-dir=/opt/php-tools \
-	phan/phan \
-	phpstan/phpstan:^2.2 \
-	--ignore-platform-reqs \
+    --working-dir=/opt/php-tools \
+    phan/phan \
+    phpstan/phpstan:^2.2 \
+    --ignore-platform-reqs \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
 	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan
 
@@ -80,6 +82,12 @@ alias l='ls -CF'
 alias la='ls -A'
 alias ll='ls -alF'
 alias ls='ls --color=auto'
+
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+
+shopt -s histappend
+PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
 
 PS1='\[\e[1;31m\][CONTAINER]\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \[\e[1;32m\]$(git_branch)\[\e[0m\] \$ '
 EOF
