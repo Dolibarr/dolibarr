@@ -86,7 +86,10 @@ try {
 	// the parse rounds (parse_intent.php) and the MCP server calls already do.
 	$status = 'Success';
 	$errorMsg = '';
-	if (array_key_exists('success', $result) && empty($result['success'])) {
+	// Two failure conventions coexist: the write tools return success=false,
+	// everything else (missing record, unknown tool, bridge error, rights
+	// refusal) returns a bare non-empty 'error' key - both must log as Error.
+	if ((array_key_exists('success', $result) && empty($result['success'])) || !empty($result['error'])) {
 		$status = 'Error';
 		$errorMsg = isset($result['error']) ? (string) $result['error'] : '';
 	}
