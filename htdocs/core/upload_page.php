@@ -564,6 +564,7 @@ if ($action == 'showsummary') {
 		print '<br><br><hr><br>';
 
 
+		// @phan-suppress-next-line PhanTypeMismatchDimFetch
 		$nameprodindoc = $invoiceindoc['items'][0]['description'];
 
 
