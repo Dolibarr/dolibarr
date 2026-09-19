@@ -372,9 +372,18 @@ class ExportTest extends CommonClassTest
 	 */
 	public function testExportModulesDatasets()
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$model = 'csviso';
+
+		print "ccccccccccccccccc\n";
+		print var_export($db, true);
+		print var_export($mysoc->db, true);
 
 		$filterdatatoexport = '';
 		//$filterdatatoexport='';

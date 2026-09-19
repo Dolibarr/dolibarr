@@ -2033,14 +2033,30 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Set desc
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
 			$textwasnotmodified = false;
+			$textdiffersonlybymarkup = false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
 				$textwasnotmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);
+			} elseif (!empty($desc) && !empty($prodser->description) && dol_textishtml($desc) != dol_textishtml($prodser->description)) {
+				// One side is HTML and the other is not. This happens as soon as a line is saved while the
+				// WYSIWYG editor is enabled on line details: the plain product description becomes "<p>...</p>".
+				// Comparing the raw strings would then report a manual change and silently drop the translation,
+				// so compare the text content instead.
+				$desctextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($desc, 1), ENT_QUOTES | ENT_HTML5));
+				$prodtextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($prodser->description, 1), ENT_QUOTES | ENT_HTML5));
+				$textwasnotmodified = ($prodtextonly !== '' && strpos($desctextonly, $prodtextonly) !== false);
+				$textdiffersonlybymarkup = ($textwasnotmodified && $desctextonly === $prodtextonly);
 			} else {
 				$textwasnotmodified = ($desc == $prodser->description);
 			}
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) {
 				if ($textwasnotmodified) {
-					$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					if ($textdiffersonlybymarkup && strpos($desc, $prodser->description) === false) {
+						// Same text, but wrapped in tags or written with HTML entities: the product description
+						// is not present verbatim, so the str_replace below would find nothing to replace.
+						$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
+					} else {
+						$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					}
 				} elseif ($translatealsoifmodified) {
 					$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
 				}
@@ -3383,6 +3399,13 @@ function pdf_render_subtotals(
 	} else {
 		$pdf->MultiCell($width, $pdf->getPageHeight() - $pdf->getBreakMargin() - $curY, '', 0, '', true);
 
+		// The page reached by the measuring pass above was discarded along with
+		// the transaction, and the MultiCell only recreates it when some room was
+		// left to fill. A line starting below the break margin leaves none, so
+		// the page must be added before it can be selected.
+		while ($pdf->getNumPages() < $pageAfter) {
+			$pdf->AddPage();
+		}
 		$pdf->setPage($pageAfter);
 		$pdf->SetXY($generator->marge_gauche, $pdf->getMargins()['top']);
 		$pdf->MultiCell($width, max(0, $yAfter - $pdf->getMargins()['top']), '', 0, '', true);
@@ -3396,4 +3419,84 @@ function pdf_render_subtotals(
 	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 
 	$generator->cols['desc']['content']['align'] = $prevAlign;
+}
+
+
+/**
+ * Truncates text to fit a specified width in TCPDF, with configurable ellipsis position.
+ *
+ * @param TCPDF  $pdf           TCPDF instance.
+ * @param string $text          Text to truncate.
+ * @param float  $max_width     Maximum allowed width in user units.
+ * @param int|'left'|'right'    $ellipsis_pos  Ellipsis position: 0 = none, < 0 = start, > 0 = end.
+ * @param string $ellipsis      Ellipsis string (default: UTF-8 ellipsis '\u{2026}').
+ * @return string Truncated text with ellipsis if necessary.
+ */
+function pdf_truncate_text($pdf, $text, $max_width, $ellipsis_pos = 1, $ellipsis = "\u{2026}")
+{
+	if ($ellipsis_pos == 0) {
+		$ellipsis = '';
+	}
+	if ($ellipsis_pos == 'left') {
+		// Keep left part of the string
+		$ellipsis_pos = 1;
+	}
+	if ($ellipsis_pos == 'right') {
+		// Keep right part of the string
+		$ellipsis_pos = 0;
+	}
+
+	$ellipsis_width = $pdf->GetStringWidth($ellipsis);
+	$available_width = $max_width - $ellipsis_width;
+
+	if ($available_width <= 0) {
+		return ($ellipsis_pos <= 0) ? $ellipsis : '';
+	}
+
+	$text_width = $pdf->GetStringWidth($text);
+	if ($text_width <= $max_width) {
+		return $text;
+	}
+
+	if ($ellipsis_pos < 0) {
+		// Ellipsis at start: truncate from the beginning
+		$low = 0;
+		$high = dol_strlen($text, 'UTF-8');
+		$best = $high;
+
+		while ($low <= $high) {
+			$mid = (int) (($low + $high) / 2);
+			$substring = dol_substr($text, $mid, null, 'UTF-8');
+			$substring_width = $pdf->GetStringWidth($substring);
+
+			if ($substring_width <= $available_width) {
+				$best = $mid;
+				$high = $mid - 1;
+			} else {
+				$low = $mid + 1;
+			}
+		}
+
+		return $ellipsis . dol_substr($text, $best, null, 'UTF-8');
+	} else {
+		// Ellipsis at end (default)
+		$low = 0;
+		$high = dol_strlen($text, 'UTF-8');
+		$best = 0;
+
+		while ($low <= $high) {
+			$mid = (int) (($low + $high) / 2);
+			$substring = dol_substr($text, 0, $mid, 'UTF-8');
+			$substring_width = $pdf->GetStringWidth($substring);
+
+			if ($substring_width <= $available_width) {
+				$best = $mid;
+				$low = $mid + 1;
+			} else {
+				$high = $mid - 1;
+			}
+		}
+
+		return dol_substr($text, 0, $best, 'UTF-8') . $ellipsis;
+	}
 }

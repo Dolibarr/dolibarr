@@ -268,11 +268,11 @@ $arraypricelevel = array();
 $arrayfields = array(
 	'p.rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
 	'p.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 5),
-	'p.ref_ext' => array('label' => 'RefExt', 'checked' => '-1', 'position' => 6, 'visible' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
+	'p.label' => array('label' => "Label", 'checked' => '1', 'position' => 6),
+	'p.ref_ext' => array('label' => 'RefExt', 'checked' => '-1', 'position' => 7, 'visible' => -1, 'enabled' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
 	'thumbnail' => array('label' => 'Photo', 'checked' => '0', 'position' => 10),
 	'p.description' => array('label' => 'Description', 'checked' => '0', 'position' => 10),
-	'p.label' => array('label' => "Label", 'checked' => '1', 'position' => 10),
 	'p.fk_product_type' => array('label' => "Type", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && isModEnabled("service")), 'position' => 11),
 	'p.barcode' => array('label' => "Gencod", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('barcode')), 'position' => 12),
 	'p.duration' => array('label' => "Duration", 'checked' => ($contextpage != 'productlist'), 'enabled' => (string) (int) (isModEnabled("service") && (string) $type == '1'), 'position' => 13),
@@ -620,18 +620,29 @@ if (isModEnabled('variants') && !$show_childproducts) {
 if ($search_id) {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
-if ($search_ref) {
-	$sql .= natural_search('p.ref', $search_ref);
+if (empty($arrayfields['p.label']['checked'])) {
+	// When label column is not visible, search_ref searches both ref and label
+	if ($search_ref) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
+			$sql .= " AND (".natural_search(array('p.ref', 'p.label'), $search_ref, 0, 1)." OR ".natural_search('pl.label', $search_ref, 0, 1).")";
+		} else {
+			$sql .= natural_search(array('p.ref', 'p.label'), $search_ref);
+		}
+	}
+} else {
+	if ($search_ref) {
+		$sql .= natural_search('p.ref', $search_ref);
+	}
+	if ($search_label) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
+			$sql .= " AND (".natural_search('p.label', $search_label, 0, 1)." OR ".natural_search('pl.label', $search_label, 0, 1).")";
+		} else {
+			$sql .= natural_search('p.label', $search_label);
+		}
+	}
 }
 if ($search_ref_ext) {
 	$sql .= natural_search('p.ref_ext', $search_ref_ext);
-}
-if ($search_label) {
-	if (getDolGlobalInt('MAIN_MULTILANGS')) {
-		$sql .= " AND (".natural_search('p.label', $search_label, 0, 1)." OR ".natural_search('pl.label', $search_label, 0, 1).")";
-	} else {
-		$sql .= natural_search('p.label', $search_label);
-	}
 }
 if ($search_default_workstation) {
 	$sql .= natural_search('ws.ref', $search_default_workstation);
@@ -1136,7 +1147,7 @@ if (!empty($arrayfields['p.rowid']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
-	print '<td class="liste_titre left">';
+	print '<td class="liste_titre left" data-key="ref">';
 	print '<input class="flat width75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
@@ -1452,7 +1463,7 @@ if (!empty($arrayfields['p.rowid']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
-	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, ' data-key="ref"', $sortfield, $sortorder, ' ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref_ext']['checked'])) {
@@ -1825,8 +1836,13 @@ while ($i < $imaxinloop) {
 
 		// Ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="tdoverflowmax250">';
+			print '<td class="tdlineheightsmall" data-key="ref">';
+			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
 			print $product_static->getNomUrl(1);
+			if (empty($arrayfields['p.label']['checked'])) {
+				print '<br><span class="spantitle">'.dolPrintHTML($product_static->label).'</span>';
+			}
+			print '</div>';
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1872,9 +1888,10 @@ while ($i < $imaxinloop) {
 		// Label
 		if (!empty($arrayfields['p.label']['checked'])) {
 			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($product_static->label).'">';
-			print '<span class="doltext opacitymedium">';
+			print '<span class="spantitle">';
 			print dolPrintHTML($product_static->label);
 			print '</span>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

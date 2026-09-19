@@ -97,7 +97,7 @@ If you push a bug fix on a very old version it is still going to be merged and p
 Use clear commit messages with the following structure:
 
 ```plaintext
-[KEYWORD] [ISSUENUM] DESC
+[KEYWORD] [ISSUENUM] TITLE
 
 LONGDESC
 ```
@@ -112,6 +112,7 @@ git config --local commit.template .gitmessage
 with
 
 #### KEYWORD
+
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
 The keyword can be omitted only if your commit does not fit in any of the following categories:
@@ -125,22 +126,21 @@ The keyword can be omitted only if your commit does not fit in any of the follow
 - Sec/SEC:     for a security vulnerability fix
 
 #### ISSUENUM
-If your commit fixes a referenced bug or feature request.
 
-In the form of a # followed by the GitHub issue number.
+This is a number in the form of a # followed by the GitHub issue number, if your commit fixes a referenced bug or feature request.
 
-#### DESC
-A short description of the commit content (ideally less than 50 characters).
+
+#### TITLE
+
+Desc is a short description of the commit content (ideally less than 80 characters).
 If fix a bug in an old version already fixed in a more recent version, please mention `backport of` followed by the commit ID you backport.
 
 #### LONGDESC
-A long description of the commit content.
 
-You can really go to town here and explain in depth what you've been doing. This section can span multiple lines.
-
-Feel free to express technical details, use cases or anything relevant to the current commit.
-
-If your PR is a change on interface, you MUST also paste a screenshot showing the new screen.
+- A long description of the commit content.
+- You can really go to town here and explain in depth what you've been doing. This section can span multiple lines.
+- Feel free to express technical details, use cases or anything relevant to the current commit.
+- If your PR is a change on interface, you MUST also paste a screenshot showing the new screen.
 
 #### Examples
 <pre>
@@ -169,7 +169,7 @@ WARNING: AI IS OFTEN DOING NON ATOMIC PR AND NON ATOMIC PR WILL BE REJECTED, SO 
 
 * When submitting a pull request, use same rule as [Commits](#commits) for the message. If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
 
-* A screenshot will be always required for any PR of change/addition of a GUI behavior.
+* A screenshot is mandatory for any PR of change/addition related to the User Interface.
 
 Also, some code changes need a prior approbation:
 
@@ -191,10 +191,24 @@ A so high ratio is very rare on a so popular project and with the increasing pop
 
 
 ### Resources
+
+Global documentation
+--------------------
+
+The project's documentation is maintained on the [Wiki](https://wiki.dolibarr.org/index.php).
+
+*Note*: to help prevent spam, you need to create an account before being able to edit. Everybody is welcome to contribute to its content.
+
+
+Developer documentation
+-----------------------
+
 [Developer documentation](https://wiki.dolibarr.org/index.php/Developer_documentation)
+
 
 Translations
 ------------
+
 The source language (en_US) is maintained in the repository.
 
 All other translations are managed online at [Transifex](https://explore.transifex.com/dolibarr-association/).
@@ -205,13 +219,6 @@ Note: Sometimes, the source text (English) is modified. In such a case, the tran
 has changed, the translation is surely no more correct so must be done again. But old translation is not lost and you can use the tab "History"
 to retrieve all old translations of a source text and restore the translation in one click with no need to retranslate it if there is no need to.
 
-
-### Resources
 [Translator documentation](https://wiki.dolibarr.org/index.php/Translator_documentation)
 
-Documentation
--------------
-The project's documentation is maintained on the [Wiki](https://wiki.dolibarr.org/index.php).
-
-*Note*: to help prevent spam, you need to create an account before being able to edit. Everybody is welcome to contribute to its content.
 

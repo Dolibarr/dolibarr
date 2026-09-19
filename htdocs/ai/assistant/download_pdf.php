@@ -33,6 +33,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/ai/lib/ai.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/includes/tecnickcom/tcpdf/tcpdf.php';
 
 // Security check
@@ -41,6 +42,15 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 }
 
 global $user, $langs;
+
+// Same per-user gate as the assistant page and the other assistant endpoints
+if (!$user->hasRight('ai', 'assistant', 'use')) {
+	accessforbidden();
+}
+
+// Must not be reachable from another site
+aiCheckCsrfToken('ai/assistant/download_pdf.php');
+
 $langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins', 'bills', 'main', 'reports@reports'));
 
 /**

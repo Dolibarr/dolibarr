@@ -16,6 +16,7 @@
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/emailsignature.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -427,7 +429,12 @@ if (empty($reshook)) {
 					}
 					$db->commit();
 
-					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+					if (!empty($backtopage)) {
+						$url = str_replace('__ID__', (string) $id, $backtopage);
+					} else {
+						$url = $_SERVER['PHP_SELF'].'?id='.$id;
+					}
+					header("Location: ".$url);
 					exit;
 				}
 			} else {
@@ -1064,6 +1071,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	if (!empty($backtopage)) {
+		print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
+	}
+	if (!empty($backtopageforcancel)) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+	}
 	if (!empty($ldap_sid)) {
 		print '<input type="hidden" name="ldap_sid" value="'.dol_escape_htmltag($ldap_sid).'">';
 	}
@@ -1613,8 +1626,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if ($id > 0) {
 		$res = $object->fetch($id, '', '', 1);
 		if ($res < 0) {
-			dol_print_error($db, $object->error);
-			exit;
+			recordNotFound('', 0);
 		}
 		$res = $object->fetch_optionals();
 
@@ -2037,6 +2049,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Signature
 			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td class="wordbreak">';
 			print dol_htmlentitiesbr($object->signature);
+			if (!empty($object->signature)) {
+				print dolGetSignatureQualityBadge($object->signature, $langs);
+			}
 			print "</td></tr>\n";
 
 			print "</table>\n";
@@ -3157,6 +3172,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $doleditor->Create(1);
 			} else {
 				print dol_htmlentitiesbr($object->signature);
+				if (!empty($object->signature)) {
+					print dolGetSignatureQualityBadge($object->signature, $langs);
+				}
 			}
 			print '</td></tr>';
 

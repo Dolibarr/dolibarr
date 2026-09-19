@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Jose MARTINEZ	<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -323,13 +324,13 @@ class pdf_standard_inventory extends ModelePDFInventory
 			$pdf->MultiCell($this->posxlabel - $this->posxproduct - 1, 3, $outputlangs->convToOutputCharset($line->product_ref), 0, 'L');
 			// Label
 			$pdf->SetXY($this->posxlabel, $curY);
-			$pdf->MultiCell($this->posxwarehouse - $this->posxlabel - 1, 3, $outputlangs->convToOutputCharset(dol_trunc($line->product_label, 45)), 0, 'L');
+			$pdf->MultiCell($this->posxwarehouse - $this->posxlabel - 1, 3, $outputlangs->convToOutputCharset(pdf_truncate_text($pdf, $line->product_label, 45)), 0, 'L');
 			// Warehouse
 			$pdf->SetXY($this->posxwarehouse, $curY);
-			$pdf->MultiCell($this->posxbatch - $this->posxwarehouse - 1, 3, $outputlangs->convToOutputCharset(dol_trunc($line->warehouse_ref, 12)), 0, 'L');
+			$pdf->MultiCell($this->posxbatch - $this->posxwarehouse - 1, 3, $outputlangs->convToOutputCharset(pdf_truncate_text($pdf, $line->warehouse_ref, 12)), 0, 'L');
 			// Batch
 			$pdf->SetXY($this->posxbatch, $curY);
-			$pdf->MultiCell($this->posxqtystock - $this->posxbatch - 1, 3, $outputlangs->convToOutputCharset(dol_trunc($line->batch, 10)), 0, 'L');
+			$pdf->MultiCell($this->posxqtystock - $this->posxbatch - 1, 3, $outputlangs->convToOutputCharset(pdf_truncate_text($pdf, $line->batch, 10)), 0, 'L');
 			// Expected qty
 			$pdf->SetXY($this->posxqtystock, $curY);
 			$pdf->MultiCell($this->posxqtyview - $this->posxqtystock - 1, 3, ($line->qty_stock !== null && $line->qty_stock !== '') ? price2num($line->qty_stock, 'MS') : '', 0, 'R');

@@ -549,6 +549,16 @@ class Orders extends DolibarrApi
 		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 		$request_data->label = sanitizeVal($request_data->label);
 
+		$orderline = new OrderLine($this->db);
+		$result = $orderline->fetch($lineid);
+		if (!$result) {
+			throw new RestException(404, 'Order line not found');
+		}
+
+		if ($orderline->fk_commande != $id) {
+			throw new RestException(403, 'Line does not belong to this order');
+		}
+
 		$updateRes = $this->commande->updateline(
 			$lineid,
 			$request_data->desc,
@@ -1204,6 +1214,10 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('propal', $propal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->commande->createFromProposal($propal, DolibarrApiAccess::$user);
 		if ($result < 0) {
 			throw new RestException(405, $this->commande->error);
@@ -1234,6 +1248,9 @@ class Orders extends DolibarrApi
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
+		}
+		if (!DolibarrApi::_checkAccessToResource('commande', $id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$obj_ret = array();
 		$sql = "SELECT e.rowid";
@@ -1300,6 +1317,9 @@ class Orders extends DolibarrApi
 		$result = $this->commande->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Order not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$shipment = new Expedition($this->db);
 		$shipment->socid = $this->commande->socid;

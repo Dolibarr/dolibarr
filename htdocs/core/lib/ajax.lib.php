@@ -511,7 +511,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$msg .= '$(document).ready(function () {
 		$(\''.dol_escape_js($componentname).'\').'.$tmpplugin.'({';
 	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
-	if (preg_match('/onrightofpage/', $morecss)) {	// In this cas, htmlname must be an ID not a class.
+	if (preg_match('/onrightofpage/', $morecss)) {	// In this case, htmlname must be an ID not a class.
 		$msg .= ' dropdownAutoWidth: true, ';
 		$msg .= ' dropdownParent: $(\'#'.$htmlname.'\').parent(), ';
 	}

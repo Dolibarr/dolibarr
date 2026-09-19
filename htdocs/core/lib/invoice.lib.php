@@ -455,7 +455,7 @@ function getNumberInvoicesPieChart($mode)
 		if ($mode == 'customers') {
 			$element = 'invoice';
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-		} elseif ($mode == 'fourn' || $mode == 'suppliers') {
+		} elseif ($mode == 'suppliers') {
 			$element = 'supplier_invoice';
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		} else {
@@ -514,7 +514,7 @@ function getNumberInvoicesPieChart($mode)
 			$result .= '<td>'.$langs->trans("NbOfOpenInvoices").' - ';
 			if ($mode == 'customers') {
 				$result .= $langs->trans("CustomerInvoice");
-			} elseif ($mode == 'fourn' || $mode == 'suppliers') {
+			} elseif ($mode == 'suppliers') {
 				$result .= $langs->trans("SupplierInvoice");
 			} else {
 				return '';
@@ -539,7 +539,7 @@ function getNumberInvoicesPieChart($mode)
 				//$dolgraph->setBarWidth('15');
 				if ($mode == 'customers') {
 					$dolgraph->draw('idgraphcustomerinvoices');
-				} elseif ($mode == 'fourn' || $mode == 'suppliers') {
+				} elseif ($mode == 'suppliers') {
 					$dolgraph->draw('idgraphfourninvoices');
 				} else {
 					return '';
