@@ -196,7 +196,8 @@ class CommonObjectTest extends CommonClassTest
 			}
 		};
 
-		$localobject->status = 1;
+		$localobject->status = 0;
+		$localobject->statut = 0;
 		$localobject->project = null;
 		$localobject->fk_project = 42;
 		$localobject->origin_object = null;
@@ -206,7 +207,8 @@ class CommonObjectTest extends CommonClassTest
 
 		$this->assertTrue($result);
 		$this->assertSame('AA2501-0001', $localobject->ref);
-		$this->assertSame(1, $localobject->status, 'status must not be altered when setting an unrelated field');
+		$this->assertSame(0, $localobject->status, 'status must not be altered when setting an unrelated field');
+		$this->assertSame(0, $localobject->statut, 'statut must not be altered when setting an unrelated field');
 		$this->assertSame(42, $localobject->fk_project, 'fk_project must not be altered when setting an unrelated field');
 		$this->assertSame(100, $localobject->totalpaid, 'totalpaid must not be altered when setting an unrelated field');
 		$this->assertNull($localobject->origin_object, 'origin_object must not be altered when setting an unrelated field');
@@ -407,6 +409,498 @@ class CommonObjectTest extends CommonClassTest
 
 		$this->assertTrue($result, 'the initial call must still succeed');
 		$this->assertSame(2, $localobject->hookCallCount, 'the loop must be broken after the second (recursive) call');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Data provider for deprecated property mappings
+	 * Tests all mappings from deprecatedProperties() method
+	 *
+	 * @return array<array{oldProp:string, newProp:string, oldValue:mixed, newValue:mixed}>
+	 */
+	public function deprecatedPropertyMappingProvider()
+	{
+		return array(
+			// Test statut -> status mapping with multiple values to ensure they evolve
+			'statut_to_status_draft' => array('statut', 'status', 0, null),
+			'statut_to_status_validated' => array('statut', 'status', 1, null),
+			'statut_to_status_canceled' => array('statut', 'status', 2, null),
+			'status_to_statut_draft' => array('status', 'statut', 0, null),
+			'status_to_statut_validated' => array('status', 'statut', 1, null),
+			// Test alreadypaid -> totalpaid mapping
+			'alreadypaid_to_totalpaid' => array('alreadypaid', 'totalpaid', 500, null),
+			'totalpaid_to_alreadypaid' => array('totalpaid', 'alreadypaid', 750, null),
+			// Test fk_project -> fk_project (self-mapping but projet -> project exists)
+			'projet_to_project' => array('projet', 'project', 'PROJ001', null),
+			'project_to_projet' => array('project', 'projet', 'Project Object', null),
+			// Test cond_reglement -> depr_cond_reglement mapping
+		);
+	}
+
+	/**
+	 * Test that setFieldValue correctly propagates ALL deprecated property mappings
+	 * This tests each deprecated->new property pair from deprecatedProperties()
+	 *
+	 * @dataProvider deprecatedPropertyMappingProvider
+	 * @param string $oldProp Old/deprecated property name
+	 * @param string $newProp New/replacement property name
+	 * @param mixed $value Value to set
+	 * @param mixed $expectedNewValue Expected value for new property (or null if same as value)
+	 * @return void
+	 */
+	public function testSetFieldValuePropagatesAllDeprecatedPropertyMappings($oldProp, $newProp, $value, $expectedNewValue)
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Create a test object with the field defined
+		// Note: We need to set status and statut to 0 (draft) so fields are not blocked
+		$localobject = new class ($db, $oldProp, $newProp) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array();
+			public $status = 0;
+			public $statut = 0;
+
+			public function __construct($db, $oldProp, $newProp)
+			{
+				$this->db = $db;
+				// Add both properties to fields if they're different
+				if ($oldProp !== $newProp) {
+					$this->fields[$oldProp] = array('type' => 'varchar(255)', 'label' => 'Old Prop', 'enabled' => 1);
+					$this->fields[$newProp] = array('type' => 'varchar(255)', 'label' => 'New Prop', 'enabled' => 1);
+				} else {
+					$this->fields[$oldProp] = array('type' => 'varchar(255)', 'label' => 'Property', 'enabled' => 1);
+				}
+			}
+		};
+
+		// Set the old property value
+		$result = $localobject->setFieldValue($user, $oldProp, $value, true);
+
+		$this->assertTrue($result, "setFieldValue should succeed for deprecated property $oldProp");
+		$this->assertSame($value, $localobject->{$oldProp}, "Old property $oldProp should have the set value");
+
+		// Check that the new property was also updated
+		$expectedValue = $expectedNewValue !== null ? $expectedNewValue : $value;
+		$this->assertSame($expectedValue, $localobject->{$newProp}, "New property $newProp should be synchronized with $oldProp");
+
+		print __METHOD__." [$oldProp->$newProp] OK\n";
+	}
+
+	/**
+	 * Test setFieldValue with child class that overrides deprecatedProperties
+	 * This tests DolDeprecationHandler compatibility with custom deprecated properties in child classes
+	 * Old properties are NOT declared - they are handled by magic methods in DolDeprecationHandler
+	 * New properties ARE declared in fields array and as class properties
+	 *
+	 * @return void
+	 */
+	public function testSetFieldValueWithChildClassDeprecatedProperties()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Create a child class that adds custom deprecated property mappings
+		// Only NEW properties (new_field, current_name) are declared in fields and as properties
+		// OLD properties (old_field, legacy_name) are NOT declared - handled by DolDeprecationHandler magic
+		$localobject = new class ($db) extends CommonObject {
+			/**
+			 * @var string Element name
+			 */
+			public $element = 'testchild';
+			/**
+			 * @var string Table name
+			 */
+			public $table_element = 'testchild';
+			/**
+			 * @var array Fields definition - includes both old and new field names
+			 * Old properties are in fields so setFieldValue accepts them, but not declared as class properties
+			 * statut is inherited from parent but needs to be in fields array for setFieldValue to accept it
+			 */
+			public $fields = array(
+				'old_field' => array('type' => 'varchar(255)', 'label' => 'Old Field', 'enabled' => 1),
+				'new_field' => array('type' => 'varchar(255)', 'label' => 'New Field', 'enabled' => 1),
+				'legacy_name' => array('type' => 'varchar(255)', 'label' => 'Legacy Name', 'enabled' => 1),
+				'current_name' => array('type' => 'varchar(255)', 'label' => 'Current Name', 'enabled' => 1),
+				'statut' => array('type' => 'smallint', 'label' => 'Statut', 'enabled' => 1),
+			);
+			/**
+			 * @var string New field property (declared)
+			 */
+			public $new_field;
+			/**
+			 * @var string Current name property (declared)
+			 */
+			public $current_name;
+			/**
+			 * @var int Status (inherited from parent CommonObject, not redeclared)
+			 */
+
+			/**
+			 * Constructor
+			 *
+			 * @param DoliDB $db Database handler
+			 */
+			public function __construct($db)
+			{
+				$this->db = $db;
+				// Inherited from CommonObject - don't redeclare
+				$this->status = 0;
+				$this->statut = 0;
+			}
+
+			/**
+			 * Override deprecatedProperties to add child-specific mappings
+			 * This simulates a class that extends CommonObject and adds its own deprecated properties
+			 * Old properties (old_field, legacy_name) are NOT declared in fields or as properties
+			 *
+			 * @return array<string,string> Mapping of old property names to new property names
+			 */
+			protected function deprecatedProperties()
+			{
+				// Start with parent mappings (statut->status, etc.)
+				$mappings = parent::deprecatedProperties();
+				// Add child-specific mappings: old (undeclared) -> new (declared)
+				$mappings['old_field'] = 'new_field';
+				$mappings['legacy_name'] = 'current_name';
+				return $mappings;
+			}
+		};
+
+		// Test child-specific deprecated property: old_field (not declared) -> new_field (declared)
+		$result1 = $localobject->setFieldValue($user, 'old_field', 'deprecated_value', true);
+		$this->assertTrue($result1, 'setFieldValue should succeed for child deprecated property old_field');
+		$this->assertSame('deprecated_value', $localobject->old_field, 'old_field should have the set value via magic method');
+		$this->assertSame('deprecated_value', $localobject->new_field, 'new_field should be synchronized with old_field');
+
+		// Test another child-specific deprecated property: legacy_name (not declared) -> current_name (declared)
+		$result2 = $localobject->setFieldValue($user, 'legacy_name', 'legacy_value', true);
+		$this->assertTrue($result2, 'setFieldValue should succeed for child deprecated property legacy_name');
+		$this->assertSame('legacy_value', $localobject->legacy_name, 'legacy_name should have the set value via magic method');
+		$this->assertSame('legacy_value', $localobject->current_name, 'current_name should be synchronized with legacy_name');
+
+		// Test that parent deprecated properties still work (statut -> status, inherited from CommonObject)
+		$result3 = $localobject->setFieldValue($user, 'statut', 1, true);
+		$this->assertTrue($result3, 'setFieldValue should succeed for parent deprecated property statut');
+		$this->assertSame(1, $localobject->statut, 'statut should have the set value');
+		$this->assertSame(1, $localobject->status, 'status should be synchronized with statut');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Data provider for field configuration tests
+	 * Tests various field configurations: enabled, disabled, noteditable, validate, etc.
+	 *
+	 * @return array<array{fieldName:string, fieldConfig:array, expectedResult:bool}>
+	 */
+	public function fieldConfigurationProvider()
+	{
+		return array(
+			// Field is enabled (default)
+			'field_enabled_default' => array(
+				'ref',
+				array('type' => 'varchar(30)', 'label' => 'Ref'),
+				true
+			),
+			// Field is explicitly enabled
+			'field_enabled_explicit' => array(
+				'ref',
+				array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => '1'),
+				true
+			),
+			// Field is disabled
+			'field_disabled' => array(
+				'ref',
+				array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 0, 'disabled' => 1),
+				false
+			),
+			// Field is not editable
+			'field_noteditable' => array(
+				'ref',
+				array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'noteditable' => 1),
+				false
+			),
+			// Field is not defined
+			'field_not_defined' => array(
+				'undefined_field',
+				array(),
+				false
+			),
+		);
+	}
+
+	/**
+	 * Test isFieldEditAllowed with various field configurations
+	 *
+	 * @dataProvider fieldConfigurationProvider
+	 * @param string $fieldName Field name to test
+	 * @param array $fieldConfig Field configuration
+	 * @param bool $expectedResult Expected result from isFieldEditAllowed
+	 * @return void
+	 */
+	public function testIsFieldEditAllowedWithVariousConfigurations($fieldName, $fieldConfig, $expectedResult)
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new class ($db, $fieldName, $fieldConfig) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array();
+			public $status = 0;
+			public $statut = 0;
+
+			public function __construct($db, $fieldName, $fieldConfig)
+			{
+				$this->db = $db;
+				if (!empty($fieldConfig)) {
+					$this->fields[$fieldName] = $fieldConfig;
+				}
+			}
+		};
+
+		$result = $localobject->isFieldEditAllowed($user, $fieldName, true);
+
+		$this->assertSame($expectedResult, $result, "isFieldEditAllowed should return $expectedResult for field $fieldName with config: " . json_encode($fieldConfig));
+
+		print __METHOD__." [$fieldName] OK\n";
+	}
+
+
+
+	/**
+	 * Test isFieldBlockedByObjectState with various status/statut combinations
+	 * This tests the logic that fields are blocked when not in draft state
+	 *
+	 * @return void
+	 */
+	public function testIsFieldBlockedByObjectStateWithVariousStates()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Test 1: Both status and statut are 0 (draft) - field should NOT be blocked
+		$obj1 = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
+			public $status = 0;
+			public $statut = 0;
+
+			public function __construct($db) { $this->db = $db; }
+		};
+
+		// Use reflection to test private method
+		$reflection = new ReflectionClass($obj1);
+		$method = $reflection->getMethod('isFieldBlockedByObjectState');
+		$method->setAccessible(true);
+
+		$result1 = $method->invoke($obj1, 'ref');
+		$this->assertFalse($result1, 'Field should NOT be blocked when both status and statut are 0 (draft)');
+
+		// Test 2: status is non-zero, statut is 0 - field SHOULD be blocked
+		$obj2 = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
+			public $status = 1;
+			public $statut = 0;
+
+			public function __construct($db) { $this->db = $db; }
+		};
+
+		$method->setAccessible(true);
+		$result2 = $method->invoke($obj2, 'ref');
+		$this->assertTrue($result2, 'Field SHOULD be blocked when status is non-zero');
+
+		// Test 3: status is 0, statut is non-zero - field SHOULD be blocked
+		$obj3 = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
+			public $status = 0;
+			public $statut = 1;
+
+			public function __construct($db) { $this->db = $db; }
+		};
+
+		$method->setAccessible(true);
+		$result3 = $method->invoke($obj3, 'ref');
+		$this->assertTrue($result3, 'Field SHOULD be blocked when statut is non-zero');
+
+		// Test 4: Both are non-zero - field SHOULD be blocked
+		$obj4 = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array('ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1));
+			public $status = 1;
+			public $statut = 1;
+
+			public function __construct($db) { $this->db = $db; }
+		};
+
+		$method->setAccessible(true);
+		$result4 = $method->invoke($obj4, 'ref');
+		$this->assertTrue($result4, 'Field SHOULD be blocked when both are non-zero');
+
+		// Test 5: Field with alwayseditable flag should NEVER be blocked
+		$obj5 = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array(
+				'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'alwayseditable' => 1)
+			);
+			public $status = 1;
+			public $statut = 1;
+
+			public function __construct($db) { $this->db = $db; }
+		};
+
+		$method->setAccessible(true);
+		$result5 = $method->invoke($obj5, 'ref');
+		$this->assertFalse($result5, 'Field with alwayseditable=1 should NEVER be blocked');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Test isFieldEnabled with expression-based enabled flag
+	 * This tests that dol_eval is correctly used to evaluate enabled expressions
+	 *
+	 * @return void
+	 */
+	public function testIsFieldEnabledWithExpression()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Test with a simple expression that evaluates to 1
+		$obj1 = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array(
+				'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => '1')
+			);
+
+			public function __construct($db) { $this->db = $db; }
+		};
+
+		// Use reflection to test private method
+		$reflection = new ReflectionClass($obj1);
+		$method = $reflection->getMethod('isFieldEnabled');
+		$method->setAccessible(true);
+
+		$result1 = $method->invoke($obj1, 'ref');
+		$this->assertTrue($result1, 'Field with enabled=\"1\" should be enabled');
+
+		// Test with expression that evaluates to 0
+		$obj2 = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array(
+				'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => '0')
+			);
+
+			public function __construct($db) { $this->db = $db; }
+		};
+
+		$method->setAccessible(true);
+		$result2 = $method->invoke($obj2, 'ref');
+		$this->assertFalse($result2, 'Field with enabled=\"0\" should be disabled');
+
+		// Test with isModEnabled expression
+		$obj3 = new class ($db) extends CommonObject {
+			public $element = 'testobject';
+			public $table_element = 'testobject';
+			public $fields = array(
+				'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 'isModEnabled("multicurrency")')
+			);
+
+			public function __construct($db) { $this->db = $db; }
+		};
+
+		$method->setAccessible(true);
+		$result3 = $method->invoke($obj3, 'ref');
+		// This will depend on whether multicurrency module is enabled
+		// We just check it returns a boolean value
+		$this->assertIsBool($result3, 'isFieldEnabled should return a boolean');
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Test that onFieldValueChanged is called for all field types
+	 *
+	 * @return void
+	 */
+	public function testOnFieldValueChangedCalledForVariousFieldTypes()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$testValues = array(
+			'string' => 'test_string',
+			'integer' => 123,
+			'float' => 45.67,
+			'array' => array('a', 'b', 'c'),
+			'null' => null,
+			'empty_string' => '',
+			'zero' => 0,
+			'bool_true' => true,
+			'bool_false' => false,
+		);
+
+		foreach ($testValues as $type => $value) {
+			$localobject = new class ($db) extends CommonObject {
+				public $element = 'testobject';
+				public $table_element = 'testobject';
+				public $fields = array(
+					'test_field' => array('type' => 'text', 'label' => 'Test Field', 'enabled' => 1)
+				);
+				public $hookCalled = false;
+				public $lastFieldKey = null;
+				public $lastValue = null;
+
+				public function __construct($db)
+				{
+					$this->db = $db;
+				}
+
+				protected function onFieldValueChanged($fieldKey, $value)
+				{
+					$this->hookCalled = true;
+					$this->lastFieldKey = $fieldKey;
+					$this->lastValue = $value;
+				}
+			};
+
+			$result = $localobject->setFieldValue($user, 'test_field', $value, true);
+			$this->assertTrue($result, "setFieldValue should succeed for $type");
+			$this->assertTrue($localobject->hookCalled, "onFieldValueChanged should be called for $type");
+			$this->assertSame('test_field', $localobject->lastFieldKey, "Field key should be 'test_field' for $type");
+			$this->assertSame($value, $localobject->lastValue, "Value should match for $type");
+		}
 
 		print __METHOD__." OK\n";
 	}
