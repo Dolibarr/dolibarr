@@ -498,8 +498,8 @@ class Ai
 	/**
 	 * Decode JSON into array
 	 *
-	 * @param array{document_info?:array{reference?:string,invoice_number?:string,title?:string,issue_date?:string,due_date?:string,vendor?:array{name?:string,siren?:string,siret?:string,email?:string,professional_id?:array{siren?:string},vat_number?:string}}|null,summary?:array{currency?:string,subtotal_excluding_tax?:float,tax?:array{rate?:float,amount?:float}},items?:array<int|string,array{description?:string,service?:string,quantity?:float,tax?:array{vat_rate?:float,rate?:float,amount?:float},unit_price?:float,total_excluding_tax?:float,total_including_tax?:float,period_start?:string,period_end?:string,period?:array{start_date?:string,end_date?:string}}>}	$json JSON
-	 * @param string	$type	Type of document to get ('supplier_invoice', 'thirdparty', ...)
+	 * @param array<string,mixed>		$json 		JSON (The structure of this var can't be guess, it change at each call, depending on AI, so we must se a strict type for it)
+	 * @param string					$type		Type of document to get ('supplier_invoice', 'thirdparty', ...)
 	 * @return array<string,string|float>	Array of values
 	 */
 	public function decodeJsonIntoArray($json, $type)
@@ -520,9 +520,9 @@ class Ai
 			}
 
 			// Issue date
-			if (!empty($json['document_info']['issue_date']) && preg_match('/^[0-9]{4})-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['issue_date'])) {
+			if (!empty($json['document_info']['issue_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['issue_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['issue_date'], 'tzuserrel');
-			} elseif (!empty($json['document_info']['submission_date']) && preg_match('/^[0-9]{4})-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['submission_date'])) {
+			} elseif (!empty($json['document_info']['submission_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['submission_date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['submission_date'], 'tzuserrel');
 			} elseif (!empty($json['document_info']['date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['date'])) {
 				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['date'], 'tzuserrel');
@@ -618,29 +618,23 @@ class Ai
 						$tmparray['lines'][$i]['desc'] = $item['service'];
 					}
 
-					if (!empty($item['service'])) {
-						$tmparray['lines'][$i]['qty'] = $item['quantity'];
-						$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'];
-						//$tmparray['lines'][$i]['vat_amount'] = $item['tax']['amount'];
-						$tmparray['lines'][$i]['subprice'] = $item['unit_price'];
-						$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'];
-						$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'];
-					} else {
-						$tmparray['lines'][$i]['qty'] = $item['quantity'];
-						$tmparray['lines'][$i]['vat_rate'] = $item['tax']['rate'];
-						$tmparray['lines'][$i]['vat_amount'] = $item['tax']['amount'];
-						$tmparray['lines'][$i]['subprice'] = $item['unit_price'];
-						$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'];
-						$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'];
-					}
+					$tmparray['lines'][$i]['qty'] = $item['quantity'] ?? 1;
+					$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'] ?? null;
+					$tmparray['lines'][$i]['total_vat'] = $item['tax']['amount'] ?? null;
+					$tmparray['lines'][$i]['subprice'] = $item['unit_price'] ?? null;
+					$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'] ?? null;
+					$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'] ?? null;
+
 					if (!empty($item['period_start'])) {
 						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period_start'], 'tzuserrel');
 					}
 					if (!empty($item['period_end'])) {
 						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period_end'], 'tzuserrel');
 					}
-					if (!empty($item['period'])) {
+					if (!empty($item['period']) && !empty($item['period']['start_date'])) {
 						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period']['start_date'], 'tzuserrel');
+					}
+					if (!empty($item['period']) && !empty($item['period']['end_date'])) {
 						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period']['end_date'], 'tzuserrel');
 					}
 				}
