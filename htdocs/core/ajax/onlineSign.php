@@ -642,17 +642,13 @@ if ($action == "importSignature") {
 					}
 
 					if (!$error) {
-						if (method_exists($object, 'call_trigger')) {
-							$user = new User($db);
-							$user->fetch($object->user_author_id);
-							$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
-							$result = $object->call_trigger('ORDER_CLOSE_SIGNED', $user);
-							if ($result < 0) {
-								$error++;
-								$response = "error in trigger " . $object->error;
-							} else {
-								$response = "success";
-							}
+						$user = new User($db);
+						$user->fetch($object->user_author_id);
+						$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+						$result = $object->('ORDER_CLOSE_SIGNED', $user);
+						if ($result < 0) {
+							$error++;
+							$response = "error in trigger " . $object->error;
 						} else {
 							$response = "success";
 						}
