@@ -91,7 +91,7 @@ notifications:
 
 before_install:
 - |
-  echo ""===== $(date) Check if the build is required (only for a pull request, we always build on push)""
+  echo "===== $(date) Check if the build is required (only for a pull request, we always build on push)"
   if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$TRAVIS_PULL_REQUEST" ]; then
     # The clone is shallow (see git.depth), so we ask for the parents of the merge
     # commit of the pull request to know the list of files it changes.
