@@ -1730,6 +1730,10 @@ abstract class CommonInvoice extends CommonObject
 					require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 					$companypaymentmode = new CompanyPaymentMode($this->db);	// table societe_rib
 					$companypaymentmode->fetch($bac->id);
+					$sepaSequenceType = strtoupper((string) $companypaymentmode->frstrecur);
+					if (!in_array($sepaSequenceType, array('FRST', 'RCUR', 'OOFF', 'FNAL'), true)) {
+						$sepaSequenceType = 'FRST';
+					}
 
 					$this->stripechargedone = 0;
 					$this->stripechargeerror = 0;
@@ -1774,7 +1778,7 @@ abstract class CommonInvoice extends CommonObject
 					if (!$error) {
 						if (empty($obj->fk_prelevement_bons)) {
 							// This creates a record into llx_prelevement_bons and updates link with llx_prelevement_demande
-							$nbinvoices = $bon->create('0', '0', 'real', 'ALL', 0, 0, $type, $did, $fk_bank_account);
+							$nbinvoices = $bon->create('0', '0', 'real', $sepaSequenceType, 0, 0, $type, $did, $fk_bank_account);
 							if ($nbinvoices <= 0) {
 								$error++;
 								$errorforinvoice++;
