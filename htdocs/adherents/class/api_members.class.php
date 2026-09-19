@@ -576,6 +576,11 @@ class Members extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
+		// Ensure both statut and status are present (statut is deprecated but expected by some clients)
+		// Note: We must use get_object_vars and create a new object because DolDeprecationHandler's __set
+		// will redirect statut to status, preventing the statut property from being created
+		$vars = get_object_vars($object);
+
 		// Remove the subscriptions because they are handled as a subresource.
 		if ($object instanceof Adherent) {
 			unset($object->subscriptions);
@@ -647,6 +652,20 @@ class Members extends DolibarrApi
 			$object->date_start = $object->dateh;
 			$object->date_end = $object->datef;
 		}
+
+		if (isset($vars['status']) && !isset($vars['statut'])) {
+			$vars['statut'] = $vars['status'];
+		}
+		if (isset($vars['statut']) && !isset($vars['status'])) {
+			$vars['status'] = $vars['statut'];
+		}
+
+		// Create a new object with all properties including the added ones
+		$newObject = new stdClass();
+		foreach ($vars as $key => $value) {
+			$newObject->$key = $value;
+		}
+		$object = $newObject;
 
 		return $object;
 	}
