@@ -86,7 +86,7 @@ try {
 	// the parse rounds (parse_intent.php) and the MCP server calls already do.
 	$status = 'Success';
 	$errorMsg = '';
-	if (is_array($result) && array_key_exists('success', $result) && empty($result['success'])) {
+	if (array_key_exists('success', $result) && empty($result['success'])) {
 		$status = 'Error';
 		$errorMsg = isset($result['error']) ? (string) $result['error'] : '';
 	}
