@@ -2077,9 +2077,8 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
 		print '</tr>';
 	}
-  
-  print '<tr><td>'.$langs->trans("CCI").'</td>';
-	print '<td><input class="minwidth150" type="text" name="cci" value="'.$companybankaccount->cci.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("CCI").'</td>';
+	print '<td><input class="minwidth150" type="text" name="cci" value="'.$companybankaccount->cci.'">';
 	print "</td></tr>\n";
 
 	// Currency
@@ -2309,11 +2308,10 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" id="'.$name.'" value="'.GETPOST($name).'" spellcheck="false"></td>';
 		print '</tr>';
 	}
-
-  print '<tr><td>'.$langs->trans("CCI").'</td>';
+	print '<tr><td>'.$langs->trans("CCI").'</td>';
 	print '<td><input class="minwidth150" type="text" name="cci" value="'.GETPOST('cci').'"></td></tr>';
 	print "</td></tr>\n";
-  
+
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
 	print '<td>';
