@@ -214,6 +214,7 @@ class ToolCrudObjects extends McpTool
 		'duree_validite',
 		'ref_supplier',
 		'create_missing_products',	// behavior flag, filtered out before property assignment
+		'products_category',	// behavior flag (category label for created products), filtered out too
 		// Date fields, generic name and per object type name (see $this->map)
 		'date',
 		'datep',
@@ -339,6 +340,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 								"duree_validite" => ["type" => "integer", "description" => "Validity in days (proposal only)"],
 								"ref_supplier" => ["type" => "string", "description" => "Supplier's own document reference (delivery note number, supplier order number...) as written on the source document"],
 								"create_missing_products" => ["type" => "boolean", "default" => false, "description" => "When a line's product_ref does not match any catalog product, create the product on the fly (ref=product_ref, label=description, buying price=unit_price) instead of adding a free-text line"],
+								"products_category" => ["type" => "string", "description" => "Optional product category/tag label assigned to every product created on the fly (the category is created when missing), e.g. 'A TRAITER' so the new products can be reviewed as a batch. Only used with create_missing_products."],
 								"note_public" => ["type" => "string", "description" => "Public note"],
 								"note_private" => ["type" => "string", "description" => "Private note"]
 							],
@@ -658,11 +660,12 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 
 		// Process Header with Field Mapping
 		$createMissingProducts = ! empty($header['create_missing_products']);
+		$productsCategory = trim((string) ($header['products_category'] ?? ''));
 		foreach ($header as $k => $v) {
 			$key = (string) $k;
 
-			// Behavior flag, not an object property
-			if ($key === 'create_missing_products') {
+			// Behavior flags, not object properties
+			if ($key === 'create_missing_products' || $key === 'products_category') {
 				continue;
 			}
 
@@ -731,6 +734,9 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 				$line['parent_id'] = $id;
 				if ($createMissingProducts) {
 					$line['create_missing_products'] = true;
+					if ($productsCategory !== '') {
+						$line['products_category'] = $productsCategory;
+					}
 				}
 
 				// Process line addition
@@ -872,6 +878,10 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 				// targeted UPDATE right after creation.
 				$this->db->query("UPDATE ".MAIN_DB_PREFIX."product SET import_key='".$this->db->escape($newprod->import_key)."' WHERE rowid=".(int) $newprod->id);
 				$prod = $newprod;
+
+				// Complete the card with what the source document knows beyond
+				// the product itself: supplier price line, review category.
+				$this->completeCreatedProduct($newprod, $object, $args, ($price !== null ? (float) $price : null), ($vat !== null ? (float) $vat : 0.0));
 			}
 			// On failure (duplicate ref, numbering rule...): fall through to a free-text line
 		}
@@ -1076,6 +1086,72 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		// Call the helper logic
 		// processAddLine(CommonObject $object, array $args)
 		return $this->processAddLine($obj, $args);
+	}
+
+	/**
+	 * Complete a product just created on the fly (create_missing_products) with
+	 * the information the source document carries beyond the product card:
+	 *  - on supplier-side documents, the supplier price line ("Buying prices"
+	 *    tab): supplier = the document's thirdparty, supplier ref = the line's
+	 *    product_ref (the ref printed on the supplier's own document), price =
+	 *    the line's buying price. Product->cost_price alone does not pre-fill
+	 *    future supplier orders; this record does.
+	 *  - the optional 'products_category' tag (created when missing), so the
+	 *    freshly created products can be reviewed as a batch.
+	 * Both steps are best-effort: a failure is logged and the line creation
+	 * continues, since the product and its document line are already right.
+	 *
+	 * @param Product             $newprod Product just created
+	 * @param CommonObject        $object  Parent document the line belongs to
+	 * @param array<string,mixed> $args    Line arguments
+	 * @param ?float              $price   Line buying price (HT), when provided
+	 * @param float               $vat     Line VAT rate
+	 * @return void
+	 */
+	private function completeCreatedProduct(Product $newprod, CommonObject $object, array $args, $price, $vat)
+	{
+		global $conf;
+
+		// Supplier price line - only where the document's thirdparty IS a supplier.
+		$supplierSideTypes = array('reception', 'supplier_order', 'supplier_invoice', 'supplier_proposal');
+		$socid = ! empty($object->socid) ? (int) $object->socid : (int) (empty($object->fk_soc) ? 0 : $object->fk_soc);
+		if ($price !== null && $price > 0 && $socid > 0 && in_array((string) $args['object_type'], $supplierSideTypes, true)) {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			$pf = new ProductFournisseur($this->db);
+			$supplier = new Societe($this->db);
+			if ($pf->fetch($newprod->id) > 0 && $supplier->fetch($socid) > 0) {
+				$reffourn = trim((string) ($args['product_ref'] ?? ''));
+				// The multicurrency price must carry the same value (tx=1, company
+				// currency): with the multicurrency module enabled, update_buyprice()
+				// recomputes $buyprice from it - left at 0, it would zero the price.
+				if ($pf->update_buyprice(1, (float) $price, $this->user, 'HT', $supplier, 0, $reffourn, (float) $vat, 0, 0, 0, 0, 0, '', array(), '', (float) $price, 'HT', 1, (string) $conf->currency) < 0) {
+					dol_syslog('[ToolCrudObjects] update_buyprice failed for new product '.$newprod->id.': '.$pf->error, LOG_WARNING);
+				}
+			}
+		}
+
+		// Optional review category.
+		$catlabel = trim((string) ($args['products_category'] ?? ''));
+		if ($catlabel !== '' && isModEnabled('category')) {
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+			$cat = new Categorie($this->db);
+			if ($cat->fetch(0, $catlabel, Categorie::TYPE_PRODUCT) <= 0) {
+				if (! $this->user->hasRight('categorie', 'creer')) {
+					dol_syslog('[ToolCrudObjects] category "'.$catlabel.'" not found and user lacks categorie->creer', LOG_WARNING);
+					return;
+				}
+				$cat = new Categorie($this->db);
+				$cat->label = $catlabel;
+				$cat->type = Categorie::TYPE_PRODUCT;
+				if ($cat->create($this->user) <= 0) {
+					dol_syslog('[ToolCrudObjects] category creation failed ('.$catlabel.'): '.$cat->error, LOG_WARNING);
+					return;
+				}
+			}
+			if ($cat->add_type($newprod, Categorie::TYPE_PRODUCT) < 0 && $cat->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				dol_syslog('[ToolCrudObjects] category assignment failed for product '.$newprod->id.': '.$cat->error, LOG_WARNING);
+			}
+		}
 	}
 
 	/**
