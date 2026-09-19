@@ -45,6 +45,7 @@ ALTER TABLE llx_blockedlog ADD COLUMN signature_backward varchar(100) DEFAULT ''
 ALTER TABLE llx_blockedlog ADD COLUMN type_code varchar(8) DEFAULT '';
 ALTER TABLE llx_blockedlog ADD COLUMN note varchar(128) DEFAULT NULL;
 
+ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_projet;
 
 
 -- v25 migration
