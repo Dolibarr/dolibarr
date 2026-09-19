@@ -791,6 +791,12 @@ function getAiChatAssistantConfig()
 		'BrowserNotSupported',
 		'AISessionExpiredReload',
 
+		// Context pins
+		'AIContextPin',
+		'AIContextCounter',
+		'AIContextClear',
+		'AIContextAttachmentOnly',
+
 		// Actions & Dialogs
 		'YesProceed',
 		'Cancel',
