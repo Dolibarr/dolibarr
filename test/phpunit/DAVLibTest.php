@@ -169,7 +169,8 @@ class DAVLibTest extends CommonClassTest
 			$this->assertSame(8, strlen($expectedKey), "CDAV_URI_KEY for host '$host' should be 8 characters");
 
 			// Check that the generated key is alphanumeric (hex)
-			$this->assertMatchesRegularExpression('/^[0-9a-f]{8}$/', $expectedKey, "CDAV_URI_KEY for host '$host' should be hex");
+			$match = preg_match('/^[0-9a-f]{8}$/', $expectedKey);
+			$this->assertSame(1, $match, "CDAV_URI_KEY for host '$host' should be hex");
 		}
 
 		print __METHOD__." OK\n";
