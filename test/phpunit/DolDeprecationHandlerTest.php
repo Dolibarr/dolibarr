@@ -79,11 +79,7 @@ class DolDeprecationHandlerTest extends CommonClassTest
 			 */
 			private $enableDeprecatedReporting = true;
 
-			/**
-			 * @var string Private var to check that magic
-			 *             is triggered.
-			 */
-			private $privateVarShouldTrigger;
+
 
 			/**
 			 * Define deprecated properties.
