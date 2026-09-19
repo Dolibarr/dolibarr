@@ -964,7 +964,7 @@ abstract class CommonObject
 			//'note' => 'note_private',		// Some classes needs ->note and others need ->note_public/private so we can't manage deprecation for this field with dolDeprecationHandler
 			'commandeFournisseur' => 'origin_object',
 			'expedition' => 'origin_object',
-			'fk_project' => 'fk_project',
+			'fk_projet' => 'fk_project',
 			'livraison' => 'origin_object',
 			'projet' => 'project',
 			'statut' => 'status',
