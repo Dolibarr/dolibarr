@@ -199,7 +199,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		if (in_array($objectpage->type_container, array('page', 'blogpost', 'service'))) {
-			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.$objectpage->pageurl.'");'."\n";
+			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.preg_replace('/[^\w_-]/', '', $objectpage->pageurl).'");'."\n";
 		}
 		$tplcontent .= "ob_start();\n";
 		$tplcontent .= "try {\n";
@@ -468,7 +468,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		if (in_array($objectpage->type_container, array('page', 'blogpost', 'service'))) {
-			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.$objectpage->pageurl.'");'."\n";
+			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.preg_replace('/[^\w_-]/', '', $objectpage->pageurl).'");'."\n";
 		}
 		$tplcontent .= "// END PHP ?>\n";
 
