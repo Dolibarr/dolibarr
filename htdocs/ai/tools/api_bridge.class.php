@@ -839,7 +839,7 @@ class ToolApiBridge extends McpTool
 	 * writable temp directory exists. The state signature is part of the file
 	 * name, so any relevant change - a module (de)activated, a Dolibarr
 	 * upgrade, another entity, an edit of this file (which holds the
-	 * enrichments and method whitelists) - simply points to a different file:
+	 * enrichments and method allowlists) - simply points to a different file:
 	 * no explicit invalidation hook to maintain. External-module API updates
 	 * that change none of these are covered by the TTL.
 	 *
