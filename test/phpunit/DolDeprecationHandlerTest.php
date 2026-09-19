@@ -79,6 +79,11 @@ class DolDeprecationHandlerTest extends CommonClassTest
 			 */
 			private $enableDeprecatedReporting = true;
 
+			/**
+			 * @var bool Configuration for dynamic properties
+			 */
+			public $enableDynamicProperties = true;
+
 
 
 			/**
@@ -134,7 +139,7 @@ class DolDeprecationHandlerTest extends CommonClassTest
 
 		$this->dynHandler = new class () {
 			use DolDeprecationHandler;
-			protected $enableDynamicProperties = true;
+			public $enableDynamicProperties = true;
 
 			/**
 			 * Define deprecated properties.
@@ -381,6 +386,11 @@ class DolDeprecationHandlerTest extends CommonClassTest
 			use DolDeprecationHandler;
 
 			/**
+			 * @var bool Configuration for dynamic properties
+			 */
+			public $enableDynamicProperties = true;
+
+			/**
 			 * @var string Old property that should not exist
 			 */
 			public $oldPropertyThatExists;
@@ -441,6 +451,11 @@ class DolDeprecationHandlerTest extends CommonClassTest
 		// Create a handler class that has an old method defined
 		$badHandler = new class () {
 			use DolDeprecationHandler;
+
+			/**
+			 * @var bool Configuration for dynamic properties
+			 */
+			public $enableDynamicProperties = true;
 
 			/**
 			 * Old method that should not exist
