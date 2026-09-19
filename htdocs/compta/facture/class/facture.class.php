@@ -2986,6 +2986,13 @@ class Facture extends CommonInvoice
 			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_total_tva;
 			$facligne->multicurrency_total_ttc = -(float) $remise->multicurrency_total_ttc;
 
+			if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT') && !empty($this->multicurrency_tx) && !empty($facligne->multicurrency_total_ht)) {
+				$facligne->subprice = -(float) price2num(abs($facligne->multicurrency_subprice) * $this->multicurrency_tx, 'MU');
+				$facligne->total_ht = -(float) price2num(abs($facligne->multicurrency_total_ht) * $this->multicurrency_tx, 'MT');
+				$facligne->total_tva = -(float) price2num(abs($facligne->multicurrency_total_tva) * $this->multicurrency_tx, 'MT');
+				$facligne->total_ttc = -(float) price2num(abs($facligne->multicurrency_total_ttc) * $this->multicurrency_tx, 'MT');
+			}
+
 			$lineid = $facligne->insert();
 			if ($lineid > 0) {
 				$result = $this->update_price(1);
