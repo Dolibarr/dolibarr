@@ -645,7 +645,7 @@ if ($action == "importSignature") {
 						$user = new User($db);
 						$user->fetch($object->user_author_id);
 						$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
-						$result = $object->('ORDER_CLOSE_SIGNED', $user);
+						$result = $object->call_trigger('ORDER_CLOSE_SIGNED', $user);
 						if ($result < 0) {
 							$error++;
 							$response = "error in trigger " . $object->error;
