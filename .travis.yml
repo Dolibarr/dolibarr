@@ -109,8 +109,6 @@ before_install:
 
 - |
   echo ===== $(date) Install repository of packages for PHP
-  #sudo apt update
-  sudo apt install -y software-properties-common
   echo "Remove awful phpenv"
   sudo rm -fr ~/.phpenv; sudo rm -fr /root/.phpenv
   echo "Run apt update to discover all PHP versions"
