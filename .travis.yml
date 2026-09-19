@@ -91,8 +91,7 @@ notifications:
 
 before_install:
 - |
-  echo ===== $(date) =====
-  echo "Check if the build is required (only for a pull request, we always build on push)"
+  echo ===== $(date) Check if the build is required (only for a pull request, we always build on push)
   if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$TRAVIS_PULL_REQUEST" ]; then
     # The clone is shallow (see git.depth), so we ask for the parents of the merge
     # commit of the pull request to know the list of files it changes.
@@ -109,8 +108,7 @@ before_install:
   fi
 
 - |
-  echo ===== $(date) =====
-  echo "Install packages for PHP"
+  echo ===== $(date) Install packages for PHP
   sudo apt update
   sudo apt install -y software-properties-common
   echo "Remove awful phpenv"
@@ -122,8 +120,7 @@ before_install:
   echo TRAVIS_TYPE=$TRAVIS_TYPE
 
 - |
-  echo ===== $(date) =====
-  echo Install packages for PHP
+  echo ===== $(date) Install packages for PHP
   if [ "$DB" = 'postgresql' ]; then
   	sudo apt install -y pgloader memcached
   fi
@@ -154,8 +151,7 @@ before_install:
   echo ===== $(date) end =====
 
 - |
-  echo ===== $(date) =====
-  echo Install pgsql if run is for pgsql
+  echo ===== $(date) Install pgsql if run is for pgsql
   if [ "$DB" = 'postgresql' ]; then
     echo "Check pgloader version"
     pgloader --version
@@ -179,7 +175,7 @@ before_install:
 
 install:
 - |
-  echo ===== $(date) =====
+  echo ===== $(date) Run update-alternatives to set the correct PHP version
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
     sudo update-alternatives --set php /usr/bin/php7.1
   fi
@@ -204,8 +200,7 @@ install:
   php -i | head -
 
 - |
-  echo ===== $(date) =====
-  echo "Updating Composer config"
+  echo ===== $(date) Updating Composer config
   curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
   HASH=`curl -sS https://composer.github.io/installer.sig`
   echo $HASH
@@ -222,8 +217,7 @@ install:
   echo
 
 - |
-  echo ===== $(date) =====
-  echo "Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
+  echo ===== $(date) Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION
   echo "(composer version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
     sudo composer self-update 2.2.18
@@ -257,8 +251,7 @@ install:
   echo
 
 - |
-  echo ===== $(date) =====
-  echo "Adding path of binaries tools installed by composer to the PATH"
+  echo ===== $(date) Adding path of binaries tools installed by composer to the PATH
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo $PATH
   ls $TRAVIS_BUILD_DIR/htdocs/includes
@@ -269,15 +262,13 @@ install:
 
 before_script:
   - |
-    echo ===== $(date) =====
-    echo Start before_script
+    echo ===== $(date) Start before_script
     echo Current dir is `pwd`
     echo Home dir is `echo ~`
     echo TRAVIS_BUILD_DIR is $TRAVIS_BUILD_DIR
 
   - |
-    echo ===== $(date) =====
-    echo "Versions information"
+    echo ===== $(date) Versions information
     echo
     # Check PHP
     echo "PHP version"
@@ -308,8 +299,7 @@ before_script:
     psql --version
 
   - |
-    echo ===== $(date) =====
-    echo "Setting up database"
+    echo ===== $(date) Setting up database
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
       echo "MySQL stop"
       sudo systemctl stop mariadb.service
@@ -357,7 +347,7 @@ before_script:
     echo
 
   - |
-    echo ===== $(date) =====
+    echo ===== $(date) Generate dolibarr conf.php file
     export CONF_FILE=htdocs/conf/conf.php
     echo "Setting up Dolibarr '$CONF_FILE'"
     echo '<?php' > $CONF_FILE
@@ -387,8 +377,7 @@ before_script:
     echo
 
   - |
-    echo ===== $(date) =====
-    echo "Create documents directory and set permissions"
+    echo ===== $(date) Create documents directory and set permissions
     # Add admin/temp subdirectory needed for unit tests
     mkdir -p $TRAVIS_BUILD_DIR/documents/admin/temp
     sudo chmod -R a+rwx $TRAVIS_BUILD_DIR/documents
@@ -397,8 +386,7 @@ before_script:
 
 
   - |
-    echo ===== $(date) =====
-    echo "Setting up Apache"
+    echo ===== $(date) Setting up Apache
     sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
     sudo cp -f dev/build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
     sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
@@ -408,8 +396,7 @@ before_script:
 
 script:
   - |
-    echo ===== $(date) =====
-    echo "Checking webserver availability by a wget -O - --debug http://127.0.0.1"
+    echo ===== $(date) Checking webserver availability by a wget -O - --debug http://127.0.0.1
     # Ensure we stop on error with set -e
     set +e
     # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
@@ -421,8 +408,7 @@ script:
     echo
 
   - |
-    echo ===== $(date) =====
-    echo "Checking PHP syntax errors"
+    echo ===== $(date) Checking PHP syntax errors
     # Ensure we catch errors
     set -e
     if [ "x$TRAVIS_RUN_PARALLELLINT" = "xyes" ]; then
@@ -439,8 +425,7 @@ script:
     echo
 
   - |
-    echo ===== $(date) =====
-    echo "Checking coding style  (only in PUSH for 1 PHP version to save CPU and avoid duplicate tests)"
+    echo ===== $(date) Checking coding style  (only in PUSH for 1 PHP version to save CPU and avoid duplicate tests)
     # Ensure we catch errors
     set -e
     CACHE_OPT="--cache=${HOME}/.cache/dolibarr-phpcs-${TRAVIS_PHP_VERSION}.cache"
@@ -466,9 +451,8 @@ script:
 #    echo
 
   - |
-    echo ===== $(date) =====
+    echo ===== $(date) Setting up Dolibarr install.forced.php to test installation
     export INSTALL_FORCED_FILE=htdocs/install/install.forced.php
-    echo "Setting up Dolibarr $INSTALL_FORCED_FILE to test installation"
     # Ensure we catch errors
     set +e
     echo '<?php ' > $INSTALL_FORCED_FILE
@@ -496,8 +480,7 @@ script:
     echo
 
   - |
-    echo ===== $(date) =====
-    echo "Upgrading Dolibarr"
+    echo ===== $(date) Upgrading Dolibarr
     # Ensure we catch errors with -e. Set this to +e if you want to go to the end to see log files.
     # Note: We keep +e because with pgsql, one of upgrade process fails even if migration seems ok, so
     # I disable stop on error to be able to continue.
@@ -586,24 +569,21 @@ script:
     echo
 
   - |
-    echo ===== $(date) =====
-    echo Show some debug info, like table content, or migration log from some versions
+    echo ===== $(date) Show some debug info, like table content, or migration log from some versions
     echo '\d llx_blockedlog' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
     cat $TRAVIS_BUILD_DIR/upgrade500600.log
     cat $TRAVIS_BUILD_DIR/upgrade19002000.log
     echo
 
   - |
-    echo ===== $(date) =====
-    echo Result of migration scripts
+    echo ===== $(date) Result of migration scripts
     ls -alrt $TRAVIS_BUILD_DIR/
 
     echo Show content of last file
     cat $TRAVIS_BUILD_DIR/"$(ls -rt $TRAVIS_BUILD_DIR/ | tail -n1)"
 
   - |
-    echo ===== $(date) =====
-    echo "Enabling new modules"
+    echo ===== $(date) Enabling new modules
     # Enable modules not enabled into original dump
     set -e
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_ProductBatch,MAIN_MODULE_SupplierProposal,MAIN_MODULE_STRIPE,MAIN_MODULE_ExpenseReport > $TRAVIS_BUILD_DIR/enablemodule.log
@@ -622,8 +602,7 @@ script:
     echo
 
   - |
-    echo ===== $(date) =====
-    echo "Unit testing"
+    echo ===== $(date) Unit testing
     # Execute phpunit, check its exit status and that the phpunit output shows a test summary
     if [ "x$TRAVIS_RUN_PHPUNIT_SOURCE_SCAN" = "xyes" ]; then
       phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
@@ -640,8 +619,7 @@ script:
 
 after_script:
   - |
-    echo ===== $(date) =====
-    echo "After script - Output last lines of dolibarr.log"
+    echo ===== $(date) After script - Output last lines of dolibarr.log
     ls $TRAVIS_BUILD_DIR/documents
     #cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
     sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
@@ -656,8 +634,7 @@ after_success:
 
 after_failure:
   - |
-    echo ===== $(date) =====
-    echo Failure detected, so we show samples of log to help diagnose
+    echo ===== $(date) Failure detected, so we show samples of log to help diagnose
     # This part of code is executed only if the command that fails are enclosed with set +e
     # Show upgrade log files
     #for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
