@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,6 +87,9 @@ $search_array = array(
 // Access Control
 if (!$user->admin) {
 	accessforbidden();
+}
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not activated.');
 }
 
 
@@ -227,8 +231,39 @@ $sqlCount .= $whereSQL;
 $resqlCount = $db->query($sqlCount);
 $totalRecords = $resqlCount ? $db->fetch_object($resqlCount)->total : 0;
 
+// Token/cost totals over the SAME filter (not only the displayed page),
+// grouped by model so the cost uses each model's own configured price.
+$sqlSum = "SELECT l.model, SUM(l.tokens_input) as tin, SUM(l.tokens_output) as tout
+             FROM " . MAIN_DB_PREFIX . "ai_request_log as l
+             LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON l.fk_user = u.rowid";
+$sqlSum .= $whereSQL;
+$sqlSum .= " GROUP BY l.model";
+$resqlSum = $db->query($sqlSum);
 
-$sql = "SELECT l.rowid, u.login
+/**
+ * Price (in/out, per 1M tokens, in the admin's own currency and contract) for a
+ * model, from the JSON map AI_MODEL_PRICES_JSON, e.g.
+ *   {"gemini-2.5-flash":{"in":0.30,"out":2.50},"default":{"in":1,"out":3}}
+ * Cost is computed at DISPLAY time, so a price update re-prices the history.
+ *
+ * @param string $model Model id as logged
+ * @return array{in:float,out:float}|null Price entry, or null when not configured
+ */
+function aiModelPrice($model)
+{
+	static $prices = null;
+	if ($prices === null) {
+		$prices = json_decode(getDolGlobalString('AI_MODEL_PRICES_JSON', '{}'), true);
+		if (!is_array($prices)) {
+			$prices = array();
+		}
+	}
+	$entry = $prices[$model] ?? ($prices['default'] ?? null);
+	return (is_array($entry) && isset($entry['in'], $entry['out'])) ? array('in' => (float) $entry['in'], 'out' => (float) $entry['out']) : null;
+}
+
+
+$sql = "SELECT l.rowid, u.login, l.date_request, l.query_text, l.tool_name, l.provider, l.execution_time, l.status, l.error_msg, l.raw_request_payload, l.raw_response_payload, l.tokens_input, l.tokens_output, l.model
         FROM " . MAIN_DB_PREFIX . "ai_request_log as l
         LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON l.fk_user = u.rowid";
 $sql .= $whereSQL;
@@ -244,6 +279,32 @@ $object->total = $totalRecords;
 
 $title = $langs->trans("AIRequestLogs");
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalRecords, 'title_ai', 0, '', '', $limit, 1, 0, 0, '');
+
+// Filtered totals: tokens and, when prices are configured, the exact cost
+// (each model's tokens priced with its own AI_MODEL_PRICES_JSON entry).
+if ($resqlSum) {
+	$totIn = 0;
+	$totOut = 0;
+	$totCost = 0.0;
+	$costComplete = true;
+	while ($sumrow = $db->fetch_object($resqlSum)) {
+		$totIn += (int) $sumrow->tin;
+		$totOut += (int) $sumrow->tout;
+		$price = aiModelPrice((string) $sumrow->model);
+		if ($price) {
+			$totCost += ((int) $sumrow->tin * $price['in'] + (int) $sumrow->tout * $price['out']) / 1000000;
+		} elseif ((int) $sumrow->tin + (int) $sumrow->tout > 0) {
+			$costComplete = false;	// tokens exist for a model without a configured price
+		}
+	}
+	if ($totIn + $totOut > 0) {
+		print '<div class="opacitymedium paddingbottom">';
+		print $langs->trans("Total").': '.number_format($totIn, 0, '', ' ').' in / '.number_format($totOut, 0, '', ' ').' out';
+		print ' &nbsp;&mdash;&nbsp; '.price($totCost, 0, $langs, 1, -1, 4).($costComplete ? '' : ' (+ '.$langs->trans("Unknown").')');
+		print ' &nbsp;<span title="AI_MODEL_PRICES_JSON, price per 1M tokens, e.g. {&quot;gemini-2.5-flash&quot;:{&quot;in&quot;:0.30,&quot;out&quot;:2.50},&quot;default&quot;:{&quot;in&quot;:1,&quot;out&quot;:3}}">'.img_info('').'</span>';
+		print '</div>';
+	}
+}
 
 print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" name="limitform">';
 print '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -305,6 +366,8 @@ print_liste_field_titre("Query", $_SERVER["PHP_SELF"], "l.query_text", "", $para
 print_liste_field_titre("MCPTool", $_SERVER["PHP_SELF"], "l.tool_name", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Provider", $_SERVER["PHP_SELF"], "l.provider", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Time", $_SERVER["PHP_SELF"], "l.execution_time", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("Tokens", $_SERVER["PHP_SELF"], "l.tokens_output", "", $param, 'align="center" title="input / output (thinking included)"', $sortfield, $sortorder);
+print_liste_field_titre("Cost", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
 print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.status", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
 print '</tr>';
@@ -328,6 +391,9 @@ print '<td class="liste_titre"><input type="text" name="search_provider" value="
 print '<td class="liste_titre center">';
 print '<input type="text" name="search_time_min" value="' . dol_escape_htmltag($search_time_min) . '" size="3" placeholder="' . dol_escape_htmltag($langs->trans('Min')) . '">';
 print '<input type="text" name="search_time_max" value="' . dol_escape_htmltag($search_time_max) . '" size="3" placeholder="' . dol_escape_htmltag($langs->trans('Max')) . '">';
+// Tokens and Cost columns carry no filter
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
 // Status search
 print '<td class="liste_titre center">';
 $status_options = array('' => $langs->trans("All"), 'success' => $langs->trans("Success"), 'confirm' => $langs->trans("Confirm"), 'error' => $langs->trans("Error"));
@@ -344,7 +410,7 @@ print '</tr>';
 
 // Mass action buttons
 print '<tr class="liste_titre">';
-print '<td class="liste_titre" colspan="8">';
+print '<td class="liste_titre" colspan="10">';
 print '<div class="center">';
 print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=purge&token='.newToken().'" onclick="return confirm(\''.$langs->trans("ConfirmDeleteAllLogs").'\');">'.$langs->trans("ClearAllLogs").'</a></div>';
 print '</div>';
@@ -375,6 +441,20 @@ if ($resql && $num > 0) {
 		// Time
 		$timeColor = ($obj->execution_time > 5) ? 'color:red;' : '';
 		print '<td style="' . $timeColor . '" align="center">' . round($obj->execution_time, 2) . 's</td>';
+
+		// Tokens (input / output) and cost, when the provider reported usage
+		if (isset($obj->tokens_input) || isset($obj->tokens_output)) {
+			print '<td align="center" class="nowrap" title="' . dol_escape_htmltag((string) $obj->model) . '">' . ((int) $obj->tokens_input) . ' / ' . ((int) $obj->tokens_output) . '</td>';
+			$price = aiModelPrice((string) $obj->model);
+			if ($price) {
+				$cost = ((int) $obj->tokens_input * $price['in'] + (int) $obj->tokens_output * $price['out']) / 1000000;
+				print '<td align="center" class="nowrap">' . price($cost, 0, $langs, 1, -1, 4) . '</td>';
+			} else {
+				print '<td align="center" class="opacitymedium">-</td>';
+			}
+		} else {
+			print '<td align="center" class="opacitymedium">-</td><td align="center" class="opacitymedium">-</td>';
+		}
 
 		// Status
 		$badge = 'badge-status0';
@@ -408,7 +488,7 @@ if ($resql && $num > 0) {
 		$i++;
 	}
 } else {
-	$colspan = 8;
+	$colspan = 10;
 	print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoLogsFound");
 	if (!empty($where)) {
 		print ' ' . $langs->trans("MatchingSearchCriteria");

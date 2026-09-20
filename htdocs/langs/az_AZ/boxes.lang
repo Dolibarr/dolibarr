@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Son müştəri göndərişləri
 BoxTitleLastCustomerShipments=Ən son %s dəyişdirilmiş müştəri göndərişləri
 BoxTitleLastLeaveRequests=Ən son %s dəyişdirilmiş məzuniyyət sorğuları
 NoRecordedShipments=Müştəri göndərişi qeydə alınmayıb
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Gözlənilməmiş limitə çatmış müştərilər
 BoxTitleLastFediverseInfos=%s ünvanından son %s postlar
 BoxLastFediverseInfos=Ən son Fediverse Yeniləmələri: Xəbərlər və Trendlər

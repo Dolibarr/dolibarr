@@ -10,7 +10,9 @@
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026 Joris Le Blansch <ping@apio.systems>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +39,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -51,7 +54,6 @@ if (isModEnabled('project')) {
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'compta', 'admin', 'other', 'products', 'banks'));
@@ -105,8 +107,7 @@ $object = new FactureRec($db);
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	$ret = $object->fetch($id, $ref);
 	if ($ret < 0) {
-		dol_print_error($db, $object->error, $object->errors);
-		exit;
+		recordNotFound();
 	} elseif (! $ret) {
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
@@ -114,7 +115,6 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicereccard', 'globalcard'));
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -759,9 +759,19 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, 0, $pu_ttc, $type, -1, $special_code, $label, (int) $fk_unit, 0, $date_start_fill, $date_end_fill, (int) $fournprice, $buyingprice, $fk_parent_line);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, 0, $pu_ttc, $type, -1, $special_code, $label, (int) $fk_unit, 0, $date_start_fill, $date_end_fill, (int) $fournprice, (float) $buyingprice, $fk_parent_line);
 
 				if ($result > 0) {
+					// TODO add "insert" function into FactureLigneRec or add "invoicerecline.class.php" (same of "factureligne.class.php")
+					$objectline = new FactureLigneRec($db);
+					if ($objectline->fetch($result)) {
+						$objectline->array_options = $array_options;
+						$result = $objectline->insertExtraFields();
+						if ($result < 0) {
+							setEventMessages($langs->trans('Error').$result, null, 'errors');
+						}
+					}
+
 					// Define output language and generate document
 					/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 					{
@@ -827,6 +837,27 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		}
+	} elseif ($action == 'confirm_addtextline' && $usercancreate) {
+		// Handling adding a new text line for subtotals module
+
+		$langs->load('subtotals');
+
+		$desc = GETPOST('subtotaltextcontent', 'restricthtml');
+
+		// Insert line
+		$result = $object->addSubtotalLine($langs, $desc, 0, array());
+
+		if ($result >= 0) {
+			if ($result == 0) {
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		exit();
 	} elseif ($action == 'confirm_addtitleline' && $usercancreate) {
 		// Handling adding a new title line for subtotals module
 
@@ -1181,6 +1212,25 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'updatetextline' && GETPOSTISSET("save") && $usercancreate && !GETPOST('cancel', 'alpha')) {
+		// Handling updating a text line for subtotals module
+
+		$langs->load('subtotals');
+
+		$desc = GETPOST('line_desc', 'restricthtml');
+
+		// Update line
+		$result = $object->updateSubtotalLine($langs, GETPOSTINT('lineid'), $desc, 0, array());
+
+		if ($result >= 0) {
+			if ($result == 0) {
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'updatesubtotalline' && GETPOSTISSET("save") && $usercancreate && !GETPOST('cancel', 'alpha')) {
 		// Handling updating a subtotal line for subtotals module
 
@@ -1327,7 +1377,7 @@ if ($action == 'create') {
 		// Customer Bank Account
 		print "<tr><td>".$langs->trans('DebitBankAccount')."</td><td>";
 		$defaultRibId = $sourceInvoice->thirdparty->getDefaultRib();
-		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $defaultRibId, 'accountcustomerid', 'fk_soc='.$sourceInvoice->socid, 1, '', 1);
+		$form->selectRib(GETPOSTISSET('accountcustomerid') ? GETPOSTINT('accountcustomerid') : $defaultRibId, 'accountcustomerid', '(fk_soc:=:'.$sourceInvoice->socid.")", 1, '', 1);
 		print "</td></tr>";
 
 		print '<script>
@@ -1374,7 +1424,6 @@ if ($action == 'create') {
 		$draft = new Facture($db);
 		$draft->fetch(GETPOSTINT('facid'));
 
-		$extralabels = new ExtraFields($db);
 		$extralabels = $extrafields->fetch_name_optionals_label($draft->table_element);
 		if ($draft->fetch_optionals() > 0) {
 			$sourceInvoice->array_options = array_merge($sourceInvoice->array_options, $draft->array_options);
@@ -1445,7 +1494,7 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Date next run
-		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
+		print "<tr><td>".$form->textwithpicto($langs->trans('NextDateToExecution'), $langs->trans("NextDateToExecutionHelp"))."</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOSTINT('remonth') ? dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear')) : -1);
 		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
@@ -1575,6 +1624,10 @@ if ($action == 'create') {
 			$type = 'subtotal';
 			$titles = $object->getPossibleTitles();
 			require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+		} elseif ($action == 'add_text_line') {
+			$langs->load('subtotals');
+			$type = 'text';
+			require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
 		}
 
 		// Call Hook formConfirm
@@ -1703,7 +1756,7 @@ if ($action == 'create') {
 			print $langs->trans('DebitBankAccount');
 			print '<td>';
 
-			if (($action != 'editbankaccountcustomer') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+			if (($action != 'editbankaccountcustomer') && $user->hasRight('facture', 'creer') && $object->status == FactureRec::STATUS_DRAFT) {
 				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editbankaccountcustomer&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetDebitBankAccount'), 1) . '</a></td>';
 			}
 			print '</tr></table>';
@@ -1723,7 +1776,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
 		print '<td>';
-		if (($action != 'editbankaccount') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+		if (($action != 'editbankaccount') && $user->hasRight('facture', 'creer') && $object->status == FactureRec::STATUS_DRAFT) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1763,7 +1816,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('Model');
 		print '<td>';
-		if (($action != 'editmodelpdf') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+		if (($action != 'editmodelpdf') && $user->hasRight('facture', 'creer') && $object->status == FactureRec::STATUS_DRAFT) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1959,9 +2012,9 @@ if ($action == 'create') {
 			// Date when (next invoice generation)
 			print '<tr><td>';
 			if ($action == 'date_when' || $object->frequency > 0) {
-				print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day');
+				print $form->editfieldkey($form->textwithpicto($langs->trans("NextDateToExecution"), $langs->trans("NextDateToExecutionHelp")), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day');
 			} else {
-				print $langs->trans("NextDateToExecution");
+				print $form->textwithpicto($langs->trans("NextDateToExecution"), $langs->trans("NextDateToExecutionHelp"));
 			}
 			print '</td><td>';
 			if ($action == 'date_when' || $object->frequency > 0) {
@@ -2132,7 +2185,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="id" value="' . $object->id.'">';
 		print '<input type="hidden" name="page_y" value="">';
 
-		if (!empty($conf->use_javascript_ajax) && $object->statut == 0) {
+		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
 			if (isModEnabled('subtotals')) {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_ajaxrow.tpl.php';
 			} else {
@@ -2188,7 +2241,7 @@ if ($action == 'create') {
 
 			// Subtotal
 			if (empty($object->suspended) && isModEnabled('subtotals')
-				&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)))) {
+				&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_TEXT_'.strtoupper($object->element)))) {
 				$langs->load("subtotals");
 
 				$url_button = array();
@@ -2208,7 +2261,15 @@ if ($action == 'create') {
 					'label' => $langs->trans('AddSubtotalLine'),
 					'url' => '/compta/facture/card-rec.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
 				);
-				print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
+
+				$url_button[] = array(
+					'lang' => 'subtotals',
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TEXT_'.strtoupper($object->element))),
+					'perm' => (bool) $usercancreate,
+					'label' => $langs->trans('AddTextLine'),
+					'url' => '/compta/facture/card-rec.php?id='.$object->id.'&action=add_text_line&token='.newToken()
+				);
+				print dolGetButtonAction('', $langs->trans('SubTotal'), 'default', $url_button, '', true);
 			}
 
 			if (empty($object->suspended)) {

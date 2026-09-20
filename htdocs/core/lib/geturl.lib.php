@@ -30,6 +30,8 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
+ * To test there is no error, you can do:  if (empty($resultget['curl_error_no']) && $resultget['http_code'] == 200) ...
+ *
  * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.log file.
  *
  * @param	string	  					$url 			    URL to call.
@@ -205,6 +207,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_setopt($ch, CURLOPT_HEADER, true);
 	} elseif ($postorget == 'DELETE') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
 	} else {
@@ -244,7 +247,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($newUrl);
-		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names
@@ -257,6 +260,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => $info['content']);
 		}
 
+		/* Discard full numeric hostname */
+		if (preg_match('/^[x0-9a-f]+$/', $hosttocheck)) {
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
+		}
+
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
 		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
 			$iptocheck = '127.0.0.1';
@@ -264,12 +272,15 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
+			// Not that a bad numeric hostname like 2130706433 will be resolved int 127.0.0.1 but
+			// this case is filtered previously.
 			$iptocheck = resolveDns($hosttocheck);
 		}
 
 		// Check $iptocheck is an IP (v4 or v6), if not clear value.
-		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
 			$iptocheck = '0'; // will disabled check on IP
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
 		}
 
 		if ($iptocheck) {
@@ -286,8 +297,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		if ($iptocheck) {
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
+			// Format is "host:port:ip:port". Port fields MUST use %s, not %d: an empty port (default 80/443) must stay empty so it matches "any port" and pins to the same port. With %d the empty string becomes 0 ("host:0:ip:0"), never matches the real port, and libcurl ignores the pin, re-opening a DNS-rebinding SSRF bypass.
 			if (defined('CURLOPT_CONNECT_TO')) {
-				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $iptocheck, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
+				$connect_to = array(sprintf("%s:%s:%s:%s", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $iptocheck, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
 				//var_dump($newUrlArray);
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
@@ -371,7 +383,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
-			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+			if ($postorget == 'HEAD' || getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
 				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
 				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
 			}
@@ -491,6 +503,7 @@ function isIPAllowed($iptocheck, $localurl)
  * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
+ * @see getRootURLFromURL()
  */
 function getDomainFromURL($url, $mode = 0)
 {
@@ -546,6 +559,7 @@ function getDomainFromURL($url, $mode = 0)
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
+ * @see getDomainFromURL()
  */
 function getRootURLFromURL($url)
 {

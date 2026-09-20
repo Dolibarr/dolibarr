@@ -57,6 +57,11 @@ class Import
 	public $array_import_module;
 
 	/**
+	 * @var array<array<string,string>>
+	 */
+	public $array_import_types;
+
+	/**
 	 * @var int[]
 	 */
 	public $array_import_perms;
@@ -112,7 +117,7 @@ class Import
 	public $array_import_updatekeys;
 
 	/**
-	 * @var array<''|array<string,string>>
+	 * @var array<int,string[]>	Update keys preselected on the screen, as field aliases
 	 */
 	public $array_import_preselected_updatekeys;
 
@@ -281,8 +286,7 @@ class Import
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
 						// Array of columns preselected as UPDATE options
-						// import_preselected_updatekeys_array does not exist - backward compatibility ?  @phan-suppress-next-line PhanUndeclaredProperty
-						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : '');
+						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : array());
 						// Array of examples
 						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
 						// Table of conversion rules for a value from another source (key=field, value=array of rules)
@@ -291,6 +295,8 @@ class Import
 						$this->array_import_run_sql_after[$i] = (isset($module->import_run_sql_after_array[$r]) ? $module->import_run_sql_after_array[$r] : '');
 						// Module
 						$this->array_import_module[$i] = array('position_of_profile' => ($module->module_position.'-'.$module->import_code[$r]), 'module' => $module);
+						// Type
+						$this->array_import_types[$i] = (isset($module->import_TypeFields_array[$r]) ? $module->import_TypeFields_array[$r] : array());
 
 						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_array[$r]));
 						$i++;

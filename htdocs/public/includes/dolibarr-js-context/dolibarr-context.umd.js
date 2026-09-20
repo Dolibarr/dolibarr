@@ -229,8 +229,18 @@
 
 		/**
 		 * Internal logger
-		 * Only prints when debug mode is enabled
-		 * @param {string} msg
+		 * Outputs logs only when debug mode is enabled.
+		 *
+		 * Why use Dolibarr.log instead of console.log?
+		 * Dolibarr.log avoids console noise caused by the Dolibarr core context
+		 * or internal notices that can easily spam the console.
+		 * Dolibarr.log is primarily intended to be used by the Dolibarr context itself,
+		 * providing a unified logging mechanism across the application.
+		 *
+		 * This allows module developers to focus on their own logs (with console.log)
+		 * without being distracted by unrelated global Dolibarr activity.
+		 *
+		 * @param {string} msg Log message
 		 */
 		log(msg) {
 			if (_debug) console.log(`Dolibarr: ${msg}`);
@@ -481,7 +491,7 @@
 		);
 
 		console.log("Show this help : %cDolibarr.tools.showConsoleHelp();","font-weight: bold;");
-		console.log(`Documentation for admin only on :  %cModule builder ➜ UX Components Doc`,"font-weight: bold;");
+		console.log("`Documentation for admin only on :  %cModule builder ➜ UX Components Doc","font-weight: bold;");
 
 		// DEBUG MODE
 		console.groupCollapsed("Dolibarr debug mode");

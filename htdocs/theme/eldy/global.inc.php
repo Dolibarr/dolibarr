@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
@@ -208,7 +208,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
-	--tableforfieldcolor:#888;
+	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
 	--amountremaintopaybackcolor:none;
@@ -218,6 +218,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--tablevalidbgcolor: rgb(252, 248, 227);
 	--colorblack: #000;
 	--colorwhite: #fff;
+	--colorwhitelight: #eee;
 	--heightrow: <?php print $heightrow; ?>;
 }
 
@@ -274,6 +275,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
 				--colorwhite: #000;
+				--colorwhitelight: #333;
 	      }
 
 		body, button {
@@ -394,11 +396,11 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 	border: none;
 	border-style: solid;
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>-width: 1px !important;
-	border-color: var(<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
+	border-color: var(<?php echo (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') && getDolGlobalString('THEME_ELDY_BACKTITLE1') != '255,255,255') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
 
 .divadvancedsearchfieldcompinput,
-div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
+div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea:not(.cke_source), div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
@@ -517,6 +519,7 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
+	box-shadow: 0 0 4px rgb(0, 0, 0, 0.18);
 }
 section.setupsection:hover {
 	box-shadow: 0 0 5px #aaa;
@@ -694,7 +697,6 @@ tr.tdsmallheight, tr.tdsmallheight td {
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
 	border: none;
-	border-bottom: solid 1px rgba(0,0,0,0.4);
 	margin-right: 1px !important;
 }
 td.onholidaymorning, td.onholidayafternoon {
@@ -813,6 +815,10 @@ input.pageplusone {
 .noopacity {
 	opacity: unset !important;
 }
+.spantitle {
+	opacity: 0.6;
+	font-size: 0.95em;
+}
 .colorwhite {
 	color: var(--colorwhite);
 }
@@ -838,8 +844,11 @@ input.pageplusone {
 .hmirror {
 	transform: scale(-1, 1);
 }
-.undertopmenu {
+.anchorundermenu {
 	scroll-margin-top: 80px;
+}
+.banner-object-label {
+	opacity: 0.8;
 }
 
 select:invalid, select.--error {
@@ -911,7 +920,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	/* background: #f3f3f3; */
 
 	padding: 20px 20px 20px 20px;
-	border-radius: 8px;
+	border-radius: 5px;
 }
 .formborder {
 	border: solid 2px #444;
@@ -935,6 +944,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 }
 
 .button:not(.bordertransp):not(.buttonpayment),
+.buttonCancel:not(.bordertransp):not(.buttonpayment),
 .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	margin-bottom: 3px;
 	margin-top: 3px;
@@ -976,12 +986,6 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	box-shadow: none;
 	cursor: auto;
 	text-decoration: none;
-}
-.buttonRefused {
-	pointer-events: none;
-	   cursor: default;
-	opacity: 0.4;
-	box-shadow: none;
 }
 .button_search, .button_removefilter {
 	border: unset;
@@ -1100,12 +1104,24 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.smallimp {
+	font-size: 85% !important;
+}
 .select2-results__option .smallincombo {
 	font-size: 95%;
 	font-weight: bold;
 }
+.tdlineheightsmall {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	vertical-align: middle;
+}
 .lineheightsmall {
-	line-height: 1.2em;
+	line-height: 1.3em;
+	vertical-align: middle;
+}
+.lineheightmedium {
+	line-height: 1.5em;
 }
 .line-height-large {
 	line-height: 1.8em;
@@ -1375,6 +1391,14 @@ td.wordbreak img, td.wordbreakimp img {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+div.kmcontent {
+	border: 1px solid #E0E0E0;
+	background-color: var(--colorbacklineimpair2);
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
 
 div.urllink {
 	padding: 5px;
@@ -1492,9 +1516,11 @@ span.fa.fa-plus-circle.paddingleft {
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
 	font-size: 1.5em;
+}
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
+.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
 	vertical-align: text-bottom;
 }
-
 .divoverflow {
 	overflow: hidden;
 	white-space: nowrap;
@@ -1634,10 +1660,15 @@ div.divsearchfield {
 }
 
 .a-filter, .a-mesure {
+	padding: 8px 10px 8px 6px;
+}
+.a-selection {
+	padding: 8px 10px 8px 10px;
+}
+.a-filter, .a-mesure, .a-selection {
 	border-radius: 50px;
 	background: var(--colortexttitlenotab);
-	color: #fff;
-	padding: 8px 10px 8px 6px;
+	color: #fff !important;
 }
 .a-filter:before {
 	content: "\f0b0";
@@ -1651,7 +1682,7 @@ div.divsearchfield {
 	padding-right: 5px;
 	padding-left: 5px;
 }
-.a-filter-disabled, .a-mesure-disabled {
+.a-filter-disabled, .a-mesure-disabled, .a-selection-disabled {
 	border-radius: 50px;
 	background: var(--colorbacktitle1);
 	padding: 8px;
@@ -2035,6 +2066,7 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	font-size: 0.85em;
 }
 
+/* This CSS can be used for password fields when input type is text */
 .text-security {
 	-webkit-text-security: disc;
 }
@@ -2664,8 +2696,8 @@ td.showDragHandle {
 <?php } else { ?>
 	display: table-cell;
 <?php } ?>
-	border-<?php echo $right; ?>: 1px solid #ECECEC;
-	border-bottom: 1px solid #ECECEC;
+	border-<?php echo $right; ?>: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -3016,7 +3048,7 @@ span.widthpictotitle.pictotitle {
 }
 .pictosubstatus {
 	padding: 4px;
-	border: 1px solid #ccc;
+	border: 1px solid #e8e8e8;
 	vertical-align: middle;
 	margin-right: 3px;
 	margin-left: 3px;
@@ -3025,6 +3057,9 @@ span.widthpictotitle.pictotitle {
 .pictosubstatus img {
 	vertical-align: text-bottom;
 	display: inline-block;
+}
+a.pictosubstatus:hover {
+	background-color: var(--colorbackhmenu1);
 }
 .pictostatus {
 	width: 15px;
@@ -3054,12 +3089,12 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 22px;	/* Do not use em unit here */
+	width: 22px;	/* Do not use em unit here, it varies on font size */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 16px;	/* Do not use em unit here */
-	padding-right: 6px;		/* width of img + padding-right must be equal to width of .pictofixedwidth */
+	width: 16px;	/* Do not use em unit here, it varies on font size */
+	padding-right: 6px;		/* img width + img padding-right must be equal to width of .pictofixedwidth */
 	margin-right: 4px;
 }
 
@@ -3191,7 +3226,8 @@ img.photorefnoborder {
 	border-bottom: 1px solid var(--colorbackgrey);
 	box-shadow: 0 0 3px var(--colorbackgrey);
 	<?php } else { ?>
-	<?php } } ?>
+	<?php }
+} ?>
 }
 
 div#tmenu_tooltip {
@@ -3469,80 +3505,80 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 	<?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
 	<?php
-	// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+		// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-	$moduletomainmenu = array(
-		'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
-		'produit' => 'products', 'service' => 'products', 'stock' => 'products',
-		'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
-		'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
-		'fournisseur' => 'companies',
-		'barcode' => '', 'fckeditor' => '', 'categorie' => '',
-	);
-	$mainmenuused = 'home';
-	foreach ($conf->modules as $val) {
-		$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
-	}
-	$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
-
-	$generic = 1;
-	// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-	$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
-	// Put here list of menu entries we are sure we don't want
-	$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-
-	foreach ($mainmenuusedarray as $val) {
-		if (empty($val) || in_array($val, $divalreadydefined)) {
-			continue;
+		$moduletomainmenu = array(
+			'user' => '', 'syslog' => '', 'societe' => 'companies', 'projet' => 'project', 'propale' => 'commercial', 'commande' => 'commercial',
+			'produit' => 'products', 'service' => 'products', 'stock' => 'products',
+			'don' => 'accountancy', 'tax' => 'accountancy', 'banque' => 'accountancy', 'facture' => 'accountancy', 'compta' => 'accountancy', 'accounting' => 'accountancy', 'adherent' => 'members', 'import' => 'tools', 'export' => 'tools', 'mailing' => 'tools',
+			'contrat' => 'commercial', 'ficheinter' => 'commercial', 'ticket' => 'ticket', 'deplacement' => 'commercial',
+			'fournisseur' => 'companies',
+			'barcode' => '', 'fckeditor' => '', 'categorie' => '',
+		);
+		$mainmenuused = 'home';
+		foreach ($conf->modules as $val) {
+			$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
 		}
-		if (in_array($val, $divnotrequired)) {
-			continue;
-		}
+		$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
 
-		$found = 0;
-		$url = '';
-		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
-		$iconformodule = getDolGlobalString($constformoduleicon);
-		if ($iconformodule) {
-			if (preg_match('/^fa\-/', $iconformodule)) {
-				// This is a fa icon
-			} else {
-				$url = dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+		$generic = 1;
+		// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+		$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
+		// Put here list of menu entries we are sure we don't want
+		$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+
+		foreach ($mainmenuusedarray as $val) {
+			if (empty($val) || in_array($val, $divalreadydefined)) {
+				continue;
 			}
-			$found = 1;
-		} else {
-			// Search img file in module dir
-			foreach ($conf->file->dol_document_root as $dirroot) {
-				if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-					$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-					$found = 1;
-					break;
+			if (in_array($val, $divnotrequired)) {
+				continue;
+			}
+
+			$found = 0;
+			$url = '';
+			$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
+			$iconformodule = getDolGlobalString($constformoduleicon);
+			if ($iconformodule) {
+				if (preg_match('/^fa\-/', $iconformodule)) {
+					// This is a fa icon
+				} else {
+					$url = dol_buildpath('/'.$val.'/img/'.$iconformodule.'.png', 1);
+				}
+				$found = 1;
+			} else {
+				// Search img file in module dir
+				foreach ($conf->file->dol_document_root as $dirroot) {
+					if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
+						$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+						$found = 1;
+						break;
+					}
+				}
+			}
+			//print "XXX".$val."->".$found."\n";
+
+			// Output entry for menu icon in CSS
+			if (!$found) {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+				print 'div.mainmenu.'.$val.' span::before {'."\n";
+				print 'content: "\f249";'."\n";
+				print '}'."\n";
+				$generic++;
+			} else {
+				if ($url) {
+					print "div.mainmenu.".$val." {\n";
+					print "	background-image: url(".$url.");\n";
+					print " background-position-y: 3px;\n";
+					print " filter: saturate(0);\n";
+					print "}\n";
+				} else {
+					print '/* icon for module '.$val.' is a fa icon */'."\n";
 				}
 			}
 		}
-		//print "XXX".$val."->".$found."\n";
-
-		// Output entry for menu icon in CSS
-		if (!$found) {
-			print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-			print 'div.mainmenu.'.$val.' span::before {'."\n";
-			print 'content: "\f249";'."\n";
-			print '}'."\n";
-			$generic++;
-		} else {
-			if ($url) {
-				print "div.mainmenu.".$val." {\n";
-				print "	background-image: url(".$url.");\n";
-				print " background-position-y: 3px;\n";
-				print " filter: saturate(0);\n";
-				print "}\n";
-			} else {
-				print '/* icon for module '.$val.' is a fa icon */'."\n";
-			}
-		}
-	}
-	// End of part to add more div class css
-	?>
+		// End of part to add more div class css
+		?>
 <?php } // End test if $dol_hide_topmenu?>
 
 .tmenuimage {
@@ -3607,7 +3643,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
 	/* border: none; */
-	border-bottom: solid 1px rgba(180,180,180,.4);
+	border-bottom: solid 1px rgba(160,160,160,.4);
 	padding: 8px;
 	padding-left: 12px;
 	margin-left: 5px;
@@ -3641,8 +3677,8 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.8em;
-	right: 11px;
+	top: 1.1em;
+	right: 20px;
 	background: none;
 	border: none;
 	opacity: 0.3;
@@ -3776,8 +3812,8 @@ div.login_block_other {
 div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
-	height: <?php echo $disableimages ? '25' : '51'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
+	height: <?php echo $disableimages ? '25' : '50'; ?>px;
 }
 
 .login_block_elem {
@@ -3844,6 +3880,7 @@ img.login, img.printer, img.entity {
 	background-size: contain;
 	border: 1px solid;
 	border-color: rgba(255, 255, 255, 0.2);
+	box-sizing: border-box; /* border is inside */
 }
 img.userphoto {			/* size for user photo in lists */
 	border-radius: 0.72em;
@@ -3851,6 +3888,9 @@ img.userphoto {			/* size for user photo in lists */
 	height: 1.4em;
 	background-size: contain;
 	vertical-align: middle;
+	border: 1px solid;
+	border-color: #ddd;
+	box-sizing: border-box; /* border is inside */
 }
 .userimg.atoplogin span.userphoto, .userimgatoplogin span.userphoto {
 	vertical-align: middle;
@@ -3877,6 +3917,9 @@ img.userphotosmall {			/* size for user photo in lists */
 	background-size: contain;
 	vertical-align: middle;
 	background-color: #FFF;
+	border: 1px solid;
+	border-color: #ddd;
+	box-sizing: border-box; /* border is inside */
 }
 img.userphotopublicvcard {
 	width: 60px;
@@ -4402,12 +4445,6 @@ span.tabspan {
 	width: 100%;
 }
 
-#undertopmenu {
-	background-repeat: repeat-x;
-	margin-top: <?php echo($dol_hide_topmenu ? '6' : '0'); ?>px;
-}
-
-
 .paddingrightonly {
 	border-collapse: collapse;
 	border: 0px;
@@ -4602,7 +4639,7 @@ td.border, div.tagtable div div.border {
 table.noborder {
 	background: var(--colorbacktabcard1);
 }
-<?php if (getDolGlobalString('THEME_ELDY_SHADOW_ON_SMALL_BOXES')) { // TODO Disable on smartphone ?>
+<?php if (getDolGlobalString('THEME_ELDY_SHADOW_ON_SMALL_BOXES')) { // TODO Disable on smartphone?>
 .firstcolumn .div-table-responsive-no-min, .secondcolumn .div-table-responsive-no-min {
 	overflow-x: unset;
 }
@@ -4641,6 +4678,13 @@ table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:first-of-type {
+	background: unset;	/* note using background-color here does not work */
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type {
+	background: unset;	/* note using background-color here does not work */
+}
+
 /* CSS to remove the interline border */
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
@@ -4651,6 +4695,7 @@ table.nointerlines tr:not(:last-child) td {
 /* Management of border radius */
 table.noborder:not(.cal_month, .paymenttable) {
 	border-radius: <?php echo $borderradius; ?>px;
+	/* overflow: hidden; */ /* Firefox does not clip cell backgrounds to the table border-radius without this */
 }
 table.noborder.cal_month {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
@@ -4692,6 +4737,7 @@ table.liste:not(.listwithfilterbefore) {
 table.liste {
 	border-bottom-left-radius: <?php echo $borderradius; ?>px;
 	border-bottom-right-radius: <?php echo $borderradius; ?>px;
+	/* overflow: hidden; */ /* Firefox does not clip cell backgrounds to the table border-radius without this */
 }
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child td:first-child,
 table.liste:not(.listwithfilterbefore) tr.liste_titre_filter:first-child th:first-child {
@@ -4853,6 +4899,7 @@ table.listwithfilterbefore {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
+.tagtd { padding-top: 5px; padding-bottom: 5px; }
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
 .confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
@@ -5019,7 +5066,8 @@ table.hidepaginationnext .paginationnext {
 
 
 /* Set the color for hover lines */
-.oddeven:hover:not(.nohover), .evenodd:hover:not(.nohover), .oddevenimport:hover:not(.nohover), .evenoddimport:hover:not(.nohover), .impair:hover:not(.nohover), .pair:hover:not(.nohover) {
+table.liste .oddeven:hover:not(.nohover), table.liste .evenodd:hover:not(.nohover), table.liste .oddevenimport:hover:not(.nohover), table.liste .evenoddimport:hover:not(.nohover),
+table.liste .impair:hover:not(.nohover), table.liste .pair:hover:not(.nohover) {
 	background: var(--colorbacklinepairhover) !important;		/* Must be background to be stronger than background of odd or even */
 }
 
@@ -5167,7 +5215,6 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
 tr.liste_titre:first-child th, tr:first-child th.liste_titre {
-/*    border-bottom: 1px solid #ddd ! important; */
 	border-bottom: unset;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
@@ -5196,10 +5243,15 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink:hover {
 	background: transparent;
 }
-tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	/* border-bottom: 1px solid #ddd; */
+
+/* For last line of table headers with no thead only */
+table > tr.liste_titre:last-child th.liste_titre, table > tr.liste_titre:last-child th.liste_titre_sel, table > tr.liste_titre td.liste_titre, table > tr.liste_titre td.liste_titre_sel,
+table > tbody > tr.liste_titre:last-child th.liste_titre, table > tbody > tr.liste_titre:last-child th.liste_titre_sel, table > tbody > tr.liste_titre td.liste_titre, table > tbody > tr.liste_titre td.liste_titre_sel,
+form.liste_titre div.tagtd {
 	border-bottom: unset;
 }
+
+
 
 div.liste_titre {
 	padding-left: 3px;
@@ -5236,7 +5288,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 1px solid #aaa;
 }
 /* to avoid too much border on contract card */
-.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
+.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart1 .oddeven, .tableforservicepart2 .impair, .tableforservicepart2 .pair, .tableforservicepart2 .oddeven {
 	background: #FFF;
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
@@ -5283,7 +5335,7 @@ div.tabBar .noborder {
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 
-#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
+#tablelines tr.liste_titre td, #tablelinesservice tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td:not(.noborder), .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid var(--colortopbordertitle1) !important;
 }
 #tablelines tr td, #tablelinesservice tr td {
@@ -5381,10 +5433,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 3px;
 	width: 118px;
 }
-
+<?php if (getDolGlobalString('MAIN_CSS_USE_SHADOWS') && getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
+.boxtable, .firstcolumn table.noborder, .secondcolumn table.noborder {
+	box-shadow: -2px 1px 12px rgba(192, 192, 192, 0.5);
+}
+<?php } ?>
 .boxtable:not(.widgetstats) td.tdboxstats .boxstats {
 	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
 	border-radius: 6px;
+
 }
 
 .tabBar .fichehalfright .boxstats {
@@ -5730,7 +5787,7 @@ img.boxhandle, img.boxclose {
  */
 
 .ok      { color: #114466; }
-.warning { color: #665511 !important; }
+.warning { color: #776611 !important; }
 .error   { color: #660000 !important; font-weight: bold; }
 .green   { color: #118822 !important; }
 .neutral { color: #444 !important; }
@@ -5748,8 +5805,10 @@ div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 	border-radius: 5px;
 }
 
-div.fiche div.info, div.fiche div.warning, div.fiche div.neutral {
+div.fiche div.info, div.fiche div.warning, div.fiche div.neutral, div.fiche div.green {
+	<?php if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
 	box-shadow: 1px 1px 6px #d4d4d4;
+	<?php } ?>
 	margin: 1em 0em 1.2em 0em;
 }
 
@@ -5769,7 +5828,7 @@ div.info {
 }
 
 /* Ok message */
-div.green div.greenborder, section.green, section.greenborder {
+div.green div.greenborder, div.green.greenborder, section.green, section.greenborder {
 	border-<?php print $left; ?>: solid 5px #118822;
 }
 div.green, section.green {
@@ -5791,6 +5850,7 @@ div.warning a, div.info a, div.error a {
 div.error {
 	border-<?php print $left; ?>: solid 5px #f28787;
 	background: #EFCFCF;
+	font-weight: normal;
 }
 
 
@@ -5926,8 +5986,6 @@ table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
-	/* padding-top: 5px;
-	padding-bottom: 5px; */
 	font-weight: 400;
 }
 div.titre.small {
@@ -5939,7 +5997,7 @@ div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
 }
-div.titre {
+div.titre, tr.liste_titre .print-barre-liste {
 	color: var(--colortexttitlenotab);
 }
 
@@ -5991,6 +6049,9 @@ div.backgreypublicpayment {
 	color: #222;
 	opacity: 0.3;
 }
+a.poweredbyhref {
+	text-decoration: none;
+}
 
 #dolpublictable {
 	min-width: 300px; font-size: 16px;
@@ -6006,7 +6067,7 @@ div.backgreypublicpayment {
 	width: 100%;
 	padding: 20px;
 	margin-bottom: 25px;
-	border-radius: 4px;
+	border-radius: 10px;
 }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -6022,6 +6083,7 @@ input#cardholder-name {
 #tablesubscribe { width: 100%; }
 #tablesubscribe tr td { font-size: 1.15em; }
 #tablesubscribe .price-registration { font-size: 1.5em; }
+#tablesubscribe .selectphonecode { font-size: 0.94em; }
 
 
 div#card-element {
@@ -6101,6 +6163,8 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	padding-right: 5px;
 	padding-top: 5px;
 	padding-bottom: 5px;
+	min-width: 300px;
+	max-width: 70%;
 }
 .ui-widget-header {
 	padding: 8px !important;
@@ -6162,7 +6226,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 }
 
 
-	/* ============================================================================== */
+/* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
 
@@ -6178,7 +6242,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 /* Formulaire confirmation (When HTML is used)                                    */
 /* ============================================================================== */
 
-table.valid {
+table.valid, div.valid {
 	/* border-top: solid 1px #E6E6E6; */
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 	/* border-<?php print $right; ?>: solid 1px #444444;
@@ -6214,7 +6278,7 @@ div.ui-tooltip.mytooltip {
 	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
-	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
 	filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
 	color: var(--tooltipfontcolor);
@@ -6562,11 +6626,11 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 .cal_current_month { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_oneday { border-right: solid 1px #E8E8E8; }
-.cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
+.cal_other_month   { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #C0C0C0; }
 .cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E8E8E8; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
-.cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { /* opacity: 0.6; */ background: #FCFCFC; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E8E8E8; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
@@ -6582,6 +6646,7 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklinepair2) 85%, var(--colorbacklinepair2) 100%);
 }
+.cal_showmore      { opacity: 0.5 }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
 div.event { margin-left: 8px; margin-right: 8px; margin-bottom: 8px; margin-top: 4px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
@@ -6611,7 +6676,7 @@ td.small.cal_event {
 .calendarviewcontainertr { height: 100px; }
 
 td.cal_other_month {
-	opacity: 0.7;
+	/* opacity: 0.7; */
 }
 td.event-past span  {
 	opacity: 0.5;
@@ -6711,7 +6776,7 @@ td.peruser_holiday_imp {
 
 
 /* ============================================================================== */
-/*  jQuery - jeditable for inline edit                                            */
+/*  Edit in place                                                                 */
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
@@ -7033,6 +7098,57 @@ div.cke_notifications_area .cke_notification_warning {
 	.cke_inner:not(.cke_maximized) .cke_button:not(.cke_button__maximize) {
 		display: none;
 	}
+}
+
+
+/* ============================================================================== */
+/*  TinyMCE                                                                       */
+/* ============================================================================== */
+
+td.linecoldescription .tox.tox-tinymce {
+	margin-top: 8px;
+}
+
+.tox .tox-edit-area::before {
+	border: none !important;
+}
+.tox.tox-tinymce {
+	margin-bottom: 6px;
+}
+.tox:not(.tox-tinymce-inline) .tox-editor-header {
+	padding: 0 !important;
+}
+.tox .tox-tbtn:not(.tox-tbtn--select):not(.tox-tbtn--bespoke):not(.tox-split-button__chevron) {
+	width: 30px !important;
+}
+.tox .tox-toolbar__group {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
+	width: 70px;
+}
+.tox:not(.tox-tinymce-inline) .tox-editor-header {
+	/*border-bottom: 1px solid #ddd !important;
+	box-shadow: unset !important; */
+	box-shadow: 0 2px 2px -2px rgba(34,47,62,.1),0 5px 5px -4px rgba(34,47,62,.09) !important;
+}
+.mce-content-body p {
+	margin: unset;
+}
+.tox .tox-button:hover:not(:disabled, .tox-button--secondary, .tox-button--naked) {
+	background-color: var(--butactionbg) !important;
+	border-color: var(--butactionbg) !important;
+}
+.tox .tox-button:not(.tox-button--secondary, .tox-button--naked) {
+	background-color: var(--butactionbg) !important;
+	border-color: var(--butactionbg) !important;
+}
+.tox .tox-custom-editor:focus-within, .tox .tox-listboxfield .tox-listbox--select:focus, .tox .tox-textarea-wrap:focus-within, .tox .tox-textarea:focus, .tox .tox-textfield:focus {
+	background-color: #fff;
+	border-color: var(--butactionbg) !important;
+	box-shadow: 0 0 0 1px var(--butactionbg) !important;
+	outline: 0;
 }
 
 
@@ -7369,7 +7485,7 @@ div#ecm-layout-center {
 	bottom: 4px !important;
 <?php } ?>
 	<?php if (getDolGlobalString('MAIN_JQUERY_JNOTIFY_UNDER_MENU')) { ?>
-	top: <?php print $disableimages ? '32' : ($heightmenu+4); ?>px;
+	top: <?php print $disableimages ? '32' : ($heightmenu + 4); ?>px;
 	<?php } ?>
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen ? '200' : '480'; ?>px;
@@ -7570,8 +7686,10 @@ input.select2-input {
 	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 li.select2-selection__choice {
-	white-space: break-spaces;
+	/* white-space: break-spaces; */
+	white-space: nowrap;
 }
+
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
 }
@@ -7672,7 +7790,7 @@ li.select2-selection__choice {
 }
 .liste_titre .select2-container--default .select2-selection--single:not(.selectwidget),
 .liste_titre .select2-container--default .select2-selection--multiple {
-	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--colorbacktitle1);
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo (getDolGlobalString('THEME_ELDY_BACKTITLE1') != '255,255,255') ? '--colorbacktitle1' : '--inputbordercolor' ?>);
 }
 
 
@@ -7743,12 +7861,14 @@ li.select2-selection__choice {
 	border-bottom: none;
 	box-shadow: none !important;
 }
+
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
-	box-shadow: 1px 2px 10px #8884;
+	box-shadow: 0 2px 10px rgb(0, 0, 0, .3);
 	background-color: var(--colorbackbody);
 	color: var(--colortext);
+	border: unset;
 }
 .select2-dropdown-open {
 	background-color: var(--colorbackvmenu1);
@@ -7919,11 +8039,11 @@ span#select2-boxbookmark-container {
 }
 span.select2-dropdown--below {
 	margin-top: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 span.select2-dropdown--above {
 	margin-bottom: -1px;
-	min-width: 100px;
+	min-width: 200px;
 }
 
 .parentonrightofpage {
@@ -7944,12 +8064,12 @@ select.multiselectononeline {
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
-		min-width: 260px !important;
+		min-width: 300px !important;
 		padding: 8px;
 	}
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
 	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
-		min-width: 260px !important;
+		min-width: 300px !important;
 		padding: 8px;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
@@ -8140,7 +8260,7 @@ dl.dropdown {
 }
 .dropdown dd ul {
 	background-color: var(--inputbackgroundcolor);
-	box-shadow: 1px 1px 10px #aaa;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
 	display:none;
 	<?php echo $right; ?>:0px;						/* pop is align on right */
 	padding: 0 0 0 0;
@@ -8149,7 +8269,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
-	border-radius: 4px;
+	border-radius: 6px;
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
@@ -8946,10 +9066,19 @@ div.clipboardCPValue.hidewithsize {
 
 .clipboardCPShowOnHover{
 	cursor: copy;
+	position: relative;
 }
 
 .clipboardCPShowOnHover .clipboardCPButton {
 	display: none;
+}
+
+.clipboardCPShowOnHover .clipboardCPButton,
+.clipboardCPShowOnHover .clipboardCPTick {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translate(100%, -50%);
 }
 
 /* To make a div popup, we must use a position absolute inside a position relative */
@@ -9123,7 +9252,7 @@ table.jPicker {
 /* ============================================================================== */
 
 .ai_dropdown {
-	min-width: 400px !important;
+	min-width: 500px !important;
 	padding: 12px;
 	left: inherit !important;
 	top: inherit !important;
@@ -9261,7 +9390,7 @@ table.jPicker {
 	}
 	div.login_block_user {
 		min-width: 0;
-		width: 100%;
+		/* width: 100%; */
 	}
 	div.login_block_tools, div.login_block_user {
 		line-height: unset;
@@ -9427,12 +9556,24 @@ table.jPicker {
 	body {
 		font-size: 0.91em;
 	}
+
+	.ui-dialog {
+		min-width: 280px;
+		max-width: 95%;
+	}
+
 	.pictofixedwidth {
 		text-align: start;
-		width: 1.5em;
-		/* padding-right: 0; */
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;
 	}
-	table.titlemodulehelp tr td img.widthpictotitle {
+	img.pictofixedwidth {
+		width: 1.2rem;	/* Do not use em unit here, it varies on font size */
+		padding-right: 0.2rem;	/* img width + img padding-right must be equal to width + padding-right of .pictofixedwidth */
+		margin-right: 4px;
+	}
+
+	 table.titlemodulehelp tr td img.widthpictotitle {
 		width: 1.5em;
 	}
 

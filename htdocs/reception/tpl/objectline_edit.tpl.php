@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		        <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2012	Regis Houssin		    <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012	Laurent Destailleur	    <eldy@users.sourceforge.net>
- * Copyright (C) 2012		    Christophe Battarel	    <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012		Christophe Battarel	    <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013		    Florian Henry		        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Florian Henry		    <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		    Vincent Maury		        <vmaury@timgroup.fr>
- * Copyright (C) 2024		    MDW						          <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		    Nick Fragoulis
+ * Copyright (C) 2024		Vincent Maury		    <vmaury@timgroup.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,9 +127,16 @@ if (!empty($extrafields)) {
 
 print '</td>';
 
+print '<td class="nobottom linecolrefsupplier">';
 $coldisplay++;
-
+print '<input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100" value="'.dol_escape_htmltag((string) (!empty($line->ref_fourn) ? $line->ref_fourn : '')).'">';
+print '</td>';
+print '<td class="nobottom linecolcostprice right">';
+$coldisplay++;
+print '<input size="6" type="text" class="flat right" name="cost_price" id="cost_price" value="'.(!empty($line->cost_price) ? price2num($line->cost_price) : '').'">';
+print '</td>';
 print '<td class="nobottom linecolqty right">';
+$coldisplay++;
 
 if (((int) $line->info_bits & 2) != 2) {
 	print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'">';
@@ -153,10 +161,21 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units') : $line->fk_unit, "units", 0, $unit_type);
 	print '</td>';
 }
+print '<td class="nobottom linecolwarehouse right">';
+$coldisplay++;
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+$formproductline = new FormProduct($object->db);
+print $formproductline->selectWarehouses(!empty($line->fk_entrepot) ? $line->fk_entrepot : '', 'entrepot_id', '', 1, 0, (!empty($line->fk_product) ? $line->fk_product : 0), '', 1);
+print '</td>';
+if (isModEnabled('productbatch')) {
+	print '<td class="nobottom linecolbatch">';
+	$coldisplay++;
+	print '<input size="8" type="text" class="flat" name="batch" id="batch" value="'.dol_escape_htmltag((string) (!empty($line->batch) ? $line->batch : '')).'">';
+	print '</td>';
+}
 
 $coldisplay += $colspan;
 print '<td class="nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
-$coldisplay += $colspan;
 print '<input type="submit" class="reposition button buttongen margintoponly marginbottomonly button-save" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
 print '<input type="submit" class="reposition button buttongen margintoponly marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</td>';

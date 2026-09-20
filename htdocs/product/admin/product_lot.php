@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021		Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,13 @@
  */
 
 /**
- *  \file	   htdocs/product/admin/product_lot.php
+ *  \file	   	htdocs/product/admin/product_lot.php
  *  \ingroup	product
- *  \brief	  Setup page of product lot module
+ *  \brief	  	Setup page of product lot module
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "products", "productbatch"));
@@ -156,8 +155,8 @@ if ($action == 'updateMaskLot') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "PRODUCT_BATCH_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->PRODUCT_BATCH_ADDON_PDF = $value;
 	}
 
@@ -186,215 +185,28 @@ $head = product_lot_admin_prepare_head();
 print dol_get_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'lot');
 
 
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-	// The feature to define the numbering module of lot or serial is no enabled because it is not used anywhere in Dolibarr code: You can set it
-	// but the numbering module is not used.
-	// TODO Use it on lot creation page, when you create a lot and when the lot number is kept empty to define the lot according
-	// to the selected product.
-	print $langs->trans("NothingToSetup");
-} else {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	/*
 	 * Lot Numbering models
 	 */
 
-	print load_fiche_titre($langs->trans("BatchLotNumberingModules"), '', '');
+	$batch = new Productlot($db);
+	$batch->initAsSpecimen();
 
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-	print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-	print '</tr>'."\n";
+	printNumberingModuleList('product_batch', 'mod_lot_', 'PRODUCTBATCH_LOT_ADDON', $langs->trans("BatchLotNumberingModules"), $batch, 'setmodlot');
 
-	clearstatcache();
-
-	foreach ($dirmodels as $reldir) {
-		$dir = dol_buildpath($reldir."core/modules/product_batch/");
-
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-						$file = substr($file, 0, dol_strlen($file) - 4);
-
-						require_once $dir.$file.'.php';
-
-						$module = new $file($db);
-						'@phan-var-force ModeleNumRefBatch $module';
-
-						// Show modules according to features level
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							continue;
-						}
-
-						if ($module->isEnabled()) {
-							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info($langs);
-							print '</td>';
-
-							// Show example of numbering model
-							print '<td class="nowrap">';
-							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) {
-								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print $langs->trans($tmp);
-							} else {
-								print $tmp;
-							}
-							print '</td>'."\n";
-
-							print '<td class="center">';
-							if (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == $file) {
-								print img_picto($langs->trans("Activated"), 'switch_on');
-							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&token='.newToken().'&value='.urlencode($file).'">';
-								print img_picto($langs->trans("Disabled"), 'switch_off');
-								print '</a>';
-							}
-							print '</td>';
-
-							$batch = new Productlot($db);
-							$batch->initAsSpecimen();
-
-							// Info
-							$htmltooltip = '';
-							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-							$nextval = $module->getNextValue($mysoc, $batch);
-							if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= ''.$langs->trans("NextValue").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
-									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 'info');
-							print '</td>';
-
-							print "</tr>\n";
-						}
-					}
-				}
-				closedir($handle);
-			}
-		}
-	}
-
-	print "</table><br>\n";
-
+	print '<br>';
 
 	/*
 	 * Serials Numbering models
 	 */
 
-	print load_fiche_titre($langs->trans("BatchSerialNumberingModules"), '', '');
+	$batch = new Productlot($db);
+	$batch->initAsSpecimen();
 
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-	print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-	print '</tr>'."\n";
+	printNumberingModuleList('product_batch', 'mod_sn_', 'PRODUCTBATCH_SN_ADDON', $langs->trans("BatchSerialNumberingModules"), $batch, 'setmodsn');
 
-	clearstatcache();
-
-	foreach ($dirmodels as $reldir) {
-		$dir = dol_buildpath($reldir."core/modules/product_batch/");
-
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-						$file = substr($file, 0, dol_strlen($file) - 4);
-
-						require_once $dir.$file.'.php';
-
-						$module = new $file($db);
-						'@phan-var-force ModeleNumRefBatch $module';
-
-						// Show modules according to features level
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							continue;
-						}
-
-						if ($module->isEnabled()) {
-							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info($langs);
-							print '</td>';
-
-							// Show example of numbering model
-							print '<td class="nowrap">';
-							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) {
-								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print $langs->trans($tmp);
-							} else {
-								print $tmp;
-							}
-							print '</td>'."\n";
-
-							print '<td class="center">';
-							if (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == $file) {
-								print img_picto($langs->trans("Activated"), 'switch_on');
-							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&token='.newToken().'&value='.urlencode($file).'">';
-								print img_picto($langs->trans("Disabled"), 'switch_off');
-								print '</a>';
-							}
-							print '</td>';
-
-							$batch = new Productlot($db);
-							$batch->initAsSpecimen();
-
-							// Info
-							$htmltooltip = '';
-							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-							$nextval = $module->getNextValue($mysoc, $batch);
-							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= ''.$langs->trans("NextValue").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
-									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 'info');
-							print '</td>';
-
-							print "</tr>\n";
-						}
-					}
-				}
-				closedir($handle);
-			}
-		}
-	}
-
-	print "</table><br>\n";
+	print '<br>';
 }
 
 // Module to build doc
@@ -419,112 +231,115 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-print '<br>';
 
-print load_fiche_titre($langs->trans("ProductBatchDocumentTemplates"), '', '');
+if (!empty($def)) {
+	print '<br>';
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>' . $langs->trans("Name") . '</td>';
-print '<td>' . $langs->trans("Description") . '</td>';
-print '<td class="center" width="60">' . $langs->trans("Status") . "</td>\n";
-print '<td class="center" width="60">' . $langs->trans("Default") . "</td>\n";
-print '<td class="center"></td>';
-print '<td class="center" width="80">' . $langs->trans("Preview") . '</td>';
-print "</tr>\n";
+	print load_fiche_titre($langs->trans("ProductBatchDocumentTemplates"), '', '');
 
-clearstatcache();
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>' . $langs->trans("Name") . '</td>';
+	print '<td>' . $langs->trans("Description") . '</td>';
+	print '<td class="center" width="60">' . $langs->trans("Status") . "</td>\n";
+	print '<td class="center" width="60">' . $langs->trans("Default") . "</td>\n";
+	print '<td class="center"></td>';
+	print '<td class="center" width="80">' . $langs->trans("Preview") . '</td>';
+	print "</tr>\n";
 
-$filelist = array();
-foreach ($dirmodels as $reldir) {
-	foreach (array('', '/doc') as $valdir) {
-		$dir = dol_buildpath($reldir . "core/modules/product_batch" . $valdir);
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					$filelist[] = $file;
-				}
-				closedir($handle);
-				arsort($filelist);
+	clearstatcache();
 
-				foreach ($filelist as $file) {
-					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-						if (file_exists($dir . '/' . $file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+	$filelist = array();
+	foreach ($dirmodels as $reldir) {
+		foreach (array('', '/doc') as $valdir) {
+			$dir = dol_buildpath($reldir . "core/modules/product_batch" . $valdir);
+			if (is_dir($dir)) {
+				$handle = opendir($dir);
+				if (is_resource($handle)) {
+					while (($file = readdir($handle)) !== false) {
+						$filelist[] = $file;
+					}
+					closedir($handle);
+					arsort($filelist);
 
-							require_once $dir . '/' . $file;
-							$module = new $classname($db);
-							'@phan-var-force ModelePDFProductBatch $module';
+					foreach ($filelist as $file) {
+						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+							if (file_exists($dir . '/' . $file)) {
+								$name = dol_substr($file, 4, dol_strlen($file) - 16);
+								$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
-							$modulequalified = 1;
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								$modulequalified = 0;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								$modulequalified = 0;
-							}
+								require_once $dir . '/' . $file;
+								$module = new $classname($db);
+								'@phan-var-force ModelePDFProductBatch $module';
 
-							if ($modulequalified) {
-								print '<tr class="oddeven"><td width="100">';
-								print(empty($module->name) ? $name : $module->name);
-								print "</td><td>\n";
-								if (method_exists($module, 'info')) {
-									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
-								} else {
-									print $module->description;
+								$modulequalified = 1;
+								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+									$modulequalified = 0;
 								}
-								print '</td>';
+								if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+									$modulequalified = 0;
+								}
 
-								// Active
-								if (in_array($name, $def)) {
-									print '<td class="center">' . "\n";
-									print '<a href="' . $_SERVER["PHP_SELF"] . '?action=del&token=' . newToken() . '&value=' . urlencode($name) . '">';
-									print img_picto($langs->trans("Enabled"), 'switch_on');
-									print '</a>';
+								if ($modulequalified) {
+									print '<tr class="oddeven"><td width="100">';
+									print(empty($module->name) ? $name : $module->name);
+									print "</td><td>\n";
+									if (method_exists($module, 'info')) {
+										print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
+									} else {
+										print $module->description;
+									}
 									print '</td>';
-								} else {
-									print '<td class="center">' . "\n";
-									print '<a href="' . $_SERVER["PHP_SELF"] . '?action=set&token=' . newToken() . '&value=' . urlencode($name) . '&scan_dir=' . urlencode($module->scandir) . '&label=' . urlencode($module->name) . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
-									print "</td>";
+
+									// Active
+									if (in_array($name, $def)) {
+										print '<td class="center">' . "\n";
+										print '<a href="' . $_SERVER["PHP_SELF"] . '?action=del&token=' . newToken() . '&value=' . urlencode($name) . '">';
+										print img_picto($langs->trans("Enabled"), 'switch_on');
+										print '</a>';
+										print '</td>';
+									} else {
+										print '<td class="center">' . "\n";
+										print '<a href="' . $_SERVER["PHP_SELF"] . '?action=set&token=' . newToken() . '&value=' . urlencode($name) . '&scan_dir=' . urlencode($module->scandir) . '&label=' . urlencode($module->name) . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+										print "</td>";
+									}
+
+									// Default
+									print '<td class="center">';
+									if (getDolGlobalString('PRODUCT_BATCH_ADDON_PDF') == $name) {
+										print img_picto($langs->trans("Default"), 'on');
+									} else {
+										print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setdoc&token=' . newToken() . '&value=' . urlencode($name) . '&scan_dir=' . urlencode($module->scandir) . '&label=' . urlencode($module->name) . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+									}
+									print '</td>';
+
+									// Info
+									$htmltooltip = '' . $langs->trans("Name") . ': ' . $module->name;
+									$htmltooltip .= '<br>' . $langs->trans("Type") . ': ' . ($module->type ? $module->type : $langs->trans("Unknown"));
+									if ($module->type == 'pdf') {
+										$htmltooltip .= '<br>' . $langs->trans("Width") . '/' . $langs->trans("Height") . ': ' . $module->page_largeur . '/' . $module->page_hauteur;
+									}
+									$htmltooltip .= '<br><br><u>' . $langs->trans("FeaturesSupported") . ':</u>';
+									$htmltooltip .= '<br>' . $langs->trans("Logo") . ': ' . yn($module->option_logo, 1, 1);
+									$htmltooltip .= '<br>' . $langs->trans("MultiLanguage") . ': ' . yn($module->option_multilang, 1, 1);
+
+
+									print '<td class="center">';
+									print $form->textwithpicto('', $htmltooltip, 1, 'info');
+									print '</td>';
+
+									// Preview
+									print '<td class="center">';
+									if ($module->type == 'pdf') {
+										print '<a href="' . $_SERVER["PHP_SELF"] . '?action=specimen&module=' . $name . '">' . img_object($langs->trans("Preview"), 'contract') . '</a>';
+									} else {
+										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
+									}
+									print '</td>';
+
+									print "</tr>\n";
 								}
-
-								// Default
-								print '<td class="center">';
-								if (getDolGlobalString('PRODUCT_BATCH_ADDON_PDF') == $name) {
-									print img_picto($langs->trans("Default"), 'on');
-								} else {
-									print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setdoc&token=' . newToken() . '&value=' . urlencode($name) . '&scan_dir=' . urlencode($module->scandir) . '&label=' . urlencode($module->name) . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
-								}
-								print '</td>';
-
-								// Info
-								$htmltooltip = '' . $langs->trans("Name") . ': ' . $module->name;
-								$htmltooltip .= '<br>' . $langs->trans("Type") . ': ' . ($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf') {
-									$htmltooltip .= '<br>' . $langs->trans("Width") . '/' . $langs->trans("Height") . ': ' . $module->page_largeur . '/' . $module->page_hauteur;
-								}
-								$htmltooltip .= '<br><br><u>' . $langs->trans("FeaturesSupported") . ':</u>';
-								$htmltooltip .= '<br>' . $langs->trans("Logo") . ': ' . yn($module->option_logo, 1, 1);
-								$htmltooltip .= '<br>' . $langs->trans("MultiLanguage") . ': ' . yn($module->option_multilang, 1, 1);
-
-
-								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 'info');
-								print '</td>';
-
-								// Preview
-								print '<td class="center">';
-								if ($module->type == 'pdf') {
-									print '<a href="' . $_SERVER["PHP_SELF"] . '?action=specimen&module=' . $name . '">' . img_object($langs->trans("Preview"), 'contract') . '</a>';
-								} else {
-									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
-								}
-								print '</td>';
-
-								print "</tr>\n";
 							}
 						}
 					}
@@ -532,10 +347,20 @@ foreach ($dirmodels as $reldir) {
 			}
 		}
 	}
+
+	print '</table>';
+	print '</div>';
 }
 
-print '</table>';
-print '</div>';
+
+if (empty($def) && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+	// The feature to define the numbering module of lot or serial is no enabled because it is not used anywhere in Dolibarr code: You can set it
+	// but the numbering module is not used.
+	// TODO Use it on lot creation page, when you create a lot and when the lot number is kept empty to define the lot according
+	// to the selected product.
+	print $langs->trans("NothingToSetup");
+}
+
 
 // End of page
 llxFooter();

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +51,6 @@ require_once '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var Translate $langs
- *
- * @var int $dolibarr_nocache
  */
 
 
@@ -62,11 +61,7 @@ require_once '../../main.inc.php';
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 
 $jsConst = [
@@ -253,6 +248,7 @@ print '
 
 // Code to manage Copy To Clipboard click
 print "\n/* JS CODE TO ENABLE ClipBoard copy paste */\n";
+// Suppress because dol_escape_js is wrapped in '' @phan-suppress-next-line FunctionMissingSingleQuoteWrapping
 print '
 	jQuery(document).ready(function() {
 				jQuery(\'.clipboardCPShowOnHover\').hover(
@@ -307,9 +303,9 @@ print '
 					if (succeed) {
 						$(this).parent().children(".clipboardCPButton").hide();
 						$(this).parent().children(".clipboardCPTick").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
-						//lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
+						//lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dolPrintHTML($langs->trans('CopiedToClipboard')).'</div>\';
 					} else {
-						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('Error')).'</div>\';
+						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dolPrintHTML($langs->trans('Error')).'</div>\';
 					}
 					setTimeout(() => { lastchild.innerHTML = tmp; lastparent.children(".clipboardCPTick").hide(); }, 2000);
 				});

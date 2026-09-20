@@ -2,8 +2,9 @@
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/takepos.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -68,15 +70,16 @@ $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 $hookmanager->initHooks(array('takeposfrontend'));
 if (empty($_SESSION["takeposterminal"])) {
-	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
-		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
+	$enabledterminals = takeposEnabledTerminals();
+	if (count($enabledterminals) == 1) {
+		$_SESSION["takeposterminal"] = (int) $enabledterminals[0]; // Use the only usable terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
 	}
 }
 
 if ($setterminal > 0) {
-	$_SESSION["takeposterminal"] = $setterminal;
+	$_SESSION["takeposterminal"] = (int) $setterminal;
 	dolSetCookie("takeposterminal", (string) $setterminal, -1); // takeposterminal var in a 1 year cookie
 }
 
@@ -333,7 +336,59 @@ function LoadProducts(position, issubcat) {
 	pageproducts=0;
 	ishow=0; //product to show counter
 
+	var parent_cat = 0;
+	var parent_cat_label = <?php echo "'".dol_escape_js($langs->trans('GoBack'))."'" ; ?>;
 	if (currentcat != "supplements") {
+		jQuery.each(subcategories, function(i, val) {
+			if (val.rowid == currentcat) {
+				parent_cat = val.fk_parent;
+				return false;
+			}
+		});
+
+		if (parent_cat > 0) {
+			var found = false;
+			jQuery.each(categories, function(i, val) {
+				if (val.rowid == parent_cat) {
+					parent_cat_label = val.label;
+					found = true;
+					return false;
+				}
+			});
+			if (!found) {
+				jQuery.each(subcategories, function(i, val) {
+					if (val.rowid == parent_cat) {
+						parent_cat_label = val.label;
+						return false;
+					}
+				});
+			}
+
+			$("#prodivdesc"+ishow).show();
+			var back_html = '<span class="fa fa-chevron-left paddingright"></span> ' + parent_cat_label;
+
+			<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+				$("#prodesc"+ishow).html('<strong>' + back_html + '</strong>');
+			<?php } else { ?>
+				$("#prodesc"+ishow).html(back_html);
+			<?php } ?>
+			$("#probutton"+ishow).html(back_html);
+
+			$("#probutton"+ishow).show();
+			$("#proprice"+ishow).attr("class", "hidden");
+			$("#proprice"+ishow).html("");
+			<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) { ?>
+			$("#proimg"+ishow).attr("src", "img/back.png");
+			<?php } ?>
+			$("#prodiv"+ishow).data("rowid", parent_cat);
+			$("#prodiv"+ishow).attr("data-rowid", parent_cat);
+			$("#prodiv"+ishow).data("iscat", 1);
+			$("#prodiv"+ishow).attr("data-iscat", 1);
+			$("#prodiv"+ishow).removeClass("divempty");
+			$("#prowatermark"+ishow).hide();
+			ishow++;
+		}
+
 		console.log("Loop on each category level 2 or more");
 		jQuery.each(subcategories, function(i, val) {
 			if (currentcat == val.fk_parent) {
@@ -368,12 +423,12 @@ function LoadProducts(position, issubcat) {
 
 	// Get socid
 	let socid = jQuery('#thirdpartyid').val();
-	if ((socid === undefined || socid === "") && parseInt("<?php echo dol_escape_js($socid) ?>") > 0) {
-		socid = parseInt("<?php echo dol_escape_js($socid); ?>");
+	if ((socid === undefined || socid === "") && parseInt(<?php echo "'".dol_escape_js($socid)."'"; ?>) > 0) {
+		socid = parseInt(<?php echo "'".dol_escape_js($socid)."'" ; ?>);
 	}
 
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo currentToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		/* Fill thumbs from ishow to end max of products with products loaded into data array */
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 		console.log("Found "+data.length+" record");
@@ -499,16 +554,16 @@ function MoreProducts(moreorless) {
 	}
 
 	var nb_cat_shown = $('.div5 div.wrapper2[data-iscat=1]').length;
-	var offset = <?php echo ($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
+	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
 
 	// Get socid
 	let socid = jQuery('#thirdpartyid').val();
-	if ((socid === undefined || socid === "") && parseInt("<?php echo dol_escape_js($socid) ?>") > 0) {
-		socid = parseInt("<?php echo dol_escape_js($socid); ?>");
+	if ((socid === undefined || socid === "") && parseInt(<?php echo "'".dol_escape_js($socid)."'"; ?>) > 0) {
+		socid = parseInt(<?php echo "'".dol_escape_js($socid)."'" ; ?>);
 	}
 
 	// Only show products for sale (tosell=1)
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo currentToken();?>&thirdpartyid=' + socid + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
 		if (typeof (data[0]) == "undefined" && moreorless=="more"){ // Return if no more pages
@@ -527,8 +582,10 @@ function MoreProducts(moreorless) {
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("data-rowid","");
+				$("#prodiv"+ishow).addClass("divempty");
 			} else {
 				$("#prodivdesc"+ishow).show();
+				$("#prodiv"+ishow).removeClass("divempty");
 				<?php if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
 					$("#prodesc"+ishow).html(data[parseInt(idata)]['ref'].bold() + ' - ' + data[parseInt(idata)]['label']);
 				<?php } elseif (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 2) { ?>
@@ -566,7 +623,7 @@ function MoreProducts(moreorless) {
 	ClearSearch(false);
 }
 
-function ClickProduct(position, qty = 1) {
+function ClickProduct(position, qty = 1, qty_std = 0) {
 	console.log("ClickProduct at position"+position);
 	if ($('#invoiceid').val() == "") {
 		invoiceid = $('#invoiceid').val();
@@ -585,24 +642,26 @@ function ClickProduct(position, qty = 1) {
 		if (idproduct == "") {
 			return;
 		}
-		addInvoiceLine = function(qty) {
+
+		addInvoiceLine = function(qty, qty_std_inner = 0) {
 			// Call page invoice.php to generate the section with product lines
-			$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid, function() {
+			  $("#poslines").load("invoice.php?action=addline&token=<?php echo currentToken(); ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty+"&invoiceid="+invoiceid+(qty_std_inner ? '&qty_std=1' : ''), function() {
 				idproduct = "";
 				<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 					echo "CustomerDisplay();";
 				}?>
 			});
 		};
+
 		// call WeighingScale() if product is a product that need to measure weight
 		<?php if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) { ?>
 			if ($('#prodiv'+position).data('unit') == 2) {
 				WeighingScale(addInvoiceLine);
 			} else {
-				addInvoiceLine(qty);
+				addInvoiceLine(qty, qty_std);
 			}
 		<?php } else { ?>
-			addInvoiceLine(qty);
+			addInvoiceLine(qty, qty_std);
 		<?php } ?>
 	}
 
@@ -612,19 +671,28 @@ function ClickProduct(position, qty = 1) {
 function ChangeThirdparty(idcustomer) {
 	 console.log("ChangeThirdparty");
 		// Call page list.php to change customer
-		$("#poslines").load("<?php echo DOL_URL_ROOT ?>/societe/list.php?action=change&token=<?php echo newToken();?>&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
+		$("#poslines").load("<?php echo DOL_URL_ROOT ?>/societe/list.php?action=change&token=<?php echo currentToken();?>&type=t&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
 		});
 
 	ClearSearch(false);
 }
 
 function deleteline() {
+	if (selectedline == 0) return;
 	invoiceid = $("#invoiceid").val();
 	console.log("Delete line invoiceid="+invoiceid);
-	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
+	$("#poslines").load("invoice.php?action=deleteline&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 	ClearSearch(false);
+}
+
+function editbatch(lineid, idproduct, clonebatch) {
+	$("#poslines").load("invoice.php?action=editbatch_popup&token=<?php echo newToken(); ?>&place="+place+"&idline="+lineid+"&idproduct="+idproduct+"&invoiceid="+invoiceid+(clonebatch ? '&clonebatch=1' : ''), function() {});
+}
+
+function updatebatch(batch, warehouseid, lineid, clonebatch) {
+	$("#poslines").load("invoice.php?action=setbatch&token=<?php echo newToken(); ?>&place="+place+"&idline="+lineid+"&batch="+encodeURIComponent(batch)+"&warehouseid="+warehouseid+"&invoiceid="+invoiceid+(clonebatch ? '&clonebatch=1' : ''), function() {});
 }
 
 function Customer() {
@@ -641,6 +709,34 @@ function History()
 {
 	console.log("Open box to select the history");
 	$.colorbox({href:"../compta/facture/list.php?contextpage=poslist&search_module_source=takepos", width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("History"); ?>"});
+}
+
+function CloneTicket(sourceinvoiceid) {
+	if (!sourceinvoiceid) {
+		sourceinvoiceid = invoiceid;
+	}
+	if (!sourceinvoiceid) {
+		return false;
+	}
+	$.getJSON("<?php print DOL_URL_ROOT; ?>/takepos/invoice.php?action=cloneticket&format=json&token=<?php echo currentToken(); ?>&sourceinvoiceid="+sourceinvoiceid)
+		.done(function(data) {
+			if (!data.success) {
+				alert(data.message || <?php echo "'".dol_escape_js($langs->trans('ErrorFailedToCloneTicket'))."'"; ?>);
+				return;
+			}
+
+			place = data.place;
+			invoiceid = data.invoiceid;
+			if (data.batchlineid > 0) {
+				editbatch(data.batchlineid, data.batchproductid, 1);
+			} else {
+				$("#poslines").load("invoice.php?place="+place+"&invoiceid="+invoiceid, function() {});
+			}
+		})
+		.fail(function() {
+			alert(<?php echo "'".dol_escape_js($langs->trans('ErrorFailedToCloneTicket'))."'"; ?>);
+		});
+	return true;
 }
 
 function Reduction() {
@@ -721,7 +817,17 @@ function New() {
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
-	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo newToken();?>&id='+invoiceid, function(data) {
+	if (invoiceid == '') {
+		$("#poslines").load("invoice.php?action=delete&token=<?php echo currentToken(); ?>&place=" + place, function () {
+			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		});
+
+		ClearSearch(false);
+		$("#idcustomer").val("");
+		return;
+	}
+
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo currentToken();?>&id='+invoiceid, function(data) {
 		var r;
 
 		if (parseInt(data['paye']) === 1) {
@@ -732,7 +838,7 @@ function New() {
 
 		if (r == true) {
 			// Reload section with invoice lines
-			$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
+			$("#poslines").load("invoice.php?action=delete&token=<?php echo currentToken(); ?>&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});
 
@@ -740,6 +846,26 @@ function New() {
 			$("#idcustomer").val("");
 		}
 	});
+}
+/**
+ * Delete (discard) the current sale, after confirmation.
+ *
+ * return   void
+ */
+function DeleteSale() {
+	if (typeof place === 'undefined') {
+		return;
+	}
+	if (confirm(<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale"))."'" ; ?>)) {
+		// Fully remove the draft (its tab disappears), then switch to the main cart.
+		$("#poslines").load("invoice.php?action=discardsale&token=<?php echo newToken(); ?>&place=" + place, function () {
+			place = '0';
+			invoiceid = 0;
+			ClearSearch(false);
+			$("#idcustomer").val("");
+			Refresh();
+		});
+	}
 }
 
 /**
@@ -782,6 +908,7 @@ function Search2(keyCodeForEnter, moreorless) {
 		$("[id^=proimg]").attr("src", "genimg/empty.png");
 		$("[id^=prodiv]").data("rowid", "");
 		$("[id^=prodiv]").attr("data-rowid", "");
+		$("[id^=prodiv]").addClass("divempty");
 		return;
 	}
 
@@ -805,12 +932,12 @@ function Search2(keyCodeForEnter, moreorless) {
 
 			// Only show products for sale (tosell=1)
 			let socid = jQuery('#thirdpartyid').val();
-			if ((socid === undefined || socid === "") && parseInt("<?php echo dol_escape_js($socid) ?>") > 0) {
-				socid = parseInt("<?php echo dol_escape_js($socid); ?>");
+			if ((socid === undefined || socid === "") && parseInt(<?php echo "'".dol_escape_js($socid)."'"; ?>) > 0) {
+				socid = parseInt(<?php echo "'".dol_escape_js($socid)."'" ; ?>);
 			}
 
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
-				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo currentToken();?>&search_term=' + search_term + '&thirdpartyid=' + socid + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+				for (i = 0; i < <?php echo $MAXPRODUCT - 2; ?>; i++) {	// the last 2 slots are the pager arrows, not product slots
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
 						$("#prodesc" + i).text("");
@@ -836,6 +963,7 @@ function Search2(keyCodeForEnter, moreorless) {
 						$("#prodesc" + i).html(data[i]['label']);
 					<?php } ?>
 					$("#prodivdesc" + i).show();
+					$("#prodiv" + i).removeClass("divempty");
 					$("#probutton" + i).html(data[i]['label']);
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
@@ -884,15 +1012,15 @@ function Search2(keyCodeForEnter, moreorless) {
 					}
 					else if ('product' == data[0]['object'] && $('#search').val() == data[0]['barcode']) {
 						console.log("There is only 1 answer and we found search on a barcode, so we add the product in basket, qty="+data[0]['qty']);
-						ClickProduct(0, data[0]['qty']);
+						ClickProduct(0, data[0]['qty'], 1);
 					}
 				}
 				if (eventKeyCode == keyCodeForEnter){
 					if (data.length == 0) {
-						$('#search').val('<?php
+						$('#search').val(<?php
 						$langs->load('errors');
-						echo dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"));
-						?> ('+search_term+')');
+						echo "'".dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"))." ('";
+						?>+search_term+')');
 						$('#search').select();
 					}
 					else ClearSearch(false);
@@ -925,6 +1053,8 @@ function Search2(keyCodeForEnter, moreorless) {
 function Edit(number) {
 	console.log("We click on PAD on key="+number);
 
+	invoiceid = $("#invoiceid").val();
+
 	if (typeof(selectedtext) == "undefined") {
 		return;	// We click on an action on the number pad but there is no line selected
 	}
@@ -941,7 +1071,7 @@ function Edit(number) {
 		return;
 	} else if (number=='qty') {
 		if (editaction=='qty' && editnumber != '') {
-			$("#poslines").load("invoice.php?action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updateqty&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber+"&invoiceid="+invoiceid, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
@@ -955,7 +1085,7 @@ function Edit(number) {
 		}
 	} else if (number=='p') {
 		if (editaction=='p' && editnumber!="") {
-			$("#poslines").load("invoice.php?action=updateprice&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updateprice&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber+"&invoiceid="+invoiceid, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
@@ -969,7 +1099,7 @@ function Edit(number) {
 		}
 	} else if (number=='r') {
 		if (editaction=='r' && editnumber!="") {
-			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?action=updatereduction&token=<?php echo currentToken(); ?>&place="+place+"&idline="+selectedline+"&number="+editnumber+"&invoiceid="+invoiceid, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 				$("#reduction").html("<?php echo $langs->trans("LineDiscountShort"); ?>").removeClass('clicked');
@@ -1009,14 +1139,14 @@ function Edit(number) {
 
 function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder output invoice to print order");
-	$("#poslines").load("invoice.php?action=order&token=<?php echo newToken();?>&place="+place, function() {
+	$("#poslines").load("invoice.php?action=order&token=<?php echo currentToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function TakeposPrintingTemp(){
 	console.log("TakeposPrintingTemp");
-	$("#poslines").load("invoice.php?action=temp&token=<?php echo newToken();?>&place="+place, function() {
+	$("#poslines").load("invoice.php?action=temp&token=<?php echo currentToken();?>&place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
@@ -1039,11 +1169,11 @@ function OpenDrawer(){
 
 /* Click on button to open drawer */
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo newToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&token=<?php echo currentToken();?>&term=<?php print urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>");
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&token='.newToken().'&term='.urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>",
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&token='.currentToken().'&term='.urlencode(empty($_SESSION["takeposterminal"]) ? '' : $_SESSION["takeposterminal"]); ?>",
 	});
 }
 
@@ -1070,7 +1200,10 @@ function CashReport(rowid)
 	$.colorbox({href:"../compta/cashcontrol/report.php?id="+rowid+"&contextpage=takepos", width:"60%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("CashReport"); ?>"});
 }
 
-// TakePOS Popup
+/*
+ * TakePOS Popup
+ * Open the <div id='ModalID'>in a popup. Example with ModalID='ModalCreditNote'
+ */
 function ModalBox(ModalID)
 {
 	var modal = document.getElementById(ModalID);
@@ -1079,7 +1212,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo newToken(); ?>&pay=LIQ", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo currentToken(); ?>&pay=LIQ", function() {
 		$('#invoiceid').val("");
 	});
 }
@@ -1107,7 +1240,7 @@ function WeighingScale(callback) {
 			.done(function(product) {
 				if (callback === undefined) {
 					callback = function(qty) {
-						$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty);
+						$("#poslines").load("invoice.php?token=<?php echo currentToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty);
 					};
 				}
 				if (product.fk_unit == "2") {
@@ -1117,9 +1250,9 @@ function WeighingScale(callback) {
 				}
 			});
 		<?php } else { ?>
-			// Protocole par défaut de takeposconnector: réception continue du poids/stabilité
+			// Default takeposconnector protocol: continuous reception of weight/stability
 			editnumber = globalWeight;
-			$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+			$("#poslines").load("invoice.php?token=<?php echo currentToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 			});
 		<?php } ?>
@@ -1130,7 +1263,7 @@ function WeighingScale(callback) {
 		url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/scale/index.php',
 	})
 	.done(function( editnumber ) {
-		$("#poslines").load("invoice.php?token=<?php echo newToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
+		$("#poslines").load("invoice.php?token=<?php echo currentToken(); ?>&action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 			});
 	});
@@ -1148,11 +1281,14 @@ $( document ).ready(function() {
 	}
 
 	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
+		// Look for any cash control fence created today on this terminal, regardless of its status,
+		// so the auto-open popup only fires on the first cash control of a calendar day. Without this,
+		// refreshing the browser the same day after closing a fence used to immediately re-fire the
+		// popup because the closed fences were filtered out by the status check (#38597).
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 		$sql .= " entity = ".((int) $conf->entity)." AND ";
 		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
-		$sql .= " AND status = 0 ";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -1274,7 +1410,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 				if ($reshook == 0) {  //Search method
 					?>
 					<div class="login_block_other takepos">
-					<input type="text" id="search" name="search" class="input-nobottom" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
+					<input type="text" id="search" name="search" class="input-nobottom" onkeyup="Search2(<?php echo "'".dol_escape_js($keyCodeForEnter)."'" ; ?>, null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
 					<a onclick="ClearSearch(false);" class="nohover"><span class="fa fa-backspace"></span></a>
 					<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
 					<span class="fas fa-home"></span></a>
@@ -1314,10 +1450,8 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 		<h3><?php print $langs->trans("TerminalSelect"); ?></h3>
 	</div>
 	<div class="modal-body">
-		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print getDolGlobalString("TAKEPOS_TERMINAL_NAME_1", $langs->trans("TerminalName", 1)); ?></button>
 		<?php
-		$nbloop = getDolGlobalInt('TAKEPOS_NUM_TERMINALS');
-		for ($i = 2; $i <= $nbloop; $i++) {
+		foreach (takeposEnabledTerminals() as $i) {
 			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i, $langs->trans("TerminalName", $i)).'</button>';
 		}
 		?>
@@ -1340,7 +1474,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				while ($obj = $db->fetch_object($resql)) {
-					print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.$obj->code.'\'">'.$obj->code.'</button>';
+					print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.urlencode($obj->code).'\'">'.$obj->code.'</button>';
 				}
 			}
 			?>
@@ -1349,7 +1483,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 </div>
 <?php } ?>
 
-<!-- Modal terminal Credit Note -->
+<!-- Modal popup to create a Credit Note -->
 <div id="ModalCreditNote" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -1400,7 +1534,9 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			<button type="button" class="calcbutton" onclick="Edit(0);">0</button>
 			<button type="button" class="calcbutton" onclick="Edit('.')">.</button>
 			<button type="button" class="calcbutton poscolorblue" onclick="Edit('c')">C</button>
+			<?php if ($user->hasRight('takepos', 'editlines')) { ?>
 			<button type="button" class="calcbutton2 poscolordelete" id="delete" onclick="deleteline()"><span class="fa fa-trash"></span></button>
+			<?php } ?>
 		</div>
 
 <?php
@@ -1583,6 +1719,12 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$menus[$r++] = array('title' => '<span class="fa fa-balance-scale pictofixedwidth"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action' => 'WeighingScale();');
 }
 
+// Button to delete (discard) the current sale
+/* Hide this. This button must appear only if is_erasable() is true. So it must depend on open invoice. For this reason,
+ * the button could not be in this panel but must be on the left side inside the invoice.php file.
+$menus[$r++] = array('title' => '<span class="fa fa-trash-alt paddingrightonly"></span><div class="trunc truncdeletesale">'.$langs->trans("DeleteSale").'</div>', 'action' => 'DeleteSale();', 'class' => 'actionbuttondelete');
+*/
+
 $parameters = array('menus' => $menus);
 $reshook = $hookmanager->executeHooks('ActionButtons', $parameters);
 if ($reshook == 0) {  //add buttons
@@ -1595,7 +1737,7 @@ if ($reshook == 0) {  //add buttons
 	}
 } elseif ($reshook == 1) {
 	$r = 0; //replace buttons
-	if (is_array($hookmanager->resArray) ) {
+	if (is_array($hookmanager->resArray)) {
 		foreach ($hookmanager->resArray as $resArray) {
 			foreach ($resArray as $butmenu) {
 				$menus[$r++] = $butmenu;
@@ -1632,12 +1774,12 @@ if ($reshook == 0) {  //add buttons
 			if (count($menus) > 12 and $i == 12) {
 				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Next").'</button>';
 				echo '<button style="display: none;" type="button" id="actionprevious" class="actionbutton" onclick="MoreActions('.count($menus).')">'.$langs->trans("Previous").'</button>';
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			} elseif ($i > 12) {
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 				// TODO keep style but hide button
 			} else {
-				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
+				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton'.(empty($menu['class']) ? '' : ' '.dol_escape_htmltag($menu['class'])).'" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			}
 		}
 
@@ -1708,14 +1850,14 @@ if ($reshook == 0) {  //add buttons
 
 	while ($count < $MAXPRODUCT) {
 		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
-													<?php if ($count == ($MAXPRODUCT - 2)) {
-														?> onclick="MoreProducts('less')" <?php
-													}
-													if ($count == ($MAXPRODUCT - 1)) {
-														?> onclick="MoreProducts('more')" <?php
-													} else {
-														echo 'onclick="ClickProduct('.((int) $count).')"';
-													} ?>>
+															<?php if ($count == ($MAXPRODUCT - 2)) {
+																?> onclick="MoreProducts('less')" <?php
+															}
+															if ($count == ($MAXPRODUCT - 1)) {
+																?> onclick="MoreProducts('more')" <?php
+															} else {
+																echo 'onclick="ClickProduct('.((int) $count).')"';
+															} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';

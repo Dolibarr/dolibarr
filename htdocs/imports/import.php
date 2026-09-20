@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2005-2016  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Christophe Battarel         <christophe.battarel@altairis.fr>
+ * Copyright (C) 2022       Charlene Benke              <charlene@patas-monkey.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin'));
+$langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin', 'products', 'margins'));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('imports'));
@@ -70,6 +70,9 @@ $entitytoicon = array(
 	'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
+	'productattribute' => 'product',
+	'productattributevalue' => 'product',
+	'productcombination' => 'product',
 	'virtualproduct' => 'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
@@ -114,6 +117,9 @@ $entitytolang = array(
 	'account'      => 'BankTransactions',
 	'payment'      => 'Payment',
 	'product'      => 'Product',
+	'productattribute' => 'ProductAttribute',
+	'productattributevalue' => 'ProductAttributeValue',
+	'productcombination' => 'ProductCombination',
 	'virtualproduct'  => 'AssociatedProducts',
 	'subproduct'      => 'SubProduct',
 	'product_supplier_ref'      => 'SupplierPrices',
@@ -247,7 +253,9 @@ if ($step == 2 && $datatoimport) {
 		$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 		$fullpath = $conf->import->dir_temp."/".$nowyearmonth.'-'.dol_string_nohtmltag(dol_sanitizeFileName($_FILES['userfile']['name']));
-		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
+		// Note: the returned value is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+		$resultupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1);
+		if (is_numeric($resultupload) && $resultupload > 0) {
 			dol_syslog("File ".$fullpath." was added for import");
 		} else {
 			$langs->load("errors");
@@ -268,7 +276,7 @@ if ($step == 2 && $datatoimport) {
 		}
 
 		$file = $conf->import->dir_temp.'/'.GETPOST('urlfile');
-		$ret = dol_delete_file($file);
+		$ret = dol_delete_file($file, 1);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -304,7 +312,7 @@ if ($step == 4 && $action == 'select_model' && $user->hasRight('import', 'run'))
 	}
 }
 if ($action == 'saveselectorder' && $user->hasRight('import', 'run')) {
-	// Enregistrement de la position des champs
+	// Save the position of the fields
 	$serialized_array_match_file_to_database = '';
 	dol_syslog("selectorder=".GETPOST('selectorder'), LOG_DEBUG);
 	$selectorder = explode(",", GETPOST('selectorder'));
@@ -528,11 +536,9 @@ if ($step == 2 && $datatoimport) {
 
 	$filetoimport = '';
 
+	// Add format information and link to download example
 	print '<table class="noborder centpercent" cellpadding="4">';
 
-	$filetoimport = '';
-
-	// Add format information and link to download example
 	print '<tr class="liste_titre"><td colspan="4">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat").'...';
 	print '</td></tr>';
@@ -558,6 +564,7 @@ if ($step == 2 && $datatoimport) {
 	}
 
 	print '</table>';
+
 
 	print '<br>';
 
@@ -704,6 +711,12 @@ if ($step == 3 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	if (empty($separator)) {
@@ -840,9 +853,9 @@ if ($step == 3 && $datatoimport) {
 		$isrequired = preg_match('/\*$/', $label);
 		if (!empty($isrequired)) {
 			$newlabel = substr($label, 0, -1);
-			$fieldstarget_tmp[$key] = array("label" => $newlabel, "required" => true);
+			$fieldstarget_tmp[$key] = array("label" => (string) $newlabel, "required" => true);
 		} else {
-			$fieldstarget_tmp[$key] = array("label" => $label, "required" => false);
+			$fieldstarget_tmp[$key] = array("label" => (string) $label, "required" => false);
 		}
 		if (!empty($array_match_database_to_file[$key])) {
 			$fieldstarget_tmp[$key]["imported"] = true;
@@ -1537,6 +1550,12 @@ if ($step == 4 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	// Create class to use for import
@@ -1675,10 +1694,10 @@ if ($step == 4 && $datatoimport) {
 	print $langs->trans("ImportFromToLine");
 	print '</td><td>';
 	if ($action == 'launchsimu') {
-		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
+		print '<input type="number" min="1" class="maxwidth50 right valignmiddle" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 		print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
 	} else {
-		print '<input type="number" class="maxwidth50 right valignmiddle" name="excludefirstline" value="'.$excludefirstline.'">';
+		print '<input type="number" min="1" class="maxwidth50 right valignmiddle" name="excludefirstline" value="'.$excludefirstline.'">';
 		print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
 	print ' - ';
@@ -1832,7 +1851,7 @@ if ($step == 4 && $datatoimport) {
 		print img_picto($langs->trans("Modify"), 'edit');
 		print '</a>';
 	} else {
-			print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
+		print $form->selectarray('importtriggermode', $triggerModeChoices, $importtriggermode, 0);
 	}
 	if ($importtriggermode === 'fast_bulk') {
 		print '<br><span class="warning">';
@@ -2081,6 +2100,12 @@ if ($step == 5 && $datatoimport) {
 	}
 
 	$model = $format;
+
+	// Fallback: txt to csv (import_txt.modules.php does not exist)
+	if ($model === 'txt') {
+		$model = 'csv';
+	}
+
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	$importid = GETPOST("importid", 'alphanohtml');
 

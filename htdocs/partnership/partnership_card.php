@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021      NextGestion			<contact@nextgestion.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -357,7 +357,7 @@ if (($id || $ref) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = partnershipPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("Partnership"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Partnership"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -442,14 +442,64 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Common attributes
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
-	//unset($object->fields['fk_project']);				// Hide field already shown in banner
-	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	unset($object->fields['fk_member']);				// Hide field already shown later
+	unset($object->fields['fk_soc']);					// Hide field already shown later
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// End of subscription date
-	if ($managedfor == 'member') {
+	if ($managedfor == 'thirdparty' && isModEnabled('societe')) {
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("ThirdParty").'</td><td class="valeur">';
+		print $object->thirdparty->getNomUrl(-1);
+		print '</td></tr>';
+
+		if (isModEnabled('member')) {
+			include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+			$fadherent = new Adherent($db);
+			$fadherent->fetch(0, '', $object->fk_soc);
+			print '<tr><td>'.$langs->trans("Member").'</td><td class="valeur">';
+			if ($fadherent->id > 0) {
+				print $fadherent->getNomUrl(-1);
+			}
+			print '</td></tr>';
+
+			if ($fadherent->id > 0) {
+				print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+				if ($fadherent->datefin) {
+					print dol_print_date($fadherent->datefin, 'day');
+					if ($fadherent->hasDelay()) {
+						print " ".img_warning($langs->trans("Late"));
+					}
+				} else {
+					$adht = new AdherentType($db);
+					$adht->fetch($fadherent->typeid);
+					if (!$adht->subscription) {
+						print $langs->trans("SubscriptionNotRecorded");
+						if ($fadherent->status > 0) {
+							print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+						}
+					} else {
+						print $langs->trans("SubscriptionNotReceived");
+						if ($fadherent->status > 0) {
+							print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+						}
+					}
+				}
+				print '</td></tr>';
+			}
+		}
+	}
+	if ($managedfor == 'member' && isModEnabled('member') && $object->fk_member > 0) {
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+
 		$fadherent = new Adherent($db);
 		$fadherent->fetch($object->fk_member);
+
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("Member").'</td><td class="valeur">';
+		print $fadherent->getNomUrl(-1);
+		print '</td></tr>';
+
 		print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
 		if ($fadherent->datefin) {
 			print dol_print_date($fadherent->datefin, 'day');
@@ -457,6 +507,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print " ".img_warning($langs->trans("Late"));
 			}
 		} else {
+			$adht = new AdherentType($db);
+			$adht->fetch($fadherent->typeid);
 			if (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($fadherent->status > 0) {
@@ -524,7 +576,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $mysoc, $soc);
+					$object->formAddObjectLine(1, $mysoc, null);
 				}
 			}
 		}

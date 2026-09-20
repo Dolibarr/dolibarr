@@ -30,6 +30,10 @@ if (!defined("NOSESSION")) {
 if (!defined("NOHTTPSREDIRECT")) {
 	define("NOHTTPSREDIRECT", '1');
 }
+if (!defined('MAIN_VERSION_DISABLE_DB_CHECK')) {
+	define("MAIN_VERSION_DISABLE_DB_CHECK", '1');
+}
+
 
 /**
  * @var Conf $conf

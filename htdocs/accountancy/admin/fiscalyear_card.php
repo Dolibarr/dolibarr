@@ -28,6 +28,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -54,7 +55,6 @@ $error = 0;
 
 // Initialize a technical objects
 $object = new Fiscalyear($db);
-$extrafields = new ExtraFields($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
@@ -321,7 +321,7 @@ if (($id || $ref) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = fiscalyear_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("Fiscalyear"), -1, $object->picto, 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Fiscalyear"), -1, $object->picto);
 
 	$morehtmlref = '';
 	//$morehtmlref .= '<div class="refidno">';

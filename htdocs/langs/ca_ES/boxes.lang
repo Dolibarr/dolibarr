@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Últims enviaments de clients
 BoxTitleLastCustomerShipments=Els últims %s enviaments de clients modificats
 BoxTitleLastLeaveRequests=Últimes %s peticions de dies lliures modificades
 NoRecordedShipments=Cap enviament de client registrat
+NoUpcomingEvent=No hi ha propers esdeveniments
 BoxCustomersOutstandingBillReached=Clients amb límit pendent assolit
 BoxTitleLastFediverseInfos=Últimes %s publicacions de %s
 BoxLastFediverseInfos=Últimes actualitzacions de Fediverse: notícies i tendències

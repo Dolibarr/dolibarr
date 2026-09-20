@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2016-2021	Ferran Marcet				<fmarcet@2byte.es>
@@ -39,6 +39,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -132,7 +133,7 @@ $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
-$search_billed = GETPOST('search_billed', 'intcomma') ? GETPOST('search_billed', 'intcomma') : GETPOST('billed', 'intcomma');
+$search_billed = GETPOST('search_billed', 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
@@ -167,7 +168,6 @@ $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Commande($db);
 $hookmanager->initHooks(array('orderlistdetail'));
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -190,7 +190,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	// Détail commande
+	// Order detail
 	'rowid' => array('label' => 'LineID', 'checked' => '-1', 'position' => 1, 'enabled' => '1'),
 	'c.ref' => array('label' => "RefOrder", 'checked' => '1', 'position' => 5),
 	'pr.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 6),
@@ -230,8 +230,8 @@ $arrayfields = array(
 	'c.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 120),
 	'c.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 125),
 	'c.date_cloture' => array('label' => "DateClosing", 'checked' => '0', 'position' => 130),
-	'c.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PUBLIC_NOTES')), 'position' => 135),
-	'c.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PRIVATE_NOTES')), 'position' => 140),
+	'c.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 135),
+	'c.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 140),
 	'shippable' => array('label' => "Shippable", 'checked' => '1','enabled' => (string) (int) (isModEnabled('shipping')), 'position' => 990),
 	'c.facture' => array('label' => "Billed", 'checked' => '1', 'enabled' => (string) (int) (!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position' => 995),
 	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
@@ -240,6 +240,9 @@ $arrayfields = array(
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -587,9 +590,9 @@ if ($search_fk_input_reason > 0) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
@@ -754,7 +757,7 @@ if ($resql) {
 	if ($search_id) {
 		$param .= '&search_id='.urlencode($search_id);
 	}
-	// Détail commande
+	// Order detail
 	if ($search_refProduct) {
 		$param .= '&search_refProduct='.urlencode($search_refProduct);
 	}
@@ -999,7 +1002,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	if (GETPOSTINT('autoselectall')) {
@@ -1018,7 +1021,7 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -1102,7 +1105,7 @@ if ($resql) {
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), '', 1);
 		print '</td>';
 	}
 	// Date order
@@ -1304,7 +1307,7 @@ if ($resql) {
 		print '</td>';
 	}
 	// Action column
-	if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre" align="middle">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -1315,7 +1318,7 @@ if ($resql) {
 	// Fields title
 	print '<tr class="liste_titre">';
 
-	if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 
@@ -1479,7 +1482,7 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 	print '</tr>'."\n";
@@ -1487,9 +1490,9 @@ if ($resql) {
 	$total = 0;
 	$subtotal = 0;
 	$productstat_cache = array();
-	'@phan-var-force array<int,array{stats_order_customer?:float|int,stats_order_supplier?:float|int}> $product_stat_cache';
+	'@phan-var-force array<int,array{stock_reel:float|int,stats_order_customer?:float|int,stats_order_supplier?:float|int}> $productstat_cache';
 	$productstat_cachevirtual = array();
-	'@phan-var-force array<int,array{stats_order_customer?:float|int,stats_order_supplier?:float|int}> $product_stat_cachevirtual';
+	'@phan-var-force array<int,array{stock_reel:float|int}> $productstat_cachevirtual';
 	$getNomUrl_cache = array();
 
 	$generic_commande = new Commande($db);
@@ -1511,7 +1514,7 @@ if ($resql) {
 	$total_margin = 0;
 
 
-	// Détail commande
+	// Order detail
 	$totalqty = 0;
 	$oldref = null;
 
@@ -1584,7 +1587,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1890,10 +1893,6 @@ if ($resql) {
 			if ($obj->warehouse > 0) {
 				print img_picto('', 'stock', 'class="paddingrightonly"');
 			}
-			if (!is_object($formproduct)) {
-				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-				$formproduct = new FormProduct($db);
-			}
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'], $obj->warehouse, 'none');
 			print "</td>\n";
 			if (!$i) {
@@ -1911,7 +1910,7 @@ if ($resql) {
 		// Currency rate
 		if (!empty($arrayfields['c.multicurrency_tx']['checked'])) {
 			print '<td class="nowrap">';
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->c_rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2249,7 +2248,7 @@ if ($resql) {
 		}
 
 		// Action column
-		if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

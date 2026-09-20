@@ -14,8 +14,9 @@ Default **language here is English**. So please prepare your contributions in En
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
 3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
 4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging information whenever possible).
-5. Delete unnecessary submissions.
-6. **Check your Message at Preview before submitting.**
+5. One report per issue. If you have several issues, please create several reports.
+6. IMPORTANT: Report the process to reproduce the bug.
+7. **Check your Message at Preview before submitting.**
 
 
 
@@ -27,9 +28,9 @@ Submit code
 This process describes how a Developer can submit code to the project so it can be analyzed and validated by the PR Maintainer (we call this a Pull Request).
 
 Definition:
-- Developer: is the human knowing the development language of the application that wants to change some part of the code by modifying the sources of the project.
-- PR Maintainer: is the human knowing the development language and code who checks that the code submitted for approbation is correct to validate it, in other words, the PR Maintainer is the approbator of commits. 
-- Release Maintainer: is the human that validates that a freeze/beta version is ok to be released officially as a stable version.
+- The Developer: is the human knowing the development language of the application that wants to change some part of the code by modifying the sources of the project.
+- The PR Maintainer: is the human knowing the development language and code who checks that the code submitted for approbation is correct to validate it, in other words, the PR Maintainer is the approbator of commits. 
+- The Release Maintainer: is the human that validates that a freeze/beta version is ok to be released officially as a stable version.
 
 
 ### Basic workflow
@@ -44,16 +45,22 @@ As the Developer:
 6. Commit and push your changes.
 7. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
+If a CI error is thrown, the developer must fix it (The maintener will not process it). This is true even if the CI error is reported an another line of code than the one you modified. This is the principle of solidarity of Dolibarr project.
+
+If a conflict is reported (so PR is not mergeable, status "Mergeable" appear on the PR itself), the developer must fix it too, also if the conflict is not the fault of yourself. Again the principle of solidarity rules.
+
+
 As the PR Maintainer:
 
-7. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
+7. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you 
+to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
 
 As the Release Maintainer:
 
 8. A tag will be added to take a snapshot of the code with all the changes approved by PR Maintainers, when ready to do a release.
 
 
-Note: Project leader(Master Yoda and BDFL) retains all above roles and can directly commit to the project without a PR. Of course anyone can check commit history and comment!
+Note: Mainteners of a branch can directly commit to the project (in their branch) without a PR. Of course anyone can check commit history and comment!
 
 
 <span id="branches" name="branches"></span>
@@ -78,6 +85,8 @@ If you push a bug fix on a very old version it is still going to be merged and p
 
 - As the Developer: Do not submit changes into files xx_XX/afile.lang. They are language files and are updated/synced automatically from Transifex. If you need to add a new language file, just add it for the en_US language.
 
+- As the Developor: For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
+
 - As the Release Maintainer: The Release Maintainer will decide to make a new release as soon as the planning of the release is reached and the code in the branch to release reach the status of "No more known serious bugs". 
 
 
@@ -88,7 +97,7 @@ If you push a bug fix on a very old version it is still going to be merged and p
 Use clear commit messages with the following structure:
 
 ```plaintext
-[KEYWORD] [ISSUENUM] DESC
+[KEYWORD] [ISSUENUM] TITLE
 
 LONGDESC
 ```
@@ -100,39 +109,38 @@ You can add it to your git configuration using:
 git config --local commit.template .gitmessage
 ```
 
-where
+with
 
-#### Keyword
+#### KEYWORD
+
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
-The keyword can be omitted if your commit does not fit in any of the following categories:
+The keyword can be omitted only if your commit does not fit in any of the following categories:
 
-- Fix/FIX: for a bug fix
+- Fix/FIX:     for a bug fix
 - Close/CLOSE: for closing a referenced feature request
-- New/NEW: for an unreferenced new feature (Opening a feature request and using close is preferred)
-- Perf/PERF: for a performance enhancement
-- Qual/QUAL: for quality code enhancement or re-engineering
+- New/NEW:     for an unreferenced new feature (Opening a feature request and using close is preferred)
+- Perf/PERF:   for a performance enhancement
+- Doc/DOC:     for documentation
+- Qual/QUAL:   for quality code enhancement or re-engineering
+- Sec/SEC:     for a security vulnerability fix
 
-#### Issuenum
-If your commit fixes a referenced bug or feature request.
+#### ISSUENUM
 
-In the form of a # followed by the GitHub issue number.
+This is a number in the form of a # followed by the GitHub issue number, if your commit fixes a referenced bug or feature request.
 
-#### Desc
-A short description of the commit content.
 
-This should ideally be less than 50 characters.
+#### TITLE
 
-#### LongDesc
-A long description of the commit content.
+Desc is a short description of the commit content (ideally less than 80 characters).
+If fix a bug in an old version already fixed in a more recent version, please mention `backport of` followed by the commit ID you backport.
 
-You can really go to town here and explain in depth what you've been doing.
+#### LONGDESC
 
-Feel free to express technical details, use cases or anything relevant to the current commit.
-
-This section can span multiple lines.
-
-If your PR is a change on interface, you must also paste a screenshot showing the new screen.
+- A long description of the commit content.
+- You can really go to town here and explain in depth what you've been doing. This section can span multiple lines.
+- Feel free to express technical details, use cases or anything relevant to the current commit.
+- If your PR is a change on interface, you MUST also paste a screenshot showing the new screen.
 
 #### Examples
 <pre>
@@ -142,7 +150,7 @@ CLOSE|Close #456 Short description (where #456 is number of feature request, if 
 or
 NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #xxx)
 or
-Short description (when the commit is not introducing a feature nor closing a bug)
+Short description (only when the commit is not introducing a feature nor closing a bug)
 
 Long description (Can span across multiple lines).
 </pre>
@@ -153,13 +161,15 @@ Long description (Can span across multiple lines).
 Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and
 a process to follow to optimize the chance to have PRs merged efficiently...
 
-* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic. For PR on maintenance versions, the modified code must be as low as possible and only the absolutely necessary changes are allowed (You must have the number of lines modified as low as possible to have the visible bug fixed (no refactoring, no perf, no quality, no renaming must be joined). This allow to reduce to the maximum the number of future conflicts (so the number of regressions) when merging fixes into higher version to reduce the time of any future impact analysis.
+* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic. For PR on maintenance versions, the modified code must be as low as possible and only the absolutely necessary changes are allowed (You must have the number of lines modified as low as possible to have the visible bug fixed (no refactoring, no perf, no quality, no renaming must be joined). 
+This allow to reduce to the maximum the number of future conflicts (so the number of regressions) when merging fixes into higher version to reduce the time of any future impact analysis.
+WARNING: AI IS OFTEN DOING NON ATOMIC PR AND NON ATOMIC PR WILL BE REJECTED, SO BE CAREFULL IF USING AI.
 
 * Your Pull Request (PR) must pass the Continuous Integration checks and code quality checks.
 
 * When submitting a pull request, use same rule as [Commits](#commits) for the message. If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
 
-* A screenshot will be always required for any PR of change/addition of a GUI behavior.
+* A screenshot is mandatory for any PR of change/addition related to the User Interface.
 
 Also, some code changes need a prior approbation:
 
@@ -181,13 +191,27 @@ A so high ratio is very rare on a so popular project and with the increasing pop
 
 
 ### Resources
+
+Global documentation
+--------------------
+
+The project's documentation is maintained on the [Wiki](https://wiki.dolibarr.org/index.php).
+
+*Note*: to help prevent spam, you need to create an account before being able to edit. Everybody is welcome to contribute to its content.
+
+
+Developer documentation
+-----------------------
+
 [Developer documentation](https://wiki.dolibarr.org/index.php/Developer_documentation)
+
 
 Translations
 ------------
+
 The source language (en_US) is maintained in the repository.
 
-All other translations are managed online at [Transifex](https://www.transifex.com/dolibarr-association/dolibarr/).
+All other translations are managed online at [Transifex](https://explore.transifex.com/dolibarr-association/).
 
 Translations done on transifex are available in the next major release.
 
@@ -195,13 +219,6 @@ Note: Sometimes, the source text (English) is modified. In such a case, the tran
 has changed, the translation is surely no more correct so must be done again. But old translation is not lost and you can use the tab "History"
 to retrieve all old translations of a source text and restore the translation in one click with no need to retranslate it if there is no need to.
 
-
-### Resources
 [Translator documentation](https://wiki.dolibarr.org/index.php/Translator_documentation)
 
-Documentation
--------------
-The project's documentation is maintained on the [Wiki](https://wiki.dolibarr.org/index.php).
-
-*Note*: to help prevent spam, you need to create an account before being able to edit. Everybody is welcome to contribute to its content.
 

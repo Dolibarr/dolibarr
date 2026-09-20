@@ -233,7 +233,7 @@ $fullpath_original_file = getMultidirOutput($object, 'ticket').'/'.$original_fil
 
 // Security:
 // Limit access if permissions are wrong
-if (!$accessallowed) {
+if (!$accessallowed) { // @phpstan-ignore-line as value is set to 1 just before
 	accessforbidden();
 }
 
@@ -269,7 +269,7 @@ if (!file_exists($fullpath_original_file_osencoded)) {
 top_httphead($type);
 
 header('Content-Description: File Transfer');
-if ($encoding) {
+if ($encoding) { // @phpstan-ignore-line as variable is set to '' and never change
 	header('Content-Encoding: '.$encoding);
 }
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
@@ -279,7 +279,7 @@ if ($attachment > 0) {
 } elseif (empty($attachment)) {
 	header('Content-Disposition: inline; filename="'.$filename.'"');
 }
-// Ajout directives pour resoudre bug IE
+// Add directives to fix IE bug
 header('Cache-Control: Public, must-revalidate');
 header('Pragma: public');
 $readfile = true;
@@ -289,7 +289,7 @@ if (is_object($db)) {
 }
 
 // Send file now
-if ($readfile) {
+if ($readfile) { // @phpstan-ignore-line as value is set to true just before
 	header('Content-Length: '.dol_filesize($fullpath_original_file));
 
 	readfileLowMemory($fullpath_original_file_osencoded);

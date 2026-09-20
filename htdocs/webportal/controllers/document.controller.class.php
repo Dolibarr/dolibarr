@@ -194,7 +194,7 @@ class DocumentController extends Controller
 			) {
 				if (isModEnabled($moduleName) && isset($conf->{$moduleName}->multidir_output[$entity])) {
 					// List of module supported in security tests (others are forbidden if not security test to check that document is owned by company is done)
-					if (in_array($moduleName, array('facture', 'invoice', 'commande', 'order', 'propal', 'ticket'))) {
+					if (in_array($moduleName, array('facture', 'invoice', 'commande', 'order', 'propal', 'ticket', 'ficheinter'))) {
 						$sql = "SELECT rowid, src_object_id, src_object_type FROM ".MAIN_DB_PREFIX.'ecm_files';
 						$sql .= " WHERE filename = '".$this->db->escape(basename($original_file))."'";
 						$sql .= " AND filepath = '".$this->db->escape(basename($tmparray['dir_output']).'/'.dirname($original_file))."'";

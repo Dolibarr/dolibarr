@@ -9,31 +9,31 @@ ActionsOnResource=אירועים על משאב זה
 ResourcePageIndex=רשימת משאבים
 ResourceSingular=מַשׁאָב
 ResourceCard=כרטיס משאבים
+NewResource=New resource
 AddResource=צור משאב
 ResourceFormLabel_ref=שם המשאב
-ResourceType=סוג משאב
 ResourceFormLabel_description=תיאור המשאב
-
+ResourceType=סוג משאב
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=משאבים המקושרים לאלמנט
 
 ShowResource=הצג משאב
-
 ResourceElementPage=משאבי אלמנט
 ResourceCreatedWithSuccess=משאב נוצר בהצלחה
 RessourceLineSuccessfullyDeleted=שורת המשאב נמחקה בהצלחה
 RessourceLineSuccessfullyUpdated=שורת המשאבים עודכנה בהצלחה
 ResourceLinkedWithSuccess=משאב מקושר להצלחה
-
 ConfirmDeleteResource=אשר למחיקת משאב זה
 RessourceSuccessfullyDeleted=המשאב נמחק בהצלחה
 DictionaryResourceType=סוג משאבים
-
 SelectResource=בחר משאב
-
 IdResource=משאב זיהוי
 AssetNumber=מספר סידורי
 ResourceTypeCode=קוד סוג משאב
 ImportDataset_resource_1=אֶמְצָעִי
-
 ErrorResourcesAlreadyInUse=חלק מהמשאבים נמצאים בשימוש
 ErrorResourceUseInEvent=%s בשימוש באירוע %s
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
+MaxUsersLabel=Maximum users

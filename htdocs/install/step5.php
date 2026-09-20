@@ -5,7 +5,8 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,8 +64,8 @@ if (file_exists($conffile)) {
  * @var string	$dolibarr_main_db_cryptkey
  * @var string	$dolibarr_main_url_root
  * @var string	$modulesdir
- * @var int		$force_install_noedit
- * @var string	$force_install_dolibarrpassword
+ * @var ?int    $force_install_dolibarrpassword
+ * @var ?int    $force_install_noedit
  */
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
@@ -74,6 +75,8 @@ require_once $dolibarr_main_document_root.'/core/lib/functions2.lib.php';
 @phan-var-force ?string $modulesdir
 @phan-var-force ?string $dolibarr_main_db_encryption
 @phan-var-force ?string $dolibarr_main_db_cryptkey
+@phan-var-force ?int $force_install_dolibarrpassword
+@phan-var-force ?int $force_install_noedit
 ';
 
 global $langs;
@@ -116,8 +119,8 @@ if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
 	/**
-	 * @var string	$force_install_noedit
-	 * @var string	$force_install_main_data_root
+	 * @var int 	$force_install_noedit
+	 * @var ?string	$force_install_main_data_root
 	 * @var string	$force_install_databaserootlogin
 	 * @var string	$force_install_databaserootpass
 	 * @var string	$force_install_type
@@ -125,16 +128,20 @@ if (@file_exists($forcedfile)) {
 	 * @var string	$force_install_database
 	 * @var string	$force_install_databaselogin
 	 * @var string	$force_install_databasepass
-	 * @var string	$force_install_port
+	 * @var int 	$force_install_port
 	 * @var string	$force_install_prefix
-	 * @var string	$force_install_createdatabase
-	 * @var string	$force_install_createuser
+	 * @var bool	$force_install_createdatabase
+	 * @var bool	$force_install_createuser
 	 * @var string	$force_install_mainforcehttps
 	 * @var string	$force_install_distrib
 	 * @var string	$force_install_dolibarrlogin
-	 * @var string	$force_install_lockinstall
+	 * @var bool	$force_install_mainforcehttps
+	 * @var bool	$force_install_lockinstall
 	 * @var string	$force_install_module
 	 */
+	'
+	@phan-var-force int $force_install_noedit
+	';
 	// If forced install is enabled, replace post values. These are empty because form fields are disabled.
 	if ($force_install_noedit == 2) {
 		if (!empty($force_install_dolibarrlogin)) {
@@ -233,7 +240,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : 0;
 	$conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
-	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+	$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, (string) $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	// Create the global $hookmanager object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -273,7 +280,10 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				$numrows = $db->num_rows($resql);
 				if ($numrows == 0) {
 					// Define default setup for password encryption
-					dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+					// DATABASE_PWD_ENCRYPTED is shared across all entities (admin/security.php:75
+					// stores it with entity=0). Use entity 0 here too.
+					dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', 0);
+
 					if (function_exists('password_hash')) {
 						dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'password_hash', 'chaine', 0, '', 0); // All entities
 					} else {
@@ -298,6 +308,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			$newuser = new User($db);
 			$newuser->lastname = 'SuperAdmin';
 			$newuser->firstname = '';
+			$newuser->ldap_sid = '';
 			$newuser->login = $login;
 			$newuser->pass = $pass;
 			$newuser->admin = 1;
@@ -313,7 +324,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			} else {
 				if ($result == -6) {	//login or email already exists
 					dolibarr_install_syslog('step5: AdminLoginAlreadyExists', LOG_WARNING);
-					print '<br><div class="warning">'.$newuser->error."</div><br>";
+					print '<div class="warning warningbackground">'.$newuser->error."</div>";
 					$success = 1;
 				} else {
 					dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
@@ -390,8 +401,8 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					$handle = @opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
-								$modName = substr($file, 0, dol_strlen($file) - 10);
+							if (is_readable($dir.$file) && dol_substr($file, 0, 3) == 'mod' && dol_substr($file, dol_strlen($file) - 10) == '.class.php') {
+								$modName = dol_substr($file, 0, dol_strlen($file) - 10);
 								if ($modName) {
 									if (!empty($modNameLoaded[$modName])) {   // In cache of already loaded modules ?
 										$mesg = "Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
@@ -515,7 +526,7 @@ if ($action == "set") {
 	if ($success) {
 		if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') == DOL_VERSION)) {
 			// Install is finished (database is on same version than files)
-			print '<br>'.$langs->trans("SystemIsInstalled")."<br>";
+			print '<br><div class="info">'.$langs->trans("SystemIsInstalled")."</div><br>";
 
 			// Create install.lock file
 			// No need for the moment to create it automatically, creation by web assistant means permissions are given
@@ -538,7 +549,7 @@ if ($action == "set") {
 				}
 			}
 			if (empty($createlock)) {
-				print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+				print '<div class="warning warningbackground">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 			}
 
 			print "<br>";
@@ -587,7 +598,7 @@ if ($action == "set") {
 			}
 		}
 		if (empty($createlock)) {
-			print '<br><div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
+			print '<div class="warning warningbackground">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
 
 		// Delete the upgrade.unlock file it it exists

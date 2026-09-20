@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2016 Xebax Christy 			<xebax@wanadoo.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025       Charlene Benke      <charlene@patas-monkey.com>
  *
@@ -166,7 +166,7 @@ class BankAccounts extends DolibarrApi
 
 		$account = new Account($this->db);
 		// Date of the initial balance (required to create an account).
-		$account->date_solde = time();
+		$account->date_solde = dol_now();
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -357,7 +357,7 @@ class BankAccounts extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$account->array_options[$index] = $this->_checkValForAPI($field, $val, $account);
+					$account->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $account);
 				}
 				continue;
 			}
@@ -679,7 +679,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function updateLine($id, $line_id, $label)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 
@@ -721,7 +721,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function deleteLine($id, $line_id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 

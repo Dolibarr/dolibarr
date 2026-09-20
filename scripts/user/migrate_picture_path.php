@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 2007-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Jean Heimburger <http://tiaris.eu>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -114,7 +114,7 @@ function migrate_user_filespath($u)
 {
 	global $conf;
 
-	// Les fichiers implodets des users sont toujours sur l'entité 1
+	// User files are always stored on entity 1
 	$dir = $conf->user->dir_output;
 	$origin = $dir.'/'.get_exdir($u->id, 2, 0, 0, $u, 'user');
 	$destin = $dir.'/'.$u->id;

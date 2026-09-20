@@ -104,7 +104,7 @@ class Warehouses extends DolibarrApi
 	 * @param int		$limit				Limit for list
 	 * @param int		$page				Page number
 	 * @param int		$category			Use this param to filter list by category
-	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:>:'20160101')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array						Array of warehouse objects
@@ -276,7 +276,7 @@ class Warehouses extends DolibarrApi
 			throw new RestException(404, 'warehouse not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
+		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id, 'entrepot')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -299,7 +299,7 @@ class Warehouses extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->warehouse->array_options[$index] = $this->_checkValForAPI($field, $val, $this->warehouse);
+					$this->warehouse->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->warehouse);
 				}
 				continue;
 			}
@@ -346,7 +346,7 @@ class Warehouses extends DolibarrApi
 			throw new RestException(404, 'warehouse not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
+		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id, 'entrepot')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

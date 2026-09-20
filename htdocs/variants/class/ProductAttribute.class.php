@@ -2,7 +2,7 @@
 /* Copyright (C) 2016	    Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2022       Open-Dsi			<support@open-dsi.fr>
  * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class ProductAttribute extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -97,7 +97,7 @@ class ProductAttribute extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -111,6 +111,11 @@ class ProductAttribute extends CommonObject
 	 * @var int rowid
 	 */
 	public $id;
+
+	/**
+	 * @var int		Alias of id, written by the import engine on the object it hands to the triggers
+	 */
+	public $rowid;
 
 	/**
 	 * @var string ref
@@ -280,21 +285,26 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 * Fetches the properties of a product attribute
+	 * Fetches the properties of a product attribute, from its id or from its ref
 	 *
-	 * @param int $id Attribute id
-	 * @return int Return integer <1 KO, >1 OK
+	 * Note: $id must not be typed as int. The import engine resolves a foreign key by
+	 * calling fetch('', $ref) and an empty string is not a numeric string in PHP 8.
+	 *
+	 * @param	int|string	$id		Attribute id
+	 * @param	string		$ref	Attribute ref, used when $id is empty
+	 * @return	int					Return integer <0 KO, 0 not found, >0 OK
 	 */
-	public function fetch($id)
+	public function fetch($id, $ref = '')
 	{
 		global $langs;
 		$error = 0;
 
 		// Clean parameters
-		$id = $id > 0 ? $id : 0;
+		$id = $id > 0 ? (int) $id : 0;
+		$ref = trim((string) $ref);
 
 		// Check parameters
-		if (empty($id)) {
+		if (empty($id) && $ref === '') {
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("TechnicalID"));
 			$error++;
 		}
@@ -305,7 +315,11 @@ class ProductAttribute extends CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext, label, position";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE rowid = " . ((int) $id);
+		if (!empty($id)) {
+			$sql .= " WHERE rowid = " . ((int) $id);
+		} else {
+			$sql .= " WHERE ref = '" . $this->db->escape($ref) . "'";
+		}
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -493,8 +507,8 @@ class ProductAttribute extends CommonObject
 
 		if (!$error) {
 			// Delete values
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element_line;
-			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element_line);
+			$sql .= " WHERE " . $this->db->sanitize($this->fk_element) . " = " . ((int) $this->id);
 
 			dol_syslog(__METHOD__ . ' - Delete values', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -517,6 +531,14 @@ class ProductAttribute extends CommonObject
 		}
 
 		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$this->errors[] = "Error " . $this->error;
+				$error++;
+			}
+		}
+
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -529,10 +551,10 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Load array lines
 	 *
-	 * @param	string		$filters	Filter on other fields
+	 * @param	string		$sql_filters	Filter on other fields
 	 * @return	int						    Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch_lines($filters = '')
+	public function fetch_lines($sql_filters = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -555,12 +577,12 @@ class ProductAttribute extends CommonObject
 		}
 
 		$sql = "SELECT td.rowid, td.fk_product_attribute, td.ref, td.value, td.position";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element_line . " AS td";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->table_element . " AS t ON t.rowid = td." . $this->fk_element;
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element_line) . " AS td";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element) . " AS t ON t.rowid = td." . $this->db->sanitize($this->fk_element);
 		$sql .= " WHERE t.rowid = " . ((int) $this->id);
 		$sql .= " AND t.entity IN (" . getEntity('product') . ")";
-		if ($filters) {
-			$sql .= $filters;
+		if ($sql_filters) {
+			$sql .= $sql_filters;
 		}
 		$sql .= $this->db->order("td.position", "asc");
 
@@ -777,8 +799,8 @@ class ProductAttribute extends CommonObject
 		}
 
 		$sql = "SELECT COUNT(*) AS count";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element_line;
-		$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
+		$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE " . $this->db->sanitize($this->fk_element) . " = " . ((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -915,7 +937,7 @@ class ProductAttribute extends CommonObject
 			// We first search all attributes
 			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= " WHERE entity IN (" . getEntity('product') . ")";
-			$sql .= " ORDER BY position ASC, rowid " . $rowidorder;
+			$sql .= " ORDER BY position ASC, rowid " . preg_replace('/[^a-zA-Z]/', '', $rowidorder); // We want to keep the order of lines that have same position, so we use rowid as second sort criteria
 
 			dol_syslog(__METHOD__ . " search all attributes", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1199,7 +1221,7 @@ class ProductAttribute extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
+					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . dol_substr($filename, 0, $pospoint) . '_mini' . dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
 					} else {
@@ -1411,6 +1433,8 @@ class ProductAttribute extends CommonObject
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
+						/** @var CommonObject $object */
+						'@phan-var-force CommonObject $object';
 						$object->formAddObjectLine(1, $mysoc, $buyer);
 					}
 				}

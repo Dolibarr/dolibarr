@@ -8,8 +8,8 @@
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,23 +34,24 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var Societe $mysoc
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "banks", "bills", 'paypal', 'stripe', 'withdrawals'));
@@ -99,6 +100,7 @@ $result = restrictedArea($user, 'societe', '', '');
 $stripe = null;  // Stripe object
 $stripeacc = null; // Stripe Account
 $stripecu = null; // Remote stripe customer
+$service = null;
 
 $servicestatus = 0;
 $site_account = 'UnknownSiteAccount';
@@ -182,8 +184,6 @@ if (empty($reshook)) {
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->status          = GETPOSTINT('clos');
-			$companybankaccount->clos            = $companybankaccount->status;
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
@@ -191,6 +191,9 @@ if (empty($reshook)) {
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
+			$companybankaccount->currency_code   = GETPOST('account_currency_code', 'alpha');
+			$companybankaccount->fk_country      = GETPOSTINT('account_country_id');
+			$companybankaccount->state_id        = GETPOSTINT('account_state_id');
 			$companybankaccount->address         = GETPOST('address', 'alpha');
 
 			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
@@ -202,6 +205,8 @@ if (empty($reshook)) {
 			if (empty($companybankaccount->rum)) {
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, (string) $companybankaccount->id);
 			}
+
+			$companybankaccount->status          = GETPOSTINT('clos');
 
 			if (GETPOST('stripe_card_ref', 'alpha') && GETPOST('stripe_card_ref', 'alpha') != $companypaymentmode->stripe_card_ref) {
 				// If we set a stripe value that is different than previous one, we also set the stripe account
@@ -323,6 +328,9 @@ if (empty($reshook)) {
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
+			$companybankaccount->currency_code   = GETPOST('account_currency_code', 'alpha');
+			$companybankaccount->fk_country      = GETPOSTINT('account_country_id');
+			$companybankaccount->state_id        = GETPOSTINT('account_state_id');
 			$companybankaccount->address         = GETPOST('address', 'alpha');
 
 			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
@@ -333,7 +341,6 @@ if (empty($reshook)) {
 			$companybankaccount->date_rum        = GETPOSTDATE('date_rum', '00:00:00');
 			$companybankaccount->datec           = dol_now();
 
-			//$companybankaccount->clos          = GETPOSTINT('clos');
 			$companybankaccount->status          = GETPOSTINT('clos');
 
 			$companybankaccount->bank = trim($companybankaccount->bank);
@@ -365,7 +372,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
-					$action = 'create'; // Force chargement page création
+					$action = 'create'; // Force loading of creation page
 				}
 
 				if (empty($companybankaccount->rum)) {
@@ -446,7 +453,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
-					$action = 'createcard'; // Force chargement page création
+					$action = 'createcard'; // Force loading of creation page
 				}
 			}
 
@@ -666,10 +673,10 @@ if (empty($reshook)) {
 
 			if (empty($newcu)) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
-				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity;
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".((int) $conf->entity);
 			} else {
 				$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
-				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep the = here for entity. Only 1 record must be modified !
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".((int) $conf->entity); // Keep the = here for entity. Only 1 record must be modified !
 			}
 
 			$resql = $db->query($sql);
@@ -692,7 +699,7 @@ if (empty($reshook)) {
 				} else {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
 					$sql .= " SET key_account = '".$db->escape($newcu)."', site_account = '".$db->escape($tmpsite_account)."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".((int) $conf->entity); // Keep = here for entity. Only 1 record must be modified !
 					$resql = $db->query($sql);
 				}
 			}
@@ -733,10 +740,11 @@ if (empty($reshook)) {
 
 			$db->begin();
 
+			$sql = '';
 			if (empty($newsup)) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".((int) $conf->entity);
 				// TODO Add site and site_account on oauth_token table
-				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
+				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".((int) $conf->entity);
 			} else {
 				try {
 					$stripesup = \Stripe\Account::retrieve($newsup);
@@ -745,9 +753,9 @@ if (empty($reshook)) {
 					$tokenstring['type'] = $stripesup->type;
 					$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
 					$sql .= " SET tokenstring = '".$db->escape(json_encode($tokenstring))."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".((int) $conf->entity); // Keep = here for entity. Only 1 record must be modified !
 					// TODO Add site and site_account on oauth_token table
-					$sql .= " WHERE fk_soc = ".$object->id." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".((int) $conf->entity); // Keep = here for entity. Only 1 record must be modified !
 				} catch (Exception $e) {
 					$error++;
 					setEventMessages($e->getMessage(), null, 'errors');
@@ -891,8 +899,11 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+
+$countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 $title = $langs->trans("ThirdParty");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
@@ -927,7 +938,7 @@ if (empty($companybankaccount->socid)) {
 }
 
 if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddupdatepaymentinformation) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'update';
 	if ($action == 'editcard') {		// Test on permission not required
@@ -937,7 +948,7 @@ if ($socid && ($action == 'edit' || $action == 'editcard') && $permissiontoaddup
 	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 }
 if ($socid && ($action == 'create' || $action == 'createcard') && $permissiontoaddupdatepaymentinformation) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	$actionforadd = 'add';
 	if ($action == 'createcard') {		// Test on permission not required
@@ -945,7 +956,6 @@ if ($socid && ($action == 'create' || $action == 'createcard') && $permissiontoa
 	}
 	print '<input type="hidden" name="action" value="'.$actionforadd.'">';
 }
-
 
 // View
 if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' && $action != 'createcard') {
@@ -1033,7 +1043,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$tmpsite_account, 'globe').'</a>';
 			}
 			if (empty($tmpstripecu)) {
-				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall" spellcheck="false">';
 				print '<input type="hidden" name="action" value="synccustomertostripetest">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1062,7 +1072,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$tmpsite_account, 'globe').'</a>';
 			}
 			if (empty($tmpstripecu)) {
-				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall" spellcheck="false">';
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1125,7 +1135,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key '.$site_account, 'globe').'</a>';
 		}
 		if (empty($stripesupplieracc)) {
-			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" class="nowraponall" spellcheck="false">';
 			print '<input type="hidden" name="action" value="syncsuppliertostripe">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -1710,7 +1720,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			$out = '';
 			if (is_array($modellist) && count($modellist)) {
-				$out .= '<form action="'.$_SERVER["PHP_SELF"].(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
+				$out .= '<form action="'.$_SERVER["PHP_SELF"].(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post" autocomplete="off" spellcheck="false">';
 				$out .= '<input type="hidden" name="action" value="builddocrib">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$out .= '<input type="hidden" name="socid" value="'.$object->id.'">';
@@ -2000,11 +2010,11 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'" spellcheck="false"></td></tr>';
 
-	$required = (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) ? "fieldrequired" : "";
-	print '<tr><td class="'.$required.'">'.$langs->trans("BankName").'</td>';
+	print '<tr><td>'.$langs->trans("BankName").'</td>';
 	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'" spellcheck="false"></td></tr>';
 
 	// Show fields of bank account
+	$companybankaccount->fetch($id);
 	$bankaccount = $companybankaccount;
 	// Code here is similar as in bank.php for users
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
@@ -2059,6 +2069,52 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
 		print '</tr>';
 	}
+
+	// Currency
+	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
+	print '<td>';
+	$selectedcode = $bankaccount->currency_code;
+	if (!$selectedcode) {
+		$selectedcode = $conf->currency;
+	}
+	print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
+	//print $langs->trans("Currency".$conf->currency);
+	//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
+	print '</td></tr>';
+
+	// Status
+	$account_status = $bankaccount->status;
+	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
+	print '<td>';
+	print $form->selectarray("clos", $bankaccount->labelStatus, $account_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
+	print '</td></tr>';
+
+	// Bank country
+	$country_codeid = GETPOST("account_country_id") ? GETPOST("account_country_id") : $bankaccount->fk_country;
+	if (empty($country_codeid)) {
+		$country_codeid = $mysoc->country_code;
+	}
+	$bankaccount->country_code = getCountry($country_codeid, '2'); // Force country code on account to have following field on bank fields matching country rules
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
+	print '<td>';
+	print img_picto('', 'country', 'class="pictofixedwidth"');
+	print $form->select_country($country_codeid, 'account_country_id');
+	if ($user->admin) {
+		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
+	print '</td></tr>';
+
+	// Bank state
+	$selected_state_id = $bankaccount->state_id;
+	print '<tr><td>'.$langs->trans('State').'</td><td>';
+	if ($country_codeid) {
+		print img_picto('', 'state', 'class="pictofixedwidth"');
+		print $formcompany->select_state($selected_state_id, $country_codeid, 'account_state_id');
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="address" rows="'.ROWS_4.'" cols="40" maxlength="255" spellcheck="false">';
@@ -2195,6 +2251,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		$size = 8;
 		$name = 'Unknown';
 		$content = 'NoContent';
+
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;
@@ -2237,9 +2294,55 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			print $langs->trans($val);
 		}
 		print '</td>';
-		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.GETPOST($name).'" spellcheck="false"></td>';
+		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" id="'.$name.'" value="'.GETPOST($name).'" spellcheck="false"></td>';
 		print '</tr>';
 	}
+
+	// Currency
+	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
+	print '<td>';
+	$selectedcode = $object->currency_code;
+	if (!$selectedcode) {
+		$selectedcode = $conf->currency;
+	}
+	print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
+	//print $langs->trans("Currency".$conf->currency);
+	//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
+	print '</td></tr>';
+
+	// Status
+	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
+	print '<td>';
+	print $form->selectarray("clos", $companybankaccount->labelStatus, (GETPOSTISSET('clos') ? GETPOSTINT('clos') : $companybankaccount::STATUS_OPEN), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
+	print '</td></tr>';
+
+	// Bank country
+	$selectedcode = '';
+	if (GETPOSTISSET("account_country_id")) {
+		$selectedcode = GETPOST("account_country_id") ? GETPOST("account_country_id") : $object->country_code;
+	} elseif (empty($selectedcode)) {
+		$selectedcode = $mysoc->country_code;
+	}
+	$object->country_code = getCountry($selectedcode, '2'); // Force country code on account to have following field on bank fields matching country rules
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
+	print '<td>';
+	print img_picto('', 'country', 'class="pictofixedwidth"');
+	print $form->select_country($selectedcode, 'account_country_id');
+	if ($user->admin) {
+		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
+	print '</td></tr>';
+
+	// Bank state
+	print '<tr><td>'.$langs->trans('State').'</td><td>';
+	if ($selectedcode) {
+		print img_picto('', 'state', 'class="pictofixedwidth"');
+		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOSTINT("account_state_id") : 0, $selectedcode, 'account_state_id');
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 	print '<textarea name="address" rows="'.ROWS_4.'" class="quatrevingtpercent" maxlength="255">';
@@ -2292,7 +2395,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print dol_get_fiche_end();
 
-	dol_set_focus('#bank');
+	dol_set_focus('#iban');
 
 	print $form->buttonsSaveCancel("Add");
 }

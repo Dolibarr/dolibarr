@@ -56,3 +56,4 @@ MailSent = Имейлът беше изпратен
 NUMBER_MONTH_BEFORE_DELETION = Брой месеци преди изтриването
 TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
 OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:
+QualifiedNumber=Qualified record count

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This is the phan config file used by .github/workflows/phan.yml
@@ -80,6 +80,7 @@ $VALID_MODULE_MAPPING = array(
 	'bom' => 'Bom',
 	'bookcal' => 'BookCal',
 	'bookmark' => 'Bookmark',
+	'captureserver' => null, // Not provided by default, no module tests
 	'cashdesk' => null,  // TODO: fill in proper class
 	'category' => 'Categorie',
 	'clicktodial' => 'ClickToDial',
@@ -97,7 +98,8 @@ $VALID_MODULE_MAPPING = array(
 	'don' => 'Don',
 	'dynamicprices' => 'DynamicPrices',
 	'ecm' => 'ECM',
-	'ecotax' => null,  // TODO: External module ?
+	'ecotax' => null,
+	'einvoice' => null,
 	'emailcollector' => 'EmailCollector',
 	'eventorganization' => 'EventOrganization',
 	'expensereport' => 'ExpenseReport',
@@ -118,6 +120,7 @@ $VALID_MODULE_MAPPING = array(
 	'intracommreport' => 'Intracommreport',
 	'invoice' => 'Facture',
 	'knowledgemanagement' => 'KnowledgeManagement',
+	'ksef' => null,
 	'label' => 'Label',
 	'ldap' => 'Ldap',
 	'loan' => 'Loan',
@@ -143,6 +146,7 @@ $VALID_MODULE_MAPPING = array(
 	'paymentbybanktransfer' => 'PaymentByBankTransfer',
 	'paypal' => 'Paypal',
 	'paypalplus' => null,
+	'pdpconnectfr' => null,
 	'prelevement' => 'Prelevement',
 	'printing' => 'Printing',
 	'product' => 'Product',
@@ -151,6 +155,7 @@ $VALID_MODULE_MAPPING = array(
 	'productsupplierprice' => null,
 	'project' => 'Projet',
 	'propal' => 'Propale',
+	'quickmemo' => null,
 	'receiptprinter' => 'ReceiptPrinter',
 	'reception' => 'Reception',
 	'recruitment' => 'Recruitment',
@@ -212,7 +217,7 @@ $EXTRAFIELDS_TYPE2LABEL = array(
 	);
 
 
-$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename'))).')$/';
+$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename', '\$dirofmodule'))).')$/';
 $deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';
 
 $extraFieldTypeRegex = '/^(?:'.implode('|', array_keys($EXTRAFIELDS_TYPE2LABEL)).')$/';
@@ -269,6 +274,7 @@ return [
 		'conffiletoshowshort' => 'string',
 		'dateSelector' => 'int<0,1>',
 		'db' => '\DoliDB',
+		'dbsession' => '\DoliDB',
 		'disableedit' => 'int<0,1>',
 		'disablemove' => 'int<0,1>',
 		'disableremove' => 'int<0,1>',
@@ -277,9 +283,21 @@ return [
 		'dolibarr_main_db_encrypted_pass' => 'string',
 		'dolibarr_main_db_host' => 'string',
 		'dolibarr_main_db_pass' => 'string',
+		'dolibarr_main_db_type' => '?string',
 		'dolibarr_main_demo' => 'string',
 		'dolibarr_main_document_root' => 'string',
 		'dolibarr_main_url_root' => 'string',
+		'dolibarr_font_DOL_DEFAULT_TTF' => '?string',
+		'dolibarr_font_DOL_DEFAULT_TTF_BOLD' => '?string',
+		'dolibarr_js_CKEDITOR' => '?string',
+		'dolibarr_js_JQUERY' => '?string',
+		'dolibarr_js_JQUERY_UI' => '?string',
+		'dolibarr_lib_NUSOAP_PATH' => '?string',
+		'dolibarr_lib_ODTPHP_PATH' => '?string',
+		'dolibarr_lib_ODTPHP_PATHTOPCLZIP' => '?string',
+		'dolibarr_lib_PHPEXCELNEW_PATH' => '?string',
+		'dolibarr_lib_TCPDF_PATH' => '?string',
+		'dolibarr_lib_TCPDI_PATH' => '?string',
 		'errormsg' => 'string',
 		'extrafields' => '\ExtraFields',
 		'filter' => 'string',
@@ -342,8 +360,9 @@ return [
 	//	should be added to the `directory_list` as
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
+		'dev/tools/',
 		'htdocs/includes/',
-		'htdocs/install/doctemplates/websites/',
+		'htdocs/install/doctemplates/',
 		'htdocs/core/class/lessc.class.php', // External library
 		'htdocs/admin/tools/ui/',
 		PHAN_DIR . '/stubs/',
@@ -352,6 +371,7 @@ return [
 	'exclude_file_regex' => '@^('  // @phpstan-ignore-line
 		.'dummy'  // @phpstan-ignore-line
 		// mymodule seen in cti, but not in git.
+		.'|dev/tools/.*'  // Ignore all files in dev tools @phpstan-ignore-line
 		.'|htdocs/custom/.*'  // Ignore all custom modules @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
 		.'|htdocs/admin/tools/ui/.*'  // @phpstan-ignore-line
@@ -386,12 +406,16 @@ return [
 		'/^dol_now$/' => [0, '{^(?:auto|gmt|tz(?:server|ref|user(?:rel)?))$}',"InvalidDolNowArgument"],
 		'/^dol_mktime$/' => [6, '{^(?:|0|1|auto|gmt|tz(?:server|ref|user(?:rel)?|,[+a-zA-Z-/]+))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
 		'/^dol_print_date$/' => [2, '{^(?:|0|1|auto|gmt|tz(?:server|user(?:rel)?))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
-		'/^GETPOSTFLOAT$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidGetPostFloatRounding"],
-		'/^price2num$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidPrice2NumRounding"],
+		'/^GETPOSTFLOAT$/' => [1, '{^(?:|M[UTS]|C[UTR]|\d+)$}',"InvalidGetPostFloatRounding"],
+		'/^price2num$/' => [1, '{^(?:|M[UTS]|C[UTR]|\d+)$}',"InvalidPrice2NumRounding"],
 	],
+
+	'SqlInjectionPlugin' => ['debug' => false],
+
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
+		__DIR__.'/plugins/SqlInjectionPlugin.php',
 		// checks if a function, closure or method unconditionally returns.
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		'DeprecateAliasPlugin',
@@ -470,6 +494,7 @@ return [
 		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
 		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
 
+		'PhanPluginEmptyStatementIf',		// Usually done on purpose with a comment
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
 		// 'PhanTypeMismatchArgument',		// Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
@@ -522,15 +547,13 @@ return [
 		'memcache'  => PHAN_DIR . '/stubs/memcache.phan_php',
 		'memcached' => PHAN_DIR . '/stubs/memcached.phan_php',
 		'mysqli'  => PHAN_DIR . '/stubs/mysqli.phan_php',
-		'pdo_cubrid'  => PHAN_DIR . '/stubs/pdo_cubrid.phan_php',
-		'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
-		'pdo_pgsql'  => PHAN_DIR . '/stubs/pdo_pgsql.phan_php',
-		'pdo_sqlite'  => PHAN_DIR . '/stubs/pdo_sqlite.phan_php',
+		'phpunit'  => PHAN_DIR . '/stubs/phpunit.phan_php',
 		'pgsql'  => PHAN_DIR . '/stubs/pgsql.phan_php',
 		'session'  => PHAN_DIR . '/stubs/session.phan_php',
 		'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',
 		'soap'  => PHAN_DIR . '/stubs/soap.phan_php',
 		'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
+		'sqlite3'  => PHAN_DIR . '/stubs/sqlite3.phan_php',
 		'tidy'  => PHAN_DIR . '/stubs/tidy.phan_php',
 		'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],

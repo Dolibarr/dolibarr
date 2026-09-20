@@ -3,7 +3,7 @@
  * Copyright (C) 2015	    Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2019	    Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,9 +103,8 @@ function salaries_prepare_head($object)
  */
 function salaries_admin_prepare_head()
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $extrafields, $langs, $user;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('salary');
 
 	$h = 0;
@@ -122,7 +121,7 @@ function salaries_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/salaries/admin/salaries_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'salary'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSalaries");
 	$nbExtrafields = $extrafields->attributes['salary']['count'];
 	if ($nbExtrafields > 0) {

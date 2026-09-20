@@ -47,10 +47,11 @@ require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 global $langs;
 
 $ok = 0;
+$db = null;
 
 
 // This page can be long. We increase the time allowed. / Cette page peut etre longue. On augmente le delai autorise.
-// Only works if you are not in safe_mode. / Ne fonctionne que si on est pas en safe_mode.
+// Only works if you are not in safe_mode.
 
 $err = error_reporting();
 error_reporting(0);      // Disable all errors
@@ -104,7 +105,8 @@ if (@file_exists($forcedfile)) {
 
 dolibarr_install_syslog("--- step2: entering step2.php page");
 
-'@phan-var-force string $dolibarr_main_db_prefix';  // From configuraiotn file or install/inc.php
+/** @var string $dolibarr_main_db_prefix */
+'@phan-var-force string $dolibarr_main_db_prefix';  // From configuration file or install/inc.php
 
 
 /*
@@ -211,7 +213,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 		// Sort list of sql files on alphabetical order (load order is important)
 		sort($tabledata);
 		foreach ($tabledata as $file) {
-			$name = substr($file, 0, dol_strlen($file) - 4);
+			$name = dol_substr($file, 0, dol_strlen($file) - 4);
 			$buffer = '';
 			$fp = fopen($dir.$file, "r");
 			if ($fp) {
@@ -287,7 +289,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 	 * To do after the files *.sql
 	 *
 	 ***************************************************************************************/
-	if ($ok && $createkeys) {
+	if ($ok && $createkeys && $db !== null) {
 		// We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
 		$dir = "mysql/tables/";
 
@@ -309,7 +311,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 		// Sort list of sql files on alphabetical order (load order is important)
 		sort($tabledata);
 		foreach ($tabledata as $file) {
-			$name = substr($file, 0, dol_strlen($file) - 4);
+			$name = dol_substr($file, 0, dol_strlen($file) - 4);
 			//print "<tr><td>Creation of table $name</td>";
 			$buffer = '';
 			$fp = fopen($dir.$file, "r");
@@ -351,7 +353,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 				fclose($fp);
 
 				// If several requests, we loop on each
-				$listesql = explode(';', $buffer);
+				$listesql = explode(';', $buffer);  // @phan-suppress-current-line SqlInjection
 				foreach ($listesql as $req) {
 					$buffer = trim($req);
 					if ($buffer) {
@@ -439,7 +441,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 			//$buffer=preg_replace('/;\';/',";'§",$buffer);
 
 			// If several requests, we loop on each of them
-			$listesql = explode('§', $buffer);
+			$listesql = explode('§', $buffer);  // @phan-suppress-current-line SqlInjection
 			foreach ($listesql as $buffer) {
 				$buffer = trim($buffer);
 				if ($buffer) {
@@ -503,7 +505,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 					}
 
 					//print 'x'.$file.'-'.$createdata.'<br>';
-					if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i', $file)) {
+					if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i', $file)) {  // @phpstan-ignore argument.invalidPregQuote
 						$tablefound++;
 						$tabledata[] = $file;
 					}
@@ -515,7 +517,7 @@ if ($action == "set") {		// Test on permission not required. Already managed by 
 		// Sort list of data files on alphabetical order (load order is important)
 		sort($tabledata);
 		foreach ($tabledata as $file) {
-			$name = substr($file, 0, dol_strlen($file) - 4);
+			$name = dol_substr($file, 0, dol_strlen($file) - 4);
 			$fp = fopen($dir.$file, "r");
 			dolibarr_install_syslog("step2: open data file ".$dir.$file." handle=".(is_bool($fp) ? json_encode($fp) : $fp));
 			if ($fp) {

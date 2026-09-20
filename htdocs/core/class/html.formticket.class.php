@@ -1,12 +1,14 @@
 <?php
 /* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023-2025  Charlene Benke	        <charlene.r@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Irvine FLEITH		    <irvine.fleith@atm-consulting.fr>
+ * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2026		Lenin Rivas          	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -394,7 +396,7 @@ class FormTicket
 
                     	jQuery("#email").change(function() {
                             jQuery("#contact_search_line").show();
-                            jQuery("#contact_search_result").html("'.dol_escape_js($langs->trans('Select2SearchInProgress')).'");
+                            jQuery("#contact_search_result").html(\''.dol_escape_js($langs->trans('Select2SearchInProgress')).'\');
                             jQuery("#contact_id").val("");
                             jQuery("#contact_lastname").val("");
                             jQuery("#contact_firstname").val("");
@@ -402,9 +404,10 @@ class FormTicket
                             jQuery("#contact_phone").val("");
 
                             jQuery.getJSON(
-                                "'.dol_escape_js(dol_buildpath('/public/ticket/ajax/ajax.php', 1)).'",
+                                \''.dol_escape_js(dol_buildpath('/public/ticket/ajax/ajax.php', 1)).'\',
 								{
 									action: "getContacts",
+									token: "'.currentToken().'",
 									email: jQuery("#email").val()
 								},
 								function(response) {
@@ -424,7 +427,7 @@ class FormTicket
 									}
 								}
                             ).fail(function(jqxhr, textStatus, error) {
-    							var error_msg = "'.dol_escape_js($langs->trans('ErrorAjaxRequestFailed')).'"+" ["+textStatus+"] : "+error;
+    							var error_msg = \''.dol_escape_js($langs->trans('ErrorAjaxRequestFailed')).'\'+" ["+textStatus+"] : "+error;
                                 jQuery("#contact_search_result").html("<span class=\"error\">"+error_msg+"</span>");
                             });
                         });
@@ -550,23 +553,51 @@ class FormTicket
 				if (isset($this->withreadid) && $this->withreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
 				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' />';
+				print '<input class="text minwidth400imp" id="subject" name="subject" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' spellcheck="false">';
 			}
 			print '</td></tr>';
 		}
 
 		// Message
-		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
+		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td class="tdtop">';
 
 		// If public form, display more information
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
-			$toolbarname = 'dolibarr_details';	// TODO Allow image so use can do paste of image into content but disallow file manager
+			$toolbarname = 'dolibarr_details';	// TODO Allow image so user can do paste of image into content but we disallow file manager
 			print '<div class="warning hideonsmartphone">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = false;
-		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= ($this->ispublic ? 2 : 1));		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+
+		// Add layout and AI tools for message (only for backoffice users)
+		if (!$this->ispublic) {
+			$out = '';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($this->db);
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+			$formai = new FormAI($this->db);
+
+			$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
+			//$formmail->withlayout = ($ckeditorenabledforticket) ? 'email' : '';
+			$formmail->withaiprompt = (isModEnabled('ai')) ? 'text' : '';
+
+			$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
+			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+			$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
+			$showlinktoailabel = $langs->trans("AIEnhancements");
+			$htmlname = 'message';
+
+			$formai->substit = $this->substit;
+
+			// Fill $out
+			$db = $this->db;
+			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+			print $out;
+			print '<br>';
+		}
+
 		if (!$ckeditorenabledforticket) {
 			$msg = dol_string_nohtmltag($msg, 2);
 		}
@@ -577,7 +608,7 @@ class FormTicket
 		// Categories
 		if (isModEnabled('category') && !$public) {
 			// Categories
-			print '<tr><td class="wordbreak"></td><td>';
+			print '<tr><td class="wordbreak">'.$langs->trans("Categories").'</td><td>';
 			print $form->selectCategories(Categorie::TYPE_TICKET, 'categories', $object);
 			print "</td></tr>";
 		}
@@ -601,7 +632,9 @@ class FormTicket
 			}
 
 			$out = '<tr>';
-			$out .= '<td></td>';
+			$out .= '<td>';
+			$out .= $langs->trans("LinkedFiles");
+			$out .='</td>';
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
@@ -634,6 +667,18 @@ class FormTicket
 			}
 			$out .= "</td></tr>\n";
 
+			// Improves user experience and prevents human error when creating tickets; files do not load.
+			$out .= '<script nonce="'.getNonce().'" type="text/javascript">
+    			jQuery(document).ready(function () {
+        			jQuery("#addedfile").on("change", function() {
+					// Dispara el clic automáticamente al seleccionar archivo
+            			jQuery("#addfile").click();
+        			});
+        			// Oculta el botón redundante si JS está activo
+        			jQuery("#addfile").hide();
+    			});
+			</script>';
+
 			print $out;
 		}
 
@@ -660,7 +705,7 @@ class FormTicket
 				print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
 				$events = array();
 				$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-				print img_picto('', 'company', 'class="paddingright"');
+				print img_picto('', 'company', 'class="pictofixedwidth"');
 				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth200');
 				print '</td></tr>';
 				if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
@@ -723,12 +768,12 @@ class FormTicket
 					print '<tr><td>'.$langs->trans("Contact").'</td><td>';
 					// If no socid, set to -1 to avoid full contacts list
 					$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
-					print img_picto('', 'contact', 'class="paddingright"');
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
 					// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 					print $form->select_contact($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 1, 'maxwidth300 widthcentpercentminusx', true);
 
 					print ' ';
-					$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
+					$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly maxwidth200');
 					print '</td></tr>';
 				}
 			} else {
@@ -770,14 +815,21 @@ class FormTicket
 		}
 
 		if ($subelement != 'contract' && $subelement != 'contrat') {
-			if (isModEnabled('contract') && !$this->ispublic) {
-				$langs->load('contracts');
-				$formcontract = new FormContract($this->db);
-				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
-				print img_picto('', 'contract', 'class="pictofixedwidth"');
-				// socid is for internal users null and not 0 or -1
-				print $formcontract->select_contract($user->socid ?? -1, GETPOSTINT('contractid'), 'contractid', 0, 1, 1, 1);
-				print '</td></tr>';
+			if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
+				// Deprecated. Duplicate feature. Ticket can already be linked to contract with the generic "Link to" feature.
+				if (isModEnabled('contract') && !$this->ispublic) {
+					// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+					// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+					if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+						$langs->load('contracts');
+						$formcontract = new FormContract($this->db);
+						print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
+						print img_picto('', 'contract', 'class="pictofixedwidth"');
+						// socid is for internal users null and not 0 or -1
+						print $formcontract->select_contract($user->socid ?? -1, GETPOSTINT('contractid'), 'contractid', 0, 1, 1, 1);
+						print '</td></tr>';
+					}
+				}
 			}
 		}
 
@@ -841,9 +893,9 @@ class FormTicket
 
 		if ($withdolfichehead) {
 			print dol_get_fiche_end();
+		} else {
+			print '<br><br>';
 		}
-
-		print '<br><br>';
 
 		if ($mode == 'create') {
 			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
@@ -1007,8 +1059,10 @@ class FormTicket
 				print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 			}
 
-			if (is_array($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
-				foreach ($conf->cache['category_tickets'] as $id => $arraycategories) {
+			$categorytickets = $conf->cache['category_tickets'];
+			'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int,public:int,active:int,force_severity:?string,fk_parent:int}> $categorytickets';
+			if (is_array($categorytickets) && count($categorytickets)) {
+				foreach ($categorytickets as $id => $arraycategories) {
 					// Exclude some record
 					if ($publicgroups) {
 						if (empty($arraycategories['public'])) {
@@ -1051,7 +1105,7 @@ class FormTicket
 						print ' selected="selected"';
 					} elseif ($arraycategories['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
 						print ' selected="selected"';
-					} elseif (count($conf->cache['category_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
+					} elseif (count($categorytickets) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 						print ' selected="selected"';
 					}
 
@@ -1192,7 +1246,7 @@ class FormTicket
 				if (!empty($arrayidused)) {
 					$sql .= " AND ctc.fk_parent IN ( ";
 					foreach ($arrayidused as $idused) {
-						$sql .= $idused.", ";
+						$sql .= ((int) $idused).", ";
 					}
 					$sql = substr($sql, 0, -2);
 					$sql .= ")";
@@ -1232,7 +1286,7 @@ class FormTicket
 							}
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid - 1) : '').'").val() == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ? '_child_'.($levelid - 1) : '').'").val() == \''.dol_escape_js($groupcodefather).'\'){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show child tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -1360,10 +1414,12 @@ class FormTicket
 			print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 		}
 
-		if (is_array($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
-			foreach ($conf->cache['severity_tickets'] as $id => $arrayseverities) {
-				// On passe si on a demande de filtrer sur des modes de paiments particuliers
-				if (count($filterarray) && !in_array($arrayseverities['type'], $filterarray)) {
+		$severitytickets = $conf->cache['severity_tickets'];
+		'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int}> $severitytickets';
+		if (is_array($severitytickets) && count($severitytickets)) {
+			foreach ($severitytickets as $id => $arrayseverities) {
+				// Skip if filtering on specific payment modes was requested
+				if (count($filterarray) && !in_array($arrayseverities['code'], $filterarray)) {
 					continue;
 				}
 
@@ -1395,7 +1451,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($arrayseverities['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
 					print ' selected="selected"';
-				} elseif (count($conf->cache['severity_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
+				} elseif (count($severitytickets) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 					print ' selected="selected"';
 				}
 
@@ -1462,10 +1518,11 @@ class FormTicket
 	/**
 	 * Show the form to add message on ticket
 	 *
-	 * @param  	string  $width      	Width of form
+	 * @param  	string  $width      			Width of form
+	 * @param	int		$fromPublicInterface	Set to 1 if call is done for the public interface
 	 * @return 	void
 	 */
-	public function showMessageForm($width = '40%')
+	public function showMessageForm($width = '40%', $fromPublicInterface = 0)
 	{
 		global $conf, $langs, $user, $hookmanager, $form;
 
@@ -1487,7 +1544,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1546,7 +1603,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1568,11 +1625,13 @@ class FormTicket
 					jQuery("#send_msg_email").prop("checked", true).trigger("change");
 				}
 				jQuery(".email_line").show();
+				jQuery(".not_email_line").hide();
 			} else {
 				if (!jQuery("#private_message").is(":checked")) {
 					jQuery("#private_message").prop("checked", true).trigger("change");
 				}
 				jQuery(".email_line").hide();
+				jQuery(".not_email_line").show();
 			}
 		';
 
@@ -1585,9 +1644,11 @@ class FormTicket
 							jQuery("#private_message").prop("checked", false).trigger("change");
 						}
 						jQuery(".email_line").show();
+						jQuery(".not_email_line").hide();
 					}
 					else {
 						jQuery(".email_line").hide();
+						jQuery(".not_email_line").show();
 					}
 				});
 
@@ -1598,13 +1659,13 @@ class FormTicket
 							jQuery("#send_msg_email").prop("checked", false).trigger("change");
 						}
 						jQuery(".email_line").hide();
+						jQuery(".not_email_line").show();
 					}
 				});';
 		}
 
 		print '});
 		</script>';
-
 
 		print '<form method="post" name="ticket" id="ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1715,67 +1776,141 @@ class FormTicket
 			$action = '';
 			$reshook = $hookmanager->executeHooks('printFieldTicketEmailTo', $parameters, $this, $action);
 			if (empty($reshook)) {
-				print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
-				print ' '.$form->textwithpicto('', $langs->trans("TicketMessageRecipientsHelp"), 1, 'help');
+				print '<tr class="email_line"><td class="fieldrequired">'.$langs->trans('MailRecipients');
+				print ' '.$form->textwithpicto('', $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"), 1, 'help');
 				print '</td><td>';
+				$withto = array();
 				if ($res) {
-					// Retrieve email of all contacts (internal and external)
+					$sendto_free = GETPOSTISSET('sendto') ? GETPOST('sendto', 'alphawithlgt') : '';
+					print '<input class="minwidth200" id="sendto" name="sendto" spellcheck="false" placeholder="email@domain.com" value="'.dol_escape_htmltag($sendto_free).'" />';
+
+					// Build recipient list; keys are email addresses (used directly in newMessage())
 					$contacts = $ticketstat->getInfosTicketInternalContact(1);
 					$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
+					$seen_emails = array();
 
-					$sendto = array();
-
-					// Build array to display recipient list
 					if (is_array($contacts) && count($contacts) > 0) {
-						foreach ($contacts as $key => $info_sendto) {
+						foreach ($contacts as $info_sendto) {
 							if ($info_sendto['email'] != '') {
-								$sendto[] = dol_escape_htmltag(trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">").' <small class="opacitymedium">('.dol_escape_htmltag($info_sendto['libelle']).")</small>";
+								$email_lc = strtolower($info_sendto['email']);
+								if (!in_array($email_lc, $seen_emails)) {
+									$label_text = trim($info_sendto['firstname'].' '.$info_sendto['lastname']).' <'.$info_sendto['email'].'>';
+									$label_html = dol_htmlentities(trim($info_sendto['firstname'].' '.$info_sendto['lastname']), ENT_QUOTES, 'UTF-8')
+										.' <span class="opacitymedium">('.dol_htmlentities($info_sendto['libelle'], ENT_QUOTES, 'UTF-8').')</span>';
+									$withto[$info_sendto['email']] = array(
+										'id'        => $info_sendto['email'],
+										'label'     => str_replace(array('<', '>'), array('(', ')'), $label_text),
+										'labelhtml' => $label_html,
+									);
+									$seen_emails[] = $email_lc;
+								}
 							}
 						}
 					}
 
-					if (!empty($ticketstat->origin_replyto) && !in_array($ticketstat->origin_replyto, $sendto)) {
-						$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_replyto).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
-					} elseif ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
-						$sendto[] = dol_escape_htmltag((string) $ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
+					if (!empty($ticketstat->origin_replyto) && !in_array(strtolower($ticketstat->origin_replyto), $seen_emails)) {
+						$email = (string) $ticketstat->origin_replyto;
+						$withto[$email] = array(
+							'id'        => $email,
+							'label'     => $email,
+							'labelhtml' => dol_escape_htmltag($email).' <span class="opacitymedium">('.$langs->trans('TicketEmailOriginIssuer').')</span>',
+						);
+						$seen_emails[] = strtolower($email);
+					} elseif ($ticketstat->origin_email && !in_array(strtolower((string) $ticketstat->origin_email), $seen_emails)) {
+						$email = (string) $ticketstat->origin_email;
+						$withto[$email] = array(
+							'id'        => $email,
+							'label'     => $email,
+							'labelhtml' => dol_escape_htmltag($email).' <span class="opacitymedium">('.$langs->trans('TicketEmailOriginIssuer').')</span>',
+						);
+						$seen_emails[] = strtolower($email);
 					}
 
 					if ($ticketstat->fk_soc > 0) {
 						$ticketstat->socid = $ticketstat->fk_soc;
 						$ticketstat->fetch_thirdparty();
-
-						if (!empty($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
-							$sendto[] = $ticketstat->thirdparty->email.' <small class="opacitymedium">('.$langs->trans('Customer').')</small>';
+						if (!empty($ticketstat->thirdparty->email) && !in_array(strtolower((string) $ticketstat->thirdparty->email), $seen_emails)) {
+							$email = (string) $ticketstat->thirdparty->email;
+							$withto[$email] = array(
+								'id'        => $email,
+								'label'     => $email,
+								'labelhtml' => dol_escape_htmltag($email).' <span class="opacitymedium">('.$langs->trans('Customer').')</span>',
+							);
+							$seen_emails[] = strtolower($email);
 						}
 					}
 
-					if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS')) {
-						$sendto[] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').' <small class="opacitymedium">(generic email)</small>';
+					if (getDolGlobalInt('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
+						$generic_email = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+						if (!in_array(strtolower($generic_email), $seen_emails)) {
+							$withto[$generic_email] = array(
+								'id'        => $generic_email,
+								'label'     => $generic_email,
+								'labelhtml' => dol_escape_htmltag($generic_email).' <span class="opacitymedium">(generic)</span>',
+							);
+						}
 					}
 
-					// Print recipient list
-					if (is_array($sendto) && count($sendto) > 0) {
-						print img_picto('', 'email', 'class="pictofixedwidth"');
-						print implode(', ', $sendto);
+					// Preselect all contacts on first load; restore POST selection on re-display
+					if (GETPOSTISSET('receiver_multiselect')) {
+						$withtoselected = GETPOST('receiver', 'array');
 					} else {
-						print '<div class="warning">'.$langs->trans('WarningNoEMailsAdded').' '.$langs->trans('TicketGoIntoContactTab').'</div>';
+						$withtoselected = array_keys($withto);
 					}
+
+					if (!empty($withto)) {
+						print ' <span class="opacitymedium">'.$langs->trans("and").'/'.$langs->trans("or").'</span> ';
+						print $form->multiselectarray('receiver', $withto, $withtoselected, 0, 0, 'inline-block minwidth500', 0, 0, '', '', '', 1);
+					} else {
+						// No contacts linked: emit the flag hidden so newMessage() still reads the free sendto input
+						print '<input type="hidden" name="receiver_multiselect" value="1">';
+						print ' &nbsp;<span class="opacitymedium"><small>'.$langs->trans('WarningNoEMailsAdded').'</small></span>';
+					}
+				}
+				print '</td></tr>';
+
+				print '<tr class="email_line"><td>';
+				print $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"), 1, 'help');
+				print '</td><td>';
+
+				// Pre-fill with TICKET_SEND_INTERNAL_CC on first load
+				if (GETPOSTISSET('receivercc_multiselect')) {
+					$sendtocc_free = GETPOST('sendtocc', 'alphawithlgt');
+				} else {
+					$sendtocc_free = getDolGlobalString('TICKET_SEND_INTERNAL_CC');
+				}
+				print '<input class="minwidth200" id="sendtocc" name="sendtocc" spellcheck="false" value="'.dol_escape_htmltag($sendtocc_free).'" />';
+
+				// Reuse $withto contact list; nothing preselected for CC
+				if (!empty($withto)) {
+					print ' <span class="opacitymedium">'.$langs->trans("and").'/'.$langs->trans("or").'</span> ';
+					$withtocc_selected = GETPOSTISSET('receivercc_multiselect') ? GETPOST('receivercc', 'array') : array();
+					print $form->multiselectarray('receivercc', $withto, $withtocc_selected, 0, 0, 'inline-block minwidth500', 0, 0, '', '', '', 1);
+				} else {
+					// No contacts: emit the flag hidden so newMessage() still reads the free sendtocc input
+					print '<input type="hidden" name="receivercc_multiselect" value="1">';
 				}
 				print '</td></tr>';
 			} else {
 				print $hookmanager->resPrint;
 			}
-			// Send to CC
-			$sendtocc = getDolGlobalString('TICKET_SEND_INTERNAL_CC');
-			if ($sendtocc) {
-				print '<tr class="email_line"><td><span class="">'.$langs->trans("MailCC").'</span></td>';
-				print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$sendtocc.'</span></td></tr>';
-			}
 		}
 
 		$uselocalbrowser = false;
 
-		// Subject/topic
+		// Summary
+		if ($this->withtitletopic) {
+			print '<tr class="not_email_line"><td><label for="summary"><span>'.$langs->trans("Summary").'</span></label></td><td>';
+			// Answer to a ticket : display of the thread title in readonly
+			if ($this->withtopicreadonly && $this->topic_title) {
+				print $langs->trans('Summary').' '.$this->topic_title;
+			} elseif (empty($this->withtopicreadonly)) {
+				$subject = $this->topic_title;
+				print '<input class="text minwidth500" maxlength="42" id="summary" name="summary" placeholder="" value="'.dolPrintHTMLForAttribute($subject).'"'.(empty($this->withemail) ? ' autofocus' : '').' />';
+			}
+			print '</td></tr>';
+		}
+
 		$topic = "";
 		foreach ($formmail->lines_model as $line) {
 			if (!empty($this->substit) && $this->param['models_id'] == $line->id) {
@@ -1785,9 +1920,9 @@ class FormTicket
 		}
 		print '<tr class="email_line"><td class="fieldrequired">'.$langs->trans('MailTopic').'</td>';
 		if (empty($topic)) {
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'"  spellcheck="false">';
 		} else {
-			print '<td><input type="text" class="text minwidth500" name="subject" value="'.make_substitutions($topic, $this->substit).'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="'.make_substitutions($topic, $this->substit).'" spellcheck="false">';
 		}
 		print '</td></tr>';
 
@@ -1858,25 +1993,63 @@ class FormTicket
 			$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 		}
 
-		print '<tr><td colspan="2"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
+		// 0=no, 1=backoffice only, 2=backoffice+public. showMessageForm() is always email context, so also honour FCKEDITOR_ENABLE_MAIL.
+		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= ($fromPublicInterface ? 2 : 1))
+			|| (!$fromPublicInterface && getDolGlobalString('FCKEDITOR_ENABLE_MAIL'));
+
+		print '<!-- Message line from showMessageForm -->';
+		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
 		if ($user->hasRight("ticket", "write") && !$user->socid) {
 			$texttooltip = $langs->trans("TicketMessageHelp");
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO') || getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$texttooltip .= '<br><br>'.$langs->trans("ForEmailMessageWillBeCompletedWith").'...';
 			}
+			$allowedmailtags = array('a', 'div', 'strong', 'em', 'i', 'u', 'p', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img');
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO')) {
 				$mail_intro = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO'), $this->substit);
-				print '<input type="hidden" name="mail_intro" value="'.dolPrintHTMLForAttribute($mail_intro).'">';
+				print '<input type="hidden" name="mail_intro" value="'.dolPrintHTMLForAttribute($mail_intro, 0, $allowedmailtags).'">';
 				$texttooltip .= '<br><u>'.$langs->trans("TicketMessageMailIntro").'</u><br>'.$mail_intro;
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$mail_signature = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE'), $this->substit);
-				print '<input type="hidden" name="mail_signature" value="'.dolPrintHTMLForAttribute($mail_signature).'">';
+				print '<input type="hidden" name="mail_signature" value="'.dolPrintHTMLForAttribute($mail_signature, 0, $allowedmailtags).'">';
 				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.$mail_signature;
 			}
 			print $form->textwithpicto('', $texttooltip, 1, 'help');
 		}
-		print '</label></td></tr>';
+		print '</label></td>';
+		$out = '<td class="tdtop">';
+
+		$out .= '<div class="div-layoutai">';
+
+		// Required to show editor assistants
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($this->db);
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+		$formai = new FormAI($this->db);
+
+		$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
+		$formmail->withlayout = ((string) $ckeditorenabledforticket && !$fromPublicInterface) ? 'email' : '';
+		$formmail->withaiprompt = (isModEnabled('ai') && !$fromPublicInterface) ? 'text' : '';
+
+		$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
+		$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+		$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
+		$showlinktoailabel = $langs->trans("AIEnhancements");
+		$formatforouput = '';
+		$htmlname = 'message';
+
+		$formai->substit = $this->substit;
+
+		// Fill $out
+		$db = $this->db;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+		$out .= '</td>';
+		print $out;
+
+		print '</tr>';
 
 
 		print '<tr><td colspan="2">';
@@ -1884,12 +2057,13 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = false;
-		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= 2);		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
 		if (!$ckeditorenabledforticket) {
 			$defaultmessage = dol_string_nohtmltag($defaultmessage, 2);
 		}
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $ckeditorenabledforticket, ROWS_5, '90%');
+
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $ckeditorenabledforticket, ROWS_6, '90%');
 		$doleditor->Create();
+
 		print '</td></tr>';
 
 		// Footer
@@ -1941,6 +2115,6 @@ class FormTicket
 			print '</script>';
 		}
 
-		print "<!-- End form TICKET -->\n";
+		print "<!-- End message_form TICKET -->\n";
 	}
 }

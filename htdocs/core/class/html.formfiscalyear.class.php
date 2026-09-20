@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ class FormFiscalYear extends Form
 
 		$sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut as status";
 		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear as f";
-		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " WHERE f.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY f.date_start ASC";
 
 		dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);

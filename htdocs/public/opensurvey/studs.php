@@ -39,18 +39,17 @@ if (!defined('NOIPCHECK')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var Societe $mysoc
  * @var Translate $langs
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $action = GETPOST('action', 'aZ09');
@@ -79,7 +78,7 @@ if (!isModEnabled('opensurvey')) {
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
-$listofvoters = explode(',', $_SESSION["savevoter"]);
+$listofvoters = explode(',', $_SESSION["savevoter"] ?? '');
 
 $error = 0;
 
@@ -149,7 +148,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 		httponly_accessforbidden('ErrorForbidden');
 	}
 
-	//Si le nom est bien entré
+	// If the name is entered correctly
 	if (GETPOST('nom', 'alphanohtml')) {
 		$nouveauchoix = '';
 		for ($i = 0; $i < $nbcolonnes; $i++) {
@@ -341,12 +340,14 @@ $toutsujet = str_replace("°", "'", $toutsujet);
 
 print '<div class="survey_intro">';
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
+print '<div class="small">';
 print '<span class="opacitymedium">'.$langs->trans("OpenSurveyHowTo").'</span><br>';
 if (empty($object->allow_spy)) {
 	print '<span class="opacitymedium">'.$langs->trans("YourVoteIsPrivate").'</span><br>';
 } else {
 	print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("YourVoteIsPublic").'</span>', $langs->trans("CanSeeOthersVote")).'<br>';
 }
+print '</div>';
 print '</div>';
 print '<br>';
 
@@ -373,7 +374,7 @@ print '</div>'."\n";
 
 //The survey has expired, users can't vote or do any action
 if (!$canbemodified) {
-	print '<br><center><div class="quatrevingtpercent center warning">'.$langs->trans('SurveyExpiredInfo').'</div></center>';
+	print '<br><center><div class="center warning">'.$langs->trans('SurveyExpiredInfo').'</div></center>';
 	llxFooterSurvey();
 
 	$db->close();
@@ -412,8 +413,7 @@ if ($object->format == "D") {
 	//display of months
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
-
+		$cur = intval($toutsujet[$i]);  // intval() is used to remove the @* suffix which logically belongs to strftime()
 		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
 		} else {

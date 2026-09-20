@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Ahmad Jamaly Rabub		<rabib@metroworks.co.jp>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025  		Ferran Marcet			<fmarcet@2byte.es>
  *
@@ -101,12 +101,6 @@ class modCommande extends DolibarrModules
 			],
 		];
 
-		/*$r++;
-		$this->const[$r][0] = "COMMANDE_DRAFT_WATERMARK";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "__(Draft)__";
-		$this->const[$r][3] = 'Watermark to show on draft orders';
-		$this->const[$r][4] = 0;*/
 
 		// Boxes
 		$this->boxes = array(
@@ -213,7 +207,7 @@ class modCommande extends DolibarrModules
 			'pj.ref' => 'ProjectRef', 'cd.rowid' => 'LineId', 'cd.description' => "LineDescription", 'cd.product_type' => 'TypeOfLineServiceOrProduct',
 			'cd.tva_tx' => "LineVATRate", 'cd.qty' => "LineQty", 'cd.total_ht' => "LineTotalHT", 'cd.total_tva' => "LineTotalVAT", 'cd.total_ttc' => "LineTotalTTC",
 			'p.rowid' => 'ProductId', 'p.ref' => 'ProductRef', 'p.label' => 'ProductLabel',
-			'cir.label'=>'Source',
+			'cir.label' => 'Source',
 		);
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
@@ -245,7 +239,7 @@ class modCommande extends DolibarrModules
 			'cd.description' => "Text", 'cd.product_type' => 'Boolean', 'cd.tva_tx' => "Numeric", 'cd.qty' => "Numeric", 'cd.total_ht' => "Numeric", 'cd.total_tva' => "Numeric",
 			'cd.total_ttc' => "Numeric", 'p.rowid' => 'List:product:ref::product', 'p.ref' => 'Text', 'p.label' => 'Text', 'd.nom' => 'Text',
 			'c.entity' => 'List:entity:label:rowid',
-			'cir.label'=>'Text',
+			'cir.label' => 'Text',
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid' => "company", 's.nom' => 'company', 's.name_alias' => 'company', 'ps.nom' => 'company', 's.code_client' => 'company', 's.address' => 'company', 's.zip' => 'company', 's.town' => 'company', 'd.nom' => 'company', 'co.label' => 'company',
@@ -296,7 +290,7 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('commande').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$parameters = array();
 		$hookmanager->executeHooks('printExportWhere', $parameters, $this); // Note that $action and $object may have been modified by hook

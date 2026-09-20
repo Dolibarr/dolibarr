@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for receptions
@@ -95,7 +96,7 @@ class Receptions extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter receptions of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101'). (el.fk_source:=:123) allows filtering by supplier order id"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101'). (el.fk_source:=:123) allows filtering by supplier order id"
 	 * @param string           $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of reception objects
@@ -134,9 +135,9 @@ class Receptions extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -456,7 +457,13 @@ class Receptions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of object
+		$receptionline = new ReceptionLineBatch($this->db);
+		if ($receptionline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'Reception line not found');
+		}
+		if ($receptionline->fk_reception != $this->reception->id) {
+			throw new RestException(403, 'Line does not belong to this reception');
+		}
 
 		$updateRes = $this->reception->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes < 0) {
@@ -506,7 +513,7 @@ class Receptions extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->reception->array_options[$index] = $this->_checkValForAPI($field, $val, $this->reception);
+					$this->reception->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->reception);
 				}
 				continue;
 			}

@@ -1,18 +1,20 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Destailleur Laurent     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Florian Henry             <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,6 +104,12 @@ class Contrat extends CommonObject
 	 * @var ?string
 	 */
 	public $ref_supplier;
+
+	/**
+	 * Type of contract (0=customer, 1=supplier)
+	 * @var int
+	 */
+	public $fk_contract_type = 0;
 
 	/**
 	 * Client id linked to the contract
@@ -233,7 +241,7 @@ class Contrat extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
@@ -257,7 +265,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -265,6 +273,7 @@ class Contrat extends CommonObject
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'ref_customer' => array('type' => 'varchar(50)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 25, 'searchall' => 1),
 		'ref_supplier' => array('type' => 'varchar(50)', 'label' => 'RefSupplier', 'enabled' => 1, 'visible' => -1, 'position' => 26, 'searchall' => 1),
+		'fk_contract_type' => array('type' => 'smallint(6)', 'label' => 'ContractType', 'enabled' => 1, 'visible' => -1, 'position' => 27, 'default' => '0', 'arrayofkeyval' => array(0 => 'CustomerContract', 1 => 'SupplierContract')),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 30, 'index' => 1),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 40),
@@ -425,7 +434,7 @@ class Contrat extends CommonObject
 
 		foreach ($this->lines as $contratline) {
 			// Open lines not already open
-			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
+			if ($contratline->status != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
 				$result = $contratline->active_line($user, $date_start, !empty($date_end) ? $date_end : -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
@@ -437,7 +446,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (!$error && $this->statut == 0) {
+		if (!$error && $this->status == 0) {
 			$result = $this->validate($user, '', $notrigger);
 			if ($result < 0) {
 				$error++;
@@ -480,11 +489,11 @@ class Contrat extends CommonObject
 
 		foreach ($this->lines as $contratline) {
 			// Close lines not already closed
-			if ($contratline->statut != ContratLigne::STATUS_CLOSED) {
+			if ($contratline->status != ContratLigne::STATUS_CLOSED) {
 				$contratline->date_end_real = $now;
 				$contratline->date_cloture = $now;	// For backward compatibility
 				$contratline->user_closing_id = $user->id;
-				$contratline->statut = ContratLigne::STATUS_CLOSED;
+				$contratline->status = ContratLigne::STATUS_CLOSED;
 
 				$result = $contratline->close_line($user, $now, $comment, $notrigger);
 
@@ -586,14 +595,14 @@ class Contrat extends CommonObject
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'contract/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files SET filepath = 'contract/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'contract/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -726,7 +735,7 @@ class Contrat extends CommonObject
 		$sql .= " fk_user_author,";
 		$sql .= " fk_projet as fk_project,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi,";
-		$sql .= " note_private, note_public, model_pdf, last_main_doc, extraparams";
+		$sql .= " note_private, note_public, model_pdf, last_main_doc, extraparams, fk_contract_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat";
 		if (!$id) {
 			$sql .= " WHERE entity IN (".getEntity('contract').")";
@@ -785,6 +794,7 @@ class Contrat extends CommonObject
 					$this->fk_soc = $obj->thirdpartyid;
 					$this->last_main_doc = $obj->last_main_doc;
 					$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
+					$this->fk_contract_type = (int) $obj->fk_contract_type;
 
 					$this->db->free($resql);
 
@@ -857,7 +867,7 @@ class Contrat extends CommonObject
 
 		// Selects contract lines related to a product
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref, p.fk_product_type as product_type,";
-		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.subprice, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
+		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.subprice, d.subprice_ttc, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql .= " d.total_ht,";
 		$sql .= " d.total_tva,";
 		$sql .= " d.total_localtax1,";
@@ -905,6 +915,7 @@ class Contrat extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice			= $objp->subprice;
+				$line->subprice_ttc		= $objp->subprice_ttc;
 				$line->statut           = $objp->status; // For backward compatibility
 				$line->status           = $objp->status;
 				$line->remise_percent	= $objp->remise_percent;
@@ -1047,7 +1058,7 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql .= " ref, entity, signed_status, note_private, note_public, ref_customer, ref_supplier, ref_ext)";
+		$sql .= " ref, entity, signed_status, note_private, note_public, ref_customer, ref_supplier, ref_ext, fk_contract_type)";
 		$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $this->socid).", ".((int) $user->id);
 		$sql .= ", ".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : "NULL");
 		$sql .= ",".($this->commercial_signature_id > 0 ? ((int) $this->commercial_signature_id) : "NULL");
@@ -1061,6 +1072,7 @@ class Contrat extends CommonObject
 		$sql .= ", ".(!empty($this->ref_customer) ? ("'".$this->db->escape($this->ref_customer)."'") : "NULL");
 		$sql .= ", ".(!empty($this->ref_supplier) ? ("'".$this->db->escape($this->ref_supplier)."'") : "NULL");
 		$sql .= ", ".(!empty($this->ref_ext) ? ("'".$this->db->escape($this->ref_ext)."'") : "NULL");
+		$sql .= ", ".((int) $this->fk_contract_type);
 		$sql .= ")";
 		$resql = $this->db->query($sql);
 
@@ -1082,7 +1094,7 @@ class Contrat extends CommonObject
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".((int) $this->id);
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".((int) $this->id).")' WHERE rowid=".((int) $this->id);
 					if ($this->db->query($sql)) {
 						if ($this->id) {
 							$this->ref = "(PROV".$this->id.")";
@@ -1187,7 +1199,11 @@ class Contrat extends CommonObject
 				$this->db->commit();
 				return $this->id;
 			} else {
-				$this->error = "Failed to add contract";
+				// Keep the error reported by the failing step, it is the only actionable one.
+				// Only fall back to a generic message when nothing was set, as propal.class.php does.
+				if (empty($this->error) && empty($this->errors)) {
+					$this->error = "Failed to add contract";
+				}
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -1245,9 +1261,9 @@ class Contrat extends CommonObject
 		// Delete lines
 		if (!$error) {
 			// Delete contratdet extrafields
-			$main = MAIN_DB_PREFIX.'contratdet';
-			$ef = $main."_extrafields";
-			$sql = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_contrat = ".((int) $this->id).")";
+			$sql_main_table = MAIN_DB_PREFIX.'contratdet';
+			$ef = $sql_main_table."_extrafields";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$sql_main_table." WHERE fk_contrat = ".((int) $this->id).")";
 
 			dol_syslog(get_class($this)."::delete contratdet_extrafields", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1260,7 +1276,7 @@ class Contrat extends CommonObject
 		if (!$error) {
 			// Delete contratdet
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
-			$sql .= " WHERE fk_contrat=".((int) $this->id);
+			$sql .= " WHERE fk_contrat = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete contratdet", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1306,7 +1322,7 @@ class Contrat extends CommonObject
 		if (!$error) {
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
-			if ($conf->contrat->dir_output) {
+			if ($conf->contrat->dir_output && !empty($ref)) {
 				$dir = $conf->contrat->multidir_output[$this->entity]."/".$ref;
 				if (file_exists($dir)) {
 					$res = @dol_delete_dir_recursive($dir);
@@ -1401,14 +1417,15 @@ class Contrat extends CommonObject
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " date_contrat=".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
-		$sql .= " statut=".(isset($this->statut) ? $this->statut : (isset($this->status) ? $this->status : "null")).",";
-		$sql .= " fk_soc=".($this->socid > 0 ? $this->socid : "null").",";
-		$sql .= " fk_projet=".($this->fk_project > 0 ? $this->fk_project : "null").",";
-		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? $this->fk_commercial_signature : "null").",";
-		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
+		$sql .= " statut=".(isset($this->statut) ? ((int) $this->statut) : (isset($this->status) ? ((int) $this->status) : "null")).",";
+		$sql .= " fk_soc=".($this->socid > 0 ? ((int) $this->socid) : "null").",";
+		$sql .= " fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? ((int) $this->fk_commercial_signature) : "null").",";
+		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? ((int) $this->fk_commercial_suivi) : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
+		$sql .= " fk_user_modif=".(isset($user->id) ? ((int) $user->id) : "null").",";
 		$sql .= " extraparams=".(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1445,6 +1462,9 @@ class Contrat extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
+			if (isset($user->id)) {
+				$this->fk_user_modif = (int) $user->id;
+			}
 			$this->db->commit();
 			return 1;
 		}
@@ -1562,6 +1582,8 @@ class Contrat extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+			$pu_ht  = $tabprice[3];
+			$pu_ttc = $tabprice[5];
 
 			if (count($localtaxes_type) > 0) {
 				$localtax1_type = $localtaxes_type[0];
@@ -1578,7 +1600,7 @@ class Contrat extends CommonObject
 
 			// if buy price not defined, define buyprice as configured in margin admin
 			if ($pa_ht == 0) {
-				$result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product);
+				$result = $this->defineBuyPrice((float) $pu_ht, $remise_percent, $fk_product);
 				if ($result < 0) {
 					return -1;
 				} else {
@@ -1586,10 +1608,10 @@ class Contrat extends CommonObject
 				}
 			}
 
-			// Insertion dans la base
+			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 			$sql .= " (fk_contrat, label, description, fk_product, qty, tva_tx, vat_src_code,";
-			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
+			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
 			$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql .= " info_bits,";
 			$sql .= " fk_product_fournisseur_price, buy_price_ht";
@@ -1602,8 +1624,8 @@ class Contrat extends CommonObject
 			$sql .= ", fk_unit";
 			$sql .= ", rang";
 			$sql .= ") VALUES (";
-			$sql .= $this->id.", '', '".$this->db->escape($desc)."',";
-			$sql .= ($fk_product > 0 ? $fk_product : "null").",";
+			$sql .= ((int) $this->id).", '', '".$this->db->escape($desc)."',";
+			$sql .= ($fk_product > 0 ? ((int) $fk_product) : "null").",";
 			$sql .= " ".((float) $qty).",";
 			$sql .= " ".((float) $txtva).",";
 			$sql .= " ".($vat_src_code ? "'".$this->db->escape($vat_src_code)."'" : "null").",";
@@ -1613,6 +1635,7 @@ class Contrat extends CommonObject
 			$sql .= " '".$this->db->escape($localtax2_type)."',";
 			$sql .= " ".price2num($remise_percent).",";
 			$sql .= " ".price2num($pu_ht).",";
+			$sql .= " ".($price_base_type === 'TTC' ? (float) price2num($pu_ttc) : 0).",";
 			$sql .= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql .= " ".((int) $info_bits).",";
 			if (isset($fk_fournprice)) {
@@ -1709,8 +1732,7 @@ class Contrat extends CommonObject
 		// Clean parameters
 		$qty = trim((string) $qty);
 		$desc = trim($desc);
-		$desc = trim($desc);
-		$subprice = price2num($pu);
+
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
 		$localtax2tx = price2num($localtax2tx);
@@ -1745,6 +1767,8 @@ class Contrat extends CommonObject
 		$total_ttc = $tabprice[2];
 		$total_localtax1 = $tabprice[9];
 		$total_localtax2 = $tabprice[10];
+		$pu_ht  = $tabprice[3];
+		$pu_ttc = $tabprice[5];
 
 		$localtax1_type = (empty($localtaxes_type[0]) ? '' : $localtaxes_type[0]);
 		$localtax2_type = (empty($localtaxes_type[2]) ? '' : $localtaxes_type[2]);
@@ -1764,7 +1788,9 @@ class Contrat extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET description = '".$this->db->escape($desc)."'";
-		$sql .= ",subprice = ".((float) price2num($subprice));
+		$sql .= ",subprice = ".((float) price2num($pu_ht));
+		// Persist the original entry mode of the line so a no-op edit can preserve it later.
+		$sql .= ",subprice_ttc = ".($price_base_type === 'TTC' ? (float) price2num($pu_ttc) : 0);
 		$sql .= ",remise_percent = ".((float) price2num($remise_percent));
 		$sql .= ",qty = ".((float) $qty);
 		$sql .= ",tva_tx = ".((float) price2num($tvatx));
@@ -1777,7 +1803,7 @@ class Contrat extends CommonObject
 		$sql .= ", total_localtax1 = ".((float) price2num($total_localtax1));
 		$sql .= ", total_localtax2 = ".((float) price2num($total_localtax2));
 		$sql .= ", total_ttc = ".((float) price2num($total_ttc));
-		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : "null");
+		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? ((int) $fk_fournprice) : "null");
 		$sql .= ", buy_price_ht = ".((float) price2num($pa_ht));
 		if ($date_start > 0) {
 			$sql .= ",date_ouverture_prevue = '".$this->db->idate($date_start)."'";
@@ -1897,6 +1923,18 @@ class Contrat extends CommonObject
 				if ($result < 0) {
 					$error++;
 					$this->error = "Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
+				}
+			}
+
+			if (!$error) {
+				// Renumber remaining lines so rang stays a contiguous 1..N sequence.
+				// Without this, a deleted line leaves a permanent gap that breaks
+				// the up/down swap logic (updateLineUp/updateLineDown) for any pair
+				// of lines that no longer sit at an exact rang+/-1 from each other.
+				$result = $this->line_order(true, 'ASC', false);
+				if ($result < 0) {
+					$error++;
+					$this->error = "Error ".get_class($this)."::deleteline line_order error";
 				}
 			}
 
@@ -2377,7 +2415,7 @@ class Contrat extends CommonObject
 		global $conf, $user;
 
 		$this->nb = array();
-		$clause = "WHERE";
+		$sanitizedclause = "WHERE";
 
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
@@ -2385,9 +2423,9 @@ class Contrat extends CommonObject
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
-			$clause = "AND";
+			$sanitizedclause = "AND";
 		}
-		$sql .= " ".$clause." c.entity = ".$conf->entity;
+		$sql .= " ".$sanitizedclause." c.entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2540,7 +2578,7 @@ class Contrat extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		if (!dol_strlen($modele)) {
 			$modele = '';	// No doc template/generation by default
@@ -2675,7 +2713,11 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			foreach ($this->lines as $line) {
-				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
+				// Preserve the original entry mode of the line. Contrat::addline() stores subprice from the
+				// $pu_ht argument as-is (like the card, which pre-computes it), so we pass the stored HT and
+				// flag TTC + subprice_ttc so the total is computed from the typed value (no rounding drift).
+				$line_price_base_type = $line->getPriceBaseType();
+				$result = $clonedObj->addline($line->description, (float) $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, $line_price_base_type, (float) $line->subprice_ttc, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
 				if ($result < 0) {
 					$error++;
 					$this->setErrorsFromObject($clonedObj);
@@ -2757,6 +2799,7 @@ class Contrat extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 			$i = 0;
 			while ($i < $num) {
@@ -2951,6 +2994,45 @@ class Contrat extends CommonObject
 		return $return;
 	}
 
+	/**
+	 *  Return totalized lines
+	 *
+	 *  @param	int		$statut			Status of lines
+	 *  @param	int		$expired		1=expired, 0=not expired
+	 *  @return array<string,mixed>|int		Array of totalized lines or int if error
+	 */
+	public function getTotalizedLines($statut, int $expired)
+	{
+		$sql = "SELECT SUM(cd.qty) as total_qty, SUM(cd.total_ht) as total_ht, SUM(cd.total_tva) as total_tva, SUM(cd.total_ttc) as total_ttc,";
+		$sql .= " SUM(cd.total_localtax1) as total_localtax1, SUM(cd.total_localtax2) as total_localtax2";
+		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+		$sql .= " WHERE cd.fk_contrat =".((int) $this->id);
+		if ($statut >= 0) {
+			$sql .= " AND cd.statut = ".((int) $statut);
+			if ($expired > 0) {
+				$sql .= " AND cd.date_fin_validite < '".$this->db->idate(dol_now())."'";
+			} else {
+				$sql .= " AND cd.date_fin_validite >= '".$this->db->idate(dol_now())."'";
+			}
+		}
+		$ret = $this->db->query($sql);
+		$response = array();
+		if ($ret) {
+			$obj = $this->db->fetch_object($ret);
+			$response['total_qty'] = $obj->total_qty;
+			$response['total_ht'] = $obj->total_ht;
+			$response['total_tva'] = $obj->total_tva;
+			$response['total_localtax1'] = $obj->total_localtax1;
+			$response['total_localtax2'] = $obj->total_localtax2;
+			$response['total_ttc'] = $obj->total_ttc;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		return $response;
+	}
+
 	// @Todo getLibSignedStatus, LibSignedStatus
 
 	/**
@@ -2965,5 +3047,199 @@ class Contrat extends CommonObject
 	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
 	{
 		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
+	}
+
+	/**
+	 * Send reminders by email before a running contract service expires.
+	 * CAN BE A CRON TASK
+	 *
+	 * Modeled on Adherent::sendReminderForExpiredSubscription(): for each requested delay, it looks
+	 * for contract lines whose end date falls on that one exact day (today + delay), so a line is
+	 * only ever matched once per delay value and running the job daily does not resend the same
+	 * reminder. Each successful send is logged as an agenda event on the contract, same as other
+	 * automated reminder emails in the application.
+	 *
+	 * @param	string		$daysbeforeendlist		Nb of days before end of service (negative number = after end). Can be a list of delays, separated by a semicolon, for example '10;5;0;-5'
+	 * @param	int			$fk_product				Restrict to lines of this product/service (0 = no restriction)
+	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForExpiredServices($daysbeforeendlist = '10', $fk_product = 0)
+	{
+		global $conf, $langs, $mysoc, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		$blockingerrormsg = '';
+
+		if (!isModEnabled('contract')) { // Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Contract"));
+			return 0;
+		}
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$listoflinesok = array();
+		$listoflinesko = array();
+
+		$arraydaysbeforeend = explode(';', $daysbeforeendlist);
+		foreach ($arraydaysbeforeend as $daysbeforeend) { // Loop on each delay
+			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
+
+			if (!is_numeric($daysbeforeend)) {
+				$blockingerrormsg = "Value for delta is not a numeric value";
+				$nbko++;
+				break;
+			}
+
+			$tmp = dol_getdate($now);
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+			$datetosearchforend = dol_time_plus_duree(dol_mktime(23, 59, 59, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+
+			$sql = "SELECT cd.rowid, cd.fk_contrat";
+			$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON c.rowid = cd.fk_contrat";
+			$sql .= " WHERE c.entity = ".((int) $conf->entity); // Do not use getEntity('contract') here, we want the batch to be on its entity only
+			$sql .= " AND cd.statut = ".((int) ContratLigne::STATUS_OPEN);
+			$sql .= " AND cd.date_fin_validite >= '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND cd.date_fin_validite <= '".$this->db->idate($datetosearchforend)."'";
+			if ((int) $fk_product > 0) {
+				$sql .= " AND cd.fk_product = ".((int) $fk_product);
+			}
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num_rows = $this->db->num_rows($resql);
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/contrat/class/contratligne.class.php';
+				$formmail = new FormMail($this->db);
+
+				$i = 0;
+				while ($i < $num_rows) {
+					$obj = $this->db->fetch_object($resql);
+
+					$contractline = new ContratLigne($this->db);
+					$contractline->fetch($obj->rowid);
+
+					$contractstatic = new Contrat($this->db);
+					$contractstatic->fetch($obj->fk_contrat);
+					$thirdpartyres = $contractstatic->fetch_thirdparty();
+
+					if ($thirdpartyres <= 0 || empty($contractstatic->thirdparty->email)) {
+						$nbko++;
+						$listoflinesko[$contractline->id] = $contractline->id;
+					} else {
+						$languagefromcountrycode = getLanguageCodeFromCountryCode($contractstatic->thirdparty->country_code);
+						$languagecodetouse = (empty($contractstatic->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $contractstatic->thirdparty->default_lang);
+
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang($languagecodetouse);
+						$outputlangs->loadLangs(array("main", "contracts"));
+						dol_syslog("sendReminderForExpiredServices Language for thirdparty id ".$contractstatic->thirdparty->id." set to ".$outputlangs->defaultlang." mysoc->default_lang=".$mysoc->default_lang);
+
+						$arraydefaultmessage = null;
+						$labeltouse = getDolGlobalString('CONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION');
+
+						if (!empty($labeltouse)) {
+							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'contrat', $user, $outputlangs, 0, 1, $labeltouse);
+						}
+
+						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $contractstatic);
+							complete_substitutions_array($substitutionarray, $outputlangs, $contractstatic);
+							$substitutionarray['__CONTRACT_LINE_LABEL__'] = ($contractline->label ? $contractline->label : $contractline->description);
+							$substitutionarray['__CONTRACT_LINE_DATE_END__'] = dol_print_date($contractline->date_end, 'day', 'tzuserrel', $outputlangs);
+
+							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+							$email_from = getDolGlobalString('CONTRACT_MAIL_FROM', $conf->email_from);
+							$to = (string) $contractstatic->thirdparty->email;
+							$cc = getDolGlobalString('CONTRACT_CC_MAIL_FROM');
+
+							$trackid = 'con'.$contractstatic->id;
+							$moreinheader = 'X-Dolibarr-Info: sendReminderForExpiredServices'."\r\n";
+
+							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+							$cmail = new CMailFile($subject, $to, $email_from, $msg, array(), array(), array(), $cc, '', 0, 1, '', '', $trackid, $moreinheader);
+							$result = $cmail->sendfile();
+							if (!$result) {
+								$error++;
+								$this->error .= $cmail->error.' ';
+								if (!is_null($cmail->errors)) {
+									$this->errors = array_merge($this->errors, $cmail->errors);
+								}
+								$nbko++;
+								$listoflinesko[$contractline->id] = $contractline->id;
+							} else {
+								$nbok++;
+								$listoflinesok[$contractline->id] = $contractline->id;
+
+								// Insert record of email sent, as an agenda event on the contract (same convention as other automated reminder emails)
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								$actioncomm = new ActionComm($this->db);
+								$actioncomm->type_code = 'AC_OTH_AUTO';
+								$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($email_from, 4, 0, 1), CMailFile::getValidAddress($to, 4, 0, 1));
+								$actioncomm->note_private = $msg;
+								$actioncomm->fk_project = 0;
+								$actioncomm->datep = $now;
+								$actioncomm->datef = $now;
+								$actioncomm->percentage = -1; // Not applicable
+								$actioncomm->socid = $contractstatic->thirdparty->id;
+								$actioncomm->contact_id = 0;
+								$actioncomm->authorid = $user->id;
+								$actioncomm->userownerid = $user->id;
+								$actioncomm->email_msgid = $cmail->msgid;
+								$actioncomm->email_from = $email_from;
+								$actioncomm->email_sender = '';
+								$actioncomm->email_to = $to;
+								$actioncomm->email_subject = $subject;
+
+								$actioncomm->fk_element = $contractstatic->id;
+								$actioncomm->elementid = $contractstatic->id;
+								$actioncomm->elementtype = $contractstatic->element;
+
+								$actioncomm->create($user);
+							}
+						} else {
+							$error++;
+							$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
+
+							$nbko++;
+							$listoflinesko[$contractline->id] = $contractline->id;
+
+							break;
+						}
+					}
+
+					$i++;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return 1;
+			}
+		}
+
+		if ($blockingerrormsg) {
+			$this->error = $blockingerrormsg;
+			return 1;
+		} else {
+			$this->output = 'Found '.($nbok + $nbko).' contract lines to send reminder for.';
+			$this->output .= ' Sent email successfully for '.$nbok.' lines';
+			if ($nbko) {
+				$this->output .= ' - Canceled for '.$nbko.' line(s) (no thirdparty email, missing template, or send error)';
+			}
+		}
+
+		if ($error) {
+			return 1;
+		}
+		return 0;
 	}
 }

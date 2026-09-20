@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014-2019  Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,17 +84,22 @@ class modSalaries extends DolibarrModules
 		$this->langfiles = array("salaries", "bills");
 
 		// Constants
-		$this->const = array();
-		$this->const[0] = array(
+		$this->const = [
+			[
 				"SALARIES_ACCOUNTING_ACCOUNT_PAYMENT",
 				"chaine",
-				"421"
-		);
-		$this->const[1] = array(
+				"421",
+				"",
+				0,
+			],
+			[
 				"SALARIES_ACCOUNTING_ACCOUNT_CHARGE",
 				"chaine",
-				"641"
-		);
+				"641",
+				"",
+				0,
+			]
+		];
 
 		// Boxes
 		$this->boxes = array();

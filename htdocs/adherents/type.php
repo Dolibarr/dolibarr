@@ -36,6 +36,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -43,7 +44,6 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 // Load translation files required by the page
@@ -103,7 +103,7 @@ $mail_valid = GETPOST("mail_valid", 'restricthtml');
 
 // Initialize a technical object
 $object = new AdherentType($db);
-$extrafields = new ExtraFields($db);
+
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
 
 // Fetch optionals attributes and labels
@@ -126,6 +126,9 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+
+// Technical ID
+$arrayfields['d.rowid'] = array('label' => 'TechnicalID', 'checked' => -1, 'enabled' => 1, 'position' => 1);
 
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
@@ -366,6 +369,11 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 			$totalarray['nbfield']++;
 		}
+		// Technical ID
+		if (!empty($arrayfields['d.rowid']['checked'])) {
+			print '<th class="center">'.$langs->trans("ID").'</th>';
+			$totalarray['nbfield']++;
+		}
 		if (!empty($arrayfields['t.rowid']['checked'])) {
 			print '<th>'.$langs->trans("Ref").'</th>';
 			$totalarray['nbfield']++;
@@ -462,6 +470,10 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
+				// Technical ID
+				if (!empty($arrayfields['d.rowid']['checked'])) {
+					print '<td class="center" data-key="id">'.dolPrintHTML($objp->rowid).'</td>';
+				}
 				if (!empty($arrayfields['t.rowid']['checked'])) {
 					print '<td class="nowraponall">';
 					print $membertype->getNomUrl(1);
@@ -469,7 +481,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.libelle']['checked'])) {
-					print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+					print '<td><span class="spantitle">'.dolPrintHTML($objp->label).'</td>';
 				}
 				if (!empty($arrayfields['t.morphy']['checked'])) {
 					print '<td class="center">';
@@ -517,7 +529,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
-					print '<td class="center">'.dol_escape_htmltag($objp->amountformuladescription).'</td>';
+					print '<td class="center">'.dolPrintHTML($objp->amountformuladescription).'</td>';
 				}
 				if (!empty($arrayfields['t.vote']['checked'])) {
 					print '<td class="center">'.yn($objp->vote).'</td>';
@@ -1123,9 +1135,9 @@ if ($rowid > 0) {
 
 		print '<table class="border centpercent">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.dolPrintHTML($object->id).'</td></tr>';
 
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
 		print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
@@ -1163,7 +1175,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("AmountFormulaDescription").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('amountformuladescription', $object->amountformuladescription, '', 220, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
+		$doleditor = new DolEditor('amountformuladescription', $object->amountformuladescription, '', 120, 'dolibarr_details', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1178,7 +1190,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
+		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_details', '', false, false, isModEnabled('fckeditor'), 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

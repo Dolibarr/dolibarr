@@ -135,7 +135,7 @@ class FormActions
                     var defaultvalue = $('#select' + htmlname).val();
 					console.log('val='+defaultvalue);
                     var percentage = $('input[name=percentage]');
-                    var selected = '".(isset($selected) ? dol_escape_js($selected) : '')."';
+                    var selected = '".dol_escape_js(isset($selected) ? $selected : '')."';
                     var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
 
                     percentage.val(value);
@@ -322,8 +322,11 @@ class FormActions
 
 					// Type
 					$labeltypelong = $actioncomm->getTypeLabel(2);
-					print '<td class="tdoverflowmax100 center" title="'.dolPrintHTML($labeltypelong).'">';
+					print '<td class="tdoverflowmax100 center valignmiddle" title="'.dolPrintHTML($labeltypelong).'">';
 					print $actioncomm->getTypePicto('valignmiddle');
+					if (preg_match('/PRIVATE/', $actioncomm->code)) {
+						print ' '.img_picto($langs->transnoentitiesnoconv("Private"), 'lock', 'class="valignmiddle"');
+					}
 					//$labeltype = $actioncomm->getTypeLabel(0);
 					//print $labeltype;
 					print '</td>';

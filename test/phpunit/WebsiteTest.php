@@ -136,7 +136,7 @@ class WebsiteTest extends CommonClassTest
 
 		// Force allow of PHP in website from main setup
 		global $dolibarr_website_allow_custom_php;
-		$dolibarr_website_allow_custom_php = 1;
+		$dolibarr_website_allow_custom_php = 2;		// Value 2 allow PHP code, so we can check the protections. Value 1 will allow PHP code only if exec fautres are disabled in PHP.
 
 		// Force permission so this is not the permission that will affect result of checkPHPCode
 		$user->rights->website->writephp = 1;

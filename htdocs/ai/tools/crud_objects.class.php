@@ -1,0 +1,1439 @@
+<?php
+/* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026   Frédéric France         <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * \file htdocs/ai/tools/crud_objects.class.php
+ * \ingroup ai
+ * \brief MCP Server tool for CRUD operations on Dolibarr objects.
+ */
+
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+/**
+ * Tool class for CRUD operations on Dolibarr objects
+ * TODO Remove all tools in this file. Must be into the objectname.class.php
+ * to follow the same structure than APIs.
+ */
+class ToolCrudObjects extends McpTool
+{
+	/**
+	 * 	Constructor
+	 *
+	 * 	Aligned with McpHandler's instantiation contract: new $className($db, $user, $conf).
+	 * 	Accepting $user via DI allows this tool to work in HTTP MCP context where no PHP
+	 * 	web session exists. Some sibling tool classes (ToolThirdParty, ToolCategories,
+	 * 	ToolProducts) already use this signature; this aligns ToolCrudObjects with them.
+	 *
+	 * 	@param	DoliDB		$db			Database handler
+	 * 	@param	User|null	$user		Service user provided by McpHandler (from AI_MCP_USER_ID)
+	 * 	@param	Conf|null	$conf		Dolibarr config (optional)
+	 */
+	public function __construct(DoliDB $db, $user = null, $conf = null)
+	{
+		$this->db = $db;
+		$this->user = $user;
+		if ($conf !== null) {
+			$this->conf = $conf;
+		}
+	}
+
+
+	/**
+	 * Configuration Map.
+	 *
+	 * Defines specific field names for each object type to ensure correct data mapping.
+	 * Each entry contains: class, path, card, date_field, soc_field
+	 *
+	 * @var array<string, array{class:string,path:string,card:string,date_field:string,soc_field:string}>
+	 */
+	private $map = [
+		// --- CUSTOMER OBJECTS ---
+		'proposal' => [
+			'class' => 'Propal',
+			'path' => '/comm/propal/class/propal.class.php',
+			'card' => '/comm/propal/card.php',
+			'date_field' => 'datep', // Propal uses 'datep'
+			'soc_field' => 'socid'
+		],
+		'order' => [
+			'class' => 'Commande',
+			'path' => '/commande/class/commande.class.php',
+			'card' => '/commande/card.php',
+			'date_field' => 'date_commande', // Commande uses 'date_commande'
+			'soc_field' => 'socid'
+		],
+		'invoice' => [
+			'class' => 'Facture',
+			'path' => '/compta/facture/class/facture.class.php',
+			'card' => '/compta/facture/card.php',
+			'date_field' => 'date',
+			'soc_field' => 'socid'
+		],
+		// --- SUPPLIER OBJECTS ---
+		'supplier_proposal' => [
+			'class' => 'SupplierProposal',
+			'path' => '/supplier_proposal/class/supplier_proposal.class.php',
+			'card' => '/supplier_proposal/card.php',
+			'date_field' => 'date', // Uses standard 'date' property for doc date
+			'soc_field' => 'socid'
+		],
+		'supplier_order' => [
+			'class' => 'CommandeFournisseur',
+			'path' => '/fourn/class/fournisseur.commande.class.php',
+			'card' => '/fourn/commande/card.php',
+			'date_field' => 'date_commande',
+			'soc_field' => 'socid'
+		],
+		'supplier_invoice' => [
+			'class' => 'FactureFournisseur',
+			'path' => '/fourn/class/fournisseur.facture.class.php',
+			'card' => '/fourn/facture/card.php',
+			'date_field' => 'date',
+			'soc_field' => 'socid'
+		],
+		// --- LOGISTICS ---
+		'shipment' => [
+			'class' => 'Expedition',
+			'path' => '/expedition/class/expedition.class.php',
+			'card' => '/expedition/card.php',
+			'date_field' => 'date_expedition',
+			'soc_field' => 'socid'
+		],
+		'reception' => [
+			'class' => 'Reception',
+			'path' => '/reception/class/reception.class.php',
+			'card' => '/reception/card.php',
+			'date_field' => 'date_reception',
+			'soc_field' => 'socid'
+		],
+	];
+
+	/**
+	 * Permission map for write (create/update) operations.
+	 *
+	 * Each object type maps to a list of alternative permissions, given as
+	 * (module, level1[, level2]); holding any of them is enough. Purchase orders and vendor
+	 * invoices need two alternatives because their permissions exist in two namespaces since
+	 * v24: the legacy 'fournisseur' one and the one of the modSupplierOrder / modSupplierInvoice
+	 * modules they have been split into. The core does the same, see the computation of
+	 * $permissiontoadd in fourn/commande/list.php. (Port of #39393 to develop.)
+	 *
+	 * @var array<string, array<int, array{0:string, 1:string, 2?:string}>>
+	 */
+	private const PERM_MAP = [
+		'proposal'          => [['propal', 'creer']],
+		'order'             => [['commande', 'creer']],
+		'invoice'           => [['facture', 'creer']],
+		'supplier_proposal' => [['supplier_proposal', 'creer']],
+		'supplier_order'    => [['fournisseur', 'commande', 'creer'], ['supplier_order', 'creer']],
+		'supplier_invoice'  => [['fournisseur', 'facture', 'creer'], ['supplier_invoice', 'creer']],
+		'shipment'          => [['expedition', 'creer']],
+		'reception'         => [['reception', 'creer']],
+	];
+
+	/**
+	 * Permission map for delete operations.
+	 * A write permission must never be enough to delete a record, so deletion is checked
+	 * against its own dedicated permission. Same two-namespaces remark as PERM_MAP.
+	 *
+	 * @var array<string, array<int, array{0:string, 1:string, 2?:string}>>
+	 */
+	private const DELETE_PERM_MAP = [
+		'proposal'          => [['propal', 'supprimer']],
+		'order'             => [['commande', 'supprimer']],
+		'invoice'           => [['facture', 'supprimer']],
+		'supplier_proposal' => [['supplier_proposal', 'supprimer']],
+		'supplier_order'    => [['fournisseur', 'commande', 'supprimer'], ['supplier_order', 'supprimer']],
+		'supplier_invoice'  => [['fournisseur', 'facture', 'supprimer'], ['supplier_invoice', 'supprimer']],
+		'shipment'          => [['expedition', 'supprimer']],
+		'reception'         => [['reception', 'supprimer']],
+	];
+
+	/**
+	 * Parameters used to call restrictedArea() on an already fetched object, so that the
+	 * entity and the thirdparty restrictions of the user are enforced on that object.
+	 *
+	 * 'feature' mirrors the restrictedArea() calls made by the matching card.php pages.
+	 * 'tableandshare' must always be provided here: restrictedArea() does not fall back to
+	 * the feature name, and checkUserAccessToObject() needs the table to run its entity
+	 * check when the multicompany module is enabled.
+	 *
+	 * @var array<string, array{feature:string, tableandshare:string}>
+	 */
+	private const ACCESS_MAP = [
+		'proposal'          => ['feature' => 'propal',            'tableandshare' => 'propal'],
+		'order'             => ['feature' => 'commande',          'tableandshare' => 'commande'],
+		'invoice'           => ['feature' => 'facture',           'tableandshare' => 'facture'],
+		'supplier_proposal' => ['feature' => 'supplier_proposal', 'tableandshare' => 'supplier_proposal'],
+		'supplier_order'    => ['feature' => 'fournisseur',       'tableandshare' => 'commande_fournisseur'],
+		'supplier_invoice'  => ['feature' => 'fournisseur',       'tableandshare' => 'facture_fourn'],
+		'shipment'          => ['feature' => 'expedition',        'tableandshare' => 'expedition'],
+		'reception'         => ['feature' => 'reception',         'tableandshare' => 'reception'],
+	];
+
+	/**
+	 * Whitelist of header properties that a caller is allowed to set on a document.
+	 *
+	 * The header comes from an LLM or from an external MCP client, so it must never be
+	 * assigned to the object as-is: properties such as 'id', 'entity', 'ref' or
+	 * 'fk_user_author' would otherwise be attacker controlled. In particular, setting both
+	 * 'id' and 'entity' makes setEntity() (called by every create() method) honor the
+	 * submitted entity, which allows creating a document inside another entity.
+	 *
+	 * Keys listed here are the ones advertised by getDefinitions() (including the develop
+	 * additions 'ref_supplier' and the 'create_missing_products' behavior flag), plus every
+	 * per-type date field declared in $this->map.
+	 *
+	 * @var array<int, string>
+	 */
+	private const ALLOWED_HEADER_FIELDS = [
+		'socid',
+		'note',
+		'note_public',
+		'note_private',
+		'duree_validite',
+		'ref_supplier',
+		'create_missing_products',	// behavior flag, filtered out before property assignment
+		'products_category',	// behavior flag (category label for created products), filtered out too
+		// Date fields, generic name and per object type name (see $this->map)
+		'date',
+		'datep',
+		'date_commande',
+	];
+
+	/**
+	 * Returns an array of tool definitions, including name, description, and input schema.
+	 *
+	 * @return list<array<string, mixed>> Array of tool definitions.
+	 */
+	public function getDefinitions(): array
+	{
+		return [
+			// Order tool
+			[
+				"name" => "create_sales_order",
+				"description" => "Create a CUSTOMER SALES ORDER. This is specifically for creating ORDERS that customers place with you. USE THIS TOOL whenever user mentions: 'create', 'new' or 'add' with 'order', 'customer order' or 'sales order'. This is NOT for invoices or supplier orders. Examples of when to use this tool:
+- 'create order for customer X'
+- 'new order for Y'
+- 'add order from customer Z'
+- 'add order for X with 5 items'
+If user says 'order' without any qualifier, they mean a SALES ORDER - use this tool.",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"socid" => [
+							"type" => "integer",
+							"description" => "Customer ID (Thirdparty ID) - REQUIRED"
+						],
+						"date_commande" => [
+							"type" => "string",
+							"description" => "Order date (YYYY-MM-DD format, optional, defaults to today)"
+						],
+						"note" => [
+							"type" => "string",
+							"description" => "Order notes (optional)"
+						],
+						"lines" => [
+							"type" => "array",
+							"description" => "Products being ordered by the customer",
+							"items" => [
+								"type" => "object",
+								"properties" => [
+									"product_id" => ["type" => "integer", "default" => 0, "description" => "Product ID (0 if not found)"],
+									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
+									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
+									"description" => ["type" => "string", "description" => "Product name or description"],
+									"quantity" => ["type" => "number", "default" => 1, "description" => "Quantity ordered"],
+									"unit_price" => ["type" => "number", "description" => "Selling price per unit (optional)"],
+									"vat_rate" => ["type" => "number", "description" => "VAT rate (optional, auto-calculated if not provided)"]
+								],
+								"required" => ["quantity"]
+							]
+						]
+					],
+					"required" => ["socid"]
+				]
+			],
+			// Invoice tool
+			[
+				"name" => "create_customer_invoice",
+				"description" => "Create a customer invoice (bill). Do NOT use this for orders - use create_sales_order instead. Do NOT use this for payments - use pay_invoice instead. Examples: 'create invoice for customer X', 'new bill customer Y'",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"object_type" => [
+							"type" => "string",
+							"enum" => ["invoice"],
+							"default" => "invoice"
+						],
+						"header" => [
+							"type" => "object",
+							"description" => "Invoice header data. Must include 'socid' (Customer ID).",
+							"properties" => [
+								"socid" => ["type" => "integer", "description" => "Customer ID (Thirdparty ID)"],
+								"date" => ["type" => "string", "description" => "Invoice date (YYYY-MM-DD)"],
+								"note_public" => ["type" => "string", "description" => "Public note"],
+								"note_private" => ["type" => "string", "description" => "Private note"]
+							],
+							"required" => ["socid"]
+						],
+						"lines" => [
+							"type" => "array",
+							"description" => "Invoice line items.",
+							"items" => [
+								"type" => "object",
+								"properties" => [
+									"product_id" => ["type" => "integer", "default" => 0],
+									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
+									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
+									"description" => ["type" => "string"],
+									"quantity" => ["type" => "number", "default" => 1],
+									"unit_price" => ["type" => "number"],
+									"vat_rate" => ["type" => "number"],
+									"fk_unit" => ["type" => "integer"]
+								],
+								"required" => ["quantity"]
+							]
+						]
+					],
+					"required" => ["header"]
+				]
+			],
+			// Generic tool for other documents (excluding order and invoice)
+			[
+				"name" => "create_other_document",
+				"description" => "Create documents other than orders and invoices. Use this for: 'proposal', 'supplier_order', 'supplier_invoice', 'supplier_proposal', 'reception', 'shipment'. DO NOT use for 'order' or 'invoice' - they have dedicated tools.",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"object_type" => [
+							"type" => "string",
+							"enum" => ['proposal', 'supplier_order', 'supplier_invoice', 'supplier_proposal', 'reception', 'shipment'],
+							"description" => "Document type. Cannot be 'order' or 'invoice'. 'reception' and 'shipment' create a standalone document (with no source order) and require the RECEPTION_STANDALONE / SHIPMENT_STANDALONE option to be enabled."
+						],
+						"header" => [
+							"type" => "object",
+							"description" => "Header data. Must include 'socid'.",
+							"properties" => [
+								"socid" => ["type" => "integer", "description" => "Thirdparty ID (Customer for proposal, Supplier for supplier_*)"],
+								"date" => ["type" => "string", "description" => "Document date (YYYY-MM-DD)"],
+								"duree_validite" => ["type" => "integer", "description" => "Validity in days (proposal only)"],
+								"ref_supplier" => ["type" => "string", "description" => "Supplier's own document reference (delivery note number, supplier order number...) as written on the source document"],
+								"create_missing_products" => ["type" => "boolean", "default" => false, "description" => "When a line's product_ref does not match any catalog product, create the product on the fly (ref=product_ref, label=description, buying price=unit_price) instead of adding a free-text line"],
+								"products_category" => ["type" => "string", "description" => "Optional product category/tag label assigned to every product created on the fly (the category is created when missing), e.g. 'A TRAITER' so the new products can be reviewed as a batch. Only used with create_missing_products."],
+								"note_public" => ["type" => "string", "description" => "Public note"],
+								"note_private" => ["type" => "string", "description" => "Private note"]
+							],
+							"required" => ["socid"]
+						],
+						"lines" => [
+							"type" => "array",
+							"description" => "Array of line items.",
+							"items" => [
+								"type" => "object",
+								"properties" => [
+									"product_id" => ["type" => "integer", "default" => 0],
+									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
+									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
+									"description" => ["type" => "string"],
+									"quantity" => ["type" => "number", "default" => 1],
+									"unit_price" => ["type" => "number"],
+									"vat_rate" => ["type" => "number"],
+									"fk_unit" => ["type" => "integer"]
+								],
+								"required" => ["quantity"]
+							]
+						]
+					],
+					"required" => ["object_type", "header"]
+				]
+			],
+			[
+				"name" => "add_line_item",
+				"description" => "Add a single line to an existing draft document.",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"object_type" => ["type" => "string", "enum" => array_keys($this->map)],
+						"parent_id" => ["type" => "integer"],
+						"product_id" => ["type" => "integer", "default" => 0],
+									"product_ref" => ["type" => "string", "description" => "Product reference/SKU as written on the source document (preferred when the numeric product_id is unknown; matched against catalog refs, barcodes and labels)"],
+									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
+						"description" => ["type" => "string"],
+						"quantity" => ["type" => "number", "default" => 1],
+						"unit_price" => ["type" => "number"],
+						"vat_rate" => ["type" => "number"]
+					],
+					"required" => ["object_type", "parent_id", "quantity"]
+				]
+			],
+			[
+				"name" => "delete_object",
+				"description" => "Delete a Draft document.",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"object_type" => ["type" => "string", "enum" => array_keys($this->map)],
+						"id" => ["type" => "integer"]
+					],
+					"required" => ["object_type", "id"]
+				]
+			]
+		];
+	}
+
+	/**
+	 * Per-object-type rights are checked inside this class (PERM_MAP / delete map),
+	 * including the two permission namespaces Dolibarr uses for the same action.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return string RIGHTS_ENFORCED_DOWNSTREAM
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return self::RIGHTS_ENFORCED_DOWNSTREAM;
+	}
+
+	/**
+	 * Return categories this tool belongs to.
+	 * Used by the intent parser to filter available tools.
+	 *
+	 * @return array<string> List of categories (e.g., ['billing', 'commercial'])
+	 */
+	public function getCategories(): array
+	{
+		return ['commercial', 'billing', 'thirdparty'];
+	}
+
+	/**
+	 * Executes the requested tool function based on its name.
+	 *
+	 * @param string $name The name of the tool to execute.
+	 * @param array<string, mixed> $args The arguments for the tool (key-value pairs).
+	 * @return mixed The result of the tool execution (usually an array) or an error array.
+	 */
+	public function execute(string $name, array $args)
+	{
+		global $langs, $conf, $mysoc;
+
+		// Use the user injected via constructor (McpHandler). Fall back to global $user
+		// when running in a web session context (e.g. AI Assistant) where DI is not used.
+		// is_object() is used instead of empty() because the parent McpTool declares $user
+		// with a non-nullable type hint, which makes PHPStan flag empty($this->user) as
+		// unreachable code.
+		if (!is_object($this->user) || empty($this->user->id)) {
+			global $user;
+			if (is_object($user) && !empty($user->id)) {
+				$this->user = $user;
+			} else {
+				return ["error" => "User not authenticated."];
+			}
+		}
+
+		if (!is_object($mysoc) || empty($mysoc->id)) {
+			$mysoc = new Societe($this->db);
+			$mysoc->setMysoc($conf);
+		}
+
+		$langs->loadLangs(["main", "bills", "companies", "orders", "propal", "products", "supplier_orders", "supplier_proposals", "sendings", "receptions"]);
+
+		try {
+			switch ($name) {
+				case 'create_sales_order':
+					// Direct mapping for order
+					$args['object_type'] = 'order';
+					// Reorganize args to match createDocument format
+					if (!isset($args['header']) && isset($args['socid'])) {
+						$args['header'] = [
+							'socid' => $args['socid'],
+							'date_commande' => $args['date_commande'] ?? null,
+							'note' => $args['note'] ?? null
+						];
+						unset($args['socid'], $args['date_commande'], $args['note']);
+					}
+					return $this->createDocument($args);
+
+				case 'create_customer_invoice':
+					$args['object_type'] = 'invoice';
+					return $this->createDocument($args);
+
+				case 'create_other_document':
+					// object_type is already set in args
+					return $this->createDocument($args);
+
+				case 'add_line_item':
+					return $this->addLineItem($args);
+
+				case 'delete_object':
+					return $this->deleteObject($args);
+
+				default:
+					return ["error" => "Unknown tool: $name"];
+			}
+		} catch (Exception $e) {
+			return ["error" => "Exception: " . $e->getMessage()];
+		}
+	}
+
+	/**
+	 * Create Document
+	 *
+	 * @param array<string, mixed> $args {
+	 *                                   object_type: string,
+	 *                                   header: array<string, mixed>,
+	 *                                   lines?: array<array<string, mixed>>
+	 *                                   } Arguments including type, header data, and optional lines.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function createDocument(array $args)
+	{
+		// Normalize the argument shapes LLMs actually produce. Models emit
+		// top-level socid instead of header.socid and line keys like
+		// ref/qty/price - accept the common aliases instead of failing the
+		// whole create over naming (field-observed with gemini-2.5-flash).
+		if (empty($args['header']) && !empty($args['socid'])) {
+			$args['header'] = ['socid' => (int) $args['socid']];
+			unset($args['socid']);
+		}
+		// Customer given by NAME (models do this when no id is on screen; the
+		// single-shot architecture cannot chain find_customer -> create, so
+		// the create resolves names itself): exact match, then unique LIKE.
+		// Ambiguity returns the candidates instead of guessing.
+		if (empty($args['header']['socid'])) {
+			$custName = '';
+			foreach (array('customer', 'customer_name', 'thirdparty', 'company', 'name') as $ck) {
+				if (!empty($args['header'][$ck]) && is_string($args['header'][$ck])) {
+					$custName = trim($args['header'][$ck]);
+					break;
+				}
+				if (!empty($args[$ck]) && is_string($args[$ck])) {
+					$custName = trim($args[$ck]);
+					break;
+				}
+			}
+			if ($custName !== '' && !is_numeric($custName)) {
+				if (empty($args['header']) || !is_array($args['header'])) {
+					$args['header'] = array();
+				}
+				$sqlc = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity IN (".getEntity('societe').") AND nom = '".$this->db->escape($custName)."'";
+				$resc = $this->db->query($sqlc);
+				if ($resc && $this->db->num_rows($resc) == 1) {
+					$args['header']['socid'] = (int) $this->db->fetch_object($resc)->rowid;
+				} else {
+					$sqlc = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity IN (".getEntity('societe').") AND nom LIKE '%".$this->db->escape($custName)."%' LIMIT 6";
+					$resc = $this->db->query($sqlc);
+					$found = array();
+					while ($resc && ($oc = $this->db->fetch_object($resc))) {
+						$found[$oc->rowid] = $oc->nom;
+					}
+					if (count($found) == 1) {
+						$args['header']['socid'] = (int) array_key_first($found);
+					} elseif (count($found) > 1) {
+						$candidatesTxt = array();
+						foreach ($found as $fid => $fname) {
+							$candidatesTxt[] = $fname." (id ".((int) $fid).")";
+						}
+
+						return ["error" => "Several thirdparties match '".$custName."': ".implode(', ', $candidatesTxt).". Ask the user which one, then retry with that socid."];
+					}
+				}
+			}
+		}
+		if (!empty($args['lines']) && is_array($args['lines'])) {
+			$aliases = ['ref' => 'product_ref', 'product' => 'product_ref', 'sku' => 'product_ref', 'qty' => 'quantity', 'price' => 'unit_price', 'unitprice' => 'unit_price', 'price_ht' => 'unit_price', 'vat' => 'vat_rate'];
+			foreach ($args['lines'] as $k => $line) {
+				if (!is_array($line)) {
+					continue;
+				}
+				foreach ($aliases as $from => $to) {
+					if (isset($line[$from]) && !isset($line[$to])) {
+						$args['lines'][$k][$to] = $line[$from];
+						unset($args['lines'][$k][$from]);
+					}
+				}
+				// 'label' means the PRODUCT NAME when no product is otherwise
+				// identified (resolution degrades to free text on a miss
+				// anyway); it means the line description when one is.
+				if (isset($line['label'])) {
+					$to = (empty($line['product_ref']) && empty($line['product_id'])) ? 'product_ref' : 'description';
+					if (!isset($args['lines'][$k][$to])) {
+						$args['lines'][$k][$to] = $line['label'];
+					}
+					unset($args['lines'][$k]['label']);
+				}
+			}
+		}
+
+		global $conf;
+
+		$type = (string) $args['object_type'];
+
+		// Validate type against map
+		if (! isset($this->map[$type])) {
+			return ["error" => "Configuration not found for object type: " . $type];
+		}
+
+		// Check permissions
+		$permError = $this->checkPermission($type);
+		if ($permError !== null) {
+			return $permError;
+		}
+
+		// Standalone-mode guard: 'reception' and 'shipment' created here have no source order,
+		// so they require the matching standalone option (mirrors the checks in processAddLine()).
+		if ($type === 'reception' && ! getDolGlobalString('RECEPTION_STANDALONE')) {
+			return ["error" => "Reception standalone mode (RECEPTION_STANDALONE) must be enabled to create a reception without a supplier order."];
+		}
+		if ($type === 'shipment' && ! getDolGlobalString('SHIPMENT_STANDALONE')) {
+			return ["error" => "Shipment standalone mode (SHIPMENT_STANDALONE) must be enabled to create a shipment without an order."];
+		}
+
+		/** @var array{class: string, path: string, card: string, date_field: string, soc_field: string} $confMap */
+		$confMap = $this->map[$type];
+
+		if (empty($args['header']) || ! is_array($args['header'])) {
+			return ["error" => "Missing or invalid header for object type: " . $type];
+		}
+
+		// Drop every header property that is not explicitly allowed. The header is produced by
+		// an LLM or by an external MCP client, so an unfiltered assignment would let the caller
+		// overwrite 'id', 'entity', 'ref', 'fk_user_author', 'total_ttc', ... on the object.
+		$header = array_intersect_key($args['header'], array_flip(self::ALLOWED_HEADER_FIELDS));
+
+		$rejectedfields = array_diff(array_keys($args['header']), array_keys($header));
+		if (! empty($rejectedfields)) {
+			dol_syslog(
+				'[ToolCrudObjects] Ignored non allowed header fields for ' . $type . ': '
+				. implode(', ', array_map('strval', $rejectedfields)),
+				LOG_WARNING
+			);
+		}
+
+		// A thirdparty is always required to build a document
+		if (empty($header['socid'])) {
+			return ["error" => "Missing socid in header for object type: " . $type];
+		}
+
+		// An external user must not be able to create a document for another thirdparty
+		if ($this->user->socid > 0 && $this->user->socid != (int) $header['socid']) {
+			dol_syslog(
+				'[ToolCrudObjects] User id=' . $this->user->id . ' (socid=' . $this->user->socid
+				. ') tried to create a ' . $type . ' for socid=' . ((int) $header['socid']) . '.',
+				LOG_WARNING
+			);
+			return ["error" => "Access denied to this thirdparty."];
+		}
+
+		// The thirdparty must exist: without this check a nonexistent socid
+		// reaches the INSERT and surfaces as a raw SQL foreign-key error in
+		// the chat (observed in the field on #39433).
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$ctrlSoc = new Societe($this->db);
+		if ($ctrlSoc->fetch((int) $header['socid']) <= 0) {
+			return ["error" => "Thirdparty with id ".((int) $header['socid'])." does not exist. Use find/search to resolve the thirdparty first."];
+		}
+
+		// Instantiate the specific Dolibarr class (Propal, Commande, etc.)
+		// We treat it as 'mixed' or generic object here to allow dynamic property assignment
+		$obj = $this->instantiate($type);
+
+		// Process Header with Field Mapping
+		$createMissingProducts = ! empty($header['create_missing_products']);
+		$productsCategory = trim((string) ($header['products_category'] ?? ''));
+		foreach ($header as $k => $v) {
+			$key = (string) $k;
+
+			// Behavior flags, not object properties
+			if ($key === 'create_missing_products' || $key === 'products_category') {
+				continue;
+			}
+
+			// Map 'date' to specific date field (e.g., date_commande)
+			if ($key === 'date' && isset($confMap['date_field'])) {
+				$key = $confMap['date_field'];
+			}
+			// Map 'socid' to specific soc field
+			if ($key === 'socid' && isset($confMap['soc_field'])) {
+				$key = $confMap['soc_field'];
+				$obj->fk_soc = (int) $v; // Standard Dolibarr field for thirdparty linkage
+			}
+
+			// Convert date strings to timestamp if needed
+			if (strpos($key, 'date') !== false && ! is_numeric($v) && is_string($v)) {
+				$timestamp = strtotime($v);
+				if ($timestamp !== false) {
+					$v = $timestamp;
+				}
+			}
+
+			// Assign value dynamically
+			// PHPStan normally dislikes dynamic property access on objects, so we suppress it for this mapper logic
+			/** @phpstan-ignore-next-line */
+			$obj->{$key} = $v;
+		}
+
+		// Set Defaults
+		$dateField = $confMap['date_field'] ?? 'date';
+		// Check if date field is empty (property might not exist or be null/0)
+		if (empty($obj->{$dateField})) {
+			/** @phpstan-ignore-next-line */
+			$obj->{$dateField} = dol_now();
+		}
+
+		// Specific default for Proposals
+		if ($type === 'proposal' && empty($obj->duree_validite)) {
+			$obj->duree_validite = 15;
+		}
+
+		// Belt and braces: the whitelist above already filters them out, but a new document must
+		// never carry an id nor an entity coming from the caller. setEntity(), called by every
+		// create() method, returns $currentobject->entity as soon as the object has both an id
+		// and an entity, which would create the document inside the submitted entity.
+		$obj->id = 0;
+		$obj->entity = $conf->entity;
+
+		// Attempt Creation
+		$id = $obj->create($this->user);
+
+		if ($id <= 0) {
+			$err = (string) $obj->error;
+			if (! empty($obj->errors)) {
+				$err .= " " . json_encode($obj->errors);
+			}
+			return ["error" => "Creation failed ($type): " . $err];
+		}
+
+		// Process Lines (if provided)
+		$linesAdded = 0;
+		$lineErrors = [];
+
+		if (! empty($args['lines']) && is_array($args['lines'])) {
+			foreach ($args['lines'] as $line) {
+				$line['object_type'] = $type;
+				$line['parent_id'] = $id;
+				if ($createMissingProducts) {
+					$line['create_missing_products'] = true;
+					if ($productsCategory !== '') {
+						$line['products_category'] = $productsCategory;
+					}
+				}
+
+				// Process line addition
+				// Assumes processAddLine returns array{success: bool, error?: string}
+				$res = $this->processAddLine($obj, $line);
+
+				if (! empty($res['success'])) {
+					$linesAdded++;
+				} else {
+					$lineErrors[] = isset($res['error']) ? (string) $res['error'] : 'Unknown line error';
+				}
+			}
+		}
+
+		// Some ::create() implementations (e.g. Reception) write the provisional
+		// reference (PROVxx) to the database but leave $obj->ref empty in memory,
+		// so the caller would show an empty ref. Reload the object to return the
+		// real reference.
+		if (empty($obj->ref) && method_exists($obj, 'fetch')) {
+			$obj->fetch($id);
+		}
+
+		return [
+			"success"     => true,
+			"id"          => (int) $id,
+			"ref"         => (string) $obj->ref,
+			"lines_added" => $linesAdded,
+			"line_errors" => $lineErrors,
+			"url"         => DOL_URL_ROOT . $confMap['card'] . "?id=" . $id
+		];
+	}
+
+	/**
+	 * Add a line to a document object.
+	 *
+	 * @param CommonObject $object The Dolibarr object (Propal, Commande, Facture, etc.).
+	 * @param array<string, mixed> $args {
+	 *                                   product?: string,
+	 *                                   description?: string,
+	 *                                   qty?: float|int|string,
+	 *                                   quantity?: float|int|string,
+	 *                                   price?: float|int|string,
+	 *                                   unit_price?: float|int|string,
+	 *                                   vat_rate?: float|int|string,
+	 *                                   discount?: float|int|string,
+	 *                                   object_type: string
+	 *                                   } Line arguments.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function processAddLine(CommonObject $object, array $args)
+	{
+		global $mysoc;
+		// Check status (Dolibarr objects usually use 'statut' property, 0 = Draft)
+		if (isset($object->statut) && $object->statut != 0) {
+			return ["success" => false, "error" => "Document is not in draft status"];
+		}
+
+		// Ensure Thirdparty is loaded
+		if (empty($object->thirdparty)) {
+			$object->fetch_thirdparty();
+		}
+
+		// Get company default VAT
+		$companyDefaultVAT = 0.0;
+		if (getDolGlobalString('MAIN_VAT_DEFAULT')) {
+			$companyDefaultVAT = getDolGlobalFloat('MAIN_VAT_DEFAULT');
+		}
+
+		// Normalize Inputs
+		$productIdentifier = isset($args['product']) ? (string) $args['product'] : (isset($args['product_ref']) ? (string) $args['product_ref'] : (isset($args['description']) ? (string) $args['description'] : ''));
+
+		$qtyInput = $args['qty'] ?? $args['quantity'] ?? 1;
+		$qty = (float) $qtyInput;
+
+		$priceInput = isset($args['price']) ? $args['price'] : ($args['unit_price'] ?? null);
+		$price = ($priceInput !== null) ? (float) $priceInput : null;
+
+		$vat = isset($args['vat_rate']) ? (float) $args['vat_rate'] : null;
+		$discount = isset($args['discount']) ? (float) $args['discount'] : 0.0;
+
+		if ($qty <= 0) {
+			return ["success" => false, "error" => "Quantity must be positive."];
+		}
+
+		// Find product
+		/** @var Product|null $prod */
+		$prod = null;
+
+		if ($productIdentifier !== '') {
+			$findResult = $this->findProduct($productIdentifier);
+			if (is_array($findResult) && isset($findResult['error'])) {
+				// Only abort if the caller EXPLICITLY asked for a product (via the 'product'
+				// argument). If they only provided a free-text 'description', we silently
+				// fall through with $prod = null so Dolibarr creates a free-text line item,
+				// which is a perfectly valid Dolibarr feature.
+				// Previous behaviour aborted ALL line creations whose description didn't
+				// match an existing product reference, which broke AI-driven creation of
+				// invoices/orders/proposals from one-off line descriptions.
+				if (isset($args['product'])) {
+					return array_merge(['success' => false], $findResult);
+				}
+				// fall through: $prod stays null
+			}
+			if (is_object($findResult)) {
+				$prod = $findResult;
+			}
+		}
+
+		// Create the product on the fly when explicitly asked to (document-driven
+		// creation, create_missing_products flag): the ref comes from the source
+		// document. Without this, unknown refs end up as free-text lines, which
+		// move no stock on receptions.
+		if ($prod === null && ! empty($args['create_missing_products']) && ! empty($args['product_ref'])
+			&& $this->user && $this->user->hasRight('produit', 'creer')) {
+			$newprod = new Product($this->db);
+			$newprod->ref = trim((string) $args['product_ref']);
+			$newprod->label = ! empty($args['description']) ? (string) $args['description'] : $newprod->ref;
+			$newprod->type = Product::TYPE_PRODUCT;
+			$newprod->status = 1;
+			$newprod->status_buy = 1;
+			// Trace AI-created products (convention akin to the scanner module's
+			// SCANyymmdd): lets admins list or purge a whole AI import batch.
+			$newprod->import_key = 'AI'.dol_print_date(dol_now(), '%y%m%d');
+			if (!empty($args['barcode'])) {
+				$newprod->barcode = trim((string) $args['barcode']);
+				// Dolibarr barcode features need the type (e.g. 2=EAN13): use the
+				// instance default when configured.
+				$defbctype = getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE');
+				if ($defbctype > 0) {
+					$newprod->barcode_type = $defbctype;
+				}
+			}
+			if ($price !== null) {
+				$newprod->cost_price = (float) $price;
+			}
+			if ($newprod->create($this->user) > 0) {
+				// Product::create() does not persist import_key: set it with a
+				// targeted UPDATE right after creation.
+				$this->db->query("UPDATE ".MAIN_DB_PREFIX."product SET import_key='".$this->db->escape($newprod->import_key)."' WHERE rowid=".(int) $newprod->id);
+				$prod = $newprod;
+
+				// Complete the card with what the source document knows beyond
+				// the product itself: supplier price line, review category.
+				$this->completeCreatedProduct($newprod, $object, $args, ($price !== null ? (float) $price : null), ($vat !== null ? (float) $vat : 0.0));
+			}
+			// On failure (duplicate ref, numbering rule...): fall through to a free-text line
+		}
+
+		// Set values based on product or user input
+		if ($price === null) {
+			$price = ($prod && isset($prod->price)) ? (float) $prod->price : 0.0;
+		}
+
+		if ($vat === null) {
+			$vat = ($prod && isset($prod->tva_tx) && $prod->tva_tx !== '') ? (float) $prod->tva_tx : $companyDefaultVAT;
+		}
+
+		// Description — collapse any line breaks / repeated whitespace the LLM may
+		// have carried over from the source document: a multi-line description
+		// renders as extra lines glued to the product name (getNomUrl) in the
+		// object line templates.
+		$userDesc = isset($args['description']) ? trim(preg_replace('/\s+/', ' ', (string) $args['description'])) : '';
+		$desc = '';
+
+		if ($userDesc !== '') {
+			if ($prod && ! empty($prod->label)) {
+				if (strtolower($userDesc) === strtolower($prod->label)) {
+					$desc = $prod->label;
+				} else {
+					$desc = $prod->label . ' - ' . $userDesc;
+				}
+			} else {
+				$desc = $userDesc;
+			}
+		} else {
+			if ($prod && ! empty($prod->label)) {
+				$desc = $prod->label;
+			}
+		}
+
+		// Product Unit handling
+		$fk_unit = 0;
+		if (getDolGlobalInt('PRODUCT_USE_UNITS') && $prod && ! empty($prod->fk_unit)) {
+			$fk_unit = (int) $prod->fk_unit;
+		}
+
+		// Add the line
+		$res = 0;
+		$docType = (string) $args['object_type'];
+		$fkProduct = ($prod && isset($prod->id)) ? (int) $prod->id : 0;
+		$prodType = ($prod && isset($prod->type)) ? (int) $prod->type : 0;
+
+		if ($docType === 'invoice') {
+			/** @var Facture $object */
+			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, '', '', 0, 0, '', 'HT', 0, $prodType, -1, 0, '', 0);
+		} elseif ($docType === 'order') {
+			/** @var Commande $object */
+			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 0, 0, 'HT', 0, '', '', $prodType);
+		} elseif ($docType === 'proposal') {
+			/** @var Propal $object */
+			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 'HT', 0, 0, $prodType);
+		} elseif ($docType === 'supplier_invoice') {
+			/** @var FactureFournisseur $object */
+			// IMPORTANT: FactureFournisseur::addline() does NOT share the same signature
+			// as Facture::addline(). Its parameter order is:
+			//   ($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product, $remise_percent, ...)
+			// i.e. $qty is in position 6, not 3 (unlike customer Facture / Commande / Propal).
+			// The previous call passed our $qty as $txtva (-> a 1% VAT rate) and our $vat
+			// as $txlocaltax1, and position 6 ended up being a hardcoded 0 -> a line was
+			// inserted with qty=0, which Dolibarr silently dropped from the visible totals.
+			$res = $object->addline($desc, $price, $vat, 0, 0, $qty, $fkProduct, $discount, '', '', 0, 0, 'HT', $prodType);
+		} elseif ($docType === 'supplier_order') {
+			/** @var CommandeFournisseur $object */
+			// IMPORTANT: CommandeFournisseur::addline() signature is:
+			//   ($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product,
+			//    $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, ...)
+			// The previous call passed $discount at position 8 ($fk_prod_fourn_price) and
+			// $prodType at position 15 ($notrigger): the discount was ignored (treated as a
+			// supplier-price rowid) and the product/service type was never set on the line.
+			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, 0, '', $discount, 'HT', 0, $prodType);
+		} elseif ($docType === 'supplier_proposal') {
+			/** @var SupplierProposal $object */
+			// SupplierProposal::addline() signature is:
+			//   ($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product,
+			//    $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, ...)
+			// The previous call passed $price_base_type as 0 (instead of 'HT'), 'HT' as
+			// $info_bits, left $type at 0 and leaked $prodType into $fk_parent_line.
+			$res = $object->addline($desc, $price, $qty, $vat, 0, 0, $fkProduct, $discount, 'HT', 0, 0, $prodType);
+		} elseif ($docType === 'shipment') {
+			// Shipment Logic
+			if (! getDolGlobalString('SHIPMENT_STANDALONE')) {
+				return ["success" => false, "error" => "Shipment standalone mode required to add lines manually."];
+			}
+			// addlinefree(qty, type, fk_product, fk_unit, weight, desc, weight_units)
+			/** @var Expedition $object */
+			$res = $object->addlinefree($qty, 'shipping', $fkProduct, $fk_unit, 0, $desc, 0);
+		} elseif ($docType === 'reception') {
+			// Reception Logic
+			if (! getDolGlobalString('RECEPTION_STANDALONE')) {
+				return ["success" => false, "error" => "Reception standalone mode required to add lines manually."];
+			}
+			require_once DOL_DOCUMENT_ROOT . '/reception/class/receptionlinebatch.class.php';
+			// Reception::addlinefree(qty, element_type, fk_product, fk_unit, rang, description, array_options, cost_price, ref_fourn, fk_entrepot, batch)
+			// A reception line WITHOUT a destination warehouse generates no stock movement on
+			// validation, so pass the reception's default warehouse (falling back to the company
+			// default warehouse). array_options must be an array ([]) — passing 0 breaks under PHP 8.
+			/** @var Reception $object */
+			// Resolve a destination warehouse: explicit arg, then the reception's default,
+			// then the global default, then the first active warehouse.
+			$recWarehouse = (int) ($args['warehouse_id'] ?? 0);
+			if ($recWarehouse <= 0) {
+				// Reception::$fk_warehouse (default warehouse on the reception header) is
+				// introduced by #39294; until that lands it is an undeclared/dynamic
+				// property that simply resolves to null here, so we fall through to the
+				// global default warehouse.
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				$recWarehouse = (int) (!empty($object->fk_warehouse) ? $object->fk_warehouse : getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE'));
+			}
+			if ($recWarehouse <= 0) {
+				$resqlw = $this->db->query("SELECT rowid FROM " . MAIN_DB_PREFIX . "entrepot WHERE entity IN (" . getEntity('stock') . ") AND statut = 1 ORDER BY rowid ASC");
+				if ($resqlw && ($objw = $this->db->fetch_object($resqlw))) {
+					$recWarehouse = (int) $objw->rowid;
+				}
+			}
+			// Also carry the buying price and the supplier's line reference (both
+			// introduced on reception lines by #39294; silently ignored before).
+			$res = $object->addlinefree($qty, 'reception', $fkProduct, $fk_unit, 0, $desc, [], (float) $price, (string) ($args['product_ref'] ?? ''), $recWarehouse);
+		} else {
+			return ["success" => false, "error" => "Type $docType not supported for lines"];
+		}
+
+		// Update unit if needed (Logic for standard docs, Shipment/Reception handle units in addlinefree)
+		// Only trigger updateLineUnit for the standard commercial documents
+		$commercialDocs = ['invoice', 'order', 'proposal', 'supplier_invoice', 'supplier_order', 'supplier_proposal'];
+		if (in_array($docType, $commercialDocs, true) && $res > 0 && $fk_unit > 0 && getDolGlobalInt('PRODUCT_USE_UNITS')) {
+			$this->updateLineUnit($docType, $res, $fk_unit);
+		}
+
+		if ($res > 0) {
+			return [
+				"success" => true,
+				"line_id" => (int) $res,
+				"debug"   => [
+					"product_identifier" => $productIdentifier,
+					"final_description"  => $desc
+				]
+			];
+		}
+
+		$errorMsg = isset($object->error) ? (string) $object->error : 'Unknown error adding line';
+		return ["success" => false, "error" => $errorMsg];
+	}
+
+	/**
+	 * Entry point for the 'add_line_item' tool. Adds line to an already existing object.
+	 * Instantiates the document and calls the line processing helper.
+	 *
+	 * @param array{object_type:string,parent_id:int,product_id?:int,description?:string,quantity?:float|int,unit_price?:float|int,vat_rate?:float|int} $args Tool arguments for adding a line item
+	 *
+	 * @return array{success:bool,line_id?:int,error?:string}
+	 */
+	private function addLineItem(array $args)
+	{
+		$type = (string) $args['object_type'];
+
+		// Check Permissions
+		$permError = $this->checkPermission($type);
+		if ($permError !== null) {
+			return [
+				'success' => false,
+				'error'   => $permError['error'] ?? 'Permission denied'
+			];
+		}
+
+		$parentId = (int) $args['parent_id'];
+
+		// Instantiate and Fetch the Parent Document
+		try {
+			$obj = $this->instantiate($type);
+		} catch (Exception $e) {
+			return ["success" => false, "error" => $e->getMessage()];
+		}
+
+		if (! method_exists($obj, 'fetch')) {
+			return ["success" => false, "error" => "Object does not support fetching"];
+		}
+
+		$result = $obj->fetch($parentId);
+		if ($result <= 0) {
+			return ["success" => false, "error" => "Parent document not found with ID: " . $parentId];
+		}
+
+		// fetch() does not filter on the entity, so the parent document must be checked against
+		// the entity and the thirdparty restrictions of the user before adding a line to it.
+		$accessError = $this->checkAccessToObject($type, $obj);
+		if ($accessError !== null) {
+			return ["success" => false, "error" => $accessError['error']];
+		}
+
+		// Map Schema arguments to Helper arguments
+		// The helper expects 'product' (which can be an ID or Ref), but schema sends 'product_id'
+		if (! empty($args['product_id'])) {
+			$args['product'] = (string) $args['product_id'];
+		}
+
+		// Call the helper logic
+		// processAddLine(CommonObject $object, array $args)
+		return $this->processAddLine($obj, $args);
+	}
+
+	/**
+	 * Complete a product just created on the fly (create_missing_products) with
+	 * the information the source document carries beyond the product card:
+	 *  - on supplier-side documents, the supplier price line ("Buying prices"
+	 *    tab): supplier = the document's thirdparty, supplier ref = the line's
+	 *    product_ref (the ref printed on the supplier's own document), price =
+	 *    the line's buying price. Product->cost_price alone does not pre-fill
+	 *    future supplier orders; this record does.
+	 *  - the optional 'products_category' tag (created when missing), so the
+	 *    freshly created products can be reviewed as a batch.
+	 * Both steps are best-effort: a failure is logged and the line creation
+	 * continues, since the product and its document line are already right.
+	 *
+	 * @param Product             $newprod Product just created
+	 * @param CommonObject        $object  Parent document the line belongs to
+	 * @param array<string,mixed> $args    Line arguments
+	 * @param ?float              $price   Line buying price (HT), when provided
+	 * @param float               $vat     Line VAT rate
+	 * @return void
+	 */
+	private function completeCreatedProduct(Product $newprod, CommonObject $object, array $args, $price, $vat)
+	{
+		global $conf;
+
+		// Supplier price line - only where the document's thirdparty IS a supplier.
+		$supplierSideTypes = array('reception', 'supplier_order', 'supplier_invoice', 'supplier_proposal');
+		// @phan-suppress-next-line PhanUndeclaredProperty -- every business class here carries socid/fk_soc, CommonObject just does not declare them
+		$socid = ! empty($object->socid) ? (int) $object->socid : (int) (empty($object->fk_soc) ? 0 : $object->fk_soc);
+		if ($price !== null && $price > 0 && $socid > 0 && in_array((string) $args['object_type'], $supplierSideTypes, true)) {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			$pf = new ProductFournisseur($this->db);
+			$supplier = new Societe($this->db);
+			if ($pf->fetch($newprod->id) > 0 && $supplier->fetch($socid) > 0) {
+				$reffourn = trim((string) ($args['product_ref'] ?? ''));
+				// The supplier price line carries its own barcode: the EAN read on
+				// THIS supplier's document belongs here. product->barcode (set at
+				// creation) stays the product's main EAN; a later second supplier
+				// with a different EAN would get his own on his own price line.
+				$supplierbarcode = trim((string) ($args['barcode'] ?? ''));
+				$supplierbarcodetype = ($supplierbarcode !== '') ? getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE') : 0;
+				// The multicurrency price must carry the same value (tx=1, company
+				// currency): with the multicurrency module enabled, update_buyprice()
+				// recomputes $buyprice from it - left at 0, it would zero the price.
+				if ($pf->update_buyprice(1, (float) $price, $this->user, 'HT', $supplier, 0, $reffourn, (float) $vat, 0, 0, 0, 0, 0, '', array(), '', (float) $price, 'HT', 1, (string) $conf->currency, '', $supplierbarcode, $supplierbarcodetype) < 0) {
+					dol_syslog('[ToolCrudObjects] update_buyprice failed for new product '.$newprod->id.': '.$pf->error, LOG_WARNING);
+				}
+			}
+		}
+
+		// Optional review category.
+		$catlabel = trim((string) ($args['products_category'] ?? ''));
+		if ($catlabel !== '' && isModEnabled('category')) {
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+			$cat = new Categorie($this->db);
+			if ($cat->fetch(0, $catlabel, Categorie::TYPE_PRODUCT) <= 0) {
+				if (! $this->user->hasRight('categorie', 'creer')) {
+					dol_syslog('[ToolCrudObjects] category "'.$catlabel.'" not found and user lacks categorie->creer', LOG_WARNING);
+					return;
+				}
+				$cat = new Categorie($this->db);
+				$cat->label = $catlabel;
+				$cat->type = Categorie::TYPE_PRODUCT;
+				if ($cat->create($this->user) <= 0) {
+					dol_syslog('[ToolCrudObjects] category creation failed ('.$catlabel.'): '.$cat->error, LOG_WARNING);
+					return;
+				}
+			}
+			if ($cat->add_type($newprod, Categorie::TYPE_PRODUCT) < 0 && $cat->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				dol_syslog('[ToolCrudObjects] category assignment failed for product '.$newprod->id.': '.$cat->error, LOG_WARNING);
+			}
+		}
+	}
+
+	/**
+	 * Find a product by various identifiers (ID, Ref, Barcode, Label).
+	 *
+	 * @param   string|int $identifier The search term (ID, ref, barcode, etc.).
+	 *
+	 * @return  Product|array{error: string, matches?: list<string>} Returns the Product object on success, or an error array.
+	 */
+	private function findProduct($identifier)
+	{
+		$product = new Product($this->db);
+		// Cast strictly to string for string manipulation
+		$searchString = trim((string) $identifier);
+
+		// Regex to handle "id: 123" format
+		$matches = [];
+		if (preg_match('/^(?:id)[:\s]+(\d+)$/i', $searchString, $matches)) {
+			$searchString = $matches[1];
+		}
+
+		// Try to Fetch by ID
+		if (is_numeric($searchString)) {
+			if ($product->fetch((int) $searchString) > 0) {
+				return $product;
+			}
+		}
+
+		// Try to Fetch by Ref
+		if ($product->fetch(0, $searchString) > 0) {
+			return $product;
+		}
+
+		// Custom SQL Search (Barcode, Label, Ref - Exact Match)
+
+		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "product";
+		$sql .= " WHERE (barcode = '" . $this->db->escape($searchString) . "' OR label = '" . $this->db->escape($searchString) . "' OR ref = '" . $this->db->escape($searchString) . "')";
+		$sql .= " AND entity IN (" . getEntity('product') . ")";
+		$sql .= " LIMIT 1";
+
+		$res = $this->db->query($sql);
+		if ($res) {
+			$numRows = $this->db->num_rows($res);
+			if ($numRows > 0) {
+				$row = $this->db->fetch_object($res);
+				if ($row) {
+					$product->fetch((int) $row->rowid);
+					$this->db->free($res);
+					return $product;
+				}
+			}
+			$this->db->free($res);
+		}
+
+		// Loose match (LIKE) if exact match fails
+		$sql = "SELECT rowid, ref, label FROM " . MAIN_DB_PREFIX . "product";
+		$sql .= " WHERE (ref LIKE '%" . $this->db->escape($searchString) . "%' OR label LIKE '%" . $this->db->escape($searchString) . "%')";
+		$sql .= " AND entity IN (" . getEntity('product') . ")";
+		$sql .= " AND tosell = 1"; // Only fetch products available for sale
+		$sql .= " LIMIT 5";
+
+		$res = $this->db->query($sql);
+
+		if ($res) {
+			$numRows = $this->db->num_rows($res);
+			if ($numRows > 0) {
+				// If exactly one match found via loose search, use it
+				if ($numRows == 1) {
+					$row = $this->db->fetch_object($res);
+					if ($row) {
+						$product->fetch((int) $row->rowid);
+						$this->db->free($res);
+						return $product;
+					}
+				}
+
+				// If multiple matches, return list for ambiguity error
+				$matchList = [];
+				while ($row = $this->db->fetch_object($res)) {
+					$matchList[] = $row->ref . " - " . $row->label;
+				}
+				$this->db->free($res);
+
+				return [
+					"error"   => "Multiple products found for '" . $searchString . "'",
+					"matches" => $matchList
+				];
+			}
+			$this->db->free($res);
+		}
+
+		return ["error" => "Product '" . $searchString . "' not found."];
+	}
+
+	/**
+	 * Delete a document object.
+	 *
+	 * @param   array{object_type: string, id: int|string} $args   Arguments containing type and ID.
+	 *
+	 * @return  array{success: bool}|array{error: string} Result array.
+	 */
+	private function deleteObject(array $args): array
+	{
+		$type = (string) $args['object_type'];
+		$id = (int) $args['id'];
+
+		// Check permissions. Deletion requires the delete permission, not the write one.
+		$permError = $this->checkPermission($type, 'delete');
+		if ($permError !== null) {
+			return $permError;
+		}
+
+		// Instantiate generic object based on type
+		$obj = $this->instantiate($type);
+
+		// Fetch object
+		if ($obj->fetch($id) <= 0) {
+			return ["error" => "Object not found with ID: " . $id];
+		}
+
+		// fetch() does not filter on the entity, so the loaded object must be checked against
+		// the entity and the thirdparty restrictions of the user before going any further.
+		$accessError = $this->checkAccessToObject($type, $obj);
+		if ($accessError !== null) {
+			return $accessError;
+		}
+
+		// Check Status: Can only delete drafts (statut == 0)
+		// We use int cast because status might be string '0' in some DB configurations
+		$status = isset($obj->statut) ? (int) $obj->statut : -1;
+
+		if ($status !== 0) {
+			return ["error" => "Can only delete drafts (status 0). Current status: " . $status];
+		}
+
+		// Perform Deletion
+		if ($obj->delete($this->user) > 0) {
+			return ["success" => true];
+		}
+
+		// Capture error message
+		$errorMsg = ! empty($obj->error) ? (string) $obj->error : 'Unknown error';
+
+		return ["error" => "Delete failed: " . $errorMsg];
+	}
+
+	/**
+	 * Check if the current user has permission for the given object type.
+	 *
+	 * @param   string $type  Object type key.
+	 * @param   string $mode  'write' to check the create/update permission, 'delete' to check
+	 *                        the dedicated delete permission.
+	 *
+	 * @return  array{error: string}|null  Null if allowed, error array if denied.
+	 */
+	private function checkPermission(string $type, string $mode = 'write'): ?array
+	{
+		$map = ($mode === 'delete' ? self::DELETE_PERM_MAP : self::PERM_MAP);
+
+		if (! isset($map[$type])) {
+			return ["error" => "Unknown type for permission check: " . $type];
+		}
+
+		// Holding any of the listed alternatives is enough
+		foreach ($map[$type] as $perm) {
+			if ($this->user->hasRight($perm[0], $perm[1], $perm[2] ?? '')) {
+				return null;
+			}
+		}
+
+		return ["error" => "Permission denied for action on " . $type];
+	}
+
+	/**
+	 * Check that the current user is allowed to work on an already fetched object.
+	 *
+	 * fetch() selects on the rowid only and does not filter on the entity, so a bare fetch()
+	 * is an IDOR: it happily returns a record of another entity or of a thirdparty the user
+	 * has no access to. restrictedArea() called with $mode = 1 returns 0/1 instead of
+	 * emitting an HTML error page, which is what we need in this JSON API context.
+	 *
+	 * @param   string       $type    Object type key.
+	 * @param   CommonObject $object  Object already loaded with fetch().
+	 *
+	 * @return  array{error: string}|null  Null if allowed, error array if denied.
+	 */
+	private function checkAccessToObject(string $type, CommonObject $object): ?array
+	{
+		if (! isset(self::ACCESS_MAP[$type])) {
+			return ["error" => "Unknown type for access check: " . $type];
+		}
+
+		$access = self::ACCESS_MAP[$type];
+
+		// Pass the object itself (not its id) so restrictedArea() can derive $feature2 from
+		// $object->element for the objects of the 'fournisseur' module.
+		$ok = restrictedArea($this->user, $access['feature'], $object, $access['tableandshare'], '', 'fk_soc', 'rowid', 0, 1);
+
+		if ($ok <= 0) {
+			dol_syslog(
+				'[ToolCrudObjects] Access denied to ' . $type . ' id=' . $object->id
+				. ' for user id=' . $this->user->id . ' (entity or thirdparty restriction).',
+				LOG_WARNING
+			);
+			return ["error" => "Access denied to this " . $type . "."];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Factory Helper to instantiate Dolibarr objects.
+	 *
+	 * @param   string $type  Object type key (e.g., 'proposal', 'invoice').
+	 *
+	 * @return  CommonObject  New instance of the specific Dolibarr class.
+	 * @throws  Exception     If the type is unknown or class not found.
+	 */
+	private function instantiate(string $type): CommonObject
+	{
+		if (! isset($this->map[$type])) {
+			throw new Exception("Unknown type: " . $type);
+		}
+
+		$config = $this->map[$type];
+		$path = (string) $config['path'];
+		$className = (string) $config['class'];
+
+		// Include the base class and the specific class file
+		require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+		require_once DOL_DOCUMENT_ROOT . $path;
+
+		if (! class_exists($className)) {
+			throw new Exception("Class '$className' not found for type '$type'");
+		}
+
+		return new $className($this->db);
+	}
+
+	/**
+	 * Helper to update units via SQL directly.
+	 *
+	 * @param   string $type   Document type (e.g., 'invoice', 'order').
+	 * @param   int    $lineId Line RowID.
+	 * @param   int    $unitId Unit RowID.
+	 *
+	 * @return  void			Only attempts to update the database, no result indication
+	 */
+	private function updateLineUnit(string $type, int $lineId, int $unitId): void
+	{
+		// Map document types to their specific detail tables
+		/** @var array<string, string> $tableMap */
+		$tableMap = [
+			'invoice'           => 'facturedet',
+			'order'             => 'commandedet',
+			'proposal'          => 'propaldet',
+			'supplier_invoice'  => 'facture_fourn_det',
+			'supplier_order'    => 'commande_fournisseurdet',
+			'supplier_proposal' => 'supplier_proposaldet'
+		];
+
+		if (! isset($tableMap[$type])) {
+			return;
+		}
+
+		$table = $tableMap[$type];
+
+		$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->sanitize($table);
+		$sql .= " SET fk_unit = " . (int) $unitId;
+		$sql .= " WHERE rowid = " . (int) $lineId;
+
+		$resql = $this->db->query($sql);
+
+		if (! $resql) {
+			dol_syslog("Error updating unit for line $lineId: " . $this->db->lasterror(), LOG_ERR);
+		}
+	}
+}

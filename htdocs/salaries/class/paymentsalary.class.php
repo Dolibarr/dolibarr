@@ -2,8 +2,8 @@
 /* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ class PaymentSalary extends CommonObject
 	public $datev = '';
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -255,7 +255,7 @@ class PaymentSalary extends CommonObject
 		$totalamount = (float) price2num($totalamount, 'MT'); // this is to ensure the following test is no biaised by a potential float equal to 0.0000000000001
 		if ($totalamount == 0) {
 			return -1;
-		} // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		} // Negative amounts are accepted (for direct debit rejections) but not null
 
 
 		$this->db->begin();
@@ -432,12 +432,12 @@ class PaymentSalary extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
-		$sql .= " fk_salary=".(isset($this->fk_salary) ? $this->fk_salary : "null").",";
+		$sql .= " fk_salary=".(isset($this->fk_salary) ? ((int) $this->fk_salary) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datepaye) != 0 ? "'".$this->db->idate($this->datepaye)."'" : 'null').",";
-		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
-		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
+		$sql .= " amount=".(isset($this->amount) ? ((float) $this->amount) : "null").",";
+		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? ((int) $this->fk_typepayment) : "null").",";
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? ((int) $this->fk_bank) : "null").",";
@@ -799,7 +799,7 @@ class PaymentSalary extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs; // TODO Renvoyer le libelle anglais et faire traduction a affichage
+		global $langs; // TODO Return the English label and translate at display time
 
 		$langs->load('compta');
 		/*if ($mode == 0)

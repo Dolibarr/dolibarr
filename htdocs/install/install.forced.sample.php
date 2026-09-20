@@ -2,6 +2,7 @@
 /* Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Yann Le Doaré      		<services@linuxconsole.org>
  * Copyright (C) 2025       Charlene Benke      	<charlene@patas-monkey.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/** @var boolean	$force_install_distrib	 		Set the way the installis done to "custom" value */
+/** @var string	$force_install_distrib	 		Set the way the installis done to "custom" value */
 $force_install_distrib = 'custom';
 
 /** @var boolean	$force_install_nophpinfo 		Hide PHP information */
@@ -29,7 +30,7 @@ $force_install_noedit = 2;
 /** @var string	$force_install_message	 			Information message to add on the page to setup parameters */
 $force_install_message = 'Welcome to your Dolibarr install...';
 
-/** @var string	$force_install_main_data_root 		Data root absolute path (documents folder) */
+/** @var ?string	$force_install_main_data_root 		Data root absolute path (documents folder) */
 $force_install_main_data_root = null;
 
 /** @var boolean	$force_install_mainforcehttps	Force HTTPS */

@@ -4,7 +4,7 @@
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,13 +66,22 @@ foreach ($dirsyslogs as $reldir) {
 
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+				if (dol_substr($file, 0, 11) == 'mod_syslog_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
-					require_once $newdir.$file.'.php';
+					try {
+						require_once $newdir.$file.'.php';
 
-					$module = new $file();
-					'@phan-var-force LogHandler $module';
+						if (!class_exists($file)) {
+							dol_syslog('admin/syslog.php skipping stale handler '.$file.' (class not declared)', LOG_WARNING);
+							continue;
+						}
+						$module = new $file();
+						'@phan-var-force LogHandler $module';
+					} catch (Throwable $e) {
+						dol_syslog('admin/syslog.php skipping stale handler '.$file.': '.$e->getMessage(), LOG_WARNING);
+						continue;
+					}
 
 					// Show modules according to features level
 					if ($module->getVersion() == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -206,7 +215,7 @@ if (isModEnabled('multicompany') && $user->entity) {
 
 // Output mode
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 
 print load_fiche_titre($langs->trans("SyslogOutput"), '', '');
 
@@ -299,7 +308,7 @@ print '<br>'."\n\n";
 
 // Level
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 
 print load_fiche_titre($langs->trans("SyslogLevel"), '', '');
 

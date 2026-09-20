@@ -253,7 +253,7 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 			}
 		}
 		if (!$error) {
-			$candidature->validate($user);
+			$result = $candidature->validate($user);
 			if ($result <= 0) {
 				$error++;
 				$errmsg .= implode('<br>', $candidature->errors);
@@ -471,11 +471,11 @@ if ($action != 'dosubmit') {
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate fieldrequired left">'.$langs->trans("Email").'</td><td class="left">';
-		print img_picto("", "email").'<input type="text" class="flat minwidth100 --success" name="email" value="'.$email.'">';
+		print img_picto("", "email", 'class="pictofixedwidth"').'<input type="text" class="flat minwidth100 --success" name="email" value="'.$email.'">';
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Phone").'</td><td class="left">';
-		print img_picto("", "phone").'<input type="text" class="flat minwidth100 --success" name="phone" value="'.$phone.'">';
+		print $form->showPhoneInput($phone, 'phone', 0, 'phone', 'flat minwidth100 --success');
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate left minwidth300">'.$langs->trans("DateOfBirth").'</td><td class="left">';
@@ -488,6 +488,7 @@ if ($action != 'dosubmit') {
 
 		// Other attributes
 		$object = new RecruitmentCandidature($db);
+		$parameters = array();
 		$parameters['tpl_context'] = 'public';	// define template context to public
 		$parameters['tdclass'] = 'left';
 		$extrafields->fetch_name_optionals_label("recruitment_recruitmentcandidature");

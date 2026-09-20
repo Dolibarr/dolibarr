@@ -6,8 +6,8 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,7 @@ if ($action == 'updateMask') {
 	$maskconstproject = GETPOST('maskconstproject', 'aZ09');
 	$maskproject = GETPOST('maskproject', 'alpha');
 
+	$res = -1;
 	if ($maskconstproject && preg_match('/_MASK$/', $maskconstproject)) {
 		$res = dolibarr_set_const($db, $maskconstproject, $maskproject, 'chaine', 0, '', $conf->entity);
 	}
@@ -209,8 +210,8 @@ if ($action == 'updateMaskTask') {
 	dolibarr_del_const($db, "PROJECT_ADDON_PDF", $conf->entity);
 } elseif ($action == 'setdoctask') {
 	if (dolibarr_set_const($db, "PROJECT_TASK_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->PROJECT_TASK_ADDON_PDF = $value;
 	}
 
@@ -314,201 +315,20 @@ print '<br>';
  * Projects Numbering model
  */
 
-print load_fiche_titre($langs->trans("ProjectsNumberingModules"), '', '');
+$project = new Project($db);
+$project->initAsSpecimen();
 
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
+printNumberingModuleList('project', 'mod_project_', 'PROJECT_ADDON', $langs->trans("ProjectsNumberingModules"), $project);
 
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/project/");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
-					$file = $reg[1];
-					$classname = substr($file, 4);
-
-					require_once $dir.$file.'.php';
-
-					$module = new $file();
-					'@phan-var-force ModeleNumRefProjects $module';
-
-					// Show modules according to features level
-					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-						continue;
-					}
-					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-						continue;
-					}
-
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
-						} else {
-							print $tmp;
-						}
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('PROJECT_ADDON') == 'mod_'.$classname) {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-						}
-						print '</td>';
-
-						$project = new Project($db);
-						$project->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $project);
-						if ((string) $nextval != $langs->trans("NotAvailable")) {
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 'info');
-						print '</td>';
-
-						print '</tr>';
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-
-print '</table>';
-print '</div>';
 print '<br>';
 
 if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 	// Task numbering module
-	print load_fiche_titre($langs->trans("TasksNumberingModules"), '', '');
+	$project = new Project($db);
+	$project->initAsSpecimen();
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td width="100">'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td>'.$langs->trans("Example").'</td>';
-	print '<td class="center" width="60">'.$langs->trans("Activated").'</td>';
-	print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-	print "</tr>\n";
+	printNumberingModuleList('project/task', 'mod_task_', 'PROJECT_TASK_ADDON', $langs->trans("TasksNumberingModules"), $project, 'setmodtask');
 
-	clearstatcache();
-
-	foreach ($dirmodels as $reldir) {
-		$dir = dol_buildpath($reldir."core/modules/project/task/");
-
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
-						$file = $reg[1];
-						$classname = substr($file, 4);
-
-						require_once $dir.$file.'.php';
-
-						$module = new $file();
-						'@phan-var-force ModeleNumRefTask $module';
-						/** @var ModeleNumRefTask $module */
-
-						// Show modules according to features level
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							continue;
-						}
-
-						if ($module->isEnabled()) {
-							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-							print $module->info($langs);
-							print '</td>';
-
-							// Show example of numbering module
-							print '<td class="nowrap">';
-							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) {
-								$langs->load("errors");
-								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print $langs->trans($tmp);
-							} else {
-								print $tmp;
-							}
-							print '</td>'."\n";
-
-							print '<td class="center">';
-							if (getDolGlobalString("PROJECT_TASK_ADDON") == 'mod_'.$classname) {
-								print img_picto($langs->trans("Activated"), 'switch_on');
-							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodtask&token='.newToken().'&value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-							}
-							print '</td>';
-
-							$project = new Project($db);
-							$project->initAsSpecimen();
-
-							// Info
-							$htmltooltip = '';
-							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-							$nextval = $module->getNextValue($mysoc, $project);
-							if ("$nextval" != $langs->trans("NotAvailable")) {	// Keep " on nextval
-								$htmltooltip .= ''.$langs->trans("NextValue").': ';
-								if ($nextval) {
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 'info');
-							print '</td>';
-
-							print '</tr>';
-						}
-					}
-				}
-				closedir($handle);
-			}
-		}
-	}
-
-	print '</table>';
-	print '</div>';
 	print '<br>';
 }
 
@@ -519,7 +339,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 
 print load_fiche_titre($langs->trans("ProjectsModelModule"), '', '');
 
-// Defini tableau def de modele
+// Define array def of model
 $type = 'project';
 $def = array();
 // TODO Replace with $def = getListOfModels($db, $type);
@@ -573,8 +393,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+							$name = dol_substr($file, 4, dol_strlen($file) - 16);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -669,7 +489,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 
 	print load_fiche_titre($langs->trans("TaskModelModule"), '', '');
 
-	// Defini tableau def de modele
+	// Define array def of model
 	$type = 'project_task';
 	$def = array();
 
@@ -722,8 +542,8 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 					foreach ($filelist as $file) {
 						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 							if (file_exists($dir.'/'.$file)) {
-								$name = substr($file, 4, dol_strlen($file) - 16);
-								$classname = substr($file, 0, dol_strlen($file) - 12);
+								$name = dol_substr($file, 4, dol_strlen($file) - 16);
+								$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 								require_once $dir.'/'.$file;
 								$module = new $classname($db);
@@ -786,7 +606,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 									// Preview
 									print '<td class="center">';
 									if ($module->type == 'pdf') {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimentask&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimentask&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 									} else {
 										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 									}
@@ -832,10 +652,11 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td class="right">';
-	$arrval = array('0' => $langs->trans("No"),
-		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	$arrval = array(
+		0 => array('label' => $langs->trans("No")),
+		1 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 1).')</span>'),
+		2 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 2).')</span>'),
+		3 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 3).')</span>'),
 	);
 	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("PROJECT_USE_SEARCH_TO_SELECT"));
 	print '<input type="submit" class="button small reposition" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
@@ -870,6 +691,7 @@ print '<input type="submit" class="button small reposition" name="PROJECT_TIMESH
 print '</td>';
 print '</tr>';
 
+/* Generates a lot of confusion for users. Not visible by default.
 print '<tr class="oddeven">';
 print '<td class="left">';
 print $form->textwithpicto($langs->transnoentities('PROJECT_DISPLAY_LINKED_BY_CONTACT'), $langs->transnoentities('PROJECT_DISPLAY_LINKED_BY_CONTACT_help'));
@@ -878,6 +700,7 @@ print '<td class="right">';
 print ajax_constantonoff('PROJECT_DISPLAY_LINKED_BY_CONTACT');
 print '</td>';
 print '</tr>';
+*/
 
 print '</table>';
 print '</div>';

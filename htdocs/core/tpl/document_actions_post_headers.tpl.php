@@ -5,7 +5,7 @@
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 	2024-2025 Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 	2025	  MDW				  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 	2025-2026	MDW				  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 	2025	  Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,20 +29,22 @@
 
 /**
  * @var Conf $conf
- * @var CommonObject $object
  * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  *
+ * @var CommonObject $object
  * @var FormFile	$formfile
  * @var	string 		$action
  * @var string  	$modulepart
  * @var string		$upload_dir
  * @var	string 		$param
- * @var string		$moreparam = param to add to download link for the form_attach_new_file function
+ * @var string		$moreparam 					Param to add to download link for the form_attach_new_file function
+ * @var string		$sortfield
+ * @var string		$sortorder
  * @var string 		$relativepathwithnofile
- * @var	int			$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
+ * @var	int			$permissiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
  * @var string  	$savingdocmask				For example dol_sanitizeFileName($object->ref).'-__file__';
  * @var int			$withproject
  */
@@ -52,7 +54,20 @@ if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+/**
+ * @var array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray
+ * @var ?int<0,1> $permtoedit
+ * @var ?int<0,1> $permission
+ * @var int<0,1> $permissiontoadd
+ * @var ?string $savingdocmask
+ * @var CommonObject $object
+ * @var string $sortfield
+ * @var string $sortorder
+ */
 '
+@phan-var-force string $action
+@phan-var-force string $modulepart
+@phan-var-force string $upload_dir
 @phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray
 @phan-var-force ?int<0,1> $permtoedit
 @phan-var-force ?int<0,1> $permission
@@ -60,6 +75,8 @@ if (empty($langs) || !is_object($langs)) {
 @phan-var-force ?string $savingdocmask
 @phan-var-force ?string $param
 @phan-var-force CommonObject $object
+@phan-var-force string $sortfield
+@phan-var-force string $sortorder
 ';
 
 
@@ -188,6 +205,13 @@ if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 }
+
+// Force displaying form to attach files and documents
+$showHideAddButtonValue = 1;
+if (getDolGlobalInt('MAIN_DOCUMENTS_SHOW_FILE_ATTACHMENT_FORM')) {
+	$showHideAddButtonValue = 0;
+}
+
 // List of document
 $formfile->list_of_documents(
 	$filearray,
@@ -211,7 +235,7 @@ $formfile->list_of_documents(
 	0,
 	-1,
 	'',
-	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
+	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => $showHideAddButtonValue)
 );
 
 if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
@@ -219,6 +243,12 @@ if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {
 	print '<div class="fichehalfright">';
 } else {
 	print "<br>";
+}
+
+// Force displaying form to link files and documents
+$showHideAddButtonValue = 1;
+if (getDolGlobalInt('MAIN_DOCUMENTS_SHOW_FILE_LINKING_FORM')) {
+	$showHideAddButtonValue = 0;
 }
 
 //List of links
@@ -229,7 +259,7 @@ $formfile->listOfLinks(
 	(string) GETPOSTINT('linkid'),
 	$param,
 	'formaddlink',
-	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
+	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => $showHideAddButtonValue)
 );
 
 if (getDolGlobalString('MAIN_DOCUMENTS_LIST_IN_TWOCOLUMNS')) {

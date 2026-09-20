@@ -5,7 +5,7 @@
  * Copyright (C) 2006		Yannick Warnier			<ywarnier@beeznest.org>
  * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Juan Pablo Farber		<jfarber55@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -262,7 +262,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_thirdpartyid]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_thirdpartyid]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_thirdpartyid]['company_email'][$id];
-			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['tva_intra'][$id]) ? $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id] : '0';  // @phan-suppress-current-line PhanTypeInvalidDimOffset,PhanTypeArraySuspiciousNull
+			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['company_tva_intra'][$id]) ? $x_coll[$my_coll_thirdpartyid]['company_tva_intra'][$id] : '0';  // @phan-suppress-current-line PhanTypeInvalidDimOffset,PhanTypeArraySuspiciousNull
 			$company_static->client = $x_coll[$my_coll_thirdpartyid]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_thirdpartyid]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_thirdpartyid]['company_status'][$id];
@@ -326,8 +326,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					'pid'				=> $x_paye[$my_paye_thirdpartyid]['pid'][$id],
 					'pref'				=> $x_paye[$my_paye_thirdpartyid]['pref'][$id],
 					'ptype'				=> $x_paye[$my_paye_thirdpartyid]['ptype'][$id],
-					'pstatus'           => $x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
-					'pstatusbuy'        => $x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
+					'pstatus'           => isset($x_paye[$my_paye_thirdpartyid]['pstatus'][$id]) ? $x_paye[$my_paye_thirdpartyid]['pstatus'][$id] : '',
+					'pstatusbuy'        => isset($x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id]) ? $x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id] : '',
 
 					'payment_id'		=> $x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
 					'payment_ref'		=> $x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
@@ -352,7 +352,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$company_static->name = $x_paye[$my_paye_thirdpartyid]['company_name'][$id];
 				$company_static->name_alias = $x_paye[$my_paye_thirdpartyid]['company_alias'][$id];
 				$company_static->email = $x_paye[$my_paye_thirdpartyid]['company_email'][$id];
-				$company_static->tva_intra = $x_paye[$my_paye_thirdpartyid]['tva_intra'][$id];
+				$company_static->tva_intra = isset($x_paye[$my_paye_thirdpartyid]['company_tva_intra'][$id]) ? $x_paye[$my_paye_thirdpartyid]['company_tva_intra'][$id] : '0';
 				$company_static->client = $x_paye[$my_paye_thirdpartyid]['company_client'][$id];
 				$company_static->fournisseur = $x_paye[$my_paye_thirdpartyid]['company_fournisseur'][$id];
 				$company_static->status = $x_paye[$my_paye_thirdpartyid]['company_status'][$id];
@@ -423,6 +423,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '</tr>';
 
 	$action = "tvadetail";
+	$parameters = array();
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
@@ -454,6 +455,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				print '</tr>'."\n";
 
 				foreach ($x_both[$thirdparty_id]['coll']['detail'] as $index => $fields) {
+					// Sort by payment date/invoice date
+					usort($x_both[$thirdparty_id]['coll']['detail'], 'cmp_fields_date');
+
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
@@ -644,6 +648,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				print '</tr>'."\n";
 
 				foreach ($x_both[$thirdparty_id]['paye']['detail'] as $index => $fields) {
+					// Sort by payment date/invoice date
+					usort($x_both[$thirdparty_id]['paye']['detail'], 'cmp_fields_date');
+
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
@@ -810,3 +817,20 @@ print '</div>';
 llxFooter();
 
 $db->close();
+
+/**
+ * Helper compare function to sort lines by payment date first
+ *
+ * @param array{datep:int,datef:int}	$a	Left argument to compare
+ * @param array{datep:int,datef:int}	$b	Right argument to compare
+ * @return int<-1,1>  Indicates sort order between arguments
+ */
+function cmp_fields_date(&$a, &$b)
+{
+	// Compare payment date
+	if ($a['datep'] != $b['datep']) {
+		return $a['datep'] <=> $b['datep'];
+	}
+	// In case the payment date is the same, order by invoice date
+	return $a['datef'] <=> $b['datef'];
+}

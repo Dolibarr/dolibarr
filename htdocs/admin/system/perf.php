@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,11 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin", "products", "mrp", "accountancy"));
@@ -151,7 +150,7 @@ if ($test) {
 } else {
 	print $langs->trans("MemcachedNotAvailable");
 }
-print '</br>';
+print '<br>';
 print '</div>';
 
 // OPCode cache
@@ -336,7 +335,7 @@ jQuery(document).ready(function() {
   getimgurl = $.ajax({
     type: "GET",
 	data: { token: \'notrequired\' },
-    url: \''.DOL_URL_ROOT.'/theme/eldy/img/help.png\',
+    url: \''.DOL_URL_ROOT.'/theme/common/img/help.png\',
     cache: false,
     /* async: false, */
     /* crossDomain: true,*/
@@ -481,7 +480,7 @@ print '<br>';
 print img_picto('', 'folder', 'class="pictofixedwidth"');
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - '.$langs->trans("CacheByClient").'</strong><br>';
 print '<div class="divsection">';
-print '<div id="httpcachebybrowser"><span class="opacitymedium">'.img_picto('', 'question.png', 'class="pictofixedwidth"').' '.$langs->trans("TestNotPossibleWithCurrentBrowsers").'</span></div>';
+print '<div id="httpcachebybrowser"><span class="opacitymedium">'.img_picto('', 'question', 'class="pictofixedwidth"').' '.$langs->trans("TestNotPossibleWithCurrentBrowsers").'</span></div>';
 print '</div>';
 
 
@@ -590,6 +589,27 @@ if ($resql) {
 		}
 	} else {
 		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Contacts"));
+	}
+	print '<br>';
+	$db->free($resql);
+}
+// User combo list
+$sql = "SELECT COUNT(*) as nb";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as s";
+$resql = $db->query($sql);
+if ($resql) {
+	$limitforoptim = 5000;
+	$num = $db->num_rows($resql);
+	$obj = $db->fetch_object($resql);
+	$nb = (int) $obj->nb;
+	if ($nb > $limitforoptim) {
+		if (!getDolGlobalString('USER_USE_SEARCH_TO_SELECT')) {
+			print img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Users"), 'USER_USE_SEARCH_TO_SELECT');
+		} else {
+			print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Users"), 'USER_USE_SEARCH_TO_SELECT', getDolGlobalString('USER_USE_SEARCH_TO_SELECT'));
+		}
+	} else {
+		print img_picto('', 'tick', 'class="pictofixedwidth"').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("Users"));
 	}
 	print '<br>';
 	$db->free($resql);
@@ -744,20 +764,13 @@ if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox'
 print '<br>';
 print '</div>';
 
+
 // Options
+
 print '<br>';
 print img_picto('', 'folder', 'class="pictofixedwidth"');
 print '<strong>'.$langs->trans("Options").'</strong><br>';
 print '<div class="divsection">';
-if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
-	print img_picto('', 'tick', 'class="pictofixedwidth"');
-} else {
-	print img_picto('', 'minus', 'class="pictofixedwidth"');
-}
-print $form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
-print ': ';
-print yn(getDolGlobalInt('MAIN_ACTIVATE_FILECACHE'));
-print '<br>';
 
 if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
@@ -769,7 +782,6 @@ print ': ';
 print yn(getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP'));
 print '<br>';
 
-
 if (getDolGlobalInt('MAIN_CACHE_COUNT')) {
 	print img_picto('', 'tick', 'class="pictofixedwidth"');
 } else {
@@ -779,6 +791,16 @@ print $form->textwithpicto($langs->trans('MAIN_CACHE_COUNT'), $langs->trans("Opt
 print ': ';
 print yn(getDolGlobalInt('MAIN_CACHE_COUNT'));
 //.' '.img_picto('', 'warning');
+print '<br>';
+
+if (getDolGlobalInt('MAIN_ACTIVATE_FILECACHE')) {
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+} else {
+	print img_picto('', 'minus', 'class="pictofixedwidth"');
+}
+print $form->textwithpicto($langs->trans("EnableFileCache").' ('.$langs->trans("Widgets").')', $langs->trans("Menu").' '.$langs->trans("Home").' - '.$langs->trans("Setup").' - '.$langs->trans("Widgets").'<br>'. $langs->trans("Option").' MAIN_ACTIVATE_FILECACHE');
+print ': ';
+print yn(getDolGlobalInt('MAIN_ACTIVATE_FILECACHE'));
 print '<br>';
 
 print '</div>';

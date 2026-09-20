@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 /**
  * Show indent and picto of a tree line. Return array with information of line.
  *
- * @param	array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,level:int,cachenbofdoc?:int}>	$fulltree		Array of entries in correct order
+ * @param	array<int,array{rowid:?int,id:int,fk_parent?:int,label:string,description:string,color?:string,position?:string,visible?:int,ref_ext?:string,picto?:string,fullpath:string,fulllabel:string,level:int,cachenbofdoc?:int}>	$fulltree		Array of entries in correct order
  * @param 	int	$key			Key of entry into fulltree to show picto
  * @param	int<0,1>		$silent			Do not output indent and picto, returns only value
  * @return	array{0:int,1:int,2:int}	array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)

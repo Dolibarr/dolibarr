@@ -1,7 +1,10 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  */
+
+// File ignore as individual 'suppress' is not extremely effective.
+// @phan-file-suppress PhanPluginDuplicateArrayKey
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
@@ -160,7 +163,6 @@ class mod_syslog_file extends LogHandler
 	 * @param	array{level:int,ip:string,ospid:string,osuser:string,message:string}	$content 	Array containing the info about the message
 	 * @param	string	$suffixinfilename	When output is a file, append this suffix into default log filename.
 	 * @return	void
-	 * @phan-suppress PhanPluginDuplicateArrayKey
 	 */
 	public function export($content, $suffixinfilename = '')
 	{
@@ -190,7 +192,7 @@ class mod_syslog_file extends LogHandler
 		$logfile = $this->getFilename($suffixinfilename);
 
 		$result = false;
-		if (defined('SYSLOG_FILE_NO_ERROR')) {
+		if (defined('SYSLOG_FILE_NO_ERROR') || !empty($suffixinfilename)) {
 			$filefd = @fopen($logfile, "a");
 		} else {
 			$filefd = fopen($logfile, "a");
@@ -201,7 +203,7 @@ class mod_syslog_file extends LogHandler
 			fclose($filefd);
 			dolChmod($logfile);
 		}
-		if ($result === false && (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR'))) {
+		if ($result === false && empty($suffixinfilename) && (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR'))) {
 			global $dolibarr_main_prod;
 			// Do not break dolibarr usage if log fails
 			//throw new Exception('Failed to open log file '.basename($logfile));

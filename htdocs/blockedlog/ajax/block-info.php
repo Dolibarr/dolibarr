@@ -218,12 +218,14 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		//var_dump($newobjtoshow);
 		foreach ($newobjtoshow as $key => $val) {
 			if (!is_object($val) && !is_array($val)) {
-				// TODO $val can be '__PHP_Incomplete_Class', the is_object return false
+				// $val can be '__PHP_Incomplete_Class', the is_object return false
 				$s .= '<tr>';
 
 				// Field code
 				$s .= '<td>';
-				$s .= '<!-- '.$key.' '.$arrayoffields[$key]['type'].''.$arrayoffields[$convertkey[$key]]['label'].' -->';
+				$types = $arrayoffields[$key]['type'] ?? '';
+				$labels = (array_key_exists($key, $convertkey) ? ($arrayoffields[$convertkey[$key]]['label'] ?? '') : '');
+				$s .= '<!-- '.$key.' '.$types.' '.$labels.' -->';
 				$s .= ($prefix ? $prefix.' > ' : '');
 				$s .= $key;
 				$s .= '</td>';

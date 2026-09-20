@@ -44,7 +44,7 @@ class box_services_contracts extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -94,7 +94,7 @@ class box_services_contracts extends ModeleBoxes
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= ")";
-			$sql .= " WHERE c.entity = ".$conf->entity;
+			$sql .= " WHERE c.entity = ".((int) $conf->entity);
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}

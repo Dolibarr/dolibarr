@@ -321,7 +321,7 @@ if ($nb) {
 
 		$default_account = ($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
 
-		print $form->select_comptes(getDolGlobalInt($default_account), 'id_bankaccount', 0, "courant=1", 0, '', 0, 'widthcentpercentminusx maxwidth300', 1);
+		print $form->select_comptes(getDolGlobalInt($default_account), 'id_bankaccount', 0, "(courant:=:1)", 0, '', 0, 'widthcentpercentminusx maxwidth300', 1);
 		print ' &nbsp; &nbsp; ';
 
 		if (empty($executiondate)) {
@@ -524,7 +524,7 @@ if ($resql) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		if ($num) {
 			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		}
@@ -556,7 +556,7 @@ if ($resql) {
 	print '</td>';
 	print '<td class="right">'.$langs->trans("PendingSince").'</td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 	}
 	print '</tr>';
@@ -591,7 +591,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="nowrap center">';
 				$selected = 0;
 				if (in_array($obj->request_row_id, $arrayofselected)) {
@@ -683,7 +683,7 @@ if ($resql) {
 			print dol_print_date($db->jdate($obj->date_demande), 'day');
 			print '</td>';
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="nowrap center">';
 				$selected = 0;
 				if (in_array($obj->request_row_id, $arrayofselected)) {

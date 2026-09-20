@@ -286,7 +286,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year")) : $datenotinstring;
+				$value = ($action == 'edit_extras' && GETPOSTISSET("options_".$tmpkeyextra)) ? dol_mktime(12, 0, 0, GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year")) : $datenotinstring;
 			}
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('datetime'))) {
 				$datenotinstring = empty($object->array_options['options_'.$tmpkeyextra]) ? '' : $object->array_options['options_'.$tmpkeyextra];
@@ -295,7 +295,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOSTINT("options_".$tmpkeyextra."hour"), GETPOSTINT("options_".$tmpkeyextra."min"), GETPOSTINT("options_".$tmpkeyextra."sec"), GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year"), 'tzuserrel') : $datenotinstring;
+				$value = ($action == 'edit_extras' && GETPOSTISSET("options_".$tmpkeyextra)) ? dol_mktime(GETPOSTINT("options_".$tmpkeyextra."hour"), GETPOSTINT("options_".$tmpkeyextra."min"), GETPOSTINT("options_".$tmpkeyextra."sec"), GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year"), 'tzuserrel') : $datenotinstring;
 			}
 
 			// TODO Improve element and rights detection
@@ -311,7 +311,9 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
 				print '<input type="hidden" name="page_y" value="">';
-				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element);
+				// Last parameter is 1 because the field is edited alone: a dependent list can't be filtered by javascript
+				// here (its parent list is not on this form), so it must be filtered on the saved value of its parent.
+				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element, 0, 1);
 
 				print '<input type="submit" class="button reposition" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
 

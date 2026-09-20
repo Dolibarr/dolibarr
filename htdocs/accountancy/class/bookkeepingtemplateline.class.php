@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024       AWeerWolf
  * Copyright (C) 2026       Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ class BookkeepingTemplateLine extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
 	 *  'enabled' is a condition when the field must be managed.
@@ -87,18 +88,18 @@ class BookkeepingTemplateLine extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>    Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>    Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>1, 'position'=>1, 'notnull'=>1, "visible"=>0, "noteditable"=>1, "index"=>1, "css"=>"left", "comment"=>"Id"),
-		"fk_transaction_template" => array("type"=>"integer", "label"=>"Template", "enabled"=>1, 'position'=>5, 'notnull'=>1, "visible"=>0, "noteditable"=>1, "foreignkey"=>"accounting_transaction_template.rowid"),
-		"general_account" => array("type"=>"varchar(32)", "label"=>"AccountNumber", "enabled"=>1, 'position'=>10, 'notnull'=>1, "visible"=>1, "css"=>"minwidth100"),
-		"general_label" => array("type"=>"varchar(255)", "label"=>"AccountLabel", "enabled"=>1, 'position'=>20, 'notnull'=>1, "visible"=>1, "css"=>"minwidth200"),
-		"subledger_account" => array("type"=>"varchar(32)", "label"=>"SubledgerAccount", "enabled"=>1, 'position'=>30, 'notnull'=>0, "visible"=>1, "css"=>"minwidth100"),
-		"subledger_label" => array("type"=>"varchar(255)", "label"=>"SubledgerLabel", "enabled"=>1, 'position'=>40, 'notnull'=>0, "visible"=>1, "css"=>"minwidth200"),
-		"operation_label" => array("type"=>"varchar(255)", "label"=>"OperationLabel", "enabled"=>1, 'position'=>50, 'notnull'=>0, "visible"=>1, "css"=>"minwidth200"),
-		"debit" => array("type"=>"double(24,8)", "label"=>"Debit", "enabled"=>1, 'position'=>60, 'notnull'=>0, "visible"=>1, "css"=>"maxwidth75 right"),
-		"credit" => array("type"=>"double(24,8)", "label"=>"Credit", "enabled"=>1, 'position'=>70, 'notnull'=>0, "visible"=>1, "css"=>"maxwidth75 right"),
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 1, 'notnull' => 1, "visible" => 0, "noteditable" => 1, "index" => 1, "css" => "left", "comment" => "Id"),
+		"fk_transaction_template" => array("type" => "integer", "label" => "Template", "enabled" => 1, 'position' => 5, 'notnull' => 1, "visible" => 0, "noteditable" => 1, "foreignkey" => "accounting_transaction_template.rowid"),
+		"general_account" => array("type" => "varchar(32)", "label" => "AccountNumber", "enabled" => 1, 'position' => 10, 'notnull' => 1, "visible" => 1, "css" => "minwidth100"),
+		"general_label" => array("type" => "varchar(255)", "label" => "AccountLabel", "enabled" => 1, 'position' => 20, 'notnull' => 1, "visible" => 1, "css" => "minwidth200"),
+		"subledger_account" => array("type" => "varchar(32)", "label" => "SubledgerAccount", "enabled" => 1, 'position' => 30, 'notnull' => 0, "visible" => 1, "css" => "minwidth100"),
+		"subledger_label" => array("type" => "varchar(255)", "label" => "SubledgerLabel", "enabled" => 1, 'position' => 40, 'notnull' => 0, "visible" => 1, "css" => "minwidth200"),
+		"operation_label" => array("type" => "varchar(255)", "label" => "OperationLabel", "enabled" => 1, 'position' => 50, 'notnull' => 0, "visible" => 1, "css" => "minwidth200"),
+		"debit" => array("type" => "double(24,8)", "label" => "Debit", "enabled" => 1, 'position' => 60, 'notnull' => 0, "visible" => 1, "css" => "maxwidth75 right"),
+		"credit" => array("type" => "double(24,8)", "label" => "Credit", "enabled" => 1, 'position' => 70, 'notnull' => 0, "visible" => 1, "css" => "maxwidth75 right"),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -181,7 +182,7 @@ class BookkeepingTemplateLine extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -246,10 +247,10 @@ class BookkeepingTemplateLine extends CommonObject
 	 * @param  int                         $limit      limit
 	 * @param  int                         $offset     Offset
 	 * @param  array<string,mixed>         $filter     Filter array. Example array('mystringfield'=>'value', 'myintfield'=>4, 'customsql'=>...)
-	 * @param  string                      $filtermode Filter mode (AND or OR)
+	 * @param  'AND'|'OR'                  $sqlfiltermode Filter mode (AND or OR)
 	 * @return BookkeepingTemplateLine[]|int           Array of BookkeepingTemplateLine objects if OK, <0 if KO
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $sqlfiltermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -312,7 +313,7 @@ class BookkeepingTemplateLine extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+			$sql .= " AND (".implode(" ".$sqlfiltermode." ", $sqlwhere).")";
 		}
 
 		if (!empty($sortfield)) {

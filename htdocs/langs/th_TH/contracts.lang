@@ -103,7 +103,13 @@ ConfirmCloneContract=คุณแน่ใจหรือไม่ว่าต�
 LowerDateEndPlannedShort=วันที่สิ้นสุดตามแผนของบริการที่ใช้งานอยู่ต่ำกว่า
 SendContractRef=ข้อมูลสัญญา __REF__
 OtherContracts=สัญญาอื่นๆ
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=ขายสัญญาลงนามตัวแทน
 TypeContact_contrat_internal_SALESREPFOLL=ตัวแทนขายสัญญาต่อไปนี้ขึ้น
 TypeContact_contrat_external_BILLING=การเรียกเก็บเงินการติดต่อกับลูกค้า

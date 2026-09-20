@@ -7,8 +7,8 @@
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,8 +152,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "FACTURE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->FACTURE_ADDON_PDF = $value;
 	}
 
@@ -327,7 +327,7 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
+				if (!is_dir($dir.$file) || (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS')) {
 					$filebis = $file;
 					$classname = preg_replace('/\.php$/', '', $file);
 					// For compatibility
@@ -343,7 +343,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					$classname = preg_replace('/\-.*$/', '', $classname);
-					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
+					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && dol_substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
 						// Charging the numbering class
 						require_once $dir.$filebis;
 
@@ -498,158 +498,15 @@ print '</div>';
  */
 
 print '<br>';
-print load_fiche_titre($langs->trans("BillsPDFModules"), '', '');
-
-// Load array def with activated templates
-$type = 'invoice';
-$def = array();
-$sql = "SELECT nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".((int) $conf->entity);
-$resql = $db->query($sql);
-if ($resql) {
-	$i = 0;
-	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		if (is_array($array)) {
-			array_push($def, $array[0]);
-		}
-		$i++;
-	}
-} else {
-	dol_print_error($db);
-}
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td class="center" width="32">'.$langs->trans("ShortInfo").'</td>';
-print '<td class="center" width="32">'.$langs->trans("Preview").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-$activatedModels = array();
-
-foreach ($dirmodels as $reldir) {
-	foreach (array('', '/doc') as $valdir) {
-		$realpath = $reldir."core/modules/facture".$valdir;
-		$dir = dol_buildpath($realpath);
-
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				$filelist = array();
-				while (($file = readdir($handle)) !== false) {
-					$filelist[] = $file;
-				}
-				closedir($handle);
-				arsort($filelist);
-
-				foreach ($filelist as $file) {
-					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
-
-							require_once $dir.'/'.$file;
-							$module = new $classname($db);
-
-							'@phan-var-force ModelePDFFactures $module';
-							/** @var ModelePDFFactures $module */
-
-							$modulequalified = 1;
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								$modulequalified = 0;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								$modulequalified = 0;
-							}
-							if ($module->version == 'disabled') {
-								$modulequalified = 0;
-							}
-
-							if ($modulequalified) {
-								print '<tr class="oddeven"><td width="100">';
-								print(empty($module->name) ? $name : $module->name);
-								print "</td><td>\n";
-								if (method_exists($module, 'info')) {
-									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
-								} else {
-									print $module->description;
-								}
-								print '</td>';
-
-								// Active
-								if (in_array($name, $def)) {
-									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
-									print img_picto($langs->trans("Enabled"), 'switch_on');
-									print '</a>';
-									print '</td>';
-								} else {
-									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"), 'switch_off').'</a>';
-									print "</td>";
-								}
-
-								// Default
-								print '<td class="center">';
-								if (getDolGlobalString('FACTURE_ADDON_PDF') == (string) $name) {
-									print img_picto($langs->trans("Default"), 'on');
-								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
-								}
-								print '</td>';
-
-								// Info
-								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf') {
-									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-								}
-								$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
-
-								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftInvoices").': '.yn($module->option_draft_watermark, 1, 1);
-
-
-								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 'info');
-								print '</td>';
-
-								// Preview
-								print '<td class="center">';
-								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
-								} else {
-									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
-								}
-								print '</td>';
-
-								print "</tr>\n";
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-print '</table>';
-print '</div>';
+printDocumentModelList('invoice', 'facture', 'FACTURE_ADDON_PDF', $langs->trans("BillsPDFModules"), array(
+	'Logo' => 'option_logo',
+	'PaymentMode' => 'option_modereg',
+	'PaymentConditions' => 'option_condreg',
+	'Discounts' => 'option_escompte',
+	'CreditNote' => 'option_credit_note',
+	'MultiLanguage' => 'option_multilang',
+	'WatermarkOnDraftInvoices' => 'option_draft_watermark',
+), true);
 
 if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) { // Hidden conf
 	/*
@@ -658,7 +515,7 @@ if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) { // Hidden conf
 	print '<br>';
 	print load_fiche_titre($langs->trans("BillsPDFModulesAccordindToInvoiceType"), '', '');
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'" />';
 	print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
 	print '<input type="hidden" name="page_y" value="" />';
@@ -702,7 +559,7 @@ if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) { // Hidden conf
 print '<br>';
 print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"), '', '');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="page_y" value="" />';
 
@@ -827,7 +684,7 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -847,7 +704,7 @@ print "</td></tr>\n";
 print '</form>';
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -862,7 +719,7 @@ print '</form>';
 
 
 // Force date validation
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="setforcedate" />';
 print '<input type="hidden" name="page_y" value="" />';

@@ -151,7 +151,7 @@
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
 
 	<!-- Disallow several spaces after comma -->
-	<!-- We want to allow this because we want to be able to align params on several similare functions on different lines -->
+	<!-- We want to allow this because we want to be able to align params on several similar functions on different lines -->
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
 		<severity>0</severity>
 	</rule>

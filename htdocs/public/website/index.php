@@ -211,8 +211,7 @@ global $dolibarr_main_data_root;
 if ($pageid == 'css') {   // No more used ?
 	header('Content-type: text/css');
 	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-	//if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
-	//else
+	//header('Cache-Control: max-age=3600, public, must-revalidate');
 	header('Cache-Control: no-cache');
 	$original_file = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/styles.css.php';
 } else {
@@ -229,8 +228,8 @@ if (!$accessallowed) {
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans
-// les noms de fichiers.
+// We forbid directory traversal as well as pipes in
+// file names.
 if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	$file = basename($original_file); // Do no show plain path of original_file in shown error message

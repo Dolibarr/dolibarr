@@ -2,8 +2,8 @@
 /* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,7 +221,7 @@ class Cronjob extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'email', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
@@ -607,10 +607,13 @@ class Cronjob extends CommonObject
 				$this->maxrun = $obj->maxrun;
 				$this->libname = $obj->libname;
 				$this->test = $obj->test;
+
+				$this->db->free($resql);
+				return 1;
 			}
 			$this->db->free($resql);
 
-			return 1;
+			return 0;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
@@ -904,7 +907,7 @@ class Cronjob extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob SET";
-		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : $conf->entity).",";
+		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : ((int) $conf->entity)).",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " jobtype=".(isset($this->jobtype) ? "'".$this->db->escape($this->jobtype)."'" : "null").",";
 		$sql .= " command=".(isset($this->command) ? "'".$this->db->escape($this->command)."'" : "null").",";
@@ -925,13 +928,13 @@ class Cronjob extends CommonObject
 		$sql .= " unitfrequency=".(isset($this->unitfrequency) ? "'".$this->db->escape($this->unitfrequency)."'" : "null").",";
 		$sql .= " frequency=".(isset($this->frequency) ? ((int) $this->frequency) : "null").",";
 		$sql .= " status=".(isset($this->status) ? ((int) $this->status) : "null").",";
-		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
+		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? ((int) $this->processing) : "0").",";
 		$sql .= " pid=".(isset($this->pid) ? ((int) $this->pid) : "null").",";
 		$sql .= " email_alert = ".(isset($this->email_alert) ? "'".$this->db->escape($this->email_alert)."'" : "null").",";
 		$sql .= " fk_user_mod = ".((int) $user->id).",";
 		$sql .= " note=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
-		$sql .= " nbrun=".((isset($this->nbrun) && $this->nbrun > 0) ? $this->nbrun : "null").",";
-		$sql .= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0) ? $this->maxrun : "0").",";
+		$sql .= " nbrun=".((isset($this->nbrun) && $this->nbrun > 0) ? ((int) $this->nbrun) : "null").",";
+		$sql .= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0) ? ((int) $this->maxrun) : "0").",";
 		$sql .= " libname=".(isset($this->libname) ? "'".$this->db->escape($this->libname)."'" : "null").",";
 		$sql .= " test=".(isset($this->test) ? "'".$this->db->escape($this->test)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -1348,13 +1351,16 @@ class Cronjob extends CommonObject
 		$cronjobpid = (int) $this->pid;
 		$dbs = $this->db;
 		register_shutdown_function(static function () use ($cronjobid, $cronjobpid, $dbs) {
-			if (empty($cronjobid) || empty($dbs)) {
+			// The job may have closed the connection before ending, and a shutdown handler runs after that.
+			// Querying a closed mysqli connection raises an Error, not an Exception, so it would escape the
+			// try/catch below and turn into a fatal error at every run (#39801).
+			if (empty($cronjobid) || empty($dbs) || empty($dbs->connected)) {
 				return;
 			}
 
 			try {
 				// Ensure we are not trapped into a transaction left open by the job.
-				$dbs->rollback();
+				$dbs->rollback('cron register_shutdown_function');
 			} catch (Throwable $e) {
 				// Ignore
 			}
@@ -1436,8 +1442,10 @@ class Cronjob extends CommonObject
 				}
 			}
 
-			// Load langs
-			if (!$error) {
+			// Load langs (module_name is optional for a 'method' job, e.g. one targeting a core
+			// class such as Utils, so only attempt this when one was actually set - Translate::load()
+			// rejects an empty domain and prints a hard error otherwise)
+			if (!$error && !empty($this->module_name)) {
 				$result = $langs->load($this->module_name);
 				$result = $langs->load($this->module_name.'@'.$this->module_name, 0, 0, '', 0, 1);
 
@@ -1617,7 +1625,7 @@ class Cronjob extends CommonObject
 	 * Reprogram a job
 	 *
 	 * @param	string		$userlogin		User login
-	 * @param	integer		$now			Date returned by dol_now()
+	 * @param	int			$now			Date returned by dol_now()
 	 * @return	int							if KO: <0 || if OK: >0
 	 */
 	public function reprogram_jobs(string $userlogin, int $now)
@@ -1647,13 +1655,13 @@ class Cronjob extends CommonObject
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $now + ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $now + ((int) $this->frequency * (int) $this->unitfrequency);
 				}
 			} else {
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
 					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
 				} else {
-					$this->datenextrun = $this->datestart + ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $this->datestart + ((int) $this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		}
@@ -1664,7 +1672,7 @@ class Cronjob extends CommonObject
 				if (!is_numeric($this->unitfrequency) || (int) $this->unitfrequency == 2678400 || (int) $this->unitfrequency <= 0) {
 					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
 				} else {
-					$this->datenextrun += ($this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun += ((int) $this->frequency * (int) $this->unitfrequency);
 				}
 			}
 		} else {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@
  */
 
 
+
+// Load Dolibarr environment
+require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -30,9 +33,6 @@
  * @var Translate $langs
  * @var User $user
  */
-
-// Load Dolibarr environment
-require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -88,7 +88,7 @@ $h++;
 
 print dol_get_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'accountline');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/compta/bank/bankentries_list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
 
 dol_banner_tab($object, 'rowid', $linkback);

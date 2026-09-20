@@ -4,8 +4,9 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,10 +202,10 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 		}
 
 		$db->free($resql);
+		$resql = null;	// so the free() at the end of the page does not run on an already closed result
 	} else {
 		dol_print_error($db);
 	}
-	//var_dump($stock_prod_warehouse);
 } elseif ($action == 'filter') {	// Test on permissions not required here
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 }
@@ -268,12 +269,11 @@ if ($date && $dateIsValid) {
 		}
 
 		$db->free($resql);
+		$resql = null;	// so the free() at the end of the page does not run on an already closed result
 	} else {
 		dol_print_error($db);
 	}
 }
-//var_dump($movements_prod_warehouse);
-//var_dump($movements_prod);
 
 
 /*
@@ -382,10 +382,10 @@ if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date
 	//print $sql;
 	if ($ext != 'csv') {
 		$sql .= $db->plimit($limit + 1, $offset);
-		$resql = $db->query($sql);
 	} else {
 		$limit = 0;
 	}
+	$resql = $db->query($sql);
 	if (empty($resql)) {
 		dol_print_error($db);
 		exit;
@@ -533,7 +533,7 @@ if ($ext == 'csv') {
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -556,7 +556,7 @@ if ($ext == 'csv') {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -572,7 +572,7 @@ if ($ext == 'csv') {
 	// Lines of title
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
 	print_liste_field_titre('ProductRef', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
@@ -602,7 +602,7 @@ if ($ext == 'csv') {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 
@@ -699,7 +699,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 					'"'.$objp->label.'"',
 					'"'.price(price2num($stock, 'MS')).'"',
 					($usercancreadsupplierprice ? (price2num($stock * $objp->pmp, 'MT') ? '"'.price2num($stock * $objp->pmp, 'MT').'"' : '') : ''),
-					!getDolGlobalString('PRODUIT_MULTIPRICES') ? '"'.price2num($stock * $objp->price, 'MT').'"' : '"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
+					(!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) ? '"'.price2num($stock * $objp->price, 'MT').'"' : '"'.$langs->trans("Variable").'('.$langs->trans("OptionMULTIPRICESIsOn").')"',
 					"$nbofmovement",
 					'"'.price2num($currentstock, 'MS').'"'))."\r\n";
 				if ($usercancreadsupplierprice) {
@@ -712,7 +712,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="left"></td>';
 			}
 
@@ -756,11 +756,11 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 				// Selling value
 				print '<td class="right"';
-				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					print ' title="'.dolPrintHTMLForAttribute($langs->trans("SellingPrice").' ('.$langs->trans("Currently").'): '.price(price2num($objp->price, 'MU'), 1));
 				}
 				print '">';
-				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					print '<span class="amount">';
 					if ($stock || (float) ($stock * $objp->price)) {
 						print price(price2num($stock * $objp->price, 'MT'), 1);
@@ -811,7 +811,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print $hookmanager->resPrint;
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="right"></td>';
 			}
 
@@ -846,7 +846,7 @@ if ($ext == 'csv') {
 		'',
 		'',
 		'"'.($usercancreadsupplierprice ? price2num($totalbuyingprice, 'MT') : '').'"',
-		!getDolGlobalString('PRODUIT_MULTIPRICES') ? '"'.price2num($totalsellingprice, 'MT').'"' : '',
+		(!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) ? '"'.price2num($totalsellingprice, 'MT').'"' : '',
 		'',
 		$productid > 0 ? price2num($totalcurrentstock, 'MS') : '')
 	);
@@ -867,7 +867,7 @@ if ($ext == 'csv') {
 			if ($usercancreadsupplierprice) {
 				print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
 			}
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				print '<td class="right">'.price(price2num($totalsellingprice, 'MT')).'</td>';
 			} else {
 				print '<td></td>';

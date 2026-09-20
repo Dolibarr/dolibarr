@@ -94,12 +94,6 @@ if (isModEnabled('paypal')) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
 }
-/*
-if (isModEnabled('paybox')) {
-}
-if (isModEnabled('stripe')) {
-}
-*/
 
 $FULLTAG = GETPOST('FULLTAG');
 if (empty($FULLTAG)) {
@@ -116,7 +110,12 @@ if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg)) {
 	$paymentmethod = $reg[1];
 }
 if (empty($paymentmethod)) {
-	dol_print_error(null, 'The back url does not contain a parameter fulltag that should help us to find the payment method used');
+	// Missing/invalid fulltag is a malformed client request, not a server failure: answer 400
+	// with a plain message instead of dol_print_error (which implies an internal error and
+	// returns a misleading 202 status).
+	dol_syslog("***** paymentko.php was called with a non valid parameter FULLTAG=".$FULLTAG, LOG_WARNING, 0, '_payment');
+	http_response_code(400);
+	print 'Bad request: the back url does not contain a valid fulltag parameter, required to find the payment method used.';
 	exit;
 } else {
 	dol_syslog("paymentko.php: paymentmethod=".$paymentmethod, LOG_DEBUG, 0, '_payment');
@@ -194,7 +193,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
-	$paymentType        = $_SESSION['PaymentType'];
+	$paymentType        = $_SESSION['PaymentType'] ?? '';
 	$currencyCodeType   = $_SESSION['currencyCodeType'];
 	$FinalPaymentAmt    = $_SESSION['FinalPaymentAmt'];
 	// From env

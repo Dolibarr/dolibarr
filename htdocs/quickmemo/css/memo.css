@@ -1,0 +1,601 @@
+#quickmemo-create-dropdown {
+	position: relative;
+}
+.dropdown-quickmemo-create{
+	min-width: 250px;
+}
+
+
+
+/* fix Dolibarr < 22 */
+.login_block .dropdown-menu.dropdown-quickmemo-create {
+	right: 0;
+	transform: translateX(30px);
+}
+@media (max-width: 1118px) {
+	.login_block .dropdown-menu.dropdown-quickmemo-create {
+		right: auto;
+		transform: translateX(0);
+	}
+}
+/* end fix Dolibarr < 22 */
+
+
+#quickmemo-create-dropdown .dropdown-menu{
+	--colortextbackhmenu : #333;
+	/*color: var(--colortextbackhmenu) !important;*/
+	animation: dropdown-quickmemo-slide-up 0.3s ease-in-out;
+}
+
+@keyframes dropdown-quickmemo-slide-up {
+	0% {
+		transform: translate(0, 5px) translateX(30px);
+		opacity: 0;
+	}
+	100% {
+		transform: translate(0, 0%) translateX(30px);
+		opacity: 1;
+	}
+}
+
+
+
+.dropdown-quickmemo-create .dropdown-header{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 10px 10px 10px 15px;
+}
+
+.dropdown-header-title{
+	padding: 0;
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.2;
+	font-weight: 600;
+	text-align: left;
+	word-break: break-word;
+}
+
+.dropdown-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	flex-shrink: 0;
+}
+
+
+
+.quickmemo-archive-list,.quickmemo-tpl-title{
+	margin: 20px 0 5px 0;
+}
+#quickmemo-create-dropdown a.top-menu-dropdown-quicknote-link{
+	color: var(--colortextlink);;
+}
+.quickmemo-tpl-title{
+	color: #333;
+	padding: 5px 0;
+}
+.quickmemo-tpl-title:first-child{
+	margin-top: 0px;
+	padding-top: 0;
+}
+.quickmemo-tpl-list {
+	color: #3d3d3d;
+
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.no-models {
+	opacity: 0.5;
+	text-align: center;
+	width: 100%;
+}
+
+.quickmemo-model-btn, .quickmemo-model-placeholder{
+	--color-block-size : 36px;
+	width: var(--color-block-size);
+	height: var(--color-block-size);
+	border-radius: 6px;
+	position: relative;
+	border: 1px solid #ccc;
+	cursor: pointer;
+}
+.quickmemo-model-placeholder{
+	border-style: dashed;
+	cursor: default;
+}
+
+.quickmemo-model-btn:hover:before {
+	content: "\f067";
+	-webkit-font-smoothing: antialiased;
+	display: inline-block;
+	font-style: normal;
+	font-variant: normal;
+	text-rendering: auto;
+	line-height: var(--color-block-size, 36px);
+	font-weight: 900;
+	font-family: "Font Awesome 5 Free";
+	opacity: 0.5;
+
+	color: white;
+	mix-blend-mode: difference;
+
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+
+
+.quickmemo-model-delete {
+	display: none;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 16px;
+	height: 16px;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	background: rgba(0,0,0,0.4);
+	color: #fff;
+	border-radius: 50%;
+	cursor: pointer;
+	transform: translateX(50%) translateY(-50%);
+}
+.quickmemo-model-delete:before{
+	content:  '\00d7'; /* code Unicode pour × */
+}
+.quickmemo-model-delete.--show {
+	display: flex;
+}
+
+#quickmemo-model-list:has(.quickmemo-model-btn.--dragging) .quickmemo-model-btn:hover:before,
+#quickmemo-model-list:has(.quickmemo-model-btn.--dragging) .quickmemo-model-delete.--show {
+	display:none;
+}
+
+.quickmemo-model-placeholder {
+	border: 1px dashed #999;
+	margin: 0 0;
+	border-radius: 4px;
+}
+
+.quickmemo-note{
+	--memo-color: #fff8a6;
+	box-sizing: border-box;
+	position: relative;
+	filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.25));
+	padding: 6px;
+	border-radius: 2px;
+	background: var(--memo-color);
+	border: 2px dotted var(--memo-color);
+
+	position: absolute;
+	cursor: grab;
+
+	opacity: 1;
+	transition: opacity 0.3s ease;
+}
+
+.quickmemo-note[data-private="1"] {
+	background-image: url("../img/private.svg");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 50% 50% ;
+	background-blend-mode: exclusion;
+}
+
+.quickmemo-note[data-shared="1"] {
+	border: 2px dotted rgba(0, 0, 0, 0.2);
+}
+.quickmemo-note.--memo-is-dark[data-shared="1"] {
+	border: 2px dotted rgba(255, 255, 255, 0.8);
+}
+
+.quickmemo-note.--memo-is-dark, .info-box-quickmemo.--memo-is-dark  {
+	color: #ffffff;
+}
+
+body.hide-quickmemo .quickmemo-note {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.quickmemo-footer{
+padding-top: 5px;
+}
+
+.quickmemo-header{
+	position: relative;
+}
+
+.quickmemo-actions{
+	position: absolute;
+	right: 0;
+	top: 0;
+
+	transform: translateY(-20%);
+	opacity: 0;
+	pointer-events: none;
+
+	border-radius: 10px 10px 0 0 ;
+	padding: 3px 5px;
+	background: var(--memo-color);
+
+	transition:
+			transform 0.25s ease,  /* delay sur transform si nécessaire */
+			opacity 0.2s ease;      /* delay sur fade in */
+}
+
+.quickmemo-note:hover .quickmemo-actions{
+	transform: translateY(-100%);
+	opacity: 1;
+	pointer-events: auto;
+	z-index: -1;
+}
+
+
+
+.quickmemo-note.--dragging * {
+	cursor: grabbing;
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently */
+}
+
+input[type="color"].quickmemo-color-input {
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	box-sizing: border-box;
+	margin: 0 5px;
+}
+.quickmemo-actions {
+	cursor: default;
+}
+
+.quickmemo-info {
+	font-size: 0.7em;
+	opacity: 70%;
+	cursor: grab;
+	min-height: 20px;
+}
+
+.quickmemo-info__user-create-name {
+	font-weight: bold;
+}
+
+.quickmemo-info__date_create, .quickmemo-info__date_update, .quickmemo-info__user-change-name {
+
+}
+
+.quickmemo-info__create{
+	display: block;
+}
+
+.quickmemo-meta{
+	text-align: right;
+}
+
+.quickmemo-note {
+	display: flex;
+	flex-direction: column;
+}
+
+.quickmemo-note textarea, .quickmemo-markdown-preview {
+	flex: 1 1 auto; /* prend tout l'espace restant */
+	width: 100%;
+	height: 100%;
+	min-height: 0; /* important pour que flex calcule bien */
+	font-size: 1.1em;
+	padding: 5px;
+	margin: 0px;
+	line-height: 1.1em;
+
+	border: none !important;
+	outline: none !important;
+	box-sizing: border-box !important;
+	background: transparent;
+	background-color: transparent !important;
+	resize: none;
+
+
+	/* Subtle inner shadows to indicate more content is available */
+	/* 1. Shadow that scrolls with the content (hides the fixed shadow) */
+	/* 2. Fixed shadow that stays at the top/bottom */
+	background:
+			linear-gradient(var(--memo-color) 30%, rgba(255,255,255,0)),
+			linear-gradient(rgba(255,255,255,0), var(--memo-color) 70%) 0 100%,
+			radial-gradient(farthest-side at 50% 0, rgba(0,0,0,0.1), rgba(0,0,0,0)),
+			radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,0.1), rgba(0,0,0,0)) 0 100%;
+
+	background-repeat: no-repeat;
+	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+	background-attachment: local, local, scroll, scroll;
+}
+
+/* Custom scrollbar for a cleaner look  */
+:is(.quickmemo-note textarea, .quickmemo-markdown-preview )::-webkit-scrollbar {
+	width: 6px;
+}
+
+:is(.quickmemo-note textarea, .quickmemo-markdown-preview )::-webkit-scrollbar-thumb {
+	background-color: rgba(0,0,0,0.2);
+	border-radius: 10px;
+}
+.quickmemo-note.--memo-is-dark :is(.quickmemo-note textarea, .quickmemo-markdown-preview )::-webkit-scrollbar-thumb {
+	background-color: rgba(255,255,255,0.7);
+}
+
+.quickmemo-note.--edit-mode textarea {
+	display: block;
+}
+.quickmemo-note.--edit-mode .quickmemo-markdown-preview {
+	display: none;
+}
+
+.markdown-line:has(.markdown-checkbox:checked) {
+	text-decoration: line-through;
+}
+/*.quickmemo-note textarea:not(:focus) {
+	display: none;
+}*/
+
+.quickmemo-note textarea {
+	resize: none;
+	display: none;
+}
+.quickmemo-note textarea:read-only {
+	cursor: grab;
+}
+
+.quickmemo-note.--memo-is-dark textarea{
+	color: #ffffff;
+}
+
+
+.quickmemo-note textarea::placeholder,.quickmemo-placeholder {
+	color: rgba(0, 0, 0, 0.5); /* gris clair, ajustable */
+	opacity: 1; /* certains navigateurs rendent le placeholder plus transparent par défaut */
+}
+
+.quickmemo-note.--memo-is-dark textarea::placeholder,.quickmemo-note.--memo-is-dark .quickmemo-placeholder{
+	color: rgba(255, 255, 255, 0.5); /* gris clair, ajustable */
+}
+
+
+.quickmemo-markdown-preview {
+	overflow: auto;
+	cursor: grab;
+}
+
+
+/* Base styles for post-it headings */
+.quickmemo-markdown-preview :is(h1, h2, h3, h4, h5) {
+	margin: 0.5em 0 0.2em 0;
+	padding: 0;
+	font-weight: 700; /* Bold for hierarchy */
+	line-height: 1.2;
+	color: inherit;
+}
+
+.quickmemo-markdown-preview .markdown-line:first-child > :is(h1, h2, h3, h4, h5) {
+	margin-top: 0;
+}
+
+.quickmemo-markdown-preview .markdown-line:has(:is(h1, h2, h3, h4, h5)) + .markdown-line.empty-line {
+	display: none;
+}
+/* Scaled down for Post-it constraints */
+.quickmemo-markdown-preview h1 {
+	font-size: 1.4em; /* Not too big, just enough to lead */
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	padding-bottom: 0.2em;
+}
+
+.quickmemo-markdown-preview h2 {
+	font-size: 1.25em;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+	padding-bottom: 0.2em;
+}
+
+.quickmemo-markdown-preview h3 {
+	font-size: 1.15em;
+}
+
+.quickmemo-markdown-preview h4 {
+	font-size: 1.05em;
+	text-decoration: underline; /* Style hint to distinguish from H3 */
+	text-underline-offset: 2px;
+}
+
+.quickmemo-markdown-preview h5 {
+	font-size: 1em;
+	font-style: italic; /* Using style instead of size for the last level */
+}
+
+/* Dark mode adjustment */
+.quickmemo-note.--memo-is-dark .quickmemo-markdown-preview h1 {
+	border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+
+
+button.btn-low-emphasis.--btn-icon.quickmemo-btn-archive{
+	margin-left : 20px
+}
+
+.quickmemo-note.--memo-is-dark .btn-low-emphasis{
+	color: rgba(255, 255, 255, 0.7); /* gris clair, ajustable */
+}
+
+
+.quickmemo-note.--note-delete-animation {
+	animation: note-delete-animation 0.2s ease-in-out;
+}
+
+@keyframes note-delete-animation {
+	0% {
+		transform: scale(1) translateY(0);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(0.8) translateY(50%);
+		opacity: 0;
+	}
+}
+
+/* *********** */
+/* KANBAN VIEW */
+/* *********** */
+
+.info-box-quickmemo {
+	--memo-color: #fff8a6;
+	box-sizing: border-box;
+	position: relative;
+	filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.25));
+	padding: 8px;
+	border-radius: 4px 4px 0 0;
+	background: var(--memo-color);
+
+	position: relative;
+}
+
+.info-box-content-quicknote {
+	padding: 5px 0px;
+	max-height: 100px;
+	min-height: 64px;
+	overflow: auto;
+}
+
+.info-box-quickmemo .quickmemo-info {
+	cursor: default;
+}
+
+.quickmemo-markdown-preview__badge {
+	display: inline-block;
+	position: absolute;
+	font-weight: bold;
+	left:0;
+	top: 0;
+	padding: 3px 8px 2px 8px;
+	border-radius: 20px;
+	font-size: 10px;
+	line-height: 10px;
+	color: #666;
+	background-color: #ededed;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.2);
+	transform: translateY(calc(-50% - 5px));
+	cursor: s-resize;
+}
+
+.quickmemo-markdown-preview__badge.success {
+	background-color: #00ac2d;
+	color: #ffffff;
+}
+
+
+
+.quickmemo-editor-toolbar {
+	display: flex;
+	position: absolute;
+
+	/* --- VERTICAL ALIGN CENTER --- */
+	top: 50%; /* On place le haut de la barre au milieu du mémo */
+	left: 4px;
+	flex-direction: column;
+	gap: 4px;
+	background: var(--memo-color);
+	padding: 4px;
+	border-right: 1px solid rgba(150,150,150,0.1);
+	border-radius: 6px;
+	z-index: 100;
+	pointer-events: none;
+	opacity: 0;
+
+	/* --- FOR 3D EFFECT --- */
+	transform-origin: right center;
+
+	/** * initial state :
+	 * 1. translateX(-100%) : Sort la barre à gauche du mémo
+	 * 2. translateY(-50%)  : Remonte la barre de la moitié de sa propre hauteur pour le centrage
+	 * 3. rotateY(-90deg)   : L'effet de rotation "cachée"
+	 */
+	transform: translateX(-100%) translateY(-50%) rotateY(-90deg);
+
+	transition:
+			transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+			opacity 0.2s ease;
+}
+
+/* Show only when parent has the edit mode class */
+.quickmemo-note.--edit-mode .quickmemo-editor-toolbar {
+	/* On garde le X et le Y, on remet juste la rotation à 0 */
+	transform: translateX(-100%) translateY(-50%) rotateY(0deg);
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.quickmemo-toolbar-btn {
+	--btn-size: 24px;
+	width: var(--btn-size);
+	height: var(--btn-size);
+	color: var(--colortextlink, inherit);
+	font-size: 12px;
+	border: none;
+	background: none;
+	cursor: pointer;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.2s;
+}
+
+.quickmemo-note.--memo-is-dark .quickmemo-toolbar-btn{
+	color: rgba(255, 255, 255, 0.7);
+}
+
+
+.quickmemo-toolbar-btn:hover {
+	background: rgba(255, 255, 255, 0.7);
+	color: #000;
+}
+.quickmemo-note.--memo-is-dark .quickmemo-toolbar-btn:hover {
+	color: var(--memo-color);
+}
+
+.quickmemo-toolbar-btn.--active {
+	 background: #e2eafc;
+	 color: #007bff;
+	 border: 1px solid #007bff;
+ }
+.quickmemo-note.--memo-is-dark .quickmemo-toolbar-btn.--active {
+	background: #e2eafc;
+	color: #007bff;
+	border: 1px solid #007bff;
+}
+
+.quickmemo-note .quickmemo-toolbar-separator {
+	height: 1px;
+	width: 50%;
+	border: none;
+	background-color: rgba(0, 0, 0, 0.7);
+	margin: 4px auto;
+
+	transform: scaleY(0.5);
+	transform-origin: center;
+}
+
+.quickmemo-note.--memo-is-dark .quickmemo-toolbar-separator {
+	background-color: rgba(255, 255, 255, 0.7);
+}
