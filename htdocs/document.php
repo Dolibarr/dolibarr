@@ -313,7 +313,12 @@ if (!empty($hashp) && $hashp != 'shared') {
 				}
 			}
 		}
-	} elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
+	} /*
+	TODO Why this else ? Which use case does it cover ?
+	TICKET_EMAIL_MUST_EXISTS means a visitor can create a ticket from public interface even if email does not exists yet as a contact.
+	Public interface means no login and unknown user (ticket are found by email submiter / id).
+	Disabled as this looks a security bypass
+	elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
 		if ($sqlprotectagainstexternals) {
 			$resql = $db->query($sqlprotectagainstexternals);
 			if ($resql) {
@@ -324,6 +329,7 @@ if (!empty($hashp) && $hashp != 'shared') {
 			}
 		}
 	}
+	*/
 }
 
 // Security:
