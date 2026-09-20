@@ -412,7 +412,7 @@ function aiTruncateForLog($text, $max = 60000)
  * @param   string                  $error      Error message, if any
  * @param   string                  $rawReq     Raw request payload
  * @param   string                  $rawRes     Raw response payload
- * @param   array{fk_actioncomm?:int,input_hash?:string,output_hash?:string,security_hash?:string,preserve_payloads?:bool} $context Optional event link and audit metadata
+ * @param   array{fk_actioncomm?:int,input_hash?:string,output_hash?:string,security_hash?:string,preserve_payloads?:bool,tokens_input?:int,tokens_output?:int,model?:string} $context Optional event link, audit metadata and provider token usage
  * @param   int|null                $logId      Output: inserted row id, or 0 when logging is disabled or fails
  * @param-out int                   $logId
  * @return  int									Return 0
@@ -443,8 +443,15 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql = "INSERT INTO " . $db->prefix() . "ai_request_log (";
 	$sql .= "entity, date_request, fk_user, query_text, tool_name, provider, ";
 	$sql .= "execution_time, confidence, status, error_msg, raw_request_payload, raw_response_payload";
-	if (!empty($context)) {
+	// Each optional group keys on ITS OWN entries, so a caller passing only
+	// token usage does not drag empty audit hashes along, and vice versa.
+	$hasAudit = isset($context['fk_actioncomm']) || isset($context['input_hash']) || isset($context['output_hash']) || isset($context['security_hash']);
+	$hasUsage = isset($context['tokens_input']) || isset($context['tokens_output']) || isset($context['model']);
+	if ($hasAudit) {
 		$sql .= ", fk_actioncomm, input_hash, output_hash, security_hash";
+	}
+	if ($hasUsage) {
+		$sql .= ", tokens_input, tokens_output, model";
 	}
 	$sql .= ") VALUES (";
 	$sql .= ((int) $conf->entity) . ", ";
@@ -459,11 +466,16 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql .= "'" . $db->escape($error) . "', ";
 	$sql .= "'" . $db->escape($rawReq) . "', ";
 	$sql .= "'" . $db->escape($rawResStr) . "'";
-	if (!empty($context)) {
+	if ($hasAudit) {
 		$sql .= ", ".(!empty($context['fk_actioncomm']) && $context['fk_actioncomm'] > 0 ? (int) $context['fk_actioncomm'] : 'NULL');
 		$sql .= ", '".$db->escape($context['input_hash'] ?? '')."'";
 		$sql .= ", '".$db->escape($context['output_hash'] ?? '')."'";
 		$sql .= ", '".$db->escape($context['security_hash'] ?? '')."'";
+	}
+	if ($hasUsage) {
+		$sql .= ", ".(isset($context['tokens_input']) ? (int) $context['tokens_input'] : 'NULL');
+		$sql .= ", ".(isset($context['tokens_output']) ? (int) $context['tokens_output'] : 'NULL');
+		$sql .= ", '".$db->escape((string) ($context['model'] ?? ''))."'";
 	}
 	$sql .= ")";
 

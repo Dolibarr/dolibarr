@@ -32,6 +32,9 @@ class UniversalLLMAdapter
 	/** @var string Stores the raw response for debugging */
 	public $lastResponse = "";
 
+	/** @var array{input?:int,output?:int,model?:string} Token usage reported by the provider for the LAST call (empty when the call failed before a usable response) */
+	public $lastUsage = array();
+
 	/** @var string The type of LLM (e.g., 'openai', 'ollama') */
 	private $type;
 
@@ -337,6 +340,8 @@ class UniversalLLMAdapter
 		// Pass $this->timeout as the response timeout so the LLM-specific value configured
 		// at construction time is honored (getURLContent's $timeoutresponse is the 10th arg;
 		// preceding args $ssl_verifypeer=-1 and $timeoutconnect=0 keep their defaults).
+		$this->lastUsage = array();	// never carry over the previous call's usage
+
 		$result = getURLContent($url, 'POST', json_encode($data), 1, $headers, array('http', 'https'), $localurl, -1, 0, $this->timeout);
 
 		$body         = (string) ($result['content'] ?? '');
@@ -365,6 +370,22 @@ class UniversalLLMAdapter
 			$msg = $json['error']['message'] ?? json_encode($json['error']);
 			$this->recordModelFailure($httpCode, (string) $msg);
 			return "Error: API " . $msg;
+		}
+
+		// Token usage as reported by the provider, for the cost columns of the
+		// request log: every provider returns it inside the response body under
+		// its own name. Thinking tokens are billed as output, so Gemini's
+		// thoughtsTokenCount is counted with the visible candidates tokens.
+		$this->lastUsage = array('model' => $this->model);
+		if ($isGemini) {
+			$this->lastUsage['input']  = (int) ($json['usageMetadata']['promptTokenCount'] ?? 0);
+			$this->lastUsage['output'] = (int) ($json['usageMetadata']['candidatesTokenCount'] ?? 0) + (int) ($json['usageMetadata']['thoughtsTokenCount'] ?? 0);
+		} elseif ($isClaude) {
+			$this->lastUsage['input']  = (int) ($json['usage']['input_tokens'] ?? 0);
+			$this->lastUsage['output'] = (int) ($json['usage']['output_tokens'] ?? 0);
+		} else {
+			$this->lastUsage['input']  = (int) ($json['usage']['prompt_tokens'] ?? 0);
+			$this->lastUsage['output'] = (int) ($json['usage']['completion_tokens'] ?? 0);
 		}
 
 		// Extraction Logic
