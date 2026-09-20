@@ -1608,6 +1608,15 @@ export function initAiAssistant(container) {
         const prefix = Object.keys(TOOL_CARD_URLS).find(p => tool.indexOf(p) === 0);
         return prefix ? (config.urlRoot || '') + TOOL_CARD_URLS[prefix].replace('%id%', encodeURIComponent(id)) : null;
     }
+    // API payloads arrive with HTML entities already encoded ("Client
+    // g&eacute;n&eacute;rique..."): decode them BEFORE escaping, or accented
+    // names render as raw entities in the chat tables and answers.
+    function decodeHtmlEntities(s) {
+        if (typeof s !== 'string' || s.indexOf('&') === -1) return s;
+        const ta = document.createElement('textarea');
+        ta.innerHTML = s;
+        return ta.value;
+    }
     function formatCell(k, v) {
         if (v === null || v === undefined || v === '') return '-';
         // Hand-written report tools legitimately embed a single link around a
@@ -1618,7 +1627,7 @@ export function initAiAssistant(container) {
         if (MONEY_FIELDS.has(k)) return fmtMoney(v);
         if (isDateField(k)) return fmtDate(v);
         if (k === 'paye') return (String(v) === '1' ? '✓' : '✗');
-        return escapeHtml(String(v));
+        return escapeHtml(decodeHtmlEntities(String(v)));
     }
     // socid -> customer name, resolved once per render through the bridge.
     async function resolveThirdpartyNames(container) {
@@ -1639,7 +1648,7 @@ export function initAiAssistant(container) {
             cells.forEach(c => {
                 const id = c.getAttribute('data-socid');
                 if (names[id]) {
-                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(names[id])}</a>`;
+                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
                 }
             });
         } catch (e) { /* names stay as ids */ }
