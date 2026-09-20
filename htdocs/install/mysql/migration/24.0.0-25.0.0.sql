@@ -259,3 +259,8 @@ ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
 -- (modules_import.class.php), including link tables, once they are actually used as a target -
 -- unlike llx_element_element/llx_actioncomm_resources, which no current dataset targets.
 ALTER TABLE llx_paiement_facture ADD COLUMN import_key varchar(14);
+
+-- AI request log: token usage reported by the provider and the exact model id, for cost reporting in the log viewer
+ALTER TABLE llx_ai_request_log ADD COLUMN tokens_input integer;
+ALTER TABLE llx_ai_request_log ADD COLUMN tokens_output integer;
+ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);

@@ -460,6 +460,9 @@ try {
 		}
 	}
 
+	// Token usage of the LLM call, filled after the adapter answered.
+	$usageContext = array();
+
 	// Apply privacy guard if enabled
 	$guard = null;
 	if ($doRedact && class_exists('PrivacyGuard')) {
@@ -670,6 +673,16 @@ try {
 			$rawRequestLog = $adapter->lastRequest;
 			$rawResponseLog = $adapter->lastResponse;
 
+			// Token usage for the cost columns of the request log: reported by
+			// the provider inside the response, captured by the adapter.
+			if (!empty($adapter->lastUsage)) {
+				$usageContext = array(
+					'tokens_input' => (int) ($adapter->lastUsage['input'] ?? 0),
+					'tokens_output' => (int) ($adapter->lastUsage['output'] ?? 0),
+					'model' => (string) ($adapter->lastUsage['model'] ?? $model),
+				);
+			}
+
 			// Process response
 			if (is_string($rawResponse) && strpos($rawResponse, 'Error:') === 0) {
 				$errorDetails = $rawResponse;
@@ -789,7 +802,7 @@ try {
 		];
 
 		// Log the failure
-		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 0.0, $langs->transnoentitiesnoconv('Error'), $errorDetails, $rawRequestLog, $rawResponseLog);
+		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 0.0, $langs->transnoentitiesnoconv('Error'), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
 		ob_end_clean();
 		echo json_encode($finalResponse);
@@ -846,7 +859,7 @@ try {
 		];
 
 		// Log the confirmation request
-		ai_log_request($db, $user, $query, $confirmationResponse, $providerUsed, microtime(true) - $startTime, $confidence, $langs->transnoentitiesnoconv("Confirm"), $errorDetails, $rawRequestLog, $rawResponseLog);
+		ai_log_request($db, $user, $query, $confirmationResponse, $providerUsed, microtime(true) - $startTime, $confidence, $langs->transnoentitiesnoconv("Confirm"), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
 		ob_end_clean();
 		echo json_encode($confirmationResponse);
@@ -863,7 +876,7 @@ try {
 		];
 
 		// Log the low confidence response
-		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog);
+		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
 		ob_end_clean();
 		echo json_encode($finalResponse);
@@ -878,7 +891,7 @@ try {
 	// Success!
 	$finalResponse = $intentJSON;
 	$execTime = microtime(true) - $startTime;
-	ai_log_request($db, $user, $query, $finalResponse, $providerUsed, $execTime, $confidence, $langs->transnoentitiesnoconv("Success"), $errorDetails, $rawRequestLog, $rawResponseLog);
+	ai_log_request($db, $user, $query, $finalResponse, $providerUsed, $execTime, $confidence, $langs->transnoentitiesnoconv("Success"), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
 	ob_end_clean();
 	echo json_encode($finalResponse);
@@ -906,7 +919,8 @@ try {
 			'error',
 			$realErrorForLog,
 			$rawRequestLog ?? '',
-			$rawResponseLog ?? ''
+			$rawResponseLog ?? '',
+			$usageContext ?? array()
 		);
 	}
 
