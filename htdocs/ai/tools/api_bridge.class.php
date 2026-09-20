@@ -864,10 +864,19 @@ class ToolApiBridge extends McpTool
 			} else {
 				$pdesc = $this->commonParamDocs[$pname] ?? '';
 			}
+			// The API docblocks carry Restler's inline validation tags. They are
+			// markup, not prose: left in place they reach the model as noise
+			// ("... (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}"). Lift the
+			// ones JSON Schema can express into real constraints, and drop the
+			// rest from the text.
+			$constraints = [];
+			$pdesc = $this->liftInlineTags($pdesc, $ptype, $constraints);
+
 			$prop = [
 				'type' => $ptype,
 				'description' => $pdesc
 			];
+			$prop += $constraints;
 			if ($p->isOptional()) {
 				try {
 					$prop['default'] = ($pname == 'limit') ? self::BRIDGE_DEFAULT_LIMIT : $p->getDefaultValue();
@@ -905,6 +914,110 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Lift Restler's inline validation tags out of a parameter description.
+	 *
+	 * The REST API documents constraints the way Restler reads them to build
+	 * swagger.json: {@min 1}, {@max 100}, {@choice yes,no}, {@pattern /re/flags}.
+	 * Those carry exactly what JSON Schema calls minimum, maximum, enum and
+	 * pattern, so they are translated instead of being shown to the model as
+	 * part of the sentence. Tags with no JSON Schema equivalent ({@type} names a
+	 * PHP class, {@from} names the HTTP source, which in-process calls have no
+	 * use for) are removed from the text and otherwise ignored.
+	 *
+	 * @param ?string $desc Parameter description, as written in the docblock (may be null)
+	 * @param string $ptype JSON Schema type already determined for this parameter
+	 * @param array<string, mixed> $constraints Filled with the JSON Schema constraints found
+	 * @return string The description with every inline tag removed
+	 */
+	private function liftInlineTags($desc, string $ptype, array &$constraints): string
+	{
+		$desc = (string) $desc;
+
+		if (strpos($desc, '{@') === false) {
+			return $desc;
+		}
+
+		$matches = [];
+		if (preg_match_all('/\{@(\w[\w-]*)\s*([^}]*)\}/', $desc, $matches, PREG_SET_ORDER)) {
+			foreach ($matches as $tag) {
+				$name = strtolower($tag[1]);
+				$value = trim($tag[2]);
+
+				if ($name === 'min' && is_numeric($value)) {
+					$constraints['minimum'] = $this->tagValueToNumber($value);
+				} elseif ($name === 'max' && is_numeric($value)) {
+					$constraints['maximum'] = $this->tagValueToNumber($value);
+				} elseif ($name === 'choice' && $value !== '') {
+					$choices = array_map('trim', explode(',', $value));
+					if ($ptype === 'integer' || $ptype === 'number') {
+						foreach ($choices as $i => $choice) {
+							if (is_numeric($choice)) {
+								$choices[$i] = $this->tagValueToNumber($choice);
+							}
+						}
+					}
+					$constraints['enum'] = array_values($choices);
+				} elseif ($name === 'pattern' && $value !== '') {
+					$pattern = $this->restlerPatternToJsonSchema($value);
+					if ($pattern !== '') {
+						$constraints['pattern'] = $pattern;
+					}
+				}
+			}
+		}
+
+		// Remove every tag, including the ones left untranslated, then tidy the
+		// whitespace the removal leaves behind.
+		$desc = preg_replace('/\s*\{@\w[\w-]*[^}]*\}/', '', $desc);
+
+		return trim(preg_replace('/\s{2,}/', ' ', (string) $desc));
+	}
+
+	/**
+	 * Convert a numeric tag value to the PHP number JSON encodes as a number.
+	 *
+	 * {@min 0} must reach the model as 0, not "0": a JSON Schema minimum given
+	 * as a string is not a minimum.
+	 *
+	 * @param string $value Numeric tag value, already checked with is_numeric()
+	 * @return int|float
+	 */
+	private function tagValueToNumber(string $value)
+	{
+		return (strpos($value, '.') === false) ? (int) $value : (float) $value;
+	}
+
+	/**
+	 * Convert a Restler {@pattern} value to a JSON Schema pattern.
+	 *
+	 * JSON Schema patterns are ECMA-262 regexps with no delimiters and no flags,
+	 * so the PCRE delimiters are stripped. A flag that changes what the regexp
+	 * accepts cannot be carried over; rather than silently tightening the
+	 * constraint, the pattern is then dropped and only the description keeps the
+	 * information. The one exception is /i on a regexp holding no letter, where
+	 * the flag has nothing to act on.
+	 *
+	 * @param string $value Raw tag value, e.g. "/^[0-9,]*$/i"
+	 * @return string JSON Schema pattern, or '' when it cannot be expressed
+	 */
+	private function restlerPatternToJsonSchema(string $value): string
+	{
+		$reg = [];
+		if (!preg_match('/^(.)(.*)\1([a-zA-Z]*)$/s', $value, $reg)) {
+			return '';	// not delimited: not a PCRE literal, leave it in the description
+		}
+
+		$expression = $reg[2];
+		$flags = $reg[3];
+
+		if ($flags !== '' && !($flags === 'i' && !preg_match('/[a-zA-Z]/', $expression))) {
+			return '';
+		}
+
+		return $expression;
+	}
+
+	/**
 	 * Convert a docblock type to a JSON Schema type.
 	 *
 	 * @param string $type Docblock type (may be a union like int|string)
@@ -926,6 +1039,17 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Rights are enforced by the REST API classes themselves.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return string RIGHTS_ENFORCED_DOWNSTREAM
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return self::RIGHTS_ENFORCED_DOWNSTREAM;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 *
 	 * @return array<string> List of categories
@@ -942,6 +1066,42 @@ class ToolApiBridge extends McpTool
 
 		return array_values(array_unique($all));
 	}
+	/**
+	 * Map a bridge endpoint key to the element type ExtraFields uses.
+	 *
+	 * @param string $key Endpoint key from the enrichment map.
+	 * @return string ExtraFields element type, '' when the objects carry none.
+	 */
+	private function extrafieldsElementForEndpoint($key)
+	{
+		$map = array(
+			'thirdparties' => 'societe',
+			'contacts' => 'socpeople',
+			'invoices' => 'facture',
+			'supplierinvoices' => 'facture_fourn',
+			'orders' => 'commande',
+			'supplierorders' => 'commande_fournisseur',
+			'proposals' => 'propal',
+			'supplierproposals' => 'supplier_proposal',
+			'products' => 'product',
+			'contracts' => 'contrat',
+			'interventions' => 'fichinter',
+			'tickets' => 'ticket',
+			'projects' => 'projet',
+			'tasks' => 'project_task',
+			'members' => 'adherent',
+			'expensereports' => 'expensereport',
+			'shipments' => 'expedition',
+			'receptions' => 'reception',
+			'agendaevents' => 'actioncomm',
+			'warehouses' => 'stock',
+			'categories' => 'categorie',
+			'bankaccounts' => 'bank_account'
+		);
+
+		return $map[$key] ?? '';
+	}
+
 	/**
 	 * Execute a bridged tool: authenticate the acting user, call the API method
 	 * in-process with positional arguments, catch RestException.
@@ -1031,6 +1191,13 @@ class ToolApiBridge extends McpTool
 					"http_status" => ($code > 0 ? $code : 500)
 				];
 			}
+		}
+
+		// Extrafields flagged as personal data (GDPR) must not reach an AI provider.
+		$elementForExtrafields = $this->extrafieldsElementForEndpoint($key);
+		if ($elementForExtrafields !== '') {
+			require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
+			$output = aiStripPersonalExtrafields($this->db, $output, $elementForExtrafields);
 		}
 
 		// Restore the caller's context (single exit point).

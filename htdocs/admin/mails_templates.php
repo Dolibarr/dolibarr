@@ -747,19 +747,6 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-if (!empty($search) && is_array($search)) {
-	foreach ($search as $key => $val) {
-		if (is_array($search[$key]) && count($search[$key])) {
-			foreach ($search[$key] as $skey) {
-				if ($skey != '') {
-					$param .= '&search_'.$key.'[]='.urlencode($skey);
-				}
-			}
-		} elseif ($search[$key] != '') {
-			$param .= '&search_'.$key.'='.urlencode($search[$key]);
-		}
-	}
-}
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
@@ -1028,15 +1015,14 @@ if ($action == 'create') {
 
 			// Add layout and AI tools for content
 			$out = '';
-			if (!is_object($formmail)) {
-				$formmail = new FormMail($db);
-				$formmail->withlayout = 'email';
-				$formmail->withaiprompt = 'textgenerationemail';
-				$formmail->withfckeditor = true;
-			}
+			$formmail = new FormMail($db);
+			$formmail->withlayout = 'email';
+			$formmail->withaiprompt = 'html';
+			$formmail->withfckeditor = 1;
+
 			$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
 			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
-			$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai') ? 'textgenerationemail' : '');
+			$showlinktoai = (isModEnabled('ai') ? 'textgenerationemail' : '');
 			$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
 			$htmlname = 'content';
 			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -1370,15 +1356,15 @@ if ($action != 'create') {
 
 								// Add layout and AI tools for content
 								$out = '';
-								if (!is_object($formmail)) {
-									$formmail = new FormMail($db);
-									$formmail->withlayout = 'email';
-									$formmail->withaiprompt = 'textgenerationemail';
-									$formmail->withfckeditor = true;
-								}
+
+								$formmail = new FormMail($db);
+								$formmail->withlayout = 'email';
+								$formmail->withaiprompt = 'html';
+								$formmail->withfckeditor = 1;
+
 								$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
 								$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
-								$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai') ? 'textgenerationemail' : '');
+								$showlinktoai = (isModEnabled('ai') ? 'textgenerationemail' : '');
 								$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
 								$htmlname = 'content_'.$rowid;
 								include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';

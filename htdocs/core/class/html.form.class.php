@@ -1345,16 +1345,16 @@ class Form
 	 */
 	private function getPhoneInputFieldJs($htmlname, $codename)
 	{
-		$hiddenId = dol_escape_js($htmlname);
-		$inputId = dol_escape_js($htmlname).'_input';
-		$selectId = 'select'.dol_escape_js($codename);
+		$hiddenId = dol_escape_js($htmlname);  // TODO: Not the correct method
+		$inputId = dol_escape_js($htmlname).'_input';  // Correctly quoted with '' below @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
+		$selectId = 'select'.dol_escape_js($codename);  // Correctly quoted with '' below @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 
 		$out = "\n".'<script type="text/javascript">'."\n";
 		$out .= 'jQuery(document).ready(function() {'."\n";
 		$out .= '	function syncPhoneField_'.$hiddenId.'() {'."\n";
-		$out .= '		var selectEl = jQuery("#'.$selectId.'");'."\n";
+		$out .= '		var selectEl = jQuery(\'#'.$selectId.'\');'."\n";
 		$out .= '		var code = selectEl.val() || "";'."\n";
-		$out .= '		var number = (jQuery("#'.$inputId.'").val() || "").replace(/[^0-9]/g, "");'."\n";
+		$out .= '		var number = (jQuery(\'#'.$inputId.'\').val() || "").replace(/[^0-9]/g, "");'."\n";
 		$out .= '		if (code && number) {'."\n";
 		$out .= '			var selOpt = selectEl[0] && selectEl[0].selectedOptions && selectEl[0].selectedOptions[0];'."\n";
 		$out .= '			var trunkPrefix = selOpt ? (selOpt.getAttribute("data-trunk-prefix") || "") : "";'."\n";
@@ -1368,8 +1368,8 @@ class Form
 		$out .= '			jQuery("#'.$hiddenId.'").val("");'."\n";
 		$out .= '		}'."\n";
 		$out .= '	}'."\n";
-		$out .= '	jQuery("#'.$selectId.'").on("change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
-		$out .= '	jQuery("#'.$inputId.'").on("input change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
+		$out .= '	jQuery(\'#'.$selectId.'\').on("change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
+		$out .= '	jQuery(\'#'.$inputId.'\').on("input change", function() { syncPhoneField_'.$hiddenId.'(); });'."\n";
 		$out .= '});'."\n";
 		$out .= '</script>'."\n";
 
@@ -1394,7 +1394,7 @@ class Form
 
 		$out = "\n".'<script type="text/javascript">'."\n";
 		$out .= 'jQuery(document).ready(function() {'."\n";
-		$out .= '	jQuery("#'.dol_escape_js($countrySelectorId).'").on("change", function() {'."\n";
+		$out .= '	jQuery(\'#'.dol_escape_js($countrySelectorId).'\').on("change", function() {'."\n";
 		$out .= '		var country_id = jQuery(this).val();'."\n";
 		$out .= '		if (country_id) {'."\n";
 		$out .= '			jQuery.getJSON("'.DOL_URL_ROOT.'/core/ajax/getphonecode.php", {country_id: country_id, token: "'.currentToken().'"}, function(data) {'."\n";
@@ -1931,13 +1931,13 @@ class Form
 
 	/**
 	 * Output html form to select a contact
-	 * This call select_contacts() or ajax depending on setup. This component is not able to support multiple select.
+	 * This call select_contacts() or ajax depending on setup.
 	 *
 	 * Return HTML code of the SELECT of list of all contacts (for a third party or all).
 	 * This also set the number of contacts found into $this->num if not using ajax mode.
 	 *
 	 * @param 	int 			$socid 				Id of third party or 0 for all or -1 for empty list
-	 * @param 	int|string 		$selected 			ID of preselected contact id
+	 * @param 	int|string|int[] 	$selected 		ID of preselected contact id, or array of ids if $multiple is used
 	 * @param 	string 			$htmlname 			Name of HTML field ('none' for a not editable field)
 	 * @param 	int<0,3>|string	$showempty			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 * @param 	string 			$exclude 			List of contacts id to exclude
@@ -1950,11 +1950,12 @@ class Form
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param 	string 			$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param 	string 			$htmlid 			Html id to use instead of htmlname
-	 * @param 	string 			$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param 	string 			$selected_input_value 	Not used anymore (kept for backward compatibility of the signature)
 	 * @param 	string 			$filter 			Optional filter criteria. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
+	 * @param 	bool 			$multiple 			add [] in the name of element and add 'multiple' attribute
 	 * @return  int|string      					Return integer <0 if KO, HTML with select string if OK.
 	 */
-	public function select_contact($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $nokeyifsocid = true, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $selected_input_value = '', $filter = '')
+	public function select_contact($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $nokeyifsocid = true, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $selected_input_value = '', $filter = '', $multiple = false)
 	{
 		// phpcs:enable
 
@@ -1962,42 +1963,101 @@ class Form
 
 		$out = '';
 
+		if (empty($htmlid)) {
+			$htmlid = $htmlname;
+		}
+
 		$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
 		if ($nokeyifsocid && $socid > 0) {
 			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
 		}
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && !$forcecombo) {
-			$ajaxoptions = array();
-
+			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 
-			// No immediate load of all database
-			$placeholder = '';
-			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+			// select2 combo pre-filled with only the currently selected contact(s) as <option selected>.
+			// select2 keeps those and fetches the rest on demand from contact/ajax/contact.php instead of
+			// loading the whole contact list into the page.
+			$selectedids = array();
+			foreach (($multiple ? (is_array($selected) ? $selected : array()) : ($selected !== '' && $selected !== 0 ? array($selected) : array())) as $tmpid) {
+				if (is_numeric($tmpid) && (int) $tmpid > 0) {
+					$selectedids[] = (int) $tmpid;
+				}
+			}
+
+			// A non-numeric $showempty ('&nbsp;', a label, ...) is used as a select2 placeholder instead of
+			// an <option> value; select2 needs an empty first <option> in single mode to be able to show it.
+			$placeholder = is_numeric($showempty) ? '' : (string) $showempty;
+
+			$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlid . '" name="' . $htmlname . ($multiple ? '[]' : '') . '"' . ($multiple ? ' multiple' : '') . ($moreparam ? ' ' . $moreparam : '') . '>';
+			if (!$multiple) {
+				$out .= '<option></option>';
+			}
+			if (count($selectedids)) {
 				$contacttmp = new Contact($this->db);
-				$contacttmp->fetch($selected);
-				$selected_input_value = $contacttmp->getFullName($langs);
+				foreach ($selectedids as $tmpid) {
+					if ($contacttmp->fetch($tmpid) > 0) {
+						$out .= '<option value="' . $tmpid . '" selected>' . dol_escape_htmltag($contacttmp->getFullName($langs)) . '</option>';
+					}
+				}
 				unset($contacttmp);
 			}
-			if (!is_numeric($showempty)) {
-				$placeholder = $showempty;
-			}
-
-			// mode 1
-			$urloption = 'htmlname=' . urlencode((string) (str_replace('.', '_', $htmlname))) . '&outjson=1&filter=' . urlencode((string) ($filter)) . (empty($exclude) ? '' : '&exclude=' . urlencode($exclude)) . ($showsoc ? '&showsoc=' . urlencode((string) ($showsoc)) : '');
-
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
-
-			$out .= '<input type="text" class="' . $morecss . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' ' . (getDolGlobalString('CONTACT_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' spellcheck="false" />';
+			$out .= '</select>';
 
 			$out .= ajax_event($htmlname, $events);
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/contact/ajax/contact.php', $urloption, getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+			// Same as the value of 'htmlname=' below: the endpoint reads the typed term from a GET param
+			// named after this transformed htmlname (see contact/ajax/contact.php).
+			$htmlnamefortermparam = str_replace('.', '_', $htmlname);
+			$urloption = 'htmlname=' . urlencode((string) $htmlnamefortermparam) . '&outjson=1&filter=' . urlencode((string) $filter)
+				. (empty($exclude) ? '' : '&exclude=' . urlencode($exclude))
+				. ($showsoc ? '&showsoc=' . urlencode((string) $showsoc) : '')
+				. ($socid > 0 ? '&socid=' . ((int) $socid) : '');
+
+			// A non-numeric value ('infinite') means "infinite list": no minimum number of chars, the list
+			// opens as soon as the field gets the focus (select2 queries the endpoint with an empty term).
+			$minlengthforajax = getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT');
+			if ($minlengthforajax < 1) {
+				$minlengthforajax = 0;
+			}
+			// Page size of the ajax endpoint (CONTACT_LIMIT_SIZE): select2 keeps asking for the next page
+			// while the endpoint returns a full page, so the whole list stays browsable by scrolling.
+			$ajaxpagesize = getDolGlobalInt('CONTACT_LIMIT_SIZE', 20);
+
+			$htmlidjs = str_replace('.', '\\\\.', $htmlid);
+			$out .= '<script nonce="' . getNonce() . '">jQuery(function() {
+				jQuery("#' . $htmlidjs . '").select2({
+					theme: "default",
+					language: (typeof select2arrayoflanguage === "undefined") ? "en" : select2arrayoflanguage,
+					containerCssClass: ":all:",
+					placeholder: ' . json_encode($placeholder) . ',
+					minimumInputLength: ' . ((int) $minlengthforajax) . ',
+					ajax: {
+						url: "' . DOL_URL_ROOT . '/contact/ajax/contact.php?' . $urloption . '",
+						dataType: "json",
+						delay: 250,
+						data: function(params) {
+							var d = {};
+							d[' . json_encode($htmlnamefortermparam) . '] = params.term;
+							d.page = params.page || 1;
+							return d;
+						},
+						processResults: function(data) {
+							var result = [];
+							jQuery.each(data, function(i, val) {
+								result.push({ id: val.key, text: val.value });
+							});
+							return { results: result, pagination: { more: data.length >= ' . ((int) $ajaxpagesize) . ' } };
+						},
+						cache: true
+					}
+				});' . (getDolGlobalString('CONTACT_SEARCH_AUTOFOCUS') ? '
+				jQuery("#' . $htmlidjs . '").select2("open");' : '') . '
+			});</script>';
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
 		} else {
 			// Immediate load of all database
-			$multiple = false;
 			$disableifempty = 0;
 			$options_only = 0;
 			$limitto = '';
@@ -2283,9 +2343,11 @@ class Form
 	 * @param 	integer 			$disableifempty 	Set tag 'disabled' on select if there is no choice
 	 * @param 	string 				$filter 			Optional filter criteria. You must use the USF (Universal Search Filter) syntax, example: '(s.client:in:1,3)'
 	 * 													Do not use a filter coming from input of users.
+	 * @param 	int 				$limit 				Maximum number of rows to return (0 = no limit). Used by the contact/ajax/contact.php autocomplete endpoint.
+	 * @param 	int 				$limitoffset 		Offset of the first returned row (only applied when $limit > 0). Used by the contact/ajax/contact.php endpoint to page through the list.
 	 * @return  int|string|array<int,array{key:int,value:string,label:string,labelhtml:string}>		Return integer <0 if KO, HTML with select string if OK.
 	 */
-	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $filter = '')
+	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $filter = '', $limit = 0, $limitoffset = 0)
 	{
 		global $conf, $user, $langs, $hookmanager, $action;
 
@@ -2372,6 +2434,7 @@ class Form
 		$reshook = $hookmanager->executeHooks('selectContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY sp.lastname ASC";
+		$sql .= $this->db->plimit($limit, ((int) $limitoffset > 0 ? (int) $limitoffset : 0));
 
 		dol_syslog(get_class($this) . "::selectcontacts", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2682,6 +2745,133 @@ class Form
 		print $this->select_dolusers($selected, $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity);
 	}
 
+	/**
+	 * Allow-list of $morefilter expressions select_dolusers() may forward to the user/ajax/users.php
+	 * autocomplete endpoint. $morefilter is a raw Universal Search Filter fed to
+	 * forgeSQLFromUniversalSearchCriteria(): letting it through the URL unchecked would let a client
+	 * run arbitrary WHERE clauses on llx_user. Only these exact, known-safe expressions - the ones
+	 * core passes to select_dolusers() - are propagated; anything else is dropped by
+	 * buildSelectDolusersAjaxUrlOption() and rejected by the endpoint. Extend this list (here) when a
+	 * new caller needs its filter to apply to the "search to select" list too.
+	 *
+	 * @var string[]
+	 */
+	public static $user_combo_allowed_morefilters = array(
+		'u.statut:=:1',						// active users only
+		'(statut:=:1)',						// active users only
+		'employee:=:1',						// employees only
+		'(employee:=:1)',					// employees only
+		'(admin:=:1) AND (statut:=:1)',		// active administrators only
+	);
+
+	/**
+	 * Tell whether a $morefilter value is allowed to be forwarded to the user/ajax/users.php endpoint.
+	 * Exact match (after trim) against self::$user_combo_allowed_morefilters - the value is never parsed.
+	 *
+	 * @param 	string 	$morefilter 	$morefilter argument passed to select_dolusers()
+	 * @return 	bool					True if the expression is in the allow-list
+	 */
+	public static function isUserComboMorefilterAllowed($morefilter)
+	{
+		return in_array(trim((string) $morefilter), self::$user_combo_allowed_morefilters, true);
+	}
+
+	/**
+	 * Build the query string of filters forwarded to the user/ajax/users.php autocomplete endpoint,
+	 * so it returns the same subset of users the full combo of select_dolusers() would.
+	 * Shared by the single-select and the multiple-select "search to select" code paths.
+	 *
+	 * @param string				$htmlname		Name of the HTML select element
+	 * @param int[]|null			$exclude		Array list of users id to exclude
+	 * @param int[]|string			$include		Array list of users id to include, or 'hierarchy'/'hierarchyme'
+	 * @param string				$force_entity	'0' or list of entity ids to force, forwarded as-is
+	 * @param int					$showstatus		showstatus flag passed to select_dolusers()
+	 * @param int<0,1>				$notdisabled	1 to keep only enabled users
+	 * @param int					$maxlength		Maximum length of the labels (0=no limit)
+	 * @param string				$morefilter		$morefilter argument of select_dolusers(); forwarded only if allow-listed
+	 * @return string								URL-encoded query string (no leading '?')
+	 */
+	private function buildSelectDolusersAjaxUrlOption($htmlname, $exclude, $include, $force_entity, $showstatus, $notdisabled, $maxlength, $morefilter = '')
+	{
+		$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1';
+		if (is_array($exclude) && count($exclude)) {
+			$urloption .= '&exclude='.urlencode(implode(',', $exclude));
+		}
+		if (is_array($include) && count($include)) {
+			$urloption .= '&include='.urlencode(implode(',', $include));
+		} elseif (is_string($include) && $include !== '') {
+			$urloption .= '&include='.urlencode($include);
+		}
+		if ($force_entity !== '') {
+			$urloption .= '&force_entity='.urlencode((string) $force_entity);
+		}
+		if ($showstatus !== 0) {
+			$urloption .= '&showstatus='.((int) $showstatus);
+		}
+		if (!empty($notdisabled)) {
+			$urloption .= '&notdisabled=1';
+		}
+		if (!empty($maxlength)) {
+			$urloption .= '&maxlength='.((int) $maxlength);
+		}
+		// $morefilter is a raw Universal Search Filter fed to forgeSQLFromUniversalSearchCriteria().
+		// Only forward it when it is one of the known-safe expressions of self::$user_combo_allowed_morefilters
+		// (the endpoint re-checks against the same list); any other value would let a client run arbitrary
+		// WHERE clauses on llx_user and is dropped here - the ajax list is then simply not narrowed by it.
+		if ((string) $morefilter !== '') {
+			if (self::isUserComboMorefilterAllowed($morefilter)) {
+				$urloption .= '&morefilter='.urlencode(trim((string) $morefilter));
+			} else {
+				dol_syslog(__METHOD__.": morefilter '".$morefilter."' is not in Form::\$user_combo_allowed_morefilters; the search-to-select user list will not be narrowed by it", LOG_WARNING);
+			}
+		}
+		return $urloption;
+	}
+
+	/**
+	 * Build the select2 initialization script shared by the single and multiple "search to select"
+	 * user combos. Both page through user/ajax/users.php the same way (select2's ajax.data sends
+	 * the page number, processResults reports pagination.more from the page size).
+	 *
+	 * @param string	$htmlname			Name of the HTML select element
+	 * @param string	$urloption			URL-encoded query string returned by buildSelectDolusersAjaxUrlOption() (no leading '?')
+	 * @param int		$minlengthforajax	select2 minimumInputLength (0 in "infinite list" mode)
+	 * @param int		$ajaxpagesize		Page size of the ajax endpoint (USER_LIMIT_SIZE)
+	 * @return string							HTML <script> block
+	 */
+	private function buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize)
+	{
+		$htmlnamejs = str_replace('.', '\\\\.', $htmlname);
+		return '<script nonce="'.getNonce().'">jQuery(function() {
+				jQuery("#'.$htmlnamejs.'").select2({
+					theme: "default",
+					language: (typeof select2arrayoflanguage === "undefined") ? "en" : select2arrayoflanguage,
+					containerCssClass: ":all:",
+					placeholder: "",
+					minimumInputLength: '.((int) $minlengthforajax).',
+					ajax: {
+						url: "'.DOL_URL_ROOT.'/user/ajax/users.php?'.$urloption.'",
+						dataType: "json",
+						delay: 250,
+						data: function(params) {
+							var d = {};
+							d['.json_encode($htmlname).'] = params.term;
+							d.page = params.page || 1;
+							return d;
+						},
+						processResults: function(data) {
+							var result = [];
+							jQuery.each(data, function(i, val) {
+								result.push({ id: val.key, text: val.value });
+							});
+							return { results: result, pagination: { more: data.length >= '.((int) $ajaxpagesize).' } };
+						},
+						cache: true
+					}
+				});
+			});</script>';
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
@@ -2705,10 +2895,13 @@ class Form
 	 * @param int<0,2>			$outputmode 	0=HTML select string, 1=Array, 2=Detailed array
 	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
 	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
+	 * @param string 			$filterkey 		Natural search string to filter users on firstname, lastname or login (used by the user/ajax/users.php autocomplete endpoint)
+	 * @param int 				$limit 			Maximum number of rows to return (0 = no limit). Used by the user/ajax/users.php autocomplete endpoint.
+	 * @param int 				$limitoffset 	Offset of the first returned row (only applied when $limit > 0). Used by the user/ajax/users.php endpoint to page through the list.
 	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($userselected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0, $filterkey = '', $limit = 0, $limitoffset = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
@@ -2777,6 +2970,107 @@ class Form
 		$out = '';
 		$outarray = array();
 		$outarray2 = array();
+
+		// If the ajax "search to select" mode is enabled for users (constant USER_USE_SEARCH_TO_SELECT), we output a
+		// select2 combo calling user/ajax/users.php instead of loading the full list of users. This is limited to
+		// the HTML output: array output, forced combo, pseudo-entries (showalso) and per-line enabling (enableonly)
+		// keep the full-list behaviour. Both single and multiple select page through the same endpoint (see
+		// buildSelectDolusersAjaxSelect2Script()); only the <select> markup (single option vs multiple/[]) differs.
+		$canajaxsearchtoselect = !empty($conf->use_javascript_ajax) && getDolGlobalString('USER_USE_SEARCH_TO_SELECT') && !$forcecombo && empty($outputmode)
+			&& empty($showalso) && !(is_array($enableonly) && count($enableonly)) && $filterkey === '';
+
+		if ($canajaxsearchtoselect && !$multiple) {
+			$preselected = 0;
+			if (!empty($selected)) {
+				$firstval = reset($selected);
+				if (is_numeric($firstval) && (int) $firstval > 0) {
+					$preselected = (int) $firstval;
+				}
+			}
+
+			$preselectedlabel = '';
+			if ($preselected > 0) {
+				$usertmpselect = new User($this->db);
+				if ($usertmpselect->fetch($preselected) > 0) {
+					$fullNameMode = getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION') ? 0 : 1;
+					$preselectedlabel = $usertmpselect->getFullName($langs, $fullNameMode, -1, $maxlength);
+					if ($preselectedlabel === '') {
+						$preselectedlabel = $usertmpselect->login;
+					}
+				}
+				unset($usertmpselect);
+			}
+
+			$out .= '<select class="flat'.($morecss ? ' '.$morecss : ' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled ? ' disabled' : '').'>';
+			if ($preselected > 0) {
+				$out .= '<option value="'.$preselected.'" selected>'.dol_escape_htmltag($preselectedlabel).'</option>';
+			}
+			$out .= '</select>';
+
+			// Propagate the filters to the ajax endpoint so it returns the same subset as the full combo would
+			$urloption = $this->buildSelectDolusersAjaxUrlOption($htmlname, $exclude, $include, $force_entity, $showstatus, $notdisabled, $maxlength, $morefilter);
+
+			// A non-numeric value ('infinite') means "infinite list": no minimum number of chars, the list
+			// opens as soon as the field gets the focus (select2 queries the endpoint with an empty term).
+			$minlengthforajax = getDolGlobalInt('USER_USE_SEARCH_TO_SELECT');
+			if ($minlengthforajax < 1) {
+				$minlengthforajax = 0;
+			}
+			// Page size of the ajax endpoint (USER_LIMIT_SIZE): select2 keeps asking for the next page
+			// while the endpoint returns a full page, so the whole list stays browsable by scrolling.
+			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
+
+			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+
+			return $out;
+		}
+
+		if ($canajaxsearchtoselect && $multiple) {
+			// Multiple select + "search to select": render a select2 combo pre-filled with only the currently
+			// selected users as <option selected>. select2 keeps those and fetches the rest on demand from
+			// user/ajax/users.php instead of loading the whole llx_user table into the page.
+			$preselectedids = array();
+			foreach ($selected as $tmpid) {
+				if (is_numeric($tmpid) && (int) $tmpid > 0) {
+					$preselectedids[] = (int) $tmpid;
+				}
+			}
+
+			$fullNameMode = getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION') ? 0 : 1;
+			$out .= '<select class="flat'.($morecss ? ' '.$morecss : ' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'[]" multiple'.($disabled ? ' disabled' : '').'>';
+			if (count($preselectedids)) {
+				$usertmpselect = new User($this->db);
+				foreach ($preselectedids as $tmpid) {
+					if ($usertmpselect->fetch($tmpid) > 0) {
+						$labeltoshow = $usertmpselect->getFullName($langs, $fullNameMode, -1, $maxlength);
+						if ($labeltoshow === '') {
+							$labeltoshow = $usertmpselect->login;
+						}
+						$out .= '<option value="'.$tmpid.'" selected>'.dol_escape_htmltag($labeltoshow).'</option>';
+					}
+				}
+				unset($usertmpselect);
+			}
+			$out .= '</select>';
+
+			$urloption = $this->buildSelectDolusersAjaxUrlOption($htmlname, $exclude, $include, $force_entity, $showstatus, $notdisabled, $maxlength, $morefilter);
+
+			// A non-numeric value ('infinite') means "infinite list": no minimum number of chars, the list
+			// opens as soon as the field gets the focus (select2 queries the endpoint with an empty term).
+			$minlengthforajax = getDolGlobalInt('USER_USE_SEARCH_TO_SELECT');
+			if ($minlengthforajax < 1) {
+				$minlengthforajax = 0;
+			}
+			// Page size of the ajax endpoint (USER_LIMIT_SIZE): select2 keeps asking for the next page
+			// while the endpoint returns a full page, so the whole list stays browsable by scrolling.
+			$ajaxpagesize = getDolGlobalInt('USER_LIMIT_SIZE', 20);
+
+			$out .= $this->buildSelectDolusersAjaxSelect2Script($htmlname, $urloption, $minlengthforajax, $ajaxpagesize);
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
+
+			return $out;
+		}
 
 		// Do we want to show the label of entity into the combo list ?
 		$showlabelofentity = isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity) && !preg_match('/^search_/', $htmlname);
@@ -2848,10 +3142,37 @@ class Form
 			$sql .= $hookmanager->resPrint;
 		}
 
+		// Add criteria on the natural search string (used by the user/ajax/users.php autocomplete endpoint)
+		if ($filterkey !== '') {
+			$sql .= " AND (";
+			$prefix = getDolGlobalString('USER_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if USER_DONOTSEARCH_ANYWHERE is on
+			// For natural search
+			$search_crit = explode(' ', $filterkey);
+			$i = 0;
+			if (count($search_crit) > 1) {
+				$sql .= "(";
+			}
+			foreach ($search_crit as $crit) {
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
+				$sql .= "(u.firstname LIKE '".$this->db->escape($prefix.$crit)."%' OR u.lastname LIKE '".$this->db->escape($prefix.$crit)."%' OR u.login LIKE '".$this->db->escape($prefix.$crit)."%')";
+				$i++;
+			}
+			if (count($search_crit) > 1) {
+				$sql .= ")";
+			}
+			$sql .= ")";
+		}
+
 		if (!getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION')) {    // MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
 			$sql .= " ORDER BY u.statut DESC, u.firstname ASC, u.lastname ASC";
 		} else {
 			$sql .= " ORDER BY u.statut DESC, u.lastname ASC, u.firstname ASC";
+		}
+
+		if ($limit > 0) {
+			$sql .= $this->db->plimit($limit, ((int) $limitoffset > 0 ? (int) $limitoffset : 0));
 		}
 
 		dol_syslog(get_class($this) . "::select_dolusers", LOG_DEBUG);
@@ -3180,7 +3501,12 @@ class Form
 			$out .= '});';
 			$out .= '})</script>';
 			$out .= img_picto('', 'user', 'class="pictofixedwidth"');
-			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter, 0, '', 'minwidth200');
+			// Force a real combo (forcecombo=1): this widget drives the "Add" button from the <option> elements of the
+			// select, so it must not be replaced by the ajax autocomplete of select_dolusers() (USER_USE_SEARCH_TO_SELECT).
+			$out .= $this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter, 0, '', 'minwidth200', 0, 0, false, 1);
+			// select_dolusers() skips the select2 beautification when forcecombo is set, so re-apply it here.
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
 			$out .= ' <button type="submit" disabled class="button valignmiddle smallpaddingimp reposition butActionAdd" id="' . $action . 'assignedtouser" name="' . $action . 'assignedtouser" value="' . dol_escape_htmltag($langs->trans("Add")) . '">';
 			$out .= $langs->trans("Add").'</button>';
 			$out .= '</div>';
@@ -6963,7 +7289,7 @@ class Form
 					modal: true,
 					closeOnEscape: false,
 					buttons: {
-						"' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '": function() {
+						\'' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '\': function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
@@ -7001,11 +7327,11 @@ class Form
 							}
 							$(this).dialog("close");
 						},
-						"' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '": function() {
+						\'' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '\': function() {
 							var options = "token=' . urlencode(newToken()) . '";
 							var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
-							var page = "' . dol_escape_js(!empty($page) ? $page : '') . '";
-							var pageno="' . dol_escape_js(!empty($pageno) ? $pageno : '') . '";
+							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
+							var pageno=\'' . dol_escape_js(!empty($pageno) ? $pageno : '') . '\';
 							if (inputko.length > 0) {
 								$.each(inputko, function(i, inputname) {
 									var more = "";
@@ -7586,7 +7912,7 @@ class Form
 			print '<form method="POST" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			print '<input type="text" class="maxwidth75" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CU')) : 1) . '" spellcheck="false" /> ';
+			print '<input type="text" class="maxwidth75" name="' . $htmlname . '" value="' . (!empty($rate) ? price(price2num($rate, 'CR')) : 1) . '" spellcheck="false" /> ';
 			print '<select name="calculation_mode" id="calculation_mode">';
 			print '<option value="1">Change ' . $langs->trans("PriceUHT") . ' of lines</option>';
 			print '<option value="2">Change ' . $langs->trans("PriceUHTCurrency") . ' of lines</option>';
@@ -8578,7 +8904,7 @@ class Form
 						}
 						// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
 						if (!getDolGlobalString('MAIN_POPUP_CALENDAR_ON_FOCUS')) {
-							$buttonImage = $calendarpicto ?: DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png";
+							$buttonImage = $calendarpicto ?: DOL_URL_ROOT . "/theme/" . dol_escape_js($conf->theme) . "/img/object_calendarday.png";  // Correctly wrapped in '' below @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 							$retstring .= "
 								showOn: 'button',	/* both has problem with autocompletion */
 								buttonImage: '" . $buttonImage . "',
@@ -10731,7 +11057,7 @@ class Form
 				//$out .= 'console.log(\'addjscombo=1 for htmlname=' . dol_escape_js($htmlname) . '\');';
 				$out .= '$(document).ready(function () {
 							$(\'#' . dol_escape_js($htmlname) . '\').' . $tmpplugin . '({';
-					// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
+				// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 				if (preg_match('/onrightofpage/', $morecss)) {	// In this cas, htmlname must be an ID not a class.
 					$out .= ' dropdownAutoWidth: true, ';
 					$out .= ' dropdownParent: $(\'#'.$htmlname.'\').parent(), ';
@@ -12274,12 +12600,11 @@ class Form
 			$out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "' . $massactionname . '", "' . $cssclass . '"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		}
 		$out .= '         });
-/*
         	        $(".' . $cssclass . '").change(function() {
 						console.log("We check and change the tr class highlight after a change on .'.$cssclass.'");
 						var $row = $(this).closest("tr");
 						if ($row.length) {
-	    					var anyChecked = $row.find(\'input[type="checkbox"].checkforselect:checked\').length > 0;
+	    					var anyChecked = $row.find(\'input[type="checkbox"].' . $cssclass . ':checked\').length > 0;
 							console.log("anychecked="+anyChecked);
 							if (!anyChecked) {
 								$row.removeClass("highlight");
@@ -12288,7 +12613,6 @@ class Form
 							}
 						}
 					});
-*/
 		 	});
     	</script>';
 
@@ -12946,7 +13270,7 @@ class Form
 		$ret .= '<script>
 			$(document).ready(function() {
 				$("#value-selector").select2({
-					placeholder: "' . dol_escape_js($langs->trans('Value')) . '"
+					placeholder: \'' . dol_escape_js($langs->trans('Value')) . '\'
 				});
 				$("#value-selector").hide();
 				$("#value-selector").next(".select2-container").hide();

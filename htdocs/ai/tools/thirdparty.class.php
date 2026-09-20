@@ -169,6 +169,27 @@ class ToolThirdParty extends McpTool
 	}
 
 	/**
+	 * Third-party reads and writes.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'search_thirdparties' => array(array('societe', 'lire')),
+			'count_thirdparties' => array(array('societe', 'lire')),
+			'get_thirdparty_details' => array(array('societe', 'lire')),
+			'list_thirdparty_contacts' => array(array('societe', 'contact', 'lire')),
+			'create_thirdparty' => array(array('societe', 'creer')),
+			'update_thirdparty' => array(array('societe', 'creer')),
+			'add_thirdparty_contact' => array(array('societe', 'contact', 'creer'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *
@@ -360,8 +381,10 @@ class ToolThirdParty extends McpTool
 				"email"   => (string) $soc->email,
 				"phone"   => (string) $soc->phone,
 				"vat"     => (string) $soc->tva_intra,
-				// getLibStatut(2) returns the status label (short). Cast to string just in case.
-				"status"  => (string) $soc->getLibStatut(2),
+				// Mode 0: the plain label. Modes 2-5 return a <span class="badge">
+				// markup that the chat renders as raw HTML (and that the model
+				// would read as content), so they must not be used here.
+				"status"  => (string) $soc->getLibStatut(0),
 				"url"     => DOL_URL_ROOT . "/societe/card.php?socid=" . $soc->id
 			];
 		}

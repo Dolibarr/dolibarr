@@ -261,6 +261,14 @@ class McpHandler
 			}
 
 			foreach ($hookmanager->resArray as $moduleTools) {
+				if ($moduleTools instanceof McpTool) {
+					// Tolerance: a module that set results = array($tool)
+					// instead of array(array($tool)) still works - the
+					// HookManager flattens results into resArray, so bare
+					// instances are the natural mistake to make.
+					$this->registerTool(get_class($moduleTools), $moduleTools);
+					continue;
+				}
 				if (!is_array($moduleTools)) {
 					continue;
 				}
@@ -431,6 +439,11 @@ class McpHandler
 					continue;
 				}
 
+				// Do not advertise what this user cannot run.
+				if ($this->checkToolRights($tool, $name) !== '') {
+					continue;
+				}
+
 				if (empty($allowed)) {
 					// No restriction configured — include everything
 					if (empty($def['categories'])) {
@@ -453,6 +466,41 @@ class McpHandler
 	}
 
 	/**
+	 * Check the rights a tool declared for the acting user.
+	 *
+	 * @param McpTool $tool     Tool instance.
+	 * @param string  $toolName Tool being checked.
+	 * @return string '' when allowed, otherwise the missing right as "module/perm".
+	 */
+	private function checkToolRights($tool, $toolName)
+	{
+		if ($this->isSystemTool($tool)) {
+			return '';
+		}
+
+		$declared = method_exists($tool, 'getRequiredRights') ? $tool->getRequiredRights($toolName) : McpTool::RIGHTS_UNDECLARED;
+
+		if ($declared === McpTool::RIGHTS_ENFORCED_DOWNSTREAM) {
+			return '';	// REST API classes check DolibarrApiAccess::$user themselves
+		}
+		if ($declared === McpTool::RIGHTS_UNDECLARED) {
+			dol_syslog("[McpHandler] Tool '".$toolName."' declares no rights: denied.", LOG_WARNING);
+
+			return 'undeclared';
+		}
+		foreach ((array) $declared as $right) {
+			$right = (array) $right;
+			$module = isset($right[0]) ? $right[0] : '';
+			$perm = isset($right[1]) ? $right[1] : '';
+			$subperm = isset($right[2]) ? $right[2] : '';
+			if ($module === '' || !$this->user->hasRight($module, $perm, $subperm)) {
+				return $module.'/'.$perm.($subperm !== '' ? '/'.$subperm : '');
+			}
+		}
+
+		return '';
+	}
+	/**
 	 * Execute a specific tool by its name.
 	 *
 	 * Enforces the tool context allow-list as a second gate so that even a crafted
@@ -466,7 +514,30 @@ class McpHandler
 	public function executeTool(string $toolName, array $args): array
 	{
 		if (!isset($this->toolsByName[$toolName])) {
-			return ["error" => "Tool '{$toolName}' not found."];
+			// LLMs routinely emit near-miss tool names (create_invoice for
+			// create_customer_invoice). Recover when the real name is
+			// UNAMBIGUOUS: same action verb (segment before the first '_')
+			// and every underscore token of the requested name appears in the
+			// candidate. Exactly one match executes (logged); zero or several
+			// keep the clean error - never guess between candidates.
+			$reqTokens = explode('_', dol_strtolower($toolName));
+			$verb = $reqTokens[0];
+			$candidates = array();
+			foreach (array_keys($this->toolsByName) as $realName) {
+				if (strpos($realName, $verb.'_') !== 0 || $this->isSystemTool($this->toolsByName[$realName])) {
+					continue;
+				}
+				$realTokens = explode('_', $realName);
+				if (!array_diff($reqTokens, $realTokens)) {
+					$candidates[] = $realName;
+				}
+			}
+			if (count($candidates) === 1) {
+				dol_syslog("[McpHandler] Tool name '".$toolName."' recovered to '".$candidates[0]."'.", LOG_INFO);
+				$toolName = $candidates[0];
+			} else {
+				return ["error" => "Tool '{$toolName}' not found."];
+			}
 		}
 
 		$toolInstance = $this->toolsByName[$toolName];
@@ -487,6 +558,13 @@ class McpHandler
 		// execute
 		try {
 			dol_syslog('[McpHandler] Executing tool \'' . $toolName . '\' with args: ' . json_encode($args), LOG_INFO);
+			$missingRight = $this->checkToolRights($toolInstance, $toolName);
+			if ($missingRight !== '') {
+				return array('error' => ($missingRight === 'undeclared')
+					? "Tool '".$toolName."' cannot run: it declares no required rights."
+					: "Permission denied: '".$toolName."' requires the right ".$missingRight.".");
+			}
+
 			$result = $toolInstance->execute($toolName, $args);
 			dol_syslog('[McpHandler] Tool \'' . $toolName . '\' executed successfully.', LOG_INFO);
 			return $result;

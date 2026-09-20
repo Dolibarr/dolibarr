@@ -1598,10 +1598,8 @@ class BonPrelevement extends CommonObject
 			}
 
 			if (!$error && !$notrigger) {
-				$triggerName = 'DIRECT_DEBIT_ORDER_CREATE';
-				if ($type != 'bank-transfer') {
-					$triggerName = 'CREDIT_TRANSFER_ORDER_CREATE';
-				}
+				$triggerName = ($type == 'bank-transfer') ? 'CREDIT_TRANSFER_ORDER_CREATE' : 'DIRECT_DEBIT_ORDER_CREATE';
+				$this->amount = $this->total;
 
 				// Call trigger
 				$result = $this->call_trigger($triggerName, $user);

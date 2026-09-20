@@ -79,7 +79,10 @@ export function initAiAssistant(container) {
     let clarificationContext = null;
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
-    let attachedDoc = null;
+    let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
+    // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
+    // the per-file/total size caps live server-side too.
+    const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -259,10 +262,24 @@ export function initAiAssistant(container) {
         uploadBtn.addEventListener('click', () => fileInput.click());
 
         fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+            const files = Array.from(e.target.files || []);
+            if (!files.length) return;
 
-            renderChip(file.name, 'loading');
+            for (const file of files) {
+                if (attachedDocs.filter((d) => !d.error).length >= MAX_ATTACHED_DOCS) {
+                    statusBar.innerText = t('AIAttachmentTooMany').replace('%s', String(MAX_ATTACHED_DOCS));
+                    break;
+                }
+                await attachOneFile(file);
+            }
+
+            fileInput.value = '';
+        });
+    }
+
+    /** Process one selected file and add it to the attached-documents list. */
+    async function attachOneFile(file) {
+            renderChips({ name: file.name, loading: true });
             statusBar.innerText = t('ProcessingFile') + ` ${file.name}...`;
 
             try {
@@ -281,6 +298,31 @@ export function initAiAssistant(container) {
                 const LOCAL_EXTRACT_TIMEOUT_MS = 20000;
                 const LOCAL_IMAGE_MAX_BYTES = 1500000;
                 const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|gif|bmp|webp)$/i.test(file.name);
+
+                // HEIC/HEIF (iPhone photos): no provider-agnostic path exists — the
+                // in-browser OCR cannot decode it, Anthropic/OpenAI reject the MIME
+                // and only Gemini takes it natively. Route: transcode to JPEG via
+                // canvas where the browser can decode HEIC (Safari/iOS — precisely
+                // where those photos come from); otherwise send natively when the
+                // configured provider accepts it; otherwise explain clearly.
+                if (isHeic(file)) {
+                    let heicPayload = '';
+                    try {
+                        heicPayload = await transcodeImageToJpegMarker(file);
+                    } catch (errHeic) {
+                        if (parseInt(config.providerAcceptsHeic || 0, 10)) {
+                            const b64 = String(await fileToBase64(file)).split(',').pop();
+                            heicPayload = `__FILE_ATTACHMENT__[image/heic]::${b64}`;
+                        } else {
+                            throw new Error(t('AIAttachmentHeicUnsupported'));
+                        }
+                    }
+                    attachedDocs.push({ name: file.name, payload: heicPayload });
+                    renderChips();
+                    statusBar.innerText = '';
+                    input.focus();
+                    return;
+                }
                 // Enforced privacy redaction: document contents cannot be masked,
                 // so the cloud-attachment fallback is off the table. Local
                 // extraction becomes the only route - attempt it even for large
@@ -314,19 +356,40 @@ export function initAiAssistant(container) {
 
                 // The content NEVER goes into the input nor the conversation:
                 // it is kept aside and sent as context with the next message.
-                attachedDoc = { name: file.name, payload: contentPayload };
-                renderChip(file.name, 'ready');
+                attachedDocs.push({ name: file.name, payload: contentPayload });
+                renderChips();
                 statusBar.innerText = '';
                 input.focus();
             } catch (err) {
                 console.error(err);
-                attachedDoc = null;
-                renderChip(file.name, 'error');
+                // Keep an error chip so the user sees WHICH file failed in a
+                // multi-selection; it is excluded from sending and removable.
+                attachedDocs.push({ name: file.name, payload: '', error: true });
+                renderChips();
                 statusBar.innerText = t('Error') + ": " + err.message;
             }
+    }
 
-            fileInput.value = '';
+    /** HEIC/HEIF detection: browsers often report an empty MIME for those. */
+    function isHeic(file) {
+        return file.type === 'image/heic' || file.type === 'image/heif' || /\.(heic|heif)$/i.test(file.name);
+    }
+
+    /**
+     * Transcode an image file to a JPEG cloud-attachment marker via canvas.
+     * Only works where the browser can decode the source format (HEIC: Safari).
+     */
+    async function transcodeImageToJpegMarker(file) {
+        const bitmap = await createImageBitmap(file);	// throws where HEIC is not decodable
+        const canvas = document.createElement('canvas');
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        canvas.getContext('2d').drawImage(bitmap, 0, 0);
+        const blob = await new Promise((resolve, reject) => {
+            canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.85);
         });
+        const base64 = String(await fileToBase64(blob)).split(',').pop();
+        return `__FILE_ATTACHMENT__[image/jpeg]::${base64}`;
     }
 
     /** Pick a FontAwesome icon class from a file name extension. */
@@ -344,27 +407,46 @@ export function initAiAssistant(container) {
         return String(s).replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
     }
 
-    /** Render the attached-file chip above the input pill. */
-    function renderChip(name, state) {
+    /**
+     * Render the attached-file chips above the input pill from attachedDocs,
+     * optionally appending a transient spinner chip for a file being processed.
+     * Each chip carries its own remove cross (by index).
+     */
+    function renderChips(processing) {
         if (!chipArea) return;
-        chipArea.classList.remove('ai-hidden');
-        const stateClass = (state === 'error') ? ' chip-error' : '';
-        const icon = (state === 'loading') ? 'fa-spinner fa-spin' : chipIcon(name);
-        chipArea.innerHTML = '<span class="file-chip' + stateClass + '">'
-            + '<i class="fa ' + icon + ' chip-icon"></i>'
-            + '<span class="chip-name">' + escapeHtml(name) + '</span>'
-            + '<button type="button" class="chip-x" title="' + escapeHtml(t('Cancel')) + '">&times;</button>'
-            + '</span>';
-        chipArea.querySelector('.chip-x').addEventListener('click', clearChip);
-    }
-
-    /** Remove the chip and forget the attached document. */
-    function clearChip() {
-        attachedDoc = null;
-        if (chipArea) {
+        if (!attachedDocs.length && !processing) {
             chipArea.innerHTML = '';
             chipArea.classList.add('ai-hidden');
+            return;
         }
+        chipArea.classList.remove('ai-hidden');
+        let html = '';
+        attachedDocs.forEach((doc, idx) => {
+            html += '<span class="file-chip' + (doc.error ? ' chip-error' : '') + '">'
+                + '<i class="fa ' + chipIcon(doc.name) + ' chip-icon"></i>'
+                + '<span class="chip-name">' + escapeHtml(doc.name) + '</span>'
+                + '<button type="button" class="chip-x" data-idx="' + idx + '" title="' + escapeHtml(t('Cancel')) + '">&times;</button>'
+                + '</span>';
+        });
+        if (processing) {
+            html += '<span class="file-chip">'
+                + '<i class="fa fa-spinner fa-spin chip-icon"></i>'
+                + '<span class="chip-name">' + escapeHtml(processing.name) + '</span>'
+                + '</span>';
+        }
+        chipArea.innerHTML = html;
+        chipArea.querySelectorAll('.chip-x').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                attachedDocs.splice(parseInt(btn.getAttribute('data-idx'), 10), 1);
+                renderChips();
+            });
+        });
+    }
+
+    /** Forget every attached document and hide the chip area. */
+    function clearChip() {
+        attachedDocs = [];
+        renderChips();
     }
 
     /** Inline (read-only) chip markup shown inside a sent user message. */
@@ -1330,7 +1412,7 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingIntent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
             appendMsg('bot', formatResult(result, false, pendingIntent.tool));
@@ -1341,18 +1423,40 @@ export function initAiAssistant(container) {
         input.focus();
     }
 
+    // Parse a fetch Response that must be JSON. When the Dolibarr session has
+    // expired, the endpoints answer with the HTML login form (HTTP 200), which
+    // used to surface as a cryptic "Unexpected token '<'" network error: detect
+    // that case and tell the user to sign back in instead.
+    async function aiJson(response) {
+        const raw = await response.text();
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            if (/<\s*(!doctype|html|form|body)[\s>]/i.test(raw)) {
+                throw new Error(t('AISessionExpiredReload'));
+            }
+            throw e;
+        }
+    }
+
     async function handleQuery() {
         const query = input.value.trim();
-        if (!query && !attachedDoc) return;
+        const readyDocs = attachedDocs.filter((d) => !d.error);
+        if (!query && !readyDocs.length) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
 
         // What is SENT = document context + question; what is DISPLAYED = chip + question.
         let sentQuery = query;
         let displayHtml = escapeHtml(query);
-        if (attachedDoc) {
-            const docContext = `${t('DocContextIntro')}\n\n${attachedDoc.payload}\n\n--- ${t('DocContextOutro')} ---\n`;
+        if (readyDocs.length) {
+            // One wrapped context block per document, so each keeps its own
+            // intro/outro delimiters whatever mix of text and markers is sent.
+            // The trailing space after the payload matters: the server-side marker
+            // regex consumes trailing newlines as part of the base64 run, which
+            // used to glue '[attached document]' to the outro line in the logs.
+            const docContext = readyDocs.map((d) => `${t('DocContextIntro')}\n\n${d.payload} \n\n--- ${t('DocContextOutro')} ---`).join('\n') + '\n';
             sentQuery = docContext + (query ? '\n' + query : '');
-            displayHtml = chipHtmlFor(attachedDoc.name) + (query ? '<br>' + displayHtml : '');
+            displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
         }
 
         appendMsg('user', displayHtml);
@@ -1366,9 +1470,32 @@ export function initAiAssistant(container) {
             const chosenModel = resolveModel();
             const intentRes = await fetch(epUrl('parse_intent.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery })
+                // Page context (set by the printCommonFooter hook on card pages)
+                // lets the server resolve "this invoice" - it re-validates the
+                // ids against the user's rights before trusting them.
+                body: JSON.stringify(Object.assign(
+                    chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                    (function () {
+                        const ctx = window.aiPageContext;
+                        if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
+                        // On list pages, the mass-action checkboxes carry the row
+                        // ids: checked ones are the user's live selection.
+                        if (ctx.list) {
+                            // The mass-action checkboxes carry rowids by core
+                            // convention on every list - a uniform source that
+                            // sidesteps the per-list SQL alias zoo server-side.
+                            const all = Array.from(document.querySelectorAll('.checkforselect'))
+                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
+                            if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
+                            const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
+                            if (sel.length) ctx.selected = sel;
+                        }
+                        return { context: ctx };
+                    })()
+                ))
             });
-            const intent = await intentRes.json();
+            const intent = await aiJson(intentRes);
             loadingMsg.remove();
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
@@ -1382,7 +1509,7 @@ export function initAiAssistant(container) {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await navRes.json();
+                const nav = await aiJson(navRes);
                 loadingNav.remove();
                 if (nav.error) { appendMsg('error', nav.error); }
                 else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fa fa-external-link"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
@@ -1395,7 +1522,7 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(intent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingData.remove();
             lastResult = { data: result, tool: intent.tool, query: query };
             appendMsg('bot', formatResult(result, false, intent.tool));

@@ -26,6 +26,7 @@
  * Copyright (C) 2025-2026	Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2977,6 +2978,9 @@ class Facture extends CommonInvoice
 			$facligne->total_localtax1 = -(float) $remise->total_localtax1;
 			$facligne->total_localtax2 = -(float) $remise->total_localtax2;
 
+			// The discount line must carry the currency of the invoice, like any other line
+			$facligne->fk_multicurrency = $this->fk_multicurrency;
+			$facligne->multicurrency_code = $this->multicurrency_code;
 			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
 			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_total_ht;
 			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_total_tva;

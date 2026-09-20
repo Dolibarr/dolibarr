@@ -31,7 +31,7 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 	$_SERVER['PHP_SELF'] = "phpunit";
 }
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -48,7 +48,39 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
+// Capture the pristine global objects once, at file load time (before any test runs).
+// Stored in $GLOBALS because @backupGlobals is disabled, so PHPUnit will not serialize
+// them. This replaces the old constructor that saved globals into instance properties:
+// the constructor override is not allowed anymore since PHPUnit 10 made
+// TestCase::__construct() final, and capturing here (instead of in setUpBeforeClass) is
+// robust against subclasses that override setUpBeforeClass() without calling the parent.
+$GLOBALS['PHPUNIT_SAVCONF'] = $conf;
+$GLOBALS['PHPUNIT_SAVUSER'] = $user;
+$GLOBALS['PHPUNIT_SAVLANGS'] = $langs;
+$GLOBALS['PHPUNIT_SAVDB'] = $db;
+$GLOBALS['PHPUNIT_SAVMYSOC'] = $mysoc;
+
 use PHPUnit\Framework\TestCase;
+
+// PHPUnit 12+ declares TestCase::onNotSuccessfulTest() with a ": never" return type
+// (it was ": void" in PHPUnit <= 11). A ": void" override cannot satisfy a ": never"
+// parent (and vice-versa), and the "never" type only exists since PHP 8.2, so the
+// override must match the installed PHPUnit version. We detect the parent return type
+// at runtime and load the matching trait file. Each file defines the SAME trait name
+// (OnNotSuccessfulTestTrait), so only one of them is ever loaded.
+$onNotSuccessfulReturnType = 'void';
+if (method_exists(TestCase::class, 'onNotSuccessfulTest')) {
+	$rt = (new ReflectionMethod(TestCase::class, 'onNotSuccessfulTest'))->getReturnType();
+	if ($rt !== null) {
+		// @phan-suppress-next-line PhanUndeclaredMethod
+		$onNotSuccessfulReturnType = $rt->getName();
+	}
+}
+if (PHP_VERSION_ID >= 80200 && $onNotSuccessfulReturnType === 'never') {
+	require_once __DIR__.'/OnNotSuccessfulTestTraitNever.php';
+} else {
+	require_once __DIR__.'/OnNotSuccessfulTestTrait.php';
+}
 
 /**
  * Class for PHPUnit tests
@@ -63,6 +95,8 @@ use PHPUnit\Framework\TestCase;
 /** @phpstan-ignore class.notFound */
 abstract class CommonClassTest extends TestCase
 {
+	use OnNotSuccessfulTestTrait;
+
 	/** @var \Conf */
 	protected $savconf;
 	/** @var \User */
@@ -71,6 +105,8 @@ abstract class CommonClassTest extends TestCase
 	protected $savlangs;
 	/** @var \DoliDB */
 	protected $savdb;
+	/** @var \Societe */
+	protected $savmysoc;
 
 	/**
 	 * Number of Dolibarr log lines to show in case of error
@@ -94,31 +130,6 @@ abstract class CommonClassTest extends TestCase
 	public $logSizeAtSetup = 0;
 
 	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param string       $name       Name
-	 * @param array<mixed> $data      Test data
-	 * @param string       $dataName   Test data name.
-	 */
-	public function __construct($name = null, array $data = array(), $dataName = '')
-	{
-		parent::__construct($name, $data, $dataName);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
-
-		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
-			print get_called_class()." db->type=".$db->type." user->id=".$user->id.PHP_EOL;
-		}
-		//print " - db ".$db->db;
-	}
-
-	/**
 	 * setUpBeforeClass
 	 *
 	 * @return void
@@ -134,135 +145,6 @@ abstract class CommonClassTest extends TestCase
 	}
 
 	/**
-	 *	This method is called when a test fails
-	 *
-	 *  @param	Throwable	$t		Throwable object
-	 *  @return void
-	 */
-	protected function onNotSuccessfulTest(Throwable $t): void
-	{
-		global $db;
-
-		// Get the lines that were added since the start of the test
-
-		if (file_exists($this->logfile)) {
-			$filecontent = (string) @file_get_contents($this->logfile);
-		} else {
-			$filecontent = '';
-		}
-
-		$currentSize = strlen($filecontent);
-		if ($currentSize >= $this->logSizeAtSetup) {
-			$filecontent = substr($filecontent, $this->logSizeAtSetup);
-		}
-		$lines = preg_split("/\r?\n/", $filecontent, -1, PREG_SPLIT_NO_EMPTY);
-
-
-		// Determine the number of lines to show
-
-		$nbLinesToShow = $this->nbLinesToShow;
-		// @phan-suppress-next-line PhanUndeclaredClass
-		/** @phpstan-ignore comparison.alwaysFalse */
-		if (get_class($t) === 'PHPUnit\Framework\Error\Notice') {
-			$nbLinesToShow = 3;
-		}
-
-		// Determine test information to show
-
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		// @phpstan-ignore method.notFound
-		$failedTestMethod = $this->getName(false);
-		$className = get_called_class();
-
-		// Get the test method's reflection
-		$reflectionMethod = new ReflectionMethod($className, $failedTestMethod);
-
-		// Get the test method's data set
-		// @phan-suppress-next-line PhanUndeclaredMethod
-		// @phpstan-ignore method.notFound
-		$argsText = $this->getDataSetAsString(true);
-
-		$totalLines = count($lines);
-		$first_line = max(0, $totalLines - $nbLinesToShow);
-		// Get the last line of the log
-		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
-
-
-		// Show log information
-
-		print PHP_EOL;
-		// Use GitHub Action compatible group output (:warning: arguments not encoded)
-		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
-		// @phan-suppress-next-line PhanUndeclaredClassMethod
-		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
-
-		// Show some information about where it happened
-		// @phan-suppress-next-line PhanUndeclaredClassMethod
-		foreach ($t->getTrace() as $idx => $trace) {
-			if (isset($trace['file'], $trace['line'])  // Only if we have a file name
-				&& !preg_match('/(?:\bphar\b|Framework)/', $trace['file']) // Only if it's not in phpunit
-			) {
-				print "## backtrace($idx): From {$trace['file']}:{$trace['line']}.".PHP_EOL;
-			}
-		}
-
-
-		if ($nbLinesToShow) {
-			print "\n";
-			print "########## We output the last ".$nbLinesToShow." lines of the file ".basename($this->logfile)." for the failed test ".$failedTestMethod." (file has ".$totalLines." lines) ".PHP_EOL;
-			$newLines = count($last_lines);
-			if ($newLines > 0) {
-				// Show partial log file contents when requested.
-				print "## Show last ".count($last_lines)." lines of dolibarr.log file -----".PHP_EOL;
-				foreach ($last_lines as $line) {
-					print $line.PHP_EOL;
-				}
-				print "########## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
-			} else {
-				print "## No new lines in 'dolibarr.log' since start of this test.".PHP_EOL;
-			}
-		}
-		print "##[endgroup]".PHP_EOL;
-
-		// Print last line of file /var/log/apache2/travis_error_log (Unix only)
-		/* File travis_error_log seems not found on travis
-		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-			$logFile = '/var/log/apache2/travis_error_log';
-
-			if (file_exists($logFile) && is_readable($logFile)) {
-				$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-				$lastFiveLines = array_slice($lines, -10);
-				print "\n";
-				echo "Last 10 lines of $logFile:\n";
-				foreach ($lastFiveLines as $line) {
-					echo $line . "\n";
-				}
-			} else {
-				echo "File $logFile does not exist or is not readable.\n";
-			}
-		}
-		*/
-
-		// Try to output DB info
-		if ($db->type == 'mysqli') {
-			print "\n";
-			print "########## We try to output some DB info".PHP_EOL;
-			$resql = $db->query("SHOW ENGINE INNODB STATUS");
-			if ($resql) {
-				$obj = $db->fetch_object($resql);
-				print $obj->Status.PHP_EOL;
-			} else {
-				print $db->lasterror().PHP_EOL;
-			}
-		}
-
-		print PHP_EOL;
-
-		/** @phpstan-ignore method.notFound */
-		parent::onNotSuccessfulTest($t);
-	}
-
-	/**
 	 * Init phpunit tests
 	 *
 	 * @return  void
@@ -270,6 +152,13 @@ abstract class CommonClassTest extends TestCase
 	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
+
+		// Populate instance snapshots from the global snapshot captured at file load time
+		$this->savconf = $GLOBALS['PHPUNIT_SAVCONF'];
+		$this->savuser = $GLOBALS['PHPUNIT_SAVUSER'];
+		$this->savlangs = $GLOBALS['PHPUNIT_SAVLANGS'];
+		$this->savdb = $GLOBALS['PHPUNIT_SAVDB'];
+		$this->savmysoc = $GLOBALS['PHPUNIT_SAVMYSOC'];
 
 		$conf = $this->savconf;
 		$user = $this->savuser;
@@ -682,27 +571,5 @@ abstract class CommonClassTest extends TestCase
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * PHPUnit compatibility helper for assertMatchesRegularExpression
-	 *
-	 * assertMatchesRegularExpression was introduced in PHPUnit 8.0.
-	 * This method provides backward compatibility with PHPUnit 7.x which only has assertRegExp.
-	 *
-	 * @param string $pattern Regular expression pattern
-	 * @param string $string  String to match against
-	 * @param string $message Optional message
-	 * @return void
-	 */
-	public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
-	{
-		if (method_exists('PHPUnit\Framework\Assert', 'assertMatchesRegularExpression')) {
-			// PHPUnit 8.0+: call parent's method
-			PHPUnit\Framework\Assert::assertMatchesRegularExpression($pattern, $string, $message);
-		} else {
-			// PHPUnit 7.x and earlier: use assertRegExp
-			PHPUnit\Framework\Assert::assertRegExp($pattern, $string, $message);
-		}
 	}
 }
