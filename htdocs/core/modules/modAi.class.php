@@ -291,6 +291,26 @@ class modAi extends DolibarrModules
 		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AI */
+		// The full-page assistant (ai/assistant/index.php) was reachable only by
+		// typing its URL: the topbar popover opens the quick chat, but nothing in
+		// the menus leads to the page with the welcome screen and its ready-made
+		// prompts. One entry under Tools, hideable with AI_MENU_HIDE_TOOLSMENU
+		// and gated by the same ai->assistant->use right as the page itself.
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=tools',
+			'type' => 'left',
+			'titre' => 'AIAssistant',
+			'prefix' => img_picto('', 'fa-robot', 'class="paddingright pictofixedwidth"'),
+			'mainmenu' => 'tools',
+			'leftmenu' => 'ai',
+			'url' => '/ai/assistant/index.php?mainmenu=tools&leftmenu=ai',
+			'langs' => 'other',
+			'position' => 200,
+			'enabled' => 'isModEnabled("ai") && getDolGlobalString("AI_ASSISTANT_ENABLED") && !getDolGlobalString("AI_MENU_HIDE_TOOLSMENU")',
+			'perms' => '$user->hasRight("ai", "assistant", "use")',
+			'target' => '',
+			'user' => 2,
+		);
 		/* END MODULEBUILDER LEFTMENU AI */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES
