@@ -2885,6 +2885,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 
 			var cardElement = elements.create('card', {style: style});
 
+				<?php if (!empty($sessionstripe)) { ?>
 			// Comment this to avoid the redirect
 			stripe.redirectToCheckout({
 			  // Make the id field from the Checkout Session creation API response
@@ -2896,6 +2897,10 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 			  // error, display the localized error message to your customer
 			  // using `result.error.message`.
 			});
+				<?php } else { ?>
+			// $sessionstripe was not created (Stripe API call failed, see the error message printed above)
+			console.error('Failed to create Stripe Checkout Session');
+				<?php } ?>
 
 
 				<?php
