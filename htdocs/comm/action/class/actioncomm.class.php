@@ -3250,4 +3250,82 @@ class ActionComm extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 * Mark elapsed events from the configured category as done.
+	 * CAN BE A CRON TASK
+	 *
+	 * Events without an end date and canceled events (percentage -1) are ignored.
+	 *
+	 * @return int<-1,0> 0 if OK, -1 if KO
+	 */
+	public function autoCompleteElapsedEvents()
+	{
+		global $langs, $user;
+
+		$this->output = '';
+		$this->error = '';
+
+		if (!isModEnabled('agenda') || !isModEnabled('category')) {
+			$langs->load('agenda');
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv('Agenda'));
+			return 0;
+		}
+
+		$categoryId = getDolGlobalInt('AGENDA_AUTO_COMPLETE_EVENT_CATEGORY_ID');
+		if ($categoryId <= 0) {
+			return 0;
+		}
+
+		$sql = 'SELECT DISTINCT a.id';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_actioncomm as ca ON ca.fk_actioncomm = a.id';
+		$sql .= ' WHERE a.entity IN ('.getEntity('actioncomm').')';
+		$sql .= ' AND ca.fk_categorie = '.((int) $categoryId);
+		$sql .= ' AND a.datep2 IS NOT NULL';
+		$sql .= " AND a.datep2 <= '".$this->db->idate(dol_now())."'";
+		$sql .= ' AND a.percent >= 0 AND a.percent < 100';
+		$sql .= $this->db->plimit(1000);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$eventIds = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$eventIds[] = (int) $obj->id;
+		}
+		$this->db->free($resql);
+
+		if (empty($eventIds)) {
+			$this->output = '0 events completed';
+			return 0;
+		}
+
+		$this->db->begin();
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'actioncomm';
+		$sql .= ' SET percent = 100';
+		if (!empty($user->id)) {
+			$sql .= ', fk_user_mod = '.((int) $user->id);
+		}
+		$sql .= ' WHERE id IN ('.$this->db->sanitize(implode(',', $eventIds)).')';
+		// Repeat mutable conditions to preserve a cancellation or reschedule made
+		// between the selection and the update.
+		$sql .= ' AND datep2 IS NOT NULL';
+		$sql .= " AND datep2 <= '".$this->db->idate(dol_now())."'";
+		$sql .= ' AND percent >= 0 AND percent < 100';
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$completedEvents = $this->db->affected_rows($resql);
+		$this->db->commit();
+		$this->output = $completedEvents.' events completed';
+		return 0;
+	}
 }

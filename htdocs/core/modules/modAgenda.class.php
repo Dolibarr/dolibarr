@@ -124,6 +124,7 @@ class modAgenda extends DolibarrModules
 		$this->cronjobs = array(
 			0 => array('label' => 'SendEmailsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendEmailsReminder', 'parameters' => '', 'comment' => 'SendEMailsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
 			1 => array('label' => 'SendSmsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendSmsReminder', 'parameters' => '', 'comment' => 'SendSmsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
+			2 => array('label' => 'AutoCompleteElapsedEvents', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'autoCompleteElapsedEvents', 'parameters' => '', 'comment' => 'AutoCompleteElapsedEvents', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda") && isModEnabled("category")', 'datestart' => $datestart),
 		);
 
 		// Rights

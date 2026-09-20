@@ -29,6 +29,9 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -104,6 +107,13 @@ if ($action == "save" && empty($cancel)) {
 			if (!($res > 0)) {
 				$error++;
 			}
+		}
+	}
+
+	if (isModEnabled('category')) {
+		$res = dolibarr_set_const($db, 'AGENDA_AUTO_COMPLETE_EVENT_CATEGORY_ID', GETPOSTINT('AGENDA_AUTO_COMPLETE_EVENT_CATEGORY_ID'), 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
 		}
 	}
 
@@ -226,6 +236,24 @@ if (!empty($triggers)) {
 }
 print '</table>';
 print '</div>';
+
+if (isModEnabled('category')) {
+	print '<br>';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans('AutoCompleteElapsedEvents').'</th></tr>';
+	print '<tr class="oddeven">';
+	print '<td>';
+	print $langs->trans('AutoCompleteEventCategory');
+	print '<br><span class="opacitymedium">'.$langs->trans('AutoCompleteEventCategoryHelp').'</span>';
+	print '</td>';
+	print '<td class="right">';
+	print $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, getDolGlobalInt('AGENDA_AUTO_COMPLETE_EVENT_CATEGORY_ID'), 'AGENDA_AUTO_COMPLETE_EVENT_CATEGORY_ID', 64, 0, 0, 0, 'minwidth300');
+	print '</td>';
+	print '</tr>';
+	print '</table>';
+	print '</div>';
+}
 
 print dol_get_fiche_end();
 

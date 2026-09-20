@@ -222,3 +222,7 @@ STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
 
 STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
 STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.
+
+AutoCompleteElapsedEvents=Automatically complete elapsed events
+AutoCompleteEventCategory=Category of events to complete automatically
+AutoCompleteEventCategoryHelp=Events in this category are marked as done after their end date. Canceled events and events moved to a future date are not completed.

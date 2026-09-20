@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
+require_once dirname(__FILE__).'/../../htdocs/categories/class/categorie.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -165,6 +166,79 @@ class ActionCommTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		return $localobject->id;
+	}
+
+	/**
+	 * testAutoCompleteElapsedEvents
+	 *
+	 * @return void
+	 */
+	public function testAutoCompleteElapsedEvents()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$categoryWasEnabled = !empty($conf->modules['category']);
+		$conf->modules['category'] = 1;
+
+		$category = new Categorie($db);
+		$category->type = Categorie::TYPE_ACTIONCOMM;
+		$category->label = 'PHPUnit auto-complete '.dol_now();
+		$categoryId = $category->create($user);
+		$this->assertGreaterThan(0, $categoryId);
+
+		$now = dol_now();
+		$eventDefinitions = array(
+			'elapsed' => array('percentage' => 0, 'start' => $now - 7200, 'end' => $now - 3600),
+			'canceled' => array('percentage' => -1, 'start' => $now - 7200, 'end' => $now - 3600),
+			'future' => array('percentage' => 0, 'start' => $now + 3600, 'end' => $now + 7200),
+		);
+		$events = array();
+		foreach ($eventDefinitions as $eventKey => $eventDefinition) {
+			$event = new ActionComm($db);
+			$event->type_code = 'AC_OTH';
+			$event->code = 'AC_OTH';
+			$event->label = 'PHPUnit auto-complete event '.$eventKey;
+			$event->datep = $eventDefinition['start'];
+			$event->datef = $eventDefinition['end'];
+			$event->percentage = $eventDefinition['percentage'];
+			$event->authorid = $user->id;
+			$event->userownerid = $user->id;
+			$eventId = $event->create($user);
+			$this->assertGreaterThan(0, $eventId);
+			$this->assertGreaterThan(0, $event->setCategories(array($categoryId)));
+			$events[$eventKey] = $event;
+		}
+
+		$conf->global->AGENDA_AUTO_COMPLETE_EVENT_CATEGORY_ID = $categoryId;
+		$result = $events['elapsed']->autoCompleteElapsedEvents();
+		$this->assertSame(0, $result);
+
+		$completedEvent = new ActionComm($db);
+		$this->assertGreaterThan(0, $completedEvent->fetch($events['elapsed']->id));
+		$this->assertSame(100, (int) $completedEvent->percentage);
+
+		$canceledEvent = new ActionComm($db);
+		$this->assertGreaterThan(0, $canceledEvent->fetch($events['canceled']->id));
+		$this->assertSame(-1, (int) $canceledEvent->percentage);
+
+		$futureEvent = new ActionComm($db);
+		$this->assertGreaterThan(0, $futureEvent->fetch($events['future']->id));
+		$this->assertSame(0, (int) $futureEvent->percentage);
+
+		foreach ($events as $event) {
+			$event->delete($user);
+		}
+		$category->delete($user);
+		unset($conf->global->AGENDA_AUTO_COMPLETE_EVENT_CATEGORY_ID);
+		if ($categoryWasEnabled) {
+			$conf->modules['category'] = 1;
+		} else {
+			unset($conf->modules['category']);
+		}
 	}
 
 	/**
