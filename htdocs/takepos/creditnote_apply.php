@@ -65,7 +65,7 @@ if (!$user->hasRight('takepos', 'run')) {
 $error = 0;
 $successmsg = '';
 
-if ($action == 'confirm_applycredit' && $discountid > 0 && !empty($_POST['token'])) {
+if ($action == 'confirm_applycredit' && $discountid > 0 && !empty($_POST['token']) && $user->hasRight('takepos', 'run')) {
 	// Apply the selected credit to the invoice (with auto-split if needed)
 	$db->begin();
 
@@ -228,7 +228,7 @@ if ($invoice->id > 0 && $invoice->socid > 0) {
 }
 
 // Confirmation step: a credit was selected, show details before executing
-if ($action == 'applycredit' && $discountid > 0 && empty($error)) {
+if ($action == 'applycredit' && $discountid > 0 && empty($error) && $user->hasRight('takepos', 'run')) {
 	$discountToConfirm = new DiscountAbsolute($db);
 	$discountToConfirm->fetch($discountid);
 
