@@ -2208,7 +2208,6 @@ class Contact extends CommonObject
 		if (!$error) {
 			$objects = array(
 				'ActionComm' => '/comm/action/class/actioncomm.class.php',
-				'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php',
 				'Contact' => '/contact/class/contact.class.php',
 				'User' => '/user/class/user.class.php',
 			);
