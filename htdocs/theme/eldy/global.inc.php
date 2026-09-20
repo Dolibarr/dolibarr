@@ -4678,6 +4678,13 @@ table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:first-of-type {
+	background: unset;	/* note using background-color here does not work */
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type {
+	background: unset;	/* note using background-color here does not work */
+}
+
 /* CSS to remove the interline border */
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
