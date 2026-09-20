@@ -15,6 +15,7 @@ Every modification must respect:
 - Do not break compatibility of PHP functions and methods
 - Do not introduce external dependencies without validation
 - Never rename existing functions or variables except if explicitly requested
+- Never remove commented code, even if it's deprecated, except if explicitly requested
 - Never remove blank lines from the code, even when multiple consecutive blank lines are present. 
 - Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
 - Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
