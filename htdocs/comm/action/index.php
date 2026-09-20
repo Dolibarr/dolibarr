@@ -1113,7 +1113,7 @@ if ($mode == 'show_day') {
 	$sql .= ' AND DAY(birthday) = '.((int) $day);
 } else {
 	// Load birthdays for all months covered by the displayed period (week or month grid)
-	$sql .= ' AND MONTH(birthday) IN ('.implode(',', array_map('intval', array_keys($birthdaymonthyearmap))).')';
+	$sql .= ' AND MONTH(birthday) IN ('.$db->sanitize(implode(',', array_keys($birthdaymonthyearmap))).')';
 }
 $sql .= ' ORDER BY birthday';
 
