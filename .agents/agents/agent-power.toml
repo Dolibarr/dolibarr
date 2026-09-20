@@ -12,6 +12,10 @@ When running bash commands, keep them plain so they can be auto-approved:
   or pipe the output to tee instead.
 """
 
+# Note: 
+# The scratchpad (tmp dir) is always allowed.
+# The allowlist and denylist will allow or deny dir not scratchpad and not workdir
+# The workdir is covered by default rule "permission"
 
 [tools.bash]
 permission = "always"
@@ -19,17 +23,21 @@ deny = ["rm -rf *", "sudo *"]
 
 [tools.grep]
 permission = "always"
-
-[tools.search_replace]
-permission = "always"
+allowlist = ["/tmp/**"]
 
 [tools.read_file]
 permission = "always"
+allowlist = ["/tmp/**"]
 
 [tools.write_file]
 permission = "always"
+allowlist = ["/tmp/**"]
 
 [tools.edit]
+permission = "always"
+allowlist = ["/tmp/**"]
+
+[tools.search_replace]
 permission = "always"
 
 [tools.web_fetch]
