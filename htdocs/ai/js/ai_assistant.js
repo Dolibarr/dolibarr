@@ -80,6 +80,31 @@ export function initAiAssistant(container) {
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
+
+    // --- Conversation persistence (storage is separate from the model context:
+    // reopening restores the bubbles, only PINNED messages are ever resent). ---
+    let conversationId = 0;          // 0 = the next message starts a new conversation
+    let restoringHistory = false;    // guard: reopening must not re-save messages
+    let persistQueue = Promise.resolve();   // keeps message order server-side
+
+    function chatHistoryApi(payload) {
+        return fetch(epUrl('../ajax/chat_history.php'), {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then((r) => r.json());
+    }
+
+    function persistMessage(div, type, rawText, html) {
+        persistQueue = persistQueue.then(() => chatHistoryApi({
+            action: 'save', id: conversationId,
+            role: (type === 'bot') ? 'assistant' : 'user',
+            raw: String(rawText).slice(0, 8000), html: String(html).slice(0, 200000),
+            pinned: div.classList.contains('ctx-pinned') ? 1 : 0
+        }).then((res) => {
+            if (res && res.id) conversationId = res.id;
+            if (res && res.message_id) div.dataset.msgId = String(res.message_id);
+        })).catch(() => { /* history is best-effort, the chat must never break on it */ });
+    }
     // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
     // the per-file/total size caps live server-side too.
     const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
@@ -222,6 +247,7 @@ export function initAiAssistant(container) {
                 chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
             }
             lastResult = { data: null, tool: '', query: '' };
+            conversationId = 0;   // past conversation stays in the history, a new one starts
             clarificationContext = null;
             input.focus();
         }
@@ -1262,8 +1288,15 @@ export function initAiAssistant(container) {
                     ev.stopPropagation();
                     div.classList.toggle('ctx-pinned');
                     updateContextBar();
+                    // Persist the pin state so it survives a reopen
+                    if (div.dataset.msgId) {
+                        chatHistoryApi({ action: 'pin', message_id: parseInt(div.dataset.msgId, 10), pinned: div.classList.contains('ctx-pinned') ? 1 : 0 }).catch(() => {});
+                    }
                 };
                 bubble.appendChild(pin);
+                if (!restoringHistory) {
+                    persistMessage(div, type, rawText, html);
+                }
             }
             div.appendChild(buildAvatar(type));
             div.appendChild(bubble);
@@ -1444,6 +1477,64 @@ export function initAiAssistant(container) {
     // expired, the endpoints answer with the HTML login form (HTTP 200), which
     // used to surface as a cryptic "Unexpected token '<'" network error: detect
     // that case and tell the user to sign back in instead.
+    // --- Conversation history panel (list / reopen / delete) ---
+    const historyBtn = container.querySelector('#ai-history-btn');
+    if (historyBtn) {
+        historyBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            const existing = container.querySelector('#ai-history-panel');
+            if (existing) { existing.remove(); return; }
+            const panel = document.createElement('div');
+            panel.id = 'ai-history-panel';
+            panel.innerHTML = '<div class="opacitymedium">…</div>';
+            historyBtn.insertAdjacentElement('afterend', panel);
+            chatHistoryApi({ action: 'list' }).then((res) => {
+                const items = (res && res.conversations) || [];
+                if (!items.length) { panel.innerHTML = '<div class="opacitymedium">' + t('AIHistoryEmpty') + '</div>'; return; }
+                panel.innerHTML = '';
+                items.forEach((c) => {
+                    const row = document.createElement('div');
+                    row.className = 'ai-history-item';
+                    row.innerHTML = '<span class="ai-history-title">' + escapeHtml(c.title || '…') + '</span>'
+                        + '<span class="ai-history-meta">' + escapeHtml(c.date) + ' · ' + c.nb + '</span>'
+                        + '<button type="button" class="ai-history-del" title="' + t('Cancel') + '">&times;</button>';
+                    row.querySelector('.ai-history-del').onclick = (e2) => {
+                        e2.stopPropagation();
+                        chatHistoryApi({ action: 'delete', id: c.id }).then(() => { row.remove(); if (conversationId === c.id) conversationId = 0; });
+                    };
+                    row.onclick = () => { panel.remove(); loadConversation(c.id); };
+                    panel.appendChild(row);
+                });
+            }).catch(() => { panel.innerHTML = '<div class="opacitymedium">' + t('AIError') + '</div>'; });
+        });
+        // Any click outside closes the panel
+        document.addEventListener('click', (ev) => {
+            const panel = container.querySelector('#ai-history-panel');
+            if (panel && !panel.contains(ev.target) && ev.target !== historyBtn) panel.remove();
+        });
+    }
+
+    function loadConversation(id) {
+        chatHistoryApi({ action: 'load', id: id }).then((res) => {
+            if (!res || !res.messages) return;
+            chat.querySelectorAll('.msg').forEach((n) => n.remove());
+            if (welcome) welcome.style.display = 'none';
+            restoringHistory = true;
+            res.messages.forEach((m) => {
+                const html = m.html || escapeHtml(m.raw).replace(/\n/g, '<br>');
+                appendMsg(m.role === 'assistant' ? 'bot' : 'user', html, null, m.raw);
+                const div = chat.lastElementChild;
+                if (div) {
+                    div.dataset.msgId = String(m.id);
+                    if (m.pinned) div.classList.add('ctx-pinned');
+                }
+            });
+            restoringHistory = false;
+            conversationId = res.id;
+            updateContextBar();
+        }).catch(() => {});
+    }
+
     // Compact, model-oriented snippet of a tool result for the pinned context:
     // the model needs the shape and the ids, not the full rendered table.
     function contextSnippetOf(result, toolName) {

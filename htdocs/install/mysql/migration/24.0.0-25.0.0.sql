@@ -342,3 +342,25 @@ ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcod
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
 
 
+-- AI chat: conversation persistence (reopen past conversations; storage is separate from the pinned context sent to the model)
+create table llx_ai_chat_conversation
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  fk_user					integer NOT NULL,
+  title						varchar(255),
+  date_creation				datetime NOT NULL,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+create table llx_ai_chat_message
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  fk_conversation			integer NOT NULL,
+  role						varchar(16) NOT NULL,
+  content_raw				text,
+  content_html				MEDIUMTEXT,
+  tool_name					varchar(255),
+  pinned					smallint DEFAULT 0,
+  position					integer DEFAULT 0,
+  datec						datetime NOT NULL
+)ENGINE=innodb;

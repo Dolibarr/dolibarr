@@ -1103,3 +1103,12 @@ body.ai-fullpage {
 .msg.ctx-pinned .msg-bubble { box-shadow: 0 0 0 2px rgba(44, 98, 172, 0.45); }
 #ai-ctx-bar { font-size: 0.85em; opacity: .85; padding: 3px 10px; margin: 0 6px 4px; border-radius: 10px; background: rgba(44, 98, 172, 0.08); }
 #ai-ctx-bar a { margin-left: 8px; }
+
+/* --- Conversation history panel --- */
+#ai-history-panel { position: absolute; top: 44px; right: 8px; z-index: 1200; width: 320px; max-height: 55%; overflow-y: auto; background: #fff; border: 1px solid #d0d0d8; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.18); padding: 6px; }
+.ai-history-item { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 6px; cursor: pointer; }
+.ai-history-item:hover { background: rgba(44, 98, 172, 0.08); }
+.ai-history-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ai-history-meta { font-size: .8em; opacity: .55; white-space: nowrap; }
+.ai-history-del { border: 0; background: none; cursor: pointer; font-size: 1.05em; opacity: .5; }
+.ai-history-del:hover { opacity: 1; color: #c00; }
