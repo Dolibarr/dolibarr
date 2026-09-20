@@ -110,7 +110,7 @@ class Mos extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
-		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
+		$restrictonsocid = 1; // Mo::$fields has a 'fk_soc' field
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;

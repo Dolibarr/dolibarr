@@ -11107,21 +11107,15 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/scripts/mymodule.php
 
 		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 3
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 2
 			path: ../../../htdocs/mrp/class/api_mos.class.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 8
-			path: ../../../htdocs/mrp/class/api_mos.class.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
 			path: ../../../htdocs/mrp/class/api_mos.class.php
 
 		-
