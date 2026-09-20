@@ -372,10 +372,12 @@ class modEventOrganization extends DolibarrModules
 		$this->export_entities_array[$r]['t.fk_project'] = 'project';
 		$this->export_entities_array[$r]['p.ref'] = 'project';
 		$this->export_entities_array[$r]['t.fk_soc'] = 'company';
+		$this->export_entities_array[$r]['t.fk_contact'] = 'contact';
 		$this->export_TypeFields_array[$r]['t.fk_project'] = 'Numeric';
 		$this->export_TypeFields_array[$r]['t.fk_invoice'] = 'Numeric';
 		$this->export_TypeFields_array[$r]['p.ref'] = 'Text';
 		$this->export_TypeFields_array[$r]['t.fk_soc'] = 'Numeric';
+		$this->export_TypeFields_array[$r]['t.fk_contact'] = 'Numeric';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
 		$keyforselect = 'eventorganization_conferenceorboothattendee';		// The value in column elementtype of llx_extrafields table

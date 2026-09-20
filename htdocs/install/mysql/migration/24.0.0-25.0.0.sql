@@ -264,3 +264,7 @@ ALTER TABLE llx_paiement_facture ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_ai_request_log ADD COLUMN tokens_input integer;
 ALTER TABLE llx_ai_request_log ADD COLUMN tokens_output integer;
 ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
+
+-- Link an event attendee to the individual contact represented by the registration.
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_contact integer AFTER fk_soc;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_contact (fk_contact);
