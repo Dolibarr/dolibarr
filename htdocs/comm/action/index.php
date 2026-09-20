@@ -771,10 +771,8 @@ $MAXONSAMEPAGE = $agendaeventresult['maxonsamepage'];
 
 
 // BIRTHDATES CALENDAR
-// Complete $eventarray with birthdates
-if ($check_birthday) {
-	agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents, $firstdaytoshow, $lastdaytoshow);
-}
+agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents, $firstdaytoshow, $lastdaytoshow);
+
 
 // LEAVE-HOLIDAY CALENDAR
 if ($user->hasRight("holiday", "read")) {
