@@ -536,6 +536,16 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		}
 	}
 
+	// Validate free registrations before committing the registration transaction.
+	if (!$error && is_object($thirdparty) && empty((float) $project->price_registration)) {
+		$resultsetstatus = $confattendee->setStatut(1);
+		if ($resultsetstatus < 0) {
+			$error++;
+			$errmsg .= $confattendee->error;
+			$errors = array_merge($errors, $confattendee->errors);
+		}
+	}
+
 	if (!$error && is_object($thirdparty)) {
 		// If the registration needs a payment
 		if (!empty((float) $project->price_registration)) {
@@ -649,9 +659,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		} else {
 			$db->commit();
 
-			// No price has been set
-			// Validating the subscription
-			$confattendee->setStatut(1);
+			// No price has been set; the subscription has already been validated.
 
 			// Sending mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
