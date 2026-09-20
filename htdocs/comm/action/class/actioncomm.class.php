@@ -3252,7 +3252,7 @@ class ActionComm extends CommonObject
 	}
 
 	/**
-	 * Mark elapsed events from the configured category as done.
+	 * Mark elapsed events as done when automatic completion is enabled.
 	 * CAN BE A CRON TASK
 	 *
 	 * Events without an end date and canceled events (percentage -1) are ignored.
@@ -3266,22 +3266,19 @@ class ActionComm extends CommonObject
 		$this->output = '';
 		$this->error = '';
 
-		if (!isModEnabled('agenda') || !isModEnabled('category')) {
+		if (!isModEnabled('agenda')) {
 			$langs->load('agenda');
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv('Agenda'));
 			return 0;
 		}
 
-		$categoryId = getDolGlobalInt('AGENDA_AUTO_COMPLETE_EVENT_CATEGORY_ID');
-		if ($categoryId <= 0) {
+		if (!getDolGlobalInt('AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS')) {
 			return 0;
 		}
 
-		$sql = 'SELECT DISTINCT a.id';
+		$sql = 'SELECT a.id';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_actioncomm as ca ON ca.fk_actioncomm = a.id';
 		$sql .= ' WHERE a.entity IN ('.getEntity('actioncomm').')';
-		$sql .= ' AND ca.fk_categorie = '.((int) $categoryId);
 		$sql .= ' AND a.datep2 IS NOT NULL';
 		$sql .= " AND a.datep2 <= '".$this->db->idate(dol_now())."'";
 		$sql .= ' AND a.percent >= 0 AND a.percent < 100';
