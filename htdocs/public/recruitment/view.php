@@ -36,6 +36,14 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
+
 // Load Dolibarr environment
 require '../../main.inc.php';
 /**
@@ -73,6 +81,7 @@ $phone = GETPOST('phone', 'alpha');
 $message = GETPOST('message', 'alpha');
 $SECUREKEY = GETPOST("securekey");
 $requestedremuneration = GETPOST('requestedremuneration', 'alpha');
+$suffix = GETPOST("suffix", 'alpha');
 
 $ref = GETPOST('ref', 'alpha');
 
@@ -316,7 +325,7 @@ print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_S
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosubmit">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
-print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'">'."\n";
+print '<input type="hidden" name="suffix" value="'.$suffix.'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";

@@ -13621,20 +13621,14 @@ parameters:
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
-			message: '#^Variable \$entity might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
 			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/public/recruitment/view.php
 
 		-
-			message: '#^Variable \$suffix might not be defined\.$#'
-			identifier: variable.undefined
+			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/public/recruitment/view.php
 
