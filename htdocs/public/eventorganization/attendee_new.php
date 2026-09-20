@@ -139,6 +139,21 @@ if ($type == 'global') {
 		}
 	}
 }
+if ($type == 'conf' && $conference->id > 0) {
+	$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+	$sql .= " WHERE fk_actioncomm = ".((int) $conference->id);
+	$sql .= " AND status IN (0, 1)";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$currentnbofattendees = $obj->nb;
+		} else {
+			dol_print_error($db);
+		}
+	}
+}
 
 // Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
@@ -743,33 +758,37 @@ print '</div>';
 // Help text
 print '<div class="justify subscriptionformhelptext">';
 
-if ($project->date_start_event || $project->date_end_event) {
+$eventdatestart = ($conference->id > 0 ? $conference->datep : $project->date_start_event);
+$eventdateend = ($conference->id > 0 ? $conference->datep2 : $project->date_end_event);
+$eventlocation = ($conference->id > 0 && !empty($conference->location) ? $conference->location : $project->location);
+
+if ($eventdatestart || $eventdateend) {
 	print '<br><span class="fa fa-calendar pictofixedwidth opacitymedium"></span>';
 }
-if ($project->date_start_event) {
+if ($eventdatestart) {
 	$format = 'day';
-	$tmparray = dol_getdate($project->date_start_event, false, '');
+	$tmparray = dol_getdate($eventdatestart, false, '');
 	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
-	print dol_print_date($project->date_start_event, $format);
+	print dol_print_date($eventdatestart, $format);
 }
-if ($project->date_start_event && $project->date_end_event) {
+if ($eventdatestart && $eventdateend) {
 	print ' - ';
 }
-if ($project->date_end_event) {
+if ($eventdateend) {
 	$format = 'day';
-	$tmparray = dol_getdate($project->date_end_event, false, '');
+	$tmparray = dol_getdate($eventdateend, false, '');
 	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
-	print dol_print_date($project->date_end_event, $format);
+	print dol_print_date($eventdateend, $format);
 }
-if ($project->date_start_event || $project->date_end_event) {
+if ($eventdatestart || $eventdateend) {
 	print '<br>';
 }
-if ($project->location) {
-	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dolPrintHTML($project->location).'<br>';
+if ($eventlocation) {
+	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dolPrintHTML($eventlocation).'<br>';
 }
 if ($project->note_public) {
 	print '<br><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
@@ -780,22 +799,14 @@ print '</div>';
 
 $maxattendees = 0;
 if ($conference->id > 0) {
-	/* date of project is not  date of event so commented
-	 print $langs->trans("Date").': ';
-	 print dol_print_date($conference->datep);
-	 if ($conference->date_end) {
-	 print ' - ';
-	 print dol_print_date($conference->datef);
-	 }*/
+	$maxattendees = $conference->max_participants;
 } else {
-	/* date of project is not  date of event so commented
-	 print $langs->trans("Date").': ';
-	 print dol_print_date($project->date_start);
-	 if ($project->date_end) {
-	 print ' - ';
-	 print dol_print_date($project->date_end);
-	 }*/
 	$maxattendees = $project->max_attendees;	// Max attendeed for the project/event
+}
+
+if ($maxattendees) {
+	print '<br>';
+	print '<div class="opacitymedium">'.$langs->trans("Attendees").': '.((int) $currentnbofattendees).' / '.((int) $maxattendees).'</div>';
 }
 
 if ($maxattendees && $currentnbofattendees >= $maxattendees) {
