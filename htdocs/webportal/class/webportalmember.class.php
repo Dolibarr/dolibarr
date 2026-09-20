@@ -259,8 +259,6 @@ class WebPortalMember extends Adherent
 			$withpictoimg = 0;
 		}
 
-		$option = 'nolink';
-
 		$result = '';
 		$linkstart = '';
 		$linkend = '';

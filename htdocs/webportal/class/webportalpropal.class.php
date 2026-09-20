@@ -219,7 +219,6 @@ class WebPortalPropal extends Propal
 		}
 
 		$url = '';
-		$option = 'nolink';
 
 		$linkclose = '';
 

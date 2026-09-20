@@ -202,7 +202,6 @@ class WebPortalInvoice extends Facture
 		$result = '';
 
 		$url = '';
-		$option = 'nolink';
 
 		if ($short) {
 			return $url;

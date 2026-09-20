@@ -206,8 +206,6 @@ class WebPortalOrder extends Commande
 
 		$url = '';
 
-		$option = 'nolink';
-
 		if ($short) {
 			return $url;
 		}

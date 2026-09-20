@@ -225,8 +225,6 @@ class WebPortalPartnership extends Partnership
 			$notooltip = 1; // Force disable tooltips
 		}
 
-		$option = 'nolink';
-
 		$result = '';
 		$params = [
 			'id' => $this->id,
