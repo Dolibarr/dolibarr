@@ -876,7 +876,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '<input type="text" name="societe" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('societe')) . '"'.(empty((float) $project->price_registration) ? '' : ' required').'></td></tr>' . "\n";
 
 		// Email company for invoice
-		if ($project->price_registration) {
+		if (!empty((float) $project->price_registration)) {
 			print '<tr><td>' . $form->textwithpicto($langs->trans("EmailCompany"), $langs->trans("EmailCompanyForInvoice")) . '</td><td>';
 			print img_picto('', 'email', 'class="pictofixedwidth"');
 			print '<input type="text" name="emailcompany" maxlength="255" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('emailcompany')) . '"></td></tr>' . "\n";
@@ -926,7 +926,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 			print '</td></tr>';
 		}
 
-		if ($project->price_registration) {
+		if (!empty((float) $project->price_registration)) {
 			print '<tr><td>' . $langs->trans('Price') . '</td><td>';
 			print '<span class="amount price-registration">'.price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print '</td></tr>';
