@@ -70,8 +70,8 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 		$attendees=new ConferenceOrBoothAttendee($db);
-		$result = $attendees->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$object->id));
-		if (!is_array($result) && $result<0) {
+		$result = $attendees->fetchAll('', '', 0, 0, '(t.fk_actioncomm:=:'.((int) $object->id).')');
+		if (!is_array($result) && $result < 0) {
 			setEventMessages($attendees->error, $attendees->errors, 'errors');
 		} else {
 			$nbAttendees = count($result);
