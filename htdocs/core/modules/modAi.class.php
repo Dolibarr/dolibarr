@@ -306,7 +306,7 @@ class modAi extends DolibarrModules
 			'url' => '/ai/assistant/index.php?mainmenu=tools&leftmenu=ai',
 			'langs' => 'other',
 			'position' => 200,
-			'enabled' => 'isModEnabled("ai") && getDolGlobalString("AI_ASSISTANT_ENABLED") && !getDolGlobalString("AI_MENU_HIDE_TOOLSMENU")',
+			'enabled' => 'isModEnabled("ai") && getDolGlobalString("AI_ASSISTANT_ENABLED") && getDolGlobalString("AI_MENU_SHOW_TOOLSMENU")',
 			'perms' => '$user->hasRight("ai", "assistant", "use")',
 			'target' => '',
 			'user' => 2,
