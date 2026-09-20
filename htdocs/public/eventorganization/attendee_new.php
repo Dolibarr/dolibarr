@@ -308,7 +308,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->date_subscription = dol_now();
 			$confattendee->email = $email;
 			$confattendee->fk_project = $project->id;
-			$confattendee->fk_actioncomm = $id;
+			$confattendee->fk_actioncomm = ($type == 'conf' ? $id : null);
 			$confattendee->note_public = $note_public;
 			$confattendee->firstname = $firstname;
 			$confattendee->lastname = $lastname;
