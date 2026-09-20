@@ -417,7 +417,7 @@ class html_cerfafr extends ModeleDon
 			}
 			if ($cent[$i] == 1) {
 				$trio[$i] = 'cent';
-			} elseif ($cent[$i] != 0 || $cent[$i] != '') {
+			} elseif ($cent[$i] != 0 && $cent[$i] != '') {
 				$trio[$i] = $chif[$cent[$i]].' cents';
 			}
 		}
@@ -427,7 +427,7 @@ class html_cerfafr extends ModeleDon
 		$secon_c = $chif2[$dix_c];
 		if ($cent_c == 1) {
 			$trio_c = 'cent';
-		} elseif ($cent_c != 0 || $cent_c != '') {
+		} elseif ($cent_c != 0 && $cent_c != '') {
 			$trio_c = $chif[$cent_c].' cents';
 		}
 
