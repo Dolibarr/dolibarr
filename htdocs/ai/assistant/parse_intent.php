@@ -1083,12 +1083,21 @@ function classifyIntentUniversal(string $query, Translate $langs)
 	$isLatin = !isComplexScript($query);
 	$searchQuery = $isLatin ? strtolower(dol_string_unaccent($query)) : $query;
 
-	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict", "sendings", "receptions"));
+	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict", "sendings", "receptions", "ticket", "members", "agenda", "interventions"));
 
+	// Vocabulary rule: every object family whose tools exist must light up the
+	// categories those tools carry (see ApiBridge::ENDPOINT_CATEGORIES), or the
+	// prompt filter drops them and the model claims the feature does not exist
+	// (that is how receptions were lost before). Families WITHOUT any bridged
+	// tool (bank accounts, donations, holidays) are deliberately absent: their
+	// words would activate categories that hold no matching tool and only
+	// narrow the prompt wrongly - add the endpoint first, the vocabulary second.
 	$intentMap = [
 		'billing' => [
-			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft'],
-			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue']
+			// Member/Subscription: members and subscriptions tools are
+			// categorized ['thirdparty', 'billing'].
+			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft', 'Member', 'Subscription'],
+			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue', 'member', 'membership', 'subscription', 'cotisation', 'adhesion']
 		],
 		'commercial' => [
 			// 'Reception' and 'Shipment' matter: create_other_document (the tool
@@ -1096,20 +1105,26 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			// query like "create a reception from this delivery note" must light
 			// this category up or the creation tool is filtered out of the prompt
 			// and the model honestly answers it cannot create receptions.
-			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft', 'Reception', 'Shipment', 'Delivery'],
-			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive']
+			// Intervention: interventions tools are ['project', 'commercial'].
+			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft', 'Reception', 'Shipment', 'Delivery', 'Intervention'],
+			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention']
 		],
 		'thirdparty' => [
-			'keys'     => ['ThirdParty', 'Customer', 'Supplier', 'Contact', 'Company'],
-			'synonyms' => ['client', 'partner', 'address', 'phone', 'vendor']
+			// Ticket and agenda-event tools are ['thirdparty', 'project'];
+			// members/subscriptions are ['thirdparty', 'billing']; the
+			// categories endpoint is ['thirdparty', 'stock'] (its 'Category'
+			// UI key translates to 'Tag/category' - unusable as a keyword,
+			// hence plain synonyms).
+			'keys'     => ['ThirdParty', 'Customer', 'Supplier', 'Contact', 'Company', 'Ticket', 'Member', 'Subscription', 'Event', 'Agenda'],
+			'synonyms' => ['client', 'partner', 'address', 'phone', 'vendor', 'ticket', 'support', 'incident', 'member', 'adherent', 'membership', 'meeting', 'appointment', 'rdv', 'category', 'categorie', 'tag']
 		],
 		'stock' => [
 			'keys'     => ['Product', 'Service', 'Stock', 'Warehouse'],
-			'synonyms' => ['item', 'inventory', 'sku', 'location', 'qty', 'warehouse']
+			'synonyms' => ['item', 'inventory', 'sku', 'location', 'qty', 'warehouse', 'category', 'categorie', 'tag']
 		],
 		'project' => [
-			'keys'     => ['Project', 'Task'],
-			'synonyms' => ['task', 'team', 'deadline', 'planning', 'milestone']
+			'keys'     => ['Project', 'Task', 'Ticket', 'Event', 'Agenda', 'Intervention'],
+			'synonyms' => ['task', 'team', 'deadline', 'planning', 'milestone', 'ticket', 'event', 'meeting', 'appointment', 'rdv', 'intervention']
 		],
 		'reporting' => [
 			'keys'     => ['Report', 'Statistics', 'Turnover', 'Revenue', 'Income'],
@@ -1123,7 +1138,7 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		global $conf;
 		$langsEnUs = new Translate('', $conf);
 		$langsEnUs->setDefaultLang('en_US');
-		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other'));
+		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions'));
 	}
 
 	$detectedCategories = [];
