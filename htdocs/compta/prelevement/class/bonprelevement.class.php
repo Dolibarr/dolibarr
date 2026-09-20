@@ -1082,7 +1082,7 @@ class BonPrelevement extends CommonObject
 	 *	@param 	string	$banque				dolibarr mysoc bank
 	 *	@param	string	$agence				dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode				real=do action, simu=test only
-	 *  @param	string	$format				FRST, RCUR or ALL
+	 *  @param	string	$format				FRST, RCUR, OOFF or FNAL. ALL is accepted only in simulation mode.
 	 *  @param  int  	$executiondate		Date to execute the transfer
 	 *  @param	int	    $notrigger			Disable triggers
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
@@ -1094,7 +1094,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$sourcetype			Source is 'invoice' or 'supplier_invoice' or 'salary'
 	 *	@return	int							Return integer <0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = '', $agence = '', $mode = 'real', $format = 'ALL', $executiondate = 0, $notrigger = 0, $type = 'direct-debit', $dids = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
+	public function create($banque = '', $agence = '', $mode = 'real', $format = 'FRST', $executiondate = 0, $notrigger = 0, $type = 'direct-debit', $dids = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -1106,7 +1106,12 @@ class BonPrelevement extends CommonObject
 
 		// Check params
 		if ($type != 'bank-transfer') {
+			$format = strtoupper($format);
 			if (empty($format)) {
+				$this->error = 'ErrorBadParametersForDirectDebitFileCreate';
+				return -1;
+			}
+			if ($mode === 'real' && !in_array($format, array('FRST', 'RCUR', 'OOFF', 'FNAL'), true)) {
 				$this->error = 'ErrorBadParametersForDirectDebitFileCreate';
 				return -1;
 			}
@@ -1878,7 +1883,7 @@ class BonPrelevement extends CommonObject
 	 * - Others countries: Warning message
 	 * File is generated with name this->filename
 	 *
-	 * @param   string  $format				FRST, RCUR or ALL
+	 * @param   string  $format				FRST, RCUR, OOFF or FNAL
 	 * @param 	int 	$executiondate		Timestamp date to execute transfer
 	 * @param	string	$type				'direct-debit' or 'bank-transfer'
 	 * @param   int     $fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
@@ -1886,9 +1891,17 @@ class BonPrelevement extends CommonObject
 	 * @param   int  	$thirdpartyBANId	If defined, will use this ID to get the RIB. Otherwise, the BAN of request will be used. If not defined, the first default BAN of thirdparty will be taken.
 	 * @return	int							>=0 if OK, <0 if KO
 	 */
-	public function generate(string $format = 'ALL', int $executiondate = 0, string $type = 'direct-debit', int $fk_bank_account = 0, int $forsalary = 0, int $thirdpartyBANId = 0)
+	public function generate(string $format = 'FRST', int $executiondate = 0, string $type = 'direct-debit', int $fk_bank_account = 0, int $forsalary = 0, int $thirdpartyBANId = 0)
 	{
 		global $conf, $langs, $mysoc;
+
+		if ($type !== 'bank-transfer') {
+			$format = strtoupper($format);
+			if (!in_array($format, array('FRST', 'RCUR', 'OOFF', 'FNAL'), true)) {
+				$this->error = 'ErrorBadParametersForDirectDebitFileCreate';
+				return -1;
+			}
+		}
 
 		//TODO: Optimize code to read lines in a single function
 
@@ -2714,7 +2727,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	int		$nombre				0 or 1
 	 *	@param	float	$total				Total
 	 *	@param	string	$CrLf				End of line character
-	 *  @param	string	$format				FRST or RCUR or ALL
+	 *  @param	string	$format				FRST, RCUR, OOFF or FNAL
 	 *  @param	string	$type				'direct-debit' or 'bank-transfer'
 	 *  @param	int		$fk_bank_account	Bank account ID the receipt is generated for. Will use the ID into the setup of module Direct Debit or Credit Transfer if 0.
 	 *	@return	string						String with SEPA Sender

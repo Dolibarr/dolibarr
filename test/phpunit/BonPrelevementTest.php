@@ -287,6 +287,42 @@ class BonPrelevementTest extends CommonClassTest
 	}
 
 	/**
+	 * A real SEPA direct debit file must not use the internal ALL filter as SeqTp.
+	 *
+	 * @return void
+	 */
+	public function testGenerateRejectsInvalidSepaSequenceType()
+	{
+		global $db;
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->generate('ALL', 0, 'direct-debit', self::$fkBankAccount);
+
+		$this->assertSame(-1, $result);
+		$this->assertSame('ErrorBadParametersForDirectDebitFileCreate', $bon->error);
+	}
+
+	/**
+	 * create() must reject ALL before creating a real direct debit order.
+	 *
+	 * @return void
+	 */
+	public function testCreateRejectsInvalidSepaSequenceType()
+	{
+		global $db, $user;
+
+		$fac = $this->createValidatedInvoice(self::$socidA, 100.0);
+		$requestId = $this->createPaymentRequest($fac, 100.0, self::$ribADefaultId);
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'direct-debit', array($requestId), self::$fkBankAccount);
+
+		$this->assertSame(-1, $result);
+		$this->assertSame('ErrorBadParametersForDirectDebitFileCreate', $bon->error);
+		$this->assertSame(0, (int) $bon->id);
+	}
+
+	/**
 	 * testTwoCompaniesSimpleRib
 	 *
 	 * Verifies that when two different companies each have one invoice with a
