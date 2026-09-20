@@ -7056,6 +7056,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_PROFID8__' => $mysoc->idprof8,
 			'__MYCOMPANY_PROFID9__' => $mysoc->idprof9,
 			'__MYCOMPANY_PROFID10__' => $mysoc->idprof10,
+			'__MYCOMPANY_OBJECT__'    => $mysoc->socialobject,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
 			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
@@ -7066,6 +7067,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_COUNTRY__'    => $mysoc->country,
 			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id,
 			'__MYCOMPANY_COUNTRY_CODE__' => $mysoc->country_code,
+			'__MYCOMPANY_CURRENCY__' => $outputlangs->transnoentitiesnoconv("Currency".$conf->currency),
 			'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
 		));
 	}
