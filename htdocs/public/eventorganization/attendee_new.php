@@ -314,12 +314,23 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		// Check if there is already an attendee into table eventorganization_conferenceorboothattendee for same event (or conference/booth)
 		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, $filter);
 
-		if (is_array($resultfetchconfattendee) && count($resultfetchconfattendee) > 0) {
+		$attendeealreadyexists = false;
+		if ($resultfetchconfattendee < 0) {
+			$error++;
+			$errmsg .= $confattendee->error;
+			$errors = array_merge($errors, $confattendee->errors);
+		} elseif (is_array($resultfetchconfattendee) && count($resultfetchconfattendee) > 0) {
 			// Found confattendee
 			$confattendee = array_shift($resultfetchconfattendee);
+			$attendeealreadyexists = true;
 		} else {
 			// Need to create a confattendee
 			$confattendee->date_creation = dol_now();
+		}
+
+		// An unpaid registration can be submitted again to update attendee details
+		// and extrafields. A paid registration remains immutable here.
+		if (!$error && (!$attendeealreadyexists || empty((float) $confattendee->amount))) {
 			$confattendee->date_subscription = dol_now();
 			$confattendee->email = $email;
 			$confattendee->fk_project = $project->id;
@@ -336,6 +347,17 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$errmsg .= $confattendee->error;
 			}
 
+			if (!$error && $attendeealreadyexists) {
+				$resultconfattendee = $confattendee->update($user);
+				if ($resultconfattendee < 0) {
+					$error++;
+					$errmsg .= $confattendee->error;
+					$errors = array_merge($errors, $confattendee->errors);
+				}
+			}
+		}
+
+		if (!$error && !$attendeealreadyexists) {
 			// Count recent already posted event
 			$confattendee->ip = getUserRemoteIP();
 			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
@@ -381,7 +403,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		//var_dump($confattendee);
 
 		// If the registration has already been paid for this attendee
-		if (!empty($confattendee->date_subscription) && !empty($confattendee->amount)) {
+		if (!$error && !empty($confattendee->date_subscription) && !empty((float) $confattendee->amount)) {
 			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
