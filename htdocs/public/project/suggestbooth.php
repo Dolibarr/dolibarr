@@ -277,7 +277,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$thirdparty->fournisseur  = 0;
 			$thirdparty->country_id   = GETPOSTINT("country_id");
 			$thirdparty->state_id     = GETPOSTINT("state_id");
-			$thirdparty->email        = ($emailcompany ? $emailcompany : $email);
+			$thirdparty->email        = $email;
 
 			// Load object modCodeTiers
 			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
@@ -664,7 +664,7 @@ print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."
 
 // Name
 print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<span class="star">*</span></label></td>';
-print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ? GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
+print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha')).'" autofocus="autofocus"></td>';
 print '</tr>';
 // Email
 print '<tr><td>'.$langs->trans("Email").'<span class="star">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
