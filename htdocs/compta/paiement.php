@@ -151,7 +151,7 @@ if (empty($reshook)) {
 						$realamountsinfo[] = $langs->trans("PaymentRealAmountsInfo", (string) $tmpinvoice->ref, price($multicurrencyamountentered, 0, $langs, 1, -1, -1, $tmpinvoice->multicurrency_code), price($amounts[$cursorfacid], 0, $langs, 1, -1, -1, $conf->currency), price2num(abs($multicurrencyamountentered / (float) $amounts[$cursorfacid]), 'CR'));
 					}
 					// Check amount
-					if (!$userealamounts && $amounts[$cursorfacid] && (abs((float) $amounts[$cursorfacid]) > abs((float) $amountsresttopay[$cursorfacid]))) {
+					if (!$userealamounts && (abs((float) $amounts[$cursorfacid]) > abs((float) $amountsresttopay[$cursorfacid]))) {
 						$addwarning = 1;
 						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPay");
 					}
