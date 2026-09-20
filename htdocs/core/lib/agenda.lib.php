@@ -1591,7 +1591,10 @@ function agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $ye
 
 		$datebirth = dol_stringtotime($obj->birthday, 1);
 		$datearray = dol_getdate($datebirth, true);
-		$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
+		// Use the year that matches the birthday month within the displayed period
+		// (handles a week/month grid spanning two months or a year boundary)
+		$birthdayyear = isset($birthdaymonthyearmap[(int) $datearray['mon']]) ? $birthdaymonthyearmap[(int) $datearray['mon']] : $year;
+		$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $birthdayyear, true); // For full day events, date are also GMT but they won't but converted during output
 		$event->datef = $event->datep;
 
 		$event->type_code = 'BIRTHDAY';
