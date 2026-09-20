@@ -1085,80 +1085,99 @@ if ($resql) {
 
 
 // BIRTHDATES CALENDAR
-// Complete $eventarray with birthdates
-if ($check_birthday) {
-	// Add events in array
-	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
-	$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.((int) $user->id).'))';
-	$sql .= " AND sp.entity IN (".getEntity('contact').")";
-	if ($mode == 'show_day') {
-		$sql .= ' AND MONTH(birthday) = '.((int) $month);
-		$sql .= ' AND DAY(birthday) = '.((int) $day);
-	} else {
-		$sql .= ' AND MONTH(birthday) = '.((int) $month);
+// Complete $eventarray with birthdates.
+// Birthdays are always loaded so the JavaScript toggle (jQuery(".family_birthday").toggle())
+// can show/hide them client-side. They are hidden by CSS class "hidden" when check_birthday is not set.
+// Add events in array
+
+// Build the map of month => year for the displayed period so we can load birthdays
+// for all months covered by the view. A week or a month grid can span two or three months,
+// and a week at a year boundary can even span two years, so we cannot rely on the reference
+// $month/$year only.
+$birthdaymonthyearmap = array();
+$tmpstamp = $firstdaytoshow;
+while ($tmpstamp < $lastdaytoshow) {
+	$m = (int) dol_print_date($tmpstamp, '%m', 'tzuserrel');
+	if (!isset($birthdaymonthyearmap[$m])) {
+		$birthdaymonthyearmap[$m] = (int) dol_print_date($tmpstamp, '%Y', 'tzuserrel');
 	}
-	$sql .= ' ORDER BY birthday';
+	$tmpstamp = dol_time_plus_duree($tmpstamp, 1, 'd');
+}
 
-	dol_syslog("comm/action/index.php", LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$nbevents += $num;
+$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
+$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
+$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.((int) $user->id).'))';
+$sql .= " AND sp.entity IN (".getEntity('contact').")";
+if ($mode == 'show_day') {
+	$sql .= ' AND MONTH(birthday) = '.((int) $month);
+	$sql .= ' AND DAY(birthday) = '.((int) $day);
+} else {
+	// Load birthdays for all months covered by the displayed period (week or month grid)
+	$sql .= ' AND MONTH(birthday) IN ('.implode(',', array_map('intval', array_keys($birthdaymonthyearmap))).')';
+}
+$sql .= ' ORDER BY birthday';
 
-		$i = 0;
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
+dol_syslog("comm/action/index.php", LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$nbevents += $num;
 
-			$event = new ActionComm($db);
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
 
-			$event->id = $obj->rowid; // We put contact id in action id for birthdays events
-			$event->ref = (string) $event->id;
+		$event = new ActionComm($db);
 
-			$datebirth = dol_stringtotime($obj->birthday, 1);
-			//print 'ee'.$obj->birthday.'-'.$datebirth;
-			$datearray = dol_getdate($datebirth, true);
-			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
-			$event->datef = $event->datep;
+		$event->id = $obj->rowid; // We put contact id in action id for birthdays events
+		$event->ref = (string) $event->id;
 
-			$event->type_code = 'BIRTHDAY';
-			$event->type_label = '';
-			$event->type_color = '';
-			$event->type = 'birthdate';
-			$event->type_picto = 'birthdate';
+		$datebirth = dol_stringtotime($obj->birthday, 1);
+		//print 'ee'.$obj->birthday.'-'.$datebirth;
+		$datearray = dol_getdate($datebirth, true);
+		// Use the year that matches the birthday month within the displayed period
+		// (handles a week/month grid spanning two months or a year boundary)
+		$birthdayyear = isset($birthdaymonthyearmap[(int) $datearray['mon']]) ? $birthdaymonthyearmap[(int) $datearray['mon']] : $year;
+		$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $birthdayyear, true); // For full day events, date are also GMT but they won't but converted during output
+		$event->datef = $event->datep;
 
-			$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
-			$event->percentage = 100;
-			$event->fulldayevent = 1;
+		$event->type_code = 'BIRTHDAY';
+		$event->type_label = '';
+		$event->type_color = '';
+		$event->type = 'birthdate';
+		$event->type_picto = 'birthdate';
 
-			$event->contact_id = $obj->rowid;
+		$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
+		$event->percentage = 100;
+		$event->fulldayevent = 1;
 
-			$event->date_start_in_calendar = $event->datep;
-			$event->date_end_in_calendar = $event->datef;
+		$event->contact_id = $obj->rowid;
 
-			// Add an entry in eventarray for each day
-			$daycursor = $event->datep;
-			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
+		$event->date_start_in_calendar = $event->datep;
+		$event->date_end_in_calendar = $event->datef;
 
-			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
+		// Add an entry in eventarray for each day
+		$daycursor = $event->datep;
+		$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+		$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+		$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
-			$eventarray[$daykey][] = $event;
+		$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 
-			/*$loop = true;
-			 $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-			 do {
-			 $eventarray[$daykey][] = $event;
-			 $daykey += 60 * 60 * 24;
-			 if ($daykey > $event->date_end_in_calendar) $loop = false;
-			 } while ($loop);
-			 */
-			$i++;
-		}
-	} else {
-		dol_print_error($db);
+		$eventarray[$daykey][] = $event;
+
+		/*$loop = true;
+		 $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
+		 do {
+		 $eventarray[$daykey][] = $event;
+		 $daykey += 60 * 60 * 24;
+		 if ($daykey > $event->date_end_in_calendar) $loop = false;
+		 } while ($loop);
+		 */
+		$i++;
 	}
+} else {
+	dol_print_error($db);
 }
 
 // LEAVE-HOLIDAY CALENDAR
