@@ -3931,15 +3931,15 @@ parameters:
 			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
 
 		-
-			message: '#^Loose comparison using \!\= between 0 and '''' will always evaluate to true\.$#'
-			identifier: notEqual.alwaysTrue
-			count: 2
-			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
-
-		-
 			message: '#^Loose comparison using \!\= between int\<min, \-1\>\|int\<1, max\> and '''' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 6
+			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
+
+		-
+			message: '#^Loose comparison using \!\= between int\<min, \-1\>\|int\<2, max\> and '''' will always evaluate to true\.$#'
+			identifier: notEqual.alwaysTrue
+			count: 2
 			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
 
 		-
