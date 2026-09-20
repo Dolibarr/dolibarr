@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 /**
  *      Class permettant la generation du formulaire d'envoi de Sms
  *      Usage: $formsms = new FormSms($db)
- *             $formsms->proprietes=1 ou chaine ou tableau de valeurs
+ *             $formsms->proprietes=1 or string or table of values
  *             $formsms->show_form() affiche le formulaire
  */
 class FormSms

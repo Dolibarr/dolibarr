@@ -92,7 +92,7 @@ $upload_dir = $conf->contrat->multidir_output[$object->entity ?? $conf->entity].
 $modulepart = 'contract';
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('contractcard', 'globalcard'));
+$hookmanager->initHooks(array('contractcard', 'contractdocument', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');	// Used by the include of actions_dellink.inc.php
 

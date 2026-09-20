@@ -206,7 +206,7 @@ class modWorkstation extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->workstation->enabled',
+			//      'test' => 'isModEnabled('workstation')',
 			//      'priority' => 50,
 			//  ),
 		);

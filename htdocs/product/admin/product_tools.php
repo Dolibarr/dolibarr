@@ -56,7 +56,7 @@ $oldvatrate = GETPOST('oldvatrate', 'alpha');
 $newvatrate = GETPOST('newvatrate', 'alpha');
 //$price_base_type=GETPOST('price_base_type');
 
-
+$hookmanager->initHooks(array('productvatadmin'));
 
 /*
  * Actions
@@ -107,7 +107,7 @@ if ($action == 'convert') {
 			if ($vat_src_code_old) {
 				$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 			} else {
-				$sql .= " AND default_vat_code = IS NULL";
+				$sql .= " AND default_vat_code IS NULL";
 			}
 
 			$resql = $db->query($sql);
@@ -209,7 +209,7 @@ if ($action == 'convert') {
 		if ($vat_src_code_old) {
 			$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 		} else {
-			$sql .= " AND default_vat_code = IS NULL";
+			$sql .= " AND default_vat_code IS NULL";
 		}
 		$sql .= " AND s.fk_pays = ".((int) $country_id);
 

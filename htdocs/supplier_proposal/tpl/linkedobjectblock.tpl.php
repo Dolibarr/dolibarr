@@ -52,14 +52,20 @@ $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
+	$objectlink->fetch_thirdparty();
+
+	$refWithThirdparty = '<span class="small">';
+	$refWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refWithThirdparty .= '</span>';
+
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
 		<td class="tdoverflowmax125" title="<?php echo dolPrintHTMLForAttribute($langs->trans("SupplierProposal")); ?>"><?php echo dolPrintHTML($langs->trans("SupplierProposal")); ?></td>
-		<td><a href="<?php echo DOL_URL_ROOT.'/supplier_proposal/card.php?id='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowSupplierProposal"), "supplier_proposal").' '.$objectlink->ref; ?></a></td>
-		<td></td>
+		<td><?php echo $objectlink->getNomUrl(1); ?></td>
+		<td class="nopaddingtopimp nopaddingbottomimp"><?php echo $refWithThirdparty; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date_creation, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('supplier_proposal', 'lire')) {

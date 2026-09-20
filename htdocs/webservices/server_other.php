@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,7 +255,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	if (!$error) {
 		$fuser->loadRights();
 
-		// Suppression de la chaine de character ../ dans $original_file
+		// Removing the "../" string from $original_file
 		$original_file = str_replace("../", "/", $original_file);
 
 		// find the subdirectory name as the reference

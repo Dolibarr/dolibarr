@@ -91,7 +91,6 @@ ForbiddenTransactionAlreadyExported=Prohibido: La transacción ha sido validada 
 LetteringManual=Conciliar manualmente
 UnletteringAuto=No reconciliar automáticamente
 UnletteringManual=No reconciliar manualmente
-AccountancyOneUnletteringModifiedSuccessfully=Uno no reconciliado modificado con éxito
 ConfirmMassDeleteBookkeepingWriting=Confirmación de borrado masivo
 SomeMandatoryStepsOfSetupWereNotDone=No se realizaron algunos pasos obligatorios de configuración, por favor complételos.
 FECFormatPieceRef=Pieza ref. (PieceRef)

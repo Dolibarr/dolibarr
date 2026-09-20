@@ -85,6 +85,9 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function deleteById($id)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
 		$allowaccess = $this->_checkAccessRights('delete', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
@@ -197,7 +200,8 @@ class EventAttendees extends DolibarrApi
 	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.status:=:1) and (t.email:=:'bad@example.com')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return  array						Array of order objects
+	 * @param int		$loadlinkedobjects	Load also linked object. 0 (default), 1 load linked objects
+	* @return  array						Array of order objects
 	 * @phan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
@@ -206,7 +210,7 @@ class EventAttendees extends DolibarrApi
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		// $allowaccess = $this->_checkAccessRights('read', 0);
 		// if (!$allowaccess) {
@@ -260,9 +264,13 @@ class EventAttendees extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$event_attendees_static = new ConferenceOrBoothAttendee($this->db);
-				if ($event_attendees_static->fetch($obj->rowid, '') > 0) {
+				if ($event_attendees_static->fetch($obj->rowid) > 0) {
 					$rowallowaccess = $this->_checkAccessRights('read', $event_attendees_static->fk_project);
 					if ($rowallowaccess) {
+						if ($loadlinkedobjects) {
+							// retrieve linked objects
+								$event_attendees_static->fetchObjectLinked();
+						}
 						$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($event_attendees_static), $properties);
 						$onerowaccessgranted = $rowallowaccess;
 					}
@@ -362,6 +370,9 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function putById($id, $request_data = null)
 	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
 		$allowaccess = $this->_checkAccessRights('write', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied update access to Event attendees');
@@ -463,6 +474,12 @@ class EventAttendees extends DolibarrApi
 	 */
 	private function _fetch($id, $ref = '')
 	{
+		if ($id < 1 && empty($ref)) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if (empty($id) && empty($ref)) {
+			throw new RestException(400, 'No eventattendee can be found with no criteria');
+		}
 		// we first need to fetch the object so we can get the fk_project id and then check for access
 		$result = $this->event_attendees->fetch($id, $ref);
 		if (!$result) {
@@ -479,6 +496,8 @@ class EventAttendees extends DolibarrApi
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
+
+		$this->event_attendees->fetchObjectLinked();
 
 		return $this->_cleanObjectDatas($this->event_attendees);
 	}

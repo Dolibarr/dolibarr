@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan 			<greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET		<jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND 			<gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025 MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -685,8 +685,8 @@ while ($i < $imaxinloop) {
 		$userstatic->firstname = $obj->firstname;
 		$userstatic->lastname = $obj->lastname;
 		$userstatic->email = $obj->email;
-		$userstatic->statut = $obj->statut;	// deprecated
-		$userstatic->status = $obj->statut;
+		$userstatic->statut = (int) $obj->statut;	// deprecated
+		$userstatic->status = (int) $obj->statut;
 		$userstatic->login = $obj->login;
 		$userstatic->photo = $obj->photo;
 

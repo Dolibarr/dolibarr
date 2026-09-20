@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 
 $langs->loadLangs(array("admin", "website", "other"));
 
@@ -67,7 +66,9 @@ $setupnotempty = 0;
 if (!$user->admin) {
 	accessforbidden();
 }
-
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not activated.');
+}
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -76,19 +77,24 @@ if (!class_exists('FormSetup')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
 
+$form = new Form($db);
 $formSetup = new FormSetup($db);
 $aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
 // Setup conf for AI model
 $formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
 foreach ($arrayofaifeatures as $featurekey => $feature) {
-	$newkey = $featurekey;
+	$newfeaturekey = $featurekey;
 	if (preg_match('/^text/', $featurekey)) {
-		$newkey = 'textgeneration';
+		$newfeaturekey = 'textgeneration';
 	}
 	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$feature["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
-	if ($arrayofai[$aiservice][$newkey] != 'na') {
-		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newkey].')</span>';
+	if (!empty($arrayofai[$aiservice][$newfeaturekey]['default']) && $arrayofai[$aiservice][$newfeaturekey]['default'] != 'na') {
+		$item->nameText = '<span class="valignmiddle">'.$langs->trans("AI_API_MODEL_".$feature["function"]).' </span><span class="opacitymedium valignmiddle">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newfeaturekey]['default'].')</span>';
+		if (!empty($arrayofai[$aiservice][$newfeaturekey]['examples'])) {
+			$htmltooltip = $langs->trans("Example").': '.$arrayofai[$aiservice][$newfeaturekey]['examples'];
+			$item->nameText .= $form->textwithpicto('', $htmltooltip);
+		}
 	} else {
 		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
 	}
@@ -206,7 +212,6 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
  * View
  */
 
-$form = new Form($db);
 $formai = new FormAI($db);
 
 $help_url = '';
@@ -214,7 +219,6 @@ $title = "AiSetup";
 
 llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-ai page-admin_custom_prompt');
 
-// Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
@@ -245,8 +249,6 @@ if ($action == 'deleteproperty') {
 	);
 	print $formconfirm;
 }
-
-print '<br>';
 
 if ($action == 'create') {
 	$out = '<div class="addcustomprompt">';
@@ -336,17 +338,28 @@ if ($action == 'create') {
 	$out .= $form->buttonsSaveCancel("Add", "");
 	$out .= '</form>';
 
-	$out .= '<br><br><br>';
+	$out .= "<br>";
+	$out .= "<br>";
+
 	$out .= '</div>';
 
 	print $out;
 }
 
-
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	$out = '';
 
-	if (!empty($currentConfigurations)) {
+	if (empty($currentConfigurations)) {
+		if ($action != 'create') {
+			print '<!-- no custom prompt-->'."\n";
+			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			print '<br>';
+			print '<br>';
+		}
+		print '<br>';
+	} else {
+		print '<br>';
+
 		foreach ($currentConfigurations as $confkey => $config) {
 			if (!empty($confkey) && !preg_match('/^[a-z]+$/i', $confkey)) {	// Ignore empty saved setup
 				continue;
@@ -432,9 +445,10 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print '<br>';
 }
 
-
+// Custom models
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
+
 	print $formSetup->generateOutput(true);
 }
 

@@ -318,7 +318,7 @@ if (!empty($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "TRACE")
 
 // Sanity check on URL
 if (!defined('NOSCANPHPSELFFORINJECTION') && !empty($_SERVER["PHP_SELF"])) {
-	$morevaltochecklikepost = array($_SERVER["PHP_SELF"]);
+	$morevaltochecklikepost = array($_SERVER["PHP_SELF"]);		// Note:if an url is called with mypage.php/aaa/bbb (used only by API) the aaa/bbb is also part of $_SERVER["PHP_SELF"] so analyzed too.
 	analyseVarsForSqlAndScriptsInjection($morevaltochecklikepost, 2);
 }
 // Sanity check on GET parameters

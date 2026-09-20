@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -471,7 +471,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 				$invoice = new Facture($db);
 				$invoice->fetch($obj->facid);
 
-				// Sécurité pour utilisateur externe
+				// Security check for external user
 				if ($socid && ($socid != $invoice->socid)) {
 					$error++;
 					$errorcode = 'PERMISSION_DENIED';
@@ -518,7 +518,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 						'total' => $invoice->total_ttc,
 						'note_private' => $invoice->note_private ? $invoice->note_private : '',
 						'note_public' => $invoice->note_public ? $invoice->note_public : '',
-						'status' => $invoice->statut,
+						'status' => $invoice->status,
 						'project_id' => $invoice->fk_project,
 						'close_code' => $invoice->close_code ? $invoice->close_code : '',
 						'close_note' => $invoice->close_note ? $invoice->close_note : '',

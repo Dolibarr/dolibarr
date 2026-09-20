@@ -147,6 +147,7 @@ if ($logsql) {
 // Define request to get table description
 $base = 0;
 $sql = null;
+$row = array();
 if (preg_match('/mysql/i', $conf->db->type)) {
 	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($db->escapeforlike($table))."'";
 	$base = 1;

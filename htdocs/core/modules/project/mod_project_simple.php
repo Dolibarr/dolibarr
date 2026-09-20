@@ -50,7 +50,7 @@ class mod_project_simple extends ModeleNumRefProjects
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */

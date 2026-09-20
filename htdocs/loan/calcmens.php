@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015	    Florian HENRY 		    <florian.henry@open-concept.pro>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +42,7 @@ require DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
 $mens = (float) price2num(GETPOST('mens'));
 $capital = (float) price2num(GETPOST('capital'));

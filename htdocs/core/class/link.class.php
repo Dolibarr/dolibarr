@@ -271,7 +271,7 @@ class Link extends CommonObject
 			if (empty($sortorder)) {
 				$sortorder = "ASC";
 			}
-			$sql .= " ORDER BY ".$sortfield." ".$sortorder;
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
@@ -317,7 +317,7 @@ class Link extends CommonObject
 		$sql = "SELECT COUNT(rowid) as nb FROM ".$dbs->prefix()."links";
 		$sql .= " WHERE objecttype = '".$dbs->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 
 		$resql = $dbs->query($sql);

@@ -1008,7 +1008,7 @@ if ($id > 0 || $ref) {
 			include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-			$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+			$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formulaire">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1029,7 +1029,7 @@ if ($id > 0 || $ref) {
 			print '<tr class="liste_titre">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 				$nbfields++;
 			}
@@ -1138,7 +1138,7 @@ if ($id > 0 || $ref) {
 				$parameters = array('id_fourn' => (!empty($id_fourn) ? $id_fourn : ''), 'prod_id' => $object->id, 'nbfields' => $nbfields);
 				$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 			}
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 				$nbfields++;
 			}
@@ -1149,7 +1149,7 @@ if ($id > 0 || $ref) {
 					print '<tr class="oddeven">';
 
 					// Action column
-					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($conf->main_checkbox_left_column) {
 						print '<td class="center nowraponall">';
 						// EN: Allow editing and deletion when user can write supplier prices
 						if ($usercancreate) {
@@ -1340,7 +1340,7 @@ if ($id > 0 || $ref) {
 					}
 
 					// Modify-Remove
-					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if (!$conf->main_checkbox_left_column) {
 						print '<td class="center nowraponall">';
 						// EN: Allow editing and deletion when user can write supplier prices
 						if ($usercancreate) {

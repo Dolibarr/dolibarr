@@ -88,21 +88,31 @@ if ($reshook < 0) {
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 || ($action == 'updateedit')) {
+	$db->begin();
+
 	$tmparray = getCountry(GETPOSTINT('country_id'), 'all', $db, $langs, 0);
 	if (!empty($tmparray['id'])) {
-		if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
-			// For FR, default value of option to show profid SIREN is on by default
-			$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+		// Check we can change country
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		if ($mysoc->country_code == 'FR' && $tmparray['code'] != $mysoc->country_code && isALNERunningVersion()) {
+			$langs->load("blockedlog");
+			setEventMessages($langs->trans("BlockedLogCountryChangeNotAllowedFR"), null, 'errors');
+			$error++;
+		} else {
+			if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
+				// For FR, default value of option to show profid SIREN is on by default
+				$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+			}
+
+			$mysoc->country_id   = $tmparray['id'];
+			$mysoc->country_code = $tmparray['code'];
+			$mysoc->country_label = $tmparray['label'];
+
+			$s = $mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
+			dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
+
+			activateModulesRequiredByCountry($mysoc->country_code);
 		}
-
-		$mysoc->country_id   = $tmparray['id'];
-		$mysoc->country_code = $tmparray['code'];
-		$mysoc->country_label = $tmparray['label'];
-
-		$s = $mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
-		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
-
-		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
 	$tmparray = getState(GETPOSTINT('state_id'), 'all', $db, 0, $langs, 0);
@@ -116,8 +126,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	} else {
 		dolibarr_del_const($db, "MAIN_INFO_SOCIETE_STATE", $conf->entity);
 	}
-
-	$db->begin();
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("name", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -450,11 +458,20 @@ if (!empty($conf->use_javascript_ajax)) {
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });
+
+		  // Show/hide VAT exemption code field based on VAT option
+		  $("input[name=\"optiontva\"]").change(function() {
+			if ($(this).val() == "0") {
+				$("#vat_exemption_code_div").show();
+			} else {
+				$("#vat_exemption_code_div").hide();
+			}
+		  });
 	  });';
 	print '</script>'."\n";
 }
 
-print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';
@@ -780,6 +797,17 @@ if ($mysoc->country_code == 'FR') {
 	$tooltiphelp = "<i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i>\n";
 }
 print '<label for="no_vat">'.$form->textwithpicto($langs->trans("VATIsNotUsedDesc"), $tooltiphelp)."</label>";
+
+print '<div class="shownifvatnotused" id="vat_exemption_code_div"'.(getDolGlobalString('FACTURE_TVAOPTION') ? ' style="display: none;"' : '').'>';
+$placeholder = (($mysoc->country_code == 'FR') ? 'VATEX-FR-FRANCHISE' : '');
+$tooltiptext = $langs->trans("VATExemptionCodeDesc").'<br>'.$langs->trans("VATExemptionCodeDesc2").'<br>'.$langs->trans("VATExemptionCodeDesc3");
+if (($mysoc->country_code == 'FR')) {
+	$tooltiptext .= '<br><br>'.$langs->trans("Example").':<br>';
+	$tooltiptext .= 'VATEX-FR-FRANCHISE, VATEX-FR-CGI261-4, VATEX-FR-J, VATEX-FR-I, VATEX-FR-D, ...';
+}
+print $form->textwithpicto($langs->trans("VATExemptionCode"), $tooltiptext, 1, 'help', 'valignmiddle', 0, 3, 'exemptioncode').' <input type="text" name="MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE" placeholder="'.$placeholder.'" value="'.getDolGlobalString('MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE').'">';
+print '</div>';
+
 print "</td></tr>\n";
 
 print "</table>";

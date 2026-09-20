@@ -5,8 +5,8 @@
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017      	Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2017       ATM-CONSULTING			<contact@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,9 +171,8 @@ function facture_prepare_head($object)
  */
 function invoice_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('facture');
 	$extrafields->fetch_name_optionals_label('facturedet');
 	$extrafields->fetch_name_optionals_label('facture_rec');
@@ -234,7 +233,7 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributeslinesrec';
 	$h++;
 
-	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 0) {	// Warning, implementation with value 1 is seriously bugged and a new one not compatible is expected to become stable
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 0) {	// Warning, implementation with value 1 is seriously bugged and the new one with value 2, not compatible with 1, is expected to become stable
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/invoice_situation.php');
 		$head[$h][1] = $langs->trans("InvoiceSituation");
 		$head[$h][2] = 'situation';
@@ -426,7 +425,7 @@ function getNumberInvoicesPieChart($mode)
 	if (($mode == 'customers' && isModEnabled('invoice') && $user->hasRight('facture', 'lire'))
 		|| ($mode == 'suppliers' && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && $user->hasRight('fournisseur', 'facture', 'lire'))
 	) {
-		global $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus8, $badgeStatus11;
+		global $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11;
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$now = date_create(date('Y-m-d', dol_now()));
@@ -504,7 +503,7 @@ function getNumberInvoicesPieChart($mode)
 				$mode == 'customers' ? $langs->trans('InvoiceNotLate30Days') : $langs->trans("InvoiceToPay30Days"),
 			);
 
-			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11, '-'.$badgeStatus11);
+			$colorseries = array('#998844', $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11, '-'.$badgeStatus11);
 
 			$result = '<div class="div-table-responsive-no-min">';
 			$result .= '<table class="noborder nohover centpercent">';
@@ -526,7 +525,7 @@ function getNumberInvoicesPieChart($mode)
 
 				$dolgraph->setLegend($legend);
 
-				$dolgraph->SetDataColor(array_values($colorseries));
+				$dolgraph->SetDataColor($colorseries);
 				$dolgraph->setShowLegend(2);
 				$dolgraph->setShowPercent(1);
 				$dolgraph->SetType(array('bars', 'bars', 'bars', 'bars', 'bars', 'bars'));
@@ -534,6 +533,7 @@ function getNumberInvoicesPieChart($mode)
 				$dolgraph->setHeight('160');	/* 160 min is required to show the 6 lines of legend */
 				$dolgraph->setWidth('450');
 				$dolgraph->setHideXValues(true);
+				//$dolgraph->setBarWidth('15');
 				if ($mode == 'customers') {
 					$dolgraph->draw('idgraphcustomerinvoices');
 				} elseif ($mode == 'fourn' || $mode == 'suppliers') {

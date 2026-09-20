@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -143,7 +143,7 @@ class SMTPs
 	private $_msgSensitivity = 0;
 
 	/**
-	 * @var string[] Message Sensitivity
+	 * @var array<string|false> Message Sensitivity
 	 */
 	private $_arySensitivity = array(false,
 								  'Personal',
@@ -151,7 +151,7 @@ class SMTPs
 								  'Company Confidential');
 
 	/**
-	 * @var int Message Sensitivity
+	 * @var int<0,5> Message Sensitivity
 	 * Defaults to 3 - Normal
 	 */
 	private $_msgPriority = 3;

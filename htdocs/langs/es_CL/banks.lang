@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Bancos | Efectivo
-MenuVariousPayment=Manual Journal Entries
-MenuNewVariousPayment=New manual journal entry
 BankAccount=cuenta bancaria
 BankAccounts=Cuentas bancarias
 BankAccountsAndGateways=Cuentas bancarias | Puertas de acceso
@@ -109,10 +107,6 @@ DocumentModelBan=Plantilla para imprimir una página con información de BAN.
 NewVariousPayment=Nuevo pago misceláneo
 VariousPayment=Pago misceláneo
 VariousPayments=Pagos diversos
-ShowVariousPayment=Show manual journal entries
-AddVariousPayment=Add manual journal entries
-VariousPaymentId=Manual journal entry ID
-VariousPaymentLabel=Manual journal entry label
 SEPAMandate=Mandato de la SEPA
 YourSEPAMandate=Su mandato de SEPA
 FindYourSEPAMandate=Este es su mandato de SEPA para autorizar a nuestra empresa a realizar un pedido de débito directo a su banco. Devuélvalo firmado (escaneo del documento firmado) o envíelo por correo a

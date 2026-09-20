@@ -39,7 +39,6 @@ PrintCustomerOnReceipts=Imprimir al cliente en boletos / recibos
 EnableBarOrRestaurantFeatures=Habilitar funciones para bar o restaurante
 ConfirmDeletionOfThisPOSSale=¿Confirma la eliminación de esta venta actual?
 ConfirmDiscardOfThisPOSSale=¿Quieres descartar esta venta actual?
-History=Historia
 Colorful=Vistoso
 SortProductField=Campo para clasificar productos
 BrowserMethodDescription=Impresión de recibos simple y fácil. Solo unos pocos parámetros para configurar el recibo. Imprimir a través del navegador.

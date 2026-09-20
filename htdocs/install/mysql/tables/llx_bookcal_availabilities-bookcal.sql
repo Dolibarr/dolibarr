@@ -37,7 +37,3 @@ CREATE TABLE llx_bookcal_availabilities(
 	fk_bookcal_calendar integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
-
-
-SELECT * FROM llx_bookcal_availabilities
-WHERE rowid = 1;

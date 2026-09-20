@@ -84,7 +84,7 @@ class mailing_advthirdparties extends MailingTargets
 		// phpcs:enable
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::add_to_target_spec socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
+		dol_syslog(get_class($this)."::add_to_target_spec socid=".formatLogObject($socid).' contactid='.formatLogObject($contactid));
 
 		$cibles = array();
 
@@ -190,7 +190,7 @@ class mailing_advthirdparties extends MailingTargets
 		}
 
 
-		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".var_export($cibles, true), LOG_DEBUG);
+		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".formatLogObject($cibles), LOG_DEBUG);
 
 		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}

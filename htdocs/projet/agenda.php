@@ -245,7 +245,7 @@ if (!empty($object->id)) {
 		$param .= '&search_complete='.urlencode($search_complete);
 	}
 	if ($search_filtert != '') {
-		$param .= '&search_filtert='.urlencode($search_filtert);
+		$param .= '&search_filtert='.urlencode((string) $search_filtert);
 	}
 	if ($search_dateevent_start != '') {
 		$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');
@@ -258,7 +258,7 @@ if (!empty($object->id)) {
 		$param .= '&dateevent_endday='.GETPOSTINT('dateevent_endday');
 	}
 
-
+	// Try to know count of actioncomm from cache
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 	$cachekey = 'count_events_project_'.$object->id;
 	$nbEvent = dol_getcache($cachekey);

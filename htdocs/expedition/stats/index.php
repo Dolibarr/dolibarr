@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,10 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,19 +34,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $hookmanager->initHooks(array('expeditionstats', 'globalcard'));
 
+$action = '';
+
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
-	$action = '';
 	$socid = $user->socid;
 }
+
+$object = new Expedition($db);
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -79,9 +81,36 @@ restrictedArea($user, 'expedition');
 
 $form = new Form($db);
 
+$title = $langs->trans("Shipments");
+
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-expedition page-stats_index');
 
-print load_fiche_titre($langs->trans("StatisticsOfSendings"), '', 'dolly');
+$page = 0;
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$picto = $object->picto;
+$limit = 0;
+$mode = '';
+
+// Currently: a sending can't create from sending list
+// $url = DOL_URL_ROOT.'/expedition/card.php?action=create';
+// if (!empty($socid)) $url .= '&socid='.$socid;
+// $newcardbutton = dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', $url, '', $user->rights->expedition->creer);
+$newcardbutton  = '';
+// @phpstan-ignore-next-line equals.alwaysFalse
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/expedition/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
+// @phpstan-ignore-next-line equals.alwaysFalse
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/expedition/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/expedition/stats/index.php?mode=statistics'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->hasRight('expedition', 'creer'));
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+
 
 $dir = (!empty($conf->expedition->multidir_temp[$conf->entity]) ? $conf->expedition->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 dol_mkdir($dir);
@@ -241,17 +270,17 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
-print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
+print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
 print '</td></tr>';
 // User
-print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
+print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
 print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Year
-print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
+print '<tr><td>'.$langs->trans("Year").'</td><td>';
 if (!in_array($year, $arrayyears)) {
 	$arrayyears[$year] = $year;
 }
@@ -277,14 +306,20 @@ print '<td class="right">'.$langs->trans("NbOfSendings").'</td>';
 print '<td class="center">'.$langs->trans("AmountAverage").'</td>';*/
 print '</tr>';
 
+$cssline = '';
+$MAXLINES = 5;
+$nbline = 0;
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
 	while (!empty($year) && $oldyear > (int) $year + 1) { // If we have empty year
 		$oldyear--;
+		$nbline++;
+		if ($nbline > $MAXLINES) {
+			$cssline = ' hidden';
+		}
 
-
-		print '<tr class="oddeven" height="24">';
+		print '<tr class="oddeven'.$cssline.'" height="24">';
 		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
 
 		print '<td class="right">0</td>';
@@ -293,7 +328,7 @@ foreach ($data as $val) {
 		print '</tr>';
 	}
 
-	print '<tr class="oddeven" height="24">';
+	print '<tr class="oddeven'.$cssline.'" height="24">';
 	print '<td class="center">';
 	if ($year) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a>';
@@ -307,6 +342,16 @@ foreach ($data as $val) {
 	print '<td class="right">'.price(price2num($val['avg'],'MT'),1).'</td>';*/
 	print '</tr>';
 	$oldyear = $year;
+	$nbline++;
+	if ($nbline > $MAXLINES) {
+		$cssline = ' hidden';
+	}
+}
+
+if ($nbline > $MAXLINES) {
+	print '<tr class="liste_total"><td colspan="4" class="center">';
+	print '<a href="#" class="showmoreoptions" onclick="javascript:$(\'.hidden\').toggle();$(this).toggle();">'.img_picto('', 'chevron-down', 'class="paddingright"').$langs->trans("More").'...</a>';
+	print '</td></tr>';
 }
 
 print '</table>';
@@ -374,4 +419,5 @@ print '<i class="opacitymedium">'.$langs->trans("StatsOnShipmentsOnlyValidated")
 
 // End of page
 llxFooter();
+
 $db->close();

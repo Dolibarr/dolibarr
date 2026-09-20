@@ -8,7 +8,7 @@
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +26,15 @@
  */
 
 /**
- * \file       htdocs/core/lib/product.lib.php
- * \brief      Ensemble de functions de base pour le module produit et service
- * \ingroup	product
+ * \file       	htdocs/core/lib/product.lib.php
+ * \brief      	Set of functions for the module product and service
+ * \ingroup		product
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   Product	$object		Object related to tabs
+ * @param   Product				$object					Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function product_prepare_head($object)
@@ -179,7 +179,7 @@ function product_prepare_head($object)
 			$objectsrc->fetch($object->origin_id);
 		}
 		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT."/product/contact.php?id=".$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/contact.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -192,7 +192,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'referers';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/card.php', ['id' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/index.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Statistics');
 	$head[$h][2] = 'stats';
 	$h++;
@@ -259,8 +259,33 @@ function product_prepare_head($object)
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/messaging.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of product count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_product_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE fk_element = ".((int) $object->id);
+			$sql .= " AND elementtype = 'product'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+		}
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
@@ -358,10 +383,10 @@ function productlot_prepare_head($object)
  */
 function product_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product');
+	$extrafields->fetch_name_optionals_label('product_lang');
 	$extrafields->fetch_name_optionals_label('product_price');
 	$extrafields->fetch_name_optionals_label('product_customer_price');
 	$extrafields->fetch_name_optionals_label('product_fournisseur_price');
@@ -398,6 +423,18 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	// Multilangs Extrafields
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_lang_extrafields.php');
+		$head[$h][1] = $langs->trans("TranslationsExtrafields");
+		$nbExtrafields = isset($extrafields->attributes['product_lang']['count']) ? $extrafields->attributes['product_lang']['count'] : 0;
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
+		$head[$h][2] = 'translationAttributes';
+		$h++;
+	}
+
 	// Extrafields for price levels
 	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_price_extrafields.php');
@@ -410,7 +447,7 @@ function product_admin_prepare_head()
 		$h++;
 	}
 
-	//Extrafields for price per customer
+	// Extrafields for price per customer
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php');
 		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
@@ -446,9 +483,8 @@ function product_admin_prepare_head()
  */
 function product_lot_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product_lot');
 
 	$h = 0;
@@ -497,10 +533,12 @@ function show_stats_for_company($product, $socid)
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
-	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
-	print '<td class="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
-	print '<td class="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
-	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
+	print '<td class="liste_titre left">';
+	print $form->textwithpicto($langs->trans("Referers"), $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")));
+	print '</td>';
+	print '<td class="liste_titre right">'.$langs->trans("NbOfThirdParties").'</td>';
+	print '<td class="liste_titre right">'.$langs->trans("NbOfObjectReferers").'</td>';
+	print '<td class="liste_titre right">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
 	// Customer proposals
@@ -512,7 +550,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("propal");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/propal.php', ['id' => $product->id]).'">'.img_object('', 'propal', 'class="pictofixedwidth"').$langs->trans("Proposals").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/propal.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'propal', 'class="pictofixedwidth"').$langs->trans("Proposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_propale['customers'];
 		print '</td><td class="right">';
@@ -531,7 +569,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("supplier_proposal");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/supplier_proposal.php', ['id' => $product->id]).'">'.img_object('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans("SupplierProposals").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/supplier_proposal.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans("SupplierProposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['suppliers'];
 		print '</td><td class="right">';
@@ -550,7 +588,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande.php', ['id' => $product->id]).'">'.img_object('', 'order', 'class="pictofixedwidth"').$langs->trans("CustomersOrders").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'order', 'class="pictofixedwidth"').$langs->trans("CustomersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande['customers'];
 		print '</td><td class="right">';
@@ -569,7 +607,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande_fournisseur.php', ['id' => $product->id]).'">'.img_object('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/commande_fournisseur.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['suppliers'];
 		print '</td><td class="right">';
@@ -588,7 +626,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['id' => $product->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("CustomersInvoices").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("CustomersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture['customers'];
 		print '</td><td class="right">';
@@ -607,7 +645,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facturerec.php', ['id' => $product->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facturerec.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facturerec['customers'];
 		print '</td><td class="right">';
@@ -626,7 +664,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_fournisseur.php', ['id' => $product->id]).'">'.img_object('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SuppliersInvoices").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_fournisseur.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("SuppliersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['suppliers'];
 		print '</td><td class="right">';
@@ -646,7 +684,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_facturerec.php', ['id' => $product->id]).'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/facture_facturerec.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facturefournrec['customers'];
 		print '</td><td class="right">';
@@ -667,7 +705,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("sendings");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/expedition.php', ['id' => $product->id]).'">'.img_object('', 'shipment', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/expedition.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'shipment', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_expedition['customers'];
 		print '</td><td class="right">';
@@ -687,7 +725,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("receptions");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/reception.php', ['id' => $product->id]).'">'.img_object('', 'reception', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/reception.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'reception', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_reception['suppliers'];
 		print '</td><td class="right">';
@@ -707,7 +745,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("contracts");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/contrat.php', ['id' => $product->id]).'">'.img_object('', 'contract', 'class="pictofixedwidth"').$langs->trans("Contracts").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/contrat.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'contract', 'class="pictofixedwidth"').$langs->trans("Contracts").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_contrat['customers'];
 		print '</td><td class="right">';
@@ -728,7 +766,7 @@ function show_stats_for_company($product, $socid)
 		$langs->load("mrp");
 
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/bom.php', ['id' => $product->id]).'">'.img_object('', 'bom', 'class="pictofixedwidth"').$langs->trans("BOM").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/bom.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'bom', 'class="pictofixedwidth"').$langs->trans("BOM").'</a>';
 		print '</td><td class="right">';
 
 		print '</td><td class="right">';
@@ -752,7 +790,7 @@ function show_stats_for_company($product, $socid)
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
-		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/mo.php', ['id' => $product->id]).'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
+		print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/product/stats/mo.php', ['id' => $product->id], false, 'anchorundermenu').'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		print $form->textwithpicto((string) $product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
 		print ' ';

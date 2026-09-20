@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Benjamin Falière	<benjamin@faliere.com>
  *
@@ -32,9 +32,8 @@
  */
 function ticketAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('ticket');
 
 	$langs->load("ticket");
@@ -213,7 +212,7 @@ function ticket_prepare_head($object)
  */
 function showDirectPublicLink($object)
 {
-	global $conf, $langs;
+	global $langs;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$email = CMailFile::getValidAddress($object->origin_email, 2);
@@ -227,15 +226,16 @@ function showDirectPublicLink($object)
 		$langs->load('errors');
 		$out .= '<span class="opacitymedium">'.$langs->trans("ErrorPublicInterfaceNotEnabled").'</span>';
 	} else {
-		$out .= img_picto('', 'object_globe.png').' <span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span>';
+		$out .= img_picto('', 'object_globe.png');
 		if ($url) {
+			$out .= ' <span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span>';
 			$out .= '<br><div class="urllink">';
 			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" spellcheck="false" value="'.$url.'">';
 			$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
 			$out .= '</div>';
 			$out .= ajax_autoselect("directpubliclink", '');
 		} else {
-			$out .= ': <span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
+			$out .= ' <span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
 		}
 	}
 
@@ -257,7 +257,7 @@ function generate_random_id($car = 16)
 	for ($i = 0; $i < $car; $i++) {
 		try {
 			$key = random_int(0, $max);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			// Fallback. We let PHP makes the seed automatically (no manual mt_srand)
 			$key = mt_rand(0, $max);
 		}

@@ -8,7 +8,7 @@
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,9 +163,9 @@ class FichinterLigne extends CommonObjectLine
 	/**
 	 *	Insert the line into database
 	 *
-	 *	@param		User	$user 		Object user that make creation
-	 *	@param		int		$notrigger	Disable all triggers
-	 *	@return		int		Return integer <0 if ko, >0 if ok
+	 *	@param		User		$user 		Object user that make creation
+	 *	@param		int<0,1>	$notrigger	Disable all triggers
+	 *	@return		int			Return integer <0 if ko, >0 if ok
 	 */
 	public function insert($user, $notrigger = 0)
 	{
@@ -186,13 +186,13 @@ class FichinterLigne extends CommonObjectLine
 
 		$rangToUse = $this->rang;
 		if ($rangToUse == -1) {
-			// Recupere rang max de la ligne d'intervention dans $rangmax
+			// Retrieve max rank of intervention line into $rangmax
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'fichinterdet';
 			$sql .= ' WHERE fk_fichinter = '.((int) $this->fk_fichinter);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
-				$rangToUse = $obj->max + 1;
+				$rangToUse = (int) $obj->max + 1;
 			} else {
 				dol_print_error($this->db);
 				$this->db->rollback();
@@ -200,7 +200,7 @@ class FichinterLigne extends CommonObjectLine
 			}
 		}
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql .= ' (fk_fichinter, description, date, duree, rang, product_type, special_code)';
 		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
@@ -271,7 +271,7 @@ class FichinterLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet SET";
 		$sql .= " description = '".$this->db->escape($this->desc)."',";
 		$sql .= " date = '".$this->db->idate($this->date)."',";

@@ -26,15 +26,12 @@
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
-
 if (!defined('NOLOGIN')) {
 	define('NOLOGIN', '1');       // If this page is public (can be called outside logged session)
 }
-
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1');     // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
-
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
@@ -49,13 +46,6 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -63,6 +53,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
  * @var Societe $mysoc
  * @var Translate $langs
  */
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
@@ -77,13 +74,12 @@ if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket is not enabled');
 }
 
+$object = new Ticket($db);
+
 
 /*
  * View
  */
-
-$form = new Form($db);
-$formticket = new FormTicket($db);
 
 if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print $langs->trans('TicketPublicInterfaceForbidden');

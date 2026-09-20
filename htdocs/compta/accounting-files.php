@@ -5,8 +5,8 @@
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro          <alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,12 +129,12 @@ if ($user->socid > 0) {
 
 // Define $arrayofentities if multientity is set.
 $arrayofentities = array();
-if (isModEnabled('multicompany') && is_object($mc)) {
+if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 	$arrayofentities = $mc->getEntitiesList();
 }
 
 $entity = (GETPOSTISSET('entity') ? GETPOSTINT('entity') : (GETPOSTISSET('search_entity') ? GETPOSTINT('search_entity') : $conf->entity));
-if (isModEnabled('multicompany') && is_object($mc)) {
+if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 	if (empty($entity) && getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
 		$entity = '0,'.implode(',', array_keys($arrayofentities));
 	}
@@ -184,7 +184,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 	if (!$error) {
 		$sql = '';
 
-		$wheretail = " '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
+		$sanitizedwheretail = " '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
 
 		// Customer invoices
 		if (GETPOST('selectinvoices') && !empty($listofchoices['selectinvoices']['perms'])) {
@@ -195,7 +195,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " t.localtax1, t.localtax2, t.revenuestamp,";
 			$sql .= " t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
-			$sql .= " WHERE datef between ".$wheretail;
+			$sql .= " WHERE datef between ".$sanitizedwheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
 			if (!empty($projectid)) {
@@ -211,7 +211,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " t.localtax1, t.localtax2, 0 as revenuestamp,";
 			$sql .= " t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
-			$sql .= " WHERE datef between ".$wheretail;
+			$sql .= " WHERE datef between ".$sanitizedwheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
 			if (!empty($projectid)) {
@@ -233,7 +233,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport_det as td ON t.rowid = td.fk_expensereport";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = t.fk_user_author";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = u.fk_country";
-				$sql .= " WHERE date_fin between  " . $wheretail;
+				$sql .= " WHERE date_fin between  " . $sanitizedwheretail;
 				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : $entity) . ')';
 				$sql .= " AND t.fk_statut <> " . ExpenseReport::STATUS_DRAFT;
 				$sql .= " AND fk_projet = ".((int) $projectid);
@@ -242,7 +242,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 				$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
 				$sql .= " t.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, " . PAY_DEBIT . " as sens";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as t LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = t.fk_user_author LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = u.fk_country";
-				$sql .= " WHERE date_fin between  " . $wheretail;
+				$sql .= " WHERE date_fin between  " . $sanitizedwheretail;
 				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : $entity) . ')';
 				$sql .= " AND t.fk_statut <> " . ExpenseReport::STATUS_DRAFT;
 			}
@@ -256,7 +256,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datedon as date, t.datedon as date_due, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."don as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_country";
-			$sql .= " WHERE datedon between ".$wheretail;
+			$sql .= " WHERE datedon between ".$sanitizedwheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
 			if (!empty($projectid)) {
@@ -272,7 +272,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
 			$sql .= " '".$db->escape($conf->currency)."' as currency, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
-			$sql .= " WHERE datep between ".$wheretail;
+			$sql .= " WHERE datep between ".$sanitizedwheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
 			if (!empty($projectid)) {
@@ -288,7 +288,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.date_ech as date, t.periode as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
-			$sql .= " WHERE t.date_ech between ".$wheretail;
+			$sql .= " WHERE t.date_ech between ".$sanitizedwheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_UNPAID;
 			if (!empty($projectid)) {
@@ -304,7 +304,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
-			$sql .= " WHERE datep between ".$wheretail;
+			$sql .= " WHERE datep between ".$sanitizedwheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			if (!empty($projectid)) {
 				$sql .= " AND fk_projet = ".((int) $projectid);
@@ -319,7 +319,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " 0 as localtax1, 0 as localtax2, 0 as revenuestamp,";
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'LoanPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as t LEFT JOIN ".MAIN_DB_PREFIX."loan as l ON l.rowid = t.fk_loan";
-			$sql .= " WHERE datep between ".$wheretail;
+			$sql .= " WHERE datep between ".$sanitizedwheretail;
 			$sql .= " AND l.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 		}
 
@@ -406,6 +406,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 							$subdir = '';
 							$upload_dir = '';
 							$link = '';
+							$modulepart = '';
 							break;
 					}
 
@@ -520,7 +521,7 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 		dol_mkdir($dirfortmpfile);
 
 		$log = $langs->transnoentitiesnoconv("Type");
-		if (isModEnabled('multicompany') && is_object($mc)) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			$log .= ','.$langs->transnoentitiesnoconv("Entity");
 		}
 		$log .= ','.$langs->transnoentitiesnoconv("Date");
@@ -565,7 +566,7 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 				}
 
 				$log .= '"'.$langs->transnoentitiesnoconv($file['item']).'"';
-				if (isModEnabled('multicompany') && is_object($mc)) {
+				if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 					$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
 				}
 				$log .= ','.dol_print_date($file['date'], 'dayrfc');
@@ -633,13 +634,15 @@ $head[$h][0] = $_SERVER["PHP_SELF"];
 $head[$h][1] = $langs->trans("AccountantFiles");
 $head[$h][2] = 'AccountancyFiles';
 
-print dol_get_fiche_head($head, 'AccountancyFiles');
+print dol_get_fiche_head($head, 'AccountancyFiles', '', -1);
 
 
 print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp");
+print '<div class="neutral">';
+
+print '<span class="opacitylow">'.$langs->trans("ExportAccountingSourceDocHelp");
 if (isModEnabled('accounting')) {
 	print ' '.$langs->trans("ExportAccountingSourceDocHelp2", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals"));
 }
@@ -654,7 +657,7 @@ print "\n";
 
 // Export is for current company only
 $socid = 0;
-if (isModEnabled('multicompany') && is_object($mc)) {
+if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 	$mc->getInfo($conf->entity);
 	print ' &nbsp; <span class="marginleftonly marginrightonly'.(!getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES') ? ' opacitymedium' : '').'">'.$langs->trans("Entity").' : ';
 	if (getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
@@ -696,7 +699,9 @@ foreach ($listofchoices as $choice => $val) {
 	$i++;
 }
 
-print '<input type="submit" class="button small nomarginleft margintoponly" name="search" value="'.$langs->trans("Search").'">';
+print '<br><br><center><input type="submit" class="button small nomarginleft margintoponly" name="search" value="'.$langs->trans("Search").'"></center>';
+
+print '</div>';
 
 print '</form>'."\n";
 

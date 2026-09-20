@@ -53,6 +53,11 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	 */
 	public $name = 'standard';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 40;
+
 
 	/**
 	 *  Return description of numbering module

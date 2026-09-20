@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2025		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
@@ -90,9 +90,6 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
-$listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'alpha') > 0 ? GETPOST('listlimit', 'alpha') : 1000;
-
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -100,7 +97,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTI
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$offset = $listlimit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -130,6 +127,24 @@ foreach ($object->fields as $key => $val) {
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
+	}
+}
+
+// Security
+if (!empty($user->socid)) {
+	accessforbidden();
+}
+
+$permissiontoadd = 1;
+$permissiontoedit = ($user->admin ? 1 : 0);
+$permissiontodelete = ($user->admin ? 1 : 0);
+
+$tmpmailtemplate = new CEmailTemplate($db);
+if ($rowid > 0) {
+	$result = $tmpmailtemplate->fetch($rowid);
+	if ($tmpmailtemplate->fk_user == $user->id) {
+		$permissiontoedit = 1;
+		$permissiontodelete = 1;
 	}
 }
 
@@ -167,9 +182,11 @@ $tabfieldinsert[25] .= ',entity'; // Must be at end because not into other array
 // List of help for fields
 // Set MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES to allow edit of template for lines
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-$formmail = new FormMail($db);
 if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
-	$tmp = FormMail::getAvailableSubstitKey('formemail');
+	$targetobject = fetchObjectByElement(0, $tmpmailtemplate->type_template);
+
+	$tmp = FormMail::getAvailableSubstitKey('formemail', $targetobject);
+
 	$tmp['__(AnyTranslationKey)__'] = 'Translation';
 	$helpsubstit = $langs->trans("AvailableVariables").':<br>';
 	$helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
@@ -178,7 +195,10 @@ if (!getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 		$helpsubstitforlines .= $key.' -> '.$val.'<br>';
 	}
 } else {
-	$tmp = FormMail::getAvailableSubstitKey('formemailwithlines');
+	$targetobject = fetchObjectByElement(0, $tmpmailtemplate->type_template);
+
+	$tmp = FormMail::getAvailableSubstitKey('formemailwithlines', $targetobject);
+
 	$tmp['__(AnyTranslationKey)__'] = 'Translation';
 	$helpsubstit = $langs->trans("AvailableVariables").':<br>';
 	$helpsubstitforlines = $langs->trans("AvailableVariables").':<br>';
@@ -219,6 +239,12 @@ if (isModEnabled('member') && $user->hasRight('adherent', 'lire')) {
 }
 if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
+}
+if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
+	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendExpenseReport'));
+}
+if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
+	$elementList['holiday'] = img_picto('', 'holiday', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendLeaves'));
 }
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
@@ -266,9 +292,6 @@ if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
-if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')) {
-	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToExpenseReport'));
-}
 if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
@@ -280,6 +303,9 @@ if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
 }
 if (isModEnabled('product') && $user->hasRight('produit', 'lire')) {
 	$elementList['product_send'] = img_picto('', 'product', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('Product'));
+}
+if (isModEnabled('stocktransfer')) {
+	$elementList['stocktransfer_send'] = '<span class="fas fa-box-open em080 valignmiddle pictomodule paddingrightonly" style="color: #a69944;"></span>'.dol_escape_htmltag($langs->trans('MailToSendStockTransfer'));
 }
 
 $parameters = array('elementList' => $elementList);
@@ -293,23 +319,6 @@ if ($reshook == 0) {
 $error = 0;
 
 $acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
-
-// Security
-if (!empty($user->socid)) {
-	accessforbidden();
-}
-
-$permissiontoadd = 1;
-$permissiontoedit = ($user->admin ? 1 : 0);
-$permissiontodelete = ($user->admin ? 1 : 0);
-if ($rowid > 0) {
-	$tmpmailtemplate = new CEmailTemplate($db);
-	$tmpmailtemplate->fetch($rowid);
-	if ($tmpmailtemplate->fk_user == $user->id) {
-		$permissiontoedit = 1;
-		$permissiontodelete = 1;
-	}
-}
 
 
 /*
@@ -410,7 +419,7 @@ if (empty($reshook)) {
 		// If previous test is ok action is add, we add the line
 		if ($ok && GETPOST('actionadd')) {
 			// Add new entry
-			$sql = "INSERT INTO ".$tabname[25]." (";
+			$sql = "INSERT INTO ".$db->sanitize($tabname[25])." (";
 			// List of fields
 			$sql .= $tabfieldinsert[25];
 			$sql .= ", active, enabled)";
@@ -504,7 +513,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Modify entry
-				$sql = "UPDATE ".$tabname[25]." SET ";
+				$sql = "UPDATE ".$db->sanitize($tabname[25])." SET ";
 				// Modify value of fields
 				$i = 0;
 				foreach ($listfieldmodify as $field) {
@@ -592,7 +601,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {       // delete
 		$rowidcol = "rowid";
 
-		$sql = "DELETE from ".$tabname[25]." WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql = "DELETE from ".$db->sanitize($tabname[25])." WHERE rowid = ".((int) $rowid);
 		if (!$user->admin) {	// A non admin user can only edit its own template
 			$sql .= " AND fk_user = ".((int) $user->id);
 		}
@@ -611,7 +620,7 @@ if (empty($reshook)) {
 	if ($action == $acts[0] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[25]." SET active = 1 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[25])." SET active = 1 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -623,7 +632,7 @@ if (empty($reshook)) {
 	if ($action == $acts[1] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[25]." SET active = 0 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[25])." SET active = 0 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -678,6 +687,9 @@ if ($search_fk_user != '' && $search_fk_user != '-1') {
 if ($search_module) {
 	$sql .= natural_search('module', $search_module);
 }
+// Exclude disabled modules
+$listofmodules = implode(",", array_keys($conf->modules));
+$sql .= "AND (".natural_search('module', $listofmodules, 3, 1)." OR module IS NULL)";
 if ($search_topic) {
 	$sql .= natural_search('topic', $search_topic);
 }
@@ -686,7 +698,6 @@ if ($sortfield == 'country') {
 	$sortfield = 'country_code';
 }
 $sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($listlimit + 1, $offset);
 //print $sql;
 
 // Output page
@@ -738,10 +749,72 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 
 
+$param = '';
+if ($search_label) {
+	$param .= '&search_label='.urlencode($search_label);
+}
+if (!empty($search_lang) && $search_lang != '-1') {
+	$param .= '&search_lang='.urlencode($search_lang);
+}
+if ($search_type_template != '-1') {
+	$param .= '&search_type_template='.urlencode($search_type_template);
+}
+if ($search_fk_user > 0) {
+	$param .= '&search_fk_user='.urlencode($search_fk_user);
+}
+if ($search_module) {
+	$param .= '&search_module='.urlencode($search_module);
+}
+if ($search_topic) {
+	$param .= '&search_topic='.urlencode($search_topic);
+}
+
+$paramwithsearch = $param;
+if ($sortorder) {
+	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
+}
+if ($sortfield) {
+	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
+}
+if (GETPOST('from', 'alpha')) {
+	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
+}
+
+$massactionbutton = '';
+
+
+// List of available record in database
+dol_syslog("htdocs/admin/mails_templates.php", LOG_DEBUG);
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$nbtotalofrecords = $db->num_rows($resql);
+
+$sql .= $db->plimit($limit + 1, $offset);
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
+
+if ($action != 'create') {
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+}
+
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 	print load_fiche_titre($title, '', $titlepicto);
 } else {
-	print load_fiche_titre($title, $newcardbutton, $titlepicto);
+	//print load_fiche_titre($title, $newcardbutton, $titlepicto);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, $newcardbutton, '', $limit, 'limit', 0, 1);
 }
 
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
@@ -790,8 +863,8 @@ if ($action == 'create') {
 	// Line to enter new values (title)
 	print '<tr class="liste_titre">';
 	foreach ($fieldlist as $field => $value) {
-		// Determine le nom du champ par rapport aux noms possibles
-		// dans les dictionnaires de donnees
+		// Determine the field name based on the possible names
+		// in the data dictionaries.
 		$valuetoshow = ucfirst($fieldlist[$field]); // Par default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$css = "left";
@@ -943,68 +1016,25 @@ if ($action == 'create') {
 	print '<br><br><br>';
 }
 
-// List of available record in database
-dol_syslog("htdocs/admin/dict", LOG_DEBUG);
-$resql = $db->query($sql);
-if (!$resql) {
-	dol_print_error($db);
-	exit;
-}
-
-$num = $db->num_rows($resql);
-
-print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent" id="table_list_of_c_email_templates">';
 
 $i = 0;
 
-$param = '';
-if ($search_label) {
-	$param .= '&search_label='.urlencode($search_label);
-}
-if (!empty($search_lang) && $search_lang != '-1') {
-	$param .= '&search_lang='.urlencode($search_lang);
-}
-if ($search_type_template != '-1') {
-	$param .= '&search_type_template='.urlencode($search_type_template);
-}
-if ($search_fk_user > 0) {
-	$param .= '&search_fk_user='.urlencode($search_fk_user);
-}
-if ($search_module) {
-	$param .= '&search_module='.urlencode($search_module);
-}
-if ($search_topic) {
-	$param .= '&search_topic='.urlencode($search_topic);
-}
-
-$paramwithsearch = $param;
-if ($sortorder) {
-	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
-}
-if ($sortfield) {
-	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
-}
-if (GETPOST('from', 'alpha')) {
-	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
-}
-
 // There is several pages
-if ($num > $listlimit) {
+/*
+if ($num > $limit) {
 	print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $limit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 	print '</td></tr>';
 }
-
+*/
 
 // Title line with search boxes
 print '<tr class="liste_titre" id="Title line with search boxes">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center" width="64">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1048,7 +1078,7 @@ if (!empty($arrayfields['t.datec']['checked'])) {
 	print '<td></td>'; // datec / Date creation
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center" width="64">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1059,7 +1089,7 @@ print '</tr>';
 // Title of lines
 print '<tr class="liste_titre" id="Title of lines">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('');
 }
 array_push($fieldlist, "tms", "datec");
@@ -1149,7 +1179,7 @@ foreach ($fieldlist as $field => $value) {
 
 print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('');
 }
 print '</tr>';
@@ -1180,7 +1210,7 @@ if ($num) {
 				$colspan = 0;
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					print '</td>';
 					$colspan++;
@@ -1190,7 +1220,7 @@ if ($num) {
 					$colspan += fieldList($fieldlist, $obj, $tabname[25], $action);
 				}
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					print '</td>';
 					$colspan++;
@@ -1198,7 +1228,7 @@ if ($num) {
 				print "</tr>\n";
 
 				print '<tr class="oddeven nohover" id="tr-aaa-'.$rowid.'">';
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center"></td>';
 				}
 				print '<td colspan="'.($colspan - 1).'" class="" style="padding-left: 20px; padding-right: 20px;">';
@@ -1270,7 +1300,7 @@ if ($num) {
 				print '</center>';
 				print '</td>';
 
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center"></td>';
 				}
 
@@ -1318,7 +1348,7 @@ if ($num) {
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 
 				// Action column - Modify link / Delete link
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall" width="64">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
@@ -1437,7 +1467,7 @@ if ($num) {
 				print "</td>";
 
 				// Action column - Modify link / Delete link
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall" width="64">';
 					if ($canbemodified) {
 						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
@@ -1466,8 +1496,9 @@ if ($nbqualified == 0) {
 print '</table>';
 print '</div>';
 
-print '</form>';
-
+if ($action != 'create') {
+	print '</form>';
+}
 
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 	print dol_get_fiche_end();

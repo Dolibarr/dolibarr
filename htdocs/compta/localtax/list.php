@@ -50,6 +50,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 $ltt = GETPOSTINT("localTaxType");
 $mode = GETPOST('mode', 'alpha');
+$toselect = GETPOST('toselect', 'array:int');
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 
 /*
@@ -118,7 +120,7 @@ if ($result) {
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
-			print $localtax_static->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+			print $localtax_static->getKanbanView('', array('selected' => in_array($localtax_static->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

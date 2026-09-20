@@ -196,7 +196,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'
 print '<td>';
 $formadmin->select_menu(getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENU_SMARTPHONE')), 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') ? '' : ' disabled');
 
-if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
+if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED'))
 	|| (!getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENU_SMARTPHONE')))) {
 	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
@@ -205,7 +205,7 @@ print '</td>';
 print '<td>';
 $formadmin->select_menu(getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE')), 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') ? '' : ' disabled');
 
-if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
+if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', getDolGlobalString("MAIN_MENUFRONT_SMARTPHONE_FORCED"))
 	|| (!getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE')))) {
 	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }

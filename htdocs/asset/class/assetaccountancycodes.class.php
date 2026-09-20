@@ -293,7 +293,7 @@ class AssetAccountancyCodes extends CommonObject
 					$sql .= ', ' . (empty($this->accountancy_codes[$mode_key][$field_key]) ? 'NULL' : "'" . $this->db->escape($this->accountancy_codes[$mode_key][$field_key]) . "'");
 				}
 				$sql .= ", '" . $this->db->idate($now) . "'";
-				$sql .= ", " . $user->id;
+				$sql .= ", " . ((int) $user->id);
 				$sql .= ")";
 
 				$resql = $this->db->query($sql);

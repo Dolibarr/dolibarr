@@ -54,6 +54,11 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	 */
 	public $name = 'standard';
 
+	/**
+	 * @var int 	position
+	 */
+	public $position = 40;
+
 
 	/**
 	 *  Return description of numbering module

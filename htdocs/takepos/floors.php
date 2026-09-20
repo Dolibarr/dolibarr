@@ -238,13 +238,13 @@ $( document ).ready(function() {
 <div style="position: absolute; left: 25%; bottom: 8%; width:50%; height:3%;">
 	<center>
 	<h1>
-	<?php if ($floor > 1) { ?>
-	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 1) {
+	<?php if ($floor > 0) { ?>
+	<img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor > 0) {
 		$floor--;
 		echo $floor;
 		$floor++;
 																											 } else {
-																												 echo "1";
+																												 echo "0";
 																											 } ?>';">
 	<?php } ?>
 	<span class="valignmiddle"><?php echo $langs->trans("Floor")." ".$floor; ?></span>

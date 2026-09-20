@@ -49,7 +49,7 @@
  *		@param	int		$info_bits					Miscellaneous information on line
  *		@param	int<0,1>	$type					0/1=Product/service
  *		@param  string|Societe|null $seller			Third party seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
- *		@param  array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}	$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+ *		@param  array{}|array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}		$localtaxes_array			Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
  *		@param  float	$progress					Situation invoices progress (value from 0 to 100, 100 by default)
  *		@param  float	$multicurrency_tx           Currency rate (1 by default)
  * 		@param  float	$pu_devise					Amount in currency
@@ -197,10 +197,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		}
 	}
 
-	// initialize total (may be HT or TTC depending on price_base_type)
+	// Initialize total (may be HT or TTC depending on price_base_type)
+	// Note: For einvoice, we may need to have MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY = 'MU' because, we must recalculate
+	// amounts using this rule when building a XML file.
 	if ($remise_percent_ligne && getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY')) {	// MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY can be 'MU', 2, ...
 		$tot_sans_remise = $pu * $qty * ($progress / 100);
-		$tot_avec_remise_ligne = (float) price2num($pu * (1 - ((float) $remise_percent_ligne / 100)), getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY')) * $qty * ($progress / 100);
+		$pudiscount = (float) price2num($pu * ((float) $remise_percent_ligne / 100), getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY'));
+		$tot_avec_remise_ligne = (float) price2num($pu - $pudiscount, getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY')) * $qty * ($progress / 100);
 	} else {
 		$tot_sans_remise = $pu * $qty * ($progress / 100);
 		$tot_avec_remise_ligne = $tot_sans_remise * (1 - ((float) $remise_percent_ligne / 100));

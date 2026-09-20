@@ -216,7 +216,7 @@ class modRecruitment extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->recruitment->enabled',
+			//      'test' => 'isModEnabled('recruitment')',
 			//      'priority' => 50,
 			//  ),
 		);

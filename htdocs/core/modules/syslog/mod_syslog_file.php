@@ -190,7 +190,7 @@ class mod_syslog_file extends LogHandler
 		$logfile = $this->getFilename($suffixinfilename);
 
 		$result = false;
-		if (defined('SYSLOG_FILE_NO_ERROR')) {
+		if (defined('SYSLOG_FILE_NO_ERROR') || !empty($suffixinfilename)) {
 			$filefd = @fopen($logfile, "a");
 		} else {
 			$filefd = fopen($logfile, "a");
@@ -201,7 +201,7 @@ class mod_syslog_file extends LogHandler
 			fclose($filefd);
 			dolChmod($logfile);
 		}
-		if ($result === false && (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR'))) {
+		if ($result === false && empty($suffixinfilename) && (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR'))) {
 			global $dolibarr_main_prod;
 			// Do not break dolibarr usage if log fails
 			//throw new Exception('Failed to open log file '.basename($logfile));

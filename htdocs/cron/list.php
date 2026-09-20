@@ -59,6 +59,7 @@ $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
 $search_processing = GETPOST("search_processing", 'int');
 $securitykey = GETPOST('securitykey', 'alpha');
+$filter = array();	// Search filter built later, initialized here so it is always defined (e.g. when a hook intercepts the Actions section)
 
 $id = GETPOSTINT('id');
 
@@ -360,7 +361,7 @@ if (GETPOSTISSET('search_processing')) {
 	$sql .= " AND t.processing = ".((int) $search_processing);
 }
 // Manage filter
-if (is_array($filter) && count($filter) > 0) {
+if (count($filter) > 0) {
 	foreach ($filter as $key => $value) {
 		$sql .= " AND ".$db->sanitize($key)." LIKE '%".$db->escape($value)."%'";
 	}
@@ -544,7 +545,7 @@ print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? 
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -571,7 +572,7 @@ print $form->selectarray('search_status', array('0' => $langs->trans("Disabled")
 print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre right">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -586,7 +587,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
@@ -606,7 +607,7 @@ print_liste_field_titre("CronDtNextLaunch", $_SERVER["PHP_SELF"], "t.datenextrun
 print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "t.status,t.priority", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print '</tr>'."\n";
@@ -655,7 +656,7 @@ if ($num > 0) {
 		print '<tr class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowraponall center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -789,9 +790,9 @@ if ($num > 0) {
 		}
 
 		// Date start last run
-		print '<td class="center lineheightsmall" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center celldateheight" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastrun)) {
-			print dol_print_date($datelastrun, 'dayhoursec', 'tzserver');
+			print dolOutputDates($datelastrun, null, 0, 1, '', 'tzserver');
 		}
 		print '</td>';
 		if (!$i) {
@@ -836,20 +837,24 @@ if ($num > 0) {
 		}
 
 		// Next run date
-		print '<td class="center lineheightsmall">';
+		print '<td class="center celldateheight">';
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {
 				print '<span class="opacitymedium strikefordisabled">';
 			}
-			print dol_print_date($datenextrun, 'dayhoursec');
+
+			$pictotoadd = '';
 			if ($obj->status == Cronjob::STATUS_ENABLED) {
 				if ($obj->maxrun && $obj->nbrun >= $obj->maxrun) {
-					print img_warning($langs->trans("MaxRunReached"));
+					$pictotoadd .= img_warning($langs->trans("MaxRunReached"));
 				} elseif ($datenextrun && $datenextrun < $now) {
-					print img_warning($langs->trans("Late"));
+					$pictotoadd .= img_warning($langs->trans("Late"));
 				}
 			}
+
+			print dolOutputDates($datenextrun, null, 0, 1, $pictotoadd);
+
 			if (empty($obj->status)) {
 				print '</span>';
 			}
@@ -899,7 +904,7 @@ if ($num > 0) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowraponall center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

@@ -52,11 +52,12 @@ function isValidLuhn($str)
 /**
  *  Check the syntax validity of a SIREN.
  *
- *  @param		string		$siren		SIREN to check
- *  @return		boolean					True if valid, False otherwise
+ *  @param		string		$siren			SIREN to check
+ *  @param  	int			$lengthonly		Make surface test only (length, ...)
+ *  @return		boolean						True if valid, False otherwise
  *  @since		Dolibarr V20
  */
-function isValidSiren($siren)
+function isValidSiren($siren, $lengthonly = 0)
 {
 	$siren = trim($siren);
 	$siren = preg_replace('/(\s)/', '', $siren);
@@ -65,18 +66,19 @@ function isValidSiren($siren)
 		return false;
 	}
 
-	return isValidLuhn($siren);
+	return ($lengthonly || isValidLuhn($siren));
 }
 
 
 /**
  *  Check the syntax validity of a SIRET.
  *
- *  @param		string		$siret		SIRET to check
- *  @return		boolean					True if valid, False otherwise
+ *  @param		string		$siret			SIRET to check
+ *  @param  	int			$lengthonly		Make surface test only (length, ...)
+ *  @return		boolean						True if valid, False otherwise
  *  @since		Dolibarr V20
  */
-function isValidSiret($siret)
+function isValidSiret($siret, $lengthonly = 0)
 {
 	$siret = trim($siret);
 	$siret = preg_replace('/(\s)/', '', $siret);
@@ -85,7 +87,7 @@ function isValidSiret($siret)
 		return false;
 	}
 
-	if (isValidLuhn($siret)) {
+	if ($lengthonly || isValidLuhn($siret)) {
 		return true;
 	} elseif ((substr($siret, 0, 9) == "356000000") && (array_sum(str_split($siret)) % 5 == 0)) {
 		/**
@@ -245,4 +247,56 @@ function isValidTinForES($str)
 
 	//Can not be verified
 	return -4;
+}
+
+
+/**
+ *  Check the validity of a professional identifier according to the properties (country) of the company (siren, siret, ...)
+ *
+ *  @param	int			$idprof         1,2,3,4 (Example: 1=siren, 2=siret, 3=naf, 4=rcs/rm)
+ *  @param  Societe		$thirdparty     Object societe
+ *  @param  int			$lenghtonly		Make surface test only (length, ...)
+ *  @return int             			Return integer <=0 if KO, >0 if OK
+ */
+function isValidProfIds($idprof, $thirdparty, $lenghtonly = 0)
+{
+	$ok = 1;
+
+	if (getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
+		return 1;
+	}
+
+	// Check SIREN
+	if ($thirdparty->country_code == 'FR') {
+		if ($idprof == 1 && !isValidSiren($thirdparty->idprof1, $lenghtonly)) {
+			return -1;
+		}
+
+		// Check SIRET
+		if ($idprof == 2 && !isValidSiret($thirdparty->idprof2, $lenghtonly)) {
+			return -2;
+		}
+	}
+
+	// Verify CIF/NIF/NIE if pays ES
+	if ($idprof == 1 && $thirdparty->country_code == 'ES') {
+		return isValidTinForES($thirdparty->idprof1);
+	}
+
+	// Verify NIF if country is PT
+	if ($idprof == 1 && $thirdparty->country_code == 'PT' && !isValidTinForPT($thirdparty->idprof1)) {
+		return -1;
+	}
+
+	// Verify NIF if country is DZ
+	if ($idprof == 1 && $thirdparty->country_code == 'DZ' && !isValidTinForDZ($thirdparty->idprof1)) {
+		return -1;
+	}
+
+	// Verify ID Prof 1 if country is BE
+	if ($idprof == 1 && $thirdparty->country_code == 'BE' && !isValidTinForBE($thirdparty->idprof1)) {
+		return -1;
+	}
+
+	return $ok;
 }

@@ -62,38 +62,74 @@ if ($reshook < 0) {
 }
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha')) || ($action == 'updateedit')) {
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NAME", GETPOST("nom", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ADDRESS", GETPOST("address", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_TOWN", GETPOST("town", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ZIP", GETPOST("zipcode", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_STATE", GETPOSTINT("state_id"), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_REGION", GETPOST("region_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_COUNTRY", GETPOSTINT('country_id'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_PHONE", GETPOST("phone", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_FAX", GETPOST("fax", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_MAIL", GETPOST("mail", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_WEB", GETPOST("web", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_IDPROF1", GETPOST("idprof1", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_CODE", GETPOST("code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NOTE", GETPOST("note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
+	$error = 0;
 
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NAME", GETPOST("itprovider_nom", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_ADDRESS", GETPOST("itprovider_address", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_TOWN", GETPOST("itprovider_town", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_ZIP", GETPOST("itprovider_zipcode", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_STATE", GETPOSTINT("itprovider_state_id"), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_REGION", GETPOST("itprovider_region_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_COUNTRY", GETPOSTINT('itprovider_country_id'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_PHONE", GETPOST("itprovider_phone", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_FAX", GETPOST("itprovider_fax", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_MAIL", GETPOST("itprovider_mail", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_WEB", GETPOST("itprovider_web", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF1", GETPOST("itprovider_idprof1", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_CODE", GETPOST("itprovider_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NOTE", GETPOST("itprovider_note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
+	// Test the idprof1 and 2 of accountant
+	// Not required
 
-	if ($action != 'updateedit') {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	// Test the idprof1 and 2 of IT supplier
+	$country_code_itprovider_array = getCountry(GETPOSTINT('itprovider_country_id'), 'all', $db, $langs, 0);
+	$country_code_itprovider = $country_code_itprovider_array['code'];
+	$tmpthirdparty = new Societe($db);
+	$tmpthirdparty->country_code = $country_code_itprovider;
+	$tmpthirdparty->country_id = getCountry($country_code_itprovider, '3', $db, $langs, 0);
+	$tmpthirdparty->idprof1 = GETPOST("itprovider_idprof1");
+	$tmpthirdparty->idprof2 = GETPOST("itprovider_idprof2");
+
+	if ($mysoc->country_code == 'FR') {
+		if (empty($tmpthirdparty->country_code)) {
+			$langs->loadLangs(array("errors", "companies"));
+			setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->country_code, $langs->trans("Country")), null, 'errors');
+			$error++;
+		}
+		if ($tmpthirdparty->idprof1 && isValidProfIds(1, $tmpthirdparty) <= 0) {
+			$langs->loadLangs(array("errors", "companies"));
+			setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof1, $langs->transcountry("ProfId1Short", $tmpthirdparty->country_code)), null, 'errors');
+			$error++;
+		}
+		if ($tmpthirdparty->idprof2 && isValidProfIds(2, $tmpthirdparty) <= 0) {
+			$langs->loadLangs(array("errors", "companies"));
+			setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof2, $langs->transcountry("ProfId2Short", $tmpthirdparty->country_code)), null, 'errors');
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NAME", GETPOST("nom", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ADDRESS", GETPOST("address", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_TOWN", GETPOST("town", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ZIP", GETPOST("zipcode", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_STATE", GETPOSTINT("state_id"), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_REGION", GETPOST("region_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_COUNTRY", GETPOSTINT('country_id'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_PHONE", GETPOST("phone", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		//dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_FAX", GETPOST("fax", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_MAIL", GETPOST("mail", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_WEB", GETPOST("web", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_IDPROF1", GETPOST("idprof1", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_IDPROF2", GETPOST("idprof2", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_CODE", GETPOST("code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NOTE", GETPOST("note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
+
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NAME", GETPOST("itprovider_nom", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_ADDRESS", GETPOST("itprovider_address", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_TOWN", GETPOST("itprovider_town", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_ZIP", GETPOST("itprovider_zipcode", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_STATE", GETPOSTINT("itprovider_state_id"), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_REGION", GETPOST("itprovider_region_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_COUNTRY", GETPOSTINT('itprovider_country_id'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_PHONE", GETPOST("itprovider_phone", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		//dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_FAX", GETPOST("itprovider_fax", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_MAIL", GETPOST("itprovider_mail", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_WEB", GETPOST("itprovider_web", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF1", GETPOST("itprovider_idprof1", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF2", GETPOST("itprovider_idprof2", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_CODE", GETPOST("itprovider_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_NOTE", GETPOST("itprovider_note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
+
+		if ($action != 'updateedit') {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		}
 	}
 }
 
@@ -207,11 +243,15 @@ print img_picto('', 'globe', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="web" id="web" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('web') ? GETPOST('web', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_WEB')).'"></td></tr>';
 print '</td></tr>'."\n";
 
-// Id prof
+// Id prof 1
 print '<tr class="oddeven"><td><label for="idprof1">'.$langs->transcountry("ProfId1", $mysoc->country_code).'</label></td><td>';
 print '<input name="idprof1" id="idprof1" class="minwidth100" value="'.dol_escape_htmltag(GETPOSTISSET('idprof1') ? GETPOST('idprof1', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_IDPROF1')).'"></td></tr>'."\n";
 
-// Code
+// Id prof 2
+print '<tr class="oddeven"><td><label for="idprof2">'.$langs->transcountry("ProfId2", $mysoc->country_code).'</label></td><td>';
+print '<input name="idprof2" id="idprof2" class="minwidth100" value="'.dol_escape_htmltag(GETPOSTISSET('idprof2') ? GETPOST('idprof2', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_IDPROF2')).'"></td></tr>'."\n";
+
+// Accountancy code
 print '<tr class="oddeven"><td><label for="code">'.$langs->trans("AccountantFileNumber").'</label></td><td>';
 print '<input name="code" id="code" class="minwidth100" value="'.dol_escape_htmltag(GETPOSTISSET('code') ? GETPOST('code', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_CODE')).'"></td></tr>'."\n";
 
@@ -291,11 +331,15 @@ print img_picto('', 'globe', '', 0, 0, 0, '', 'pictofixedwidth');
 print '<input name="itprovider_web" id="itprovider_web" class="maxwidth300 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('itprovider_web') ? GETPOST('itprovider_web', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_WEB')).'"></td></tr>';
 print '</td></tr>'."\n";
 
-// Code
+// Prof ID 1
 print '<tr class="oddeven"><td><label for="itprovider_idprof1">'.$langs->transcountry("ProfId1", $mysoc->country_code).'</label></td><td>';
 print '<input name="itprovider_idprof1" id="itprovider_idprof1" class="minwidth100" value="'.dol_escape_htmltag(GETPOSTISSET('itprovider_idprof1') ? GETPOST('itprovider_idprof1', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1')).'"></td></tr>'."\n";
 
-// Code
+// Prof ID 2
+print '<tr class="oddeven"><td><label for="itprovider_idprof2">'.$langs->transcountry("ProfId2", $mysoc->country_code).'</label></td><td>';
+print '<input name="itprovider_idprof2" id="itprovider_idprof2" class="minwidth100" value="'.dol_escape_htmltag(GETPOSTISSET('itprovider_idprof2') ? GETPOST('itprovider_idprof2', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF2')).'"></td></tr>'."\n";
+
+// Accountancy code
 print '<tr class="oddeven"><td><label for="itprovider_code">'.$langs->trans("AccountantFileNumber").'</label></td><td>';
 print '<input name="itprovider_code" id="itprovider_code" class="minwidth100" value="'.dol_escape_htmltag(GETPOSTISSET('itprovider_code') ? GETPOST('itprovider_code', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ITPROVIDER_CODE')).'"></td></tr>'."\n";
 

@@ -18,15 +18,22 @@
 /**
  *      \file       htdocs/core/modules/openid_connect/public/callback.php
  *      \ingroup    openid_connect
- *      \brief      OpenID Connect: Authorization Code flow authentication
+ *      \brief      OpenID Connect: Authorization Code flow callback
+ *
+ *      This page receives the authorization code from the OIDC provider and
+ *      stores the OIDC parameters (code, state) in $_SESSION, then redirects
+ *      to index.php via a same-site JS redirect (with tz detection from dst.js).
+ *
+ *      The same-site redirect ensures the session cookie IS sent (SameSite=Lax
+ *      allows same-site navigations). The OIDC code and state are transported
+ *      via $_SESSION instead of GET parameters to avoid exposing them in
+ *      web server access logs.
  */
 
 
-
 define('NOLOGIN', '1');
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
-}
+define('NOTOKENRENEWAL', '1');
+define('NOCSRFCHECK', 1);
 
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -45,7 +52,7 @@ top_htmlhead('', '', 0, 0, $arrayofjs);
 
 $prefix = dol_getprefix('');
 
-$callbackUrl = $_COOKIE["DOL_rollback_url_".$prefix];	// Was set by login page to $_SERVER['REQUEST_URI'] to allow come back to initial requested page
+$callbackUrl = isset($_COOKIE["DOL_rollback_url_".$prefix]) ? $_COOKIE["DOL_rollback_url_".$prefix] : '';
 
 if (empty($callbackUrl) || !preg_match('/^\/[a-z0-9]/i', $callbackUrl)) {
 	// We accept only value that is an internal relative URL. URL starting with http are not allowed.
@@ -56,26 +63,41 @@ if ($callbackUrl === '/') {
 } else {
 	dolSetCookie('DOL_rollback_url_'.dol_getprefix(''), "", time() + 1);
 }
+
+// Get OIDC parameters from the provider's redirect (GET) and store in session
+$oidcState = GETPOST('state', 'aZ09');
+$oidcCode = GETPOST('code', 'password');
+
+// Store in $_SESSION so they are not exposed as GET params on the redirect to index.php
+$_SESSION['oidc_code'] = $oidcCode;
+$_SESSION['oidc_state'] = $oidcState;
 ?>
 
-<form id="login" name="login" method="post" action="<?php echo dolPrintHTMLForAttributeUrl($callbackUrl); ?>">
-	<!-- Add fields to send OpenID information -->
-	<input type="hidden" name="openid_mode" value="true" />
-	<input type="hidden" name="state" value="<?php echo GETPOST('state'); ?>" />
-	<input type="hidden" name="session_state" value="<?php echo GETPOST('session_state'); ?>" />
-	<input type="hidden" name="code" value="<?php echo GETPOST('code'); ?>" />
-	<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
-	<!-- Add fields to send local user information -->
-	<input type="hidden" name="tz" id="tz" value="" />
-	<input type="hidden" name="tz_string" id="tz_string" value="" />
-	<input type="hidden" name="dst_observed" id="dst_observed" value="" />
-	<input type="hidden" name="dst_first" id="dst_first" value="" />
-	<input type="hidden" name="dst_second" id="dst_second" value="" />
-	<input type="hidden" name="screenwidth" id="screenwidth" value="" />
-	<input type="hidden" name="screenheight" id="screenheight" value="" />
-</form>
+<!-- Hidden fields for dst.js to populate with timezone detection -->
+<input type="hidden" id="tz" value="" />
+<input type="hidden" id="tz_string" value="" />
+<input type="hidden" id="dst_observed" value="" />
+<input type="hidden" id="dst_first" value="" />
+<input type="hidden" id="dst_second" value="" />
+<input type="hidden" id="screenwidth" value="" />
+<input type="hidden" id="screenheight" value="" />
+
 <script type="text/javascript">
 	$(document).ready(function () {
-		document.forms['login'].submit();
+		// dst.js has already populated the hidden fields above.
+		// Build a GET redirect URL with openid_mode flag + timezone info.
+		var baseUrl = '<?php echo dol_escape_js($callbackUrl); ?>';
+		var sep = baseUrl.indexOf('?') === -1 ? '?' : '&';
+
+		var url = baseUrl + sep + 'openid_mode=true';
+		url += '&tz=' + encodeURIComponent($('#tz').val());
+		url += '&tz_string=' + encodeURIComponent($('#tz_string').val());
+		url += '&dst_observed=' + encodeURIComponent($('#dst_observed').val());
+		url += '&dst_first=' + encodeURIComponent($('#dst_first').val());
+		url += '&dst_second=' + encodeURIComponent($('#dst_second').val());
+		url += '&screenwidth=' + encodeURIComponent($('#screenwidth').val());
+		url += '&screenheight=' + encodeURIComponent($('#screenheight').val());
+
+		window.location.href = url;
 	});
 </script>

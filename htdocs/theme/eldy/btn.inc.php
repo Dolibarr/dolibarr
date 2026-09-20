@@ -59,7 +59,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 <?php
-if (getDolGlobalString('THEME_DARKMODEENABLED')) {
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
 	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
@@ -87,9 +87,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 /* Buttons for actions                                                            */
 /* ============================================================================== */
 
-/*div.divButAction {
-	margin-bottom: 1.4em;
-}*/
+
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butAction,
@@ -187,7 +185,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	padding-<?php echo $left; ?>: 6px;
 	font-size: 1.5em;
 	border: none;
-	box-shadow: none; webkit-box-shadow: none;
+	box-shadow: none;
+	webkit-box-shadow: none;
 }
 
 .butAction:hover, .dropdown-holder.open > .butAction   {
@@ -295,11 +294,10 @@ TITLE BUTTON
 	min-width: 60px;
 	text-align: center;
 	color: var(--btncolortext);
-	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: var(--btncolorbg); */
-	border: 1px solid var(--btncolorborder);
+	border: 1px solid transparent;
 }
 
 a.btnTitle.btnTitleSelected {
@@ -342,7 +340,7 @@ a.btnTitle.btnTitleSelected {
 }
 .btnTitle.reposition:not(.btnTitleSelected) {
 	background-color: unset;
-	border: unset;
+	border: 1px solid transparent;
 }
 
 .btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label {
@@ -489,4 +487,11 @@ button.btn-low-emphasis.--btn-icon:active {
 	background-color:  hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1);
 	background-size: 100%;
 	transition: background 0s;/* used for hover ripple effect */
+}
+
+
+input.button-save, input.button-cancel {
+	min-width: 110px;
+	margin-left: 5px !important;
+	margin-right: 5px !important;
 }

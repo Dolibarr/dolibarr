@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,8 +96,8 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 	 *  Renvoi la liste des modeles de numérotation
 	 *
 	 *  @param	DoliDB	$dbs     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array|int					List of numbers
+	 *  @param  int		$maxfilenamelength  Max length of value to show
+	 *  @return	string[]|-1					List of numbers
 	 */
 	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
@@ -111,7 +111,7 @@ abstract class ModeleProductCode extends CommonNumRefGenerator
 			$i = 0;
 			while ($i < $num) {
 				$row = $dbs->fetch_row($resql);
-				$list[$row[0]] = $row[1];
+				$list[$row[0]] = (string) $row[1];
 				$i++;
 			}
 		} else {

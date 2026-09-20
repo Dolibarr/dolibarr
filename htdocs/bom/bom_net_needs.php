@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,19 +25,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other", "stocks"));
@@ -45,17 +45,16 @@ $langs->loadLangs(array("mrp", "other", "stocks"));
 // Get parameters
 $id = GETPOSTINT('id');
 $lineid = GETPOSTINT('lineid');
-$ref    = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$confirm  = GETPOST('confirm', 'alpha');
-$cancel   = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bomnet_needs'; // To manage different context of search
-$backtopage  = GETPOST('backtopage', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 
 // Initialize a technical objects
 $object = new BOM($db);
-$extrafields = new ExtraFields($db);
 
 // Initialize a technical objects for hooks
 $hookmanager->initHooks(array('bomnetneeds')); // Note that conf->hooks_modules contains array
@@ -258,39 +257,57 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</thead>';
 	print '<tbody>';
+	$tablerows = array();
+	$position = '';
+	$levelposition = '';
+	$lineposition = 0;
 	if (count($TChildBom) > 0) {
 		if ($action == 'treeview') {
 			foreach ($TChildBom as $fk_bom => $TProduct) {
 				$repeatChar = '&emsp;';
 				if (!empty($TProduct['bom'])) {
+					// we make position string in format 'lineposition.bomlevel.childposition'
+					if (!empty($TProduct['position']) && $TProduct['parentid'] == $object->id) {
+						// define lineposition
+						$lineposition = $TProduct['position'];
+					}
+					// define lineposition.bomlevel
+					$position = sprintf('%d.%d', $lineposition, $TProduct['level']);
+					// memorize level position for products in bom
+					$levelposition = $position;
+					if (!empty($TProduct['parentid']) && $TProduct['parentid'] != $object->id && empty($TProduct['product'])) {
+						// define lineposition.bomlevel.childposition
+						$position = sprintf('%s.%d', $position, $TProduct['position']);
+					}
 					$prod = new Product($db);
 					$prod->fetch($TProduct['bom']->fk_product);
 					if ($TProduct['parentid'] != $object->id) {
-						print '<tr class="sub_bom_lines oddeven" parentid="'.$TProduct['parentid'].'">';
+						$tablerows[$position] = '<tr class="sub_bom_lines oddeven" parentid="'.$TProduct['parentid'].'">';
 					} else {
-						print '<tr class="oddeven">';
+						$tablerows[$position] = '<tr class="oddeven">';
 					}
-					if ($action == 'treeview') {
-						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
-					} else {
-						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
-					}
-					print ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
-					print img_picto('', 'folder-open');
-					print '</a>';
-					print  '</td>';
-					if ($action == 'treeview') {
-						print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
-					}
-					print '<td class="linecolqty right">'.price(price2num($TProduct['qty'], 'MS')).'</td>';
-					print '<td>';
-					print '</td>';
-					print '<td class="linecolstock right"></td>';
-					print '<td class="linecoltheoricalstock right"></td>';
-					print '</tr>';
+					$tablerows[$position] .= '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
+					$tablerows[$position] .= ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
+					$tablerows[$position] .= img_picto('', 'folder-open');
+					$tablerows[$position] .= '</a>';
+					$tablerows[$position] .=  '</td>';
+					$tablerows[$position] .= '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
+					$tablerows[$position] .= '<td class="linecolqty right">'.price(price2num($TProduct['qty'], 'MS')).'</td>';
+					$tablerows[$position] .= '<td>';
+					$tablerows[$position] .= '</td>';
+					$tablerows[$position] .= '<td class="linecolstock right"></td>';
+					$tablerows[$position] .= '<td class="linecoltheoricalstock right"></td>';
+					$tablerows[$position] .= '</tr>';
 				}
 				if (!empty($TProduct['product'])) {
 					foreach ($TProduct['product'] as $fk_product => $TInfos) {
+						if (!empty($TInfos['position']) && $fk_bom == $object->id) {
+							// top level position
+							$position = $TInfos['position'];
+						} else {
+							// sublevel position
+							$position = sprintf('%s.%d', $levelposition, $TInfos['position']);
+						}
 						$prod = new Product($db);
 						$prod->fetch($fk_product);
 						$prod->load_virtual_stock();
@@ -298,22 +315,26 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$prod->stock_reel = 0;
 						}
 						if ($fk_bom != $object->id) {
-							print '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">';
+							$tablerows[$position] = '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">'; // sub bom on same position
 						} else {
-							print '<tr class="oddeven">';
+							$tablerows[$position] = '<tr class="oddeven">';
 						}
-						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
-						if ($action == 'treeview') {
-							print '<td></td>';
-						}
-						print '<td class="linecolqty right">'.price(price2num($TInfos['qty'], 'MS')).'</td>';
-						print '<td>';
-						print '</td>';
-						print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
-						print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
-						print '</tr>';
+						$tablerows[$position] .= '<td class="linecoldescription">'.str_repeat($repeatChar, (int) $TInfos['level']).$prod->getNomUrl(1).'</td>';
+						$tablerows[$position] .= '<td></td>';
+						$tablerows[$position] .= '<td class="linecolqty right">'.price(price2num((float) $TInfos['qty'], 'MS')).'</td>';
+						$tablerows[$position] .= '<td>';
+						$tablerows[$position] .= '</td>';
+						$tablerows[$position] .= '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
+						$tablerows[$position] .= '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
+						$tablerows[$position] .= '</tr>';
 					}
 				}
+			}
+			// Sort the rows numeric by position string
+			ksort($tablerows, SORT_NUMERIC);
+			// Print the rows
+			foreach ($tablerows as $position => $row) {
+				print $row;
 			}
 		} else {
 			foreach ($TChildBom as $fk_product => $elem) {

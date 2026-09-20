@@ -144,6 +144,10 @@ class SecurityTest extends CommonClassTest
 		$result = testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
 
+		$_SERVER["PHP_SELF"] = '/dolibarr/htdocs/admin/index.php/aaa%bbb';
+		$result = testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect % inside URL');
+
 		$test = 'select @@version';
 		$result = testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL1a. Should find an attack on POST param and did not.');
@@ -464,10 +468,10 @@ class SecurityTest extends CommonClassTest
 
 		$url = 'ftp://mydomain.com';
 		$tmp = getURLContent($url);
-		print __METHOD__." url=".$url."\n";
+		print __METHOD__." url=".$url." ".$tmp['curl_error_msg']."\n";
 
-		$tmpvar = preg_match('/not supported/', $tmp['curl_error_msg']);
-		$this->assertEquals(1, $tmpvar, "Did not find the /not supported/ in getURLContent error message. We should.");
+		$tmpvar = preg_match('/not supported|disabled/', $tmp['curl_error_msg']);
+		$this->assertEquals(1, $tmpvar, "Did not find the /not supported|disabled/ in getURLContent error message. We should.");
 
 		$DISABLEREMOTEACCESSTODOLIBARRFR = 1;
 
@@ -475,7 +479,7 @@ class SecurityTest extends CommonClassTest
 			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 			$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
 			print __METHOD__." url=".$url."\n";
-			$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 response');
+			$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Test getURLContent '.$url.' - Should GET url 301 response');
 
 			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 			$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
@@ -980,6 +984,26 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
 
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
+		$stringtotest = "<b>bold</b> <code>aaa</code>";
+		$stringfixed = "<b>bold</b> aaa";
+		//$result = dol_htmlentitiesbr($stringtotest);
+		//$result = dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0);
+		//$result = dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		//$result = dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0, array())), 1, 1, 'common', 0, 1);
+		$result = dolPrintHTML($stringtotest, 0, array('code'));
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringfixed, $result, 'Error in dolPrintHTML test 1');    // Expected '' because should failed because login 'auto' does not exists
+
 		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
 		$stringtotest = "&quot; &gt; &lt; <b>bold</b>";
 		$stringfixed = "&quot; &gt; &lt; <b>bold</b>";
@@ -1367,6 +1391,21 @@ class SecurityTest extends CommonClassTest
 	{
 		global $conf;
 
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 2;				// 1 = only valid html, 2 = only valid htm and allowed styles
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+
+
+		// Test on sanitizing styles
+		$result = dol_htmlwithnojs('Text <div style="position: 0">Div content</div><span style="z-index: 123">Text</span> and more', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		// Normalize formatting differences between libxml/php versions (spaces and line breaks around tags/style values)
+		$normalizedresult = str_replace(array("\r", "\n", "\t"), ' ', $result);
+		$normalizedresult = preg_replace('/style="\s*([0-9]+)\s*"/', 'style="$1"', $normalizedresult);
+		$normalizedresult = preg_replace('/>\s*</', '><', $normalizedresult);
+		$this->assertEquals('Text <div style="0">Div content</div><span style="123">Text</span> and more', $normalizedresult, 'Test sanitizing style for CSS UI redressing');
+
+
 		// Test on a string in hindi with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES because
 		// in past this case was losing the UTF8.
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
@@ -1382,17 +1421,15 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
 
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 
 		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
 
 
+		// Test emoticons
 
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
-		// If we set this to 1, it will also convert emoticon in htmlentities, so tests must be modified.
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// If we set this to 1, it will also convert emoticon in htmlentities, so tests must be modified.
 
 		$sav1 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
 		$sav2 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');

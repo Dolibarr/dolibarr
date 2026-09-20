@@ -2,7 +2,7 @@
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
  * Copyright (C) 2019	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 		}
 
 		// Check if user status is enabled
-		if ($user->statut != $user::STATUS_ENABLED) {
+		if ($user->status != $user::STATUS_ENABLED) {
 			// Status is disabled
 			dol_syslog("The user has been disabled.");
 			return false;

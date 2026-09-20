@@ -1400,6 +1400,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Load all objects with filters.
+	 *  This is used by the showactions used into the main tab of objects to show the last n actions.
 	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join, like done into show_actions_done.
 	 *
 	 *  @param		int		$socid			Filter by thirdparty
@@ -1427,6 +1428,9 @@ class ActionComm extends CommonObject
 		$hookmanager->initHooks(array('agendadao'));
 
 		$sql = "SELECT a.id";
+		if ($elementtype == 'user') {
+			$sql .= ",a.datep";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
@@ -1446,10 +1450,13 @@ class ActionComm extends CommonObject
 				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
 				$sql .= " r.element_type = 'socpeople' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
 			} elseif ($elementtype == 'user') {
-				$sql .= " AND (a.fk_user_action = ".((int) $fk_element)." OR EXISTS";
-				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+				$sql1 = $sql;
+				$sql .= " AND a.fk_user_action = ".((int) $fk_element);
+				$sql = "SELECT a.id FROM ((" . $sql . ") UNION (" . $sql1;
+				$sql .= " AND EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
 				$sql .= " r.element_type = 'user' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
-				$sql .= ")";
+				$sql .= " AND a.fk_user_action <> ".((int) $fk_element);
+				$sql .= ")) as a";
 			} else {
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
@@ -1548,10 +1555,8 @@ class ActionComm extends CommonObject
 					$response->url .= '&filtert=-1';
 				}
 				$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
-			}
-			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				if (empty($load_state_board)) {
+
+				while ($obj = $this->db->fetch_object($resql)) {
 					'@phan-var-force WorkboardResponse $response
 					 @phan-var-force ActionComm $agenda_static';
 					$response->nbtodo++;
@@ -1559,7 +1564,10 @@ class ActionComm extends CommonObject
 					if ($agenda_static->hasDelay()) {
 						$response->nbtodolate++;
 					}
-				} else {
+				}
+			} else {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
 					$this->nb["actionscomm"] = $obj->nb;
 				}
 			}
@@ -1800,7 +1808,7 @@ class ActionComm extends CommonObject
 	 *  @param	int<0,1>	$overwritepicto			1 = Overwrite picto with this one
 	 *  @param	int<0,1>	$notooltip		    	1 = Disable tooltip
 	 *  @param  int<-1,1>	$save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
-	 *  @return	string							Chaine avec URL
+	 *  @return	string							String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlength = 0, $morecss = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
@@ -2296,31 +2304,31 @@ class ActionComm extends CommonObject
 					}
 					if ($key == 'logina') {
 						$logina = $value;
-						$condition = '=';
+						$sanitizedcondition = '=';
 						if (preg_match('/^!/', $logina)) {
 							$logina = preg_replace('/^!/', '', $logina);
-							$condition = '<>';
+							$sanitizedcondition = '<>';
 						}
 						$userforfilter = new User($this->db);
 						$result = $userforfilter->fetch(0, $logina);
 						if ($result > 0) {
-							$sql .= " AND a.fk_user_author ".$condition." ".$userforfilter->id;
-						} elseif ($result < 0 || $condition == '=') {
+							$sql .= " AND a.fk_user_author ".$sanitizedcondition." ".((int) $userforfilter->id);
+						} elseif ($result < 0 || $sanitizedcondition == '=') {
 							$sql .= " AND a.fk_user_author = 0";
 						}
 					}
 					if ($key == 'logint') {
 						$logint = $value;
-						$condition = '=';
+						$sanitizedcondition = '=';
 						if (preg_match('/^!/', $logint)) {
 							$logint = preg_replace('/^!/', '', $logint);
-							$condition = '<>';
+							$sanitizedcondition = '<>';
 						}
 						$userforfilter = new User($this->db);
 						$result = $userforfilter->fetch(0, $logint);
 						if ($result > 0) {
 							$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
-						} elseif ($result < 0 || $condition == '=') {
+						} elseif ($result < 0 || $sanitizedcondition == '=') {
 							$sql .= " AND ar.fk_element = 0";
 						}
 					}
@@ -2360,7 +2368,7 @@ class ActionComm extends CommonObject
 
 					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
 					$event = array();
-					$event['uid'] = 'dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
+					$event['uid'] = 'dolibarragenda-'.$obj->id."@".dol_getprefix('email');
 					$event['type'] = $type;
 
 					$datestart = (int) $this->db->jdate($obj->datep) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
@@ -2399,6 +2407,8 @@ class ActionComm extends CommonObject
 						$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 
 						$event['url'] = $link_subscription;
+					} else {
+						$event['url'] = $dolibarr_main_url_root.'/comm/action/card.php?id='.$obj->id;
 					}
 
 					$event['created'] = (int) $this->db->jdate($obj->datec) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
@@ -2477,15 +2487,15 @@ class ActionComm extends CommonObject
 						}
 
 						if (getDolGlobalString('AGENDA_EXPORT_FIX_TZ')) {
-							$timestampStart -= ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
-							$timestampEnd   -= ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+							$timestampStart -= (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
+							$timestampEnd   -= (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
 						}
 
 						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 						$urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT;
 						$url               = $urlwithroot.'/holiday/card.php?id='.$obj->rowid;
 
-						$event['uid']          = 'dolibarrholiday-'.$this->db->database_name.'-'.$obj->rowid."@".$_SERVER["SERVER_NAME"];
+						$event['uid']          = 'dolibarrholiday-'.$obj->rowid."@".dol_getprefix('email');
 						$event['author']       = dolGetFirstLastname($obj->firstname, $obj->lastname);
 						$event['type']         = 'event';
 						$event['category']     = "Holiday";

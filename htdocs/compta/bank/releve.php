@@ -7,7 +7,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -507,7 +507,7 @@ if (empty($numref)) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		// Ligne Solde debut releve
+		// Row with the start balance of the bank statement
 		print '<tr class="oddeven"><td colspan="3"></td>';
 		print '<td colspan="3"><b>'.$langs->trans("InitialBankBalance")." :</b></td>";
 		print '<td class="right"><b>'.price($total).'</b></td><td>&nbsp;</td>';

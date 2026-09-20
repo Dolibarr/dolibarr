@@ -482,7 +482,7 @@ class AdherentTest extends CommonClassTest
 	 * testAdherentDelete
 	 *
 	 * @param   Adherent    $localobject    Member instance
-	 * @return	void
+	 * @return	Adherent
 	 *
 	 * @depends	testAdherentResiliate
 	 * The depends says test is run only if previous is ok

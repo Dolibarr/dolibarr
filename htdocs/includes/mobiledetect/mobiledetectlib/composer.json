@@ -1,4 +1,10 @@
 {
+	"config": {
+	    "platform": {
+	      "php": "7.1"
+	    }
+	},
+
     "name": "mobiledetect/mobiledetectlib",
     "type": "library",
     "description": "Mobile_Detect is a lightweight PHP class for detecting mobile devices. It uses the User-Agent string combined with specific HTTP headers to detect the mobile environment.",
@@ -14,10 +20,7 @@
         }
     ],
     "require": {
-        "php": ">=5.0.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~4.8.35||~5.7"
+        "php": ">=7.0.0"
     },
     "autoload": {
         "classmap": ["Mobile_Detect.php"],

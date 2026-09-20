@@ -11,6 +11,7 @@
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Yoan Mollard				<ymollard@users.noreply.github.com>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,7 +216,7 @@ if ($modecompta == "CREANCES-DETTES") {
 } elseif ($modecompta == "BOOKKEEPING") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-	$arraylist = array('no'=>$langs->trans("CustomerCode"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
+	$arraylist = array('no' => $langs->trans("CustomerCode"), 'yes' => $langs->trans("AccountWithNonZeroValues"), 'all' => $langs->trans("All"));
 	$period .= ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("DetailBy").'</span> '.$form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesAmountOnInOutBookkeepingRecord");
@@ -243,7 +244,7 @@ if (isModEnabled('accounting')) {
 }
 $calcmode .= '</label>';
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'showaccountdetail'=>$showaccountdetail), $calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta' => $modecompta, 'showaccountdetail' => $showaccountdetail), $calcmode);
 
 /*
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
@@ -378,7 +379,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 			}
 			if ($modecompta == 'CREANCES-DETTES') {	// In mode payment, we can't filter on date of invoice that is different than date of payment.
 				$detailed_list_url = '';
-				$detailed_list_url .= empty($objp->project_ref)? "?search_project_ref=^$": "?search_project_ref=".urlencode($objp->project_ref);
+				$detailed_list_url .= empty($objp->project_ref) ? "?search_project_ref=^$" : "?search_project_ref=".urlencode($objp->project_ref);
 				$detailed_list_url .= $search_date_url;
 				echo ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
 			}
@@ -479,7 +480,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 
 					echo '<tr class="oddeven">';
 					echo '<td>&nbsp;</td>';
-					$project_ref = empty($obj->project_ref)? $langs->trans("None"): $obj->project_ref;
+					$project_ref = empty($obj->project_ref) ? $langs->trans("None") : $obj->project_ref;
 					echo "<td>".$langs->trans("Project").' <a href="'.DOL_URL_ROOT."/projet/card.php?id=".((int) $obj->rowid).'">'.$project_ref."</a></td>\n";
 
 					echo '<td class="right">';
@@ -583,7 +584,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 				}
 				$detailed_list_url = '';
 				//$detailed_list_url .= '?search_project='.urlencode($search_project_ref);
-				$detailed_list_url .= empty($objp->project_ref)? "?search_project_ref=^$": '?search_project_ref='.urlencode($objp->project_ref);
+				$detailed_list_url .= empty($objp->project_ref) ? "?search_project_ref=^$" : '?search_project_ref='.urlencode($objp->project_ref);
 				$detailed_list_url .= $search_date_url;
 				echo ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.$detailed_list_url.'">'.$langs->trans("DetailedListLowercase")."</a>)\n";
 				echo "</td>\n";
@@ -1005,6 +1006,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 
 $action = "balanceclient";
 $object = array(&$total_ht, &$total_ttc);
+$parameters = array();
 $parameters["mode"] = $modecompta;
 $parameters["date_start"] = $date_start;
 $parameters["date_end"] = $date_end;

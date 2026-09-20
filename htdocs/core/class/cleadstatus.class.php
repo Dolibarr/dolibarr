@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Florian HENRY           <florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -183,7 +183,7 @@ class CLeadStatus extends CommonDict
 	 * @param  int         $offset       Offset
 	 * @param  string      $filter       Filter USF
 	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @return self[]|int                int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{

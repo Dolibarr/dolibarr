@@ -1,8 +1,8 @@
 #!/usr/bin/env php
 <?php
 /**
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
@@ -23,7 +23,7 @@
 /**
  * \file scripts/members/sync_members_ldap2dolibarr.php
  * \ingroup ldap member
- * \brief Script de mise a jour des adherents dans Dolibarr depuis LDAP
+ * \brief Script to update Dolibarr members from LDAP
  */
 
 if (!defined('NOSESSION')) {

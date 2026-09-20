@@ -168,6 +168,8 @@ ErrorPaymentModeDefinedToWithoutSetup=Se ha establecido el modo de pago al tipo 
 ErrorPHPNeedModule=Error, su PHP debe tener instalado el módulo <b>%s</b> para usar esta funcionalidad.
 ErrorOpenIDSetupConfNotComplete=Por motivos de seguridad, también debe configurar el archivo de configuración de Dolibarr conf.php para permitir la autenticación OpenID
 ErrorOpenIDSetupNotComplete=Ha configurado Dolibarr para aceptar la autentificación OpenID, pero la URL del servicio OpenID no se encuentra definida en la constante %s
+OIDCAutocreateUserDisabled=La creación automática de usuarios al iniciar sesión con OIDC está deshabilitada. Para habilitarla, añada $dolibarr_main_authentication_autocreateuser=1 a su archivo conf.php.
+OIDCAutocreateUserEnabled=La creación automática de usuarios al iniciar sesión con OIDC está habilitada ($dolibarr_main_authentication_autocreateuser=1 está definido en conf.php).
 ErrorWarehouseMustDiffers=El almacén de origen y destino deben de ser diferentes
 ErrorBadFormat=¡El formato es erróneo!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, este miembro aún no está enlazado a un tercero. Enlace el miembro a un tercero existente o cree un tercero nuevo antes de crear la suscripción con la factura.
@@ -467,4 +469,5 @@ SomeShipmentExists=Error, hay un envío vinculado al pedido. Eliminación rechaz
 WarningEvaluationEmptyValidate=No se puede validar la evaluación, niveles de habilidades no definidos
 ErrorBadParametersForDirectDebitFileCreate=No se puede crear un archivo de transferencia bancaria: no se proporciona el parámetro de formato esperado.
 ErrorBadParametersForDirectDebitFileCreateDids=No se puede crear el archivo de transferencia bancaria: no se proporcionan los ID de las solicitudes de pago existentes.
-UserDoesNotHaveRightsToChangeHisPassword=That user doesn't have the rights to change his own password
+UserDoesNotHaveRightsToChangeHisPassword=Este usuario no tiene permisos para cambiar su propia contraseña
+ErrorFailedToGetTokenFromClientIdAndSecret=No se pudo obtener un token de %s con el ID de cliente y el secreto de cliente

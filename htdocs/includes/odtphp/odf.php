@@ -1019,7 +1019,7 @@ IMG;
 			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
-			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.formatLogObject($output_arr), LOG_DEBUG);
 
 			if ($retval == 126) {
 				throw new OdfException('Permission execute convert script : ' . $command);

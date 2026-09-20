@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -380,7 +380,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Total de la localtax des factures emises par la societe.
+	 *	Total of invoices localtax emitted by the company
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -614,7 +614,7 @@ class Localtax extends CommonObject
 	 *
 	 *	@param		int		$withpicto		0=Link, 1=Picto into link, 2=Picto
 	 *	@param		string	$option			What the link points to
-	 *	@return		string					Chaine avec URL
+	 *	@return		string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '')
 	{

@@ -107,7 +107,6 @@ ACCOUNTING_LENGTH_GACCOUNT=Anzahl Zeichen der Buchhaltungskonto - Codes.\n(Wenn 
 ACCOUNTING_LENGTH_AACCOUNT=Anzahl Stellen der Partner - Kontonummern (die Kontonummern werden entsprechend mit Nullen aufgefüllt, z.B bei Wert "6", Kto. 401 -> 401000)
 BANK_DISABLE_DIRECT_INPUT=Direktbuchung der Transaktion auf dem Bankkonto unterbinden
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Entwurfsexport des Journales erlauben
-ACCOUNTANCY_COMBO_FOR_AUX=Kombinierte Liste für Nebenbuchkonten aktivieren (das kann bei vielen Geschäftspartnern langsam gehen. Weiter kannst du so nicht nach Teilwerten suchen.
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Spesenabrechnungsjournal
 ACCOUNTING_HAS_NEW_JOURNAL=Hat neuen Journaleintrag
 ACCOUNTING_SOCIAL_JOURNAL=Personaljournal

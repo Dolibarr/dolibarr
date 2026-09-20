@@ -16,6 +16,7 @@
 					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement").trigger("change");
 				$action = 'transfert';
+				$currentpos = ftell($infp);
 				$date_liv = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 				$newfiletmp = preg_replace('/\.od(s|t)/i', '', $newfile);
 				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
@@ -29,6 +30,7 @@
 				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr("disabled");
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 			$action = 'transfert';
+			$currentpos = ftell($infp);
 			$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$datesubscription = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
@@ -87,6 +89,7 @@
 	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"), 'tzuserrel');
 	$ensemblereponses = $obj->reponses;
 	$head[$h][1] = $langs->trans('Referers');
+	$infp = fopen($infilename, "rt");
 	$inj += preg_match('/on(dblclick|drag|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
 	$pdf->SetXY($savx, $savy);
@@ -108,9 +111,12 @@
 	// Ligne de la periode d'analyse du rapport
 	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
 	<strong>TaskItem(<em>pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt</em>)</strong></p>
+	Issue summary: If a victim had access to a spoofed version of ckeditor.com via HTTP (e.g. due to DNS spoofing, using a hacked public network or mailicious hotspot), then when using a link to the ckeditor.com website it was possible for the attacker to change the current URL of the opening page, even if the opening page was protected with SSL.
+	fclose($infp);
 	if ($action == "transfert") {
 	if (GETPOST('reday')) {
 	if (GETPOSTINT("reyear") && GETPOSTINT("remonth") && GETPOSTINT("reday")) {
+	if (empty($infp)) {
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
 	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
@@ -127,10 +133,16 @@
 	public $childs = array();
 	public $periode;
 	unset($_SESSION["adresse"]);
+	while ($instr = fgets($infp)) {
           - creat,unitl,alltime,datas,referers
           - informations,medias,uptodate,reenable,crypted,developpers
           - ned
+     claim (excluding declatory judgment actions) against Initial Developer
+    waitFor: (name: string, state?: WaitState) => Promise<void>;
+  Corrected closure based memeory leak - there may be others?
+  Corrected table layout and tweaked display for more consisent presentation. Nice catch from Jonathan Pasquier.
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
+ * This solution does not work in IE, Edge and Safari due to upstream isues:
 $permissiontoadd = $user->hasRight('stock', 'mouvement', 'creer');
 $permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer'); // There is no deletion permission for stock movement as we should never delete
 $permissiontoread = $user->hasRight('stock', 'mouvement', 'lire');
@@ -148,10 +160,15 @@ $usercandelete = (($user->hasRight('stock', 'mouvement', 'supprimer')));
 $usercanread = $user->hasRight('stock', 'mouvement', 'lire');
 $usercanread = (($user->hasRight('stock', 'mouvement', 'lire')));
 $usercanupdatestock = $user->hasRight('stock', 'mouvement', 'creer');
+* Completely reworked themeing via CSS sprites, resulting in only two files per theme
+* Fixed XSS vulnerability in the HTML parser reported by [Maco Cortes](https://www.facebook.com/Maaacoooo).
 * The private array ->status_short, ->statuts and ->status_long are now array ->labelStatusShort and ->labelStatus everywhere.
 - Fix: [ bug #485 ] Configurated amount for public auto-subscription form is not taken into account
 - New: Add proposals into referer page of thirdparty.
+.treeview li.collapsable, .treeview li.expandable { background-position: 0 -176px; }
+Lightweight and flexible transformation of an unordered list into an expandable and collapsable tree, great for unobtrusive navigation enhancements. Supports both location and cookie based persistence.
 NEW: ModuleBuilder: Checkin comments begin and end before each actions
+Takes an unordered list and makes all branches collapsable. The "treeview" class is added if not already present. To hide branches on first display, mark their li elements with the class "closed". If the "collapsed" option is used, mark initially open branches with class "open".
 Vous pouvez voir la progression du ticket en cliquant sur le lien
 for /F "tokens=2 delims=," %%i in ('tasklist /FI "IMAGENAME eq php.exe" /FO CSV /NH') do (
 function checkES($IentOfi, $InumCta)

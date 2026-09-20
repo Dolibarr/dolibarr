@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Pierre-Henry Favre			<phf@atm-consulting.fr>
- * Copyright (C) 2016-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2022		Lionel Vessiller			<lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2017		Elarifr. Ari Elbaz			<github@accedinfo.com>
@@ -14,7 +14,7 @@
  * Copyright (C) 2020		Guillaume Alexandre			<guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter				<jkueter@gmx.de>
  * Copyright (C) 2022		Progiseize					<a.bisotti@progiseize.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -950,7 +950,15 @@ class AccountancyExport
 				}
 
 				$tab['filler2'] = str_repeat(' ', 110);
-				$tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
+
+				// Field "Maj" (static position 1 char):
+				// blank = no update if account already exists
+				// 2 = partial update (alpha key, label, address, collectif, RIB)
+				if (getDolGlobalString('ACCOUNTING_EXPORT_QUADRATUS_DISABLE_THIRDPARTY_UPDATE')) {
+					$tab['Maj'] = ' ';
+				} else {
+					$tab['Maj'] = 2;
+				}
 
 				if ($line->doc_type == 'customer_invoice') {
 					$tab['type_compte'] = 'C';
@@ -1396,7 +1404,7 @@ class AccountancyExport
 		$separator = ';';
 		$end_line = "\n";
 
-		// parcours du tableau pour recuperation des numero de compte des tiers pour pouvoir les fournir dans la bonne ligne pour istea
+		// Extract the Third party account numbers from the table to provide the correct line for ISTEA
 		$tiers = [];
 		foreach ($objectLines as $line) {
 			if ($line->subledger_account && substr($line->subledger_account, 0, 1) == '4') {
@@ -2757,7 +2765,7 @@ class AccountancyExport
 			$tab[] = substr($date, 3, 2);
 			$tab[] = substr($date, 0, 2);
 			$tab[] = $line->doc_ref;
-			//Conversion de chaine UTF8 en Latin9
+			// Convert the UTF-8 string in latin9
 			$tab[] = mb_convert_encoding(str_replace(' - Compte auxiliaire', '', $line->label_operation), "Windows-1252", 'UTF-8');
 
 			//Calcul de la longueur des numéros de comptes

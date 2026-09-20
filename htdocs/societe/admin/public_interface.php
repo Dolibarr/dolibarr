@@ -107,6 +107,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print dol_get_fiche_head($head, 'publicurl', '', -1, 'company');
 
 
+print '<div class="info">';
+
 print '<span class="opacitymedium">'.$langs->trans("PublicInterfaceCompanyDesc").'</span><br><br>';
 
 $param = '';
@@ -126,8 +128,8 @@ if (!getDolGlobalString('SOCIETE_ENABLE_PUBLIC')) {
 print $enabledisablehtml;
 print '<input type="hidden" id="SOCIETE_ENABLE_PUBLIC" name="SOCIETE_ENABLE_PUBLIC" value="'.(!getDolGlobalString('SOCIETE_ENABLE_PUBLIC') ? 0 : 1).'">';
 
+print '</div>';
 
-print '<br>';
 
 
 print dol_get_fiche_end();

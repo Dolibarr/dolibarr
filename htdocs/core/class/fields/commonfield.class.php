@@ -292,13 +292,13 @@ abstract class CommonField
 
 		// Todo move this in validate class ?
 		// MIN Value test
-		if (isset($fieldInfos->minValue) && is_numeric($value) && ((double) $value) < $fieldInfos->minValue) {
+		if (isset($fieldInfos->minValue) && is_numeric($value) && ((float) $value) < $fieldInfos->minValue) {
 			self::$validator->error = $langs->trans('RequireMinValue', $fieldInfos->minValue);
 			return false;
 		}
 
 		// MAX Value test
-		if (isset($fieldInfos->maxValue) && is_numeric($value) && ((double) $value) > $fieldInfos->maxValue) {
+		if (isset($fieldInfos->maxValue) && is_numeric($value) && ((float) $value) > $fieldInfos->maxValue) {
 			self::$validator->error = $langs->trans('RequireMaxValue', $fieldInfos->maxValue);
 			return false;
 		}

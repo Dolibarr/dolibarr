@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,9 +30,8 @@
  */
 function recruitmentAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('recruitment_recruitmentjobposition');
 	$extrafields->fetch_name_optionals_label('recruitment_recruitmentcandidature');
 

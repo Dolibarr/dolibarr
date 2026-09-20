@@ -1,5 +1,8 @@
 <?php
+/* Copyright (C) 2026		MDW	<mdeweerd@users.noreply.github.com>
+ */
 '@phan-var-force DolibarrModules $this';
+/** @var DolibarrModules $this */
 
 if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement)) {
 	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
@@ -12,7 +15,9 @@ if (empty($keyforalias)) {
 
 dol_include_once($keyforclassfile);
 if (class_exists($keyforclass)) {
+	/** @var CommonObject $tmpobject */
 	$tmpobject = new $keyforclass($this->db);
+	'@phan-var-force CommonObject $tmpobject';
 
 	// Add common fields
 	foreach ($tmpobject->fields as $keyfield => $valuefield) {
@@ -35,17 +40,17 @@ if (class_exists($keyforclass)) {
 			case 'boolean':
 				$typeFilter = "Boolean";
 				break;
-			/*
-			 * case 'sellist':
-			 * $tmp='';
-			 * $tmpparam=jsonOrUnserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-			 * if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-			 * $tmpkeys=array_keys($tmpparam['options']);
-			 * $tmp=array_shift($tmpkeys);
-			 * }
-			 * if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
-			 * break;
-			 */
+				/*
+				 * case 'sellist':
+				 * $tmp='';
+				 * $tmpparam=jsonOrUnserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+				 * if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+				 * $tmpkeys=array_keys($tmpparam['options']);
+				 * $tmp=array_shift($tmpkeys);
+				 * }
+				 * if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
+				 * break;
+				 */
 		}
 		$helpfield = '';
 		if (!empty($valuefield['help'])) {

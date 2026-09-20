@@ -75,12 +75,11 @@ class OrderListController extends AbstractListController
 			$this->formList->doActions();
 		}
 
-		$this->formList->setSqlRequest();
-
 		// filter on logged third-party
-		$this->formList->sql_body .= " AND t.fk_soc = " . ((int) $context->logged_thirdparty->id);
+		$sqlBody = " AND t.fk_soc = ".((int) $context->logged_thirdparty->id);
 		// discard record with status draft
-		$this->formList->sql_body .= " AND t.fk_statut <> 0";
+		$sqlBody .= " AND t.fk_statut <> 0";
+		$this->formList->setSqlRequest('', $sqlBody);
 
 		$this->formList->loadRecords();
 		$this->formList->setParams();

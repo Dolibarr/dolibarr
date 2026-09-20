@@ -49,7 +49,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated Use $name, getName()
 	 * @see $name
 	 */

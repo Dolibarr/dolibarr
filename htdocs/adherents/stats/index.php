@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -75,14 +74,27 @@ $langs->loadLangs(array("companies", "members"));
  */
 
 $memberstatic = new Adherent($db);
+$membershipstatic = new Subscription($db);
 $form = new Form($db);
 
-$title = $langs->trans("MembershipStatistics");
+$title = $langs->trans("Subscriptions");
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-stats');
 
-print load_fiche_titre($title, '', $memberstatic->picto);
+$param = '';
+
+$newcardbutton = '';
+$queryforbutton = array();
+$queryforbutton['mode'] = 'common';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/subscription/list.php', $queryforbutton), '', 1, array('morecss' => 'reposition'));
+$queryforbutton['mode'] = 'kanban';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/subscription/list.php', $queryforbutton), '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/adherents/stats/index.php', 1).'?objecttype=adherent@adherent'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', ['statut' => '-1,1']), '', $user->hasRight('adherent', 'creer'));
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $langs->trans("Statistics"), $membershipstatic->picto, 0, $newcardbutton, '', 0, 0, 0, 1);
 
 $dir = $conf->member->dir_temp;
 
@@ -157,7 +169,7 @@ if (!$mesg) {
 }
 
 
-$head = member_stats_prepare_head($memberstatic);
+$head = membership_stats_prepare_head($memberstatic);
 
 print dol_get_fiche_head($head, 'statssubscription', '', -1, '');
 
@@ -197,12 +209,19 @@ print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
+$MAXLINES = 5;
+$nbline = 0;
 $oldyear = 0;
+$cssline = '';
 foreach ($data as $val) {
 	$year = (int) $val['year'];
 	while ($oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
-		print '<tr class="oddeven" height="24">';
+		$nbline++;
+		if ($nbline > $MAXLINES) {
+			$cssline = ' hidden';
+		}
+		print '<tr class="oddeven'.$cssline.'" height="24">';
 		print '<td class="center">';
 		//print '<a href="month.php?year='.$oldyear.'&mode='.$mode.'">';
 		print $oldyear;
@@ -213,7 +232,7 @@ foreach ($data as $val) {
 		print '<td class="right amount nowraponall">0</td>';
 		print '</tr>';
 	}
-	print '<tr class="oddeven" height="24">';
+	print '<tr class="oddeven'.$cssline.'" height="24">';
 	print '<td class="center">';
 	print '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?date_select='.((int) $year).'">'.$year.'</a>';
 	print '</td>';
@@ -222,6 +241,16 @@ foreach ($data as $val) {
 	print '<td class="right amount nowraponall"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
 	print '</tr>';
 	$oldyear = $year;
+	$nbline++;
+	if ($nbline > $MAXLINES) {
+		$cssline = ' hidden';
+	}
+}
+
+if ($nbline > $MAXLINES) {
+	print '<tr class="liste_total"><td colspan="4" class="center">';
+	print '<a href="#" class="showmoreoptions" onclick="javascript:$(\'.hidden\').toggle();$(this).toggle();">'.img_picto('', 'chevron-down', 'class="paddingright"').$langs->trans("More").'...</a>';
+	print '</td></tr>';
 }
 
 print '</table>';

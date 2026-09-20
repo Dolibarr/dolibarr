@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
@@ -51,6 +51,8 @@
  *
  * @var string $action
  * @var int	$dateSelector
+ * @var string $var
+ * @var int	$i
  */
 
 // Protection to avoid direct call of template
@@ -58,13 +60,13 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
 '
 @phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
 @phan-var-force Societe $seller
 @phan-var-force Societe $buyer
 @phan-var-force string $var
+@phan-var-force int $i
 ';
 
 // Handle subtotals line edit
@@ -303,7 +305,14 @@ $coldisplay++;
 		&nbsp;
 	<?php } ?>
 	</td>
-
+	<?php
+	// Shippable Status (Empty cell for edit mode to keep column alignment)
+	if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+		print '<td class="linecolstock center">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	?>
 	<?php
 	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		$unit_type = false;
@@ -414,7 +423,9 @@ $coldisplay++;
 	$prefillDates = false;
 	$date_start_prefill = 0;
 	$date_end_prefill = 0;
+	// @phan-suppress-next-line PhanUndeclaredGlobalVariable
 	if (getDolGlobalString('MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE') && !empty($object->lines) && $i > 0) {
+		// @phan-suppress-next-line PhanUndeclaredGlobalVariable
 		for ($j = $i - 1; $j >= 0; $j--) {
 			$lastline = $object->lines[$j];
 			if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end))) {

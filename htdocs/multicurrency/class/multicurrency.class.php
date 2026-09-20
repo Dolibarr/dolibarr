@@ -89,6 +89,11 @@ class MultiCurrency extends CommonObject
 	public $rate;
 
 	/**
+	 * @var ?CurrencyRate 	The currency rate direct
+	 */
+	public $rate_direct;
+
+	/**
 	 * @var string			URL endpoint for update of currency
 	 */
 	public $urlendpoint;
@@ -539,7 +544,7 @@ class MultiCurrency extends CommonObject
 	 */
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = 0)
 	{
-		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
+		$sql1 = "SELECT m.rowid, mc.rate, mc.rate_direct FROM ".MAIN_DB_PREFIX."multicurrency m";
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
 		$sql1 .= " WHERE m.code = '".$dbs->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
@@ -559,7 +564,7 @@ class MultiCurrency extends CommonObject
 			if (getDolGlobalString('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE')) {
 				$resql = $dbs->query($sql1.$sql3);
 				if ($resql && $obj = $dbs->fetch_object($resql)) {
-					return array($obj->rowid, $obj->rate);
+					return array($obj->rowid, $obj->rate, $obj->rate_direct);
 				}
 			}
 

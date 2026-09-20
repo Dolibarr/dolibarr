@@ -209,6 +209,7 @@ class Reception extends CommonObject
 	 */
 	public $detail_batch;
 
+	const STATUS_CANCELED = -1;
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CLOSED = 2;
@@ -900,7 +901,7 @@ class Reception extends CommonObject
 				// qty wished in origin (purchase order, ...)
 				foreach ($this->origin_object->lines as $origin_line) {
 					// exclude lines not qualified for reception
-					if ((!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) || $origin_line->product_type > 1) {
+					if (($origin_line->product_type > 0 && (!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') || empty($origin_line->stockable_product))) || $origin_line->product_type > 1) {
 						continue;
 					}
 					if (array_key_exists($origin_line->fk_product, $qty_wished)) {
@@ -1502,7 +1503,7 @@ class Reception extends CommonObject
 								$origin_object->loadReceptions();
 								//var_dump($this->$origin->receptions);exit;
 								if (count($origin_object->receptions) <= 0) {
-									$origin_object->setStatut(3); // ordered
+									$origin_object->setStatut(3); // CommandeFournisseur ordered
 								}
 							}
 						}
@@ -1851,7 +1852,7 @@ class Reception extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Object utilisateur qui modifie
+	 *	@param      User			$user        		Object User who makes the update
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
@@ -2439,7 +2440,7 @@ class Reception extends CommonObject
 							}
 							//var_dump($this->$origin->receptions);exit;
 							if ($setStatut) {
-								$this->origin_object->setStatut(3); // ordered
+								$this->origin_object->setStatut(3); // CommandeFournisseur ordered
 							}
 						}
 					}

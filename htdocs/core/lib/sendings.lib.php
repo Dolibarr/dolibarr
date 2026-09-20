@@ -324,11 +324,11 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$sql .= ' p.description as product_desc';
 	$sql .= " FROM " . MAIN_DB_PREFIX . "expeditiondet as ed,";
 	$sql .= " " . MAIN_DB_PREFIX . "expedition as e,";
-	$sql .= " " . MAIN_DB_PREFIX . $origin . "det as obj";	// for example llx_commandedet
+	$sql .= " " . MAIN_DB_PREFIX . $db->sanitize($origin) . "det as obj";	// for example llx_commandedet
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
 	$sql .= " WHERE e.entity IN (" . getEntity('expedition') . ")";
-	$sql .= " AND obj.fk_" . $origin . " = " . ((int) $origin_id);
+	$sql .= " AND obj.fk_" . $db->sanitize($origin) . " = " . ((int) $origin_id);
 	$sql .= " AND obj.rowid = ed.fk_elementdet";
 	if (isModEnabled('subtotals')) {
 		$sql .= " AND obj.special_code <> " . SUBTOTALS_SPECIAL_CODE;

@@ -3,9 +3,9 @@
  * Copyright (C) 2011-2012	Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry	<florian.henry@open-concept.pro>
  * Copyright (C) 2017       Ferran Marcet   <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France <frederic.france@free.fr>
  * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Charlene Benke	<charlene@patas-monkey.com>
+ * Copyright (C) 2025-2026	Charlene Benke	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +24,11 @@
 /**
  *	\file       htdocs/ticket/note.php
  *	\ingroup    ticket
- *	\brief      Fiche d'information sur une ticket
+ *	\brief      Tab for notes on ticket
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +36,11 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'ticket'));
@@ -159,8 +158,13 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="underbanner clearboth"></div>';
 
 	$cssclass = "titlefield";
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	foreach ($dirtpls as $reldir) {
+		$res = @include dol_buildpath($reldir.'/notes.tpl.php');
+		if ($res) {
+			break;
+		}
+	}
 	print '</div>';
 
 	print dol_get_fiche_end();

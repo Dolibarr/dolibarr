@@ -187,7 +187,7 @@ Translations
 ------------
 The source language (en_US) is maintained in the repository.
 
-All other translations are managed online at [Transifex](https://www.transifex.com/dolibarr-association/dolibarr/).
+All other translations are managed online at [Transifex](https://explore.transifex.com/dolibarr-association/).
 
 Translations done on transifex are available in the next major release.
 

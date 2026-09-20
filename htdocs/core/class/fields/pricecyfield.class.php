@@ -282,7 +282,7 @@ class PricecyField extends CommonField
 		}
 
 		return array(
-			'price' => (double) $price,
+			'price' => (float) $price,
 			'currency' => $currency
 		);
 	}

@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@
  * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var Form $form
  * @var FormCompany $formcompany
  * @var HookManager $hookmanager
@@ -56,6 +57,7 @@
  * @var ?string $uploaddir
  * @var int[] $toselect
  * @var int[] $arrayofselected
+ * @var ?string $search_all
  */
 '
 @phan-var-force string $string
@@ -65,6 +67,12 @@
 @phan-var-force ?string $uploaddir
 @phan-var-force int<0,1> $withmaindocfilemail
 @phan-var-force string $sendto
+@phan-var-force string $massaction
+@phan-var-force int[] $arrayofselected
+@phan-var-force string $trackid
+@phan-var-force string $modelmail
+@phan-var-force ?string $search_all
+@phan-var-force ?Task $taskstatic
 ';
 
 if (!empty($sall) || !empty($search_all)) {
@@ -198,11 +206,11 @@ if ($massaction == 'preaffectuser') {
 	$valuefieldtasksrole .= '</div>';
 
 	$formquestion[] = array(
-				'type' => 'other',
-				'name' => 'usertoaffect',
-				'label' => $langs->trans("User"),
-				'value' => $valuefielduser
-			);
+		'type' => 'other',
+		'name' => 'usertoaffect',
+		'label' => $langs->trans("User"),
+		'value' => $valuefielduser
+	);
 	$formquestion[] = array(
 		'type' => 'other',
 		'name' => 'projectrole',
@@ -371,7 +379,6 @@ if ($massaction == 'edit_extrafields') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 	$elementtype = $objecttmp->element;
 	/** @var CommonObject $objecttmp */
-	$extrafields = new ExtraFields($db);
 	$keysuffix = '';
 	$extrafields->fetch_name_optionals_label($elementtype);
 	$extrafields_list = $extrafields->attributes[$elementtype]['label'];
@@ -453,6 +460,24 @@ if ($massaction == 'unsetcommercial') {
 
 if ($massaction == 'preapproveleave') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, 'yes', 0, 200, 500, 1);
+}
+
+if ($massaction == 'precreatecreditnote') {
+	$text = '<br>';
+	$text .= $langs->trans("ConfirmMassCreateCreditNoteQuestion", count($toselect)) . '<br>';
+
+	// Credit note validation may trigger notifications, so display them in confirmation dialog
+	if (isModEnabled('notification')) {
+		foreach ($toselect as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+				$notify = new Notify($db);
+				$text .= $notify->confirmMessage('BILL_VALIDATE', $objecttmp->socid, $objecttmp) . '<br>';
+			}
+		}
+	}
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassCreateCreditNote"), $text, "createcreditnote", null, 'yes', 0, 200, 500, 1);
 }
 
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)

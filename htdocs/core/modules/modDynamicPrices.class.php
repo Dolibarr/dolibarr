@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +17,10 @@
  */
 
 /**
- *  \defgroup   produit     Module dynamic prices
+ *  \defgroup   product     Module dynamic prices
  *  \brief      Module to manage dynamic prices in products
  *  \file       htdocs/core/modules/modDynamicPrices.class.php
- *  \ingroup    produit
+ *  \ingroup    product
  *  \brief      Description and activation file for the module to manage dynamic prices in products
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

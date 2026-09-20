@@ -247,7 +247,6 @@ MailToSendProposal=Propuestas de clientes
 MailToSendInvoice=Facturas de clientes
 MailToSendSupplierOrder=Ordenes de compra
 MailToSendSupplierInvoice=Facturas de proveedor
-MailToExpenseReport=Reporte de gastos
 AllPublishers=Todos los editores
 AddMenus=Añadir menús
 AddPermissions=Añadir permisos

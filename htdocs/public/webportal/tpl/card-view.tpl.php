@@ -36,14 +36,12 @@ print $formconfirm;
 
 ?>
 
-<article>
+<article class="card-view-container" data-element-id="<?php print dol_escape_htmltag((string) $formCard->object->id) ?>" data-element="<?php print dol_escape_htmltag($formCard->object->element) ?>" >
 	<?php $this->loadTemplate('card-view-header') ?>
 
 	<?php $this->loadTemplate('card-view-properties') ?>
 
 	<?php $this->loadTemplate('card-view-lines') ?>
+
+	<?php $this->loadTemplate('card-view-footer') ?>
 </article>
-
-<?php $this->loadTemplate('card-view-actions-buttons') ?>
-
-<?php $this->loadTemplate('card-view-footer') ?>

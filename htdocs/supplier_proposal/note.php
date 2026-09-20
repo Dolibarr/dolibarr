@@ -30,12 +30,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +37,11 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta', 'bills'));
@@ -66,6 +65,7 @@ $object = new SupplierProposal($db);
 
 $usercancreate = $user->hasRight("supplier_propal", "write");
 
+$now = dol_now();
 
 
 /*
@@ -90,12 +90,6 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
-	if ($mesg) {
-		print $mesg;
-	}
-
-	$now = dol_now();
-
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
 

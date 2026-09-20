@@ -5,7 +5,7 @@
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ class CompanyBankAccount extends Account
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
@@ -92,7 +92,7 @@ class CompanyBankAccount extends Account
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
@@ -335,6 +335,9 @@ class CompanyBankAccount extends Account
 	 */
 	public $datem;
 
+	const STATUS_OPEN = 0;
+	const STATUS_CLOSED = 1;
+
 	/**
 	 *  Constructor
 	 *
@@ -342,6 +345,8 @@ class CompanyBankAccount extends Account
 	 */
 	public function __construct(DoliDB $db)
 	{
+		global $langs;
+
 		$this->db = $db;
 
 		$this->socid = 0;
@@ -349,6 +354,11 @@ class CompanyBankAccount extends Account
 		$this->balance = 0;
 		$this->default_rib = 0;
 		$this->type = "ban";
+
+		$this->labelStatus = array(
+			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
+			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
+		);
 	}
 
 
@@ -465,6 +475,10 @@ class CompanyBankAccount extends Account
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape(dolEncrypt($this->iban))."'";
+		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
+		$sql .= ",fk_country = '".((int) $this->fk_country)."'";
+		$sql .= ",state_id = '".((int) $this->state_id)."'";
+		$sql .= ",status = '".((int) $this->status)."'";
 		$sql .= ",domiciliation = '".$this->db->escape($this->address)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -530,7 +544,7 @@ class CompanyBankAccount extends Account
 		}
 
 		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
-		$sql .= " domiciliation as address,";
+		$sql .= " currency_code, fk_country, state_id, status, domiciliation as address,";
 		$sql .= " proprio as owner_name, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
 		$sql .= " last_main_doc, model_pdf";
@@ -568,6 +582,10 @@ class CompanyBankAccount extends Account
 				$this->bic             = $obj->bic;
 				$this->iban            = dolDecrypt($obj->iban);
 
+				$this->currency_code   = $obj->currency_code;
+				$this->fk_country      = $obj->fk_country;
+				$this->state_id        = $obj->state_id;
+				$this->status          = $obj->status;
 				$this->address         = $obj->address;
 
 				$this->owner_name      = $obj->owner_name;

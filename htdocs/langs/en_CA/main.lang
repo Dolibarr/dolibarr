@@ -12,6 +12,7 @@ FormatDateShortJQuery=dd.mm.yy
 FormatDateShortJQueryInput=dd.mm.yy
 FormatHourShortJQuery=HH:MI
 FormatHourShort=%H:%M
+FormatHourSecShort=%I:%M:%S %p
 FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y

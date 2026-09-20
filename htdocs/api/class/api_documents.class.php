@@ -7,7 +7,7 @@
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
- * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,6 +352,22 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
+		} elseif ($modulepart == 'holiday') {
+			require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+			$tmpobject = new Holiday($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'Holiday not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document');
+			}
 		} elseif ($modulepart == 'product') {
 			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -561,7 +577,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Purchase order not found');
 			}
 
-			$upload_dir = getMultidirOutput($object) . "/commande/".dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . "/commande/".dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -621,7 +637,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error while fetching object: '.$object->error);
 			}
 
-			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event' || $modulepart == 'actioncomm') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -635,7 +651,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Event not found');
 			}
 
-			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
@@ -649,7 +665,21 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Expense report not found');
 			}
 
-			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
+		} elseif ($modulepart == 'holiday') {
+			require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+			if (!DolibarrApiAccess::$user->hasRight('holiday', 'read')) {
+				throw new RestException(403);
+			}
+
+			$object = new Holiday($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Holiday not found');
+			}
+
+			$upload_dir = getMultidirOutput($object) . '/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'ticket') {
 			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 
@@ -663,7 +693,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Ticket not found');
 			}
 
-			$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'knowledgemanagement') {
 			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
@@ -677,7 +707,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'KM article not found');
 			}
 
-			$upload_dir = getMultidirOutput($object) . '/knowledgerecord/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput($object) . '/knowledgerecord/'.dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'categorie' || $modulepart == 'category') {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
@@ -691,7 +721,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Category not found');
 			}
 
-			$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'ecm') {
 			throw new RestException(500, 'Modulepart Ecm not implemented yet.');
 			// require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
@@ -760,7 +790,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error while fetching project for task');
 			}
 
-			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . "/" . dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName((string) $object->project->ref) . "/" . dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'mrp') {
 			$modulepart = 'mrp';
 			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
@@ -971,7 +1001,7 @@ class Documents extends DolibarrApi
 					$project_result = $object->fetchProject();
 
 					if ($project_result >= 0) {
-						$tmpreldir = dol_sanitizeFileName($object->project->ref).'/';
+						$tmpreldir = dol_sanitizeFileName((string) $object->project->ref).'/';
 					}
 				} else {
 					throw new RestException(500, 'Error while fetching Task '.$ref);
@@ -982,6 +1012,9 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'expensereport') {
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
+			} elseif ($modulepart == 'holiday') {
+				require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+				$object = new Holiday($this->db);
 			} elseif ($modulepart == 'ficheinter' || $modulepart == 'intervention') {
 				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 				$object = new Fichinter($this->db);
@@ -1068,7 +1101,7 @@ class Documents extends DolibarrApi
 			if ($modulepart == 'societe') {
 				$relativefile = $tmpreldir.dol_sanitizeFileName((string) $object->id);
 			} else {
-				$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
+				$relativefile = $tmpreldir.dol_sanitizeFileName((string) $object->ref);
 			}
 			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir

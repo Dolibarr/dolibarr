@@ -96,8 +96,8 @@ class html_generic extends ModeleDon
 		// prints the translation instead of returning it
 		$formclass->load_cache_types_paiements();
 
-		if ($don->mode_reglement_id) {
-			$paymentmode = (string) $formclass->cache_types_paiements[$don->mode_reglement_id]['label'];
+		if ($don->mode_reglement_id > 0) {
+			$paymentmode = (string) $formclass->cache_types_paiements[(int) $don->mode_reglement_id]['label'];
 		} else {
 			$paymentmode = '';
 		}

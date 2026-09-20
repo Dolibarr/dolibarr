@@ -4,7 +4,6 @@ NewIntervention=Nueva intervención
 ChangeIntoRepeatableIntervention=Cambio a intervención repetible.
 ListOfInterventions=Lista de intervenciones
 ActionsOnFicheInter=Acciones en intervención
-InterventionContact=Contacto de intervención
 ValidateIntervention=Validar la intervención
 ModifyIntervention=Modificar la intervención
 ConfirmDeleteIntervention=¿Seguro que quieres eliminar esta intervención?

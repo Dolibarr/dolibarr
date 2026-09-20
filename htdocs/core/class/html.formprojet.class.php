@@ -3,7 +3,7 @@
  * Copyright (C) 2015 		Marcos García  				<marcosgdf@gmail.com>
  * Copyright (C) 2018 		Charlene Benke 				<charlie@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -535,19 +535,17 @@ class FormProjets extends Form
 	/**
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
-	 * @param string $table_element Table of the element to update
-	 * @param int|string $socid If of thirdparty to use as filter or 'id1,id2,...'
-	 * @param string $morecss More CSS
-	 * @param int $limitonstatus Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
-	 * @param string $projectkey Equivalent key  to fk_projet for actual table_element
-	 * @param string $placeholder Placeholder
-	 * @return    int|string                        The HTML select list of element or '' if nothing or -1 if KO
+	 * @param string 		$table_element 	Table of the element to update
+	 * @param int|string 	$socid 			Id of thirdparty or 'all' or 'ifcompany' or 'none' or 'onlyifcompany' or 'only	If of thirdparty to use as filter or 'id1,id2,...'
+	 * @param string 		$morecss 		Add More CSS
+	 * @param int 			$limitonstatus 	Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
+	 * @param string 		$projectkey 	Equivalent key  to fk_projet for actual table_element
+	 * @param string 		$placeholder 	Placeholder
+	 * @return    int|string                The HTML select list of element or '' if nothing or -1 if KO
 	 */
 	public function select_element($table_element, $socid = 0, $morecss = '', $limitonstatus = -2, $projectkey = "fk_projet", $placeholder = '')
 	{
 		// phpcs:enable
-		global $conf, $langs;
-
 		if ($table_element == 'projet_task') {
 			return ''; // Special case of element we never link to a project (already always done)
 		}
@@ -568,8 +566,6 @@ class FormProjets extends Form
 		)) {
 			$linkedtothirdparty = true;
 		}
-
-		$sqlfilter = '';
 
 		//print $table_element;
 		switch ($table_element) {
@@ -623,11 +619,11 @@ class FormProjets extends Form
 		if ($linkedtothirdparty) {
 			$sql .= ", s.nom as name";
 		}
-		$sql .= " FROM " . $this->db->prefix() . $table_element . " as t";
+		$sql .= " FROM " . $this->db->prefix() . $this->db->sanitize($table_element) . " as t";
 		if ($linkedtothirdparty) {
 			$sql .= ", " . $this->db->prefix() . "societe as s";
 		}
-		$sql .= " WHERE " . $projectkey . " is null";
+		$sql .= " WHERE " . $this->db->sanitize($projectkey) . " is null";
 		if (!empty($socid) && $linkedtothirdparty) {
 			if (is_numeric($socid)) {
 				$sql .= " AND t.fk_soc = " . ((int) $socid);
@@ -640,9 +636,6 @@ class FormProjets extends Form
 		}
 		if ($linkedtothirdparty) {
 			$sql .= " AND s.rowid = t.fk_soc";
-		}
-		if ($sqlfilter) {
-			$sql .= " AND " . $sqlfilter;
 		}
 		$sql .= " ORDER BY ref DESC";
 
@@ -705,7 +698,7 @@ class FormProjets extends Form
 	 */
 	public function selectOpportunityStatus($htmlname, $preselected = -1, $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0, $addcombojs = 0)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$sql = "SELECT rowid, code, label, percent";
 		$sql .= " FROM " . $this->db->prefix() . 'c_lead_status';
@@ -729,10 +722,15 @@ class FormProjets extends Form
 					$sellist .= '<option value="notopenedopp"' . ($preselected == 'notopenedopp' ? ' selected="selected"' : '') . '>-- ' . $langs->trans("NotOpenedOpportunitiesShort") . '</option>';
 					$sellist .= '<option value="none"' . ($preselected == 'none' ? ' selected="selected"' : '') . '>-- ' . $langs->trans("NotAnOpportunityShort") . '</option>';
 				}
+				$separatoradded = 0;
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 
-					$sellist .= '<option value="' . $obj->rowid . '" defaultpercent="' . $obj->percent . '" elemcode="' . $obj->code . '"';
+					if (($obj->code == 'WON' || $obj->code == 'LOST') && !$separatoradded) {
+						$separatoradded = 1;
+						$sellist .= '<option value="" disabled>--------------------</option>';
+					}
+					$sellist .= '<option value="' . $obj->rowid . '" defaultpercent="' . $obj->percent . '" data-elemcode="' . $obj->code . '"';
 					if ($obj->rowid == $preselected) {
 						$sellist .= ' selected="selected"';
 					}
@@ -759,12 +757,7 @@ class FormProjets extends Form
 					$sellist .= ajax_combobox($htmlname);
 				}
 			}
-			/*else
-			{
-				$sellist = '<select class="flat" name="elementselect">';
-				$sellist.= '<option value="0" disabled>'.$langs->trans("None").'</option>';
-				$sellist.= '</select>';
-			}*/
+
 			$this->db->free($resql);
 
 			return $sellist;
@@ -834,6 +827,8 @@ class FormProjets extends Form
 		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 		$out = '';
+		$labeltoshow = '';
+
 		if (empty($lineOnly)) {
 			// Search Invoice
 			$sql = "SELECT f.rowid, f.ref as fref,";
@@ -918,6 +913,7 @@ class FormProjets extends Form
 
 				$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlNameInvoiceLine . '" name="' . $htmlNameInvoiceLine . '">';
 			}
+
 			$num = $this->db->num_rows($resql);
 			if ($num) {
 				while ($obj = $this->db->fetch_object($resql)) {
@@ -949,7 +945,7 @@ class FormProjets extends Form
 	 *  @param 	''|int $percent_value	percentage of the opportunity
 	 *  @param	string $htmlname_status	name of HTML element for status select
 	 *  @param	string $htmlname_percent	name of HTML element for percent input
-	 *  @param  string $filter         	optional filters criteras
+	 *  @param  string $filter         	Optional filter criteria
 	 *  @param  int<0,1> $nooutput     	No print output. Return it only.
 	 *  @return	void|string
 	 */

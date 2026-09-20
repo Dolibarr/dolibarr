@@ -3,8 +3,8 @@
  * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		Jon Bendtsen                <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025       Josep Lluís Amador Teruel   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,12 +32,14 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT .'/projet/class/project.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 // Load translation files required by the page
 $langs->load('mails');
@@ -53,6 +55,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+$projectid  = GETPOSTINT('projectid');
 
 // Load variable for pagination
 $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -80,8 +83,12 @@ $search_project = GETPOST('search_project', 'alpha');
 
 // Initialize a technical objects
 $object = new Mailing($db);
-$extrafields = new ExtraFields($db);
-$hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
+if ($projectid > 0) {
+	$hookmanager->initHooks(array('projectmailing', 'globalcard'));
+} else {
+	$hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
+}
+
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -111,7 +118,6 @@ if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_
 }
 //restrictedArea($user, 'mailing');
 
-
 /*
  * Actions
  */
@@ -125,6 +131,9 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 }
 
 $parameters = array();
+if ($projectid > 0) {
+	$parameters['projectid'] = $projectid;
+}
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -205,6 +214,9 @@ if ($filteremail) {
 	if ($search_all) {
 		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
 	}
+	if ($projectid) {
+		$sql .= " AND pr.rowid = ".((int) $projectid)." ";
+	}
 	if ($search_refproject) {
 		$sql .= natural_search('pr.ref', $search_refproject);
 	}
@@ -240,6 +252,9 @@ if ($filteremail) {
 	}
 	if ($search_all) {
 		$sql .= " AND (m.titre LIKE '%".$db->escape($search_all)."%' OR m.sujet LIKE '%".$db->escape($search_all)."%' OR m.body LIKE '%".$db->escape($search_all)."%')";
+	}
+	if ($projectid) {
+		$sql .= " AND pr.rowid = ".((int) $projectid)." ";
 	}
 	if ($search_refproject) {
 		$sql .= natural_search('pr.ref', $search_refproject);
@@ -320,6 +335,74 @@ if ($filteremail) {
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
+if ($projectid > 0) {
+	$projectstat = new Project($db);
+	if ($projectstat->fetch($projectid) > 0) {
+		$projectid = $projectstat->id;
+		$projectstat->fetch_thirdparty();
+
+		$savobject = $object;
+		$object = $projectstat;
+
+		// To verify role of users
+		//$userAccess = $object->restrictedProjectArea($user,'read');
+		$userWrite = $projectstat->restrictedProjectArea($user, 'write');
+		//$userDelete = $object->restrictedProjectArea($user,'delete');
+		//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+
+		$head = project_prepare_head($projectstat);
+		print dol_get_fiche_head($head, 'mailing', $langs->trans("Project"), -1, ($projectstat->public ? 'projectpub' : 'project'));
+
+		// Project card
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+		$morehtmlref = '<div class="refidno">';
+		// Title
+		$morehtmlref .= $object->title;
+		// Thirdparty
+		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
+			$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
+		}
+		$morehtmlref .= '</div>';
+
+		// Define a complementary filter for search of next/prev ref.
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+			$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
+		}
+
+		dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+		print '<div class="fichecenter">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border tableforfield centpercent">';
+
+		// Visibility
+		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+		if ($projectstat->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans('SharedProject');
+		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans('PrivateProject');
+		}
+		print '</td></tr>';
+
+		print "</table>";
+
+		print '</div>';
+		print dol_get_fiche_end();
+
+		print '<br>';
+
+		$object = $savobject;
+	} else {
+		print "ErrorRecordNotFound";
+	}
+}
+
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = "&search_all=".urlencode($search_all);
@@ -350,7 +433,9 @@ if ($search_project != '') {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-
+if ($projectid > 0) {
+	$param .= '&projectid='.urlencode((string) ($projectid));
+}
 if ($filteremail) {
 	$param .= '&filteremail='.urlencode($filteremail);
 }
@@ -390,12 +475,18 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-$newcardbutton = '';
-if ($user->hasRight('mailing', 'creer')) {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
+if ($projectid) {
+	print '<input type="hidden" name="projectid" value="'.$projectid.'" >';
 }
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_email', 0, $newcardbutton, '', $limit, 0, 0, 1);
+$url = DOL_URL_ROOT.'/comm/mailing/card.php?action=create'.($projectid ? '&origin=project&originid='.$projectid : '');
+
+$newcardbutton = '';
+if ($user->hasRight('mailing', 'creer')) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', $url);
+}
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendMailingRef";
@@ -431,7 +522,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -441,7 +532,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -484,7 +575,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -498,7 +589,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -544,7 +635,7 @@ print $hookmanager->resPrint;
 print_liste_field_titre("Status", $_SERVER["PHP_SELF"], ($filteremail ? "mc.statut" : "m.statut"), "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -573,7 +664,7 @@ while ($i < $imaxinloop) {
 	// Show here line of result
 	print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
@@ -681,7 +772,7 @@ while ($i < $imaxinloop) {
 	}
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;

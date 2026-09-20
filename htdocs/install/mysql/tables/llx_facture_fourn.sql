@@ -45,7 +45,7 @@ create table llx_facture_fourn
   remise				double(24,8)     DEFAULT 0,
 
   close_code			varchar(16),		              -- Code motif cloture sans paiement complet
-  close_missing_amount	double(24,8),					  -- Amount missing when closing with a not complete payment
+  close_missing_amount	double(24,8),					  -- TODO Amount missing when closing with a not complete payment
   close_note			varchar(128),		              -- Commentaire cloture sans paiement complet
 
   vat_reverse_charge    tinyint          DEFAULT 0,	      -- By default, supplier invoice not concerned by vat reverse charge
@@ -74,6 +74,10 @@ create table llx_facture_fourn
   fk_cond_reglement		integer,   	                   -- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,                	   -- mode de reglement (CHQ, VIR, ...)
   date_lim_reglement 	date,                          -- date limite de reglement
+
+  payment_reference     varchar(25),                    -- SEPA and any other national or custom payment id (use case for this field is not clear)
+  fk_thirdparty_rib_id	integer NULL,					-- ID of thirdparty payment mode in llx_societe_rib
+  dispute_status		integer DEFAULT 0,				-- set to 1 if a dispute on a payment of invoice is open
 
   note_private			text,
   note_public			text,

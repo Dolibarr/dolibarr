@@ -85,7 +85,7 @@ if (isModEnabled('import')) {
 	$out .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 	$out .= '</tr>';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.class.php';
 	$model = new ModeleImports();
 	$list = $model->listOfAvailableImportFormat($db);
 

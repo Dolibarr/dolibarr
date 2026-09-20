@@ -78,6 +78,16 @@ if (!empty($formList->records)) {
 					$formList->setTotalValue('signature_link', [], $record, $i, $totalarray) ?>
 				</td>
 			<?php } ?>
+
+			<?php
+			// Consultation link
+			if (array_key_exists('consultation_link', $formList->arrayfields) && !empty($formList->arrayfields['consultation_link']['checked'])) { ?>
+				<td data-label="<?php print dolPrintHTMLForAttribute((string) $formList->arrayfields['consultation_link']['label']) ?>" data-col="consultation_link">
+					<?php print $formList->printValue('consultation_link', [], $record, $i, $totalarray);
+					$formList->setTotalValue('consultation_link', [], $record, $i, $totalarray) ?>
+				</td>
+			<?php } ?>
+
 		</tr>
 	<?php }
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021-2024	Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,7 +281,7 @@ function dol_getcache($memoryid, $filecache = 0)
  * 	Return shared memory address used to store dataset with key memoryid
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int						Return integer <0 if KO, Memoy address of shared memory for key
+ * 	@return	int						Return integer <0 if KO, Memory address of shared memory for key
  */
 function dol_getshmopaddress($memoryid)
 {
@@ -289,7 +289,7 @@ function dol_getshmopaddress($memoryid)
 	if (empty($shmkeys[$memoryid])) {	// No room reserved for this memoryid, no way to use cache
 		return 0;
 	}
-	return $shmkeys[$memoryid] + $shmoffset;
+	return  (int) ($shmkeys[$memoryid] + $shmoffset);
 }
 
 /**
@@ -332,7 +332,7 @@ function dol_setshmop($memoryid, $data, $expire)
 		return 0; // No key reserved for this memoryid, we can't cache this memoryid
 	}
 
-	$newdata = serialize($data);
+	$newdata = json_encode($data);
 	$size = strlen($newdata);
 	//print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".$size."bytes<br>\n";
 	$handle = shmop_open($shmkey, 'c', 0644, 6 + $size);
@@ -376,7 +376,7 @@ function dol_getshmop($memoryid)
 	if ($handle) {
 		$size = (int) trim(shmop_read($handle, 0, 6));
 		if ($size) {
-			$data = unserialize(shmop_read($handle, 6, $size));
+			$data = json_decode(shmop_read($handle, 6, $size), true);
 		} else {
 			return -1;
 		}

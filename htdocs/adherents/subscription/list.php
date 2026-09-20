@@ -28,19 +28,21 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
 
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+// Load translation files required by the page
 $langs->loadLangs(array("members", "companies", "banks"));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...
@@ -64,6 +66,24 @@ $search_note = GETPOST('search_note', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
+// Start Date (Subscription Date)
+$search_dateadh_startday = GETPOSTINT('search_dateadh_startday');
+$search_dateadh_startmonth = GETPOSTINT('search_dateadh_startmonth');
+$search_dateadh_startyear = GETPOSTINT('search_dateadh_startyear');
+$search_dateadh_endday = GETPOSTINT('search_dateadh_endday');
+$search_dateadh_endmonth = GETPOSTINT('search_dateadh_endmonth');
+$search_dateadh_endyear = GETPOSTINT('search_dateadh_endyear');
+$search_dateadh_start = dol_mktime(0, 0, 0, $search_dateadh_startmonth, $search_dateadh_startday, $search_dateadh_startyear);
+$search_dateadh_end = dol_mktime(23, 59, 59, $search_dateadh_endmonth, $search_dateadh_endday, $search_dateadh_endyear);
+// End Date (Expiration Date)
+$search_datef_startday = GETPOSTINT('search_datef_startday');
+$search_datef_startmonth = GETPOSTINT('search_datef_startmonth');
+$search_datef_startyear = GETPOSTINT('search_datef_startyear');
+$search_datef_endday = GETPOSTINT('search_datef_endday');
+$search_datef_endmonth = GETPOSTINT('search_datef_endmonth');
+$search_datef_endyear = GETPOSTINT('search_datef_endyear');
+$search_datef_start = dol_mktime(0, 0, 0, $search_datef_startmonth, $search_datef_startday, $search_datef_startyear);
+$search_datef_end = dol_mktime(23, 59, 59, $search_datef_endmonth, $search_datef_endday, $search_datef_endyear);
 
 $date_select = GETPOST("date_select", 'alpha');
 
@@ -88,7 +108,6 @@ if (!$sortfield) {
 
 // Initialize a technical objects
 $object = new Subscription($db);
-$extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('subscriptionlist'));
 
 // Fetch optionals attributes and labels
@@ -137,7 +156,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => isset($socid) ? $socid : null);
+$parameters = array('socid' => null);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -159,6 +178,22 @@ if (empty($reshook)) {
 		$search_account = "";
 		$toselect = array();
 		$search_array_options = array();
+		$search_dateadh_startday = '';
+		$search_dateadh_startmonth = '';
+		$search_dateadh_startyear = '';
+		$search_dateadh_endday = '';
+		$search_dateadh_endmonth = '';
+		$search_dateadh_endyear = '';
+		$search_dateadh_start = '';
+		$search_dateadh_end = '';
+		$search_datef_startday = '';
+		$search_datef_startmonth = '';
+		$search_datef_startyear = '';
+		$search_datef_endday = '';
+		$search_datef_endmonth = '';
+		$search_datef_endyear = '';
+		$search_datef_start = '';
+		$search_datef_end = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -185,7 +220,8 @@ $accountstatic = new Account($db);
 
 $now = dol_now();
 
-// List of subscriptions
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut as status,";
 $sql .= " d.gender, d.email, d.morphy,";
 $sql .= " c.rowid as crowid, c.fk_type, c.subscription,";
@@ -195,7 +231,7 @@ $sql .= " b.fk_account";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : "");
 	}
 }
 // Add fields from hooks
@@ -245,6 +281,18 @@ if ($search_amount) {
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
+if ($search_dateadh_start) {
+	$sql .= " AND c.dateadh >= '".$db->idate($search_dateadh_start)."'";
+}
+if ($search_dateadh_end) {
+	$sql .= " AND c.dateadh <= '".$db->idate($search_dateadh_end)."'";
+}
+if ($search_datef_start) {
+	$sql .= " AND c.datef >= '".$db->idate($search_datef_start)."'";
+}
+if ($search_datef_end) {
+	$sql .= " AND c.datef <= '".$db->idate($search_datef_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -344,6 +392,26 @@ if ($search_amount) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+// Subscription Start Date (dateadh)
+if ($search_dateadh_startday) $param .= '&search_dateadh_startday='.urlencode((string) $search_dateadh_startday);
+if ($search_dateadh_startmonth) $param .= '&search_dateadh_startmonth='.urlencode((string) $search_dateadh_startmonth);
+if ($search_dateadh_startyear) $param .= '&search_dateadh_startyear='.urlencode((string) $search_dateadh_startyear);
+
+// Subscription End Date (dateadh)
+if ($search_dateadh_endday) $param .= '&search_dateadh_endday='.urlencode((string) $search_dateadh_endday);
+if ($search_dateadh_endmonth) $param .= '&search_dateadh_endmonth='.urlencode((string) $search_dateadh_endmonth);
+if ($search_dateadh_endyear) $param .= '&search_dateadh_endyear='.urlencode((string) $search_dateadh_endyear);
+
+// End Subscription Start Date (datef)
+if ($search_datef_startday) $param .= '&search_datef_startday='.urlencode((string) $search_datef_startday);
+if ($search_datef_startmonth) $param .= '&search_datef_startmonth='.urlencode((string) $search_datef_startmonth);
+if ($search_datef_startyear) $param .= '&search_datef_startyear='.urlencode((string) $search_datef_startyear);
+
+// End Subscription End Date (datef)
+if ($search_datef_endday) $param .= '&search_datef_endday='.urlencode((string) $search_datef_endday);
+if ($search_datef_endmonth) $param .= '&search_datef_endmonth='.urlencode((string) $search_datef_endmonth);
+if ($search_datef_endyear) $param .= '&search_datef_endyear='.urlencode((string) $search_datef_endyear);
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -382,6 +450,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/adherents/stats/index.php', 1).'?objecttype=adherent@adherent'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/list.php?status=-1,1');
@@ -425,7 +494,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -436,7 +505,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -477,7 +546,7 @@ if (!empty($arrayfields['d.login']['checked'])) {
 
 if (!empty($arrayfields['c.note']['checked'])) {
 	print '<td class="liste_titre">';
-	print '';
+	print '<input class="flat maxwidth100" type="text" name="search_note" value="'.dol_escape_htmltag($search_note).'"></td>';
 	print '</td>';
 }
 
@@ -488,11 +557,19 @@ if (!empty($arrayfields['d.bank']['checked'])) {
 }
 
 if (!empty($arrayfields['c.dateadh']['checked'])) {
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre center">';
+	print $form->selectDate($search_dateadh_start, 'search_dateadh_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '<br>';
+	print $form->selectDate($search_dateadh_end, 'search_dateadh_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('To'));
+	print '</td>';
 }
 
 if (!empty($arrayfields['c.datef']['checked'])) {
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre center">';
+	print $form->selectDate($search_datef_start, 'search_datef_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '<br>';
+	print $form->selectDate($search_datef_end, 'search_datef_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('To'));
+	print '</td>';
 }
 
 if (!empty($arrayfields['d.amount']['checked'])) {
@@ -519,7 +596,7 @@ if (!empty($arrayfields['c.tms']['checked'])) {
 }
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -534,7 +611,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -593,7 +670,7 @@ if (!empty($arrayfields['c.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -621,6 +698,7 @@ while ($i < $imaxinloop) {
 
 	$adherent->lastname = $obj->lastname;
 	$adherent->firstname = $obj->firstname;
+	$adherent->company = $obj->societe;
 	$adherent->ref = $obj->rowid;
 	$adherent->id = $obj->rowid;
 	$adherent->statut = $obj->status;
@@ -669,7 +747,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -804,7 +882,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

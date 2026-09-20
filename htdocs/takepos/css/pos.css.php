@@ -60,11 +60,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 
 include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
@@ -84,6 +80,28 @@ html,body {
 
 .bodytakepos {
 	background-color: var(--colorbackgrey);
+}
+
+/* Fix dropdown user menu clipped by overflow:hidden on body and #topnav under MD theme */
+.bodytakepos#topmenu-login-dropdown.dropdown-menu{
+	position:fixed;
+	top:45px;
+	left:auto;
+	right:0;
+	overflow-y:auto;
+	max-height:calc(100vh-50px);
+}
+
+/* Fix dropdown user-header layout missing .side-nav-vert context under TakePOS */
+.bodytakepos #topmenu-login-dropdown .dropdown-menu {
+	line-height: 1.3em;
+}
+
+.bodytakepos #topmenu-login-dropdown .dropdown-menu > .user-header {
+	min-height: 100px;
+	padding: 10px;
+	text-align: center;
+	white-space: normal;
 }
 
 .center {

@@ -38,9 +38,9 @@ $formCard = $this->formCard;
 		<?php $this->loadTemplate('card-edit-properties') ?>
 
 		<?php $this->loadTemplate('card-edit-lines') ?>
+
+
+		<?php $this->loadTemplate('card-edit-footer') ?>
 	</article>
 
-	<?php $this->loadTemplate('card-edit-actions-buttons') ?>
-
-	<?php $this->loadTemplate('card-edit-footer') ?>
 </form>

@@ -48,7 +48,7 @@ class CashControl extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -78,16 +78,16 @@ class CashControl extends CommonObject
 	'posmodule' => array('type' => 'varchar(30)', 'label' => 'Module', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 19),
 	'posnumber' => array('type' => 'varchar(30)', 'label' => 'Terminal', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 20, 'csslist' => 'width50 center'),
 	'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 0, 'position' => 24),
-	'opening' => array('type' => 'price', 'label' => 'Opening', 'enabled' => 1, 'visible' => 1, 'position' => 25, 'csslist' => 'amount'),
+	'opening' => array('type' => 'price', 'label' => 'Opening', 'enabled' => 1, 'visible' => -1, 'position' => 25, 'csslist' => 'amount'),
 	'cash' => array('type' => 'price', 'label' => 'Cash', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'csslist' => 'amount'),
 	'cheque' => array('type' => 'price', 'label' => 'Cheque', 'enabled' => 1, 'visible' => 1, 'position' => 33, 'csslist' => 'amount'),
 	'card' => array('type' => 'price', 'label' => 'CreditCard', 'enabled' => 1, 'visible' => 1, 'position' => 36, 'csslist' => 'amount'),
-	'cash_declared' => array('type' => 'price', 'label' => 'CashDeclared', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'csslist' => 'amount'),
-	'cheque_declared' => array('type' => 'price', 'label' => 'ChequeDeclared', 'enabled' => 1, 'visible' => 1, 'position' => 41, 'csslist' => 'amount'),
-	'card_declared' => array('type' => 'price', 'label' => 'CreditCardDeclared', 'enabled' => 1, 'visible' => 1, 'position' => 42, 'csslist' => 'amount'),
-	'cash_lifetime' => array('type' => 'price', 'label' => 'CashLifetime', 'enabled' => 1, 'visible' => 0, 'position' => 45, 'csslist' => 'amount'),
-	'cheque_lifetime' => array('type' => 'price', 'label' => 'ChequeLifetime', 'enabled' => 1, 'visible' => 0, 'position' => 46, 'csslist' => 'amount'),
-	'card_lifetime' => array('type' => 'price', 'label' => 'CreditCardLifetime', 'enabled' => 1, 'visible' => 0, 'position' => 47, 'csslist' => 'amount'),
+	'cash_declared' => array('type' => 'price', 'label' => 'CashDeclared', 'enabled' => 1, 'visible' => -1, 'position' => 40, 'csslist' => 'amount'),
+	'cheque_declared' => array('type' => 'price', 'label' => 'ChequeDeclared', 'enabled' => 1, 'visible' => -1, 'position' => 41, 'csslist' => 'amount'),
+	'card_declared' => array('type' => 'price', 'label' => 'CreditCardDeclared', 'enabled' => 1, 'visible' => -1, 'position' => 42, 'csslist' => 'amount'),
+	'cash_lifetime' => array('type' => 'price', 'label' => 'CashLifetime', 'enabled' => 1, 'visible' => -1, 'position' => 45, 'csslist' => 'amount'),
+	'cheque_lifetime' => array('type' => 'price', 'label' => 'ChequeLifetime', 'enabled' => 1, 'visible' => -1, 'position' => 46, 'csslist' => 'amount'),
+	'card_lifetime' => array('type' => 'price', 'label' => 'CardLifetime', 'enabled' => 1, 'visible' => -1, 'position' => 47, 'csslist' => 'amount'),
 	'lifetime_start' => array('type' => 'datetime', 'label' => 'LifetimeStartDate', 'enabled' => 1, 'visible' => 0, 'position' => 48, 'csslist' => 'center'),
 	'year_close' => array('type' => 'integer', 'label' => 'Year', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 50, 'css' => 'center'),
 	'month_close' => array('type' => 'integer', 'label' => 'Month', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'css' => 'center'),
@@ -101,7 +101,7 @@ class CashControl extends CommonObject
 	'fk_user_creat' => array('type' => 'integer:User', 'label' => 'UserCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 600),
 	'fk_user_valid' => array('type' => 'integer:User', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 602),
 	'import_key' => array('type' => 'varchar(14)', 'label' => 'Import key', 'enabled' => 1, 'visible' => 0, 'position' => 700),
-	'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 1000, 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated')),
+	'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 1000, 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Closed')),
 	);
 
 	/**

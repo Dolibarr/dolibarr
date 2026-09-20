@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
- * Copyright (C) 2019-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,15 +28,16 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+
 
 // Load translation files required by page
 $langs->loadLangs(array("users"));
@@ -71,7 +72,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new UserGroup($db);
-$extrafields = new ExtraFields($db);
+
 //$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -108,7 +109,7 @@ if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 
-// Defini si peux lire/modifier utilisateurs et permissions
+// Define if user can modify other users and permissions
 $caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "write")));
 $permissiontodelete = $caneditperms;
 // Advanced permissions
