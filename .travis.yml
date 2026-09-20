@@ -406,7 +406,7 @@ script:
     echo
 
   - |
-    echo ===== $(date) Checking PHP syntax errors
+    echo ===== $(date) Checking PHP syntax errors with parallel-lint
     # Ensure we catch errors
     set -e
     if [ "x$TRAVIS_RUN_PARALLELLINT" = "xyes" ]; then
@@ -423,7 +423,7 @@ script:
     echo
 
   - |
-    echo ===== $(date) Checking coding style
+    echo ===== $(date) Checking coding style with codesniffer
     # Ensure we catch errors
     set -e
     CACHE_OPT="--cache=${HOME}/.cache/dolibarr-phpcs-${TRAVIS_PHP_VERSION}.cache"
