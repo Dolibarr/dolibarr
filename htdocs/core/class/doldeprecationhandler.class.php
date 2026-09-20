@@ -45,9 +45,8 @@ trait DolDeprecationHandler
 	 */
 	public function __get($name)
 	{
-		$deprecatedProperties = $this->deprecatedProperties();
-		if (isset($deprecatedProperties[$name])) {
-			$newProperty = $deprecatedProperties[$name];
+		$newProperty = $this->getReplacementProperty($name);
+		if ($newProperty !== null) {
 			$msg = "DolDeprecationHandler: Accessing deprecated property '".$name."' on class ".get_class($this).". Use '".$newProperty."' instead.".self::getCallerInfoString();
 			dol_syslog($msg);
 			if ($this->isDeprecatedReportingEnabled()) {
@@ -73,9 +72,8 @@ trait DolDeprecationHandler
 	 */
 	public function __set($name, $value)
 	{
-		$deprecatedProperties = $this->deprecatedProperties();
-		if (isset($deprecatedProperties[$name])) {
-			$newProperty = $deprecatedProperties[$name];
+		$newProperty = $this->getReplacementProperty($name);
+		if ($newProperty !== null) {
 			// Setting is for compatibility, should not be a problem and should be reported only in paranoid mode
 			/*
 			$msg = "DolDeprecationHandler: Setting value to the deprecated property '".$name."'. Use '".$newProperty."' instead.".self::getCallerInfoString();
@@ -105,9 +103,8 @@ trait DolDeprecationHandler
 	 */
 	public function __unset($name)
 	{
-		$deprecatedProperties = $this->deprecatedProperties();
-		if (isset($deprecatedProperties[$name])) {
-			$newProperty = $deprecatedProperties[$name];
+		$newProperty = $this->getReplacementProperty($name);
+		if ($newProperty !== null) {
 			// Unsetting is for compatibility, should not be a problem and should be reported only in paranoid mode
 			/*
 			$msg = "DolDeprecationHandler: Unsetting deprecated property '".$name."'. Use '".$newProperty."' instead.".self::getCallerInfoString();
@@ -134,9 +131,8 @@ trait DolDeprecationHandler
 	 */
 	public function __isset($name)
 	{
-		$deprecatedProperties = $this->deprecatedProperties();
-		if (isset($deprecatedProperties[$name])) {
-			$newProperty = $deprecatedProperties[$name];
+		$newProperty = $this->getReplacementProperty($name);
+		if ($newProperty !== null) {
 			$msg = "DolDeprecationHandler: Accessing deprecated property '".$name."' on class ".get_class($this).". Use '".$newProperty."' instead.".self::getCallerInfoString();
 			dol_syslog($msg);
 			if ($this->isDeprecatedReportingEnabled()) {
@@ -161,9 +157,8 @@ trait DolDeprecationHandler
 	 */
 	public function __call($name, $arguments)
 	{
-		$deprecatedMethods = $this->deprecatedMethods();
-		if (isset($deprecatedMethods[$name])) {
-			$newMethod = $deprecatedMethods[$name];
+		$newMethod = $this->getReplacementMethod($name);
+		if ($newMethod !== null) {
 			if ($this->isDeprecatedReportingEnabled()) {
 				trigger_error("Calling deprecated method '".$name."' on class ".get_class($this).". Use '".$newMethod."' instead.".self::getCallerInfoString(), E_USER_DEPRECATED);
 			}
@@ -253,6 +248,54 @@ trait DolDeprecationHandler
 		);
 	}
 
+	/**
+	 * Get replacement property name for a deprecated property
+	 *
+	 * @param string $oldProperty Name of the deprecated property
+	 * @return string|null Name of the replacement property, or null if not deprecated
+	 * @throws Exception If the replacement property name is the same as the old property name
+	 */
+	private function getReplacementProperty(string $oldProperty): ?string
+	{
+		$deprecatedProperties = $this->deprecatedProperties();
+		if (!isset($deprecatedProperties[$oldProperty])) {
+			return null;
+		}
+
+		$newProperty = $deprecatedProperties[$oldProperty];
+
+		// Validate that the new property name is different from the old one
+		if ($newProperty === $oldProperty) {
+			throw new Exception("DolDeprecationHandler: Configuration error - replacement property name for '$oldProperty' is the same as the old property name on class " . get_class($this) . ".");
+		}
+
+		return $newProperty;
+	}
+
+	/**
+	 * Get replacement method name for a deprecated method
+	 *
+	 * @param string $oldMethod Name of the deprecated method
+	 * @return string|null Name of the replacement method, or null if not deprecated
+	 * @throws Exception If the replacement method name is the same as the old method name
+	 */
+	private function getReplacementMethod(string $oldMethod): ?string
+	{
+		$deprecatedMethods = $this->deprecatedMethods();
+		if (!isset($deprecatedMethods[$oldMethod])) {
+			return null;
+		}
+
+		$newMethod = $deprecatedMethods[$oldMethod];
+
+		// Validate that the new method name is different from the old one
+		if ($newMethod === $oldMethod) {
+			throw new Exception("DolDeprecationHandler: Configuration error - replacement method name for '$oldMethod' is the same as the old method name on class " . get_class($this) . ".");
+		}
+
+		return $newMethod;
+	}
+
 
 	/**
 	 * Get caller info
@@ -282,7 +325,9 @@ trait DolDeprecationHandler
 	{
 		// Check deprecated properties
 		$deprecatedProperties = $this->deprecatedProperties();
-		foreach ($deprecatedProperties as $oldProperty => $newProperty) {
+		foreach (array_keys($deprecatedProperties) as $oldProperty) {
+			// This will also validate that newProperty != oldProperty via getReplacementProperty
+			$replacementProperty = $this->getReplacementProperty($oldProperty);
 			if (property_exists($this, $oldProperty)) {
 				// Use Exception instead of trigger_error with E_USER_ERROR (deprecated in PHP 8.4)
 				throw new Exception("DolDeprecationHandler: Old property '$oldProperty' still exists on class " . get_class($this) . ". It should be commented out or removed since it is mapped as deprecated.");
@@ -291,7 +336,9 @@ trait DolDeprecationHandler
 
 		// Check deprecated methods
 		$deprecatedMethods = $this->deprecatedMethods();
-		foreach ($deprecatedMethods as $oldMethod => $newMethod) {
+		foreach (array_keys($deprecatedMethods) as $oldMethod) {
+			// This will also validate that newMethod != oldMethod via getReplacementMethod
+			$replacementMethod = $this->getReplacementMethod($oldMethod);
 			if (method_exists($this, $oldMethod)) {
 				// Use Exception instead of trigger_error with E_USER_ERROR (deprecated in PHP 8.4)
 				throw new Exception("DolDeprecationHandler: Old method '$oldMethod' still exists on class " . get_class($this) . ". It should be commented out or removed since it is mapped as deprecated.");

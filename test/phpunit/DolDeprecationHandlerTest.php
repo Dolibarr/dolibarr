@@ -442,6 +442,147 @@ class DolDeprecationHandlerTest extends CommonClassTest
 	}
 
 	/**
+	 * Test that configuration error is thrown when replacement property name matches old property name
+	 *
+	 * @return void
+	 */
+	public function testConfigurationErrorForSamePropertyName()
+	{
+		// Create a handler class with a configuration error (same name for old and new property)
+		$badHandler = new class () {
+			use DolDeprecationHandler;
+
+			/**
+			 * @var bool Configuration for dynamic properties
+			 */
+			public $enableDynamicProperties = true;
+
+			/**
+			 * @var string Property
+			 */
+			public $propertyName;
+
+			/**
+			 * Define deprecated properties with configuration error.
+			 *
+			 * @return array<string,string>
+			 */
+			protected function deprecatedProperties()
+			{
+				return [
+					'propertyName' => 'propertyName',  // Same name - configuration error
+				];
+			}
+
+			/**
+			 * Define deprecated methods.
+			 *
+			 * @return array<string,string>
+			 */
+			protected function deprecatedMethods()
+			{
+				return [];
+			}
+
+			/**
+			 * Make getReplacementProperty accessible for testing
+			 *
+			 * @param string $oldProperty Name of the deprecated property
+			 * @return string|null Name of the replacement property
+			 */
+			public function testGetReplacementProperty(string $oldProperty): ?string
+			{
+				return $this->getReplacementProperty($oldProperty);
+			}
+
+			/**
+			 * Override destructor to prevent verification during test cleanup
+			 *
+			 * @return void
+			 */
+			public function __destruct()
+			{
+				// Do nothing to prevent verification from running during test cleanup
+			}
+		};
+
+		// Expect the exception for configuration error
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage("Configuration error - replacement property name for 'propertyName' is the same as the old property name");
+
+		// Call the getter method directly
+		$badHandler->testGetReplacementProperty('propertyName');
+	}
+
+	/**
+	 * Test that configuration error is thrown when replacement method name matches old method name
+	 *
+	 * @return void
+	 */
+	public function testConfigurationErrorForSameMethodName()
+	{
+		// Create a handler class with a configuration error (same name for old and new method)
+		$badHandler = new class () {
+			use DolDeprecationHandler;
+
+			/**
+			 * @var bool Configuration for dynamic properties
+			 */
+			public $enableDynamicProperties = true;
+
+			/**
+			 * Define deprecated properties.
+			 *
+			 * @return array<string,string>
+			 */
+			protected function deprecatedProperties()
+			{
+				return [];
+			}
+
+			/**
+			 * Define deprecated methods with configuration error.
+			 *
+			 * @return array<string,string>
+			 */
+			protected function deprecatedMethods()
+			{
+				return [
+					'methodName' => 'methodName',  // Same name - configuration error
+				];
+			}
+
+			/**
+			 * Make getReplacementMethod accessible for testing
+			 *
+			 * @param string $oldMethod Name of the deprecated method
+			 * @return string|null Name of the replacement method
+			 */
+			public function testGetReplacementMethod(string $oldMethod): ?string
+			{
+				return $this->getReplacementMethod($oldMethod);
+			}
+
+			/**
+			 * Override destructor to prevent verification during test cleanup
+			 *
+			 * @return void
+			 */
+			public function __destruct()
+			{
+				// Do nothing to prevent verification from running during test cleanup
+			}
+		};
+
+		// Expect the exception for configuration error
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage("Configuration error - replacement method name for 'methodName' is the same as the old method name");
+
+		// Call the getter method directly
+		$badHandler->testGetReplacementMethod('methodName');
+	}
+
+	/**
 	 * Test that verification triggers error when old method exists
 	 *
 	 * @return void
