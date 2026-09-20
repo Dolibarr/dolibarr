@@ -278,8 +278,8 @@ try {
 	}
 
 	// This is to allow easy test of the parse_intent.php by calling the URL with param query=test
-	if (empty($query) && GETPOST('query', 'alphanohtml') == 'testdebug') {
-		$query = 'testdebug';
+	if (empty($query) && GETPOST('query', 'alphanohtml') == '/tools') {
+		$query = '/tools';
 	}
 
 	if (empty($query)) {
@@ -495,17 +495,30 @@ try {
 		$llmToolsBase   = $mcp->getToolsSchemaForLLM();
 
 		// Special case we ask debug info
-		if ($query == 'testdebug') {
-			print '----- loadedTools'."\n";
-			print '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			print "\n";
-			print "\n";
-			print '----- toolsByName'."\n";
-			print '<pre>' . json_encode($mcp->toolsByName, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			print "\n";
-			print "\n";
-			print '----- allToolsSchema (non system + system)'."\n";
-			print '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+		if ($query == '/tools') {
+			$s = '----- loadedTools (scan of family tools, not tools)'."\n";
+			$s .= '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			$s .= "\n";
+			$s .= "\n";
+			$s .= '----- toolsByName'."\n";
+			$s .= '<pre>' . json_encode($mcp->toolsByName, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			$s .= "\n";
+			$s .= "\n";
+			$s .= '----- allToolsSchema (non system + system)'."\n";
+			$s .= '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+
+			$finalResponse = [
+				"tool" => "respond_to_user",
+				"arguments" => [
+					"message" => $s
+				]
+			];
+
+			// Log the low confidence response
+			//ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
+
+			ob_end_clean();
+			echo json_encode($finalResponse);
 			exit;
 		}
 
