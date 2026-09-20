@@ -6,7 +6,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
- * Copyright (C) 2026		José MARTINEZ		<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ if ($action == 'setmulticurrencyamount' && $caneditmcamount && getDolGlobalInt('
 		$objp = $db->fetch_object($resql);
 		$mccode = $objp->multicurrency_code;
 		$pfamount = (float) $objp->amount;
-		$newtx = ($pfamount != 0) ? (float) price2num($newmcamount / $pfamount, 'MU') : 1;
+		$newtx = ($pfamount != 0) ? (float) price2num($newmcamount / $pfamount, 'CR') : 1;
 		$db->begin();
 		$ok = $db->query("UPDATE ".MAIN_DB_PREFIX."paiementfourn SET multicurrency_amount = ".((float) $newmcamount)." WHERE rowid = ".((int) $object->id));
 		$ok = $ok && $db->query("UPDATE ".MAIN_DB_PREFIX."paiementfourn_facturefourn SET multicurrency_amount = ".((float) $newmcamount).", multicurrency_code = ".($mccode ? "'".$db->escape($mccode)."'" : "null").", multicurrency_tx = ".((float) $newtx)." WHERE fk_paiementfourn = ".((int) $object->id));
@@ -309,7 +309,7 @@ if ($result > 0) {
 			print '</td></tr>';
 			if ((float) $object->multicurrency_amount != 0 && (float) $object->amount != 0) {
 				print '<tr><td>'.$langs->trans('CurrencyRate').'</td>';
-				print '<td>'.price2num((float) $object->multicurrency_amount / (float) $object->amount, 'MU').'</td></tr>';
+				print '<td>'.price2num((float) $object->multicurrency_amount / (float) $object->amount, 'CR').'</td></tr>';
 			}
 		}
 	}

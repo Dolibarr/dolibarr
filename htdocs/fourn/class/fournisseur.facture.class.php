@@ -18,7 +18,6 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
- * Copyright (C) 2026		José MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2931,7 +2930,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 		// Multicurrency rate and total in the invoice currency (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
 		if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency') && !empty($this->multicurrency_code) && $this->multicurrency_code != $conf->currency) {
-			$datas['multicurrencyrate'] = '<br><b>'.$langs->trans('CurrencyRate').':</b> '.price2num($this->multicurrency_tx, 'MU');
+			$datas['multicurrencyrate'] = '<br><b>'.$langs->trans('CurrencyRate').':</b> '.price2num($this->multicurrency_tx, 'CR');
 			if (!empty($this->multicurrency_total_ht)) {
 				$datas['multicurrencytotalht'] = '<br><b>'.$langs->trans('MulticurrencyAmountHT').':</b> '.price($this->multicurrency_total_ht, 0, $langs, 0, -1, -1, $this->multicurrency_code);
 			}

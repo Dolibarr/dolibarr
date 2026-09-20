@@ -14,7 +14,7 @@
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2026		José MARTINEZ		<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -365,7 +365,7 @@ class Paiement extends CommonObject
 				// The counterpart amount is the real amount entered by the user, not a value derived at the invoice rate
 				$value_converted = ($way == 'dolibarr') ? $realforeignamount : $realcompanyamount;
 				// Derived exchange rate, Dolibarr convention: multicurrency_tx = amount in invoice currency / amount in company currency
-				$derived_tx = (float) price2num(abs($realforeignamount) / abs($realcompanyamount), 'MU');
+				$derived_tx = (float) price2num(abs($realforeignamount) / abs($realcompanyamount), 'CR');
 				if ($derived_tx <= 0) {
 					$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 					return -1;
@@ -373,7 +373,7 @@ class Paiement extends CommonObject
 				$this->multicurrency_tx[$key] = $derived_tx;
 				// Non-blocking warning if the derived rate is far (> 50%) from the invoice rate (probable swap of the two amounts)
 				if ($invoice_multicurrency_tx && abs($derived_tx - $invoice_multicurrency_tx) > (0.5 * $invoice_multicurrency_tx)) {
-					setEventMessages($langs->trans('WarningPaymentDerivedRateFarFromInvoiceRate', (string) $invoiceidfortrans, price2num($derived_tx, 'MU'), price2num($invoice_multicurrency_tx, 'MU')), null, 'warnings');
+					setEventMessages($langs->trans('WarningPaymentDerivedRateFarFromInvoiceRate', (string) $invoiceidfortrans, price2num($derived_tx, 'CR'), price2num($invoice_multicurrency_tx, 'CR')), null, 'warnings');
 				}
 			} elseif ($invoice_multicurrency_tx) {
 				if ($way == 'dolibarr') {
@@ -628,7 +628,7 @@ class Paiement extends CommonObject
 											$realeurpaid = (float) price2num($invoice->getSommePaiement(0), 'MT');
 											$realfxpaid = (float) price2num($invoice->getSommePaiement(1), 'MT');
 											if ($realeurpaid != 0 && $realfxpaid != 0) {
-												$discountmctx = (float) price2num($realfxpaid / $realeurpaid, 'MU');
+												$discountmctx = (float) price2num($realfxpaid / $realeurpaid, 'CR');
 												if ((float) $invoice->total_ttc != 0) {
 													$discountrealratio = $realeurpaid / (float) $invoice->total_ttc;
 												}
@@ -1494,7 +1494,7 @@ class Paiement extends CommonObject
 		if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency') && !empty($this->multicurrency_amount) && (float) $this->amount != 0 && abs((float) $this->multicurrency_amount - (float) $this->amount) > 0.0001) {
 			$langs->load("multicurrency");
 			$datas['multicurrencyamount'] = '<br><strong>'.$langs->trans("MulticurrencyPaymentAmount").':</strong> '.price($this->multicurrency_amount, 0, $langs, 1);
-			$datas['multicurrencyrate'] = '<br><strong>'.$langs->trans("Rate").':</strong> '.price2num((float) $this->multicurrency_amount / (float) $this->amount, 'MU');
+			$datas['multicurrencyrate'] = '<br><strong>'.$langs->trans("Rate").':</strong> '.price2num((float) $this->multicurrency_amount / (float) $this->amount, 'CR');
 		}
 
 		return $datas;

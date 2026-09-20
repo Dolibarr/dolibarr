@@ -4245,7 +4245,7 @@ if ($action == 'create') {
 						// Amount in the invoice currency and derived rate as a sub-line (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
 						if (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency') && !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency && (float) $objp->amount != 0 && abs((float) $objp->multicurrency_amount - (float) $objp->amount) > 0.0001) {
 							print '<br><span class="opacitymedium small">'.price($objp->multicurrency_amount, 0, $langs, 1, -1, -1, $object->multicurrency_code);
-							print '<br>'.$langs->trans('Rate').' : '.price2num((float) $objp->multicurrency_amount / (float) $objp->amount, 'MU');
+							print '<br>'.$langs->trans('Rate').' : '.price2num((float) $objp->multicurrency_amount / (float) $objp->amount, 'CR');
 							print '</span>';
 						}
 						print '</td>';
