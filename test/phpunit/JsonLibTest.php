@@ -84,10 +84,6 @@ class JsonLibTest extends CommonClassTest
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		// Try to decode a string encoded with serialize
 		$encoded = 'a:1:{s:7:"options";a:3:{s:3:"app";s:11:"Application";s:6:"system";s:6:"System";s:6:"option";s:6:"Option";}}';

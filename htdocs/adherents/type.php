@@ -481,7 +481,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.libelle']['checked'])) {
-					print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+					print '<td><span class="spantitle">'.dolPrintHTML($objp->label).'</td>';
 				}
 				if (!empty($arrayfields['t.morphy']['checked'])) {
 					print '<td class="center">';

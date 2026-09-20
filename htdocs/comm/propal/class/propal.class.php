@@ -1577,6 +1577,13 @@ class Propal extends CommonObject
 								$line->subprice = $pu_ht;
 								$line->tva_tx = $tva_tx;
 								$line->remise_percent = $remise_percent;
+
+								// Also update the buy price (margin) with the same fallback logic used when a line is added or updated
+								// (cost price, or PMP, or best supplier price, depending on MARGIN_TYPE). Keep line->pa_ht unchanged if nothing better is found.
+								$buyPrice = $this->defineBuyPrice($pu_ht, $remise_percent, $prod->id);
+								if ($buyPrice > 0) {
+									$line->pa_ht = $buyPrice;
+								}
 							}
 							if ($update_desc === true) {
 								$line->desc = $prod->description;

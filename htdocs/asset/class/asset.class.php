@@ -667,6 +667,12 @@ class Asset extends CommonObject
 					foreach ($fields as $field_key => $value) {
 						$options->deprecation_options[$mode_key][$field_key] = $value;
 					}
+					// 'amount_base_depreciation_ht' only exists on the asset (not on the model, see 'only_on_asset'),
+					// so it is never part of $fields above and must be computed from the asset itself, otherwise
+					// it stays at 0 and all depreciation lines are calculated on a zero base.
+					if (!array_key_exists('amount_base_depreciation_ht', $options->deprecation_options[$mode_key])) {
+						$options->deprecation_options[$mode_key]['amount_base_depreciation_ht'] = $this->reversal_amount_ht > 0 ? $this->reversal_amount_ht : $this->acquisition_value_ht;
+					}
 				}
 
 				$result = $options->updateDeprecationOptions($user, $this->id, 0, $notrigger);
@@ -1061,9 +1067,9 @@ class Asset extends CommonObject
 				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
 				$finish_date = $disposal_date !== "" ? $disposal_date : $depreciation_date_end;
 				$accountancy_code_depreciation_debit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_debit'];
-				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key];
+				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key] ?? '';
 				$accountancy_code_depreciation_credit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_credit'];
-				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key];
+				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key] ?? '';
 
 				// Reversal depreciation line
 				//-----------------------------------------------------
@@ -1783,7 +1789,7 @@ class Asset extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'asset/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'asset/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;

@@ -24,6 +24,7 @@
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
 
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2865,7 +2866,8 @@ abstract class CommonObject
 	}
 
 	/**
-	 *  Change the payments methods
+	 *  Change the payments methods.
+	 *  Can be used on invoice, supplier invoice, salary, company, vat, ...
 	 *
 	 *  @param		int		$id		Id of new payment method
 	 *  @return		int				>0 if OK, <0 if KO
@@ -2993,6 +2995,12 @@ abstract class CommonObject
 				// Update line price
 				if (!empty($this->lines)) {
 					foreach ($this->lines as &$line) {
+						// A credit line (deposit, credit note, discount applied to the invoice) is not priced at the invoice rate:
+						// both its amounts are the historical ones of the credit, so a rate change must leave it untouched.
+						if (!empty($line->fk_remise_except)) {
+							continue;
+						}
+
 						// Amounts in company currency will be recalculated
 						if ($mode == 1) {
 							$line->subprice = 0;
@@ -6935,9 +6943,9 @@ abstract class CommonObject
 						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								// We set a global variable to $objectoffield so we can use it inside computed formula
-								$objectoffield = dol_clone($this, 2);
+								// We set a global variable to $objectoffield so we can use it inside computed formula (must be before the assignment)
 								global $objectoffield;
+								$objectoffield = dol_clone($this, 2);
 								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}

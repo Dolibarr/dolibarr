@@ -68,6 +68,7 @@ class DolDeprecationHandlerTest extends CommonClassTest
 	protected function setUp(): void
 	{
 		parent::setUp();
+
 		print __METHOD__."\n";
 		$this->handler = new class () {
 			use DolDeprecationHandler;

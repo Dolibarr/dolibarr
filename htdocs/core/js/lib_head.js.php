@@ -1599,6 +1599,26 @@ $(document).ready(function() {
 
 
 jQuery(document).ready(function() {
+	// Code to remove the separator spaces of a professional id pasted into a field that never holds one
+	// (SIREN "849 943 618", SIRET "849 943 618 00012"). Cleaning the pasted text before it is inserted
+	// makes the maxlength of the field apply to the id itself instead of to its presentation: without
+	// this the browser silently truncates the paste and the user records an id short of a few digits.
+	jQuery(document).on("paste", "input[data-profidnospace]", function(event) {
+		var clipboardData = (event.originalEvent || event).clipboardData;
+		if (!clipboardData) {
+			return;
+		}
+		var pastedText = clipboardData.getData("text");
+		var cleanedText = pastedText.replace(/\s+/g, "");
+		if (cleanedText == pastedText) {
+			return;		// Nothing to remove, leave the paste to the browser
+		}
+		event.preventDefault();
+		// insertText keeps the undo history and, unlike setRangeText, is subject to the maxlength
+		document.execCommand("insertText", false, cleanedText);
+	});
+
+
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("core/frames.php") == -1 && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
@@ -1726,6 +1746,8 @@ if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DI
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
 
+if (typeof jQuery.fn.on === 'function') {
+
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component)");
 	const target = $(e.target);
@@ -1737,6 +1759,8 @@ $(document).on('select2:open', (e) => {
 		document.querySelector('input[aria-controls*='+id+']').focus();
 	}
 });
+
+}
 	<?php
 }
 ?>

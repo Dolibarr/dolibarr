@@ -183,6 +183,7 @@ MarkAsRead=Mark ticket as read
 TicketHistory=Ticket history
 AssignUser=Assign to user
 TicketAssigned=Ticket is now assigned
+TicketUnassigned=Ticket is now unassigned
 TicketChangeType=Change type
 TicketChangeCategory=Change analytic code
 TicketChangeSeverity=Change severity

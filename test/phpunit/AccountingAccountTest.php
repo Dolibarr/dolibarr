@@ -57,17 +57,9 @@ class AccountingAccountTest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		if (!isModEnabled('accounting')) {
-			print __METHOD__." module accounting must be enabled.\n";
-			exit(1);
-		}
-
-		print __METHOD__."\n";
+		self::assertTrue(isModEnabled('accounting'), " module double party accounting must be enabled");
+		parent::setUpBeforeClass();
 	}
-
 
 	/**
 	 * testAccountingAccountCreate
