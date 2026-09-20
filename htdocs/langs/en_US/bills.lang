@@ -762,3 +762,5 @@ InvoiceRateRealigned=Invoice exchange rate aligned on the real rate (%s)
 WarningPaymentDerivedRateFarFromInvoiceRate=For invoice %s, the exchange rate %s derived from the amounts entered differs by more than 50%% from the invoice rate %s. Please check that the two amounts have not been swapped.
 ErrorPaymentRealAmountsMustHaveSameSign=For invoice %s, the amount in the invoice currency and the real amount in the company currency must have the same sign.
 
+PaymentRealAmountsInfo=Invoice %s: the payment is recorded with its two real amounts, %s in the original currency and %s in the company currency (rate %s). The invoice is settled on the amount in the original currency: the gap in the company currency is an exchange difference, not an overpayment.
+

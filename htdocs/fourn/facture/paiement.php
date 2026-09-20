@@ -103,6 +103,7 @@ if (!$sortfield) {
 $amounts = array();
 $amountsresttopay = array();
 $addwarning = 0;
+$realamountsinfo = array();	// Info lines about the payments entered with their real amounts in both currencies
 
 $multicurrency_amounts = array();
 $multicurrency_amountsresttopay = array();
@@ -205,8 +206,15 @@ if (empty($reshook)) {
 				restrictedArea($user, 'fournisseur', $tmpinvoice->id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', (($tmpinvoice->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0));
 				$amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement());
 				if ($amounts[$cursorfacid]) {
+					// Under MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS, when the real amount in the original currency is entered too, the amount in the company
+					// currency may legitimately differ from the remaining amount (exchange difference): the check is then done on the original currency only
+					$multicurrencyamountentered = (float) price2num(GETPOST('multicurrency_amount_'.$cursorfacid, 'alpha'));
+					$userealamounts = (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency') && !empty($tmpinvoice->multicurrency_code) && $tmpinvoice->multicurrency_code != $conf->currency && $multicurrencyamountentered != 0);
+					if ($userealamounts) {
+						$realamountsinfo[] = $langs->trans("PaymentRealAmountsInfo", (string) $tmpinvoice->ref, price($multicurrencyamountentered, 0, $langs, 1, -1, -1, $tmpinvoice->multicurrency_code), price($amounts[$cursorfacid], 0, $langs, 1, -1, -1, $conf->currency), price2num(abs($multicurrencyamountentered / (float) $amounts[$cursorfacid]), 'CR'));
+					}
 					// Check amount
-					if ((abs((float) $amounts[$cursorfacid]) > abs((float) $amountsresttopay[$cursorfacid]))) {
+					if (!$userealamounts && (abs((float) $amounts[$cursorfacid]) > abs((float) $amountsresttopay[$cursorfacid]))) {
 						$addwarning = 1;
 						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPaySupplier")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
 					}
@@ -999,6 +1007,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				if (GETPOST('closepaidinvoices')) {
 					$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 					print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
+				}
+				// Payments entered with their real amounts in both currencies: say which amount settles the invoice (option MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS)
+				if (!empty($realamountsinfo)) {
+					$formquestion['text'] = (empty($formquestion['text']) ? '' : $formquestion['text'].'<br>').img_picto('', 'info', 'class="pictofixedwidth"').implode('<br>', $realamountsinfo);
 				}
 				print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id.'&socid='.$object->socid.'&type='.$object->type, $langs->trans('PayedSuppliersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
 			}
