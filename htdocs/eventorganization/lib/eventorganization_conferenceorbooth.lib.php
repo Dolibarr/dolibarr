@@ -56,33 +56,33 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 		$h++;
 	}
 
-	/*
-	$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?conforboothid='.$object->id.$withProjectUrl;
-	$head[$h][1] = $langs->trans("Attendees");
-	$head[$h][2] = 'attendees';
-	// Enable caching of conf or booth count attendees
-	$nbAttendees = 0;
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-	$cachekey = 'count_attendees_conferenceorbooth_'.$object->id;
-	$dataretrieved = dol_getcache($cachekey);
-	if (!is_null($dataretrieved)) {
-		$nbAttendees = $dataretrieved;
-	} else {
-		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-		$attendees=new ConferenceOrBoothAttendee($db);
-		$result = $attendees->fetchAll('', '', 0, 0, '(t.fk_actioncomm:=:'.((int) $object->id).')');
-		if (!is_array($result) && $result < 0) {
-			setEventMessages($attendees->error, $attendees->errors, 'errors');
+	if ($object->isConferenceType() && !empty($object->registration_enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?conforboothid='.$object->id.$withProjectUrl;
+		$head[$h][1] = $langs->trans("Attendees");
+		$head[$h][2] = 'attendees';
+		// Enable caching of conf or booth count attendees
+		$nbAttendees = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_attendees_conferenceorbooth_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbAttendees = $dataretrieved;
 		} else {
-			$nbAttendees = count($result);
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+			$attendees = new ConferenceOrBoothAttendee($db);
+			$result = $attendees->fetchAll('', '', 0, 0, '(t.fk_actioncomm:=:'.((int) $object->id).')');
+			if (!is_array($result) && $result < 0) {
+				setEventMessages($attendees->error, $attendees->errors, 'errors');
+			} else {
+				$nbAttendees = count($result);
+			}
+			dol_setcache($cachekey, $nbAttendees, 120); // If setting cache fails, this is not a problem, so we do not test result.
 		}
-		dol_setcache($cachekey, $nbAttendees, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		if ($nbAttendees > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbAttendees.'</span>';
+		}
+		$h++;
 	}
-	if ($nbAttendees > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbAttendees.'</span>';
-	}
-	$h++;
-	*/
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';

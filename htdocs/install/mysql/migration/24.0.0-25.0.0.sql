@@ -264,3 +264,5 @@ ALTER TABLE llx_paiement_facture ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_ai_request_log ADD COLUMN tokens_input integer;
 ALTER TABLE llx_ai_request_log ADD COLUMN tokens_output integer;
 ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
+
+ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;

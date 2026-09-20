@@ -113,6 +113,7 @@ class ConferenceOrBooth extends ActionComm
 		'datep' => array('type' => 'datetime', 'label' => 'DateStart', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => 2,),
 		'datep2' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => 3,),
 		'max_participants' => array('type' => 'integer', 'label' => 'MaxNbOfAttendees', 'enabled' => 1, 'position' => 72, 'notnull' => -1, 'visible' => 1),
+		'registration_enabled' => array('type' => 'boolean', 'label' => 'AllowUsersToRegisterToConference', 'enabled' => 1, 'position' => 73, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'help' => 'AllowUsersToRegisterToConferenceHelp'),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
@@ -160,6 +161,11 @@ class ConferenceOrBooth extends ActionComm
 	public $max_participants;
 
 	/**
+	 * @var int Allow public registrations for this conference
+	 */
+	public $registration_enabled;
+
+	/**
 	 * @var int
 	 */
 	public $fk_user_author;
@@ -178,7 +184,10 @@ class ConferenceOrBooth extends ActionComm
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
-	//public $pubregister;
+	/**
+	 * @var string Public registration URL
+	 */
+	public $pubregister;
 
 
 	/**
@@ -263,6 +272,9 @@ class ConferenceOrBooth extends ActionComm
 	{
 		$this->userownerid = $user->id;
 		$this->type_id = $this->fk_action;
+		if (!$this->isConferenceType()) {
+			$this->registration_enabled = 0;
+		}
 		$this->socid = $this->fk_soc;
 		$this->datef = $this->datep2;
 		$this->note_private = $this->note;
@@ -281,6 +293,25 @@ class ConferenceOrBooth extends ActionComm
 	}
 
 	/**
+	 * Return whether this event uses a conference action type.
+	 *
+	 * @return bool
+	 */
+	public function isConferenceType()
+	{
+		$typeCode = (string) $this->type_code;
+		$typeId = !empty($this->fk_action) ? (int) $this->fk_action : (int) $this->type_id;
+		if ($typeCode === '' && $typeId > 0) {
+			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_actioncomm WHERE id = '.$typeId;
+			$resql = $this->db->query($sql);
+			if ($resql && ($obj = $this->db->fetch_object($resql))) {
+				$typeCode = (string) $obj->code;
+			}
+		}
+		return in_array($typeCode, array('AC_EO_ONLINECONF', 'AC_EO_INDOORCONF'), true);
+	}
+
+	/**
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id   Id object
@@ -296,15 +327,17 @@ class ConferenceOrBooth extends ActionComm
 
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
 
-		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.urlencode((string) ($id)).'&type=conf';
-
-		$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
-		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
-
-		/*$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
-		$this->pubregister = $link_subscription;*/
-
 		$this->getActionCommFields();
+
+		if (!$this->isConferenceType()) {
+			unset($this->fields['registration_enabled']);
+		} elseif ($this->registration_enabled) {
+			$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.urlencode((string) ($id)).'&type=conf';
+			$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $id), 'md5');
+			$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+			$this->fields['pubregister'] = array('type' => 'url', 'label' => 'PublicAttendeeSubscriptionPage', 'enabled' => 1, 'position' => 74, 'notnull' => 0, 'visible' => 5, 'noteditable' => 1);
+			$this->pubregister = $link_subscription;
+		}
 
 		return $result;
 	}

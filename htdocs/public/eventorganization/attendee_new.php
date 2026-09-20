@@ -179,6 +179,9 @@ $user->loadDefaultValues();
 if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
+if ($type == 'conf' && (!$conference->isConferenceType() || empty($conference->registration_enabled))) {
+	httponly_accessforbidden('Registration is not enabled for this conference');
+}
 
 $extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
@@ -334,7 +337,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->date_subscription = dol_now();
 			$confattendee->email = $email;
 			$confattendee->fk_project = $project->id;
-			$confattendee->fk_actioncomm = $id;
+			$confattendee->fk_actioncomm = ($type == 'conf' ? $id : null);
 			$confattendee->note_public = $note_public;
 			$confattendee->firstname = $firstname;
 			$confattendee->lastname = $lastname;
