@@ -1991,7 +1991,7 @@ while ($i < $imaxinloop) {
 			if ($contextpage == 'poslist') {
 				print dolPrintHTML($companystatic->name);
 			} else {
-				print $companystatic->getNomUrl(1, '', 100, 0, 1, 1);
+				print $companystatic->getNomUrl(1, '', 100, 0, 1, 1, '', 'valignmiddle', 1);
 				if (empty($arrayfields['s.name_alias']['checked'])) {
 					print '<br><span class="spantitle">'.dolPrintHTML($companystatic->name_alias).'</span>';
 				}

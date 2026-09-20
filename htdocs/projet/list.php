@@ -1918,6 +1918,8 @@ while ($i < $imaxinloop) {
 	$object->usage_organize_event = $obj->usage_organize_event;
 	$object->email_msgid = $obj->email_msgid;
 	$object->import_key = $obj->import_key;
+	$object->note_public = $obj->note_public;
+	$object->note_private = $obj->note_private;
 	$object->thirdparty = $companystatic;
 
 	//$userAccess = $object->restrictedProjectArea($user); // disabled, permission on project must be done by the select
@@ -2149,7 +2151,7 @@ while ($i < $imaxinloop) {
 		// Project ref url
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax200">';
-			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''));
+			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''), 0, '', ' - ', 0, -1, '', '', 1);
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}
