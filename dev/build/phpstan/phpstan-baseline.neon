@@ -11287,15 +11287,9 @@ parameters:
 			path: ../../../htdocs/opensurvey/wizard/choix_date.php
 
 		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 3
-			path: ../../../htdocs/partnership/class/api_partnerships.class.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 2
 			path: ../../../htdocs/partnership/class/api_partnerships.class.php
 
 		-
