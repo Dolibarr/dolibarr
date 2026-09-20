@@ -613,16 +613,16 @@ class Salary extends CommonObject
 		$langs->loadLangs(['salaries']);
 
 		// Complete datas
-		if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
-			// Load the alreadypaid field
-			$this->alreadypaid = $this->getSommePaiement(0);
+		if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
+			// Load the totalpaid field
+			$this->totalpaid = $this->getSommePaiement(0);
 		}
 
 		$datas = [];
 
 		$datas['picto'] = '<u>'.$langs->trans("Salary").'</u>';
-		if (isset($this->status) && isset($this->alreadypaid)) {
-			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+		if (isset($this->status) && isset($this->totalpaid)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
@@ -953,7 +953,7 @@ class Salary extends CommonObject
 			}
 			$return .= '</span>';
 		}
-		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->totalpaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
