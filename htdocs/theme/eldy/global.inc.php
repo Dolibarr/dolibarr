@@ -9383,7 +9383,7 @@ table.jPicker {
 	}
 	div.login_block_user {
 		min-width: 0;
-		width: 100%;
+		/* width: 100%; */
 	}
 	div.login_block_tools, div.login_block_user {
 		line-height: unset;
