@@ -1471,12 +1471,14 @@ $param .= $hookmanager->resPrint;
 
 $arrayofmassactions = array(
 	'validate' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
-		'edit_extrafields' => img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields"),
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
+if ($user->hasRight('facture', 'creer')) {
+	$arrayofmassactions['edit_extrafields'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields");
+}
 if (isModEnabled('category') && $user->hasRight('facture', 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
