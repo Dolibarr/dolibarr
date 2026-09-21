@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This is the phan config file used by dev/tools/apstats.php
@@ -10,6 +10,7 @@
 $config = include __DIR__.DIRECTORY_SEPARATOR."config.php";
 
 $config['plugins'] = [
+		__DIR__.'/plugins/SqlInjectionPlugin.php',
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
 		'DeprecateAliasPlugin',

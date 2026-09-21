@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2018-2025 Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024-2025 MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -1014,7 +1014,7 @@ class pdf_vinci extends ModelePDFMo
 		// Do not add the BACKGROUND as this is for suppliers
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
-		//Affiche le filigrane brouillon - Print Draft Watermark
+		// Print Draft Watermark
 		/*if($object->statut==0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK'))
 		{
 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
@@ -1070,7 +1070,7 @@ class pdf_vinci extends ModelePDFMo
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
 			}
 		}
 

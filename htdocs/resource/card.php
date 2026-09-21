@@ -250,7 +250,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print dol_get_fiche_head();
 	} else {
 		$head = resource_prepare_head($object);
-		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource');
+		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 	}
 
 	if ($action == 'create' || $action == 'edit') {
@@ -347,8 +347,8 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Phone
 		print '<td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
 		print '<td>';
-		print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-		print '<input type="tel" name="phone" id="phone" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+		print $form->showPhoneInput($object->phone, 'phone', $countryid, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+		print '</td>';
 		print '</tr>';
 
 		// Email

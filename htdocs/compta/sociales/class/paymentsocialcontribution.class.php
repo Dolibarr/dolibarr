@@ -611,8 +611,8 @@ class PaymentSocialContribution extends CommonObject
 				$emetteur_banque
 			);
 
-			// Mise a jour fk_bank dans llx_paiement.
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// Update fk_bank in llx_paiement.
+			// This way we know the payment that generated the bank entry
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -787,7 +787,7 @@ class PaymentSocialContribution extends CommonObject
 			$labeltoshow = $this->label;
 			$reg = array();
 			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
+				// Generic label because it is in parentheses. We display it translated.
 				if ($reg[1] == 'paiement') {
 					$reg[1] = 'Payment';
 				}
@@ -812,6 +812,16 @@ class PaymentSocialContribution extends CommonObject
 			if ($withpicto != 2) {
 				$result .= $link.($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
+		}
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 
 		return $result;

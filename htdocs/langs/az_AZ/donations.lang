@@ -57,3 +57,7 @@ donAnonymous=Anonim ianə
 AnonymousDonationTooltip=Əgər ianənizin anonim qalmasını istəyirsinizsə, bu qutuyu işarələyin. Şəxsi məlumatlarınız soruşulmayacaq.
 publicDonationFieldHelp=%s mənim ianəmi ictimai reyestrdə dərc edə bilər
 listOfPublicDonations=İctimai ianələrin siyahısı
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

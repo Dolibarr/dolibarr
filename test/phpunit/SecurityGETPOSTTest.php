@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 
@@ -87,6 +87,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		// Force default mode
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
@@ -301,7 +302,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 
 		$result = GETPOST("param15", 'restricthtml');		// param15 = <img onxxxx<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals("<img onxxxx=alert(document.domain) src=>0xbeefed", $result, 'Test 15');	// The GETPOST return a harmull string
+		$this->assertEquals("<img alert(document.domain) src=>0xbeefed", $result, 'Test 15');	// The GETPOST return a harmull string
 
 		$result = GETPOST("param15b", 'restricthtml');		// param15b = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";

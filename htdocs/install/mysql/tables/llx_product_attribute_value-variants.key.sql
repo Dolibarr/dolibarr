@@ -17,3 +17,5 @@
 -- ============================================================================
 
 ALTER TABLE llx_product_attribute_value ADD UNIQUE INDEX uk_product_attribute_value (fk_product_attribute, ref);
+
+ALTER TABLE llx_product_attribute_value ADD CONSTRAINT fk_product_attribute_value_fk_product_attribute FOREIGN KEY (fk_product_attribute) REFERENCES llx_product_attribute (rowid);

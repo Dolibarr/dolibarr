@@ -32,7 +32,7 @@ descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Po ověření nákupní faktury k
 descWORKFLOW_TICKET_LINK_CONTRACT=Po vytvoření tiketu jej propojte s dostupnými smlouvami, které odpovídají stejné třetí straně jako tiket.
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Při automatickém propojování tiketu se smlouvami vyhledávat smlouvy mezi smlouvami mateřských společností.
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Když je lístek uzavřen, ukončete všechny zásahy spojené s lístkem
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Když je tiket uzavřen, ukončete všechny zásahy spojené s tiketem
 AutomaticCreation=Automatická tvorba
 AutomaticClassification=Automatická klasifikace
 AutomaticClosing=Automatické zavírání

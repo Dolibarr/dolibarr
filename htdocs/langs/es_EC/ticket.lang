@@ -102,4 +102,3 @@ ActionsOnTicket=Eventos en boleto
 BoxLastTicketDescription=Últimos tickets %s creados
 BoxLastModifiedTicketDescription=Últimos tickets %s modificados
 BoxLastModifiedTicketNoRecordedTickets=No hay tickets modificadas recientemente
-KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

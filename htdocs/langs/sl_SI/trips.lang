@@ -72,7 +72,8 @@ ExpenseReportRulesDesc=Določite lahko pravila za največji znesek za poročila 
 ExpenseReportWaitingForApproval=Novo poročilo o stroških je bilo predloženo v potrditev
 ExpenseReportWaitingForApprovalMessage=Novo poročilo o stroških je bilo predloženo in čaka na odobritev. <br> - Uporabnik: %s <br> - Obdobje: %s <br> Kliknite tukaj za potrditev: %s
 ExpenseReportWaitingForReApproval=Poročilo o stroških je bilo predloženo v ponovno odobritev
-ExpenseReportWaitingForReApprovalMessage=Poročilo o stroških je bilo predloženo in čaka na ponovno odobritev. <br> %s, zavrnili ste odobritev poročila o stroških iz tega razloga: %s. <br> Nova različica je bila predlagana in čaka na vašo odobritev. <br> - Uporabnik: %s <br> - Obdobje: %s <br> Kliknite tukaj za potrditev: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=Konfiguracija zaračunavanja kilometrine
 ExpenseReportsRules=Pravila za poročilo o stroških
 ExpenseReportsToApprove=Poročila o stroških za odobritev
@@ -120,7 +121,6 @@ ValideTrip=Potrdite poročilo o stroških
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Zajtrk
@@ -156,3 +156,6 @@ TF_PEAGE=Cestnina
 TF_TAXI=Taksi
 TF_TRAIN=Vlak
 TF_TRIP=Prevozništvo
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

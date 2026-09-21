@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Viimaste klientide saadetised
 BoxTitleLastCustomerShipments=Viimased muudetud kliendisaadetised %s
 BoxTitleLastLeaveRequests=Viimased %s muudetud puhkusetaotlused
 NoRecordedShipments=Kliendisaadetist ei registreeritud
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Kliendid, kelle limiit on täis
 BoxTitleLastFediverseInfos=Viimased %s postitused kasutajalt %s
 BoxLastFediverseInfos=Viimased Fediverse'i värskendused: uudised ja suundumused

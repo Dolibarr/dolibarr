@@ -472,11 +472,10 @@ class Documents extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
-
 		// Define $object
-		$object = fetchObjectByElement($id, $modulepart, $ref);
+		$object = fetchObjectByElement($id, $modulepart, $ref);		// Note that we don't mind id and ref, we want to get a valid instantiated $object but not necessarily initialized
 		if (!is_object($object)) {
-			throw new RestException(404, 'Object with (id, ref) = ('.$id.', '.$ref.') not found or not allowed for modulepart = '.$modulepart);
+			throw new RestException(404, 'Module for modulepart = '.$modulepart." is not enabled (or not yet supported by API");
 		}
 
 		// Define $upload_dir to scan
@@ -617,7 +616,7 @@ class Documents extends DolibarrApi
 		$countarray = is_array($filearray) ? count($filearray) : 0;
 
 		if (empty($filearray)) {
-			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
+			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$id.(!empty($ref) ? ' or Ref '.$ref : '').' does not return any document.');
 		} else {
 			$filearray = array_slice($filearray, $limit * $page, $limit);
 			if (($object->id) > 0 && !empty($modulepart)) {
@@ -658,7 +657,7 @@ class Documents extends DolibarrApi
 
 					// Select only files that match the requested $content_type, if provided
 					$arraycontenttype = explode(",", $content_type);
-					if (!empty($arraycontenttype)) {
+					if (!empty($content_type)) {
 						$filearray = array_filter(
 							$filearray,
 							/**
@@ -672,6 +671,12 @@ class Documents extends DolibarrApi
 					}
 				}
 			}
+		}
+
+		// Clean result from fullname
+		foreach ($filearray as $tmpkey => $tmpval) {
+			unset($filearray[$tmpkey]['path']);
+			unset($filearray[$tmpkey]['fullname']);
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
@@ -723,11 +728,12 @@ class Documents extends DolibarrApi
 	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
-	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
+	 * @param   int 	$createdirifnotexists  	Create subdirectories if they doesn't exists (1 by default)
 	 * @param   int     $position               Position
 	 * @param   string  $cover                  Cover info
 	 * @param   array   $array_options          Array for extrafields of ECM index table
 	 * @param	int		$generateThumbs			1=Will generate the small and mini thumbs if applicable
+	 * @param   int     $share                  1=Make the file public by generating a share key into the ECM table (0 by default)
 	 * @return  string
 	 *
 	 * @phan-param   array<string,string>   $array_options
@@ -740,7 +746,7 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	404		Object not found
 	 * @throws	RestException	500		Error on file operation
 	 */
-	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0)
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0, $share = 0)
 	{
 		global $conf;
 
@@ -1051,6 +1057,10 @@ class Documents extends DolibarrApi
 		if (!empty($cover)) {
 			$moreinfo = array_merge($moreinfo, ["cover" => $cover]);
 		}
+		if (!empty($share)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$moreinfo = array_merge($moreinfo, ["share" => getRandomPassword(true)]);
+		}
 		$moreinfo['gen_or_uploaded'] = 'api';
 
 		// Move the temporary file at its final emplacement
@@ -1061,6 +1071,7 @@ class Documents extends DolibarrApi
 
 		if (is_object($object) && $generateThumbs) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';	// image_format_supported() is defined here
 			if (image_format_supported($dest_file)) {
 				$object->addThumbs($dest_file);
 			}

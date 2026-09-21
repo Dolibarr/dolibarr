@@ -57,3 +57,7 @@ donAnonymous=Анонимно дарение
 AnonymousDonationTooltip=Отбележете това квадратче, ако искате дарението ви да остане анонимно. Няма да бъде поискана лична информация.
 publicDonationFieldHelp=%s може да публикува дарението ми в публичния регистър
 listOfPublicDonations=Списък с публични дарения
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

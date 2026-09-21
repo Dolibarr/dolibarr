@@ -6,6 +6,7 @@ TotalMargin=Total Margin
 MarginOnProducts=Margin / Products
 MarginOnServices=Margin / Services
 MarginRate=Margin rate
+ModifyMarginRates=Modify margin rates
 MarkRate=Mark rate
 DisplayMarginRates=Display margin rates
 DisplayMarkRates=Display mark rates
@@ -30,14 +31,14 @@ UseDiscountOnTotal=On subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=Margin on Best vendor price
-MargeType2=Margin on Weighted Average Price (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Cost price
 UnitCharges=Unit charges
 Charges=Charges
 AgentContactType=Commercial agent contact type
-AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitly on the invoices.
 rateMustBeNumeric=Rate must be a numeric value
 markRateShouldBeLesserThan100=Mark rate should be lower than 100
 ShowMarginInfos=Show margin infos
