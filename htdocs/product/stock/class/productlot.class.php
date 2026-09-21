@@ -951,6 +951,13 @@ class Productlot extends CommonObject
 			return $this->logBarcodeGenerationFailure('module returned '.(is_string($numFinal) && $numFinal !== '' ? $numFinal : (string) $mod->error), $guessedtype);
 		}
 
+		// A '*' or '?' left in the value means the mask asked for a key the numbering module could not
+		// compute, typically a mask whose length does not match the barcode type. Storing it would
+		// yield an unscannable code.
+		if (preg_match('/[*?]/', $numFinal)) {
+			return $this->logBarcodeGenerationFailure('mask produced '.$numFinal.', the key placeholder was not resolved for barcode type '.((int) $this->fk_barcode_type), $guessedtype);
+		}
+
 		// get_next_value() reads the counter with a MAX() that ignores uncommitted rows, so two lots
 		// created in the same transaction can be handed the same value
 		if (method_exists($mod, 'verif_dispo') && $mod->verif_dispo($this->db, $numFinal, $this) != 0) {

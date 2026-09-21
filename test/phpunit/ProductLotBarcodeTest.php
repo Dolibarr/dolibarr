@@ -456,6 +456,26 @@ class ProductLotBarcodeTest extends CommonClassTest
 	}
 
 	/**
+	 * A mask whose length does not match the barcode type leaves the key placeholder unresolved.
+	 * Storing '05000000001?' would yield an unscannable code, so it must degrade instead.
+	 *
+	 * @return void
+	 */
+	public function testUnresolvedKeyPlaceholderDegradesWithoutBlocking()
+	{
+		$typeid = $this->enableGeneration('05{00000000}?');
+		if (empty($typeid)) {
+			$this->markTestSkipped('No barcode type labelled EAN13 into the dictionary');
+		}
+
+		$lot = $this->createLot('PHPUNIT-JOKER-1');
+
+		$this->assertGreaterThan(0, $lot->id, 'The lot must still be created');
+		$this->assertEmpty($lot->barcode, 'An unresolved key placeholder must never be stored');
+		$this->assertNotEmpty($lot->warnings);
+	}
+
+	/**
 	 * A barcode provided by the caller is never overwritten by the generator
 	 *
 	 * @return void
