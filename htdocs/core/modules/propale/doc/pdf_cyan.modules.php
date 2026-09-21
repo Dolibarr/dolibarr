@@ -9,7 +9,7 @@
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -583,6 +583,7 @@ class pdf_cyan extends ModelePDFPropales
 					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
 						$level = $object->lines[$i]->qty;
 						if ($sub_options) {
+							$hidenextline = 0;
 							if (isset($sub_options['titleshowuponpdf'])) {
 								$pdf_sub_options['titleshowuponpdf'] = isset($pdf_sub_options['titleshowuponpdf']) && $pdf_sub_options['titleshowuponpdf'] < $level ? $pdf_sub_options['titleshowuponpdf'] : $level;
 							} elseif (isset($pdf_sub_options['titleshowuponpdf']) && abs($level) <= $pdf_sub_options['titleshowuponpdf']) {
@@ -857,7 +858,7 @@ class pdf_cyan extends ModelePDFPropales
 						}
 					}
 
-					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE && isset($sub_options['titleshowuponpdf']) && getDolGlobalString('SUBTOTAL_HIDE_LINES_UNDER_TITLE')) {	// TODO Use $sub_options['titlehidelinesundertitle'] instead of SUBTOTAL_HIDE_LINES_UNDER_TITLE
+					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE && (isset($sub_options['titleshowuponpdf']) || isset($sub_options['titleshowtotalexludingvatonpdf'])) && getDolGlobalString('SUBTOTAL_HIDE_LINES_UNDER_TITLE')) {	// TODO Use $sub_options['titlehidelinesundertitle'] instead of SUBTOTAL_HIDE_LINES_UNDER_TITLE
 						$hidenextline = 1;
 					}
 
@@ -1725,31 +1726,11 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
-			if ($this->emetteur->logo) {
-				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
-				}
-				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
-					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				} else {
-					$logo = $logodir.'/logos/'.$this->emetteur->logo;
-				}
-				if (is_readable($logo)) {
-					$height = pdf_getHeightForLogo($logo);
-					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				} else {
-					$pdf->SetTextColor(200, 0, 0);
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
-				}
-			} else {
-				$text = $this->emetteur->name;
-				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
-			}
+		$logodir = $conf->mycompany->dir_output;
+		if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+			$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 		}
+		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, $ltrdirection);
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
@@ -1785,7 +1766,7 @@ class pdf_cyan extends ModelePDFPropales
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($ref_customer), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($ref_customer), 65), '', 'R');
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
@@ -1794,7 +1775,7 @@ class pdf_cyan extends ModelePDFPropales
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". $object->project->title, '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
 			}
 		}
 

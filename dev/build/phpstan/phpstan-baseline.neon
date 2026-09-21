@@ -349,12 +349,6 @@ parameters:
 			path: ../../../htdocs/admin/boxes.php
 
 		-
-			message: '#^Call to function is_null\(\) with null will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/admin/dict.php
-
-		-
 			message: '#^Loose comparison using \!\= between ''create'' and ''edit'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -399,60 +393,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''integer''\|''varchar'' and ''html'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''integer''\|''varchar'' and ''product'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''integer''\|''varchar'' and ''textarea'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''integer''\|''varchar'' and ''yesno'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''varchar'' and ''html'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''varchar'' and ''product'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''varchar'' and ''securekey'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''varchar'' and ''yesno'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/admin/hrm.php
-
-		-
-			message: '#^Loose comparison using \=\= between 1 and 1 will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
 			count: 2
 			path: ../../../htdocs/admin/hrm.php
 
@@ -802,48 +742,6 @@ parameters:
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''accountancy_category''\|''string'' and ''accountancy_code'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''accountancy_category''\|''string'' and ''html'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''accountancy_category''\|''string'' and ''product'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''accountancy_category''\|''string'' and ''securekey'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''accountancy_category''\|''string'' and ''textarea'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''accountancy_category''\|''string'' and ''yesno'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
-			message: '#^Loose comparison using \=\= between 1 and 1 will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
 			path: ../../../htdocs/asset/admin/setup.php
 
 		-
@@ -1215,7 +1113,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/comm/action/index.php
 
 		-
@@ -1347,7 +1245,7 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between ''show_peruser'' and ''show_day'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
@@ -1695,12 +1593,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/compta/bank/various_payment/card.php
-
-		-
-			message: '#^Call to function property_exists\(\) with PaymentVarious and ''socid'' will always evaluate to false\.$#'
-			identifier: function.impossibleType
 			count: 1
 			path: ../../../htdocs/compta/bank/various_payment/card.php
 
@@ -2551,12 +2443,6 @@ parameters:
 			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
-			message: '#^Variable \$tmpdir might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''directory'' and ''directory'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -2591,12 +2477,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/ajax/onlineSign.php
-
-		-
-			message: '#^Variable \$tva_tx in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/core/ajax/price.php
 
 		-
 			message: '#^Left side of && is always true\.$#'
@@ -2689,12 +2569,6 @@ parameters:
 			path: ../../../htdocs/core/class/CMailFile.class.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/class/CMailFile.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -2716,12 +2590,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/core/class/commoninvoice.class.php
-
-		-
-			message: '#^Variable \$stripearrayofkeys might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/core/class/commoninvoice.class.php
 
 		-
@@ -2815,18 +2683,6 @@ parameters:
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
-			message: '#^Parameter \#1 \$line of method CommonObject\:\:printOriginLine\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^Parameter \#2 \$line of method CommonObject\:\:printObjectLine\(\) expects CommonObjectLine, CommonObject\|stdClass given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -2871,12 +2727,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/class/conf.class.php
-
-		-
-			message: '#^Property Conf\:\:\$modules_parts type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: ../../../htdocs/core/class/conf.class.php
 
@@ -2995,18 +2845,6 @@ parameters:
 			path: ../../../htdocs/core/class/hookmanager.class.php
 
 		-
-			message: '#^Property HookManager\:\:\$hooks has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/hookmanager.class.php
-
-		-
-			message: '#^Property HookManager\:\:\$hooksSorted has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/hookmanager.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\{\}\|array\{mixed\} will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
@@ -3028,12 +2866,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between ''GET'' and ''GET'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 2
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Parameter \#15 \$excludeids of method Form\:\:select_company\(\) expects array\<string\>, array\<int\> given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
@@ -3063,12 +2895,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/class/html.formcompany.class.php
-
-		-
-			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, array\<array\<string, int\>\|int\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/class/html.formcompany.class.php
 
@@ -3117,19 +2943,7 @@ parameters:
 		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/core/class/html.formmail.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formemail''\|''formemailforlines''\|''formemailwithlines'' and ''formforlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formmail.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formemail''\|''formemailforlines''\|''formemailwithlines'' and ''formwithlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
+			count: 2
 			path: ../../../htdocs/core/class/html.formmail.class.php
 
 		-
@@ -3154,12 +2968,6 @@ parameters:
 			message: '#^Call to function is_array\(\) with list will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
-			path: ../../../htdocs/core/class/html.formticket.class.php
-
-		-
-			message: '#^Call to function is_array\(\) with list\<non\-falsy\-string\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
 			path: ../../../htdocs/core/class/html.formticket.class.php
 
 		-
@@ -3295,18 +3103,6 @@ parameters:
 			path: ../../../htdocs/core/class/utils.class.php
 
 		-
-			message: '#^Parameter \#1 \$table of static method Diff\:\:generatePartialDiff\(\) expects array\<array\{string, int\<0, 2\>\}\>, array\<array\<int\>\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/utils_diff.class.php
-
-		-
-			message: '#^Variable \$r might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/commonfieldsinimport.inc.php
-
-		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array\<string, mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -3325,48 +3121,6 @@ parameters:
 			path: ../../../htdocs/core/customreports.php
 
 		-
-			message: '#^Property DoliDBMysqli\:\:\$db \(mysqli\) in empty\(\) is not falsy\.$#'
-			identifier: empty.property
-			count: 1
-			path: ../../../htdocs/core/db/mysqli.class.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/filemanagerdol/browser/default/browser.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/filemanagerdol/browser/default/browser.php
-
-		-
-			message: '#^Variable \$_FILES in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/core/filemanagerdol/connectors/php/connector.lib.php
-
-		-
-			message: '#^Variable \$_SERVER in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/core/filemanagerdol/connectors/php/connector.lib.php
-
-		-
-			message: '#^Variable \$isImageValid in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/core/filemanagerdol/connectors/php/connector.lib.php
-
-		-
-			message: '#^Variable \$var in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/core/lib/accounting.lib.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -3382,6 +3136,12 @@ parameters:
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 2
+			path: ../../../htdocs/core/lib/agenda.lib.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
 			path: ../../../htdocs/core/lib/agenda.lib.php
 
 		-
@@ -3499,12 +3259,6 @@ parameters:
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 3
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
 			message: '#^Instanceof between DOMDocument and DOMDocument will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -3531,37 +3285,13 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Offset ''list'' on array\{list\: array\{\}\}\|array\{list\: non\-empty\-list\<object\>\} in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Offset 1 on array\{non\-falsy\-string, non\-falsy\-string\} in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Result of && is always true\.$#'
-			identifier: booleanAnd.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 7
+			count: 1
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
@@ -3583,20 +3313,8 @@ parameters:
 			path: ../../../htdocs/core/lib/images.lib.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''suppliers'' and ''fourn'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 3
-			path: ../../../htdocs/core/lib/invoice.lib.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''suppliers'' and ''suppliers'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
-			count: 3
-			path: ../../../htdocs/core/lib/invoice.lib.php
-
-		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
 			count: 3
 			path: ../../../htdocs/core/lib/invoice.lib.php
 
@@ -3627,7 +3345,7 @@ parameters:
 		-
 			message: '#^Strict comparison using \!\=\= between string and false will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/core/lib/modulebuilder.lib.php
 
 		-
@@ -3651,12 +3369,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<\(int\|string\)\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/lib/project.lib.php
-
-		-
-			message: '#^Variable \$progressCalculated in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
 			count: 1
 			path: ../../../htdocs/core/lib/project.lib.php
 
@@ -3805,12 +3517,6 @@ parameters:
 			path: ../../../htdocs/core/modules/DolibarrModules.class.php
 
 		-
-			message: '#^Offset ''entity'' on array\{data\: string, entity\: int\} in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 1
-			path: ../../../htdocs/core/modules/DolibarrModules.class.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2
@@ -3913,15 +3619,15 @@ parameters:
 			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
 
 		-
-			message: '#^Loose comparison using \!\= between 0 and '''' will always evaluate to true\.$#'
-			identifier: notEqual.alwaysTrue
-			count: 2
-			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
-
-		-
 			message: '#^Loose comparison using \!\= between int\<min, \-1\>\|int\<1, max\> and '''' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 6
+			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
+
+		-
+			message: '#^Loose comparison using \!\= between int\<min, \-1\>\|int\<2, max\> and '''' will always evaluate to true\.$#'
+			identifier: notEqual.alwaysTrue
+			count: 2
 			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
 
 		-
@@ -3999,12 +3705,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\>" between int\<2, max\> and 1 is always true\.$#'
 			identifier: greater.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Variable \$fac might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
@@ -4399,12 +4099,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_view.tpl.php
 
 		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/tpl/filemanager.tpl.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -4519,22 +4213,10 @@ parameters:
 			path: ../../../htdocs/ecm/dir_add_card.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/dir_add_card.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
 			path: ../../../htdocs/ecm/index_medias.php
-
-		-
-			message: '#^Variable \$bc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/search.php
 
 		-
 			message: '#^Call to function is_array\(\) with list\<non\-empty\-string\> will always evaluate to true\.$#'
@@ -4561,12 +4243,6 @@ parameters:
 			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
 
 		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 16
-			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -4581,12 +4257,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
-
-		-
-			message: '#^Variable \$mode might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
 
@@ -4651,18 +4321,6 @@ parameters:
 			path: ../../../htdocs/expedition/card.php
 
 		-
-			message: '#^Variable \$rowEnd might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
-			message: '#^Variable \$rowExtrafieldsView might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -4723,18 +4381,6 @@ parameters:
 			path: ../../../htdocs/expensereport/card.php
 
 		-
-			message: '#^Variable \$date might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Variable \$fk_project might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(PaymentExpenseReport\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -4769,18 +4415,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/expensereport/class/paymentexpensereport.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/expensereport/class/paymentexpensereport.class.php
-
-		-
-			message: '#^Variable \$linkback might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/payment/info.php
 
 		-
 			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
@@ -5143,18 +4777,6 @@ parameters:
 			path: ../../../htdocs/holiday/define_holiday.php
 
 		-
-			message: '#^Variable \$search_month_update might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/holiday/list.php
-
-		-
-			message: '#^Variable \$search_year_update might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/holiday/list.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -5163,12 +4785,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/hrm/admin/admin_hrm.php
-
-		-
-			message: '#^Variable \$mesg might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/admin/admin_hrm.php
 
@@ -5383,12 +4999,6 @@ parameters:
 			path: ../../../htdocs/hrm/job_card.php
 
 		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/job_card.php
-
-		-
 			message: '#^Comparison operation "\<" between int\<0, max\> and 0 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -5481,12 +5091,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/intracommreport/card.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/intracommreport/card.php
 
@@ -6301,12 +5905,6 @@ parameters:
 			path: ../../../htdocs/partnership/partnership_card.php
 
 		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/partnership/partnership_card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -6463,12 +6061,6 @@ parameters:
 			path: ../../../htdocs/product/dynamic_price/class/price_global_variable_updater.class.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/inventory/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -6505,8 +6097,8 @@ parameters:
 			path: ../../../htdocs/product/price.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_price'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
+			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_customer_price'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
 			count: 2
 			path: ../../../htdocs/product/price.php
 
@@ -6514,12 +6106,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between ''edit_level_price'' and ''edit_level_price'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
-			path: ../../../htdocs/product/price.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 2
 			path: ../../../htdocs/product/price.php
 
 		-
@@ -6547,12 +6133,6 @@ parameters:
 			path: ../../../htdocs/product/reassort.php
 
 		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/reassort.php
-
-		-
 			message: '#^Comparison operation "\<" between null and 0 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -6561,12 +6141,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/reassortlot.php
-
-		-
-			message: '#^Variable \$type might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/reassortlot.php
 
@@ -6593,18 +6167,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/product/stock/class/productstockentrepot.class.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/product/stock/info.php
-
-		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/info.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -6682,12 +6244,6 @@ parameters:
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
-			message: '#^Variable \$productlabelselected might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/product/stock/movement_list.php
 
 		-
@@ -6909,12 +6465,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/projet/comment.php
-
-		-
-			message: '#^Variable \$mode might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/comment.php
 
@@ -7273,12 +6823,6 @@ parameters:
 			path: ../../../htdocs/public/bookcal/bookcalAjax.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/bookcal/index.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7311,18 +6855,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/public/eventorganization/attendee_new.php
-
-		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 2
-			path: ../../../htdocs/public/eventorganization/attendee_new.php
-
-		-
-			message: '#^Variable \$tmpcode might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/public/eventorganization/attendee_new.php
 
@@ -7507,12 +7039,6 @@ parameters:
 			path: ../../../htdocs/public/payment/paymentok.php
 
 		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7522,12 +7048,6 @@ parameters:
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/public/project/index.php
-
-		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 2
 			path: ../../../htdocs/public/project/index.php
 
 		-
@@ -7549,12 +7069,6 @@ parameters:
 			path: ../../../htdocs/public/project/suggestbooth.php
 
 		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 2
-			path: ../../../htdocs/public/project/suggestbooth.php
-
-		-
 			message: '#^Variable \$emailcompany might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -7567,12 +7081,6 @@ parameters:
 			path: ../../../htdocs/public/project/suggestbooth.php
 
 		-
-			message: '#^Variable \$tmpcode might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/project/suggestbooth.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7582,12 +7090,6 @@ parameters:
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/public/project/suggestconference.php
-
-		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 2
 			path: ../../../htdocs/public/project/suggestconference.php
 
 		-
@@ -7604,12 +7106,6 @@ parameters:
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/project/suggestconference.php
-
-		-
-			message: '#^Variable \$tmpcode might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/public/project/suggestconference.php
@@ -7652,12 +7148,6 @@ parameters:
 
 		-
 			message: '#^Variable \$entity might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/recruitment/view.php
-
-		-
-			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/public/recruitment/view.php
@@ -8275,14 +7765,8 @@ parameters:
 			path: ../../../htdocs/societe/price.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_price'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/societe/price.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
+			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_customer_price'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
 			count: 2
 			path: ../../../htdocs/societe/price.php
 
@@ -8417,12 +7901,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 3
 			path: ../../../htdocs/takepos/freezone.php
-
-		-
-			message: '#^Property CommonObjectLine\:\:\$product \(Product\) in empty\(\) is not falsy\.$#'
-			identifier: empty.property
-			count: 2
-			path: ../../../htdocs/takepos/invoice.php
 
 		-
 			message: '#^Variable \$body_ticket might not be defined\.$#'
@@ -8849,12 +8327,6 @@ parameters:
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 1
 			path: ../../../htdocs/webhook/class/target.class.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/webhook/target_card.php
 
 		-
 			message: '#^Result of && is always false\.$#'

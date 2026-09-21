@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng để đăng ký quyên góp (mô-đun quyên góp)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng để đăng ký đăng ký thành viên (Mô-đun thành viên - nếu tư cách thành viên được ghi mà không có hóa đơn)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định để đăng ký tiền gửi của khách hàng
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Lưu trữ tài khoản khách hàng dưới dạng tài khoản cá nhân trong sổ cái phụ cho các dòng thanh toán trả trước (nếu bị vô hiệu hóa, tài khoản cá nhân cho các dòng xuống thanh toán sẽ vẫn trống)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Lưu trữ tài khoản nhà cung cấp dưới dạng tài khoản cá nhân trong sổ cái phụ cho các dòng thanh toán trả trước (nếu bị vô hiệu hóa, tài khoản cá nhân cho các dòng xuống thanh toán sẽ vẫn trống)

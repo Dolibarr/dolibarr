@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=यह हस्ताक्षर �
 ThisIsInformationOnDocumentToSignSociete_rib=यह SEPA अधिदेश पर हस्ताक्षर करने की जानकारी है
 ThisIsInformationOnDocumentToSignExpedition= यह हस्ताक्षर करने के लिए शिपमेंट पर जानकारी है
 SignatureProposalRef=उद्धरण/वाणिज्यिक प्रस्ताव पर हस्ताक्षर %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=अनुबंध पर हस्ताक्षर %s
 SignatureFichinterRef=हस्तक्षेप का हस्ताक्षर %s
 SignatureSociete_ribRef=SEPA अधिदेश का हस्ताक्षर %s

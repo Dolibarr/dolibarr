@@ -202,6 +202,7 @@ DiscountReceived=Desconto recibido
 DONATION_ACCOUNTINGACCOUNT=Conta (do Plan Contable) que se utilizará para rexistrar doazóns (módulo de Doazóns)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conta (do Plan Contable) que se utilizará para rexistrar subscricións de asociados (módulo de adhesión - se asociado rexistrado sen factura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Conta (do Plan Contable) que se utilizará como conta predeterminada para rexistrar o depósito do cliente
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Conta (do Plan Contable) que se usará como conta predeterminada para o depósito de IVE do cliente usado nas ligazóns
 UseAuxiliaryAccountOnCustomerDeposit=Almacenar a conta do cliente como unha conta individual para as liñas de anicipo no Libro Maior subsidiario (se está desactivada, a conta individual para as liñas de anticipo permanecerá baleira)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Conta (do Plan Contable) que se usará como conta predeterminada para rexistrar o depósito do provedor
 UseAuxiliaryAccountOnSupplierDeposit=Almacenar a conta do provedor como unha conta individual no libro maior subsidiario para as liñas de anticipo (se está desactivada, a conta individual para as liñas de anticipo permanecerá baleira)

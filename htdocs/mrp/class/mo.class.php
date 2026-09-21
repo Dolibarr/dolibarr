@@ -273,6 +273,14 @@ class Mo extends CommonObject
 	 */
 	public $tpl = array();
 
+	/**
+	 * @var int[] Ids of BOM lines (with a sub-BOM) that must not be flattened into their raw materials
+	 *            when generating the consume/produce lines, because the user asked to generate a child MO
+	 *            for them instead (see mo_card.php "Generate Child MO"). A single MoLine anchored on the
+	 *            sub-assembly product is created for these lines instead of recursing into the sub-BOM.
+	 */
+	public $noFlattenBomLineIds = array();
+
 
 	/**
 	 * Constructor
@@ -811,11 +819,11 @@ class Mo extends CommonObject
 
 		$quantity /= $bom->qty;
 		foreach ($bom->lines as $line) {
-			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : 1;
+			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : $line->qty;
 
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($line->fk_product);
-			if ($line->fk_bom_child > 0) {
+			if ($line->fk_bom_child > 0 && !in_array($line->id, $this->noFlattenBomLineIds)) {
 				$bom = new BOM($this->db);
 				$bom->fetch((int) $line->fk_bom_child);
 				$error += $this->processBOM($user, $role, $bom, $quantity_line);
@@ -938,6 +946,18 @@ class Mo extends CommonObject
 			$result = $this->cancelConsumedAndProducedLines($user, 0, false, $notrigger);
 			if ($result < 0) {
 				$error++;
+			}
+		}
+
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_mo";
+			$sql .= " WHERE fk_mo = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
 			}
 		}
 

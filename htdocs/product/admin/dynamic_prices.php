@@ -78,7 +78,7 @@ if (!empty($action) && empty($cancel)) {
 	if ($action == 'create_variable' || $action == 'edit_variable') {
 		$price_globals->code = GETPOSTISSET('code') ? GETPOST('code', 'alpha') : $price_globals->code;
 		$price_globals->description = GETPOSTISSET('description') ? GETPOST('description', 'restricthtml') : $price_globals->description;
-		$price_globals->value = GETPOSTISSET('value') ? GETPOSTINT('value') : $price_globals->value;
+		$price_globals->value = GETPOSTISSET('value') ? GETPOSTFLOAT('value') : $price_globals->value;
 		//Check if record already exists only when saving
 		if (!empty($save)) {
 			foreach ($price_globals->listGlobalVariables() as $entry) {
@@ -204,7 +204,7 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 		 * Action bar
 		 */
 		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_variable">'.$langs->trans("AddVariable").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_variable&token='.newToken().'">'.$langs->trans("AddVariable").'</a>';
 		print '</div>';
 		//Separator is only need for updaters table is showed after buttons
 		print '<br><br>';

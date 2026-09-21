@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2018-2026  Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1228,7 +1228,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		// Do not add the BACKGROUND as this is for suppliers
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
-		//Affiche le filigrane brouillon - Print Draft Watermark
+		// Print Draft Watermark
 		/*if($object->statut==0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK'))
 		{
 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
@@ -1244,31 +1244,11 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
-			if ($this->emetteur->logo) {
-				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
-				}
-				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
-					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				} else {
-					$logo = $logodir.'/logos/'.$this->emetteur->logo;
-				}
-				if (is_readable($logo)) {
-					$height = pdf_getHeightForLogo($logo);
-					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				} else {
-					$pdf->SetTextColor(200, 0, 0);
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
-				}
-			} else {
-				$text = $this->emetteur->name;
-				$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
-			}
+		$logodir = $conf->mycompany->dir_output;
+		if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+			$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 		}
+		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, 100, $default_font_size, $ltrdirection);
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
@@ -1294,7 +1274,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
 			}
 		}
 

@@ -225,6 +225,7 @@ MinLength=Longitud mínima
 LanguageFilesCachedIntoShmopSharedMemory=Archivos .lang cargados en la memoria compartida
 ListOfDirectories=Lista de directorios de plantillas OpenDocument
 ListOfDirectoriesForModelGenODT=Open to Document. <br> <br> Ponga aquí la ruta completa de los directorios. <br> Para un directorio del módulo GED, añádalo aquí <b> DOL_DATA_ROOT / ecm / yourdirectoryname </b>. <br> <br> Los archivos de esos deben ser eliminados con <b> .odt </b> o <b> .ods </b>.
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br> Para saber cómo crear sus plantillas de documentos ODT, antes de guardarlos en esos directorios, leer la documentación wiki:
 FirstnameNamePosition=Posición del Nombre / Apellido
 DescWeather=Las siguientes imágenes se mostrarán en el tablero cuando el número de acciones tardías alcance los siguientes valores:

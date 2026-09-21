@@ -155,9 +155,6 @@ ErrNoZipEngine=Ingen motor til zip/unzip %s filen i dette PHP-miljøet
 ErrorFileMustBeADolibarrPackage=Filen %s må være en Dolibarr zip-pakke
 ErrorModuleFileRequired=Du må velge en Dolibarr modulpakke-fil
 ErrorFailToDownloadModuleFromSource=Failed to download the module from the source. Please check your internet connection or the source URL and try again.
-extModuleConfirmInstallTitle = Confirm module installation
-extModuleConfirmInstallText  = You are about to install the following module:<br><br><b>Name:</b> %s<br><b>Version:</b> %s<br><b>Reference:</b> %s<br><b>Last update:</b> %s<br><br>This action is not reversible, Do you confirm the installation of this module?
-install=Install
 ErrorPhpCurlNotInstalled=PHP CURL er ikke installert. Denne må være installert for å kommunisere med Paypal
 ErrorFailedToAddToMailmanList=Klarte ikke å legge post %s til Mailman-liste %s eller SPIP-base
 ErrorFailedToRemoveToMailmanList=Klarte ikke å fjerne post %s fra Mailman-liste %s eller SPIP-base
@@ -443,6 +440,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Vær forsiktig når du får en modul (betalt eller gratis) fra en mistenkelig ikke-offisiell plattform som %s
 WarningDNSServerNotAvailable=Advarsel, DNS-serveren er ikke tilgjengelig
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = SwissQR-faktura kan kun legges til på fakturaer som skal betales med kredittoverføring.
 SwissQrCreditorAddressInvalid = Kreditoradressen er ugyldig (er postnummer og sted angitt? (%s)

@@ -7,8 +7,9 @@
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
  * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -495,8 +496,7 @@ llxHeader('', $title, $help_url);
 if ($id > 0) {
 	$result = $object->fetch($id);
 	if ($result <= 0) {
-		dol_print_error($db);
-		exit;
+		recordNotFound('', 0);
 	}
 }
 
@@ -764,7 +764,7 @@ if ($action == 'create' && $permissiontoadd) {
 						);
 
 					} else {
-						alert("'.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'");
+						alert(\''.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'\');
 					}
 		});
 
@@ -896,7 +896,7 @@ if ($id > 0) {
 	print $formconfirm;
 
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 
 	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/salaries/list.php', ['restore_lastsearch_values' => 1]).(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

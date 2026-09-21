@@ -194,7 +194,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 
 	$head = subscription_prepare_head($object);
 
-	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
@@ -244,12 +244,12 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	// Amount
 	print '<tr><td>'.$langs->trans("Amount").'</td>';
 	print '<td class="valeur">';
-	print '<input type="text" class="flat width200" name="amount" value="'.price($object->amount).'"></td></tr>';
+	print '<input type="text" class="width100" name="amount" value="'.price($object->amount).'"></td></tr>';
 
 	// Note
 	print '<tr><td>'.$langs->trans("Note").'</td>';
 	print '<td class="valeur">';
-	print '<input type="text" class="flat" name="note" value="'.$object->note_public.'"></td></tr>';
+	print '<input type="text" class="minwidth500" name="note" value="'.$object->note_public.'"></td></tr>';
 
 	// Bank line
 	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {

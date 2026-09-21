@@ -280,7 +280,6 @@ mandatoryperiod=Périodes obligatoires
 mandatoryPeriodNeedTobeSet=Remarque : la période (date de début et de fin) doit être définie
 mandatoryPeriodNeedTobeSetMsgValidate=Un service nécessite une période de début et de fin
 mandatoryHelper=Cochez cette case si vous souhaitez un message à l'utilisateur lors de la création/validation d'une facture, d'une proposition commerciale, d'une commande client sans saisir de date de début et de fin sur les lignes avec ce service.
-mandatoryHelper2=Notez que le message est un avertissement et non une erreur bloquante.
 DefaultBOMDesc=Nomenclature par défaut recommandée pour la fabrication de ce produit. Ce champ ne peut être défini que si la nature du produit est « %s ».
 Rank=Rang
 MergeOriginProduct=Produit dupliqué (le produit que vous souhaitez supprimer)

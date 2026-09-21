@@ -278,6 +278,13 @@ class HolidayTest extends CommonClassTest
 
 		$result = $localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
 		$this->assertTrue($result, 'result should be true, there is no overlapping');
+
+		$date_start_enclosing = dol_mktime(0, 0, 0, 12, 31, 2019);
+		$date_end_enclosing = dol_mktime(0, 0, 0, 1, 3, 2020);
+		foreach (array(0, -1, 1, 2) as $halfday) {
+			$result = $localobjectc->verifDateHolidayCP($user->id, $date_start_enclosing, $date_end_enclosing, $halfday);
+			$this->assertFalse($result, 'result should be false, an enclosing leave overlaps existing leave requests.');
+		}
 	}
 
 	/**

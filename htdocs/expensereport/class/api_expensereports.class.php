@@ -241,7 +241,16 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 
-			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->expensereport->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->expensereport);
+				}
+				continue;
+			}
+
+			if (!in_array($field, array('fk_statut', 'fk_user_approve'))) {	// Exclude properties that must be set by other workflow methods
+				$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			}
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -532,7 +541,9 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 
-			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			if (!in_array($field, array('fk_statut', 'fk_user_approve'))) {	// Exclude properties that must be set by other workflow methods
+				$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
+			}
 		}
 
 		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0) {
@@ -874,6 +885,12 @@ class ExpenseReports extends DolibarrApi
 		$sql .= " WHERE e.rowid = t.fk_expensereport";
 		$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 
+		// Restrict to payments of expense reports the user is allowed to see
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'readall')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND e.fk_user_author IN (".$this->db->sanitize(implode(',', $childids)).")";
+		}
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -928,6 +945,16 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'paymentExpenseReport not found');
 		}
 
+		// Check access to the parent expense report
+		$result = $this->expensereport->fetch($paymentExpenseReport->fk_expensereport);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		return $this->_cleanObjectDatas($paymentExpenseReport);
 	}
 
@@ -952,6 +979,16 @@ class ExpenseReports extends DolibarrApi
 		}
 		// Check mandatory fields
 		$result = $this->_validatepayment($request_data);
+
+		// Check access to the parent expense report
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
 		$paymentExpenseReport = new PaymentExpenseReport($this->db);
 		$paymentExpenseReport->fk_expensereport = $id;
@@ -1000,6 +1037,16 @@ class ExpenseReports extends DolibarrApi
 		$result = $paymentExpenseReport->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'payment of expense report not found');
+		}
+
+		// Check access to the parent expense report
+		$result = $this->expensereport->fetch($paymentExpenseReport->fk_expensereport);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {

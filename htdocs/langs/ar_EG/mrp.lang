@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - mrp
+ListOfManufacturingOrders=أوامر التصنيع
 StatusMrpValidated=تم الاعتماد
 ConfirmMassChangeDateStartQuestion =هل أنت متأكد أنك تريد تعديل %s سجل(ات) محدد(ة)؟
 ConfirmMassChangeDateEndQuestion =هل أنت متأكد أنك تريد تعديل %s سجل(ات) محدد(ة)؟

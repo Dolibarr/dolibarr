@@ -1,9 +1,9 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro
+ * Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -248,7 +248,7 @@ $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($object->lines) && (count($object->lines) > 0)) {
-	$savconf = dol_clone($conf);
+	$savconf = dol_clone($conf, 1); // Native mode 2 (default) drops object properties like $conf->db, so restoring $conf from it later would leave those undefined
 
 	// Loop over job
 	foreach ($object->lines as $line) {

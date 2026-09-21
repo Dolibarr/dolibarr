@@ -202,6 +202,7 @@ DiscountReceived=Discount received
 DONATION_ACCOUNTINGACCOUNT=Dohaintzak erregistratzeko erabiliko den kontua (Kontuen Planetik) (Dohaintza modulua)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Bazkidetzak erregistratzeko erabiliko den kontua (Kontuen Planetik) (Bazkidetza modulua - fakturarik gabe erregistratutako bazkidetza bada)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Bezeroen gordailua erregistratzeko kontu lehenetsi gisa erabiliko den kontua (Kontuen Planetik)
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT=Account (from the Chart Of Account) to be used as the default account for VAT on customer deposit used in bindings
 UseAuxiliaryAccountOnCustomerDeposit=Gorde bezeroaren kontua banakako kontu gisa liburu osagarrian hasierako ordainketa-lerroetarako (desgaituta badago, hasierako ordainketa-lerroetarako banakako kontua hutsik geratuko da)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Gorde hornitzailearen kontua banakako kontu gisa liburu osagarrian hasierako ordainketa-lerroetarako (desgaituta badago, hasierako ordainketa-lerroetarako banakako kontua hutsik geratuko da)

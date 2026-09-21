@@ -26,15 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
-require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement_knowledgerecord.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +33,13 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
+require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement_knowledgerecord.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("knowledgemanagement", "ticket", "other"));
@@ -219,15 +217,73 @@ if ($action == 'create') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
-	print '</table>'."\n";
 
 	// Add field answer
-	print '<br>';
-	print $langs->trans($object->fields['answer']['label']).'<br>';
+	print '<td>';
+	print $langs->trans($object->fields['answer']['label']);
+	print '</td><td>';
+
+	// Add layout and AI tools for answer
+	$out = '';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	$formmail = new FormMail($db);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+	$formai = new FormAI($db);
+
+	$formmail->withfckeditor = 1;
+	//$formmail->withlayout = 'email';
+	$formmail->withaiprompt = (isModEnabled('ai') ? 'html' : '');
+
+	$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
+	$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+	$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
+	$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+	$htmlname = 'answer';
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+	print $out;
+	print '</td>';
+
+	print '</table>'."\n";
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%');
 	$out = $doleditor->Create(1);
 	print $out;
+
+	// Prefill AI instructions with question text on create form
+	if (isModEnabled('ai')) {
+		$aipromptprefix = $langs->transnoentities('SuggestAnswerToQuestion');
+
+		print '<script nonce="'.getNonce().'" type="text/javascript">
+		$(document).ready(function() {
+			$("#linkforaiprompttextgenerationemail").on("click", function() {
+				setTimeout(function() {
+					var instructionField = $("#ai_instructionsanswer");
+					if (!instructionField.is(":visible")) {
+						return;
+					}
+					var prefix = \''.dol_escape_js($aipromptprefix).'\';
+					var currentVal = instructionField.val();
+					var question = "";
+					if (typeof CKEDITOR !== "undefined" && CKEDITOR.instances && CKEDITOR.instances["question"]) {
+						question = $("<div>").html(CKEDITOR.instances["question"].getData()).text().trim();
+					} else {
+						question = $("#question").val() ? $.trim($("#question").val()) : "";
+					}
+					if (currentVal === "" || currentVal === prefix || currentVal.indexOf(prefix) === 0) {
+						if (question) {
+							instructionField.val(prefix + " " + question);
+						} else {
+							instructionField.val(prefix);
+						}
+						$("#generate_buttonanswer").prop("disabled", (instructionField.val() === ""));
+					}
+				}, 50);
+			});
+		});
+		</script>';
+	}
 
 	print dol_get_fiche_end();
 
@@ -283,6 +339,28 @@ if (($id || $ref) && $action == 'edit') {
 	// Add field answer
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
+
+	// Add layout and AI tools for answer
+	$out = '';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	$formmail = new FormMail($db);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+	$formai = new FormAI($db);
+
+	$formmail->withfckeditor = 1;
+	$formmail->withlayout = 'email';
+	$formmail->withaiprompt = (isModEnabled('ai') ? 'html' : '');
+
+	$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
+	$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+	$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
+	$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+	$htmlname = 'answer';
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+	print $out;
+	print '<br>';
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%');
 	$out = $doleditor->Create(1);
@@ -300,7 +378,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = knowledgerecordPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("KnowledgeRecord"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("KnowledgeRecord"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -461,11 +539,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<br>';
 	print load_fiche_titre($langs->trans($object->fields['answer']['label']), '', '');
 	if ($action == 'edit') {
+		// Add layout and AI tools for answer
+		$out = '';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($db);
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+		$formai = new FormAI($db);
+
+		$formmail->withfckeditor = 1;
+		$formmail->withlayout = 'email';
+		$formmail->withaiprompt = (isModEnabled('ai') ? 'html' : '');
+
+		$showlinktolayout = (getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? $formmail->withlayout : '');
+		$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+		$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
+		$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+		$htmlname = 'answer';
+
+		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+		print $out;
+		print '<br>';
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%', 1);
 		$out = $doleditor->Create(1);
 	} else {
-		$out = '<div class="content">';
+		$out = '<div class="content kmcontent">';
 		$out .= $object->answer;
 		$out .= '</div>';
 	}

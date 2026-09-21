@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
  *
@@ -42,6 +42,25 @@ class Holidays extends DolibarrApi
 		'fk_user',
 		'date_debut',
 		'date_fin',
+	);
+
+	/**
+	 * @var string[]	Workflow fields that must not be set through the generic
+	 *					create/update endpoints. They can only be changed via the
+	 *					dedicated routes (validate, approve, refuse, cancel, reopen)
+	 *					that enforce the proper permission checks.
+	 */
+	public static $FIELDS_FORBIDDEN_FOR_API = array(
+		'status',
+		'statut',
+		'fk_validator',
+		'date_valid',
+		'fk_user_valid',
+		'date_approval',
+		'fk_user_approve',
+		'date_refuse',
+		'fk_user_refuse',
+		'detail_refuse',
 	);
 
 	/**
@@ -221,6 +240,9 @@ class Holidays extends DolibarrApi
 				$this->holiday->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if (in_array($field, self::$FIELDS_FORBIDDEN_FOR_API) && $field !== 'fk_validator') {
+				throw new RestException(400, "Field '".$field."' is not allowed in create endpoint. Use dedicated routes (validate, approve, refuse, cancel, reopen) to change the workflow status.");
+			}
 
 			$this->holiday->$field = $this->_checkValForAPI($field, $value, $this->holiday);
 		}
@@ -270,6 +292,11 @@ class Holidays extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		if (!is_array($request_data)) {
+			$request_data = array();
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -278,6 +305,9 @@ class Holidays extends DolibarrApi
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->holiday->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
+			}
+			if (in_array($field, self::$FIELDS_FORBIDDEN_FOR_API)) {
+				throw new RestException(400, "Field '".$field."' is not allowed in update endpoint. Use dedicated routes (validate, approve, refuse, cancel, reopen) to change the workflow status.");
 			}
 
 			if ($field == 'array_options' && is_array($value)) {
@@ -559,7 +589,7 @@ class Holidays extends DolibarrApi
 		}
 
 		// Check if the holiday is actually canceled
-		if ($this->holiday->statut != Holiday::STATUS_CANCELED) {
+		if ($this->holiday->status != Holiday::STATUS_CANCELED) {
 			throw new RestException(400, 'Holiday is not canceled. Only canceled holidays can be reopened.');
 		}
 		$this->holiday->status = Holiday::STATUS_VALIDATED;

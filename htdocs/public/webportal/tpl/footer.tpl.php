@@ -1,6 +1,6 @@
 <!-- file footer.tpl.php -->
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  */
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
@@ -40,7 +40,7 @@ if (!empty($context->eventMessages['mesgs'])) {
 	$htmlSuccess .= $useJNotify ? '' : '</div>';
 	if ($useJNotify) {
 		$jsSuccess = '
-               jQuery.jnotify("' . dol_escape_js($htmlSuccess) . '",
+               jQuery.jnotify(\'' . dol_escape_js($htmlSuccess) . '\',
                         "success",
                         3000
                );';
@@ -59,7 +59,7 @@ if (!empty($context->eventMessages['warnings'])) {
 	}
 	$htmlWarning .= $useJNotify ? '' : '</div>';
 	if ($useJNotify) {
-		$jsWarning .= 'jQuery.jnotify("' . dol_escape_js($htmlWarning) . '", "warning", true);';
+		$jsWarning .= 'jQuery.jnotify(\'' . dol_escape_js($htmlWarning) . '\', "warning", true);';
 	}
 }
 // alert error
@@ -75,7 +75,7 @@ if (!empty($context->eventMessages['errors'])) {
 	}
 	$htmlError .= $useJNotify ? '' : '</div>';
 	if ($useJNotify) {
-		$jsError .= 'jQuery.jnotify("' . dol_escape_js($htmlError) . '", "error", true );';
+		$jsError .= 'jQuery.jnotify(\'' . dol_escape_js($htmlError) . '\', "error", true );';
 	}
 }
 $html .= $htmlError . $htmlWarning . $htmlSuccess;
@@ -108,7 +108,7 @@ if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') { ?>
 		jQuery(document).ready(function () {
 			jQuery(".documentpreview").click(function () {
 				console.log("We click on preview for element with href=" + $(this).attr('href') + " mime=" + $(this).attr('mime'));
-				const modalTitle = $(this).data('modal-title') || $(this).attr('title') || '<?php print dol_escape_js($langs->transnoentities("Preview")) ?>';
+				const modalTitle = $(this).data('modal-title') || $(this).attr('title') || <?php print "'".dol_escape_js($langs->transnoentities("Preview"))."'"; ?>;
 				document_preview($(this).attr('href'), $(this).attr('mime'), modalTitle);
 				return false;
 			});
