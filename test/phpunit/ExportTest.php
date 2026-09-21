@@ -475,7 +475,9 @@ class ExportTest extends CommonClassTest
 
 			print __METHOD__." dataset=".$exportcode." sql=".$sql."\n";
 
-			$this->assertMatchesRegularExpression('/'.preg_quote(MAIN_DB_PREFIX.$expectedtable, '/').'/', $sql, 'Dataset '.$exportcode.' does not join expected table '.$expectedtable);
+			$regex = '/'.preg_quote(MAIN_DB_PREFIX.$expectedtable, '/').'/';
+			$result = (bool) preg_match($regex, $sql);
+			$this->assertTrue($result, 'Dataset '.$exportcode.' does not join expected table '.$expectedtable);
 			$this->assertStringContainsString($expectedclause, $sql, 'Dataset '.$exportcode.' is not restricted for a user without permission to see all records');
 		}
 
