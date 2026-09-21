@@ -302,7 +302,7 @@ class ConferenceOrBooth extends ActionComm
 		$typeCode = (string) $this->type_code;
 		$typeId = !empty($this->fk_action) ? (int) $this->fk_action : (int) $this->type_id;
 		if ($typeCode === '' && $typeId > 0) {
-			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_actioncomm WHERE id = '.$typeId;
+			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_actioncomm WHERE id = '.((int) $typeId);
 			$resql = $this->db->query($sql);
 			if ($resql && ($obj = $this->db->fetch_object($resql))) {
 				$typeCode = (string) $obj->code;
