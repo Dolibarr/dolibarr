@@ -270,7 +270,7 @@ $original_file = str_replace('..\\', '/', $original_file);
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
-if ($refname == 'thumbs') {
+if ($refname == 'thumbs' || $refname == 'temp') {
 	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
 	$refname = basename(dirname(dirname($original_file))."/");
 }
@@ -292,7 +292,7 @@ if ($modulepart === 'medias' && $entity != $conf->entity) {
 	$conf->setValues($db);
 }
 
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
