@@ -67,8 +67,14 @@ PHP RESTLER:
 * In htdocs/includes/restler/framework/Luracast/Restler/Data/Validator.php
 
 Add a guard to skip type-specific prefilters when the validation type is an array
-(PHPDoc union types such as datetime|string or string|float). This avoids a fatal
-"Illegal offset type" error and lets the existing union-type validation logic handle it.
+(PHPDoc union types such as datetime|string or string|float). Without it, the array
+is used as an array key, which is a fatal TypeError on PHP 8, raised before the
+endpoint's own code runs. The union branch further down already re-enters validate()
+once per type, so the prefilter still runs there with a scalar type and nothing is
+lost by skipping it on the array pass.
+
+Guarded by test/phpunit/RestlerValidatorTest.php, so the patch is not silently lost
+the next time the library is updated.
 
 
 

@@ -120,6 +120,8 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeTest');
 		require_once dirname(__FILE__).'/AiMcpWireTest.php';
 		$suite->addTestSuite('AiMcpWireTest');
+		require_once dirname(__FILE__).'/RestlerValidatorTest.php';
+		$suite->addTestSuite('RestlerValidatorTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
 		$suite->addTestSuite('CompanyLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
