@@ -560,7 +560,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$sql .= ' AND a.status = '.ConferenceOrBooth::STATUS_CONFIRMED;
 		$sql .= ' AND a.registration_enabled = 1';
 		if (count($excludedConferenceIds) > 0) {
-			$sql .= ' AND a.id NOT IN ('.implode(', ', $excludedConferenceIds).')';
+			$sql .= ' AND a.id NOT IN ('.$this->db->sanitize(implode(', ', $excludedConferenceIds)).')';
 		}
 
 		$resql = $this->db->query($sql);
