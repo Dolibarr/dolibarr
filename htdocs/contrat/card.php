@@ -2527,5 +2527,5 @@ if (isModEnabled('margin') && $action == 'editline') {
 		}
 	});
 	<?php
-	print "\n".'<script type="text/javascript">'."\n";
+	print '</script>'."\n";
 }
