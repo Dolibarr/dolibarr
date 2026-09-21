@@ -2237,9 +2237,9 @@ class FunctionsLibTest extends CommonClassTest
 
 
 		// Try mix HTML into not HTML but no replaement is done
-		$newstring = make_substitutions('¿Necesitas ayuda para empezar con GLPI?', array('__SENDEREMAIL_SIGNATURE__' => '<br><strong>HTML content</strong>'), $langs, 1);
+		$newstring = make_substitutions('¿Necesitas ayuda?', array('__SENDEREMAIL_SIGNATURE__' => '<br><strong>HTML content</strong>'), $langs, 1);
 		print __METHOD__." ".$newstring."\n";
-		$this->assertEquals($newstring, '¿Necesitas ayuda para empezar con GLPI?');
+		$this->assertEquals($newstring, '¿Necesitas ayuda?');
 
 		return true;
 	}
@@ -2851,7 +2851,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('myobject', $properties['element']);
 		$this->assertEquals('mymodule', $properties['module']);
 		$this->assertEquals('myobject', $properties['subelement']);
-		$this->assertEquals('myobject@mymodule', $properties['table_element']);
+		$this->assertEquals('mymodule_myobject', $properties['table_element']);
 		$this->assertEquals('mymodule/class', $properties['classpath']);
 		$this->assertEquals('myobject', $properties['classfile']);
 		$this->assertEquals('Myobject', $properties['classname']);
