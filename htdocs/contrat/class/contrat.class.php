@@ -1587,7 +1587,7 @@ class Contrat extends CommonObject
 
 			// if buy price not defined, define buyprice as configured in margin admin
 			if ($pa_ht == 0) {
-				$result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product);
+				$result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product, $qty);
 				if ($result < 0) {
 					return -1;
 				} else {
