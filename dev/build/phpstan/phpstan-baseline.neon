@@ -11281,18 +11281,6 @@ parameters:
 			path: ../../../htdocs/opensurvey/wizard/choix_date.php
 
 		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 3
-			path: ../../../htdocs/partnership/class/api_partnerships.class.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/partnership/class/api_partnerships.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Partnership\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
