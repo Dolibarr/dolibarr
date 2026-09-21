@@ -5,6 +5,7 @@
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Guenter Lukas			<gl@gl.co.at>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +23,11 @@
 
 /**
  *       \file      htdocs/core/ajax/ajaxstatusprospect.php
- *       \brief     File of service to update prospect status of a third party
- *       			TODO Rename into updatestatusprospect.php
+ *       \brief     File of service to update a status of a record:
+ *                  - the prospect status of a third party (action=updatestatusprospect),
+ *                  - the field used to group the cards of a kanban group by view, when a card is
+ *                    dragged into another column (action=updatekanbanfield).
+ *       			TODO Rename into updatestatus.php
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -57,6 +61,66 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 $idstatus = GETPOSTINT('id');
 $idprospect = GETPOSTINT('prospectid');
 $action = GETPOST('action', 'aZ09');
+
+/*
+ * Action updatekanbanfield: save the field a card was dragged by into a kanban group by view
+ * (mode=kanbangroupby). Unlike core/ajax/saveinplace.php, this is not tied to the deprecated
+ * "Edit in place" option and accepts only the fields a class declares into its
+ * $kanbangroupbyfields property, so saveinplace.php can remain closed.
+ */
+if ($action === 'updatekanbanfield') {
+	$element = GETPOST('element', 'aZ09');
+	$fk_element = GETPOSTINT('fk_element');
+	$field = preg_replace('/^editval_/', '', GETPOST('field', 'aZ09'));
+	$value = GETPOST('value', 'aZ09');
+
+	// Load object according to $fk_element and $element
+	$object = fetchObjectByElement($fk_element, $element);
+	if (!is_object($object) || $object->id <= 0) {
+		httponly_accessforbidden('Not allowed, bad combination of parameters for fetchObjectByElement');
+	}
+
+	// Only a field the class declares as a kanban "group by" field can be saved here. This is what
+	// keeps this service narrow: no arbitrary field and no arbitrary table can be written.
+	if (empty($object->kanbangroupbyfields) || !is_array($object->kanbangroupbyfields)
+		|| !in_array($field, $object->kanbangroupbyfields) || !isset($object->fields[$field])) {
+		httponly_accessforbidden('Not allowed, field is not declared as a kanban group by field');
+	}
+
+	// Security check. Set the action to 'update' so restrictedArea() tests the write permission
+	// and not only the read permission.
+	$_POST['action'] = 'update';
+	$result = restrictedArea($user, empty($object->module) ? $element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+	if (!$result) {
+		httponly_accessforbidden('Not allowed by restrictArea');
+	}
+
+	top_httphead('application/json');
+
+	// The column of the records without any value uses the id 'undefined' (see mode=kanbangroupby
+	// into the list pages), it is stored as 0 like the "Undefined" entry of the column dictionary.
+	$isint = preg_match('/^integer/', $object->fields[$field]['type']);
+	if ($value === 'undefined' || $value === '') {
+		$newvalue = $isint ? 0 : '';
+	} else {
+		$newvalue = $isint ? (int) $value : $value;
+	}
+
+	$return = array();
+
+	// Save with a trigger key, so a stage change is seen by triggers, hooks and the agenda
+	// (saveinplace.php does not pass any trigger key).
+	$res = $object->setValueFrom($field, $newvalue, '', null, $isint ? 'int' : 'text', '', $user, strtoupper($object->element).'_MODIFY');
+	if ($res > 0) {
+		$return['value'] = $newvalue;
+	} else {
+		$return['error'] = empty($object->error) ? $langs->trans('ErrorFailedToUpdateRecord') : $object->error;
+	}
+
+	echo json_encode($return);
+	exit;
+}
+
 
 $prospectstatic = new Client($db);
 

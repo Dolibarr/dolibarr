@@ -1716,10 +1716,12 @@ $(document).ready(function() {
  */
 function onKanbanColumnChange(item, newColumn) {
 	console.log("Call onKanbanColumnChange");
+	var originalColumn = item.data('original-column');
 	jQuery.ajax({
 		method: 'POST',
-		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/saveinplace.php',
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/ajaxstatusprospect.php',
 		data: {
+			action: 'updatekanbanfield',
 			field: 'editval_'+newColumn.data('groupbyfield'),
 			element: item.data('element'),
 			table_element: item.data('tableelement'),
@@ -1728,13 +1730,44 @@ function onKanbanColumnChange(item, newColumn) {
 			token: '<?php echo currentToken() ?>'
 		},
 		context: document.body,
-		success: function() {
+		dataType: 'json',
+		success: function(response) {
+			if (response && response.error) {
+				onKanbanColumnChangeFailed(item, originalColumn, response.error);
+				return;
+			}
+			/* Record is saved, the new column becomes the reference for the next move */
+			item.data('original-column', newColumn);
 			if (newColumn.hasClass('kanbancollapsed')) {
 				item.hide();
 			}
+		},
+		error: function(xhr) {
+			onKanbanColumnChangeFailed(item, originalColumn, xhr.status+' '+xhr.statusText);
 		}
 	});
-	item.data('original-column', newColumn);
+}
+
+/**
+ * Function called when the new value of a dragged item could not be saved. Moves the item back
+ * to the column it came from, so the view never shows a value that is not into the database.
+ *
+ * @param {jQuery} item				The dragged item
+ * @param {jQuery} originalColumn	The column the item came from
+ * @param {string} errormessage		Error to show
+ * @return {void}
+ */
+function onKanbanColumnChangeFailed(item, originalColumn, errormessage) {
+	console.error("onKanbanColumnChange failed: "+errormessage);
+	if (originalColumn && originalColumn.length) {
+		originalColumn.append(item);
+	}
+	var msg = '<?php echo dol_escape_js($langs->transnoentities('ErrorFailedToUpdateRecord')); ?>'+' '+errormessage;
+	if (typeof jQuery.jnotify === 'function') {
+		jQuery.jnotify(msg, 'error', true);
+	} else {
+		window.alert(msg);
+	}
 }
 
 
