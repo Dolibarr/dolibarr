@@ -93,7 +93,7 @@ $conditions = [
 $max_depth = 0;
 
 foreach ($modules as $const => $desc) {
-	$const_depth = getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH', 2);
+	$const_depth = getDolGlobalInt('SUBTOTAL_' . $const . '_MAX_DEPTH', 2);
 
 	$constante_title = 'SUBTOTAL_TITLE_' . $const;
 	$constante_subtotal = 'SUBTOTAL_' . $const;
@@ -145,7 +145,7 @@ if (preg_match('/^SUBTOTAL_.*$/', $action)) {
 	}
 }
 
-if ($action == 'update_colors') {
+if ($action == 'update_colors' && !GETPOST('cancel', 'alpha')) {
 	foreach ($colors as $level_colors) {
 		foreach ($level_colors as $const => $color) {
 			$color_to_update = GETPOST($const, 'aZ09');
@@ -178,6 +178,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<td width="1100">' . $langs->trans("Settings") . '</td>';
 	print '<td class="center">' . $langs->trans("Title") . '</td>';
 	print '<td class="center">' . $langs->trans("SubTotal") . '</td>';
+	print '<td class="center">' . $langs->trans("SubtotalTextColumnTitle") . '</td>';
 	print '<td class="center">' . $langs->trans("MaxSubtotalLevel") . '</td>';
 	print "</tr>\n";
 
@@ -192,6 +193,7 @@ if (empty($conf->use_javascript_ajax)) {
 
 		$constante_title = 'SUBTOTAL_TITLE_' . $const;
 		$constante_subtotal = 'SUBTOTAL_' . $const;
+		$constante_text = 'SUBTOTAL_TEXT_' . $const;
 		print '<!-- constant = ' . $constante_subtotal . ' -->' . "\n";
 		print '<tr class="oddeven">';
 		print '<td>';
@@ -214,14 +216,20 @@ if (empty($conf->use_javascript_ajax)) {
 		print $value_subtotal == 0 ? img_picto($langs->trans("Disabled"), 'switch_off') : img_picto($langs->trans("Enabled"), 'switch_on') . '</a>';
 		print '</td>';
 
+		print '<td class="center">';
+		$value_text = getDolGlobalInt($constante_text, 0);
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=' . $constante_text . '&token=' . newToken() . '">';
+		print $value_text == 0 ? img_picto($langs->trans("Disabled"), 'switch_off') : img_picto($langs->trans("Enabled"), 'switch_on') . '</a>';
+		print '</td>';
+
 		print '<td class="center nowraponall">';
 		$can_modify = !($value_subtotal == 0 && $value_title == 0);
-		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" >';
+		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '"  spellcheck="false">';
 		print '<input type="hidden" name="token" value="' . newToken() . '">';
 		print '<input type="hidden" name="action" value="SUBTOTAL_' . $const . '_MAX_DEPTH">';
 		print '<input size="3" type="text" class="center"';
 		print $can_modify ? '' : ' disabled="disabled" ';
-		print 'name="SUBTOTAL_' . $const . '_MAX_DEPTH" value="' . getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH', $can_modify ? 2 : 0) . '">';
+		print 'name="SUBTOTAL_' . $const . '_MAX_DEPTH" value="' . getDolGlobalInt('SUBTOTAL_' . $const . '_MAX_DEPTH', $can_modify ? 2 : 0) . '">';
 		print $can_modify ? '<input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="' . $langs->trans("Modify") . '">' : '';
 		print '</form>';
 		print '</td>';
@@ -233,7 +241,7 @@ if (empty($conf->use_javascript_ajax)) {
 
 	// Other options
 
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '" spellcheck="false">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update_colors">';
 
@@ -263,12 +271,14 @@ if (empty($conf->use_javascript_ajax)) {
 	}
 
 	print '</table>' . "\n";
-}
 
-print '<div class="center">';
-print '<input class="button button-save reposition buttonforacesave" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
-print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
-print '</div>';
+	print '<div class="center">';
+	print '<input class="button button-save reposition buttonforacesave" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
+	print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
+	print '</div>';
+
+	print '</form>';
+}
 
 // End of page
 llxFooter();

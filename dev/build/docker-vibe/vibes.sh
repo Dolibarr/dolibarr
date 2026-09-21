@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Build image
+#sudo docker build dev/build/docker-vibe -t docker-vibe --no-cache
+sudo docker build dev/build/docker-vibe -t docker-vibe
+
+# Run image
+GIT_DIR=$(basename "$PWD")
+export GIT_DIR
+
+sudo docker run --rm -it \
+  -e HOST_UID="$(id -u)" \
+  -e HOST_GID="$(id -g)" \
+  -e HOST_USER="$(id -un)" \
+  -e HOST_GROUP="$(id -un)" \
+  -e GH_TOKEN="$(gh auth token)" \
+  --network=host \
+  --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \
+  --mount "type=bind,src=$HOME/git/$GIT_DIR,dst=$HOME/git/$GIT_DIR" \
+  --mount "type=bind,src=$HOME/.vibe,dst=/home/$(id -un)/.vibe" \
+  --mount "type=bind,src=$HOME/.gitconfig,dst=$HOME/.gitconfig" \
+  --mount "type=bind,src=$HOME/.bash_history,dst=$HOME/.bash_history" \
+  -w "$HOME/git/$GIT_DIR" \
+  docker-vibe "$@"

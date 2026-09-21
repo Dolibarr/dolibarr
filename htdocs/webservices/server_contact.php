@@ -544,7 +544,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 			$num = $db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				// En attendant remplissage par boucle
+				// While waiting to be filled by a loop
 				$obj = $db->fetch_object($resql);
 
 				$contact = new Contact($db);

@@ -42,7 +42,6 @@ if (!defined('NOREQUIREMENU')) {
 session_cache_limiter('public');
 
 require '../../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 /**
  * @var DoliDB $db

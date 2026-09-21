@@ -5,7 +5,7 @@
  * Copyright (C) 2015-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -184,6 +184,8 @@ $dir = "../../core/modules/dons/";
 $form = new Form($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
+} else {
+	$formaccounting = null;
 }
 
 $help_url = '';
@@ -238,8 +240,8 @@ $handle = opendir($dir);
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
 		if (preg_match('/\.modules\.php$/i', $file)) {
-			$name = substr($file, 0, dol_strlen($file) - 12);
-			$classname = substr($file, 0, dol_strlen($file) - 12);
+			$name = dol_substr($file, 0, dol_strlen($file) - 12);
+			$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 			require_once $dir.'/'.$file;
 			$module = new $classname($db);
@@ -354,7 +356,7 @@ print '<td>';
 $label = $langs->trans("AccountAccounting");
 print '<label for="DONATION_ACCOUNTINGACCOUNT">'.$label.'</label></td>';
 print '<td class="center">';
-if (isModEnabled('accounting')) {
+if (isModEnabled('accounting') && is_object($formaccounting)) {
 	/** @var FormAccounting $formaccounting */
 	print $formaccounting->select_account(getDolGlobalString('DONATION_ACCOUNTINGACCOUNT'), 'DONATION_ACCOUNTINGACCOUNT', 1, array(), 1, 1);
 } else {

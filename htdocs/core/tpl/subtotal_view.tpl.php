@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025  		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,7 @@ $line_color = $this->getSubtotalColors($line->qty);
 $line_text_style = ' style="color: ' . $this->getSubtotalCssTextColor($line->qty) . '"';
 $line_picto_style = 'style="color: ' . $this->getSubtotalCssTextColor($line->qty, '#666') . '"';
 
-echo '<tr data-level="' . $line->qty . '" data-desc="' . $line->desc . '" data-rang="' . $line->rang . '" id="row-' . $line->id . '" class="drag drop" style="background:#' . $line_color . '">';
+echo '<tr data-level="' . $line->qty . '" data-desc="' . dol_escape_htmltag($line->desc) . '" data-rang="' . $line->rang . '" id="row-' . $line->id . '" class="drag drop" style="background:#' . $line_color . '">';
 
 // Showing line number if conf is enabled
 if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
@@ -77,7 +77,7 @@ if ($line->qty > 0) { ?>
 			echo img_picto($langs->trans("CollapseBlock"), 'chevron-down', '', 0, 0, 0, '', 'subtotalcollapsepicto');
 			echo '</span>';
 		}
-		echo $line->desc;
+		echo dol_escape_htmltag($line->desc);
 		if (array_key_exists('titleshowuponpdf', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ShowUPOnPDF"), 'invoicing');
 		}
@@ -229,7 +229,7 @@ if ($line->qty > 0) { ?>
 	?>
 	<td class="linecollabel nowrap right" <?php echo $line_text_style ?> colspan="<?php echo $colspan + 2 ?>">
 		<?php
-		echo $line->desc;
+		echo dol_escape_htmltag($line->desc);
 		if (array_key_exists('subtotalshowtotalexludingvatonpdf', $line_options)) {
 			echo '&nbsp; <span title="' . $langs->trans("ShowTotalExludingVATOnPDF") . '">%</span>';
 		}
@@ -250,6 +250,56 @@ if ($line->qty > 0) { ?>
 		echo '</td>';
 	}
 	?>
+<?php } elseif ($line->qty == 0) {
+	// Base colspan if there is no module activated to display line correctly
+	$colspan = 3;  // linecoldescription, linecolvat, linecoluht
+
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
+		$colspan++;
+	}
+	// Handling colspan if MAIN_NO_INPUT_PRICE_WITH_TAX conf is enabled
+	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		$colspan++;
+	}
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		$colspan++;
+	}
+
+	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+		$colspan += 2;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$colspan += 1;
+		}
+	}
+
+	// Handling colspan if margin module is enabled
+	if (!empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande')) && isModEnabled('margin') && empty($user->socid)) {
+		if ($user->hasRight('margins', 'creer')) {
+			$colspan += 1;
+		}
+		if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) {
+			$colspan += 1;
+		}
+		if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
+			$colspan += 1;
+		}
+	}
+
+	// Handling colspan if PRODUCT_USE_UNITS conf is enabled
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+		$colspan += 1;
+	}
+	// Handling colspan if supplier object
+	if (in_array($object->element, ['supplier_proposal'])) {
+		$colspan += 1;
+	}
+
+	$extra_cols = 3;
+	if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+		$extra_cols = 4;
+	}
+	?>
+	<td class="linecollabel" colspan="<?php echo $colspan + $extra_cols ?>"><?php echo dolPrintHTML($line->desc); ?></td>
 <?php }
 
 if ($this->status == 0) {

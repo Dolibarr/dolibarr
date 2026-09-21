@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ */
 
 /**
  * @var CommonObject $object
@@ -57,7 +59,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 if ($line->qty > 0) { ?>
 	<td class="linecollabel" colspan="<?php echo $colspan ?>" <?php echo $line_text_style ?>><?php echo str_repeat('&nbsp;', (int) ($line->qty - 1) * 8); ?>
 		<?php
-		echo $desc;
+		echo dol_escape_htmltag($desc);
 		if (array_key_exists('titleshowuponpdf', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ShowUPOnPDF"), 'invoicing');
 		}
@@ -72,11 +74,15 @@ if ($line->qty > 0) { ?>
 <?php } elseif ($line->qty < 0) { ?>
 <td class="linecollabel nowrap right" <?php echo $line_text_style ?> colspan="<?php echo $colspan ?>">
 	<?php
-	echo $desc;
+	echo dol_escape_htmltag($desc);
 	if (array_key_exists('subtotalshowtotalexludingvatonpdf', $line_options)) {
 		echo '&nbsp; <span title="' . $langs->trans("ShowTotalExludingVATOnPDF") . '">%</span>';
 	}
 	?>
+</td>
+<?php } elseif ($line->qty == 0) { ?>
+<td class="linecollabel" colspan="<?php echo $colspan ?>" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?>>
+	<?php echo dolPrintHTML($desc); ?>
 </td>
 <?php }
 

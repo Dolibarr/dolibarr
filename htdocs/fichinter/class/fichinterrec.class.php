@@ -243,7 +243,6 @@ class FichinterRec extends Fichinter
 				 */
 				$num = count($fichintsrc->lines);
 				for ($i = 0; $i < $num; $i++) {
-					//var_dump($fichintsrc->lines[$i]);
 					$result_insert = $this->addLineRec(
 						$fichintsrc->lines[$i]->desc,
 						$fichintsrc->lines[$i]->duration,

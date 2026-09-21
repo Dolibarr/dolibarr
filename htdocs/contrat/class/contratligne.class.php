@@ -91,6 +91,11 @@ class ContratLigne extends CommonObjectLine
 	public $fk_product;
 
 	/**
+	 * @var int|null ID of parent line
+	 */
+	public $fk_parent_line;
+
+	/**
 	 * @var int 0 inactive, 4 active, 5 closed
 	 */
 	public $statut;
@@ -450,6 +455,17 @@ class ContratLigne extends CommonObjectLine
 		if ($withpicto != 2) {
 			$result .= $link.($this->product_ref ? $this->product_ref.' ' : '').($this->label ? $this->label : $this->description).$linkend;
 		}
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -604,12 +620,12 @@ class ContratLigne extends CommonObjectLine
 		$this->fk_contrat = (int) $this->fk_contrat;
 		$this->fk_product = (int) $this->fk_product;
 		$this->statut = (int) $this->statut;
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->vat_src_code = trim($this->vat_src_code);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->vat_src_code = trim((string) $this->vat_src_code);
 		$this->tva_tx = trim((string) $this->tva_tx);
-		$this->localtax1_tx = trim($this->localtax1_tx);
-		$this->localtax2_tx = trim($this->localtax2_tx);
+		$this->localtax1_tx = trim((string) $this->localtax1_tx);
+		$this->localtax2_tx = trim((string) $this->localtax2_tx);
 		$this->qty = (float) $this->qty;
 		$this->remise_percent = trim((string) $this->remise_percent);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
@@ -618,7 +634,7 @@ class ContratLigne extends CommonObjectLine
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
 		$this->fk_user_cloture = (int) $this->fk_user_cloture;
-		$this->commentaire = trim($this->commentaire);
+		$this->commentaire = trim((string) $this->commentaire);
 		$this->rang = (int) $this->rang;
 		if (empty($this->subprice)) {
 			$this->subprice = 0;
@@ -827,7 +843,7 @@ class ContratLigne extends CommonObjectLine
 
 		$error = 0;
 
-		// Insertion dans la base
+		// Insert into database
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 		$sql .= " (fk_contrat, label, description, fk_product, qty, vat_src_code, tva_tx,";
 		$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
@@ -850,7 +866,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->localtax2_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".price2num($this->remise_percent).",".price2num($this->subprice).",".price2num($this->subprice_ttc).",";
+		$sql .= " ".price2num($this->remise_percent).",".price2num($this->subprice).",".((float) price2num($this->subprice_ttc)).",";
 		$sql .= " ".price2num($this->total_ht).",".price2num($this->total_tva).",".price2num($this->total_localtax1).",".price2num($this->total_localtax2).",".price2num($this->total_ttc).",";
 		$sql .= " '".$this->db->escape((string) $this->info_bits)."',";
 		$sql .= " ".(empty($this->rang) ? '0' : (int) $this->rang).",";
