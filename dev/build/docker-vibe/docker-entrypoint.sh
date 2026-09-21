@@ -65,6 +65,12 @@ if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibe" ]; then
 fi
 
 
+# Create .cache directory
+mkdir -p "/home/$USER_NAME/.cache"
+chmod 700 "/home/$USER_NAME/.cache"
+chown -R "$USER_NAME:$USER_NAME" "/home/$USER_NAME/.cache"
+
+
 install -d -m 700 -o "$USER_NAME" -g "$USER_NAME" "/home/$USER_NAME/.ssh"
 
 # shellcheck disable=SC2016  # $HOME must expand in the su subshell, not here

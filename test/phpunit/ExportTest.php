@@ -24,7 +24,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -484,7 +484,9 @@ class ExportTest extends CommonClassTest
 
 			print __METHOD__." dataset=".$exportcode." sql=".$sql."\n";
 
-			$this->assertMatchesRegularExpression('/'.preg_quote(MAIN_DB_PREFIX.$expectedtable, '/').'/', $sql, 'Dataset '.$exportcode.' does not join expected table '.$expectedtable);
+			$regex = '/'.preg_quote(MAIN_DB_PREFIX.$expectedtable, '/').'/';
+			$result = (bool) preg_match($regex, $sql);
+			$this->assertTrue($result, 'Dataset '.$exportcode.' does not join expected table '.$expectedtable);
 			$this->assertStringContainsString($expectedclause, $sql, 'Dataset '.$exportcode.' is not restricted for a user without permission to see all records');
 		}
 
