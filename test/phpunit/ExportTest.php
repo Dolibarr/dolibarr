@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -484,7 +485,7 @@ class ExportTest extends CommonClassTest
 
 			print __METHOD__." dataset=".$exportcode." sql=".$sql."\n";
 
-			$this->assertMatchesRegularExpression('/'.preg_quote(MAIN_DB_PREFIX.$expectedtable, '/').'/', $sql, 'Dataset '.$exportcode.' does not join expected table '.$expectedtable);
+			$this->assertRegExp('/'.preg_quote(MAIN_DB_PREFIX.$expectedtable, '/').'/', $sql, 'Dataset '.$exportcode.' does not join expected table '.$expectedtable);
 			$this->assertStringContainsString($expectedclause, $sql, 'Dataset '.$exportcode.' is not restricted for a user without permission to see all records');
 		}
 
