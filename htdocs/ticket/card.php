@@ -1202,6 +1202,40 @@ if ($action == 'create' || $action == 'presend') {
 		print '</td>';
 		print '</tr>';
 
+		// Internal only: element_time carries the cost rate of the contributors. Time already turned
+		// into an intervention is left out, it is counted in the duration of interventions below.
+		if (empty($user->socid)) {
+			$sql = "SELECT SUM(t.element_duration) as dur";
+			$sql .= " FROM ".$db->prefix()."element_time as t";
+			if (isModEnabled('intervention')) {
+				$sql .= " LEFT JOIN ".$db->prefix()."fichinterdet as interdet ON interdet.rowid = t.intervention_line_id";
+			}
+			$sql .= " WHERE t.elementtype = '".$db->escape($object->element)."'";
+			$sql .= " AND t.fk_element = ".((int) $object->id);
+			if (isModEnabled('intervention')) {
+				$sql .= " AND interdet.rowid IS NULL";
+			}
+			$durationnotininter = 0;
+			$resqltime = $db->query($sql);
+			if ($resqltime) {
+				$objtime = $db->fetch_object($resqltime);
+				$durationnotininter = $objtime ? (int) $objtime->dur : 0;
+				$db->free($resqltime);
+			} else {
+				dol_syslog('ticket/card.php '.$db->lasterror(), LOG_ERR);
+			}
+
+			print '<tr><td>';
+			print $langs->trans(isModEnabled('intervention') ? "TicketTimeSpentNotInIntervention" : "TimeSpent");
+			print '</td><td>';
+			if ($durationnotininter > 0) {
+				print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/ticket/time.php', ['id' => $object->id]).'">';
+				print convertSecondToTime($durationnotininter, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
+				print '</a>';
+			}
+			print '</td></tr>';
+		}
+
 		// Timing (Duration sum of linked fichinter)
 		if (isModEnabled('intervention')) {
 			$object->fetchObjectLinked();

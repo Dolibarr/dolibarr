@@ -481,6 +481,423 @@ class TimeSpent extends CommonObject
 		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
 
+	/**
+	 * Create a time spent record attached to any business object (task, ticket, manufacturing order, ...)
+	 *
+	 * Access control on $object is the responsibility of the caller.
+	 * Opens its own transaction: when the caller already holds one, it MUST read the return value
+	 * and roll back in turn.
+	 *
+	 * @param	CommonObject	$object			Host object the time is spent on
+	 * @param	string			$elementtype	Value stored in elementtype (example: 'ticket'). Not derived from $object->element, which differs for some objects (Task).
+	 * @param	User			$user			User doing the creation
+	 * @param	string			$triggercode	Business trigger code to call on $object (example: 'TICKET_TIMESPENT_CREATE'). Empty string to call none.
+	 * @param	int				$notrigger		0=launch trigger, 1=disable trigger
+	 * @return	int								Return integer <0 if KO, id of the created record if OK
+	 */
+	public function createForElement(CommonObject $object, string $elementtype, User $user, string $triggercode = '', int $notrigger = 0): int
+	{
+		global $langs;
+
+		$langs->load('errors');
+
+		if (!($object->id > 0) || empty($elementtype)) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			return -1;
+		}
+		if (!($this->element_duration > 0)) {
+			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Duration'));
+			return -1;
+		}
+		if (!($this->fk_user > 0)) {
+			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('User'));
+			return -1;
+		}
+		if (empty($this->element_date)) {
+			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Date'));
+			return -1;
+		}
+
+		if (empty($this->element_datehour)) {
+			$this->element_datehour = $this->element_date;
+		}
+		$this->note = trim((string) $this->note);
+		// No service is stored as 0, never as the -1 posted by the empty option of the selector
+		if (!($this->fk_product > 0)) {
+			$this->fk_product = 0;
+		}
+
+		$this->db->begin();
+
+		$this->fk_element = $object->id;
+		$this->elementtype = $elementtype;
+		$this->datec = dol_now();
+
+		$resthm = $this->loadHourlyRateOfUser((int) $this->fk_user);
+		if ($resthm < 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$result = $this->createCommon($user, 1);
+		if ($result <= 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		if (empty($notrigger) && !empty($triggercode) && $this->callHostTrigger($object, $user, $triggercode) < 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+
+		return $this->id;
+	}
+
+	/**
+	 * Update a time spent record attached to a business object
+	 *
+	 * The record MUST have been loaded with fetch(): a record that does not belong to $object is refused.
+	 * Opens its own transaction: when the caller already holds one, it MUST read the return value
+	 * and roll back in turn.
+	 *
+	 * @param	CommonObject	$object			Host object the time is spent on
+	 * @param	string			$elementtype	Expected elementtype of the record (example: 'ticket')
+	 * @param	User			$user			User doing the update
+	 * @param	string			$triggercode	Business trigger code to call on $object. Empty string to call none.
+	 * @param	int				$notrigger		0=launch trigger, 1=disable trigger
+	 * @return	int								Return integer <0 if KO, >0 if OK
+	 */
+	public function updateForElement(CommonObject $object, string $elementtype, User $user, string $triggercode = '', int $notrigger = 0): int
+	{
+		global $langs;
+
+		$langs->load('errors');
+
+		if (!($this->id > 0)) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			return -1;
+		}
+		if (!$this->isAttachedTo($object, $elementtype)) {
+			return -1;
+		}
+		if (!($this->fk_user > 0)) {
+			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('User'));
+			return -1;
+		}
+		if (!($this->element_duration > 0)) {
+			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Duration'));
+			return -1;
+		}
+		if (empty($this->element_date)) {
+			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Date'));
+			return -1;
+		}
+
+		if (empty($this->element_datehour)) {
+			$this->element_datehour = $this->element_date;
+		}
+		$this->note = trim((string) $this->note);
+		if (!($this->fk_product > 0)) {
+			$this->fk_product = 0;
+		}
+
+		$this->db->begin();
+
+		$sql = "SELECT fk_user FROM ".$this->db->prefix()."element_time";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$obj) {
+			// updateCommon() reports success on a vanished row
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$this->db->rollback();
+			return -1;
+		}
+		$authorhaschanged = (bool) ((int) $obj->fk_user != (int) $this->fk_user);
+
+		// thm is the rate of the contributor: it follows a change of author
+		if ($authorhaschanged || empty($this->thm) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM')) {
+			$resthm = $this->loadHourlyRateOfUser((int) $this->fk_user);
+			if ($resthm < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		$result = $this->updateCommon($user, 1);
+		if ($result <= 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		if (empty($notrigger) && !empty($triggercode) && $this->callHostTrigger($object, $user, $triggercode) < 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+
+		return 1;
+	}
+
+	/**
+	 * Delete a time spent record attached to a business object
+	 *
+	 * The record MUST have been loaded with fetch(): a record that does not belong to $object is refused.
+	 * The trigger is called before the deletion, so a handler can still read the record.
+	 * Opens its own transaction: when the caller already holds one, it MUST read the return value
+	 * and roll back in turn.
+	 *
+	 * @param	CommonObject	$object			Host object the time is spent on
+	 * @param	string			$elementtype	Expected elementtype of the record (example: 'ticket')
+	 * @param	User			$user			User doing the deletion
+	 * @param	string			$triggercode	Business trigger code to call on $object. Empty string to call none.
+	 * @param	int				$notrigger		0=launch trigger, 1=disable trigger
+	 * @return	int								Return integer <0 if KO, >0 if OK
+	 */
+	public function deleteForElement(CommonObject $object, string $elementtype, User $user, string $triggercode = '', int $notrigger = 0): int
+	{
+		global $langs;
+
+		$langs->load('errors');
+
+		if (!($this->id > 0)) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			return -1;
+		}
+		if (!$this->isAttachedTo($object, $elementtype)) {
+			return -1;
+		}
+
+		$this->db->begin();
+
+		if (empty($notrigger) && !empty($triggercode) && $this->callHostTrigger($object, $user, $triggercode) < 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$result = $this->deleteCommon($user, 1);
+		if ($result <= 0) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+
+		return 1;
+	}
+
+	/**
+	 * Count the time spent records attached to a business object
+	 *
+	 * @param	string	$elementtype	Type of the host object (example: 'ticket')
+	 * @param	int		$fk_element		Id of the host object
+	 * @return	int						Number of records, or -1 if KO
+	 */
+	public function countForElement(string $elementtype, int $fk_element): int
+	{
+		if (empty($elementtype) || !($fk_element > 0)) {
+			return 0;
+		}
+
+		$sql = "SELECT COUNT(t.rowid) as nb";
+		$sql .= " FROM ".$this->db->prefix()."element_time as t";
+		$sql .= " WHERE t.elementtype = '".$this->db->escape($elementtype)."'";
+		$sql .= " AND t.fk_element = ".((int) $fk_element);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$nb = $obj ? (int) $obj->nb : 0;
+		$this->db->free($resql);
+
+		return $nb;
+	}
+
+	/**
+	 * Load a summary of the time spent on a business object
+	 *
+	 * @param	string		$elementtype	Type of the host object (example: 'ticket')
+	 * @param	int			$fk_element		Id of the host object
+	 * @param	User|null	$userobj		Restrict the summary to the time spent by this user
+	 * @return	array{min_date:int,max_date:int,total_duration:float,total_amount:float,nblines:int,nblinesnull:int}	Zeroed summary if KO, with $this->error set
+	 */
+	public function getSummaryForElement(string $elementtype, int $fk_element, ?User $userobj = null): array
+	{
+		$empty = array('min_date' => 0, 'max_date' => 0, 'total_duration' => 0.0, 'total_amount' => 0.0, 'nblines' => 0, 'nblinesnull' => 0);
+
+		if (empty($elementtype) || !($fk_element > 0)) {
+			return $empty;
+		}
+
+		$sql = "SELECT MIN(t.element_datehour) as min_date, MAX(t.element_datehour) as max_date,";
+		$sql .= " SUM(t.element_duration) as total_duration,";
+		$sql .= " SUM(t.element_duration / 3600 * ".$this->db->ifsql('t.thm IS NULL', '0', 't.thm').") as total_amount,";
+		$sql .= " COUNT(t.rowid) as nblines,";
+		$sql .= " SUM(".$this->db->ifsql('t.thm IS NULL', '1', '0').") as nblinesnull";
+		$sql .= " FROM ".$this->db->prefix()."element_time as t";
+		$sql .= " WHERE t.elementtype = '".$this->db->escape($elementtype)."'";
+		$sql .= " AND t.fk_element = ".((int) $fk_element);
+		if ($userobj instanceof User && $userobj->id > 0) {
+			$sql .= " AND t.fk_user = ".((int) $userobj->id);
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return $empty;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$result = array(
+			'min_date' => $obj ? (int) $this->db->jdate($obj->min_date) : 0,
+			'max_date' => $obj ? (int) $this->db->jdate($obj->max_date) : 0,
+			'total_duration' => $obj ? (float) $obj->total_duration : 0.0,
+			'total_amount' => $obj ? (float) $obj->total_amount : 0.0,
+			'nblines' => $obj ? (int) $obj->nblines : 0,
+			'nblinesnull' => $obj ? (int) $obj->nblinesnull : 0
+		);
+		$this->db->free($resql);
+
+		return $result;
+	}
+
+	/**
+	 * Keep, among the given record ids, only those attached to a business object
+	 *
+	 * element_time.rowid is unique across every elementtype: a selection coming from the user MUST
+	 * go through this before a mass action.
+	 *
+	 * @param	int[]	$ids			Record ids to filter
+	 * @param	string	$elementtype	Type of the host object (example: 'ticket')
+	 * @param	int		$fk_element		Id of the host object, or 0 to accept any object of that type
+	 * @return	int[]					Ids actually attached, empty array if none or if KO
+	 */
+	public function filterAttachedIds(array $ids, string $elementtype, int $fk_element): array
+	{
+		if (empty($ids) || empty($elementtype)) {
+			return array();
+		}
+
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".$this->db->prefix()."element_time as t";
+		$sql .= " WHERE t.rowid IN (".$this->db->sanitize(implode(',', array_map('intval', $ids))).")";
+		$sql .= " AND t.elementtype = '".$this->db->escape($elementtype)."'";
+		if ($fk_element > 0) {
+			$sql .= " AND t.fk_element = ".((int) $fk_element);
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return array();
+		}
+
+		$attached = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$attached[] = (int) $obj->rowid;
+		}
+		$this->db->free($resql);
+
+		return $attached;
+	}
+
+	/**
+	 * Tell whether this record is attached to the given business object
+	 *
+	 * @param	CommonObject	$object			Host object to check against
+	 * @param	string			$elementtype	Expected elementtype of the record
+	 * @return	bool							True if the record belongs to $object
+	 */
+	private function isAttachedTo(CommonObject $object, string $elementtype): bool
+	{
+		global $langs;
+
+		if (empty($elementtype) || $this->fk_element != $object->id || $this->elementtype != $elementtype) {
+			// Same message as a missing record: never disclose that the id exists on another object
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			dol_syslog(__METHOD__.' refused record '.$this->id.' of type '.$this->elementtype.'/'.$this->fk_element.' for '.$elementtype.'/'.$object->id, LOG_WARNING);
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Call a business trigger on the host object, exposing this record as $object->timespent_id like Task does
+	 *
+	 * @param	CommonObject	$object			Host object carrying the trigger
+	 * @param	User			$user			User doing the action
+	 * @param	string			$triggercode	Trigger code
+	 * @return	int								Return integer <0 if KO, >=0 if OK
+	 */
+	private function callHostTrigger(CommonObject $object, User $user, string $triggercode): int
+	{
+		if (property_exists($object, 'timespent_id')) {
+			$object->timespent_id = $this->id;
+		}
+
+		$result = $object->call_trigger($triggercode, $user);
+		if ($result < 0) {
+			$this->error = $object->error;
+			$this->errors = $object->errors;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Load into this record the current hourly rate of a user
+	 *
+	 * @param	int		$fk_user	Id of the user whose rate is read
+	 * @return	int					Return integer <0 if KO, >0 if OK
+	 */
+	private function loadHourlyRateOfUser(int $fk_user): int
+	{
+		if (!($fk_user > 0)) {
+			return 1;
+		}
+
+		$sql = "SELECT u.thm FROM ".$this->db->prefix()."user as u WHERE u.rowid = ".((int) $fk_user);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$obj) {
+			global $langs;
+
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			dol_syslog(__METHOD__.' refused unknown user '.$fk_user, LOG_WARNING);
+			return -1;
+		}
+		$this->thm = $obj->thm;
+
+		return 1;
+	}
+
 
 	/**
 	 *	Validate object
