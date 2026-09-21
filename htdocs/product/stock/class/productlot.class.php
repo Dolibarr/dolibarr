@@ -974,7 +974,11 @@ class Productlot extends CommonObject
 		dol_syslog(__METHOD__.' failed to generate barcode for lot '.$this->batch.' of product '.((int) $this->fk_product).': '.$reason, LOG_WARNING);
 
 		$langs->load("products");
-		$this->warnings[] = $langs->trans("WarningFailedToGenerateBarcodeForLot", $this->batch);
+		$message = $langs->trans("WarningFailedToGenerateBarcodeForLot", $this->batch);
+		$this->warnings[] = $message;
+		// Every caller that creates a lot goes through MouvementStock::_create(), which drops the
+		// Productlot object once create() succeeded, so the warning would never reach the screen
+		setEventMessages($message, null, 'warnings');
 
 		return 0;
 	}
