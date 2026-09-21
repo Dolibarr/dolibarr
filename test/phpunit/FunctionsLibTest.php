@@ -221,7 +221,7 @@ class FunctionsLibTest extends CommonClassTest
 		$prop = getElementProperties('contact');
 		$this->assertSame('societe', $prop['module']);
 		$this->assertSame($conf->societe->multidir_output[$conf->entity].'/contact', $prop['dir_output'], 'A contact is stored into a /contact sub directory');
-		$this->assertSame($conf->societe->multidir_temp[$conf->entity].'/contact', $prop['dir_temp'], 'The sub directory applies to the temporary directory too');
+		$this->assertSame(preg_replace('/\/temp$/', '', $conf->societe->multidir_temp[$conf->entity]).'/contact/temp', $prop['dir_temp'], 'The sub directory applies to the temporary directory too');
 
 		// The elements added or fixed here must answer the class that is really able to load them, and the
 		// table restrictedArea() builds its sql on.
@@ -270,7 +270,7 @@ class FunctionsLibTest extends CommonClassTest
 			foreach (array('job', 'position', 'skill', 'evaluation') as $element) {
 				$prop = getElementProperties($element);
 				$this->assertSame($conf->hrm->dir_output.'/'.$element, $prop['dir_output'], 'The element '.$element.' is stored into a /'.$element.' sub directory');
-				$this->assertSame($conf->hrm->dir_temp.'/'.$element, $prop['dir_temp'], 'The sub directory applies to the temporary directory of '.$element.' too');
+				$this->assertSame(preg_replace('/\/temp$/', '', $conf->hrm->dir_temp).'/'.$element.'/temp', $prop['dir_temp'], 'The sub directory applies to the temporary directory of '.$element.' too');
 			}
 		}
 
