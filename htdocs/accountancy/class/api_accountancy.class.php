@@ -284,7 +284,7 @@ class Accountancy extends DolibarrApi
 				}
 
 				return array(
-					'modulepart' => 'export_compta',
+					'modulepart' => 'accounting',
 					'relative_path' => dol_substr($filedata['downloadFilePath'], dol_strlen($outputdir)),
 					'filename' => basename($filedata['downloadFileFullName']),
 					'mimetype' => $filedata['downloadFileMimeType'],
