@@ -130,7 +130,7 @@ class ConfFileManager
 			array('section' => 'Security', 'key' => 'dolibarr_main_prod', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Set to 1 on production to hide error messages'),
 			// Written as a raw literal (never user input here) so the secure default keeps its double quote, which dol_escape_php() would otherwise convert.
 			array('section' => 'Security', 'key' => 'dolibarr_login_badcharunauthorized', 'default' => "',@<>\"\\''", 'type' => 'raw', 'mode' => $s, 'comment' => 'Forbidden characters in logins (secure default written explicitly)'),
-			array('section' => 'Security', 'key' => 'dolibarr_main_restrict_os_commands', 'default' => 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe', 'type' => 'string', 'mode' => $s, 'comment' => 'Allowed OS commands for backup feature'),
+			array('section' => 'Security', 'key' => 'dolibarr_main_restrict_os_commands', 'default' => 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bz2, zstd', 'type' => 'string', 'mode' => $s, 'comment' => 'Allowed OS commands for backup feature'),
 			array('section' => 'Security', 'key' => 'dolibarr_main_restrict_eval_methods', 'default' => 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, dolSort, abs, min, max, round, dol_now, preg_match', 'type' => 'string', 'mode' => $s, 'comment' => 'Whitelist of functions allowed in computed fields'),
 			array('section' => 'Security', 'key' => 'dolibarr_main_disabled_modules', 'default' => 'array()', 'type' => 'raw', 'mode' => $c, 'comment' => 'Modules forbidden to enable, e.g. array(\'dav\', \'api\')'),
 			array('section' => 'Security', 'key' => 'dolibarr_main_restrict_ip', 'default' => '', 'type' => 'string', 'mode' => $s, 'comment' => 'Restrict backoffice access to a list of IP/CIDR'),
@@ -153,6 +153,7 @@ class ConfFileManager
 
 			// --- Other ---
 			array('section' => 'Other', 'key' => 'dolibarr_main_limit_users', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Maximum number of users that can be created (0 = unlimited)'),
+			array('section' => 'Other', 'key' => 'dolibarr_main_limit_sessions_per_user', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Maximum concurrent sessions per user, database session handler only (0 = unlimited)'),
 			array('section' => 'Other', 'key' => 'dolibarr_strict_mode', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Enable PHP strict mode (dev only)'),
 			array('section' => 'Other', 'key' => 'dolibarr_allow_download_external_modules', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Allow downloading the zip of external modules from admin'),
 			array('section' => 'Other', 'key' => 'dolibarr_main_distrib', 'default' => 'standard', 'type' => 'string', 'mode' => $s, 'comment' => 'Distribution name'),

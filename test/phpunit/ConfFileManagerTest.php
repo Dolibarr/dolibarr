@@ -89,6 +89,29 @@ class ConfFileManagerTest extends CommonClassTest
 	}
 
 	/**
+	 * Test that the canvas documents every variable of conf.php.example.
+	 *
+	 * @return	void
+	 */
+	public function testCanvasCoversConfExample()
+	{
+		// testBuildExhaustiveAndValid() only walks canvas -> output, so a variable added to
+		// conf.php.example alone would go unnoticed. This walks example -> canvas.
+		$confmanager = new ConfFileManager();
+		$keys = $confmanager->getCanvasKeys();
+
+		$example = file_get_contents(DOL_DOCUMENT_ROOT.'/conf/conf.php.example');
+		$this->assertNotFalse($example, 'conf.php.example must be readable');
+
+		$nbfound = preg_match_all('/^\s*(?:\/\/\s*)?\$(dolibarr_\w+)\s*=/m', $example, $matches);
+		$this->assertGreaterThan(0, $nbfound, 'No variable found in conf.php.example');
+
+		foreach (array_unique($matches[1]) as $key) {
+			$this->assertContains($key, $keys, 'Variable '.$key.' is documented in conf.php.example but absent from the canvas');
+		}
+	}
+
+	/**
 	 * Test that build() generates an exhaustive, valid conf.php with all the expected variables.
 	 *
 	 * @return	void
