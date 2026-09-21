@@ -3263,8 +3263,21 @@ class EmailCollector extends CommonObject
 													dol_mkdir($destdir);
 												}
 												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
-														$attachment->save($destdir.'/');
+														try {
+															$filename = (string) $attachment->getName();
+														} catch (Throwable $e) {
+															$filename = '';
+														}
+														if (!$this->isAllowedAttachmentFilename($filename)) {
+															$skippedatt++;
+															continue;
+														}
+														$this->saveAttachment($destdir, $filename, (string) $attachment->getContent());
+													}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
 												} else {
 													$this->getmsg($connection, $imapemail, $destdir);
@@ -3280,18 +3293,32 @@ class EmailCollector extends CommonObject
 							}
 						} elseif ($operation['type'] == 'recordjoinpiece') {
 							$data = [];
+							$skippedatt = 0;
 							if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 								foreach ($attachments as $attachment) {
-									if ($attachment->getName() === 'undefined') {
+									try {
+										$filename = (string) $attachment->getName();
+									} catch (Throwable $e) {
+										$filename = '';
+									}
+									if (!$this->isAllowedAttachmentFilename($filename)) {
+										$skippedatt++;
 										continue;
 									}
-									$data[$attachment->getName()] = $attachment->getContent();
+									$data[$filename] = $attachment->getContent();
 								}
 							} else {
 								$pj = getAttachments($imapemail, $connection);
 								foreach ($pj as $key => $val) {
+									if (!$this->isAllowedAttachmentFilename((string) $val['filename'])) {
+										$skippedatt++;
+										continue;
+									}
 									$data[$val['filename']] = getFileData($imapemail, (string) $val['pos'], $val['type'], $connection);
 								}
+							}
+							if ($skippedatt > 0) {
+								$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 							}
 							if (count($data) > 0) {
 								$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."user WHERE email LIKE '%".$this->db->escape($email_from)."%'";
@@ -3579,12 +3606,19 @@ class EmailCollector extends CommonObject
 													dol_mkdir($destdir);
 												}
 												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$typeattachment = (string) $attachment->getDisposition();
 														$filename = $attachment->getFilename();
+														if (!$this->isAllowedAttachmentFilename((string) $filename)) {
+															$skippedatt++;
+															continue;
+														}
 														$content = $attachment->getContent();
 														$this->saveAttachment($destdir, $filename, $content);
+													}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
 												} else {
 													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
@@ -3740,12 +3774,19 @@ class EmailCollector extends CommonObject
 													dol_mkdir($destdir);
 												}
 												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$typeattachment = (string) $attachment->getDisposition();
 														$filename = $attachment->getName();
+														if (!$this->isAllowedAttachmentFilename((string) $filename)) {
+															$skippedatt++;
+															continue;
+														}
 														$content = $attachment->getContent();
 														$this->saveAttachment($destdir, $filename, $content);
+													}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
 												} else {
 													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
@@ -4188,7 +4229,7 @@ class EmailCollector extends CommonObject
 		// ATTACHMENT
 		// Any part with a filename is an attachment,
 		// so an attached text file (type 0) is not mistaken as the message.
-		if (!empty($params['filename']) || !empty($params['name'])) {
+		if ((!empty($params['filename']) || !empty($params['name'])) && $this->isAllowedAttachmentFilename((string) ($params['filename'] ?? $params['name']))) {
 			// filename may be given as 'Filename' or 'Name' or both
 			$filename = $params['filename'] ?? $params['name'];
 			// filename may be encoded, so see imap_mime_header_decode()
@@ -4407,6 +4448,9 @@ class EmailCollector extends CommonObject
 			if ($origName === '' || $origName === 'undefined') {
 				$origName = 'attachment-'.$index;
 			}
+			if (!$this->isAllowedAttachmentFilename($origName)) {
+				continue;
+			}
 			if ($content === '') {
 				continue;
 			}
@@ -4456,6 +4500,48 @@ class EmailCollector extends CommonObject
 		}
 
 		return $stored;
+	}
+
+	/**
+	 * Check if an attachment filename is allowed by configuration.
+	 *
+	 * An empty EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS value keeps the current behavior and accepts every filename.
+	 * Otherwise, only the configured extensions are accepted, case-insensitively.
+	 *
+	 * @param 	string	$filename	Filename as provided by IMAP
+	 * @return 	bool
+	 */
+	private function isAllowedAttachmentFilename($filename)
+	{
+		static $allowedExtRaw = null;
+		static $allowedExtMap = null;
+
+		$raw = trim(getDolGlobalString('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS'));
+		if ($raw === '') {
+			return true;
+		}
+
+		if ($allowedExtRaw !== $raw) {
+			$allowedExtRaw = $raw;
+			$allowedExtMap = array();
+			$tokens = preg_split('/[\s,;]+/', strtolower($raw));
+			if (is_array($tokens)) {
+				foreach ($tokens as $token) {
+					$token = (string) preg_replace('/[^a-z0-9]+/', '', ltrim(trim($token), '.'));
+					if ($token !== '') {
+						$allowedExtMap[$token] = true;
+					}
+				}
+			}
+		}
+
+		// Ignore an invalid configuration instead of blocking every attachment.
+		if (empty($allowedExtMap)) {
+			return true;
+		}
+
+		$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+		return $extension !== '' && !empty($allowedExtMap[$extension]);
 	}
 
 	/**
