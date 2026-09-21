@@ -387,7 +387,7 @@ if ($reshook < 0) {
 
 // If we show an invoice, we test if we must regenerate the PDF
 if ($modulepart == 'facture') {
-	$invoice = $object;
+	$invoice = fetchObjectByElement(0, $modulepart, $refname);
 
 	if ($original_file == preg_replace('/facture\//', '', $invoice->last_main_doc)) {
 		// We are on the download or print of the main document
