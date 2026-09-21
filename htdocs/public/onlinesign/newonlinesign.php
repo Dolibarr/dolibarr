@@ -114,10 +114,8 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 // Complete urls for post treatment
 $SECUREKEY = GETPOST("securekey"); // Secure key
 
-if ($source !== '') {
-	$urlok .= 'source='.urlencode($source).'&';
-	$urlko .= 'source='.urlencode($source).'&';
-}
+$urlok .= 'source='.urlencode($source).'&';
+$urlko .= 'source='.urlencode($source).'&';
 if (!empty($REF)) {
 	$urlok .= 'ref='.urlencode($REF).'&';
 	$urlko .= 'ref='.urlencode($REF).'&';
@@ -137,7 +135,7 @@ $creditor = $mysoc->name;
 
 $type = $source;
 if (!$action) {
-	if ($source !== '' && !$ref) {
+	if (!$ref) {
 		httponly_accessforbidden($langs->trans('ErrorBadParameters')." - ref missing", 400, 1);
 	}
 }
@@ -193,12 +191,10 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes' && $source === 'propo
 
 		$message = 'refused';
 		setEventMessages("PropalRefused", null, 'warnings');
-		if (method_exists($object, 'call_trigger')) {
-			$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
-			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
-			if ($result < 0) {
-				$error++;
-			}
+		$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+		$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
+		if ($result < 0) {
+			$error++;
 		}
 	} else {
 		$db->rollback();
