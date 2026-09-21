@@ -21,4 +21,4 @@ sudo docker run --rm -it \
   --mount "type=bind,src=$HOME/.gitconfig,dst=$HOME/.gitconfig" \
   --mount "type=bind,src=$HOME/.bash_history,dst=$HOME/.bash_history" \
   -w "$HOME/git/$GIT_DIR" \
-  docker-vibe bash
+  docker-vibe "$@"
