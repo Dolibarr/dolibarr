@@ -125,7 +125,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Set the user-chosen new password (posted from the passwordreset.tpl.php page)
-	if ($action == 'setnewpassword' && $username && $passworduidhash) {	// Security is managed by $passworduidhash (proof of possession of the emailed link); no captcha needed on this step
+	if ($action == 'setnewpassword' && $username && $passworduidhash) {	// Test on permission not required here. This action is done anonymously, access is proven by the hash of the emailed link.
 		if ($newpass1 === '' || $newpass2 === '') {
 			$message = '<div class="error">'.$langs->trans("NewPasswordEmpty").'</div>';
 		} elseif ($newpass1 !== $newpass2) {
