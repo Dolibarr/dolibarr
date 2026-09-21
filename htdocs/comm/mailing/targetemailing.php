@@ -535,11 +535,24 @@ if ($object->fetch($id) >= 0) {
 		print '</div>';
 		print '<div class="tagtd left"><div class="inline-block">'.$langs->trans("Filters").'</div>';
 		if ($object->messtype != 'sms') {
-			print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class="inline-block valignmiddle">'.$langs->trans("EvenUnsubscribe").' ';
+			print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class="inline-block valignmiddle">';
+			print '<span id="evenunsubscribe_text_'.$object->id.'" class="linkobject" style="cursor: pointer;">'.$langs->trans("EvenUnsubscribe").'</span> ';
 			print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle reposition', '', 1, 'allowaddtarget=1');
 			print '</div>';
 		}
-		print '</div>';
+		print '</div>'."\n";
+		// Add JavaScript to make EvenUnsubscribe text clickable
+		/* This does not work, don't know why
+		print '<script>'."\n";
+		print '$(document).ready(function() {';
+		print '    $("#evenunsubscribe_text_'.dol_escape_js($object->id).'").click(function() {'."\n";
+		print '		   console.log("We click on link to switch unsubscribed emails");';
+		print '        jQuery("#set_evenunsubscribe_'.dol_escape_js($object->id).'").trigger("click");';
+		print '        jQuery("#del_evenunsubscribe_'.dol_escape_js($object->id).'").trigger("click");';
+		print '    });'."\n";
+		print '});'."\n";
+		print '</script>'."\n";
+		*/
 		print '<div class="tagtd">&nbsp;</div>';
 		print '</div>';	// End tr
 
@@ -554,7 +567,7 @@ if ($object->fetch($id) >= 0) {
 			$handle = @opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
+					if (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS') {
 						$reg = array();
 						if (preg_match("/(.*)\.modules\.php$/i", $file, $reg)) {
 							if ($reg[1] == 'example') {

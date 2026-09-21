@@ -140,62 +140,62 @@ class modPropale extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 21; // id de la permission
-		$this->rights[$r][1] = 'Read commercial proposals'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 21; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read commercial proposals'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 22; // id de la permission
-		$this->rights[$r][1] = 'Create and update commercial proposals'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 22; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create and update commercial proposals'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 24; // id de la permission
+		$this->rights[$r][0] = 24; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Validate commercial proposals'; // Validate proposal
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'propal_advance';
 		$this->rights[$r][5] = 'validate';
 
 		$r++;
-		$this->rights[$r][0] = 25; // id de la permission
-		$this->rights[$r][1] = 'Send commercial proposals to customers'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 25; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Send commercial proposals to customers'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'propal_advance';
 		$this->rights[$r][5] = 'send';
 
 		$r++;
-		$this->rights[$r][0] = 26; // id de la permission
+		$this->rights[$r][0] = 26; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Close commercial proposals'; // Set proposal to signed or refused
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'propal_advance';
 		$this->rights[$r][5] = 'close';
 
 		$r++;
-		$this->rights[$r][0] = 27; // id de la permission
-		$this->rights[$r][1] = 'Delete commercial proposals'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 27; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete commercial proposals'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 28; // id de la permission
-		$this->rights[$r][1] = 'Exporting commercial proposals and attributes'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 28; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Exporting commercial proposals and attributes'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'export';
 
 		$r++;
-		$this->rights[$r][0] = 29; // id de la permission
+		$this->rights[$r][0] = 29; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Reopen commercial proposals'; // Set proposal to signed or refused
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'propal_advance';
 		$this->rights[$r][5] = 'reopen';
 
@@ -355,17 +355,10 @@ class modPropale extends DolibarrModules
 		}
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'propal' AND entity IN (0, ".((int) $conf->entity).")";
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-				$import_extrafield_sample[$fieldname] = $fieldlabel;
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'propal';
+		$keyforelement = 'propal';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'propal'];
 		$this->import_regex_array[$r] = ['c.ref' => '[^ ]'];
 		$import_sample = [
@@ -444,17 +437,10 @@ class modPropale extends DolibarrModules
 		}
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'propaldet' AND entity IN (0, ".((int) $conf->entity).")";
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-				$import_extrafield_sample[$fieldname] = $fieldlabel;
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'propaldet';
+		$keyforelement = 'propal';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'propaldet');
 		$this->import_regex_array[$r] = array('cd.product_type' => '[0|1]$');
 		$import_sample = array(

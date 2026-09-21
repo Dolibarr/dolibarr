@@ -101,6 +101,11 @@ class MultiCurrency extends CommonObject
 
 	const MULTICURRENCY_APP_ENDPOINT_DEFAULT = 'https://api.currencylayer.com/live?access_key=__MULTICURRENCY_APP_KEY__&source=__MULTICURRENCY_APP_SOURCE__';
 
+	// Frankfurter (frankfurter.dev): free, no API key, ECB reference rates (~30 currencies).
+	// Unlike currencylayer's free tier, it accepts any source currency directly, so no
+	// USD-pivot recalculation is needed when the configured source isn't USD.
+	const MULTICURRENCY_APP_ENDPOINT_FRANKFURTER_DEFAULT = 'https://api.frankfurter.dev/v1/latest?base=__MULTICURRENCY_APP_SOURCE__';
+
 
 	/**
 	 * Constructor
@@ -113,7 +118,9 @@ class MultiCurrency extends CommonObject
 
 		$key = getDolGlobalString("MULTICURRENCY_APP_KEY");
 		$source = getDolGlobalString('MULTICURRENCY_APP_SOURCE', 'USD');
-		$urlendpoint = getDolGlobalString("MULTICURRENCY_APP_ENDPOINT", self::MULTICURRENCY_APP_ENDPOINT_DEFAULT);
+		$provider = getDolGlobalString('MULTICURRENCY_APP_PROVIDER', 'currencylayer');
+		$defaultendpoint = ($provider == 'frankfurter') ? self::MULTICURRENCY_APP_ENDPOINT_FRANKFURTER_DEFAULT : self::MULTICURRENCY_APP_ENDPOINT_DEFAULT;
+		$urlendpoint = getDolGlobalString("MULTICURRENCY_APP_ENDPOINT", $defaultendpoint);
 
 		$this->urlendpoint = str_replace(array('__MULTICURRENCY_APP_KEY__', '__MULTICURRENCY_APP_SOURCE__'), array($key, $source), $urlendpoint);
 	}
@@ -674,16 +681,22 @@ class MultiCurrency extends CommonObject
 			} else {
 				setEventMessages($langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER'), null, 'errors');
 			}
+			$this->errors[] = $langs->trans('Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER');
 			return -1;
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		$provider = getDolGlobalString('MULTICURRENCY_APP_PROVIDER', 'currencylayer');
 		$urlendpoint = $this->urlendpoint;
 
 		dol_syslog("Call url endpoint ".$urlendpoint);
 
-		$addheaders = array('apikey: '.getDolGlobalString('MULTICURRENCY_APP_KEY'));
+		// Frankfurter is free and needs no API key; currencylayer/apilayer require one.
+		$addheaders = array();
+		if ($provider != 'frankfurter') {
+			$addheaders[] = 'apikey: '.getDolGlobalString('MULTICURRENCY_APP_KEY');
+		}
 
 		$resget = getURLContent($urlendpoint, 'GET', '', 1, $addheaders);
 
@@ -692,55 +705,79 @@ class MultiCurrency extends CommonObject
 		// 251,"source":"USD","quotes":{"USDAED":3.67302,"USDAFN":70.6213,"USDALL":91.042287,"USDAMD":390.984233,"USDANG":1.802039,"USDAOA":913.498241,"USDARS":1
 		// 068.745088,"USDAUD":1.591824,"USDAWG":1.8,"USDAZN":1.699323,"USDBAM":1.80224,"USDBBD":2.018881,"USDBDT":121.488567,"USDBGN":1.802745,"USDBHD":0.376878
 		// ,"USDBIF":2963.403228,"USDBMD":1,"USDBND":1.333573,"USDBOB":6.909262,"USDBRL":5.721'... (length=3337)
+		//
+		// Example of result with https://api.frankfurter.dev/v1/latest (no key, ECB rates, ~30 currencies):
+		// 'content' => string '{"amount":1.0,"base":"USD","date":"2026-09-17","rates":{"AUD":1.4057,"BRL":5.1307,"CAD":1.3995,"EUR":0.871,"GBP":0.74758,...}}'
 		//var_dump($urlendpoint);
 		//var_dump($resget);
 
-		if (!empty($resget['content'])) {
-			$response = $resget['content'];
-			$response = json_decode($response);
+		if (empty($resget['content'])) {
+			$this->output = $resget['curl_error_msg'];
+			$this->errors[] = $this->output;
 
-			if ($response->success) {
+			return -1;
+		}
+
+		$response = json_decode($resget['content']);
+
+		$TRate = null;
+		$error_info = '';
+		$error_info_syslog = '';
+
+		if ($provider == 'frankfurter') {
+			if (!empty($response->rates) && is_object($response->rates)) {
+				// Frankfurter never includes the base currency itself in 'rates', add it back
+				// so recalculRates()'s pivot lookup (USD<localcurrency>) keeps working the same
+				// way it does for currencylayer's response, which does include it.
+				$sourcecode = !empty($response->base) ? $response->base : getDolGlobalString('MULTICURRENCY_APP_SOURCE', 'USD');
+				$TRate = new stdClass();
+				foreach ($response->rates as $code => $rate) {
+					$TRate->{$sourcecode.$code} = $rate;
+				}
+				$TRate->{$sourcecode.$sourcecode} = 1.0;
+			} else {
+				$error_info = !empty($response->message) ? $response->message : (!empty($response->error) ? $response->error : json_encode($response));
+				$error_info_syslog = $error_info;
+			}
+		} else {
+			// currencylayer / apilayer
+			if (!empty($response->success)) {
 				$TRate = $response->quotes;
 				//$timestamp = $response->timestamp;
-
-				// Recalculate rate and update it (or add it) into database
-				if ($this->recalculRates($TRate) >= 0) {
-					foreach ($TRate as $currency_code => $rate) {
-						$code = substr($currency_code, 3, 3);
-						$obj = new MultiCurrency($db);
-						if ($obj->fetch(0, $code) > 0) {
-							$obj->updateRate($rate);
-						} elseif ($addifnotfound) {
-							$this->addRateFromDolibarr($code, $rate);
-						}
-					}
-				}
-
-				if ($mode == "cron") {
-					return 0;
-				}
-				return 1;
 			} else {
 				if (isset($response->error->info)) {  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
 					$error_info_syslog = $response->error->info;  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
 					$error_info = $error_info_syslog;
 				} else {
 					$error_info_syslog = json_encode($response);
-					if (empty($resget['content'])) {
-						$error_info = "No error information found (see syslog)";
-					} else {
-						$error_info = $resget['content'];
+					$error_info = $resget['content'];
+				}
+			}
+		}
+
+		if ($TRate !== null) {
+			// Recalculate rate and update it (or add it) into database
+			if ($this->recalculRates($TRate) >= 0) {
+				foreach ($TRate as $currency_code => $rate) {
+					$code = substr($currency_code, 3, 3);
+					$obj = new MultiCurrency($db);
+					if ($obj->fetch(0, $code) > 0) {
+						$obj->updateRate($rate);
+					} elseif ($addifnotfound) {
+						$this->addRateFromDolibarr($code, $rate);
 					}
 				}
-
-				dol_syslog("Failed to call endpoint ".$error_info_syslog, LOG_WARNING);
-
-				$this->output = $langs->trans('multicurrency_syncronize_error', $error_info);
-
-				return -1;
 			}
+
+			if ($mode == "cron") {
+				return 0;
+			}
+			return 1;
 		} else {
-			$this->output = $resget['curl_error_msg'];
+			dol_syslog("Failed to call endpoint ".$error_info_syslog, LOG_WARNING);
+
+			$this->output = $langs->trans('multicurrency_syncronize_error', $error_info);
+			$this->errors[] = $this->output;
 
 			return -1;
 		}

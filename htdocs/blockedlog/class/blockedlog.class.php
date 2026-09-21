@@ -23,6 +23,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 
 /**
@@ -140,7 +141,7 @@ class BlockedLog
 	public $date_modification;
 
 	/**
-	 * @var int
+	 * @var int				UTC date of object (date of invoice, payment, ...)
 	 */
 	public $date_object = 0;
 
@@ -1306,6 +1307,13 @@ class BlockedLog
 			return -2;
 		}
 
+		if (empty($this->date_object)) {	// date_object is a critical field, it is included into the line signature
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBlockLogNeedDateObject");
+			dol_syslog($this->error, LOG_WARNING);
+			return -2;
+		}
+
 		if (empty($this->action)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadParameterWhenCallingCreateOfBlockedLog");
@@ -1492,7 +1500,7 @@ class BlockedLog
 					// Check the .end flag file.
 					$headstring = '';
 					$remoteobfuscationkey = '';
-					if (preg_match('/^dolcrypt/', $line)) {		// Old method (does not happen after migration)
+					if (preg_match('/^dolcrypt/', $line)) {		// Old method (does not happen after migration to a certified version)
 						$headstring = dolDecrypt($line);
 					} elseif (preg_match('/^dolobfuscation/', $line)) {
 						$remoteobfuscationkey = $this->getObfuscationKey();
@@ -1546,7 +1554,7 @@ class BlockedLog
 					}
 
 
-					// We can now write the new .end file
+					// We can now write the new .end flag (Note: BLOCKEDLOGHEAD means end of chain)
 					$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $finalsignature;
 
 					if (isALNERunningVersion(1, ($this->action == 'MODULE_SET' ? 1 : 0)) && $mysoc->country_code == 'FR') {
@@ -1848,6 +1856,7 @@ class BlockedLog
 
 	/**
 	 * Save the HMAC secret key into database.
+	 * Parameter may be set by caller to "dolcrypt", or "dolibfuscation" if "isALNERunningVersion(1) && $mysoc->country_code == 'FR'"
 	 *
 	 * @param	string		$hmac_secret_key		HMAC secret key ('BLOCKEDLOG_HMAC_KEY...')
 	 * @param	string		$obfuscationmode		Obfuscation mode ('dolcrypt', 'dolobfuscationv1-SIREN')
@@ -1923,9 +1932,21 @@ class BlockedLog
 
 	/**
 	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key).
-	 * Use a memory cache to avoid repeated db access.
+	 * Use a memory cache to avoid repeated db or remote access.
 	 * This function can also be called just to store the remote obfuscation key into the cache so all next call will not depends on the obfuscation key server availability.
-	 * Note: Avoid to call this function if you are not in acontext that need remote obfuscation key.
+	 * Note: Avoid to call this function if you are not in a context that need remote obfuscation key.
+	 *
+	 * This function is called:
+	 *
+	 * - During a migration (migrate_blockedlog_add_end_file())of an old version to encrypt old HMAC key.
+	 * - Page to show and validate archives (blockedlog_archives.php)
+	 * - Page to list and check blocked log (blockedlog_list.php)
+	 * - Page to help debug/technical information (blockedlog.php)
+	 * - Page of registration that initialize the HMAC key.
+	 *
+	 * - In function getClearHMACSecretKey() of this file to validate an entry in blockedlog
+	 * - In function buildFinalSignatureHash() of this file to save a new entry in blockedlog
+	 * - In function create() called by trigger to read/validate the .end flag and to update the .end flag after new entry recording
 	 *
 	 * @return 	string					Obfuscation key or a coma-separated list of obfuscation keys, or "" if not found.
 	 */
@@ -2018,6 +2039,7 @@ class BlockedLog
 
 	/**
 	 * Get the HMAC secret key.
+	 * Note: The HMAC key has been saved by saveHMACSecretKey().
 	 *
 	 * @param 	string	$hmac_encoded_secret_key	HMAC encode string retrieved with getEncodedHMACSecretKey()
 	 * @return 	string								Encoded HMAC secret key.

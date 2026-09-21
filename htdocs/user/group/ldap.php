@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +190,6 @@ if ($result > 0) {
 
 	$records = $ldap->getAttribute($dn, $search);
 
-	//var_dump($records);
 
 	// Show tree
 	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {

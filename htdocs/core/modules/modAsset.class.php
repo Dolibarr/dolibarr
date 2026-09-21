@@ -101,18 +101,12 @@ class modAsset extends DolibarrModules
 		// Example: $this->const=array(0=>array('ASSETS_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('ASSETS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
+		// Note: ASSET_DEPRECIATION_DAY_COUNT_CONVENTION is on purpose NOT created here. When it is not
+		// set, getAssetDepreciationDayCountConvention() returns the convention of the country of the
+		// company (30/360 for France, real days / 365 elsewhere), or the one deduced from the
+		// deprecated ASSET_DEPRECIATION_DURATION_PER_YEAR for an installation that already used it.
 		$this->const = array();
 		$this->const[1] = array(
-			"ASSET_DEPRECIATION_DURATION_PER_YEAR",
-			"chaine",
-			"360",
-			"Duration per year to calculate depreciation. In some case, can be 365 days",
-			0,
-			'current',
-			1
-		);
-
-		$this->const[2] = array(
 			"ASSET_ASSET_ADDON",
 			"chaine",
 			"mod_asset_standard",

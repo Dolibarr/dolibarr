@@ -1361,6 +1361,11 @@ ImportDataset_service_1
 ImportDataset_tax_contrib
 ImportDataset_tax_vat
 ImportDataset_user_1
+ImportDataset_variants_attribute
+ImportDataset_variants_value
+ImportDataset_variants_combination
+ImportDataset_variants_combination2val
+ImportDataset_variants_pricelevel
 ImportSetup
 InWorkingOrder
 IncludeClosedAccount

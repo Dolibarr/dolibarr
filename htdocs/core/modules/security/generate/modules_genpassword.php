@@ -23,7 +23,6 @@
  *		\ingroup    core
  *		\brief      File with parent class for password generating classes
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**

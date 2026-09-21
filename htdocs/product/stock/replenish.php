@@ -57,8 +57,6 @@ if ($user->socid) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
 
-$result = restrictedArea($user, 'produit|service');
-
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
@@ -142,16 +140,27 @@ if ($mode == 'virtual') {
 	$usevirtualstock = 1;
 }
 
-$parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$object = new CommandeFournisseur($db);
+
+if (!isModEnabled('stock')) {
+	accessforbidden("Module stock must be enabled to use this feature");
 }
+if (!$user->hasRight('stock', 'read')) {
+	accessforbidden("You need permission to read stock to access this feature");
+}
+
+restrictedArea($user, 'produit|service');
 
 
 /*
  * Actions
  */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = '';
@@ -184,10 +193,25 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$box = $i;
 				$supplierpriceid = GETPOSTINT('fourn'.$i);
 				//get all the parameters needed to create a line
+
 				$qty = GETPOSTFLOAT('tobuy'.$i);
-				$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
+
+				// Resolve the product and the supplier of the selected price line first. Without them,
+				// get_buyprice() falls back to a search with no product and no supplier filter, and can
+				// return a price row of another supplier for another product (see #40182).
+				$tmpprodfourn = new ProductFournisseur($db);
+				if ($tmpprodfourn->fetch_product_fournisseur_price($supplierpriceid) > 0) {
+					$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty, $tmpprodfourn->product_id, 'none', $tmpprodfourn->fourn_id);
+				} else {
+					$idprod = $productsupplier->get_buyprice($supplierpriceid, $qty);
+				}
+
 				$res = $productsupplier->fetch($idprod);
-				if ($res && $idprod > 0) {
+				if ($res && $idprod > 0 && $fk_supplier > 0 && (int) $productsupplier->fourn_socid !== (int) $fk_supplier) {
+					// Safety net: never let a line be attached to a supplier different from the one filtered on.
+					dol_syslog("replenish.php: get_buyprice returned fourn_socid=".$productsupplier->fourn_socid." for fk_product=".$idprod." instead of expected fk_supplier=".$fk_supplier." (line $i, product_fournisseur_price id $supplierpriceid, qty $qty)", LOG_WARNING);
+					$errorQty++;
+				} elseif ($res && $idprod > 0) {
 					if ($qty) {
 						//might need some value checks
 						$line = new CommandeFournisseurLigne($db);
@@ -269,6 +293,7 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 				$order->fetch($obj->rowid);
 				$order->fetch_thirdparty();
 
+				$result = 0;	// Stays 0 when the supplier has no line, so the test below is not done on an undefined value
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
 						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
@@ -295,6 +320,9 @@ if ($action == 'order' && GETPOST('valid') && $user->hasRight('fournisseur', 'co
 						$line->fk_unit,
 						$line->multicurrency_subprice
 					);
+					if ($result < 0) {
+						break;
+					}
 				}
 				if ($result < 0) {
 					$fail++;
@@ -902,6 +930,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
+		$result = null;
 		if (isset($draftchecked)) {
 			$result = $prod->load_stats_commande_fournisseur(0, '0,1,2,3,4');
 		} elseif (!$usevirtualstock) {

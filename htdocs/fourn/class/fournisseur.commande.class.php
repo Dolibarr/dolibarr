@@ -18,6 +18,7 @@
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2026		Pierre Ardoin			<developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1087,7 +1088,7 @@ class CommandeFournisseur extends CommonOrder
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
 			$label = '';
 		} else {
-			$label = implode($this->getTooltipContentArray($params));
+			$label = $this->getTooltipContent($params);
 		}
 
 		$url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;
@@ -2087,8 +2088,9 @@ class CommandeFournisseur extends CommonOrder
 			} else {
 				$pu = $pu_ttc;
 			}
+
 			$label = trim((string) $label);
-			$desc = trim($desc);
+			$desc = trim((string) $desc);
 			if ($desc === '' && $label !== '') {
 				$desc = $label;
 			}
@@ -3821,6 +3823,10 @@ class CommandeFournisseur extends CommonOrder
 						}
 					}
 					foreach ($this->lines as $line) {
+						// Free lines have no product and cannot be dispatched to stock.
+						if (empty($line->fk_product)) {
+							continue;
+						}
 						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
 						if ($line->product_type > 0 && (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') || empty($line->stockable_product))) {
 							continue;

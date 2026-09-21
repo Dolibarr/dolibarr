@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -166,9 +167,9 @@ class Mos extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		if ($sqlfilters) {
@@ -520,7 +521,7 @@ class Mos extends DolibarrApi
 					if (empty($value["objectid"])) {
 						throw new RestException(500, "Field objectid required in ".$arrayname);
 					}
-					$tmpproduct->fetch($value["qty"]);
+					$tmpproduct->fetch($value["objectid"]);
 					if (empty($value["qty"])) {
 						throw new RestException(500, "Field qty required in ".$arrayname);
 					}
@@ -543,48 +544,34 @@ class Mos extends DolibarrApi
 
 							$stockmove->setOrigin($this->mo->element, $this->mo->id);
 
+							// Record the stock movement first: the line below stores its ID, and
+							// llx_mrp_production.fk_stock_movement is a foreign key on llx_stock_mouvement.
 							if ($arrayname == 'arraytoconsume') {
-								$moline = new MoLine($this->db);
-								$moline->fk_mo = $this->mo->id;
-								$moline->position = $pos;
-								$moline->fk_product = $value["objectid"];
-								$moline->fk_warehouse = (int) $value["fk_warehouse"];
-								$moline->qty = $qtytoprocess;
-								$moline->batch = (string) $tmpproduct->status_batch;
-								$moline->role = 'toproduce';
-								$moline->fk_mrp_production = 0;
-								$moline->fk_stock_movement = $idstockmove;
-								$moline->fk_user_creat = DolibarrApiAccess::$user->id;
-
-								$resultmoline = $moline->create(DolibarrApiAccess::$user);
-								if ($resultmoline <= 0) {
-									$error++;
-									throw new RestException(500, $moline->error);
-								}
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $value["objectid"], $value["fk_warehouse"], $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
-								$moline = new MoLine($this->db);
-								$moline->fk_mo = $this->mo->id;
-								$moline->position = $pos;
-								$moline->fk_product = $value["objectid"];
-								$moline->fk_warehouse = $value["fk_warehouse"];
-								$moline->qty = $qtytoprocess;
-								$moline->batch = (string) $tmpproduct->status_batch;
-								$moline->role = 'toconsume';
-								$moline->fk_mrp_production = 0;
-								$moline->fk_stock_movement = $idstockmove;
-								$moline->fk_user_creat = DolibarrApiAccess::$user->id;
-
-								$resultmoline = $moline->create(DolibarrApiAccess::$user);
-								if ($resultmoline <= 0) {
-									$error++;
-									throw new RestException(500, $moline->error);
-								}
 								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $value["objectid"], $value["fk_warehouse"], $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
 								throw new RestException(500, $stockmove->error);
+							}
+
+							$moline = new MoLine($this->db);
+							$moline->fk_mo = $this->mo->id;
+							$moline->position = $pos;
+							$moline->fk_product = $value["objectid"];
+							$moline->fk_warehouse = (int) $value["fk_warehouse"];
+							$moline->qty = $qtytoprocess;
+							$moline->batch = (string) $tmpproduct->status_batch;
+							$moline->role = ($arrayname == 'arraytoconsume' ? 'toproduce' : 'toconsume');
+							$moline->fk_mrp_production = 0;
+							$moline->fk_stock_movement = $idstockmove > 0 ? $idstockmove : null;
+							$moline->fk_user_creat = DolibarrApiAccess::$user->id;
+
+							$resultmoline = $moline->create(DolibarrApiAccess::$user);
+							if ($resultmoline <= 0) {
+								$error++;
+								throw new RestException(500, $moline->error ? $moline->error : implode(', ', $moline->errors));
 							}
 						}
 						if (!$error) {
@@ -602,13 +589,13 @@ class Mos extends DolibarrApi
 								$moline->role = 'produced';
 							}
 							$moline->fk_mrp_production = 0;
-							$moline->fk_stock_movement = $idstockmove;
+							$moline->fk_stock_movement = $idstockmove > 0 ? $idstockmove : null;
 							$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
 							$resultmoline = $moline->create(DolibarrApiAccess::$user);
 							if ($resultmoline <= 0) {
 								$error++;
-								throw new RestException(500, $moline->error);
+								throw new RestException(500, $moline->error ? $moline->error : implode(', ', $moline->errors));
 							}
 
 							$pos++;
@@ -709,7 +696,30 @@ class Mos extends DolibarrApi
 							$stockmove->origin_type = 'mo';
 							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
+								// Entering the produced goods into stock is the only movement that may carry
+								// a value: the manufacturing cost of one unit, that is the sum of qty * unit
+								// cost over the lines to consume, divided by the quantity produced. Unit cost
+								// follows the same priority chain as the web UI: cost_price, then pmp, then
+								// the lowest supplier price. Computed here, inside the stock entry branch, so
+								// it can never reach a stock exit.
+								$mfgcost = 0;
+								foreach ($this->mo->lines as $consumedline) {
+									if ($consumedline->role == 'toconsume') {
+										$consumedproduct = new Product($this->db);
+										$consumedproduct->fetch($consumedline->fk_product);
+										$consumedcost = price2num(!empty($consumedproduct->cost_price) ? $consumedproduct->cost_price : $consumedproduct->pmp);
+										if (empty($consumedcost)) {
+											require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+											$productFournisseur = new ProductFournisseur($this->db);
+											if ($productFournisseur->find_min_price_product_fournisseur($consumedline->fk_product, $consumedline->qty) > 0) {
+												$consumedcost = $productFournisseur->fourn_unitprice;
+											}
+										}
+										$mfgcost += price2num(($consumedline->qty * $consumedcost) / ($this->mo->qty > 0 ? $this->mo->qty : 1), 'MU');
+									}
+								}
+								$mfgcost = (float) price2num($mfgcost, 'MU');
+								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, $mfgcost, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							} else {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							}
