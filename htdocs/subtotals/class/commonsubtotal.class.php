@@ -90,6 +90,9 @@ trait CommonSubtotal
 		}
 		$error = 0;
 		$desc = dol_html_entity_decode($desc, ENT_QUOTES);
+		// The description input wraps but stays a single line of text: a title line and its subtotal line
+		// are paired by strict equality of their description, so any line feed typed in is turned into a space.
+		$desc = trim(preg_replace('/\s*\R\s*/u', ' ', $desc));
 		$rang = -1;
 		$next_line = false;
 		$result = 0;
@@ -419,6 +422,9 @@ trait CommonSubtotal
 
 		$result = 0;
 		$error = 0;
+
+		// See addSubtotalLine(): the description stays a single line of text
+		$desc = trim(preg_replace('/\s*\R\s*/u', ' ', $desc));
 
 		$max_existing_level = 0;
 
