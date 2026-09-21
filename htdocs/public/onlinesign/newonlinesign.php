@@ -98,7 +98,7 @@ $ref = $REF = GETPOST("ref", 'alpha');
 $urlok = '';
 $urlko = '';
 
-if ($source == '') {
+if ($source === '') {
 	$source = 'proposal';
 }
 if (!empty($refusepropal)) {
@@ -114,7 +114,7 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 // Complete urls for post treatment
 $SECUREKEY = GETPOST("securekey"); // Secure key
 
-if (!empty($source)) {
+if ($source !== '') {
 	$urlok .= 'source='.urlencode($source).'&';
 	$urlko .= 'source='.urlencode($source).'&';
 }
@@ -137,7 +137,7 @@ $creditor = $mysoc->name;
 
 $type = $source;
 if (!$action) {
-	if ($source && !$ref) {
+	if ($source !== '' && !$ref) {
 		httponly_accessforbidden($langs->trans('ErrorBadParameters')." - ref missing", 400, 1);
 	}
 }
@@ -175,7 +175,7 @@ $mesg = '';
  * Actions
  */
 
-if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on permission not required here. Public form. Security checked on the securekey and on mitigation
+if ($action == 'confirm_refusepropal' && $confirm == 'yes' && $source === 'proposal' && $object instanceof Propal) {	// Public form. Security checked on the securekey and on mitigation
 	$db->begin();
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -280,16 +280,16 @@ if (getDolGlobalString('ONLINE_SIGN_NEWFORM_TEXT')) {
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text)) {
-	if ($source == 'proposal') {
+	if ($source === 'proposal' && $object instanceof Propal) {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageProposal", $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromProposal", $creditor).'<br><br></td></tr>'."\n";
-	} elseif ($source == 'contract') {
+	} elseif ($source === 'contract' && $object instanceof Contrat) {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageContract", $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromContract", $creditor).'<br><br></td></tr>'."\n";
-	} elseif ($source == 'fichinter') {
+	} elseif ($source === 'fichinter' && $object instanceof Fichinter) {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageFichinter", $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromFichinter", $creditor).'<br><br></td></tr>'."\n";
-	} elseif ($source == 'expedition') {
+	} elseif ($source === 'expedition' && $object instanceof Expedition) {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageExpedition", $mysoc->name).'</strong></td></tr>'."\n";
 		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromExpedition", $creditor).'<br><br></td></tr>'."\n";
 	} else {
@@ -302,13 +302,13 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-if ($source == 'proposal') {
+if ($source === 'proposal' && $object instanceof Propal) {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignProposal").'<br><br></td></tr>'."\n";
-} elseif ($source == 'contract') {
+} elseif ($source === 'contract' && $object instanceof Contrat) {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignContract").'<br><br></td></tr>'."\n";
-} elseif ($source == 'fichinter') {
+} elseif ($source === 'fichinter' && $object instanceof Fichinter) {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignFichinter").'<br><br></td></tr>'."\n";
-} elseif ($source == 'expedition') {
+} elseif ($source === 'expedition' && $object instanceof Expedition) {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignExpedition").'<br><br></td></tr>'."\n";
 } else {
 	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSign".dol_ucfirst($source)).'<br><br></td></tr>'."\n";
@@ -317,7 +317,7 @@ $found = false;
 $error = 0;
 
 // Signature on commercial proposal
-if ($source == 'proposal') {
+if ($source === 'proposal' && $object instanceof Propal) {
 	$found = true;
 	$langs->load("proposal");
 
@@ -412,7 +412,7 @@ if ($source == 'proposal') {
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
-} elseif ($source == 'contract') { // Signature on contract
+} elseif ($source === 'contract' && $object instanceof Contrat) { // Signature on contract
 	$found = true;
 	$langs->load("contract");
 
@@ -462,7 +462,7 @@ if ($source == 'proposal') {
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
-} elseif ($source == 'fichinter') {
+} elseif ($source === 'fichinter' && $object instanceof Fichinter) {
 	// Signature on fichinter
 	$found = true;
 	$langs->load("interventions");
@@ -511,7 +511,7 @@ if ($source == 'proposal') {
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
-} elseif ($source == 'societe_rib') {
+} elseif ($source === 'societe_rib' && $object instanceof CompanyBankAccount) {
 	$found = true;
 	$langs->loadLangs(array("companies", "commercial", "withdrawals"));
 
@@ -567,7 +567,7 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
-} elseif ($source == 'expedition') {
+} elseif ($source === 'expedition' && $object instanceof Expedition) {
 	// Signature on expedition
 	$found = true;
 	$langs->load("interventions");
@@ -773,7 +773,7 @@ if ($action == "dosign" && empty($cancel)) {
 	});
 	</script>';
 } else {
-	if ($source == 'proposal') {
+	if ($source === 'proposal' && $object instanceof Propal) {
 		if ($object->status == $object::STATUS_SIGNED) {
 			print '<br>';
 			if ($message == 'signed') {
@@ -796,19 +796,19 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<input type="submit" class="butAction butActionSign small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignPropal").'">';
 			print '<input name="refusepropal" type="submit" class="butActionDelete small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("RefusePropal").'">';
 		}
-	} elseif ($source == 'contract') {
+	} elseif ($source === 'contract' && $object instanceof Contrat) {
 		if ($message == 'signed') {
 			print '<span class="ok">'.$langs->trans("ContractSigned").'</span>';
 		} else {
 			print '<input type="submit" class="butAction butActionSign small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignContract").'">';
 		}
-	} elseif ($source == 'fichinter') {
+	} elseif ($source === 'fichinter' && $object instanceof Fichinter) {
 		if ($message == 'signed') {
 			print '<span class="ok">'.$langs->trans("FichinterSigned").'</span>';
 		} else {
 			print '<input type="submit" class="butAction butActionSign small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignFichinter").'">';
 		}
-	} elseif ($source == 'expedition') {
+	} elseif ($source === 'expedition' && $object instanceof Expedition) {
 		if ($message == 'signed' || $object->signed_status == Expedition::$SIGNED_STATUSES['STATUS_SIGNED_SENDER']) {
 			print '<span class="ok">'.$langs->trans("ExpeditionSigned").'</span>';
 		} else {

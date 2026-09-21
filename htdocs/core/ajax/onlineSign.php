@@ -1079,9 +1079,6 @@ if ($action == "importSignature") {
 							$object->indexFile($newpdffilename, 1);
 						}
 					}
-				} elseif (preg_match('/\.odt$/i', $last_main_doc_file)) {
-					$error++;
-					$response = "error document_format_not_supported";
 				} else {
 					$error++;
 					$response = "error document_format_not_supported";
@@ -1091,7 +1088,7 @@ if ($action == "importSignature") {
 			if (!$error) {
 				$result = onlineSignatureFinalizeObject($sourceDefinition, $object, $online_sign_name, $upload_dir . $filename, $newpdffilename, $response);
 				if ($result < 0) {
-					$error++;
+					$error = 1;
 				} else {
 					$response = "success";
 				}

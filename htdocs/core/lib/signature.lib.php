@@ -124,7 +124,7 @@ function getOnlineSignatureSourceDefinition($source, $ref = '', $entity = 0, $ob
 		),
 	);
 
-	$definition = empty($definitions[$source]) ? array() : $definitions[$source];
+	$definition = $definitions[$source] ?? array();
 	if (is_object($obj)) {
 		$definition['object'] = $obj;
 	}
