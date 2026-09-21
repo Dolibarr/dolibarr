@@ -251,6 +251,8 @@ class modBanque extends DolibarrModules
 	{
 		global $conf;
 
+		$this->_load_tables('/install/mysql/', 'bank');
+
 		// Permissions
 		$this->remove($options);
 
