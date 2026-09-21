@@ -111,8 +111,23 @@ before_install:
   echo ===== $(date) Install repository of packages for PHP
   echo "Remove awful phpenv"
   sudo rm -fr ~/.phpenv; sudo rm -fr /root/.phpenv
+  echo "Configure the PHP repository without relying on the Launchpad API"
+  sudo rm -f /etc/apt/sources.list.d/*mariadb*
+  sudo install -d -m 0755 /etc/apt/keyrings
+  if ! curl --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30 --fail --silent --show-error --location \
+    "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xB8DC7E53946656EFBCE4C1DD71DAEAAB4AD4CAB6" \
+    --output /tmp/ondrej-php.key; then
+    curl --retry 3 --retry-all-errors --connect-timeout 10 --max-time 30 --fail --silent --show-error --location \
+      "https://ppa.setup-php.com/keys/ondrej/php.gpg" --output /tmp/ondrej-php.key
+  fi
+  gpg --show-keys --with-colons /tmp/ondrej-php.key | grep -q ":B8DC7E53946656EFBCE4C1DD71DAEAAB4AD4CAB6:"
+  if grep -q "^-----BEGIN PGP PUBLIC KEY BLOCK-----" /tmp/ondrej-php.key; then
+    sudo gpg --dearmor --yes --output /etc/apt/keyrings/ondrej-php.gpg /tmp/ondrej-php.key
+  else
+    sudo install -m 0644 /tmp/ondrej-php.key /etc/apt/keyrings/ondrej-php.gpg
+  fi
+  echo "deb [signed-by=/etc/apt/keyrings/ondrej-php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/ondrej-php.list > /dev/null
   echo "Run apt update to discover all PHP versions"
-  sudo add-apt-repository -y ppa:ondrej/php
   sudo apt update
   echo TRAVIS_PHP_VERSION=$TRAVIS_PHP_VERSION
   echo TRAVIS_TYPE=$TRAVIS_TYPE
