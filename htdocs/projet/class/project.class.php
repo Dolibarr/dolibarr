@@ -227,6 +227,12 @@ class Project extends CommonObject
 	public $fk_opp_status; // opportunity status, into table llx_c_lead_status
 
 	/**
+	 * @var string[] Fields that can be saved by core/ajax/savekanbanfield.php when a card is
+	 *               dragged into another column of a kanban group by view (mode=kanbangroupby)
+	 */
+	public $kanbangroupbyfields = array('fk_opp_status');
+
+	/**
 	 * @var float|'' opportunity amount
 	 */
 	public $opp_amount; // opportunity amount
