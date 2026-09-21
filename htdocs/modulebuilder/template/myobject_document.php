@@ -190,7 +190,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card_d
 // Show tabs
 $head = myobjectPrepareHead($object);
 
-print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto);
+print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 // Build file list
