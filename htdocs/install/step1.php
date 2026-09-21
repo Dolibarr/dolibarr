@@ -263,12 +263,12 @@ if (!filter_var($main_url, FILTER_VALIDATE_URL)) {
 	$error++;
 }
 
-// Remove last / into dans main_dir
+// Remove last / into main_dir
 if (substr($main_dir, dol_strlen($main_dir) - 1) == "/") {
 	$main_dir = substr($main_dir, 0, dol_strlen($main_dir) - 1);
 }
 
-// Remove last / into dans main_url
+// Remove last / into main_url
 if (!empty($main_url) && substr($main_url, dol_strlen($main_url) - 1) == "/") {
 	$main_url = substr($main_url, 0, dol_strlen($main_url) - 1);
 }
@@ -815,7 +815,7 @@ function jsinfo()
 {
 	ok=true;
 
-	//alert('<?php echo dol_escape_js($langs->transnoentities("NextStepMightLastALongTime")); ?>');
+	//alert(<?php echo "'".dol_escape_js($langs->transnoentities("NextStepMightLastALongTime"))."'" ; ?>);
 
 	document.getElementById('nextbutton').style.visibility="hidden";
 	document.getElementById('pleasewait').style.visibility="visible";
@@ -980,7 +980,7 @@ function write_conf_file($conffile)
 		fwrite($fp, '$dolibarr_main_force_https=\''.dol_escape_php($main_force_https, 1).'\';');
 		fwrite($fp, "\n");
 
-		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
+		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bz2, zstd\';');
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, dolSort, abs, min, max, round, dol_now, preg_match\';');

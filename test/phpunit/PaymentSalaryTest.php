@@ -98,6 +98,7 @@ class PaymentSalaryTest extends CommonClassTest
 		$salary->amount = 100;
 		$salary->datesp = dol_now();
 		$salary->dateep = dol_now() + (3600 * 24 * 30);
+		$salary->type_payment = dol_getIdFromCode($db, 'VIR', 'c_paiement', 'code', 'id', 1);
 		$salaryid = $salary->create($user);
 		$this->assertGreaterThan(0, $salaryid, $salary->errorsToString());
 

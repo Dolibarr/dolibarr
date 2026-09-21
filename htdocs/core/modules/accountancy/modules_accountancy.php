@@ -203,7 +203,7 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 	 */
 	public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
 	{
-		global $hookmanager, $conf;
+		global $hookmanager;
 
 		foreach ($this->cols as $colKey => $colDef) {
 			$parameters = array(
@@ -251,6 +251,9 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 
 					// Add space for lines (more if we need to show a second alternative language)
 					global $outputlangsbis;
+					/** @var Translate $outputlangsbis */
+					'@phan-var-force Translate $outputlangsbis';
+
 					if (is_object($outputlangsbis)) {
 						// set cell padding with column title definition
 						$pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], 0.5);

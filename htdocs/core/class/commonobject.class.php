@@ -24,6 +24,7 @@
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
 
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -263,6 +264,11 @@ abstract class CommonObject
 	 * @var mixed		Array of linked objects, set and used when calling ->create() to be able to create links during the creation of object
 	 */
 	public $linked_objects;
+
+	/**
+	 * @var array<string,int>|null		Array of external linked objects (set by hooks or external modules) to merge into during creation
+	 */
+	public $other_linked_objects;
 
 	/**
 	 * @var array<string,array<int,int>>	Array of linked objects ids. Loaded by ->fetchObjectLinked
@@ -2141,9 +2147,11 @@ abstract class CommonObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+		/* Done with DolDeprecationHandler
 		if (empty($this->fk_project) && !empty($this->fk_projet)) {
 			$this->fk_project = $this->fk_projet; // For backward compatibility
 		}
+		*/
 		if (empty($this->fk_project)) {
 			return 0;
 		}
@@ -2860,7 +2868,8 @@ abstract class CommonObject
 	}
 
 	/**
-	 *  Change the payments methods
+	 *  Change the payments methods.
+	 *  Can be used on invoice, supplier invoice, salary, company, vat, ...
 	 *
 	 *  @param		int		$id		Id of new payment method
 	 *  @return		int				>0 if OK, <0 if KO
@@ -2988,6 +2997,12 @@ abstract class CommonObject
 				// Update line price
 				if (!empty($this->lines)) {
 					foreach ($this->lines as &$line) {
+						// A credit line (deposit, credit note, discount applied to the invoice) is not priced at the invoice rate:
+						// both its amounts are the historical ones of the credit, so a rate change must leave it untouched.
+						if (!empty($line->fk_remise_except)) {
+							continue;
+						}
+
 						// Amounts in company currency will be recalculated
 						if ($mode == 1) {
 							$line->subprice = 0;
@@ -4336,7 +4351,7 @@ abstract class CommonObject
 				'@phan-var-force Facture $this';
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';  // Note: possibly useless as $this is normally already Facture, so the class file should be loaded
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
-					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
+					if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 						$prev_sits = $this->get_prev_sits();
 
 						foreach ($prev_sits as $sit) {                // $sit is an object Facture loaded with a fetch.
@@ -4740,7 +4755,7 @@ abstract class CommonObject
 									$object = new $className($this->db);
 									'@phan-var-force CommonObject $object';
 									$ret = $object->fetch($objectid);
-									if ($ret >= 0) {
+									if ($ret > 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;
 									}
 								}
@@ -5685,7 +5700,7 @@ abstract class CommonObject
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
 	 *	@param	string      		$action				GET/POST action
-	 *	@param  CommonObjectLine 	$line			    Selected object line to output
+	 *	@param  CommonObjectLine|CommonObject|stdClass 	$line			    Selected object line to output
 	 *	@param  ''		    		$var               	Not used
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
@@ -5733,7 +5748,7 @@ abstract class CommonObject
 
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE') && empty($newlang) && is_object($this->thirdparty)) {
@@ -5897,7 +5912,7 @@ abstract class CommonObject
 	 *  If lines are into a template, titles must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	CommonObjectLine	$line				Line
+	 * 	@param	CommonObjectLine|CommonObject|stdClass	$line				Line
 	 * 	@param	string				$var				Not used
 	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
 	 *  @param	string				$defaulttpldir		Directory where to find the template
@@ -6930,9 +6945,9 @@ abstract class CommonObject
 						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								// We set a global variable to $objectoffield so we can use it inside computed formula
-								$objectoffield = dol_clone($this, 2);
+								// We set a global variable to $objectoffield so we can use it inside computed formula (must be before the assignment)
 								global $objectoffield;
+								$objectoffield = dol_clone($this, 2);
 								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
@@ -7212,7 +7227,11 @@ abstract class CommonObject
 
 							$obj = $this->db->getRow($sqlFetchObject);
 
-							if ($obj !== false) {
+							// getRow() returns an object on success, int 0 when the query succeeded but
+							// returned no row, and false on SQL failure. Testing "!== false" let the 0
+							// through as a success: $obj->rowid on an int is null, $res was set to 1 and
+							// null was stored in the column while a success was reported.
+							if (is_object($obj)) {
 								$objectId = $obj->rowid;
 								$res = 1;
 							} else {
@@ -7351,7 +7370,7 @@ abstract class CommonObject
 		// Update also the user of last modification in parent table
 		if (!$error && !empty($this->fields['fk_user_modif'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET fk_user_modif = ".(int) $user->id;
+			$sql .= " SET fk_user_modif = ".(int) $userused->id;
 			$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 			$this->db->query($sql);
 		}
@@ -7790,7 +7809,7 @@ abstract class CommonObject
 			// Update also the user of last modification in parent table
 			if (!$error && !empty($this->fields['fk_user_modif'])) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-				$sql .= " SET fk_user_modif = ".(int) $user->id;
+				$sql .= " SET fk_user_modif = ".(int) $userused->id;
 				$sql .= " WHERE ".(empty($this->table_rowid) ? 'rowid' : $this->db->sanitize($this->table_rowid))." = ".((int) $this->id);
 				$this->db->query($sql);
 			}
@@ -8070,7 +8089,9 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', (string) $type)) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($placeholder ? ' placeholder="'.dolPrintHTMLForAttribute($placeholder).'"' : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif (in_array($type, array('email', 'mail', 'phone', 'url', 'ip'))) {
+		} elseif ($type == 'phone' && !preg_match('/search_/', $keyprefix)) {
+			$out = $form->showPhoneInput($value, $keyprefix.$key.$keysuffix, !empty($this->country_id) ? $this->country_id : 0);
+		} elseif (in_array($type, array('email', 'mail', 'url', 'ip'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', (string) $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -8783,11 +8804,11 @@ abstract class CommonObject
 				$out .= '
 					<script nonce="'.getNonce().'">
 					$(document).ready(function() {
-						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
-							$("'.dol_escape_js($newInput).'").insertBefore(this);
+						$(\'a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add\').click(function() {
+							$(\''.dol_escape_js($newInput).'\').insertBefore(this);
 						});
 
-						$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
+						$(document).on("click", \'a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del\', function() {
 							$(this).parent().remove();
 						});
 					});
@@ -9926,7 +9947,7 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value, '', $this->table_element);
 								break;
 							case "create":
-								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
+								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,ip,password'));
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
@@ -11364,8 +11385,8 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
-		$sql.= " SET ".implode(', ', $sanitized_tmp);
-		$sql.= " WHERE rowid = ".((int) $this->id);
+		$sql .= " SET ".implode(', ', $sanitized_tmp);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 

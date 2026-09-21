@@ -736,6 +736,48 @@ class FunctionsLibTest extends CommonClassTest
 
 
 	/**
+	 * testDolGetThemeFilePath
+	 *
+	 * @return void
+	 */
+	public function testDolGetThemeFilePath()
+	{
+		global $conf;
+
+		$savtheme = $conf->theme;
+		$savmodulesparts = $conf->modules_parts;
+
+		// A file that exists in the native theme directory is found there
+		$conf->theme = 'eldy';
+		$conf->modules_parts['theme'] = array();
+		$result = dol_getThemeFilePath('theme_vars.inc.php');
+		print __METHOD__." result=".$result."\n";
+		$this->assertSame(DOL_DOCUMENT_ROOT.'/theme/eldy/theme_vars.inc.php', $result, 'Native theme file must be found under DOL_DOCUMENT_ROOT');
+
+		// An explicit theme name can be passed
+		$conf->theme = 'md';
+		$result = dol_getThemeFilePath('theme_vars.inc.php', 'eldy');
+		$this->assertSame(DOL_DOCUMENT_ROOT.'/theme/eldy/theme_vars.inc.php', $result, 'The $theme argument must take precedence over $conf->theme');
+
+		// With no module theme registered, the native path is returned as-is,
+		// without an existence check (historical behaviour, no extra I/O).
+		$conf->theme = 'eldy';
+		$conf->modules_parts['theme'] = array();
+		$result = dol_getThemeFilePath('afilethatdoesnotexist.inc.php');
+		$this->assertSame(DOL_DOCUMENT_ROOT.'/theme/eldy/afilethatdoesnotexist.inc.php', $result, 'With no module theme, the native path is returned unchecked');
+
+		// When a module registers a theme directory, a file missing from every
+		// candidate directory returns an empty string.
+		$conf->modules_parts['theme'] = array('/amodulethatdoesnotexist/');
+		$result = dol_getThemeFilePath('afilethatdoesnotexist.inc.php');
+		$this->assertSame('', $result, 'A missing theme file must return an empty string when a module theme is registered');
+
+		$conf->theme = $savtheme;
+		$conf->modules_parts = $savmodulesparts;
+	}
+
+
+	/**
 	 * testGetBrowserInfo
 	 *
 	 * @return void
@@ -1636,10 +1678,6 @@ class FunctionsLibTest extends CommonClassTest
 	public function testGetDefaultTva()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		// Sellers
 		$companyfrnovat = new Societe($db);
@@ -1754,10 +1792,6 @@ class FunctionsLibTest extends CommonClassTest
 	public function testGetDefaultTvaForBuyerState()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		// Make sure the ecommerce directive left on by a previous test does not interfere with VATRULE 2
 		unset($conf->global->SERVICE_ARE_ECOMMERCE_200238EC);
@@ -1828,10 +1862,6 @@ class FunctionsLibTest extends CommonClassTest
 	public function testGetDefaultLocalTax()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		$companyfrnovat = new Societe($db);
 		$companyfrnovat->country_code = 'FR';
@@ -2205,6 +2235,12 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$newstring."\n";
 		$this->assertEquals($newstring, "This is a text with<br>\nNew line<br>\nThen<br>\nNo html<br>\nThen<br>\n<b>HTML</b>", 'Test on make_substitutions with full conversion of text accepted');
 
+
+		// Try mix HTML into not HTML but no replaement is done
+		$newstring = make_substitutions('¿Necesitas ayuda para empezar con GLPI?', array('__SENDEREMAIL_SIGNATURE__' => '<br><strong>HTML content</strong>'), $langs, 1);
+		print __METHOD__." ".$newstring."\n";
+		$this->assertEquals($newstring, '¿Necesitas ayuda para empezar con GLPI?');
+
 		return true;
 	}
 
@@ -2307,6 +2343,35 @@ class FunctionsLibTest extends CommonClassTest
 		$result = fetchObjectByElement(0, 'product');
 
 		$this->assertTrue(is_object($result));
+
+		$hasvariantsmodule = array_key_exists('variants', $conf->modules);
+		$originalvariantsmodule = $hasvariantsmodule ? $conf->modules['variants'] : null;
+
+		try {
+			$conf->modules['variants'] = 1;
+
+			$productattribute = getElementProperties('product_attribute');
+			$this->assertSame('variants', $productattribute['module']);
+			$this->assertSame('variants/class', $productattribute['classpath']);
+			$this->assertSame('ProductAttribute', $productattribute['classfile']);
+			$this->assertSame('ProductAttribute', $productattribute['classname']);
+
+			$productattributevalue = getElementProperties('product_attribute_value');
+			$this->assertSame('variants', $productattributevalue['module']);
+			$this->assertSame('variants/class', $productattributevalue['classpath']);
+			$this->assertSame('ProductAttributeValue', $productattributevalue['classfile']);
+			$this->assertSame('ProductAttributeValue', $productattributevalue['classname']);
+			$this->assertSame('product_attribute', $productattributevalue['parent_element']);
+
+			$this->assertInstanceOf(ProductAttribute::class, fetchObjectByElement(0, 'product_attribute'));
+			$this->assertInstanceOf(ProductAttributeValue::class, fetchObjectByElement(0, 'product_attribute_value'));
+		} finally {
+			if ($hasvariantsmodule) {
+				$conf->modules['variants'] = $originalvariantsmodule;
+			} else {
+				unset($conf->modules['variants']);
+			}
+		}
 
 		return true;
 	}
@@ -2530,6 +2595,143 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testDolStrlenDolSubstr
+	 *
+	 * @return void
+	 */
+	public function testDolStrlenDolSubstr()
+	{
+		$this->assertEquals(0, dol_strlen(null), 'dol_strlen(null) must be 0, not an error');
+		$this->assertEquals(0, dol_strlen(''));
+		$this->assertEquals(3, dol_strlen('abc'));
+		$this->assertEquals(2, dol_strlen('éà'), 'dol_strlen must count characters, not bytes');
+
+		$this->assertEquals('Hello', dol_substr('Hello World', 0, 5));
+		$this->assertEquals('World', dol_substr('Hello World', 6));
+		$this->assertEquals('éà', dol_substr('éàüö', 0, 2), 'dol_substr must cut on characters, not bytes');
+		// $trunconbytes=1: length is a max of bytes instead of a max of characters
+		$this->assertEquals('Hel', dol_substr('Hello', 0, 3, '', 1));
+	}
+
+	/**
+	 * testVatrate
+	 *
+	 * @return void
+	 */
+	public function testVatrate()
+	{
+		global $conf, $langs;
+
+		$oldlangs = $langs;
+		$newlangs = new Translate('', $conf);
+		$newlangs->setDefaultLang('en_US');
+		$newlangs->load('main');
+		$langs = $newlangs;
+
+		$this->assertEquals('20', vatrate('20'), 'No addpercent asked and no % in input');
+		$this->assertEquals('20%', vatrate('20', true), 'addpercent=true adds the % sign');
+		$this->assertEquals('20%', vatrate('20%'), 'A % already in the rate auto-enables addpercent');
+
+		// info_bits&1 (French NPR) with default usestarfornpr=0 still shows the '*'
+		$this->assertEquals('8.5% *', vatrate('8.5', true, 1));
+		// usestarfornpr=-1 means never show the star, even for a NPR rate
+		$this->assertEquals('8.5%', vatrate('8.5', true, 1, -1));
+
+		// A trailing '(CODE)' note is extracted and re-appended after formatting
+		$this->assertEquals('8.5 (NPR)', vatrate('8.5 (NPR)'));
+		// In HTML mode, the note is wrapped in a span
+		$this->assertEquals('8.5% <span class="opacitymedium small">(NPR)</span>', vatrate('8.5 (NPR)', true, 0, 0, 1));
+
+		// A rate with '/' (multiple combined rates) is never reformatted by price(), just passed through
+		$this->assertEquals('9/9/9', vatrate('9/9/9'));
+
+		$langs = $oldlangs;
+	}
+
+	/**
+	 * testYn
+	 *
+	 * @return void
+	 */
+	public function testYn()
+	{
+		global $conf, $langs;
+
+		$oldlangs = $langs;
+		$newlangs = new Translate('', $conf);
+		$newlangs->setDefaultLang('en_US');
+		$newlangs->load('main');
+		$langs = $newlangs;
+
+		// format=1 (default): capitalized Yes/No
+		$this->assertEquals('Yes', yn(1));
+		$this->assertEquals('No', yn(0));
+		// format=0: lowercase yes/no
+		$this->assertEquals('yes', yn(true, 0));
+		$this->assertEquals('no', yn(false, 0));
+		// String values 'yes'/'no' are also accepted
+		$this->assertEquals('Yes', yn('yes'));
+		$this->assertEquals('No', yn('no'));
+		// format=2: checkbox only
+		$this->assertEquals('<input type="checkbox" value="1" checked disabled>', yn(1, 2));
+		$this->assertEquals('<input type="checkbox" value="0" disabled>', yn(0, 2));
+		// format=3: checkbox + text
+		$this->assertEquals('<input type="checkbox" value="1" checked disabled> Yes', yn(1, 3));
+		// color=1: wrap in a <span> colored 'ok' or 'error'
+		$this->assertEquals('<span class="ok">Yes</span>', yn(1, 1, 1));
+		$this->assertEquals('<span class="error">No</span>', yn(0, 1, 1));
+		// color=2: always use 'ok' styling, even for a "No" value
+		$this->assertEquals('<span class="ok">No</span>', yn(0, 1, 2));
+		// format=4 (or non-numeric): use a picto instead of text
+		$this->assertStringContainsStringIgnoringCase('fa-check', yn(1, 4));
+		$this->assertStringContainsStringIgnoringCase('fa-times', yn(0, 4));
+
+		$langs = $oldlangs;
+	}
+
+	/**
+	 * testColorIsLight
+	 *
+	 * @return void
+	 */
+	public function testColorIsLight()
+	{
+		$this->assertEquals(-1, colorIsLight(''), 'Empty/invalid color must return -1');
+		$this->assertEquals(1, colorIsLight('FFFFFF'), 'White (hex) is light');
+		$this->assertEquals(0, colorIsLight('000000'), 'Black (hex) is dark');
+		$this->assertEquals(1, colorIsLight('255,255,255'), 'White (comma RGB) is light');
+		$this->assertEquals(0, colorIsLight('0,0,0'), 'Black (comma RGB) is dark');
+		$this->assertEquals(0, colorIsLight('123456'), 'A dark-ish arbitrary color');
+	}
+
+	/**
+	 * testGetExdir
+	 *
+	 * @return void
+	 */
+	public function testGetExdir()
+	{
+		// New usage: modulepart not in the legacy numeric-path list, ref is used directly (sanitized)
+		$obj = new stdClass();
+		$obj->ref = 'INV2024-0001';
+		$obj->id = 5;
+		$this->assertEquals('INV2024-0001', get_exdir(0, 0, 0, 1, $obj, 'facture'));
+		$this->assertEquals('INV2024-0001/', get_exdir(0, 0, 0, 0, $obj, 'facture'), 'withoutslash=0 adds a trailing slash');
+
+		// New usage, no ref: falls back to the object id
+		$obj2 = new stdClass();
+		$obj2->ref = '';
+		$obj2->id = 42;
+		$this->assertEquals('42', get_exdir(0, 0, 0, 1, $obj2, 'facture'));
+
+		// Legacy numeric path: 'mailing' is one of the modules using the old per-digit subdirectory split
+		$this->assertEquals('5/1/0/', get_exdir('015', 3, 0, 0, null, 'mailing'), 'Level 3 splits the last 3 digits into 3 subdirs');
+		$this->assertEquals('5/', get_exdir('015', 1, 0, 0, null, 'mailing'), 'Level 1 keeps only the last digit');
+		// Level not given (0): 'cheque' is in the legacy list and forces level=2 automatically
+		$this->assertEquals('5/1/', get_exdir('015', 0, 0, 0, null, 'cheque'));
+	}
+
+	/**
 	 * testDolPrintSize
 	 *
 	 * @return void
@@ -2712,5 +2914,63 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('comm/action/class', $properties['classpath']);
 		$this->assertEquals('actioncomm', $properties['classfile']);
 		$this->assertEquals('Actioncomm', $properties['classname']);
+
+		// Variants elements: the 2nd segment ('attribute') collides with the PHP 8 native
+		// Attribute class, so a wrong resolution here is a fatal TypeError, not a soft failure.
+		$properties = getElementProperties('product_attribute');
+		$this->assertEquals('variants', $properties['module'], 'product_attribute module');
+		$this->assertEquals('variants/class', $properties['classpath'], 'product_attribute classpath');
+		$this->assertEquals('ProductAttribute', $properties['classfile'], 'product_attribute classfile');
+		$this->assertEquals('ProductAttribute', $properties['classname'], 'product_attribute classname');
+		$this->assertEquals('product_attribute', $properties['table_element'], 'product_attribute table_element');
+
+		$properties = getElementProperties('product_attribute_value');
+		$this->assertEquals('ProductAttributeValue', $properties['classname'], 'product_attribute_value classname');
+		$this->assertEquals('variants/class', $properties['classpath'], 'product_attribute_value classpath');
+
+		$properties = getElementProperties('product_attribute_combination');
+		$this->assertEquals('ProductCombination', $properties['classname'], 'product_attribute_combination classname');
+		$this->assertEquals('variants/class', $properties['classpath'], 'product_attribute_combination classpath');
+
+		$properties = getElementProperties('product_attribute_combination2val');
+		$this->assertEquals('ProductCombination2ValuePair', $properties['classname'], 'combination2val classname');
+
+		// The price level class lives inside ProductCombination.class.php
+		$properties = getElementProperties('product_attribute_combination_price_level');
+		$this->assertEquals('ProductCombination', $properties['classfile'], 'price level classfile');
+		$this->assertEquals('ProductCombinationLevel', $properties['classname'], 'price level classname');
+	}
+
+	/**
+	 * testFetchObjectByElementNeverInstantiatesInternalClass
+	 *
+	 * @return void
+	 */
+	public function testFetchObjectByElementNeverInstantiatesInternalClass()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savmodules = $conf->modules;
+		$conf->modules['variants'] = 'variants';
+
+		// Before the fix, this resolved to the native PHP 8 'Attribute' class and raised
+		// TypeError: Attribute::__construct(): Argument #1 ($flags) must be of type int.
+		$object = fetchObjectByElement(0, 'product_attribute_combination');
+		$this->assertInstanceOf('ProductCombination', $object, 'fetchObjectByElement product_attribute_combination');
+
+		$object = fetchObjectByElement(0, 'product_attribute');
+		$this->assertInstanceOf('ProductAttribute', $object, 'fetchObjectByElement product_attribute');
+
+		// Any unknown element whose subelement is the name of a PHP class reaches the same trap:
+		// the default rules of getElementProperties() build classname from the subelement, so
+		// 'product_error' resolves to the native 'Error' class of an enabled module.
+		$this->assertEquals('Error', getElementProperties('product_error')['classname'], 'product_error resolves to a PHP internal class');
+		$this->assertEquals(-1, fetchObjectByElement(0, 'product_error'), 'a PHP internal class is never instantiated');
+
+		$conf->modules = $savmodules;
 	}
 }

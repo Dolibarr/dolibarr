@@ -6,6 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,10 @@ top_httphead('text/css');
 header('Cache-Control: max-age=10800, public, must-revalidate');
 
 
-include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+if ($theme_vars_file) {
+	include $theme_vars_file;
+}
 if (defined('THEME_ONLY_CONSTANT')) {
 	return;
 }
@@ -103,6 +107,10 @@ html,body {
 	padding: 10px;
 	text-align: center;
 	white-space: normal;
+}
+
+.bodytakepos div.login_block_user {
+	text-align: right;
 }
 
 .center {
@@ -249,6 +257,11 @@ div[aria-describedby="dialog-info"] button:before {
 }
 div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
 	border-width: 0;
+}
+
+.takepos #search {
+	height: unset;
+	margin-bottom: 4px !important;
 }
 
 .takepospay {
@@ -461,6 +474,14 @@ div.paymentbordline
 	font-size: 6px;
 	padding-top:10px;
 	padding-bottom:10px;
+}
+
+/* When the categories column is hidden (TAKEPOS_HIDE_CATEGORIES), index.php gives the
+ * products area the centpercent class so it takes the whole row, but the generic
+ * .centpercent rule of the theme loses against .div5 above, which is loaded later:
+ * make the intent explicit. */
+.div5.centpercent {
+	width: 100%;
 }
 
 .div1, .div2, .div3, .div4, .div5 {

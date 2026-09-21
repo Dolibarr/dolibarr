@@ -22,6 +22,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -139,9 +140,9 @@ class Boms extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		if ($sqlfilters) {
@@ -470,6 +471,16 @@ class Boms extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->bom->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// BOM::updateLine() sets fk_bom to this BOM on whatever line it is given, so a line of
+		// another BOM must be refused here or it would be moved into this one.
+		$bomline = new BOMLine($this->db);
+		if ($bomline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'BOM line not found');
+		}
+		if ($bomline->fk_bom != $this->bom->id) {
+			throw new RestException(403, 'Line does not belong to this BOM');
 		}
 
 		$request_data = (object) $request_data;

@@ -449,6 +449,9 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->info_bits)) {
 			$this->info_bits = 0;
 		}
@@ -598,6 +601,9 @@ class OrderLine extends CommonOrderLine
 		}
 		if (empty($this->qty)) {
 			$this->qty = 0;
+		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
 		}
 		if (empty($this->total_localtax1)) {
 			$this->total_localtax1 = 0;

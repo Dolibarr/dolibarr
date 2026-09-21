@@ -114,7 +114,7 @@ class modCron extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 23002;
-		$this->rights[$r][1] = 'Create cron Jobs';
+		$this->rights[$r][1] = 'Create/Update and execute cron Jobs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'create';
 		$r++;
@@ -125,11 +125,13 @@ class modCron extends DolibarrModules
 		$this->rights[$r][4] = 'delete';
 		$r++;
 
+		/*
 		$this->rights[$r][0] = 23004;
 		$this->rights[$r][1] = 'Execute cron Jobs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'execute';
 		$r++;
+		*/
 
 		// Main menu entries
 		$r = 0;

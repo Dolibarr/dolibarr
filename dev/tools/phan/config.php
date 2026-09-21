@@ -360,8 +360,9 @@ return [
 	//	should be added to the `directory_list` as
 	//	to `exclude_analysis_directory_list`.
 	"exclude_analysis_directory_list" => [
+		'dev/tools/',
 		'htdocs/includes/',
-		'htdocs/install/doctemplates/websites/',
+		'htdocs/install/doctemplates/',
 		'htdocs/core/class/lessc.class.php', // External library
 		'htdocs/admin/tools/ui/',
 		PHAN_DIR . '/stubs/',
@@ -370,6 +371,7 @@ return [
 	'exclude_file_regex' => '@^('  // @phpstan-ignore-line
 		.'dummy'  // @phpstan-ignore-line
 		// mymodule seen in cti, but not in git.
+		.'|dev/tools/.*'  // Ignore all files in dev tools @phpstan-ignore-line
 		.'|htdocs/custom/.*'  // Ignore all custom modules @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
 		.'|htdocs/admin/tools/ui/.*'  // @phpstan-ignore-line
@@ -404,10 +406,12 @@ return [
 		'/^dol_now$/' => [0, '{^(?:auto|gmt|tz(?:server|ref|user(?:rel)?))$}',"InvalidDolNowArgument"],
 		'/^dol_mktime$/' => [6, '{^(?:|0|1|auto|gmt|tz(?:server|ref|user(?:rel)?|,[+a-zA-Z-/]+))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
 		'/^dol_print_date$/' => [2, '{^(?:|0|1|auto|gmt|tz(?:server|user(?:rel)?))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
-		'/^GETPOSTFLOAT$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidGetPostFloatRounding"],
-		'/^price2num$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidPrice2NumRounding"],
+		'/^GETPOSTFLOAT$/' => [1, '{^(?:|M[UTS]|C[UTR]|\d+)$}',"InvalidGetPostFloatRounding"],
+		'/^price2num$/' => [1, '{^(?:|M[UTS]|C[UTR]|\d+)$}',"InvalidPrice2NumRounding"],
 	],
+
 	'SqlInjectionPlugin' => ['debug' => false],
+
 	'plugins' => [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
@@ -543,10 +547,6 @@ return [
 		'memcache'  => PHAN_DIR . '/stubs/memcache.phan_php',
 		'memcached' => PHAN_DIR . '/stubs/memcached.phan_php',
 		'mysqli'  => PHAN_DIR . '/stubs/mysqli.phan_php',
-		'pdo_cubrid'  => PHAN_DIR . '/stubs/pdo_cubrid.phan_php',
-		'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
-		'pdo_pgsql'  => PHAN_DIR . '/stubs/pdo_pgsql.phan_php',
-		'pdo_sqlite'  => PHAN_DIR . '/stubs/pdo_sqlite.phan_php',
 		'phpunit'  => PHAN_DIR . '/stubs/phpunit.phan_php',
 		'pgsql'  => PHAN_DIR . '/stubs/pgsql.phan_php',
 		'session'  => PHAN_DIR . '/stubs/session.phan_php',

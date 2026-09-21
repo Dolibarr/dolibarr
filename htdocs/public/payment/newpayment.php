@@ -2402,11 +2402,14 @@ if ($action != 'dopayment') {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("OrderBilled").'</div>';
 		} elseif ($source == 'invoice' && $object->paye) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("InvoicePaid").'</div>';
-		} elseif ($source == 'invoice' && $object->status == Facture::STATUS_ABANDONED && $object->close_code == Facture::CLOSECODE_REPLACED) {
+		} elseif ($source == 'invoice' && $object->status == Facture::STATUS_ABANDONED && ($object->close_code == Facture::CLOSECODE_REPLACED || getDolGlobalString('INVOICE_ONLINE_PAYMENT_REFUSED_WHATEVER_IS_ABANDON_REASON'))) {
 			// Only refuse the payment when the invoice was closed because it has been replaced: the amount is
 			// then claimed by the replacement invoice and paying this link would pay it twice. An invoice
 			// abandoned for any other reason, a bad debt for instance, keeps its link usable, since a customer
 			// paying it anyway is a good outcome.
+			// INVOICE_ONLINE_PAYMENT_REFUSED_WHATEVER_IS_ABANDON_REASON extends the refusal to every
+			// abandoned invoice, for jurisdictions where collecting is no longer allowed once a
+			// receivable has been written off or sent to collections (#39327).
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("Abandoned").'</div>';
 		} elseif ($source == 'donation' && $object->paid) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("DonationPaid").'</div>';
@@ -2824,6 +2827,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 
 			var cardElement = elements.create('card', {style: style});
 
+				<?php if (!empty($sessionstripe)) { ?>
 			// Comment this to avoid the redirect
 			stripe.redirectToCheckout({
 			  // Make the id field from the Checkout Session creation API response
@@ -2835,6 +2839,10 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 			  // error, display the localized error message to your customer
 			  // using `result.error.message`.
 			});
+				<?php } else { ?>
+			// $sessionstripe was not created (Stripe API call failed, see the error message printed above)
+			console.error('Failed to create Stripe Checkout Session');
+				<?php } ?>
 
 
 				<?php
@@ -2916,19 +2924,19 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 							billing_details: {
 								name: 'test'
 								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
-									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
+									?>, email: <?php echo "'".dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) {
-									?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
+									?>, phone: <?php echo "'".dol_escape_js($object->thirdparty->phone)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty)) {
 									?>, address: {
-									city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+									city: <?php echo "'".dol_escape_js($object->thirdparty->town)."'" ; ?>,
 									<?php if ($object->thirdparty->country_code) {
-										?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
+										?>country: <?php echo "'".dol_escape_js($object->thirdparty->country_code)."'" ; ?>,<?php
 									} ?>
-									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
-									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
+									line1: <?php echo "'".dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address))."'" ; ?>,
+									postal_code: <?php echo "'".dol_escape_js($object->thirdparty->zip)."'" ; ?>
 									}
 									<?php
 								} ?>
@@ -2996,7 +3004,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 				{
 					console.log("Field Card holder is empty");
 					var displayError = document.getElementById('card-errors');
-					displayError.textContent = '<?php print dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner"))); ?>';
+					displayError.textContent = <?php print "'".dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner")))."'" ; ?>;
 				}
 				else
 				{
@@ -3010,19 +3018,19 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 							billing_details: {
 								name: cardholderName.value
 								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
-									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
+									?>, email: <?php echo "'".dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) {
-									?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
+									?>, phone: <?php echo "'".dol_escape_js($object->thirdparty->phone)."'" ; ?><?php
 								} ?>
 								<?php if (is_object($object) && is_object($object->thirdparty)) {
 									?>, address: {
-									city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+									city: <?php echo "'".dol_escape_js($object->thirdparty->town)."'" ; ?>,
 									<?php if ($object->thirdparty->country_code) {
-										?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
+										?>country: <?php echo "'".dol_escape_js($object->thirdparty->country_code)."'" ; ?>,<?php
 									} ?>
-									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
-									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
+									line1: <?php echo "'".dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address))."'" ; ?>,
+									postal_code: <?php echo "'".dol_escape_js($object->thirdparty->zip)."'" ; ?>
 									}
 									<?php
 								} ?>

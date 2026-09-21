@@ -1,8 +1,8 @@
-name: "Close old PRs with merge conflicts"
+name: "Close old PRs with Works for me / Can't reproduce label"
 
 on:
   schedule:
-    - cron: "20 21 * * *"
+    - cron: "0 21 * * 3"
 
   workflow_dispatch:
 
@@ -11,20 +11,20 @@ permissions:
   pull-requests: write
 
 jobs:
-  close-old-conflicting-prs:
+  close-old-labeled-prs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Find and close old PRs with merge conflicts
+      - name: Find and close old PRs with Works for me / Can't reproduce label
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
 
-          ONE_YEAR_AGO=$(date -d "6 months ago" --iso-8601=seconds)
+          SIX_MONTHS_AGO=$(date -d "6 months ago" --iso-8601=seconds)
 
-          echo "Looking for open PRs not updated since: $ONE_YEAR_AGO"
+          echo "Looking for open PRs with 'Works for me / Can't reproduce' label not updated since: $SIX_MONTHS_AGO"
 
           CLOSED_COUNT=0
           MAX_CLOSED=20
@@ -33,8 +33,9 @@ jobs:
             --repo "$REPO" \
             --state open \
             --limit 1000 \
-            --json number,title,createdAt,updatedAt |
-          jq -c '.[] | select(.updatedAt < "'"$ONE_YEAR_AGO"'")' |
+            --label "Works for me / Can't reproduce" \
+            --json number,title,createdAt,updatedAt,labels |
+          jq -c '.[] | select(.updatedAt < "'"$SIX_MONTHS_AGO"'")' |
           while IFS= read -r PR; do
 
             PR_NUMBER=$(echo "$PR" | jq -r '.number')
@@ -49,20 +50,17 @@ jobs:
             echo "Last updated: $UPDATED_AT"
             echo "========================================"
 
-            echo "Checking merge status..."
+            # Verify the label is present
+            LABELS=$(echo "$PR" | jq -r '[.labels[].name] | join(", ")')
+            echo "Labels: $LABELS"
 
-            MERGEABLE=$(gh pr view "$PR_NUMBER" \
-              --repo "$REPO" \
-              --json mergeable \
-              --jq '.mergeable')
+            HAS_LABEL=$(echo "$PR" | jq -r '[.labels[].name] | any(.[]; . == "Works for me / Can'"'"'t reproduce")')
 
-            echo "Mergeable status: $MERGEABLE"
+            if [ "$HAS_LABEL" = "true" ]; then
 
-            if [ "$MERGEABLE" = "CONFLICTING" ]; then
+              echo "PR #$PR_NUMBER has the required label."
 
-              echo "PR #$PR_NUMBER has merge conflicts."
-
-              COMMENT="This PR has been closed automatically because it has not been updated for more than 6 months, and currently has merge conflicts so can't merged without author action. The PR must be reopened if the conflicts are resolved and the changes are still relevant."
+              COMMENT="This PR has been closed automatically because it has not been updated for more than 6 months and has the label 'Works for me / Can't reproduce'. If the issue is still relevant, please reopen the PR and provide additional context or a reproducible test case."
 
               echo "Closing PR #$PR_NUMBER"
 
@@ -80,7 +78,7 @@ jobs:
               fi
 
             else
-              echo "PR #$PR_NUMBER has no merge conflict. Keeping it open."
+              echo "PR #$PR_NUMBER does not have the required label. Keeping it open."
             fi
 
           done

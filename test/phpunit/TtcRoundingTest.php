@@ -1837,4 +1837,121 @@ class TtcRoundingTest extends CommonClassTest
 		$this->assertMixedSubpriceTtc($afterRemise, 'Supplier invoice ROT discount');
 		print __METHOD__." id=".$id." clone=".$clonedId."\n";
 	}
+
+	/**
+	 * Customer invoice - applying a deposit/absolute discount inserts a FactureLigne through
+	 * insert_discount() which never sets subprice_ttc.
+	 * The line must be inserted with subprice_ttc defaulting to 0.
+	 *
+	 * @return void
+	 */
+	public function testCustomerInvoiceApplyDepositTtc()
+	{
+		global $user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('invoice')) {
+			$this->markTestSkipped('Module invoice disabled');
+			return;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		// Final invoice with one TTC line.
+		$object = new Facture($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Invoice create for deposit');
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, '', '', 0, 0, 0, 'TTC', self::PU_TTC);
+
+		// A deposit/absolute discount available for the thirdparty (not yet linked to any invoice).
+		$discount = new DiscountAbsolute($db);
+		$discount->socid = $socid;
+		$discount->fk_soc = $socid;
+		$discount->description = 'Deposit TTC';
+		$discount->amount_ht = 100;
+		$discount->amount_tva = 20;
+		$discount->amount_ttc = 120;
+		$discount->tva_tx = self::VAT;
+		$discountid = $discount->create($user);
+		$this->assertGreaterThan(0, $discountid, 'DiscountAbsolute create: '.$discount->error);
+
+		// Apply the deposit on the final invoice: this is the path that used to crash.
+		$reloaded = new Facture($db);
+		$reloaded->fetch($id);
+		$res = $reloaded->insert_discount($discountid);
+		$this->assertGreaterThan(0, $res, 'insert_discount must not fail with an SQL error: '.$reloaded->error);
+
+		// The discount line is persisted with subprice_ttc = 0 (HT-entered, not a TTC entry marker).
+		$after = new Facture($db);
+		$after->fetch($id);
+		$after->fetch_lines();
+		$found = null;
+		foreach ($after->lines as $line) {
+			if (!empty($line->fk_remise_except)) {
+				$found = $line;
+				break;
+			}
+		}
+		$this->assertNotNull($found, 'Deposit line must exist on the invoice');
+		$this->assertEquals(0, (float) ($found->subprice_ttc ?? 0), 'Deposit line subprice_ttc must default to 0');
+		$this->assertEquals(-100, (float) $found->subprice, 'Deposit line subprice = -amount_ht');
+		print __METHOD__." id=".$id." discount=".$discountid."\n";
+	}
+
+	/**
+	 * Customer invoice - a line created before subprice_ttc existed has NULL in DB.
+	 * After fetch() (subprice_ttc = null), a plain update() must not break the SQL: the guard defaults it to 0.
+	 *
+	 * @return void
+	 */
+	public function testCustomerInvoiceLineUpdateLegacyNullSubpriceTtc()
+	{
+		global $user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('invoice')) {
+			$this->markTestSkipped('Module invoice disabled');
+			return;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/factureligne.class.php';
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new Facture($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Invoice create for legacy NULL subprice_ttc');
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, '', '', 0, 0, 0, 'TTC', self::PU_TTC);
+
+		$reloaded = new Facture($db);
+		$reloaded->fetch($id);
+		$reloaded->fetch_lines();
+		$priced = $this->pricedLines($reloaded);
+		$lineid = $priced[0]->id;
+
+		// Simulate a line created before subprice_ttc existed: force NULL in DB.
+		$sql = "UPDATE ".$db->prefix()."facturedet SET subprice_ttc = NULL WHERE rowid = ".((int) $lineid);
+		$this->assertNotFalse($db->query($sql), 'Force subprice_ttc = NULL in DB');
+
+		// Fetch (subprice_ttc becomes null) then update(): must not break the SQL.
+		$line = new FactureLigne($db);
+		$line->fetch($lineid);
+		$this->assertEmpty($line->subprice_ttc, 'subprice_ttc is empty/null after fetch of a legacy line');
+		$res = $line->update($user);
+		$this->assertGreaterThan(0, $res, 'update() must not fail on a legacy NULL subprice_ttc line: '.$line->error);
+
+		// After the update the guard persisted a 0 (never an empty SQL value).
+		$afterLine = new FactureLigne($db);
+		$afterLine->fetch($lineid);
+		$this->assertEquals(0, (float) ($afterLine->subprice_ttc ?? 0), 'subprice_ttc persisted as 0 after update');
+		print __METHOD__." id=".$id." line=".$lineid."\n";
+	}
 }

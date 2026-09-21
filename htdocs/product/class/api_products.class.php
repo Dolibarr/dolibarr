@@ -445,7 +445,9 @@ class Products extends DolibarrApi
 			$updatetype = true;
 		}
 
-		$result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update', $updatetype);
+		$this->db->begin();
+
+		$result = $this->product->update($id, DolibarrApiAccess::$user, 0, 'update', $updatetype);
 
 		// If price mode is 1 price per product or price by client
 		if ($result > 0 && (getDolGlobalString('PRODUCT_PRICE_UNIQ') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES'))) {
@@ -546,8 +548,11 @@ class Products extends DolibarrApi
 		}
 
 		if ($result <= 0) {
+			$this->db->rollback();
 			throw new RestException(500, "Error updating product", array_merge(array($this->product->error), $this->product->errors));
 		}
+
+		$this->db->commit();
 
 		return $this->get($id);
 	}
@@ -2433,6 +2438,49 @@ class Products extends DolibarrApi
 		}
 
 		unset($object->module);
+
+		// Document/line totals carried by CommonObject: always empty for a standalone product
+		unset($object->total_ht);
+		unset($object->total_tva);
+		unset($object->total_ttc);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+
+		// Validation/closure workflow fields: a product is never validated or closed
+		unset($object->date_validation);
+		unset($object->date_cloture);
+		unset($object->user_validation_id);
+		unset($object->user_closing_id);
+
+		// Supplier buying-price context: only filled after get_buyprice(), not by a plain read
+		// (complements fourn_pu / fourn_socid / ref_fourn / product_fourn_id already removed above)
+		unset($object->buyprice);
+		unset($object->fourn_qty);
+		unset($object->fourn_multicurrency_price);
+		unset($object->fourn_multicurrency_unitprice);
+		unset($object->fourn_multicurrency_tx);
+		unset($object->fourn_multicurrency_id);
+		unset($object->fourn_multicurrency_code);
+		unset($object->vatrate_supplier);
+		unset($object->desc_supplier);
+		unset($object->default_vat_code_supplier);
+		unset($object->product_fourn_price_id);
+
+		// Transient scaffolding not related to the product record
+		unset($object->specimen);
+		unset($object->canvas);
+		unset($object->res);
+		unset($object->other);
+		unset($object->warehouse);
+		unset($object->warehouse_id);
+
 		return $object;
 	}
 

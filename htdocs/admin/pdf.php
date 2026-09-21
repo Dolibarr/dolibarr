@@ -233,8 +233,8 @@ $arraydetailsforpdffoot = array(
 
 $arraylistofpdfformat = array(
 	0 => $langs->transnoentitiesnoconv('PDF 1.7'),
-	1 => $langs->transnoentitiesnoconv('PDF/A-1b'),
-	3 => $langs->transnoentitiesnoconv('PDF/A-3b'),
+	1 => $langs->transnoentitiesnoconv('PDF/A-1b (1.4)'),
+	3 => $langs->transnoentitiesnoconv('PDF/A-3b (1.7)'),
 );
 
 $s = $langs->trans("LibraryToBuildPDF")."<br>";

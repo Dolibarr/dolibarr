@@ -68,9 +68,6 @@ $projectstatic = new Project($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// include comment actions
-include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
-
 // Security check
 $socid = 0;
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
@@ -91,6 +88,9 @@ if ($id > 0 || $ref) {
 }
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+
+// include comment actions (after security check to prevent IDOR)
+include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 
 /*

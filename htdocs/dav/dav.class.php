@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,11 +253,11 @@ class CdavLib
 		$calendarId = (int) $calendarId;
 		$calevents = array();
 
-		if (!$this->user->rights->agenda->myactions->read) {
+		if (!$this->user->hasRight('agenda', 'myactions', 'read')) {
 			return $calevents;
 		}
 
-		if ($calendarId != $this->user->id && (!isset($this->user->rights->agenda->allactions->read) || !$this->user->rights->agenda->allactions->read)) {
+		if ($calendarId != $this->user->id && !$this->user->hasRight('agenda', 'allactions', 'read')) {
 			return $calevents;
 		}
 

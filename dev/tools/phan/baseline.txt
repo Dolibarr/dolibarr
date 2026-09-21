@@ -9,42 +9,27 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 330+ occurrences
-    // PhanTypeMismatchArgument : 25+ occurrences
+    // PhanUndeclaredProperty : 290+ occurrences
+    // FunctionMissingSingleQuoteWrapping : 50+ occurrences
+    // PhanTypeMismatchArgument : 20+ occurrences
     // PhanTypeMismatchProperty : 15+ occurrences
     // PhanTypeInvalidDimOffset : 10+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
     // PhanUndeclaredGlobalVariable : 10+ occurrences
-    // PhanTypeArraySuspiciousNull : 5 occurrences
     // PhanUndeclaredMethod : 5 occurrences
-    // PhanTypeExpectedObjectPropAccess : 4 occurrences
+    // PhanTypeArraySuspiciousNull : 4 occurrences
     // PhanPluginUndeclaredVariableIsset : 2 occurrences
     // PhanParamTooMany : 1 occurrence
     // PhanPluginSuspiciousParamPosition : 1 occurrence
+    // PhanTypeExpectedObjectPropAccess : 1 occurrence
     // PhanTypeExpectedObjectPropAccessButGotNull : 1 occurrence
     // PhanTypeMismatchArgumentNullable : 1 occurrence
-    // PhanTypeMismatchArgumentProbablyReal : 1 occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 1 occurrence
     // PhanTypeMismatchReturn : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/comm/action/index.php' => ['PhanTypeMismatchProperty'],
-        'htdocs/comm/action/pertype.php' => ['PhanTypeExpectedObjectPropAccess'],
-        'htdocs/comm/action/peruser.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
-        'htdocs/comm/mailing/targetemailing.php' => ['PhanUndeclaredProperty'],
-        'htdocs/comm/propal/list.php' => ['PhanUndeclaredProperty'],
-        'htdocs/commande/class/commande.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
-        'htdocs/commande/list_det.php' => ['PhanTypeInvalidDimOffset'],
-        'htdocs/compta/bank/class/account.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/bank/various_payment/card.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/bank/various_payment/document.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/facture/class/facture-rec.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/facture/class/facture.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/paiement/card.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/sociales/card.php' => ['PhanUndeclaredProperty'],
-        'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/blockedlog/admin/filecheck.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/compta/tva/clients.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset'],
         'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanUndeclaredProperty'],
@@ -58,14 +43,20 @@ return [
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/dolgraph.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/emailsenderprofile.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/class/html.form.class.php' => ['PhanParamTooMany', 'PhanPluginSuspiciousParamPosition', 'PhanTypeMismatchArgument'],
+        'htdocs/core/class/html.form.class.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanParamTooMany', 'PhanPluginSuspiciousParamPosition', 'PhanTypeMismatchArgument'],
+        'htdocs/core/class/html.formaccounting.class.php' => ['FunctionMissingSingleQuoteWrapping'],
+        'htdocs/core/class/html.formai.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/html.formcompany.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/html.formmail.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/class/html.formticket.class.php' => ['PhanTypeMismatchDimAssignment'],
+        'htdocs/core/class/html.formother.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/class/timespent.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
+        'htdocs/core/js/lib_head.js.php' => ['FunctionMissingSingleQuoteWrapping'],
+        'htdocs/core/js/lib_notification.js.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/lib/admin.lib.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/lib/files.lib.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/lib/ajax.lib.php' => ['FunctionMissingSingleQuoteWrapping'],
+        'htdocs/core/lib/files.lib.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanUndeclaredProperty'],
         'htdocs/core/lib/functions2.lib.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/lib/html.lib.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/lib/pdf.lib.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/lib/product.lib.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/lib/project.lib.php' => ['PhanUndeclaredProperty'],
@@ -89,6 +80,7 @@ return [
         'htdocs/core/modules/propale/doc/pdf_azur.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/propale/doc/pdf_cyan.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/reception/doc/pdf_squille.modules.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/modules/security/captcha/modCaptchaStandard.class.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/stocktransfer/mod_stocktransfer_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php' => ['PhanTypeMismatchProperty'],
@@ -98,15 +90,20 @@ return [
         'htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php' => ['PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/workstation/mod_workstation_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/multicompany_page.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/core/tpl/ajaxrow.tpl.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/tpl/massactions_pre.tpl.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/tpl/objectline_create.tpl.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/tpl/objectline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/tpl/passwordreset.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/resource_view.tpl.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/tpl/subtotal_ajaxrow.tpl.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/delivery/class/delivery.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/ecm/tpl/enablefiletreeajax.tpl.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/emailcollector/class/emailcollector.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/eventorganization/class/conferenceorboothattendee.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/expedition/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/expedition/class/expedition.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/expedition/dispatch.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/expensereport/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/expensereport/class/expensereport.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/fichinter/class/api_interventions.class.php' => ['PhanUndeclaredProperty'],
@@ -125,12 +122,13 @@ return [
         'htdocs/hrm/core/tpl/objectline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/hrm/evaluation_card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/hrm/skill_card.php' => ['PhanTypeExpectedObjectPropAccess', 'PhanUndeclaredProperty'],
-        'htdocs/imports/import.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/imports/import.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanTypeMismatchArgument'],
         'htdocs/knowledgemanagement/class/knowledgerecord.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/loan/class/paymentloan.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/loan/document.php' => ['PhanUndeclaredProperty'],
         'htdocs/loan/note.php' => ['PhanUndeclaredProperty'],
         'htdocs/loan/payment/payment.php' => ['PhanUndeclaredProperty'],
+        'htdocs/main.inc.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/mrp/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/partnership/class/partnership.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/partnership/core/modules/partnership/mod_partnership_advanced.php' => ['PhanUndeclaredProperty'],
@@ -139,6 +137,7 @@ return [
         'htdocs/product/class/html.formproduct.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/class/productfournisseurprice.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/product/inventory/class/inventory.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/product/inventory/inventory.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/product/price.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/reassort.php' => ['PhanTypeExpectedObjectPropAccessButGotNull'],
         'htdocs/product/stock/info.php' => ['PhanUndeclaredProperty'],
@@ -152,7 +151,6 @@ return [
         'htdocs/product/stock/stocktransfer/class/stocktransferline.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/tpl/stockcorrection.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/projet/admin/project.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/projet/tasks.php' => ['PhanTypeMismatchArgument'],
         'htdocs/projet/tasks/time.php' => ['PhanTypeInvalidDimOffset', 'PhanUndeclaredProperty'],
         'htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/public/payment/newpayment.php' => ['PhanUndeclaredProperty'],
@@ -160,6 +158,7 @@ return [
         'htdocs/public/project/suggestconference.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/public/project/viewandvote.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/recruitment/view.php' => ['PhanUndeclaredGlobalVariable'],
+        'htdocs/public/webportal/tpl/footer.tpl.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/public/webportal/tpl/menu.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/reception/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/reception/class/reception.class.php' => ['PhanUndeclaredProperty'],
@@ -184,7 +183,7 @@ return [
         'htdocs/supplier_proposal/card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/supplier_proposal/class/api_supplier_proposals.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/supplier_proposal/class/supplier_proposal.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/takepos/invoice.php' => ['PhanUndeclaredGlobalVariable'],
+        'htdocs/takepos/invoice.php' => ['FunctionMissingSingleQuoteWrapping', 'PhanUndeclaredGlobalVariable'],
         'htdocs/takepos/split.php' => ['PhanPluginUndeclaredVariableIsset'],
         'htdocs/ticket/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/ticket/class/actions_ticket.class.php' => ['PhanUndeclaredProperty'],
@@ -194,7 +193,6 @@ return [
         'htdocs/variants/tpl/productattributevalueline_edit.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/variants/tpl/productattributevalueline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/webhook/class/target.class.php' => ['PhanUndeclaredMethod'],
-        'htdocs/webservices/server_project.php' => ['PhanUndeclaredProperty'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.
     // (directory_suppressions will currently be ignored by subsequent calls to --save-baseline, but may be preserved in future Phan releases)
