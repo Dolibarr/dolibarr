@@ -469,8 +469,12 @@ NOTES   :
 
 ==> FILE   : Data/Validator.php, function validate()
     REASON : A PHPDoc union type (datetime|string, string|float) is stored as an array in
-             ValidationInfo::type, and using it as a key of $preFilters is a fatal "Illegal offset
-             type". Skip the prefilters for those, so the existing union-type validation handles them.
+             ValidationInfo::type, and using it as a key of $preFilters is a fatal TypeError on
+             PHP 8, raised before the endpoint's own code runs. The union branch further down
+             re-enters validate() once per type, so the prefilter still runs there with a scalar
+             type and nothing is lost by skipping it on the array pass.
+    NOTES  : Guarded by test/phpunit/RestlerValidatorTest.php, so the patch is not lost silently
+             the next time the library is updated.
     DIFF   :
         +   !is_array($info->type) &&
             isset(static::$preFilters[$info->type]) &&
