@@ -163,7 +163,7 @@ class PasswordResetTest extends CommonClassTest
 		$link = 'https://portal.example.com/user/passwordforgotten.php?setnewpassword=1&username=admin&passworduidhash=DEADBEEF';
 		$body = $u->getPasswordResetEmailContent($langs, $link);
 
-		$this->assertStringContainsString($link, $body, 'body contains the reset link');
+		$this->assertStringContainsString($link, html_entity_decode($body, ENT_QUOTES, 'UTF-8'), 'body contains the reset link');
 		$this->assertStringContainsString('passworduidhash=DEADBEEF', $body, 'link hash present');
 		$this->assertStringNotContainsString('Password = ', $body, 'no cleartext password label');
 	}
