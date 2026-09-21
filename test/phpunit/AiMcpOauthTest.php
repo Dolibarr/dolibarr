@@ -1,0 +1,410 @@
+<?php
+/* Copyright (C) 2026 Morgan Demoulin <morgan.demoulin@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *      \file       test/phpunit/AiMcpOauthTest.php
+ *      \ingroup    test
+ *      \brief      PHPUnit tests for the MCP authorization server
+ *                  (ai/class/mcpoauth.class.php): PKCE, one-shot authorization
+ *                  codes, refresh rotation, redirect URI matching and the rules
+ *                  that decide which redirect URIs may be registered at all.
+ */
+
+global $conf,$user,$langs,$db;
+//require_once 'PHPUnit/Autoload.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/ai/class/mcpoauth.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+
+if (empty($user->id)) {
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
+}
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+
+
+/**
+ * Class AiMcpOauthTest
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes disabled
+ */
+class AiMcpOauthTest extends CommonClassTest
+{
+	/**
+	 * @var string Verifier used across the PKCE tests
+	 */
+	private $verifier = 'jTMZAFeqqAgVv8LRiVUq1IhZTvRIzqQ-3DHsxHJfNyc';
+
+	/**
+	 * A server bound to a fixed issuer, so the metadata assertions can be exact.
+	 *
+	 * @return McpOauth
+	 */
+	private function getServer()
+	{
+		global $db;
+
+		return new McpOauth($db, 'https://example.org/ai/oauth.php', 'https://example.org/ai/server/mcp_server.php');
+	}
+
+	/**
+	 * Register a throwaway client and return its row.
+	 *
+	 * @param  string      $authmethod Token endpoint auth method
+	 * @return object|null             Client row
+	 */
+	private function makeClient($authmethod = 'none')
+	{
+		$server = $this->getServer();
+
+		$registration = $server->registerClient(array(
+			'client_name' => 'PHPUnit client',
+			'redirect_uris' => array('https://example.org/callback'),
+			'token_endpoint_auth_method' => $authmethod,
+		));
+		$this->assertNotNull($registration, 'Registration should have succeeded');
+
+		return $server->getClient($registration['client_id']);
+	}
+
+	/**
+	 * The PKCE challenge matching $this->verifier.
+	 *
+	 * @return string
+	 */
+	private function challenge()
+	{
+		return rtrim(strtr(base64_encode(hash('sha256', $this->verifier, true)), '+/', '-_'), '=');
+	}
+
+	/**
+	 * The documents a client reads to find its way in.
+	 *
+	 * @return void
+	 */
+	public function testMetadataDocuments()
+	{
+		$server = $this->getServer();
+
+		$as = $server->metadataAuthorizationServer();
+		$this->assertSame('https://example.org/ai/oauth.php', $as['issuer']);
+		$this->assertSame(array('S256'), $as['code_challenge_methods_supported'], 'plain must not be offered');
+		$this->assertTrue($as['authorization_response_iss_parameter_supported'], 'RFC 9207 must be advertised');
+
+		$prm = $server->metadataProtectedResource();
+		$this->assertSame('https://example.org/ai/server/mcp_server.php', $prm['resource']);
+		$this->assertSame(array('https://example.org/ai/oauth.php'), $prm['authorization_servers']);
+	}
+
+	/**
+	 * A public client gets no secret, and a confidential one gets it once.
+	 *
+	 * @return void
+	 */
+	public function testRegistrationSecretDependsOnAuthMethod()
+	{
+		$server = $this->getServer();
+
+		$public = $server->registerClient(array('redirect_uris' => array('https://example.org/cb'), 'token_endpoint_auth_method' => 'none'));
+		$this->assertArrayNotHasKey('client_secret', $public, 'A public client must not be handed a secret');
+
+		$confidential = $server->registerClient(array('redirect_uris' => array('https://example.org/cb'), 'token_endpoint_auth_method' => 'client_secret_basic'));
+		$this->assertArrayHasKey('client_secret', $confidential);
+		$this->assertNotEmpty($confidential['client_secret']);
+	}
+
+	/**
+	 * Which redirect URIs may be registered at all. The ones refused here are
+	 * the ones that would let an authorization code land somewhere else.
+	 *
+	 * @return void
+	 */
+	public function testRedirectUriRules()
+	{
+		$server = $this->getServer();
+
+		$accepted = array(
+			'https://example.org/callback',
+			'http://127.0.0.1:53682/callback',
+			'http://localhost:1410/',
+			'com.example.app:/oauth2redirect',
+		);
+		foreach ($accepted as $uri) {
+			$this->assertNotNull(
+				$server->registerClient(array('redirect_uris' => array($uri))),
+				$uri.' should be accepted'
+			);
+		}
+
+		$refused = array(
+			'http://evil.example/callback',		// plain http off the loopback
+			'https://example.org/cb#fragment',	// a fragment swallows the response
+			'ftp://example.org/cb',				// not a callback scheme
+			'notadomain:/cb',					// a scheme anyone could claim
+			'',
+		);
+		foreach ($refused as $uri) {
+			$this->assertNull(
+				$server->registerClient(array('redirect_uris' => array($uri))),
+				$uri.' should be refused'
+			);
+		}
+	}
+
+	/**
+	 * Redirect URIs are compared whole. Prefix matching is how a code ends up
+	 * on someone else's server.
+	 *
+	 * @return void
+	 */
+	public function testRedirectUriIsMatchedInFull()
+	{
+		$server = $this->getServer();
+		$client = $this->makeClient();
+
+		$this->assertTrue($server->isRegisteredRedirectUri($client, 'https://example.org/callback'));
+		$this->assertFalse($server->isRegisteredRedirectUri($client, 'https://example.org/callback/../evil'));
+		$this->assertFalse($server->isRegisteredRedirectUri($client, 'https://example.org/callbackevil'));
+		$this->assertFalse($server->isRegisteredRedirectUri($client, 'https://example.org/'));
+		$this->assertFalse($server->isRegisteredRedirectUri($client, ''));
+	}
+
+	/**
+	 * The happy path, and the fact that the code only works once.
+	 *
+	 * @return void
+	 */
+	public function testAuthorizationCodeIsSingleUse()
+	{
+		global $user;
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+
+		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+		$this->assertNotNull($code);
+
+		$tokens = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
+		$this->assertNotNull($tokens, 'A correct exchange should return tokens');
+		$this->assertArrayHasKey('access_token', $tokens);
+		$this->assertArrayHasKey('refresh_token', $tokens);
+		$this->assertSame('Bearer', $tokens['token_type']);
+
+		$replay = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
+		$this->assertNull($replay, 'The same code must not be exchangeable twice');
+		$this->assertSame('invalid_grant', $server->error);
+	}
+
+	/**
+	 * A wrong verifier is refused, and burns the code on the way: the attacker
+	 * who guessed wrong does not get a second try, and neither does anyone else.
+	 *
+	 * @return void
+	 */
+	public function testWrongPkceVerifierBurnsTheCode()
+	{
+		global $user;
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+
+		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+
+		$this->assertNull($server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', 'a-wrong-verifier-that-is-long-enough'));
+		$this->assertNull(
+			$server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier),
+			'The code must be spent even though the exchange failed'
+		);
+	}
+
+	/**
+	 * A code minted for one redirect URI cannot be redeemed against another.
+	 *
+	 * @return void
+	 */
+	public function testRedirectUriIsBoundToTheCode()
+	{
+		global $user;
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+
+		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+
+		$this->assertNull($server->exchangeAuthorizationCode($client, $code, 'https://example.org/elsewhere', $this->verifier));
+	}
+
+	/**
+	 * A code belonging to one client is worthless to another.
+	 *
+	 * @return void
+	 */
+	public function testCodeIsBoundToItsClient()
+	{
+		global $user;
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+		$other = $this->makeClient();
+
+		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+
+		$this->assertNull($server->exchangeAuthorizationCode($other, $code, 'https://example.org/callback', $this->verifier));
+	}
+
+	/**
+	 * No PKCE challenge, no code. A code exchangeable without a verifier is a
+	 * code an interceptor can exchange.
+	 *
+	 * @return void
+	 */
+	public function testCodeRequiresAPkceChallenge()
+	{
+		global $user;
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+
+		$this->assertNull($server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', '', 'dolibarr', ''));
+		$this->assertSame('invalid_request', $server->error);
+	}
+
+	/**
+	 * Refreshing rotates: the token just used stops working.
+	 *
+	 * @return void
+	 */
+	public function testRefreshTokenRotates()
+	{
+		global $user;
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+
+		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+		$first = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
+
+		$second = $server->refreshTokens($client, $first['refresh_token']);
+		$this->assertNotNull($second);
+		$this->assertNotSame($first['access_token'], $second['access_token']);
+
+		$this->assertNull($server->refreshTokens($client, $first['refresh_token']), 'A spent refresh token must not work again');
+	}
+
+	/**
+	 * An access token resolves to the user who consented, and only while it is
+	 * meant to.
+	 *
+	 * @return void
+	 */
+	public function testAccessTokenResolvesToTheConsentingUser()
+	{
+		global $db, $user;
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+
+		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+		$tokens = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
+
+		$row = $server->validateAccessToken($tokens['access_token']);
+		$this->assertNotNull($row);
+		$this->assertSame((int) $user->id, (int) $row->fk_user);
+
+		$this->assertNull($server->validateAccessToken('dolmcp_a'.str_repeat('0', 64)), 'An unknown token resolves to nothing');
+
+		// Expire it in place rather than waiting an hour.
+		$sql = "UPDATE ".$db->prefix()."ai_oauth_token SET expires_at = '".$db->idate(dol_now() - 60)."'";
+		$sql .= " WHERE token_hash = '".$db->escape(hash('sha256', $tokens['access_token']))."'";
+		$db->query($sql);
+
+		$this->assertNull($server->validateAccessToken($tokens['access_token']), 'An expired token must stop working');
+	}
+
+	/**
+	 * A refresh token is not an access token, whatever it is presented as.
+	 *
+	 * @return void
+	 */
+	public function testRefreshTokenIsNotAnAccessToken()
+	{
+		global $user;
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+
+		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+		$tokens = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
+
+		$this->assertNull($server->validateAccessToken($tokens['refresh_token']));
+	}
+
+	/**
+	 * What the prefix test is for: recognising our own access tokens without
+	 * asking the database about every credential that comes in.
+	 *
+	 * @return void
+	 */
+	public function testLooksLikeAccessToken()
+	{
+		$this->assertTrue(McpOauth::looksLikeAccessToken('dolmcp_aabcdef'));
+		$this->assertFalse(McpOauth::looksLikeAccessToken('dolmcp_rabcdef'), 'A refresh token is not one');
+		$this->assertFalse(McpOauth::looksLikeAccessToken('dolmcp_gabcdef'), 'An authorization code is not one');
+		$this->assertFalse(McpOauth::looksLikeAccessToken('a-plain-user-api-key'));
+		$this->assertFalse(McpOauth::looksLikeAccessToken(''));
+	}
+
+	/**
+	 * A confidential client must prove itself; a public one has nothing to prove
+	 * and is protected by PKCE instead.
+	 *
+	 * @return void
+	 */
+	public function testClientAuthentication()
+	{
+		$server = $this->getServer();
+
+		$registration = $server->registerClient(array(
+			'redirect_uris' => array('https://example.org/callback'),
+			'token_endpoint_auth_method' => 'client_secret_basic',
+		));
+		$client = $server->getClient($registration['client_id']);
+
+		$this->assertTrue($server->authenticateClient($client, $registration['client_secret']));
+		$this->assertFalse($server->authenticateClient($client, 'wrong-secret'));
+		$this->assertFalse($server->authenticateClient($client, ''), 'An empty secret is not a free pass');
+
+		$public = $this->makeClient();
+		$this->assertTrue($server->authenticateClient($public, ''), 'A public client has no secret to present');
+	}
+
+	/**
+	 * An unknown client_id resolves to nothing, which is what keeps the
+	 * authorize endpoint from being used as an open redirector.
+	 *
+	 * @return void
+	 */
+	public function testUnknownClientIsNotFound()
+	{
+		$server = $this->getServer();
+
+		$this->assertNull($server->getClient('dolmcp_cdoesnotexist'));
+		$this->assertNull($server->getClient(''));
+	}
+}

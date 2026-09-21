@@ -83,7 +83,12 @@ $mcpAuth = new McpAuth($db);
 if ($mcpAuth->authenticate() < 0) {
 	if ($mcpAuth->httpcode == 401) {
 		// RFC 6750 section 3: a rejected Bearer request must say what it wanted.
-		header('WWW-Authenticate: ' . $mcpAuth->getWwwAuthenticateHeader());
+		// RFC 9728 section 5.1: pointing at the Protected Resource Metadata is
+		// what lets an OAuth-capable client discover the authorization server
+		// and sign the user in, instead of just failing.
+		header('WWW-Authenticate: ' . $mcpAuth->getWwwAuthenticateHeader(
+			DOL_MAIN_URL_ROOT . '/ai/oauth.php/.well-known/oauth-protected-resource'
+		));
 	}
 
 	http_response_code($mcpAuth->httpcode);
