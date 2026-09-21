@@ -1795,6 +1795,8 @@ while ($i < $imaxinloop) {
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
 		$product_static->stockable_product = $obj->stockable_product;
+		$product_static->note_public = $obj->note_public;
+		$product_static->note_private = $obj->note_private;
 		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			$product_static->fk_unit = $obj->fk_unit;
 		}
@@ -1877,7 +1879,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="tdlineheightsmall" data-key="ref">';
 			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
-			print $product_static->getNomUrl(1);
+			print $product_static->getNomUrl(1, '', 0, -1, 0, '', 0, ' - ', 1);
 			if (empty($arrayfields['p.label']['checked'])) {
 				print '<br><span class="spantitle">'.dolPrintHTML($product_static->label).'</span>';
 			}
