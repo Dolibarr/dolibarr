@@ -64,6 +64,40 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
+	 * Skip when the ai module tables are not installed.
+	 *
+	 * The CI database enables a fixed list of modules and ai is not among
+	 * them, so llx_ai_oauth_client does not exist there. The tests that need
+	 * no storage still run; these say why they did not rather than failing on
+	 * a missing table.
+	 *
+	 * @return void
+	 */
+	private function requireSchema()
+	{
+		global $db;
+
+		$resql = $db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0");
+		if (!$resql) {
+			$this->markTestSkipped('The ai module tables are not installed on this database');
+		}
+	}
+
+	/**
+	 * Call the private redirect URI filter, which needs no storage.
+	 *
+	 * @param  string $uri Candidate redirect URI
+	 * @return bool        Whether it may be registered
+	 */
+	private function acceptsRedirectUri($uri)
+	{
+		$method = new ReflectionMethod('McpOauth', 'isAcceptableRedirectUri');
+		$method->setAccessible(true);
+
+		return $method->invoke($this->getServer(), $uri);
+	}
+
+	/**
 	 * Register a throwaway client and return its row.
 	 *
 	 * @param  string      $authmethod Token endpoint auth method
@@ -71,6 +105,8 @@ class AiMcpOauthTest extends CommonClassTest
 	 */
 	private function makeClient($authmethod = 'none')
 	{
+		$this->requireSchema();
+
 		$server = $this->getServer();
 
 		$registration = $server->registerClient(array(
@@ -119,6 +155,8 @@ class AiMcpOauthTest extends CommonClassTest
 	 */
 	public function testRegistrationSecretDependsOnAuthMethod()
 	{
+		$this->requireSchema();
+
 		$server = $this->getServer();
 
 		$public = $server->registerClient(array('redirect_uris' => array('https://example.org/cb'), 'token_endpoint_auth_method' => 'none'));
@@ -137,8 +175,6 @@ class AiMcpOauthTest extends CommonClassTest
 	 */
 	public function testRedirectUriRules()
 	{
-		$server = $this->getServer();
-
 		$accepted = array(
 			'https://example.org/callback',
 			'http://127.0.0.1:53682/callback',
@@ -146,10 +182,7 @@ class AiMcpOauthTest extends CommonClassTest
 			'com.example.app:/oauth2redirect',
 		);
 		foreach ($accepted as $uri) {
-			$this->assertNotNull(
-				$server->registerClient(array('redirect_uris' => array($uri))),
-				$uri.' should be accepted'
-			);
+			$this->assertTrue($this->acceptsRedirectUri($uri), $uri.' should be accepted');
 		}
 
 		$refused = array(
@@ -157,13 +190,11 @@ class AiMcpOauthTest extends CommonClassTest
 			'https://example.org/cb#fragment',	// a fragment swallows the response
 			'ftp://example.org/cb',				// not a callback scheme
 			'notadomain:/cb',					// a scheme anyone could claim
+			'https:///nohost',					// no host to compare
 			'',
 		);
 		foreach ($refused as $uri) {
-			$this->assertNull(
-				$server->registerClient(array('redirect_uris' => array($uri))),
-				$uri.' should be refused'
-			);
+			$this->assertFalse($this->acceptsRedirectUri($uri), $uri.' should be refused');
 		}
 	}
 
@@ -317,6 +348,8 @@ class AiMcpOauthTest extends CommonClassTest
 	{
 		global $db, $user;
 
+		$this->requireSchema();
+
 		$server = $this->getServer();
 		$client = $this->makeClient();
 
@@ -378,6 +411,8 @@ class AiMcpOauthTest extends CommonClassTest
 	 */
 	public function testClientAuthentication()
 	{
+		$this->requireSchema();
+
 		$server = $this->getServer();
 
 		$registration = $server->registerClient(array(
@@ -402,6 +437,8 @@ class AiMcpOauthTest extends CommonClassTest
 	 */
 	public function testUnknownClientIsNotFound()
 	{
+		$this->requireSchema();
+
 		$server = $this->getServer();
 
 		$this->assertNull($server->getClient('dolmcp_cdoesnotexist'));
