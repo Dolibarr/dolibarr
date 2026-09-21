@@ -617,6 +617,7 @@ class BlockedLog
 		// Add fields to exclude (this has become useless because we now use a list fields to keep later).
 		$arrayoffieldstoexclude = array(
 			'table_element', 'fields',
+			'ref_ext',
 			'ref_previous', 'ref_next',
 			'origin', 'origin_id',
 			'oldcopy', 'picto', 'error', 'errors',
@@ -666,7 +667,7 @@ class BlockedLog
 				}
 				// List of fields qualified
 				if (!in_array($key, array(
-				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
+				'name', 'name_alias', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 				'tva_intra', 'tva_assuj', 'localtax1_assuj', 'localtax2_assuj', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 				))) {
 					continue; // Discard if not into this dedicated list
