@@ -88,6 +88,10 @@ $emailcompany = GETPOST("emailcompany");
 $note_public = GETPOST('note_public', "restricthtml");
 $firstname = GETPOST('firstname');
 $lastname = GETPOST('lastname');
+$selectedconferenceids = GETPOST('conference_ids', 'array:int');
+if (!is_array($selectedconferenceids)) {
+	$selectedconferenceids = array();
+}
 
 // Getting id from Post and decoding it
 $type = GETPOST('type', 'aZ09');
@@ -117,6 +121,8 @@ if ($type == 'conf') {
 }
 
 $currentnbofattendees = 0;
+$registrableconferences = array();
+$conferenceattendeecounts = array();
 if ($type == 'global') {
 	$resultproject = $project->fetch($id);
 	if ($resultproject < 0) {
@@ -126,6 +132,7 @@ if ($type == 'global') {
 	} else {
 		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
 		$sql .= " WHERE fk_project = ".((int) $project->id);
+		$sql .= " AND fk_actioncomm IS NULL";
 		$sql .= " AND status IN (0, 1)";
 
 		$resql = $db->query($sql);
@@ -135,6 +142,26 @@ if ($type == 'global') {
 				$currentnbofattendees = $obj->nb;
 			} else {
 				dol_print_error($db);
+			}
+		}
+
+		$filter = '(t.fk_project:=:'.((int) $project->id).') AND (t.registration_enabled:=:1) AND (t.status:=:'.ConferenceOrBooth::STATUS_CONFIRMED.')';
+		$resultconferences = $conference->fetchAll('ASC', 't.datep', 0, 0, $filter);
+		if (is_array($resultconferences)) {
+			foreach ($resultconferences as $availableconference) {
+				if (!$availableconference->isConferenceType()) {
+					continue;
+				}
+				$registrableconferences[$availableconference->id] = $availableconference;
+
+				$sql = 'SELECT COUNT(rowid) AS nb';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'eventorganization_conferenceorboothattendee';
+				$sql .= ' WHERE fk_actioncomm = '.((int) $availableconference->id);
+				$sql .= ' AND status IN (0, 1)';
+				$resql = $db->query($sql);
+				if ($resql && ($obj = $db->fetch_object($resql))) {
+					$conferenceattendeecounts[$availableconference->id] = (int) $obj->nb;
+				}
 			}
 		}
 	}
@@ -178,6 +205,9 @@ $user->loadDefaultValues();
 // Security check
 if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');
+}
+if ($type == 'conf' && (!$conference->isConferenceType() || empty($conference->registration_enabled))) {
+	httponly_accessforbidden('Registration is not enabled for this conference');
 }
 
 $extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
@@ -299,13 +329,14 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 	}
 
 	$thirdparty = null;
+	$attendeealreadyexists = false;
 
 	if (!$error) {
 		// Check if attendee already exists (by email and for this event)
 		$filter = array();
 
 		if ($type == 'global') {
-			$filter = "(t.fk_project:=:".((int) $id).") AND (t.email:=:'".$db->escape($email)."')";
+			$filter = "(t.fk_project:=:".((int) $id).") AND (t.fk_actioncomm:is:NULL) AND (t.email:=:'".$db->escape($email)."')";
 		}
 		if ($type == 'conf') {
 			$filter = "(t.fk_actioncomm:=:".((int) $id).") AND (t.email:=:'".$db->escape($email)."')";
@@ -314,7 +345,6 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		// Check if there is already an attendee into table eventorganization_conferenceorboothattendee for same event (or conference/booth)
 		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, $filter);
 
-		$attendeealreadyexists = false;
 		if ($resultfetchconfattendee < 0) {
 			$error++;
 			$errmsg .= $confattendee->error;
@@ -333,8 +363,9 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		if (!$error && (!$attendeealreadyexists || empty((float) $confattendee->amount))) {
 			$confattendee->date_subscription = dol_now();
 			$confattendee->email = $email;
+			$confattendee->email_company = $emailcompany;
 			$confattendee->fk_project = $project->id;
-			$confattendee->fk_actioncomm = $id;
+			$confattendee->fk_actioncomm = ($type == 'conf' ? $id : null);
 			$confattendee->note_public = $note_public;
 			$confattendee->firstname = $firstname;
 			$confattendee->lastname = $lastname;
@@ -401,6 +432,15 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 		// At this point, we have an existing $confattendee. It may not be linked to a thirdparty.
 		//var_dump($confattendee);
+
+		if (!$error && $type == 'global' && $attendeealreadyexists && !empty((float) $confattendee->amount) && count($selectedconferenceids) > 0) {
+			$resultconferenceregistrations = $confattendee->addConferenceRegistrations($user, $selectedconferenceids);
+			if ($resultconferenceregistrations < 0) {
+				$error++;
+				$errmsg .= $confattendee->error;
+				$errors = array_merge($errors, $confattendee->errors);
+			}
+		}
 
 		// If the registration has already been paid for this attendee
 		if (!$error && !empty($confattendee->date_subscription) && !empty((float) $confattendee->amount)) {
@@ -571,6 +611,15 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$confattendee->fk_soc     = $thirdparty->id;
 				$confattendee->update($user);
 			}
+		}
+	}
+
+	if (!$error && $type == 'global' && count($selectedconferenceids) > 0 && !($attendeealreadyexists && !empty((float) $confattendee->amount))) {
+		$resultconferenceregistrations = $confattendee->addConferenceRegistrations($user, $selectedconferenceids);
+		if ($resultconferenceregistrations < 0) {
+			$error++;
+			$errmsg .= $confattendee->error;
+			$errors = array_merge($errors, $confattendee->errors);
 		}
 	}
 
@@ -963,6 +1012,32 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		if (!empty((float) $project->price_registration)) {
 			print '<tr><td>' . $langs->trans('Price') . '</td><td>';
 			print '<span class="amount price-registration">'.price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+			print '</td></tr>';
+		}
+
+		if ($type == 'global' && count($registrableconferences) > 0) {
+			print '<tr><td>'.$form->textwithpicto($langs->trans('OptionalConferenceSessions'), $langs->trans('OptionalConferenceSessionsHelp')).'</td><td>';
+			foreach ($registrableconferences as $registrableconference) {
+				$currentconferenceattendees = $conferenceattendeecounts[$registrableconference->id] ?? 0;
+				$isfull = !empty($registrableconference->max_participants) && $currentconferenceattendees >= (int) $registrableconference->max_participants;
+				$ischecked = in_array((int) $registrableconference->id, $selectedconferenceids, true);
+				print '<div class="marginbottomonly">';
+				print '<label><input type="checkbox" name="conference_ids[]" value="'.((int) $registrableconference->id).'"'.($ischecked ? ' checked' : '').($isfull ? ' disabled' : '').'> ';
+				print dolPrintHTML($registrableconference->label).'</label>';
+				if ($registrableconference->datep) {
+					print ' <span class="opacitymedium">'.dol_print_date($registrableconference->datep, 'dayhour').'</span>';
+				}
+				if ($registrableconference->location) {
+					print ' <span class="opacitymedium">'.dolPrintHTML($registrableconference->location).'</span>';
+				}
+				if (!empty($registrableconference->max_participants)) {
+					print ' <span class="opacitymedium">('.$currentconferenceattendees.' / '.((int) $registrableconference->max_participants).')</span>';
+				}
+				if ($isfull) {
+					print ' <span class="warning">'.$langs->trans('MaxNbOfAttendeesReached').'</span>';
+				}
+				print '</div>';
+			}
 			print '</td></tr>';
 		}
 

@@ -223,6 +223,11 @@ class ActionComm extends CommonObject
 	public $max_participants;
 
 	/**
+	 * @var int Allow public registrations for this event
+	 */
+	public $registration_enabled;
+
+	/**
 	 * @var int Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
 	 */
 	public $transparency;
@@ -448,6 +453,7 @@ class ActionComm extends CommonObject
 		"fulldayevent" => array("type" => "smallint(6)", "label" => "Fulldayevent", "enabled" => "1", 'position' => 115, 'notnull' => 1, "visible" => "0",),
 		"location" => array("type" => "varchar(128)", "label" => "Location", "enabled" => "1", 'position' => 125, 'notnull' => 0, "visible" => "0",),
 		"max_participants" => array("type" => "integer", "label" => "MaxNbOfAttendees", "enabled" => "1", 'position' => 126, 'notnull' => 0, "visible" => "0",),
+		"registration_enabled" => array("type" => "boolean", "label" => "AllowUsersToRegisterToConference", "enabled" => "1", 'position' => 127, 'notnull' => 1, "visible" => "0", "default" => "0",),
 		"durationp" => array("type" => "double", "label" => "Durationp", "enabled" => "1", 'position' => 130, 'notnull' => 0, "visible" => "0",),
 		"durationa" => array("type" => "double", "label" => "Durationa", "enabled" => "1", 'position' => 135, 'notnull' => 0, "visible" => "0",),
 		"fk_element" => array("type" => "integer", "label" => "LinkedObject", "enabled" => "getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')", 'position' => 145, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
@@ -628,7 +634,7 @@ class ActionComm extends CommonObject
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_action,";
 		$sql .= "fk_task,";
-		$sql .= "label,percent,priority,fulldayevent,location,max_participants,";
+		$sql .= "label,percent,priority,fulldayevent,location,max_participants,registration_enabled,";
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
 		$sql .= "elementtype,";
@@ -673,6 +679,7 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->escape((string) $this->fulldayevent)."', ";
 		$sql .= "'".$this->db->escape($this->location)."', ";
 		$sql .= (isset($this->max_participants) && $this->max_participants > 0 ? ((int) $this->max_participants) : "null").", ";
+		$sql .= ((int) $this->registration_enabled).", ";
 		$sql .= "'".$this->db->escape((string) $this->transparency)."', ";
 		$sql .= (!empty($this->elementid) ? ((int) $this->elementid) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
@@ -903,7 +910,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_task,";
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
-		$sql .= " a.priority, a.fulldayevent, a.location, a.max_participants, a.transparency,";
+		$sql .= " a.priority, a.fulldayevent, a.location, a.max_participants, a.registration_enabled, a.transparency,";
 		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_sender, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
 		$sql .= " a.recurid, a.recurrule, a.recurdateend,";
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
@@ -977,6 +984,7 @@ class ActionComm extends CommonObject
 				$this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
 				$this->max_participants		= $obj->max_participants;
+				$this->registration_enabled	= (int) $obj->registration_enabled;
 				$this->transparency			= $obj->transparency;
 
 				$this->socid = $obj->fk_soc; // To have fetch_thirdparty method working
@@ -1291,6 +1299,7 @@ class ActionComm extends CommonObject
 		$sql .= ", fulldayevent = '".$this->db->escape((string) $this->fulldayevent)."'";
 		$sql .= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'" : "null");
 		$sql .= ", max_participants = ".(isset($this->max_participants) && $this->max_participants > 0 ? ((int) $this->max_participants) : "null");
+		$sql .= ", registration_enabled = ".((int) $this->registration_enabled);
 		$sql .= ", transparency = '".$this->db->escape((string) $this->transparency)."'";
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
