@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var User $user
  *
  * @var string $butactionbg
- * @var string $colorbackhmenu1
  * @var string $colortextlink
  * @var int $dol_optimize_smallscreen
  * @var string $fontlist
@@ -35,7 +34,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 '
 @phan-var-force string $butactionbg
-@phan-var-force string $colorbackhmenu1
 @phan-var-force string $colortextlink
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
@@ -49,13 +47,14 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 /* IDE Hack <style type="text/css"> */
 
 :root {
-			--btncolortext: rgb(<?php print $colortextlink; ?>);
-			--btncolorbg: #fbfbfb;
-			--btncolorborderhover: none;
-			--btncolorborder: #FFF;
-			--butactiondeletebg: rgb(234,228,225);
-			--butactionbg: rgb(<?php print $butactionbg; ?>);
-			--textbutaction: rgb(<?php print $textbutaction; ?>);
+	--btncolortext: rgb(<?php print $colortextlink; ?>);
+	--btncolorbg: #fbfbfb;
+	--btncolorborderhover: none;
+	--btncolorborder: #FFF;
+	--butactiondeletebg: rgb(234,228,225);
+	--butactioncancelbg: #e3e3e3;
+	--butactionbg: rgb(<?php print $butactionbg; ?>);
+	--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
 
 <?php
@@ -203,10 +202,19 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	/* border: 1px solid #633; */
 	color: #633 !important;
 }
+.button.button-cancel:not(.buttongen), .button.button-cancel:link:not(.buttongen), .button.button-cancel:visited:not(.buttongen), .button.button-cancel:hover:not(.buttongen), .button.button-cancel:active:not(.buttongen), .button.button-cancel:not(.buttongen) {
+	background: var(--butactioncancelbg) !important;
+	border: none;
+	color: #333 !important;
+}
 
 .butActionDelete:hover {
-	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
+.button.button-cancel:hover:not(.buttongen) {
+	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+}
+
 
 /*
 .butActionDelete#action-delete::before {
@@ -222,6 +230,11 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 */
 
 .butActionRefused {
+	/* pointer-events: none; Removed as this break the use of title */
+	cursor: default;
+	opacity: 0.8;
+	box-shadow: none;
+
 	text-decoration: none !important;
 	text-transform: uppercase;
 	font-weight: bold !important;
@@ -263,7 +276,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionLogin, .butActionLogin:link, .butActionLogin:visited, .butActionLogin:hover, .butActionLogin:active {
-	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
+	background-color: var(--butactionbg);
 	padding: 1em 1em;
 }
 
@@ -492,6 +505,17 @@ button.btn-low-emphasis.--btn-icon:active {
 
 input.button-save, input.button-cancel {
 	min-width: 110px;
-	margin-left: 5px !important;
-	margin-right: 5px !important;
+	margin-left: 8px !important;
+	margin-right: 8px !important;
+}
+
+/* smartphone */
+
+@media only screen and (max-width: 767px)
+{
+	input.button-save, input.button-cancel {
+		min-width: 90px;
+		margin-left: 4px !important;
+		margin-right: 4px !important;
+	}
 }

@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=معلومات حول التدخل ا
 ThisIsInformationOnDocumentToSignSociete_rib=معلومات حول تفويض SEPA المطلوب توقيعه
 ThisIsInformationOnDocumentToSignExpedition= معلومات حول الشحنة المطلوب توقيعها
 SignatureProposalRef=توقيع العرض التجاري %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=توقيع العقد %s
 SignatureFichinterRef=توقيع التدخل %s
 SignatureSociete_ribRef=توقيع تفويض SEPA %s

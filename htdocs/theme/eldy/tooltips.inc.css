@@ -11,7 +11,7 @@ div.ui-tooltip.mytooltip-hover-tooltip {
 	border: solid 1px #BBBBBB;
 	padding: 10px 20px;
 	border-radius: 0;
-	box-shadow: 0 0 4px grey;
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
 	margin: 2px;
 	font-stretch: condensed;
 	line-height: 1.6em;

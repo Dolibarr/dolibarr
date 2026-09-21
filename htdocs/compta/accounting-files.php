@@ -191,12 +191,12 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
-			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
+			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat,";
 			$sql .= " t.localtax1, t.localtax2, t.revenuestamp,";
 			$sql .= " t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$sanitizedwheretail;
-			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : ((int) $entity)).')';
 			$sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
 			if (!empty($projectid)) {
 				$sql .= " AND fk_projet = ".((int) $projectid);
@@ -212,7 +212,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$sanitizedwheretail;
-			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : ((int) $entity)).')';
 			$sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
 			if (!empty($projectid)) {
 				$sql .= " AND fk_projet = ".((int) $projectid);
@@ -234,7 +234,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = t.fk_user_author";
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = u.fk_country";
 				$sql .= " WHERE date_fin between  " . $sanitizedwheretail;
-				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : $entity) . ')';
+				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : ((int) $entity)) . ')';
 				$sql .= " AND t.fk_statut <> " . ExpenseReport::STATUS_DRAFT;
 				$sql .= " AND fk_projet = ".((int) $projectid);
 			} else {
@@ -243,7 +243,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 				$sql .= " t.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, " . PAY_DEBIT . " as sens";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as t LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON u.rowid = t.fk_user_author LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON c.rowid = u.fk_country";
 				$sql .= " WHERE date_fin between  " . $sanitizedwheretail;
-				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : $entity) . ')';
+				$sql .= " AND t.entity IN (" . $db->sanitize($entity == 1 ? '0,1' : ((int) $entity)) . ')';
 				$sql .= " AND t.fk_statut <> " . ExpenseReport::STATUS_DRAFT;
 			}
 		}
@@ -257,7 +257,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datedon as date, t.datedon as date_due, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."don as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_country";
 			$sql .= " WHERE datedon between ".$sanitizedwheretail;
-			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : ((int) $entity)).')';
 			$sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
 			if (!empty($projectid)) {
 				$sql .= " AND fk_projet = ".((int) $projectid);
@@ -273,7 +273,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " '".$db->escape($conf->currency)."' as currency, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 			$sql .= " WHERE datep between ".$sanitizedwheretail;
-			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : ((int) $entity)).')';
 			//$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
 			if (!empty($projectid)) {
 				$sql .= " AND fk_projet = ".((int) $projectid);
@@ -289,7 +289,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.date_ech as date, t.periode as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
 			$sql .= " WHERE t.date_ech between ".$sanitizedwheretail;
-			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : ((int) $entity)).')';
 			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_UNPAID;
 			if (!empty($projectid)) {
 				$sql .= " AND fk_projet = ".((int) $projectid);
@@ -305,7 +305,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
 			$sql .= " WHERE datep between ".$sanitizedwheretail;
-			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : ((int) $entity)).')';
 			if (!empty($projectid)) {
 				$sql .= " AND fk_projet = ".((int) $projectid);
 			}
@@ -320,7 +320,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'LoanPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as t LEFT JOIN ".MAIN_DB_PREFIX."loan as l ON l.rowid = t.fk_loan";
 			$sql .= " WHERE datep between ".$sanitizedwheretail;
-			$sql .= " AND l.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND l.entity IN (".$db->sanitize($entity == 1 ? '0,1' : ((int) $entity)).')';
 		}
 
 		if ($sql) {
@@ -520,6 +520,46 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 	} else {
 		dol_mkdir($dirfortmpfile);
 
+		// Tags of the exported documents, read with one query per document type for the whole
+		// batch: a month of activity holds hundreds of documents and one query per document
+		// would make the export crawl. Only customer and supplier invoices can carry tags,
+		// the other items of the export (various payments, expense reports, salaries,
+		// donations, social contributions, loan payments) have no category type in Dolibarr
+		// and keep an empty column.
+		$tagsofdocuments = array();
+		foreach (array('Invoice' => 'invoice', 'SupplierInvoice' => 'supplier_invoice') as $itemfortags => $tablefortags) {
+			$idsfortags = array();
+			foreach ($filesarray as $filefortags) {
+				if ($filefortags['item'] == $itemfortags) {
+					$idsfortags[] = (int) $filefortags['id'];
+				}
+			}
+			if (empty($idsfortags)) {
+				continue;
+			}
+
+			$sqltags = "SELECT ct.fk_".$db->sanitize($tablefortags)." as fk_object, c.label";
+			$sqltags .= " FROM ".MAIN_DB_PREFIX."categorie_".$db->sanitize($tablefortags)." as ct, ".MAIN_DB_PREFIX."categorie as c";
+			$sqltags .= " WHERE ct.fk_categorie = c.rowid";
+			$sqltags .= " AND ct.fk_".$db->sanitize($tablefortags)." IN (".$db->sanitize(implode(',', $idsfortags)).")";
+			$sqltags .= " AND c.entity IN (".getEntity('category').")";
+			$sqltags .= " ORDER BY c.label";
+
+			$resqltags = $db->query($sqltags);
+			if ($resqltags) {
+				while ($objtags = $db->fetch_object($resqltags)) {
+					$keyfortags = $itemfortags.'_'.$objtags->fk_object;
+					if (empty($tagsofdocuments[$keyfortags])) {
+						$tagsofdocuments[$keyfortags] = array();
+					}
+					$tagsofdocuments[$keyfortags][] = $objtags->label;
+				}
+				$db->free($resqltags);
+			} else {
+				dol_print_error($db);
+			}
+		}
+
 		$log = $langs->transnoentitiesnoconv("Type");
 		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			$log .= ','.$langs->transnoentitiesnoconv("Entity");
@@ -540,7 +580,8 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 		$log .= ','.$langs->transnoentitiesnoconv("Code");
 		$log .= ','.$langs->transnoentitiesnoconv("Country");
 		$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
-		$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
+		$log .= ','.$langs->transnoentitiesnoconv("Sens");
+		$log .= ','.$langs->transnoentitiesnoconv("Categories")."\n";
 		$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel');
 		if (!empty($projectid)) {
 			$project = new Project($db);
@@ -586,6 +627,8 @@ if ($result && $action == "dl" && !$error) {	// Test on permission not required 
 				$log .= ',"'.$file['country_code'].'"';
 				$log .= ',"'.$file['vatnum'].'"';
 				$log .= ',"'.$file['sens'].'"';
+				$keyfortags = $file['item'].'_'.$file['id'];
+				$log .= ',"'.(empty($tagsofdocuments[$keyfortags]) ? '' : implode(',', $tagsofdocuments[$keyfortags])).'"';
 				$log .= "\n";
 			}
 			$zip->addFromString('transactions.csv', $log);

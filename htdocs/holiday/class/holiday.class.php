@@ -294,7 +294,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *   Créer un congés payés dans la base de données
+	 *   Create a paid leave entry in the database
 	 *
 	 *   @param		User	$user        	User that create
 	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
@@ -456,10 +456,12 @@ class Holiday extends CommonObject
 				$this->fk_user = (int) $obj->fk_user;
 				$this->date_create = $this->db->jdate($obj->date_create);
 				$this->description = $obj->description;
+
 				$this->date_debut = $this->db->jdate($obj->date_debut);
 				$this->date_fin = $this->db->jdate($obj->date_fin);
 				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
 				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
+
 				$this->halfday = (int) $obj->halfday;
 				$this->status = (int) $obj->status;
 				$this->statut = (int) $obj->status;	// deprecated
@@ -544,17 +546,17 @@ class Holiday extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
+		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack needed for search on the list
 		$sql .= " AND cp.fk_user IN (".$this->db->sanitize($user_id).")";
 
 		// Selection filter
 		if (!empty($filter)) {
-			$sql .= $filter;
+			$sql .= $filter;  // @phan-suppress-current-line SqlInjection
 		}
 
 		// Order of display of the result
 		if (!empty($order)) {
-			$sql .= $order;
+			$sql .= $order;  // @phan-suppress-current-line SqlInjection
 		}
 
 		dol_syslog(get_class($this)."::fetchByUser", LOG_DEBUG);
@@ -632,11 +634,11 @@ class Holiday extends CommonObject
 	/**
 	 *	List all holidays of all users
 	 *
-	 *  @param      string	$order      Sort order
-	 *  @param      string	$filter     SQL Filter
-	 *  @return     int      			-1 if KO, 1 if OK, 2 if no result
+	 *  @param      string	$sqlOrder   Sort order
+	 *  @param      string	$sqlFilter  SQL Filter
+	 *  @return     int<-1,-1>|int<1,2> -1 if KO, 1 if OK, 2 if no result
 	 */
-	public function fetchAll($order, $filter)
+	public function fetchAll($sqlOrder, $sqlFilter)
 	{
 		$sql = "SELECT";
 		$sql .= " cp.rowid,";
@@ -675,16 +677,16 @@ class Holiday extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack needed for search on the list
 
 		// Selection filtering
-		if (!empty($filter)) {
-			$sql .= $filter;
+		if (!empty($sqlFilter)) {
+			$sql .= $sqlFilter;
 		}
 
 		// order of display
-		if (!empty($order)) {
-			$sql .= $order;
+		if (!empty($sqlOrder)) {
+			$sql .= $sqlOrder;
 		}
 
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
@@ -777,9 +779,15 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, 0, '', $this->fk_user);
+
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -840,7 +848,7 @@ class Holiday extends CommonObject
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'holiday/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'holiday/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -901,9 +909,15 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, 0, '', $this->fk_user);
+
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1029,9 +1043,15 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT && $this->status != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			// Use the GMT variants: num_public_holiday(), called by num_open_day(), refuses a range whose
+			// length is not a whole number of days, and a range spanning a DST transition is 23h or 25h
+			// long in the server timezone. It then returns a string and the subtraction fatals.
+			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
+			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, 0, '', $this->fk_user);
+
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1234,6 +1254,11 @@ class Holiday extends CommonObject
 			//var_dump("--");
 			//var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
 			//var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
+
+			// A new leave can fully contain an existing leave, so neither endpoint is inside the existing range.
+			if ($dateStart < $infos_CP['date_debut'] && $dateEnd > $infos_CP['date_fin']) {
+				return false;
+			}
 
 			if ($halfday == 0) {
 				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin']) {
@@ -1600,7 +1625,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Met à jour une option du module Holiday Payés
+	 *  Update an option of the Holiday module
 	 *
 	 *  @param	string	$name       name settings parameter
 	 *  @param	string	$value      true if update OK else false
@@ -1690,6 +1715,12 @@ class Holiday extends CommonObject
 
 			// Get month of last update
 			$stringInDBForLastUpdate = $this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S'));	// Example '20200101120000'
+			// The lastUpdate config row is created empty (value NULL) at install, so getConfCP() returns an empty value
+			// the first time. Treat an empty value as "start from now" (like define_holiday.php does) instead of a very
+			// old date, otherwise the catch-up loop below would credit every user with years of monthly accrual at once.
+			if (empty($stringInDBForLastUpdate)) {
+				$stringInDBForLastUpdate = dol_print_date($now, '%Y%m%d%H%M%S');
+			}
 			// Protection when $lastUpdate has a not valid value
 			if ($stringInDBForLastUpdate < '20000101000000') {
 				$stringInDBForLastUpdate = '20000101000000';
@@ -1851,42 +1882,6 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Create entries for each user at setup step
-	 *
-	 *  @param	boolean		$single		Single
-	 *  @param	int			$userid		Id user
-	 *  @return void
-	 */
-	public function createCPusers($single = false, $userid = 0)
-	{
-		// do we have to add balance for all users ?
-		if (!$single) {
-			dol_syslog(get_class($this).'::createCPusers');
-			$arrayofusers = $this->fetchUsers(false, true);
-
-			foreach ($arrayofusers as $users) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
-				$sql .= " (fk_user, nb_holiday)";
-				$sql .= " VALUES (".((int) $users['rowid'])."', '0')";
-
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					dol_print_error($this->db);
-				}
-			}
-		} else {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."holiday_users";
-			$sql .= " (fk_user, nb_holiday)";
-			$sql .= " VALUES (".((int) $userid)."', '0')";
-
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				dol_print_error($this->db);
-			}
-		}
-	}
-
-	/**
 	 *  Return the balance of annual leave of a user
 	 *
 	 *  @param	int		$user_id    User ID
@@ -1922,10 +1917,10 @@ class Holiday extends CommonObject
 	 *
 	 *	@param	boolean		$stringlist	    If true return a string list of id. If false, return an array with detail.
 	 *	@param	boolean		$type			If true, read Dolibarr user list, if false, return vacation balance list.
-	 *	@param	string		$filters        Filters. Warning: This must not contains data from user input.
+	 *	@param	string		$sqlFilters     Filters. Warning: This must not contain data from user input.
 	 *	@return array<array{rowid:int,id:int,name:string,lastname:string,firstname:string,gender:string,status:int,employee:int,photo:string,fk_user:int,type?:int,nb_holiday?:int}>|string|int<-1,-1>	Return an array
 	 */
-	public function fetchUsers($stringlist = true, $type = true, $filters = '')
+	public function fetchUsers($stringlist = true, $type = true, $sqlFilters = '')
 	{
 		dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
 
@@ -1949,8 +1944,8 @@ class Holiday extends CommonObject
 				}
 				$sql .= " AND u.statut > 0";
 				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
-				if ($filters) {
-					$sql .= $filters;
+				if ($sqlFilters) {
+					$sql .= $sqlFilters;
 				}
 
 				$resql = $this->db->query($sql);
@@ -1985,8 +1980,8 @@ class Holiday extends CommonObject
 				$sql = "SELECT DISTINCT cpu.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
 				$sql .= " WHERE cpu.fk_user = u.rowid";
-				if ($filters) {
-					$sql .= $filters;
+				if ($sqlFilters) {
+					$sql .= $sqlFilters;
 				}
 
 				$resql = $this->db->query($sql);
@@ -2040,8 +2035,8 @@ class Holiday extends CommonObject
 
 				$sql .= " AND u.statut > 0";
 				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
-				if ($filters) {
-					$sql .= $filters;
+				if ($sqlFilters) {
+					$sql .= $sqlFilters;
 				}
 
 				$resql = $this->db->query($sql);
@@ -2084,8 +2079,8 @@ class Holiday extends CommonObject
 				$sql = "SELECT cpu.fk_type, cpu.nb_holiday, u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut as status, u.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
 				$sql .= " WHERE cpu.fk_user = u.rowid";
-				if ($filters) {
-					$sql .= $filters;
+				if ($sqlFilters) {
+					$sql .= $sqlFilters;
 				}
 
 				$resql = $this->db->query($sql);
@@ -2291,7 +2286,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	string	$sqlorder   SQL sort order
 	 *  @param  string	$sqlwhere   SQL where
-	 *  @return int         		-1 si erreur, 1 si OK et 2 si pas de résultat
+	 *  @return int         		-1 if error, 1 if OK, 2 if no result
 	 */
 	public function fetchLog($sqlorder, $sqlwhere)
 	{
@@ -2432,7 +2427,7 @@ class Holiday extends CommonObject
 		$sql .= " f.fk_user_refuse as fk_user_refuse";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as f";
 		$sql .= " WHERE f.rowid = ".((int) $id);
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2751,12 +2746,15 @@ class Holiday extends CommonObject
 		foreach ($arrayfields as $key => $label) {
 			$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;">';
 			$outputarrayleaves .= $outputlangs->trans($label);
+			if ($key == 'date_end') {
+				$outputarrayleaves .=" (".$langs->trans("Included").")";
+			}
 			$outputarrayleaves .= '</td>';
 		}
 		$outputarrayleaves .= '</tr>';
 
 		if (!empty($arrayleaves)) {
-			foreach ($arrayleaves as $key => $fields) {
+			foreach ($arrayleaves as $fields) {
 				$outputarrayleaves .= '<tr>';
 				foreach ($fields as $field => $value) {
 					$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" id="'.$field.'">';

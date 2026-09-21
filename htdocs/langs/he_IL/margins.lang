@@ -31,9 +31,9 @@ UseDiscountOnTotal=על סכומי הביניים
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=מגדיר אם מתייחסים להנחה גלובלית כאל מוצר, שירות או רק על סכום ביניים לחישוב מרווח.
 MARGIN_TYPE=מחיר קנייה/עלות מוצע כברירת מחדל לחישוב המרווח
 MargeType1=מרווח במחיר הספק הטוב ביותר
-MargeType2=מרווח על מחיר ממוצע משוקלל (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=מרווח על מחיר עלות
-MarginTypeDesc=* מרווח על מחיר הקנייה הטוב ביותר = מחיר מכירה - מחיר הספק הטוב ביותר שהוגדר בכרטיס המוצר<br>* מרווח על מחיר ממוצע משוקלל (WAP) = מחיר מכירה - מחיר ממוצע משוקלל של מוצר (WAP) או מחיר הספק הטוב ביותר אם WAP עדיין לא הוגדר<br>* מרווח על מחיר עלות = מחיר מכירה - מחיר עלות מוגדר בכרטיס המוצר או WAP אם מחיר העלות לא הוגדר, או מחיר הספק הטוב ביותר אם WAP עדיין לא הוגדר
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=מחיר עלות
 UnitCharges=חיובי יחידה
 Charges=חיובים

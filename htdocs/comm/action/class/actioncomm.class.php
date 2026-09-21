@@ -5,8 +5,8 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -216,6 +216,11 @@ class ActionComm extends CommonObject
 	 * @var string 	Location
 	 */
 	public $location;
+
+	/**
+	 * @var ?int Maximum number of participants allowed for this event
+	 */
+	public $max_participants;
 
 	/**
 	 * @var int Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
@@ -442,6 +447,7 @@ class ActionComm extends CommonObject
 		"priority" => array("type" => "smallint(6)", "label" => "Priority", "enabled" => "1", 'position' => 110, 'notnull' => 0, "visible" => "0",),
 		"fulldayevent" => array("type" => "smallint(6)", "label" => "Fulldayevent", "enabled" => "1", 'position' => 115, 'notnull' => 1, "visible" => "0",),
 		"location" => array("type" => "varchar(128)", "label" => "Location", "enabled" => "1", 'position' => 125, 'notnull' => 0, "visible" => "0",),
+		"max_participants" => array("type" => "integer", "label" => "MaxNbOfAttendees", "enabled" => "1", 'position' => 126, 'notnull' => 0, "visible" => "0",),
 		"durationp" => array("type" => "double", "label" => "Durationp", "enabled" => "1", 'position' => 130, 'notnull' => 0, "visible" => "0",),
 		"durationa" => array("type" => "double", "label" => "Durationa", "enabled" => "1", 'position' => 135, 'notnull' => 0, "visible" => "0",),
 		"fk_element" => array("type" => "integer", "label" => "LinkedObject", "enabled" => "getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')", 'position' => 145, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
@@ -622,7 +628,7 @@ class ActionComm extends CommonObject
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_action,";
 		$sql .= "fk_task,";
-		$sql .= "label,percent,priority,fulldayevent,location,";
+		$sql .= "label,percent,priority,fulldayevent,location,max_participants,";
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
 		$sql .= "elementtype,";
@@ -651,21 +657,22 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->idate($this->datep)."', ";	// date start event
 		$sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
 		$sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape((string) $this->durationp)."'" : "null").", "; // deprecated
-		$sql .= (isset($this->type_id) ? $this->type_id : "null").",";
+		$sql .= (isset($this->type_id) ? ((int) $this->type_id) : "null").",";
 		$sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
 		$sql .= ((isset($this->socid) && $this->socid > 0) ? ((int) $this->socid) : "null").", ";
 		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").", ";
 		$sql .= " '".$this->db->escape($this->note_private)."', ";
 		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? ((int) $this->contact_id) : "null").", "; // deprecated, use ->socpeopleassigned
-		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
-		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
+		$sql .= (isset($user->id) && $user->id > 0 ? ((int) $user->id) : "null").", ";
+		$sql .= ($userownerid > 0 ? ((int) $userownerid) : "null").", ";
 		$sql .= (!empty($this->fk_task) ? ((int) $this->fk_task) : "null").", ";
 		$sql .= "'".$this->db->escape($this->label)."', ";
 		$sql .= "'".$this->db->escape((string) $this->percentage)."', ";
 		$sql .= "'".$this->db->escape((string) $this->priority)."', ";
 		$sql .= "'".$this->db->escape((string) $this->fulldayevent)."', ";
 		$sql .= "'".$this->db->escape($this->location)."', ";
+		$sql .= (isset($this->max_participants) && $this->max_participants > 0 ? ((int) $this->max_participants) : "null").", ";
 		$sql .= "'".$this->db->escape((string) $this->transparency)."', ";
 		$sql .= (!empty($this->elementid) ? ((int) $this->elementid) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
@@ -695,7 +702,7 @@ class ActionComm extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 			$this->ref = (string) $this->id;
-			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->db->escape($this->ref)."' WHERE id=".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->db->escape($this->ref)."' WHERE id=".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -896,7 +903,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_task,";
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
-		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
+		$sql .= " a.priority, a.fulldayevent, a.location, a.max_participants, a.transparency,";
 		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_sender, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
 		$sql .= " a.recurid, a.recurrule, a.recurdateend,";
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
@@ -969,6 +976,7 @@ class ActionComm extends CommonObject
 				$this->priority				= $obj->priority;
 				$this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
+				$this->max_participants		= $obj->max_participants;
 				$this->transparency			= $obj->transparency;
 
 				$this->socid = $obj->fk_soc; // To have fetch_thirdparty method working
@@ -1282,6 +1290,7 @@ class ActionComm extends CommonObject
 		$sql .= ", priority = '".$this->db->escape((string) $this->priority)."'";
 		$sql .= ", fulldayevent = '".$this->db->escape((string) $this->fulldayevent)."'";
 		$sql .= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'" : "null");
+		$sql .= ", max_participants = ".(isset($this->max_participants) && $this->max_participants > 0 ? ((int) $this->max_participants) : "null");
 		$sql .= ", transparency = '".$this->db->escape((string) $this->transparency)."'";
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
@@ -1399,6 +1408,79 @@ class ActionComm extends CommonObject
 	}
 
 	/**
+	 *  Check if any resource attached to this event would become double-booked if the
+	 *  event's dates were changed to the given range. Only checks when the
+	 *  RESOURCE_USED_IN_EVENT_CHECK option is enabled and $this->element is 'action';
+	 *  returns no conflict otherwise.
+	 *
+	 *  @param	int		$newdatep	New start date to check (Unix timestamp)
+	 *  @param	int		$newdatef	New end date to check (Unix timestamp), 0 if none
+	 *  @return	array<int,array{r_ref:string,ac_id:int,ac_label:string}>|int<-1,-1>	Array of conflicting resource/event pairs (empty array = no conflict), -1 if a DB error occurred (check $this->error)
+	 */
+	public function checkResourceConflicts($newdatep, $newdatef)
+	{
+		if (!getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') || $this->element != 'action') {
+			return array();
+		}
+
+		$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$this->db->escape($this->element)."'";
+		$sql .= " WHERE ac.id <> ".((int) $this->id);
+		$sql .= " AND er.resource_id IN (";
+		$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
+		$sql .= " WHERE element_id = ".((int) $this->id);
+		$sql .= " AND element_type = '".$this->db->escape($this->element)."'";
+		$sql .= " AND busy = 1";
+		$sql .= ")";
+		$sql .= " AND er.busy = 1";
+		$sql .= " AND (";
+		$sql .= " (ac.datep <= '".$this->db->idate($newdatep)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$this->db->idate($newdatep)."'))";
+		if (!empty($newdatef)) {
+			$sql .= " OR (ac.datep <= '".$this->db->idate($newdatef)."' AND (ac.datep2 >= '".$this->db->idate($newdatef)."'))";
+		}
+		$sql .= " OR (";
+		$sql .= "ac.datep >= '".$this->db->idate($newdatep)."'";
+		if (!empty($newdatef)) {
+			$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$this->db->idate($newdatef)."')";
+		}
+		$sql .= ")";
+		$sql .= ")";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$conflicts = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$conflicts[] = array('r_ref' => $obj->r_ref, 'ac_id' => (int) $obj->ac_id, 'ac_label' => $obj->ac_label);
+		}
+		$this->db->free($resql);
+
+		return $conflicts;
+	}
+
+	/**
+	 *  Format an array of resource conflicts (as returned by checkResourceConflicts()) into a
+	 *  translated, HTML-formatted error message.
+	 *
+	 *  @param	array<int,array{r_ref:string,ac_id:int,ac_label:string}>	$conflicts	Conflicts array
+	 *  @param	Translate	$langs	Translate object to use for translation
+	 *  @return	string	Translated HTML message listing the conflicts
+	 */
+	public function formatResourceConflicts($conflicts, $langs)
+	{
+		$message = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+		foreach ($conflicts as $conflict) {
+			$message .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $conflict['r_ref'], $conflict['ac_label'].' ['.$conflict['ac_id'].']');
+		}
+		return $message;
+	}
+
+	/**
 	 *  Load all objects with filters.
 	 *  This is used by the showactions used into the main tab of objects to show the last n actions.
 	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join, like done into show_actions_done.
@@ -1406,13 +1488,13 @@ class ActionComm extends CommonObject
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
 	 *  @param		string	$elementtype	Type of element action is linked to
-	 *  @param		string	$filter			Other filter
+	 *  @param		string	$sqlfilter		Other filter
 	 *  @param		string	$sortfield		Sort on this field
 	 *  @param		string	$sortorder		ASC or DESC
 	 *  @param		int		$limit			Limit number of answers
 	 *  @return		ActionComm[]|string		Error string if KO, array with actions if OK
 	 */
-	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
+	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $sqlfilter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
 		global $hookmanager;
 
@@ -1461,8 +1543,8 @@ class ActionComm extends CommonObject
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
 		}
-		if (!empty($filter)) {
-			$sql .= $filter;
+		if (!empty($sqlfilter)) {
+			$sql .= $sqlfilter;
 		}
 		// Fields where hook
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
@@ -2642,6 +2724,61 @@ class ActionComm extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 *  Function used to replace a contact id with another one when merging two contacts.
+	 *  llx_actioncomm_resources with element_type = 'socpeople' is where the contacts assigned to an
+	 *  event are really stored, llx_actioncomm.fk_contact being deprecated but still filled.
+	 *
+	 *  @param	DoliDB	$dbs		Database handler
+	 *  @param	int		$origin_id	Old contact id (the contact to delete)
+	 *  @param	int		$dest_id	New contact id (the contact that will receive elements of the other)
+	 *  @return	bool				True if success, False if error
+	 */
+	public static function replaceContact(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		// llx_actioncomm_resources: UNIQUE(fk_actioncomm, element_type, fk_element)
+		$sql = 'DELETE FROM '.$dbs->prefix().'actioncomm_resources WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'actioncomm_resources as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'actioncomm_resources as dest';
+		$sql .= '   ON dest.fk_actioncomm = origin.fk_actioncomm AND dest.element_type = origin.element_type';
+		$sql .= "  WHERE origin.element_type = 'socpeople'";
+		$sql .= '   AND origin.fk_element = '.((int) $origin_id).' AND dest.fk_element = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		$sql = 'UPDATE '.$dbs->prefix().'actioncomm_resources SET fk_element = '.((int) $dest_id);
+		$sql .= " WHERE element_type = 'socpeople' AND fk_element = ".((int) $origin_id);
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		// llx_actioncomm_reminder: UNIQUE(fk_actioncomm, fk_user, fk_soc, fk_contact, typeremind, offsetvalue, offsetunit)
+		$sql = 'DELETE FROM '.$dbs->prefix().'actioncomm_reminder WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'actioncomm_reminder as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'actioncomm_reminder as dest';
+		$sql .= '   ON dest.fk_actioncomm = origin.fk_actioncomm AND dest.typeremind = origin.typeremind';
+		$sql .= '   AND dest.offsetvalue = origin.offsetvalue AND dest.offsetunit = origin.offsetunit';
+		// fk_user and fk_soc are part of the unique key and are nullable, hence the NULL safe
+		// comparisons: the MySQL <=> operator is not portable to PostgreSQL
+		$sql .= '   AND (dest.fk_user = origin.fk_user OR (dest.fk_user IS NULL AND origin.fk_user IS NULL))';
+		$sql .= '   AND (dest.fk_soc = origin.fk_soc OR (dest.fk_soc IS NULL AND origin.fk_soc IS NULL))';
+		$sql .= '  WHERE origin.fk_contact = '.((int) $origin_id).' AND dest.fk_contact = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		$tables = array(
+			'actioncomm', 'actioncomm_reminder'
+		);
+
+		return CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, $tables, 'fk_contact');
 	}
 
 	/**

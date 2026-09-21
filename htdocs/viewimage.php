@@ -104,11 +104,14 @@ if (!$needlogin) {
 	}
 }
 
-// For MultiCompany module.
+// For MultiCompany modules, if an entity is set in query parameters (required to point an object because a ref can exists
+// in 2 entities), then if user is not already into a session, the user must be loaded on this entity, so permission will
+// be the one of this entity.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// Because 2 entities can have the same ref.
-$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 0));
+if (is_numeric($entity) && $entity > 0) {
+	// An entity was forced on param, so we force the constant to allow master.inc.php to use this entity if not already logged.
+	// It has no effect if already logged.
 	define("DOLENTITY", $entity);
 }
 
@@ -152,8 +155,6 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 }
 
 require 'main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -161,6 +162,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
 $original_file = GETPOST('file', 'alphanohtml');
@@ -168,7 +170,7 @@ $hashp = GETPOST('hashp', 'aZ09', 1);
 $extname = GETPOST('extname', 'alpha', 1);
 $modulepart = GETPOST('modulepart', 'alpha', 1);
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity);
+$entity = ($entity > 0 ? $entity : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -176,6 +178,9 @@ if (empty($modulepart) && empty($hashp)) {
 }
 if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') {
 	httponly_accessforbidden('Bad link. Missing identification to find file (param file or hashp)', 400);
+}
+if ($hashp == 'shared') {
+	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
 }
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
@@ -207,7 +212,7 @@ if ($cachestring) {
 }
 
 // If we have a hash public (hashp), we guess the original_file.
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$ecmfile = new EcmFiles($db);
@@ -265,7 +270,7 @@ $original_file = str_replace('..\\', '/', $original_file);
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
-if ($refname == 'thumbs') {
+if ($refname == 'thumbs' || $refname == 'temp') {
 	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
 	$refname = basename(dirname(dirname($original_file))."/");
 }
@@ -287,20 +292,20 @@ if ($modulepart === 'medias' && $entity != $conf->entity) {
 	$conf->setValues($db);
 }
 
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 
-if (!empty($hashp)) {
+$imagepublicfortakepos = (GETPOSTINT("publictakepos") && getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category')));
+
+if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
-} elseif (GETPOSTINT("publictakepos")) {
-	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
-		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
-		// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
-		// only shared images are visible
-	}
+} elseif ($imagepublicfortakepos) {
+	$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
+	// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
+	// only shared images are visible
 } else {
 	// Basic protection (against external users only)
 	if ($user->socid > 0) {
@@ -322,6 +327,17 @@ if (!empty($hashp)) {
 	}
 }
 
+// Check permission on per object basis
+if (!empty($hashp) && $hashp != 'shared' && $accessallowed && !$imagepublicfortakepos) {
+	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
+	//var_dump($object);
+	if (is_object($object)) {
+		$accessallowed = restrictedArea($user, $modulepart, $object);
+	} else {
+		$accessallowed = 0;
+	}
+}
+
 // Security:
 // Limit access if permissions are wrong
 if (!$accessallowed) {
@@ -329,7 +345,7 @@ if (!$accessallowed) {
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+// We forbid directory traversal as well as pipes in file names.
 if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {
 	dol_syslog("Refused to deliver file ".$fullpath_original_file);
 	print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);

@@ -613,7 +613,7 @@ if ($result) {
 			print '<td>';
 			print '<input name="label" class="flat minwidth300" '.($objp->rappro ? ' disabled' : '').' value="';
 			if (preg_match('/^\((.*)\)$/i', $objp->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
+				// Generic label because it is in parentheses. We display it translated.
 				print $langs->trans($reg[1]);
 			} else {
 				print dol_escape_htmltag($objp->label);
@@ -623,7 +623,7 @@ if ($result) {
 		} else {
 			print '<td>';
 			if (preg_match('/^\((.*)\)$/i', $objp->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
+				// Generic label because it is in parentheses. We display it translated.
 				print $langs->trans($reg[1]);
 			} else {
 				print dol_escape_htmltag($objp->label);

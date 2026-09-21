@@ -90,6 +90,7 @@ ThisIsInformationOnDocumentToSignFichinter=Αυτές είναι πληροφο�
 ThisIsInformationOnDocumentToSignSociete_rib=Αυτές είναι πληροφορίες σχετικά με την Εντολή SEPA προς υπογραφή
 ThisIsInformationOnDocumentToSignExpedition= Αυτές είναι πληροφορίες για την αποστολή προς υπογραφή
 SignatureProposalRef=Υπογραφή προσφοράς / εμπορικής πρότασης %s
+SignatureOrderRef=Signature of sale order %s
 SignatureContractRef=Υπογραφή σύμβασης %s
 SignatureFichinterRef=Υπογραφή παρέμβασης %s
 SignatureSociete_ribRef=Υπογραφή της εντολής SEPA %s

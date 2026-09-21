@@ -501,7 +501,7 @@ function hash_call($methodName, $nvpStr)
 
 	//turning off the server and peer verification(TrustManager Concept).
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? 2 : 0));
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
 	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -310,7 +310,7 @@ class Loan extends CommonObject
 		$sql .= " '".$this->db->escape($this->account_interest)."',";
 		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
-		$sql .= " ".(empty($this->fk_project) ? 'NULL' : $this->fk_project).",";
+		$sql .= " ".(empty($this->fk_project) ? 'NULL' : ((int) $this->fk_project)).",";
 		$sql .= " ".((int) $user->id).",";
 		$sql .= " '".price2num($newinsuranceamount)."'";
 		$sql .= ")";
@@ -791,7 +791,7 @@ class Loan extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->dateend, 'day').'</span>';
 		}
 
-		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->totalpaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

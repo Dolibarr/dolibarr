@@ -63,6 +63,14 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
+// Load object
+$object = new PaiementFourn($db);
+$upload_dir = null;
+if ($object->fetch($id, $ref)) {
+	$object->fetch_thirdparty();
+	$ref = dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+}
 
 // Security check
 if ($user->isExternalUser()) {
@@ -88,15 +96,6 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
-// Load object
-$object = new PaiementFourn($db);
-$upload_dir = null;
-if ($object->fetch($id, $ref)) {
-	$object->fetch_thirdparty();
-	$ref = dol_sanitizeFileName($object->ref);
-	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
-}
-
 $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")); // Used by the include of actions_setnotes.inc.php
 
 
@@ -118,7 +117,7 @@ llxHeader('', $title);
 
 if ($object->id > 0 && $upload_dir !== null) {
 	$head = payment_supplier_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans("SupplierPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("SupplierPayment"), -1, 'payment', 0, '', '', 0, '', 1);
 
 	// Supplier order card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';

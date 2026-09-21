@@ -257,14 +257,16 @@ class Tva extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
-		$sql .= " tms='".$this->db->idate($this->tms)."',";
-		$sql .= " datep='".$this->db->idate($this->datep)."',";
-		$sql .= " datev='".$this->db->idate($this->datev)."',";
-		$sql .= " amount=".price2num($this->amount).",";
-		$sql .= " label='".$this->db->escape($this->label)."',";
-		$sql .= " note='".$this->db->escape($this->note)."',";
-		$sql .= " fk_user_creat=".((int) $this->fk_user_creat).",";
-		$sql .= " fk_user_modif=".((int) ($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id));
+		if (!empty($this->tms)) {
+			$sql .= " tms='".$this->db->idate($this->tms)."',";
+		}
+		$sql .= " datep = '".$this->db->idate($this->datep)."',";
+		$sql .= " datev = '".$this->db->idate($this->datev)."',";
+		$sql .= " amount = ".(float) price2num($this->amount).",";
+		$sql .= " label = '".$this->db->escape($this->label)."',";
+		$sql .= " note = '".$this->db->escape($this->note)."',";
+		$sql .= " fk_user_creat = ".((int) $this->fk_user_creat).",";
+		$sql .= " fk_user_modif = ".((int) ($this->fk_user_modif > 0 ? ((int) $this->fk_user_modif) : ((int) $user->id)));
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -807,6 +809,16 @@ class Tva extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -963,7 +975,7 @@ class Tva extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label" >'.dol_print_date($this->datev).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, (float) $this->totalpaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -3,7 +3,7 @@
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018 Andreu Bisquerra     <jove@bisquerra.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -300,8 +300,8 @@ class CashControl extends CommonObject
 		$sql .= ", '".$this->db->idate(dol_now())."'";
 		$sql .= ", '".$this->db->escape($this->posmodule)."'";
 		$sql .= ", '".$this->db->escape($this->posnumber)."'";
-		$sql .= ", ".($this->day_close > 0 ? $this->day_close : "null");
-		$sql .= ", ".($this->month_close > 0 ? $this->month_close : "null");
+		$sql .= ", ".($this->day_close > 0 ? ((int) $this->day_close) : "null");
+		$sql .= ", ".($this->month_close > 0 ? ((int) $this->month_close) : "null");
 		$sql .= ", ".((int) $this->year_close);
 		$sql .= ", ".(isset($this->hour_close) ? (int) $this->hour_close : 23);
 		$sql .= ", ".(isset($this->min_close) ? (int) $this->min_close : 59);

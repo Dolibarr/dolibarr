@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -96,6 +96,7 @@ if ($type == 'proposal') {
 }
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
+	// Link may have expired because of a change into the keys used to forge the signature.
 	httponly_accessforbidden('Bad value for securitykey. Value provided ' . dol_escape_htmltag($SECUREKEY) . ' does not match expected value for ref=' . dol_escape_htmltag($ref), 403);
 }
 
@@ -175,7 +176,12 @@ if ($action == "importSignature") {
 
 						if (empty($reshook)) {
 							// We build the new PDF
-							$pdf = pdf_getInstance();
+							$formatarray = pdf_getFormat();
+							$page_largeur = $formatarray['width'];
+							$page_hauteur = $formatarray['height'];
+							$format = array($page_largeur, $page_hauteur);
+
+							$pdf = pdf_getInstance($format);
 							if (class_exists('TCPDF')) {
 								$pdf->setPrintHeader(false);
 								$pdf->setPrintFooter(false);
@@ -200,8 +206,10 @@ if ($action == "importSignature") {
 								try {
 									$tppl = $pdf->importPage($i);
 									$s = $pdf->getTemplatesize($tppl);
-									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$format = array($s['w'], $s['h']);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L', $format);
 									$pdf->useTemplate($tppl);
+
 									if ($propalsignonspecificpage < 0) {
 										$propalsignonspecificpage = $pagecount - abs($propalsignonspecificpage);
 									}
@@ -296,13 +304,21 @@ if ($action == "importSignature") {
 					$sql .= ", online_sign_name = '" . $db->escape($online_sign_name) . "'";
 				}
 				$sql .= " WHERE rowid = " . ((int) $object->id);
+				$sql .= " AND fk_statut = ".((int) $object::STATUS_VALIDATED);		// Protection so we can't sign a document that is no more with status validated.
 
 				dol_syslog(__FILE__, LOG_DEBUG);
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
+					$response = "error sql";
 				} else {
 					$num = $db->affected_rows($resql);
+					if ($num <= 0) {
+						$error++;
+						$langs->load("errors");
+						//setEventMessages($langs->trans("ErrorCantSignDocument"), null, 'errors');
+						print $langs->transnoentitiesnoconv("ErrorCantSignDocument");	// Must be a print that is shown by ajavascript alert().
+					}
 				}
 
 				if (!$error) {
@@ -327,15 +343,12 @@ if ($action == "importSignature") {
 					} else {
 						$response = "success";
 					}
-				} else {
-					$error++;
-					$response = "error sql";
 				}
 
 				if (!$error) {
 					$db->commit();
 					$response = "success";
-					setEventMessages("PropalSigned", null, 'warnings');
+					setEventMessages("PropalSigned", null, 'mesgs');
 				} else {
 					$db->rollback();
 				}
@@ -560,17 +573,17 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
 										} else {
-											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 										}
 
 										dolPrintSignatureImage($pdf, $langs, $param);
@@ -586,9 +599,9 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
-								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
@@ -724,7 +737,7 @@ if ($action == "importSignature") {
 								}
 								foreach ($dirmodels as $reldir) {
 									$file = "pdf_" . $last_modelpdf . ".modules.php";
-									// On vérifie l'emplacement du modele
+									// Check the template location
 									$file = dol_buildpath($reldir . $modelpath . $file, 0);
 									if (file_exists($file)) {
 										$filefound = $file;
@@ -919,7 +932,7 @@ if ($action == "importSignature") {
 										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 										// TODO Get position of box from PDF template
 
-										$param['xforimgstart'] = 111;
+										$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
 										$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
 										$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
@@ -936,7 +949,7 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = 111;
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
 								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
 								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 

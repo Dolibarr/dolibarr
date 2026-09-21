@@ -48,7 +48,7 @@ $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre access paiement
+// TODO add rule to restrict payment access
 //restrictedArea($user, 'facture', $id,'');
 
 $payment = new PaymentLoan($db);
@@ -242,7 +242,7 @@ if (empty($action) && $user->hasRight('loan', 'delete')) {
 	if (!$disable_delete) {
 		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 1);
 	} else {
-		print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
+		print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 0);
 	}
 }
 

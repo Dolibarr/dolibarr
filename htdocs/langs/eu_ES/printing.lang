@@ -46,6 +46,10 @@ IPP_Color=Kolorea
 IPP_Device=Gailua
 IPP_Media=Inprimagailu-euskarria
 IPP_Supported=Komunikabide mota
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=None
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=Orrialde honek eskuragarri dauden inprimagailuetarako aurkitutako inprimatze-lanak zerrendatzen ditu.
 GoogleAuthNotConfigured=Google OAuth ez da konfiguratu. Gaitu OAuth modulua eta ezarri Google ID/sekretu bat.
 GoogleAuthConfigured=Google OAuth kredentzialak OAuth moduluaren konfigurazioan aurkitu dira.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Google Cloud Print inprimatzeko kontrolatzailearen ko
 PrintingDriverDescprintipp=Cups inprimatzeko kontrolatzaileen konfigurazio aldagaiak.
 PrintTestDescprintgcp=Google Cloud Print-erako inprimagailuen zerrenda.
 PrintTestDescprintipp=Edalontzietarako inprimagailuen zerrenda.
-Testbbbb
+PrinterLocation=Printer location

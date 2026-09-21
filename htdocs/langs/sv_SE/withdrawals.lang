@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Löner som väntar på betalning via kreditöverföring
 RefSalary=Lön
 NoSalaryInvoiceToWithdraw=Ingen lön som väntar på en '%s'. Gå på fliken '%s' på lönekortet för att göra en förfrågan.
 SalaryInvoiceWaitingWithdraw=Löner som väntar på betalning via kreditöverföring
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

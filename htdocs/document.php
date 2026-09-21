@@ -76,6 +76,16 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	}
 }
 
+// For MultiCompany modules, if an entity is set in query parameters (required to point an object because a ref can exists
+// in 2 entities), then if user is not already into a session, the user must be loaded on this entity, so permission will
+// be the one of this entity.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 0));
+if ($entity > 0) {
+	// An entity was forced on param, so we force the constant to allow master.inc.php to use this entity if not already logged.
+	// It has no effect if already logged.
+	define("DOLENTITY", $entity);
+}
 
 /**
  * Header empty
@@ -136,7 +146,7 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity;
+$entity = ($entity > 0 ? $entity : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -144,6 +154,9 @@ if (empty($modulepart) && empty($hashp)) {
 }
 if (empty($original_file) && empty($hashp)) {
 	httponly_accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 400);
+}
+if ($hashp == 'shared') {
+	httponly_accessforbidden('Bad link. Bad value for parameter hashp', 400);
 }
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
@@ -176,14 +189,15 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
 
 // If we have a hash public (hashp), we guess the original_file.
 $ecmfile = '';
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	if (GETPOST('type', 'alpha') == 'link') {
+		// If we request a link
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
 		$result = $link->fetch(0, $hashp);
 		if ($result > 0 && !empty($link->url)) {
 			if (preg_match('/^(http|dav)/', $link->url)) {
-				header('Location: '.$link->url);
+				header('Location: '.$link->url);				// Return the shared link we found in db
 				exit;
 			}
 		} else {
@@ -191,6 +205,7 @@ if (!empty($hashp)) {
 			httponly_accessforbidden($langs->trans("ErrorLinkNotFoundWithSharedLink"), 403, 1);
 		}
 	} else {
+		// If we request a file
 		include_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
 		$ecmfile = new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', '', '', $hashp);
@@ -208,7 +223,7 @@ if (!empty($hashp)) {
 					$original_file = (($tmp[1] ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
 					//var_dump($original_file); exit;
 				} else {
-					httponly_accessforbidden('Bad link. File is from another module part.', 403);
+					httponly_accessforbidden('Bad entry found. File has a path from another module part.', 403);
 				}
 			} else {
 				$modulepart = $moduleparttocheck;
@@ -226,6 +241,8 @@ if (!empty($hashp)) {
 			if ($entity != $conf->entity) {
 				$conf->entity = $entity;
 				$conf->setValues($db);
+				// Multicompany: Here we are switching entity and later we will check the requested object is in this entity but may be that user is not allowed to log/see entity
+				// but we don't mind, we are using the public hash to get file.
 			}
 		} else {
 			$langs->load("errors");
@@ -265,19 +282,26 @@ $original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... 
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
+// Find the subdirectory name as the reference
+$refname = basename(dirname($original_file)."/");
+if ($refname == 'thumbs' || $refname == 'temp') {
+	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+	$refname = basename(dirname(dirname($original_file))."/");
+}
+
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '', 'read');
+$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 //var_dump($modulepart.' '.$entity.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
-if (!empty($hashp)) {
+if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
 } else {
@@ -298,16 +322,17 @@ if (!empty($hashp)) {
 				}
 			}
 		}
-	} elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
-		if ($sqlprotectagainstexternals) {
-			$resql = $db->query($sqlprotectagainstexternals);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				if ($num > 0) {
-					$accessallowed = 1;
-				}
-			}
-		}
+	}
+}
+
+// Check permission on per object basis
+if (!empty($hashp) && $hashp != 'shared' && $accessallowed) {
+	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
+	//var_dump($object);
+	if (is_object($object)) {
+		$accessallowed = restrictedArea($user, $modulepart, $object);
+	} else {
+		$accessallowed = 0;
 	}
 }
 
@@ -362,12 +387,6 @@ if ($reshook < 0) {
 
 // If we show an invoice, we test if we must regenerate the PDF
 if ($modulepart == 'facture') {
-	$refname = basename(dirname($original_file)."/");
-	if ($refname == 'thumbs' || $refname == 'temp') {
-		// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
-		$refname = basename(dirname(dirname($original_file))."/");
-	}
-
 	$invoice = fetchObjectByElement(0, $modulepart, $refname);
 
 	if ($original_file == preg_replace('/facture\//', '', $invoice->last_main_doc)) {
@@ -442,7 +461,7 @@ if ($attachment > 0) {
 } elseif (empty($attachment)) {
 	header('Content-Disposition: inline; filename="'.$filename.'"');
 }
-// Ajout directives pour resoudre bug IE
+// Add directives to fix IE bug
 header('Cache-Control: Public, must-revalidate');
 header('Pragma: public');
 $readfile = true;

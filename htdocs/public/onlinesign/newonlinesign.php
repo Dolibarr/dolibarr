@@ -97,7 +97,6 @@ $ref = $REF = GETPOST("ref", 'alpha');
 $urlok = '';
 $urlko = '';
 
-
 if ($source == '') {
 	$source = 'proposal';
 }
@@ -155,6 +154,8 @@ if ($source == 'proposal') {
 	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($source == 'societe_rib') {
 	$securekeyseed = getDolGlobalString('SOCIETE_RIB_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
+} else {
+	$securekeyseed = getDolGlobalString(dol_strtoupper((string) $source).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 }
 if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, 'hash')) {
 	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
@@ -686,12 +687,8 @@ if ($source == 'proposal') {
 $parameters = array('source' => $source);
 $reshook = $hookmanager->executeHooks('addFormSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
-if (!$found && !$mesg) {
-	$mesg = $langs->transnoentitiesnoconv("ErrorBadParameters");
-}
-
-if ($mesg) {
-	print '<tr><td class="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
+if (!$found) {
+	print '<tr><td class="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($langs->transnoentitiesnoconv("ErrorBadParameters")).'</div></td></tr>'."\n";
 }
 
 print '</table>'."\n";

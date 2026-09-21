@@ -30,11 +30,6 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
@@ -179,6 +178,8 @@ if ($compression == 'zip') {
 	}
 } elseif (in_array($compression, array('gz', 'bz', 'zstd'))) {
 	$userlogin = ($user->login ? $user->login : 'unknown');
+
+	dol_mkdir($conf->admin->dir_temp);	// May have been removed by a "Clean temporary files" purge
 
 	$outputfile = $conf->admin->dir_temp.'/'.dol_sanitizeFileName('export_files.'.$userlogin.'.out'); // File used with popen method
 

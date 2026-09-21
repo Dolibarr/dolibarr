@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,7 @@ function isHTTPS()
  *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database, like into configuration table llx_const, or societe_rib, ...
+ *  Note: Trying to encode a string already encode does not encode the string twice, it just return the already encoded string.
  *
  *	@param   string		$chain				String to encode
  *	@param   string		$key				Key to use to decode. It can be a list of keys separated by ','.
@@ -70,7 +72,7 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '', $obfusc
 	}
 
 	$reg = array();
-	if (preg_match('/^(dolobfuscationv1[^:]+|dolcrypt):([^:]+):(.+)$/', $chain, $reg)) {
+	if (preg_match('/^(dolobfuscation|dolcrypt)[^:]*:([^:]+):(.+)$/', $chain, $reg)) {
 		// The $chain is already an encrypted string
 		return $chain;
 	}
@@ -124,7 +126,7 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '', $obfusc
  *
  *	@param   string			$chain			Encrypted string to decode
  *	@param   string			$key			Key to use to decode. It can be a list of keys separated by ','.
- *  @param	 string			$patterntotest	Pattern to test if decoing is ok.
+ *  @param	 string			$patterntotest	Pattern to test if decoding is ok.
  *	@return  string							Decrypted string
  *  @since v17
  *  @see dolEncrypt(), dol_hash()
@@ -151,23 +153,23 @@ function dolDecrypt($chain, $key = '', $patterntotest = '')
 
 	$reg = array();
 
-	// Old method (no more used, kept for compatibility)
+	// Very old method (no more used, kept for compatibility in case of)
 	if (preg_match('/^crypted:(.+)$/', $chain, $reg)) {
 		return dol_decode($reg[1]);
 	}
 
-	// New method
-	if (preg_match('/^dol[^:]+:([^:]+):(.+)$/', $chain, $reg)) {
+	// New method (dolcrypt using local key or dolobfuscationkey using remote key)
+	if (preg_match('/^(dolobfuscation|dolcrypt)[^:]*:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
 		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
 
-		$ciphering = $reg[1];
+		$ciphering = $reg[2];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
 				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_WARNING);
 				return $chain;
 			}
-			$tmpexplode = explode(':', $reg[2]);
+			$tmpexplode = explode(':', $reg[3]);
 			if (!empty($tmpexplode[1])) {
 				$data = $tmpexplode[1];
 				$iv = $tmpexplode[0];
@@ -177,6 +179,8 @@ function dolDecrypt($chain, $key = '', $patterntotest = '')
 			}
 
 			$keys = explode(',', $key);
+
+			$newchain = '';
 
 			// Loop on each possible keys (usually one, but can be more in future if we have a list of keys)
 			foreach ($keys as $tmpkey) {
@@ -190,9 +194,9 @@ function dolDecrypt($chain, $key = '', $patterntotest = '')
 			}
 
 			// Test validity of decryption
-			if (!ascii_check($newchain)) {
+			if (!ascii_check($newchain) && !utf8_check($newchain)) {
 				if (empty($savkey)) {
-					dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
+					dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, seems not to be the one used to encrypt the encrypted string", LOG_ERR);
 				} else {
 					dol_syslog("Error dolDecrypt failed: The string decoded with the key return a non valid value (not ascii)", LOG_ERR);
 				}

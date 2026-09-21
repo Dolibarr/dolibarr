@@ -5,7 +5,7 @@
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2026      Joachim Küter        <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -126,6 +126,11 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	if (empty($duration_value)) {
+		return $time;
+	}
+	if (!in_array($duration_unit, array('s', 'i', 'mn', 'min', 'h', 'd', 'w', 'm', 'y'))) {
+		$errormsg = 'dol_time_plus_duree call to function with undefined or bad duration_unit : ' . $duration_unit;
+		dol_syslog($errormsg, LOG_ERR);
 		return $time;
 	}
 	if ($duration_unit == 's') {
@@ -391,24 +396,25 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
 	$day_date = intval($day_date);
 	$month_date = intval($month_date);
 	$year_date = intval($year_date);
+	$sql_datefield = $db->sanitize($datefield);
 
 	if ($month_date > 0) {
 		if ($month_date > 12) {	// protection for bad value of month
 			return " AND 1 = 2";
 		}
 		if ($year_date > 0 && empty($day_date)) {
-			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm));
-			$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, $gm))."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm))."'";
+			$sqldate .= " AND '".$db->idate(dol_get_last_day($year_date, $month_date, $gm))."'";
 		} elseif ($year_date > 0 && !empty($day_date)) {
-			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date, $gm));
-			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date, $gm))."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date, $gm))."'";
+			$sqldate .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date, $gm))."'";
 		} else {
 			// This case is not reliable on TZ, but we should not need it.
-			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape((string) $month_date)."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$sql_datefield.", '%c') = '".$db->escape((string) $month_date)."'";
 		}
 	} elseif ($year_date > 0) {
-		$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, $gm));
-		$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, 12, $gm))."'";
+		$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, $gm))."'";
+		$sqldate .= " AND '".$db->idate(dol_get_last_day($year_date, 12, $gm))."'";
 	}
 	return $sqldate;
 }
@@ -438,8 +444,8 @@ function dol_stringtotime($string, $gm = 1)
 	// Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
 	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $string, $reg)) {
 		dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
-		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
-		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
+		// Date is in format 'DD/MM/YY' or 'DD/MM/YY HH:MM:SS'
+		// Date is in format 'DD/MM/YYYY' or 'DD/MM/YYYY HH:MM:SS'
 		$sday = (int) $reg[1];
 		$smonth = (int) $reg[2];
 		$syear = (int) $reg[3];
@@ -632,7 +638,7 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 		$month += 1;
 	}
 
-	// On se deplace au debut du mois suivant, et on retire un jour
+	// Move to the start of the next month, then subtract one day
 	$datelim = dol_mktime(23, 59, 59, $month, 1, $year, $gm);
 	$datelim -= (3600 * 24);
 
@@ -806,7 +812,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 		$tmpArrayOfPublicHolidays = array();
 		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
-		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".$country_id : 0).")";
+		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".((int) $country_id) : 0).")";
 		$sql .= " AND entity IN (0," .getEntity('holiday') .")";
 
 		$resql = $db->query($sql);
@@ -909,7 +915,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 			}
 
 			if (in_array('ascension', $specialdayrule)) {
-				// Calcul du jour de l'ascension (39 days after easter day)
+				// Calculation of Ascension day (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_ascension = $date_paques + (3600 * 24 * 39);
 				$jour_ascension = gmdate("d", $date_ascension);
@@ -1006,8 +1012,11 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 		}
 
 		// Increase number of days (on go up into loop)
+		// Advance by exactly one GMT day. We can use += instead of dol_time_plus_duree() here because
+		// inputs of this function are GMT dates (checked above), so a day
+		// is always exactly 86400 seconds.
 		//var_dump("before ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
-		$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
+		$timestampStart += 86400;
 		//var_dump("after ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
 
 		$i++;
@@ -1069,7 +1078,7 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
 		$tmpArrayOfPublicHolidays = array();
 		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_hrm_public_holiday";
-		$sql .= " WHERE active = 1 and fk_country IN (0" . ($country_id > 0 ? ", " . $country_id : 0) . ")";
+		$sql .= " WHERE active = 1 and fk_country IN (0" . ($country_id > 0 ? ", " . ((int) $country_id) : 0) . ")";
 		$sql .= " AND entity IN (0," . getEntity('holiday') . ")";
 
 		$resql = $db->query($sql);
@@ -1200,7 +1209,7 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
 			}
 
 			if (in_array('ascension', $specialdayrule)) {
-				// Calcul du jour de l'ascension (39 days after easter day)
+				// Calculation of Ascension day (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_ascension = $date_paques + (3600 * 24 * 39);
 				$jour_ascension = gmdate("d", $date_ascension);
@@ -1297,7 +1306,7 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
- *  @see num_public_holiday(), num_open_day()
+ *  @see num_public_holiday(), num_open_day(), num_between_day_30_360()
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
@@ -1313,6 +1322,62 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 	}
 	//print ($timestampEnd - $timestampStart) - $lastday;
 	return $nbjours;
+}
+
+/**
+ *	Function to return number of days between two dates using the 30/360 day count convention:
+ *  every month counts for 30 days and every year for 360 days.
+ *  Example: 2022-03-10 2023-07-31 => 500 if lastday=0, 501 if lastday=1
+ *
+ *  This convention is the one applied by most accounting firms (and the usual one in France) to
+ *  compute the prorata temporis of a depreciation. The returned value must always be divided by
+ *  360 to get a fraction of year: dividing a count of real calendar days by 360 instead mixes two
+ *  conventions and overestimates every partial period by about 1.39% (365/360).
+ *
+ *  WARNING: this function uses the PHP server timezone by default because it works on the calendar
+ *  representation of the dates. Force $forcetimezone to 'gmt' when the timestamps are UTC dates.
+ *
+ *	@param	   int			$timestampStart     Timestamp start
+ *	@param	   int			$timestampEnd       Timestamp end
+ *	@param     int			$lastday            Last day is included, 0: no, 1:yes
+ *	@param	   string		$forcetimezone		'' to use the PHP server timezone, or 'gmt', 'Europe/Paris', ...
+ *	@return    int								Number of days on a 30/360 basis
+ *  @see num_between_day()
+ */
+function num_between_day_30_360($timestampStart, $timestampEnd, $lastday = 0, $forcetimezone = '')
+{
+	if ($timestampStart > $timestampEnd) {
+		return 0;
+	}
+
+	$start = dol_getdate((int) $timestampStart, false, $forcetimezone);
+	$end = dol_getdate((int) $timestampEnd, false, $forcetimezone);
+
+	// The 31st of a month is brought back to the 30th, so that every month counts for 30 days
+	$daystart = min($start['mday'], 30);
+	$dayend = min($end['mday'], 30);
+
+	$nbdays = ($dayend - $daystart) + 30 * ($end['mon'] - $start['mon']) + 360 * ($end['year'] - $start['year']);
+	if ($lastday == 1) {
+		$nbdays++;
+	}
+
+	return max(0, $nbdays);
+}
+
+/**
+ *	Function to return the real number of days of a year (365, or 366 for a leap year).
+ *
+ *	@param	   int			$year				Year on 4 digits
+ *	@return    int								365 or 366
+ *  @see num_between_day(), num_between_day_30_360()
+ */
+function num_days_in_year($year)
+{
+	$year = (int) $year;
+	$isleapyear = (($year % 4 == 0 && $year % 100 != 0) || $year % 400 == 0);
+
+	return $isleapyear ? 366 : 365;
 }
 
 /**
@@ -1477,7 +1542,7 @@ function getWeekNumbersOfMonth($month, $year)
 {
 	$nb_days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 	$TWeek = array();
-	for ($day = 1; $day < $nb_days; $day++) {
+	for ($day = 1; $day <= $nb_days; $day++) {
 		$week_number = getWeekNumber($day, $month, $year);
 		$TWeek[$week_number] = $week_number;
 	}
@@ -1494,11 +1559,20 @@ function getWeekNumbersOfMonth($month, $year)
 function getFirstDayOfEachWeek($TWeek, $year)
 {
 	$TFirstDayOfWeek = array();
+	// When a month overlaps 2 years, the weeks 52/53 of previous year and the week 01 of next year are present together in $TWeek.
+	// If $TWeek starts with week 52 or 53 (a January), these first weeks belong to previous year.
+	// If $TWeek ends with week 01 (a December), this last week belongs to next year.
+	$startwithweeksofpreviousyear = ((int) reset($TWeek) >= 52 && in_array('01', $TWeek));
 	foreach ($TWeek as $weekNb) {
-		if (in_array('01', $TWeek) && in_array('52', $TWeek) && $weekNb == '01') {
-			$year++; //Si on a la 1re semaine et la semaine 52 c'est qu'on change d'année
+		$yeartouse = $year;
+		if ($startwithweeksofpreviousyear) {
+			if ((int) $weekNb >= 52) {
+				$yeartouse = $year - 1;
+			}
+		} elseif ($weekNb == '01' && in_array('52', $TWeek)) {
+			$yeartouse = $year + 1;
 		}
-		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($year.'W'.$weekNb));
+		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb));
 	}
 	return $TFirstDayOfWeek;
 }
@@ -1513,8 +1587,18 @@ function getFirstDayOfEachWeek($TWeek, $year)
 function getLastDayOfEachWeek($TWeek, $year)
 {
 	$TLastDayOfWeek = array();
+	// Same rule as in getFirstDayOfEachWeek() to find the year each week belongs to
+	$startwithweeksofpreviousyear = ((int) reset($TWeek) >= 52 && in_array('01', $TWeek));
 	foreach ($TWeek as $weekNb) {
-		$TLastDayOfWeek[$weekNb] = date('d', strtotime($year.'W'.$weekNb.'+6 days'));
+		$yeartouse = $year;
+		if ($startwithweeksofpreviousyear) {
+			if ((int) $weekNb >= 52) {
+				$yeartouse = $year - 1;
+			}
+		} elseif ($weekNb == '01' && in_array('52', $TWeek)) {
+			$yeartouse = $year + 1;
+		}
+		$TLastDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb.'+6 days'));
 	}
 	return $TLastDayOfWeek;
 }

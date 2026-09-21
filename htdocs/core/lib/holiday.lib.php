@@ -55,6 +55,11 @@ function holiday_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/holiday/holiday_agenda.php', ['id' => $object->id]);
+	$head[$h][1] = $langs->trans("Events");
+	$head[$h][2] = 'agenda';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'add', 'core');
 
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/holiday/info.php', ['id' => $object->id]);
@@ -99,7 +104,7 @@ function holiday_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/holiday_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'holiday'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['holiday']['count'];
 	if ($nbExtrafields > 0) {

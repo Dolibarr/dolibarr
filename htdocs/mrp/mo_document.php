@@ -121,7 +121,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = moPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("ManufacturingOrder"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("ManufacturingOrder"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
@@ -142,7 +142,7 @@ if ($object->id && $upload_dir !== null) {
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
 	// Project

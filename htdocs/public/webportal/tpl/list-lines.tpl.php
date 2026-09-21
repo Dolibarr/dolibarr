@@ -52,7 +52,7 @@ if (!empty($formList->records)) {
 
 			// Fields from hook
 			$parameters = array('record' => $record, 'i' => $i, 'totalarray' => &$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $context);
+			$reshook = $hookmanager->executeHooks('webPortalPrintFieldListValue', $parameters, $context);
 			print $hookmanager->resPrint;
 
 			// Remain to pay

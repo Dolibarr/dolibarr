@@ -104,6 +104,9 @@ $arrayfields = array(
 	'bc.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 60),
 	'bc.statut'			=> array('label' => "Status", 'checked' => '1', 'position' => 70)
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -261,7 +264,7 @@ if ($resql) {
 		$param .= '&search_account='.urlencode((string) ($search_account));
 	}
 
-	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new';
+	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=create2';
 
 	$newcardbutton  = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));

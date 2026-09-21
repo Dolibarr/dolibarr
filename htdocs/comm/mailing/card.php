@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
@@ -63,8 +63,8 @@ $id = (GETPOSTINT('mailid') ? GETPOSTINT('mailid') : GETPOSTINT('id'));
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$urlfrom = GETPOST('urlfrom');
 $projectid = GETPOSTINT('projectid');
+$urlfrom = GETPOST('urlfrom');
 $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 
@@ -202,7 +202,7 @@ if (empty($reshook)) {
 			$id       = $object->id;
 			$subject  = $object->sujet;
 			$message  = $object->body;
-			$from     = $object->email_from;
+			$email_from     = $object->email_from;
 			$replyto = $object->email_replyto;
 			$errorsto = $object->email_errorsto;
 			// Is the message in html
@@ -382,7 +382,7 @@ if (empty($reshook)) {
 						// Mail making
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
 						$upload_dir_tmp = $upload_dir;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', $replyto, $upload_dir_tmp);
+						$mail = new CMailFile($newsubject, $sendto, $email_from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', $replyto, $upload_dir_tmp);
 
 						if ($mail->error) {
 							$res = 0;
@@ -626,21 +626,23 @@ if (empty($reshook)) {
 
 		if ($action == 'settitle') {					// Test on permission already done
 			$object->title = trim(GETPOST('title', 'alpha'));
+			if (empty($object->title)) {
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
+			}
 		} elseif ($action == 'setemail_from') {			// Test on permission already done
 			$object->email_from = trim(GETPOST('email_from', 'alphawithlgt')); // Must allow 'name <email>'
+			if (empty($object->email_from)) {
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
+			}
 		} elseif ($action == 'setemail_replyto') {		// Test on permission already done
 			$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
 		} elseif ($action == 'setemail_errorsto') {		// Test on permission already done
 			$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
-		} elseif ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
-		} elseif ($action == 'setfrom' && empty($object->email_from)) {	// Test on permission already done
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
 		} elseif ($action == 'setevenunsubscribe') {	// Test on permission already done
 			$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
 		}
 
-		if (isset($mesg) && empty($mesg)) {
+		if (empty($mesg)) {
 			$result = $object->update($user);
 			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -1268,7 +1270,7 @@ if ($action == 'create') {	// aaa
 				1 => array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
 				);
 				// Incomplete payment. On demande si motif = escompte ou autre
-				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneEMailing', $object->ref), 'confirm_clone', $formquestion, 'yes', 2, 240);
+				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneEMailing', $object->ref), 'confirm_clone', $formquestion, 'yes', 2, 0);
 			}
 
 			// Actions Buttons
@@ -1310,7 +1312,7 @@ if ($action == 'create') {	// aaa
 					} elseif (!$user->hasRight('mailing', 'valider')) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</a>';
 					} else {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valid&amp;id='.$object->id.'">'.$langs->trans("Validate").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valid&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("Validate").'</a>';
 					}
 				}
 
@@ -1320,19 +1322,19 @@ if ($action == 'create') {	// aaa
 					} elseif (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
 					} else {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendall&amp;id='.$object->id.'">'.$langs->trans("SendMailing").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendall&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("SendMailing").'</a>';
 					}
 				}
 
 				if ($user->hasRight('mailing', 'creer')) {
-					print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?action=clone&amp;object=emailing&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+					print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?action=clone&amp;token='.newToken().'&amp;object=emailing&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 				}
 
 				if (($object->status == 2 || $object->status == 3) && $user->hasRight('mailing', 'valider')) {
 					if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('mailing', 'mailing_advance', 'send')) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
 					} else {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
 					}
 				}
 

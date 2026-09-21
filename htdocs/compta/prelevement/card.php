@@ -414,6 +414,8 @@ if ($id > 0 || $ref) {
 	}
 
 	if ($object->status == BonPrelevement::STATUS_TRANSFERED && (($user->hasRight('prelevement', 'bons', 'credit') && $object->type != 'bank-transfer') || ($user->hasRight('paymentbybanktransfer', 'debit') && $object->type == 'bank-transfer')) && $action == 'setcredited') {
+		print '<br>';
+
 		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -561,7 +563,7 @@ if ($id > 0 || $ref) {
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder liste centpercent">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre("LineID", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);
 		print_liste_field_titre((!$salaryBonPl ? "ThirdParty" : "Employee"), $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
 		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre('');

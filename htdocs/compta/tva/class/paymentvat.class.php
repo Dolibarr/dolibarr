@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,13 +120,6 @@ class PaymentVAT extends CommonObject
 	public $chid;
 
 	/**
-	 * @var string lib
-	 * @deprecated
-	 * @see $label
-	 */
-	public $lib;
-
-	/**
 	 * @var int|string datepaye
 	 */
 	public $datepaye;
@@ -239,7 +232,7 @@ class PaymentVAT extends CommonObject
 			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
 			$sql .= " ".((float) $totalamount).",";
-			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
@@ -369,7 +362,6 @@ class PaymentVAT extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -458,11 +450,13 @@ class PaymentVAT extends CommonObject
 
 		if ($this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
-			$accline->fetch($this->bank_line);
-			$result = $accline->delete($user);
-			if ($result < 0) {
-				$this->errors[] = $accline->error;
-				$error++;
+			$result = $accline->fetch($this->bank_line);
+			if ($result > 0) {
+				$result = $accline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+				if ($result < 0) {
+					$this->errors[] = $accline->error;
+					$error++;
+				}
 			}
 		}
 
@@ -757,30 +751,14 @@ class PaymentVAT extends CommonObject
 
 		$result = '';
 
-		if (empty($this->ref)) {
-			$this->ref = $this->lib;
-		}
-
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("VATPayment").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (!empty($this->label)) {
-			$labeltoshow = $this->label;
-			$reg = array();
-			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
-				// Label generique car entre parentheses. On l'affiche en le traduisant
-				if ($reg[1] == 'paiement') {
-					$reg[1] = 'Payment';
-				}
-				$labeltoshow = $langs->trans($reg[1]);
-			}
-			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
-		}
 		if ($this->datep) {
 			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
 		}
 
 		if (!empty($this->id)) {
-			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$this->id.'" title="'.dolPrintHTMLForAttribute($label).'" class="classfortooltip">';
 			$linkend = '</a>';
 
 			if ($withpicto) {
@@ -792,6 +770,16 @@ class PaymentVAT extends CommonObject
 			if ($withpicto != 2) {
 				$result .= $link.($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
+		}
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 
 		return $result;

@@ -28,5 +28,10 @@ create table llx_societe_perentity
   	accountancy_code_supplier			varchar(32),                         	-- supplier accountancy auxiliary account
   	accountancy_code_sell				varchar(32),                            -- Selling accountancy code
   	accountancy_code_buy				varchar(32),                            -- Buying accountancy code
-	vat_reverse_charge					tinyint DEFAULT 0						-- VAT reverse charge
+	vat_reverse_charge					tinyint DEFAULT 0,						-- VAT reverse charge
+	fk_account							integer DEFAULT NULL,					-- default bank account
+	mode_reglement						integer DEFAULT NULL,					-- payment mode customer
+	cond_reglement						tinyint DEFAULT NULL,					-- payment term customer
+	mode_reglement_supplier				tinyint DEFAULT NULL,					-- payment mode supplier
+	cond_reglement_supplier				tinyint DEFAULT NULL					-- payment term supplier
 )ENGINE=innodb;

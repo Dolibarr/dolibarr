@@ -7,7 +7,7 @@
  * Copyright (C) 2014       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -80,7 +80,7 @@ if ($user->socid) {
 
 $hookmanager->initHooks(array('expeditiondispatch'));
 
-// Recuperation de l'id de projet
+// Retrieve the project id
 $projectid = 0;
 if (GETPOSTISSET("projectid")) {
 	$projectid = GETPOSTINT("projectid");
@@ -1297,7 +1297,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$out_js_line .= '		var product_element_name = selectwarehouse.attr("name").replace("entrepot", "productbatch");';
 				$out_js_line .= '		jQuery.ajax({';
 				$out_js_line .= '			type: "POST",';
-				$out_js_line .= '			url: "'.dol_escape_js(dol_buildpath('/expedition/ajax/interface.php', 1)).'",';
+				$out_js_line .= '			url: \''.dol_escape_js(dol_buildpath('/expedition/ajax/interface.php', 1)).'\',';
 				$out_js_line .= '			data: {';
 				$out_js_line .= '				action: "updateselectbatchbywarehouse",';
 				$out_js_line .= '				warehouse_id: jQuery(this).val(),';
@@ -1320,15 +1320,15 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$out_js_line .= '				var dataSellByDate = objBatch.sellbydate;';
 				$out_js_line .= '				var optionLabel = key+" (";';
 				$out_js_line .= '				if (selectwarehouse.val() == -1) {';
-				$out_js_line .= '					optionLabel += "'.dol_escape_js($langs->trans('TotalStock')).': "+objBatch.qty;';
+				$out_js_line .= '					optionLabel += \''.dol_escape_js($langs->trans('TotalStock')).': \'+objBatch.qty;';
 				$out_js_line .= '				} else {';
-				$out_js_line .= '					 optionLabel += "'.dol_escape_js($langs->trans('Stock')).': "+objBatch.qty;';
+				$out_js_line .= '					 optionLabel += \''.dol_escape_js($langs->trans('Stock')).': \'+objBatch.qty;';
 				$out_js_line .= '				}';
 				$out_js_line .= '				if (dataEatByDate != "") {';
-				$out_js_line .= '					optionLabel += " - '.dol_escape_js($langs->trans('EatByDate')).': "+dataEatByDate;';
+				$out_js_line .= '					optionLabel += \' - '.dol_escape_js($langs->trans('EatByDate')).': \'+dataEatByDate;';
 				$out_js_line .= '				}';
 				$out_js_line .= '				if (dataSellByDate != "") {';
-				$out_js_line .= '					optionLabel += " - '.dol_escape_js($langs->trans('SellByDate')).': "+dataSellByDate;';
+				$out_js_line .= '					optionLabel += \' - '.dol_escape_js($langs->trans('SellByDate')).': \'+dataSellByDate;';
 				$out_js_line .= '				}';
 				$out_js_line .= '				optionLabel += ")";';
 				$out_js_line .= '				var option = "<option data-eatbydate=\""+dataEatByDate+"\" data-sellbydate=\""+dataSellByDate+"\" value=\""+key+"\"";';
@@ -1369,7 +1369,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$out_js_line .= '		var product_element_name = selectbatch.attr("name").replace("lot_number", "productbatch");';
 				$out_js_line .= '		jQuery.ajax({';
 				$out_js_line .= '			type: "POST",';
-				$out_js_line .= '			url: "'.dol_escape_js(dol_buildpath('/expedition/ajax/interface.php', 1)).'",';
+				$out_js_line .= '			url: \''.dol_escape_js(dol_buildpath('/expedition/ajax/interface.php', 1)).'\',';
 				$out_js_line .= '			data: {';
 				$out_js_line .= '				action: "updateselectwarehousebybatch",';
 				$out_js_line .= '				batch: jQuery(this).val(),';
@@ -1391,7 +1391,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				$out_js_line .= '}';
 				$out_js_line_list[] = $out_js_line;
 
-				$out_js = '<script type="text/javascript" language="javascript">';
+				$out_js = '<script type="text/javascript">';
 				$out_js .= 'jQuery(document).ready(function() {';
 				// when a warehouse is selected, only the lot/serial numbers that are available in it are offered
 				$out_js .= 'updateselectbatchbywarehouse();';
@@ -1595,33 +1595,33 @@ if ($object->id > 0 || !empty($object->ref)) {
 								}
 							}
 						});
-						jQuery("#scantoolmessage").text("'.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\n");
+						jQuery("#scantoolmessage").text(\''.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\'+"\n");
 						/* document.forms["formrecord"].submit(); */
 					} else {
 						let stringerror = "";
 						if (Object.keys(errortab1).length > 0) {
-							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': ";
+							stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': \';
 							errortab1.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 						if (Object.keys(errortab2).length > 0) {
-							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': ";
+							stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': \';
 							errortab2.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 						if (Object.keys(errortab3).length > 0) {
-							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': ";
+							stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': \';
 							errortab3.forEach(element => {
 								stringerror += (element + ", ")
 							});
 							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 						}
 						if (Object.keys(errortab4).length > 0) {
-							stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': ";
+							stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': \';
 							errortab4.forEach(element => {
 								stringerror += (element + ", ")
 							});
@@ -1629,7 +1629,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 						}
 
 						jQuery("#scantoolmessage").html(\''.dol_escape_js($langs->transnoentities("ErrorOnElementsInventory")).'\' + stringerror);
-						//alert("'.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n" + stringerror);
+						//alert(\''.dol_escape_js($langs->trans("ErrorOnElementsInventory")).'\'+" :\n" + stringerror);
 					}
 				}
 
@@ -1642,7 +1642,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 				result=false;
 				tabproduct.forEach(product => {
 					$.ajax({ url: \''.DOL_URL_ROOT.'/expedition/ajax/searchfrombarcode.php\',
-						data: { "token":"'.newToken().'", "action":"existbarcode","fk_entrepot": warehousetouse, "barcode":element, "mode":mode},
+						data: { "token":"'.currentToken().'", "action":"existbarcode","fk_entrepot": warehousetouse, "barcode":element, "mode":mode},
 						type: \'POST\',
 						async: false,
 						success: function(response) {
@@ -1702,7 +1702,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 		print $formother->getHTMLScannerForm("barcodescannerjs", 'all', 1);
 	}
 
-	// traitement entrepot par défaut
+	// default warehouse handling
 	print '<script type="text/javascript">
 		$(document).ready(function () {
 			$("select[name=fk_default_warehouse]").change(function() {

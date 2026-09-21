@@ -139,10 +139,24 @@ class DiscountTest extends CommonClassTest
 	}
 
 	/**
+	 * Provide test data for AbsoluteDiscount splitting
+	 *
+	 * @return array<mixed> values and expectations data
+	 */
+	public function providerSplitRemiseData()
+	{
+		// A fixed discount with a taxed total
+		// array(total_amount, splitamount_1, tva_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, ex_ht_amount1, ex_total_amount1, ex_ht_amount2, ex_total_amount2),
+		return array(
+			array(1468.15, 1000, 5, 9.975, 1, 0, 0,      869.75, 1000, 407.17, 468.15)		// Split 1468.15 ttc into 1000 + remain 468.15
+		);
+	}
+
+	/**
 	 * testDiscountScenarioConfirmSplit
 	 *
-	 * test the scenario of action 'confirm_split' in remx.php
-	 * also support 'confirm_split_more'
+	 * test the scenario of action 'confirm_split' in remx.php, also support 'confirm_split_more'
+	 *
 	 * @param	float 	$total_amount initial amount of discount to split
 	 * @param	float 	$splitamount_1 first half of split discount
 	 * @param	float	$tva_tx vat rate
@@ -155,7 +169,9 @@ class DiscountTest extends CommonClassTest
 	 * @param	float	$ex_ht_amount2 expected amount 2 HT
 	 * @param	float	$ex_total_amount2 expected amount 2 TTC
 	 * @return	int
+	 *
 	 * @dataProvider providerSplitRemiseData
+	 * @depends	testDiscountDelete
 	 */
 	public function testDiscountSplitScenarioConfirmSplit($total_amount, $splitamount_1, $tva_tx, $localtax1_tx, $localtax1_type, $localtax2_tx, $localtax2_type, $ex_ht_amount1, $ex_total_amount1, $ex_ht_amount2, $ex_total_amount2)
 	{
@@ -169,6 +185,7 @@ class DiscountTest extends CommonClassTest
 		 * Create a DiscountAbsolute object from spec, split it and
 		 * test results with expected.
 		 */
+
 		$localobject = new DiscountAbsolute($db);
 		$localobject->tva_tx = $tva_tx;
 		$localobject->localtax1_tx = $localtax1_tx;
@@ -189,8 +206,29 @@ class DiscountTest extends CommonClassTest
 		$result = 1;
 
 		print __METHOD__." total_amount=".$total_amount." splitamount_1=".$splitamount_1." tva_tx=".$tva_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." result=".$result."\n";
+		print __METHOD__." discount2: amount_ht=".$newdiscount2->amount_ht." vat=".$newdiscount2->total_tva." localtax1=".$newdiscount2->total_localtax1." localtax2=".$newdiscount2->total_localtax2." ttx=".$newdiscount2->total_ttc."\n";
 
 		return $result;
+	}
+
+	/**
+	 * Provide test data for AbsoluteDiscount
+	 *
+	 * @return array<mixed> values and expectations data
+	 */
+	public function providerRemiseData()
+	{
+		// array(amount, vat_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, price_base, ex_total_tva, ex_total_localtax1, ex_total_localtax2, ex_total_ttc, ex_total_ht),
+		return array(
+			array(1234,    5, 9.975, 1, 0, 0, 'HT',   61.7, 123.09, 0, 1418.79, 1234),
+			array(1418.79, 5, 9.975, 1, 0, 0, '',     61.7, 123.09, 0, 1418.79, 1234),
+			array(1234,    5, 9.975, 1, 4, 1, 'HT',   61.7, 123.09, 49.36, 1468.15, 1234),
+			array(1468.15, 5, 9.975, 1, 4, 1, '',     61.7, 123.09, 49.36, 1468.15, 1234),
+			array(1234,    5, 9.975, 2, 0, 0,'HT',    61.7, 129.25, 0, 1424.95, 1234),
+			array(1424.95, 5, 9.975, 2, 0, 0, '',     61.7, 129.25, 0, 1424.95, 1234),
+			array(1234,    5, 9.975, 2, 4, 2,'HT',    61.7, 129.25, 51.83, 1476.78, 1234),
+			array(1476.78, 5, 9.975, 2, 4, 2, '',     61.7, 129.25, 51.83, 1476.78, 1234)
+		);
 	}
 
 	/**
@@ -211,6 +249,7 @@ class DiscountTest extends CommonClassTest
 	 * @param	float	$ex_total_ttc expected discount total TTC amount
 	 * @param	float	$ex_total_ht expected discount HT amount
 	 * @return	int
+	 *
 	 * @dataProvider providerRemiseData
 	 */
 	public function testDiscountScenarioSetRemise($amount, $vat_tx, $localtax1_tx, $localtax1_type, $localtax2_tx, $localtax2_type, $price_base, $ex_total_tva, $ex_total_localtax1, $ex_total_localtax2, $ex_total_ttc, $ex_total_ht)
@@ -228,54 +267,20 @@ class DiscountTest extends CommonClassTest
 
 		$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type, $localtax2_type);
 
+		print __METHOD__." amount=".$amount." vat_tx=".$vat_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." price_base=".$price_base."\n";
+
 		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_ht, $localobject->amount_ht);
+		$this->assertEquals($ex_total_ht, $localobject->total_ht);
 		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_ttc, $localobject->amount_ttc);
+		$this->assertEquals($ex_total_ttc, $localobject->total_ttc);
 		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_tva, $localobject->amount_tva);
+		$this->assertEquals($ex_total_tva, $localobject->total_tva);
 		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_localtax1, price2num($localobject->total_localtax1, 'MT'));
+		$this->assertEquals($ex_total_localtax1, $localobject->total_localtax1);
 		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_localtax2, price2num($localobject->total_localtax2, 'MT'));
+		$this->assertEquals($ex_total_localtax2, $localobject->total_localtax2);
 		$result = 1;
 
-		print __METHOD__." amount=".$amount." vat_tx=".$vat_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." price_base=".$price_base." result=".$result."\n";
-
 		return $result;
-	}
-
-	/**
-	 * Provide test data for AbsoluteDiscount
-	 *
-	 * @return array<mixed> values and expectations data
-	 */
-	public function providerRemiseData()
-	{
-		// array(amount, vat_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, price_base, ex_total_tva, ex_total_localtax1, ex_total_localtax2, ex_total_ttc, ex_total_ht),
-		return array(
-			array(1234,5,9.975,1,0,0,'HT',61.7,123.09,0,1418.79,1234),
-			array(1418.79,5,9.975,1,0,0,'',61.7,123.09,0,1418.79,1234),
-			array(1234,5,9.975,1,4,1,'HT',61.7,123.09,49.36,1468.15,1234),
-			array(1468.15,5,9.975,1,4,1,'',61.7,123.09,49.36,1468.15,1234),
-			array(1234,5,9.975,2,0,0,'HT',61.7,129.25,0,1424.95,1234),
-			array(1424.95,5,9.975,2,0,0,'',61.7,129.25,0,1424.95,1234),
-			array(1234,5,9.975,2,4,2,'HT',61.7,129.25,57,1481.94,1234),
-			array(1481.94,5,9.975,2,4,2,'',61.7,129.25,57,1481.94,1234)
-		);
-	}
-
-	/**
-	 * Provide test data for AbsoluteDiscount splitting
-	 *
-	 * @return array<mixed> values and expectations data
-	 */
-	public function providerSplitRemiseData()
-	{
-		// A fixed discount with a taxed total
-		// array(total_amount, splitamount_1, tva_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, ex_ht_amount1, ex_total_amount1, ex_ht_amount2, ex_total_amount2),
-		return array(
-			array(1468.15,1000,5,9.975,1,0,0,869.75,1000,407.18,468.15)
-		);
 	}
 }

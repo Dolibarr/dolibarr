@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-
+require_once DOL_DOCUMENT_ROOT . '/ai/lib/ai.lib.php';
 /**
  * Class ToolCategories
  *
@@ -273,6 +273,23 @@ class ToolCategories extends McpTool
 	}
 
 	/**
+	 * Category reads and creation.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'search_categories' => array(array('categorie', 'lire')),
+			'get_category_details' => array(array('categorie', 'lire')),
+			'create_category' => array(array('categorie', 'creer'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *
@@ -287,7 +304,7 @@ class ToolCategories extends McpTool
 	 * Executes the requested tool function based on its name.
 	 *
 	 * @param string $name The name of the tool to execute.
-	 * @param array<string, mixed> $args The arguments for the tool (key-value pairs).
+	 * @param array<string, mixed> $args The arguments for the tool (key-value pairs). Only SQL safe arguments!
 	 * @return mixed The result of the tool execution (usually an array) or an error array.
 	 */
 	public function execute(string $name, array $args)
@@ -406,6 +423,8 @@ class ToolCategories extends McpTool
 	/**
 	 * Searches for categories based on a query and type.
 	 *
+	 * Note: Only call with sql safe parameters
+	 *
 	 * @param array<string, mixed> $args Array containing 'query' (string), 'scope' (string), 'limit' (int), 'offset' (int).
 	 * @return array{error:string}|array{count:int}|list<array<string, mixed>> A list of found categories or an error array.
 	 */
@@ -442,9 +461,9 @@ class ToolCategories extends McpTool
 		$sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
 
 		if (!empty($query)) {
-			$query_lower = strtolower($query);
+			$sqlSearchText = $this->db->escape(strtolower($query));
 
-			$sql .= " AND (LOWER(c.label) LIKE '%" . $this->db->escape($query_lower) . "%' OR LOWER(c.description) LIKE '%" . $this->db->escape($query_lower) . "%')";
+			$sql .= " AND (LOWER(c.label) LIKE '%" . $sqlSearchText . "%' OR LOWER(c.description) LIKE '%" . $sqlSearchText . "%')";
 		}
 
 		if (!empty($scope_filter)) {
@@ -631,10 +650,12 @@ class ToolCategories extends McpTool
 			$linked_objects_summary = "{$linked_objects_count} item" . ($linked_objects_count != 1 ? "s" : "") . " tagged with this category";
 		}
 
-		// Load extrafields
+		// Load extrafields. Values flagged as personal data (GDPR) are dropped:
+		// they must not reach an AI provider.
 		$extrafields = [];
 		if (!empty($cat->array_options) && is_array($cat->array_options)) {
-			foreach ($cat->array_options as $key => $value) {
+			$filtered = aiStripPersonalExtrafields($this->db, ['array_options' => $cat->array_options], 'categorie');
+			foreach (($filtered['array_options'] ?? []) as $key => $value) {
 				if ($value !== null && $value !== '') {
 					$clean_key = preg_replace('/^options_/', '', $key);
 					$extrafields[$clean_key] = $value;

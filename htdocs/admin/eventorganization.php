@@ -25,12 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Libraries
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/eventorganization.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+// Libraries
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/eventorganization.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 
 // Translations
 $langs->loadLangs(array("admin", "eventorganization", "categories"));
@@ -161,7 +161,7 @@ print '<br>';
 
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 

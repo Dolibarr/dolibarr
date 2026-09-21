@@ -4,7 +4,7 @@
  * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
  * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre SPANGARO			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  *
@@ -212,7 +212,7 @@ $disable_delete = 0;
 $sql = 'SELECT f.rowid as scid, f.label, f.paye, f.amount as sc_amount, ps.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_salary as ps,'.MAIN_DB_PREFIX.'salary as f';
 $sql .= ' WHERE ps.fk_salary = f.rowid';
-$sql .= ' AND f.entity = '.$conf->entity;
+$sql .= ' AND f.entity = '.((int) $conf->entity);
 $sql .= ' AND ps.rowid = '.((int) $object->id);
 
 dol_syslog("payment_salary/card.php", LOG_DEBUG);

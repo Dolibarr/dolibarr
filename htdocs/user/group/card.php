@@ -471,7 +471,7 @@ if ($action == 'create') {
 						print '<td>'.$useringroup->firstname.'</td>';
 						print '<td class="center">'.$useringroup->getLibStatut(5).'</td>';
 						print '<td class="right">';
-						if (!empty($user->admin)) {
+						if ($permissiontoedit) {
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=removeuser&token='.newToken().'&user='.$useringroup->id.'">';
 							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';

@@ -179,7 +179,7 @@ class FormAccounting extends Form
 			$sql = "SELECT rowid, code, label, nature, entity, active";
 			$sql .= " FROM ".$this->db->prefix()."accounting_journal";
 			$sql .= " WHERE active = 1";
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 			if ($nature && is_numeric($nature)) {
 				$sql .= " AND nature = ".((int) $nature);
 			}
@@ -631,9 +631,9 @@ class FormAccounting extends Form
 		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {
 			$out .= '<script nonce="'.getNonce().'">
 		        jQuery(document).ready(() => {
-		            $("#'.dol_escape_js($htmlname).'").on("select2:select", function(e) {
+		            $(\'#'.dol_escape_js($htmlname).'\').on("select2:select", function(e) {
 		                var match = /\(([^)]+)\)/.exec(e.params.data.text);
-		                if (match) { $("input[name=\"'.dol_escape_js($labelhtmlname).'\"]").val(match[1]); }
+		                if (match) { $(\'input[name="'.dol_escape_js($labelhtmlname).'"]\').val(match[1]); }
 		            });
 		        });
         	</script>';

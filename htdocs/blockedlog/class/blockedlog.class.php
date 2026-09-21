@@ -2,8 +2,8 @@
 /* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 
 /**
@@ -96,12 +97,12 @@ class BlockedLog
 	public $pos_source = '';
 
 	/**
-	 * @var string $linktype. Example 'paymentofinvoice'
+	 * @var string Example 'paymentofinvoice'
 	 */
 	public $linktype = '';
 
 	/**
-	 * @var string $linktoref
+	 * @var string
 	 */
 	public $linktoref = '';
 
@@ -140,7 +141,7 @@ class BlockedLog
 	public $date_modification;
 
 	/**
-	 * @var int
+	 * @var int				UTC date of object (date of invoice, payment, ...)
 	 */
 	public $date_object = 0;
 
@@ -616,6 +617,7 @@ class BlockedLog
 		// Add fields to exclude (this has become useless because we now use a list fields to keep later).
 		$arrayoffieldstoexclude = array(
 			'table_element', 'fields',
+			'ref_ext',
 			'ref_previous', 'ref_next',
 			'origin', 'origin_id',
 			'oldcopy', 'picto', 'error', 'errors',
@@ -638,7 +640,9 @@ class BlockedLog
 
 		// Add more fields to exclude depending on object type
 		if ($this->element == 'cashcontrol') {
-			$arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
+			$arrayoffieldstoexclude = array_merge(
+				$arrayoffieldstoexclude,
+				array(
 				'name', 'lastname', 'firstname', 'region', 'region_id', 'region_code', 'state', 'state_id', 'state_code', 'country', 'country_id', 'country_code',
 				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
 				'barcode_type', 'barcode_type_code', 'barcode_type_label', 'barcode_type_coder', 'mode_reglement_id', 'cond_reglement_id', 'mode_reglement', 'cond_reglement', 'shipping_method_id',
@@ -663,7 +667,7 @@ class BlockedLog
 				}
 				// List of fields qualified
 				if (!in_array($key, array(
-				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
+				'name', 'name_alias', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 				'tva_intra', 'tva_assuj', 'localtax1_assuj', 'localtax2_assuj', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 				))) {
 					continue; // Discard if not into this dedicated list
@@ -884,7 +888,7 @@ class BlockedLog
 			$this->linktoref = '';
 
 			// If payment and $object->amounts is empty (for example when we delete), we complete the information
-			if ($this->element == 'payment' && empty($object->amounts) && $object instanceOf Paiement) {
+			if ($this->element == 'payment' && empty($object->amounts) && $object instanceof Paiement) {
 				$amountsarray = $object->getAmountsArray();
 				$object->amounts = $amountsarray;
 				// Invert the sign of amount into the array ->amounts if it is a deletion
@@ -1148,9 +1152,8 @@ class BlockedLog
 		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.type_code, b.linktoref, b.linktype, b.object_data, b.object_version, b.object_format, b.signature,";
 		$sql .= " b.note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
-		if ($id) {
-			$sql .= " WHERE b.rowid = ".((int) $id);
-		}
+		$sql .= " WHERE b.rowid = ".((int) $id);  // $id is not empty because of test above
+
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1305,6 +1308,13 @@ class BlockedLog
 			return -2;
 		}
 
+		if (empty($this->date_object)) {	// date_object is a critical field, it is included into the line signature
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorBlockLogNeedDateObject");
+			dol_syslog($this->error, LOG_WARNING);
+			return -2;
+		}
+
 		if (empty($this->action)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadParameterWhenCallingCreateOfBlockedLog");
@@ -1409,7 +1419,7 @@ class BlockedLog
 		$sql .= "0,";
 		$sql .= ((int) $this->fk_user).",";
 		$sql .= "'".$this->db->escape($this->user_fullname)."',";
-		$sql .= ((int) ($this->entity ? $this->entity : $conf->entity)).",";
+		$sql .= ((int) ($this->entity ? ((int) $this->entity) : ((int) $conf->entity))).",";
 		$sql .= "'".$this->db->escape($this->debuginfo)."'";
 		$sql .= ")";
 
@@ -1491,7 +1501,7 @@ class BlockedLog
 					// Check the .end flag file.
 					$headstring = '';
 					$remoteobfuscationkey = '';
-					if (preg_match('/^dolcrypt/', $line)) {		// Old method (does not happen after migration)
+					if (preg_match('/^dolcrypt/', $line)) {		// Old method (does not happen after migration to a certified version)
 						$headstring = dolDecrypt($line);
 					} elseif (preg_match('/^dolobfuscation/', $line)) {
 						$remoteobfuscationkey = $this->getObfuscationKey();
@@ -1537,7 +1547,7 @@ class BlockedLog
 						$sql .= " SET signature = '".$this->db->escape($finalsignature)."',";
 						$sql .= " note = '".$this->db->escape($finalnote)."',";
 						$sql .= " debuginfo = '".$this->db->escape($this->debuginfo)."'";
-						$sql .=" WHERE rowid = ".((int) $this->id);
+						$sql .= " WHERE rowid = ".((int) $this->id);
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							throw new Exception("End of chain deletion detected but we failed to update the signature of the record ".$this->id." to set the note and new signature ".$finalsignature." to track this.");
@@ -1545,7 +1555,7 @@ class BlockedLog
 					}
 
 
-					// We can now write the new .end file
+					// We can now write the new .end flag (Note: BLOCKEDLOGHEAD means end of chain)
 					$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $finalsignature;
 
 					if (isALNERunningVersion(1, ($this->action == 'MODULE_SET' ? 1 : 0)) && $mysoc->country_code == 'FR') {
@@ -1847,6 +1857,7 @@ class BlockedLog
 
 	/**
 	 * Save the HMAC secret key into database.
+	 * Parameter may be set by caller to "dolcrypt", or "dolibfuscation" if "isALNERunningVersion(1) && $mysoc->country_code == 'FR'"
 	 *
 	 * @param	string		$hmac_secret_key		HMAC secret key ('BLOCKEDLOG_HMAC_KEY...')
 	 * @param	string		$obfuscationmode		Obfuscation mode ('dolcrypt', 'dolobfuscationv1-SIREN')
@@ -1922,9 +1933,21 @@ class BlockedLog
 
 	/**
 	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key).
-	 * Use a memory cache to avoid repeated db access.
+	 * Use a memory cache to avoid repeated db or remote access.
 	 * This function can also be called just to store the remote obfuscation key into the cache so all next call will not depends on the obfuscation key server availability.
-	 * Note: Avoid to call this function if you are not in acontext that need remote obfuscation key.
+	 * Note: Avoid to call this function if you are not in a context that need remote obfuscation key.
+	 *
+	 * This function is called:
+	 *
+	 * - During a migration (migrate_blockedlog_add_end_file())of an old version to encrypt old HMAC key.
+	 * - Page to show and validate archives (blockedlog_archives.php)
+	 * - Page to list and check blocked log (blockedlog_list.php)
+	 * - Page to help debug/technical information (blockedlog.php)
+	 * - Page of registration that initialize the HMAC key.
+	 *
+	 * - In function getClearHMACSecretKey() of this file to validate an entry in blockedlog
+	 * - In function buildFinalSignatureHash() of this file to save a new entry in blockedlog
+	 * - In function create() called by trigger to read/validate the .end flag and to update the .end flag after new entry recording
 	 *
 	 * @return 	string					Obfuscation key or a coma-separated list of obfuscation keys, or "" if not found.
 	 */
@@ -1953,7 +1976,7 @@ class BlockedLog
 		$registrationnumber = getHashUniqueIdOfRegistration();
 
 		// Value is not into cache, we must get it from ping.dolibarr.org
-		$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber);
+		$obfuscationkey = callApiToGetObfuscationKey((string) $mysoc->idprof1, $registrationnumber);
 		if (empty($obfuscationkey)) {
 			dol_syslog("getObfuscationKey Failed to get the obfuscation key from ping.dolibarr.org (country='.$mysoc->country_code.', SIREN='.$mysoc->idprof1.'). May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (empty value returned). Re-try later.", LOG_DEBUG);
 			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org (country='.$mysoc->country_code.', SIREN='.$mysoc->idprof1.'). May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (empty value returned). Re-try later.');
@@ -1963,11 +1986,9 @@ class BlockedLog
 			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (bad value returned). Re-try later. '.$obfuscationkey);
 		}
 
-		// Now store value in cache
-		if ($obfuscationkey) {
-			$_SESSION['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
-			$conf->cache['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
-		}
+		// Now store value in cache ($obfuscationkey is not empty because of empty/throw above).
+		$_SESSION['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
+		$conf->cache['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
 
 		return (string) $obfuscationkey;
 	}
@@ -2019,6 +2040,7 @@ class BlockedLog
 
 	/**
 	 * Get the HMAC secret key.
+	 * Note: The HMAC key has been saved by saveHMACSecretKey().
 	 *
 	 * @param 	string	$hmac_encoded_secret_key	HMAC encode string retrieved with getEncodedHMACSecretKey()
 	 * @return 	string								Encoded HMAC secret key.
@@ -2102,6 +2124,8 @@ class BlockedLog
 		}
 
 		if (empty($previoussignature)) {
+			dol_syslog("getPreviousHash: We did not found previous record with fast mode so we search with a select max", LOG_DEBUG);
+
 			// Note: a select max rowid and then a select to get signature seems not faster due to filter on entity
 			$sql = "SELECT rowid, signature, date_creation, object_format FROM ".MAIN_DB_PREFIX."blockedlog";
 			if ($beforeid) {
@@ -2227,16 +2251,16 @@ class BlockedLog
 
 		if ($element == 'all') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity;
+			 WHERE entity = ".((int) $conf->entity);
 		} elseif ($element == 'not_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND certified = 0";
+			 WHERE entity = ".((int) $conf->entity)." AND certified = 0";
 		} elseif ($element == 'just_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND certified = 1";
+			 WHERE entity = ".((int) $conf->entity)." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND element = '".$this->db->escape($element)."'";
+			 WHERE entity = ".((int) $conf->entity)." AND element = '".$this->db->escape($element)."'";
 		}
 
 		if ($fk_object) {
@@ -2289,9 +2313,9 @@ class BlockedLog
 					}
 				}
 				if (!empty($search_module_source)) {
-					$tmp = natural_search("module_source", implode(',', $search_module_source), 0, 1);
-					$tmp = str_replace('%backoffice%', '', $tmp);
-					$sql .= $tmp;
+					$sqlTmp = natural_search("module_source", implode(',', $search_module_source), 0, 1);
+					$sqlTmp = str_replace('%backoffice%', '', $sqlTmp);
+					$sql .= $sqlTmp;
 				}
 				$sql .= " OR module_source = 'mix'";	// When a payment was recorded and payment was on an invoice with different origins (pos and not pos)
 				$sql .= ")";

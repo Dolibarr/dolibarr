@@ -635,6 +635,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$firstrecorddate = 0;
 		global $foundoldformat, $firstrecorddate;
 		include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+		'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
+		'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
 
 		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
@@ -698,15 +700,6 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				$object->fullname = $user->getFullName($langs);
 
 				$object->label = 'Export unalterable logs';
-
-				/*
-				$object->total_billed = $totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT");
-				$object->total_collected = $totalamountalllines['PAYMENT_CUSTOMER'];
-				$object->totallifetime_billed = $totalhtamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT");
-				$object->totallifetime_collected = ($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
-				*/
-				// TODO: Add total_billed, total_collected, totallifetime_billed, totallifetime_collected
-
 
 				$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
@@ -1320,7 +1313,7 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 		print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 		print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 		/*if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-			print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
+			print ' | <a href="?action=downloadblockchain&token='.newToken().''.(GETPOST('withtab', 'alpha') ? '&withtab='.GETPOST('withtab', 'alpha') : '').'">'.$langs->trans('DownloadBlockChain').'</a>';
 		}*/
 		print ' </div><br>';
 
