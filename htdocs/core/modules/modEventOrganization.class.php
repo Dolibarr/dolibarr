@@ -138,6 +138,13 @@ class modEventOrganization extends DolibarrModules
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$this->const = array(
 			[
+				'EVENTORGANIZATION_ENABLE_CONFERENCE_REGISTRATION',
+				'yesno',
+				'0',
+				'',
+				0,
+			],
+			[
 				'EVENTORGANIZATION_TASK_LABEL',
 				'chaine',
 				'',

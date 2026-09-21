@@ -55,6 +55,7 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
 $arrayofparameters = array(
+	'EVENTORGANIZATION_ENABLE_CONFERENCE_REGISTRATION' => array('type' => 'yesno', 'enabled' => 1, 'css' => ''),
 	'EVENTORGANIZATION_SECUREKEY' => array('type' => 'securekey', 'enabled' => 1, 'css' => ''),
 );
 
@@ -125,7 +126,10 @@ if ($action == 'edit') {
 			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
 			print '</td><td>';
 
-			/*if ($val['type'] == 'textarea') {
+			if ($val['type'] == 'yesno') {
+				print $form->selectyesno($constname, getDolGlobalString($constname), 1);
+			} else {
+				/*if ($val['type'] == 'textarea') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
 				print getDolGlobalString($constname);
 				print "</textarea>\n";
@@ -168,14 +172,14 @@ if ($action == 'edit') {
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname, 'customerorprospect', 'form', '', '1');
 			} elseif ($val['type'] == 'securekey') { */
-			print '<input type="text" class="flat width500" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" spellcheck="false">';
-			if (!empty($conf->use_javascript_ajax)) {
-				print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
-			}
+				print '<input type="text" class="flat width500" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" spellcheck="false">';
+				if (!empty($conf->use_javascript_ajax)) {
+					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
+				}
 
-			// Add button to autosuggest a key
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
+				// Add button to autosuggest a key
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 			/* } elseif ($val['type'] == 'product') {
 				if (isModEnabled("product") || isModEnabled("service")) {
 					$selected = getDolGlobalInt($constname);
@@ -184,7 +188,8 @@ if ($action == 'edit') {
 				}
 			} else {
 				print '<input name="' . $constname . '"  class="flat ' . (empty($val['css']) ? 'minwidth200' : $val['css']) . '" value="' . getDolGlobalString($constname) . '">';
-			}*/
+				}*/
+			}
 			print '</td></tr>';
 		}
 	}
@@ -206,7 +211,11 @@ if ($action == 'edit') {
 		$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
 		print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
 		print '</td><td>';
-		print getDolGlobalString($constname);
+		if ($val['type'] == 'yesno') {
+			print yn(getDolGlobalInt($constname));
+		} else {
+			print getDolGlobalString($constname);
+		}
 		print '</td>';
 
 		print '</tr>';

@@ -113,7 +113,7 @@ class ConferenceOrBooth extends ActionComm
 		'datep' => array('type' => 'datetime', 'label' => 'DateStart', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => 2,),
 		'datep2' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => 3,),
 		'max_participants' => array('type' => 'integer', 'label' => 'MaxNbOfAttendees', 'enabled' => 1, 'position' => 72, 'notnull' => -1, 'visible' => 1),
-		'registration_enabled' => array('type' => 'boolean', 'label' => 'AllowUsersToRegisterToConference', 'enabled' => 1, 'position' => 73, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'help' => 'AllowUsersToRegisterToConferenceHelp'),
+		'registration_enabled' => array('type' => 'boolean', 'label' => 'AllowUsersToRegisterToConference', 'enabled' => 'getDolGlobalInt("EVENTORGANIZATION_ENABLE_CONFERENCE_REGISTRATION")', 'position' => 73, 'notnull' => 1, 'visible' => 1, 'default' => '0', 'help' => 'AllowUsersToRegisterToConferenceHelp'),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
@@ -272,7 +272,7 @@ class ConferenceOrBooth extends ActionComm
 	{
 		$this->userownerid = $user->id;
 		$this->type_id = $this->fk_action;
-		if (!$this->isConferenceType()) {
+		if (!getDolGlobalInt('EVENTORGANIZATION_ENABLE_CONFERENCE_REGISTRATION') || !$this->isConferenceType()) {
 			$this->registration_enabled = 0;
 		}
 		$this->socid = $this->fk_soc;
@@ -329,7 +329,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$this->getActionCommFields();
 
-		if (!$this->isConferenceType()) {
+		if (!getDolGlobalInt('EVENTORGANIZATION_ENABLE_CONFERENCE_REGISTRATION') || !$this->isConferenceType()) {
 			unset($this->fields['registration_enabled']);
 		} elseif ($this->registration_enabled) {
 			$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.urlencode((string) ($id)).'&type=conf';

@@ -524,6 +524,65 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
+	 * Return whether two conference events overlap.
+	 *
+	 * @param ConferenceOrBooth $first  First conference
+	 * @param ConferenceOrBooth $second Second conference
+	 * @return bool                      True when both time intervals overlap
+	 */
+	protected function conferenceTimesOverlap(ConferenceOrBooth $first, ConferenceOrBooth $second)
+	{
+		$firstStart = (int) $first->datep;
+		$firstEnd = !empty($first->datep2) ? (int) $first->datep2 : $firstStart;
+		$secondStart = (int) $second->datep;
+		$secondEnd = !empty($second->datep2) ? (int) $second->datep2 : $secondStart;
+
+		return $firstEnd > $firstStart && $secondEnd > $secondStart && $firstStart < $secondEnd && $secondStart < $firstEnd;
+	}
+
+	/**
+	 * Find an active registration whose conference overlaps with another conference.
+	 *
+	 * @param string            $email             Attendee email
+	 * @param ConferenceOrBooth $conference        Conference being registered
+	 * @param array<int>        $excludedConferenceIds Conference IDs to ignore
+	 * @return string|false                        Conflicting conference label, empty string when none, false on error
+	 */
+	public function findConferenceTimeConflict($email, ConferenceOrBooth $conference, array $excludedConferenceIds = array())
+	{
+		$excludedConferenceIds = array_values(array_filter(array_unique(array_map('intval', $excludedConferenceIds))));
+		$sql = 'SELECT a.id, a.label, a.datep, a.datep2';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' AS attendee';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'actioncomm AS a ON a.id = attendee.fk_actioncomm';
+		$sql .= " WHERE attendee.email = '".$this->db->escape($email)."'";
+		$sql .= ' AND attendee.fk_project = '.((int) $conference->fk_project);
+		$sql .= ' AND attendee.status IN ('.self::STATUS_DRAFT.', '.self::STATUS_VALIDATED.')';
+		$sql .= ' AND a.status = '.ConferenceOrBooth::STATUS_CONFIRMED;
+		$sql .= ' AND a.registration_enabled = 1';
+		if (count($excludedConferenceIds) > 0) {
+			$sql .= ' AND a.id NOT IN ('.implode(', ', $excludedConferenceIds).')';
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return false;
+		}
+
+		while ($obj = $this->db->fetch_object($resql)) {
+			$registeredConference = new ConferenceOrBooth($this->db);
+			$registeredConference->datep = $this->db->jdate($obj->datep);
+			$registeredConference->datep2 = $this->db->jdate($obj->datep2);
+			if ($this->conferenceTimesOverlap($conference, $registeredConference)) {
+				return (string) $obj->label;
+			}
+		}
+
+		return '';
+	}
+
+	/**
 	 * Register the same attendee for selected conference events of the project.
 	 *
 	 * The project registration and conference registrations remain separate rows.
@@ -537,6 +596,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 	{
 		global $langs;
 
+		if (!getDolGlobalInt('EVENTORGANIZATION_ENABLE_CONFERENCE_REGISTRATION')) {
+			$this->error = $langs->trans('ErrorConferenceRegistrationDisabled');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
 		if (empty($this->id) || empty($this->fk_project) || !empty($this->fk_actioncomm) || empty($this->email)) {
 			$this->error = $langs->trans('ErrorProjectRegistrationRequired');
 			$this->errors[] = $this->error;
@@ -546,6 +611,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 
 		$conferenceIds = array_values(array_unique(array_map('intval', $conferenceIds)));
+		$conferences = array();
 		$nbregistrations = 0;
 
 		foreach ($conferenceIds as $conferenceId) {
@@ -564,6 +630,29 @@ class ConferenceOrBoothAttendee extends CommonObject
 				$this->errors[] = $this->error;
 				return -1;
 			}
+			foreach ($conferences as $otherConference) {
+				if ($this->conferenceTimesOverlap($conference, $otherConference)) {
+					$this->error = $langs->trans('ErrorConferenceRegistrationTimeConflict', $conference->label, $otherConference->label);
+					$this->errors[] = $this->error;
+					return -1;
+				}
+			}
+			$conferences[$conferenceId] = $conference;
+		}
+
+		foreach ($conferences as $conference) {
+			$conflictingConference = $this->findConferenceTimeConflict($this->email, $conference, $conferenceIds);
+			if ($conflictingConference === false) {
+				return -1;
+			}
+			if ($conflictingConference !== '') {
+				$this->error = $langs->trans('ErrorConferenceRegistrationTimeConflict', $conference->label, $conflictingConference);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
+		foreach ($conferences as $conferenceId => $conference) {
 
 			$sessionattendee = new self($this->db);
 			$filter = "(t.fk_actioncomm:=:".$conferenceId.") AND (t.email:=:'".$this->db->escape($this->email)."')";

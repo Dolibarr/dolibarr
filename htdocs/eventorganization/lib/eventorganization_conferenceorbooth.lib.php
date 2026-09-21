@@ -56,7 +56,7 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 		$h++;
 	}
 
-	if ($object->isConferenceType() && !empty($object->registration_enabled)) {
+	if (getDolGlobalInt('EVENTORGANIZATION_ENABLE_CONFERENCE_REGISTRATION') && $object->isConferenceType() && !empty($object->registration_enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_list.php?conforboothid='.$object->id.$withProjectUrl;
 		$head[$h][1] = $langs->trans("Attendees");
 		$head[$h][2] = 'attendees';

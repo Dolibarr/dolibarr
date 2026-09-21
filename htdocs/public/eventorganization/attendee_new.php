@@ -145,9 +145,11 @@ if ($type == 'global') {
 			}
 		}
 
-		$filter = '(t.fk_project:=:'.((int) $project->id).') AND (t.registration_enabled:=:1) AND (t.status:=:'.ConferenceOrBooth::STATUS_CONFIRMED.')';
-		$resultconferences = $conference->fetchAll('ASC', 't.datep', 0, 0, $filter);
-		if (is_array($resultconferences)) {
+		if (getDolGlobalInt('EVENTORGANIZATION_ENABLE_CONFERENCE_REGISTRATION')) {
+			$filter = '(t.fk_project:=:'.((int) $project->id).') AND (t.registration_enabled:=:1) AND (t.status:=:'.ConferenceOrBooth::STATUS_CONFIRMED.')';
+			$resultconferences = $conference->fetchAll('ASC', 't.datep', 0, 0, $filter);
+		}
+		if (!empty($resultconferences) && is_array($resultconferences)) {
 			foreach ($resultconferences as $availableconference) {
 				if (!$availableconference->isConferenceType()) {
 					continue;
@@ -206,7 +208,7 @@ $user->loadDefaultValues();
 if (empty($conf->eventorganization->enabled)) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
-if ($type == 'conf' && (!$conference->isConferenceType() || empty($conference->registration_enabled))) {
+if ($type == 'conf' && (!getDolGlobalInt('EVENTORGANIZATION_ENABLE_CONFERENCE_REGISTRATION') || !$conference->isConferenceType() || empty($conference->registration_enabled))) {
 	httponly_accessforbidden('Registration is not enabled for this conference');
 }
 
@@ -326,6 +328,16 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 	if (!GETPOST("country_id")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"))."<br>\n";
+	}
+	if (!$error && $type == 'conf') {
+		$conflictingconference = $confattendee->findConferenceTimeConflict($email, $conference, array((int) $conference->id));
+		if ($conflictingconference === false) {
+			$error++;
+			$errmsg .= $confattendee->error."<br>\n";
+		} elseif ($conflictingconference !== '') {
+			$error++;
+			$errmsg .= $langs->trans('ErrorConferenceRegistrationTimeConflict', $conference->label, $conflictingconference)."<br>\n";
+		}
 	}
 
 	$thirdparty = null;
@@ -1022,10 +1034,16 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 				$isfull = !empty($registrableconference->max_participants) && $currentconferenceattendees >= (int) $registrableconference->max_participants;
 				$ischecked = in_array((int) $registrableconference->id, $selectedconferenceids, true);
 				print '<div class="marginbottomonly">';
-				print '<label><input type="checkbox" name="conference_ids[]" value="'.((int) $registrableconference->id).'"'.($ischecked ? ' checked' : '').($isfull ? ' disabled' : '').'> ';
+				$sessionstart = (int) $registrableconference->datep;
+				$sessionend = !empty($registrableconference->datep2) ? (int) $registrableconference->datep2 : $sessionstart;
+				print '<label><input type="checkbox" class="conference-session-choice" name="conference_ids[]" value="'.((int) $registrableconference->id).'" data-start="'.$sessionstart.'" data-end="'.$sessionend.'" data-full="'.($isfull ? '1' : '0').'"'.($ischecked ? ' checked' : '').($isfull ? ' disabled' : '').'> ';
 				print dolPrintHTML($registrableconference->label).'</label>';
 				if ($registrableconference->datep) {
-					print ' <span class="opacitymedium">'.dol_print_date($registrableconference->datep, 'dayhour').'</span>';
+					print ' <span class="opacitymedium">'.dol_print_date($registrableconference->datep, 'dayhour');
+					if ($registrableconference->datep2) {
+						print ' – '.dol_print_date($registrableconference->datep2, 'dayhour');
+					}
+					print '</span>';
 				}
 				if ($registrableconference->location) {
 					print ' <span class="opacitymedium">'.dolPrintHTML($registrableconference->location).'</span>';
@@ -1036,8 +1054,21 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 				if ($isfull) {
 					print ' <span class="warning">'.$langs->trans('MaxNbOfAttendeesReached').'</span>';
 				}
+				print ' <span class="warning conference-session-conflict" style="display: none">'.$langs->trans('ConferenceSessionOverlapsSelection').'</span>';
 				print '</div>';
 			}
+			print '<script nonce="'.getNonce().'">';
+			print 'document.addEventListener("DOMContentLoaded",function(){';
+			print 'const choices=Array.from(document.querySelectorAll(".conference-session-choice"));';
+			print 'const overlaps=(a,b)=>Number(a.dataset.start)<Number(b.dataset.end)&&Number(b.dataset.start)<Number(a.dataset.end);';
+			print 'const refresh=(changed)=>{';
+			print 'if(changed&&changed.checked){choices.forEach((other)=>{if(other!==changed&&other.checked&&overlaps(changed,other)){other.checked=false;}});}';
+			print 'const accepted=[];choices.forEach((choice)=>{if(choice.checked&&accepted.some((other)=>overlaps(choice,other))){choice.checked=false;}if(choice.checked){accepted.push(choice);}});';
+			print 'choices.forEach((choice)=>{choice.disabled=choice.dataset.full==="1";choice.closest("div").querySelector(".conference-session-conflict").style.display="none";});';
+			print 'choices.filter((choice)=>choice.checked).forEach((selected)=>{choices.forEach((choice)=>{if(choice!==selected&&!choice.checked&&overlaps(selected,choice)){choice.disabled=true;choice.closest("div").querySelector(".conference-session-conflict").style.display="inline";}});});';
+			print '};choices.forEach((choice)=>choice.addEventListener("change",()=>refresh(choice)));refresh(null);';
+			print '});';
+			print '</script>';
 			print '</td></tr>';
 		}
 
