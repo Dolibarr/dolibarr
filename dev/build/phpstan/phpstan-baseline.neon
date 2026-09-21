@@ -1045,15 +1045,9 @@ parameters:
 			path: ../../../htdocs/api/index.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/asset/admin/setup.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
+			count: 2
 			path: ../../../htdocs/asset/admin/setup.php
 
 		-
@@ -1111,8 +1105,8 @@ parameters:
 			path: ../../../htdocs/asset/admin/setup.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/asset/card.php
 
@@ -1125,6 +1119,12 @@ parameters:
 		-
 			message: '#^Property Asset\:\:\$date_start \(int\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
+			count: 2
+			path: ../../../htdocs/asset/class/asset.class.php
+
+		-
+			message: '#^Call to function method_exists\(\) with \$this\(Asset\) and ''generateDocument'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 2
 			path: ../../../htdocs/asset/class/asset.class.php
 
