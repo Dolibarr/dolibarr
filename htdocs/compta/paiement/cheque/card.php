@@ -7,6 +7,7 @@
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -339,8 +340,7 @@ if ($action == 'create2') {
 } else {
 	$result = $object->fetch($id, $ref);
 	if ($result < 0) {
-		dol_print_error($db, $object->error);
-		exit;
+		recordNotFound('', 0);
 	}
 
 	$h = 0;
@@ -437,7 +437,9 @@ if ($action == 'create2') {
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
 	print img_picto('', 'account', 'class="pictofixedwidth"');
-	$form->select_comptes($filteraccountid, 'accountid', 0, 'courant:<>:2', 1);
+	// Filter must use the Universal Search Filter syntax, select_comptes() runs it through
+	// forgeSQLFromUniversalSearchCriteria(). != is mapped to <>, so cash registers stay excluded.
+	$form->select_comptes($filteraccountid, 'accountid', 0, '(courant:!=:2)', 1);
 	print '</td></tr>';
 	print '</table>';
 

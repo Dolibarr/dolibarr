@@ -183,6 +183,10 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -740,17 +744,14 @@ if (!empty($arrayfields['f.note_private']['checked'])) {
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
-	$liststatus = [
-		$object::STATUS_DRAFT => $langs->transnoentitiesnoconv('Draft'),
-		$object::STATUS_VALIDATED => $langs->transnoentitiesnoconv('Validated'),
-		$object::STATUS_BILLED => $langs->transnoentitiesnoconv('StatusInterInvoiced'),
-		$object::STATUS_CLOSED => $langs->transnoentitiesnoconv('Done'),
-	];
+	$objecttmp->getLibStatut();
+
 	if (!getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
-		unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
+		unset($objecttmp->labelStatus[Fichinter::STATUS_BILLED]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	}
+
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
+	print $form->selectarray('search_status', $objecttmp->labelStatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Signed status

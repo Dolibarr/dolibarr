@@ -23,6 +23,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for supplier invoices
@@ -148,9 +149,9 @@ class SupplierInvoices extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -343,8 +344,11 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
-		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
+		$result = $this->invoice->delete(DolibarrApiAccess::$user);
+		if ($result < 0) {
 			throw new RestException(500, 'Error when deleting invoice');
+		} elseif ($result == 0) {
+			throw new RestException(403, 'Invoice not erasable');
 		}
 
 		return array(
@@ -831,6 +835,14 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
+		$invoiceline = new SupplierInvoiceLine($this->db);
+		if ($invoiceline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'Supplier invoice line not found');
+		}
+		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
+			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
+
 		$request_data = (object) $request_data;
 
 		$request_data->description = sanitizeVal($request_data->description, 'restricthtml');
@@ -903,7 +915,13 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
-		// TODO Check the lineid $lineid is a line of object
+		$invoiceline = new SupplierInvoiceLine($this->db);
+		if ($invoiceline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'Supplier invoice line not found');
+		}
+		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
+			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
 
 		$updateRes = $this->invoice->deleteLine($lineid);
 		if ($updateRes > 0) {

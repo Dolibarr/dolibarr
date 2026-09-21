@@ -670,8 +670,10 @@ class User extends CommonObject
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass = $obj->pass;
 				$this->pass_temp = $obj->pass_temp;
+
 				$this->force_pass_change = $obj->force_pass_change;
-				$this->datelastpassvalidation = $obj->datelastpassvalidation;
+				$this->datelastpassvalidation = $this->db->jdate($obj->datelastpassvalidation);
+
 				$this->api_key = dolDecrypt($obj->api_key);
 
 				$this->address = $obj->address;
@@ -1016,9 +1018,6 @@ class User extends CommonObject
 
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
-		//var_dump($this->rights->$rightsPath);
-		//var_dump($conf->modules);
-		//if ($module == 'fournisseur') { var_dump($module.' '.isModEnabled($module).' '.$rightsPath.' '.$permlevel1.' '.$permlevel2); }
 
 		if (!isModEnabled($module)) {
 			return 0;
@@ -1051,8 +1050,6 @@ class User extends CommonObject
 			$permlevel1 = 'recruitmentjobposition';
 		}
 
-		//var_dump($this->rights);
-		//var_dump($rightsPath.' '.$permlevel1.' '.$permlevel2);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
 		}
@@ -1420,7 +1417,7 @@ class User extends CommonObject
 
 		if (!$alreadyloaded) {
 			// First user permissions
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+			$sql = "SELECT DISTINCT r.module, r.module_origin, r.perms, r.subperms";
 			$sql .= " FROM ".$this->db->prefix()."user_rights as ur,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
 			$sql .= " WHERE r.id = ur.fk_id";
@@ -1452,7 +1449,12 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					if ($obj) {
-						$module = $obj->module;
+						// module_origin (set only when the right was declared by another module
+						// via KEY_MODULE, to be filed into a foreign module's section of the
+						// permission grid) is the namespace actually used to check the right with
+						// hasRight(), so the declaring module keeps control of it regardless of
+						// which module's section it is grouped under for display.
+						$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 						$perms = $obj->perms;
 						$subperms = $obj->subperms;
 
@@ -1484,7 +1486,7 @@ class User extends CommonObject
 			}
 
 			// Now permissions of groups
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms, r.entity";
+			$sql = "SELECT DISTINCT r.module, r.module_origin, r.perms, r.subperms, r.entity";
 			$sql .= " FROM ".$this->db->prefix()."usergroup_rights as gr,";
 			$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
@@ -1525,7 +1527,12 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					if ($obj) {
-						$module = $obj->module;
+						// module_origin (set only when the right was declared by another module
+						// via KEY_MODULE, to be filed into a foreign module's section of the
+						// permission grid) is the namespace actually used to check the right with
+						// hasRight(), so the declaring module keeps control of it regardless of
+						// which module's section it is grouped under for display.
+						$module = (!empty($obj->module_origin) ? $obj->module_origin : $obj->module);
 						$perms = $obj->perms;
 						$subperms = $obj->subperms;
 
@@ -1666,11 +1673,11 @@ class User extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if (isset($this->statut)) {
-			if ($this->statut == $status) {
+		if (isset($this->status)) {
+			if ($this->status == $status) {
 				return 0;
 			}
-		} elseif (isset($this->status) && $this->status == $status) {
+		} elseif (isset($this->statut) && $this->statut == $status) {	// $this->statut is deprecated
 			return 0;
 		}
 
@@ -3463,7 +3470,7 @@ class User extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut(isset($this->statut) ? (int) $this->statut : (int) $this->status, $mode);
+		return $this->LibStatut(isset($this->status) ? (int) $this->status : (int) $this->statut, $mode);	// $this->statut is deprecated
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -4139,7 +4146,7 @@ class User extends CommonObject
 			$childids = $this->cache_childids[$this->id];
 		} else {
 			// Init this->users
-			$this->get_full_tree();
+			$treeresult = $this->get_full_tree();
 
 			$idtoscan = $this->id;
 
@@ -4148,6 +4155,14 @@ class User extends CommonObject
 				if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) {
 					$childids[$val['id']] = $val['id'];
 				}
+			}
+
+			// A loop anywhere in the hierarchy aborts get_full_tree(), leaving the branches it had not
+			// walked yet with an empty fullpath, so they silently drop out of the list above. Do not
+			// cache such a truncated result, it would be reused for the whole request.
+			if ($treeresult < 0) {
+				dol_syslog(get_class($this)."::getAllChildIds got a truncated tree: ".$this->error, LOG_WARNING);
+				return $addcurrentuser ? array($this->id => $this->id) : $childids;
 			}
 		}
 		$this->cache_childids[$this->id] = $childids;

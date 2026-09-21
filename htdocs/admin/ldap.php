@@ -282,7 +282,7 @@ print '<br>';
  */
 if (function_exists("ldap_connect")) {
 	if (getDolGlobalString('LDAP_SERVER_HOST')) {
-		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
+		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=test&token='.newToken().'">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
 	}
 
 	if ($action == 'test') {
