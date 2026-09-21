@@ -482,7 +482,12 @@ class Productlot extends CommonObject
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
+				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS' && isModEnabled('barcode') && !empty($this->barcode)) {
+					$langs->load("errors");
+					$this->errors[] = $langs->trans("ErrorProductLotBarCodeAlreadyExists", $this->barcode);
+				} else {
+					$this->errors[] = 'Error ' . $this->db->lasterror();
+				}
 			}
 
 			if (!$error) {
@@ -663,6 +668,8 @@ class Productlot extends CommonObject
 		if ($res < 0) {
 			$error++;
 		}
+
+		$this->ensureBarcodeTypeIsSet();
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
@@ -896,6 +903,7 @@ class Productlot extends CommonObject
 
 		// A value was already provided by the caller. '-1' and 'auto' both mean "generate one"
 		if (!empty($this->barcode) && $this->barcode != '-1' && $this->barcode != 'auto') {
+			$this->ensureBarcodeTypeIsSet();
 			return 0;
 		}
 
@@ -953,6 +961,22 @@ class Productlot extends CommonObject
 		$this->barcode_type = $this->fk_barcode_type;
 
 		return 1;
+	}
+
+	/**
+	 * Give a barcode type to a lot that carries a barcode without one
+	 *
+	 * uk_product_lot_barcode spans (barcode, fk_barcode_type, entity) and MySQL skips rows holding a
+	 * NULL in a unique index, so leaving the type empty would let the same barcode be stored twice.
+	 *
+	 * @return	void
+	 */
+	private function ensureBarcodeTypeIsSet()
+	{
+		if (!empty($this->barcode) && empty($this->fk_barcode_type)) {
+			$this->fk_barcode_type = getDolGlobalInt('PRODUCTLOT_DEFAULT_BARCODE_TYPE');
+			$this->barcode_type = $this->fk_barcode_type;
+		}
 	}
 
 	/**

@@ -176,6 +176,19 @@ class ProductLotBarcodeTest extends CommonClassTest
 	}
 
 	/**
+	 * Build a valid EAN13 nobody else holds. Hardcoding one is fragile: the suite runs against the
+	 * real database, where the unique index makes any collision fail the test for the wrong reason.
+	 *
+	 * @return	string	13 digit EAN13
+	 */
+	private function uniqueBarcode()
+	{
+		$base = '05'.str_pad((string) mt_rand(1, 9999999999), 10, '0', STR_PAD_LEFT);
+
+		return $base.barcode_gen_ean_sum($base);
+	}
+
+	/**
 	 * Create a lot on the test product
 	 *
 	 * @param	string	$batch		Batch value
@@ -410,12 +423,13 @@ class ProductLotBarcodeTest extends CommonClassTest
 	{
 		$this->enableGeneration();
 
-		$lot = $this->createLot('PHPUNIT-NORM-1', '0512345678905');
+		$lot = $this->createLot('PHPUNIT-NORM-1', $this->uniqueBarcode());
 		$this->assertGreaterThan(0, $lot->id);
 
-		$value = '  0577777777775  ';
+		$free = $this->uniqueBarcode();
+		$value = '  '.$free.'  ';
 		$this->assertEquals(0, $lot->checkBarcode($value, 'EAN13'));
-		$this->assertSame('0577777777775', $value, 'The caller must receive the trimmed value it has to store');
+		$this->assertSame($free, $value, 'The caller must receive the trimmed value it has to store');
 	}
 
 	/**
@@ -453,10 +467,11 @@ class ProductLotBarcodeTest extends CommonClassTest
 			$this->markTestSkipped('No barcode type labelled EAN13 into the dictionary');
 		}
 
-		$lot = $this->createLot('PHPUNIT-MANUAL-1', '0512345678905');
+		$expected = $this->uniqueBarcode();
+		$lot = $this->createLot('PHPUNIT-MANUAL-1', $expected);
 
 		$this->assertGreaterThan(0, $lot->id);
-		$this->assertSame('0512345678905', $lot->barcode);
+		$this->assertSame($expected, $lot->barcode);
 	}
 
 	/**
@@ -602,6 +617,62 @@ class ProductLotBarcodeTest extends CommonClassTest
 		$db->free($resql);
 
 		return $found;
+	}
+
+	/**
+	 * A barcode without a type would defeat uk_product_lot_barcode: MySQL skips rows holding a NULL
+	 * in a unique index, so the same value could be stored twice in the same entity.
+	 *
+	 * @return void
+	 */
+	public function testBarcodeWithoutTypeCannotBeDuplicated()
+	{
+		global $db, $user;
+
+		$typeid = $this->enableGeneration();
+		if (empty($typeid)) {
+			$this->markTestSkipped('No barcode type labelled EAN13 into the dictionary');
+		}
+		if (!$this->hasUniqueBarcodeIndex()) {
+			$this->markTestSkipped('uk_product_lot_barcode is not deployed on the test database');
+		}
+
+		$first = $this->createLot('PHPUNIT-NOTYPEDUP-1');
+		$this->assertNotEmpty($first->barcode);
+
+		// Same value, no type given by the caller
+		$second = new Productlot($db);
+		$second->fk_product = $this->productid;
+		$second->batch = 'PHPUNIT-NOTYPEDUP-2';
+		$second->barcode = $first->barcode;
+		$this->assertLessThanOrEqual(0, $second->create($user), 'A duplicate must be refused even when no type is provided');
+		$this->assertNotEmpty($second->errors);
+	}
+
+	/**
+	 * The same barcode stays allowed on two different entities
+	 *
+	 * @return void
+	 */
+	public function testSameBarcodeIsAllowedOnAnotherEntity()
+	{
+		global $db, $user;
+
+		$typeid = $this->enableGeneration();
+		if (empty($typeid)) {
+			$this->markTestSkipped('No barcode type labelled EAN13 into the dictionary');
+		}
+
+		$first = $this->createLot('PHPUNIT-ENT-1');
+		$this->assertNotEmpty($first->barcode);
+
+		$other = new Productlot($db);
+		$other->fk_product = $this->productid;
+		$other->batch = 'PHPUNIT-ENT-2';
+		$other->barcode = $first->barcode;
+		$other->entity = 2;
+		$this->assertGreaterThan(0, $other->create($user), 'Multi entity must keep its own barcode namespace');
+		$this->assertEquals($typeid, (int) $other->fk_barcode_type, 'The type must be filled in so the unique index applies');
 	}
 
 	/**
