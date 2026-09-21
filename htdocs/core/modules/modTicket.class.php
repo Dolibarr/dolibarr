@@ -41,7 +41,7 @@ class modTicket extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $langs, $conf, $user;
 		$langs->load("ticket");
 
 		$this->db = $db;
@@ -391,6 +391,10 @@ class modTicket extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'ticket_extrafields as extra on (t.rowid = extra.fk_object)';
 		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('ticket').')';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			// Restrict to tickets with no thirdparty or with a thirdparty the user is sales representative of
+			$this->export_sql_end[$r] .= ' AND (t.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = '.((int) $user->id).'))';
+		}
 		$r++;
 	}
 

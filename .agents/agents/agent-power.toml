@@ -21,6 +21,7 @@ When running bash commands, keep them plain so they can be auto-approved:
 permission = "always"
 deny = ["rm -rf *", "sudo *"]
 allowlist = [
+    "awk",
     "actionlint",
     "base64",
     "basename",
@@ -39,9 +40,11 @@ allowlist = [
     "find",
     "fmt",
     "fold",
+    "for",
     "git",
     "grep",
     "head",
+    "if",
     "join",
     "less",
     "ls",
@@ -52,7 +55,9 @@ allowlist = [
     "paste",
     "phan",
     "php",
+    "phpunit",
     "phpstan",
+    "pre-commit",
     "printenv",
     "printf",
     "pwd",
@@ -81,6 +86,7 @@ allowlist = [
     "uniq",
     "wc",
     "which",
+    "while",
     "whoami",
     "xargs",
     "xxd",
