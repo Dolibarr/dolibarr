@@ -3416,9 +3416,10 @@ class Societe extends CommonObject
 	 *      @param	int<0,1>	$noaliasinname			  	1=Do not add alias into the link ref
 	 *      @param	string		$target			  		  	add attribute target
 	 *      @param	string		$morecss					More CSS
+	 *      @param	int<0,1>	$addlinktonotes				1=Add link to notes
 	 *		@return	string						          	String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '', $morecss = 'valignmiddle')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '', $morecss = 'valignmiddle', $addlinktonotes = 0)
 	{
 		global $conf, $langs, $hookmanager, $user;
 
@@ -3546,6 +3547,18 @@ class Societe extends CommonObject
 			$result .= dol_escape_htmltag($maxlen ? dol_trunc((string) $name, $maxlen) : $name);
 		}
 		$result .= $linkend;
+
+		if ($addlinktonotes) {
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/societe/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
+		}
 
 		global $action;
 		$hookmanager->initHooks(array('thirdpartydao'));
