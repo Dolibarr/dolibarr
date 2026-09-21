@@ -2374,6 +2374,120 @@ abstract class CommonObject
 		return $result;
 	}
 
+
+	/**
+	 * @var array<string,bool> Fields currently being processed by setFieldValue(), keyed by field name.
+	 *                         Used to detect and break infinite recursion that could be caused by
+	 *                         onFieldValueChanged() side effects calling setFieldValue() back.
+	 */
+	protected $fieldValueBeingSet = array();
+
+	/**
+	 * Set a value for a dynamic field on the current object.
+	 *
+	 * This method performs multiple safety checks before assigning the value:
+	 * - verifies that the field is defined
+	 * - checks if the user is allowed to edit the field
+	 * - optionally validates the value if validation is required
+	 *
+	 * If all checks pass, the value is assigned dynamically to the property, and
+	 * onFieldValueChanged() is called so child classes can recompute dependent fields
+	 * (for example recalculating a TTC amount when the HT amount of a line changes).
+	 *
+	 * @param User 		$user					The user attempting to modify the field.
+	 * @param string 	$fieldKey 	 			The name of the field to modify.
+	 * @param mixed 	$value 					The value to assign to the field.
+	 * @param bool   	$byPassUserPermission 	set to true to skip user permission check and force value
+	 *
+	 * @return bool Returns true if the value was successfully set, false otherwise.
+	 */
+	public function setFieldValue(User $user, $fieldKey, $value, $byPassUserPermission = false)
+	{
+		global $langs;
+
+		if (!empty($this->fieldValueBeingSet[$fieldKey])) {
+			// A side effect (onFieldValueChanged) is trying to set this same field again while it is
+			// still being processed higher up the call stack: this would cause infinite recursion.
+			dol_syslog(get_class($this)."::setFieldValue recursive call detected on field '".$fieldKey."', aborting to avoid infinite loop", LOG_WARNING);
+			return false;
+		}
+
+		if (!$this->isFieldDefined($fieldKey)) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
+			return false;
+		}
+
+		if (!$this->isFieldEditAllowed($user, $fieldKey, $byPassUserPermission)) {
+			$this->setFieldError($fieldKey, $langs->trans('FieldNotAllowedForEdit'));
+			return false;
+		}
+
+		if ($this->isFieldValidationRequired($fieldKey) && !$this->validateField($this->fields, $fieldKey, $value)) {
+			return false;
+		}
+
+		if ($this->oldcopy === null || !is_object($this->oldcopy)) {
+			$this->oldcopy = clone $this;
+		}
+
+
+		if (is_object($this->oldcopy) && property_exists($this, $fieldKey) && property_exists($this->oldcopy, $fieldKey)) {
+			$this->oldcopy->$fieldKey = $this->$fieldKey;
+		}
+
+		$this->fieldValueBeingSet[$fieldKey] = true;
+
+		// Set new value
+		$this->$fieldKey = $value;
+
+		// Some deprecated/replacement property pairs (ex: statut/status, alreadypaid/totalpaid) are still
+		// both declared as real properties on the object for backward compatibility, so PHP never triggers
+		// DolDeprecationHandler magic methods for them (magic only fires for undefined/inaccessible properties).
+		// We must keep such pairs manually in sync, but only the pair that actually matches $fieldKey.
+		$deprecatedProperties = $this->deprecatedProperties();
+		if (!empty($deprecatedProperties) && is_array($deprecatedProperties)) {
+			foreach ($deprecatedProperties as $oldProperty => $newProperty) {
+				if ($fieldKey === $oldProperty && property_exists($this, $newProperty)) {
+					if (is_object($this->oldcopy) && property_exists($this->oldcopy, $newProperty) && property_exists($this->oldcopy, $oldProperty)) {
+						$this->oldcopy->$newProperty = $this->oldcopy->$oldProperty;
+					}
+					$this->$newProperty = $value;
+				} elseif ($fieldKey === $newProperty && property_exists($this, $oldProperty)) {
+					if (is_object($this->oldcopy) && property_exists($this->oldcopy, $oldProperty) && property_exists($this->oldcopy, $newProperty)) {
+						$this->oldcopy->$oldProperty = $this->oldcopy->$newProperty;
+					}
+					$this->$oldProperty = $value;
+				}
+			}
+		}
+
+		// Let child classes recompute dependent fields (ex: TTC amount when HT amount changes on a line).
+		// Left as a no-op by default in CommonObject, which is shared by every kind of object.
+		$this->onFieldValueChanged($fieldKey, $value);
+
+		unset($this->fieldValueBeingSet[$fieldKey]);
+
+		return true;
+	}
+
+	/**
+	 * Hook called by setFieldValue() after a field has been successfully assigned.
+	 * Override in child classes to recompute fields that depend on the one that just changed
+	 * (for example recalculating total_ttc when subprice or tva_tx changes on a line).
+	 *
+	 * Warning: to avoid infinite recursion, dependent fields should be assigned directly
+	 * (ex: $this->total_ttc = ...) rather than through a recursive call to setFieldValue().
+	 * setFieldValue() also guards against re-entrant calls on the same field as a safety net.
+	 *
+	 * @param string $fieldKey The name of the field that was just modified.
+	 * @param mixed  $value    The new value that was assigned to the field.
+	 * @return void
+	 */
+	protected function onFieldValueChanged($fieldKey, $value)
+	{
+		// Nothing to do by default.
+	}
+
 	/**
 	 *	Setter generic. Update a specific field into database.
 	 *  Warning: Trigger is run only if param trigkey is provided.
@@ -2410,6 +2524,7 @@ abstract class CommonObject
 		$propfield = $field;
 
 		// Special case
+		// TODO move special case to product class and/or create a propfield/field (table col name ) mapping key in object fields parameters ?
 		if ($table == 'product') {
 			if ($field == 'note_private') {
 				$field = 'note';
@@ -10070,7 +10185,18 @@ abstract class CommonObject
 	public function getRights()
 	{
 		global $user;
+		return $this->getRightsForUser($user);
+	}
 
+	/**
+	 * Returns the rights used for this class for a specific user
+	 *
+	 * @param User $user User to check rights
+	 *
+	 * @return null|int|stdClass        Object of permission for the module
+	 */
+	public function getRightsForUser(User $user)
+	{
 		$module = empty($this->module) ? '' : $this->module;
 		$element = $this->element;
 
@@ -10084,6 +10210,174 @@ abstract class CommonObject
 		}
 
 		return isset($user->rights->$element) ? $user->rights->$element : null;
+	}
+
+	/**
+	 * @param User   $user User to check rights
+	 * @param string $field Field name to check
+	 *
+	 * @return bool True if current user have right to write for this field, false otherwise
+	 */
+	public function hasUserWritePermissionOnField(User $user, $field)
+	{
+		// Basic rights validation (invalid or missing rights object = deny access)
+		// TODO remove chaos from getRights results
+		$right = $this->getRightsForUser($user);
+		// Normalize global rights
+		if (is_null($right)) {
+			return false;
+		}
+
+		if (is_int($right)) {
+			if ((int) $right !== 1) {
+				return false;
+			}
+		} elseif (is_object($right)) {
+			if (empty($right->write)) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+
+		if (empty($field)) {
+			// Each child class need to be edited
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check whether a given field is allowed to be edited on the current object.
+	 * This method combines:
+	 * - user rights check
+	 * - field configuration constraints
+	 * - object state constraints (status/statut)
+	 * Note: This method is defined in CommonObject, so it must remain generic.
+	 * Some child classes use `status`, others use `statut`, hence both are checked.
+	 *
+	 * @param User   $user  User to check rights
+	 * @param string $field Field name to check
+	 * @param bool   $byPassUserPermission set to true to skip user permission check and force value
+	 *
+	 * @return bool True if the field is editable, false otherwise
+	 */
+	public function isFieldEditAllowed(User $user, $field, $byPassUserPermission = false)
+	{
+		// TODO : Implement error message ?
+
+		// Ensure user has write permission for field
+		if (!$byPassUserPermission && !$this->hasUserWritePermissionOnField($user, $field)) {
+			return false;
+		}
+
+		// Ensure field exists in object definition
+		if (!$this->isFieldDefined($field)) {
+			return false;
+		}
+
+		// Field explicitly disabled
+		if ($this->isFieldDisabled($field)) {
+			return false;
+		}
+
+		// Field must be enabled (default = enabled if not defined)
+		if (!$this->isFieldEnabled($field)) {
+			return false;
+		}
+
+		// Field explicitly marked as not editable
+		if ($this->isFieldMarkedNotEditable($field)) {
+			return false;
+		}
+
+		// Object state restriction
+		if ($this->isFieldBlockedByObjectState($field)) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * Check if the field is defined in the object's field metadata.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field exists in the object definition, false otherwise
+	 */
+	private function isFieldDefined($field)
+	{
+		return !empty($this->fields)
+			&& is_array($this->fields)
+			&& isset($this->fields[$field]);
+	}
+
+	/**
+	 * Check if the field is explicitly marked as disabled.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is disabled, false otherwise
+	 */
+	private function isFieldDisabled($field)
+	{
+		return !empty($this->fields[$field]['disabled']);
+	}
+
+	/**
+	 * Check if the field requires validation.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if validation is required, false otherwise
+	 */
+	private function isFieldValidationRequired($field)
+	{
+		return !empty($this->fields[$field]['validate']);
+	}
+
+
+
+	/**
+	 * Check if the field is enabled.
+	 * A field is considered enabled by default if the "enabled" flag is not set.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is enabled, false otherwise
+	 */
+	private function isFieldEnabled($field)
+	{
+		return !isset($this->fields[$field]['enabled']) || (bool) (int) dol_eval((string) $this->fields[$field]['enabled']);
+	}
+
+	/**
+	 * Check if the field is explicitly marked as not editable.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is not editable, false otherwise
+	 */
+	private function isFieldMarkedNotEditable($field)
+	{
+		return !empty($this->fields[$field]['noteditable']);
+	}
+
+	/**
+	 * Check if the field is blocked by the current object state.
+	 * In non-draft states, fields are locked unless "alwayseditable" is set.
+	 *
+	 * Note:
+	 * This method is kept generic for CommonObject compatibility.
+	 * Both `status` and `statut` are checked because child classes may use either.
+	 *
+	 * @param string $field Field name to check
+	 * @return bool True if the field is blocked by object state, false otherwise
+	 */
+	private function isFieldBlockedByObjectState($field)
+	{
+		return (
+			($this->status != 0 || $this->statut != 0)
+			&& (empty($this->fields[$field]['alwayseditable']))
+		);
 	}
 
 	/**
