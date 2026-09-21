@@ -396,10 +396,10 @@ class WebsitePage extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				$this->fk_website = $obj->fk_website;
-				$this->type_container = $obj->type_container;
+				$this->fk_website = (int) $obj->fk_website;
+				$this->type_container = dol_sanitizeKeyCode($obj->type_container);
 
-				$this->pageurl = $obj->pageurl;
+				$this->pageurl = preg_replace('/[^\w_-]+/', '', $obj->pageurl);		// Sanitize page url
 				$this->ref = $obj->pageurl;
 				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
 
@@ -412,7 +412,7 @@ class WebsitePage extends CommonObject
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
 				$this->allowed_in_frames = $obj->allowed_in_frames;
-				$this->status = $obj->status;
+				$this->status = (int) $obj->status;
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);

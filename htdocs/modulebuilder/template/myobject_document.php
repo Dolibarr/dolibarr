@@ -249,10 +249,12 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-$modulepart = 'mymodule';
+//$modulepart = 'mymodule';
+$modulepart = 'myobject@mymodule';
 $param = '&id='.$object->id;
 //$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
-$relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
+//$relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
+$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 

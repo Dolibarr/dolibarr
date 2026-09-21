@@ -612,6 +612,9 @@ class Interventions extends DolibarrApi
 		if ($objectline->fetch($lineid) <= 0) {
 			throw new RestException(404, 'Intervention line not found');
 		}
+		if ($objectline->fk_fichinter != $this->fichinter->id) {
+			throw new RestException(403, 'Line does not belong to this intervention');
+		}
 
 		$updateRes = $objectline->deleteLine(DolibarrApiAccess::$user);
 
@@ -833,6 +836,9 @@ class Interventions extends DolibarrApi
 		$objectline = new FichinterLigne($this->db);
 		if ($objectline->fetch($lineid) <= 0) {
 			throw new RestException(404, 'Intervention line not found');
+		}
+		if ($objectline->fk_fichinter != $this->fichinter->id) {
+			throw new RestException(403, 'Line does not belong to this intervention');
 		}
 		$request_data = (object) $request_data;
 

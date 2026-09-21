@@ -2885,6 +2885,9 @@ function top_menu_ai()
 			if (input) { input.focus(); }
 		}
 
+		// The expand button always opens the standalone full page
+		// (/ai/assistant/index.php) in the current tab. There is no small mode:
+		// the popover opens and stays in the large ("expanded") state.
 		toggle.addEventListener("click", function (event) {
 			console.log("Click on #topmenu-ai-toggle");
 			event.preventDefault();
@@ -2894,6 +2897,8 @@ function top_menu_ai()
 			positionPopover();
 			var isOpen = popover.classList.toggle("open");
 			if (isOpen) {
+				// Always open in the large ("expanded") state.
+				popover.classList.add("expanded");
 				loadChat();
 				if (loaded) { focusInput(); }
 			}
@@ -2906,10 +2911,9 @@ function top_menu_ai()
 			if (closeBtn) {
 				popover.classList.remove("open");
 			} else if (expandBtn) {
-				var expanded = popover.classList.toggle("expanded");
-				var icon = expandBtn.querySelector("i");
-				if (icon) { icon.className = expanded ? "fa fa-compress-alt" : "fa fa-expand-alt"; }
-				expandBtn.title = expanded ? (expandBtn.dataset.titleReduce || "") : (expandBtn.dataset.titleExpand || "");
+				// Open the standalone full page in the current tab.
+				var url = expandBtn.dataset.fullscreenUrl;
+				if (url) { window.location.href = url; }
 			}
 		});
 
@@ -4010,47 +4014,6 @@ if (!function_exists("llxFooter")) {
 			print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
 			print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang . '&' . $ext .'"></script>'."\n";
 		}
-
-		// JS wrapper to add an unalterable log when clicking on Download or Preview
-		// This is done on customer invoices only.
-		// This add a log and increase the pos_print_counter too (done by block-add.php).
-		/* NOTE: No more required, the trigger is now included into the call of the wrapper documents.php
-		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0) {
-			if (in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
-				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
-				?>
-				<script>
-				jQuery(document).ready(function () {
-					$('a.documentpreview').click(function() {
-						console.log("Call /blockedlog/ajax/block-add on a.documentpreview (DOC_PREVIEW)");
-						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
-								, {
-									id: <?php echo $object->id; ?>
-									, element: '<?php echo dol_escape_js($object->element) ?>'
-									, action: 'DOC_PREVIEW'
-									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
-									, token: '<?php echo currentToken(); ?>'
-								}
-						);
-					});
-					$('a.documentdownload').click(function() {
-						console.log("Call /blockedlog/ajax/block-add on a.documentdownload (DOC_DOWNLOAD)");
-						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
-								, {
-									id: <?php echo $object->id; ?>
-									, element: '<?php echo dol_escape_js($object->element) ?>'
-									, action: 'DOC_DOWNLOAD'
-									, lang: <?php echo "'".dol_escape_js($langs->defaultlang))."'" ; ?>
-									, token: '<?php echo currentToken(); ?>'
-								}
-						);
-					});
-				});
-				</script>
-				<?php
-			}
-		}
-		*/
 
 		// A div for the #dialogforpopup popup
 		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";

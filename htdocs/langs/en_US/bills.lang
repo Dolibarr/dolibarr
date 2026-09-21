@@ -76,6 +76,7 @@ Payment=Payment
 PaymentBack=Refund
 CustomerInvoicePaymentBack=Refund
 Payments=Payments
+PaymentsLinkedInvoices=Payments - linked invoices
 PaymentsBack=Refunds
 paymentInInvoiceCurrency=in invoices currency
 PaidBack=Paid back

@@ -80,7 +80,9 @@ export function initAiAssistant(container) {
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
-    const MAX_ATTACHED_DOCS = 5;  // context-size guard; the per-file/total size caps live server-side
+    // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
+    // the per-file/total size caps live server-side too.
+    const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -1410,7 +1412,7 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingIntent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
             appendMsg('bot', formatResult(result, false, pendingIntent.tool));
@@ -1419,6 +1421,22 @@ export function initAiAssistant(container) {
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
+    }
+
+    // Parse a fetch Response that must be JSON. When the Dolibarr session has
+    // expired, the endpoints answer with the HTML login form (HTTP 200), which
+    // used to surface as a cryptic "Unexpected token '<'" network error: detect
+    // that case and tell the user to sign back in instead.
+    async function aiJson(response) {
+        const raw = await response.text();
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            if (/<\s*(!doctype|html|form|body)[\s>]/i.test(raw)) {
+                throw new Error(t('AISessionExpiredReload'));
+            }
+            throw e;
+        }
     }
 
     async function handleQuery() {
@@ -1477,7 +1495,7 @@ export function initAiAssistant(container) {
                     })()
                 ))
             });
-            const intent = await intentRes.json();
+            const intent = await aiJson(intentRes);
             loadingMsg.remove();
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
@@ -1491,7 +1509,7 @@ export function initAiAssistant(container) {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await navRes.json();
+                const nav = await aiJson(navRes);
                 loadingNav.remove();
                 if (nav.error) { appendMsg('error', nav.error); }
                 else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fa fa-external-link"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
@@ -1504,7 +1522,7 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(intent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingData.remove();
             lastResult = { data: result, tool: intent.tool, query: query };
             appendMsg('bot', formatResult(result, false, intent.tool));
@@ -1590,6 +1608,15 @@ export function initAiAssistant(container) {
         const prefix = Object.keys(TOOL_CARD_URLS).find(p => tool.indexOf(p) === 0);
         return prefix ? (config.urlRoot || '') + TOOL_CARD_URLS[prefix].replace('%id%', encodeURIComponent(id)) : null;
     }
+    // API payloads arrive with HTML entities already encoded ("Client
+    // g&eacute;n&eacute;rique..."): decode them BEFORE escaping, or accented
+    // names render as raw entities in the chat tables and answers.
+    function decodeHtmlEntities(s) {
+        if (typeof s !== 'string' || s.indexOf('&') === -1) return s;
+        const ta = document.createElement('textarea');
+        ta.innerHTML = s;
+        return ta.value;
+    }
     function formatCell(k, v) {
         if (v === null || v === undefined || v === '') return '-';
         // Hand-written report tools legitimately embed a single link around a
@@ -1600,7 +1627,7 @@ export function initAiAssistant(container) {
         if (MONEY_FIELDS.has(k)) return fmtMoney(v);
         if (isDateField(k)) return fmtDate(v);
         if (k === 'paye') return (String(v) === '1' ? '✓' : '✗');
-        return escapeHtml(String(v));
+        return escapeHtml(decodeHtmlEntities(String(v)));
     }
     // socid -> customer name, resolved once per render through the bridge.
     async function resolveThirdpartyNames(container) {
@@ -1621,7 +1648,7 @@ export function initAiAssistant(container) {
             cells.forEach(c => {
                 const id = c.getAttribute('data-socid');
                 if (names[id]) {
-                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(names[id])}</a>`;
+                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
                 }
             });
         } catch (e) { /* names stay as ids */ }

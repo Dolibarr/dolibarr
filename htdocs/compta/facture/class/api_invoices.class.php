@@ -504,6 +504,9 @@ class Invoices extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Contract not found');
 		}
+		if (!DolibarrApi::_checkAccessToResource('contrat', $contract->id)) {
+			throw new RestException(403, 'Access to contract '.$contract->id.' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
 		$result = $this->invoice->createFromContract($contract, DolibarrApiAccess::$user);
 		if ($result < 0) {

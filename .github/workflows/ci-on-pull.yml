@@ -11,6 +11,11 @@ jobs:
     secrets: inherit
     with:
       gh_event: ${{ github.event_name }}
+  check-translations:
+    uses: ./.github/workflows/translations.yml
+    secrets: inherit
+    with:
+      gh_event: ${{ github.event_name }}
   phan:
     # if: false   # Uncommenting this line disables phan
     uses: ./.github/workflows/phan.yml
