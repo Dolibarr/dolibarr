@@ -74,6 +74,14 @@ su -s /bin/sh "$USER_NAME" -c \
 chmod 644 "/home/$USER_NAME/.ssh/known_hosts"
 
 
+if [ "$1" = "--yolo" ]; then
+    VIBE_OPTIONS="--yolo"
+else
+    VIBE_OPTIONS=""
+fi
+
+echo "VIBE_OPTIONS=$VIBE_OPTIONS"
+
 # Execute order
-exec runuser -u "$USER_NAME" -- "$@" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power; exec bash'
+exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"'; exec bash'
 #exec "$@"

@@ -11008,7 +11008,8 @@ function getElementProperties($elementType)
 		$dir_output .= $subdir;
 	}
 	if (!empty($dir_temp)) {
-		$dir_temp = preg_replace('/\/temp$/', '', $dir_temp).$subdir.'/temp';
+		//$dir_temp = preg_replace('/\/temp$/', '', $dir_temp).$subdir.'/temp';		// To get mymoduledir/myobject/temp
+		$dir_temp .= $subdir;														// To get mymoduledir/temp/myobject
 	}
 
 	$elementProperties = array(
