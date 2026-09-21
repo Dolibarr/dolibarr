@@ -3056,7 +3056,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * @param	int 		$entity				Restrict objects stored into entity (0=no restriction). Note that permissions tested are the one the user is logged in, so permissions for $conf->entity that may be different than $entity.
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
- * @param   string  	$mode               Check permission for 'read' or 'write'
+ * @param   string  	$mode               Check permission for 'read' or 'write' or 'delete'
  * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' (a SQL to compare the fk_soc with the one of the user) & 'original_file' (as a full path name)
  * @see restrictedArea()
  */
@@ -3073,6 +3073,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if (empty($modulepart)) {
 		return 'ErrorBadParameter';
 	}
+
+	$originalmodulepart = $modulepart;
+
 	if (empty($entity)) {
 		if (!isModEnabled('multicompany')) {
 			$entity = 1;
@@ -3080,9 +3083,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$entity = 0;
 		}
 	} else {
-		// TODO Test that the user in session of conf->entity can see objects of the target $entity
-		// ...
+		// TODO Test that the user in session of conf->entity can see objects of the target $entity like restrictedArea() does, however
+		// it is better to limit the scope of this function to check "per module" permission only, and to do the test on "per object" permission
+		// by calling restrictedArea()by the caller.
 	}
+
 	// Fix modulepart for backward compatibility
 	if ($modulepart == 'facture') {
 		$modulepart = 'invoice';
@@ -3095,6 +3100,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$modulepart = 'delivery';
 	} elseif ($modulepart == 'propale') {
 		$modulepart = 'propal';
+	}
+
+	// If modulepart is composed of an objectpart@modulepart, we keep modulepart.
+	$reg = array();
+	if (preg_match('/(\w+)@(\w+)$/', $modulepart, $reg)) {
+		$modulepart = $reg[2];
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
@@ -3121,6 +3132,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if ($mode == 'write') {
 		$lire = 'creer';
 		$read = 'write';
+		$download = 'upload';
+	} elseif ($mode == 'delete') {
+		$lire = 'supprimer';
+		$read = 'delete';
 		$download = 'upload';
 	}
 
@@ -3839,6 +3854,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1; // If user is admin
 		}
 
+		// For external modules, we can have (modulepart=mymodule and original_file=myobject/...) or (modulepart=mymodule-myobject and original_file=...)
 		$tmpmodulepart = explode('-', $modulepart);
 		if (!empty($tmpmodulepart[1])) {
 			$modulepart = $tmpmodulepart[0];
@@ -3897,6 +3913,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			}
 			$original_file = $conf->$tmpmodule->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 		} else {
+			// Main generic case
 			if (empty($conf->$modulepart->dir_output)) {	// modulepart not supported
 				dol_print_error(null, 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.'). The module for this modulepart value may not be activated.');
 				exit;
@@ -3914,11 +3931,21 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = 1;
 			}
 
-			if (is_array($conf->$modulepart->multidir_output) && !empty($conf->$modulepart->multidir_output[$entity])) {
-				$original_file = $conf->$modulepart->multidir_output[$entity].'/'.$original_file;
-			} else {
-				$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
+			$subdir = '';
+			$regs = array();
+			if (preg_match('/^(\w+)@(\w+)$/', $originalmodulepart, $regs)) {
+				$subdir = $regs[1].'/';
 			}
+
+			if (is_array($conf->$modulepart->multidir_output) && !empty($conf->$modulepart->multidir_output[$entity])) {
+				$original_file = $conf->$modulepart->multidir_output[$entity].'/'.$subdir.$original_file;
+			} else {
+				$original_file = $conf->$modulepart->dir_output.'/'.$subdir.$original_file;
+			}
+
+			// TODO
+			// Implement a way for the generic case to set $sqlprotectagainstexternals automatically.
+			// For the moment, external modules can use the following hook checkSecureAccess if they need to protect against external users.
 		}
 
 		$parameters = array(

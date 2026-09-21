@@ -10483,13 +10483,16 @@ function getElementProperties($elementType)
 	$table_element = $elementType;
 
 	// If we ask a resource form external module (instead of default path)
-	if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {	// 'myobject@mymodule'
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {	// 'myobject@mymodule' (usually external modules)
 		$element = $subelement = $regs[1];
+		$table_element = $regs[2].'_'.$regs[1];
+		$subdir = '/'.$regs[1];
 		$module = $regs[2];
-	} elseif (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// 'myobject_mysubobject' with myobject=mymodule, example 'project_task'
+	} elseif (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// old deprecated syntax: 'myobject_mysubobject' with myobject=mymodule, example 'project_task'
 		// This is an alternative syntax to 'myobject@mymodule', so it must not be applied when the previous case already matched,
 		// otherwise the module resolved from the '@' syntax would be overwritten by a wrong guess when $element contains a '_'.
 		$module = $element = $regs[1];
+		$table_element = $elementType;
 		$subelement = $regs[2];
 	}
 
@@ -10500,7 +10503,7 @@ function getElementProperties($elementType)
 		$classpath = $module . '/class';
 		$classfile = $module;
 		$classname = preg_replace('/det$/', 'Line', $element);
-		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'supplier_order', 'commandefournisseur'))) {
+		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'ficheinter', 'supplier_order', 'commandefournisseur'))) {
 			$classname = preg_replace('/det$/', 'Ligne', $element);
 		}
 	}
@@ -10698,7 +10701,7 @@ function getElementProperties($elementType)
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
 		$table_element = 'cabinetmedcons';
-	} elseif ($elementType == 'fichinter') {
+	} elseif ($elementType == 'fichinter' || $elementType == 'ficheinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$subelement = 'fichinter';
@@ -10998,13 +11001,14 @@ function getElementProperties($elementType)
 		$dir_output = $conf->fournisseur->payment->dir_output;
 		$dir_temp = $conf->fournisseur->payment->dir_temp;
 	}
+
 	// The sub directory must not be appended when the module is disabled, because $dir_output is then empty
 	// and we would return a path at the root of the file system instead of an empty string.
 	if (!empty($dir_output)) {
 		$dir_output .= $subdir;
 	}
 	if (!empty($dir_temp)) {
-		$dir_temp .= $subdir;
+		$dir_temp = preg_replace('/\/temp$/', '', $dir_temp).$subdir.'/temp';
 	}
 
 	$elementProperties = array(
@@ -11071,8 +11075,9 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
-	//var_dump($element_prop); exit;
+	//var_dump($element_prop);
 
+	// Check special cases
 	if ($element_prop['module'] == 'product' || $element_prop['module'] == 'service') {
 		// For example, for an extrafield 'product' (shared for both product and service) that is a link to an object,
 		// this is called with $element_type = 'product' when we need element properties of a service, we must return a product. If we create the
@@ -11084,6 +11089,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	} else {
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}
+
 	//var_dump('element_type='.$element_type);
 	//var_dump($element_prop);
 	//var_dump($element_prop['module'].' '.$ismodenabled);
@@ -11117,7 +11123,6 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			$objecttmp = new $className($db);
 			'@phan-var-force CommonObject $objecttmp';
 			/** @var CommonObject $objecttmp */
-
 			if ($element_id > 0 || !empty($element_ref)) {
 				$ret = $objecttmp->fetch($element_id, $element_ref);
 				if ($ret >= 0) {
