@@ -3151,7 +3151,6 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		}
 	}
 
-	// Show tabs
 	// if =0 we don't use the feature
 	if (empty($limittoshow)) {
 		$limittoshow = getDolGlobalInt('MAIN_MAXTABS_IN_CARD', 99);
@@ -3287,6 +3286,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out .= '">' . "\n";
 	}
 	if (!empty($dragdropfile)) {
+		// Add the js code to manage the drag and drop
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 		$out .= dragAndDropFileUpload("dragDropAreaTabBar");
 	}
