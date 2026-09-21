@@ -1970,6 +1970,23 @@ class Task extends CommonObjectLine
 
 		dol_syslog(get_class($this)."::fetchTimeSpent", LOG_DEBUG);
 
+		// Callers loop without reading the return: every way out must leave no stale value
+		$this->timespent_id = 0;
+		$this->timespent_date = '';
+		$this->timespent_datehour = '';
+		$this->timespent_withhour = 0;
+		$this->timespent_duration = 0;
+		$this->timespent_fk_user = 0;
+		$this->timespent_fk_product = 0;
+		$this->timespent_thm = 0.0;
+		$this->timespent_note = '';
+
+		// A record of another type would overwrite $this->id with a foreign fk_element
+		if ($timespent->id > 0 && $timespent->elementtype != 'task') {
+			dol_syslog(get_class($this)."::fetchTimeSpent refused record ".$id." of type ".$timespent->elementtype, LOG_WARNING);
+			return 0;
+		}
+
 		if ($timespent->id > 0) {
 			$this->timespent_id = $timespent->id;
 			$this->id = $timespent->fk_element;
@@ -2131,6 +2148,7 @@ class Task extends CommonObjectLine
 		}
 		$timespent->fk_product = $this->timespent_fk_product;
 		$timespent->fk_element = $this->id; // Update task assignment (may be changed)
+		$timespent->elementtype = 'task';
 		$timespent->note = $this->timespent_note;
 		$timespent->invoice_id = $this->timespent_invoiceid;
 		$timespent->invoice_line_id = $this->timespent_invoicelineid;

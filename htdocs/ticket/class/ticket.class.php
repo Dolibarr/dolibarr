@@ -33,6 +33,7 @@
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/timespent.class.php';
 
 
 /**
@@ -241,6 +242,11 @@ class Ticket extends CommonObject
 	 * @var Ticket[] 		Array of Tickets
 	 */
 	public $lines;
+
+	/**
+	 * @var int		Id of the time spent record concerned by the TICKET_TIMESPENT_* trigger being run
+	 */
+	public $timespent_id;
 
 	/**
 	 * @var string Regex pour les images
@@ -1213,6 +1219,38 @@ class Ticket extends CommonObject
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_ticket";
 			$sql .= " WHERE fk_ticket = ".(int) $this->id;
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			$sql = "SELECT t.rowid, t.invoice_id";
+			$sql .= " FROM ".$this->db->prefix()."element_time as t";
+			$sql .= " WHERE t.elementtype = '".$this->db->escape($this->element)."'";
+			$sql .= " AND t.fk_element = ".((int) $this->id);
+			$sql .= " AND t.invoice_id > 0";
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			} else {
+				while ($obj = $this->db->fetch_object($resql)) {
+					dol_syslog(get_class($this)."::delete dropping time spent record ".$obj->rowid." still linked to invoice ".$obj->invoice_id, LOG_WARNING);
+				}
+				$this->db->free($resql);
+			}
+		}
+
+		// The filter on elementtype is mandatory: a task may carry the same fk_element
+		if (!$error) {
+			$sql = "DELETE FROM ".$this->db->prefix()."element_time";
+			$sql .= " WHERE elementtype = '".$this->db->escape($this->element)."'";
+			$sql .= " AND fk_element = ".((int) $this->id);
 
 			$result = $this->db->query($sql);
 			if (!$result) {
@@ -3726,5 +3764,97 @@ class Ticket extends CommonObject
 		$modelpath = "core/modules/ticket/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+	/**
+	 * Return the number of time spent records attached to this ticket
+	 *
+	 * @return	int		Number of records, or -1 if KO
+	 */
+	public function countTimeSpent(): int
+	{
+		$timespent = new TimeSpent($this->db);
+
+		$result = $timespent->countForElement($this->element, (int) $this->id);
+		if ($result < 0) {
+			$this->error = $timespent->error;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Record time spent on this ticket
+	 *
+	 * @param	User		$user		User doing the creation
+	 * @param	TimeSpent	$timespent	Time spent record to create. fk_element and elementtype are set by this method.
+	 * @param	int			$notrigger	0=launch trigger, 1=disable trigger
+	 * @return	int						Return integer <0 if KO, id of the created record if OK
+	 */
+	public function addTimeSpent(User $user, TimeSpent $timespent, int $notrigger = 0): int
+	{
+		$result = $timespent->createForElement($this, $this->element, $user, 'TICKET_TIMESPENT_CREATE', $notrigger);
+		if ($result < 0) {
+			$this->error = $timespent->error;
+			$this->errors = $timespent->errors;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Update a time spent record of this ticket
+	 *
+	 * @param	User		$user		User doing the update
+	 * @param	TimeSpent	$timespent	Time spent record, loaded with fetch() then updated. A record that does not belong to this ticket is refused.
+	 * @param	int			$notrigger	0=launch trigger, 1=disable trigger
+	 * @return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function updateTimeSpent(User $user, TimeSpent $timespent, int $notrigger = 0): int
+	{
+		$result = $timespent->updateForElement($this, $this->element, $user, 'TICKET_TIMESPENT_MODIFY', $notrigger);
+		if ($result < 0) {
+			$this->error = $timespent->error;
+			$this->errors = $timespent->errors;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Delete a time spent record of this ticket
+	 *
+	 * @param	User		$user		User doing the deletion
+	 * @param	TimeSpent	$timespent	Time spent record, loaded with fetch(). A record that does not belong to this ticket is refused.
+	 * @param	int			$notrigger	0=launch trigger, 1=disable trigger
+	 * @return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function delTimeSpent(User $user, TimeSpent $timespent, int $notrigger = 0): int
+	{
+		$result = $timespent->deleteForElement($this, $this->element, $user, 'TICKET_TIMESPENT_DELETE', $notrigger);
+		if ($result < 0) {
+			$this->error = $timespent->error;
+			$this->errors = $timespent->errors;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Load a summary of the time spent on this ticket
+	 *
+	 * @param	User|null	$userobj	Restrict the summary to the time spent by this user
+	 * @return	array{min_date:int,max_date:int,total_duration:float,total_amount:float,nblines:int,nblinesnull:int}	Zeroed summary if KO, with $this->error set
+	 */
+	public function getSummaryOfTimeSpent(?User $userobj = null): array
+	{
+		$timespent = new TimeSpent($this->db);
+
+		$result = $timespent->getSummaryForElement($this->element, (int) $this->id, $userobj);
+		if (!empty($timespent->error)) {
+			$this->error = $timespent->error;
+		}
+
+		return $result;
 	}
 }
