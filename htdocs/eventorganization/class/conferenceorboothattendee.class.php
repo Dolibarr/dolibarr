@@ -653,7 +653,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		foreach ($conferences as $conferenceId => $conference) {
-
 			$sessionattendee = new self($this->db);
 			$filter = "(t.fk_actioncomm:=:".$conferenceId.") AND (t.email:=:'".$this->db->escape($this->email)."')";
 			$existingregistrations = $sessionattendee->fetchAll('', '', 0, 0, $filter);
