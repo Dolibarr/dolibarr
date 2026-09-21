@@ -536,16 +536,6 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		}
 	}
 
-	// Validate free registrations before committing the registration transaction.
-	if (!$error && is_object($thirdparty) && empty((float) $project->price_registration)) {
-		$resultsetstatus = $confattendee->setStatut(1);
-		if ($resultsetstatus < 0) {
-			$error++;
-			$errmsg .= $confattendee->error;
-			$errors = array_merge($errors, $confattendee->errors);
-		}
-	}
-
 	if (!$error && is_object($thirdparty)) {
 		// If the registration needs a payment
 		if (!empty((float) $project->price_registration)) {
@@ -657,64 +647,74 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$db->rollback();
 			}
 		} else {
-			$db->commit();
-
-			// No price has been set; the subscription has already been validated.
-
-			// Sending mail
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			// Set output language
-			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
-			// Load traductions files required by page
-			$outputlangs->loadLangs(array("main", "members", "eventorganization"));
-			// Get email content from template
-			$arraydefaultmessage = null;
-
-			$labeltouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');
-			if (!empty($labeltouse)) {
-				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
+			// No price has been set. Validate the subscription before committing.
+			$resultsetstatus = $confattendee->setStatut(1);
+			if ($resultsetstatus < 0) {
+				$error++;
+				$errmsg .= $confattendee->error;
+				$errors = array_merge($errors, $confattendee->errors);
 			}
 
-			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-				$subject = $arraydefaultmessage->topic;
-				$msg     = $arraydefaultmessage->content;
-			} else {
-				$subject = '';
-				$msg = '';
-			}
+			if (!$error) {
+				$db->commit();
 
-			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
-			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+				// Sending mail
+				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$formmail = new FormMail($db);
+				// Set output language
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+				// Load traductions files required by page
+				$outputlangs->loadLangs(array("main", "members", "eventorganization"));
+				// Get email content from template
+				$arraydefaultmessage = null;
 
-			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
-			$sendto = !empty($thirdparty->email) ? $thirdparty->email :
-				$confattendee->email;
-
-			$from = getDolGlobalString('MAILING_EMAIL_FROM');
-			$urlback = $_SERVER["REQUEST_URI"];
-
-			$ishtml = dol_textishtml($texttosend); // May contain urls
-
-			if (!empty($sendto)) {
-				$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
-				$result = $mailfile->sendfile();
-				if ($result) {
-					dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-				} else {
-					dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+				$labeltouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');
+				if (!empty($labeltouse)) {
+					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
 				}
+
+				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+					$subject = $arraydefaultmessage->topic;
+					$msg     = $arraydefaultmessage->content;
+				} else {
+					$subject = '';
+					$msg = '';
+				}
+
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
+				complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+				$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+				$sendto = !empty($thirdparty->email) ? $thirdparty->email :
+					$confattendee->email;
+
+				$from = getDolGlobalString('MAILING_EMAIL_FROM');
+				$urlback = $_SERVER["REQUEST_URI"];
+
+				$ishtml = dol_textishtml($texttosend); // May contain urls
+
+				if (!empty($sendto)) {
+					$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
+					$result = $mailfile->sendfile();
+					if ($result) {
+						dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+					} else {
+						dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+					}
+				}
+
+				$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
+				$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
+
+				header("Location: ".$redirection);
+				exit;
+			} else {
+				$db->rollback();
 			}
-
-			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
-			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
-
-			header("Location: ".$redirection);
-			exit;
 		}
 		//Header("Location: ".$urlback);
 		//exit;
