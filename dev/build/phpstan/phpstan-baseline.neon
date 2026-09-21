@@ -12007,12 +12007,6 @@ parameters:
 			path: ../../../htdocs/product/stats/commande_fournisseur.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/stats/contrat.php
-
-		-
 			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
