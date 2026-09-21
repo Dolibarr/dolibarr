@@ -1,7 +1,7 @@
 -- Table with all fields description to be able to request it like dolibarr native extrafields
 --
 
-CREATE TABLE llx_schemas_field (
+CREATE TABLE llx_extrafields_schemas (
 	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
     name 			varchar(64) NOT NULL,
     entity 			integer DEFAULT 1 NOT NULL,
