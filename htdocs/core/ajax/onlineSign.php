@@ -982,6 +982,7 @@ if ($action == "importSignature") {
 		} else {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
 
+			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
 			$object = fetchOnlineSignatureObject($sourceDefinition, $ref, (int) $entity);
 			if (!is_object($object) || empty($object->id)) {
 				$error++;
@@ -1000,7 +1001,6 @@ if ($action == "importSignature") {
 			}
 
 			if (!$error) {
-				$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
 				$filename = "signatures/" . $date . "_signature.png";
 				if (!dol_is_dir($upload_dir . "signatures/")) {
 					if (!dol_mkdir($upload_dir . "signatures/")) {
