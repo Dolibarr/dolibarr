@@ -944,11 +944,13 @@ class Productlot extends CommonObject
 		/** @var ModeleNumRefBarCode $mod */
 
 		// getNextValue() expects the barcode type as a rowid, unlike verif() which expects the literal code
-		$numFinal = $mod->getNextValue($this, (string) $this->fk_barcode_type);
+		// Cast: the shipped numbering modules return int -1 on an incompatible object although the
+		// inherited contract is a string, so '-1' has to be rejected as a sentinel below
+		$numFinal = (string) $mod->getNextValue($this, (string) $this->fk_barcode_type);
 		// get_next_value() substitutes ErrorMaxNumberReachForThisMask *inside* the value instead of
 		// returning it alone, so the sentinel must be searched anywhere, not only at the start
-		if (!is_string($numFinal) || $numFinal === '' || $numFinal === 'NotConfigured' || strpos($numFinal, 'Error') !== false) {
-			return $this->logBarcodeGenerationFailure('module returned '.(is_string($numFinal) && $numFinal !== '' ? $numFinal : (string) $mod->error), $guessedtype);
+		if ($numFinal === '' || $numFinal === '-1' || $numFinal === 'NotConfigured' || strpos($numFinal, 'Error') !== false) {
+			return $this->logBarcodeGenerationFailure('module returned '.($numFinal !== '' ? $numFinal : (string) $mod->error), $guessedtype);
 		}
 
 		// A '*' or '?' left in the value means the mask asked for a key the numbering module could not
@@ -960,7 +962,7 @@ class Productlot extends CommonObject
 
 		// get_next_value() reads the counter with a MAX() that ignores uncommitted rows, so two lots
 		// created in the same transaction can be handed the same value
-		if (method_exists($mod, 'verif_dispo') && $mod->verif_dispo($this->db, $numFinal, $this) != 0) {
+		if ($mod->verif_dispo($this->db, $numFinal, $this) != 0) {
 			return $this->logBarcodeGenerationFailure('value '.$numFinal.' is already used', $guessedtype);
 		}
 
