@@ -909,7 +909,6 @@ $companystatic = new Societe($db);
 $invoicerectmp = new FactureFournisseurRec($db);
 
 $now = dol_now();
-$nowlasthour = dol_get_last_hour($now);
 
 // Create mode
 if ($action == 'create') {
@@ -1578,7 +1577,7 @@ if ($action == 'create') {
 				if (!empty($object->frequency) && $object->nb_gen_max > 0 && ($object->nb_gen_done >= $object->nb_gen_max)) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("MaxGenerationReached")) . '">' . $langs->trans("CreateBill") . '</a></div>';
 				} else {
-					if (empty($object->frequency) || $object->date_when <= $nowlasthour) {
+					if (empty($object->frequency) || $object->isDueForGeneration()) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/facture/card.php?action=create&socid=' . $object->thirdparty->id . '&fac_rec=' . $object->id . '">' . $langs->trans("CreateBill") . '</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("DateIsNotEnough")) . '">' . $langs->trans("CreateBill") . '</a></div>';

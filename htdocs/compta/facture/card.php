@@ -1667,11 +1667,22 @@ if (empty($reshook)) {
 
 		// Standard invoice or Deposit invoice, created from a Predefined template invoice
 		if ((GETPOST('type') == Facture::TYPE_STANDARD || GETPOST('type') == Facture::TYPE_DEPOSIT) && GETPOSTINT('fac_rec') > 0) {
+			$maxdateinvoice = dol_get_last_hour(dol_now('tzuserrel')) + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY');
+			if (!empty($dateinvoice) && $dateinvoice > $maxdateinvoice) {
+				// Beyond the usual limit, only the next generation date of a recurring template generated in advance is allowed
+				$templateinadvance = new FactureRec($db);
+				$result = $templateinadvance->fetch(GETPOSTINT('fac_rec'), '', '', 1, 1);
+				if ($result > 0 && $templateinadvance->isNextGenerationDate($dateinvoice)) {
+					$maxdateinvoice = $dateinvoice;
+				} elseif ($result < 0) {
+					dol_syslog("Failed to load invoice template id=".GETPOSTINT('fac_rec')." result=".$result." ".$templateinadvance->error, LOG_WARNING);
+				}
+			}
 			if (empty($dateinvoice)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 				$action = 'create';
-			} elseif ($dateinvoice > (dol_get_last_hour(dol_now('tzuserrel')) + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
+			} elseif ($dateinvoice > $maxdateinvoice) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';

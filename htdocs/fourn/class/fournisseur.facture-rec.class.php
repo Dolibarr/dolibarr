@@ -1346,8 +1346,63 @@ class FactureFournisseurRec extends CommonInvoice
 	}
 
 	/**
+	 *  Return the most distant next generation date qualifying a supplier invoice template for generation.
+	 *  It is the last second of the current day, shifted by SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS days.
+	 *
+	 *  @param	int		$now	Reference timestamp, 0 for now
+	 *  @return	int				Timestamp of the last qualifying next generation date
+	 */
+	public static function getLastDateToGenerate(int $now = 0): int
+	{
+		return self::getEndOfDayShifted($now, max(0, getDolGlobalInt('SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS')));
+	}
+
+	/**
+	 *  Return if the template may be generated now. A template already due is always allowed, so a late
+	 *  generation is still caught up. A template not yet due must be within SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS
+	 *  days and its previous occurrence must be past, so at most one invoice is generated in advance.
+	 *
+	 *  @param	int		$now	Reference timestamp, 0 for now
+	 *  @return	bool
+	 */
+	public function isDueForGeneration(int $now = 0): bool
+	{
+		$endoftoday = self::getEndOfDayShifted($now, 0);
+
+		if (empty($this->date_when) || $this->date_when <= $endoftoday) {
+			return true;
+		}
+		if ($this->date_when > self::getLastDateToGenerate($now)) {
+			return false;
+		}
+
+		$previousdate = dol_time_plus_duree((int) $this->date_when, -((int) $this->frequency), (string) $this->unit_frequency, 1);
+
+		return $previousdate <= $endoftoday;
+	}
+
+	/**
+	 *  Return if a date is the next generation date of this recurring template and this template may be
+	 *  generated now, possibly in advance.
+	 *
+	 *  @param	int		$date	Date at midnight in the server timezone, as read from the invoice creation form
+	 *  @return	bool
+	 */
+	public function isNextGenerationDate(int $date): bool
+	{
+		if (empty($this->frequency) || empty($this->date_when) || !$this->isDueForGeneration()) {
+			return false;
+		}
+
+		return dol_get_first_hour((int) $this->date_when) == $date;
+	}
+
+	/**
 	 *  Create all recurrents supplier invoices (for all entities if multicompany is used).
 	 *  A result may also be provided into this->output.
+	 *
+	 *  Templates are also processed in advance, up to SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS days
+	 *  before their next generation date. The generated invoice still uses the next generation date as its date.
 	 *
 	 *  WARNING: This method changes temporarily the context $conf->entity to be in correct context for each recurring invoice found.
 	 *
@@ -1366,21 +1421,22 @@ class FactureFournisseurRec extends CommonInvoice
 		$langs->loadLangs(array('main', 'bills'));
 
 		$now = dol_now();
-		$tmparray = dol_getdate($now);
-		$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
+		$lastdatetogenerate = self::getLastDateToGenerate();
 
 		dol_syslog('createRecurringInvoices restrictioninvoiceid=' .$restrictioninvoiceid. ' forcevalidation=' .$forcevalidation);
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_fourn_rec';
 		$sql .= ' WHERE frequency > 0'; // A recurring supplier invoice is an invoice with a frequency
-		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($today)."')";
+		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($lastdatetogenerate)."')";
 		$sql .= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql .= ' AND suspended = 0';
 		$sql .= ' AND entity = '. (int) $conf->entity; // MUST STAY = $conf->entity here
 		if ($restrictioninvoiceid > 0) {
 			$sql .= ' AND rowid = '. (int) $restrictioninvoiceid;
 		}
-		$sql .= $this->db->order('entity', 'ASC');
+		// Templates due first, so a limited batch never starves them in favour of the ones generated in advance.
+		// The CASE keeps the templates without a date first on PostgreSQL too, where NULL sorts last.
+		$sql .= ' ORDER BY CASE WHEN date_when IS NULL THEN 0 ELSE 1 END, date_when ASC, entity ASC';
 		if (getDolGlobalInt('NB_REC_FACT_GEN_BY_CALL')) {
 			$sql .= $this->db->plimit(getDolGlobalInt('NB_REC_FACT_GEN_BY_CALL'));
 		}
@@ -1416,6 +1472,13 @@ class FactureFournisseurRec extends CommonInvoice
 				$facturerec = new FactureFournisseurRec($this->db);
 				$laststep = "Fetch {$line->rowid}";
 				$facturerec->fetch($line->rowid);
+
+				if ($facturerec->id > 0 && !$facturerec->isDueForGeneration()) {
+					dol_syslog('createRecurringInvoices Skip invoice template id='.$facturerec->id.' not due, its previous occurrence is not past yet');
+					$this->db->rollback();
+					$i++;
+					continue;
+				}
 
 				if ($facturerec->id > 0) {
 					// Set entity context
