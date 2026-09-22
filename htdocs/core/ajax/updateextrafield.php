@@ -79,6 +79,8 @@ if ($usesublevelpermission && !$user->hasRight($module, $element, 'write') && !$
 
 restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 
+// TODO
+// Add blacklist of some forbidden field name.
 
 
 
