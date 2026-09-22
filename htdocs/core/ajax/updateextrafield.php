@@ -19,7 +19,8 @@
 /**
  *      \file       htdocs/core/ajax/updateextrafield.php
  *      \ingroup    core
- *      \brief      File to update an extrafield (for example for stars or AI update)
+ *      \brief      File to update an extrafield (for example for stars or AI update).
+ *      			See htdocs/core/ajax/ajaxextrafield.php for aja component to read extrafield value.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
