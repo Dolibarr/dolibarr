@@ -826,6 +826,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'produit') {
 			$dbtablename = 'product';
 		}
+		if ($feature == 'ficheinter') {
+			$dbtablename = 'fichinter';
+		}
+		if ($feature == 'banque') {
+			// The module name (and permission name) is 'banque', but the table of the bank account object is 'bank_account'
+			$dbtablename = 'bank_account';
+		}
 		if ($feature == 'project') {
 			$feature = 'projet';
 		}

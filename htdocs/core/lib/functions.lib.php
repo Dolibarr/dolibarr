@@ -10524,11 +10524,14 @@ function getElementProperties($elementType)
 		$subelement = 'adherent_type';
 		$classname = 'AdherentType';
 		$table_element = 'adherent_type';
-	} elseif ($elementType == 'bank_account') {
+	} elseif ($elementType == 'bank_account' || $elementType == 'bank') {
+		// 'bank' is the value used for the modulepart when downloading files attached to a bank account
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
+		$element = $subelement = 'bank_account';
+		$table_element = 'bank_account';
 	} elseif ($elementType == 'bank_line') {
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
