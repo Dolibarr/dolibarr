@@ -11131,6 +11131,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 
 			if ($element_id > 0 || !empty($element_ref)) {
 				// Special case for job, there is no ref, it is the id
+				// TODO Replace hard coded code with a test if object has a ref or not.
 				if (empty($element_id) && !empty($element_ref) && (in_array($objecttmp->element, array('evaluation', 'job', 'position', 'skill')))) {
 					$element_id = $element_ref;
 					$element_ref = '';
