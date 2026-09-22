@@ -439,9 +439,19 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Tools
+	$toolsperms = (empty($user->socid) || $user->hasRight('category', 'read') || $user->hasRight('mailing', 'lire') || $user->hasRight('import', 'run') || $user->hasRight('export', 'lire'));
+	if (!$toolsperms) {
+		// Entries added into menu Tools by modules, already filtered on user type, enabled and perms by menuLoad()
+		foreach ($tabMenu as $val) {
+			if ($val['type'] == 'left' && ($val['mainmenu'] == 'tools' || $val['fk_mainmenu'] == 'tools') && $val['perms']) {
+				$toolsperms = true;
+				break;
+			}
+		}
+	}
 	$tmpentry = array(
 		'enabled' => 1,
-		'perms' => (string) (int) (empty($user->socid) || $user->hasRight('category', 'read') || $user->hasRight('mailing', 'lire') || $user->hasRight('import', 'run') || $user->hasRight('export', 'lire')),
+		'perms' => (string) (int) $toolsperms,
 		'module' => ''
 	);
 	$menu_arr[] = array(
