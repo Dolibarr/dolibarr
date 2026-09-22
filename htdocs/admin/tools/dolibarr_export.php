@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 /**
  * @var string $dolibarr_main_db_name
  * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_restrict_os_commands
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
@@ -663,11 +664,27 @@ $filecompression = $compression;
 unset($filecompression['none']);
 $filecompression['zip'] = array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip', 'label' => $langs->trans("FormatZip"));
 
+// The gz, bz and zstd formats are built by export_files.php with OS commands (tar then a compressor). When
+// $dolibarr_main_restrict_os_commands is set (default since 24.0.1), Utils::executeCLI() refuses any command not in
+// the list, so a format whose commands are not allowed must not be offered.
+$oscommandsforformat = array('gz' => array('tar', 'gzip'), 'bz' => array('tar', 'bzip2'), 'zstd' => array('tar', 'zstd'));
+$arrayofallowedcommand = array();
+if (!empty($dolibarr_main_restrict_os_commands)) {
+	$arrayofallowedcommand = array_map('trim', explode(',', $dolibarr_main_restrict_os_commands));
+}
+$disabledbyrestriction = array();
+foreach ($oscommandsforformat as $key => $commands) {
+	if (!empty($arrayofallowedcommand) && array_diff($commands, $arrayofallowedcommand)) {
+		$disabledbyrestriction[$key] = implode(', ', array_diff($commands, $arrayofallowedcommand));
+	}
+}
+$defaultcompression = empty($disabledbyrestriction['gz']) ? 'gz' : 'zip';
+
 $i = 0;
 foreach ($filecompression as $key => $val) {
-	if (!$val['function'] || function_exists($val['function'])) {	// Enabled export format
+	if ((!$val['function'] || function_exists($val['function'])) && empty($disabledbyrestriction[$key])) {	// Enabled export format
 		$checked = '';
-		if ($key == 'gz') {
+		if ($key == $defaultcompression) {
 			$checked = ' checked';
 		}
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2"'.$checked.'>';
@@ -675,10 +692,17 @@ foreach ($filecompression as $key => $val) {
 	} else { // Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2" disabled>';
 		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
-		print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+		if (!empty($disabledbyrestriction[$key])) {
+			print ' <span class="opacitymedium">('.$langs->trans("NotAvailableCommandNotAllowed", $disabledbyrestriction[$key]).')</span>';
+		} else {
+			print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+		}
 	}
 	print ' &nbsp; &nbsp; ';
 	$i++;
+}
+if (!empty($disabledbyrestriction)) {
+	print '<br><span class="opacitymedium small">'.$langs->trans("RestrictOsCommandsHelp", 'dolibarr_main_restrict_os_commands').'</span>';
 }
 
 print '</div>';
