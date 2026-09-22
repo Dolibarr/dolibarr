@@ -107,8 +107,11 @@ $tmpexpe = new Expedition($object->db);
 if ($line->fk_product > 0) {
 	print $tmpproduct->getNomUrl(1);
 	print ' - '.$tmpproduct->label;
+	if (!empty($line->description) && $line->description !== $tmpproduct->label) {
+		print '<br>'.dol_htmlentitiesbr($line->description);
+	}
 } else {
-	print ' - '.$line->description;
+	print dol_htmlentitiesbr($line->description);
 }
 print '</td>';
 
