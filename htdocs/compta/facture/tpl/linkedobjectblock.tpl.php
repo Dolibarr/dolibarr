@@ -48,6 +48,11 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	print '<tr class="'.$trclass.'" data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
 	print '<td class="linkedcol-element tdoverflowmax100">';
+
+	if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
+		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines&amp;token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
+	}
+
 	switch ($objectlink->type) {
 		case Facture::TYPE_REPLACEMENT:
 			echo $langs->trans("InvoiceReplacement");
@@ -67,9 +72,6 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		default:
 			echo $langs->trans("CustomerInvoice");
 			break;
-	}
-	if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines&amp;token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 	}
 	print '</td>';
 	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
