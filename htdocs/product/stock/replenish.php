@@ -964,13 +964,15 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 		if (empty($usevirtualstock)) {
 			$stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
-		} else {
-			$stocktobuy = max(max($desiredstock, $alertstock) - $stock, 0); //ordered is already in $stock in virtual mode
-		}
-		if (empty($usevirtualstock)) {
 			$stocktobuywarehouse = max(max($desiredstockwarehouse, $alertstockwarehouse) - $stockwarehouse - $ordered, 0);
 		} else {
+			$stocktobuy = max(max($desiredstock, $alertstock) - $stock, 0); //ordered is already in $stock in virtual mode
 			$stocktobuywarehouse = max(max($desiredstockwarehouse, $alertstockwarehouse) - $stockwarehouse, 0); //ordered is already in $stock in virtual mode
+		}
+		$tobuy = ((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? $stocktobuywarehouse : $stocktobuy);
+		$order_zero_message = '';
+		if ($tobuy <= 0) {
+			$order_zero_message = $langs->trans('ReplenishQuantityZeroExplanation');
 		}
 
 		$picto = '';
@@ -986,7 +988,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), 'help');
 		}
 
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven" '.($tobuy <= 0 ? "title=\"$order_zero_message\"" : '').'>';
 
 		// Select field
 		print '<td><input type="checkbox" class="check" name="choose' . $i . '"></td>';
@@ -1032,8 +1034,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="right"><a href="replenishorders.php?search_product=' . $prod->id . '">' . $ordered . '</a> ' . $picto . '</td>';
 
 		// To order
-		$tobuy = ((getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) > 0 ? $stocktobuywarehouse : $stocktobuy);
-		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$tobuy.'"></td>';
+		print '<td class="right">';
+		$input_html = '<input type="text" size="4" name="tobuy'.$i.'" value="'.$tobuy.'">';
+		print ($tobuy <= 0) ? $form->textwithpicto($input_html, $order_zero_message, -1) : $input_html;
+		print '</td>';
 
 		// Supplier
 		print '<td class="right">';
