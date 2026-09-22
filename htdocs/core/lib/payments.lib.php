@@ -210,9 +210,10 @@ function getValidOnlinePaymentMethods($paymentmethod = '', $mode = 0)
  * @param   string		$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string		$ref		Ref of object
  * @param	int|float	$amount		Amount of money to request for
+ * @param	string		$lang		Language code to force on the online payment page (example 'en_US'), usually the language of the recipient of the link
  * @return	string					Url string
  */
-function showOnlinePaymentUrl($type, $ref, $amount = 0)
+function showOnlinePaymentUrl($type, $ref, $amount = 0, $lang = '')
 {
 	global $langs;
 
@@ -222,7 +223,7 @@ function showOnlinePaymentUrl($type, $ref, $amount = 0)
 	$servicename = '';	// Link is a generic link for all payments services (paypal, stripe, ...)
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
-	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
+	$url = getOnlinePaymentUrl(0, $type, $ref, $amount, 'your_tag', 1, $lang);
 	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" spellcheck="false" class="quatrevingtpercentminusx" value="'.$url.'">';
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
@@ -237,11 +238,12 @@ function showOnlinePaymentUrl($type, $ref, $amount = 0)
  * @param	string		$ref		Ref of object
  * @param	string		$label		Text or HTML tag to display, if empty it display the URL
  * @param	int|float	$amount		Amount of money to request for
+ * @param	string		$lang		Language code to force on the online payment page (example 'en_US'), usually the language of the recipient of the link
  * @return	string					Url string
  */
-function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
+function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0, $lang = '')
 {
-	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
+	$url = getOnlinePaymentUrl(0, $type, $ref, $amount, 'your_tag', 1, $lang);
 	$label = $label ? $label : $url;
 	return '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$label.'</a>';
 }

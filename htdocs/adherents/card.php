@@ -2256,7 +2256,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$amount = 0;
 				}
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-				print showOnlinePaymentUrl('membersubscription', $object->ref, $amount);
+				// The link is given to the member, so show the payment page in his language
+				$langforpaymentpage = (getDolGlobalInt('MAIN_MULTILANGS') && !empty($object->default_lang)) ? $object->default_lang : '';
+				print showOnlinePaymentUrl('membersubscription', $object->ref, $amount, $langforpaymentpage);
 			}
 
 			print '</div><div class="fichehalfright">';

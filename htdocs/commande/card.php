@@ -3822,7 +3822,9 @@ if ($action == 'create' && $usercancreate) {
 			if ($object->status != Commande::STATUS_DRAFT && $useonlinepayment) {
 				print '<br><!-- Link to pay -->';
 				require_once DOL_DOCUMENT_ROOT . '/core/lib/payments.lib.php';
-				print showOnlinePaymentUrl('order', $object->ref) . '<br>';
+				// The link is given to the customer, so show the payment page in his language
+				$langforpaymentpage = (getDolGlobalInt('MAIN_MULTILANGS') && !empty($object->thirdparty->default_lang)) ? $object->thirdparty->default_lang : '';
+				print showOnlinePaymentUrl('order', $object->ref, 0, $langforpaymentpage) . '<br>';
 			}
 
 			print '</div><div class="fichehalfright">';

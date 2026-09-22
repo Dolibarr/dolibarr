@@ -863,7 +863,9 @@ if (($action != 'createsubscription' && $action != 'create_thirdparty')) {
 		print '<br>';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-		print showOnlinePaymentUrl('membersubscription', $object->ref);
+		// The link is given to the member, so show the payment page in his language
+		$langforpaymentpage = (getDolGlobalInt('MAIN_MULTILANGS') && !empty($object->default_lang)) ? $object->default_lang : '';
+		print showOnlinePaymentUrl('membersubscription', $object->ref, 0, $langforpaymentpage);
 		print '<br>';
 	}
 }

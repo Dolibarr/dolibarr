@@ -7262,7 +7262,9 @@ if ($action == 'create') {
 		if ($object->status != Facture::STATUS_DRAFT && $useonlinepayment) {
 			print '<br><!-- Link to pay -->'."\n";
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
+			// The link is given to the customer, so show the payment page in his language
+			$langforpaymentpage = (getDolGlobalInt('MAIN_MULTILANGS') && !empty($object->thirdparty->default_lang)) ? $object->thirdparty->default_lang : '';
+			print showOnlinePaymentUrl('invoice', $object->ref, 0, $langforpaymentpage).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';
