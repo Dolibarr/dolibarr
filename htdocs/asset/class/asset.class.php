@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
@@ -1638,6 +1638,38 @@ class Asset extends CommonObject
 		// $this->property2 = ...
 
 		return $this->initAsSpecimenCommon();
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	Object lang to use for translation
+	 *  @param	int<0,1>	$hidedetails	Hide details of lines
+	 *  @param	int<0,1>	$hidedesc		Hide description
+	 *  @param	int<0,1>	$hideref		Hide ref
+	 *  @param	?array<string,mixed>	$moreparams	Array to provide more information
+	 *  @return	int							0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("assets");
+
+		if (!dol_strlen($modele)) {
+			$modele = 'standard_asset';
+
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('ASSET_ASSET_ADDON_PDF')) {
+				$modele = getDolGlobalString('ASSET_ASSET_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/asset/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**

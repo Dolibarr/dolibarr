@@ -2573,6 +2573,9 @@ if ($action == 'create' && $permissiontoadd) {
 		$alreadysent = array();
 
 		$origin = (string) $origin;
+
+		// The origin may arrive as 'order_supplier' from some callers, while the table name below is
+		// built from 'supplier_order'. Normalise it or the query targets a table that does not exist.
 		if (empty($origin) || $origin == 'order_supplier') {
 			$origin = 'supplier_order';
 		}
