@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,27 @@
  * @param	string						$morelogsuffix		If set to a string '_suffix', some logs are also added into the file "dolibarr_suffix.log"
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
+/**
+ * Mask the value of credential-carrying HTTP headers inside a raw header dump,
+ * so a request header block can be written into the log without leaking the
+ * secret it authenticates with (API keys, bearer tokens, cookies...).
+ *
+ * @param	string	$headerdump		Raw header block, as returned by CURLINFO_HEADER_OUT
+ * @return	string					Same block with sensitive header values replaced by '***'
+ */
+function dolMaskSensitiveHeaders($headerdump)
+{
+	if (!is_string($headerdump) || $headerdump === '') {
+		return (string) $headerdump;
+	}
+
+	// Header names whose VALUE is a credential. Matched case-insensitively at
+	// the start of a header line, so a body that merely mentions them is untouched.
+	$sensitive = array('authorization', 'proxy-authorization', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'cookie', 'set-cookie', 'x-goog-api-key', 'dolapikey');
+
+	return (string) preg_replace('/^('.implode('|', $sensitive).')\s*:\s*.*$/im', '$1: ***', $headerdump);
+}
+
 function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array(), $morelogsuffix = '')
 {
 	// Get global variables for proxy use
@@ -216,7 +238,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	//if USE_PROXY constant set at begin of this method.
 	if ($USE_PROXY) {
-		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".$PROXY_PASS);
+		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".($PROXY_PASS ? '***' : ''));
 		//curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
 		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST.":".$PROXY_PORT);
 		if ($PROXY_USER) {
@@ -332,6 +354,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} while ($http_code);	// Stop if http_code is 0
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
+	// The outgoing header block carries the credentials of the call (API keys,
+	// bearer tokens, cookies): mask them BEFORE any log write. This log line is
+	// emitted at LOG_INFO, so lowering the syslog level to 6 does not stop it.
+	$request = dolMaskSensitiveHeaders($request);
 
 	dol_syslog("getURLContent request without content body=".$request);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
