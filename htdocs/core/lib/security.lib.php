@@ -400,8 +400,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			} elseif ($object->type == 0 && !$user->hasRight('produit', 'lire')) {
 				$readok = 0;
 				$nbko++;
-			}
-			if (is_object($object) && $object->type == 1 && !$user->hasRight('service', 'lire')) {
+			} elseif ($object->type == 1 && !$user->hasRight('service', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
