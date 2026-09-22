@@ -385,6 +385,18 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '</td>';
 	print '</tr>';
 
+	// A connector signs the user in with OAuth instead of being handed a key.
+	// Self-registration is what lets it do that without an administrator
+	// creating anything first, which is how claude.ai and the ChatGPT
+	// connector expect to arrive. It is off until someone decides otherwise:
+	// the endpoint accepts registrations from anyone who can reach it.
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans('AiMcpOauthDynamicRegistration'), $langs->trans('AiMcpOauthDynamicRegistrationHelp')).'</td>';
+	print '<td>';
+	print ajax_constantonoff('AI_MCP_OAUTH_DYNAMIC_REGISTRATION', array(), null, 0, 0, 1);
+	print '</td>';
+	print '</tr>';
+
 	print '</table>';
 	print '</div>';
 
