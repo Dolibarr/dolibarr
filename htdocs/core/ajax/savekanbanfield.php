@@ -74,6 +74,32 @@ if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea');
 }
 
+// Add blacklist of some forbidden field name.
+$blacklistedfields = array('pass', 'pass_crypted', 'pass_temp', 'api_key', 'openid', 'admin', 'status', 'statut');
+$canreadsalary = ((isModEnabled('salaries') && $user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+if (!$canreadsalary) {
+	$blacklistedfields[] = 'salary';
+	$blacklistedfields[] = 'salaryextra';
+	$blacklistedfields[] = 'thm';
+	$blacklistedfields[] = 'tjm';
+}
+if (in_array($field, $blacklistedfields)) {
+	httponly_accessforbidden("Can't edit a field blacklisted with name ".$field);
+}
+
+// Use also a whitelist
+$whitelistfields = array('fk_opp_status');
+if (!in_array($field, $whitelistfields)) {
+	httponly_accessforbidden("Can't edit a field ".$field." not in whiteliste");
+}
+
+// Use also a whitelist
+$whitelistelement = array('projet', 'project');
+if (!in_array($object->module, $whitelistelement)) {
+	httponly_accessforbidden("Can't edit a field for element module = ".$object->module);
+}
+
+
 
 /*
  * Actions
@@ -92,8 +118,7 @@ if ($value === 'undefined' || $value === '') {
 
 $return = array();
 
-// Save with a trigger key, so a stage change is seen by triggers, hooks and the agenda
-// (saveinplace.php does not pass any trigger key).
+// Save with a trigger key, so a change is seen by triggers, hooks and the agenda
 $res = $object->setValueFrom($field, $newvalue, '', null, $isint ? 'int' : 'text', '', $user, strtoupper($object->element).'_MODIFY');
 if ($res > 0) {
 	$return['value'] = $newvalue;
