@@ -91,7 +91,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'showoncombobox' => 1, 'comment' => "Reference of object"),
-		//'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'picto'=>'agenda'),
+		'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'picto'=>'agenda'),
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'picto' => 'project', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'email' => array('type' => 'mail', 'label' => 'EmailAttendee', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'autofocusoncreate' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'csslist' => 'tdoverflowmax150'),
 		'firstname' => array('type' => 'varchar(100)', 'label' => 'Firstname', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125', 'showoncombobox' => 1),
@@ -521,6 +521,148 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 			return -1;
 		}
+	}
+
+	/**
+	 * Register the same attendee for selected conference events of the project.
+	 *
+	 * @param User       $user          User creating the registrations
+	 * @param array<int> $conferenceIds Conference agenda event IDs selected by the attendee
+	 * @return int                       Number of registrations created or restored, -1 on error
+	 */
+	public function addConferenceRegistrations(User $user, array $conferenceIds)
+	{
+		global $langs;
+
+		if (empty($this->id) || empty($this->fk_project) || !empty($this->fk_actioncomm)) {
+			$this->error = $langs->trans('ErrorProjectRegistrationRequired');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+
+		$conferenceIds = array_values(array_unique(array_map('intval', $conferenceIds)));
+		$conferences = array();
+		$nbregistrations = 0;
+
+		foreach ($conferenceIds as $conferenceId) {
+			if ($conferenceId <= 0) {
+				continue;
+			}
+
+			$conference = new ConferenceOrBooth($this->db);
+			$result = $conference->fetch($conferenceId);
+			if ($result <= 0
+				|| (int) $conference->fk_project !== (int) $this->fk_project
+				|| !$conference->isConferenceType()
+				|| empty($conference->registration_enabled)
+				|| empty($conference->datep)
+				|| empty($conference->datep2)
+				|| $conference->datep2 <= $conference->datep
+				|| (int) $conference->status !== ConferenceOrBooth::STATUS_CONFIRMED) {
+				$this->error = $langs->trans('ErrorConferenceRegistrationNotAvailable', $conferenceId);
+				$this->errors[] = $this->error;
+				return -1;
+			}
+			foreach ($conferences as $otherConference) {
+				if ($conference->datep < $otherConference->datep2 && $otherConference->datep < $conference->datep2) {
+					$this->error = $langs->trans('ErrorConferenceRegistrationTimeConflict', $conference->label, $otherConference->label);
+					$this->errors[] = $this->error;
+					return -1;
+				}
+			}
+			$conferences[$conferenceId] = $conference;
+		}
+
+		if (count($conferences) > 0) {
+			$sql = 'SELECT a.label, a.datep, a.datep2';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' AS attendee';
+			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'actioncomm AS a ON a.id = attendee.fk_actioncomm';
+			$sql .= " WHERE attendee.email = '".$this->db->escape($this->email)."'";
+			$sql .= ' AND attendee.fk_project = '.((int) $this->fk_project);
+			$sql .= ' AND attendee.status IN ('.self::STATUS_DRAFT.', '.self::STATUS_VALIDATED.')';
+			$sql .= ' AND attendee.fk_actioncomm NOT IN ('.$this->db->sanitize(implode(', ', array_keys($conferences))).')';
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				return -1;
+			}
+			while ($obj = $this->db->fetch_object($resql)) {
+				$start = $this->db->jdate($obj->datep);
+				$end = $this->db->jdate($obj->datep2);
+				foreach ($conferences as $conference) {
+					if ($conference->datep < $end && $start < $conference->datep2) {
+						$this->error = $langs->trans('ErrorConferenceRegistrationTimeConflict', $conference->label, $obj->label);
+						$this->errors[] = $this->error;
+						return -1;
+					}
+				}
+			}
+		}
+
+		foreach ($conferences as $conferenceId => $conference) {
+			$sessionattendee = new self($this->db);
+			$filter = "(t.fk_actioncomm:=:".$conferenceId.") AND (t.email:=:'".$this->db->escape($this->email)."')";
+			$existingregistrations = $sessionattendee->fetchAll('', '', 0, 0, $filter);
+			if (!is_array($existingregistrations)) {
+				$this->setErrorsFromObject($sessionattendee);
+				return -1;
+			}
+
+			$registrationexists = count($existingregistrations) > 0;
+			if ($registrationexists) {
+				$existingregistration = array_shift($existingregistrations);
+				if (!$existingregistration instanceof self) {
+					$this->error = 'ErrorRecordNotFound';
+					$this->errors[] = $this->error;
+					return -1;
+				}
+				$sessionattendee = $existingregistration;
+			}
+
+			if ($registrationexists && (int) $sessionattendee->status !== self::STATUS_CANCELED) {
+				continue;
+			}
+
+			$sessionattendee->date_subscription = dol_now();
+			$sessionattendee->email = $this->email;
+			$sessionattendee->fk_project = $this->fk_project;
+			$sessionattendee->fk_actioncomm = $conferenceId;
+			$sessionattendee->note_public = $this->note_public;
+			$sessionattendee->firstname = $this->firstname;
+			$sessionattendee->lastname = $this->lastname;
+			$sessionattendee->fk_soc = $this->fk_soc;
+			$sessionattendee->email_company = $this->email_company;
+			$sessionattendee->ip = $this->ip;
+			$sessionattendee->array_options = $this->array_options;
+
+			if ($registrationexists) {
+				$result = $sessionattendee->update($user);
+			} else {
+				$sessionattendee->date_creation = dol_now();
+				$sessionattendee->ref = '(PROV'.$conferenceId.'-'.$this->id.')';
+				$result = $sessionattendee->create($user);
+				if ($result > 0) {
+					$sessionattendee->ref = (string) $sessionattendee->id;
+					$result = $sessionattendee->update($user);
+				}
+			}
+			if ($result < 0) {
+				$this->setErrorsFromObject($sessionattendee);
+				return -1;
+			}
+
+			$result = $sessionattendee->setStatut(self::STATUS_VALIDATED);
+			if ($result < 0) {
+				$this->setErrorsFromObject($sessionattendee);
+				return -1;
+			}
+			$nbregistrations++;
+		}
+
+		return $nbregistrations;
 	}
 
 	/**
