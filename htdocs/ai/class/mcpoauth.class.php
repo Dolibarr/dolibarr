@@ -121,6 +121,14 @@ class McpOauth
 	/**
 	 * Authorization server metadata (RFC 8414).
 	 *
+	 * Deliberately without jwks_uri, subject_types_supported and
+	 * id_token_signing_alg_values_supported. Those are OpenID Connect fields,
+	 * and advertising them says this is an OpenID provider. It is not: it
+	 * issues opaque access tokens, never an id_token, signs nothing and does
+	 * not offer the openid scope. A client that believes the claim validates
+	 * the document as OpenID Connect and refuses it — claude.ai and the
+	 * ChatGPT connector both did, while mcp-remote works either way.
+	 *
 	 * @return array<string, mixed> The document to serve
 	 */
 	public function metadataAuthorizationServer()
@@ -140,23 +148,9 @@ class McpOauth
 			// RFC 9207: the authorization response names its issuer, so a client
 			// talking to several servers cannot be made to mix up two responses.
 			'authorization_response_iss_parameter_supported' => true,
-			// A client_id may be the HTTPS URL of a metadata document the server
-			// fetches, instead of a registration (spec 2026-07-28, which
-			// deprecates RFC 7591 in favour of this).
+			// A client_id may be the HTTPS URL of a metadata document this
+			// server fetches, instead of a registration (spec 2026-07-28).
 			'client_id_metadata_document_supported' => true,
-			// RFC 8414 puts the metadata of an issuer that has a path at
-			// /.well-known/oauth-authorization-server/<path>, which is at the
-			// domain root and not something Dolibarr can serve. What is
-			// reachable is the OpenID form, <issuer>/.well-known/openid-
-			// configuration, and clients built on the MCP TypeScript SDK
-			// validate whatever answers there as OpenID Connect. These three
-			// are what that validation requires. They are honest rather than
-			// aspirational: the key set is empty because nothing is signed,
-			// and the openid scope is deliberately not offered - this is an
-			// authorization server, not an OpenID provider.
-			'jwks_uri' => $this->issuer.'/jwks',
-			'subject_types_supported' => array('public'),
-			'id_token_signing_alg_values_supported' => array('RS256'),
 		);
 	}
 

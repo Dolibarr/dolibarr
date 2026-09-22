@@ -309,10 +309,11 @@ class McpAuth
 	 */
 	public function getWwwAuthenticateHeader($resourcemetadataurl = '')
 	{
-		$challenge = 'Bearer realm="Dolibarr MCP"';
+		$challenge = 'Bearer';
 		if ($resourcemetadataurl !== '') {
-			$challenge .= ', resource_metadata="'.$resourcemetadataurl.'"';
+			$challenge .= ' resource_metadata="'.$resourcemetadataurl.'"';
 		}
+		$challenge .= ', scope="dolibarr"';
 
 		return $challenge;
 	}

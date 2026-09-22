@@ -154,14 +154,6 @@ switch ($mcp_route) {
 		mcpOauthJson($oauth->metadataAuthorizationServer());
 		// no break
 
-	case '/jwks':
-		// Advertised by the metadata document because clients built on the MCP
-		// TypeScript SDK validate it as OpenID Connect and refuse a document
-		// without jwks_uri. Empty on purpose and honestly so: access tokens
-		// here are opaque, nothing is signed, so there is no key to publish.
-		mcpOauthJson(array('keys' => array()));
-		// no break
-
 	case '/register':
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 			mcpOauthError('invalid_request', 405, 'Use POST to register a client.');

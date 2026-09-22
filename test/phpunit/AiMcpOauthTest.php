@@ -144,13 +144,17 @@ class AiMcpOauthTest extends CommonClassTest
 		$this->assertTrue($as['authorization_response_iss_parameter_supported'], 'RFC 9207 must be advertised');
 		$this->assertTrue($as['client_id_metadata_document_supported'], 'Clients must be told they may use a metadata document');
 
-		// Clients built on the MCP TypeScript SDK read this document as OpenID
-		// Connect and refuse it without these three. The values are honest:
-		// nothing is signed, and the openid scope is not offered.
-		$this->assertSame($as['issuer'].'/jwks', $as['jwks_uri']);
-		$this->assertSame(array('public'), $as['subject_types_supported']);
-		$this->assertSame(array('RS256'), $as['id_token_signing_alg_values_supported']);
-		$this->assertNotContains('openid', $as['scopes_supported'], 'This is not an OpenID provider');
+		// This is an OAuth 2.0 authorization server, not an OpenID provider: it
+		// issues opaque access tokens, never an id_token, and signs nothing.
+		// Advertising the OpenID fields says otherwise, and a client that
+		// believes it then validates the document as OpenID Connect and
+		// refuses it — claude.ai and the ChatGPT connector both did, while
+		// mcp-remote works either way. Keeping them out is the honest document
+		// and the one real clients accept.
+		$this->assertArrayNotHasKey('jwks_uri', $as);
+		$this->assertArrayNotHasKey('subject_types_supported', $as);
+		$this->assertArrayNotHasKey('id_token_signing_alg_values_supported', $as);
+		$this->assertNotContains('openid', $as['scopes_supported'], 'The openid scope is not offered');
 
 		$prm = $server->metadataProtectedResource();
 		$this->assertSame('https://example.org/ai/server/mcp_server.php', $prm['resource']);
