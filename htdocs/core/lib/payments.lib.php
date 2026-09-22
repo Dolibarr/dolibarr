@@ -256,9 +256,10 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
  * @param	int|float	$amount		      Amount of money to request for
  * @param	string		$freetag	      Free tag (required and used for $type='free' only)
  * @param   int|string 	$localorexternal  0=Url of current browsing, 1=Url for external access, or string with virtual host url
+ * @param	string		$lang	          Language code to force on the online payment page (example 'en_US'). Empty = language of the visitor/instance.
  * @return	string					      Url string
  */
-function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'your_tag', $localorexternal = 1)
+function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'your_tag', $localorexternal = 1, $lang = '')
 {
 	global $conf, $dolibarr_main_url_root;
 
@@ -406,6 +407,11 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
 		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+	}
+
+	// Force the language of the online payment page (for example the language of the customer the email is sent to)
+	if (!empty($out) && !empty($lang) && preg_match('/^[a-zA-Z0-9_]+$/', $lang)) {
+		$out .= "&lang=".urlencode($lang);
 	}
 
 	return $out;

@@ -7507,7 +7507,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$typeforonlinepayment = 'ficheinter';
 				}
 
-				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__'], (float) $amounttouse);
+				// The email is built with $outputlangs (language of the recipient when MAIN_MULTILANGS is on), so the
+				// online payment page must be shown in that same language instead of the language of the visitor.
+				$langforpaymentpage = (getDolGlobalInt('MAIN_MULTILANGS') && !empty($outputlangs->defaultlang)) ? $outputlangs->defaultlang : '';
+
+				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__'], (float) $amounttouse, 'your_tag', 1, $langforpaymentpage);
 				$paymenturl = $url;
 			}
 
