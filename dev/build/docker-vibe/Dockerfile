@@ -14,7 +14,10 @@ RUN apt-get update \
         dialog \
 		gh \
 		git \
+        graphviz \
+        gzip \
 		hurl \
+        memcached \
 		mysql-client \
 		openssh-client \
 		phpunit \
@@ -38,6 +41,7 @@ RUN apt-get update \
 		unzip \
 		w3m \
 		zip \
+        zstd \
     && rm -rf /var/lib/apt/lists/*
 
 # Install RTK - Rust Token Killer
