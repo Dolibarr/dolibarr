@@ -4,7 +4,7 @@
  * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -388,11 +388,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif ($feature == 'produit') {
-			if ($object->type == 0 && !$user->hasRight('produit', 'lire')) {
+			// $object is only a real Product/Service when the check is scoped to one specific
+			// record (e.g. a product card); a generic area check (e.g. the product/service
+			// dashboard) never sets it, so it keeps its default int value and has no ->type to
+			// tell products and services apart - fall back to requiring either right.
+			if (!is_object($object)) {
+				if (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire')) {
+					$readok = 0;
+					$nbko++;
+				}
+			} elseif ($object->type == 0 && !$user->hasRight('produit', 'lire')) {
 				$readok = 0;
 				$nbko++;
-			}
-			if ($object->type == 1 && !$user->hasRight('service', 'lire')) {
+			} elseif ($object->type == 1 && !$user->hasRight('service', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
