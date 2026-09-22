@@ -139,12 +139,14 @@ CREATE TABLE llx_deletion_log(
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity			integer NOT NULL DEFAULT 1,
 	fk_actioncomm	integer NOT NULL,
-	uid				char(36) NULL,
+	uid				varchar(36) NULL,
 	fk_user_action	integer NULL,
 	assigned_users	varchar(255) NULL,
 	date_deletion	datetime NOT NULL,
 	fk_user			integer NULL
 ) ENGINE=innodb;
+ALTER TABLE llx_deletion_log ADD COLUMN uid	varchar(36) NULL;
+ALTER TABLE llx_deletion_log ADD COLUMN fk_user_action integer NULL;
 
 ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_entity_date (entity, date_deletion);
 ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_uid (uid);
@@ -263,6 +265,8 @@ ALTER TABLE llx_paiement_facture ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_ai_request_log ADD COLUMN tokens_input integer;
 ALTER TABLE llx_ai_request_log ADD COLUMN tokens_output integer;
 ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
+
+ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;
 
 -- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
 -- Empty strings must become NULL first: the unique index does not tolerate them like NULL.

@@ -131,7 +131,7 @@ if ($object->id) {
 	$head = contact_prepare_head($object);
 	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
-	print dol_get_fiche_head($head, 'documents', $title, -1, 'contact');
+	print dol_get_fiche_head($head, 'documents', $title, -1, 'contact', 0, '', '', 0, '', 1);
 
 
 	// Build file list
