@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2026		Dolicraft				<contact@dolicraft.com>
+ * Copyright (C) 2026		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,6 +231,8 @@ class Dolresources extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('resource', $this->resource->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		$this->resource->oldcopy = dol_clone($this->resource, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
