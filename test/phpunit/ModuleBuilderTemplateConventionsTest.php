@@ -19,12 +19,14 @@
  * \file    test/phpunit/ModuleBuilderTemplateConventionsTest.php
  * \ingroup modulebuilder
  * \brief   PHPUnit test for ModuleBuilder template conventions: status labels derived from
- *          arrayofkeyval, and normalized trigger naming (MYMODULE_MYOBJECT_ACTION).
+ *          arrayofkeyval, normalized trigger naming (MYMODULE_MYOBJECT_ACTION), and card action
+ *          markers that must survive the generation time block removal.
  */
 
 global $conf, $user, $langs, $db;
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -116,5 +118,108 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 			$content = file_get_contents($tpl);
 			$this->assertSame(0, preg_match($legacy, $content), 'Legacy unprefixed trigger code found in '.basename($tpl));
 		}
+	}
+
+	/**
+	 * Assert that a PHP source string is parsable, by linting it in a temporary file.
+	 *
+	 * @param	string	$content	PHP source to lint
+	 * @param	string	$message	Message reported on failure
+	 * @return	void
+	 */
+	private function assertPhpSourceIsParsable($content, $message)
+	{
+		$tmpfile = tempnam(sys_get_temp_dir(), 'mbcardaction').'.php';
+		file_put_contents($tmpfile, $content);
+
+		$output = array();
+		$returncode = 0;
+		exec(escapeshellarg(PHP_BINARY).' -l '.escapeshellarg($tmpfile).' 2>&1', $output, $returncode);
+		unlink($tmpfile);
+
+		$this->assertSame(0, $returncode, $message.' : '.implode("\n", $output));
+	}
+
+	/**
+	 * Every card action marker must open and close the same number of times, otherwise the generation
+	 * time removal eats an unrelated part of the card page.
+	 *
+	 * @return void
+	 */
+	public function testCardActionMarkersAreBalancedInTemplate()
+	{
+		$content = file_get_contents(self::CARD_TPL);
+
+		foreach (getModuleBuilderObjectCardActions() as $actionkey => $meta) {
+			$begin = preg_match_all('/\/\/ BEGIN MODULEBUILDER ACTION '.$meta['marker'].'$/m', $content);
+			$end = preg_match_all('/\/\/ END MODULEBUILDER ACTION '.$meta['marker'].'$/m', $content);
+
+			$this->assertGreaterThan(0, $begin, 'No block anchored for card action '.$actionkey);
+			$this->assertSame($begin, $end, 'Unbalanced markers for card action '.$actionkey);
+		}
+	}
+
+	/**
+	 * The Cancel / Re-Open block ships commented out: its two sentinel lines are what the generator
+	 * removes to activate it.
+	 *
+	 * @return void
+	 */
+	public function testStatusChangeSentinelsArePresentOnceInTemplate()
+	{
+		$content = file_get_contents(self::CARD_TPL);
+
+		$this->assertSame(1, preg_match_all('/\/\* BEGIN COMMENTED STATUSCHANGE$/m', $content));
+		$this->assertSame(1, preg_match_all('/^\h*END COMMENTED STATUSCHANGE \*\/$/m', $content));
+	}
+
+	/**
+	 * Removing a card action block must leave a parsable card page: this is what catches a marker
+	 * dropped in the middle of a control structure.
+	 *
+	 * @return void
+	 */
+	public function testCardTemplateStaysParsableWhenEachActionIsRemoved()
+	{
+		$content = file_get_contents(self::CARD_TPL);
+
+		foreach (getModuleBuilderObjectCardActions() as $actionkey => $meta) {
+			$stripped = preg_replace(getModuleBuilderCardActionBlockPattern($meta['marker']), '', $content);
+
+			$this->assertNotNull($stripped, 'Block pattern failed for card action '.$actionkey);
+			$this->assertStringNotContainsString('MODULEBUILDER ACTION '.$meta['marker'], $stripped, 'Block left behind for card action '.$actionkey);
+			$this->assertPhpSourceIsParsable($stripped, 'Card page is not parsable without card action '.$actionkey);
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCardTemplateStaysParsableWhenAllActionsAreRemoved()
+	{
+		$stripped = file_get_contents(self::CARD_TPL);
+		foreach (getModuleBuilderObjectCardActions() as $meta) {
+			$stripped = preg_replace(getModuleBuilderCardActionBlockPattern($meta['marker']), '', $stripped);
+		}
+
+		$this->assertPhpSourceIsParsable($stripped, 'Card page is not parsable without any card action');
+	}
+
+	/**
+	 * Activating Cancel / Re-Open must produce live code, not a leftover comment.
+	 *
+	 * @return void
+	 */
+	public function testStatusChangeActivationProducesParsableCode()
+	{
+		$activated = file_get_contents(self::CARD_TPL);
+		foreach (getModuleBuilderCardActionUncommentPatterns('STATUSCHANGE') as $pattern) {
+			$activated = preg_replace($pattern, '', $activated);
+			$this->assertNotNull($activated, 'Uncomment pattern failed for STATUSCHANGE');
+		}
+
+		$this->assertStringNotContainsString('COMMENTED STATUSCHANGE', $activated);
+		$this->assertMatchesRegularExpression('/^\h*print dolGetButtonAction\(.*Re-Open/m', $activated, 'Re-Open button is still commented out after activation');
+		$this->assertPhpSourceIsParsable($activated, 'Card page is not parsable once Cancel / Re-Open is activated');
 	}
 }
