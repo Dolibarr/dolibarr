@@ -58,22 +58,16 @@ class WebservicesThirdpartyTest extends CommonClassTest
 
 
 	/**
-	 * Constructor
-	 * We save global variables into local variables
+	 * Init phpunit tests
+	 * The nusoap_client is created here (and not in a constructor) because
+	 * TestCase::__construct() is final since PHPUnit 10, and the constructor
+	 * was called for each test anyway.
 	 *
-	 * @param 	string	$name		Name
-	 * @return WebservicesThirdpartyTest
+	 * @return void
 	 */
-	public function __construct($name = '')
+	protected function setUp(): void
 	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
+		parent::setUp();
 
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
 
@@ -85,8 +79,8 @@ class WebservicesThirdpartyTest extends CommonClassTest
 			$this->soapclient->decodeUTF8(false);
 		}
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
+		print __METHOD__." db->type=".$this->savdb->type." user->id=".$this->savuser->id;
+		//print " - db ".$this->savdb->db;
 		print "\n";
 	}
 

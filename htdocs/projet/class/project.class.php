@@ -8,7 +8,7 @@
  * Copyright (C) 2019       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -1422,9 +1422,10 @@ class Project extends CommonObject
 	 *  @param  int<-1,1>	$save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param	string		$morecss				  More css on a link
 	 *  @param	string		$save_pageforbacktolist	  Back to this page 'context:url'
+	 *  @param	int			$addlinktonotes			  1=Add link to notes
 	 * 	@return	string						          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '', $save_pageforbacktolist = '')
+	public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '', $save_pageforbacktolist = '', $addlinktonotes = 0)
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -1516,6 +1517,18 @@ class Project extends CommonObject
 		$result .= $linkend;
 		if ($withpicto != 2) {
 			$result .= (($addlabel > 0 && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
+		}
+
+		if ($addlinktonotes) {
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/projet/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
 		}
 
 		global $action;

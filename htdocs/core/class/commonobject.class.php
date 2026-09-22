@@ -1019,16 +1019,6 @@ abstract class CommonObject
 	}
 
 	/**
-	 * isEmpty We consider CommonObject isEmpty if this->id is empty
-	 *
-	 * @return bool
-	 */
-	public function isEmpty()
-	{
-		return (empty($this->id));
-	}
-
-	/**
 	 * setErrorsFromObject
 	 *
 	 * @param CommonObject|HookManager $object commonobject or HookManager

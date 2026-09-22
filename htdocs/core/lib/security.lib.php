@@ -946,7 +946,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				}
 			}
 			$checkonentityready = 1;
-			var_dump($checkonentityready, $sql);
+			//var_dump($checkonentityready, $sql);
 		}
 
 		if (in_array($feature, $checksoc) && !empty($objectid)) {	// We check feature = checksoc. For $objectid = 0, no check
