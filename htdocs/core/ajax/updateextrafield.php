@@ -79,9 +79,18 @@ if ($usesublevelpermission && !$user->hasRight($module, $element, 'write') && !$
 
 restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 
-// TODO
 // Add blacklist of some forbidden field name.
-
+$blacklistedfields = array('pass', 'pass_crypted', 'pass_temp', 'api_key', 'openid', 'admin', 'status', 'statut');
+$canreadsalary = ((isModEnabled('salaries') && $user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+if (!$canreadsalary) {
+	$blacklistedfields[] = 'salary';
+	$blacklistedfields[] = 'salaryextra';
+	$blacklistedfields[] = 'thm';
+	$blacklistedfields[] = 'tjm';
+}
+if (in_array($field, $blacklistedfields)) {
+	access_forbidden("Can't edit a field blacklisted with name ".$field);
+}
 
 
 /*
