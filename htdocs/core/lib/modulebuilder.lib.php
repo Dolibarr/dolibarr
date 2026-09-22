@@ -1523,9 +1523,10 @@ function getModuleBuilderCardActionBlockPattern($marker)
 function getModuleBuilderCardActionUncommentPatterns($marker)
 {
 	$quotedmarker = preg_quote($marker, '/');
+	// \R and not \n, to stay aligned with getModuleBuilderCardActionBlockPattern()
 	return array(
-		'/\h*\/\* BEGIN COMMENTED '.$quotedmarker.'\n/',
-		'/\h*END COMMENTED '.$quotedmarker.' \*\/\n/',
+		'/\h*\/\* BEGIN COMMENTED '.$quotedmarker.'\h*\R/',
+		'/\h*END COMMENTED '.$quotedmarker.'\h*\*\/\h*\R/',
 	);
 }
 
