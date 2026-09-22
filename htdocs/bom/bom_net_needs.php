@@ -201,7 +201,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Find sell price of generated product. We suppose we sell it to a company like ours (same country...).
 	$res = $object->fetch_product();
 	$manufacturedvalued = '';
-	if ($res && is_object($object->product) && !$object->product->isEmpty()) {
+	if ($res && is_object($object->product) && !empty($object->product->id)) {
 		global $mysoc;
 		$tmparray = $object->product->getSellPrice($mysoc, $mysoc);
 		$manufacturedvalued = $tmparray['pu_ht'] * $object->qty;

@@ -1007,6 +1007,7 @@ abstract class CommonObject
 	 * isEmpty We consider CommonObject isEmpty if this->id is empty
 	 *
 	 * @return bool
+	 * @deprecated  Use empty($this->id) instead
 	 */
 	public function isEmpty()
 	{
