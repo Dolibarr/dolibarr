@@ -441,7 +441,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Tools
 	$tmpentry = array(
 		'enabled' => 1,
-		'perms' => '1',
+		'perms' => (string) (int) (empty($user->socid) || $user->hasRight('category', 'read') || $user->hasRight('mailing', 'lire') || $user->hasRight('import', 'run') || $user->hasRight('export', 'lire')),
 		'module' => ''
 	);
 	$menu_arr[] = array(
@@ -2601,7 +2601,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 			$newmenu->add("/exports/export.php?leftmenu=export", $langs->trans("NewExport"), 1, $user->hasRight('export', 'lire'));
 		} */
 
-		$newmenu->add(dolBuildUrl('/core/customreports.php', ['leftmenu' => 'customreports']), $langs->trans("BICustomReports"), 0, 1, '', $mainmenu, 'customreports', 100, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
+		$newmenu->add(dolBuildUrl('/core/customreports.php', ['leftmenu' => 'customreports']), $langs->trans("BICustomReports"), 0, (int) empty($user->socid), '', $mainmenu, 'customreports', 100, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
 	}
 }
 
