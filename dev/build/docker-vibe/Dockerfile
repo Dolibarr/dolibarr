@@ -67,9 +67,12 @@ RUN mkdir -p /opt/php-tools \
     --working-dir=/opt/php-tools \
     phan/phan \
     phpstan/phpstan:^2.2 \
+	squizlabs/php_codesniffer \
     --ignore-platform-reqs \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
-	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan
+	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan \
+	&& ln -s /opt/php-tools/vendor/bin/phpcs /usr/local/bin/phpcs \
+	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpc
 
 
 # Prompt
