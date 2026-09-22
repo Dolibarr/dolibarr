@@ -253,8 +253,9 @@ class pdf_standard_asset extends ModelePDFAsset
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("PdfTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset((string) $object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset(is_object($object->thirdparty) ? (string) $object->thirdparty->name : ''));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
@@ -887,7 +888,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		}
 		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date_acquisition, "day", false, $outputlangs), '', 'R');
 
-		if ($object->thirdparty->code_client) {
+		if (is_object($object->thirdparty) && $object->thirdparty->code_client) {
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -963,7 +964,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			}
 
 			// Recipient name
-			if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+			if (is_object($object->contact) && is_object($object->thirdparty) && $object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
