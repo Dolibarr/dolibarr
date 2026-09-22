@@ -1056,7 +1056,11 @@ class FormMail extends Form
 					if ($this->param["models"] == 'member') {
 						$typeforonlinepayment = 'member'; // TODO use detection on something else than template
 					}
-					$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
+					// The message is prepared with $outputlangs (language of the recipient when MAIN_MULTILANGS is on), so
+					// the online payment page must be shown in that same language.
+					$langforpaymentpage = (getDolGlobalInt('MAIN_MULTILANGS') && !empty($outputlangs->defaultlang)) ? $outputlangs->defaultlang : '';
+
+					$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__'], 0, 'your_tag', 1, $langforpaymentpage);
 					$paymenturl = $url;
 				}
 

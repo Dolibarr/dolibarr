@@ -1622,7 +1622,11 @@ class pdf_sponge extends ModelePDFFactures
 
 					$langs->loadLangs(array('payment', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
-					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0);
+					// The document is generated with $outputlangs (language of the customer when MAIN_MULTILANGS is on), so
+					// the online payment page must be shown in that same language.
+					$langforpaymentpage = (getDolGlobalInt('MAIN_MULTILANGS') && !empty($outputlangs->defaultlang)) ? $outputlangs->defaultlang : '';
+
+					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0, $langforpaymentpage);
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
 					$pdf->SetXY($this->marge_gauche, $posy);

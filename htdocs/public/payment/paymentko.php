@@ -333,7 +333,8 @@ if (empty($doactionsthenredirect)) {
 	$tag = GETPOST('tag', 'alpha');
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 	if ($type || $tag) {
-		$urlsubscription = getOnlinePaymentUrl(0, ($type ? $type : 'free'), $ref, $FinalPaymentAmt, $tag);
+		// Keep the visitor on the same language when he tries again
+		$urlsubscription = getOnlinePaymentUrl(0, ($type ? $type : 'free'), $ref, $FinalPaymentAmt, $tag, 1, $langs->defaultlang);
 
 		print $langs->trans("ClickHereToTryAgain", $urlsubscription);
 	}

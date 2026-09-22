@@ -395,7 +395,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	if (!$error) {
-		$urlback = getOnlinePaymentUrl(0, 'invoice', (string) $invoice->ref, 0, '');
+		// Keep the visitor on the same language on the payment page
+		$urlback = getOnlinePaymentUrl(0, 'invoice', (string) $invoice->ref, 0, '', 1, $langs->defaultlang);
 		if ($ws) {
 			$urlback .= (strpos($urlback, '?') ? '&' : '?').'ws='.urlencode($ws);
 		}

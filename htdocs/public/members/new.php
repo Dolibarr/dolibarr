@@ -593,7 +593,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					$minimumamountbytype = $adht->minimumamountbytype(1); // Load the array of minimum amount per type
 					$minimumamount = empty($minimumamountbytype[$adh->typeid]) ? 0 : $minimumamountbytype[$adh->typeid];
 					$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
-					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, (float) $amount, '', 0);
+					// Keep the visitor on the same language on the payment page
+					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, (float) $amount, '', 0, $langs->defaultlang);
 					if ($amount < max(getDolGlobalInt("MEMBER_MIN_AMOUNT"), $minimumamount)) {
 						$error++;
 						$errmsg .= $langs->trans("MinimumAmountShort")." : ".price(max(getDolGlobalInt("MEMBER_MIN_AMOUNT"), $minimumamount), 0, $langs, 1, -1, -1, $conf->currency)."<br>\n";

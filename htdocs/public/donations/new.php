@@ -319,7 +319,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 				}
 
 				if (getDolGlobalString('DONATION_NEWFORM_PAYONLINE') && getDolGlobalString('DONATION_NEWFORM_PAYONLINE') != '-1') {
-					$urlback = getOnlinePaymentUrl(0, 'donation', (string) $donation->id, 0, '');
+					// Keep the visitor on the same language on the payment page
+					$urlback = getOnlinePaymentUrl(0, 'donation', (string) $donation->id, 0, '', 1, $langs->defaultlang);
 
 					if (GETPOST('email')) {
 						$urlback .= '&email='.urlencode(GETPOST('email'));

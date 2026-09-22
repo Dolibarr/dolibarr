@@ -663,7 +663,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$sourcetouse = 'boothlocation';
 					$reftouse = $fac->id;
 
-					$url = getOnlinePaymentUrl(0, $sourcetouse, (string) $reftouse);
+					// The link is given to the attendee, so show the payment page in his language
+					$langforpaymentpage = '';
+					if (getDolGlobalInt('MAIN_MULTILANGS') && $fac->fetch_thirdparty() > 0) {
+						$langforpaymentpage = $fac->thirdparty->default_lang;
+					}
+
+					$url = getOnlinePaymentUrl(0, $sourcetouse, (string) $reftouse, 0, 'your_tag', 1, $langforpaymentpage);
 					$url .= '&booth='.$object->id;
 
 					print '<div class="urllink"><input type="text" id="onlinepaymenturl" spellcheck="false" class="quatrevingtpercent" value="'.$url.'">';
