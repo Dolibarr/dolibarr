@@ -7187,6 +7187,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__RECEPTIONTRACKNUM__'] = 'Shipping tracking number of shipment';
 				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = 'Shipping tracking url';
 			}
+			if (isModEnabled('supplier_order') && (!is_object($object) || $object->element == 'order_supplier')) {
+				$substitutionarray['__SUPPLIER_BANK_ACCOUNT_MASKED__'] = 'Masked default supplier bank account (last 4 characters)';
+			}
 		} else {
 			'@phan-var-force Adherent|Delivery $object';
 			/** @var Adherent|Delivery $object */
