@@ -604,6 +604,10 @@ $totalvirtualstock = 0;
 
 $i = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
+	if (empty($resql)) {
+		break;
+	}
+
 	$objp = $db->fetch_object($resql);
 
 	if (getDolGlobalString('STOCK_SUPPORTS_SERVICES') || $objp->fk_product_type == 0) {
