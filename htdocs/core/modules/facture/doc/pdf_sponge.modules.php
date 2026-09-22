@@ -339,7 +339,7 @@ class pdf_sponge extends ModelePDFFactures
 				$nbpayments = count($object->getListOfPayments());
 
 				// Create pdf instance
-				$pdf = pdf_getInstance($this->format);
+				$pdf = pdf_getInstance($this->format);		// Will also define if we use format 1.7, 1.4/A-1b or 1.7/A-3b (embedded fonts)
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$pdf->setAutoPageBreak(true, 0);
 
