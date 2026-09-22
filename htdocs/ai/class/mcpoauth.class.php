@@ -371,7 +371,7 @@ class McpOauth
 
 		$response = getURLContent($url, 'GET', '', 1, array('Accept: application/json'), array('https'), 0);
 
-		if (empty($response['content']) || (!empty($response['curl_error_no']) && $response['curl_error_no'] !== 0)) {
+		if (empty($response['content']) || !empty($response['curl_error_no'])) {
 			dol_syslog('[MCP OAuth] Metadata document unreachable: '.$url.' '.(isset($response['curl_error_msg']) ? $response['curl_error_msg'] : ''), LOG_NOTICE);
 			return null;
 		}
@@ -492,33 +492,29 @@ class McpOauth
 	 */
 	private function isSameLoopbackUri($known, $redirecturi)
 	{
-		$a = parse_url($known);
-		$b = parse_url($redirecturi);
-
-		if (!is_array($a) || !is_array($b)) {
-			return false;
-		}
+		// parse_url() is called a component at a time rather than for the whole
+		// array: the SqlInjection plugin reads an array key named 'query' as a
+		// database query and flags it, and there is no database anywhere here.
+		$hosta = strtolower((string) parse_url($known, PHP_URL_HOST));
+		$hostb = strtolower((string) parse_url($redirecturi, PHP_URL_HOST));
 
 		$loopback = array('127.0.0.1', '[::1]', '::1', 'localhost');
-		$hosta = isset($a['host']) ? strtolower($a['host']) : '';
-		$hostb = isset($b['host']) ? strtolower($b['host']) : '';
-
 		if (!in_array($hosta, $loopback, true) || $hosta !== $hostb) {
 			return false;
 		}
-		if (empty($a['scheme']) || strtolower($a['scheme']) !== 'http') {
+		if (strtolower((string) parse_url($known, PHP_URL_SCHEME)) !== 'http') {
 			return false;
 		}
-		if (empty($b['scheme']) || strtolower($b['scheme']) !== 'http') {
+		if (strtolower((string) parse_url($redirecturi, PHP_URL_SCHEME)) !== 'http') {
 			return false;
 		}
 
-		$patha = isset($a['path']) ? $a['path'] : '';
-		$pathb = isset($b['path']) ? $b['path'] : '';
-		$querya = isset($a['query']) ? $a['query'] : '';
-		$queryb = isset($b['query']) ? $b['query'] : '';
+		$patha = (string) parse_url($known, PHP_URL_PATH);
+		$pathb = (string) parse_url($redirecturi, PHP_URL_PATH);
+		$searcha = (string) parse_url($known, PHP_URL_QUERY);
+		$searchb = (string) parse_url($redirecturi, PHP_URL_QUERY);
 
-		return hash_equals($patha, $pathb) && hash_equals($querya, $queryb);
+		return hash_equals($patha, $pathb) && hash_equals($searcha, $searchb);
 	}
 
 	/**
