@@ -2898,6 +2898,7 @@ AiMcpOauthConsentQuestion=<b>%s</b> is asking to use the Dolibarr AI assistant a
 AiMcpOauthConsentScope=It will be able to do what you can do, with your permissions and nothing more.
 AiMcpOauthConsentExpiry=Access lasts one hour at a time and is renewed silently for up to 30 days of use. To end it sooner, ask an administrator to revoke it.
 AiMcpOauthConsentHost=You will be sent back to <b>%s</b>. Do not continue unless you recognise it.
+AiMcpOauthConsentLocalApp=You will be sent back to an application running on your own computer.
 AiMcpOauthConsentRedirect=Full address:
 AiMcpOauthAllow=Allow
 AiMcpOauthDeny=Deny

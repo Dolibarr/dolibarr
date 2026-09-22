@@ -519,4 +519,34 @@ class AiMcpOauthTest extends CommonClassTest
 		$this->assertSame($before + 1, $server->countRecentRegistrations('203.0.113.7'));
 		$this->assertSame(0, $server->countRecentRegistrations(''), 'No address, nothing to count');
 	}
+	/**
+	 * A native client listens on a port the operating system hands it when it
+	 * starts, so it cannot publish that port in its metadata. RFC 8252 section
+	 * 7.3 requires the port to be free at request time on loopback — Codex
+	 * registers http://127.0.0.1/callback and asks for
+	 * http://127.0.0.1:1455/callback.
+	 *
+	 * Only the port may differ, and only on loopback.
+	 *
+	 * @return void
+	 */
+	public function testLoopbackRedirectUriIgnoresThePort()
+	{
+		$server = $this->getServer();
+		$client = (object) array('redirect_uris' => "http://127.0.0.1/callback\nhttp://localhost/callback");
+
+		$this->assertTrue($server->isRegisteredRedirectUri($client, 'http://127.0.0.1:1455/callback'));
+		$this->assertTrue($server->isRegisteredRedirectUri($client, 'http://localhost:64213/callback'));
+		$this->assertTrue($server->isRegisteredRedirectUri($client, 'http://127.0.0.1/callback'));
+
+		$this->assertFalse($server->isRegisteredRedirectUri($client, 'http://127.0.0.1:1455/elsewhere'), 'The path still has to match');
+		$this->assertFalse($server->isRegisteredRedirectUri($client, 'http://127.0.0.2:1455/callback'), 'Another host is another host');
+		$this->assertFalse($server->isRegisteredRedirectUri($client, 'https://127.0.0.1:1455/callback'), 'The scheme still has to match');
+
+		$public = (object) array('redirect_uris' => 'https://example.org/callback');
+		$this->assertFalse(
+			$server->isRegisteredRedirectUri($public, 'https://example.org:8443/callback'),
+			'Off loopback the port is part of the identity'
+		);
+	}
 }

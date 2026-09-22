@@ -320,6 +320,14 @@ if ($clienthost === '') {
 	$clienthost = (string) parse_url($redirecturi, PHP_URL_SCHEME);
 }
 
+// A native client is called back on the loopback, so naming the host would
+// only show "127.0.0.1", which tells the user nothing. What matters to them
+// there is that the answer never leaves their machine.
+$isloopback = in_array(strtolower($clienthost), array('127.0.0.1', '[::1]', '::1', 'localhost'), true);
+$hostline = $isloopback
+	? $langs->trans('AiMcpOauthConsentLocalApp')
+	: $langs->trans('AiMcpOauthConsentHost', dol_escape_htmltag($clienthost));
+
 llxHeader('', $langs->trans('AiMcpOauthConsentTitle'), '', '', 0, 0, '', '', '', 'mod-ai page-oauth');
 
 print load_fiche_titre($langs->trans('AiMcpOauthConsentTitle'), '', 'ai');
@@ -344,7 +352,7 @@ foreach (array(
 
 print '<div class="center">';
 print '<p>'.$langs->trans('AiMcpOauthConsentQuestion', dol_escape_htmltag($clientname), dol_escape_htmltag($user->login)).'</p>';
-print '<p>'.$langs->trans('AiMcpOauthConsentHost', dol_escape_htmltag($clienthost)).'</p>';
+print '<p>'.$hostline.'</p>';
 print '<p class="opacitymedium">'.$langs->trans('AiMcpOauthConsentScope').'</p>';
 print '<p class="opacitymedium"><small>'.$langs->trans('AiMcpOauthConsentExpiry').'</small></p>';
 print '<p class="opacitymedium"><small>'.$langs->trans('AiMcpOauthConsentRedirect').' '.dol_escape_htmltag($redirecturi).'</small></p>';

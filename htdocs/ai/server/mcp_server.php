@@ -74,6 +74,37 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 
+// Discovery asked for under this endpoint's own path.
+//
+// A client that has just met a 401 here looks for the authorization server by
+// deriving well-known locations from the URL it was talking to, rather than
+// from the authorization_servers value the protected resource metadata gives
+// it. Codex asks this endpoint for /.well-known/openid-configuration; without
+// an answer it never finds the server and falls back to posting a registration
+// at the site root.
+//
+// Answering here costs nothing, needs no rewrite rule, and works wherever
+// Dolibarr is installed — which the canonical locations, being at the domain
+// root, do not.
+$mcp_wellknown = empty($_SERVER['PATH_INFO']) ? '' : (string) $_SERVER['PATH_INFO'];
+if (in_array($mcp_wellknown, array('/.well-known/oauth-protected-resource', '/.well-known/oauth-authorization-server', '/.well-known/openid-configuration'), true)) {
+	require_once DOL_DOCUMENT_ROOT . '/ai/class/mcpoauth.class.php';
+
+	$mcpOauth = new McpOauth(
+		$db,
+		DOL_MAIN_URL_ROOT . '/ai/oauth.php',
+		DOL_MAIN_URL_ROOT . '/ai/server/mcp_server.php'
+	);
+
+	header('Cache-Control: no-store');
+	echo json_encode(
+		$mcp_wellknown === '/.well-known/oauth-protected-resource'
+		? $mcpOauth->metadataProtectedResource()
+		: $mcpOauth->metadataAuthorizationServer()
+	);
+	exit;
+}
+
 // Request headers, used by the transport-header validation further down.
 $headers = function_exists('getallheaders') ? getallheaders() : [];
 $headers = array_change_key_case($headers, CASE_LOWER);

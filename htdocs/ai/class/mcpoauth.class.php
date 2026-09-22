@@ -464,12 +464,67 @@ class McpOauth
 			return false;
 		}
 		foreach (explode("\n", (string) $client->redirect_uris) as $known) {
-			if (hash_equals(trim($known), $redirecturi)) {
+			$known = trim($known);
+			if ($known === '') {
+				continue;
+			}
+			if (hash_equals($known, $redirecturi)) {
+				return true;
+			}
+			if ($this->isSameLoopbackUri($known, $redirecturi)) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Compare two loopback redirect URIs, ignoring the port.
+	 *
+	 * RFC 8252 section 7.3 requires the port to be free at request time: a
+	 * native client asks the operating system for a spare port when it starts
+	 * listening, so it cannot know it when it publishes its metadata. Codex
+	 * registers http://127.0.0.1/callback and then asks for
+	 * http://127.0.0.1:1455/callback.
+	 *
+	 * Only the port is allowed to differ. Scheme, host and path must still
+	 * match exactly, and this applies to loopback only — relaxing a port on a
+	 * public host would let a code be delivered to another service there.
+	 *
+	 * @param  string $known       Registered redirect URI
+	 * @param  string $redirecturi URI presented in the request
+	 * @return bool                True when they differ only by their port
+	 */
+	private function isSameLoopbackUri($known, $redirecturi)
+	{
+		$a = parse_url($known);
+		$b = parse_url($redirecturi);
+
+		if (!is_array($a) || !is_array($b)) {
+			return false;
+		}
+
+		$loopback = array('127.0.0.1', '[::1]', '::1', 'localhost');
+		$hosta = isset($a['host']) ? strtolower($a['host']) : '';
+		$hostb = isset($b['host']) ? strtolower($b['host']) : '';
+
+		if (!in_array($hosta, $loopback, true) || $hosta !== $hostb) {
+			return false;
+		}
+		if (empty($a['scheme']) || strtolower($a['scheme']) !== 'http') {
+			return false;
+		}
+		if (empty($b['scheme']) || strtolower($b['scheme']) !== 'http') {
+			return false;
+		}
+
+		$patha = isset($a['path']) ? $a['path'] : '';
+		$pathb = isset($b['path']) ? $b['path'] : '';
+		$querya = isset($a['query']) ? $a['query'] : '';
+		$queryb = isset($b['query']) ? $b['query'] : '';
+
+		return hash_equals($patha, $pathb) && hash_equals($querya, $queryb);
 	}
 
 	/**
