@@ -14103,13 +14103,19 @@ parameters:
 		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
-			count: 6
+			count: 3
+			path: ../../../htdocs/recruitment/class/api_recruitments.class.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 2
 			path: ../../../htdocs/recruitment/class/api_recruitments.class.php
 
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../../htdocs/recruitment/class/api_recruitments.class.php
 
 		-
