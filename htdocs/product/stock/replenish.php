@@ -988,7 +988,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), 'help');
 		}
 
-		print '<tr class="oddeven" '.($tobuy <= 0 ? "title=\"$order_zero_message\"" : '').'>';
+		print '<tr class="oddeven" '.($tobuy <= 0 ? 'title="$order_zero_message"' : '').'>';
 
 		// Select field
 		print '<td><input type="checkbox" class="check" name="choose' . $i . '"></td>';
