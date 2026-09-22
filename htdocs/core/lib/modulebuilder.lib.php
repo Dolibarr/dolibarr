@@ -1458,6 +1458,19 @@ function getModuleBuilderObjectTabs()
 }
 
 /**
+ * Return the regular expression matching a block of object lines code in the templates, used when
+ * the user asks not to manage lines on the generated object.
+ * The pattern is non greedy, so the BEGIN/END markers of a file must be balanced and never nested:
+ * a nested pair makes the outer BEGIN match the inner END and cuts an unbalanced fragment.
+ *
+ * @return	string	Regular expression, usable with removePatternFromFile()
+ */
+function getModuleBuilderLinesBlockPattern()
+{
+	return '/\/\/BEGIN MODULEBUILDER LINES.*?\/\/END MODULEBUILDER LINES\s*/s';
+}
+
+/**
  * Filter a list of requested tab keys against the known optional tabs map.
  * Protects against injection of unknown keys, removes duplicates, normalizes order.
  *
