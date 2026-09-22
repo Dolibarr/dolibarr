@@ -20,3 +20,6 @@ ALTER TABLE llx_ai_oauth_client ADD UNIQUE INDEX uk_ai_oauth_client_client_id (e
 
 -- Index for Entity
 ALTER TABLE llx_ai_oauth_client ADD INDEX idx_ai_oauth_client_entity (entity);
+
+-- Index for the rate limit on self-registration
+ALTER TABLE llx_ai_oauth_client ADD INDEX idx_ai_oauth_client_registered_from (registered_from, datec);

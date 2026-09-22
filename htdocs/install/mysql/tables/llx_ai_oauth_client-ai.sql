@@ -19,11 +19,12 @@ create table llx_ai_oauth_client
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   entity					integer DEFAULT 1 NOT NULL,
-  client_id					varchar(80) NOT NULL,					-- Public identifier handed to the client
+  client_id					varchar(255) NOT NULL,					-- Public identifier: a generated id, or the URL of the client's metadata document
   client_secret_hash		varchar(128),							-- sha256 of the secret, NULL for a public client (PKCE is then the only protection)
   client_name				varchar(255),							-- Name shown on the consent screen
   redirect_uris				text NOT NULL,							-- One absolute URI per line, matched exactly
   token_endpoint_auth_method varchar(32) DEFAULT 'none',			-- none, client_secret_basic or client_secret_post
+  registered_from			varchar(64),							-- Address the registration came from, to bound self-registration
   fk_user_creat				integer,								-- User who registered it by hand, NULL when self-registered
   datec						datetime NOT NULL,
   tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

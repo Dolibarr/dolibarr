@@ -61,6 +61,22 @@ class McpOauth
 	const REFRESH_TOKEN_TTL = 2592000;
 
 	/**
+	 * How long a client that never obtained a token is kept, in seconds.
+	 */
+	const UNUSED_CLIENT_TTL = 86400;
+
+	/**
+	 * How long a fetched metadata document is trusted before being read again,
+	 * in seconds.
+	 */
+	const METADATA_DOCUMENT_TTL = 86400;
+
+	/**
+	 * Most registrations one address may make in an hour.
+	 */
+	const REGISTRATIONS_PER_HOUR = 20;
+
+	/**
 	 * Lifetime of an authorization code, in seconds. Short on purpose: it is
 	 * exchanged immediately by a client that already holds the verifier.
 	 */
@@ -124,6 +140,23 @@ class McpOauth
 			// RFC 9207: the authorization response names its issuer, so a client
 			// talking to several servers cannot be made to mix up two responses.
 			'authorization_response_iss_parameter_supported' => true,
+			// A client_id may be the HTTPS URL of a metadata document the server
+			// fetches, instead of a registration (spec 2026-07-28, which
+			// deprecates RFC 7591 in favour of this).
+			'client_id_metadata_document_supported' => true,
+			// RFC 8414 puts the metadata of an issuer that has a path at
+			// /.well-known/oauth-authorization-server/<path>, which is at the
+			// domain root and not something Dolibarr can serve. What is
+			// reachable is the OpenID form, <issuer>/.well-known/openid-
+			// configuration, and clients built on the MCP TypeScript SDK
+			// validate whatever answers there as OpenID Connect. These three
+			// are what that validation requires. They are honest rather than
+			// aspirational: the key set is empty because nothing is signed,
+			// and the openid scope is deliberately not offered - this is an
+			// authorization server, not an OpenID provider.
+			'jwks_uri' => $this->issuer.'/jwks',
+			'subject_types_supported' => array('public'),
+			'id_token_signing_alg_values_supported' => array('RS256'),
 		);
 	}
 
@@ -187,13 +220,14 @@ class McpOauth
 		$name = isset($metadata['client_name']) ? dol_trunc((string) $metadata['client_name'], 255, 'right', 'UTF-8', 1) : '';
 
 		$sql = "INSERT INTO ".$this->db->prefix()."ai_oauth_client";
-		$sql .= " (entity, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, datec)";
+		$sql .= " (entity, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, registered_from, datec)";
 		$sql .= " VALUES (".((int) $conf->entity);
 		$sql .= ", '".$this->db->escape($clientid)."'";
 		$sql .= ", ".($secret === '' ? "NULL" : "'".$this->db->escape(hash('sha256', $secret))."'");
 		$sql .= ", '".$this->db->escape($name)."'";
 		$sql .= ", '".$this->db->escape(implode("\n", $uris))."'";
 		$sql .= ", '".$this->db->escape($authmethod)."'";
+		$sql .= ", '".$this->db->escape(dol_trunc((string) getUserRemoteIP(), 64, 'right', 'UTF-8', 1))."'";
 		$sql .= ", '".$this->db->idate(dol_now())."')";
 
 		if (!$this->db->query($sql)) {
@@ -231,13 +265,154 @@ class McpOauth
 	 */
 	public function getClient($clientid)
 	{
-		global $conf;
-
 		if (empty($clientid)) {
 			return null;
 		}
 
-		$sql = "SELECT rowid, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method";
+		// A client_id that is an HTTPS URL is a metadata document to fetch, not
+		// a registration to look up. The row it produces is keyed on that URL,
+		// so a client that comes back tomorrow reuses it instead of creating
+		// another one.
+		if (self::isMetadataDocumentUrl($clientid)) {
+			return $this->resolveMetadataDocument($clientid);
+		}
+
+		return $this->fetchClientRow($clientid);
+	}
+
+	/**
+	 * Tell a metadata document URL from a registered client identifier.
+	 *
+	 * @param  string $clientid Value presented as client_id
+	 * @return bool             True when it is an HTTPS URL to fetch
+	 */
+	public static function isMetadataDocumentUrl($clientid)
+	{
+		return stripos($clientid, 'https://') === 0;
+	}
+
+	/**
+	 * Resolve a client_id that is the URL of a metadata document.
+	 *
+	 * The document is fetched through getURLContent(), which is what keeps this
+	 * from being a way to make Dolibarr probe its own network: that function
+	 * refuses private, loopback and link-local addresses, and keeps refusing
+	 * them after a redirect.
+	 *
+	 * The result is stored, keyed on the URL, so the fetch happens once a day
+	 * per client rather than once per sign-in, and so a client that has been
+	 * used keeps working if its document briefly goes missing.
+	 *
+	 * @param  string      $url Absolute HTTPS URL of the document
+	 * @return object|null      Client row, or null when the document is unusable
+	 */
+	private function resolveMetadataDocument($url)
+	{
+		global $conf;
+
+		$known = $this->fetchClientRow($url);
+		if ($known !== null && $this->db->jdate($known->tms) > (dol_now() - self::METADATA_DOCUMENT_TTL)) {
+			return $known;
+		}
+
+		$document = $this->readMetadataDocument($url);
+		if ($document === null) {
+			// Keep serving a client that already worked: a document that is
+			// momentarily unreachable should not sign everybody out.
+			return $known;
+		}
+
+		$uris = array();
+		if (!empty($document['redirect_uris']) && is_array($document['redirect_uris'])) {
+			foreach ($document['redirect_uris'] as $uri) {
+				$uri = trim((string) $uri);
+				if ($this->isAcceptableRedirectUri($uri)) {
+					$uris[] = $uri;
+				}
+			}
+		}
+		if (empty($uris)) {
+			$this->error = 'invalid_client_metadata';
+			return null;
+		}
+
+		$name = isset($document['client_name']) ? dol_trunc((string) $document['client_name'], 255, 'right', 'UTF-8', 1) : '';
+
+		if ($known !== null) {
+			$sql = "UPDATE ".$this->db->prefix()."ai_oauth_client";
+			$sql .= " SET client_name = '".$this->db->escape($name)."'";
+			$sql .= ", redirect_uris = '".$this->db->escape(implode("\n", $uris))."'";
+			$sql .= ", tms = '".$this->db->idate(dol_now())."'";
+			$sql .= " WHERE rowid = ".((int) $known->rowid);
+		} else {
+			$sql = "INSERT INTO ".$this->db->prefix()."ai_oauth_client";
+			$sql .= " (entity, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, datec)";
+			$sql .= " VALUES (".((int) $conf->entity);
+			$sql .= ", '".$this->db->escape($url)."'";
+			$sql .= ", NULL";
+			$sql .= ", '".$this->db->escape($name)."'";
+			$sql .= ", '".$this->db->escape(implode("\n", $uris))."'";
+			$sql .= ", 'none'";
+			$sql .= ", '".$this->db->idate(dol_now())."')";
+		}
+
+		if (!$this->db->query($sql)) {
+			dol_syslog('[MCP OAuth] Could not store the metadata document of '.$url.': '.$this->db->lasterror(), LOG_ERR);
+			$this->error = 'server_error';
+			return null;
+		}
+
+		return $this->fetchClientRow($url);
+	}
+
+	/**
+	 * Fetch and parse a client metadata document.
+	 *
+	 * @param  string                   $url Absolute HTTPS URL
+	 * @return array<string, mixed>|null     Decoded document, or null
+	 */
+	private function readMetadataDocument($url)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+		$response = getURLContent($url, 'GET', '', 1, array('Accept: application/json'), array('https'), 0);
+
+		if (empty($response['content']) || (!empty($response['curl_error_no']) && $response['curl_error_no'] !== 0)) {
+			dol_syslog('[MCP OAuth] Metadata document unreachable: '.$url.' '.(isset($response['curl_error_msg']) ? $response['curl_error_msg'] : ''), LOG_NOTICE);
+			return null;
+		}
+		if (strlen($response['content']) > 65536) {
+			dol_syslog('[MCP OAuth] Metadata document too large: '.$url, LOG_WARNING);
+			return null;
+		}
+
+		$document = json_decode($response['content'], true);
+		if (!is_array($document)) {
+			dol_syslog('[MCP OAuth] Metadata document is not a JSON object: '.$url, LOG_WARNING);
+			return null;
+		}
+
+		// The document has to claim the URL it was found at. Without this check
+		// a document copied to another address would authorise its original.
+		if (empty($document['client_id']) || !hash_equals((string) $document['client_id'], $url)) {
+			dol_syslog('[MCP OAuth] Metadata document does not identify itself as '.$url, LOG_WARNING);
+			return null;
+		}
+
+		return $document;
+	}
+
+	/**
+	 * Read one client row by its identifier.
+	 *
+	 * @param  string      $clientid Client identifier
+	 * @return object|null           Row, or null
+	 */
+	private function fetchClientRow($clientid)
+	{
+		global $conf;
+
+		$sql = "SELECT rowid, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, tms";
 		$sql .= " FROM ".$this->db->prefix()."ai_oauth_client";
 		$sql .= " WHERE client_id = '".$this->db->escape($clientid)."'";
 		$sql .= " AND entity = ".((int) $conf->entity);
@@ -427,6 +602,45 @@ class McpOauth
 		$sql .= " WHERE expires_at < '".$this->db->idate(dol_now() - 86400)."'";
 
 		$this->db->query($sql);
+
+		// A registration that never led to a token is a row nobody asked for:
+		// /register takes no credential, so without this the table only grows,
+		// one row per connection attempt. Anything that did obtain a token is
+		// left alone whatever its age.
+		$sql = "DELETE FROM ".$this->db->prefix()."ai_oauth_client";
+		$sql .= " WHERE datec < '".$this->db->idate(dol_now() - self::UNUSED_CLIENT_TTL)."'";
+		$sql .= " AND rowid NOT IN (SELECT fk_client FROM ".$this->db->prefix()."ai_oauth_token)";
+
+		$this->db->query($sql);
+	}
+
+	/**
+	 * Count the clients registered from one address over the last hour.
+	 *
+	 * @param  string $ip Caller address
+	 * @return int        Number of registrations
+	 */
+	public function countRecentRegistrations($ip)
+	{
+		global $conf;
+
+		if ($ip === '') {
+			return 0;
+		}
+
+		$sql = "SELECT COUNT(rowid) as nb";
+		$sql .= " FROM ".$this->db->prefix()."ai_oauth_client";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND registered_from = '".$this->db->escape($ip)."'";
+		$sql .= " AND datec > '".$this->db->idate(dol_now() - 3600)."'";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return 0;
+		}
+		$obj = $this->db->fetch_object($resql);
+
+		return $obj ? (int) $obj->nb : 0;
 	}
 
 	/**

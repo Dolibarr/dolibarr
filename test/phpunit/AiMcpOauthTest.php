@@ -142,6 +142,15 @@ class AiMcpOauthTest extends CommonClassTest
 		$this->assertSame('https://example.org/ai/oauth.php', $as['issuer']);
 		$this->assertSame(array('S256'), $as['code_challenge_methods_supported'], 'plain must not be offered');
 		$this->assertTrue($as['authorization_response_iss_parameter_supported'], 'RFC 9207 must be advertised');
+		$this->assertTrue($as['client_id_metadata_document_supported'], 'Clients must be told they may use a metadata document');
+
+		// Clients built on the MCP TypeScript SDK read this document as OpenID
+		// Connect and refuse it without these three. The values are honest:
+		// nothing is signed, and the openid scope is not offered.
+		$this->assertSame($as['issuer'].'/jwks', $as['jwks_uri']);
+		$this->assertSame(array('public'), $as['subject_types_supported']);
+		$this->assertSame(array('RS256'), $as['id_token_signing_alg_values_supported']);
+		$this->assertNotContains('openid', $as['scopes_supported'], 'This is not an OpenID provider');
 
 		$prm = $server->metadataProtectedResource();
 		$this->assertSame('https://example.org/ai/server/mcp_server.php', $prm['resource']);
@@ -443,5 +452,71 @@ class AiMcpOauthTest extends CommonClassTest
 
 		$this->assertNull($server->getClient('dolmcp_cdoesnotexist'));
 		$this->assertNull($server->getClient(''));
+	}
+	/**
+	 * A client_id that is an HTTPS URL is a document to fetch; anything else is
+	 * a registration to look up. Getting this wrong either breaks metadata
+	 * document clients or turns every unknown id into an outbound request.
+	 *
+	 * @return void
+	 */
+	public function testMetadataDocumentUrlIsRecognised()
+	{
+		$this->assertTrue(McpOauth::isMetadataDocumentUrl('https://example.org/client.json'));
+		$this->assertFalse(McpOauth::isMetadataDocumentUrl('http://example.org/client.json'), 'Plain http is not a document URL');
+		$this->assertFalse(McpOauth::isMetadataDocumentUrl('dolmcp_cabc123'));
+		$this->assertFalse(McpOauth::isMetadataDocumentUrl(''));
+	}
+
+	/**
+	 * /register takes no credential, so a registration that never led to a
+	 * token is collected. One that did is kept whatever its age.
+	 *
+	 * @return void
+	 */
+	public function testUnusedClientsArePurgedAndUsedOnesAreNot()
+	{
+		global $db, $user;
+
+		$this->requireSchema();
+
+		$server = $this->getServer();
+		$unused = $this->makeClient();
+		$used = $this->makeClient();
+
+		// Give one of them a token, then age both past the cutoff.
+		$code = $server->createAuthorizationCode($used, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+		$server->exchangeAuthorizationCode($used, $code, 'https://example.org/callback', $this->verifier);
+
+		$old = $db->idate(dol_now() - (McpOauth::UNUSED_CLIENT_TTL * 2));
+		$db->query("UPDATE ".$db->prefix()."ai_oauth_client SET datec = '".$old."' WHERE rowid IN (".((int) $unused->rowid).", ".((int) $used->rowid).")");
+
+		$server->purgeExpired();
+
+		$this->assertNull($server->getClient($unused->client_id), 'A client that never obtained a token should be gone');
+		$this->assertNotNull($server->getClient($used->client_id), 'A client that obtained a token should be kept');
+	}
+
+	/**
+	 * Registrations are counted per address so the endpoint can be bounded.
+	 *
+	 * @return void
+	 */
+	public function testRegistrationsAreCountedPerAddress()
+	{
+		global $db;
+
+		$this->requireSchema();
+
+		$server = $this->getServer();
+		$before = $server->countRecentRegistrations('203.0.113.7');
+
+		$sql = "INSERT INTO ".$db->prefix()."ai_oauth_client";
+		$sql .= " (entity, client_id, client_name, redirect_uris, token_endpoint_auth_method, registered_from, datec)";
+		$sql .= " VALUES (1, 'dolmcp_ctest".dol_now()."', '', 'https://example.org/cb', 'none', '203.0.113.7', '".$db->idate(dol_now())."')";
+		$db->query($sql);
+
+		$this->assertSame($before + 1, $server->countRecentRegistrations('203.0.113.7'));
+		$this->assertSame(0, $server->countRecentRegistrations(''), 'No address, nothing to count');
 	}
 }

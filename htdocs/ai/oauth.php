@@ -154,12 +154,27 @@ switch ($mcp_route) {
 		mcpOauthJson($oauth->metadataAuthorizationServer());
 		// no break
 
+	case '/jwks':
+		// Advertised by the metadata document because clients built on the MCP
+		// TypeScript SDK validate it as OpenID Connect and refuse a document
+		// without jwks_uri. Empty on purpose and honestly so: access tokens
+		// here are opaque, nothing is signed, so there is no key to publish.
+		mcpOauthJson(array('keys' => array()));
+		// no break
+
 	case '/register':
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 			mcpOauthError('invalid_request', 405, 'Use POST to register a client.');
 		}
 		if (!getDolGlobalString('AI_MCP_OAUTH_DYNAMIC_REGISTRATION')) {
 			mcpOauthError('access_denied', 403, 'Self-registration is disabled. An administrator registers clients on this Dolibarr.');
+		}
+
+		// /register takes no credential by design, so the only thing standing
+		// between it and an unbounded table is this.
+		if ($oauth->countRecentRegistrations(getUserRemoteIP()) >= McpOauth::REGISTRATIONS_PER_HOUR) {
+			dol_syslog('[MCP OAuth] Registration rate limit reached for '.getUserRemoteIP(), LOG_WARNING);
+			mcpOauthError('temporarily_unavailable', 429, 'Too many registrations from this address. Try again later.');
 		}
 
 		$body = json_decode(file_get_contents('php://input'), true);
@@ -171,6 +186,8 @@ switch ($mcp_route) {
 		if ($registration === null) {
 			mcpOauthError($oauth->error, 400);
 		}
+
+		$oauth->purgeExpired();
 
 		mcpOauthJson($registration, 201);
 		// no break
@@ -294,13 +311,23 @@ if ($action === 'grant' || $action === 'deny') {
  * View
  */
 
+// A client picks its own client_name, so it is the one thing on this page an
+// attacker controls freely. The host the user will be sent back to is not,
+// and it is what tells them who they are really authorising.
 $clientname = !empty($client->client_name) ? $client->client_name : $clientid;
+$clienthost = (string) parse_url($redirecturi, PHP_URL_HOST);
+if ($clienthost === '') {
+	$clienthost = (string) parse_url($redirecturi, PHP_URL_SCHEME);
+}
 
 llxHeader('', $langs->trans('AiMcpOauthConsentTitle'), '', '', 0, 0, '', '', '', 'mod-ai page-oauth');
 
 print load_fiche_titre($langs->trans('AiMcpOauthConsentTitle'), '', 'ai');
 
-print '<form method="POST" action="'.dol_escape_htmltag($_SERVER['PHP_SELF'].'/authorize').'">';
+// SCRIPT_NAME, not PHP_SELF: under Apache with mod_php the latter already
+// carries the path info, so appending /authorize to it posts the form to
+// /ai/oauth.php/authorize/authorize and the route is not found.
+print '<form method="POST" action="'.dol_escape_htmltag($_SERVER['SCRIPT_NAME'].'/authorize').'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 foreach (array(
 	'response_type' => $responsetype,
@@ -317,7 +344,9 @@ foreach (array(
 
 print '<div class="center">';
 print '<p>'.$langs->trans('AiMcpOauthConsentQuestion', dol_escape_htmltag($clientname), dol_escape_htmltag($user->login)).'</p>';
+print '<p>'.$langs->trans('AiMcpOauthConsentHost', dol_escape_htmltag($clienthost)).'</p>';
 print '<p class="opacitymedium">'.$langs->trans('AiMcpOauthConsentScope').'</p>';
+print '<p class="opacitymedium"><small>'.$langs->trans('AiMcpOauthConsentExpiry').'</small></p>';
 print '<p class="opacitymedium"><small>'.$langs->trans('AiMcpOauthConsentRedirect').' '.dol_escape_htmltag($redirecturi).'</small></p>';
 print '<br>';
 print '<button type="submit" class="button" name="action" value="grant">'.$langs->trans('AiMcpOauthAllow').'</button>';
