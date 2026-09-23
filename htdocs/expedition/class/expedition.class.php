@@ -2440,12 +2440,13 @@ class Expedition extends CommonObject
 				$line->desc				= $objp->description;
 				$line->qty              = $objp->qty;
 				$line->fk_entrepot      = $objp->fk_entrepot;
+				$line->entrepot_id      = $objp->fk_entrepot;
 				$line->fk_product       = $objp->fk_product;
 				$line->rang             = $objp->rang;
 				$line->fk_element 		= $objp->fk_element;
 				$line->fk_unit          = $objp->fk_unit;
 				$line->fk_elementdet 	= $objp->fk_elementdet;
-				$line->fk_element_type 	= $objp->element_type;
+				$line->element_type     = $objp->element_type;
 				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
