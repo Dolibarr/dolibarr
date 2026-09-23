@@ -35,6 +35,7 @@ RUN apt-get update \
 		python3-pip \
 		shellcheck \
 		sshpass \
+		time \
 		unzip \
 		w3m \
 		zip \
