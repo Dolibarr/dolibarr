@@ -212,6 +212,8 @@ class AllTests
 		$suite->addTestSuite('ExpeditionTest');
 		require_once dirname(__FILE__).'/ExpeditionLineFetchTest.php';
 		$suite->addTestSuite('ExpeditionLineFetchTest');
+		require_once dirname(__FILE__).'/ExpeditionDispatchTest.php';
+		$suite->addTestSuite('ExpeditionDispatchTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
 		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';

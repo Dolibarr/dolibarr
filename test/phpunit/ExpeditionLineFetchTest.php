@@ -145,6 +145,7 @@ class ExpeditionLineFetchTest extends \PHPUnit\Framework\TestCase
 		$row = $this->createLineRow(3);
 		$unassignedRow = $this->createLineRow(null);
 		$unassignedRow->rowid = 43;
+		$unassignedRow->fk_parent = null;
 		$unassignedRow->element_type = 'shipping';
 		$unassignedRow->fk_element = null;
 		$unassignedRow->fk_elementdet = null;
@@ -165,6 +166,7 @@ class ExpeditionLineFetchTest extends \PHPUnit\Framework\TestCase
 			$line = $shipment->lines[$index];
 			$this->assertSame($expected->rowid, $line->id);
 			$this->assertSame($expected->fk_product, $line->fk_product);
+			$this->assertSame($expected->fk_parent, $line->fk_parent);
 			$this->assertSame($expected->fk_entrepot, $line->entrepot_id);
 			$this->assertSame($expected->fk_entrepot, $line->fk_entrepot);
 			$this->assertSame($expected->element_type, $line->element_type);
