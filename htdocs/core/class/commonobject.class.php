@@ -11150,7 +11150,8 @@ abstract class CommonObject
 		// Triggers
 		if (!$error && !$notrigger) {
 			// Call triggers
-			$result = $this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+			$result = $this->call_trigger($triggerPrefix.'_CREATE', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -11405,7 +11406,8 @@ abstract class CommonObject
 		// Triggers
 		if (!$error && !$notrigger) {
 			// Call triggers
-			$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+			$result = $this->call_trigger($triggerPrefix.'_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			} //Do also here what you must do to rollback action if trigger fail
@@ -11512,7 +11514,8 @@ abstract class CommonObject
 		if (!$error) {
 			if (!$notrigger) {
 				// Call triggers
-				$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
+				$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+				$result = $this->call_trigger($triggerPrefix.'_DELETE', $user);
 				if ($result < 0) {
 					$error++;
 				} // Do also here what you must do to rollback action if trigger fail
