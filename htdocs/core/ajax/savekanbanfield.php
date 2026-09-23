@@ -19,10 +19,7 @@
  *       \file      htdocs/core/ajax/savekanbanfield.php
  *       \brief     Save the "group by" field of a record dragged into another column of a
  *                  kanban group by view (mode=kanbangroupby).
- *                  Unlike core/ajax/saveinplace.php, this endpoint is not tied to the
- *                  deprecated "Edit in place" option and accepts only the fields a class
- *                  declares into its $kanbangroupbyfields property. The value is saved with
- *                  setValueFrom() and a trigger key, so triggers are called.
+ *                  The value is saved with setValueFrom() and a trigger key, so triggers are called.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -59,13 +56,6 @@ if (!is_object($object) || $object->id <= 0) {
 	httponly_accessforbidden('Not allowed, bad combination of parameters for fetchObjectByElement');
 }
 
-// Only a field the class declares as a kanban "group by" field can be saved here. This is what
-// keeps this endpoint narrow: no arbitrary table and no arbitrary field can be written.
-if (empty($object->kanbangroupbyfields) || !is_array($object->kanbangroupbyfields)
-	|| !in_array($field, $object->kanbangroupbyfields) || !isset($object->fields[$field])) {
-	httponly_accessforbidden('Not allowed, field is not declared as a kanban group by field');
-}
-
 // Security check. Set the action to 'update' so restrictedArea() tests the write permission
 // and not only the read permission.
 $_POST['action'] = 'update';
@@ -87,17 +77,19 @@ if (in_array($field, $blacklistedfields)) {
 	httponly_accessforbidden("Can't edit a field blacklisted with name ".$field);
 }
 
-// Use also a whitelist
+// Use also a whitelist for field
 $whitelistfields = array('fk_opp_status');
 if (!in_array($field, $whitelistfields)) {
 	httponly_accessforbidden("Can't edit a field ".$field." not in whiteliste");
 }
 
-// Use also a whitelist
+// Use also a whitelist for module
 $whitelistelement = array('projet', 'project');
 if (!in_array($object->module, $whitelistelement)) {
 	httponly_accessforbidden("Can't edit a field for element module = ".$object->module);
 }
+
+// TODO Use a property into ->fields to defined whitelist properties allowed for savekanbanfield.php or more globally for inline standalone update?
 
 
 
