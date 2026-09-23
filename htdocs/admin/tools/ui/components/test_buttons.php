@@ -24,9 +24,6 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1); // File must be accessed by logon page so without login
-}
 if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', 1);
 }

@@ -69,6 +69,9 @@ if (isModEnabled('ldap')) {
 if (isModEnabled('google')) {
 	print "Warning: Google module should not be enabled.\n";
 }
+if (isModEnabled('numberwords')) {
+	print "Warning: Numberwords module should not be enabled.\n";
+}
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
@@ -230,9 +233,6 @@ class AllTests
 
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
-		require_once dirname(__FILE__).'/MoTest.php';
-		$suite->addTestSuite('MoTest');
-
 		require_once dirname(__FILE__).'/MoTest.php';
 		$suite->addTestSuite('MoTest');
 

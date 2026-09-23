@@ -8,6 +8,7 @@
  * Copyright (C) 2019       JC Prieto			<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026	Guillaume de Wellenstein	<guillaume@tecneo.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2362,6 +2363,58 @@ class BonPrelevement extends CommonObject
 	}
 
 
+	/**
+	 * 	Build the SEPA postal address block (<PstlAdr>) in the hybrid format required by
+	 * 	ISO 20022 usage guidelines (EPC153-22 v2.1, mandatory in the EU from November 15, 2026):
+	 * 	structured elements (PstCd, TwnNm, Ctry) combined with a single AdrLine for the street.
+	 * 	Elements are output in the order imposed by the XSD PostalAddress6 (pain.001.001.03 / pain.008.001.02):
+	 * 	PstCd?, TwnNm, Ctry, AdrLine?.
+	 * 	TwnNm and Ctry are mandatory inside PstlAdr: when the town or the country code is empty,
+	 * 	the whole block is omitted (this method returns an empty string) and a warning is logged.
+	 * 	PstCd is output only when the zip is not empty, and AdrLine only when the address is not empty.
+	 *
+	 *	@param	string	$address			Street address (into AdrLine, max 70 chars)
+	 *	@param	string	$zip				ZIP code (into PstCd, max 16 chars, optional)
+	 *	@param	string	$town				Town name (into TwnNm, max 35 chars, mandatory else block omitted)
+	 *	@param	string	$country_code		Country code ISO 3166-1 alpha 2 (into Ctry, mandatory else block omitted)
+	 *  @param	string	$indent				Indentation string used for the PstlAdr tag
+	 *  @param	string	$CrLf				End of line character
+	 *	@return	string						XML string of the PstlAdr block, or '' when the block must be omitted
+	 */
+	public function buildSEPAPostalAddressXML($address, $zip, $town, $country_code, $indent, $CrLf)
+	{
+		$town = dol_string_nospecial(dol_string_unaccent((string) $town), ' ');
+		$country_code = trim((string) $country_code);
+
+		$missingelements = array();
+		if (trim($town) == '') {
+			$missingelements[] = 'town';
+		}
+		if ($country_code == '') {
+			$missingelements[] = 'country code';
+		}
+		if (count($missingelements) > 0) {
+			// TwnNm and Ctry are mandatory inside PstlAdr: omit the whole block and warn when one of them is empty
+			dol_syslog('buildSEPAPostalAddressXML: PstlAdr block omitted because the '.implode(' and the ', $missingelements).' is empty.', LOG_WARNING);
+			return '';
+		}
+
+		$XML_ADR = $indent . '<PstlAdr>' . $CrLf;
+		$zip = dol_string_nospecial(dol_string_unaccent((string) $zip), ' ');
+		if (trim($zip) != '') {
+			$XML_ADR .= $indent . '	<PstCd>' . dolEscapeXML(dol_trunc($zip, 16, 'right', 'UTF-8', 1)) . '</PstCd>' . $CrLf;
+		}
+		$XML_ADR .= $indent . '	<TwnNm>' . dolEscapeXML(dol_trunc($town, 35, 'right', 'UTF-8', 1)) . '</TwnNm>' . $CrLf;
+		$XML_ADR .= $indent . '	<Ctry>' . dolEscapeXML($country_code) . '</Ctry>' . $CrLf;
+		$addressline1 = strtr((string) $address, array(chr(13) => ", ", chr(10) => ""));
+		if (trim($addressline1)) {
+			$XML_ADR .= $indent . '	<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
+		}
+		$XML_ADR .= $indent . '</PstlAdr>' . $CrLf;
+
+		return $XML_ADR;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Write recipient of request (customer)
@@ -2526,17 +2579,7 @@ class BonPrelevement extends CommonObject
 				$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
 				$XML_DEBITOR .= '				<Dbtr>' . $CrLf;
 				$XML_DEBITOR .= '					<Nm>' . dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '))) . '</Nm>' . $CrLf;
-				$XML_DEBITOR .= '					<PstlAdr>' . $CrLf;
-				$XML_DEBITOR .= '						<Ctry>' . $row_country_code . '</Ctry>' . $CrLf;
-				$addressline1 = strtr($row_address, array(chr(13) => ", ", chr(10) => ""));
-				$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : '') . (string) $row_town, array(chr(13) => ", ", chr(10) => ""));
-				if (trim($addressline1)) {
-					$XML_DEBITOR .= '						<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
-				}
-				if (trim($addressline2)) {
-					$XML_DEBITOR .= '						<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline2), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
-				}
-				$XML_DEBITOR .= '					</PstlAdr>' . $CrLf;
+				$XML_DEBITOR .= $this->buildSEPAPostalAddressXML($row_address, $row_zip, $row_town, $row_country_code, "\t\t\t\t\t", $CrLf);
 				$XML_DEBITOR .= '				</Dbtr>' . $CrLf;
 				$XML_DEBITOR .= '				<DbtrAcct>' . $CrLf;
 				$XML_DEBITOR .= '					<Id>' . $CrLf;
@@ -2612,17 +2655,7 @@ class BonPrelevement extends CommonObject
 				$XML_CREDITOR .= '				</CdtrAgt>' . $CrLf;
 				$XML_CREDITOR .= '				<Cdtr>' . $CrLf;
 				$XML_CREDITOR .= '					<Nm>' . dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '))) . '</Nm>' . $CrLf;
-				$XML_CREDITOR .= '					<PstlAdr>' . $CrLf;
-				$XML_CREDITOR .= '						<Ctry>' . $row_country_code . '</Ctry>' . $CrLf;
-				$addressline1 = strtr($row_address, array(chr(13) => ", ", chr(10) => ""));
-				$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : '') . (string) $row_town, array(chr(13) => ", ", chr(10) => ""));
-				if (trim($addressline1)) {
-					$XML_CREDITOR .= '						<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
-				}
-				if (trim($addressline2)) {
-					$XML_CREDITOR .= '						<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline2), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
-				}
-				$XML_CREDITOR .= '					</PstlAdr>' . $CrLf;
+				$XML_CREDITOR .= $this->buildSEPAPostalAddressXML($row_address, $row_zip, $row_town, $row_country_code, "\t\t\t\t\t", $CrLf);
 				$XML_CREDITOR .= '				</Cdtr>' . $CrLf;
 				$XML_CREDITOR .= '				<CdtrAcct>' . $CrLf;
 				$XML_CREDITOR .= '					<Id>' . $CrLf;
@@ -2800,17 +2833,11 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			<ReqdColltnDt>' . $dateTime_ETAD . '</ReqdColltnDt>' . $CrLf;
 				$XML_SEPA_INFO .= '			<Cdtr>' . $CrLf;
 				$XML_SEPA_INFO .= '				<Nm>' . dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))) . '</Nm>' . $CrLf;
-				$XML_SEPA_INFO .= '				<PstlAdr>' . $CrLf;
-				$XML_SEPA_INFO .= '					<Ctry>' . $country[1] . '</Ctry>' . $CrLf;
-				$addressline1 = strtr(getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS'), array(chr(13) => ", ", chr(10) => ""));
-				$addressline2 = strtr(getDolGlobalString('MAIN_INFO_SOCIETE_ZIP') . ((getDolGlobalString('MAIN_INFO_SOCIETE_ZIP') || ' ' . getDolGlobalString('MAIN_INFO_SOCIETE_TOWN')) ? ' ' : '') . getDolGlobalString('MAIN_INFO_SOCIETE_TOWN'), array(chr(13) => ", ", chr(10) => ""));
-				if ($addressline1) {
-					$XML_SEPA_INFO .= '					<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
-				}
-				if ($addressline2) {
-					$XML_SEPA_INFO .= '					<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline2), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
-				}
-				$XML_SEPA_INFO .= '				</PstlAdr>' . $CrLf;
+				$sender_address = (string) getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS');
+				$sender_zip = (string) getDolGlobalString('MAIN_INFO_SOCIETE_ZIP');
+				$sender_town = (string) getDolGlobalString('MAIN_INFO_SOCIETE_TOWN');
+				$sender_country_code = (string) ($country[1] ?? '');
+				$XML_SEPA_INFO .= $this->buildSEPAPostalAddressXML($sender_address, $sender_zip, $sender_town, $sender_country_code, "\t\t\t\t", $CrLf);
 				$XML_SEPA_INFO .= '			</Cdtr>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CdtrAcct>' . $CrLf;
 				$XML_SEPA_INFO .= '				<Id>' . $CrLf;
@@ -2866,17 +2893,11 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			<ReqdExctnDt>' . dol_print_date($dateTime_ETAD, 'dayrfc') . '</ReqdExctnDt>' . $CrLf;
 				$XML_SEPA_INFO .= '			<Dbtr>' . $CrLf;
 				$XML_SEPA_INFO .= '				<Nm>' . dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))) . '</Nm>' . $CrLf;
-				$XML_SEPA_INFO .= '				<PstlAdr>' . $CrLf;
-				$XML_SEPA_INFO .= '					<Ctry>' . $country[1] . '</Ctry>' . $CrLf;
-				$addressline1 = strtr(getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS'), array(chr(13) => ", ", chr(10) => ""));
-				$addressline2 = strtr(getDolGlobalString('MAIN_INFO_SOCIETE_ZIP') . ((getDolGlobalString('MAIN_INFO_SOCIETE_ZIP') || ' ' . getDolGlobalString('MAIN_INFO_SOCIETE_TOWN')) ? ' ' : '') . getDolGlobalString('MAIN_INFO_SOCIETE_TOWN'), array(chr(13) => ", ", chr(10) => ""));
-				if ($addressline1) {
-					$XML_SEPA_INFO .= '					<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
-				}
-				if ($addressline2) {
-					$XML_SEPA_INFO .= '					<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline2), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
-				}
-				$XML_SEPA_INFO .= '				</PstlAdr>' . $CrLf;
+				$sender_address = (string) getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS');
+				$sender_zip = (string) getDolGlobalString('MAIN_INFO_SOCIETE_ZIP');
+				$sender_town = (string) getDolGlobalString('MAIN_INFO_SOCIETE_TOWN');
+				$sender_country_code = (string) ($country[1] ?? '');
+				$XML_SEPA_INFO .= $this->buildSEPAPostalAddressXML($sender_address, $sender_zip, $sender_town, $sender_country_code, "\t\t\t\t", $CrLf);
 				$XML_SEPA_INFO .= '			</Dbtr>' . $CrLf;
 				$XML_SEPA_INFO .= '			<DbtrAcct>' . $CrLf;
 				$XML_SEPA_INFO .= '				<Id>' . $CrLf;

@@ -1639,19 +1639,17 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testVerifCond
 	 *
-	 * @dataProvider verifCondDataProvider
-	 *
-	 * @param string $cond     Condition to test using verifCond
-	 * @param string $expected Expected outcome of verifCond
-	 *
 	 * @return	void
 	 */
-	public function testVerifCond($cond, $expected)
+	public function testVerifCond()
 	{
-		if ($expected) {
-			$this->assertTrue(verifCond($cond));
-		} else {
-			$this->assertFalse(verifCond($cond));
+		foreach ($this->verifCondDataProvider() as $case) {
+			list($cond, $expected) = $case;
+			if ($expected) {
+				$this->assertTrue(verifCond($cond));
+			} else {
+				$this->assertFalse(verifCond($cond));
+			}
 		}
 	}
 
@@ -2237,9 +2235,9 @@ class FunctionsLibTest extends CommonClassTest
 
 
 		// Try mix HTML into not HTML but no replaement is done
-		$newstring = make_substitutions('¿Necesitas ayuda para empezar con GLPI?', array('__SENDEREMAIL_SIGNATURE__' => '<br><strong>HTML content</strong>'), $langs, 1);
+		$newstring = make_substitutions('¿Necesitas ayuda?', array('__SENDEREMAIL_SIGNATURE__' => '<br><strong>HTML content</strong>'), $langs, 1);
 		print __METHOD__." ".$newstring."\n";
-		$this->assertEquals($newstring, '¿Necesitas ayuda para empezar con GLPI?');
+		$this->assertEquals($newstring, '¿Necesitas ayuda?');
 
 		return true;
 	}
@@ -2851,7 +2849,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('myobject', $properties['element']);
 		$this->assertEquals('mymodule', $properties['module']);
 		$this->assertEquals('myobject', $properties['subelement']);
-		$this->assertEquals('myobject@mymodule', $properties['table_element']);
+		$this->assertEquals('mymodule_myobject', $properties['table_element']);
 		$this->assertEquals('mymodule/class', $properties['classpath']);
 		$this->assertEquals('myobject', $properties['classfile']);
 		$this->assertEquals('Myobject', $properties['classname']);
