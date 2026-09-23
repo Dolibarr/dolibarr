@@ -4724,6 +4724,27 @@ table.paddingtopbottomonly tr td {
 	padding-top: 1px;
 	padding-bottom: 2px;
 }
+
+
+/* Block of CSS to fix border on firefox */
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type {
+	background: unset !important;	/* note using background-color here does not work */
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type th,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type th,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type td,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type td {
+	background: var(--colorbacktitle1) !important;
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) {
+	background: inherit;
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) td {
+	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
+}
+
+
 /* CSS to remove the interline border */
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;

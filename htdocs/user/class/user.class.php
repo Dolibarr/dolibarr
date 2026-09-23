@@ -2318,7 +2318,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		// Check if login already exists in same entity or into entity 0.
-		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && $this->oldcopy->login != $this->login) {
+		if (is_object($this->oldcopy) && !empty($this->oldcopy->id) && $this->oldcopy->login != $this->login) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
@@ -2332,7 +2332,7 @@ class User extends CommonObject
 				}
 			}
 		}
-		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && !empty($this->email) && $this->oldcopy->email != $this->email) {
+		if (is_object($this->oldcopy) && !empty($this->oldcopy->id) && !empty($this->email) && $this->oldcopy->email != $this->email) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
@@ -3620,7 +3620,7 @@ class User extends CommonObject
 
 				// Check if it is the LDAP key and if its value has been changed
 				if (getDolGlobalString('LDAP_KEY_USERS') && getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString($constname)) {
-					if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && $this->$varname != $this->oldcopy->$varname) {
+					if (is_object($this->oldcopy) && !empty($this->oldcopy->id) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
 				}

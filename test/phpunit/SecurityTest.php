@@ -481,6 +481,41 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals(1, $result);
 	}
 
+	/**
+	 * testCheckUserAccessToObjectBank
+	 *
+	 * @return void
+	 */
+	public function testCheckUserAccessToObjectBank()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+		$account = new Account($db);
+		$account->ref = 'TSEC'.mt_rand(0, 99999);
+		$account->label = 'testCheckUserAccessToObjectBank '.$account->ref;
+		$account->type = Account::TYPE_CURRENT;
+		$account->currency_code = 'EUR';
+		$account->country_id = 1;
+		$account->date_solde = dol_now();
+		$accountid = $account->create($user);
+		$this->assertGreaterThan(0, $accountid, 'Bank account must be created');
+
+		// A user that can not see all third parties, so the access is checked with a sql request
+		$restricteduser = new User($db);
+		$this->assertEmpty($restricteduser->hasRight('societe', 'client', 'voir'), 'User must not see all third parties');
+
+		$result = checkUserAccessToObject($restricteduser, array('banque'), $accountid);
+		$this->assertTrue($result, 'Access to bank account with feature banque');
+		$result = checkUserAccessToObject($restricteduser, array('bank'), $accountid);
+		$this->assertTrue($result, 'Access to bank account with feature bank, the english name of the module');
+	}
+
 
 	/**
 	 * testDolSanitizeUrl

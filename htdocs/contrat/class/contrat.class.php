@@ -1600,7 +1600,7 @@ class Contrat extends CommonObject
 
 			// if buy price not defined, define buyprice as configured in margin admin
 			if ($pa_ht == 0) {
-				$result = $this->defineBuyPrice((float) $pu_ht, $remise_percent, $fk_product);
+				$result = $this->defineBuyPrice((float) $pu_ht, $remise_percent, $fk_product, $qty);
 				if ($result < 0) {
 					return -1;
 				} else {
@@ -2086,7 +2086,7 @@ class Contrat extends CommonObject
 			$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '. $this->ref_customer;
 			if (!$nofetch) {
 				$langs->load('project');
-				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
+				if (is_null($this->project) || (is_object($this->project) && empty($this->project->id))) {
 					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');

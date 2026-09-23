@@ -1551,7 +1551,7 @@ while ($i < $imaxinloop) {
 		// Ref
 		if (!empty($arrayfields['e.ref']['checked'])) {
 			print '<td class="nowraponall">';
-			print $object->getNomUrl(1);
+			print $object->getNomUrl(1, '', 0, 0, 0, -1, 1);
 			$filedir = ($conf->expedition->multidir_output[$object->entity ?? $conf->entity] ? $conf->expedition->multidir_output[$object->entity ?? $conf->entity] : $conf->expedition->dir_output).'/sending/'.get_exdir(0, 0, 0, 1, $object, '');
 			$filename = dol_sanitizeFileName($object->ref);
 			print $formfile->getDocumentsLink('expedition', $filename, $filedir);

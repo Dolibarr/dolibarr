@@ -116,16 +116,16 @@ class Functions2LibTest extends CommonClassTest
 
 	/**
 	 * Test jsUnEscape function.
-	 * @dataProvider unescapeProvider
-	 * @param string $input The input string to test.
-	 * @param string $expected The expected result.
 	 * @return void
 	 */
-	public function testJsUnEscape($input, $expected)
+	public function testJsUnEscape()
 	{
-		$result = jsUnEscape($input);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, $expected);
+		foreach ($this->unescapeProvider() as $case) {
+			list($input, $expected) = $case;
+			$result = jsUnEscape($input);
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals($result, $expected);
+		}
 	}
 
 	/**
@@ -278,18 +278,14 @@ class Functions2LibTest extends CommonClassTest
 	/**
 	 * Test get_string_between()
 	 *
-	 * @param string $string String to search in.
-	 * @param string $start String indicating start
-	 * @param string $end String indicating end
-	 * @param string $expected Expected result
-	 *
 	 * @return void
-	 *
-	 * @dataProvider stringBetweenDataProvider
 	 */
-	public function testGetStringBetween($string, $start, $end, $expected)
+	public function testGetStringBetween()
 	{
-		$this->assertEquals($expected, get_string_between($string, $start, $end));
+		foreach ($this->stringBetweenDataProvider() as $case) {
+			list($string, $start, $end, $expected) = $case;
+			$this->assertEquals($expected, get_string_between($string, $start, $end));
+		}
 	}
 
 
@@ -319,19 +315,17 @@ class Functions2LibTest extends CommonClassTest
 	/**
 	 * Test numero_semaine()
 	 *
-	 * @param string $time_str Time (string) to test
-	 * @param int    $expected_week Week expected
-	 *
 	 * @return void
-	 *
-	 * @dataProvider numeroSemaineDataProvider
 	 */
-	public function testNumeroSemaine($time_str, $expected_week)
+	public function testNumeroSemaine()
 	{
-		$time = strtotime($time_str);
-		$str = date(DATE_ATOM, $time).PHP_EOL;
-		print __METHOD__." time=".$time."\n";
-		$this->assertEquals($expected_week, numero_semaine($time), "Computed week incorrect for $str");
+		foreach ($this->numeroSemaineDataProvider() as $case) {
+			list($time_str, $expected_week) = $case;
+			$time = strtotime($time_str);
+			$str = date(DATE_ATOM, $time).PHP_EOL;
+			print __METHOD__." time=".$time."\n";
+			$this->assertEquals($expected_week, numero_semaine($time), "Computed week incorrect for $str");
+		}
 	}
 
 

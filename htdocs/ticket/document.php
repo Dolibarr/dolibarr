@@ -159,7 +159,7 @@ if ($object->id && $upload_dir !== null) {
 
 	$head = ticket_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'tabTicketDocument', $langs->trans("Ticket"), 0, 'ticket');
+	print dol_get_fiche_head($head, 'tabTicketDocument', $langs->trans("Ticket"), 0, 'ticket', 0, '', '', 0, '', 1);
 
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= $object->subject;

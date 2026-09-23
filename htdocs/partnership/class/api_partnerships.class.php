@@ -117,7 +117,8 @@ class Partnerships extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
-		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
+		// Partnership::$fields only has a 'fk_soc' field when PARTNERSHIP_IS_MANAGED_FOR is not 'member' (it has 'fk_member' instead in that case, see Partnership::__construct())
+		$restrictonsocid = (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 0 : 1;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -274,7 +275,7 @@ class Partnerships extends DolibarrApi
 		if ($this->partnership->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->partnership->error);
+			throw new RestException(500, $this->partnership->errorsToString());
 		}
 	}
 
@@ -305,7 +306,7 @@ class Partnerships extends DolibarrApi
 		}
 
 		if (!$this->partnership->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting Partnership : '.$this->partnership->error);
+			throw new RestException(500, 'Error when deleting Partnership : '.$this->partnership->errorsToString());
 		}
 
 		return array(

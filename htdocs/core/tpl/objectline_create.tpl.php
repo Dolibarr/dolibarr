@@ -14,7 +14,7 @@
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas			<lenin.rivas777@gmail.com>
- * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,7 +165,16 @@ if ($nolinesbefore) {
 			print $langs->trans('Unit');
 			print '</span></td>';
 		} ?>
-		<td class="linecoldiscount right"><?php echo $langs->trans('ReductionShort'); ?></td>
+		<?php
+		if ($object->element == 'reception') {	// Same columns as on the line, see below: warehouse and batch instead of discount
+			print '<td class="linecolwarehouse right"><span id="title_warehouse">'.$langs->trans('Warehouse').'</span></td>';
+			if (isModEnabled('productbatch')) {
+				print '<td class="linecolbatch"><span id="title_batch">'.$langs->trans('Batch').'</span></td>';
+			}
+		} else {
+			print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
+		}
+		?>
 		<?php
 		// Fields for situation invoice
 		if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
@@ -1333,7 +1342,7 @@ if (!empty($object->thirdparty)) {
 
 						/* Define default price at loading */
 						var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-						$("#buying_price").val(defaultprice);
+						$("#buying_price").val((defaultprice === undefined || defaultprice === '') ? '' : pricejs(defaultprice, 'MU'));	/* an empty buying price must stay empty, not become 0 */
 
 						$("#fournprice_predef").change(function() {
 							console.log("change on fournprice_predef");
@@ -1341,13 +1350,13 @@ if (!empty($object->thirdparty)) {
 							var linevalue=$(this).find('option:selected').val();
 							var pricevalue = $(this).find('option:selected').attr("price");
 							if (linevalue != 'inputprice' && linevalue != 'pmpprice') {
-								$("#buying_price").val(pricevalue).hide();	/* We set value then hide field */
+								$("#buying_price").val(pricejs(pricevalue, 'MU')).hide();	/* We set value then hide field */
 							}
 							if (linevalue == 'inputprice') {
 								$('#buying_price').show();
 							}
 							if (linevalue == 'pmpprice') {
-								$("#buying_price").val(pricevalue);
+								$("#buying_price").val(pricejs(pricevalue, 'MU'));
 								$('#buying_price').hide();
 							}
 						});

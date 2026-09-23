@@ -940,8 +940,10 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Clear").'</span>';
 	$out .= '</button>';
 	if ($mode === 'popover') {
-		// Window controls of the popover (handled by the bootstrap JS in main.inc.php)
-		$out .= '<button type="button" id="ai-expand-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIExpandPanel")).'" data-title-expand="'.dol_escape_htmltag($langs->trans("AIExpandPanel")).'" data-title-reduce="'.dol_escape_htmltag($langs->trans("AIReducePanel")).'"><i class="fa fa-expand-alt"></i></button>';
+		// Window controls of the popover (handled by the bootstrap JS in main.inc.php).
+		// The expand button opens the standalone full page (/ai/assistant/index.php)
+		// in the current tab; the popover always stays in its large ("expanded") state.
+		$out .= '<button type="button" id="ai-expand-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIOpenFullPage")).'" data-fullscreen-url="'.dol_buildpath('/ai/assistant/index.php', 1).'"><i class="fa fa-expand"></i></button>';
 		$out .= '<button type="button" id="ai-close-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("Close")).'"><i class="fa fa-times"></i></button>';
 	}
 	$out .= '</div>';
