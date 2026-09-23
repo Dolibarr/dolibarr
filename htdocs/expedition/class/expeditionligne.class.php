@@ -163,6 +163,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	 * @var int|null Id of warehouse, also exposed as entrepot_id
+	 * @deprecated Use $entrepot_id
 	 */
 	public $fk_entrepot;
 
