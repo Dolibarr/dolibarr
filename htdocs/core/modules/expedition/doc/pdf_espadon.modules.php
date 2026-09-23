@@ -8,6 +8,7 @@
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +32,11 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 /**
  *	Class to build sending documents with model Espadon
@@ -128,6 +131,87 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->tabTitleHeight = 5; // default height
 	}
 
+	/**
+	 * Add catalog lines created directly on an order-based shipment to PDF lines.
+	 *
+	 * @param	Expedition	$object			Shipment object
+	 * @param	Translate	$outputlangs	Output language
+	 * @return	void
+	 */
+	private function addAdditionalCatalogLines($object, $outputlangs)
+	{
+		if (empty($object->id) || !($object->origin_id > 0)) {
+			return;
+		}
+
+		$existingLineIds = array();
+		if (is_array($object->lines)) {
+			foreach ($object->lines as $existingLine) {
+				if (!empty($existingLine->id)) {
+					$existingLineIds[(int) $existingLine->id] = true;
+				}
+			}
+		} else {
+			$object->lines = array();
+		}
+
+		$tmpobject = new Expedition($this->db);
+		$tmpobject->id = $object->id;
+		if ($tmpobject->fetch_lines_free() <= 0) {
+			return;
+		}
+
+		foreach ($tmpobject->lines as $line) {
+			if (!empty($line->id) && !empty($existingLineIds[(int) $line->id])) {
+				continue;
+			}
+			if (!empty($line->fk_elementdet) || (!empty($line->element_type) && $line->element_type !== 'shipping')) {
+				continue;
+			}
+
+			$line->origin_line_id = 0;
+			$line->fk_elementdet = 0;
+			$line->qty_asked = $line->qty;
+			$line->qty_shipped = $line->qty;
+			$line->special_code = 0;
+			$line->subprice = 0;
+			$line->total_ht = 0;
+			$line->total_tva = 0;
+			$line->total_ttc = 0;
+			$line->desc = $line->description;
+			$line->ref = '';
+			$line->product_label = '';
+			$line->label = '';
+			$line->fk_product_type = Product::TYPE_PRODUCT;
+			$line->product_type = Product::TYPE_PRODUCT;
+			$line->weight = 0;
+			$line->weight_units = 0;
+			$line->volume = 0;
+			$line->volume_units = 0;
+
+			if ($line->fk_product > 0) {
+				$product = new Product($this->db);
+				if ($product->fetch($line->fk_product) > 0) {
+					$productLabel = (!empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $product->label;
+					$line->ref = $product->ref;
+					$line->product_label = $productLabel;
+					$line->label = $productLabel;
+					$line->fk_product_type = $product->type;
+					$line->product_type = $product->type;
+					$line->weight = $product->weight;
+					$line->weight_units = (int) ($product->weight_units ?? 0);
+					$line->volume = $product->volume;
+					$line->volume_units = (int) ($product->volume_units ?? 0);
+					if (empty($line->fk_unit)) {
+						$line->fk_unit = $product->fk_unit;
+					}
+				}
+			}
+
+			$object->lines[] = $line;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build pdf onto disk
@@ -162,6 +246,8 @@ class pdf_espadon extends ModelePdfExpedition
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('SHIPPING_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('SHIPPING_DRAFT_WATERMARK');
 		}
+
+		$this->addAdditionalCatalogLines($object, $outputlangs);
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
