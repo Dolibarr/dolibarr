@@ -277,7 +277,7 @@ class Donations extends DolibarrApi
 		if ($this->don->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->don->error);
+			throw new RestException(500, $this->don->errorsToString());
 		}
 	}
 
@@ -305,7 +305,7 @@ class Donations extends DolibarrApi
 		}
 
 		if (!$this->don->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete donation : '.$this->don->error);
+			throw new RestException(500, 'Error when delete donation : '.$this->don->errorsToString());
 		}
 
 		return array(
@@ -359,7 +359,7 @@ class Donations extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Order: '.$this->don->error);
+			throw new RestException(500, 'Error when validating Order: '.$this->don->errorsToString());
 		}
 		$result = $this->don->fetch($id);
 		if (!$result) {

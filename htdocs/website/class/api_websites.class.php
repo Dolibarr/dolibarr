@@ -415,7 +415,7 @@ class Websites extends DolibarrApi
 		// Update the page in database
 		$result = $this->websitepage->update(DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(500, $this->websitepage->error);
+			throw new RestException(500, $this->websitepage->errorsToString());
 		}
 
 		// Regenerate static files on disk (same as web interface in index.php)
