@@ -50,7 +50,9 @@ if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
 }
 
 // Permissions
-$permissionnote = $user->hasRight("user", "self", "write"); // Used by the include of actions_setnotes.inc.php
+// Writing notes on own record needs the "self" write right, writing on another user's record needs the "user" write right.
+// Without this distinction a user holding only "self" write could edit the notes of any user, including admins.
+$permissionnote = ((($object->id == $user->id) && $user->hasRight("user", "self", "write")) || (($object->id != $user->id) && $user->hasRight("user", "user", "write"))); // Used by the include of actions_setnotes.inc.php
 
 // Security check
 $socid = 0;

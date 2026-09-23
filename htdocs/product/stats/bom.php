@@ -230,7 +230,7 @@ if ($id > 0 || !empty($ref)) {
 					$bomtmp->ref = $objp->ref;
 					$product = new Product($db);
 					if (!empty($objp->fk_product)) {
-						if (!array_key_exists($product->id, $product_cache)) {
+						if (!array_key_exists($objp->fk_product, $product_cache)) {
 							$resultFetch = $product->fetch($objp->fk_product);
 							if ($resultFetch < 0) {
 								setEventMessages($product->error, $product->errors, 'errors');

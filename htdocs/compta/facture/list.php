@@ -419,11 +419,15 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 					$errorpayment++;
 				} else {
 					if ($facture->type != Facture::TYPE_CREDIT_NOTE && $facture->statut == Facture::STATUS_VALIDATED && $facture->paye == 0) {
-						$paiementAmount = $facture->getSommePaiement();
+						// Get both the base-currency and invoice-currency paid amount in a single query
+						$sommePaiement = $facture->getSommePaiement(-1);
+						$paiementAmount = $sommePaiement['alreadypaid'];
 						$totalcreditnotes = $facture->getSumCreditNotesUsed();
 						$totaldeposits = $facture->getSumDepositsUsed();
 						$totalallpayments = $paiementAmount + $totalcreditnotes + $totaldeposits;
 						$remaintopay = price2num($facture->total_ttc - $totalallpayments);
+						// Remain to pay in the invoice currency (may differ from $remaintopay when multicurrency is used)
+						$multicurrency_remaintopay = price2num($facture->multicurrency_total_ttc - $sommePaiement['alreadypaid_multicurrency']);
 						if ($remaintopay != 0) {
 							$resultBank = $facture->setBankAccount($bankid);
 							if ($resultBank < 0) {
@@ -433,7 +437,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 								$paiement = new Paiement($db);
 								$paiement->datepaye = $paiementdate;
 								$paiement->amounts[$facture->id] = $remaintopay; // Array with all payments dispatching with invoice id
-								$paiement->multicurrency_amounts[$facture->id] = $remaintopay;
+								$paiement->multicurrency_amounts[$facture->id] = $multicurrency_remaintopay;
 								$paiement->paiementid = $paiementid;
 								$paiement_id = $paiement->create($user, 1, $facture->thirdparty);
 								if ($paiement_id < 0) {
@@ -2399,7 +2403,8 @@ if ($resql) {
 
 				// Pending amount
 				if (!empty($arrayfields['rtp']['checked'])) {
-					print '<td class="right nowraponall amount">';
+					$cssamountorstrike = (empty($obj->paye) ? 'amount' : 'colorgrey strikefordisabled');
+					print '<td class="right nowraponall '.$cssamountorstrike.'">';
 					print (!empty($remaintopay) ? price($remaintopay, 0, $langs) : '&nbsp;');
 					print '</td>'; // TODO Use a denormalized field
 					if (!$i) {
@@ -2407,6 +2412,9 @@ if ($resql) {
 					}
 					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = 'rtp';
+					}
+					if (!empty($obj->paye)) {
+						$remaintopay = 0; // remove from total
 					}
 					$totalarray['val']['rtp'] += $remaintopay;
 				}
@@ -2465,7 +2473,8 @@ if ($resql) {
 
 				// Pending amount
 				if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
-					print '<td class="right nowraponall">';
+					$cssamountorstrike = (empty($obj->paye) ? '' : ' colorgrey strikefordisabled');
+					print '<td class="right nowraponall'.$cssamountorstrike.'">';
 					print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
 					print '</td>'; // TODO Use a denormalized field ?
 					if (!$i) {

@@ -259,6 +259,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			} else {
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element);
+				print '<input type="hidden" value="' . dol_escape_htmltag($value) . '" name="options_' . dol_escape_htmltag($tmpkeyextra) . '" id="options_' . dol_escape_htmltag($tmpkeyextra) . '"/>'; // it's needed when to get parent value when extra-field list depend on parent extra-field list
 			}
 
 			print '</td>';
@@ -273,31 +274,6 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 		print '
 				<script>
 				    jQuery(document).ready(function() {
-				    	function showOptions(child_list, parent_list)
-				    	{
-				    		var val = $("select[name="+parent_list+"]").val();
-				    		var parentVal = parent_list + ":" + val;
-							if(val > 0) {
-					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
-					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
-							} else {
-								$("select[name=\""+child_list+"\"] option").show();
-							}
-				    	}
-						function setListDependencies() {
-					    	jQuery("select option[parent]").parent().each(function() {
-					    		var child_list = $(this).attr("name");
-								var parent = $(this).find("option[parent]:first").attr("parent");
-								var infos = parent.split(":");
-								var parent_list = infos[0];
-								showOptions(child_list, parent_list);
-
-								/* Activate the handler to call showOptions on each future change */
-								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list);
-								});
-					    	});
-						}
 						setListDependencies();
 				    });
 				</script>'."\n";
