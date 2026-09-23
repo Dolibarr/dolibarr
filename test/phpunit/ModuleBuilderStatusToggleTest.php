@@ -25,6 +25,7 @@ global $conf, $user, $langs, $db;
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -51,11 +52,6 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class ModuleBuilderStatusToggleTest extends CommonClassTest
 {
 	/**
-	 * @var string Regex pruning every BEGIN/END MODULEBUILDER STATUS region (non-greedy).
-	 */
-	const STATUS_PRUNE_PATTERN = '/\h*\/\*\s*BEGIN MODULEBUILDER STATUS\s*\*\/.*?\/\*\s*END MODULEBUILDER STATUS\s*\*\/\s*/s';
-
-	/**
 	 * @var string Absolute path to the object class template.
 	 */
 	const CLASS_TPL = __DIR__.'/../../htdocs/modulebuilder/template/class/myobject.class.php';
@@ -66,17 +62,42 @@ class ModuleBuilderStatusToggleTest extends CommonClassTest
 	const CARD_TPL = __DIR__.'/../../htdocs/modulebuilder/template/myobject_card.php';
 
 	/**
-	 * Copy a template to a tmp file, prune its STATUS regions, return the tmp path.
+	 * @var string Temporary module directory, removed in tearDown()
+	 */
+	private $tmpDir = '';
+
+	/**
+	 * Copy both templates into a temporary module tree, prune it with pruneModuleBuilderStatusRegions()
+	 * and return the path of the pruned copy of $srcTpl.
 	 *
-	 * @param	string	$srcTpl		Absolute path to the source template
-	 * @return	string				Absolute path to the pruned tmp file (caller must unlink)
+	 * @param	string	$srcTpl		self::CLASS_TPL or self::CARD_TPL
+	 * @return	string				Absolute path to the pruned copy
 	 */
 	private function pruneToTmp($srcTpl)
 	{
-		$tmp = tempnam(sys_get_temp_dir(), 'mbstatus').'.php';
-		copy($srcTpl, $tmp);
-		removePatternFromFile($tmp, self::STATUS_PRUNE_PATTERN);
-		return $tmp;
+		$this->tmpDir = sys_get_temp_dir().'/mbstatus_'.getmypid();
+		dol_mkdir($this->tmpDir.'/class');
+		$classFile = $this->tmpDir.'/class/myobject.class.php';
+		$cardFile = $this->tmpDir.'/myobject_card.php';
+		copy(self::CLASS_TPL, $classFile);
+		copy(self::CARD_TPL, $cardFile);
+		$this->assertSame(0, pruneModuleBuilderStatusRegions($this->tmpDir, 'MyObject'), 'pruneModuleBuilderStatusRegions() failed');
+		return ($srcTpl === self::CARD_TPL ? $cardFile : $classFile);
+	}
+
+	/**
+	 * Remove the temporary module tree, even when an assertion failed.
+	 *
+	 * @return void
+	 */
+	protected function tearDown(): void
+	{
+		if ($this->tmpDir !== '' && is_dir($this->tmpDir)) {
+			$nbdeleted = 0;
+			dol_delete_dir_recursive($this->tmpDir, 0, 1, 0, $nbdeleted, 0, 1);
+		}
+		$this->tmpDir = '';
+		parent::tearDown();
 	}
 
 	/**
@@ -88,7 +109,6 @@ class ModuleBuilderStatusToggleTest extends CommonClassTest
 	{
 		$tmp = $this->pruneToTmp(self::CLASS_TPL);
 		$content = file_get_contents($tmp);
-		unlink($tmp);
 		$this->assertSame(0, preg_match('/STATUS_|->status\b|LibStatut|getLabelStatus/', $content), 'Residual status reference found in pruned class');
 	}
 
@@ -101,7 +121,6 @@ class ModuleBuilderStatusToggleTest extends CommonClassTest
 	{
 		$tmp = $this->pruneToTmp(self::CLASS_TPL);
 		$content = file_get_contents($tmp);
-		unlink($tmp);
 		$this->assertSame(0, preg_match("/'status'\s*=>\s*array/", $content), "Status field entry still present in \$fields after prune");
 	}
 
@@ -116,7 +135,6 @@ class ModuleBuilderStatusToggleTest extends CommonClassTest
 		$out = array();
 		$code = 0;
 		exec('php -l '.escapeshellarg($tmp).' 2>&1', $out, $code);
-		unlink($tmp);
 		$this->assertSame(0, $code, 'Pruned class fails php -l: '.implode("\n", $out));
 	}
 
@@ -143,7 +161,6 @@ class ModuleBuilderStatusToggleTest extends CommonClassTest
 	{
 		$tmp = $this->pruneToTmp(self::CARD_TPL);
 		$content = file_get_contents($tmp);
-		unlink($tmp);
 		// Runtime status references only. The "// Actions ... confirm_setdraft, confirm_reopen" comment
 		// documents the core actions_addupdatedelete.inc.php include and is intentionally kept:
 		// those core actions exist regardless of this feature and are simply never triggered without buttons.
@@ -161,7 +178,6 @@ class ModuleBuilderStatusToggleTest extends CommonClassTest
 		$out = array();
 		$code = 0;
 		exec('php -l '.escapeshellarg($tmp).' 2>&1', $out, $code);
-		unlink($tmp);
 		$this->assertSame(0, $code, 'Pruned card fails php -l: '.implode("\n", $out));
 	}
 
