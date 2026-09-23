@@ -320,7 +320,8 @@ if ($db !== null) {
 
 // Set default language (must be after the setValues setting global conf 'MAIN_LANG_DEFAULT'. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (!defined('NOREQUIRETRAN')) {
-	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+	// On a public page, the visitor has no user setup: the language of his browser wins over the default language of the backoffice
+	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : ((defined('NOLOGIN') && !empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) ? 'auto' : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto')));
 	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
 		$langcode = constant('MAIN_LANG_DEFAULT');
 	}
