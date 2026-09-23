@@ -3,7 +3,7 @@
 The 2 main CI workflows are:
 ----------------------------
 
-- ci-on-pull_request.yml
+- ci-on-pull.yml
 - ci-on-push.yml
 
 This run the actions:
@@ -25,9 +25,4 @@ The other worklows are:
 - ci-cache-clean-pr 	to clean cache when closing a PR.
 - ci-test 				to make CI tests
 - ci-checkfiltesetlock 	to check we do not modify a file that is locked by a signature in dev/lockedfiles.txt
-
-Some tests workflows are:
-------------------------
-
-- pr-18
-- test
+- ci-checkpr 		to check the title of a PR starts with a valid keyword (Fix, Close, New, Perf, Doc, Qual, Sec)
