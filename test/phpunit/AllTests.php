@@ -134,6 +134,8 @@ class AllTests
 		//$suite->addTestSuite('DateLibTzFranceTest');
 		require_once dirname(__FILE__).'/MarginsLibTest.php';
 		$suite->addTestSuite('MarginsLibTest');
+		require_once dirname(__FILE__).'/ModuleBuilderStatusToggleTest.php';
+		$suite->addTestSuite('ModuleBuilderStatusToggleTest');
 		require_once dirname(__FILE__).'/FilesLibMoveDirTest.php';
 		$suite->addTestSuite('FilesLibMoveDirTest');
 		require_once dirname(__FILE__).'/FilesLibTest.php';
