@@ -241,7 +241,6 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod
 -- VMYSQL10.3 UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_user.entity FROM llx_user WHERE llx_notify_def.fk_user = llx_user.rowid AND llx_notify_def.fk_user > 0;
 
-
 -- Payment tables predate the modulebuilder convention of always adding import_key, so unlike
 -- most other object tables they never got it. Add it so a future import profile for payments
 -- (see htdocs/core/modules/mod*.class.php import_tables_array) is possible.
@@ -268,3 +267,12 @@ ALTER TABLE llx_ai_request_log ADD COLUMN tokens_output integer;
 ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
 
 ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;
+
+-- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
+-- Empty strings must become NULL first: the unique index does not tolerate them like NULL.
+UPDATE llx_product_lot SET barcode = NULL WHERE barcode = '';
+
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
+

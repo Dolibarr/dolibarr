@@ -1765,7 +1765,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			];
 
 			// Pattern to remove everything between the tags
-			$pattern = '/\/\/BEGIN MODULEBUILDER LINES.*?\/\/END MODULEBUILDER LINES\s*/s';
+			$pattern = getModuleBuilderLinesBlockPattern();
 			foreach ($TFilePaths as $filePath) {
 				// Skip files that were not generated (e.g. the API class when API generation is disabled);
 				// a missing optional file must not abort the whole object generation.

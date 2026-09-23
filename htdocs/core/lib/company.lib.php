@@ -2774,9 +2774,10 @@ function show_subsidiaries($conf, $langs, $db, $object)
  *                                          ids. 0 / '' / empty array => only test that the thirdparty is assigned to
  *                                          at least one sales representative.
  * @param	int<0,1>			$not		1 to return "NOT EXISTS(...)" instead of "EXISTS(...)"
+ * @param	int<0,1>			$allownull	Allow null value for the sales representative (i.e. contract is not assigned to any third party)
  * @return	string							SQL "EXISTS(...)" / "NOT EXISTS(...)" fragment
  */
-function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0)
+function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $allownull = 0)
 {
 	global $db;
 
@@ -2787,13 +2788,19 @@ function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0)
 		return $v > 0;
 	}));
 
-	$sql = ($not ? 'NOT EXISTS' : 'EXISTS');
+	$sql = "";
+	if ($allownull) {
+		$sql .= "(t.fk_soc IS NULL OR ";
+	}
+	$sql .= ($not ? 'NOT EXISTS' : 'EXISTS');
 	// $socidfield is a column expression of the outer query (e.g. 's.rowid'); it is compared to sc.fk_soc
 	$sql .= ' (SELECT sc.fk_soc FROM '.$db->prefix().'societe_commerciaux as sc WHERE '.$db->sanitize($socidfield).' = sc.fk_soc';
 	if (!empty($userids)) {
 		$sql .= ' AND sc.fk_user IN ('.$db->sanitize(implode(',', $userids)).')';
 	}
-	$sql .= ')';
+	if ($allownull) {
+		$sql .= ')';
+	}
 
 	return $sql;
 }

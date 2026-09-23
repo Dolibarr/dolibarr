@@ -64,6 +64,15 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 	const DATA_SQL = __DIR__.'/../../htdocs/modulebuilder/template/sql/data.sql';
 
 	/**
+	 * @var string[] Templates the 'do not manage lines' option strips MODULEBUILDER LINES blocks from.
+	 */
+	const LINES_TPL = array(
+		__DIR__.'/../../htdocs/modulebuilder/template/myobject_card.php',
+		__DIR__.'/../../htdocs/modulebuilder/template/class/myobject.class.php',
+		__DIR__.'/../../htdocs/modulebuilder/template/class/api_mymodule.class.php',
+	);
+
+	/**
 	 * getLibStatut() must use the label defined in the status field arrayofkeyval, not a hardcoded one.
 	 *
 	 * @return void
@@ -160,6 +169,38 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 	}
 
 	/**
+	 * MODULEBUILDER LINES markers must be balanced and never nested: the removal pattern is non greedy,
+	 * so a nested pair makes the outer BEGIN match the inner END and cuts an unbalanced fragment.
+	 *
+	 * @return void
+	 */
+	public function testLinesMarkersAreBalancedAndNotNestedInTemplates()
+	{
+		foreach (self::LINES_TPL as $tpl) {
+			$content = file_get_contents($tpl);
+			$name = basename($tpl);
+
+			$begin = preg_match_all('/^\h*\/\/BEGIN MODULEBUILDER LINES$/m', $content);
+			$end = preg_match_all('/^\h*\/\/END MODULEBUILDER LINES$/m', $content);
+			$this->assertGreaterThan(0, $begin, 'No MODULEBUILDER LINES block in '.$name);
+			$this->assertSame($begin, $end, 'Unbalanced MODULEBUILDER LINES markers in '.$name);
+
+			$markers = array();
+			preg_match_all('/^\h*\/\/(BEGIN|END) MODULEBUILDER LINES$/m', $content, $markers);
+			$depth = 0;
+			foreach ($markers[1] as $marker) {
+				$depth += ($marker === 'BEGIN' ? 1 : -1);
+				$this->assertGreaterThanOrEqual(0, $depth, 'END before BEGIN in '.$name);
+				$this->assertLessThanOrEqual(1, $depth, 'Nested MODULEBUILDER LINES markers in '.$name);
+			}
+			$this->assertSame(0, $depth, 'Unclosed MODULEBUILDER LINES block in '.$name);
+
+			// A correctly paired file lets the production pattern match every block
+			$this->assertSame($begin, preg_match_all(getModuleBuilderLinesBlockPattern(), $content), 'Pattern does not pair every block in '.$name);
+		}
+	}
+
+	/**
 	 * The Cancel / Re-Open block ships commented out: its two sentinel lines are what the generator
 	 * removes to activate it.
 	 *
@@ -221,5 +262,28 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 		$this->assertStringNotContainsString('COMMENTED STATUSCHANGE', $activated);
 		$this->assertMatchesRegularExpression('/^\h*print dolGetButtonAction\(.*Re-Open/m', $activated, 'Re-Open button is still commented out after activation');
 		$this->assertPhpSourceIsParsable($activated, 'Card page is not parsable once Cancel / Re-Open is activated');
+	}
+
+	/**
+	 * Templates must stay parsable once the object lines code is stripped.
+	 *
+	 * @return void
+	 */
+	public function testTemplatesStayParsableWithoutLines()
+	{
+		foreach (self::LINES_TPL as $tpl) {
+			$stripped = preg_replace(getModuleBuilderLinesBlockPattern(), '', file_get_contents($tpl));
+			$this->assertNotNull($stripped, 'Lines pattern failed on '.basename($tpl));
+			$this->assertStringNotContainsString('MODULEBUILDER LINES', $stripped, 'Leftover marker in '.basename($tpl));
+
+			$tmpfile = tempnam(sys_get_temp_dir(), 'mbnolines').'.php';
+			file_put_contents($tmpfile, $stripped);
+			$output = array();
+			$returncode = 0;
+			exec(escapeshellarg(PHP_BINARY).' -l '.escapeshellarg($tmpfile).' 2>&1', $output, $returncode);
+			unlink($tmpfile);
+
+			$this->assertSame(0, $returncode, basename($tpl).' is not parsable without lines : '.implode("\n", $output));
+		}
 	}
 }
