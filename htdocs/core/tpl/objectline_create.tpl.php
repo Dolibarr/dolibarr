@@ -124,6 +124,8 @@ if (!empty($extrafields)) {
 		$objectline = new FactureLigneRec($this->db);
 	} elseif ($this->table_element_line == 'facture_fourn_det_rec') {
 		$objectline = new FactureFournisseurLigneRec($this->db);
+	} elseif ($this->table_element_line == 'expeditiondet') {
+		$objectline = new ExpeditionLigne($this->db);
 	}
 }
 print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
