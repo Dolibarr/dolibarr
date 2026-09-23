@@ -268,6 +268,60 @@ ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
 
 ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;
 
+-- NEW schemas table and schemas extrafields
+CREATE TABLE llx_schemas (
+    rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+    uuid 			varchar(64) NOT NULL,                
+    name 			varchar(64) NOT NULL,
+    label 			varchar(255) NOT NULL,
+    schema_kind 	varchar(32) NULL,
+    description 	text,
+    composed_of 	JSON NULL,
+    json_schema 	JSON,
+    active 			integer DEFAULT 1 NOT NULL,
+    date_creation 	datetime NOT NULL,
+    tms 			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_user_creat 	integer,
+    fk_user_modif 	integer,
+    entity 			integer DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+CREATE TABLE llx_extrafields_schemas (
+	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+    name 			varchar(64) NOT NULL,
+    entity 			integer DEFAULT 1 NOT NULL,
+    label 			varchar(255) NOT NULL,
+    type 			varchar(64),
+    size 			varchar(8) DEFAULT NULL,
+    fieldcomputed 	text,
+    fielddefault 	text,
+    fieldunique 	integer DEFAULT 0,
+    fieldrequired 	integer DEFAULT 0,
+    perms 			varchar(255),
+    enabled 		varchar(255),
+    pos 			integer DEFAULT 0,
+    alwayseditable 	integer DEFAULT 0,
+    emptyonclone 	integer DEFAULT 0,
+    param 			text,
+    list 			varchar(255) DEFAULT '1',
+	printable 		integer DEFAULT 0,
+	showintooltip	integer DEFAULT 0,
+    totalizable 	boolean default false,
+    langs 			varchar(64),
+    help 			text,
+	aiprompt		text,
+    css 			varchar(255),
+    cssview 		varchar(255),
+    csslist 		varchar(255),
+    personal_data	integer DEFAULT 0,
+	fk_user_author	integer,
+	fk_user_modif	integer,
+    fk_schema 		integer NOT NULL,
+	datec			datetime,
+	tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=innodb;
+
+
 -- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
 -- Empty strings must become NULL first: the unique index does not tolerate them like NULL.
 UPDATE llx_product_lot SET barcode = NULL WHERE barcode = '';
@@ -275,4 +329,5 @@ UPDATE llx_product_lot SET barcode = NULL WHERE barcode = '';
 ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
 ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
+
 
