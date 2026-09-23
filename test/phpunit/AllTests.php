@@ -233,9 +233,6 @@ class AllTests
 		require_once dirname(__FILE__).'/MoTest.php';
 		$suite->addTestSuite('MoTest');
 
-		require_once dirname(__FILE__).'/MoTest.php';
-		$suite->addTestSuite('MoTest');
-
 		require_once dirname(__FILE__).'/DolresourceTest.php';
 		$suite->addTestSuite('DolresourceTest');
 
