@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
@@ -117,11 +117,12 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
-	global $conf, $langs, $mysoc;
+	global $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -296,7 +297,7 @@ print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"'
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext opacitymedium justify">';
+print '<div class="center subscriptionformhelptext opacitymedium">';
 if (getDolGlobalString('COMPANY_NEWFORM_TEXT')) {
 	print $langs->trans(getDolGlobalString('COMPANY_NEWFORM_TEXT')) . "<br>\n";
 } else {
@@ -361,7 +362,7 @@ if ($object->particulier || $private) {
 */
 print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate">'; // text appreas left
 print '<input type="hidden" name="ThirdPartyName" value="' . $langs->trans('ThirdPartyName') . '">';
-print '<span id="TypeName" class="fieldrequired"  title="' .dol_escape_htmltag($langs->trans("FieldsWithAreMandatory", '*')) . '" >' . $form->editfieldkey('Company', 'name', '', $object, 0) . '<span class="star"> *</span></span>';
+print '<span id="TypeName" title="' .dol_escape_htmltag($langs->trans("FieldsWithAreMandatory", '*')) . '" >' . $form->editfieldkey('Company', 'name', '', $object, 0) . '<span class="star"> *</span></span>';
 print '</td><td>'; // inline input
 print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="' . dol_escape_htmltag($object->name) . '" autofocus="autofocus">';
 //
@@ -393,16 +394,16 @@ print '</td></tr>';
 
 // Phone / Fax
 print '<tr><td>' . $form->editfieldkey('Phone', 'phone', '', $object, 0) . '</td>';
-print '<td>' . img_picto('', 'object_phoning', 'class="pictofixedwidth"') . ' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="' . (GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone) . '"></td>';
+print '<td>' . $form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth200 widthcentpercentminusx') . '</td>';
 print '</tr>';
 
 print '<tr>';
 print '<td>' . $form->editfieldkey('Fax', 'fax', '', $object, 0) . '</td>';
-print '<td>' . img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"') . ' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="' . (GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax) . '"></td>';
+print '<td>' . $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth200 widthcentpercentminusx') . '</td>';
 print '</tr>';
 
 // Email / Web
-print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', !getDolGlobalString('SOCIETE_EMAIL_MANDATORY') ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY) . '</td>';
+print '<tr><td>' . $form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', getDolGlobalInt('SOCIETE_EMAIL_MANDATORY')) . '</td>';
 print '<td>' . img_picto('', 'object_email', 'class="pictofixedwidth"') . ' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="' . $object->email . '"></td>';
 if (isModEnabled('mailing') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 	if ($conf->browser->layout == 'phone') {

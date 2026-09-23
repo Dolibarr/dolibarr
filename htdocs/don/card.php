@@ -5,8 +5,9 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,15 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -47,14 +57,6 @@ if (isModEnabled('project')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 $langs->loadLangs(array('bills', 'companies', 'donations', 'users'));
 
@@ -82,8 +84,6 @@ if (!empty($socid) && $socid > 0) {
 		$soc->fetch($socid);
 	}
 }
-
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -546,7 +546,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel();
+	print $form->buttonsSaveCancel('CreateDraft');
 
 	print "</form>\n";
 }
@@ -690,8 +690,7 @@ if (!empty($id) && $action != 'edit') {
 
 	$result = $object->fetch($id);
 	if ($result < 0) {
-		dol_print_error($db, $object->error);
-		exit;
+		recordNotFound('', 0);
 	}
 	$result = $object->fetch_optionals();
 	if ($result < 0) {
@@ -702,7 +701,7 @@ if (!empty($id) && $action != 'edit') {
 	$hselected = 'card';
 
 	$head = donation_prepare_head($object);
-	print dol_get_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'donation');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'donation', 0, '', '', 0, '', 1);
 
 	// Print form confirm
 	print $formconfirm;

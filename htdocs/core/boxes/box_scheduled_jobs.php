@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017 	   Nicolas Zabouri      <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class box_scheduled_jobs extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -79,7 +79,7 @@ class box_scheduled_jobs extends ModeleBoxes
 			$sql .= " t.label, t.status, t.test, t.lastresult, t.processing";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "cronjob as t";
 			$sql .= " WHERE status <> ".$cronstatic::STATUS_DISABLED;
-			$sql .= " AND entity IN (0, ".$conf->entity.")";
+			$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 			$sql .= $this->db->order("t.datelastrun", "DESC");
 
 			$result = $this->db->query($sql);

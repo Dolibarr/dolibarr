@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,7 +66,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 $action = GETPOST('action', 'aZ09');
 
 $signature = GETPOST('signaturebase64');
-$ref = GETPOST('ref', 'aZ09');
+// Match the filter the producer uses in newonlinesign.php:97 ('alpha').
+// Refs such as PR2601-0003 contain a dash, which aZ09 strips. After stripping
+// the dash, dol_verifyHash fails because the security key was built from the
+// full reference, so onlineSign answered 403 even on valid submissions (#31464).
+$ref = GETPOST('ref', 'alpha');
 $mode = GETPOST('mode', 'aZ09');    // 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
 $online_sign_name = GETPOST("onlinesignname");
@@ -76,19 +80,23 @@ $response = "";
 
 $type = $mode;
 
+global $dolibarr_main_instance_unique_id;
+$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
+
 // Security check
 $securekeyseed = '';
 if ($type == 'proposal') {
-	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($type == 'contract') {
-	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($type == 'fichinter') {
-	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } else {
-	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 }
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
+	// Link may have expired because of a change into the keys used to forge the signature.
 	httponly_accessforbidden('Bad value for securitykey. Value provided ' . dol_escape_htmltag($SECUREKEY) . ' does not match expected value for ref=' . dol_escape_htmltag($ref), 403);
 }
 
@@ -168,7 +176,12 @@ if ($action == "importSignature") {
 
 						if (empty($reshook)) {
 							// We build the new PDF
-							$pdf = pdf_getInstance();
+							$formatarray = pdf_getFormat();
+							$page_largeur = $formatarray['width'];
+							$page_hauteur = $formatarray['height'];
+							$format = array($page_largeur, $page_hauteur);
+
+							$pdf = pdf_getInstance($format);
 							if (class_exists('TCPDF')) {
 								$pdf->setPrintHeader(false);
 								$pdf->setPrintFooter(false);
@@ -193,8 +206,10 @@ if ($action == "importSignature") {
 								try {
 									$tppl = $pdf->importPage($i);
 									$s = $pdf->getTemplatesize($tppl);
-									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$format = array($s['w'], $s['h']);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L', $format);
 									$pdf->useTemplate($tppl);
+
 									if ($propalsignonspecificpage < 0) {
 										$propalsignonspecificpage = $pagecount - abs($propalsignonspecificpage);
 									}
@@ -289,21 +304,27 @@ if ($action == "importSignature") {
 					$sql .= ", online_sign_name = '" . $db->escape($online_sign_name) . "'";
 				}
 				$sql .= " WHERE rowid = " . ((int) $object->id);
+				$sql .= " AND fk_statut = ".((int) $object::STATUS_VALIDATED);		// Protection so we can't sign a document that is no more with status validated.
 
 				dol_syslog(__FILE__, LOG_DEBUG);
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
+					$response = "error sql";
 				} else {
 					$num = $db->affected_rows($resql);
+					if ($num <= 0) {
+						$error++;
+						$langs->load("errors");
+						//setEventMessages($langs->trans("ErrorCantSignDocument"), null, 'errors');
+						print $langs->transnoentitiesnoconv("ErrorCantSignDocument");	// Must be a print that is shown by ajavascript alert().
+					}
 				}
 
 				if (!$error) {
 					if (method_exists($object, 'call_trigger')) {
-						//customer is not a user !?! so could we use same user as validation ?
-						$user = new User($db);
-						$user->fetch($object->user_validation_id);
 						$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+
 						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED', $user);
 						if ($result < 0) {
 							$error++;
@@ -322,15 +343,12 @@ if ($action == "importSignature") {
 					} else {
 						$response = "success";
 					}
-				} else {
-					$error++;
-					$response = "error sql";
 				}
 
 				if (!$error) {
 					$db->commit();
 					$response = "success";
-					setEventMessages("PropalSigned", null, 'warnings');
+					setEventMessages("PropalSigned", null, 'mesgs');
 				} else {
 					$db->rollback();
 				}
@@ -341,7 +359,7 @@ if ($action == "importSignature") {
 			$object = new Contrat($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contrat->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
+			$upload_dir = !empty($conf->contract->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contract->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
@@ -555,17 +573,17 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART")) {
 											$param['xforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_XFORIMGSTART");
 										} else {
-											$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
+											$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
 										} else {
-											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
+											$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 										}
 
 										dolPrintSignatureImage($pdf, $langs, $param);
@@ -581,9 +599,9 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
-								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
+								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
@@ -663,6 +681,13 @@ if ($action == "importSignature") {
 						if ($last_modelpdf == 'sepamandate') {
 							$newpdffilename = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . "_signed-" . $date . ".pdf";
 							$sourcefile = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . ".pdf";
+						} else {
+							// Fallback for setups using a non-default bank PDF model (eg. "ban"): take the last
+							// generated main document as source and append "_signed-<date>" before the extension.
+							// Without this the signed PDF is never built and the download link keeps pointing at
+							// the unsigned original.
+							$sourcefile = DOL_DATA_ROOT . '/' . $last_main_doc_file;
+							$newpdffilename = preg_replace('/\.pdf$/i', '_signed-' . $date . '.pdf', $sourcefile);
 						}
 						if (dol_is_file($sourcefile)) {
 							$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -712,7 +737,7 @@ if ($action == "importSignature") {
 								}
 								foreach ($dirmodels as $reldir) {
 									$file = "pdf_" . $last_modelpdf . ".modules.php";
-									// On vérifie l'emplacement du modele
+									// Check the template location
 									$file = dol_buildpath($reldir . $modelpath . $file, 0);
 									if (file_exists($file)) {
 										$filefound = $file;
@@ -782,7 +807,7 @@ if ($action == "importSignature") {
 
 				$online_sign_ip = getUserRemoteIP();
 
-				$sql = "UPDATE " . MAIN_DB_PREFIX . $object->table_element;
+				$sql = "UPDATE " . MAIN_DB_PREFIX . $db->sanitize($object->table_element);
 				$sql .= " SET ";
 				$sql .= " date_signature = '" . $db->idate(dol_now()) . "',";
 				$sql .= " online_sign_ip = '" . $db->escape($online_sign_ip) . "'";
@@ -907,7 +932,7 @@ if ($action == "importSignature") {
 										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 										// TODO Get position of box from PDF template
 
-										$param['xforimgstart'] = 111;
+										$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
 										$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
 										$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 
@@ -924,7 +949,7 @@ if ($action == "importSignature") {
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 								// TODO Get position of box from PDF template
 
-								$param['xforimgstart'] = 111;
+								$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
 								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
 								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
 

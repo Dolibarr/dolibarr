@@ -513,6 +513,54 @@ class DateLibTest extends CommonClassTest
 		return 1;
 	}
 
+	/**
+	 * testGetFirstDayOfEachWeek
+	 *
+	 * @return int
+	 */
+	public function testGetFirstDayOfEachWeek()
+	{
+		// June 2026 (no year overlap): weeks 23 to 27
+		$TWeek = getWeekNumbersOfMonth(6, 2026);
+		$this->assertEquals(array('23' => '01', '24' => '08', '25' => '15', '26' => '22', '27' => '29'), getFirstDayOfEachWeek($TWeek, 2026));
+
+		// December 2025 ends with week 01 of 2026: week 01 starts on monday 2025-12-29
+		$TWeek = getWeekNumbersOfMonth(12, 2025);
+		$this->assertEquals(array('49' => '01', '50' => '08', '51' => '15', '52' => '22', '01' => '29'), getFirstDayOfEachWeek($TWeek, 2025));
+
+		// January 2022 starts with week 52 of 2021 (monday 2021-12-27). Week 01 of 2022 starts on monday the 3rd,
+		// week 02 on the 10th, ... (weeks 01 to 05 must not be shifted to next year)
+		$TWeek = getWeekNumbersOfMonth(1, 2022);
+		$this->assertEquals(array('52' => '27', '01' => '03', '02' => '10', '03' => '17', '04' => '24', '05' => '31'), getFirstDayOfEachWeek($TWeek, 2022));
+
+		// January 2021 starts with week 53 of 2020 (monday 2020-12-28)
+		$TWeek = getWeekNumbersOfMonth(1, 2021);
+		$this->assertEquals(array('53' => '28', '01' => '04', '02' => '11', '03' => '18', '04' => '25'), getFirstDayOfEachWeek($TWeek, 2021));
+
+		return 1;
+	}
+
+	/**
+	 * testGetLastDayOfEachWeek
+	 *
+	 * @return int
+	 */
+	public function testGetLastDayOfEachWeek()
+	{
+		// June 2026 (no year overlap): weeks 23 to 27
+		$TWeek = getWeekNumbersOfMonth(6, 2026);
+		$this->assertEquals(array('23' => '07', '24' => '14', '25' => '21', '26' => '28', '27' => '05'), getLastDayOfEachWeek($TWeek, 2026));
+
+		// December 2025 ends with week 01 of 2026: week 01 ends on sunday 2026-01-04
+		$TWeek = getWeekNumbersOfMonth(12, 2025);
+		$this->assertEquals(array('49' => '07', '50' => '14', '51' => '21', '52' => '28', '01' => '04'), getLastDayOfEachWeek($TWeek, 2025));
+
+		// January 2022 starts with week 52 of 2021: week 52 ends on sunday 2022-01-02
+		$TWeek = getWeekNumbersOfMonth(1, 2022);
+		$this->assertEquals(array('52' => '02', '01' => '09', '02' => '16', '03' => '23', '04' => '30', '05' => '06'), getLastDayOfEachWeek($TWeek, 2022));
+
+		return 1;
+	}
 
 	/**
 	 * testDolGetFirstHour

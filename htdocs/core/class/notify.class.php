@@ -7,8 +7,9 @@
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026      Pierre Ardoin        <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,9 @@ class Notify
 	 */
 	public $fk_project;
 
-	// This codes actions are defined into table llx_notify_def
+	/**
+	 * @var string[] These codes actions are defined in table llx_notify_def
+	 */
 	public static $arrayofnotifsupported = array(
 		'BILL_CANCEL',
 		'BILL_VALIDATE',
@@ -166,7 +169,12 @@ class Notify
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
 		'ACTION_CREATE',
-		'CONTRACT_MODIFY'
+		'CONTRACT_MODIFY',
+		'STOCKTRANSFER_CREATE',
+		'STOCKTRANSFER_MODIFY',
+		'STOCKTRANSFER_VALIDATE',
+		'STOCKTRANSFER_UNVALIDATE',
+		'STOCKTRANSFER_CLOSE'
 	);
 
 	/**
@@ -184,10 +192,10 @@ class Notify
 	 *  Return message that say how many notification (and to which email) will occurs on requested event.
 	 *	This is to show confirmation messages before event is recorded.
 	 *
-	 * 	@param	string	$action		Id of action in llx_c_action_trigger
-	 * 	@param	int		$socid		Id of third party
-	 *  @param	Object	$object		Object the notification is about
-	 *	@return	string				Message
+	 * 	@param	string			$action		Id of action in llx_c_action_trigger
+	 * 	@param	int				$socid		Id of third party
+	 *  @param	?CommonObject	$object		Object the notification is about
+	 *	@return	string						Message
 	 */
 	public function confirmMessage($action, $socid, $object)
 	{
@@ -277,6 +285,7 @@ class Notify
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql .= " AND entity IN (".getEntity('notify_def').")";
 
 			if (!$this->db->query($sql)) {
 				$error++;
@@ -302,6 +311,8 @@ class Notify
 	 */
 	public function create($user = null, $notrigger = 0)
 	{
+		global $conf;
+
 		$now = dol_now();
 
 		$error = 0;
@@ -319,8 +330,8 @@ class Notify
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (fk_soc, fk_action, fk_contact, type, datec)";
-		$sql .= " VALUES (".((int) $this->socid).", ".((int) $this->event).", ".((int) $this->contact_id).",";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (entity, fk_soc, fk_action, fk_contact, type, datec)";
+		$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->socid).", ".((int) $this->event).", ".((int) $this->contact_id).",";
 		$sql .= "'".$this->db->escape($this->type)."', '".$this->db->idate($this->datec)."')";
 
 		$resql = $this->db->query($sql);
@@ -424,6 +435,7 @@ class Notify
 		$sql .= ",fk_action = ".((int) $this->event);
 		$sql .= ",fk_contact = ".((int) $this->contact_id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " AND entity IN (".getEntity('notify_def').")";
 
 		$result = $this->db->query($sql);
 		if (!$result) {
@@ -450,10 +462,10 @@ class Notify
 	 *
 	 * @param	string			$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
 	 * @param	int				$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
-	 * @param	CommonObject	$object			Object the notification is about (need it to check threshold value of some notifications)
+	 * @param	?CommonObject	$object			Object the notification is about (need it to check threshold value of some notifications)
 	 * @param	int				$userid         Id of user or 0 for all users or -1 for no users
-	 * @param   array   		$scope          Scope where to search
-	 * @return	array|int						Return integer <0 if KO, array of notifications to send if OK
+	 * @param   string[]   		$scope          Scope where to search
+	 * @return	array<string,array{type:'touser'|'tofixedemail',code:string,emaildesc:string,email:string,userid:int,isemailvalid:bool}>|-1		Return integer <0 if KO, array of notifications to send if OK
 	 */
 	public function getNotificationsArray($notifcode, $socid = 0, $object = null, $userid = 0, $scope = array('thirdparty', 'user', 'global'))
 	{
@@ -490,6 +502,7 @@ class Notify
 				$sql .= " AND n.fk_soc = s.rowid";
 				$sql .= $sqlnotifcode;
 				$sql .= " AND s.entity IN (".getEntity('societe').")";
+				$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 				if ($socid > 0) {
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
@@ -530,6 +543,7 @@ class Notify
 				$sql .= " AND a.rowid = n.fk_action";
 				$sql .= $sqlnotifcode;
 				$sql .= " AND c.entity IN (".getEntity('user').")";
+				$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 				if ($userid > 0) {
 					$sql .= " AND c.rowid = ".((int) $userid);
 				}
@@ -546,7 +560,7 @@ class Notify
 							$newval2 = trim($obj->email);
 							$isvalid = isValidEmail($newval2);
 							if (empty($resarray[$newval2])) {
-								$resarray[$newval2] = array('type' => 'touser', 'code' => trim($obj->code), 'emaildesc' => 'User id '.$obj->rowid, 'email' => $newval2, 'userid' => $obj->rowid, 'isemailvalid' => $isvalid);
+								$resarray[$newval2] = array('type' => 'touser', 'code' => trim($obj->code), 'emaildesc' => 'User id '.$obj->rowid, 'email' => $newval2, 'userid' => (int) $obj->rowid, 'isemailvalid' => $isvalid);
 							}
 						}
 						$i++;
@@ -582,17 +596,10 @@ class Notify
 					foreach ($tmpemail as $key2 => $val2) {
 						$newval2 = trim($val2);
 						if ($newval2 == '__SUPERVISOREMAIL__') {
-							if ($user->fk_user > 0) {
-								$tmpuser = new User($this->db);
-								$tmpuser->fetch($user->fk_user);
-								if ($tmpuser->email) {
-									$newval2 = trim($tmpuser->email);
-								} else {
-									$newval2 = '';
-								}
-							} else {
-								$newval2 = '';
-							}
+							$newval2 = $this->getSupervisorEmail();
+						}
+						if ($newval2 == '__AUTHOREMAIL__') {
+							$newval2 = $this->getAuthorEmail($object);
 						}
 						if ($newval2) {
 							$isvalid = isValidEmail($newval2, 0);
@@ -668,7 +675,10 @@ class Notify
 			$application = (preg_match('/^\+/', $applicationcustom) ? $application : '').$applicationcustom;
 		}
 
-		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
+		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM');
+		if (empty($from)) {
+			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+		}
 
 		$object_type = '';
 		$link = '';
@@ -680,7 +690,7 @@ class Notify
 
 		$sql = '';
 
-		// Check notification per third party
+		// Check notification per third party @phan-suppress-next-line PhanUndeclaredProperty
 		if (!empty($object->socid) && $object->socid > 0) {
 			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type";
@@ -689,6 +699,7 @@ class Notify
 			$sql .= " ".$this->db->prefix()."notify_def as n,";
 			$sql .= " ".$this->db->prefix()."societe as s";
 			$sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+			$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 			$sql .= " AND n.fk_soc = s.rowid";
 			$sql .= " AND c.statut = 1";
 			if (is_numeric($notifcode)) {
@@ -696,6 +707,7 @@ class Notify
 			} else {
 				$sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 			}
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			$sql .= " AND s.rowid = ".((int) $object->socid);
 
 			$sql .= "\nUNION\n";
@@ -708,6 +720,7 @@ class Notify
 		$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 		$sql .= " ".$this->db->prefix()."notify_def as n";
 		$sql .= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
+		$sql .= " AND n.entity IN (".getEntity('notify_def').")";
 		$sql .= " AND c.statut = 1";
 		if (is_numeric($notifcode)) {
 			$sql .= " AND n.fk_action = ".((int) $notifcode); // Old usage
@@ -822,26 +835,26 @@ class Notify
 							case 'FICHINTER_ADD_CONTACT':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 								break;
 							case 'FICHINTER_MODIFY':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 								break;
 							case 'FICHINTER_CLOSE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 								break;
 							case 'ORDER_SUPPLIER_VALIDATE':
@@ -984,22 +997,8 @@ class Notify
 
 						$labeltouse = !empty($labeltouse) ? $labeltouse : '';
 
-						// Replace keyword __SUPERVISOREMAIL__
-						if (preg_match('/__SUPERVISOREMAIL__/', $sendto)) {
-							$newval = '';
-							if ($user->fk_user > 0) {
-								$supervisoruser = new User($this->db);
-								$supervisoruser->fetch($user->fk_user);
-								if ($supervisoruser->email) {
-									$newval = trim(dolGetFirstLastname($supervisoruser->firstname, $supervisoruser->lastname).' <'.$supervisoruser->email.'>');
-								}
-							}
-							dol_syslog("Replace the __SUPERVISOREMAIL__ key into recipient email string with ".$newval);
-							$sendto = preg_replace('/__SUPERVISOREMAIL__/', $newval, $sendto);
-							$sendto = preg_replace('/,\s*,/', ',', $sendto); // in some case you can have $sendto like "email, __SUPERVISOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
-							$sendto = preg_replace('/^[\s,]+/', '', $sendto); // Clean start of string
-							$sendto = preg_replace('/[\s,]+$/', '', $sendto); // Clean end of string
-						}
+						$sendto = $this->replaceSpecialRecipientToken($sendto, '__SUPERVISOREMAIL__', $this->getSupervisorEmail(1));
+						$sendto = $this->replaceSpecialRecipientToken($sendto, '__AUTHOREMAIL__', $this->getAuthorEmail($object, 1));
 
 						$parameters = array('notifcode' => $notifcode, 'sendto' => $sendto, 'from' => $from, 'file' => $filename_list, 'mimefile' => $mimetype_list, 'filename' => $mimefilename_list, 'outputlangs' => $outputlangs, 'labeltouse' => $labeltouse);
 						if (!isset($action)) {
@@ -1049,9 +1048,11 @@ class Notify
 						if ($mailfile->sendfile()) {
 							if ($obj->type_target == 'touserid') {
 								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
+								// @phan-suppress-next-line PhanUndeclaredProperty
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".((int) $obj->cid).", '".$this->db->escape($obj->type)."', '".$this->db->escape($object_type)."', '".$this->db->escape($obj->type_target)."', ".((int) $object->id).", '".$this->db->escape($obj->email)."')";
 							} else {
 								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
+								// @phan-suppress-next-line PhanUndeclaredProperty
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".((int) $obj->cid).", '".$this->db->escape($obj->type)."', '".$this->db->escape($object_type)."', '".$this->db->escape($obj->type_target)."', ".((int) $object->id).", '".$this->db->escape($obj->email)."')";
 							}
 							if (!$this->db->query($sql)) {
@@ -1067,6 +1068,7 @@ class Notify
 					$i++;
 				}
 			} else {
+				// @phan-suppress-next-line PhanUndeclaredProperty
 				dol_syslog("No notification to thirdparty sent, nothing into notification setup for the thirdparty socid = ".(empty($object->socid) ? '' : $object->socid));
 			}
 		} else {
@@ -1147,26 +1149,26 @@ class Notify
 					case 'FICHINTER_ADD_CONTACT':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->ficheinter->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 						break;
 					case 'FICHINTER_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->facture->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 						break;
 					case 'FICHINTER_MODIFY':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->ficheinter->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 						break;
 					case 'FICHINTER_CLOSE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->facture->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 						break;
 					case 'ORDER_SUPPLIER_CANCEL':
@@ -1266,7 +1268,7 @@ class Notify
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
-				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
+				$pdf_path = $dir_output."/".$ref.".pdf";
 				if (!dol_is_file($pdf_path)) {
 					// We can't add PDF as it is not generated yet.
 					$filepdf = '';
@@ -1287,7 +1289,7 @@ class Notify
 				if (!empty($mailTemplateLabel)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
-					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
+					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $mailTemplateLabel);
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
 					if (property_exists($object, 'thirdparty')) {
@@ -1315,22 +1317,8 @@ class Notify
 					$message = nl2br($message);
 				}
 
-				// Replace keyword __SUPERVISOREMAIL__
-				if (preg_match('/__SUPERVISOREMAIL__/', $sendto)) {
-					$newval = '';
-					if ($user->fk_user > 0) {
-						$supervisoruser = new User($this->db);
-						$supervisoruser->fetch($user->fk_user);
-						if ($supervisoruser->email) {
-							$newval = trim(dolGetFirstLastname($supervisoruser->firstname, $supervisoruser->lastname).' <'.$supervisoruser->email.'>');
-						}
-					}
-					dol_syslog("Replace the __SUPERVISOREMAIL__ key into recipient email string with ".$newval);
-					$sendto = preg_replace('/__SUPERVISOREMAIL__/', $newval, $sendto);
-					$sendto = preg_replace('/,\s*,/', ',', $sendto); // in some case you can have $sendto like "email, __SUPERVISOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
-					$sendto = preg_replace('/^[\s,]+/', '', $sendto); // Clean start of string
-					$sendto = preg_replace('/[\s,]+$/', '', $sendto); // Clean end of string
-				}
+				$sendto = $this->replaceSpecialRecipientToken($sendto, '__SUPERVISOREMAIL__', $this->getSupervisorEmail(1));
+				$sendto = $this->replaceSpecialRecipientToken($sendto, '__AUTHOREMAIL__', $this->getAuthorEmail($object, 1));
 
 				if ($sendto) {
 					$parameters = array('notifcode' => $notifcode, 'sendto' => $sendto, 'from' => $from, 'file' => $filename_list, 'mimefile' => $mimetype_list, 'filename' => $mimefilename_list, 'subject' => &$subject, 'message' => &$message);
@@ -1375,7 +1363,8 @@ class Notify
 
 					if ($mailfile->sendfile()) {
 						$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
-						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($sendto)."')";
+						// @phan-suppress-next-line PhanUndeclaredProperty
+						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".((!empty($object->socid)  && $object->socid > 0) ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($sendto)."')";
 						if (!$this->db->query($sql)) {
 							dol_print_error($this->db);
 						}
@@ -1392,5 +1381,100 @@ class Notify
 		} else {
 			return -1 * $error;
 		}
+	}
+
+	/**
+	 * Return supervisor email.
+	 *
+	 * @param	int<0,1>	$withLabel	1=Return "Firstname Lastname <email>", 0=Return "email"
+	 * @return	string
+	 */
+	private function getSupervisorEmail($withLabel = 0)
+	{
+		global $user;
+
+		if (empty($user->fk_user) || $user->fk_user <= 0) {
+			return '';
+		}
+
+		$supervisoruser = new User($this->db);
+		$supervisoruser->fetch($user->fk_user);
+		if (empty($supervisoruser->email)) {
+			return '';
+		}
+
+		if ($withLabel) {
+			return trim(dolGetFirstLastname($supervisoruser->firstname, $supervisoruser->lastname).' <'.$supervisoruser->email.'>');
+		}
+
+		return trim((string) $supervisoruser->email);
+	}
+
+	/**
+	 * Return author email of object.
+	 *
+	 * @param	CommonObject|null	$object		Object used to resolve author
+	 * @param	int<0,1>			$withLabel	1=Return "Firstname Lastname <email>", 0=Return "email"
+	 * @return	string
+	 */
+	private function getAuthorEmail($object, $withLabel = 0)
+	{
+		if (!is_object($object)) {
+			return '';
+		}
+
+		$author = null;
+
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (isset($object->user_author) && is_object($object->user_author) && !empty($object->user_author->email)) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
+			$author = $object->user_author;
+		} else {
+			$authorid = 0;
+			foreach (array('fk_user_author', 'user_author_id', 'fk_user_creat') as $fieldname) {
+				if (!empty($object->$fieldname)) {
+					// @phan-suppress-next-line PhanUndeclaredProperty
+					$authorid = (int) $object->$fieldname;
+					break;
+				}
+			}
+			if ($authorid > 0) {
+				$author = new User($this->db);
+				$author->fetch($authorid);
+			}
+		}
+
+		if (empty($author) || empty($author->email)) {
+			return '';
+		}
+
+		if ($withLabel) {
+			return trim(dolGetFirstLastname($author->firstname, $author->lastname).' <'.$author->email.'>');
+		}
+
+		return trim((string) $author->email);
+	}
+
+	/**
+	 * Replace a special token inside recipient list.
+	 *
+	 * @param	string	$sendto			Recipient list
+	 * @param	string	$token			Token to replace
+	 * @param	string	$replacement	Replacement value
+	 * @return	string
+	 */
+	private function replaceSpecialRecipientToken($sendto, $token, $replacement)
+	{
+		if (!preg_match('/'.preg_quote($token, '/').'/', $sendto)) {
+			return $sendto;
+		}
+
+		dol_syslog("Replace the ".$token." key into recipient email string with ".$replacement);
+		$sendto = preg_replace('/'.preg_quote($token, '/').'/', $replacement, $sendto);
+		$sendto = preg_replace('/,\s*,/', ',', $sendto); // In some case you can have $sendto like "email, __SUPERVISOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
+		$sendto = preg_replace('/^[\s,]+/', '', $sendto); // Clean start of string
+		$sendto = preg_replace('/[\s,]+$/', '', $sendto); // Clean end of string
+
+		return $sendto;
 	}
 }

@@ -34,6 +34,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
@@ -43,16 +50,8 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm"));
+$langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm", "other"));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -161,7 +160,7 @@ if ($object->id) {
 
 	$head = salaries_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("SalaryPayment"), -1, 'salary');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', 1);
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);

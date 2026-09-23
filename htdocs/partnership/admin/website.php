@@ -110,7 +110,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print dol_get_fiche_head($head, 'website', $langs->trans("Partnerships"), -1, 'partnership');
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print 'jQuery(document).ready(function () {
                 function initemail()
                 {
@@ -193,9 +193,6 @@ if (getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (isModEnabled('paybox')) {
-		$listofval['paybox'] = 'Paybox';
-	}
 	if (isModEnabled('paypal')) {
 		$listofval['paypal'] = 'PayPal';
 	}

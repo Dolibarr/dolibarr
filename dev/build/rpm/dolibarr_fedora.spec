@@ -189,7 +189,6 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/expedition
 %_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
-%_datadir/dolibarr/htdocs/externalsite
 %_datadir/dolibarr/htdocs/fichinter
 %_datadir/dolibarr/htdocs/fourn
 %_datadir/dolibarr/htdocs/ftp
@@ -209,12 +208,12 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/partnership
-%_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
 %_datadir/dolibarr/htdocs/printing
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/quickmemo
 %_datadir/dolibarr/htdocs/recruitment
 %_datadir/dolibarr/htdocs/reception
 %_datadir/dolibarr/htdocs/resource
@@ -222,6 +221,8 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/societe
 %_datadir/dolibarr/htdocs/stripe
 %_datadir/dolibarr/htdocs/subtotals
+%_datadir/dolibarr/htdocs/supplier_invoice
+%_datadir/dolibarr/htdocs/supplier_order
 %_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/theme
 %_datadir/dolibarr/htdocs/takepos

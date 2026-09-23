@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019       Maxime Kohlhaas         <maxime@atm-consulting.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,8 @@
  */
 function bomAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $extrafields;
 
-	global $db;
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bom_bom');
 	$extrafields->fetch_name_optionals_label('bom_bomline');
 
@@ -47,7 +45,7 @@ function bomAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/bom_extrafields.php");
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bom_bom'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = (isset($extrafields->attributes['bom_bom']['label']) && is_countable($extrafields->attributes['bom_bom']['label'])) ? count($extrafields->attributes['bom_bom']['label']) : 0;
 	if ($nbExtrafields > 0) {
@@ -56,7 +54,7 @@ function bomAdminPrepareHead()
 	$head[$h][2] = 'bom_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/bomline_extrafields.php");
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bom_bomline'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = (isset($extrafields->attributes['bom_bomline']['label']) && is_countable($extrafields->attributes['bom_bomline']['label'])) ? count($extrafields->attributes['bom_bomline']['label']) : 0;
 	if ($nbExtrafields > 0) {
@@ -167,7 +165,7 @@ function mrpCollapseBomManagement()
 {
 	?>
 
-	<script type="text/javascript" language="javascript">
+	<script type="text/javascript">
 
 		$(document).ready(function () {
 			function folderManage(element, onClose = 0) {
@@ -176,7 +174,7 @@ function mrpCollapseBomManagement()
 
 				if(element.html().indexOf('folder-open') <= 0 && onClose < 1) {
 					$('[parentid="'+ id_bom_line +'"]').show();
-					element.html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+					element.html(<?php echo "'".dol_escape_js(img_picto('', 'folder-open'))."'" ; ?>);
 				}
 				else {
 					for (let i = 0; i < TSubLines.length; i++) {
@@ -188,7 +186,7 @@ function mrpCollapseBomManagement()
 						}
 					}
 					TSubLines.hide();
-					element.html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+					element.html(<?php echo "'".dol_escape_js(img_picto('', 'folder'))."'" ; ?>);
 				}
 			}
 
@@ -202,7 +200,7 @@ function mrpCollapseBomManagement()
 			$("#show_all").click(function() {
 				console.log("We click on show all");
 				$("[class^=sub_bom_lines]").show();
-				$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+				$("[class^=collapse_bom]").html(<?php echo "'".dol_escape_js(img_picto('', 'folder-open'))."'" ; ?>);
 				return false;
 			});
 
@@ -210,7 +208,7 @@ function mrpCollapseBomManagement()
 			$("#hide_all").click(function() {
 				console.log("We click on hide all");
 				$("[class^=sub_bom_lines]").hide();
-				$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+				$("[class^=collapse_bom]").html(<?php echo "'".dol_escape_js(img_picto('', 'folder'))."'" ; ?>);
 				return false;
 			});
 		});

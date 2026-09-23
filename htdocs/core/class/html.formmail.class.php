@@ -4,10 +4,12 @@
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Nathan Pixodeo			<nathan@pixodeo.net>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -170,12 +172,12 @@ class FormMail extends Form
 	public $withlayout;
 
 	/**
-	 * @var string	'text' or 'html' to add a button "Fill with AI generation"
+	 * @var string					'text' or 'html' to add a button "Fill with AI generation"
 	 */
 	public $withaiprompt;
 
 	/**
-	 * @var int<-1,1> 1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
+	 * @var int<-1,1> 				1=Add a checkbox "Attach also main document" for mass actions (checked by default), -1=Add checkbox (not checked by default)
 	 */
 	public $withmaindocfile;
 	/**
@@ -266,7 +268,7 @@ class FormMail extends Form
 	public $withtoccuser = array();
 
 	/**
-	 * @var ModelMail[]
+	 * @var CEmailTemplate[]
 	 */
 	public $lines_model;
 
@@ -585,6 +587,7 @@ class FormMail extends Form
 			}
 
 			$modelmail_array = array();
+			$break = '';
 			if ($this->param['models'] != 'none') {
 				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
 				if ($result < 0) {
@@ -599,14 +602,24 @@ class FormMail extends Form
 						$labeltouse = $line->label;
 					}
 
+					if ($break != $line->lang) {
+						// New break for a new language, we add the break
+						$s = $line->lang;
+						$shtml = '----- '.$langs->trans("Language_".$line->lang).' -----';
+						$modelmail_array['separator_'.$line->lang] = array('label' => $s, 'data-html' => $shtml, 'disabled' => 'disabled');
+					}
+
 					// We escape the $labeltouse to store it into $modelmail_array.
-					$modelmail_array[$line->id] = dol_escape_htmltag($labeltouse);
+					$s = dol_escape_htmltag($labeltouse);
+					$shtml = dol_escape_htmltag($labeltouse);
 					if ($line->lang) {
-						$modelmail_array[$line->id] .= ' '.picto_from_langcode($line->lang);
+						$shtml = picto_from_langcode($line->lang).'</span> '.$shtml;
 					}
 					if ($line->private) {
-						$modelmail_array[$line->id] .= ' - <span class="opacitymedium">'.dol_escape_htmltag($langs->trans("Private")).'</span>';
+						$shtml .= ' - <span class="opacitymedium small">'.dol_escape_htmltag($langs->trans("Private")).'</span>';
 					}
+
+					$modelmail_array[$line->id] = array('label' => $s, 'data-html' => $shtml);
 				}
 			}
 
@@ -617,12 +630,25 @@ class FormMail extends Form
 				// If list of template is filled
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
 
-				$out .= $this->selectarray('modelmailselected', $modelmail_array, $model_mail_selected_id, $langs->trans('SelectMailModel'), 0, 0, '', 0, 0, 0, '', 'minwidth100', 1, '', 0, 1);
+				$out .= $this->selectarray('modelmailselected', $modelmail_array, $model_mail_selected_id, $langs->trans('SelectMailModel'), 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
 				if ($user->admin) {
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
 
-				$out .= ' &nbsp; ';
+				// Language selector for predefined message templates (only when multilang is enabled)
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
+					// This feature is in conflict with the existing one where all templates are show with the language in a flag so user
+					// can choose the template in the correct language.To avoid duplicate and conflict selection, we currently enable this on a hidden constant.
+					// A solution to be compatible would be to wait the user has selected the template, and the combo to select language is shown if no language is forced for the template.
+					if (getDolGlobalInt('MAIN_MULTILANGS_ASK_LANG_IN_SEPARATE_COMBO')) {
+						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+						$formadmin = new FormAdmin($this->db);
+						$currentlang = (is_object($outputlangs) ? $outputlangs->defaultlang : $langs->defaultlang);
+						$out .= ' &nbsp; ';
+						$out .= $formadmin->select_language($currentlang, 'lang_id', 0, array(), 1, 0, 0, 'maxwidth150');
+					}
+				}
+
 				$out .= '<input type="submit" class="button reposition smallpaddingimp" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
@@ -658,7 +684,9 @@ class FormMail extends Form
 					if (in_array($key, array('__NEWREF__', '__REFCLIENT__', '__REFSUPPLIER__', '__SUPPLIER_ORDER_DATE_DELIVERY__', '__SUPPLIER_ORDER_DELAY_DELIVERY__'))) {
 						continue;
 					}
-					if (is_array($val)) $val = implode(', ', $val); // key __MULTICURRENCY_CODE__ is an array and crashes dolGetFirstLineOfText function which accept only text
+					if (is_array($val)) {
+						$val = implode(', ', $val);
+					} // key __MULTICURRENCY_CODE__ is an array and crashes dolGetFirstLineOfText function which accept only text
 					$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText((string) $val))).'<br>';
 				}
 				$helpforsubstitution .= '</span>';
@@ -687,6 +715,7 @@ class FormMail extends Form
 						&& !preg_match('/user_aliases/', $this->fromtype)
 						&& !preg_match('/global_aliases/', $this->fromtype)
 						&& !preg_match('/senderprofile/', $this->fromtype)
+						&& !preg_match('/from_template_(\d+)/', $this->fromtype)
 					) {
 						// Use this->fromname and this->frommail or error if not defined
 						$out .= $this->fromname;
@@ -721,9 +750,9 @@ class FormMail extends Form
 							'global_aliases' => getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'),
 						);
 
-						if (!empty($arraydefaultmessage->email_from)) {
+						if (!empty($arraydefaultmessage->email_from) && !empty($arraydefaultmessage->id)) {
 							$templatemailfrom = ' &lt;'.$arraydefaultmessage->email_from.'&gt;';
-							$liste['from_template_'.$arraydefaultmessage->id] = array('label' => $templatemailfrom, 'data-html' => $templatemailfrom);
+							$liste['from_template_'.((int) $arraydefaultmessage->id)] = array('label' => $templatemailfrom, 'data-html' => $templatemailfrom);
 						}
 
 						// Also add robot email
@@ -782,7 +811,7 @@ class FormMail extends Form
 								$liste[$key]['data-html'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $liste[$key]['data-html']);
 							}
 						}
-						$out .= ' '.$form->selectarray('fromtype', $liste, empty($arraydefaultmessage->email_from) ? $this->fromtype : 'from_template_'.$arraydefaultmessage->id, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
+						$out .= ' '.$form->selectarray('fromtype', $liste, (empty($arraydefaultmessage->email_from) || empty($arraydefaultmessage->id)) ? $this->fromtype : 'from_template_'.((int) $arraydefaultmessage->id), 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
 					}
 
 					$out .= "</td></tr>\n";
@@ -795,82 +824,91 @@ class FormMail extends Form
 				}
 			}
 
-			// To
-			if (!empty($this->withto) || is_array($this->withto)) {
-				$out .= $this->getHtmlForTo();
+			// Hook to let a module render the whole recipients block (e.g. a modern tokenized To/CC/BCC field). If the hook handles it (returns > 0), the native recipient rows below are skipped.
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printEmailRecipients', $parameters, $this);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
-
-			// To User
-			if (!empty($this->withtouser) && is_array($this->withtouser) && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
-				$out .= '<tr><td>';
-				$out .= $langs->trans("MailToUsers");
-				$out .= '</td><td>';
-
-				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
-				$tmparray = $this->withtouser;
-				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
+			$out .= $hookmanager->resPrint;
+			if (empty($reshook)) {
+				// To
+				if (!empty($this->withto) || is_array($this->withto)) {
+					$out .= getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT') ? $this->getHtmlForToNew() : $this->getHtmlForTo();
 				}
-				$withtoselected = GETPOST("receiveruser", 'array'); // Array of selected value
-				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
-					$withtoselected = array_keys($tmparray);
-				}
-				$out .= $form->multiselectarray("receiveruser", $tmparray, $withtoselected, 0, 0, 'inline-block minwidth500', 0, "");
-				$out .= "</td></tr>\n";
-			}
 
-			// With option for one email per recipient
-			if (!empty($this->withoptiononeemailperrecipient)) {
-				if (abs($this->withoptiononeemailperrecipient) == 1) {
-					$out .= '<tr><td class="minwidth200">';
-					$out .= $langs->trans("GroupEmails");
+				// To User
+				if (!empty($this->withtouser) && is_array($this->withtouser) && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
+					$out .= '<tr><td>';
+					$out .= $langs->trans("MailToUsers");
 					$out .= '</td><td>';
-					$out .= ' <input type="checkbox" id="oneemailperrecipient" value="1" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
-					$out .= '<label for="oneemailperrecipient">';
-					$out .= $form->textwithpicto($langs->trans("OneEmailPerRecipient"), $langs->trans("WarningIfYouCheckOneRecipientPerEmail"), 1, 'help');
-					$out .= '</label>';
-					//$out .= '<span class="hideonsmartphone opacitymedium">';
-					//$out .= ' - ';
-					//$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
-					//$out .= '</span>';
-					if (getDolGlobalString('MASS_ACTION_EMAIL_ON_DIFFERENT_THIRPARTIES_ADD_CUSTOM_EMAIL')) {
-						if (!empty($this->withto) && !is_array($this->withto)) {
-							$out .= ' <span class="opacitymedium">'.$langs->trans("or").'</span> <input type="email" name="emailto" value="">';
-						}
+
+					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
+					$tmparray = $this->withtouser;
+					foreach ($tmparray as $key => $val) {
+						$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
 					}
-					$out .= '</td></tr>';
-				} else {
-					$out .= '<tr><td><input type="hidden" name="oneemailperrecipient" value="1"></td><td></td></tr>';
+					$withtoselected = GETPOST("receiveruser", 'array'); // Array of selected value
+					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
+						$withtoselected = array_keys($tmparray);
+					}
+					$out .= $form->multiselectarray("receiveruser", $tmparray, $withtoselected, 0, 0, 'inline-block minwidth500', 0, "");
+					$out .= "</td></tr>\n";
 				}
-			}
 
-			// CC
-			if (!empty($this->withtocc) || is_array($this->withtocc)) {
-				$out .= $this->getHtmlForCc();
-			}
-
-			// To User cc
-			if (!empty($this->withtoccuser) && is_array($this->withtoccuser) && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
-				$out .= '<tr><td>';
-				$out .= $langs->trans("MailToCCUsers");
-				$out .= '</td><td>';
-
-				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
-				$tmparray = $this->withtoccuser;
-				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
+				// With option for one email per recipient
+				if (!empty($this->withoptiononeemailperrecipient)) {
+					if (abs($this->withoptiononeemailperrecipient) == 1) {
+						$out .= '<tr><td class="minwidth200">';
+						$out .= $langs->trans("GroupEmails");
+						$out .= '</td><td>';
+						$out .= ' <input type="checkbox" id="oneemailperrecipient" value="1" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
+						$out .= '<label for="oneemailperrecipient">';
+						$out .= $form->textwithpicto($langs->trans("OneEmailPerRecipient"), $langs->trans("WarningIfYouCheckOneRecipientPerEmail"), 1, 'help');
+						$out .= '</label>';
+						//$out .= '<span class="hideonsmartphone opacitymedium">';
+						//$out .= ' - ';
+						//$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+						//$out .= '</span>';
+						if (getDolGlobalString('MASS_ACTION_EMAIL_ON_DIFFERENT_THIRPARTIES_ADD_CUSTOM_EMAIL')) {
+							if (!empty($this->withto) && !is_array($this->withto)) {
+								$out .= ' <span class="opacitymedium">'.$langs->trans("or").'</span> <input type="email" name="emailto" value="">';
+							}
+						}
+						$out .= '</td></tr>';
+					} else {
+						$out .= '<tr><td><input type="hidden" name="oneemailperrecipient" value="1"></td><td></td></tr>';
+					}
 				}
-				$withtoselected = GETPOST("receiverccuser", 'array'); // Array of selected value
-				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
-					$withtoselected = array_keys($tmparray);
-				}
-				$out .= $form->multiselectarray("receiverccuser", $tmparray, $withtoselected, 0, 0, 'inline-block minwidth500', 0, "");
-				$out .= "</td></tr>\n";
-			}
 
-			// CCC
-			if (!empty($this->withtoccc) || is_array($this->withtoccc)) {
-				$out .= $this->getHtmlForWithCcc();
+				// CC
+				if (!empty($this->withtocc) || is_array($this->withtocc)) {
+					$out .= getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT') ? $this->getHtmlForCcNew() : $this->getHtmlForCc();
+				}
+
+				// To User cc
+				if (!empty($this->withtoccuser) && is_array($this->withtoccuser) && getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')) {
+					$out .= '<tr><td>';
+					$out .= $langs->trans("MailToCCUsers");
+					$out .= '</td><td>';
+
+					// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
+					$tmparray = $this->withtoccuser;
+					foreach ($tmparray as $key => $val) {
+						$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
+					}
+					$withtoselected = GETPOST("receiverccuser", 'array'); // Array of selected value
+					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
+						$withtoselected = array_keys($tmparray);
+					}
+					$out .= $form->multiselectarray("receiverccuser", $tmparray, $withtoselected, 0, 0, 'inline-block minwidth500', 0, "");
+					$out .= "</td></tr>\n";
+				}
+
+				// CCC
+				if (!empty($this->withtoccc) || is_array($this->withtoccc)) {
+					$out .= getDolGlobalString('MAIL_ENABLE_FREETAG_RECIPIENT_INPUT') ? $this->getHtmlForWithCccNew() : $this->getHtmlForWithCcc();
+				}
 			}
 
 			// Replyto
@@ -954,7 +992,7 @@ class FormMail extends Form
 							// Preview of attachment
 							$out .= img_mime($listofnames[$key]).$listofnames[$key];
 
-							$out .= ' '.$formfile->showPreview(array(), $formfile_params[2], $formfile_params[4], 0, ($entity == 1 ? '' : 'entity='.((int) $entity)));
+							$out .= ' '.$formfile->showPreview(array('fullname' => $val,'name' => basename($val)), $formfile_params[2], $formfile_params[4], 0, ($entity == 1 ? '' : 'entity='.((int) $entity)));
 
 							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile input-nobottom" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
@@ -1041,7 +1079,7 @@ class FormMail extends Form
 				$defaultlines = $arraydefaultmessage->content_lines;
 				if (isset($defaultlines)) {
 					foreach ($this->substit_lines as $lineid => $substit_line) {
-						$lines .= make_substitutions($defaultlines, $substit_line)."\n";
+						$lines .= make_substitutions($defaultlines, $substit_line, $outputlangs)."\n";
 					}
 				}
 				$this->substit['__LINES__'] = $lines;
@@ -1086,12 +1124,16 @@ class FormMail extends Form
 				if (GETPOSTISSET("message") && !GETPOST('modelselected')) {
 					$defaultmessage = GETPOST("message", "restricthtml");
 				} else {
-					$defaultmessage = make_substitutions($defaultmessage, $this->substit);
+					// Pass $outputlangs so __(TranslationKey)__ in the template body is resolved
+					// in the language of the selected email template, not the operator's language
+					// (see issue #34540).
+					$defaultmessage = make_substitutions($defaultmessage, $this->substit, $outputlangs);
 					// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)
 					$defaultmessage = preg_replace("/^(<br>)+/", "", $defaultmessage);
 					$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 				}
 
+				$out .= '<!-- Message line from get_form -->';
 				$out .= '<tr>';
 				$out .= '<td class="tdtop">';
 				$out .= $form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
@@ -1136,7 +1178,10 @@ class FormMail extends Form
 						}
 					}
 
-					$doleditor = new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, true, $this->withfckeditor, 8, '95%');
+					$uselocalbrowser = getDolGlobalBool('FCKEDITOR_ENABLE_IMAGE_UPLOAD');
+					// $uselocalbrowser = true;
+
+					$doleditor = new DolEditor('message', $defaultmessage, '', 280, $this->ckeditortoolbar, 'In', true, $uselocalbrowser, $this->withfckeditor, 8, '95%');
 					$out .= $doleditor->Create(1);
 				}
 				$out .= "</td></tr>\n";
@@ -1182,6 +1227,81 @@ class FormMail extends Form
 
 			return $out;
 		}
+	}
+
+	/**
+	 * Build a select2 combo that accepts the existing thirdparty/contact/free entries of $sourcearray
+	 * and also lets the user create a new entry by typing a "Name <email>" or bare "email" value
+	 * (select2 "tags" mode). Used by the *New() variants of getHtmlForTo()/getHtmlForCc()/
+	 * getHtmlForWithCcc() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on.
+	 *
+	 * Unlike multiselectarray()'s own generic script (skipped here via $addjscombo=0), this select2
+	 * instance is not shared with other combos on the page: it needs its own tags/createTag options,
+	 * so it is initialized by its own dedicated <script>, and multiselectarray() itself is never
+	 * modified by this feature.
+	 *
+	 * @param   string                                          $htmlname       Name of the html field, also used as the <select> id
+	 * @param   array<int|string,string|array<string,mixed>>    $sourcearray    Same shape as $this->withto/withtocc/withtoccc: key=>label or key=>array('id'=>,'label'=>)
+	 * @param   string[]                                        $selected       Array of preselected keys
+	 * @return  string                                                          Html of the <select multiple> plus its dedicated select2 init script
+	 */
+	private function getHtmlForFreetagRecipient($htmlname, array $sourcearray, array $selected)
+	{
+		global $form;
+
+		$tmparray = array();
+		foreach ($sourcearray as $key => $val) {
+			$label = is_array($val) ? $val['label'] : $val;
+			$label = str_replace(array('<', '>'), array('(', ')'), $label);
+			// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
+			$tmparray[$key] = dol_htmlentities($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', true);
+		}
+
+		$morecss = 'inline-block minwidth500';
+
+		// $addjscombo = 0: skip multiselectarray()'s generic select2 init script, we init it ourselves below with tags/createTag.
+		$out = $form->multiselectarray($htmlname, $tmparray, $selected, 0, 0, $morecss, 0, 0, '', '', '', 0);
+
+		$out .= "\n".'<script nonce="'.getNonce().'">'."\n";
+		$out .= '$(document).ready(function () {'."\n";
+		$out .= '	$(\''.dol_escape_js('#'.$htmlname).'\').select2({'."\n";
+		// Nowdoc for the static part of the select2 config (no PHP value is interpolated in here, so unlike
+		// a heredoc none of this JS's own '$(' / '$.' / trailing regex '$' anchors need checking against
+		// PHP's variable-interpolation rules): the two lines around it that need an escaped PHP value stay
+		// as plain concatenation, same as multiselectarray()'s own script-building style.
+		$out .= "
+				dir: 'ltr',
+				theme: 'default',
+				width: 'resolve',
+				language: (typeof select2arrayoflanguage === 'undefined') ? 'en' : select2arrayoflanguage,
+				tags: true,
+				createTag: function (params) {
+					var REGEX_EMAIL = '([a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)';
+					var term = $.trim(params.term);
+					if (term.indexOf('@') === -1) {
+						return null;
+					}
+					var matchwithname = term.match(new RegExp('^([^<]*)<' + REGEX_EMAIL + '>$', 'i'));
+					if (matchwithname !== null) {
+						var valuewithname = $.trim(matchwithname[1]) + ' <' + matchwithname[2] + '>';
+						return { id: valuewithname, text: valuewithname };
+					}
+					if (term.indexOf('<') >= 0 || term.indexOf('>') >= 0) {
+						return null;
+					}
+					var matchbare = term.match(new RegExp('^' + REGEX_EMAIL + '$', 'i'));
+					if (matchbare !== null) {
+						return { id: matchbare[1], text: matchbare[1] };
+					}
+					return null;
+				}
+			});
+		";
+		$out .= '	$(\''.dol_escape_js('#'.$htmlname.' + .select2').'\').addClass(\''.dol_escape_js($morecss).'\');'."\n";
+		$out .= '});'."\n";
+		$out .= '</script>'."\n";
+
+		return $out;
 	}
 
 	/**
@@ -1269,6 +1389,70 @@ class FormMail extends Form
 	}
 
 	/**
+	 * get html For To, using a single select2 combo that also accepts free-typed "Name <email>" tags
+	 * (used instead of getHtmlForTo() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on)
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForToNew()
+	{
+		global $langs, $form;
+
+		$out = '<tr><td class="fieldrequired">';
+		if ($this->withtofree) {
+			$out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+		} else {
+			$out .= $langs->trans("MailTo");
+		}
+		$out .= '</td><td>';
+
+		if ($this->withtoreadonly) {
+			if (!empty($this->toname) && !empty($this->tomail)) {
+				$out .= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
+				$out .= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
+				if ($this->totype == 'thirdparty') {
+					$soc = new Societe($this->db);
+					$soc->fetch($this->toid);
+					$out .= $soc->getNomUrl(1);
+				} elseif ($this->totype == 'contact') {
+					$contact = new Contact($this->db);
+					$contact->fetch($this->toid);
+					$out .= $contact->getNomUrl(1);
+				} else {
+					$out .= $this->toname;
+				}
+				$out .= ' &lt;'.$this->tomail.'&gt;';
+				if ($this->withtofree) {
+					$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" spellcheck="false" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
+				}
+			} else {
+				$out .= (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
+			}
+			$out .= "</td></tr>\n";
+			return $out;
+		}
+
+		$tmparray = is_array($this->withto) ? $this->withto : array();
+		if (!empty($this->withtofree)) {
+			$keyval = (($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : ""));
+			if ($keyval !== '' && !array_key_exists($keyval, $tmparray)) {
+				$tmparray[$keyval] = $keyval;
+			}
+		}
+
+		$withtoselected = GETPOST("receiver", 'array');
+		if (!getDolGlobalInt('MAIN_MAIL_NO_WITH_TO_SELECTED')) {
+			if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
+				$withtoselected = array_keys($tmparray);
+			}
+		}
+
+		$out .= $this->getHtmlForFreetagRecipient('receiver', $tmparray, $withtoselected);
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
 	 * get html For CC
 	 *
 	 * @return string html
@@ -1312,6 +1496,39 @@ class FormMail extends Form
 				$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, 0, 0, 'inline-block minwidth500', 0, 0);
 			}
 		}
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get html For CC, using a single select2 combo that also accepts free-typed "Name <email>" tags
+	 * (used instead of getHtmlForCc() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on)
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForCcNew()
+	{
+		global $langs, $form;
+
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+		$out .= '</td><td>';
+
+		if ($this->withtoccreadonly) {
+			$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
+			$out .= "</td></tr>\n";
+			return $out;
+		}
+
+		$tmparray = is_array($this->withtocc) ? $this->withtocc : array();
+		$keyval = (GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : ''));
+		if ($keyval !== '' && !array_key_exists($keyval, $tmparray)) {
+			$tmparray[$keyval] = $keyval;
+		}
+
+		$withtoccselected = GETPOST("receivercc", 'array');
+
+		$out .= $this->getHtmlForFreetagRecipient('receivercc', $tmparray, $withtoccselected);
 		$out .= "</td></tr>\n";
 		return $out;
 	}
@@ -1398,6 +1615,71 @@ class FormMail extends Form
 	}
 
 	/**
+	 * get html For WithCCC, using a single select2 combo that also accepts free-typed "Name <email>" tags
+	 * (used instead of getHtmlForWithCcc() when MAIL_ENABLE_FREETAG_RECIPIENT_INPUT is on)
+	 * This information is show when MAIN_EMAIL_USECCC is set.
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForWithCccNew()
+	{
+		global $langs, $form;
+
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+		$out .= '</td><td>';
+
+		if (!empty($this->withtocccreadonly)) {
+			$out .= (!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : "";
+		} else {
+			$tmparray = is_array($this->withtoccc) ? $this->withtoccc : array();
+			$keyval = (GETPOSTISSET("sendtoccc") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : ''));
+			if ($keyval !== '' && !array_key_exists($keyval, $tmparray)) {
+				$tmparray[$keyval] = $keyval;
+			}
+
+			$withtocccselected = GETPOST("receiverccc", 'array');
+
+			$out .= $this->getHtmlForFreetagRecipient('receiverccc', $tmparray, $withtocccselected);
+		}
+
+		$showinfobcc = '';
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'propal_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROPOSAL_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_ORDER_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_INVOICE_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO') && !empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO') && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO') && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO') && !empty($this->param['models']) && $this->param['models'] == 'project') {	// don't know why there is not '_send' at end of this models name.
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_PROJECT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO') && !empty($this->param['models']) && $this->param['models'] == 'shipping_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_SHIPMENT_TO');
+		}
+		if (getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO') && !empty($this->param['models']) && $this->param['models'] == 'reception_send') {
+			$showinfobcc = getDolGlobalString('MAIN_MAIL_AUTOCOPY_RECEPTION_TO');
+		}
+		if ($showinfobcc) {
+			$out .= ' + '.$showinfobcc;
+		}
+
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
 	 * get Html For WithErrorsTo
 	 *
 	 * @return string html
@@ -1467,7 +1749,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
-		global $langs, $form;
+		global $conf, $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
 
@@ -1479,7 +1761,17 @@ class FormMail extends Form
 			}
 		}
 
-		$defaulttopic = make_substitutions($defaulttopic, $this->substit);
+		// Resolve __(TranslationKey)__ in the language of the selected template
+		// (see issue #34540). Falls back to the caller's language when the template
+		// has no explicit language pinned.
+		$outputlangs = $langs;
+		if (is_object($arraydefaultmessage) && !empty($arraydefaultmessage->lang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($arraydefaultmessage->lang);
+			$outputlangs->load('other');
+		}
+
+		$defaulttopic = make_substitutions($defaulttopic, $this->substit, $outputlangs);
 
 		$out = '<tr>';
 		$out .= '<td class="fieldrequired">';
@@ -1488,9 +1780,9 @@ class FormMail extends Form
 		$out .= '<td>';
 		if ($this->withtopicreadonly) {
 			$out .= $defaulttopic;
-			$out .= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" />';
+			$out .= '<input type="hidden" class="quatrevingtpercent" id="subject" name="subject" value="'.$defaulttopic.'" spellcheck="false">';
 		} else {
-			$out .= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'.((GETPOSTISSET("subject") && !GETPOST('modelselected')) ? GETPOST("subject") : ($defaulttopic ? $defaulttopic : '')).'" />';
+			$out .= '<input type="text" class="quatrevingtpercent" id="subject" name="subject" value="'.((GETPOSTISSET("subject") && !GETPOST('modelselected')) ? GETPOST("subject") : ($defaulttopic ? $defaulttopic : '')).'" spellcheck="false">';
 		}
 		$out .= "</td></tr>\n";
 		return $out;
@@ -1502,6 +1794,7 @@ class FormMail extends Form
 	 * @param   string      $htmlContent    	HTML name of WYSIWYG field to fill once layout has been chosen
 	 * @param	string		$showlinktolayout	Show link to layout
 	 * @return  string                      	HTML for model email boxes
+	 * @see getContentPageTemplate()
 	 */
 	public function getEmailLayoutSelector($htmlContent = 'message', $showlinktolayout = 'email')
 	{
@@ -1513,6 +1806,7 @@ class FormMail extends Form
 		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 		$out = '<div id="template-selector" class="template-selector email-layout-container hidden" style="display:none;">';
+		$out .= '<div>';
 
 		// Define list of email layouts to use
 		$layouts = array(
@@ -1600,7 +1894,7 @@ class FormMail extends Form
 
 		// Use the multiselect array function to create the dropdown
 		if (in_array('news', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
-			$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="margin-top: 8px; display:none;">';
 			$out .= '<label for="blogpost-select">Select Posts: </label>';
 			$out .= '<!-- select component for selection of blog posts -->'."\n";
 			// TODO WARNING: multiselectarray is ok only for very small list
@@ -1611,7 +1905,7 @@ class FormMail extends Form
 		if (in_array('product', array_keys($layouts)) && (isModEnabled('product') || isModEnabled('service'))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
-			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="height: 32px; display:none;">';
+			$out .= '<div id="product-dropdown-container" class="email-layout-container hidden" style="margin-top: 8px; display:none;">';
 			$out .= '<label for="product-select">'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("Product").' : </label>';
 			$out .= '<!-- select component for selection of product -->'."\n";
 			$out .= $form->select_produits(0, 'product-select', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'inline-block valignmiddle', 0, '', null, 1);
@@ -1620,6 +1914,8 @@ class FormMail extends Form
 			$out .= ' <input type="submit" class="smallpaddingimp button reposition" name="submit" id="product-submit" value="'.dolPrintHTMLForAttribute($langs->trans("Select")).'">';
 			$out .= '</div>';
 		}
+
+		$out .= '</div>';
 
 		$out .= '<!-- Js code to manage choice of an email layout -->'."\n";
 		$out .= '<script type="text/javascript">
@@ -1822,6 +2118,8 @@ class FormMail extends Form
 				$ret->content_lines = (string) $obj->content_lines;
 				$ret->joinfiles = $obj->joinfiles;
 				$ret->email_from = (string) $obj->email_from;
+				$ret->email_tocc = (string) $obj->email_tocc;
+				$ret->email_tobcc = (string) $obj->email_tobcc;
 
 				break;
 			} else {
@@ -1836,30 +2134,28 @@ class FormMail extends Form
 					if ($type_template == 'body') {
 						// Special case to use this->withbody as content
 						$defaultmessage = (string) $this->withbody;
-					} elseif ($type_template == 'facture_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoice");
-					} elseif ($type_template == 'facture_relance') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder");
-					} elseif ($type_template == 'propal_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendProposal");
-					} elseif ($type_template == 'supplier_proposal_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal");
-					} elseif ($type_template == 'order_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendOrder");
-					} elseif ($type_template == 'order_supplier_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder");
-					} elseif ($type_template == 'invoice_supplier_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
-					} elseif ($type_template == 'shipping_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
-					} elseif ($type_template == 'reception_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendReception");
-					} elseif ($type_template == 'fichinter_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
-					} elseif ($type_template == 'actioncomm_send') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
+					} elseif ($type_template == 'facture_send' || $type_template == 'facture' || $type_template == 'facture_relance') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendInvoice");
+					} elseif ($type_template == 'propal_send' || $type_template == 'propal') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendProposal");
+					} elseif ($type_template == 'supplier_proposal_send' || $type_template == 'supplier_proposal') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendSupplierProposal");
+					} elseif ($type_template == 'order_send' || $type_template == 'order') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendOrder");
+					} elseif ($type_template == 'order_supplier_send' || $type_template == 'order_supplier') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendSupplierOrder");
+					} elseif ($type_template == 'invoice_supplier_send' || $type_template == 'invoice_supplier') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendSupplierInvoice");
+					} elseif ($type_template == 'shipping_send' || $type_template == 'shipping') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendShipping");
+					} elseif ($type_template == 'reception_send' || $type_template == 'reception') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendReception");
+					} elseif ($type_template == 'fichinter_send' || $type_template == 'fichinter') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendFichInter");
+					} elseif ($type_template == 'actioncomm_send' || $type_template == 'actioncomm') {
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentSendActionComm");
 					} elseif (!empty($type_template)) {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
+						$defaultmessage = $outputlangs->transnoentitiesnoconv("PredefinedMailContentGeneric");
 					}
 
 					$ret->label = 'default';
@@ -1935,7 +2231,7 @@ class FormMail extends Form
 			$sql .= " AND active = ".((int) $active);
 		}
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";	// Return all languages
-		$sql .= $this->db->order("position,lang,label", "ASC");
+		$sql .= $this->db->order("lang,position,label", "ASC");
 		//print $sql;
 
 		$resql = $this->db->query($sql);
@@ -1972,11 +2268,87 @@ class FormMail extends Form
 		}
 	}
 
+	/**
+	 * Normalize a text for equality checks.
+	 * @param  string $value Raw text to normalize.
+	 * @return string
+	 */
+	private static function normalizeTextForComparison($value)
+	{
+		$value = dol_string_nohtmltag((string) $value);
+		$value = preg_replace('/\s+/', ' ', $value);
+		return trim((string) $value);
+	}
 
+	/**
+	 * Return language prefix from a language code.
+	 * @param  string $langcode Full language code (for example fr_FR).
+	 * @return string
+	 */
+	private static function getLangPrefix($langcode)
+	{
+		$langcode = trim((string) $langcode);
+		if ($langcode === '') {
+			return '';
+		}
+
+		$prefix = preg_replace('/[_-].*$/', '', $langcode);
+		$prefix = strtolower((string) $prefix);
+		return preg_replace('/[^a-z]/', '', $prefix);
+	}
+
+	/**
+	 * Pick best translated label/description from product multilangs.
+	 *
+	 * @param  array<string,array{label?:string,description?:string,note?:string,other?:string}>|null $multilangs Product multilang rows indexed by language code.
+	 * @param  string                                                                                   $langcode   Preferred language code.
+	 * @return array{label:string,description:string}
+	 */
+	private static function getBestProductTranslation($multilangs, $langcode)
+	{
+		$langcode = trim((string) $langcode);
+		if ($langcode === '' || !is_array($multilangs) || empty($multilangs)) {
+			return array('label' => '', 'description' => '');
+		}
+
+		$prefix = self::getLangPrefix($langcode);
+		$candidates = array($langcode);
+		if ($prefix !== '' && $prefix !== $langcode) {
+			$candidates[] = $prefix;
+		}
+
+		foreach ($candidates as $candidate) {
+			if (empty($multilangs[$candidate]) || !is_array($multilangs[$candidate])) {
+				continue;
+			}
+			$label = trim((string) (isset($multilangs[$candidate]['label']) ? $multilangs[$candidate]['label'] : ''));
+			$description = trim((string) (isset($multilangs[$candidate]['description']) ? $multilangs[$candidate]['description'] : ''));
+			if ($label !== '' || $description !== '') {
+				return array('label' => $label, 'description' => $description);
+			}
+		}
+
+		if ($prefix !== '') {
+			foreach ($multilangs as $code => $row) {
+				if (!is_array($row)) {
+					continue;
+				}
+				if (!(strpos($code, $prefix.'_') === 0 || strpos($code, $prefix.'-') === 0)) {
+					continue;
+				}
+				$label = trim((string) (isset($row['label']) ? $row['label'] : ''));
+				$description = trim((string) (isset($row['description']) ? $row['description'] : ''));
+				if ($label !== '' || $description !== '') {
+					return array('label' => $label, 'description' => $description);
+				}
+			}
+		}
+
+		return array('label' => '', 'description' => '');
+	}
 
 	/**
 	 * Set ->substit (and ->substit_line) array from object. This is call when suggesting the email template into forms before sending email.
-	 *
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang
 	 * @return	void
@@ -1988,9 +2360,13 @@ class FormMail extends Form
 
 		$parameters = array();
 		$tmparray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-		complete_substitutions_array($tmparray, $outputlangs, null, $parameters);
+		complete_substitutions_array($tmparray, $outputlangs, $object, $parameters);
 
 		$this->substit = $tmparray;
+		$targetLang = '';
+		if (is_object($outputlangs) && !empty($outputlangs->defaultlang)) {
+			$targetLang = trim((string) $outputlangs->defaultlang);
+		}
 
 		// Fill substit_lines with each object lines content
 		if (is_array($object->lines)) {
@@ -2018,6 +2394,28 @@ class FormMail extends Form
 					$product->fetch($line->fk_product, '', '', '1');
 					$product->fetch_optionals();
 
+					if (getDolGlobalInt('MAIN_MULTILANGS') && $targetLang !== '' && !empty($product->multilangs) && is_array($product->multilangs)) {
+						$translated = self::getBestProductTranslation($product->multilangs, $targetLang);
+						$translatedLabel = trim((string) (isset($translated['label']) ? $translated['label'] : ''));
+						$translatedDescription = trim((string) (isset($translated['description']) ? $translated['description'] : ''));
+
+						$currentLabelNorm = self::normalizeTextForComparison($substit_line['__PRODUCT_LABEL__']);
+						$currentProductDescriptionNorm = self::normalizeTextForComparison($substit_line['__PRODUCT_DESCRIPTION__']);
+						$currentLineDescriptionNorm = self::normalizeTextForComparison($substit_line['__DESCRIPTION__']);
+						$productLabelNorm = self::normalizeTextForComparison($product->label);
+						$productDescriptionNorm = self::normalizeTextForComparison($product->description);
+
+						if ($translatedLabel !== '' && ($currentLabelNorm === '' || $currentLabelNorm === $productLabelNorm)) {
+							$substit_line['__PRODUCT_LABEL__'] = $translatedLabel;
+						}
+						if ($translatedDescription !== '' && ($currentProductDescriptionNorm === '' || $currentProductDescriptionNorm === $productDescriptionNorm)) {
+							$substit_line['__PRODUCT_DESCRIPTION__'] = $translatedDescription;
+						}
+						if ($translatedDescription !== '' && ($currentLineDescriptionNorm === '' || $currentLineDescriptionNorm === $productDescriptionNorm || $currentLineDescriptionNorm === $currentProductDescriptionNorm)) {
+							$substit_line['__DESCRIPTION__'] = $translatedDescription;
+						}
+					}
+
 					$extrafields->fetch_name_optionals_label($product->table_element, true);
 
 					if (!empty($extrafields->attributes[$product->table_element]['label']) && is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
@@ -2035,7 +2433,6 @@ class FormMail extends Form
 	/**
 	 * Get list of substitution keys available for emails. This is used for tooltips help.
 	 * This include the complete_substitutions_array.
-	 *
 	 * @param	string	$mode		'formemail', 'formemailwithlines', 'formemailforlines', 'emailing', ...
 	 * @param	?Object	$object		Object if applicable
 	 * @return	array<string,string>               Array of substitution values for emails.
@@ -2047,20 +2444,20 @@ class FormMail extends Form
 		$tmparray = array();
 		if ($mode == 'formemail' || $mode == 'formemailwithlines' || $mode == 'formemailforlines') {
 			$parameters = array('mode' => $mode);
-			$tmparray = getCommonSubstitutionArray($langs, 2, null, $object); // Note: On email templated edition, this is null because it is related to all type of objects
+			$tmparray = getCommonSubstitutionArray($langs, 2, null, $object); // Note: On email template creation, this may be null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
 
-			if ($mode == 'formwithlines') {
+			if ($mode == 'formemailwithlines') {
 				$tmparray['__LINES__'] = '__LINES__'; // Will be set by the get_form function
 			}
-			if ($mode == 'formforlines') {
+			if ($mode == 'formemailforlines') {
 				$tmparray['__QUANTITY__'] = '__QUANTITY__'; // Will be set by the get_form function
 			}
 		}
 
 		if ($mode == 'emailing') {
 			$parameters = array('mode' => $mode);
-			$tmparray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount'), $object); // Note: On email templated edition, this is null because it is related to all type of objects
+			$tmparray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount'), $object); // Note: On email template creation, this may be null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
 
 			// For mass emailing, we have different keys specific to the data into tagerts list
@@ -2085,47 +2482,42 @@ class FormMail extends Form
 			if (isModEnabled('paypal')) {
 				$onlinepaymentenabled++;
 			}
-			if (isModEnabled('paybox')) {
-				$onlinepaymentenabled++;
-			}
 			if (isModEnabled('stripe')) {
 				$onlinepaymentenabled++;
 			}
 			if ($onlinepaymentenabled && getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 				$tmparray['__SECUREKEYPAYMENT__'] = getDolGlobalString('PAYMENT_SECURITY_TOKEN');
-				if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-					if (isModEnabled('member')) {
-						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
-					}
-					if (isModEnabled('don')) {
-						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
-					}
-					if (isModEnabled('invoice')) {
-						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
-					}
-					if (isModEnabled('order')) {
-						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
-					}
-					if (isModEnabled('contract')) {
-						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
-					}
+				if (isModEnabled('member')) {
+					$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
+				}
+				if (isModEnabled('don')) {
+					$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
+				}
+				if (isModEnabled('invoice')) {
+					$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
+				}
+				if (isModEnabled('order')) {
+					$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
+				}
+				if (isModEnabled('contract')) {
+					$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
+				}
 
-					//Online payment link
-					if (isModEnabled('member')) {
-						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
-					}
-					if (isModEnabled('don')) {
-						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
-					}
-					if (isModEnabled('invoice')) {
-						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
-					}
-					if (isModEnabled('order')) {
-						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
-					}
-					if (isModEnabled('contract')) {
-						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
-					}
+				//Online payment link
+				if (isModEnabled('member')) {
+					$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
+				}
+				if (isModEnabled('don')) {
+					$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
+				}
+				if (isModEnabled('invoice')) {
+					$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
+				}
+				if (isModEnabled('order')) {
+					$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
+				}
+				if (isModEnabled('contract')) {
+					$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
 				}
 			} else {
 				/* No need to show into tooltip help, option is not enabled

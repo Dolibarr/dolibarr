@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -26,12 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,11 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
 $langs->loadLangs(array("bills", "loan"));
 
 $action = GETPOST('action', 'aZ09');
-$confirm	= GETPOST('confirm', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
 $chid = GETPOSTINT('id');
@@ -303,7 +302,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	if (empty($datepaid)) {
 		if (empty($ts_temppaid)) {
-			$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : dol_now();
+			$datepayment = (getDolGlobalString('MAIN_AUTOFILL_DATE') ? dol_now() : -1);
 		} else {
 			$datepayment = $ts_temppaid;
 		}
@@ -324,7 +323,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opened bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, '(courant:=:'.Account::TYPE_CURRENT.')', 1); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number

@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2001-2003  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
- * Copyright (C) 2015       Alexandre Spangaro   	<aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,11 +76,34 @@ $result = restrictedArea($user, 'don');
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-don page-stats_index');
-
+$picto = 'donation';
+$title = $langs->trans("Donations");
 $dir = $conf->don->dir_temp;
 
-print load_fiche_titre($langs->trans("DonationsStatistics"), '', 'donation');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-don page-stats');
+
+$page = 0;
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+
+$urlnew = DOL_URL_ROOT.'/don/card.php?action=create';
+if (!empty($socid)) {
+	$urlnew .= '&socid='.$socid;
+}
+
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/don/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/don/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/don/stats/index.php', '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create', '', $user->hasRight('don', 'write'));
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 
@@ -124,7 +147,7 @@ if (!$mesg) {
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 
 $filenameamount = $dir."/donationamount-".$year.".png";
-$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&amp;file=donationamoutinyear-'.$year.'.png';
+$fileurlamount = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['modulepart' => 'donationStats', 'file' => 'donationamoutinyear-'.$year.'.png']);
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
@@ -153,7 +176,7 @@ if (!$mesg) {
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $filename_avg = $dir."/donationaverage-".$year.".png";
-$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&file=donationaverageinyear-'.$year.'.png';
+$fileurl_avg = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['modulepart' => 'donationStats', 'file' => 'donationaverageinyear-'.$year.'.png']);
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
@@ -290,7 +313,7 @@ foreach ($data as $val) {
 	while (!empty($year) && $oldyear > (int) $year + 1) {
 		$oldyear--;
 		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['year' => $oldyear]).'">'.$oldyear.'</a></td>';
 
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
@@ -306,7 +329,14 @@ foreach ($data as $val) {
 	$greenavg = (empty($val['avg_diff']) || $val['avg_diff'] >= 0);
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
+	$query = ['year' => $year, 'mode' => $mode];
+	if ($socid > 0) {
+		$query += ['socid' => $socid];
+	}
+	if ($userid > 0) {
+		$query += ['userid' => $userid];
+	}
+	print '<td align="center"><a href="'.dolBuildUrl($_SERVER["PHP_SELF"], $query).'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';

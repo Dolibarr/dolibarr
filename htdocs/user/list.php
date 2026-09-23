@@ -34,11 +34,13 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -78,7 +80,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
-$extrafields = new ExtraFields($db);
+
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('userlist'));
 
@@ -155,8 +157,12 @@ $arrayfields = array(
 	'u.thm' => array('label' => "THM", 'langs' => 'salaries', 'checked' => '-1', 'position' => 82, 'enabled' => '1', 'isameasure' => 1),
 	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'date_modification' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'u.import_key' => array('label' => "ImportId", 'checked' => '-1', 'position' => 800, 'enabled' => '1'),
 	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => '1', 'position' => 100);
@@ -393,7 +399,7 @@ $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.l
 $sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.thm, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
-$sql .= " u.ldap_sid, u.statut as status, u.entity,";
+$sql .= " u.ldap_sid, u.statut as status, u.entity, u.import_key,";
 $sql .= " GREATEST(u.tms, ef.tms) as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas,";
@@ -460,10 +466,10 @@ if ($search_accountancy_code != '') {
 	$sql .= natural_search("u.accountancy_code", $search_accountancy_code);
 }
 if ($search_phonepro != '') {
-	$sql .= natural_search("u.office_phone", $search_phonepro);
+	$sql .= dol_natural_search_phone($db, "u.office_phone", $search_phonepro);
 }
 if ($search_phonemobile != '') {
-	$sql .= natural_search("u.user_mobile", $search_phonemobile);
+	$sql .= dol_natural_search_phone($db, "u.user_mobile", $search_phonemobile);
 }
 if ($search_email != '') {
 	$sql .= natural_search("u.email", $search_email);
@@ -762,7 +768,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -773,7 +779,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -871,6 +877,11 @@ if (!empty($arrayfields['date_modification']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['u.import_key']['checked'])) {
+	// Import ID
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 if (!empty($arrayfields['u.statut']['checked'])) {
 	// Status
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -878,7 +889,7 @@ if (!empty($arrayfields['u.statut']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -892,7 +903,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -999,12 +1010,20 @@ if (!empty($arrayfields['date_modification']['checked'])) {
 	print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "date_modification", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['import_key']['checked'])) {
+	print_liste_field_titre("ImportId", $_SERVER["PHP_SELF"], "u.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['u.import_key']['checked'])) {
+	print_liste_field_titre("ImportId", $_SERVER["PHP_SELF"], "u.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['u.statut']['checked'])) {
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "u.statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1042,8 +1061,7 @@ while ($i < $imaxinloop) {
 	$object->admin = $obj->admin;
 	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
-	$object->statut = $obj->status;
-	$object->status = $obj->status;
+	$object->status = (int) $obj->status;
 	$object->office_phone = $obj->office_phone;
 	$object->user_mobile = $obj->user_mobile;
 	$object->job = $obj->job;
@@ -1096,7 +1114,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1193,7 +1211,6 @@ while ($i < $imaxinloop) {
 				$user2->user_mobile = $obj->user_mobile;
 				$user2->email = $obj->email2;
 				$user2->socid = $obj->fk_soc2;
-				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
 				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
 					print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright"');
@@ -1232,7 +1249,8 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
+			$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, $obj->rowid, $obj->fk_soc, 1, 0, $showinvalidemail, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1403,6 +1421,13 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Import
+		if (!empty($arrayfields['u.import_key']['checked'])) {
+			print '<td class="center">'.dolPrintHTML($obj->import_key).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Status
 		if (!empty($arrayfields['u.statut']['checked'])) {
 			print '<td class="center">'.$object->getLibStatut(5).'</td>';
@@ -1411,7 +1436,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

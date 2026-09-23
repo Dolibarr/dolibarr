@@ -6,7 +6,7 @@
  * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,8 +123,12 @@ if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg)) {
 	$paymentmethod = $reg[1];
 }
 if (empty($paymentmethod)) {
-	dol_syslog("***** paymentok.php was called with a non valid parameter FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_payment');
-	dol_print_error(null, 'The callback url does not contain a parameter fulltag that should help us to find the payment method used');
+	// Missing/invalid fulltag is a malformed client request, not a server failure: answer 400
+	// with a plain message instead of dol_print_error (which implies an internal error and
+	// returns a misleading 202 status).
+	dol_syslog("***** paymentok.php was called with a non valid parameter FULLTAG=".$FULLTAG, LOG_WARNING, 0, '_payment');
+	http_response_code(400);
+	print 'Bad request: the callback url does not contain a valid fulltag parameter, required to find the payment method used.';
 	exit;
 }
 
@@ -369,12 +373,6 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 	}
 }
 
-// For Paybox
-if (isModEnabled('paybox') && $paymentmethod === 'paybox') {
-	// TODO Add a check to validate that payment is ok.
-	$ispaymentok = true; // We will do the rest of code
-}
-
 // For Stripe
 if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
@@ -396,7 +394,9 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	}
 
 	// Check we are coming from the newpaymentpage
-	if (GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
+	// Bypass session check when returning from Stripe confirmPayment() (mode STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2)
+	// In that case, payment_intent is passed in GET by Stripe and PaymentIntent::retrieve() below acts as verification
+	if (!GETPOST('payment_intent', 'alphanohtml') && GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
 		$error++;
 		$errmsg = 'Attempted direct access to the paymentok page without a valid session.';
 		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
@@ -422,7 +422,13 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 				}
 
 				// Check amount and currency
-				$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents
+				// Handle zero-decimal currencies that don't use cents/subunits
+				$zeroDecimalCurrencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				if (in_array(strtoupper($currencyCodeType), $zeroDecimalCurrencies)) {
+					$expectedAmount = (int) round($FinalPaymentAmt); // No cents for these currencies
+				} else {
+					$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents for most currencies
+				}
 				$expectedCurrency = strtolower($currencyCodeType);
 
 				if ((int) $paymentIntent->amount !== $expectedAmount || strtolower($paymentIntent->currency) !== $expectedCurrency) {
@@ -614,10 +620,6 @@ if ($ispaymentok) {
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
-						// - If not found, take the default amount
-						if (empty($amountexpected) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-							$amountexpected = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-						}
 						// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 						//if (empty($amount)) {
 						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
@@ -658,13 +660,31 @@ if ($ispaymentok) {
 				if (! $error) {
 					// We validate the member (no effect if it is already validated)
 					$result = ($object->status == $object::STATUS_EXCLUDED) ? -1 : $object->validate($user); // if membre is excluded (status == -2) the new validation is not possible
-					if ($result < 0 || empty($object->datevalid)) {
+					if ($result < 0) {
 						$error++;
 						$errmsg = $object->error;
 						$postactionmessages[] = $errmsg;
 						$postactionmessages = array_merge($postactionmessages, $object->errors);
 						$ispostactionok = -1;
 						dol_syslog("Failed to validate member: ".$errmsg, LOG_ERR, 0, '_payment');
+					}
+					// Member is validated but date of validation is empty so we set it
+					if (empty($object->datevalid)) {
+						dol_syslog("Member date of validation is empty. We define it", LOG_WARNING, 0, '_payment');
+						$now = dol_now();
+						$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+						$sql .= " datevalid = '".$db->idate($now)."'";
+						$sql .= " WHERE rowid = ".((int) $object->id);
+						$result = $db->query($sql);
+						if ($result) {
+							$object->datevalid = $now;
+						} else {
+							$errmsg = $db->error();
+							$postactionmessages[] = $errmsg;
+							$error++;
+							$ispostactionok = -1;
+							dol_syslog("Failed to set date of validation: ".$errmsg, LOG_ERR, 0, '_payment');
+						}
 					}
 				}
 
@@ -1208,7 +1228,7 @@ if ($ispaymentok) {
 							// TODO Send a warning email.
 						}
 
-						$object->classifyBilled($user);		// The invoice has been create from the order so total is the same, so we can classify order to billed (even if payment may be partial).
+						$object->classifyBilled($user);		// The invoice has been created from the order so total is the same, so we can classify order to billed (even if payment may be partial).
 
 						$invoice->validate($user);			// This may re-classify all linked orders to billed (done previously) if amount of invoice is ok by triggers, depending on the workflow module setup.
 
@@ -1323,7 +1343,7 @@ if ($ispaymentok) {
 				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalInt('global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
 				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
@@ -1455,7 +1475,7 @@ if ($ispaymentok) {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch((int) $ref);  // @phan-suppress-curren-line PhanPluginSuspiciousParamPosition
+		$result = $object->fetch((int) $ref);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 		if ($result) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
@@ -2104,7 +2124,7 @@ if (empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
 		if ($TRANSACTIONID) {
-			print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
+			print $langs->trans("ThisIsTransactionId")." : ".$TRANSACTIONID."<br><br>\n";
 		}
 
 		print '<center>';
@@ -2194,7 +2214,7 @@ if ($ispaymentok) {
 		} elseif ($ispostactionok == 0) {
 			$content .= $companylangs->transnoentitiesnoconv("None");
 		} else {
-			$topic .= ($ispostactionok ? '' : ' ('.$companylangs->trans("WarningPostActionErrorAfterPayment").')');
+			$topic .= ' ('.$companylangs->trans("WarningPostActionErrorAfterPayment").')';
 			$content .= '<span class="star">'.$companylangs->transnoentitiesnoconv("Error").'</span>';
 		}
 		$content .= '<br>'."\n";
@@ -2335,7 +2355,7 @@ if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
 		$randomseckey = getRandomPassword(true, null, 20);
-		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentok of the website.
+		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key propagated between paymentok.php to another page like a paymentok of the website.
 
 		// Paymentok page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
@@ -2350,7 +2370,7 @@ if (!empty($doactionsthenredirect)) {
 	} else {
 		// Redirect to an error page
 		$randomseckey = getRandomPassword(true, null, 20);
-		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentko of the website.
+		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key propagated between paymentok.php to another page like a paymentko of the website.
 
 		// Paymentko page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {

@@ -2,7 +2,7 @@
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017 ATM Consulting       <contact@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->bl
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "mails", "members", "products"));
+$langs->loadLangs(array("admin", "bills", "blockedlog", "cashdesk", "companies", "compta", "mails", "members", "products"));
 
 
 /*
@@ -96,7 +96,7 @@ $db->close();
  */
 function formatObject($objtoshow, $prefix, $parentelement = '')
 {
-	global $db, $langs;
+	global $db, $langs, $mysoc;
 
 	$s = '';
 
@@ -163,12 +163,13 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'vat_src_code' => 'VATCode',
 		'multicurrency_code' => 'Currency',
 		'qty' => 'Quantity',
-		'remise_percent' => 'DiscountInPercent',
+		'remise_percent' => $langs->transnoentitiesnoconv('Discount').' (%)',
 		'nom' => 'Name',
 		'name' => 'Name',
 		'email' => 'Email',
 		'address' => 'Address',
 		'town' => 'Town',
+		'zip' => 'Zip',
 		'state_code' => 'State',
 		'fk_pays' => 'Country',
 		'fk_typent' => 'CompanyType',
@@ -178,10 +179,11 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'capital' => 'Capital',
 		'fullname' => 'Fullname',
 		'period' => 'Period',
-		'localtax1_assuj' => 'UseLocalTax1',
-		'localtax2_assuj' => 'UseLocalTax2',
-		'localtax1_value' => 'LocalTax1DefaultValue',
-		'localtax2_value' => 'LocalTax2DefaultValue',
+		'tva_assuj' => 'VATIsUsed',
+		'localtax1_assuj' => $langs->transcountry('LocalTax1IsUsed', $mysoc->country_code),
+		'localtax2_assuj' => $langs->transcountry('LocalTax2IsUsed', $mysoc->country_code),
+		'localtax1_value' => 'Localtax1Rate',
+		'localtax2_value' => 'Localtax2Rate',
 		'subprice' => 'UnitPrice',
 		'product_type' => 'ProductType',
 		'product_label' => 'ProductLabel',
@@ -190,15 +192,19 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		'special_code' => 'Special line (WEEE line, option, id of module...)',
 		'status' => 'Status',
 		'cash' => 'PaymentTypeLIQ',
-		'cash_declared' => $langs->transnoentities('PaymentTypeLIQ').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
-		'cash_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeLIQ')),
+		'cash_declared' => $langs->transnoentitiesnoconv('PaymentTypeLIQ').' - '.$langs->transnoentitiesnoconv("AmuntCountedByUserShort"),
+		'cash_lifetime' => $langs->transnoentitiesnoconv('LifetimeAmount', $langs->transnoentitiesnoconv('PaymentTypeLIQ')),
 		'card' => 'PaymentTypeCB',
-		'card_declared' => $langs->transnoentities('PaymentTypeCB').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
-		'card_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCB')),
+		'card_declared' => $langs->transnoentitiesnoconv('PaymentTypeCB').' - '.$langs->transnoentitiesnoconv("AmuntCountedByUserShort"),
+		'card_lifetime' => $langs->transnoentitiesnoconv('LifetimeAmount', $langs->transnoentitiesnoconv('PaymentTypeCB')),
 		'cheque' => 'PaymentTypeCHQ',
-		'cheque_declared' => $langs->transnoentities('PaymentTypeCHQ').' - '.$langs->transnoentities("AmuntCountedByUserShort"),
-		'cheque_lifetime' => $langs->transnoentities('LifetimeAmount', $langs->transnoentities('PaymentTypeCHQ')),
+		'cheque_declared' => $langs->transnoentitiesnoconv('PaymentTypeCHQ').' - '.$langs->transnoentitiesnoconv("AmuntCountedByUserShort"),
+		'cheque_lifetime' => $langs->transnoentitiesnoconv('LifetimeAmount', $langs->transnoentitiesnoconv('PaymentTypeCHQ')),
 		'lifetime_start' => 'LifetimeStatDate',
+		'total_billed' => 'Turnover',
+		'total_collected' => 'TurnoverCollected',
+		'totallifetime_billed' => $langs->transnoentitiesnoconv('Turnover').' - '.$langs->transnoentitiesnoconv('LifetimeAmountShort'),
+		'totallifetime_collected' => $langs->transnoentitiesnoconv('TurnoverCollected').' - '.$langs->transnoentitiesnoconv('LifetimeAmountShort'),
 		'email_from' => 'MailFrom',
 		'email_to' => 'MailTo',
 		'email_msgid' => 'EmailMsgID',
@@ -214,12 +220,14 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 		//var_dump($newobjtoshow);
 		foreach ($newobjtoshow as $key => $val) {
 			if (!is_object($val) && !is_array($val)) {
-				// TODO $val can be '__PHP_Incomplete_Class', the is_object return false
+				// $val can be '__PHP_Incomplete_Class', the is_object return false
 				$s .= '<tr>';
 
 				// Field code
 				$s .= '<td>';
-				$s .= '<!-- '.$key.' '.$arrayoffields[$key]['type'].''.$arrayoffields[$convertkey[$key]]['label'].' -->';
+				$types = $arrayoffields[$key]['type'] ?? '';
+				$labels = (array_key_exists($key, $convertkey) ? ($arrayoffields[$convertkey[$key]]['label'] ?? '') : '');
+				$s .= '<!-- '.$key.' '.$types.' '.$labels.' -->';
 				$s .= ($prefix ? $prefix.' > ' : '');
 				$s .= $key;
 				$s .= '</td>';
@@ -239,7 +247,7 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 					}
 				}
 				if (empty($label) && !empty($otherlabels[$key])) {
-					if (preg_match('/^invoiceline/', $prefix) && $key == 'ref') {
+					if (preg_match('/^invoiceline/', $prefix) && $key === 'ref') {
 						$label = $langs->trans("ProductRef");
 					} else {
 						$label = $langs->trans($otherlabels[$key]);
@@ -281,6 +289,8 @@ function formatObject($objtoshow, $prefix, $parentelement = '')
 					'cash_declared', 'cheque_declared', 'card_declared', 'cash_lifetime', 'cheque_lifetime', 'card_lifetime'
 				)) || (isset($arrayoffields[$key]['type']) && in_array($arrayoffields[$key]['type'], array('price')))) {
 					$s .= '<span class="amount">'.price($val, 0, $langs, 1, 0, -2).'</span>';
+				} elseif (in_array($key, array('total_billed', 'total_collected', 'totallifetime_billed', 'totallifetime_collected'))) {
+					$s .= '<span class="amount">'.$val.'</span>';
 				} else {
 					$s .= $val;
 				}

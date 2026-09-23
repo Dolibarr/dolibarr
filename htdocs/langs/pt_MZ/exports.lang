@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ExportsArea=Exportações
 ImportableDatas=Conjunto de dados que podem ser importados
 SelectExportDataSet=Escolha um conjunto predefinido de dados que deseja exportar...
 SelectImportDataSet=Escolha um conjunto predefinido de dados que deseja importar...
@@ -27,7 +28,6 @@ TablesTarget=Mesas alvejados
 FieldsTarget=Alvo
 FieldTarget=Campo de destino
 FieldSource=Campo Fonte
-NowClickToTestTheImport=Verifique se o formato de arquivo (delimitadores de campo e cadeia) do arquivo corresponde às opções mostradas e se você omitiu a linha de cabeçalho ou se elas serão sinalizadas como erros na simulação a seguir. <br> Clique no botão "<b>%s</b>" para executar uma verificação da estrutura/conteúdo do arquivo e simular o processo de importação. <br> <b>Nenhum dado será alterado em seu banco de dados</b>.
 FieldNeedSource=Este campo requer dados do arquivo de origem
 SomeMandatoryFieldHaveNoSource=Alguns campos obrigatórios não têm nenhuma fonte de arquivo de dados
 InformationOnSourceFile=Arquivo Fonte
@@ -54,7 +54,6 @@ ImportFromLine=Importar iniciando da linha número
 ImportFromToLine=Intervalo de limite (de - até). Por exemplo. omitir linhas de cabeçalho.
 SetThisValueTo2ToExcludeFirstLine=Por exemplo, defina esse valor como 3 para excluir as 2 primeiras linhas. <br> Se as linhas de cabeçalho NÃO forem omitidas, isso resultará em vários erros na simulação de importação.
 KeepEmptyToGoToEndOfFile=Mantenha este campo vazio para processar todas as linhas até o final do arquivo.
-SelectPrimaryColumnsForUpdateAttempt=Selecione coluna(s) para usar como chave primária para uma importação de UPDATE
 UpdateNotYetSupportedForThisImport=Atualizar não é suportado para este tipo de importação (apenas inserir)
 NoUpdateAttempt=Nenhuma tentativa de atualização foi realizada, apenas insira
 ImportDataset_user_1=Usuários (funcionários ou não) e propriedades

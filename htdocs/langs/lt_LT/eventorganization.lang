@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konferencija arba stendas
 AmountPaid = Sumokėta suma
 DateOfRegistration = Registracijos data
 ConferenceOrBoothAttendee = Konferencijos ar stendo dalyvis
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Pareiškėjas arba lankytojas
 Speaker=Kalbėtojas
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Renginių projektų dalyvių sąrašas
 ListOfConfOrBoothOfEvent=Konferencijų arba renginių projektų stendų sąrašas
 DownloadICSLink=Atsisiųsti ICS failą
 EVENTORGANIZATION_SECUREKEY=„Seed“, kad būtų užtikrintas viešo registracijos puslapio raktas, skirtas konferencijos pasiūlymui
-SERVICE_BOOTH_LOCATION=Paslauga, naudojama sąskaitos faktūros eilutei apie stendo vietą
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Paslauga, naudojama sąskaitos faktūros eilutei apie dalyvio prenumeratą renginiui
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Balsų skaičius
 # Status
 EvntOrgDraft = Projektas

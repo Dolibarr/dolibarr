@@ -5,8 +5,8 @@
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,6 +252,7 @@ if (!empty($db_prefix) && !preg_match('/^[a-z0-9]+_$/i', $db_prefix)) {
 	$error++;
 }
 
+$db = null;
 $main_dir = dol_sanitizePathName($main_dir);
 $main_data_dir = dol_sanitizePathName($main_data_dir);
 
@@ -262,12 +263,12 @@ if (!filter_var($main_url, FILTER_VALIDATE_URL)) {
 	$error++;
 }
 
-// Remove last / into dans main_dir
+// Remove last / into main_dir
 if (substr($main_dir, dol_strlen($main_dir) - 1) == "/") {
 	$main_dir = substr($main_dir, 0, dol_strlen($main_dir) - 1);
 }
 
-// Remove last / into dans main_url
+// Remove last / into main_url
 if (!empty($main_url) && substr($main_url, dol_strlen($main_url) - 1) == "/") {
 	$main_url = substr($main_url, 0, dol_strlen($main_url) - 1);
 }
@@ -365,18 +366,9 @@ if (!$error) {
 		//print '</a>';
 		$error++;
 	}
-} else {
-	if (isset($db)) {
-		print $db->lasterror();
-	}
-	if (isset($db) && !$db->connected) {
-		print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
-	}
-	print $langs->trans("ErrorGoBackAndCorrectParameters");
-	$error++;
 }
 
-if (!$error && $db->connected) {
+if (!$error && $db !== null && $db->connected) {
 	if (!empty($db_create_database)) {
 		$result = $db->select_db($db_name);
 		if ($result) {
@@ -389,7 +381,7 @@ if (!$error && $db->connected) {
 }
 
 // Define $defaultCharacterSet and $defaultDBSortingCollation
-if (!$error && $db->connected) {
+if (!$error && $db !== null && $db->connected) {
 	if (!empty($db_create_database)) {    // If we create database, we force default value
 		// Default values come from the database handler
 
@@ -405,12 +397,11 @@ if (!$error && $db->connected) {
 		$defaultCharacterSet = 'utf8';
 		$defaultDBSortingCollation = 'utf8_unicode_ci';
 	}
-	// Force to avoid utf8mb4 because index on field char 255 reach limit of 767 char for indexes (example with mysql 5.6.34 = mariadb 10.0.29)
-	// TODO Remove this when utf8mb4 is supported
-	if ($defaultCharacterSet == 'utf8mb4' || $defaultDBSortingCollation == 'utf8mb4_unicode_ci') {
-		$defaultCharacterSet = 'utf8';
-		$defaultDBSortingCollation = 'utf8_unicode_ci';
-	}
+	// Note: utf8mb4 is no longer downgraded to utf8 here. The 767-byte InnoDB index
+	// prefix limit that motivated this only applied to MySQL < 5.7.7 / MariaDB < 10.2.2
+	// (innodb_large_prefix off by default); modern servers support 3072 bytes, enough
+	// for a VARCHAR(255) index in utf8mb4. If the database was created (or already
+	// exists) as utf8mb4, we now keep it as-is instead of forcing it back to utf8.
 
 	print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
 	print '<input type="hidden" name="dolibarr_main_db_collation" value="'.$defaultDBSortingCollation.'">';
@@ -421,7 +412,7 @@ if (!$error && $db->connected) {
 
 
 // Create config file
-if (!$error && $db->connected && $action == "set") {	// Test on permission not required here
+if (!$error && $db !== null && $db->connected && $action == "set") {	// Test on permission not required here
 	umask(0);
 	if (is_array($_POST)) {
 		foreach ($_POST as $key => $value) {
@@ -824,7 +815,7 @@ function jsinfo()
 {
 	ok=true;
 
-	//alert('<?php echo dol_escape_js($langs->transnoentities("NextStepMightLastALongTime")); ?>');
+	//alert(<?php echo "'".dol_escape_js($langs->transnoentities("NextStepMightLastALongTime"))."'" ; ?>);
 
 	document.getElementById('nextbutton').style.visibility="hidden";
 	document.getElementById('pleasewait').style.visibility="visible";
@@ -916,7 +907,7 @@ function write_conf_file($conffile)
 
 	$error = 0;
 
-	$key = md5(uniqid((string) mt_rand(), true)); // Generate random hash
+	$key = bin2hex(random_bytes(32));		// Generate a random hash (64 hex chars)
 
 	$fp = fopen("$conffile", "w");
 	if ($fp) {
@@ -989,10 +980,10 @@ function write_conf_file($conffile)
 		fwrite($fp, '$dolibarr_main_force_https=\''.dol_escape_php($main_force_https, 1).'\';');
 		fwrite($fp, "\n");
 
-		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
+		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bzip2, zstd\';');
 		fwrite($fp, "\n");
 
-		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match\';');
+		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, dolSort, abs, min, max, round, dol_now, preg_match\';');
 		fwrite($fp, "\n");
 
 		fwrite($fp, '$dolibarr_nocsrfcheck=\'0\';');

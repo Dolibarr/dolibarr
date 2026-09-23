@@ -5,8 +5,9 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +205,7 @@ if (empty($reshook)) {
 					$db->free($resql);
 				} else {
 					$error++;
-					setEventMessages($db->error, $db->errors, 'errors');
+					setEventMessages($db->error, null, 'errors');
 				}
 			}
 
@@ -283,15 +284,14 @@ $thirdpartystatic = new Societe($db);
 
 $result = $object->fetch($id, $ref);
 if ($result <= 0) {
-	dol_print_error($db, 'Payment '.$id.' not found in database');
-	exit;
+	recordNotFound('', 0);
 }
 
 $form = new Form($db);
 
 $head = payment_prepare_head($object);
 
-print dol_get_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
+print dol_get_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), -1, 'payment', 0, '', '', 0, '', 1);
 
 // Confirmation of payment delete
 if ($action == 'delete') {
@@ -541,6 +541,7 @@ if ($resql) {
 
 			$invoice = new Facture($db);
 			$invoice->fetch($objp->facid);
+			$marginInfo = null;
 
 			// Add Margin
 			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
@@ -577,7 +578,7 @@ if ($resql) {
 			}
 
 			// Add margin
-			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT') && $marginInfo !== null) {
 				print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
 			}
 

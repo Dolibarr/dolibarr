@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Đi tới <a class="notasortlink" href="%s" target="_bl
 OAUTH_STRIPE_TEST_NAME=Kiểm tra sọc
 OAUTH_STRIPE_LIVE_NAME=Sọc Trực Tiếp
 OAUTH_ID=ID ứng dụng khách OAuth
-OAUTH_SECRET=Bí mật OAuth
-OAUTH_TENANT=Đối tượng thuê OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Đã thêm nhà cung cấp OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Mục nhập OAuth cho nhà cung cấp và nhãn này đã tồn tại
 URLOfOAuthServiceEndpoints=URL cơ sở cho các điểm cuối dịch vụ OAuth
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL được cung cấp bởi dịch vụ OAuth để xác thực
 Scopes=Quyền (Phạm vi)
 ScopeUndefined=Quyền (Phạm vi) không xác định (xem tab trước)
-ScopesDesc=Ví dụ: đọc, viết với Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Mã thông báo đầy đủ (đối tượng)
 AccessToken=Mã thông báo truy cập
 TokenExpired=Đã hết hạn
@@ -50,3 +50,4 @@ RefreshToken=Làm mới mã thông báo
 RefreshTokenHelp=Sử dụng Mã thông báo làm mới để nhận Mã thông báo truy cập mới
 OldTokenWasExpiredItHasBeenRefresh=Mã thông báo cũ đã hết hạn, nó đã được làm mới
 OldTokenWasNotExpiredButItHasBeenRefresh=Mã thông báo cũ chưa hết hạn nhưng đã được làm mới
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

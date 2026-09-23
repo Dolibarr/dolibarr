@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,12 +105,19 @@ class DolibarrApiAccess implements iAuthenticate
 
 		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
 		$api_key = '';
+		if (isset($_GET['api_key']) || isset($_GET['DOLAPIKEY'])) {
+			// A key passed in the query string ends up in the web server access log, in proxy logs, in the
+			// browser history and in the Referer header of any outgoing link. Setting API_DISABLE_KEY_IN_URL
+			// refuses it instead of accepting it, so that a client still using that form is corrected rather
+			// than leaking the key silently. Off by default, for backward compatibility.
+			if (getDolGlobalString('API_DISABLE_KEY_IN_URL')) {
+				throw new RestException(401, 'The API key must be sent in the DOLAPIKEY header, not in the URL (API_DISABLE_KEY_IN_URL is set)');
+			}
+		}
 		if (isset($_GET['api_key'])) {	// For backward compatibility. Keep $_GET here.
-			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['api_key'];
 		}
 		if (isset($_GET['DOLAPIKEY'])) {
-			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['DOLAPIKEY']; // With GET method
 		}
 
@@ -135,18 +142,40 @@ class DolibarrApiAccess implements iAuthenticate
 			$token_rowid = 0;
 
 			if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
-				$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, u.api_key as api_key, u.entity as token_entity, 0 as token_rowid,";
-				$sql .= " u.tms as date_modification";
-				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-				$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
+					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, u.api_key as api_key, 0 as token_rowid,";
+					$sql .= " u.tms as date_modification,";
+					$sql .= " gu.entity, gu.entity as token_entity";
+					$sql .= " FROM ".$this->db->prefix()."user as u";
+					$sql .= " JOIN ".$this->db->prefix()."usergroup_user as gu ON u.rowid = gu.fk_user AND gu.entity = ".((int) $conf->entity);
+					$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+				} else {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, u.api_key as api_key, u.entity as token_entity, 0 as token_rowid,";
+					$sql .= " u.tms as date_modification";
+					$sql .= " FROM ".$this->db->prefix()."user as u";
+					$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+				}
 			} else {
-				$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, oat.tokenstring as api_key, oat.entity as token_entity, rowid as token_rowid,";
-				$sql .= " oat.tms as date_modification";
-				$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token AS oat";
-				$sql .= " JOIN ".MAIN_DB_PREFIX."user AS u ON u.rowid = oat.fk_user";
-				$sql .= " WHERE (oat.tokenstring = '".$this->db->escape($api_key)."'";
-				$sql .= " OR oat.tokenstring = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."')";
-				$sql .= " AND oat.service = 'dolibarr_rest_api'";
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
+					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
+					$sql .= " oat.tms as date_modification,";
+					$sql .= " gu.entity";
+					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
+					$sql .= " JOIN ".$this->db->prefix()."user AS u ON u.rowid = oat.fk_user";
+					$sql .= " JOIN ".$this->db->prefix()."usergroup_user as gu ON u.rowid = gu.fk_user AND gu.entity = ".((int) $conf->entity);
+					$sql .= " WHERE (oat.tokenstring = '".$this->db->escape($api_key)."'";
+					$sql .= " OR oat.tokenstring = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."')";
+					$sql .= " AND gu.entity = oat.entity";
+					$sql .= " AND oat.service = 'dolibarr_rest_api'";
+				} else {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
+					$sql .= " oat.tms as date_modification";
+					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
+					$sql .= " JOIN ".$this->db->prefix()."user AS u ON u.rowid = oat.fk_user";
+					$sql .= " WHERE (oat.tokenstring = '".$this->db->escape($api_key)."'";
+					$sql .= " OR oat.tokenstring = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."')";
+					$sql .= " AND oat.service = 'dolibarr_rest_api'";
+				}
 			}
 
 			$result = $this->db->query($sql);
@@ -318,6 +347,7 @@ class DolibarrApiAccess implements iAuthenticate
 		}
 
 		$userClass::setCacheIdentifier(static::$role);
+
 		Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 		$requirefortest = static::$requires;
 		if (!is_array($requirefortest)) {
@@ -337,7 +367,7 @@ class DolibarrApiAccess implements iAuthenticate
 	}
 
 	/**
-	 * Verify access
+	 * Check that the role of user is among a the given list defined into static::$requires
 	 *
 	 * @param   array{class:array{DolibarrApiAccess:array{properties:array{requires?:bool}}}} $m Properties of method
 	 *

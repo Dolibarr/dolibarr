@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -34,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
@@ -146,6 +146,7 @@ $namelink = '';
 $builddate = dol_now();
 $periodlink = '';
 $name = '';
+$description = '';
 
 // TODO Report from bookkeeping not yet available, so we switch on report on business events
 /*if ($modecompta == "BOOKKEEPING") {
@@ -229,9 +230,9 @@ if (isModEnabled('accounting')) {
 		$sql = "SELECT b.rowid ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 		$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
-		$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+		$sql .= " WHERE b.entity = ".((int) $conf->entity); // In module double party accounting, we never share entities
 		$sql .= " AND b.numero_compte = aa.account_number";
-		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.entity = ".((int) $conf->entity);
 		$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 		$sql .= $db->plimit(1);
 
@@ -244,6 +245,8 @@ if (isModEnabled('accounting')) {
 	}
 }
 
+
+$sql = '';
 
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
@@ -275,10 +278,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.debit - b.credit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 	$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
-	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+	$sql .= " WHERE b.entity = ".((int) $conf->entity); // In module double party accounting, we never share entities
 	$sql .= " AND b.doc_type = 'supplier_invoice'";
 	$sql .= " AND b.numero_compte = aa.account_number";
-	$sql .= " AND aa.entity = ".$conf->entity;
+	$sql .= " AND aa.entity = ".((int) $conf->entity);
 	$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 	$sql .= " AND aa.pcg_type = 'EXPENSE'";		// TODO Be able to use a custom group
 }

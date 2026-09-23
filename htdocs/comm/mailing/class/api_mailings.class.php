@@ -466,7 +466,7 @@ class Mailings extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->mailing->array_options[$index] = $this->_checkValForAPI($field, $val, $this->mailing);
+					$this->mailing->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->mailing);
 				}
 				continue;
 			}

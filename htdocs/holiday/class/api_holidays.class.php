@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
  *
@@ -45,6 +45,25 @@ class Holidays extends DolibarrApi
 	);
 
 	/**
+	 * @var string[]	Workflow fields that must not be set through the generic
+	 *					create/update endpoints. They can only be changed via the
+	 *					dedicated routes (validate, approve, refuse, cancel, reopen)
+	 *					that enforce the proper permission checks.
+	 */
+	public static $FIELDS_FORBIDDEN_FOR_API = array(
+		'status',
+		'statut',
+		'fk_validator',
+		'date_valid',
+		'fk_user_valid',
+		'date_approval',
+		'fk_user_approve',
+		'date_refuse',
+		'fk_user_refuse',
+		'detail_refuse',
+	);
+
+	/**
 	 * @var Holiday {@type Holiday}
 	 */
 	public $holiday;
@@ -84,7 +103,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -104,7 +123,7 @@ class Holidays extends DolibarrApi
 	 * @param	int			$limit				List limit
 	 * @param	int			$page				Page number
 	 * @param	string		$user_ids   		User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array<string,mixed>				Array of order objects
@@ -113,9 +132,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		// TODO Check on permission holiday->read only if all ID are inside the childids of user
-
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read') && !DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
 			throw new RestException(403);
 		}
 
@@ -125,11 +142,15 @@ class Holidays extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ?: $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Link to extrafields is to allow to search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON t.fk_user = u.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('holiday').')';
 		if ($user_ids) {
 			$sql .= " AND t.fk_user IN (".$this->db->sanitize($user_ids).")";
+		}
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user IN (".$this->db->sanitize(implode(',', $childids)).")";
 		}
 
 		// Add sql filters
@@ -219,6 +240,9 @@ class Holidays extends DolibarrApi
 				$this->holiday->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if (in_array($field, self::$FIELDS_FORBIDDEN_FOR_API) && $field !== 'fk_validator') {
+				throw new RestException(400, "Field '".$field."' is not allowed in create endpoint. Use dedicated routes (validate, approve, refuse, cancel, reopen) to change the workflow status.");
+			}
 
 			$this->holiday->$field = $this->_checkValForAPI($field, $value, $this->holiday);
 		}
@@ -262,12 +286,17 @@ class Holidays extends DolibarrApi
 
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'holiday not found');
+			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		if (!is_array($request_data)) {
+			$request_data = array();
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -277,10 +306,13 @@ class Holidays extends DolibarrApi
 				$this->holiday->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if (in_array($field, self::$FIELDS_FORBIDDEN_FOR_API)) {
+				throw new RestException(400, "Field '".$field."' is not allowed in update endpoint. Use dedicated routes (validate, approve, refuse, cancel, reopen) to change the workflow status.");
+			}
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->holiday->array_options[$index] = $this->_checkValForAPI($field, $val, $this->holiday);
+					$this->holiday->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->holiday);
 				}
 				continue;
 			}
@@ -318,7 +350,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -363,7 +395,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -409,7 +441,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -452,10 +484,10 @@ class Holidays extends DolibarrApi
 
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Holiday not found');
+			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -499,10 +531,10 @@ class Holidays extends DolibarrApi
 
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Holiday not found');
+			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -549,15 +581,15 @@ class Holidays extends DolibarrApi
 
 		$result = $this->holiday->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Holiday not found');
+			throw new RestException(404, 'Leave not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday->id)) {
+		if (!DolibarrApi::_checkAccessToResource('holiday', $this->holiday)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// Check if the holiday is actually canceled
-		if ($this->holiday->statut != Holiday::STATUS_CANCELED) {
+		if ($this->holiday->status != Holiday::STATUS_CANCELED) {
 			throw new RestException(400, 'Holiday is not canceled. Only canceled holidays can be reopened.');
 		}
 		$this->holiday->status = Holiday::STATUS_VALIDATED;

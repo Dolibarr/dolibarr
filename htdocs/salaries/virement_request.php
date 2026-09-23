@@ -5,7 +5,7 @@
  * Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,8 +197,8 @@ if ($action == "add" && $permissiontoadd) {
 
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		} else {
-			dol_print_error($db, $error);
 			$db->rollback();
+
 			setEventMessages($obj->error, $obj->errors, 'errors');
 		}
 	}
@@ -559,7 +559,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td>&nbsp;</td>';
 }
 print '<td class="left">'.$langs->trans("DateRequest").'</td>';
@@ -573,7 +573,7 @@ if ($type == 'bank-transfer') {
 }
 print '<td>&nbsp;</td>';
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td>&nbsp;</td>';
 }
 print '</tr>';
@@ -595,13 +595,12 @@ if ($resql) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
@@ -662,7 +661,7 @@ if ($resql) {
 			print '<td class="center">-</td>';
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
@@ -713,13 +712,12 @@ if ($resql) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td>&nbsp;</td>';
 			}
 
@@ -776,7 +774,7 @@ if ($resql) {
 			print '<td>&nbsp;</td>';
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td>&nbsp;</td>';
 			}
 

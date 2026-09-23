@@ -11,7 +11,7 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ require_once 'filefunc.inc.php';
  * @var string $dolibarr_main_db_cryptkey
  * @var string $dolibarr_main_document_root_alt
  * @var string $dolibarr_main_limit_users
+ * @var string $dolibarr_main_limit_sessions_per_user
  * @var string $dolibarr_mailing_limit_sendbyweb
  * @var string $dolibarr_mailing_limit_sendbycli
  * @var	string $dolibarr_mailing_limit_sendbyday
@@ -62,13 +63,16 @@ require_once 'filefunc.inc.php';
  * @var string $dolibarr_main_url_root
  * @var string $dolibarr_main_url_root_alt
  * @var string $dolibarr_main_document_root_alt
+ * @var string $dolibarr_allow_unsecured_select_in_extrafields_filter;
  * @var string|string[] $dolibarr_main_stream_to_disable
  */
 '
 @phan-var-force ?string $dolibarr_main_db_prefix
+@phan-var-force ?string $dolibarr_main_db_collation
 @phan-var-force ?string $dolibarr_main_db_encryption
 @phan-var-force ?string $dolibarr_main_db_cryptkey
 @phan-var-force ?string $dolibarr_main_limit_users
+@phan-var-force ?string $dolibarr_main_limit_sessions_per_user
 @phan-var-force ?string $dolibarr_main_url_root_alt
 ';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
@@ -111,6 +115,11 @@ if (!defined('LOG_DEBUG')) {
 		define('LOG_DEBUG', 7);
 	}
 }
+
+if (!defined('SUBTOTALS_SPECIAL_CODE')) {
+	define('SUBTOTALS_SPECIAL_CODE', 81);
+}
+
 
 /*
  * Disable some not used PHP stream
@@ -157,6 +166,7 @@ if (defined('TEST_DB_FORCE_TYPE')) {
 
 // Set properties specific to conf file
 $conf->file->main_limit_users = $dolibarr_main_limit_users;
+$conf->file->main_limit_sessions_per_user = empty($dolibarr_main_limit_sessions_per_user) ? 0 : $dolibarr_main_limit_sessions_per_user;
 $conf->file->mailing_limit_sendbyweb = empty($dolibarr_mailing_limit_sendbyweb) ? 0 : $dolibarr_mailing_limit_sendbyweb;
 $conf->file->mailing_limit_sendbycli = empty($dolibarr_mailing_limit_sendbycli) ? 0 : $dolibarr_mailing_limit_sendbycli;
 $conf->file->mailing_limit_sendbyday = empty($dolibarr_mailing_limit_sendbyday) ? 0 : $dolibarr_mailing_limit_sendbyday;
@@ -270,6 +280,13 @@ if (!defined('NOREQUIREUSER')) {
 if (!defined('NOHOOKMANAGER')) {
 	$hookmanager = new HookManager($db);
 }
+/*
+ * Create $extrafields object
+ */
+if ($db !== null) {
+	require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+	$extrafields = new ExtraFields($db);
+}
 
 
 /*
@@ -303,7 +320,8 @@ if ($db !== null) {
 
 // Set default language (must be after the setValues setting global conf 'MAIN_LANG_DEFAULT'. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (!defined('NOREQUIRETRAN')) {
-	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+	// On a public page, the visitor has no user setup: the language of his browser wins over the default language of the backoffice
+	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : ((defined('NOLOGIN') && !empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) ? 'auto' : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto')));
 	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
 		$langcode = constant('MAIN_LANG_DEFAULT');
 	}

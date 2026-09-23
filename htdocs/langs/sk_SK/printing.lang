@@ -46,6 +46,10 @@ IPP_Color=Farba
 IPP_Device=Zariadenie
 IPP_Media=Tlačiarenské médiá
 IPP_Supported=Typ média
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Nikto
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Farba
 DirectPrintingJobsDesc=Táto stránka obsahuje zoznam tlačových úloh nájdených pre dostupné tlačiarne.
 GoogleAuthNotConfigured=Google OAuth nebol nastavený. Povoľte modul OAuth a nastavte Google ID/Secret.
 GoogleAuthConfigured=V nastavení modulu OAuth boli nájdené poverenia Google OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Konfiguračné premenné pre tlačový ovládač Goog
 PrintingDriverDescprintipp=Konfiguračné premenné pre ovládač tlače Cups.
 PrintTestDescprintgcp=Zoznam tlačiarní pre službu Google Cloud Print.
 PrintTestDescprintipp=Zoznam tlačiarní na poháre.
-Testbbbb
+PrinterLocation=Printer location

@@ -6,9 +6,10 @@
  * Copyright (C) 2012		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2012-2020	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -51,7 +53,6 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -85,7 +86,7 @@ if (isModEnabled('mailmanspip')) {
 }
 
 $object = new Adherent($db);
-$extrafields = new ExtraFields($db);
+
 $upload_dir = null;
 
 // fetch optionals attributes and labels
@@ -206,7 +207,7 @@ if (empty($reshook)) {
 			if ($socid != $object->socid) {	// If link differs from currently in database
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
 				$sql .= " WHERE socid = ".((int) $socid);
-				$sql .= " AND entity = ".$conf->entity;
+				$sql .= " AND entity = ".((int) $conf->entity);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -448,7 +449,9 @@ if (empty($reshook)) {
 
 							if (@is_dir($dir)) {
 								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-								if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
+								$resultupload = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
+								// Note: $resultupload is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+								if (!is_numeric($resultupload) || $resultupload <= 0) {
 									setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 								} else {
 									// Create thumbs
@@ -1053,7 +1056,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</script>'."\n";
 		}
 
-		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
+		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data" spellcheck="false">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
@@ -1189,9 +1192,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td id="tdcompany">'.$langs->trans("Company").' / '.$langs->trans("Organization").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
 
 		// Civility
-		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-		print $formcompany->select_civility(GETPOSTISSET('civility_code') ? GETPOST('civility_code') : $object->civility_code, 'civility_code', 'maxwidth150', 1).'</td>';
-		print '</tr>';
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_MEMBER')) {
+			print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+			print $formcompany->select_civility(GETPOSTISSET('civility_code') ? GETPOST('civility_code', "aZ09") : $object->civility_code, 'civility_code', 'maxwidth150', 1);
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Lastname
 		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET('lastname') ? GETPOST('lastname', 'alphanohtml') : $object->lastname).'"></td>';
@@ -1256,15 +1262,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" size="20" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $soc->phone).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($soc->phone, 'phone', $soc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone_perso" size="20" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone_perso, 'phone_perso', $soc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
-		print '<td>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" size="20" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $soc->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1313,8 +1319,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	if ($action == 'edit') {
 		$res = $object->fetch($id);
 		if ($res < 0) {
-			dol_print_error($db, $object->error);
-			exit;
+			recordNotFound('', 0);
 		}
 		$res = $object->fetch_optionals();
 		if ($res < 0) {
@@ -1415,18 +1420,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys["mor"] = $langs->trans("Moral");
 		$checkednature = (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy);
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberNature").'</span></td><td>';
-		print '<span id="spannature1" class="member-individual-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
-		print '<span id="spannature1" class="member-company-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature1" class="member-individual-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
+		print '<span id="spannature1" class="member-company-back spannature paddinglarge marginrightonly"><label for="moralinput" class="">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
 		print "</td></tr>";
 
 		// Company
 		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
 
 		// Civility
-		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-		print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code', 'maxwidth150', 1);
-		print '</td>';
-		print '</tr>';
+		if (getDolGlobalString('MAIN_USE_TITLE_FOR_MEMBER')) {
+			print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+			print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code', 'maxwidth150', 1);
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Lastname
 		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("lastname") ? GETPOST("lastname", 'alphanohtml', 2) : $object->lastname).'"></td>';
@@ -1507,15 +1514,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Pro phone
 		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone" value="'.(GETPOSTISSET("phone") ? GETPOST("phone") : $object->phone).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		// Personal phone
 		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
-		print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').'<input type="text" name="phone_perso" value="'.(GETPOSTISSET("phone_perso") ? GETPOST("phone_perso") : $object->phone_perso).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone_perso, 'phone_perso', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
-		print '<td>'.img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"').'<input type="text" name="phone_mobile" value="'.(GETPOSTISSET("phone_mobile") ? GETPOST("phone_mobile") : $object->phone_mobile).'"></td></tr>';
+		print '<td>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
 
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1592,8 +1599,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	if ($id > 0 && $action != 'edit') {
 		$res = $object->fetch($id);
 		if ($res < 0) {
-			dol_print_error($db, $object->error);
-			exit;
+			recordNotFound('', 0);
 		}
 		$res = $object->fetch_optionals();
 		if ($res < 0) {
@@ -1731,7 +1737,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (isModEnabled('mailman') && getDolGlobalString('ADHERENT_USE_SPIP')) {
 				$formquestion[] = array('type' => 'other', 'label' => $langs->transnoentitiesnoconv("SynchroSpipEnabled"), 'value' => '');
 			}
-			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 250);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 0);
 		}
 
 		// Confirm resiliate
@@ -2104,7 +2110,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				/*
 				if ($user->hasRight('adherent', 'creer')) {
 					if (Adherent::STATUS_VALIDATED == $object->status) {
-						if ($object->email) print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=sendinfo">'.$langs->trans("SendCardByMail")."</a>\n";
+						if ($object->email) print '<a class="butAction" href="card.php?rowid='.$object->id.'&action=sendinfo&token='.newToken().'">'.$langs->trans("SendCardByMail")."</a>\n";
 						else print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendCardByMail")."</a>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("SendCardByMail")."</span>";

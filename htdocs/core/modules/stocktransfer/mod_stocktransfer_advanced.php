@@ -50,7 +50,12 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 	/**
 	 * @var string name
 	 */
-	public $name = 'got2be';
+	public $name = 'advanced';
+
+	/**
+	 * @var int 	position
+	 */
+	public $position = 60;
 
 
 	/**

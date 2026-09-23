@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -382,7 +382,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND clos = 0";
 		$sql .= " ORDER BY label";
 
@@ -415,7 +415,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if (getDolGlobalString('ACCOUNTING_MODE') == 'RECETTES-DEPENSES') {
 			$sql .= " AND nature = 4"; // only bank journal when using treasury accounting mode
 		}

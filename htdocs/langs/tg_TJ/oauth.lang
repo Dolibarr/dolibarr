@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Ба <a class="notasortlink" href="%s" target="_blank" 
 OAUTH_STRIPE_TEST_NAME=Санҷиши хат
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=ID мизоҷи OAuth
-OAUTH_SECRET=Сирри OAuth
-OAUTH_TENANT=Иҷорагир OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Провайдери OAuth илова карда шуд
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Воридоти OAuth барои ин провайдер ва нишона аллакай мавҷуд аст
 URLOfOAuthServiceEndpoints=URL-и асосӣ барои нуқтаи ниҳоии хидмати OAuth
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL аз ҷониби хидмати OAuth барои аутентификатсия пешниҳод карда мешавад
 Scopes=Иҷозатҳо (миқёсҳо)
 ScopeUndefined=Иҷозатҳо (миқёсҳо) муайяннашуда (ба ҷадвали қаблӣ нигаред)
-ScopesDesc=Мисол: бо Мастодон хондан, навиштан
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Токен пурра (объект)
 AccessToken=Токен дастрас
 TokenExpired=Муддат гузаштааст
@@ -50,3 +50,4 @@ RefreshToken=Токенро навсозӣ кунед
 RefreshTokenHelp=Барои гирифтани аломати дастрасии нав аз Токени навсозӣ истифода баред
 OldTokenWasExpiredItHasBeenRefresh=Мӯҳлати нишонаи кӯҳна гузаштааст, он нав карда шуд
 OldTokenWasNotExpiredButItHasBeenRefresh=Мӯҳлати нишонаи кӯҳна ба охир нарасидааст, аммо навсозӣ шудааст
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

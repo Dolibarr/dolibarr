@@ -2,8 +2,9 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ class FormWebPortal extends Form
 		$out .= '>';
 		*/
 
-		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '', '', '', '', 1, '', $placeholder);
+		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '', '', '', '', 1, '', $placeholder, 'auto', DOL_URL_ROOT . "/theme/common/object_calendarday.png");
 
 		return $out;
 	}
@@ -541,6 +542,14 @@ class FormWebPortal extends Form
 				$out = $this->inputType('tel', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
 
+			case 'phone':
+				if (preg_match('/^search_/', $keyprefix)) {
+					$out = $this->inputType('text', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
+				} else {
+					$out = $this->showPhoneInput($value, $htmlName, !empty($object->country_id) ? $object->country_id : 0);
+				}
+				break;
+
 			case 'url':
 				$out = $this->inputType('url', $htmlName, dol_escape_htmltag($value), $htmlId, $morecss, $moreparam);
 				break;
@@ -616,7 +625,11 @@ class FormWebPortal extends Form
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList .= ', ' . $parentField;
+					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
+						$keyList .= ', main.'.$parentField;
+					} else {
+						$keyList .= ', '.$parentField;
+					}
 				}
 
 				$filter_categorie = false;
@@ -634,8 +647,8 @@ class FormWebPortal extends Form
 					}
 
 					$sqlwhere = '';
-					$sql = "SELECT " . $keyList;
-					$sql .= " FROM " . $this->db->prefix() . $InfoFieldList[0];
+					$sql = "SELECT " . $this->db->sanitize($keyList, 0, 0, 1);
+					$sql .= " FROM " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -647,9 +660,11 @@ class FormWebPortal extends Form
 
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= " as main, " . $this->db->prefix() . $InfoFieldList[0] . "_extrafields as extra";
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2] . " AND " . $InfoFieldList[4];
+							$sql .= " as main, " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]) . "_extrafields as extra";
+							// We trust this argument `$InfoFieldList[4]` @phan-suppress-next-line SqlInjection
+							$sqlwhere .= " WHERE extra.fk_object=main." . $this->db->sanitize($InfoFieldList[2]) . " AND " . $InfoFieldList[4];
 						} else {
+							// We trust this argument `$InfoFieldList[4]` @phan-suppress-next-line SqlInjection
 							$sqlwhere .= " WHERE " . $InfoFieldList[4];
 						}
 					} else {
@@ -959,17 +974,17 @@ class FormWebPortal extends Form
 				}
 			}
 
-			$sql = "SELECT " . $keyList;
-			$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
+			$sql = "SELECT " . $this->db->sanitize($keyList);
+			$sql .= ' FROM ' . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE " . $selectkey . " = 0";
+				$sql .= " WHERE " . $this->db->sanitize($selectkey) . " = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE " . $selectkey . " = " . ((int) $value);
+				$sql .= " WHERE " . $this->db->sanitize($selectkey) . " = " . ((int) $value);
 			} else {
-				$sql .= " WHERE " . $selectkey . " = '" . $this->db->escape($value) . "'";
+				$sql .= " WHERE " . $this->db->sanitize($selectkey) . " = '" . $this->db->escape($value) . "'";
 			}
 
 			dol_syslog(__METHOD__ . ' type=sellist', LOG_DEBUG);
@@ -1067,13 +1082,13 @@ class FormWebPortal extends Form
 				}
 			}
 
-			$sql = "SELECT " . $keyList;
-			$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
+			$sql = "SELECT " . $this->db->sanitize($keyList);
+			$sql .= ' FROM ' . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
-			// $sql.= ' AND entity = '.$conf->entity;
+			// $sql.= ' AND entity = '.((int) $conf->entity);
 
 			dol_syslog(__METHOD__ . ' type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1152,6 +1167,8 @@ class FormWebPortal extends Form
 								$value = (string) $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'nom')) {
 								$value = (string) $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
+							} elseif (property_exists($object, 'ref')) {
+								$value = (string) $object->ref;  // @phan-suppress-current-line PhanUndeclaredProperty
 							}
 						}
 					}
@@ -1225,9 +1242,9 @@ class FormWebPortal extends Form
 		$out = "
 					<script>
 					$(document).ready(function () {
-						$('#" . $htmlName . "').select2({
+						$('#" . dol_escape_js($htmlName) . "').select2({
 							ajax: {
-								url: '" . $ajaxUrl . "',
+								url: '" . dol_escape_js($ajaxUrl) . "',
 								dataType: 'json',
 								delay: 250, // wait 250 milliseconds before triggering the request
 								data: function (params) {
@@ -1236,7 +1253,7 @@ class FormWebPortal extends Form
 										page: params.page || 1";
 		if (!empty($ajaxData) && is_array($ajaxData)) {
 			foreach ($ajaxData as $key => $value) {
-				$out .= ", " . $key . ": '" . $value . "'";
+				$out .= ", " . preg_replace('/[^a-z0-9_]/i', '', $key) . ": '" . dol_escape_js($value) . "'";
 			}
 		}
 		$out .= "
@@ -1283,12 +1300,13 @@ class FormWebPortal extends Form
 	public function inputText($htmlName, $value, $morecss = '', $moreparam = '', $options = array())
 	{
 		global $langs;
-
 		$out = '';
 		if (!empty($options)) {
 			// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
+			$out .= '<div class="text-area-multi-input-add-group" >';
 			$out .= $this->selectarray($htmlName . "_multiinput", $options, '', 1, 0, 0, $moreparam, 0, 0, 0, '', "flat maxwidthonphone" . $morecss);
 			$out .= '<input id="' . $htmlName . '_multiinputadd" type="button" class="button" value="' . $langs->trans("Add") . '">';
+			$out .= '</div>';
 			$out .= "<script>";
 			$out .= '
 					function handlemultiinputdisabling(htmlname){
@@ -1338,7 +1356,7 @@ class FormWebPortal extends Form
 		}
 
 		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-		$doleditor = new DolEditor($htmlName, (string) $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
+		$doleditor = new DolEditor($htmlName, (string) $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5);
 		$out .= (string) $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
 
 		return $out;
@@ -1601,12 +1619,13 @@ class FormWebPortal extends Form
 	 * @param int<0,1>										$cache						1=Accept to use image in cache
 	 * @param ''|'user'|'environment'						$forcecapture				'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
 	 * @param int<0,1>										$noexternsourceoverwrite	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @param int<0,1>										$usesharelinkifavailable	Use 1 to use the share=key link if available. This is slower.
 	 * @return string																	HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
-	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0, $usesharelinkifavailable = 0)
 	{
-		$out = parent::showphoto($modulepart, $object, $width, $height, $caneditfield, $cssclass, $imagesize, $addlinktofullsize, $cache, $forcecapture, $noexternsourceoverwrite);
+		$out = parent::showphoto($modulepart, $object, $width, $height, $caneditfield, $cssclass, $imagesize, $addlinktofullsize, $cache, $forcecapture, $noexternsourceoverwrite, $usesharelinkifavailable);
 		$out = self::convertAllLink($out);
 
 		return $out;
@@ -1664,9 +1683,9 @@ class FormWebPortal extends Form
 		$context = Context::getInstance();
 
 		$html = str_replace(DOL_URL_ROOT . '/viewimage.php?', $context->getControllerUrl('viewimage') . $additionalViewImageParams . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/viewimage.php?')), urlencode(dol_escape_js($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&')), $html);
+		$html = str_replace(urlencode(DOL_URL_ROOT . '/viewimage.php?'), urlencode($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&'), $html);
 		$html = str_replace(DOL_URL_ROOT . '/document.php?', $context->getControllerUrl('document') . $additionalDocumentParams . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/document.php?')), urlencode(dol_escape_js($context->getControllerUrl('document') . $additionalDocumentParams . '&')), $html);
+		$html = str_replace(urlencode(DOL_URL_ROOT . '/document.php?'), urlencode($context->getControllerUrl('document') . $additionalDocumentParams . '&'), $html);
 
 		return $html;
 	}

@@ -19,5 +19,4 @@ DictionaryResourceType=Types de ressources
 SelectResource=Sélectionnez la ressource
 IdResource=Ressource Id
 ErrorResourcesAlreadyInUse=Certaines ressources sont en cours d'utilisation
-MaxUsers=Nombre maximal d'utilisateurs (places, sièges, etc.)
 MaxUsersLabel=Nombre maximal d'utilisateurs

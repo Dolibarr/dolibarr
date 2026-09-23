@@ -14,6 +14,7 @@ DeleteProp=Teklif sil
 ValidateProp=Teklif doğrula
 CancelPropal=İptal
 AddProp=Teklif oluştur
+AddRenewalProp=Yenileme teklifi oluşturun
 ConfirmDeleteProp=Bu teklifi silmek istediğinizden emin misiniz?
 ConfirmValidateProp=Bu teklifi <b>%s</b> adı altında onaylamak istediğinizden emin misiniz?
 ConfirmCancelPropal=iptal ticari teklif vermek istediğinizden emin misiniz <b>%s</b>?

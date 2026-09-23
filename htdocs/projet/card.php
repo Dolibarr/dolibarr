@@ -5,7 +5,7 @@
  * Copyright (C) 2023       Charlene Benke          <charlene@patas_monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Benjamin Falière		<benjamin@faliere.com>
  *
@@ -31,6 +31,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -38,16 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langsLoad = array('projects', 'companies');
@@ -85,7 +84,6 @@ $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
 
 $object = new Project($db);
-$extrafields = new ExtraFields($db);
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Can't use generic include because when creating a project, ref is defined and we don't want error if fetch fails from ref.
@@ -251,25 +249,27 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			$result = $object->create($user);
-			if (!$error && $result > 0) {
-				// Add myself as Owner Contact Selected in the form
-				$typeofcontact = GETPOST('typeofcontact');
-				$result = $object->add_contact($user->id, $typeofcontact, 'internal');
+			if (!$error) {
+				$result = $object->create($user);
+				if ($result > 0) {
+					// Add myself as Owner Contact Selected in the form
+					$typeofcontact = GETPOST('typeofcontact');
+					$result = $object->add_contact($user->id, $typeofcontact, 'internal');
 
-				// -3 means type not found (renamed, de-activated or deleted), so don't prevent creation if it has been the case
-				if ($result == -3) {
-					setEventMessage('ErrorPROJECTLEADERRoleMissingRestoreIt', 'errors');
-					$error++;
-				} elseif ($result < 0) {
+					// -3 means type not found (renamed, de-activated or deleted), so don't prevent creation if it has been the case
+					if ($result == -3) {
+						setEventMessage('ErrorPROJECTLEADERRoleMissingRestoreIt', 'errors');
+						$error++;
+					} elseif ($result < 0) {
+						$langs->load("errors");
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+					}
+				} else {
 					$langs->load("errors");
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-			} else {
-				$langs->load("errors");
-				setEventMessages($object->error, $object->errors, 'errors');
-				$error++;
 			}
 			if (!$error && !empty($object->id) > 0) {
 				// Category association
@@ -502,6 +502,8 @@ if (empty($reshook)) {
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
+		} else {
+			setEventMessages($langs->trans("FileGenerated"), null, 'mesgs');
 		}
 	}
 
@@ -513,7 +515,7 @@ if (empty($reshook)) {
 			$langs->load("other");
 			$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			$ret = dol_delete_file($file, 1, 0, 0, $object);
 			if ($ret) {
 				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 			} else {
@@ -991,7 +993,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
                 var element = jQuery("#opp_status option:selected");
                 var defaultpercent = element.attr("defaultpercent");
                 /*if (jQuery("#opp_percent_not_set").val() == "") */
-                jQuery("#opp_percent").val(defaultpercent);
+                /* defaultpercent is the raw DB value (double(5,2), ie "100.00"), so normalize it */
+                jQuery("#opp_percent").val(parseFloat(defaultpercent));
         	}
 
 			/*init_myfunc();*/
@@ -1276,14 +1279,15 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print $formproject->selectOpportunityStatus('opp_status', (string) $object->opp_status, 1, 0, 0, 0, 'minwidth150 inline-block valignmiddle', 1, 1);
 
 			// Opportunity probability
-			print ' <input class="width50 right" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : '')).'"> %';
+			print ' <input class="width50 right valignmiddle" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : '')).'"> %';
 			print '<span id="oldopppercent" class="opacitymedium"></span>';
 			print '</div>';
 
 			print '<div id="divtocloseproject" class="inline-block valign clearboth paddingtop" style="display: none;">';
 			print '<input type="checkbox" id="inputcloseproject" name="closeproject" class="valignmiddle" />';
 			print '<label for="inputcloseproject" class="opacitymedium valignmiddle">';
-			print $form->textwithpicto($langs->trans("AlsoCloseAProject"), $langs->trans("AlsoCloseAProjectTooltip")).'</label>';
+			print $form->textwithpicto($langs->trans("AlsoCloseAProject"), $langs->trans("AlsoCloseAProjectTooltip"));
+			print '</label>';
 			print ' </div>';
 
 			print '</td>';
@@ -1291,16 +1295,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 			// Opportunity amount
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
-			print '<td><input class="width75 right" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'">';
-			print $langs->getCurrencySymbol($conf->currency);
+			print '<td><input class="width75 right marginright2" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'">';
+			print '<span class="opacitymedium">'.$langs->getCurrencySymbol($conf->currency).'</span>';
 			print '</td>';
 			print '</tr>';
 		}
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input class="width75 right" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
-		print $langs->getCurrencySymbol($conf->currency);
+		print '<td><input class="width75 right marginright2" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
+		print '<span class="opacitymedium">'.$langs->getCurrencySymbol($conf->currency).'</span>';
 		print '</td>';
 		print '</tr>';
 
@@ -1621,23 +1625,26 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
                         jQuery("#divtocloseproject").hide();
                     }
 
+                    /* Note: defaultpercent and oldpercent hold raw DB values (double(5,2), ie "100.00"),
+                       so they are already in universal numeric format and must not go through price2numjs(),
+                       which would strip the "." as a thousand separator in languages like de_DE. */
                     /* Change percent with default percent (defaultpercent) if new status (defaultpercent) is higher than current (jQuery("#opp_percent").val()) */
                     if (oldpercent != \'\' && (parseFloat(defaultpercent) < parseFloat(oldpercent)))
                     {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent+" def < old");
                         if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
-							jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+							jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+parseFloat(oldpercent)+\' %\');
 						}
 
-						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(oldpercent); }
-                        else { jQuery("#opp_percent").val(price2numjs(defaultpercent)); }
+						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(parseFloat(oldpercent)); }
+                        else { jQuery("#opp_percent").val(parseFloat(defaultpercent)); }
                     } else {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent);
                     	if (jQuery("#opp_percent").val() == \'\' || (parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent))) {
                         	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
-								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+parseFloat(oldpercent)+\' %\');
 							}
-                        	jQuery("#opp_percent").val(price2numjs(defaultpercent));
+                        	jQuery("#opp_percent").val(parseFloat(defaultpercent));
                     	}
                     }
             	}
@@ -1766,9 +1773,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Clone
 			if ($user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.((int) $object->id), '');
+					print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.((int) $object->id), '');
 				} else {
-					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF']. '#', '', false);
 				}
 			}
 
@@ -1777,7 +1784,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				if ($userDelete > 0 || ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
 					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 				} else {
-					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF']. '#', '', false);
 				}
 			}
 		}
@@ -1805,7 +1812,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				print '</td></tr></table>';
 
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
+				print '<table class="centpercent noborder'.(!empty($morecss) ? ' '.$morecss : '').'">';
 				print '<tr class="liste_titre">';
 				print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
 				print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);

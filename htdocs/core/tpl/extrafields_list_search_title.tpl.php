@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Laurent Destailleur     <eldy@users.sourceforge.net>
  *
@@ -31,17 +31,21 @@
  * @var ?int   $disablesortlink
  * @var string $sortfield
  * @var string $sortorder
+ * @var string $param
  */
+'
+@phan-var-force ?int<0,1> $disablesortlink
+@phan-var-force string $sortfield
+@phan-var-force string $sortorder
+@phan-var-force string $param
+@phan-var-force ?array{nbfield?:int} $totalarray
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-'
-@phan-var-force ?int<0,1> $disablesortlink
-';
-
 if (empty($extrafieldsobjectkey) && is_object($object)) {
 	$extrafieldsobjectkey = $object->table_element;
 }

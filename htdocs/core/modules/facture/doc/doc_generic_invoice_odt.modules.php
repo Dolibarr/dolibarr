@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke				<charlie@patas-monkey.com>
- * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -63,6 +63,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$this->db = $db;
 		$this->name = "ODT/ODS templates";
 		$this->description = $langs->trans("DocumentModelOdt");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 		$this->scandir = 'FACTURE_ADDON_PDF_ODT_PATH'; // Name of constant that is used to save list of directories to scan
 
 		// Page size for A4 format
@@ -345,16 +346,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$nbProduct = 0;
 				$nbService = 0;
 				foreach ($object->lines as $line) {
-					// Do not take into account lines of the type “deposit.”
-					$is_deposit = false;
-					if (preg_match('/^\((.*)\)$/', $line->desc, $reg)) {
-						if ($reg[1] == 'DEPOSIT') {
-							$is_deposit = true;
-						}
-					}
-
 					// If DEPOSIT, this line is completely ignored for calculations.
-					if ($is_deposit) {
+					if ($line->isDepositLine()) {
 						continue;
 					}
 

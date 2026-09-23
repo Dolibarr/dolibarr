@@ -92,6 +92,7 @@ class ActionCommTest extends CommonClassTest
 		$localobject->fk_project  = 0;
 		$localobject->datep       = $now;
 		$localobject->datef       = $now;
+		$localobject->max_participants = 25;
 		$localobject->percentage  = -1;   // Not applicable
 		$localobject->socid       = 0;
 		$localobject->contactid   = 0;
@@ -138,6 +139,7 @@ class ActionCommTest extends CommonClassTest
 		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
+		$this->assertSame(25, (int) $localobject->max_participants);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		return $localobject;
 	}
@@ -160,9 +162,14 @@ class ActionCommTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$localobject->label = 'New label';
+		$localobject->max_participants = 30;
 		$result = $localobject->update($user);
 
 		$this->assertLessThan($result, 0);
+		$updatedobject = new ActionComm($db);
+		$resultfetch = $updatedobject->fetch($localobject->id);
+		$this->assertLessThan($resultfetch, 0);
+		$this->assertSame(30, (int) $updatedobject->max_participants);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		return $localobject->id;
 	}

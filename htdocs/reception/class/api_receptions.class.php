@@ -22,6 +22,9 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 /**
  * API class for receptions
@@ -95,7 +98,7 @@ class Receptions extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter receptions of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101'). (el.fk_source:=:123) allows filtering by supplier order id"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101'). (el.fk_source:=:123) allows filtering by supplier order id"
 	 * @param string           $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of reception objects
@@ -134,9 +137,9 @@ class Receptions extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -258,16 +261,20 @@ class Receptions extends DolibarrApi
 		return $this->reception->id;
 	}
 
-	// /**
-	//  * Get lines of an reception
-	//  *
-	//  * @param int   $id             Id of reception
-	//  *
-	//  * @url	GET {id}/lines
-	//  *
-	//  * @return int
-	//  */
-	/*
+	/**
+	 * Get lines of a reception
+	 *
+	 * @param int   $id             Id of reception
+	 *
+	 * @url	GET {id}/lines
+	 *
+	 * @return array
+	 * @phan-return ReceptionLineBatch[]
+	 * @phpstan-return ReceptionLineBatch[]
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 */
 	public function getLines($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
@@ -275,171 +282,200 @@ class Receptions extends DolibarrApi
 		}
 
 		$result = $this->reception->fetch($id);
-		if (! $result) {
+		if (!$result) {
 			throw new RestException(404, 'Reception not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
+		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->reception->getLinesArray();
+
+		// fetch() already loaded the lines with the right reader (fetch_lines() when the reception
+		// comes from a supplier order, fetch_lines_free() otherwise), so we don't reload them here.
 		$result = array();
 		foreach ($this->reception->lines as $line) {
-			array_push($result,$this->_cleanObjectDatas($line));
+			array_push($result, $this->_cleanObjectDatas($line));
 		}
 		return $result;
 	}
-	*/
-
-	// /**
-	//  * Add a line to given reception
-	//  *
-	//  * @param int   $id             Id of reception to update
-	//  * @param array $request_data   ShipmentLine data
-	//  * @phan-param ?array<string,string> $request_data
-	//  * @phpstan-param ?array<string,string> $request_data
-	//  *
-	//  * @url	POST {id}/lines
-	//  *
-	//  * @return int
-	//  */
-	/*
-	public function postLine($id, $request_data = null)
-	{
-		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
-			throw new RestException(403);
-		}
-
-		$result = $this->reception->fetch($id);
-		if (! $result) {
-			throw new RestException(404, 'Reception not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		$request_data = (object) $request_data;
-
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->label = sanitizeVal($request_data->label);
-
-		$updateRes = $this->reception->addline(
-						$request_data->desc,
-						$request_data->subprice,
-						$request_data->qty,
-						$request_data->tva_tx,
-						$request_data->localtax1_tx,
-						$request_data->localtax2_tx,
-						$request_data->fk_product,
-						$request_data->remise_percent,
-						$request_data->info_bits,
-						$request_data->fk_remise_except,
-						'HT',
-						0,
-						$request_data->date_start,
-						$request_data->date_end,
-						$request_data->product_type,
-						$request_data->rang,
-						$request_data->special_code,
-						$fk_parent_line,
-						$request_data->fk_fournprice,
-						$request_data->pa_ht,
-						$request_data->label,
-						$request_data->array_options,
-						$request_data->fk_unit,
-						$request_data->origin,
-						$request_data->origin_id,
-						$request_data->multicurrency_subprice
-		);
-
-		if ($updateRes > 0) {
-			return $updateRes;
-
-		}
-		return false;
-	}*/
-
-	// /**
-	//  * Update a line to given reception
-	//  *
-	//  * @param int   $id             Id of reception to update
-	//  * @param int   $lineid         Id of line to update
-	//  * @param array $request_data   ShipmentLine data
-	//  * @phan-param ?array<string,string> $request_data
-	//  * @phpstan-param ?array<string,string> $request_data
-	//  *
-	//  * @url	PUT {id}/lines/{lineid}
-	//  *
-	//  * @return object
-	//  */
-	/*
-	public function putLine($id, $lineid, $request_data = null)
-	{
-		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
-			throw new RestException(403);
-		}
-
-		$result = $this->reception->fetch($id);
-		if (! $result) {
-			throw new RestException(404, 'Reception not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		$request_data = (object) $request_data;
-
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->label = sanitizeVal($request_data->label);
-
-		$updateRes = $this->reception->updateline(
-						$lineid,
-						$request_data->desc,
-						$request_data->subprice,
-						$request_data->qty,
-						$request_data->remise_percent,
-						$request_data->tva_tx,
-						$request_data->localtax1_tx,
-						$request_data->localtax2_tx,
-						'HT',
-						$request_data->info_bits,
-						$request_data->date_start,
-						$request_data->date_end,
-						$request_data->product_type,
-						$request_data->fk_parent_line,
-						0,
-						$request_data->fk_fournprice,
-						$request_data->pa_ht,
-						$request_data->label,
-						$request_data->special_code,
-						$request_data->array_options,
-						$request_data->fk_unit,
-						$request_data->multicurrency_subprice
-		);
-
-		if ($updateRes > 0) {
-			$result = $this->get($id);
-			unset($result->line);
-			return $this->_cleanObjectDatas($result);
-		}
-		return false;
-	}*/
 
 	/**
-	 * Delete a line to given reception
+	 * Add a line to a given reception
+	 *
+	 * A reception line always references the supplier order line it receives
+	 * (fk_elementdet): the received quantity relates to that order line. A line can only
+	 * be added while the reception is still a draft, before any stock movement.
+	 *
+	 * @param int    $id                Id of reception to update
+	 * @param int    $fk_origin_line    Id of the supplier order line received by this line		{@from body}{@required true}
+	 * @param float  $qty               Quantity to receive for this line						{@from body}{@required true}{@min 1}
+	 * @param int    $warehouse_id      Target warehouse id (may be optional depending on STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS)	{@from body}{@required false}
+	 * @param string $batch             Lot/serial number (mandatory for a batch managed product)	{@from body}{@required false}
+	 * @param string $eatby             Eat-by date, timestamp or date string (batch managed product only)	{@from body}{@required false}
+	 * @param string $sellby            Sell-by date, timestamp or date string (batch managed product only)	{@from body}{@required false}
+	 * @param float  $cost_price        Line cost used to update the AWP on validation			{@from body}{@required false}
+	 * @param string $comment           Comment kept on the stock movement						{@from body}{@required false}
+	 *
+	 * @url	POST {id}/lines
+	 *
+	 * @return int							Id of the created reception line
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 405
+	 * @throws RestException 500
+	 */
+	public function postLine($id, $fk_origin_line = 0, $qty = 0, $warehouse_id = 0, $batch = '', $eatby = '', $sellby = '', $cost_price = 0, $comment = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->reception->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Reception not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// A line can only be added while the reception is a draft (no stock movement yet).
+		if ((int) $this->reception->status != Reception::STATUS_DRAFT) {
+			throw new RestException(405, 'Lines can only be added to a draft reception');
+		}
+
+		$fk_origin_line = (int) $fk_origin_line;
+		if ($fk_origin_line <= 0) {
+			throw new RestException(400, 'Field fk_origin_line is mandatory');
+		}
+
+		$qty = (float) $qty;
+		if ($qty <= 0) {
+			throw new RestException(400, 'Field qty is mandatory and must be greater than 0');
+		}
+
+		$orderline = new CommandeFournisseurLigne($this->db);
+		$resorderline = $orderline->fetch($fk_origin_line);
+		if ($resorderline <= 0) {
+			throw new RestException(404, 'Origin supplier order line '.$fk_origin_line.' not found');
+		}
+		// A reception is linked to one supplier order only (Reception::fetch() joins a single
+		// origin), and Reception::getStatusDispatch() counts the lines of that order: refuse a
+		// line taken from another order, which would be lost for both objects.
+		if ($this->reception->origin_id > 0 && (int) $orderline->fk_commande != (int) $this->reception->origin_id) {
+			throw new RestException(400, 'Origin line '.$fk_origin_line.' does not belong to the supplier order of this reception');
+		}
+		// ReceptionLineBatch::create() refuses a line without product, and a line without
+		// product would move no stock anyway.
+		if (empty($orderline->fk_product)) {
+			throw new RestException(400, 'Origin line '.$fk_origin_line.' has no product: only product lines can be received');
+		}
+
+		$eatbydate = (dol_strlen((string) $eatby) == 0 ? null : (is_numeric($eatby) ? (int) $eatby : dol_stringtotime($eatby)));
+		$sellbydate = (dol_strlen((string) $sellby) == 0 ? null : (is_numeric($sellby) ? (int) $sellby : dol_stringtotime($sellby)));
+
+		// addline() stacks the line in memory and runs native validation (warehouse requirement,
+		// lot number requirement, mandatory eat-by/sell-by dates).
+		$addResult = $this->reception->addline((int) $warehouse_id, $fk_origin_line, $qty, array(), trim((string) $comment), $eatbydate, $sellbydate, trim((string) $batch), $cost_price);
+		if ($addResult < 0) {
+			// Every rejection of addline() comes from a value provided by the caller.
+			throw new RestException(400, $this->reception->error ? $this->reception->error : 'Error while adding reception line');
+		}
+
+		// addline() only fills $this->reception->lines; persist the line just stacked, the same
+		// way Reception::create() does.
+		$line = end($this->reception->lines);
+
+		$createRes = $line->create(DolibarrApiAccess::$user);
+		if ($createRes > 0) {
+			return $createRes;
+		}
+
+		throw new RestException(500, $line->error ? $line->error : implode(', ', $line->errors));
+	}
+
+		/**
+	 * Update a line of a given reception
+	 *
+	 * Only the quantity (and optionally the target warehouse) of the line can be changed,
+	 * and only while the reception is still a draft: once validated the stock has already
+	 * been moved, so editing the line would desync the stock. Lot/serial data is set at
+	 * line creation - delete the line and create it again to change it.
+	 *
+	 * @param int   $id             Id of reception to update
+	 * @param int   $lineid         Id of line to update
+	 * @param float $qty            New quantity to receive for this line			{@from body}{@required true}{@min 1}
+	 * @param int   $warehouse_id   Target warehouse id for this line (optional, 0 to keep the current one)	{@from body}{@required false}
+	 *
+	 * @url	PUT {id}/lines/{lineid}
+	 *
+	 * @return Object					Updated reception
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 405
+	 * @throws RestException 500
+	 */
+	public function putLine($id, $lineid, $qty = 0, $warehouse_id = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->reception->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Reception not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// A line can only be edited while the reception is a draft (no stock movement yet).
+		if ((int) $this->reception->status != Reception::STATUS_DRAFT) {
+			throw new RestException(405, 'Only draft reception lines can be updated');
+		}
+
+		$qty = (float) $qty;
+		if ($qty <= 0) {
+			throw new RestException(400, 'Field qty is mandatory and must be greater than 0');
+		}
+
+		$line = $this->fetchLineOfReception($lineid);
+
+		$line->qty = $qty;
+		if ($warehouse_id > 0) {
+			$line->fk_entrepot = (int) $warehouse_id;
+		}
+
+		$updateRes = $line->update(DolibarrApiAccess::$user);
+		if ($updateRes > 0) {
+			return $this->get($id);
+		}
+
+		throw new RestException(500, $line->error ? $line->error : implode(', ', $line->errors));
+	}
+
+	/**
+	 * Delete a line of a given reception
+	 *
+	 * A line can only be deleted while the reception is still a draft: once validated the
+	 * stock has already been moved, so removing the line would desync the stock.
 	 *
 	 * @param int   $id             Id of reception to update
 	 * @param int   $lineid         Id of line to delete
-	 * @return array
-	 * @phan-return array{success:array{code:int,message:string}}
-	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
-	 * @throws RestException 401
+	 * @return Object					Updated reception
+	 *
+	 * @throws RestException 403
 	 * @throws RestException 404
+	 * @throws RestException 405
+	 * @throws RestException 500
 	 */
 	public function deleteLine($id, $lineid)
 	{
@@ -456,19 +492,42 @@ class Receptions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of object
-
-		$updateRes = $this->reception->deleteLine(DolibarrApiAccess::$user, $lineid);
-		if ($updateRes < 0) {
-			throw new RestException(405, $this->reception->error);
+		// A line can only be deleted while the reception is a draft (no stock movement yet).
+		if ((int) $this->reception->status != Reception::STATUS_DRAFT) {
+			throw new RestException(405, 'Only draft reception lines can be deleted');
 		}
 
-		return array(
-			'success' => array(
-				'code' => 200,
-				'message' => 'Line deleted'
-			)
-		);
+		$line = $this->fetchLineOfReception($lineid);
+
+		$deleteRes = $line->delete(DolibarrApiAccess::$user);
+		if ($deleteRes > 0) {
+			return $this->get($id);
+		}
+
+		throw new RestException(500, $line->error ? $line->error : implode(', ', $line->errors));
+	}
+
+	/**
+	 * Load a line and check it belongs to the reception currently loaded
+	 *
+	 * @param	int		$lineid		Id of the line to load
+	 * @return	ReceptionLineBatch	Loaded line
+	 *
+	 * @throws RestException 404
+	 */
+	private function fetchLineOfReception($lineid)
+	{
+		$line = new ReceptionLineBatch($this->db);
+		// fetch() returns 1 even when no row matches, so we check the loaded id.
+		$resline = $line->fetch($lineid);
+		if ($resline <= 0 || empty($line->id)) {
+			throw new RestException(404, 'Reception line not found');
+		}
+		if ((int) $line->fk_reception != (int) $this->reception->id) {
+			throw new RestException(404, 'Line '.((int) $lineid).' is not a line of reception '.((int) $this->reception->id));
+		}
+
+		return $line;
 	}
 
 	/**
@@ -506,7 +565,7 @@ class Receptions extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->reception->array_options[$index] = $this->_checkValForAPI($field, $val, $this->reception);
+					$this->reception->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->reception);
 				}
 				continue;
 			}
@@ -562,17 +621,11 @@ class Receptions extends DolibarrApi
 	 * decrease stock on reception is on.
 	 *
 	 * @param   int		$id             Reception ID
-	 * @param   int		$notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @param   int		$notrigger      {@from query} 1=Does not execute triggers, 0= execute triggers (optional)
 	 *
 	 * @url POST    {id}/validate
 	 *
 	 * @return  Object
-	 * \todo An error 403 is returned if the request has an empty body.
-	 * Error message: "Forbidden: Content type `text/plain` is not supported."
-	 * Workaround: send this in the body
-	 * {
-	 *   "notrigger": 0
-	 * }
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -717,6 +770,58 @@ class Receptions extends DolibarrApi
 		}
 		if ($result < 0) {
 			throw new RestException(500, 'Error when closing Reception: '.$this->reception->error);
+		}
+
+		// Reload reception
+		$result = $this->reception->fetch($id);
+
+		$this->reception->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->reception);
+	}
+
+	/**
+	 * Set a reception back to draft status
+	 *
+	 * This reverts a validated reception to draft. If stock movements were recorded at
+	 * validation (module stock enabled and STOCK_CALCULATE_ON_RECEPTION on), they are
+	 * cancelled back by the native method, and the supplier order goes back to "ordered"
+	 * when no validated reception remains.
+	 *
+	 * @param   int		$id             Reception ID
+	 *
+	 * @url POST    {id}/settodraft
+	 *
+	 * @return  Object
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function setToDraft($id)
+	{
+		// Same permission as the one checked by Reception::setDraft().
+		if (!((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && DolibarrApiAccess::$user->hasRight('reception', 'creer'))
+			|| (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && DolibarrApiAccess::$user->hasRight('reception', 'reception_advance', 'validate')))) {
+			throw new RestException(403);
+		}
+
+		$result = $this->reception->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Reception not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->reception->setDraft(DolibarrApiAccess::$user);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already draft');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when setting reception back to draft: '.$this->reception->error);
 		}
 
 		// Reload reception

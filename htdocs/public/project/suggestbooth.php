@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre				<dorian.vabre@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -108,12 +107,10 @@ $langs->loadLangs(array("main", "companies", "install", "other", "eventorganizat
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
-$extrafields = new ExtraFields($db);
-
 $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
-$arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='booth@eventorganization'");
+$arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module:=:'booth@eventorganization'");
 if ($arrayofconfboothtype == -1) {
 	$arrayofconfboothtype = [];
 }
@@ -134,9 +131,10 @@ if (!isModEnabled('eventorganization')) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -251,6 +249,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 	$thirdparty = null;
 	$contact = null;
+	$tmpcode = '';
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
@@ -277,7 +276,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$thirdparty->fournisseur  = 0;
 			$thirdparty->country_id   = GETPOSTINT("country_id");
 			$thirdparty->state_id     = GETPOSTINT("state_id");
-			$thirdparty->email        = ($emailcompany ? $emailcompany : $email);
+			$thirdparty->email        = $email;
 
 			// Load object modCodeTiers
 			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
@@ -488,11 +487,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 								$reftouse = $facture->id;
 								$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse.'&booth='.$conforbooth->id;
 								if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-									if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-										$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
-									} else {
-										$redirection .= '&securekey='.getDolGlobalString('PAYMENT_SECURITY_TOKEN');
-									}
+									$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
 								}
 								header("Location: ".$redirection);
 								exit;
@@ -602,7 +597,7 @@ if ($project->date_start_event || $project->date_end_event) {
 if ($project->date_start_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_start_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_start_event, $format);
@@ -613,7 +608,7 @@ if ($project->date_start_event && $project->date_end_event) {
 if ($project->date_end_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_end_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_end_event, $format);
@@ -664,7 +659,7 @@ print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."
 
 // Name
 print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<span class="star">*</span></label></td>';
-print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ? GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
+print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha')).'" autofocus="autofocus"></td>';
 print '</tr>';
 // Email
 print '<tr><td>'.$langs->trans("Email").'<span class="star">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";

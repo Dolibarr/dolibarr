@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025 Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026 MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
@@ -28,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
@@ -49,13 +48,21 @@ $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal"
 $socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $section = GETPOSTINT('section') ? GETPOSTINT('section') : GETPOSTINT('section_id');
-$module = GETPOST('module', 'alpha');
+$module = GETPOST('module', 'aZ09arobase');
 if (!$section) {
 	$section = 0;
 }
 $section_dir = GETPOST('section_dir', 'alpha');
 
 $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
+$search_doc_date_start = '';
+$search_doc_date_end = '';
+if (GETPOSTISSET('search_doc_date_start') || GETPOSTISSET('search_doc_date_startday') || GETPOSTISSET('search_doc_date_startmonth') || GETPOSTISSET('search_doc_date_startyear')) {
+	$search_doc_date_start = GETPOSTDATE('search_doc_date_start');
+}
+if (GETPOSTISSET('search_doc_date_end') || GETPOSTISSET('search_doc_date_endday') || GETPOSTISSET('search_doc_date_endmonth') || GETPOSTISSET('search_doc_date_endyear')) {
+	$search_doc_date_end = GETPOSTDATE('search_doc_date_end', 'end');
+}
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -110,6 +117,8 @@ $result = restrictedArea($user, 'ecm', 0);
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_doc_ref = '';
+	$search_doc_date_start = '';
+	$search_doc_date_end = '';
 }
 
 // Add directory
@@ -147,7 +156,7 @@ if ($action == 'confirm_deletefile' && $user->hasRight('ecm', 'upload')) {
 		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
 		$file = $upload_dir."/".GETPOST('urlfile');
 
-		$ret = dol_delete_file($file);
+		$ret = dol_delete_file($file, 1);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -185,16 +194,16 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
-	$sqltree = $ecmdirstatic->get_full_arbo(0);
+	$treesqldir = $ecmdirstatic->get_full_arbo(0);
 
 	$adirwascreated = 0;
 
 	// Now we compare both trees to complete missing trees into database
 	//var_dump($disktree);
-	//var_dump($sqltree);
+	//var_dump($treesqldir);
 	foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
 		$dirisindatabase = 0;
-		foreach ($sqltree as $dirsqldesc) {
+		foreach ($treesqldir as $dirsqldesc) {
 			if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname']) {
 				$dirisindatabase = 1;
 				break;
@@ -218,7 +227,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 				dol_syslog($txt);
 				//print $txt." -> ";
 				$parentdirisindatabase = 0;
-				foreach ($sqltree as $dirsqldesc) {
+				foreach ($treesqldir as $dirsqldesc) {
 					if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent) {
 						$parentdirisindatabase = $dirsqldesc['id'];
 						break;
@@ -249,13 +258,13 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id' => $id,
+					$newsqldir = array('id' => $id,
 									 'id_mere' => $ecmdirtmp->fk_parent,
 									 'label' => $ecmdirtmp->label,
 									 'description' => $ecmdirtmp->description,
 									 'fullrelativename' => $relativepathmissing);
-					$sqltree[] = $newdirsql; // We complete fulltree for following loops
-					//var_dump($sqltree);
+					$treesqldir[] = $newsqldir; // We complete fulltree for following loops
+					//var_dump($treesqldir);
 					$adirwascreated = 1;
 				} else {
 					dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
@@ -269,7 +278,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	}
 
 	// Loop now on each sql tree to check if dir exists
-	foreach ($sqltree as $dirdesc) {    // Loop on each sqltree to check dir is on disk
+	foreach ($treesqldir as $dirdesc) {    // Loop on each treesqldir to check dir is on disk
 		$dirtotest = $conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
 		if (!dol_is_dir($dirtotest)) {
 			$ecmdirtmp->id = $dirdesc['id'];
@@ -285,8 +294,142 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	// If a directory was added, the fulltree array is not correctly completed and sorted, so we clean
 	// it to be sure that fulltree array is not used without reloading it.
 	if ($adirwascreated) {
-		$sqltree = null;
+		$treesqldir = null;
 	}
+}
+
+// Download selected automatic ECM files for supplier invoices
+if ($action == 'download_selected' && $module == 'invoice_supplier' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
+	accessforbidden();
+}
+if ($action == 'download_selected' && $module == 'invoice_supplier' && $user->hasRight('fournisseur', 'facture', 'lire')) {
+	$langs->loadLangs(array("errors", "accountancy"));
+
+	$selectedfiles = GETPOST('selectedfiles', 'array');
+	$selectedfiles = is_array($selectedfiles) ? $selectedfiles : array();
+	$maxformassaction = getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000);
+
+	if (count($selectedfiles) < 1) {
+		setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
+	} elseif (count($selectedfiles) > $maxformassaction) {
+		setEventMessages($langs->trans("TooManyRecordForMassAction", $maxformassaction), null, 'errors');
+	} elseif (!class_exists('ZipArchive')) {
+		setEventMessages('ZipArchive PHP extension is not available', null, 'errors');
+	} else {
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+
+		$upload_dir = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+		$basepath = realpath($upload_dir);
+		$basepathwithslash = ($basepath ? rtrim($basepath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '');
+		$filestoarchive = array();
+		$invoicecache = array();
+
+		foreach ($selectedfiles as $selectedfile) {
+			if (!is_scalar($selectedfile)) {
+				continue;
+			}
+
+			$relativefile = str_replace('\\', '/', (string) $selectedfile);
+			$relativefile = preg_replace('/\/+/', '/', $relativefile);
+			$relativefile = ltrim($relativefile, '/');
+
+			if ($relativefile == ''
+				|| preg_match('/(^|\/)\.\.(\/|$)/', $relativefile)
+				|| preg_match('/[<>|\x00-\x1F]/', $relativefile)
+				|| preg_match('/(^|\/)(temp|thumbs|CVS|payments)(\/|$)/i', $relativefile)
+				|| preg_match('/(\.meta|_preview.*\.png)$/i', $relativefile)
+			) {
+				continue;
+			}
+
+			$reg = array();
+			preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg);
+			$ref = (isset($reg[1]) ? $reg[1] : '');
+			$id = 0;
+			if ($ref === '') {
+				continue;
+			}
+			if (is_numeric($ref)) {
+				$id = (int) $ref;
+				$ref = '';
+			}
+
+			$cachekey = $id.'_'.$ref;
+			if (!array_key_exists($cachekey, $invoicecache)) {
+				$invoicecache[$cachekey] = false;
+				$objecttmp = new FactureFournisseur($db);
+				$result = 0;
+				if ($id > 0) {
+					$result = $objecttmp->fetch($id);
+				} else {
+					if (!($result = $objecttmp->fetch(0, $ref))) {
+						$result = $objecttmp->fetchOneLike($ref);
+					}
+				}
+				if ($result > 0 && (int) $objecttmp->entity === (int) $conf->entity) {
+					$invoicecache[$cachekey] = true;
+				}
+			}
+			if (empty($invoicecache[$cachekey])) {
+				continue;
+			}
+
+			$fullpath = realpath($upload_dir.'/'.$relativefile);
+			if (empty($basepath) || empty($fullpath) || strpos($fullpath, $basepathwithslash) !== 0 || !is_file($fullpath)) {
+				continue;
+			}
+
+			$filestoarchive[$relativefile] = $fullpath;
+		}
+
+		if (count($filestoarchive) < 1) {
+			setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
+		} else {
+			$tmpdir = DOL_DATA_ROOT.'/ecm/temp';
+			dol_mkdir($tmpdir);
+
+			if (!is_writable($tmpdir)) {
+				setEventMessages($langs->trans("ErrorFailedToWriteInDir", $tmpdir), null, 'errors');
+			} else {
+				$zipfilename = 'supplier_invoice_documents_'.dol_print_date(dol_now(), 'dayhourlog').'.zip';
+				$zipfullpath = $tmpdir.'/'.$zipfilename;
+
+				$zip = new ZipArchive();
+				$result = $zip->open($zipfullpath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+				if ($result !== true) {
+					setEventMessages($langs->trans("ErrorFailedToBuildArchive", $zipfullpath), null, 'errors');
+				} else {
+					$errorarchive = 0;
+					foreach ($filestoarchive as $relativefile => $fullpath) {
+						$result = $zip->addFile($fullpath, $relativefile);
+						if (!$result) {
+							$errorarchive++;
+							setEventMessages($langs->trans("ErrorArchiveAddFile", $relativefile), null, 'errors');
+							break;
+						}
+					}
+					$closeok = $zip->close();
+
+					if ($errorarchive || !$closeok || !is_file($zipfullpath)) {
+						if (!$errorarchive) {
+							setEventMessages($langs->trans("ErrorFailedToBuildArchive", $zipfullpath), null, 'errors');
+						}
+						dol_delete_file($zipfullpath, 1, 0, 1, null, false, 0, 1);
+					} else {
+						top_httphead('application/zip');
+						header('Content-Disposition: attachment; filename="'.$zipfilename.'"');
+						header('Content-Length: '.filesize($zipfullpath));
+						readfile($zipfullpath);
+						dol_delete_file($zipfullpath, 1, 0, 1, null, false, 0, 1);
+						$db->close();
+						exit;
+					}
+				}
+			}
+		}
+	}
+
+	$action = '';
 }
 
 
@@ -429,7 +572,7 @@ print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 // Confirm remove file (for non javascript users)
 if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section, 'urlfile' => GETPOST("urlfile"))), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
@@ -443,7 +586,18 @@ if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
 print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
-$url = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
+if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
+	$url = '#';
+} else {
+	$paramsrefresh = array('action' => 'refreshmanual');
+	if ($module) {
+		$paramsrefresh['module'] = $module;
+	}
+	if ($section) {
+		$paramsrefresh['section'] = $section;
+	}
+	$url = dolBuildUrl($_SERVER["PHP_SELF"], $paramsrefresh);
+}
 print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 print '</a>';
@@ -460,7 +614,7 @@ print '</div>';
 
 // Generate form to confirm the deletion of a category line
 if ($action == 'delete_section') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section)), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
 }
 // End confirm
 
@@ -507,7 +661,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			}
 
 			print '<li class="directory collapsed">';
-			print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.urlencode($val['module']).'">';
+			print '<a class="fmdirlia jqft ecmjqft" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array('module' => $val['module'])).'">';
 			print dolPrintLabel($val['label']);
 			print '</a>';
 

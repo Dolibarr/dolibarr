@@ -51,8 +51,8 @@ $ref = GETPOST('ref', 'alpha');
 
 // Get parameters
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", 'aZ09comma');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -118,7 +118,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = stocktransferPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("StockTransfer"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("StockTransfer"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list

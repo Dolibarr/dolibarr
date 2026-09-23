@@ -103,7 +103,13 @@ ConfirmCloneContract=<b> %s </b> shartnomasini klonlashni xohlaysizmi?
 LowerDateEndPlannedShort=Faol xizmatlarning quyi rejalashtirilgan tugash sanasi
 SendContractRef=Shartnoma to'g'risidagi ma'lumotlar __REF__
 OtherContracts=Boshqa shartnomalar
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Savdo vakili shartnomani imzolash
 TypeContact_contrat_internal_SALESREPFOLL=Savdo vakili keyingi shartnoma
 TypeContact_contrat_external_BILLING=Xaridor bilan hisob-kitob qilish

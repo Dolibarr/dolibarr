@@ -4,7 +4,8 @@
  * Copyright (C) 2021      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026      Jose Martinez        <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +181,7 @@ $formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, '', '', '', 'mod-takepos page-admin_terminal');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsearch_values=1">'.img_picto($langs->trans("GoBack"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("GoBack").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
@@ -204,6 +205,15 @@ print '<td>';
 print '<input type="text" name="terminalname'.$terminal.'" value="'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$terminal, $langs->trans("TerminalName", $terminal)).'" >';
 print '</td></tr>';
 
+// A disabled terminal is hidden from the terminal selection screen. Its invoices and its
+// reference counter are kept, so it can be enabled again later without losing anything.
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("TakeposTerminalDisabled"), $langs->trans("TakeposTerminalDisabledHelp"));
+print '</td>';
+print '<td>';
+print ajax_constantonoff("TAKEPOS_TERMINAL_DISABLED_".$terminal, array(), $conf->entity, 0, 0, 1, 0);
+print '</td></tr>';
+
 print '<tr class="oddeven"><td>'.$langs->trans("ForbidSalesToTheDefaultCustomer").'</td>';
 print '<td>';
 print ajax_constantonoff("TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER", array(), $conf->entity, 0, 0, 1, 0);
@@ -223,7 +233,7 @@ if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "(courant:=:2)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse)) {
 		$atleastonefound++;
@@ -232,7 +242,7 @@ if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse)) {
 		$atleastonefound++;
@@ -241,7 +251,7 @@ if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse)) {
 		$atleastonefound++;
@@ -289,7 +299,7 @@ if (isModEnabled("bank")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSumup").'</td>';
 		print '<td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+		print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 		print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 		if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse)) {
 			$atleastonefound++;
@@ -313,7 +323,7 @@ if (isModEnabled("bank")) {
 			print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
 		} else {
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-			print $form->select_comptes(getDolGlobalInt($name), $name, 0, "courant=".$cour, 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+			print $form->select_comptes(getDolGlobalInt($name), $name, 0, "(courant:=:".((int) $cour).")", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 			print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 		}
 		print '</td></tr>';
@@ -393,7 +403,7 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (!is_dir($dir.$file) || (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS')) {
+					if (!is_dir($dir.$file) || (dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS')) {
 						$filebis = $file;
 						$classname = preg_replace('/\.php$/', '', $file);
 						// For compatibility
@@ -409,7 +419,7 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 						}
 
 						$classname = preg_replace('/\-.*$/', '', $classname);
-						if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
+						if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && dol_substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
 							// Charging the numbering class
 							require_once $dir.$filebis;
 

@@ -7,7 +7,7 @@
  * Copyright (C) 2020		Pierre Ardoin			<mapiolca@me.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -48,16 +55,8 @@ if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('commercialindex'));
 
 // Load translation files required by the page
@@ -75,7 +74,8 @@ if (!empty($user->socid) && $user->socid > 0) {
 
 $total = 0;
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
+
 $maxofloop = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 $now = dol_now();
 
@@ -177,7 +177,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire") && is_object($pr
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -281,7 +281,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=".SupplierProposal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -382,7 +382,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($o
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("DraftOrders", "commande/list.php", "search_status=".Commande::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -487,7 +487,7 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=".CommandeFournisseur::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -589,7 +589,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("DraftFichinter", "fichinter/list.php", "search_status=".Fichinter::STATUS_DRAFT, 2, $num);
 
 		//print '<tr class="liste_titre">';
@@ -625,7 +625,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 				print $fichinterstatic->getNomUrl(1);
 				print "</td>";
 				print '<td class="tdoverflowmax250 minwidth100">';
-				print $companystatic->getNomUrl(1, 'customer');
+				print $companystatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="nowraponall tdoverflowmax100 right">';
 				print convertSecondToTime($obj->duration);
@@ -649,6 +649,7 @@ print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfri
 /*
  * Last modified customers or prospects
  */
+/* Hidden, already into the menu thirdparty, and it is more relevant in this menu.
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
@@ -724,11 +725,6 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 				if (($obj->client == 1 || $obj->client == 3) && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 					$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
 				}
-				/*
-				if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $obj->fournisseur)
-				{
-					$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
-				}*/
 				print $s;
 
 				print '</td>';
@@ -751,6 +747,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 		dol_print_error($db);
 	}
 }
+*/
 
 
 /*
@@ -843,6 +840,7 @@ if (isModEnabled('propal') && is_object($propalstatic)) {
 			}
 		}
 
+		addSummaryTableLine(4, $num);
 		finishSimpleTable(true);
 		$db->free($resql);
 	} else {
@@ -949,6 +947,7 @@ if (isModEnabled('order')) {
 /*
  * Last suppliers
  */
+/* Hidden, should be into the Thirdparty menu
 if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->hasRight('societe', 'lire')) {
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
@@ -1008,13 +1007,6 @@ if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $use
 
 				$obj = $companystatic;
 				$s = '';
-				/*if (($obj->client == 2 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
-					$s .= '<a class="customer-back opacitymedium" title="'.$langs->trans("Prospect").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Prospect"), 0, 1).'</a>';
-				}
-				if (($obj->client == 1 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
-				{
-					$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
-				}*/
 				if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $obj->fournisseur) {
 					$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
 				}
@@ -1040,22 +1032,7 @@ if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $use
 		dol_print_error($db);
 	}
 }
-
-
-/*
- * Last actions
- */
-/*if ($user->hasRight('agenda', 'myactions', 'read')) {
-	show_array_last_actions_done($max);
-}*/
-
-
-/*
- * Actions to do
- */
-/*if ($user->hasRight('agenda', 'myactions', 'read')) {
-	show_array_actions_to_do($max);
-}*/
+*/
 
 
 /*

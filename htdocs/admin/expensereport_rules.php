@@ -156,7 +156,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				header('Location: ' . $_SERVER['PHP_SELF']);
+				header('Location: '.DOL_URL_ROOT.'/admin/expensereport_rules.php');
 				exit;
 			} else {
 				$action = '';
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 			dol_print_error($object->db);
 		}
 
-		header('Location: ' . $_SERVER['PHP_SELF']);
+		header('Location: ' . DOL_URL_ROOT.'/admin/expensereport_rules.php');
 		exit;
 	}
 
@@ -209,7 +209,7 @@ echo '<span class="opacitymedium">' . $langs->trans('ExpenseReportRulesDesc') . 
 print '<br><br>';
 
 if ($action != 'edit') {
-	echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
+	echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post" spellcheck="false">';
 	echo '<input type="hidden" name="token" value="' . newToken() . '" />';
 	echo '<input type="hidden" name="action" value="save" />';
 
@@ -247,7 +247,7 @@ if ($action != 'edit') {
 }
 
 
-echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
+echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post" spellcheck="false">';
 echo '<input type="hidden" name="token" value="' . newToken() . '" />';
 
 if ($action == 'edit') {

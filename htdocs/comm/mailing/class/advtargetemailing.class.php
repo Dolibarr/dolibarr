@@ -2,7 +2,7 @@
 /* Advance Targeting Emailing for mass emailing module
  * Copyright (C) 2013  		Florian Henry 			<florian.henry@open-concept.pro>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -430,7 +430,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql .= " name=".(isset($this->name) ? "'".$this->db->escape($this->name)."'" : "''").",";
 		$sql .= " entity=".((int) $conf->entity).",";
-		$sql .= " fk_element=".(isset($this->fk_element) ? $this->fk_element : "null").",";
+		$sql .= " fk_element=".(isset($this->fk_element) ? ((int) $this->fk_element) : "null").",";
 		$sql .= " type_element=".(isset($this->type_element) ? "'".$this->db->escape($this->type_element)."'" : "null").",";
 		$sql .= " filtervalue=".(isset($this->filtervalue) ? "'".$this->db->escape($this->filtervalue)."'" : "null").",";
 		$sql .= " fk_user_mod=".((int) $user->id);
@@ -573,8 +573,8 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[] = $this->transformToSQL('t.town', $arrayquery['cust_city']);
 			}
 			if (!empty($arrayquery['cust_mothercompany'])) {
-				$str = $this->transformToSQL('nom', $arrayquery['cust_mothercompany']);
-				$sqlwhere[] = " (t.parent IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE (".$str.")))";
+				$sqlStr = $this->transformToSQL('nom', $arrayquery['cust_mothercompany']);
+				$sqlwhere[] = " (t.parent IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE (".$sqlStr.")))";
 			}
 			if (!empty($arrayquery['cust_status']) && count($arrayquery['cust_status']) > 0) {
 				$sqlwhere[] = " (t.status IN (".$this->db->sanitize(implode(',', $arrayquery['cust_status']))."))";
@@ -646,7 +646,7 @@ class AdvanceTargetingMailing extends CommonObject
 						if (count($arrayquery['options_'.$key])) {
 							$i2 = 0;
 							$field = "te.".$key;
-							$sqlwhereselllist="";
+							$sqlwhereselllist = "";
 							foreach ($arrayquery['options_'.$key] as $data) {
 								$data = trim($data);
 								if ($data) {
@@ -714,8 +714,6 @@ class AdvanceTargetingMailing extends CommonObject
 	public function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
@@ -751,13 +749,13 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[] = " (t.civility IN (".$this->db->sanitize("'".implode("','", $arrayquery['contact_civility'])."'", 1)."))";
 			}
 			if ($arrayquery['contact_no_email'] != '') {
-				$tmpwhere = '';
+				$sqlTmpWhere = '';
 				if (!empty($arrayquery['contact_no_email'])) {
-					$tmpwhere .= "(t.email IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
+					$sqlTmpWhere .= "(t.email IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
 				} else {
-					$tmpwhere .= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape((string) $arrayquery['contact_no_email'])."'))";
+					$sqlTmpWhere .= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape((string) $arrayquery['contact_no_email'])."'))";
 				}
-				$sqlwhere[] = $tmpwhere;
+				$sqlwhere[] = $sqlTmpWhere;
 			}
 			if ($arrayquery['contact_update_st_dt'] != '') {
 				$sqlwhere[] = " (t.tms >= '".$this->db->idate($arrayquery['contact_update_st_dt'])."' AND t.tms <= '".$this->db->idate($arrayquery['contact_update_end_dt'])."')";
@@ -766,7 +764,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[] = " (t.datec >= '".$this->db->idate($arrayquery['contact_create_st_dt'])."' AND t.datec <= '".$this->db->idate($arrayquery['contact_create_end_dt'])."')";
 			}
 			if (!empty($arrayquery['contact_categ']) && count($arrayquery['contact_categ']) > 0) {
-				$sqlwhere[] = " (contactcateg.fk_categorie IN (".$this->db->escape(implode(",", $arrayquery['contact_categ']))."))";
+				$sqlwhere[] = " (contactcateg.fk_categorie IN (".$this->db->sanitize(implode(",", $arrayquery['contact_categ']), 0, 0, 0, 0)."))";
 			}
 
 			//Standard Extrafield feature
@@ -807,14 +805,14 @@ class AdvanceTargetingMailing extends CommonObject
 						}
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'link') {
 						if ($arrayquery['options_'.$key."_cnct"] > 0) {
-							$sqlwhere[]= " (te.".$key." = ".((int) $arrayquery["options_".$key."_cnct"]).")";
+							$sqlwhere[] = " (te.".$key." = ".((int) $arrayquery["options_".$key."_cnct"]).")";
 						}
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'chkbxlst'
 						&& is_array($arrayquery['options_'.$key.'_cnct'])) {
 						if (count($arrayquery['options_'.$key.'_cnct'])) {
 							$i2 = 0;
 							$field = "te.".$key;
-							$sqlwhereselllist="";
+							$sqlwhereselllist = "";
 							foreach ($arrayquery['options_'.$key.'_cnct'] as $data) {
 								$data = trim($data);
 								if ($data) {
@@ -863,8 +861,8 @@ class AdvanceTargetingMailing extends CommonObject
 						$sqlwhere[] = $this->transformToSQL('ts.town', $arrayquery['cust_city']);
 					}
 					if (!empty($arrayquery['cust_mothercompany'])) {
-						$str = $this->transformToSQL('nom', $arrayquery['cust_mothercompany']);
-						$sqlwhere[] = " (ts.parent IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE (".$str.")))";
+						$sql_str = $this->transformToSQL('nom', $arrayquery['cust_mothercompany']);
+						$sqlwhere[] = " (ts.parent IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE (".$sql_str.")))";
 					}
 					if (!empty($arrayquery['cust_status']) && count($arrayquery['cust_status']) > 0) {
 						$sqlwhere[] = " (ts.status IN (".$this->db->sanitize(implode(',', $arrayquery['cust_status']))."))";
@@ -936,14 +934,14 @@ class AdvanceTargetingMailing extends CommonObject
 								}
 							} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'link') {
 								if ($arrayquery['options_'.$key] > 0) {
-									$sqlwhere[]= " (te.".$key." = ".((int) $arrayquery["options_".$key]).")";
+									$sqlwhere[] = " (te.".$key." = ".((int) $arrayquery["options_".$key]).")";
 								}
 							} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'chkbxlst'
 								&& is_array($arrayquery['options_'.$key])) {
 								if (count($arrayquery['options_'.$key])) {
 									$i2 = 0;
 									$field = "tse.".$key;
-									$sqlwhereselllist="";
+									$sqlwhereselllist = "";
 									foreach ($arrayquery['options_'.$key] as $data) {
 										$data = trim($data);
 										if ($data) {

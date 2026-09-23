@@ -29,6 +29,15 @@
 
 use Luracast\Restler\Format\UploadFormat;
 
+// API endpoints return JSON (or XML). A stray PHP warning or notice in the
+// response body corrupts the parser on the caller side. Silence the display
+// of PHP messages here while keeping them in the server log so that the
+// problem is still observable to the operator (filefunc.inc.php only does
+// this when dolibarr_main_prod is set, which leaves development setups
+// emitting HTML into every API answer).
+@ini_set('display_errors', '0');
+@ini_set('log_errors', '1');
+
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
 }
@@ -119,16 +128,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 // In API context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
-
-
-// In API context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 
 $url = $_SERVER['PHP_SELF'];
 if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] is 'api\/index\.php' instead of 'api\/index\.php/explorer.php' or 'api\/index\.php/method'
-	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : $_SERVER['PATH_INFO']);
+	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? ($_SERVER['ORIG_PATH_INFO'] ?? '') : $_SERVER['PATH_INFO']);
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (getDolGlobalString('MAIN_NGINX_FIX')) {
@@ -288,10 +294,9 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 									continue;
 								}
 
-								//$conf->global->API_DISABLE_LOGIN_API = 1;
-								if ($file_searched == 'api_login.class.php' && getDolGlobalString('API_DISABLE_LOGIN_API')) {
-									continue;
-								}
+								//if ($file_searched == 'api_login.class.php' && !getDolGlobalString('API_ENABLE_LOGIN_API')) {
+								//	continue;
+								//}
 
 								//dol_syslog("We scan to search api file with into ".$dir_part.$file_searched);
 
@@ -363,10 +368,20 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
 	}
+	if ($moduleobject == 'resources') {
+		// The API class is named Dolresources because "resources" is already used by the API explorer itself
+		$classfile = 'dolresources';
+	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
 	$classname = ucwords($moduleobject);
+	if ($moduleobject == 'resources') {
+		// Force the class name, because ucwords() would give Resources, which is the name of
+		// the class of the API explorer itself (Luracast\Restler\Resources) and is autoloadable,
+		// so the wrong class would be dispatched.
+		$classname = 'Dolresources';
+	}
 
 	// Test rules on endpoints. For example:
 	// $conf->global->API_ENDPOINT_RULES = 'endpoint1:1,endpoint2:1,...'
@@ -414,8 +429,19 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 		exit(0);
 	}
 
-	if (class_exists($classname)) {
-		$api->r->addAPIClass($classname);
+	// Match the discovery loop above which accepts both "Foo" and "FooApi" class
+	// names (see line ~308). Without the Api suffix branch, a module file named
+	// api_mymodule.class.php exposing class MyModuleApi cannot be dispatched
+	// even though the api explorer lists it (#37282).
+	// When the class name does not match the called endpoint (for example the endpoint /resources
+	// served by the class Dolresources), the endpoint must be given to Restler as the resource path,
+	// because Restler builds its routes from the class name and would answer 404 otherwise.
+	$resourcepath = (strtolower($classname) != $moduleobject) ? $moduleobject : null;
+
+	if (class_exists($classname.'Api')) {
+		$api->r->addAPIClass($classname.'Api', $resourcepath);
+	} elseif (class_exists($classname)) {
+		$api->r->addAPIClass($classname, $resourcepath);
 	}
 }
 
@@ -523,18 +549,20 @@ if ((getDolGlobalInt("API_ENABLE_COUNT_CALLS") || !empty($dolibarr_api_count_alw
 
 // Call API termination method
 $apiMethodInfo = &$api->r->apiMethodInfo;
-$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
-if (method_exists($apiMethodInfo->className, $terminateCall)) {
-	// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
-	ob_end_flush();
+if (!is_null($apiMethodInfo)) {
+	$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
+	if (method_exists($apiMethodInfo->className, $terminateCall)) {
+		// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
+		ob_end_flush();
 
-	// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
-	if (function_exists('fastcgi_finish_request')) {
-		fastcgi_finish_request();
+		// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
+		if (function_exists('fastcgi_finish_request')) {
+			fastcgi_finish_request();
+		}
+
+		// Call a termination method. Warning: This method can do I/O, sync but must not make output.
+		call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 	}
-
-	// Call a termination method. Warning: This method can do I/O, sync but must not make output.
-	call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 }
 
 //session_destroy();

@@ -240,7 +240,7 @@ class pdf_balance extends ModelePdfAccountancy
 			$pdf->SetSubject($outputlangs->transnoentities("AccountancyBalance"));
 		}
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyBalance"));
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
@@ -530,7 +530,7 @@ class pdf_balance extends ModelePdfAccountancy
 			$langs->transnoentities('GrandTotals'),
 			$tab_top_newpage,
 			$totalDebit,
-			$totalCredit,
+			$totalCredit
 		);
 
 

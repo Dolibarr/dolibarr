@@ -9,8 +9,9 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
- * Copyright (C) 2024-2025 MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2026      Nathan Pixodeo       <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +34,11 @@
  */
 
 
-if (!defined('DOL_APPLICATION_TITLE')) {
-	define('DOL_APPLICATION_TITLE', 'Dolibarr');
-}
 
 require_once 'version.inc.php';		// Define the DOL_VERSION
 
+// Dolibarr must always work with numeric in english format when they are in memory (example: 1234.56)
+setlocale(LC_NUMERIC, 'C');
 
 // Define syslog constants
 if (!defined('LOG_DEBUG')) {
@@ -123,7 +123,7 @@ function dol_session_rotate($sessionname = '')
 // Define localization of conf file
 // --- Start of part replaced by Dolibarr packager makepack-dolibarr
 $conffile = "conf/conf.php";
-$conffiletoshow = "htdocs/conf/conf.php";	// Used into the include
+$conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
 //$conffile = "/etc/dolibarr/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
@@ -159,9 +159,11 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
  * @var ?string $dolibarr_main_dolcrypt_key
  * @var ?string $dolibarr_main_force_https
  * @var ?string $dolibarr_main_limit_users
+ * @var ?string $dolibarr_main_limit_sessions_per_user
  * @var ?string $dolibarr_mailing_limit_sendbyweb
  * @var ?string $dolibarr_mailing_limit_sendbycli
  * @var ?string $dolibarr_mailing_limit_sendbyday
+ * @var ?string $dolibarr_allow_unsecured_select_in_extrafields_filter;
  * @var ?string $dolibarr_nocsrfcheck
  *
  * @var ?string $dolibarr_font_DOL_DEFAULT_TTF
@@ -178,19 +180,6 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
  * @var ?string $dolibarr_lib_TCPDF_PATH
  * @var ?string $dolibarr_lib_TCPDI_PATH
  */
-'
-@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF
-@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
-@phan-var-force ?string $dolibarr_js_CKEDITOR
-@phan-var-force ?string $dolibarr_js_JQUERY
-@phan-var-force ?string $dolibarr_js_JQUERY_UI
-@phan-var-force ?string $dolibarr_lib_NUSOAP_PATH
-@phan-var-force ?string $dolibarr_lib_ODTPHP_PATH
-@phan-var-force ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
-@phan-var-force ?string $dolibarr_lib_PHPEXCELNEW_PATH
-@phan-var-force ?string $dolibarr_lib_TCPDF_PATH
-@phan-var-force ?string $dolibarr_lib_TCPDI_PATH
-';
 
 /*
  * Redirect if install not done
@@ -298,6 +287,9 @@ if (empty($dolibarr_main_db_cryptkey)) {
 if (empty($dolibarr_main_limit_users)) {
 	$dolibarr_main_limit_users = 0;
 }
+if (empty($dolibarr_main_limit_sessions_per_user)) {
+	$dolibarr_main_limit_sessions_per_user = 0;
+}
 if (empty($dolibarr_mailing_limit_sendbyweb)) {
 	$dolibarr_mailing_limit_sendbyweb = 0;
 }
@@ -311,12 +303,15 @@ if (empty($dolibarr_strict_mode)) {
 	$dolibarr_strict_mode = 0; // For debug in php strict mode
 }
 
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
+if (!defined('DOL_DOCUMENT_ROOT')) {
+	define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
+}
 
+// @phpstan-ignore-next-line if.alwaysTrue
 if (empty(DOL_DOCUMENT_ROOT) || !file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
 	print "Error: Dolibarr config file content seems to be not correctly defined";
 	if (empty($dolibarr_main_document_root)) {
-		print " (dolibarr_main_document_root can't be known).<br>\n";
+		print " (dolibarr_main_document_root can't be unknown).<br>\n";
 	} else {
 		print " (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
 	}
@@ -327,7 +322,9 @@ if (empty(DOL_DOCUMENT_ROOT) || !file_exists(DOL_DOCUMENT_ROOT."/core/lib/functi
 
 // Included by default (must be before the CSRF check so wa can use the dol_syslog)
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 //print memory_get_usage();
 
 
@@ -370,6 +367,9 @@ if (empty($dolibarr_main_url_root) && !defined('NOREQUIREVIRTUALURL')) {
 	die;
 }
 
+if (empty($dolibarr_main_url_root_alt)) {
+	$dolibarr_main_url_root_alt = '/custom';
+}
 if (empty($dolibarr_main_document_root_alt)) {
 	$dolibarr_main_document_root_alt = $dolibarr_main_document_root.'/custom';
 }
@@ -412,11 +412,14 @@ foreach ($paths as $tmppath) {	// We check to find (B+start of C)=A
 	}
 	//else print "Not found yet for concatpath=".$concatpath."<br>\n";
 }
+
 //print "found=".$found." dolibarr_main_url_root=".$dolibarr_main_url_root."\n";
 if (!$found) {
 	// There is no subdir that compose the main url root or autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
 	$tmp = $dolibarr_main_url_root;
 } else {
+	// Note:when using ip: $_SERVER["SERVER_NAME"] contains 'localhost' when $_SERVER["HTTP_HOST"] contains '192.168.0.1' but $_SERVER["HTTP_HOST"] is forged by client and not reliable.
+	// so we prefer use the $_SERVER["SERVER_NAME"] even if not similar to url of user.
 	$tmp = 'http'.((!isHTTPS() && (empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] != 443)) ? '' : 's').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) ? '' : ':'.$_SERVER["SERVER_PORT"]).($tmp3 ? (preg_match('/^\//', $tmp3) ? '' : '/').$tmp3 : '');
 }
 
@@ -424,6 +427,7 @@ if (!$found) {
 if (!empty($dolibarr_main_force_https)) {
 	$tmp = preg_replace('/^http:/i', 'https:', $tmp);
 }
+
 define('DOL_MAIN_URL_ROOT', $tmp); // URL absolute root (https://sss/dolibarr, ...)
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
 $suburi = strstr($uri, '/'); // $suburi contains url without domain:port

@@ -223,4 +223,4 @@ InvoiceExportModelsMigration=請求書エクスポートモデルの移行
 MigrationApiRestTokens=ユーザ の API キーを llx_oauth_token に移行する
 MigratedTokens=%s トークン(s)が移行済
 InitAHMACKeyForBlockedLog=Unalterable Log モジュールの新しい HMAC 暗号化用の BLOCKEDLOG_HMAC_KEY 定数の初期化
-MigrationAlreadyDone=この移行はすでに完了しているようです。
+MigrationAlreadyDone=この移行はすでに完了しているよう。

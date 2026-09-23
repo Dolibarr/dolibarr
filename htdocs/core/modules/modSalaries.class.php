@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014-2019  Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,8 @@ class modSalaries extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
+		global $user;
+
 		$this->db = $db;
 		$this->numero = 510; // Perms from 501..519
 
@@ -64,6 +67,13 @@ class modSalaries extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/salaries/temp");
 
+		// Parts of module
+		$this->module_parts = array(
+			'models' => 1,
+			'triggers' => 0,
+			'substitutions' => 0,
+		);
+
 		// Config pages
 		$this->config_page_url = array('salaries.php@salaries');
 
@@ -76,17 +86,22 @@ class modSalaries extends DolibarrModules
 		$this->langfiles = array("salaries", "bills");
 
 		// Constants
-		$this->const = array();
-		$this->const[0] = array(
+		$this->const = [
+			[
 				"SALARIES_ACCOUNTING_ACCOUNT_PAYMENT",
 				"chaine",
-				"421"
-		);
-		$this->const[1] = array(
+				"421",
+				"",
+				0,
+			],
+			[
 				"SALARIES_ACCOUNTING_ACCOUNT_CHARGE",
 				"chaine",
-				"641"
-		);
+				"641",
+				"",
+				0,
+			]
+		];
 
 		// Boxes
 		$this->boxes = array();
@@ -168,17 +183,23 @@ class modSalaries extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON s.fk_user = u.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_salary = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
-		$this->export_sql_end[$r] .= ' AND s.entity IN ('.getEntity('salary').')';
+		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('salary').')';
+		if (is_object($user) && !$user->hasRight('salaries', 'readall')) {
+			$childids = $user->getAllChildIds(1);
+			$this->export_sql_end[$r] .= ' AND s.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
+		}
+		if (is_object($user) && !$user->hasRight('salaries', 'readchild')) {
+			$this->export_sql_end[$r] .= ' AND s.fk_user = '.((int) $user->id);
+		}
 	}
-
 
 	/**
 	 *  Function called when module is enabled.
-	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *  It also creates data directories
+	 *  The init function adds constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories and runs upgrade tasks if needed.
 	 *
-	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *  @return     int             	1 if OK, 0 if KO
+	 *  @param      string  $options    Options when enabling module ('', 'noboxes')
+	 *  @return     int                 1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
@@ -187,7 +208,22 @@ class modSalaries extends DolibarrModules
 		// Clean before activation
 		$this->remove($options);
 
+		// Ensure data directory exists
+		$dirSalary = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/salaries/temp';
+		if (!is_dir($dirSalary)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirSalary);
+		}
+
+		// Register the PDF model
 		$sql = array();
+		$sql[] = "DELETE FROM ".MAIN_DB_PREFIX."document_model
+			WHERE nom = 'standard_salary'
+			AND type = 'salary'
+			AND entity = ".((int) $conf->entity);
+
+		$sql[] = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity)
+			VALUES ('standard_salary', 'salary', ".((int) $conf->entity).")";
 
 		return $this->_init($sql, $options);
 	}

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 	$_SERVER['PHP_SELF'] = "phpunit";
 }
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -48,63 +48,86 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
+// Capture the pristine global objects once, at file load time (before any test runs).
+// Stored in $GLOBALS because @backupGlobals is disabled, so PHPUnit will not serialize
+// them. This replaces the old constructor that saved globals into instance properties:
+// the constructor override is not allowed anymore since PHPUnit 10 made
+// TestCase::__construct() final, and capturing here (instead of in setUpBeforeClass) is
+// robust against subclasses that override setUpBeforeClass() without calling the parent.
+$GLOBALS['PHPUNIT_SAVCONF'] = $conf;
+$GLOBALS['PHPUNIT_SAVUSER'] = $user;
+$GLOBALS['PHPUNIT_SAVLANGS'] = $langs;
+$GLOBALS['PHPUNIT_SAVDB'] = $db;
+$GLOBALS['PHPUNIT_SAVMYSOC'] = $mysoc;
+
 use PHPUnit\Framework\TestCase;
+
+// PHPUnit 12+ declares TestCase::onNotSuccessfulTest() with a ": never" return type
+// (it was ": void" in PHPUnit <= 11). A ": void" override cannot satisfy a ": never"
+// parent (and vice-versa), and the "never" type only exists since PHP 8.2, so the
+// override must match the installed PHPUnit version. We detect the parent return type
+// at runtime and load the matching trait file. Each file defines the SAME trait name
+// (OnNotSuccessfulTestTrait), so only one of them is ever loaded.
+$onNotSuccessfulReturnType = 'void';
+if (method_exists(TestCase::class, 'onNotSuccessfulTest')) {
+	$rt = (new ReflectionMethod(TestCase::class, 'onNotSuccessfulTest'))->getReturnType();
+	if ($rt !== null) {
+		// @phan-suppress-next-line PhanUndeclaredMethod
+		$onNotSuccessfulReturnType = $rt->getName();
+	}
+}
+if (PHP_VERSION_ID >= 80200 && $onNotSuccessfulReturnType === 'never') {
+	require_once __DIR__.'/OnNotSuccessfulTestTraitNever.php';
+} else {
+	require_once __DIR__.'/OnNotSuccessfulTestTrait.php';
+}
 
 /**
  * Class for PHPUnit tests
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
  */
+/** @phpstan-ignore class.notFound */
 abstract class CommonClassTest extends TestCase
 {
+	use OnNotSuccessfulTestTrait;
+
+	/** @var \Conf */
 	protected $savconf;
+	/** @var \User */
 	protected $savuser;
+	/** @var \Translate */
 	protected $savlangs;
+	/** @var \DoliDB */
 	protected $savdb;
+	/** @var \Societe */
+	protected $savmysoc;
 
 	/**
 	 * Number of Dolibarr log lines to show in case of error
 	 *
 	 * @var integer
 	 */
-	public $nbLinesToShow = 100;
+	public $nbLinesToShow = 50;
 
 	/**
 	 * Log file from which to extract lines in case of failing test
+	 *
+	 * @var string
 	 */
 	public $logfile = DOL_DATA_ROOT.'/dolibarr.log';
 
 	/**
 	 * Log file size before a test started (=in setUp() call)
+	 *
+	 * @var int
 	 */
 	public $logSizeAtSetup = 0;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param string       $name       Name
-	 * @param array        $data       Test data
-	 * @param string       $dataName   Test data name.
-	 */
-	public function __construct($name = null, array $data = array(), $dataName = '')
-	{
-		parent::__construct($name, $data, $dataName);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
-
-		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
-			print get_called_class()." db->type=".$db->type." user->id=".$user->id.PHP_EOL;
-		}
-		//print " - db ".$db->db;
-	}
 
 	/**
 	 * setUpBeforeClass
@@ -122,113 +145,6 @@ abstract class CommonClassTest extends TestCase
 	}
 
 	/**
-	 *	This method is called when a test fails
-	 *
-	 *  @param	Throwable	$t		Throwable object
-	 *  @return void
-	 */
-	protected function onNotSuccessfulTest(Throwable $t): void
-	{
-
-		// Get the lines that were added since the start of the test
-
-		if (file_exists($this->logfile)) {
-			$filecontent = (string) @file_get_contents($this->logfile);
-		} else {
-			$filecontent = '';
-		}
-
-		$currentSize = strlen($filecontent);
-		if ($currentSize >= $this->logSizeAtSetup) {
-			$filecontent = substr($filecontent, $this->logSizeAtSetup);
-		}
-		$lines = preg_split("/\r?\n/", $filecontent, -1, PREG_SPLIT_NO_EMPTY);
-
-
-		// Determine the number of lines to show
-
-		$nbLinesToShow = $this->nbLinesToShow;
-		if ($t instanceof PHPUnit\Framework\Error\Notice) {
-			$nbLinesToShow = 3;
-		}
-
-		// Determine test information to show
-
-		$failedTestMethod = $this->getName(false);
-		$className = get_called_class();
-
-		// Get the test method's reflection
-		$reflectionMethod = new ReflectionMethod($className, $failedTestMethod);
-
-		// Get the test method's data set
-		$argsText = $this->getDataSetAsString(true);
-
-		$totalLines = count($lines);
-		$first_line = max(0, $totalLines - $nbLinesToShow);
-		// Get the last line of the log
-		$last_lines = array_slice($lines, $first_line, $nbLinesToShow);
-
-
-		// Show log information
-
-		print PHP_EOL;
-		// Use GitHub Action compatible group output (:warning: arguments not encoded)
-		print "##[group]$className::$failedTestMethod failed - $argsText.".PHP_EOL;
-		print "## ".get_class($t).": {$t->getMessage()}".PHP_EOL;
-
-		// Show some information about where it happened
-		foreach ($t->getTrace() as $idx => $trace) {
-			if (isset($trace['file'], $trace['line'])  // Only if we have a file name
-				&& !preg_match('/(?:\bphar\b|Framework)/', $trace['file']) // Only if it's not in phpunit
-			) {
-				print "## backtrace($idx): From {$trace['file']}:{$trace['line']}.".PHP_EOL;
-			}
-		}
-
-
-		if ($nbLinesToShow) {
-			print "\n";
-			print "########## We try to output the last ".$nbLinesToShow." lines of the log file ".basename($this->logfile)." (that has ".$totalLines." lines)".PHP_EOL;
-			$newLines = count($last_lines);
-			if ($newLines > 0) {
-				// Show partial log file contents when requested.
-				print "## Show last ".count($last_lines)." lines of dolibarr.log file -----".PHP_EOL;
-				foreach ($last_lines as $line) {
-					print $line.PHP_EOL;
-				}
-				print "########## end of dolibarr.log for $className::$failedTestMethod".PHP_EOL;
-			} else {
-				print "## No new lines in 'dolibarr.log' since start of this test.".PHP_EOL;
-			}
-		}
-		print "##[endgroup]".PHP_EOL;
-
-		// Print last line of file /var/log/apache2/travis_error_log
-		$logFile = '/var/log/apache2/travis_error_log';
-
-		// Check if the file exists and is readable
-		if (@file_exists($logFile) && is_readable($logFile)) {
-			// Read the file into an array
-			$lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-			// Get the last 5 lines
-			$lastFiveLines = array_slice($lines, -10);
-
-			// Print the last 5 lines
-			print "Content of ".$logFile."\n";
-			echo "Last 5 lines of $logFile:\n";
-			foreach ($lastFiveLines as $line) {
-				echo $line . "\n";
-			}
-		} else {
-			//echo "File $logFile does not exist or is not readable so we can't show more information.\n";
-		}
-
-
-		parent::onNotSuccessfulTest($t);
-	}
-
-	/**
 	 * Init phpunit tests
 	 *
 	 * @return  void
@@ -236,6 +152,13 @@ abstract class CommonClassTest extends TestCase
 	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
+
+		// Populate instance snapshots from the global snapshot captured at file load time
+		$this->savconf = $GLOBALS['PHPUNIT_SAVCONF'];
+		$this->savuser = $GLOBALS['PHPUNIT_SAVUSER'];
+		$this->savlangs = $GLOBALS['PHPUNIT_SAVLANGS'];
+		$this->savdb = $GLOBALS['PHPUNIT_SAVDB'];
+		$this->savmysoc = $GLOBALS['PHPUNIT_SAVMYSOC'];
 
 		$conf = $this->savconf;
 		$user = $this->savuser;
@@ -250,6 +173,7 @@ abstract class CommonClassTest extends TestCase
 		}
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			// @phpstan-ignore method.notFound
 			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
 		}
 		//print $db->getVersion()."\n";
@@ -263,6 +187,7 @@ abstract class CommonClassTest extends TestCase
 	protected function tearDown(): void
 	{
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			// @phpstan-ignore method.notFound
 			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;
 		}
 	}
@@ -287,7 +212,7 @@ abstract class CommonClassTest extends TestCase
 	 *
 	 * @param object $obj  Object on which to call method
 	 * @param string $name Method to call
-	 * @param array  $args Arguments to provide in method call
+	 * @param array<mixed>  $args Arguments to provide in method call
 	 * @return mixed Return value
 	 */
 	public static function callMethod($obj, $name, array $args = [])
@@ -308,8 +233,8 @@ abstract class CommonClassTest extends TestCase
 	 * @param   Object $oA                      Object operand 1
 	 * @param   Object $oB                      Object operand 2
 	 * @param   boolean $ignoretype             False will not report diff if type of value differs
-	 * @param   array $fieldstoignorearray      Array of fields to ignore in diff
-	 * @return  array                           Array with differences
+	 * @param   array<int|string> $fieldstoignorearray      Array of fields to ignore in diff
+	 * @return  array<mixed>                    Array with differences
 	 */
 	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
 	{
@@ -346,6 +271,56 @@ abstract class CommonClassTest extends TestCase
 		}
 
 		return $retAr;
+	}
+
+	/**
+	 * Assert that the sum of the persisted line totals matches the object header totals.
+	 * Catches bugs where update_price() forgets a line, or a total is not recalculated after a line change.
+	 *
+	 * @param CommonObject $localobject Object with a ->lines array of line objects having total_ht/total_tva/total_ttc
+	 * @param string       $message     Extra message to show on failure
+	 * @return void
+	 */
+	protected function assertLineTotalsMatchHeader($localobject, $message = '')
+	{
+		$sumht = 0.0;
+		$sumtva = 0.0;
+		$sumttc = 0.0;
+		foreach ($localobject->lines as $line) {
+			$sumht += (float) $line->total_ht;
+			$sumtva += (float) $line->total_tva;
+			$sumttc += (float) $line->total_ttc;
+		}
+
+		$this->assertEqualsWithDelta($sumht, (float) $localobject->total_ht, 0.01, 'total_ht does not match sum of lines. '.$message);
+		$this->assertEqualsWithDelta($sumtva, (float) $localobject->total_tva, 0.01, 'total_tva does not match sum of lines. '.$message);
+		$this->assertEqualsWithDelta($sumttc, (float) $localobject->total_ttc, 0.01, 'total_ttc does not match sum of lines. '.$message);
+	}
+
+	/**
+	 * Compare $localobject against a freshly built specimen of the same class (with the same mutation applied)
+	 * to detect fields unexpectedly changed by a lifecycle action such as update() or valid().
+	 *
+	 * @param object   $localobject         Object to check, already gone through create()/update()/valid()...
+	 * @param callable $mutate              Callback(object $specimen): void applying the same mutation that was applied to $localobject
+	 * @param array<int|string> $fieldstoignorearray Fields to ignore in the comparison (passed to objCompare)
+	 * @param array<mixed> $specimenparam   Param array passed to initAsSpecimen()
+	 * @return void
+	 */
+	protected function assertMatchesFreshSpecimen($localobject, callable $mutate, array $fieldstoignorearray, array $specimenparam = array())
+	{
+		global $db;
+
+		$class = get_class($localobject);
+		$newlocalobject = new $class($db);
+		$newlocalobject->initAsSpecimen($specimenparam);
+		$mutate($newlocalobject);
+
+		$clonedobject = clone $localobject;
+		unset($clonedobject->array_options);
+
+		$arraywithdiff = $this->objCompare($clonedobject, $newlocalobject, true, $fieldstoignorearray);
+		$this->assertEquals(array(), $arraywithdiff, 'Found differences '.var_export($arraywithdiff, true));
 	}
 
 	/**
@@ -410,7 +385,7 @@ abstract class CommonClassTest extends TestCase
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
 		'shipping' => 'Expedition',
-		'deplacement' => 'Deplacement',					// TODO Remove module
+		'deplacement' => null,
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
 		'dynamicprices' => 'DynamicPrices',
@@ -456,7 +431,6 @@ abstract class CommonClassTest extends TestCase
 		'opensurvey' => 'OpenSurvey',
 		'order' => 'Commande',
 		'partnership' => 'Partnership',
-		'paybox' => 'Paybox',
 		'paymentbybanktransfer' => 'PaymentByBankTransfer',
 		'paypal' => 'Paypal',
 		'paypalplus' => null,
@@ -468,6 +442,7 @@ abstract class CommonClassTest extends TestCase
 		'productsupplierprice' => null,
 		'project' => 'Projet',
 		'propal' => 'Propale',
+		'quickmemo' => 'QuickMemo',
 		'receiptprinter' => 'ReceiptPrinter',
 		'reception' => 'Reception',
 		'recruitment' => 'Recruitment',
@@ -498,6 +473,14 @@ abstract class CommonClassTest extends TestCase
 		'zapier' => 'Zapier',
 	);
 
+	/**
+	 * Map module names to the 'class' name (the class is: mod<CLASSNAME>)
+	 * Value is null when the module is not internal to the default
+	 * Dolibarr setup.
+	 */
+	const OTHER_MODULE_MAPPING = array(
+		'captureserver' => 'CaptureServer'
+	);
 
 	/**
 	 * Run php script (file) using the php binary used for running phpunit.
@@ -507,11 +490,11 @@ abstract class CommonClassTest extends TestCase
 	 * This ensures that the php script is properly run on multiple platforms.
 	 *
 	 * @param string $phpScriptCommand The command and arguments are run by the php binary.
-	 * @param array  $output           The output returned by the command
+	 * @param array<string>  $output           The output returned by the command
 	 * @param int   $exitCode The exit code returned for the execution.
 	 * @return false|string  False on failure, else last line if the output from the command
 	 */
-	protected function runPhpScript($phpScriptCommand, &$output, &$exitCode)
+	protected function runPhpScript(string $phpScriptCommand, &$output, &$exitCode)
 	{
 		$phpExecutable = PHP_BINARY;
 
@@ -532,12 +515,17 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function assertDirectoryNotExistsCompat($directory, $message = '')
 	{
-		$phpunitVersion = \PHPUnit\Runner\Version::id();
+		// @phan-suppress-next-line PhanUndeclaredClassReference, PhanUndeclaredClassMethod
+		$phpunitVersion = class_exists('\PHPUnit\Runner\Version') ? \PHPUnit\Runner\Version::id() : '9.0.0';
 
 		// Check if PHPUnit version is less than 9.0.0
 		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			/** @phpstan-ignore method.notFound */
 			$this->assertDirectoryNotExists($directory, $message);
 		} else {
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			/** @phpstan-ignore method.notFound */
 			$this->assertDirectoryDoesNotExist($directory, $message);
 		}
 	}
@@ -552,12 +540,15 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function assertFileNotExistsCompat($file, $message = '')
 	{
-		$phpunitVersion = \PHPUnit\Runner\Version::id();
+		// @phan-suppress-next-line PhanUndeclaredClassReference, PhanUndeclaredClassMethod
+		$phpunitVersion = class_exists('\PHPUnit\Runner\Version') ? \PHPUnit\Runner\Version::id() : '9.0.0';
 
 		// Check if PHPUnit version is less than 9.0.0
 		if (version_compare($phpunitVersion, '9.0.0', '<')) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$this->assertFileNotExists($file, $message);
 		} else {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$this->assertFileDoesNotExist($file, $message);
 		}
 	}
@@ -573,6 +564,8 @@ abstract class CommonClassTest extends TestCase
 	protected function fakeAssertIfNotUnix($message)
 	{
 		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+			// @phan-suppress-next-line PhanUndeclaredMethod
+			// @phpstan-ignore method.notFound
 			$this->assertTrue(true, "Dummy test to not mark the test as risky");
 			// $this->markTestSkipped("PHPUNIT is running on windows.  $message");
 			return true;

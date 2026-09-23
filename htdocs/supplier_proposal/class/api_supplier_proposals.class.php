@@ -21,6 +21,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -139,8 +140,17 @@ class SupplierProposals extends DolibarrApi
 				continue;
 			}
 
-			$this->supplier_proposal->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				$this->supplier_proposal->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
+				}
+				continue;
+			}
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
+
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
 		  foreach ($request_data["lines"] as $line) {
@@ -148,6 +158,7 @@ class SupplierProposals extends DolibarrApi
 		  }
 		  $this->propal->lines = $lines;
 		}*/
+
 		if ($this->supplier_proposal->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating supplier proposal", array_merge(array($this->supplier_proposal->error), $this->supplier_proposal->errors));
 		}
@@ -189,11 +200,11 @@ class SupplierProposals extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->supplier_proposal->array_options[$index] = $val;
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
 				}
 				continue;
 			}
-			$this->supplier_proposal->$field = $value;
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
 
 		// update end of validity date
@@ -257,9 +268,9 @@ class SupplierProposals extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters

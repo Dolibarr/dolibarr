@@ -65,7 +65,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
-NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+NoLineGoOnTabToAddSome=No line, go to tab "%s" to add
 CreateInvoiceForThisCustomerFromSendings=Create Bills
 IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
 OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
@@ -128,6 +128,7 @@ ShipmentDistribution=Shipment distribution
 ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
 TypeContact_shipping_external_BILLING=Customer invoice contact

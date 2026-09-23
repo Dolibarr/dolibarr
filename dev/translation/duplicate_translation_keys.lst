@@ -4,12 +4,10 @@
 AccountancyCode
 AffectedTo
 AvailableFormats
-BIC
 BankTransferAmount
 Buy
 ByDefaultInList
 ByYear
-CashDesk
 ChooseFileToImport
 ConfirmCloneAsk
 ContractSigned
@@ -26,7 +24,6 @@ DriverType
 ExportableDatas
 ExportsArea
 History
-IBAN
 IdModule
 InterventionSentByEMail
 InvoiceRef

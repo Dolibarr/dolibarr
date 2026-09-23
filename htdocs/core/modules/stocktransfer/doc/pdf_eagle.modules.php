@@ -4,9 +4,9 @@
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021 	   Gauthier VERDOL 	    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -335,7 +335,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("StockTransfer"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("StockTransfer"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -535,7 +535,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					$pdf->startTransaction();
 
-					if (method_exists($object->lines[$i], 'fetch_product')) {
+					if (is_object($object->lines[$i]) && method_exists($object->lines[$i], 'fetch_product')) {
 						$object->lines[$i]->fetch_product();
 						$object->lines[$i]->label = $object->lines[$i]->product->label;
 						$object->lines[$i]->description = $object->lines[$i]->product->description;
@@ -611,7 +611,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
-					// Lot / série
+					// Batch / serial number
 					if (isModEnabled('productbatch')) {
 						$pdf->SetXY($this->posxlot, $curY);
 						$pdf->MultiCell(($this->posxweightvol - $this->posxlot), 3, $object->lines[$i]->batch, '', 'C');
@@ -1030,7 +1030,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK'))) {
+		if ($object->status == 0 && (getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK'))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SHIPPING_DRAFT_WATERMARK);
 		}
 
@@ -1075,7 +1075,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		$pdf->SetFont('', '', $default_font_size + 1);
 
-		// Date prévue depart
+		// Expected departure date
 		if (!empty($object->date_prevue_depart)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1083,7 +1083,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DatePrevueDepart")." : ".dol_print_date($object->date_prevue_depart, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		// Date prévue arrivée
+		// Expected arrival date
 		if (!empty($object->date_prevue_arrivee)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1099,7 +1099,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateReelleDepart")." : ".dol_print_date($object->date_reelle_depart, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		// Date reelle arrivée
+		// Actual arrival date
 		if (!empty($object->date_reelle_arrivee)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1225,7 +1225,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			}
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// We can use the name of the contact's company
 			if ($usecontact/* && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)*/) {
 				$thirdparty = $object->contact;
 			} else {

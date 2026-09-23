@@ -69,7 +69,7 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, year, month, day
 
 -- Spain (4)
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('ES-EASTER',        __ENTITY__, 4, 'easter', 0,  0,  0, 1);
-INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('ES-REYE',          __ENTITY__, 4,       '', 0,  6,  1, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('ES-REYE',          __ENTITY__, 4,       '', 0,  1,  6, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('ES-HISPANIDAD',    __ENTITY__, 4,       '', 0, 10, 12, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('ES-TOUSSAINT',     __ENTITY__, 4,       '', 0, 11,  1, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('ES-CONSTITUIZION', __ENTITY__, 4,       '', 0, 12,  6, 1);

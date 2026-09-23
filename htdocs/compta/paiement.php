@@ -136,6 +136,9 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than the
+				// one restrictedArea() was called on above. Check the user is allowed on that one too.
+				restrictedArea($user, 'facture', $tmpinvoice->id, '', '', 'fk_soc', 'rowid', (($tmpinvoice->status == Facture::STATUS_DRAFT) ? 1 : 0));
 				$amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement(0));
 				if ($amounts[$cursorfacid]) {
 					// Check amount
@@ -163,6 +166,9 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
+				// The id comes from the name of a POST field, so it can name an invoice other than the
+				// one restrictedArea() was called on above. Check the user is allowed on that one too.
+				restrictedArea($user, 'facture', $tmpinvoice->id, '', '', 'fk_soc', 'rowid', (($tmpinvoice->status == Facture::STATUS_DRAFT) ? 1 : 0));
 				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->multicurrency_total_ttc - $tmpinvoice->getSommePaiement(1));
 				if ($multicurrency_amounts[$cursorfacid]) {
 					// Check amount
@@ -525,7 +531,7 @@ if ($result >= 0) {
 	// Date payment
 	print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
 	$datepayment = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-	$datepayment = ($datepayment == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepayment);
+	$datepayment = ($datepayment == '' ? (getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1) : $datepayment);
 	$adddateof = array(array('adddateof'=>$facture->date));
 	$adddateof[] = array('adddateof'=>$facture->date_lim_reglement, 'labeladddateof'=>$langs->transnoentities('DateDue'));
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_paiement", 1, 1, 0, '', '', $adddateof);
@@ -558,19 +564,19 @@ if ($result >= 0) {
 
 	// Bank check number
 	print '<tr><td>'.$langs->trans('Numero');
-	print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
+	print ' <em class="opacitymedium small">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
 	print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'" spellcheck="false"></td></tr>';
 
 	// Check transmitter
 	print '<tr><td><span class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter').'</span>';
-	print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
+	print ' <em class="opacitymedium small">('.$langs->trans("ChequeMaker").')</em>';
 	print '</td>';
 	print '<td><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'" spellcheck="false"></td></tr>';
 
 	// Bank name
 	print '<tr><td>'.$langs->trans('Bank');
-	print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
+	print ' <em class="opacitymedium small">('.$langs->trans("ChequeBank").')</em>';
 	print '</td>';
 	print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'" spellcheck="false"></td></tr>';
 
@@ -686,15 +692,15 @@ if ($result >= 0) {
 				print '<td>' . $langs->trans('Type') . '</td>';
 			}
 			print '<td class="center">'.$langs->trans('Date').'</td>';
-			print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
+			print '<td class="center">'.$langs->trans('DateDue').'</td>';
 			if (isModEnabled("multicurrency")) {
 				$langs->load("multicurrency");
-				$labeltoshow = '<span class="small nowraponall">'.$langs->trans("MulticurrencyOriginalCurrency").'</span>';
-				print '<th>'.$langs->trans('Currency').'</th>';
-				print '<th class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-				print '<th class="right">'.$multicurrencyalreadypayedlabel.' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-				print '<th class="right">'.$multicurrencyremaindertopay.' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-				print '<th class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
+				$labeltoshow = $langs->trans("MulticurrencyOriginalCurrency");
+				print '<td>'.$langs->trans('Currency').'</th>';
+				print '<td class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyalreadypayedlabel.' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyremaindertopay.' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></td>';
+				print '<td class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium small nowraponall">('.$labeltoshow.')</span></td>';
 			}
 			print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 			print '<td class="right">'.$alreadypayedlabel.'</td>';
@@ -748,8 +754,8 @@ if ($result >= 0) {
 					$multicurrency_payment = $invoice->getSommePaiement(1);
 					$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
 					$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
-					$multicurrency_alreadypayed = price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
-					$multicurrency_remaintopay = price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
+					$multicurrency_alreadypayed = (float) price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits, 'MT');
+					$multicurrency_remaintopay = (float) price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits, 'MT');
 					// Multicurrency full amount tooltip
 					$tooltiponmulticurrencyfullamount = $langs->trans('AmountHT') . ": " . price($objp->multicurrency_total_ht, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
 					$tooltiponmulticurrencyfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->multicurrency_total_tva, 0, $langs, 0, -1, -1, $objp->multicurrency_code) . "<br>";
@@ -814,6 +820,7 @@ if ($result >= 0) {
 
 					// Multicurrency Price
 					print '<td class="right">';
+					print '<span class="amount">';
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 						print price($sign * $multicurrency_payment);
 						if ($multicurrency_creditnotes) {
@@ -823,12 +830,13 @@ if ($result >= 0) {
 							print '+'.price($multicurrency_deposits);
 						}
 					}
+					print '</span>';
 					print '</td>';
 
 					// Multicurrency remain to pay
 					print '<td class="right">';
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
-						print price($sign * (float) $multicurrency_remaintopay);
+						print '<span class="amount">'.price($sign * (float) $multicurrency_remaintopay).'</span>';
 					}
 					print '</td>';
 
@@ -849,7 +857,7 @@ if ($result >= 0) {
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 						if ($action != 'add_paiement') {
 							if (!empty($conf->use_javascript_ajax)) {
-								print '<button class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">';
+								print '<button type="button" class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">';
 								print img_picto("Auto fill", 'rightarrow.png');
 								print '</button>';
 							}
@@ -878,7 +886,7 @@ if ($result >= 0) {
 
 				// Remain to take or to pay back
 				print '<td class="right">';
-				print price($sign * (float) $remaintopay);
+				print '<span class="amount">'.price($sign * (float) $remaintopay).'</span>';
 				if (isModEnabled('prelevement')) {
 					$numdirectdebitopen = 0;
 					$totaldirectdebit = 0;
@@ -922,7 +930,7 @@ if ($result >= 0) {
 
 				if ($action != 'add_paiement') {
 					if (!empty($conf->use_javascript_ajax)) {
-						print '<button  class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">';
+						print '<button type="button" class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">';
 						print img_picto("Auto fill", 'rightarrow.png');
 						print '</button>';
 					}

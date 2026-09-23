@@ -30,11 +30,6 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
@@ -148,7 +147,7 @@ $dirtocompress = basename($fulldirtocompress);
 if ($compression == 'zip') {
 	$file .= '.zip';
 
-	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\])/i';
+	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\]|[\/\\\]admin[\/\\\]backup[\/\\\])/i';
 
 	//var_dump($fulldirtocompress);
 	//var_dump($outputdir."/".$file);exit;
@@ -180,13 +179,23 @@ if ($compression == 'zip') {
 } elseif (in_array($compression, array('gz', 'bz', 'zstd'))) {
 	$userlogin = ($user->login ? $user->login : 'unknown');
 
+	dol_mkdir($conf->admin->dir_temp);	// May have been removed by a "Clean temporary files" purge
+
 	$outputfile = $conf->admin->dir_temp.'/'.dol_sanitizeFileName('export_files.'.$userlogin.'.out'); // File used with popen method
 
 	$file .= '.tar';
 
-	// We also exclude '/temp/' dir and 'documents/admin/documents'
+	// Write the tar into a temp directory outside the documents tree.
+	// If we wrote it directly under $outputdir (= DOL_DATA_ROOT/admin/documents),
+	// tar would notice its own output directory growing as it reads the source
+	// and exit with code 1 / 'file changed as we read it', even though the archive
+	// is complete. The error short-circuited compression at line 194 and left
+	// users with an uncompressed .tar plus a misleading error (#37266).
+	$tmpfile = $conf->admin->dir_temp.'/'.dol_sanitizeFileName($file);
+
+	// We also exclude '/temp/' dir, 'documents/admin/documents' (previous documents backups) and 'documents/admin/backup' (database dumps)
 	// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-	$cmd = "tar -cf '".escapeshellcmd($outputdir."/".$file)."' --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='documents/admin/documents' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
+	$cmd = "tar -cf '".escapeshellcmd($tmpfile)."' --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='admin/documents' --exclude='admin/backup' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
 
 	$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
@@ -195,13 +204,20 @@ if ($compression == 'zip') {
 		$langs->load("errors");
 		dol_syslog("Documents tar retval after exec=".$retval, LOG_ERR);
 		$errormsg = 'Error tar generation return '.$retval;
+		if (file_exists($tmpfile)) {
+			unlink($tmpfile);
+		}
 	} else {
+		$compressedtmpfile = $tmpfile;
 		if ($compression == 'gz') {
-			$cmd = "gzip -f ".$outputdir."/".$file;
+			$cmd = "gzip -f ".$tmpfile;
+			$compressedtmpfile = $tmpfile.'.gz';
 		} elseif ($compression == 'bz') {
-			$cmd = "bzip2 -f ".$outputdir."/".$file;
+			$cmd = "bzip2 -f ".$tmpfile;
+			$compressedtmpfile = $tmpfile.'.bz2';
 		} elseif ($compression == 'zstd') {
-			$cmd = "zstd -z -9 -q --rm ".$outputdir."/".$file;
+			$cmd = "zstd -z -9 -q --rm ".$tmpfile;
+			$compressedtmpfile = $tmpfile.'.zst';
 		}
 
 		$result = $utils->executeCLI($cmd, $outputfile);
@@ -209,7 +225,23 @@ if ($compression == 'zip') {
 		$retval = $result['error'];
 		if ($result['result'] || !empty($retval)) {
 			$errormsg = 'Error '.$compression.' generation return '.$retval;
-			unlink($outputdir."/".$file);
+			if (file_exists($tmpfile)) {
+				unlink($tmpfile);
+			}
+			if (file_exists($compressedtmpfile)) {
+				unlink($compressedtmpfile);
+			}
+		} else {
+			// Move the compressed archive from temp to the final outputdir.
+			$finalfile = $outputdir.'/'.basename($compressedtmpfile);
+			if (!@rename($compressedtmpfile, $finalfile)) {
+				$errormsg = 'Error moving generated archive to '.$outputdir;
+				if (file_exists($compressedtmpfile)) {
+					unlink($compressedtmpfile);
+				}
+			} else {
+				$file = basename($compressedtmpfile);
+			}
 		}
 	}
 } else {

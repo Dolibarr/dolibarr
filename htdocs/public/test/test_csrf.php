@@ -19,12 +19,17 @@ if (!defined("NOLOGIN")) {
 // Load Dolibarr environment
 @include '../../main.inc.php';
 /**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
  * @var string $dolibarr_main_prod
+ * @var string $dolibarr_main_test
  */
 
 // Security
-if (!empty($dolibarr_main_prod)) {
-	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
+if (!empty($dolibarr_main_prod) || empty($dolibarr_main_test)) {
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1 or $dolibarr_main_test is NOT set to 1 into conf.php');
 }
 
 

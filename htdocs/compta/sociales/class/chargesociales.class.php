@@ -4,7 +4,7 @@
  * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL		    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -418,7 +418,6 @@ class ChargeSociales extends CommonObject
 		if ($this->type > 0) {
 			$sql .= ", fk_type = ".((int) $this->type);
 		}
-		$sql .= ", fk_user_modif=".((int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -672,8 +671,8 @@ class ChargeSociales extends CommonObject
 		if (isset($this->paye)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
-		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->id)) {
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
 		}
 		if (!empty($this->label)) {
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
@@ -741,12 +740,9 @@ class ChargeSociales extends CommonObject
 	 */
 	public function getSommePaiement()
 	{
-		$table = 'paiementcharge';
-		$field = 'fk_charge';
-
 		$sql = 'SELECT sum(amount) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementcharge';
+		$sql .= " WHERE fk_charge = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -866,7 +862,7 @@ class ChargeSociales extends CommonObject
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->totalpaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

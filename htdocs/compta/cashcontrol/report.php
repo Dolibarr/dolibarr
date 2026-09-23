@@ -63,7 +63,7 @@ $summaryonly = GETPOSTINT('summaryonly');		// May be used for ticket Z
 $object = new CashControl($db);
 $object->fetch($id);
 
-//$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
+//$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortorder = 'ASC';
 $sortfield = 'b.datev,b.dateo,b.rowid';
 
@@ -122,31 +122,34 @@ if ($syear && !$smonth) {
 $datefilter = 'p.datep';
 $modulesourcefilter = 'f.module_source';
 $amountfield = 'pf.amount';
+$possource = 'f.pos_source';
+$fieldentity = 'p.entity';
 $joinleft = 'LEFT ';
 if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 	$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
 	$modulesourcefilter = 'bl.module_source';
 	$amountfield = 'bl.amounts';
+	$possource = 'bl.pos_source';
+	$fieldentity = 'bl.entity';
 	$joinleft = '';
 }
 
 // NOTE: This request must use similar fields and filters to the one into cashcontrol_card to count and sum amount
-$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
+$sql = "SELECT p.rowid, p.ref as pref, p.datep as datep, cp.code,";
 $sql .= " f.rowid as facid, f.ref, f.datef as datef, ".$db->sanitize($amountfield)." as amount,";
 $sql .= " b.fk_account as bankid,";
 $sql .= " bl.signature";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f,";
 $sql .= " ".MAIN_DB_PREFIX."paiement as p";
-//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.ref_object = p.ref AND bl.entity = ".((int) $conf->entity).",";
 $sql .= " ".$db->sanitize($joinleft)." JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.action = 'PAYMENT_CUSTOMER_CREATE'";
 $sql .= " AND bl.element = 'payment' AND bl.fk_object = p.rowid AND bl.entity = ".((int) $conf->entity);
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid,";
 $sql .= " ".MAIN_DB_PREFIX."c_paiement as cp";
 $sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 $sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
-$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
-$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
+$sql .= " AND ".$db->sanitize($possource)." = '".$db->escape($terminalid)."'";
 $sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+$sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
 $sql .= " ORDER BY ".$db->sanitize($datefilter)." ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
 $resql = $db->query($sql);
@@ -175,7 +178,7 @@ if ($resql) {
 	$uservalid = new User($db);
 	if ($userauthor > 0) {
 		$uservalid->fetch($userauthor);
-		print '<br>'.$langs->trans("Author").': '.$uservalid->getFullName($langs);
+		print ' - '.$langs->trans("Author").': '.$uservalid->getFullName($langs);
 	}
 	print '<br>'.$langs->trans("Period").': '.$object->year_close.($object->month_close ? '-'.sprintf("%02d", $object->month_close) : '').($object->day_close ? '-'.sprintf("%02d", $object->day_close) : '');
 	print '</center>';
@@ -398,7 +401,9 @@ if ($resql) {
 
 	print $langs->trans("Cash").(!empty($transactionspertype['CASH']) ? ' ('.$transactionspertype['CASH'].' '.$langs->trans("Payments").')' : '').' : ';
 	if (!$summaryonly) {
-		print '<div class="inline-block amount width100">'.($cash >= 0 ? '+' : '').price($cash).'</div>';
+		// Cash is the only row where both boxes carry a value. width100 is set inside a min-width media
+		// query, so below that breakpoint the boxes shrink to their content and the two amounts touch.
+		print '<div class="inline-block amount width100 marginrightonly">'.($cash >= 0 ? '+' : '').price($cash).'</div>';
 		print '<div class="inline-block amount width100">'.price($newcash).'</div>';
 	} else {
 		print '<div class="inline-block amount width100"></div>';

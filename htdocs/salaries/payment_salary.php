@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -61,6 +61,25 @@ if ($user->socid > 0) {
 }
 restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
+// restrictedArea() called without a feature2 only checks that the salaries read permission
+// exists, and checkUserAccessToObject() lists 'salaries' among the features tested on the
+// entity alone, so neither of them looks at who the salary belongs to. Without the check
+// below, any holder of salaries->read lists, adds and deletes the payments of a colleague.
+// Same condition as salaries/card.php, the screen this page is reached from.
+if ($object->id > 0) {
+	$childids = $user->getAllChildIds(1);
+	$canread = 0;
+	if ($user->hasRight('salaries', 'readall')) {
+		$canread = 1;
+	}
+	if ($user->hasRight('salaries', 'read') && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
+
 
 /*
  * Actions
@@ -116,7 +135,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 		$paiement->fk_salary    = $id;
 		$paiement->chid         = $id;	// deprecated
 		$paiement->datep        = $datepaye;
-		$paiement->amounts      = $amounts; // Tableau de montant
+		$paiement->amounts      = $amounts; // Amount array
 		$paiement->fk_typepayment = GETPOSTINT("paiementtype");
 		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 		$paiement->note         = GETPOST("note", 'restricthtml');
@@ -164,7 +183,7 @@ llxHeader('', '', $help_url);
 $salary = $object;
 $sumpaid = 0.0;
 
-// Formulaire de creation d'un paiement de charge
+// Payment creation form
 if ($action == 'create') {
 	$salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
 	$salary->fk_typepayment = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
@@ -216,7 +235,7 @@ if ($action == 'create') {
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(GETPOSTINT("rehour"), GETPOSTINT("remin"), GETPOSTINT("resec"), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
-	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOST("remonth") ? $datepaye : -1) : '';
+	$datepayment = getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : (GETPOST("remonth") ? $datepaye : -1);
 	print $form->selectDate($datepayment, '', 1, 1, 0, "add_payment", 1, 1, 0, '', '', $salary->dateep, '', 1, $langs->trans("DateEnd"));
 	print "</td>";
 	print '</tr>';
@@ -294,7 +313,7 @@ if ($action == 'create') {
 			$nameRemain = "remain_".$objp->id;
 			/* Disabled, we autofil the amount with remain to pay by default
 			if (!empty($conf->use_javascript_ajax)) {
-				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
 			} */
 			$valuetoshow = GETPOSTISSET($namef) ? GETPOST($namef) : ((float) $objp->amount - $sumpaid);
 
@@ -328,7 +347,7 @@ if ($action == 'create') {
 
 	print '<br>';
 
-	// Bouton Save payment
+	// Save payment button
 	print '<div class="center">';
 	print '<div class="paddingbottom"><input type="checkbox" checked name="closepaidsalary" id="closepaidsalary" class="marginrightonly"><label for="closepaidsalary" class="opacitymedium">'.$langs->trans("ClosePaidSalaryAutomatically").'</label></div>';
 	print $form->buttonsSaveCancel("ToMakePayment", "Cancel", array(), true);

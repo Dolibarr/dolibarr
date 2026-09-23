@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
@@ -108,7 +108,6 @@ class CMailFile
 	 */
 	public $errors = array();
 
-
 	/**
 	 * @var SMTPS (if this method is used)
 	 */
@@ -190,6 +189,7 @@ class CMailFile
 	public $html_images = array();
 	/** @var array<array{name:string,fullpath:string,content_type:string,cid:string,image_encoded:string}> */
 	public $images_encoded = array();
+	/** @var array<string,string> Filename extension to MIME mapping */
 	public $image_types = array(
 		'gif'  => 'image/gif',
 		'jpg'  => 'image/jpeg',
@@ -201,7 +201,6 @@ class CMailFile
 		'tiff' => 'image/tiff',
 		'webp' => 'image/webp',
 	);
-
 
 	/**
 	 *	CMailFile
@@ -233,7 +232,6 @@ class CMailFile
 
 		dol_syslog("CMailFile::CMailFile: charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext");
 		dol_syslog("CMailFile::CMailFile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
-
 
 		// Clean values of $mimefilename_list
 		if (is_array($mimefilename_list)) {
@@ -1164,6 +1162,7 @@ class CMailFile
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
+							// time() is used in tokenobj @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 						}
 						// Token expired so we refresh it
@@ -1174,6 +1173,11 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
+							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
+							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
 							// Recreate the service with its configured scopes.
 							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
@@ -1208,7 +1212,8 @@ class CMailFile
 						if (is_object($tokenobj)) {
 							$this->smtps->setToken($tokenobj->getAccessToken());
 						} else {
-							$this->error = "Token not found";
+							$this->error = "OAuth2 token not found for service '".$OAUTH_SERVICENAME."' (setup constant ".$keyforsmtpoauthservice.", send context '".$this->sendcontext."'). Compare it with the service column of llx_oauth_token.";
+							dol_syslog("CMailFile::sendfile: ".$this->error, LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1315,6 +1320,7 @@ class CMailFile
 					$this->transport->setPassword(getDolGlobalString($keyforsmtppw));
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
+					$this->transport->setAuthMode('XOAUTH2');
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
 					$supportedoauth2array = getSupportedOauth2Array();
@@ -1348,6 +1354,7 @@ class CMailFile
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
+							// time() is used in tokenobj @phan-suppress-next-line DolibarrForbiddenFunctionPlugin
 							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
 						}
 						// Token expired so we refresh it
@@ -1358,6 +1365,11 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
+							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
+							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
 							// Recreate the service with its configured scopes.
 							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
@@ -1390,7 +1402,8 @@ class CMailFile
 							$this->transport->setAuthMode('XOAUTH2');
 							$this->transport->setPassword($tokenobj->getAccessToken());
 						} else {
-							$this->errors[] = "Token not found";
+							$this->errors[] = "OAuth2 token not found for service '".$OAUTH_SERVICENAME."' (setup constant ".$keyforsmtpoauthservice.", send context '".$this->sendcontext."'). Compare it with the service column of llx_oauth_token.";
+							dol_syslog("CMailFile::sendfile: ".end($this->errors), LOG_ERR);
 						}
 					} catch (Exception $e) {
 						// Return an error if token not found
@@ -1431,6 +1444,8 @@ class CMailFile
 
 				// send mail
 				$failedRecipients = array();
+
+				$result = false;
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {
@@ -1525,7 +1540,6 @@ class CMailFile
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Write content of a SMTP request into a dump file (mode = all)
@@ -1545,8 +1559,14 @@ class CMailFile
 
 			if ($fp) {
 				if ($this->sendmode == 'mail') {
+					fwrite($fp, 'Param 1 (dest) for mail(): Not yet available in dump');
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 2 (topic) for mail(): '.$this->subject);
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 4 (headers) for mail():'."\n");
 					fwrite($fp, $this->headers);
 					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 3 (message) for mail():'."\n");
 					fwrite($fp, $this->message);
 				} elseif ($this->sendmode == 'smtps') {
 					fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
@@ -1610,7 +1630,6 @@ class CMailFile
 		}
 	}
 
-
 	/**
 	 * Correct an incomplete html string
 	 *
@@ -1662,7 +1681,6 @@ class CMailFile
 			$this->styleCSS .= '</style>';
 		}
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1746,7 +1764,6 @@ class CMailFile
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out, LOG_DEBUG);
 		return $out;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -1923,7 +1940,6 @@ class CMailFile
 		return $out;
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Attach an image to email (mode = 'mail')
@@ -1954,22 +1970,61 @@ class CMailFile
 		return $out;
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Try to create a socket connection
 	 *
-	 * @param 	string		$host		Add ssl:// for SSL/TLS.
-	 * @param 	int			$port		Example: 25, 465
-	 * @return	int						Socket id if ok, 0 if KO
+	 * @param 	string							$host		Add ssl:// for SSL/TLS.
+	 * @param 	int								$port		Example: 25, 465
+	 * @return	int|array<string,int|string>				Socket id if OK, = 0 if KO
 	 */
 	public function check_server_port($host, $port)
 	{
-		// phpcs:enable
-		global $conf;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		// phpcs:enable
 		$_retVal = 0;
 		$timeout = 5; // Timeout in seconds
+
+		// Parse $newUrl
+		$newUrlArray = parse_url($host);
+		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
+		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
+
+		// Deny some reserved host names
+		if (in_array($hosttocheck, array('metadata.google.internal'))) {
+			$info = array();
+			$info['http_code'] = 400;
+			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
+			return $info;
+		}
+
+		// Clean host name $hosttocheck to convert it into an IP $iptocheck
+		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
+			$iptocheck = '127.0.0.1';
+		} elseif (in_array($hosttocheck, array('ip6-localhost', 'ip6-loopback'))) {
+			$iptocheck = '::1';
+		} else {
+			// Resolve $hosttocheck to get the IP $iptocheck
+			$iptocheck = resolveDns($hosttocheck);
+		}
+
+		// Check $iptocheck is an IP (v4 or v6), if not clear value.
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
+			$iptocheck = '0'; // will disabled check on IP
+		}
+
+		if ($iptocheck && !in_array($iptocheck, array('127.0.0.1', '::1'))) {
+			$localurl = 0;
+			$tmpresult = isIPAllowed($iptocheck, $localurl);
+
+			if ($tmpresult) {
+				$info = array();
+				$info['http_code'] = 400;
+				$info['content'] = $tmpresult;
+				return $info;
+			}
+		}
 
 		if (function_exists('fsockopen')) {
 			$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER';
@@ -2034,6 +2089,8 @@ class CMailFile
 			}
 		}
 
+		sleep(1);
+
 		return $_retVal;
 	}
 
@@ -2089,8 +2146,10 @@ class CMailFile
 			$i = 0;
 			// We are interested in $matches[1] only (the second set of parenthesis into regex)
 			foreach ($matches[1] as $full) {
+				$full = urldecode($full);
+
 				$regs = array();
-				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i', $full, $regs)) {   // If xxx is 'file=aaa'
+				if (preg_match('/file=([A-Za-z0-9_\-\/ ]+[\.]?[A-Za-z0-9]+)?$/i', $full, $regs)) {   // If xxx is 'file=aaa'
 					$img = $regs[1];
 
 					if (file_exists($images_dir.'/'.$img)) {
@@ -2129,7 +2188,7 @@ class CMailFile
 					if (!in_array($fullpath, $inline)) {
 						// Read image file
 						if ($image = file_get_contents($fullpath)) {
-							// On garde que le nom de l'image
+							// Keep only the image name
 							$regs = array();
 							preg_match('/([A-Za-z0-9_-]+[\.]?[A-Za-z0-9]+)?$/i', $img["name"], $regs);
 							$imgName = $regs[1];

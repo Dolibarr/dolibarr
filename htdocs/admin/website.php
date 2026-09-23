@@ -98,15 +98,15 @@ $tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtual
 $tabsqlsort = array();
 $tabsqlsort[1] = "ref ASC";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Name of the fields in the result of select to display the dictionary
 $tabfield = array();
 $tabfield[1] = "ref,description,virtualhost,position,date_creation,lastaccess,pageviews_previous_month,pageviews_total";
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Name of editing fields for record modification
 $tabfieldvalue = array();
 $tabfieldvalue[1] = "ref,description,virtualhost,position,entity";
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Name of the fields in the table for inserting a record
 $tabfieldinsert = array();
 $tabfieldinsert[1] = "ref,description,virtualhost,position,entity";
 
@@ -177,7 +177,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
-			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -194,10 +194,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$website->create($user); */
 
 		// Add new entry
-		$sql = "INSERT INTO ".$tabname[$id]." (";
+		$sql = "INSERT INTO ".$db->sanitize($tabname[$id])." (";
 		// List of fields
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $tabrowid[$id].",";
+			$sql .= $db->sanitize($tabrowid[$id]).",";
 		}
 		$sql .= $tabfieldinsert[$id];
 		$sql .= ", status, date_creation)";
@@ -205,7 +205,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// List of values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $newid.",";
+			$sql .= ((int) $newid).",";
 		}
 		$i = 0;
 		foreach ($listfieldinsert as $f => $value) {
@@ -256,10 +256,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$website->fetch($rowid);
 
 		// Modify entry
-		$sql = "UPDATE ".$tabname[$id]." SET ";
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
 		// Modify the field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
-			$sql .= $tabrowid[$id]."=";
+			$sql .= $db->sanitize($tabrowid[$id])." = ";
 			$sql .= "'".$db->escape((string) $rowid)."', ";
 		}
 		$i = 0;
@@ -278,7 +278,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -363,7 +363,7 @@ if ($action == $acts[0]) {
 	}
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET status = 1 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET status = 1 WHERE rowid = ".((int) $rowid);
 	} else {
 		$sql = null;
 	}
@@ -387,7 +387,7 @@ if ($action == $acts[1]) {
 	}
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET status = 0 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET status = 0 WHERE rowid = ".((int) $rowid);
 	} else {
 		$sql = null;
 	}
@@ -460,7 +460,7 @@ if ($id) {
 
 	$fieldlist = explode(',', $tabfield[$id]);
 
-	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -543,7 +543,7 @@ if ($id) {
 		if ($num) {
 			print '<br>';
 
-			print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+			print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" spellcheck="false">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="page" value="'.$page.'">';
 			print '<input type="hidden" name="rowid" value="'.$rowid.'">';

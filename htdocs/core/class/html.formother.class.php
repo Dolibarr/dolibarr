@@ -112,7 +112,7 @@ class FormOther
 		*/
 		$out .= '<br>';
 		$out .= '<center>';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id ="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.dolPrintHTMLForAttribute($langs->trans("Add")).'">';
 		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.dol_escape_htmltag($langs->trans("CloseWindow")).'">';
 		$out .= '</center>';
 		$out .= '<br>';
@@ -123,8 +123,10 @@ class FormOther
 		$out .= 'console.log("select choice");';
 		$out .= 'jQuery("#scantoolmessage").text("");';
 		$out .= '});'."\n";
-		$out .= '$("#exec'.dol_escape_js($jstoexecuteonadd).'").click(function(){
-			console.log("We call js to execute \''.dol_escape_js($jstoexecuteonadd).'\'");
+		// $jstoexecuteonadd is a name of a js function
+		// TODO: dol_escape_js($jstoexecuteonadd) seems wrong for execution, verify, fix
+		$out .= '$(\'#exec'.dol_escape_js($jstoexecuteonadd).'\').click(function(){
+			console.log(\'We call js to execute '.dol_escape_js($jstoexecuteonadd).'\');
 			'.dol_escape_js($jstoexecuteonadd).'();
 			return false;	/* We want to stay on the scan tool */
 		})';
@@ -140,17 +142,17 @@ class FormOther
 	/**
 	 *    Return HTML select list of export models
 	 *
-	 *    @param    string	$selected          Id of the preselected model
-	 *    @param    string	$htmlname          Name of the selected zone
-	 *    @param    string	$type              Type of the desired models
-	 *    @param    int		$useempty          Show an empty value in list
-	 *    @param    int		$fk_user           User we want templates
+	 *    @param    string		$selected          Id of the preselected model
+	 *    @param    string		$htmlname          Name of the selected zone
+	 *    @param    string		$type              Type of the desired models
+	 *    @param    int|string	$useempty          Show an empty value in list
+	 *    @param    int			$fk_user           User we want templates
 	 *    @return	void
 	 */
 	public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
 	{
 		// phpcs:enable
-		global $conf, $langs, $user;
+		global $langs;
 
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".$this->db->prefix()."export_model";
@@ -163,7 +165,11 @@ class FormOther
 		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($useempty) {
-				print '<option value="-1">&nbsp;</option>';
+				if (is_numeric($useempty)) {
+					print '<option value="-1">&nbsp;</option>';
+				} else {
+					print '<option value="-1">'.$langs->trans($useempty).'</option>';
+				}
 			}
 
 			$tmpuser = new User($this->db);
@@ -182,13 +188,16 @@ class FormOther
 				}
 
 				if ($selected == $obj->rowid) {
-					print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
+					print '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($label).'">';
 				} else {
-					print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
+					print '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($label).'">';
 				}
 				print $label;
 				print '</option>';
 				$i++;
+			}
+			if ($num == 0) {
+				print '<option value="-1" disabled data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->transnoentitiesnoconv("NoPredefinedExportProfileYet").'</span>').'">'.$langs->transnoentitiesnoconv("NoPredefinedProfileYet").'</option>';
 			}
 			print "</select>";
 			print ajax_combobox($htmlname);
@@ -202,11 +211,11 @@ class FormOther
 	/**
 	 *    Return list of export models
 	 *
-	 *    @param    string	$selected          Id of the preselected model
-	 *    @param    string	$htmlname          Name of the selected zone
-	 *    @param    string	$type              Type of the desired models
-	 *    @param    int		$useempty          Show an empty value in list
-	 *    @param    int		$fk_user           User that has created the template
+	 *    @param    string		$selected          Id of the preselected model
+	 *    @param    string		$htmlname          Name of the selected zone
+	 *    @param    string		$type              Type of the desired models
+	 *    @param    int|string	$useempty          Show an empty value in list
+	 *    @param    int			$fk_user           User that has created the template
 	 *    @return	void
 	 */
 	public function select_import_model($selected = '', $htmlname = 'importmodelid', $type = '', $useempty = 0, $fk_user = null)
@@ -224,8 +233,10 @@ class FormOther
 		$result = $this->db->query($sql);
 		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($useempty) {
+			if (is_numeric($useempty)) {
 				print '<option value="-1">&nbsp;</option>';
+			} else {
+				print '<option value="-1">'.$langs->trans($useempty).'</option>';
 			}
 
 			$tmpuser = new User($this->db);
@@ -251,6 +262,9 @@ class FormOther
 				print $label;
 				print '</option>';
 				$i++;
+			}
+			if ($num == 0) {
+				print '<option value="-1" disabled data-html="'.dolPrintHTMLForAttribute('<span class="opacitymedium">'.$langs->transnoentitiesnoconv("NoPredefinedProfileYet").'</span>').'">'.$langs->transnoentitiesnoconv("NoPredefinedProfileYet").'</option>';
 			}
 			print "</select>";
 			print ajax_combobox($htmlname);
@@ -539,7 +553,7 @@ class FormOther
 
 		//Add hook to filter on user (for example on usergroup define in custom modules)
 		if (!empty($reshook)) {
-			$sql_usr .= $hookmanager->resArray[0];
+			$sql_usr .= $hookmanager->resArray[0];  // Trust the hook: @phan-suppress-current-line SqlInjection
 		}
 
 		// Add existing sales representatives of thirdparty of external user
@@ -562,7 +576,7 @@ class FormOther
 
 			//Add hook to filter on user (for example on usergroup define in custom modules)
 			if (!empty($reshook)) {
-				$sql_usr .= $hookmanager->resArray[1];
+				$sql_usr .= $hookmanager->resArray[1];  // Trust the hook: @phan-suppress-current-line SqlInjection
 			}
 		}
 
@@ -914,7 +928,7 @@ class FormOther
 		                  }
 				        },
 						function(color, context) { console.log("close color selector"); },
-						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
+						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex+\' setpropertyonselect='.dol_escape_js($setpropertyonselect).'\');';
 				if ($setpropertyonselect) {
 					$out .= 'if (originalhex == null) {';
 					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';
@@ -947,7 +961,7 @@ class FormOther
 					var originalhex = null;
 					jQuery("#colorpicker'.$prefix.'").on(\'change\', function() {
 						var hex = jQuery("#colorpicker'.$prefix.'").val();
-						console.log("new color selected in input color "+hex+" setpropertyonselect='.dol_escape_js($setpropertyonselect).'");';
+						console.log("new color selected in input color "+hex+\' setpropertyonselect='.dol_escape_js($setpropertyonselect).'\');';
 				if ($setpropertyonselect) {
 					$out .= 'if (originalhex == null) {';
 					$out .= ' 	originalhex = getComputedStyle(document.querySelector(":root")).getPropertyValue(\'--'.dol_escape_js($setpropertyonselect).'\');';
@@ -1323,22 +1337,23 @@ class FormOther
 			//var_dump($boxidactivatedforuser);
 
 			// Class Form must have been already loaded
+			$widthforwidget = 'width200';
 			$selectboxlist .= '<!-- Form with select box list -->'."\n";
-			$selectboxlist .= '<form id="addbox" name="addbox" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+			$selectboxlist .= '<form id="addbox" class="parentonrightofpage" name="addbox" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 			$selectboxlist .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$selectboxlist .= '<input type="hidden" name="addbox" value="addbox">';
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'noborderfocus selectwidget maxwidth300 hideonprint', 0, 'hidden selected', 0, 0);
+			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'noborderfocus selectwidget max'.$widthforwidget.' hideonprint onrightofpage', 0, 'hidden selected', 0, 0);
+			if (!empty($conf->use_javascript_ajax)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$selectboxlist .= ajax_combobox("boxcombo", array(), 0, 0, 'resolve', '-1', 'onrightofpage '.$widthforwidget);
+			}
 			if (empty($conf->use_javascript_ajax)) {
 				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
 			}
 			$selectboxlist .= '</form>';
-			if (!empty($conf->use_javascript_ajax)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$selectboxlist .= ajax_combobox("boxcombo");
-			}
 		}
 
 		// Javascript code for dynamic actions
@@ -1509,13 +1524,13 @@ class FormOther
 	public function select_dictionary($htmlname, $dictionarytable, $keyfield = 'code', $labelfield = 'label', $selected = '', $useempty = 0, $moreattrib = '')
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 
 		$langs->load("admin");
 
-		$sql = "SELECT rowid, ".$keyfield.", ".$labelfield;
+		$sql = "SELECT rowid, ".$this->db->sanitize($keyfield).", ".$this->db->sanitize($labelfield);
 		$sql .= " FROM ".$this->db->prefix().$dictionarytable;
-		$sql .= " ORDER BY ".$labelfield;
+		$sql .= $this->db->order($labelfield);
 
 		dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1601,7 +1616,7 @@ class FormOther
 	 */
 	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250', $showempty = '1')
 	{
-		global $langs, $extrafields, $form;
+		global $form;
 
 		$arrayofgroupbylabel = array();
 		foreach ($arrayofgroupby as $key => $val) {

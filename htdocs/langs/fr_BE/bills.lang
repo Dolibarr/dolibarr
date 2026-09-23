@@ -25,6 +25,7 @@ AddBill=Créer facture ou note de crédit
 EnterPaymentDueToCustomer=Réaliser règlement de crédits dus au client
 ErrorInvoiceAvoirMustBeNegative=Erreur, une facture de type Note de crédit doit avoir un montant négatif
 EscompteOfferedShort=Ristourne
+RecurringInvoiceSource=Source recurring invoice
 Discounts=Ristournes
 AddDiscount=Créer ristourne
 ShowDiscount=Visualiser le crédit
