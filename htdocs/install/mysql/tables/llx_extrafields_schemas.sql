@@ -22,28 +22,20 @@ CREATE TABLE llx_extrafields_schemas (
     emptyonclone 	integer DEFAULT 0,
     param 			text,
     list 			varchar(255) DEFAULT '1',
-	printable 		integer DEFAULT 0,
-	-- is the extrafield output on tooltip
+	printable 		integer DEFAULT 0,		-- is the extrafield output on tooltip
 	showintooltip	integer DEFAULT 0,
     totalizable 	boolean default false,
     langs 			varchar(64),
-    help 			text,
-	-- a prompt to autofill the value with AI
+    help 			text,					-- a prompt to autofill the value with AI
 	aiprompt		text,
     css 			varchar(255),
     cssview 		varchar(255),
-    csslist 		varchar(255),
-	-- 1 if field contains personal data (GDPR/nLPD/LGPD)
-    personal_data	integer DEFAULT 0,
-	-- user making creation
-	fk_user_author	integer,
-	-- user making last change
-	fk_user_modif	integer,
-	-- link to schema
-    fk_schema 		integer NOT NULL,
-	-- date of creation
-	datec			datetime,
-	-- last modification date
+    csslist 		varchar(255),			-- 1 if field contains personal data (GDPR/nLPD/LGPD)
+    personal_data	integer DEFAULT 0,		-- user making creation
+	fk_user_author	integer,				-- user making last change
+	fk_user_modif	integer,				-- link to schema
+    fk_schema 		integer NOT NULL,		-- date of creation
+	datec			datetime,				-- last modification date
 	tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 
