@@ -631,7 +631,6 @@ abstract class CommonObject
 	 */
 	public $fk_user_modif;
 
-
 	public $next_prev_filter;
 
 	/**
@@ -4446,7 +4445,11 @@ abstract class CommonObject
 					}
 				}
 
+				$this->context = array_merge($this->context, array('newstatus' => $status));
+
 				if ($trigkey) {
+					$this->oldcopy = dol_clone($this);
+
 					// Call trigger
 					$result = $this->call_trigger($trigkey, $user);
 					if ($result < 0) {

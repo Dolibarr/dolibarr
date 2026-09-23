@@ -1,0 +1,86 @@
+# Action to prepare the github action
+# Go on Dolibarr - Settings - Developer settings - Enter a name + webhook to disable + Permissions (see app test) + Can install by any account
+# Click on generate the private keys
+# Click on Install application - choose user of the Organization
+# Go on Organisation - Secret and variables and create a secret PR18_SECRET_KEY and copy the content of received private key. Choose the repository access to "Repository Dolibarr".
+# Go on Organisation - Secret and variables and create a variable PR18_APP_ID and copy the ID of the previously create ID. Choose the repository access to "Repository Dolibarr".
+#
+
+name: Set reviewer and label for v18 (test ldr)
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "18.0"
+  push:
+    branches:
+      - "18.0"
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  assign-and-label-v18:
+    runs-on: ubuntu-latest
+
+    steps:
+    #- name: Install GitHub CLI
+    #  run: sudo apt-get install gh
+
+    - name: Debug GitHub Event
+      run: cat $GITHUB_EVENT_PATH
+
+    - name: Generate a token
+      id: generate-token
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.PR18_APP_ID }}
+        private-key: ${{ secrets.PR18_SECRET_KEY }}
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Assign Tag
+      env:
+        GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        prid: ${{ github.event.pull_request.number }}
+        prid2: ${{ github.event.pull_request_target.number }}
+        prref: ${{ github.event.pull_request.ref }}
+        prref2: ${{ github.event.pull_request_target.ref }}
+        url: ${{ github.event.pull_request.html_url }}
+        url2: ${{ github.event.pull_request_target.html_url }}
+      run: |
+        echo "env.prid=${{env.prid}}"
+        echo "env.prid2=${{env.prid2}}"
+        echo "env.prref=${{env.prref}}"
+        echo "env.prref2=${{env.prref2}}"
+        echo "env.url=${{env.url}}"
+        echo "env.url2=${{env.url2}}"
+        gh pr edit "${{env.prid}}" --add-label "Issue for v18 maintenance Team"
+
+    - name: Set reviewers except PR author
+      id: set-reviewers
+      run: |
+        # Liste des reviewers à ajuster selon équipe
+        REVIEWERS=("lvessiller-opendsi" "rycks")
+        AUTHOR="${{ github.event.pull_request.user.login }}"
+        FINAL_REVIEWERS=()
+        for reviewer in "${REVIEWERS[@]}"; do
+          if [ "$reviewer" != "$AUTHOR" ]; then
+            FINAL_REVIEWERS+=("$reviewer")
+          fi
+        done
+        echo "AUTHOR=$AUTHOR"
+        echo reviewers=$(IFS=, ; echo "${FINAL_REVIEWERS[*]}") >> $GITHUB_OUTPUT
+
+    - name: Assign reviewers
+      if: steps.set-reviewers.outputs.reviewers != '' && ${{env.prid}} != ''
+      env:
+        GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        prid: ${{ github.event.pull_request.number }}
+        url: ${{ github.event.pull_request.html_url }}
+        reviewers: ${{ steps.set-reviewers.outputs.reviewers }}
+      run: |
+        echo "Assigning reviewers: ${{env.reviewers}}"
+        gh pr edit "${{env.prid}}" --add-reviewer "${{env.reviewers}}"

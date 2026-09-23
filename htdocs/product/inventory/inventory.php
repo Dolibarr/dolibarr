@@ -43,7 +43,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $listoffset = GETPOST('listoffset', 'alpha');
-$limit = GETPOST('limit', 'int') > 0 ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') > 0 ? GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -59,9 +59,9 @@ $batch = GETPOST('batch', 'alphanohtml');
 $totalExpectedValuation = 0;
 $totalRealValuation = 0;
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$result = restrictedArea($user, 'stock', $id);
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock');
 } else {
-	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock', 'inventory_advance');
 }
 
 // Initialize technical objects
@@ -259,7 +259,7 @@ if (empty($reshook)) {
 	}
 
 	// Save quantity found during inventory (when we click on Save button on inventory page)
-	if ($action =='updateinventorylines' && $permissiontoadd) {
+	if ($action == 'updateinventorylines' && $permissiontoadd) {
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
@@ -1051,7 +1051,7 @@ if ($resql) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 			} else {
-				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
+				$valuetoshow = !empty($product_static->stock_warehouse[$obj->fk_warehouse]->real) ? $product_static->stock_warehouse[$obj->fk_warehouse]->real : 0;
 			}
 		}
 		print price2num($valuetoshow, 'MS');
@@ -1215,10 +1215,11 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page + 1).$paramwithsearch.'";
     						}});
+							return false;
     					});
 
 
-                         $(".paginationprevious:last").click(function(e){
+                        $(".paginationprevious:last").click(function(e){
                             var form = $("#formrecord");
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
@@ -1228,9 +1229,10 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'";
        					 	}});
-						 });
+							return false;
+						});
 
-                          $("#idbuttonmakemovementandclose").click(function(e){
+                        $("#idbuttonmakemovementandclose").click(function(e){
                             var form = $("#formrecord");
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
@@ -1240,7 +1242,8 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'&action=record";
        					 	}});
-						 });
+							return false;
+						});
 					});
 </script>';
 

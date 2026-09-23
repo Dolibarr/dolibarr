@@ -463,7 +463,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			if (isModEnabled('contract') && isModEnabled('ticket') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT') && getDolGlobalString('TICKET_PRODUCT_CATEGORY') && !empty($object->fk_soc)) {
 				$societe = new Societe($this->db);
 				$company_ids = (!getDolGlobalString('WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS')) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
-
+				require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 				$contrat = new Contrat($this->db);
 				$number_contracts_found = 0;
 				foreach ($company_ids as $company_id) {

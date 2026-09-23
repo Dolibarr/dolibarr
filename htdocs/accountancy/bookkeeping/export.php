@@ -764,16 +764,35 @@ if ($action == 'export_file') {
 	}
 
 	// add documents in an archive for accountancy export (Quadratus)
-	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS) {
-		$form_question['notifiedexportfull'] = array(
-			'name' => 'notifiedexportfull',
-			'type' => 'checkbox',
-			'label' => $langs->trans('NotifiedExportFull'),
-			'value' => 'false',
-		);
-	}
+	$exportTypesWithDocs = array(
+		AccountancyExport::$EXPORT_TYPE_QUADRATUS,
+	);
+	$form_question['notifiedexportfull'] = array(
+		'name' => 'notifiedexportfull',
+		'type' => 'checkbox',
+		'label' => $langs->trans('NotifiedExportFull'),
+		'value' => 'false',
+	);
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 420, 600);
+	$formconfirm .= '<script>
+jQuery(document).ready(function() {
+	const exportTypesWithDocs = ['.implode(',', $exportTypesWithDocs).'];
+	const $formatExport = jQuery("#formatexport");
+
+	function toggleExportFull() {
+		const $checkbox = jQuery("#notifiedexportfull");
+		const show = exportTypesWithDocs.indexOf(parseInt($formatExport.val())) !== -1;
+		$checkbox.closest(".tagtr").toggle(show);
+		if (!show) {
+			$checkbox.prop("checked", false); // remove checked if hidden
+		}
+	}
+
+	$formatExport.on("change", toggleExportFull);
+	toggleExportFull();
+});
+</script>';
 }
 
 // Print form confirm

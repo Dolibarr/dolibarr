@@ -499,7 +499,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$url = $shorturl = $tmp[0];
 			$param = (isset($tmp[1]) ? $tmp[1] : '');
 
-			if ((!preg_match('/mainmenu/i', $param)) || !preg_match('/leftmenu/i', $param)) {
+			// Complete the url only when neither mainmenu nor leftmenu is already set, like print_left_eldy_menu() does.
+			// With a OR, a url already carrying only mainmenu got a second one, and a url already carrying only leftmenu
+			// got an empty leftmenu appended that overrode the real value.
+			if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param))) {
 				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 			}
 			//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad

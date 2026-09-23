@@ -42,9 +42,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inv
 $backtopage = GETPOST('backtopage', 'alpha');
 
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$result = restrictedArea($user, 'stock', $id);
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock');
 } else {
-	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock', 'inventory_advance');
 }
 
 // Initialize technical objects

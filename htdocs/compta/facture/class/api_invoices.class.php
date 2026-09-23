@@ -331,6 +331,7 @@ class Invoices extends DolibarrApi
 	  *
 	  * @throws RestException 400
 	  * @throws RestException 401
+	  * @throws RestException 403		Access not allowed for login
 	  * @throws RestException 404
 	  * @throws RestException 405
 	  */
@@ -346,6 +347,9 @@ class Invoices extends DolibarrApi
 		}
 		if (empty($orderid)) {
 			throw new RestException(400, 'Order ID is mandatory');
+		}
+		if (!DolibarrApi::_checkAccessToResource('commande', $orderid)) {
+			throw new RestException(403, 'Access not allowed on order for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$order = new Commande($this->db);
@@ -425,6 +429,16 @@ class Invoices extends DolibarrApi
 
 		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 		$request_data->label = sanitizeVal($request_data->label);
+
+		$invoiceline = new FactureLigne($this->db);
+		$result = $invoiceline->fetch($lineid);
+		if (!$result) {
+			throw new RestException(404, 'Invoice line not found');
+		}
+
+		if ($invoiceline->fk_facture != $id) {
+			throw new RestException(403, 'Line does not belong to this invoice');
+		}
 
 		$updateRes = $this->invoice->updateline(
 			$lineid,

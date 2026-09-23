@@ -45,7 +45,7 @@ $date_endyear = GETPOST('date_endyear', 'int');
 
 $nbofyear = 4;
 
-// Change this to test different cases of setup
+// Change this to test different cases of setup.
 //$conf->global->SOCIETE_FISCAL_MONTH_START = 7;
 
 
@@ -678,7 +678,7 @@ if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta
  * Expense reports
  */
 
-if (!isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	$langs->load('trips');
 
 	if ($modecompta == 'CREANCES-DETTES') {

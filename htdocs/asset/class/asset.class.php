@@ -475,7 +475,11 @@ class Asset extends CommonObject
 		if ($result > 0 && $this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model) {
 			$result = $this->setDataFromAssetModel($user, $notrigger);
 		}
-		if ($result > 0 && (
+		// oldcopy is set by the caller before it modifies the object, which card.php does, but dispose()
+		// and reopen() call update() without it and neither touches the fields compared below. Without
+		// the guard, reading them on null warns on PHP 8 and the comparison is always true, so the
+		// depreciation plan was recomputed on every disposal for nothing.
+		if ($result > 0 && is_object($this->oldcopy) && (
 				$this->date_start != $this->oldcopy->date_start ||
 				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
 				$this->reversal_date != $this->oldcopy->reversal_date ||
@@ -928,12 +932,13 @@ class Asset extends CommonObject
 				}
 
 				// Delete old lines
-				$sql = "DELETE " . MAIN_DB_PREFIX . "asset_depreciation FROM " . MAIN_DB_PREFIX . "asset_depreciation";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab ON ab.doc_type = 'asset' AND ab.fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid";
-				$sql .= " WHERE " . MAIN_DB_PREFIX . "asset_depreciation.fk_asset = " . (int) $this->id;
-				$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				$sql .= " AND ab.fk_docdet IS NULL";
-				if ($last_depreciation_date !== "") $sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.ref != ''";
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "asset_depreciation";
+				$sql .= " WHERE fk_asset = " . (int) $this->id;
+				$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+				$sql .= " AND NOT EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset' AND fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid)";
+				if ($last_depreciation_date !== "") {
+					$sql .= " AND ref != ''";
+				}
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->errors[] = $langs->trans('AssetErrorClearDepreciationLines') . ': ' . $this->db->lasterror();
@@ -962,9 +967,9 @@ class Asset extends CommonObject
 				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
 				$finish_date = $disposal_date !== "" ? $disposal_date : $depreciation_date_end;
 				$accountancy_code_depreciation_debit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_debit'];
-				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key];
+				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key] ?? '';
 				$accountancy_code_depreciation_credit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_credit'];
-				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key];
+				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key] ?? '';
 
 				// Reversal depreciation line
 				//-----------------------------------------------------

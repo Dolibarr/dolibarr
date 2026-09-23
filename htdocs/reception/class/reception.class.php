@@ -12,6 +12,7 @@
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1033,7 +1034,10 @@ class Reception extends CommonObject
 		$this->db->begin();
 
 		// Stock control
-		if (isModEnabled('stock') && $conf->global->STOCK_CALCULATE_ON_RECEPTION && $this->statut > 0) {
+		if (isModEnabled('stock') &&
+			((getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION') && $this->statut > self::STATUS_DRAFT) ||
+			 (getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE') && $this->statut == self::STATUS_CLOSED))
+			) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1057,7 +1061,7 @@ class Reception extends CommonObject
 					// we do not log origin because it will be deleted
 					$mouvS->origin = null;
 
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch); // Price is set to 0, because we don't want to see WAP changed
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby ? $this->db->jdate($obj->eatby) : null, $obj->sellby ? $this->db->jdate($obj->sellby) : null, $obj->batch); // Price is set to 0, because we don't want to see WAP changed
 					if ($result < 0) {
 						$error++;
 						$this->error = $mouvS->error;
