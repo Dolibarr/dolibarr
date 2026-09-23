@@ -3,4 +3,34 @@
 namespace PHPUnit\Framework;
 
 class TestCase {
+	public function __construct($name = null, array $data = array(), $dataName = '')
+	{
+	}
+
+	/*
+    public function assertTrue($condition, string $message = ''): void {}
+    public function assertFalse($condition, string $message = ''): void {}
+    public function assertEquals($expected, $actual, string $message = ''): void {}
+    public function assertSame($expected, $actual, string $message = ''): void {}
+    public function assertNotNull($actual, string $message = ''): void {}
+    public function assertNull($actual, string $message = ''): void {}
+    public function assertCount(int $expectedCount, $haystack, string $message = ''): void {}
+    public function assertEmpty($actual, string $message = ''): void {}
+    public function assertNotEmpty($actual, string $message = ''): void {}
+    public function fail(string $message = ''): void {}
+	*/
+
+	public function	onNotSuccessfulTest(\PHPUnit\Framework\Throwable $t): void
+	{
+	}
+}
+
+class CommonClassTest {
+    public static function assertEquals($expected, $actual, string $message = '') : void {}
+    public static function assertTrue($condition, string $message = '') : void {}
+    public static function assertNotNull($actual, string $message = '') : void {}
+    public static function assertFileExists(string $filename, string $message = '') : void {}
+    public static function assertGreaterThan($expected, $actual, string $message = '') : void {}
+    public static function assertGreaterThanOrEqual($expected, $actual, string $message = '') : void {}
+    public static function assertNotFalse($actual, string $message = '') : void {}
 }
