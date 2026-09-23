@@ -2799,7 +2799,9 @@ function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $a
 	if (!empty($userids)) {
 		$sql .= ' AND sc.fk_user IN ('.$db->sanitize(implode(',', $userids)).')';
 	}
-	$sql .= ')';
+	if ($allownull) {
+		$sql .= ')';
+	}
 
 	return $sql;
 }
