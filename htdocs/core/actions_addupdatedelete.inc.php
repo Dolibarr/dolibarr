@@ -555,8 +555,9 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 	if ($object->element == 'inventory') {
-		// $include_sub_warehouse can be set when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set, $no_prefill to start an empty inventory
-		$result = $object->validate($user, false, (empty($include_sub_warehouse) ? 0 : $include_sub_warehouse), (empty($no_prefill) ? 0 : 1));
+		// $include_sub_warehouse can be set when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set,
+		// $startmode says how the lines are initialized (empty = use the setup default)
+		$result = $object->validate($user, false, (empty($include_sub_warehouse) ? 0 : $include_sub_warehouse), (empty($startmode) ? '' : $startmode));
 	} else {
 		$result = $object->validate($user);
 	}

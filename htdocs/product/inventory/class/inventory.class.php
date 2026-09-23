@@ -60,6 +60,17 @@ class Inventory extends CommonObject
 	const STATUS_CANCELED  = 9;		// Canceled
 
 	/**
+	 * How the lines of the inventory are initialized when it is started.
+	 * CURRENT: one line per product in stock, expected qty = current stock level (historical behaviour).
+	 * NONE:    no line at all, they are added manually or with a barcode scanner while counting.
+	 * ZERO:    one line per product in stock, but counted qty preset to 0, so a product that is never
+	 *          counted nor scanned ends up regulated to zero.
+	 */
+	const START_MODE_CURRENT = 'current';
+	const START_MODE_NONE    = 'none';
+	const START_MODE_ZERO    = 'zero';
+
+	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
@@ -243,14 +254,23 @@ class Inventory extends CommonObject
 	 * @param  	User 	$user      				User that creates
 	 * @param	int 	$notrigger 				0=launch triggers after, 1=disable triggers
 	 * @param	int		$include_sub_warehouse	Include sub warehouses
-	 * @param	int		$no_prefill				1=Do not prefill lines from current stock (start an empty inventory)
+	 * @param	string	$startmode				How lines are initialized: '' = use the INVENTORY_DEFAULT_START_MODE
+	 *											setup value, self::START_MODE_CURRENT, self::START_MODE_NONE or
+	 *											self::START_MODE_ZERO
 	 * @return 	int             				Return integer <0 if KO, Id of created object if OK
 	 */
-	public function validate(User $user, $notrigger = 0, $include_sub_warehouse = 0, $no_prefill = 0)
+	public function validate(User $user, $notrigger = 0, $include_sub_warehouse = 0, $startmode = '')
 	{
 		$this->db->begin();
 
 		$result = 0;
+
+		if (empty($startmode)) {
+			$startmode = getDolGlobalString('INVENTORY_DEFAULT_START_MODE', self::START_MODE_CURRENT);
+		}
+		if (!in_array($startmode, array(self::START_MODE_CURRENT, self::START_MODE_NONE, self::START_MODE_ZERO))) {
+			$startmode = self::START_MODE_CURRENT;
+		}
 
 		if ($this->status == self::STATUS_DRAFT) {
 			// Delete inventory
@@ -262,8 +282,8 @@ class Inventory extends CommonObject
 				return -1;
 			}
 
-			if (!empty($no_prefill)) {
-				// Start with an empty inventory: lines will be added manually or with a barcode scanner while counting
+			if ($startmode == self::START_MODE_NONE) {
+				// Start with no line at all: they will be added manually or with a barcode scanner while counting
 				$result = $this->setStatut($this::STATUS_VALIDATED, null, '', 'INVENTORY_VALIDATED');
 				if ($result > 0) {
 					$this->db->commit();
@@ -337,6 +357,9 @@ class Inventory extends CommonObject
 					$inventoryline->fk_product = $obj->fk_product;
 					$inventoryline->batch = $obj->batch;
 					$inventoryline->datec = dol_now();
+					// With the "zero" start mode, the counted qty is preset to 0 instead of being left empty,
+					// so a product that is never counted is regulated to zero when the inventory is recorded.
+					$inventoryline->qty_view = ($startmode == self::START_MODE_ZERO) ? 0 : null;
 
 					if (isModEnabled('productbatch')) {
 						if ($obj->batch && empty($obj->tobatch)) {

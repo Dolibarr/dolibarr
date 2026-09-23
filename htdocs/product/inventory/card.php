@@ -53,7 +53,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'in
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
-$no_prefill = !empty(GETPOST('no_prefill')) ? 1 : 0;
+$startmode = GETPOST('startmode', 'aZ09');
 
 $hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -311,8 +311,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action == 'validate') {
 		$form = new Form($db);
+		$startmodes = array(
+			Inventory::START_MODE_CURRENT => $langs->trans("InventoryStartModeCurrent"),
+			Inventory::START_MODE_NONE => $langs->trans("InventoryStartModeNone"),
+			Inventory::START_MODE_ZERO => $langs->trans("InventoryStartModeZero"),
+		);
+		$defaultstartmode = getDolGlobalString('INVENTORY_DEFAULT_START_MODE', Inventory::START_MODE_CURRENT);
+		if (!array_key_exists($defaultstartmode, $startmodes)) {
+			$defaultstartmode = Inventory::START_MODE_CURRENT;
+		}
 		$formquestion = array(
-			array('type' => 'checkbox', 'name' => 'no_prefill', 'label' => $form->textwithpicto($langs->trans("DoNotPrefillInventoryLines"), $langs->trans("DoNotPrefillInventoryLinesHelp")), 'value' => 0, 'size' => '10'),
+			array('type' => 'select', 'name' => 'startmode', 'label' => $form->textwithpicto($langs->trans("InventoryStartMode"), $langs->trans("InventoryStartModeHelp")), 'values' => $startmodes, 'default' => $defaultstartmode),
 		);
 		$text = $langs->trans('ConfirmStartInventory');
 		if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
