@@ -21,6 +21,7 @@ When running bash commands, keep them plain so they can be auto-approved:
 permission = "always"
 deny = ["rm -rf *", "sudo *"]
 allowlist = [
+    "awk",
     "actionlint",
     "base64",
     "basename",
@@ -33,15 +34,18 @@ allowlist = [
     "date",
     "diff",
     "dirname",
+    "dot",
     "du",
     "echo",
     "file",
     "find",
     "fmt",
     "fold",
+    "for",
     "git",
     "grep",
     "head",
+    "if",
     "join",
     "less",
     "ls",
@@ -52,7 +56,9 @@ allowlist = [
     "paste",
     "phan",
     "php",
+    "phpunit",
     "phpstan",
+    "pre-commit",
     "printenv",
     "printf",
     "pwd",
@@ -81,6 +87,7 @@ allowlist = [
     "uniq",
     "wc",
     "which",
+    "while",
     "whoami",
     "xargs",
     "xxd",
@@ -129,4 +136,3 @@ permission = "always"
 
 [tools.connector_github_app_pull_request_read]
 permission = "always"
-

@@ -26,7 +26,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf, $user, $langs, $db, $mysoc;
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
@@ -115,12 +115,9 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 	/**
 	 * testModulesInit
 	 *
-	 * @param string	$modlabel	Module label (class is mod<modlabel>)
 	 * @return int
-	 *
-	 * @dataProvider moduleInitListProvider
 	 */
-	public function testModulesInit(string $modlabel)
+	public function testModulesInit()
 	{
 		global $conf,$user,$langs,$db,$mysoc;
 
@@ -128,46 +125,49 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 
 		//$modlabel = 'DebugBar';
 
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
+		foreach ($this->moduleInitListProvider() as $case) {
+			list($modlabel) = $case;
+			$conf = $this->savconf;
+			$user = $this->savuser;
+			$langs = $this->savlangs;
+			$db = $this->savdb;
 
-		$mysoc = new Societe($db);
-		$mysoc->setMysoc($conf);
+			$mysoc = new Societe($db);
+			$mysoc->setMysoc($conf);
 
-		require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
-		$class = 'mod'.$modlabel;
-		$mod = new $class($db);
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
+			$class = 'mod'.$modlabel;
+			$mod = new $class($db);
 
-		$result = $mod->remove();
-		print __METHOD__." test remove for module ".$modlabel.", result=".$result."\n";
-
-		$result = $mod->init();
-		print __METHOD__." test init for module ".$modlabel.", result=".$result."\n";
-
-		$this->assertLessThan($result, 0, $modlabel." ".$mod->error);
-
-
-		if ($modlabel == 'User') {
-			print __METHOD__." test table llx_user exists after Webhook init\n";
-			$infotable = $db->DDLListTablesFull($db->database_name);
-			//print var_export($infotable, true)."\n";
-			$this->assertGreaterThan(0, count($infotable));
-		}
-		if ($modlabel == 'Webhook') {
-			print __METHOD__." test table llx_webhook_target exists after Webhook init\n";
-			$infotable = $db->DDLListTablesFull($db->database_name);
-			//print var_export($infotable, true)."\n";
-			$this->assertGreaterThan(0, count($infotable));
-		}
-
-		// WARNING: This test is doing init that include DDL and break transactions.So rollback may have no effect.
-		// This is why we force disabling modules.
-
-		// Disable modules
-		if (in_array($modlabel, array('Ldap', 'MailmanSpip', 'DebugBar'))) {
 			$result = $mod->remove();
+			print __METHOD__." test remove for module ".$modlabel.", result=".$result."\n";
+
+			$result = $mod->init();
+			print __METHOD__." test init for module ".$modlabel.", result=".$result."\n";
+
+			$this->assertLessThan($result, 0, $modlabel." ".$mod->error);
+
+
+			if ($modlabel == 'User') {
+				print __METHOD__." test table llx_user exists after Webhook init\n";
+				$infotable = $db->DDLListTablesFull($db->database_name);
+				//print var_export($infotable, true)."\n";
+				$this->assertGreaterThan(0, count($infotable));
+			}
+			if ($modlabel == 'Webhook') {
+				print __METHOD__." test table llx_webhook_target exists after Webhook init\n";
+				$infotable = $db->DDLListTablesFull($db->database_name);
+				//print var_export($infotable, true)."\n";
+				$this->assertGreaterThan(0, count($infotable));
+			}
+
+			// WARNING: This test is doing init that include DDL and break transactions.So rollback may have no effect.
+			// This is why we force disabling modules.
+
+			// Disable modules
+			if (in_array($modlabel, array('Ldap', 'MailmanSpip', 'DebugBar'))) {
+				$result = $mod->remove();
+			}
 		}
 
 		return 0;

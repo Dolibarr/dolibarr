@@ -429,6 +429,7 @@ class MyObject extends CommonObject
 		return $result;
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 * Load object lines in memory from the database
 	 *
