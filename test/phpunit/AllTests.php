@@ -156,6 +156,8 @@ class AllTests
 		$suite->addTestSuite('EmailSignatureLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
+		require_once dirname(__FILE__).'/ModuleBuilderCardActionsTest.php';
+		$suite->addTestSuite('ModuleBuilderCardActionsTest');
 		// Test disabled because it uses include of phpsessionindb.lib.php that run session_set_save_handler() but this function
 		// fails when output was already done (here by output log of unit tests)
 		//require_once dirname(__FILE__).'/PhpSessionInDbTest.php';
