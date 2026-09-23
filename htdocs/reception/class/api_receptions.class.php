@@ -341,7 +341,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-	// A line can only be added while the reception is a draft (no stock movement yet).
+		// A line can only be added while the reception is a draft (no stock movement yet).
 		if ((int) $this->reception->status != Reception::STATUS_DRAFT) {
 			throw new RestException(405, 'Lines can only be added to a draft reception');
 		}
