@@ -50,24 +50,31 @@
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
 /**
- * Mask the value of credential-carrying HTTP headers inside a raw header dump,
- * so a request header block can be written into the log without leaking the
- * secret it authenticates with (API keys, bearer tokens, cookies...).
+ * Mask the credentials an HTTP call carries, so a URL or a raw header block can
+ * be written into the log without leaking the secret it authenticates with.
+ * Covers both places a credential travels: a query-string parameter (Gemini's
+ * '?key=', many webhooks' '?token=') and a header value (Anthropic's
+ * 'x-api-key', OAuth's 'Authorization: Bearer', cookies...).
  *
- * @param	string	$headerdump		Raw header block, as returned by CURLINFO_HEADER_OUT
- * @return	string					Same block with sensitive header values replaced by '***'
+ * @param	string	$text	URL, raw header block (CURLINFO_HEADER_OUT), or any string mixing both
+ * @return	string			Same string with every credential replaced by '***'
  */
-function dolMaskSensitiveHeaders($headerdump)
+function dolMaskSecretsForLog($text)
 {
-	if (!is_string($headerdump) || $headerdump === '') {
-		return (string) $headerdump;
+	if (!is_string($text) || $text === '') {
+		return (string) $text;
 	}
 
-	// Header names whose VALUE is a credential. Matched case-insensitively at
-	// the start of a header line, so a body that merely mentions them is untouched.
-	$sensitive = array('authorization', 'proxy-authorization', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'cookie', 'set-cookie', 'x-goog-api-key', 'dolapikey');
+	// 1) Query-string parameters whose value is a credential. The value stops at
+	// the next separator, so the rest of the URL (and of the log line) is kept.
+	$sensitiveparams = array('key', 'api_key', 'apikey', 'token', 'access_token', 'auth', 'password', 'secret', 'signature', 'dolapikey');
+	$text = (string) preg_replace('/([?&](?:'.implode('|', $sensitiveparams).')=)[^&\s"\']+/i', '$1***', $text);
 
-	return (string) preg_replace('/^('.implode('|', $sensitive).')\s*:\s*.*$/im', '$1: ***', $headerdump);
+	// 2) Header names whose VALUE is a credential. Matched case-insensitively at
+	// the start of a header line, so a body that merely mentions them is untouched.
+	$sensitiveheaders = array('authorization', 'proxy-authorization', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'cookie', 'set-cookie', 'x-goog-api-key', 'dolapikey');
+
+	return (string) preg_replace('/^('.implode('|', $sensitiveheaders).')\s*:\s*.*$/im', '$1: ***', $text);
 }
 
 function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array(), $morelogsuffix = '')
@@ -79,12 +86,17 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
 	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 
-	dol_syslog("getURLContent postorget=".$postorget." URL=".$url);
+	// The URL may itself carry the credential as a query parameter (Gemini's
+	// '?key=', many webhooks' '?token='): never log it raw. Masked into a
+	// dedicated variable so the real $url keeps being used for the call.
+	$urlforlog = dolMaskSecretsForLog($url);
+
+	dol_syslog("getURLContent postorget=".$postorget." URL=".$urlforlog);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
-		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$urlforlog." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
 	}
 	if ($morelogsuffix) {
-		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, $morelogsuffix);
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$urlforlog." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, $morelogsuffix);
 	}
 
 	if (!function_exists('curl_init')) {
@@ -357,7 +369,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// The outgoing header block carries the credentials of the call (API keys,
 	// bearer tokens, cookies): mask them BEFORE any log write. This log line is
 	// emitted at LOG_INFO, so lowering the syslog level to 6 does not stop it.
-	$request = dolMaskSensitiveHeaders($request);
+	$request = dolMaskSecretsForLog($request);
 
 	dol_syslog("getURLContent request without content body=".$request);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
