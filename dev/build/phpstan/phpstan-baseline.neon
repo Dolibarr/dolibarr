@@ -733,22 +733,22 @@ parameters:
 			path: ../../../htdocs/api/index.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 2
 			path: ../../../htdocs/asset/admin/setup.php
 
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
-			path: ../../../htdocs/asset/admin/setup.php
+			path: ../../../htdocs/asset/card.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/asset/card.php
+			message: '#^Call to function method_exists\(\) with \$this\(Asset\) and ''generateDocument'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: ../../../htdocs/asset/class/asset.class.php
 
 		-
 			message: '#^Call to function is_callable\(\) with array\{\$this\(AssetDepreciationOptions\), ''validateField''\} will always evaluate to true\.$#'
@@ -5656,6 +5656,12 @@ parameters:
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 3
+			path: ../../../htdocs/mrp/class/api_mos.class.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 2
 			path: ../../../htdocs/mrp/class/api_mos.class.php
 
 		-
