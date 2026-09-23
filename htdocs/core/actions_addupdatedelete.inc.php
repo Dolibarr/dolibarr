@@ -166,6 +166,10 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09') ? GETPOST($key, 'aZ09') : "";
+			} elseif (isset($object->fields[$key]['type']) && $object->fields[$key]['type'] == 'password') {
+				// A password must not go through alphanohtml: it rewrites a backslash followed by u, x or a
+				// digit into a slash, which silently alters the value before it is encrypted.
+				$value = GETPOST($key, 'password');
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
@@ -331,6 +335,10 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09');
+			} elseif (isset($object->fields[$key]['type']) && $object->fields[$key]['type'] == 'password') {
+				// A password must not go through alphanohtml: it rewrites a backslash followed by u, x or a
+				// digit into a slash, which silently alters the value before it is encrypted.
+				$value = GETPOST($key, 'password');
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
