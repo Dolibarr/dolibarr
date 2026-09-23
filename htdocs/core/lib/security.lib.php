@@ -836,6 +836,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'category') {
 			$feature = 'categorie';
 		}
+		if ($feature == 'bank') {
+			$feature = 'banque';
+		}
 		if ($feature == 'contract') {
 			$dbtablename = 'contrat';
 		}
