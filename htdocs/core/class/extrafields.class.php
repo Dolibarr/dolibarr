@@ -138,6 +138,16 @@ class ExtraFields
 	}
 
 	/**
+	 * Method to output saved errors
+	 *
+	 * @return	string		String with errors
+	 */
+	public function errorsToString()
+	{
+		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
+	}
+
+	/**
 	 *  Add a new extra field parameter
 	 *
 	 *  @param	string			$attrname           Code of attribute

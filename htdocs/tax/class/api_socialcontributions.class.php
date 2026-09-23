@@ -214,7 +214,7 @@ class SocialContributions extends DolibarrApi
 		}
 
 		if ($contrib->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating social contribution: '.$contrib->error);
+			throw new RestException(500, 'Error when creating social contribution: '.$contrib->errorsToString());
 		}
 
 		return $contrib->id;
@@ -272,7 +272,7 @@ class SocialContributions extends DolibarrApi
 		if ($contrib->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating social contribution: '.$contrib->error);
+			throw new RestException(500, 'Error when updating social contribution: '.$contrib->errorsToString());
 		}
 	}
 
@@ -301,7 +301,7 @@ class SocialContributions extends DolibarrApi
 		}
 
 		if ($contrib->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting social contribution: '.$contrib->error);
+			throw new RestException(500, 'Error when deleting social contribution: '.$contrib->errorsToString());
 		}
 
 		return array(
@@ -507,7 +507,7 @@ class SocialContributions extends DolibarrApi
 		}
 
 		if ($payment->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting payment: '.$payment->error);
+			throw new RestException(500, 'Error when deleting payment: '.$payment->errorsToString());
 		}
 
 		return array(

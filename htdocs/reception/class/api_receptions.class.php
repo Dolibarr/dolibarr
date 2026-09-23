@@ -381,7 +381,7 @@ class Receptions extends DolibarrApi
 		$addResult = $this->reception->addline((int) $warehouse_id, $fk_origin_line, $qty, array(), trim((string) $comment), $eatbydate, $sellbydate, trim((string) $batch), $cost_price);
 		if ($addResult < 0) {
 			// Every rejection of addline() comes from a value provided by the caller.
-			throw new RestException(400, $this->reception->error ? $this->reception->error : 'Error while adding reception line');
+			throw new RestException(400, $this->reception->errorsToString() ? $this->reception->errorsToString() : 'Error while adding reception line');
 		}
 
 		// addline() only fills $this->reception->lines; persist the line just stacked, the same
@@ -393,7 +393,7 @@ class Receptions extends DolibarrApi
 			return $createRes;
 		}
 
-		throw new RestException(500, $line->error ? $line->error : implode(', ', $line->errors));
+		throw new RestException(500, $line->errorsToString());
 	}
 
 		/**
@@ -456,7 +456,7 @@ class Receptions extends DolibarrApi
 			return $this->get($id);
 		}
 
-		throw new RestException(500, $line->error ? $line->error : implode(', ', $line->errors));
+		throw new RestException(500, $line->errorsToString());
 	}
 
 	/**
@@ -504,7 +504,7 @@ class Receptions extends DolibarrApi
 			return $this->get($id);
 		}
 
-		throw new RestException(500, $line->error ? $line->error : implode(', ', $line->errors));
+		throw new RestException(500, $line->errorsToString());
 	}
 
 	/**
@@ -576,7 +576,7 @@ class Receptions extends DolibarrApi
 		if ($this->reception->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->reception->error);
+			throw new RestException(500, $this->reception->errorsToString());
 		}
 	}
 
@@ -603,7 +603,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!$this->reception->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting reception : '.$this->reception->error);
+			throw new RestException(500, 'Error when deleting reception : '.$this->reception->errorsToString());
 		}
 
 		return array(
@@ -646,7 +646,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Reception: '.$this->reception->error);
+			throw new RestException(500, 'Error when validating Reception: '.$this->reception->errorsToString());
 		}
 
 		// Reload reception
@@ -688,7 +688,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->classifyBilled(DolibarrApiAccess::$user);
 		if ($result < 0) {
-				throw new RestException(400, $this->reception->error);
+				throw new RestException(400, $this->reception->errorsToString());
 		}
 		return $result;
 	}
@@ -732,7 +732,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->createFromOrder($order, DolibarrApiAccess::$user);
 		if( $result < 0) {
-				throw new RestException(405, $this->reception->error);
+				throw new RestException(405, $this->reception->errorsToString());
 		}
 		$this->reception->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->reception);
@@ -769,7 +769,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Reception: '.$this->reception->error);
+			throw new RestException(500, 'Error when closing Reception: '.$this->reception->errorsToString());
 		}
 
 		// Reload reception
@@ -821,7 +821,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when setting reception back to draft: '.$this->reception->error);
+			throw new RestException(500, 'Error when setting reception back to draft: '.$this->reception->errorsToString());
 		}
 
 		// Reload reception
