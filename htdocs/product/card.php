@@ -413,17 +413,11 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// Delete the product
-					if ($productOrigin->delete($user) < 1) {
-						$error++;
-					}
-				}
-
-				if (!$error) {
 					// Move files from the dir of the product being deleted into the dir of the product kept.
-					// This must happen on success only: the filesystem is not part of the transaction, so
-					// moving the files on the failing path stripped the origin product of its documents
-					// while the database was rolled back, and left them orphaned on the successful one.
+					// This must happen on success only, and before the deletion: the filesystem is not part
+					// of the transaction, so moving the files on the failing path stripped the origin product
+					// of its documents while the database was rolled back, and Product::delete() removes the
+					// directory of the product, so a move placed after it finds nothing left to move.
 					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
 						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
 						$destdir = $conf->product->multidir_output[$object->entity]."/".$object->ref;
@@ -439,6 +433,13 @@ if (empty($reshook)) {
 						}
 					}
 
+					// Delete the product
+					if ($productOrigin->delete($user) < 1) {
+						$error++;
+					}
+				}
+
+				if (!$error) {
 					setEventMessages($langs->trans('ProductsMergeSuccess'), null, 'mesgs');
 					$db->commit();
 				} else {
