@@ -195,7 +195,7 @@ class Salaries extends DolibarrApi
 		if ($salary->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $salary->error);
+			throw new RestException(500, $salary->errorsToString());
 		}
 	}
 
@@ -389,7 +389,7 @@ class Salaries extends DolibarrApi
 		if ($paymentsalary->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $paymentsalary->error);
+			throw new RestException(500, $paymentsalary->errorsToString());
 		}
 	}
 

@@ -665,7 +665,7 @@ class Contracts extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(405, $this->contract->error);
+			throw new RestException(405, $this->contract->errorsToString());
 		}
 	}
 
@@ -735,7 +735,7 @@ class Contracts extends DolibarrApi
 		if ($this->contract->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->contract->error);
+			throw new RestException(500, $this->contract->errorsToString());
 		}
 	}
 
@@ -763,7 +763,7 @@ class Contracts extends DolibarrApi
 		}
 
 		if (!$this->contract->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete contract : '.$this->contract->error);
+			throw new RestException(500, 'Error when delete contract : '.$this->contract->errorsToString());
 		}
 
 		return array(
@@ -812,7 +812,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Contract: '.$this->contract->error);
+			throw new RestException(500, 'Error when validating Contract: '.$this->contract->errorsToString());
 		}
 
 		return array(
@@ -861,7 +861,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already close');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Contract: '.$this->contract->error);
+			throw new RestException(500, 'Error when closing Contract: '.$this->contract->errorsToString());
 		}
 
 		return array(

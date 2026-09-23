@@ -318,7 +318,7 @@ class Interventions extends DolibarrApi
 		if ($this->fichinter->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->fichinter->error);
+			throw new RestException(500, $this->fichinter->errorsToString());
 		}
 	}
 
@@ -408,7 +408,7 @@ class Interventions extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->fichinter->error);
+			throw new RestException(400, $this->fichinter->errorsToString());
 		}
 	}
 
@@ -439,7 +439,7 @@ class Interventions extends DolibarrApi
 		}
 
 		if (!$this->fichinter->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete intervention : '.$this->fichinter->error);
+			throw new RestException(500, 'Error when delete intervention : '.$this->fichinter->errorsToString());
 		}
 
 		return array(
@@ -481,7 +481,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already set as draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->error);
+			throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->errorsToString());
 		}
 		$this->fichinter->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->fichinter);
@@ -525,7 +525,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Intervention: '.$this->fichinter->error);
+			throw new RestException(500, 'Error when validating Intervention: '.$this->fichinter->errorsToString());
 		}
 
 		$this->fichinter->fetchObjectLinked();
@@ -566,7 +566,7 @@ class Interventions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->error);
+			throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->errorsToString());
 		}
 
 		$this->fichinter->fetchObjectLinked();
