@@ -199,11 +199,7 @@ class StockMovements extends DolibarrApi
 
 		$this->stockmovement->setOrigin($origin_type, $origin_id);
 		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, (float) $price, $movementlabel, $movementcode, $dateMvt, $eatBy, $sellBy, $lot) <= 0) {
-			$errormessage = $this->stockmovement->error;
-			if (empty($errormessage)) {
-				$errormessage = implode(',', $this->stockmovement->errors);
-			}
-			throw new RestException(503, 'Error when create stock movement : '.$errormessage);
+			throw new RestException(503, 'Error when create stock movement : '.$this->stockmovement->errorsToString());
 		}
 
 		return $this->stockmovement->id;
