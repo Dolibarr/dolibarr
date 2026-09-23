@@ -561,7 +561,6 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		}
 	}
 
-	// Show tabs
 	// if =0 we don't use the feature
 	if (empty($limittoshow)) {
 		$limittoshow = getDolGlobalInt('MAIN_MAXTABS_IN_CARD', 99);
@@ -1019,9 +1018,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	} elseif (in_array($object->element, array('salary'))) {
 		/** @var Salary $object */
 		'@phan-var-force Salary $object';
-		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
+		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {

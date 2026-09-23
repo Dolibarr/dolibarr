@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -503,5 +504,178 @@ class FormTest extends CommonClassTest
 
 		unset($conf->global->USER_USE_SEARCH_TO_SELECT);
 		$db->rollback();
+	}
+
+	/**
+	 * testSelectcontactsLimitOffset
+	 *
+	 * selectcontacts() must cap the number of returned contacts to the $limit argument and
+	 * offset the result set by $limitoffset, so the contact/ajax/contact.php endpoint can page
+	 * through the list (select2 infinite scroll), the same way select_dolusers() already does.
+	 *
+	 * @return void
+	 */
+	public function testSelectcontactsLimitOffset()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$db->begin();
+
+		$uniq = 'zttestctclim'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		for ($i = 1; $i <= 3; $i++) {
+			$tmpcontact = new Contact($db);
+			$tmpcontact->lastname = $uniq.'Limit'.$i;
+			$tmpcontact->firstname = 'Contact';
+			$tmpcontact->statut = 1;
+			$this->assertGreaterThan(0, $tmpcontact->create($user), 'Failed to create test contact: '.$tmpcontact->error);
+		}
+
+		$form = new Form($db);
+		$filter = "(lastname:like:'".$uniq."%')";
+
+		// Without limit: the 3 contacts match the filter
+		$all = $form->selectcontacts(0, array(), 'contactid', 0, '', '', 0, '', 2, 0, 0, array(), '', '', false, 0, $filter);
+		$this->assertIsArray($all);
+		$this->assertGreaterThanOrEqual(3, count($all), 'Expected at least the 3 created contacts without a limit');
+
+		// With limit=2: at most 2 rows are returned
+		$limited = $form->selectcontacts(0, array(), 'contactid', 0, '', '', 0, '', 2, 0, 0, array(), '', '', false, 0, $filter, 2);
+		$this->assertIsArray($limited);
+		$this->assertLessThanOrEqual(2, count($limited), 'selectcontacts did not honour the $limit argument');
+
+		// Page 2 (offset 2): must still return the remaining contact(s), without repeating page 1's rows
+		$page2 = $form->selectcontacts(0, array(), 'contactid', 0, '', '', 0, '', 2, 0, 0, array(), '', '', false, 0, $filter, 2, 2);
+		$this->assertIsArray($page2);
+		$this->assertNotEmpty($page2, 'the offset page must still return the remaining contact(s)');
+		$this->assertEmpty(
+			array_intersect(array_column($limited, 'key'), array_column($page2, 'key')),
+			'offset page must not repeat rows from page 1'
+		);
+
+		$db->rollback();
+	}
+
+	/**
+	 * testSelectContactSingleSearchToSelectUsesSelect2Pagination
+	 *
+	 * Like select_dolusers(), select_contact()'s single-select "search to select" combo must use
+	 * select2 bound to contact/ajax/contact.php with page/pagination.more wiring, instead of the
+	 * old jQuery UI ajax_autocompleter() which has no pagination concept.
+	 *
+	 * @return void
+	 */
+	public function testSelectContactSingleSearchToSelectUsesSelect2Pagination()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 'infinite';
+
+		$form = new Form($db);
+		// socid=0 (no thirdparty scoping) so $nokeyifsocid never disables ajax mode
+		$out = $form->select_contact(0, '', 'contactid');
+
+		$this->assertIsString($out);
+		$this->assertStringContainsString('contact/ajax/contact.php', $out, 'single select-to-select must bind select2 to the ajax endpoint');
+		$this->assertStringContainsString('.select2({', $out, 'single select-to-select must use select2, not the old jQuery UI autocomplete');
+		$this->assertStringContainsString('d.page = params.page', $out, 'the ajax data callback must forward the select2 page number');
+		$this->assertStringContainsString('pagination: { more:', $out, 'processResults must tell select2 whether more rows are available');
+		$this->assertStringNotContainsString('ui-autocomplete', $out, 'the old jQuery UI autocomplete markup must be gone');
+
+		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	}
+
+	/**
+	 * testSelectContactMultipleSearchToSelect
+	 *
+	 * When CONTACT_USE_SEARCH_TO_SELECT is enabled, select_contact() in multiple mode must render
+	 * an ajax select2 bound to contact/ajax/contact.php with only the preselected contacts as
+	 * <option>, instead of loading the whole contact list - mirroring select_dolusers($multiple=true).
+	 *
+	 * @return void
+	 */
+	public function testSelectContactMultipleSearchToSelect()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+
+		$db->begin();
+
+		$uniq = 'zttestctcmul'.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
+		$contact1 = new Contact($db);
+		$contact1->lastname = 'Selected'.$uniq;
+		$contact1->firstname = 'Contact';
+		$contact1->statut = 1;
+		$this->assertGreaterThan(0, $contact1->create($user), 'Failed to create test contact: '.$contact1->error);
+
+		$contact2 = new Contact($db);
+		$contact2->lastname = 'NotSelected'.$uniq;
+		$contact2->firstname = 'Contact';
+		$contact2->statut = 1;
+		$this->assertGreaterThan(0, $contact2->create($user), 'Failed to create test contact: '.$contact2->error);
+
+		$form = new Form($db);
+
+		// Ajax "search to select" mode ON
+		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 2;
+		$out = $form->select_contact(0, array($contact1->id), 'socpeopleassigned', 0, '', '', 0, '', false, 0, 0, array(), '', '', '', '', true);
+		$this->assertIsString($out);
+		$this->assertStringContainsString('name="socpeopleassigned[]"', $out, 'multiple mode must add [] to the element name');
+		$this->assertStringContainsString('multiple', $out, 'multiple attribute must be present');
+		$this->assertStringContainsString('contact/ajax/contact.php', $out, 'multiple + search-to-select must bind select2 to the ajax endpoint');
+		$this->assertStringContainsString('<option value="'.$contact1->id.'"', $out, 'the preselected contact must be rendered as an <option>');
+		$this->assertStringNotContainsString('<option value="'.$contact2->id.'"', $out, 'the full contact list must not be rendered in ajax mode');
+
+		// Ajax "search to select" mode OFF -> full list
+		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+		$outfull = $form->select_contact(0, array($contact1->id), 'socpeopleassigned', 0, '', '', 0, '', false, 0, 0, array(), '', '', '', '', true);
+		$this->assertIsString($outfull);
+		$this->assertStringNotContainsString('contact/ajax/contact.php', $outfull, 'without the constant the ajax endpoint must not be used');
+		$this->assertStringContainsString('<option value="'.$contact2->id.'"', $outfull, 'without the constant the full contact list must be rendered');
+
+		$db->rollback();
+	}
+
+	/**
+	 * testSelectContactAjaxMultiplePagination
+	 *
+	 * The multiple contact "search to select" combo must let select2 page through the endpoint,
+	 * like select_dolusers($multiple=true) already does.
+	 *
+	 * @return void
+	 */
+	public function testSelectContactAjaxMultiplePagination()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->use_javascript_ajax = 1;
+		$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 'infinite';
+
+		$form = new Form($db);
+		$out = $form->select_contact(0, array(), 'socpeopleassigned', 0, '', '', 0, '', false, 0, 0, array(), '', '', '', '', true);
+
+		$this->assertIsString($out);
+		$this->assertStringContainsString('d.page = params.page', $out, 'the ajax data callback must forward the select2 page number');
+		$this->assertStringContainsString('pagination: { more:', $out, 'processResults must tell select2 whether more rows are available');
+
+		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 	}
 }

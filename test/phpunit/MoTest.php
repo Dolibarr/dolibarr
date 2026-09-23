@@ -119,7 +119,8 @@ class MoTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertEqualsWithDelta(5.0, (float) $localobject->qty, 0.00001);
 		$this->assertEquals(Mo::STATUS_DRAFT, $localobject->status);
-		$this->assertMatchesRegularExpression('/^\(?PROV/i', (string) $localobject->ref, 'A not yet validated Mo must have a provisional ref');
+		$match = preg_match('/^\(?PROV/i', (string) $localobject->ref);
+		$this->assertSame(1, $match, 'A not yet validated Mo must have a provisional ref');
 
 		return $localobject;
 	}

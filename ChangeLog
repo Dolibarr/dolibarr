@@ -3,6 +3,16 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 25.0.0 compared to 24.0 *****
+
+
+WARNING:
+--------
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* All names of functions for hooks in the webportal module have been renamed into webPortalX... to avoid conflict with backoffice.
+
+
+
 ***** ChangeLog for 24.0.1 compared to 24.0.0 *****
 
 FIX: $arrayfields used before definition in don/list.php

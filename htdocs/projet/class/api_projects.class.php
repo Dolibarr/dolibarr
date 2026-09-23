@@ -1119,12 +1119,16 @@ class Projects extends DolibarrApi
 		// If requested, add the contact to tasks
 		if ($affect_to_tasks !== null) {
 			$this->project->getLinesArray(DolibarrApiAccess::$user);
+			$taskContactType = ($type_contact == 'PROJECTLEADER' ? 'TASKEXECUTIVE' : 'TASKCONTRIBUTOR');
 
 			foreach ($this->project->lines as $task) {
 				// If $affect_to_tasks is empty, assign to all tasks
 				// Otherwise, check if the task is in the list
 				if (empty($affect_to_tasks) || in_array($task->id, $affect_to_tasks)) {
-					$task->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
+					$result = $task->add_contact($fk_socpeople, $taskContactType, $source, $notrigger);
+					if ($result < 0) {
+						throw new RestException(500, 'Error adding contact to task '.$task->id.': '.$task->error);
+					}
 				}
 			}
 		}

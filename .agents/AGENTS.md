@@ -15,6 +15,7 @@ Every modification must respect:
 - Do not break compatibility of PHP functions and methods
 - Do not introduce external dependencies without validation
 - Never rename existing functions or variables except if explicitly requested
+- Never remove commented code, even if it's deprecated, except if explicitly requested
 - Never remove blank lines from the code, even when multiple consecutive blank lines are present. 
 - Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
 - Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
@@ -105,10 +106,10 @@ Before writing any code, the agent **must**:
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
 - Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is used into HTML escaped functions
-- Language files must be placed in `mymodule/langs/en_US/` (and other locales as needed)
-- All code comments and variables or functions names must be in English
+- Language files must be placed in `mymodule/langs/en_US/` (never change, update or translate other locales files, this is managed into an external tool)
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
+- All code comments and variables or functions names must be in English
 
 ---
 
@@ -182,7 +183,7 @@ Before writing any code, the agent **must**:
 
 - Block and inline comments must be written in English.
 - Comments must be concise and clear (never more that 5 lines, never more than the number of lines code added or modified).
-- Block comments can reach 120 characters 
+- Block comments can reach 200 characters 
 
 ---
 

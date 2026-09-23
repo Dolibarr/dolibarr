@@ -2698,6 +2698,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fourn';
 	} elseif ($moduleobject == 'ficheinter' || $moduleobject == 'interventions') {
 		$moduledirforclass = 'fichinter';
+	} elseif ($moduleobject == 'cronjobs') {
+		$moduledirforclass = 'cron';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
 	} elseif ($moduleobject == 'workstations') {

@@ -50,6 +50,8 @@ class EmailCleanerTest extends \PHPUnit\Framework\TestCase
 	 */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $conf, $user;
 		$this->savedConf = $conf;
 		$this->savedUser = $user;

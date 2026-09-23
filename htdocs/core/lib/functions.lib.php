@@ -7056,6 +7056,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_PROFID8__' => $mysoc->idprof8,
 			'__MYCOMPANY_PROFID9__' => $mysoc->idprof9,
 			'__MYCOMPANY_PROFID10__' => $mysoc->idprof10,
+			'__MYCOMPANY_OBJECT__'    => $mysoc->socialobject,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
 			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
@@ -7066,6 +7067,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_COUNTRY__'    => $mysoc->country,
 			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id,
 			'__MYCOMPANY_COUNTRY_CODE__' => $mysoc->country_code,
+			'__MYCOMPANY_CURRENCY__' => $outputlangs->transnoentitiesnoconv("Currency".$conf->currency),
 			'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
 		));
 	}
@@ -10481,13 +10483,16 @@ function getElementProperties($elementType)
 	$table_element = $elementType;
 
 	// If we ask a resource form external module (instead of default path)
-	if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {	// 'myobject@mymodule'
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {	// 'myobject@mymodule' (usually external modules)
 		$element = $subelement = $regs[1];
+		$table_element = $regs[2].'_'.$regs[1];
+		$subdir = '/'.$regs[1];
 		$module = $regs[2];
-	} elseif (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// 'myobject_mysubobject' with myobject=mymodule, example 'project_task'
+	} elseif (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// old deprecated syntax: 'myobject_mysubobject' with myobject=mymodule, example 'project_task'
 		// This is an alternative syntax to 'myobject@mymodule', so it must not be applied when the previous case already matched,
 		// otherwise the module resolved from the '@' syntax would be overwritten by a wrong guess when $element contains a '_'.
 		$module = $element = $regs[1];
+		$table_element = $elementType;
 		$subelement = $regs[2];
 	}
 
@@ -10498,7 +10503,7 @@ function getElementProperties($elementType)
 		$classpath = $module . '/class';
 		$classfile = $module;
 		$classname = preg_replace('/det$/', 'Line', $element);
-		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'supplier_order', 'commandefournisseur'))) {
+		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'ficheinter', 'supplier_order', 'commandefournisseur'))) {
 			$classname = preg_replace('/det$/', 'Ligne', $element);
 		}
 	}
@@ -10519,11 +10524,14 @@ function getElementProperties($elementType)
 		$subelement = 'adherent_type';
 		$classname = 'AdherentType';
 		$table_element = 'adherent_type';
-	} elseif ($elementType == 'bank_account') {
+	} elseif ($elementType == 'bank_account' || $elementType == 'bank') {
+		// 'bank' is the value used for the modulepart when downloading files attached to a bank account
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
+		$element = $subelement = 'bank_account';
+		$table_element = 'bank_account';
 	} elseif ($elementType == 'bank_line') {
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
@@ -10696,7 +10704,7 @@ function getElementProperties($elementType)
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
 		$table_element = 'cabinetmedcons';
-	} elseif ($elementType == 'fichinter') {
+	} elseif ($elementType == 'fichinter' || $elementType == 'ficheinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$subelement = 'fichinter';
@@ -10996,13 +11004,15 @@ function getElementProperties($elementType)
 		$dir_output = $conf->fournisseur->payment->dir_output;
 		$dir_temp = $conf->fournisseur->payment->dir_temp;
 	}
+
 	// The sub directory must not be appended when the module is disabled, because $dir_output is then empty
 	// and we would return a path at the root of the file system instead of an empty string.
 	if (!empty($dir_output)) {
 		$dir_output .= $subdir;
 	}
 	if (!empty($dir_temp)) {
-		$dir_temp .= $subdir;
+		//$dir_temp = preg_replace('/\/temp$/', '', $dir_temp).$subdir.'/temp';		// To get mymoduledir/myobject/temp
+		$dir_temp .= $subdir;														// To get mymoduledir/temp/myobject
 	}
 
 	$elementProperties = array(
@@ -11069,8 +11079,9 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
-	//var_dump($element_prop); exit;
+	//var_dump($element_type, $element_prop);
 
+	// Check special cases
 	if ($element_prop['module'] == 'product' || $element_prop['module'] == 'service') {
 		// For example, for an extrafield 'product' (shared for both product and service) that is a link to an object,
 		// this is called with $element_type = 'product' when we need element properties of a service, we must return a product. If we create the
@@ -11082,6 +11093,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	} else {
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}
+
 	//var_dump('element_type='.$element_type);
 	//var_dump($element_prop);
 	//var_dump($element_prop['module'].' '.$ismodenabled);
@@ -11098,6 +11110,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 		if ($includeresult === false) {
 			dol_syslog('fetchObjectByElement: class file /' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php not found for element ' . $element_type, LOG_WARNING);
 		}
+		//var_dump('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php', $element_prop['classname']);
 
 		if (class_exists($element_prop['classname'])) {
 			$className = $element_prop['classname'];
@@ -11117,6 +11130,13 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			/** @var CommonObject $objecttmp */
 
 			if ($element_id > 0 || !empty($element_ref)) {
+				// Special case for job, there is no ref, it is the id
+				// TODO Replace hard coded code with a test if object has a ref or not.
+				if (empty($element_id) && !empty($element_ref) && (in_array($objecttmp->element, array('evaluation', 'job', 'position', 'skill')))) {
+					$element_id = $element_ref;
+					$element_ref = '';
+				}
+
 				$ret = $objecttmp->fetch($element_id, $element_ref);
 				if ($ret >= 0) {
 					if (empty($objecttmp->module)) {
@@ -11142,7 +11162,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 				return $objecttmp;	// returned an object without fetch
 			}
 		} else {
-			dol_syslog($element_prop['classname'] . ' doesn\'t exists in /' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
+			dol_syslog($element_prop['classname'] . " doesn't exists in /" . $element_prop['classpath'] . "/" . $element_prop['classfile'] . ".class.php");
 			return -1;
 		}
 	}

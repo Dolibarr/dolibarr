@@ -674,8 +674,13 @@ if (empty($reshook)) {
 		$error = 0;
 
 		if ($action == 'setwarehouse') {	// Test on permission already done. Default warehouse for the lines
-			$object->setValueFrom('fk_warehouse', (GETPOSTINT('warehouse_id') > 0 ? GETPOSTINT('warehouse_id') : null), '', null, 'int', '', $user);
-			$object->fk_warehouse = GETPOSTINT('warehouse_id');
+			// Note: setValueFrom() casts the value to int, so it can not store an empty warehouse.
+			// We use update() to keep a NULL, because a line without warehouse must not move stock.
+			$object->fk_warehouse = (GETPOSTINT('warehouse_id') > 0 ? GETPOSTINT('warehouse_id') : null);
+			if ($object->update($user) < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 
 		if ($action == 'settracking_number') {		// Test on permission already done
@@ -2646,6 +2651,9 @@ if ($action == 'create' && $permissiontoadd) {
 		$alreadysent = array();
 
 		$origin = (string) $origin;
+
+		// The origin may arrive as 'order_supplier' from some callers, while the table name below is
+		// built from 'supplier_order'. Normalise it or the query targets a table that does not exist.
 		if (empty($origin) || $origin == 'order_supplier') {
 			$origin = 'supplier_order';
 		}
@@ -3113,7 +3121,6 @@ if ($action == 'create' && $permissiontoadd) {
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
-
 
 llxFooter();
 

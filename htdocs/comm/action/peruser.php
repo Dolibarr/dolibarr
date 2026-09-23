@@ -1048,7 +1048,7 @@ if ($resql) {
 // BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
 if ($showbirthday) {  // always false @phpstan-ignore-line
-	agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents);
+	agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents, $firstdaytoshow, $lastdaytoshow);
 }
 
 // LEAVE-HOLIDAY CALENDAR

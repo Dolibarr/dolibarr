@@ -24,6 +24,7 @@
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
 
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1015,16 +1016,6 @@ abstract class CommonObject
 			}
 		}
 		return -1;
-	}
-
-	/**
-	 * isEmpty We consider CommonObject isEmpty if this->id is empty
-	 *
-	 * @return bool
-	 */
-	public function isEmpty()
-	{
-		return (empty($this->id));
 	}
 
 	/**
@@ -2146,9 +2137,11 @@ abstract class CommonObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+		/* Done with DolDeprecationHandler
 		if (empty($this->fk_project) && !empty($this->fk_projet)) {
 			$this->fk_project = $this->fk_projet; // For backward compatibility
 		}
+		*/
 		if (empty($this->fk_project)) {
 			return 0;
 		}
@@ -2994,6 +2987,12 @@ abstract class CommonObject
 				// Update line price
 				if (!empty($this->lines)) {
 					foreach ($this->lines as &$line) {
+						// A credit line (deposit, credit note, discount applied to the invoice) is not priced at the invoice rate:
+						// both its amounts are the historical ones of the credit, so a rate change must leave it untouched.
+						if (!empty($line->fk_remise_except)) {
+							continue;
+						}
+
 						// Amounts in company currency will be recalculated
 						if ($mode == 1) {
 							$line->subprice = 0;
@@ -10221,9 +10220,10 @@ abstract class CommonObject
 	 * @param float		$unitPrice			Product unit price
 	 * @param float		$discountPercent	Line discount percent
 	 * @param int		$fk_product			Product id
+	 * @param float		$qty				Line quantity, to select the matching supplier price quantity range (0 = ignore quantity ranges)
 	 * @return float|int<-2,-1>				Return buy price if OK, integer <0 if KO
 	 */
-	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
+	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0, $qty = 0)
 	{
 		global $conf;
 
@@ -10265,7 +10265,12 @@ abstract class CommonObject
 				if (empty($buyPrice) && in_array(getDolGlobalString('MARGIN_TYPE'), array('1', 'pmp', 'costprice'))) {
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);
-					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0) {
+					$result = $productFournisseur->find_min_price_product_fournisseur($fk_product, $qty);
+					if ($result == 0 && $qty > 0) {
+						// No supplier price defined for such a low quantity, fall back on the lowest known price
+						$result = $productFournisseur->find_min_price_product_fournisseur($fk_product);
+					}
+					if ($result > 0) {
 						$buyPrice = $productFournisseur->fourn_unitprice;
 					} elseif ($result < 0) {
 						$this->errors[] = $productFournisseur->error;

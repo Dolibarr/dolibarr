@@ -15,7 +15,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
- * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1419,6 +1419,7 @@ class Reception extends CommonObject
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " fk_projet=".((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_warehouse=".((isset($this->fk_warehouse) && $this->fk_warehouse > 0) ? ((int) $this->fk_warehouse) : "null").",";
 		$sql .= " entity = ".((int) $conf->entity);
 		$sql .= " WHERE rowid=".((int) $this->id);
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
  *
@@ -589,7 +589,7 @@ class Holidays extends DolibarrApi
 		}
 
 		// Check if the holiday is actually canceled
-		if ($this->holiday->statut != Holiday::STATUS_CANCELED) {
+		if ($this->holiday->status != Holiday::STATUS_CANCELED) {
 			throw new RestException(400, 'Holiday is not canceled. Only canceled holidays can be reopened.');
 		}
 		$this->holiday->status = Holiday::STATUS_VALIDATED;

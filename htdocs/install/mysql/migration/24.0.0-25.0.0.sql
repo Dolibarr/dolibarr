@@ -45,6 +45,7 @@ ALTER TABLE llx_blockedlog ADD COLUMN signature_backward varchar(100) DEFAULT ''
 ALTER TABLE llx_blockedlog ADD COLUMN type_code varchar(8) DEFAULT '';
 ALTER TABLE llx_blockedlog ADD COLUMN note varchar(128) DEFAULT NULL;
 
+ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_projet;
 
 
 -- v25 migration
@@ -138,12 +139,14 @@ CREATE TABLE llx_deletion_log(
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity			integer NOT NULL DEFAULT 1,
 	fk_actioncomm	integer NOT NULL,
-	uid				char(36) NULL,
+	uid				varchar(36) NULL,
 	fk_user_action	integer NULL,
 	assigned_users	varchar(255) NULL,
 	date_deletion	datetime NOT NULL,
 	fk_user			integer NULL
 ) ENGINE=innodb;
+ALTER TABLE llx_deletion_log ADD COLUMN uid	varchar(36) NULL;
+ALTER TABLE llx_deletion_log ADD COLUMN fk_user_action integer NULL;
 
 ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_entity_date (entity, date_deletion);
 ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_uid (uid);
@@ -238,7 +241,6 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod
 -- VMYSQL10.3 UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_user.entity FROM llx_user WHERE llx_notify_def.fk_user = llx_user.rowid AND llx_notify_def.fk_user > 0;
 
-
 -- Payment tables predate the modulebuilder convention of always adding import_key, so unlike
 -- most other object tables they never got it. Add it so a future import profile for payments
 -- (see htdocs/core/modules/mod*.class.php import_tables_array) is possible.
@@ -258,3 +260,19 @@ ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
 -- (modules_import.class.php), including link tables, once they are actually used as a target -
 -- unlike llx_element_element/llx_actioncomm_resources, which no current dataset targets.
 ALTER TABLE llx_paiement_facture ADD COLUMN import_key varchar(14);
+
+-- AI request log: token usage reported by the provider and the exact model id, for cost reporting in the log viewer
+ALTER TABLE llx_ai_request_log ADD COLUMN tokens_input integer;
+ALTER TABLE llx_ai_request_log ADD COLUMN tokens_output integer;
+ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
+
+ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;
+
+-- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
+-- Empty strings must become NULL first: the unique index does not tolerate them like NULL.
+UPDATE llx_product_lot SET barcode = NULL WHERE barcode = '';
+
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
+
