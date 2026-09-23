@@ -11,6 +11,13 @@ EXISTING_GROUP=$(getent group "$GROUP_ID" | cut -d: -f1)
 
 if [ -n "$EXISTING_GROUP" ]; then
     echo "GID $GROUP_ID already belongs to $EXISTING_GROUP"
+
+    if [ "$EXISTING_GROUP" != "$GROUP_NAME" ]; then
+        echo Changing groupname for "$EXISTING_GROUP" to "$GROUP_NAME"
+        groupmod \
+            --new-name "$GROUP_NAME" \
+            "$EXISTING_GROUP"
+    fi
 else
     echo "Creating group $GROUP_NAME with GID $GROUP_ID"
 
@@ -29,6 +36,7 @@ if [ -n "$EXISTING_USER" ]; then
     echo "UID $USER_ID already belongs to $EXISTING_USER"
 
     if [ "$EXISTING_USER" != "$USER_NAME" ]; then
+        echo Changing username for "$EXISTING_USER" to "$USER_NAME"
         usermod \
             --login "$USER_NAME" \
             --home "/home/$USER_NAME" \
@@ -70,6 +78,7 @@ mkdir -p "/home/$USER_NAME/.cache"
 chmod 700 "/home/$USER_NAME/.cache"
 chown -R "$USER_NAME:$USER_NAME" "/home/$USER_NAME/.cache"
 
+export XDG_CACHE_HOME="/home/$USER_NAME/.cache"
 
 install -d -m 700 -o "$USER_NAME" -g "$USER_NAME" "/home/$USER_NAME/.ssh"
 

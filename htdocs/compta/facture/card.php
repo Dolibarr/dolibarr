@@ -1952,7 +1952,12 @@ if (empty($reshook)) {
 									}
 								}
 
-								$amount_ttc_diff = $amountdeposit[0];
+								// For variable deposits, use source TTC x percent to avoid 1-cent rounding diff vs final invoice.
+								if ($typeamount == 'variable') {
+									$amount_ttc_diff = (float) price2num($srcobject->total_ttc * ((float) $valuedeposit / 100), 'MT');
+								} else {
+									$amount_ttc_diff = $amountdeposit[0];
+								}
 							}
 
 							foreach ($amountdeposit as $tva => $amount) {
@@ -2008,9 +2013,11 @@ if (empty($reshook)) {
 								);
 							}
 
+							$object->update_price(1, 'auto', 0, $mysoc); // Refresh total_ttc (addline used noupdateafterinsertline=1)
+
 							$diff = $object->total_ttc - $amount_ttc_diff;
 
-							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && $diff != 0) {
+							if ($diff != 0) {
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);

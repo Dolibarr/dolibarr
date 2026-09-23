@@ -241,7 +241,6 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod
 -- VMYSQL10.3 UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_user.entity FROM llx_user WHERE llx_notify_def.fk_user = llx_user.rowid AND llx_notify_def.fk_user > 0;
 
-
 -- Payment tables predate the modulebuilder convention of always adding import_key, so unlike
 -- most other object tables they never got it. Add it so a future import profile for payments
 -- (see htdocs/core/modules/mod*.class.php import_tables_array) is possible.
@@ -272,24 +271,14 @@ ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEF
 -- NEW schemas table and schemas extrafields
 CREATE TABLE llx_schemas (
     rowid 			integer AUTO_INCREMENT PRIMARY KEY,
-	-- uuid from json file
-    uuid 			varchar(64) NOT NULL,
-	-- name of object like keyboard, mouse, screen ...
+    uuid 			varchar(64) NOT NULL,                
     name 			varchar(64) NOT NULL,
-	-- name displayed to user
     label 			varchar(255) NOT NULL,
-	-- kind of schema (family like "cerfa")
     schema_kind 	varchar(32) NULL,
-	-- long description
     description 	text,
-	-- json for meta object composed of other parts
-	-- note even if that is a json store is TEXT for "old" version of mariadb
     composed_of 	JSON NULL,
-	-- orignal json in case of remote deleted file (for example)
     json_schema 	JSON,
-	-- 0 disabled / 1 enabled
     active 			integer DEFAULT 1 NOT NULL,
-	-- note : version is in json and parent uuid is in json too
     date_creation 	datetime NOT NULL,
     tms 			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_creat 	integer,
@@ -302,9 +291,6 @@ CREATE TABLE llx_extrafields_schemas (
     name 			varchar(64) NOT NULL,
     entity 			integer DEFAULT 1 NOT NULL,
     label 			varchar(255) NOT NULL,
-	-- there is no element type because there is only one def of schema
-	-- and link will be on element_element
-	-- like elementtype note some new type will become like note_audio ...
     type 			varchar(64),
     size 			varchar(8) DEFAULT NULL,
     fieldcomputed 	text,
@@ -319,27 +305,29 @@ CREATE TABLE llx_extrafields_schemas (
     param 			text,
     list 			varchar(255) DEFAULT '1',
 	printable 		integer DEFAULT 0,
-	-- is the extrafield output on tooltip
 	showintooltip	integer DEFAULT 0,
     totalizable 	boolean default false,
     langs 			varchar(64),
     help 			text,
-	-- a prompt to autofill the value with AI
 	aiprompt		text,
     css 			varchar(255),
     cssview 		varchar(255),
     csslist 		varchar(255),
-	-- 1 if field contains personal data (GDPR/nLPD/LGPD)
     personal_data	integer DEFAULT 0,
-	-- user making creation
 	fk_user_author	integer,
-	-- user making last change
 	fk_user_modif	integer,
-	-- link to schema
     fk_schema 		integer NOT NULL,
-	-- date of creation
 	datec			datetime,
-	-- last modification date
 	tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
+
+
+-- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
+-- Empty strings must become NULL first: the unique index does not tolerate them like NULL.
+UPDATE llx_product_lot SET barcode = NULL WHERE barcode = '';
+
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
+
 
