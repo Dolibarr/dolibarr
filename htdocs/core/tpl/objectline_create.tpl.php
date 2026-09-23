@@ -1259,7 +1259,7 @@ if (!empty($object->thirdparty)) {
 
 						/* Define default price at loading */
 						var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-						$("#buying_price").val(defaultprice);
+						$("#buying_price").val((defaultprice === undefined || defaultprice === '') ? '' : pricejs(defaultprice, 'MU'));	/* an empty buying price must stay empty, not become 0 */
 
 						$("#fournprice_predef").change(function() {
 							console.log("change on fournprice_predef");
@@ -1267,13 +1267,13 @@ if (!empty($object->thirdparty)) {
 							var linevalue=$(this).find('option:selected').val();
 							var pricevalue = $(this).find('option:selected').attr("price");
 							if (linevalue != 'inputprice' && linevalue != 'pmpprice') {
-								$("#buying_price").val(pricevalue).hide();	/* We set value then hide field */
+								$("#buying_price").val(pricejs(pricevalue, 'MU')).hide();	/* We set value then hide field */
 							}
 							if (linevalue == 'inputprice') {
 								$('#buying_price').show();
 							}
 							if (linevalue == 'pmpprice') {
-								$("#buying_price").val(pricevalue);
+								$("#buying_price").val(pricejs(pricevalue, 'MU'));
 								$('#buying_price').hide();
 							}
 						});
