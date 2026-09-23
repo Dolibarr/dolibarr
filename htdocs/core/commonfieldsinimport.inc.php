@@ -3,7 +3,7 @@
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  */
 
-/** 
+/**
  * @var DolibarrModules $this
  * @var ?int $r
  **/
