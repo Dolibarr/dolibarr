@@ -11,6 +11,8 @@
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Sylvain Legrand			<contact@infras.fr>
+ * Copyright (C) 2026		Lucky Ranasolonirina	<technique@infras.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,6 +173,20 @@ class Account extends CommonObject
 	 * @var int
 	 */
 	public $pti_in_ctti = 0;
+
+	/**
+	 * XML SEPA format: code of the category purpose (PmtTpInf/CtgyPurp/Cd). Some banks require a value other than CORE.
+	 * One of self::SEPA_CATEGORY_PURPOSES.
+	 * @var string
+	 */
+	public $sepa_category_purpose = 'CORE';
+
+	/**
+	 * XML SEPA format: code of the local instrument (PmtTpInf/LclInstrm/Cd). INST = instant payment.
+	 * One of self::SEPA_LOCAL_INSTRUMENTS.
+	 * @var string
+	 */
+	public $sepa_local_instrument = 'CORE';
 
 	/**
 	 * Name of account holder
@@ -424,6 +440,18 @@ class Account extends CommonObject
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
 
+	/**
+	 * Allowed codes for the category purpose of a SEPA payment (ISO 20022, ExternalCategoryPurpose1Code subset).
+	 * Defined by the SEPA scheme, not editable by the end user: no dictionary table.
+	 */
+	const SEPA_CATEGORY_PURPOSES = array('CORE', 'CORT', 'CASH', 'INST', 'SUPP', 'TREA');
+
+	/**
+	 * Allowed codes for the local instrument of a SEPA payment (ISO 20022, ExternalLocalInstrument1Code subset).
+	 * CORE = standard scheme, INST = instant payment.
+	 */
+	const SEPA_LOCAL_INSTRUMENTS = array('CORE', 'INST');
+
 
 	/**
 	 *  Constructor
@@ -450,6 +478,30 @@ class Account extends CommonObject
 			self::STATUS_OPEN => $langs->transnoentitiesnoconv("StatusAccountOpened"),
 			self::STATUS_CLOSED => $langs->transnoentitiesnoconv("StatusAccountClosed")
 		);
+	}
+
+	/**
+	 * Return the category purpose code to write into a SEPA file for this account (PmtTpInf/CtgyPurp/Cd).
+	 * An unknown or empty value falls back to CORE, so a SEPA file is never built with a code outside the ISO list.
+	 *
+	 * @return string	One of self::SEPA_CATEGORY_PURPOSES
+	 */
+	public function getSepaCategoryPurpose()
+	{
+		$code = strtoupper(trim((string) $this->sepa_category_purpose));
+		return (in_array($code, self::SEPA_CATEGORY_PURPOSES) ? $code : 'CORE');
+	}
+
+	/**
+	 * Return the local instrument code to write into a SEPA file for this account (PmtTpInf/LclInstrm/Cd).
+	 * An unknown or empty value falls back to CORE.
+	 *
+	 * @return string	One of self::SEPA_LOCAL_INSTRUMENTS
+	 */
+	public function getSepaLocalInstrument()
+	{
+		$code = strtoupper(trim((string) $this->sepa_local_instrument));
+		return (in_array($code, self::SEPA_LOCAL_INSTRUMENTS) ? $code : 'CORE');
 	}
 
 	/**
@@ -821,6 +873,8 @@ class Account extends CommonObject
 		$sql .= ", iban_prefix";
 		$sql .= ", domiciliation";
 		$sql .= ", pti_in_ctti";
+		$sql .= ", sepa_category_purpose";
+		$sql .= ", sepa_local_instrument";
 		$sql .= ", proprio";
 		$sql .= ", owner_address";
 		$sql .= ", owner_zip";
@@ -851,6 +905,8 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
+		$sql .= ", '".$this->db->escape($this->getSepaCategoryPurpose())."'";
+		$sql .= ", '".$this->db->escape($this->getSepaLocalInstrument())."'";
 		$sql .= ", '".$this->db->escape($this->owner_name)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->owner_zip)."'";
@@ -979,6 +1035,8 @@ class Account extends CommonObject
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
+		$sql .= ",sepa_category_purpose = '".$this->db->escape($this->getSepaCategoryPurpose())."'";
+		$sql .= ",sepa_local_instrument = '".$this->db->escape($this->getSepaLocalInstrument())."'";
 		$sql .= ",proprio = '".$this->db->escape($this->owner_name)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
@@ -1126,7 +1184,7 @@ class Account extends CommonObject
 
 		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant as type, ba.clos as status, ba.rappro, ba.url,";
 		$sql .= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
-		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
+		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.sepa_category_purpose, ba.sepa_local_instrument, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
 		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
@@ -1179,6 +1237,8 @@ class Account extends CommonObject
 				$this->owner_country_id = $obj->owner_country_id;
 
 				$this->pti_in_ctti   = $obj->pti_in_ctti;
+				$this->sepa_category_purpose = (in_array($obj->sepa_category_purpose, self::SEPA_CATEGORY_PURPOSES) ? $obj->sepa_category_purpose : 'CORE');
+				$this->sepa_local_instrument = (in_array($obj->sepa_local_instrument, self::SEPA_LOCAL_INSTRUMENTS) ? $obj->sepa_local_instrument : 'CORE');
 
 				$this->state_id        = $obj->state_id;
 				$this->state_code      = $obj->state_code;
