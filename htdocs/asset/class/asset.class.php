@@ -754,7 +754,11 @@ class Asset extends CommonObject
 		}
 
 		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht,";
-		$sql .= " " . $this->db->ifsql('EXISTS (SELECT fk_docdet FROM ' . MAIN_DB_PREFIX . 'accounting_bookkeeping as ab WHERE ab.doc_type = \'asset\' AND ab.fk_docdet = ad.rowid)', '1', '0') . " AS bookkeeping";
+		if (isModEnabled('accounting')) {
+			$sql .= " " . $this->db->ifsql('EXISTS (SELECT fk_docdet FROM ' . MAIN_DB_PREFIX . 'accounting_bookkeeping as ab WHERE ab.doc_type = \'asset\' AND ab.fk_docdet = ad.rowid)', '1', '0') . " AS bookkeeping";
+		} else {
+			$sql .= " 0 AS bookkeeping";
+		}
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " ORDER BY ad.depreciation_date ASC";
@@ -803,6 +807,9 @@ class Asset extends CommonObject
 		}
 		if ($error) {
 			return -1;
+		}
+		if (!isModEnabled('accounting')) {
+			return 0;
 		}
 
 		// Old request with 'WITH'
@@ -998,26 +1005,28 @@ class Asset extends CommonObject
 				$sql .= " LIMIT 1";
 				*/
 
-				$sql = "SELECT ad.depreciation_date, ad.cumulative_depreciation_ht";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
-				$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
-				$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
-				$sql .= " AND ad.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				$sql .= " AND iab.fk_docdet IS NOT NULL";
-				$sql .= " ORDER BY ad.depreciation_date DESC";
-				$sql .= " LIMIT 1";
-
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$this->errors[] = $langs->trans('AssetErrorFetchMaxDepreciationDateForMode', $mode_key) . ': ' . $this->db->lasterror();
-					$error++;
-					break;
-				}
 				$last_depreciation_date = '';
 				$last_cumulative_depreciation_ht = $this->reversal_amount_ht;
-				if ($obj = $this->db->fetch_object($resql)) {
-					$last_depreciation_date = $this->db->jdate($obj->depreciation_date);
-					$last_cumulative_depreciation_ht = $obj->cumulative_depreciation_ht;
+				if (isModEnabled('accounting')) {
+					$sql = "SELECT ad.depreciation_date, ad.cumulative_depreciation_ht";
+					$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+					$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
+					$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
+					$sql .= " AND ad.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+					$sql .= " AND iab.fk_docdet IS NOT NULL";
+					$sql .= " ORDER BY ad.depreciation_date DESC";
+					$sql .= " LIMIT 1";
+
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$this->errors[] = $langs->trans('AssetErrorFetchMaxDepreciationDateForMode', $mode_key) . ': ' . $this->db->lasterror();
+						$error++;
+						break;
+					}
+					if ($obj = $this->db->fetch_object($resql)) {
+						$last_depreciation_date = $this->db->jdate($obj->depreciation_date);
+						$last_cumulative_depreciation_ht = $obj->cumulative_depreciation_ht;
+					}
 				}
 
 				// Set last cumulative depreciation
@@ -1035,7 +1044,9 @@ class Asset extends CommonObject
 				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "asset_depreciation";
 				$sql .= " WHERE fk_asset = " . (int) $this->id;
 				$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				$sql .= " AND NOT EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset' AND fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid)";
+				if (isModEnabled('accounting')) {
+					$sql .= " AND NOT EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset' AND fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid)";
+				}
 				if ($last_depreciation_date !== "") {
 					$sql .= " AND ref <> ''";
 				}
