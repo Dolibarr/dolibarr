@@ -10472,7 +10472,7 @@ function getElementProperties($elementType)
 
 	$regs = array();
 
-	//$element_type='facture';
+	//var_dump($elementType);
 
 	$classfile = $classname = $classpath = $subdir = $dir_output = $dir_temp = $parent_element = '';
 
@@ -10524,7 +10524,7 @@ function getElementProperties($elementType)
 		$subelement = 'adherent_type';
 		$classname = 'AdherentType';
 		$table_element = 'adherent_type';
-	} elseif ($elementType == 'bank_account' || $elementType == 'bank') {
+	} elseif ($elementType == 'bank_account' || $elementType == 'bank' || $elementType == 'banque') {
 		// 'bank' is the value used for the modulepart when downloading files attached to a bank account
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
@@ -10537,6 +10537,14 @@ function getElementProperties($elementType)
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'AccountLine';
+	} elseif ($elementType == 'remisecheque') {
+		$classpath = 'compta/paiement/cheque/class';
+		$classfile = 'remisecheque';
+		$classname = 'RemiseCheque';
+		$module = 'bank';
+		$element = 'chequereceipt';
+		$subelement = 'cheque';
+		$table_element = 'bordereau_cheque';
 	} elseif ($elementType == 'category') {
 		$classpath = 'categories/class';
 		$module = 'categorie';
@@ -10563,10 +10571,12 @@ function getElementProperties($elementType)
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
 		$table_element = 'entrepot';
-	} elseif ($elementType == 'project') {
+	} elseif ($elementType == 'project' || $elementType == 'projet') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$table_element = 'projet';
+		$classfile = 'project';
+		$classname = 'Project';
 	} elseif ($elementType == 'project_task') {
 		$classpath = 'projet/class';
 		$module = 'projet';

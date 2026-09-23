@@ -329,6 +329,7 @@ if (!empty($hashp) && $hashp != 'shared') {
 if ($accessallowed && (empty($hashp) || $hashp == 'shared')) {
 	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
 
+	//var_dump($object);
 	if (is_object($object)) {
 		$accessallowed = restrictedArea($user, $modulepart, $object);
 	} else {

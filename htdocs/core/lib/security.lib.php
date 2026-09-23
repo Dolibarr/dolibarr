@@ -214,6 +214,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$dbt_select = 'id';
 	} elseif ($features == 'bank') {
 		$features = 'banque';
+		$feature2 = 'cheque';
+	} elseif ($features == 'remisecheque') {
+		$features = 'banque';
 	} elseif ($features == 'facturerec') {
 		$features = 'facture';
 	} elseif ($features == 'supplier_invoicerec') {
@@ -232,6 +235,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$parentfortableentity = 'fk_website@website';
 	} elseif ($features == 'project') {
 		$features = 'projet';
+	} elseif ($features == 'project_task') {
+		$features = 'projet';
+		$objectid = (int) $object->fk_project;
+		$object = $objectid;
 	} elseif (is_object($object) && ($features == 'conferenceorbooth@eventorganization' || ($features == 'eventorganization' && $object->element == 'conferenceorbooth'))) {
 		// The module of an event organization declares no permission of its own, on purpose.
 		// Permission are done on project table.
