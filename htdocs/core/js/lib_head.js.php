@@ -1812,7 +1812,8 @@ function onKanbanColumnChange(item, newColumn) {
 			table_element: item.data('tableelement'),
 			fk_element: item.data('itemid'),
 			value: newColumn.data('groupbyid'),
-			token: '<?php echo currentToken() ?>'
+			/* Token of the current page: this file is cached by the browser, so it must not contain a token */
+			token: jQuery("meta[name=anti-csrf-currenttoken]").attr("content")
 		},
 		context: document.body,
 		dataType: 'json',
