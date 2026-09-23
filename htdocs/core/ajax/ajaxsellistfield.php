@@ -17,10 +17,9 @@
  */
 
 /**
- *      \file       htdocs/core/ajax/ajaxfield.php
+ *      \file       htdocs/core/ajax/ajaxsellistfield.php
  *      \ingroup    core
- *      \brief      This script returns content of fields or extrafields (using new class/fields/*.class.php files).
- *      			TODO This may depreciate htdoc/core/ajax/ajaxextrafields.php
+ *      \brief      This script returns content of select list for a fields or extrafields (using new class/fields/*.class.php files).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
