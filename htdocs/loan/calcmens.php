@@ -45,15 +45,19 @@ require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
 $mens = (float) price2num(GETPOST('mens'));
+$amort = GETPOSTISSET('amort') ? (float) price2num(GETPOST('amort')) : null;
+$interet = GETPOSTISSET('interet') ? (float) price2num(GETPOST('interet')) : null;
+$source = GETPOST('source', 'aZ09') ? GETPOST('source', 'aZ09') : 'mens';
 $capital = (float) price2num(GETPOST('capital'));
 $rate = (float) price2num(GETPOST('rate'));
 $echance = GETPOSTINT('echeance');
 $nbterm = GETPOSTINT('nbterm');
+$grace_period = GETPOSTINT('grace_period');
 
 top_httphead();
 
 $output = array();
 
-$output = loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm);
+$output = loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm, $amort, $source, $grace_period, $interet);
 
 echo json_encode($output);

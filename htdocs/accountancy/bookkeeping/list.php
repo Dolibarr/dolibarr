@@ -210,6 +210,9 @@ $arrayfields = array(
 	't.date_lim_reglement' => array('label' => $langs->trans("DateDue"), 'checked' => '0'),
 	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => '0', 'position' => 1100),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
 	unset($arrayfields['t.lettering_code']);
@@ -518,6 +521,10 @@ if (empty($reshook)) {
 					$result = $object->deleteMvtNum($object->piece_num);
 					if ($result > 0) {
 						$nbok++;
+					} elseif ($result == 0) {
+						setEventMessages($langs->trans("ErrorBookkeepingDocDateNotOnActiveFiscalPeriod"), null, 'errors');
+						$error += 1;
+						break;
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error += 1;
@@ -692,8 +699,9 @@ if (count($filter) > 0) {
 			$sqlwhere[] = "t.subledger_account >= '".$db->escape($value)."'";
 		} elseif ($key == 't.subledger_account<=') {
 			$sqlwhere[] = "t.subledger_account <= '".$db->escape($value)."'";
-			/* } elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') { // these fields doesn't exists
-			$sqlwhere[] = $db->sanitize($key).' = '.((int) $value); */
+		} elseif ($key == 't.piece_num') {
+			// piece_num is an integer column, a LIKE on it is translated to ILIKE by the pgsql driver and fails
+			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 			$sqlwhere[] = $db->sanitize($key)." LIKE '".$db->escape($db->escapeforlike($value))."%'";
 			/* } elseif ($key == 't.subledger_account') { // test is always false

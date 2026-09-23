@@ -937,7 +937,7 @@ class Propal extends CommonObject
 		global $mysoc, $langs;
 
 		dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise_percent=$remise_percent,
-        txtva=$txtva, desc=$desc, price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
+        txtva=$txtva, desc=".dol_trunc($desc, 16).", price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Clean parameters
@@ -1577,6 +1577,13 @@ class Propal extends CommonObject
 								$line->subprice = $pu_ht;
 								$line->tva_tx = $tva_tx;
 								$line->remise_percent = $remise_percent;
+
+								// Also update the buy price (margin) with the same fallback logic used when a line is added or updated
+								// (cost price, or PMP, or best supplier price, depending on MARGIN_TYPE). Keep line->pa_ht unchanged if nothing better is found.
+								$buyPrice = $this->defineBuyPrice($pu_ht, $remise_percent, $prod->id);
+								if ($buyPrice > 0) {
+									$line->pa_ht = $buyPrice;
+								}
 							}
 							if ($update_desc === true) {
 								$line->desc = $prod->description;
@@ -3662,7 +3669,7 @@ class Propal extends CommonObject
 		$this->ref_client = 'NEMICEPS';
 		$this->specimen = 1;
 		$this->socid = 1;
-		$this->date = time();
+		$this->date = dol_now();
 		$this->fin_validite = $this->date + 3600 * 24 * 30;
 		$this->cond_reglement_id   = 1;
 		$this->cond_reglement_code = 'RECEP';
@@ -3859,7 +3866,7 @@ class Propal extends CommonObject
 			}
 			if (!$nofetch) {
 				$langs->load('project');
-				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
+				if (is_null($this->project) || (is_object($this->project) && empty($this->project->id))) {
 					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');

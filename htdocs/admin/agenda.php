@@ -162,7 +162,7 @@ print '</tr>'."\n";
 
 print '<tr class="liste_titre">';
 print '<th class="liste_titre" colspan="2">'.$langs->trans("ActionsEvents").'</th>';
-print '<th class="liste_titre"><a href="'.$_SERVER["PHP_SELF"].'?action=selectall'.($param ? $param : '').'">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone'.($param ? $param : '').'">'.$langs->trans("None").'</a></th>';
+print '<th class="liste_titre"><a href="'.$_SERVER["PHP_SELF"].'?action=selectall&token='.newToken().''.($param ? $param : '').'">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone'.($param ? $param : '').'">'.$langs->trans("None").'</a></th>';
 print '</tr>'."\n";
 // Show each trigger (list is in c_action_trigger)
 if (!empty($triggers)) {

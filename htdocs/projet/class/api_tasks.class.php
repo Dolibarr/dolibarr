@@ -26,6 +26,7 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/timespent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for projects
@@ -149,9 +150,9 @@ class Tasks extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = " . ((int) $search_sale) . ")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -567,7 +568,7 @@ class Tasks extends DolibarrApi
 		if ($this->task->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->task->error);
+			throw new RestException(500, $this->task->errorsToString());
 		}
 	}
 
@@ -598,7 +599,7 @@ class Tasks extends DolibarrApi
 		}
 
 		if ($this->task->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when delete task : ' . $this->task->error);
+			throw new RestException(500, 'Error when delete task : ' . $this->task->errorsToString());
 		}
 
 		return array(
@@ -710,7 +711,7 @@ class Tasks extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when adding time: ' . $this->task->error);
+			throw new RestException(500, 'Error when adding time: ' . $this->task->errorsToString());
 		}
 
 		return array(
@@ -768,7 +769,7 @@ class Tasks extends DolibarrApi
 			throw new RestException(304, 'Error nothing done.');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when updating time spent: ' . $this->task->error);
+			throw new RestException(500, 'Error when updating time spent: ' . $this->task->errorsToString());
 		}
 
 		return array(
@@ -805,7 +806,7 @@ class Tasks extends DolibarrApi
 		}
 
 		if ($this->task->delTimeSpent(DolibarrApiAccess::$user, 0) < 0) {
-			throw new RestException(500, 'Error when deleting time spent: ' . $this->task->error);
+			throw new RestException(500, 'Error when deleting time spent: ' . $this->task->errorsToString());
 		}
 
 		return array(
@@ -1115,7 +1116,7 @@ class Tasks extends DolibarrApi
 
 		$result = $this->task->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
 		if ($result <= 0) {
-			throw new RestException(500, 'Error : ' . $this->task->error);
+			throw new RestException(500, 'Error : ' . $this->task->errorsToString());
 		}
 
 		$result = $this->task->fetch($id);

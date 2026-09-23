@@ -1,0 +1,57 @@
+---
+name: check-translations
+
+on:
+  # workflow called by the parent workflow ci-on-pull.yml
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  # can run job manually
+  workflow_dispatch:
+
+concurrency:
+  group: check-translations-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-translations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check that no translation files outside htdocs/langs/en_US are modified
+        run: |
+          # Get the list of files modified in the pull request compared to the base branch.
+          # For workflow_dispatch or non pull_request events, we compare with the previous commit.
+          if [ "${{ inputs.gh_event }}" = "pull_request" ]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE_SHA="${{ github.event.before }}"
+            HEAD_SHA="${{ github.event.after }}"
+          fi
+
+          if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+            echo "No base commit to compare with, skipping the check."
+            exit 0
+          fi
+
+          echo "Comparing $BASE_SHA...$HEAD_SHA"
+
+          # List of files changed (added or modified) under htdocs/langs/,
+          # excluding the htdocs/langs/en_US/ subdirectory.
+          CHANGED_FILES=$(git diff --name-only --diff-filter=AM "$BASE_SHA...$HEAD_SHA" -- 'htdocs/langs/' ':!htdocs/langs/en_US/')
+
+          if [ -n "$CHANGED_FILES" ]; then
+            echo "::error::Translation files outside htdocs/langs/en_US must not be modified in a pull request. Translations are generated from en_US. The following files were modified:"
+            echo "$CHANGED_FILES" | sed 's/^/ - /'
+            echo ""
+            echo "Please revert your changes on these files and keep only modifications in htdocs/langs/en_US/."
+            exit 1
+          fi
+
+          echo "No translation files outside htdocs/langs/en_US were modified. OK."

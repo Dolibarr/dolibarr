@@ -519,7 +519,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Third party
 			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
-			if ($projectstatic->thirdparty->id) {
+			if (!empty($projectstatic->thirdparty->id)) {
 				print $projectstatic->thirdparty->getNomUrl(1);
 			} else {
 				print '&nbsp;';
@@ -778,6 +778,9 @@ if ($id > 0 || !empty($ref)) {
 					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("SetToDraft").'">'.$langs->trans('SetToDraft').'</a>';
 				} elseif ($object->status == $object::STATUS_DRAFT) {
 					print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=valid&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Validate').'</a>';
+				} elseif ($object->status == $object::STATUS_CLOSED) {
+					// A closed task had no way back, the reopen action above already accepts it
+					print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('ReOpen').'</a>';
 				}
 				//if ($object->status != $object::STATUS_CLOSED) {
 				print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';

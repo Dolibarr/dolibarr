@@ -455,7 +455,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", ".((float) $this->credit);
 				$sql .= ", ".((float) $this->montant);
 				$sql .= ", ".(!empty($this->sens) ? ("'".$this->db->escape($this->sens)."'") : "NULL");
-				$sql .= ", ".((int) $this->fk_user_author).",";
+				$sql .= ", ".((int) $this->fk_user_author);
 				$sql .= ", '".$this->db->idate($now)."'";
 				$sql .= ", '".$this->db->escape($this->code_journal)."'";
 				$sql .= ", ".(!empty($this->journal_label) ? ("'".$this->db->escape($this->journal_label)."'") : "NULL");

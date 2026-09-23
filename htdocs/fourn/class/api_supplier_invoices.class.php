@@ -23,6 +23,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for supplier invoices
@@ -148,9 +149,9 @@ class SupplierInvoices extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -343,8 +344,11 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
-		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
+		$result = $this->invoice->delete(DolibarrApiAccess::$user);
+		if ($result < 0) {
 			throw new RestException(500, 'Error when deleting invoice');
+		} elseif ($result == 0) {
+			throw new RestException(403, 'Invoice not erasable');
 		}
 
 		return array(
@@ -394,7 +398,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. The invoice is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Invoice: ' . $this->invoice->error);
+			throw new RestException(500, 'Error when validating Invoice: ' . $this->invoice->errorsToString());
 		}
 
 		return array(
@@ -439,7 +443,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(304, 'Nothing done.');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : ' . $this->invoice->error);
+			throw new RestException(500, 'Error : ' . $this->invoice->errorsToString());
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -484,8 +488,8 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		$result = $this->invoice->getListOfPayments();
-		if ($this->invoice->error !== '') {
-			throw new RestException(405, $this->invoice->error);
+		if ($this->invoice->errorsToString() !== '') {
+			throw new RestException(405, $this->invoice->errorsToString());
 		}
 
 		return $result;
@@ -586,14 +590,14 @@ class SupplierInvoices extends DolibarrApi
 		$paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
 		if ($paiement_id < 0) {
 			$this->db->rollback();
-			throw new RestException(400, 'Payment error : ' . $paiement->error);
+			throw new RestException(400, 'Payment error : ' . $paiement->errorsToString());
 		}
 
 		if (isModEnabled("bank")) {
 			$result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, $chqemetteur, $chqbank);
 			if ($result < 0) {
 				$this->db->rollback();
-				throw new RestException(400, 'Add payment to bank error : ' . $paiement->error);
+				throw new RestException(400, 'Add payment to bank error : ' . $paiement->errorsToString());
 			}
 		}
 
@@ -637,7 +641,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. Maybe object is already paid or not payable.');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error: ' . $this->invoice->error);
+			throw new RestException(500, 'Error: ' . $this->invoice->errorsToString());
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -681,7 +685,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(304, 'Nothing done.');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error: ' . $this->invoice->error);
+			throw new RestException(500, 'Error: ' . $this->invoice->errorsToString());
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -793,7 +797,7 @@ class SupplierInvoices extends DolibarrApi
 		);
 
 		if ($updateRes < 0) {
-			throw new RestException(400, 'Unable to insert the new line. Check your inputs. ' . $this->invoice->error);
+			throw new RestException(400, 'Unable to insert the new line. Check your inputs. ' . $this->invoice->errorsToString());
 		}
 
 		return $updateRes;
@@ -831,6 +835,14 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
+		$invoiceline = new SupplierInvoiceLine($this->db);
+		if ($invoiceline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'Supplier invoice line not found');
+		}
+		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
+			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
+
 		$request_data = (object) $request_data;
 
 		$request_data->description = sanitizeVal($request_data->description, 'restricthtml');
@@ -864,7 +876,7 @@ class SupplierInvoices extends DolibarrApi
 			unset($result->line);
 			return $this->_cleanObjectDatas($result);
 		} else {
-			throw new RestException(304, $this->invoice->error);
+			throw new RestException(304, $this->invoice->errorsToString());
 		}
 	}
 
@@ -903,7 +915,13 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
-		// TODO Check the lineid $lineid is a line of object
+		$invoiceline = new SupplierInvoiceLine($this->db);
+		if ($invoiceline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'Supplier invoice line not found');
+		}
+		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
+			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
 
 		$updateRes = $this->invoice->deleteLine($lineid);
 		if ($updateRes > 0) {
@@ -914,7 +932,7 @@ class SupplierInvoices extends DolibarrApi
 				)
 			);
 		} else {
-			throw new RestException(405, $this->invoice->error);
+			throw new RestException(405, $this->invoice->errorsToString());
 		}
 	}
 

@@ -415,27 +415,27 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// Delete the product
-					if ($productOrigin->delete($user) < 1) {
-						$error++;
-					}
-				}
-
-				if ($error) {
-					// Move files from the dir of the third party to delete into the dir of the third party to keep
-					if (!empty($conf->product->multidir_output[$productOrigin->entity ?? 1])) {
-						$srcdir = $conf->product->multidir_output[$productOrigin->entity ?? 1]."/".$productOrigin->ref;
+					// Move files from the dir of the product being deleted into the dir of the product kept.
+					// This must happen on success only: the filesystem is not part of the transaction, so
+					// moving the files on the failing path stripped the origin product of its documents
+					// while the database was rolled back, and left them orphaned on the successful one.
+					if (!empty($conf->product->multidir_output[$productOrigin->entity ?? $conf->entity])) {
+						$srcdir = $conf->product->multidir_output[$productOrigin->entity ?? $conf->entity]."/".$productOrigin->ref;
 						$destdir = $conf->product->multidir_output[$object->entity ?? $conf->entity]."/".$object->ref;
 
 						if (dol_is_dir($srcdir)) {
 							$dirlist = dol_dir_list($srcdir, 'files', 1);
 							foreach ($dirlist as $filetomove) {
 								$destfile = $destdir.'/'.$filetomove['relativename'];
-								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
 								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
 							}
 							//exit;
 						}
+					}
+
+					// Delete the product
+					if ($productOrigin->delete($user) < 1) {
+						$error++;
 					}
 				}
 
@@ -1621,8 +1621,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if ($showbarcode) {
-				//var_dump($modBarCodeProduct); exit;
-
 				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 				if (GETPOSTISSET('fk_barcode_type')) {
 					$fk_barcode_type = GETPOST('fk_barcode_type') ? GETPOST('fk_barcode_type') : 0;
@@ -3164,7 +3162,7 @@ print $formconfirm;
  * Action bar
  */
 if ($action != 'create' && $action != 'edit') {
-	$cloneProductUrl = $_SERVER["PHP_SELF"].'?action=clone&token='.newToken();
+	$cloneProductUrl = dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone'], true);
 	$cloneButtonId = 'action-clone-no-ajax';
 
 	print "\n".'<div class="tabsAction">'."\n";
@@ -3174,11 +3172,11 @@ if ($action != 'create' && $action != 'edit') {
 	if (empty($reshook)) {
 		if ($usercancreate) {
 			if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
-				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit', 'id' => $object->id], true), '', $usercancreate);
 			}
 
 			//Send
-			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle');
 
 			if (!isset($hookmanager->resArray['no_button_copy']) || $hookmanager->resArray['no_button_copy'] != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
@@ -3196,7 +3194,7 @@ if ($action != 'create' && $action != 'edit') {
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
 						print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
 					} else {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
+						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '');
 					}
 				}
 			} else {

@@ -112,8 +112,7 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', '
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("MiscellaneousDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("MiscellaneousDesc")."</div>\n";
 
 
 

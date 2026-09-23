@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026   Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@
 
 
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ai/lib/ai.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -187,6 +188,25 @@ class ToolProducts extends McpTool
 				]
 			]
 		];
+	}
+
+	/**
+	 * Catalog reads, supplier prices and stock forecast.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'search_products' => array(array('produit', 'lire')),
+			'get_product_details' => array(array('produit', 'lire')),
+			'get_supplier_prices' => array(array('produit', 'lire'), array('fournisseur', 'lire')),
+			'analyze_stock_forecast' => array(array('produit', 'lire'), array('stock', 'lire')),
+			'create_product' => array(array('produit', 'creer'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
 	}
 
 	/**
@@ -553,7 +573,7 @@ class ToolProducts extends McpTool
 		$categories = [];
 		$staticCat = new Categorie($this->db);
 
-		$cats = $staticCat->get_categories($product_id);
+		$cats = $staticCat->containing($product_id, Categorie::TYPE_PRODUCT);
 
 		if (is_array($cats) && count($cats) > 0) {
 			foreach ($cats as $cat) {
@@ -603,10 +623,12 @@ class ToolProducts extends McpTool
 		// Fetch categories using the helper method
 		$categories = $this->getProductCategories($prod->id);
 
-		// Process Extrafields
+		// Process Extrafields. Values flagged as personal data (GDPR) are
+		// dropped: they must not reach an AI provider.
 		$extrafields = [];
 		if (!empty($prod->array_options) && is_array($prod->array_options)) {
-			foreach ($prod->array_options as $key => $value) {
+			$filtered = aiStripPersonalExtrafields($this->db, ['array_options' => $prod->array_options], 'product');
+			foreach (($filtered['array_options'] ?? []) as $key => $value) {
 				$clean_key = (string) preg_replace('/^options_/', '', $key);
 				$extrafields[$clean_key] = $value;
 			}

@@ -298,7 +298,7 @@ class FormCompany extends Form
 
 		$out = '';
 
-		// Search departements/cantons/province active d'une region et pays actif
+		// Search active departments/cantons/provinces of a region and active country
 		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
 		$sql .= " " . $this->db->prefix() . "c_departements as d, " . $this->db->prefix() . "c_regions as r," . $this->db->prefix() . "c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
@@ -788,7 +788,7 @@ class FormCompany extends Form
 			if ($resql) {
 				print '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlname . '" name="' . $htmlname . '"';
 				if ($conf->use_javascript_ajax) {
-					$javaScript = "window.location='" . dol_escape_js($_SERVER['PHP_SELF']) . "?" . $var_id . "=" . ($forceid > 0 ? $forceid : $object->id) . $moreparam . "&" . $htmlname . "=' + form." . $htmlname . ".options[form." . $htmlname . ".selectedIndex].value;";
+					$javaScript = "window.location='" . dol_escape_js($_SERVER['PHP_SELF']) . "?" . $var_id . "=" . ($forceid > 0 ? $forceid : $object->id) . $moreparam . "&" . $htmlname . "=' + form." . $htmlname . ".options[form." . $htmlname . ".selectedIndex].value;";   // Quoting for dol_escape_js is ok @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 					print ' onChange="' . $javaScript . '"';
 				}
 				print '>';
@@ -919,6 +919,8 @@ class FormCompany extends Form
 				}
 				if (count($newselected) > 0) {
 					$selected = $newselected;
+				} else {
+					$selected = array();
 				}
 			}
 			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss, 0, '90%', '', '', $placeholder);
@@ -977,6 +979,8 @@ class FormCompany extends Form
 		// phpcs:enable
 		global $hookmanager;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
+
 		$formlength = 0;
 		if (!getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
 			if ($country_code == 'FR') {
@@ -1022,13 +1026,19 @@ class FormCompany extends Form
 			$maxlength = 128;
 		}
 
+		// Such an id is most often copy/pasted from an official document, where it is presented with its
+		// separator spaces (SIREN "849 943 618"). This attribute tells lib_head.js.php to remove them from
+		// the pasted text before it is inserted, so that maxlength applies to the id itself and not to its
+		// presentation: without it the browser silently truncates the paste.
+		$dataprofid = isProfIdWithoutSpace($idprof, $country_code) ? ' data-profidnospace="1"' : '';
+
 		$out = '';
 
 		// Execute hook getInputIdProf to complete or replace $out
 		$parameters = array('formlength' => $formlength, 'selected' => $preselected, 'idprof' => $idprof, 'htmlname' => $htmlname, 'country_code' => $country_code);
 		$reshook = $hookmanager->executeHooks('getInputIdProf', $parameters);
 		if (empty($reshook)) {
-			$out .= '<input type="text" ' . ($morecss ? 'class="' . $morecss . '" ' : '') . 'name="' . $htmlname . '" id="' . $htmlname . '" maxlength="' . $maxlength . '" value="' . $selected . '">';
+			$out .= '<input type="text" ' . ($morecss ? 'class="' . $morecss . '" ' : '') . 'name="' . $htmlname . '" id="' . $htmlname . '" maxlength="' . $maxlength . '"' . $dataprofid . ' value="' . $selected . '">';
 		}
 		$out .= $hookmanager->resPrint;
 
@@ -1230,7 +1240,7 @@ class FormCompany extends Form
 						$.ajax({
 							type: "POST",
 							url: \'' . DOL_URL_ROOT . '/core/ajax/ajaxstatusprospect.php\',
-							data: { id: statusid, prospectid: prospectid, token: \''. newToken() .'\', action: \'updatestatusprospect\' },
+							data: { id: statusid, prospectid: prospectid, token: \''. currentToken() .'\', action: \'updatestatusprospect\' },
 							success: function(response) {
 								console.log(response.img);
 								image.replaceWith(response.img);

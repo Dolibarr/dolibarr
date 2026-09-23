@@ -19,6 +19,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -871,9 +872,9 @@ class Product extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
-		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Reference of object'),
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 5),
-		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'position' => 15, 'csslist' => 'tdoverflowmax250'),
+		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Reference of object'),
+		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'position' => 11, 'csslist' => 'tdoverflowmax250'),
 		'barcode'       => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 'isModEnabled("barcode")', 'position' => 20, 'visible' => -1, 'showoncombobox' => 3, 'cssview' => 'tdwordbreak', 'csslist' => 'tdoverflowmax125'),
 		'fk_barcode_type' => array('type' => 'integer', 'label' => 'BarcodeType', 'enabled' => 1, 'position' => 21, 'notnull' => 0, 'visible' => -1,),
 		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61),
@@ -934,17 +935,17 @@ class Product extends CommonObject
 	public function check()
 	{
 		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-			$this->ref = trim($this->ref);
+			$this->ref = trim((string) $this->ref);
 		} else {
 			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
 		}
 
 		$err = 0;
-		if (dol_strlen(trim($this->ref)) == 0) {
+		if (dol_strlen(trim((string) $this->ref)) == 0) {
 			$err++;
 		}
 
-		if (dol_strlen(trim($this->label)) == 0) {
+		if (dol_strlen(trim((string) $this->label)) == 0) {
 			$err++;
 		}
 
@@ -970,16 +971,16 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-			$this->ref = trim($this->ref);
+			$this->ref = trim((string) $this->ref);
 		} else {
-			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim((string) $this->ref)));
 		}
-		$this->label = trim($this->label);
+		$this->label = trim((string) $this->label);
 		$this->price_ttc = (float) price2num($this->price_ttc);
 		$this->price = (float) price2num($this->price);
 		$this->price_min_ttc = (float) price2num($this->price_min_ttc);
 		$this->price_min = (float) price2num($this->price_min);
-		$this->price_label = trim($this->price_label);
+		$this->price_label = trim((string) $this->price_label);
 		if (empty($this->tva_tx)) {
 			$this->tva_tx = 0;
 		}
@@ -1074,7 +1075,7 @@ class Product extends CommonObject
 		}
 
 		// Barcode value
-		$this->barcode = trim($this->barcode);
+		$this->barcode = trim((string) $this->barcode);
 		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
 		// Check parameters
 		if (empty($this->label)) {
@@ -1315,7 +1316,7 @@ class Product extends CommonObject
 		$this->errors = array();
 
 		$result = 0;
-		$this->ref = trim($this->ref);
+		$this->ref = trim((string) $this->ref);
 
 		if (!$this->ref) {
 			$this->errors[] = 'ErrorBadRef';
@@ -1412,12 +1413,12 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (getDolGlobalInt('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-			$this->ref = trim($this->ref);
+			$this->ref = trim((string) $this->ref);
 		} else {
-			$this->ref = dol_string_nospecial(trim($this->ref));
+			$this->ref = dol_string_nospecial(trim((string) $this->ref));
 		}
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
 		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : null);
 		$this->net_measure = price2num($this->net_measure);
@@ -1502,12 +1503,12 @@ class Product extends CommonObject
 		// Barcode value
 		$this->barcode = (empty($this->barcode) ? '' : trim($this->barcode));
 
-		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
+		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
 		$this->accountancy_code_buy_intra = (!empty($this->accountancy_code_buy_intra) ? trim($this->accountancy_code_buy_intra) : '');
-		$this->accountancy_code_buy_export = trim($this->accountancy_code_buy_export);
-		$this->accountancy_code_sell = trim($this->accountancy_code_sell);
-		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
-		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
+		$this->accountancy_code_buy_export = trim((string) $this->accountancy_code_buy_export);
+		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
+		$this->accountancy_code_sell_intra = trim((string) $this->accountancy_code_sell_intra);
+		$this->accountancy_code_sell_export = trim((string) $this->accountancy_code_sell_export);
 
 		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
 		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
@@ -1942,6 +1943,21 @@ class Product extends CommonObject
 				if (!$error && ($prodcomb->fetchByFkProductChild($this->id) > 0) && ($prodcomb->delete($user) < 0)) {
 					$error++;
 					$this->errors[] = 'Error deleting child combination';
+				}
+			}
+
+			// Rows may survive the deactivation of the module, and the foreign key on
+			// fk_product_parent would then refuse to delete the product. Only the links are
+			// removed here, never a product: deleting variant products silently is the job of the
+			// block above, which runs when the user can actually see them. Missing tables are
+			// tolerated by deleteLinksByProduct(): they only exist once the module was enabled.
+			if (!$error) {
+				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+
+				$prodcomb = new ProductCombination($this->db);
+				if ($prodcomb->deleteLinksByProduct($this->id) < 0) {
+					$error++;
+					$this->errors[] = $prodcomb->error;
 				}
 			}
 
@@ -3915,9 +3931,10 @@ class Product extends CommonObject
 	 * @param	string	$filtrestatut		Id of status to filter on status
 	 * @param	int		$forVirtualStock	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
+	 * @param	int		$dateofvirtualstockmin	Lower bound of the virtual stock window: ignore orders planned before this date
 	 * @return	int							Array of stats in $this->stats_commande_fournisseur, <0 if ko or >0 if ok
 	 */
-	public function load_stats_commande_fournisseur($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
+	public function load_stats_commande_fournisseur($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $dateofvirtualstockmin = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -3941,7 +3958,17 @@ class Product extends CommonObject
 			$sql .= " AND c.fk_statut in (".$this->db->sanitize($filtrestatut).")"; // Peut valoir 0
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			// Window of the horizon. The lower bound, when set, drops the orders that did not arrive as planned: their date has
+			// passed, so they are no longer a credible supply. Orders with no planned delivery date fall outside the window as
+			// well, since their arrival is unknown, unless the option says to keep them.
+			$sqlwindow = "c.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			if (!empty($dateofvirtualstockmin)) {
+				$sqlwindow = "c.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."' AND ".$sqlwindow;
+			}
+			if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS')) {
+				$sqlwindow .= " OR c.date_livraison IS NULL";
+			}
+			$sql .= " AND (".$sqlwindow.")";
 		}
 
 		$result = $this->db->query($sql);
@@ -4058,9 +4085,10 @@ class Product extends CommonObject
 	 * @param	string 	$filtrestatut    	Id status to filter on a status
 	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
+	 * @param	int		$dateofvirtualstockmin	Lower bound of the virtual stock window: ignore orders planned before this date
 	 * @return	int                   		Array of stats in $this->stats_reception, <0 if ko or >0 if ok
 	 */
-	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null)
+	public function load_stats_reception($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $dateofvirtualstockmin = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -4085,6 +4113,16 @@ class Product extends CommonObject
 		}
 		if (!empty($dateofvirtualstock)) {
 			$sql .= " AND fd.datec <= '".$this->db->idate($dateofvirtualstock)."'";
+		}
+		if (!empty($dateofvirtualstockmin)) {
+			// Same window as the supplier order side: both halves of the subtraction must always run on the same population of
+			// orders, otherwise an order dropped from one half while its receptions are still subtracted in the other one would
+			// push the theoretical stock below the real stock.
+			$sqlwindow = "cf.date_livraison >= '".$this->db->idate($dateofvirtualstockmin)."' AND cf.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
+			if (getDolGlobalInt('STOCK_VIRTUAL_HORIZON_INCLUDE_UNDATED_ORDERS')) {
+				$sqlwindow .= " OR cf.date_livraison IS NULL";
+			}
+			$sql .= " AND (".$sqlwindow.")";
 		}
 
 		$result = $this->db->query($sql);
@@ -4117,9 +4155,10 @@ class Product extends CommonObject
 	 * @param	int    	$forVirtualStock 	Ignore rights filter for virtual stock calculation.
 	 * @param	int		$dateofvirtualstock	Date of virtual stock
 	 * @param   int 	$warehouseid 		Filter by a warehouse. Warning: When a filter on a warehouse is set, it is not possible to calculate an accurate virtual stock because we can't know in which warehouse will be done virtual stock changes.
+	 * @param	int		$dateofvirtualstockmin	Lower bound of the virtual stock window: ignore manufacturing orders planned to end before this date
 	 * @return 	integer                 	Array of stats in $this->stats_mrptoproduce (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
-	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0)
+	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $dateofvirtualstock = null, $warehouseid = 0, $dateofvirtualstockmin = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -4144,7 +4183,14 @@ class Product extends CommonObject
 		if ($filtrestatut != '') {
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
 		}
-		if (!empty($dateofvirtualstock)) {
+		if (!empty($dateofvirtualstockmin)) {
+			// Window of the horizon. Here the relevant date is the planned end of production, not the validation date: a
+			// manufacturing order validated months ago but never completed is no longer a credible source of goods, and its
+			// components are no longer a credible consumption either. The validation date is kept as a fallback for the
+			// orders that carry no planned end date.
+			$sql .= " AND COALESCE(m.date_end_planned, m.date_valid) >= '".$this->db->idate($dateofvirtualstockmin)."'";
+			$sql .= " AND COALESCE(m.date_end_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."'";
+		} elseif (!empty($dateofvirtualstock)) {
 			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
 		}
 		if (!$serviceStockIsEnabled) {
@@ -4598,8 +4644,8 @@ class Product extends CommonObject
 		}
 
 		if (empty($year)) {
-			$year = dol_print_date(time(), '%Y');
-			$month = dol_print_date(time(), '%m');
+			$year = dol_print_date(dol_now(), '%Y');
+			$month = dol_print_date(dol_now(), '%m');
 		} elseif ($year == -1) {
 			$year = '';
 			$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.
@@ -4623,7 +4669,9 @@ class Product extends CommonObject
 			}
 			if ($month == 0) {
 				$month = 12;
-				$year -= 1;
+				if ($year !== '') { // $year is '' when we want stats for all years
+					$year -= 1;
+				}
 			}
 		}
 
@@ -5602,7 +5650,6 @@ class Product extends CommonObject
 			$multiply = 1;
 		}
 
-		//var_dump($prod);
 		foreach ($prod as $id_product => $desc_pere) {    // $id_product is 0 (first call starting with root top) or an id of a sub_product
 			if (is_array($desc_pere)) {    // If desc_pere is an array, this means it's a child
 				$id = (!empty($desc_pere[0]) ? $desc_pere[0] : '');
@@ -5671,7 +5718,6 @@ class Product extends CommonObject
 				}
 			}
 		}
-		//var_dump($res);
 		return $this->res;
 	}
 
@@ -6052,11 +6098,12 @@ class Product extends CommonObject
 	 * @param  	string  $morecss            	''=Add more css on link
 	 * @param	int		$add_label				0=Default, 1=Add label into string, >1=Add first chars into string
 	 * @param	string	$sep					' - '=Separator between ref and label if option 'add_label' is set
+	 * @param	int		$addlinktonotes			1=Add link to notes
 	 * @return	string							String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ', $addlinktonotes = 0)
 	{
-		global $langs, $hookmanager;
+		global $langs, $hookmanager, $user;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
@@ -6134,6 +6181,18 @@ class Product extends CommonObject
 			$result .= (($add_label && $this->label) ? $sep.dol_trunc($this->label, ($add_label > 1 ? $add_label : 0)) : '');
 		}
 
+		if ($addlinktonotes) {
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/product/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
+		}
+
 		global $action;
 		$hookmanager->initHooks(array('productdao'));
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result, 'label' => &$label);
@@ -6156,7 +6215,7 @@ class Product extends CommonObject
 	 * @param  int       $hidedetails Hide details of lines
 	 * @param  int       $hidedesc    Hide description
 	 * @param  int       $hideref     Hide ref
-	 * @return int                         0 if KO, 1 if OK
+	 * @return int                    Return integer < 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -6165,14 +6224,23 @@ class Product extends CommonObject
 		$langs->load("products");
 		$outputlangs->load("products");
 
-		// Positionne le modele sur le nom du modele a utiliser
+		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
-			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
+			$modele = '';	// No doc template/generation by default
+
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('PRODUCT_ADDON_PDF')) {
+				$modele = getDolGlobalString('PRODUCT_ADDON_PDF');
+			}
 		}
 
-		$modelpath = "core/modules/product/doc/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		if (empty($modele)) {
+			return 0;
+		} else {
+			$modelpath = "core/modules/product/doc/";
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
 	}
 
 	/**
@@ -6536,6 +6604,17 @@ class Product extends CommonObject
 
 		//dol_syslog("load_virtual_stock");
 
+		// If the caller did not provide a date, apply the virtual stock horizon (option STOCK_VIRTUAL_HORIZON_IN_DAYS):
+		// incoming supply expected after this horizon is ignored, so the theoretical stock does not promise goods that are still far away.
+		// An empty option means no horizon at all (default). A value of 0 is a valid horizon: only supply already due is counted.
+		$horizoninDays = getDolGlobalString('STOCK_VIRTUAL_HORIZON_IN_DAYS');
+		$dateofvirtualstockmin = 0;
+		if (empty($dateofvirtualstock) && $horizoninDays !== '') {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';	// dol_time_plus_duree/dol_get_first_hour are not loaded in CLI/webservice contexts
+			$dateofvirtualstock = dol_time_plus_duree(dol_now(), max(0, (int) $horizoninDays), 'd');
+			$dateofvirtualstockmin = dol_get_first_hour(dol_now());	// The horizon is a window: supply expected before today did not arrive as planned
+		}
+
 		if (isModEnabled('order')) {
 			$result = $this->load_stats_commande(0, '1,2', 1);
 			if ($result < 0) {
@@ -6563,7 +6642,7 @@ class Product extends CommonObject
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
-			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock);
+			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6571,11 +6650,11 @@ class Product extends CommonObject
 		}
 		// Include reception lines
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-			$filterStatus = '4';
+			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '4');
 			if (isset($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}
-			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock);
+			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6583,7 +6662,8 @@ class Product extends CommonObject
 		}
 		// Include manufacturing
 		if (isModEnabled('mrp')) {
-			$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock);
+			$filterStatus = getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2');
+			$result = $this->load_stats_inproduction(0, $filterStatus, 1, $dateofvirtualstock, 0, $dateofvirtualstockmin);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
@@ -6642,7 +6722,7 @@ class Product extends CommonObject
 		if (!empty($this->stock_warehouse) && getDolGlobalString('STOCK_ALLOW_VIRTUAL_STOCK_PER_WAREHOUSE')) {
 			foreach ($this->stock_warehouse as $warehouseid => $stockwarehouse) {
 				if (isModEnabled('mrp')) {
-					$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock, $warehouseid);
+					$result = $this->load_stats_inproduction(0, getDolGlobalString('MO_STATUS_FOR_VIRTUAL_STOCK', '1,2'), 1, $dateofvirtualstock, $warehouseid, $dateofvirtualstockmin);
 					if ($result < 0) {
 						dol_print_error($this->db, $this->error);
 					}

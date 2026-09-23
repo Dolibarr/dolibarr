@@ -110,7 +110,7 @@ div.divsearchfield {
     width: 120px;
 }
 .updatedApp{
-    background-color: #25a580;
+    background-color: rgb(0,135,160);
     line-height: 1em;
 }
 .notcompatible {
@@ -120,7 +120,7 @@ div.divsearchfield {
     color: orange;
 }
 .compatible {
-    color: #25a580;
+    color: rgb(0,135,160);
 }
 tr.app {
     height: 200px;

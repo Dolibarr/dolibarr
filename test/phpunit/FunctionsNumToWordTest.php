@@ -60,6 +60,8 @@ class FunctionsNumToWordTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
@@ -69,18 +71,23 @@ class FunctionsNumToWordTest extends CommonClassTest
 		$langs->setDefaultLang('fr_FR');
 		$langs->load('main');
 
+		if (isModEnabled('numberwords')) {
+			print __METHOD__." module numberwords must NOT be enabled.\n";
+			die(1);
+		}
+
 		// Traditional spelling (pre-1990) is the default
 		unset($conf->global->CONVERT_TO_WORD_FR);
 	}
 
 	/**
-	 * Data provider: integer => expected French words (traditional, pre-1990 spelling).
+	 * Map of integer => expected French words (traditional, pre-1990 spelling).
 	 *
-	 * @return array<string, array{0:int, 1:string}>
+	 * @return array<int, string>
 	 */
 	public function providerFrenchIntegersTraditional()
 	{
-		$map = array(
+		return array(
 			0 => 'zéro', 1 => 'un', 2 => 'deux', 3 => 'trois', 4 => 'quatre', 5 => 'cinq',
 			6 => 'six', 7 => 'sept', 8 => 'huit', 9 => 'neuf', 10 => 'dix', 11 => 'onze',
 			12 => 'douze', 13 => 'treize', 14 => 'quatorze', 15 => 'quinze', 16 => 'seize',
@@ -117,24 +124,18 @@ class FunctionsNumToWordTest extends CommonClassTest
 			1000000000 => 'un milliard', 2000000000 => 'deux milliards',
 			1000000000000 => 'un billion',
 		);
-		$data = array();
-		foreach ($map as $n => $expected) {
-			$data[(string) $n] = array($n, $expected);
-		}
-		return $data;
 	}
 
 	/**
 	 * Test dolConvertIntToFrenchWords() with the traditional (pre-1990) spelling.
 	 *
-	 * @param	int		$number		Integer to convert
-	 * @param	string	$expected	Expected French words
 	 * @return	void
-	 * @dataProvider providerFrenchIntegersTraditional
 	 */
-	public function testDolConvertIntToFrenchWordsTraditional($number, $expected)
+	public function testDolConvertIntToFrenchWordsTraditional()
 	{
-		$this->assertSame($expected, dolConvertIntToFrenchWords($number, false), "Conversion failed for $number");
+		foreach ($this->providerFrenchIntegersTraditional() as $number => $expected) {
+			$this->assertSame($expected, dolConvertIntToFrenchWords($number, false), "Conversion failed for $number");
+		}
 	}
 
 	/**

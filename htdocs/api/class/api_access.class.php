@@ -105,12 +105,19 @@ class DolibarrApiAccess implements iAuthenticate
 
 		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
 		$api_key = '';
+		if (isset($_GET['api_key']) || isset($_GET['DOLAPIKEY'])) {
+			// A key passed in the query string ends up in the web server access log, in proxy logs, in the
+			// browser history and in the Referer header of any outgoing link. Setting API_DISABLE_KEY_IN_URL
+			// refuses it instead of accepting it, so that a client still using that form is corrected rather
+			// than leaking the key silently. Off by default, for backward compatibility.
+			if (getDolGlobalString('API_DISABLE_KEY_IN_URL')) {
+				throw new RestException(401, 'The API key must be sent in the DOLAPIKEY header, not in the URL (API_DISABLE_KEY_IN_URL is set)');
+			}
+		}
 		if (isset($_GET['api_key'])) {	// For backward compatibility. Keep $_GET here.
-			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['api_key'];
 		}
 		if (isset($_GET['DOLAPIKEY'])) {
-			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['DOLAPIKEY']; // With GET method
 		}
 
@@ -150,7 +157,7 @@ class DolibarrApiAccess implements iAuthenticate
 				}
 			} else {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
-					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, rowid as token_rowid,";
+					$sql = "SELECT DISTINCT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
 					$sql .= " oat.tms as date_modification,";
 					$sql .= " gu.entity";
 					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
@@ -248,7 +255,7 @@ class DolibarrApiAccess implements iAuthenticate
 					throw new RestException(503, 'Error when fetching user api_key : More than 1 user with this apikey');
 				}
 			} else {
-				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error);
+				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->lasterror());
 			}
 
 			if ($login && $stored_key != $api_key) {		// This should not happen since we did a search on api_key

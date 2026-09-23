@@ -45,6 +45,8 @@ class modSalaries extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
+		global $user;
+
 		$this->db = $db;
 		$this->numero = 510; // Perms from 501..519
 
@@ -181,7 +183,14 @@ class modSalaries extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON s.fk_user = u.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_salary = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
-		$this->export_sql_end[$r] .= ' AND s.entity IN ('.getEntity('salary').')';
+		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('salary').')';
+		if (is_object($user) && !$user->hasRight('salaries', 'readall')) {
+			$childids = $user->getAllChildIds(1);
+			$this->export_sql_end[$r] .= ' AND s.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
+		}
+		if (is_object($user) && !$user->hasRight('salaries', 'readchild')) {
+			$this->export_sql_end[$r] .= ' AND s.fk_user = '.((int) $user->id);
+		}
 	}
 
 	/**

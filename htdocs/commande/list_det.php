@@ -14,6 +14,7 @@
  * Copyright (C) 2021-2023	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +195,7 @@ $arrayfields = array(
 	'rowid' => array('label' => 'LineID', 'checked' => '-1', 'position' => 1, 'enabled' => '1'),
 	'c.ref' => array('label' => "RefOrder", 'checked' => '1', 'position' => 5),
 	'pr.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 6),
-	'pr.desc' => array('label' => 'ProductDescription', 'checked' => '-1', 'position' => 7),
+	'pr.label' => array('label' => 'ProductDescription', 'checked' => '-1', 'position' => 7),
 	'cdet.qty' => array('label' => 'QtyOrdered', 'checked' => '1', 'position' => 8),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => '-1', 'enabled' => (string) (int) isModEnabled('project'), 'position' => 20),
@@ -240,6 +241,9 @@ $arrayfields = array(
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -587,9 +591,9 @@ if ($search_fk_input_reason > 0) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
@@ -1043,7 +1047,7 @@ if ($resql) {
 		print '</td>';
 	}
 	// Product Description
-	if (!empty($arrayfields['pr.desc']['checked'])) {
+	if (!empty($arrayfields['pr.label']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="6" type="text" name="search_descProduct" value="'.dol_escape_htmltag($search_descProduct).'">';
 		print '</td>';
@@ -1330,8 +1334,8 @@ if ($resql) {
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['pr.desc']['checked'])) {
-		print_liste_field_titre($arrayfields['pr.desc']['label'], $_SERVER["PHP_SELF"], 'pr.desc', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['pr.label']['checked'])) {
+		print_liste_field_titre($arrayfields['pr.label']['label'], $_SERVER["PHP_SELF"], 'pr.label', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['cdet.qty']['checked'])) {
 		print_liste_field_titre($arrayfields['cdet.qty']['label'], $_SERVER["PHP_SELF"], 'cdet.qty', '', $param, '', $sortfield, $sortorder);
@@ -1487,9 +1491,9 @@ if ($resql) {
 	$total = 0;
 	$subtotal = 0;
 	$productstat_cache = array();
-	'@phan-var-force array<int,array{stats_order_customer?:float|int,stats_order_supplier?:float|int}> $product_stat_cache';
+	'@phan-var-force array<int,array{stock_reel:float|int,stats_order_customer?:float|int,stats_order_supplier?:float|int}> $productstat_cache';
 	$productstat_cachevirtual = array();
-	'@phan-var-force array<int,array{stats_order_customer?:float|int,stats_order_supplier?:float|int}> $product_stat_cachevirtual';
+	'@phan-var-force array<int,array{stock_reel:float|int}> $productstat_cachevirtual';
 	$getNomUrl_cache = array();
 
 	$generic_commande = new Commande($db);
@@ -1644,7 +1648,7 @@ if ($resql) {
 			}
 		}
 		// Product Description
-		if (!empty($arrayfields['pr.desc']['checked'])) {
+		if (!empty($arrayfields['pr.label']['checked'])) {
 			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
 			$descline = empty($obj->description) ? $obj->product_label : $obj->description;
 			print '<td class="nowrap tdoverflowmax200">';
@@ -1907,7 +1911,7 @@ if ($resql) {
 		// Currency rate
 		if (!empty($arrayfields['c.multicurrency_tx']['checked'])) {
 			print '<td class="nowrap">';
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->c_rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

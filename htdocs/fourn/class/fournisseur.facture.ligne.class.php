@@ -127,7 +127,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Unit price including taxes
-	 * @var float
+	 * @var float|null
 	 */
 	public $subprice_ttc;
 
@@ -482,6 +482,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		// Clean parameters
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
@@ -647,6 +650,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 		if (empty($this->subprice)) {
 			$this->subprice = 0;
+		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
 		}
 		if (empty($this->special_code)) {
 			$this->special_code = 0;

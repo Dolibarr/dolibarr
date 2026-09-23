@@ -184,7 +184,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'servermcp', "MCP Server", -1, "ai");
 
-print '<span class="opacitymedium">' . $langs->trans("ConfigHelp") . '</span><br><br>';
+//print '<span class="opacitymedium">' . $langs->trans("ConfigHelp") . '</span><br><br>';
 
 $form = new Form($db);
 
@@ -356,21 +356,22 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td>';
 	print '<div style="display: flex; align-items: center;">';
 	print $form->select_dolusers(getDolGlobalInt('AI_MCP_USER_ID'), 'AI_MCP_USER_ID', 1);
-	print ' <input type="submit" class="button" value="'.$langs->trans("Save").'" style="margin-left: 20px;">';
+	print ' <input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Save").'" style="margin-left: 20px;">';
 	print '</div>';
 	print '<span class="opacitymedium small">' . $langs->trans("DedicatedUserRecommendation") . '</span>';
 	print '</td>';
 	print '</tr>';
 
+	// API Key
 	print '<tr class="oddeven">';
-	print '<td width="30%">API Key</td>';
+	print '<td>MCP API Key</td>';
 	print '<td>';
 	if ($apiKey) {
 		print '<input type="text" id="apikey" value="'.$apiKey.'" readonly style="width:400px; padding:6px; background:#f4f4f4; border:1px solid #ccc; color:#555;">';
-		print ' <a class="button smallpaddingimp" href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'">Generate New Key</a>';
+		print ' <a class="button small smallpaddingimp" href="'.$_SERVER["PHP_SELF"].'?action=generate_key&token='.newToken().'">Generate New Key</a>';
 	} else {
 		print '<span class="opacitymedium">' . $langs->trans("NoKeyWarning") . '</span>';
-		print ' <a class="button smallpaddingimp" href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '">' . $langs->trans("GenerateKey") . '</a>';
+		print ' <a class="button small smallpaddingimp" href="' . $_SERVER["PHP_SELF"] . '?action=generate_key&token=' . newToken() . '">' . $langs->trans("GenerateKey") . '</a>';
 	}
 	print '</td>';
 	print '</tr>';
@@ -378,7 +379,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	$endpoint = dol_buildpath('/ai/server/mcp_server.php', 3);
 
 	print '<tr class="oddeven">';
-	print '<td>Endpoint URL</td>';
+	print '<td>MCP Endpoint URL</td>';
 	print '<td>';
 	print '<input type="text" id="endpoint" value="'.$endpoint.'" readonly style="width:600px; border:none; background:transparent;">';
 	print '</td>';

@@ -101,6 +101,9 @@ $fieldstosearchall = array();
 $arrayfields = array();
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 
 $object->fields = dol_sort_array($object->fields, 'position');

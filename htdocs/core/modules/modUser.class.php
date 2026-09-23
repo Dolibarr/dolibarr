@@ -333,16 +333,10 @@ class modUser extends DolibarrModules
 			'u.statut' => 'Status'
 		);
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'user' AND entity IN (0,".((int) $conf->entity).")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'user';
+		$keyforelement = 'user';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array('u.fk_user_creat' => 'user->id', 'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'user'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r] = array(
 			'u.fk_state' => array('rule' => 'fetchidfromcodeid', 'classfile' => '/core/class/cstate.class.php', 'class' => 'Cstate', 'method' => 'fetch', 'dict' => 'DictionaryState'),
