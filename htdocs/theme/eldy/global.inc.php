@@ -815,6 +815,10 @@ input.pageplusone {
 .noopacity {
 	opacity: unset !important;
 }
+.spantitle {
+	opacity: 0.6;
+	font-size: 0.95em;
+}
 .colorwhite {
 	color: var(--colorwhite);
 }
@@ -1107,8 +1111,14 @@ textarea.centpercent {
 	font-size: 95%;
 	font-weight: bold;
 }
+.tdlineheightsmall {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	vertical-align: middle;
+}
 .lineheightsmall {
-	line-height: 1.2em;
+	line-height: 1.3em;
+	vertical-align: middle;
 }
 .lineheightmedium {
 	line-height: 1.5em;
@@ -1380,6 +1390,14 @@ td.wordbreak img, td.wordbreakimp img {
 .overflowellipsis .shortmessagecut, .overflowellipsis .longmessagecut {
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+div.kmcontent {
+	border: 1px solid #E0E0E0;
+	background-color: var(--colorbacklineimpair2);
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 div.urllink {
@@ -4660,6 +4678,24 @@ table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
+
+
+/* Block of CSS to fix border on firefox */
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type {
+	background: unset !important;	/* note using background-color here does not work */
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type th,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type th,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type td,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type td {
+	background: var(--colorbacktitle1) !important;
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type {
+	background: unset;	/* note using background-color here does not work */
+}
+
+
 /* CSS to remove the interline border */
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
@@ -6058,6 +6094,7 @@ input#cardholder-name {
 #tablesubscribe { width: 100%; }
 #tablesubscribe tr td { font-size: 1.15em; }
 #tablesubscribe .price-registration { font-size: 1.5em; }
+#tablesubscribe .selectphonecode { font-size: 0.94em; }
 
 
 div#card-element {
@@ -6200,7 +6237,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 }
 
 
-	/* ============================================================================== */
+/* ============================================================================== */
 /* For content of image preview                                                   */
 /* ============================================================================== */
 
@@ -9364,7 +9401,7 @@ table.jPicker {
 	}
 	div.login_block_user {
 		min-width: 0;
-		width: 100%;
+		/* width: 100%; */
 	}
 	div.login_block_tools, div.login_block_user {
 		line-height: unset;

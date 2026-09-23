@@ -455,6 +455,17 @@ class ContratLigne extends CommonObjectLine
 		if ($withpicto != 2) {
 			$result .= $link.($this->product_ref ? $this->product_ref.' ' : '').($this->label ? $this->label : $this->description).$linkend;
 		}
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -609,12 +620,12 @@ class ContratLigne extends CommonObjectLine
 		$this->fk_contrat = (int) $this->fk_contrat;
 		$this->fk_product = (int) $this->fk_product;
 		$this->statut = (int) $this->statut;
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->vat_src_code = trim($this->vat_src_code);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->vat_src_code = trim((string) $this->vat_src_code);
 		$this->tva_tx = trim((string) $this->tva_tx);
-		$this->localtax1_tx = trim($this->localtax1_tx);
-		$this->localtax2_tx = trim($this->localtax2_tx);
+		$this->localtax1_tx = trim((string) $this->localtax1_tx);
+		$this->localtax2_tx = trim((string) $this->localtax2_tx);
 		$this->qty = (float) $this->qty;
 		$this->remise_percent = trim((string) $this->remise_percent);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
@@ -623,7 +634,7 @@ class ContratLigne extends CommonObjectLine
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_ouverture = (int) $this->fk_user_ouverture;
 		$this->fk_user_cloture = (int) $this->fk_user_cloture;
-		$this->commentaire = trim($this->commentaire);
+		$this->commentaire = trim((string) $this->commentaire);
 		$this->rang = (int) $this->rang;
 		if (empty($this->subprice)) {
 			$this->subprice = 0;
@@ -669,7 +680,7 @@ class ContratLigne extends CommonObjectLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0) {
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return -1;
 			} else {
@@ -941,6 +952,7 @@ class ContratLigne extends CommonObjectLine
 		}
 		$sql .= " fk_user_ouverture = ".((int) $this->fk_user_ouverture).",";
 		$sql .= " date_cloture = null,";
+		$sql .= " fk_user_cloture = null,";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND (statut = ".ContratLigne::STATUS_INITIAL." OR statut = ".ContratLigne::STATUS_CLOSED.")";
 

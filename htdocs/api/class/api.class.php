@@ -309,6 +309,16 @@ class DolibarrApi
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 		unset($object->table_rowid);
+		unset($object->childtablesoncascade);
+		unset($object->picto);
+		unset($object->element);
+		unset($object->element_for_permission);
+		unset($object->fk_element);
+		unset($object->table_element);
+		unset($object->table_element_line);
+		unset($object->class_element_line);
+		unset($object->rowid);				// Property must be id
+
 		unset($object->pass);
 		unset($object->pass_indatabase);
 		unset($object->pass_indatabase_crypted);
@@ -319,6 +329,7 @@ class DolibarrApi
 
 		unset($object->fields);
 		unset($object->oldline);
+		unset($object->oldcopy);
 
 		unset($object->error);
 		unset($object->errors);
@@ -326,6 +337,7 @@ class DolibarrApi
 		unset($object->warning);
 		unset($object->warnings);
 		unset($object->TRIGGER_PREFIX);
+		unset($object->errorsstring);
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
@@ -339,6 +351,7 @@ class DolibarrApi
 		unset($object->note);				// We use note_public or note_private now
 		unset($object->contact);			// We use contact_id now
 		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
+		unset($object->warehouse);			// We use warehouse_id now
 
 		unset($object->project); // Should be fk_project
 		unset($object->fk_projet); // Should be fk_project
@@ -416,25 +429,8 @@ class DolibarrApi
 		unset($object->module);
 		unset($object->origin_object);
 		unset($object->origin);
-		unset($object->element);
-		unset($object->element_for_permission);
-		unset($object->fk_element);
-		unset($object->table_element);
-		unset($object->table_element_line);
-		unset($object->class_element_line);
-		unset($object->picto);
 		unset($object->linked_objects);
 
-		// Remove the $oldcopy property because it is not supported by the JSON
-		// encoder. The following error is generated when trying to serialize
-		// it: "Error encoding/decoding JSON: Type is not supported"
-		// Note: Event if this property was correctly handled by the JSON
-		// encoder, it should be ignored because keeping it would let the API
-		// have a very strange behavior: calling PUT and then GET on the same
-		// resource would give different results:
-		// PUT /objects/{id} -> returns object with oldcopy = previous version of the object
-		// GET /objects/{id} -> returns object with oldcopy empty
-		unset($object->oldcopy);
 
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {

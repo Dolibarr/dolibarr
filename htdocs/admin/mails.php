@@ -4,7 +4,7 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
  * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Berton				<anthony.berton@bb2a.fr>
 

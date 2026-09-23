@@ -1173,6 +1173,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1362,6 +1365,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1553,8 +1559,14 @@ class CMailFile
 
 			if ($fp) {
 				if ($this->sendmode == 'mail') {
+					fwrite($fp, 'Param 1 (dest) for mail(): Not yet available in dump');
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 2 (topic) for mail(): '.$this->subject);
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 4 (headers) for mail():'."\n");
 					fwrite($fp, $this->headers);
 					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 3 (message) for mail():'."\n");
 					fwrite($fp, $this->message);
 				} elseif ($this->sendmode == 'smtps') {
 					fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on

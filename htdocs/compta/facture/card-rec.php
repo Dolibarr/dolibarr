@@ -12,6 +12,7 @@
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026 Joris Le Blansch <ping@apio.systems>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,8 +107,7 @@ $object = new FactureRec($db);
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	$ret = $object->fetch($id, $ref);
 	if ($ret < 0) {
-		dol_print_error($db, $object->error, $object->errors);
-		exit;
+		recordNotFound();
 	} elseif (! $ret) {
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
@@ -1756,7 +1756,7 @@ if ($action == 'create') {
 			print $langs->trans('DebitBankAccount');
 			print '<td>';
 
-			if (($action != 'editbankaccountcustomer') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+			if (($action != 'editbankaccountcustomer') && $user->hasRight('facture', 'creer') && $object->status == FactureRec::STATUS_DRAFT) {
 				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editbankaccountcustomer&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetDebitBankAccount'), 1) . '</a></td>';
 			}
 			print '</tr></table>';
@@ -1776,7 +1776,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
 		print '<td>';
-		if (($action != 'editbankaccount') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+		if (($action != 'editbankaccount') && $user->hasRight('facture', 'creer') && $object->status == FactureRec::STATUS_DRAFT) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1816,7 +1816,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('Model');
 		print '<td>';
-		if (($action != 'editmodelpdf') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+		if (($action != 'editmodelpdf') && $user->hasRight('facture', 'creer') && $object->status == FactureRec::STATUS_DRAFT) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -2185,7 +2185,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="id" value="' . $object->id.'">';
 		print '<input type="hidden" name="page_y" value="">';
 
-		if (!empty($conf->use_javascript_ajax) && $object->statut == 0) {
+		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
 			if (isModEnabled('subtotals')) {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_ajaxrow.tpl.php';
 			} else {

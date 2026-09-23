@@ -434,7 +434,7 @@ class Contrat extends CommonObject
 
 		foreach ($this->lines as $contratline) {
 			// Open lines not already open
-			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
+			if ($contratline->status != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
 				$result = $contratline->active_line($user, $date_start, !empty($date_end) ? $date_end : -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
@@ -446,7 +446,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (!$error && $this->statut == 0) {
+		if (!$error && $this->status == 0) {
 			$result = $this->validate($user, '', $notrigger);
 			if ($result < 0) {
 				$error++;
@@ -489,11 +489,11 @@ class Contrat extends CommonObject
 
 		foreach ($this->lines as $contratline) {
 			// Close lines not already closed
-			if ($contratline->statut != ContratLigne::STATUS_CLOSED) {
+			if ($contratline->status != ContratLigne::STATUS_CLOSED) {
 				$contratline->date_end_real = $now;
 				$contratline->date_cloture = $now;	// For backward compatibility
 				$contratline->user_closing_id = $user->id;
-				$contratline->statut = ContratLigne::STATUS_CLOSED;
+				$contratline->status = ContratLigne::STATUS_CLOSED;
 
 				$result = $contratline->close_line($user, $now, $comment, $notrigger);
 
@@ -1600,7 +1600,7 @@ class Contrat extends CommonObject
 
 			// if buy price not defined, define buyprice as configured in margin admin
 			if ($pa_ht == 0) {
-				$result = $this->defineBuyPrice((float) $pu_ht, $remise_percent, $fk_product);
+				$result = $this->defineBuyPrice((float) $pu_ht, $remise_percent, $fk_product, $qty);
 				if ($result < 0) {
 					return -1;
 				} else {
@@ -1732,7 +1732,7 @@ class Contrat extends CommonObject
 		// Clean parameters
 		$qty = trim((string) $qty);
 		$desc = trim($desc);
-		$desc = trim($desc);
+
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
 		$localtax2tx = price2num($localtax2tx);
@@ -1926,6 +1926,18 @@ class Contrat extends CommonObject
 				}
 			}
 
+			if (!$error) {
+				// Renumber remaining lines so rang stays a contiguous 1..N sequence.
+				// Without this, a deleted line leaves a permanent gap that breaks
+				// the up/down swap logic (updateLineUp/updateLineDown) for any pair
+				// of lines that no longer sit at an exact rang+/-1 from each other.
+				$result = $this->line_order(true, 'ASC', false);
+				if ($result < 0) {
+					$error++;
+					$this->error = "Error ".get_class($this)."::deleteline line_order error";
+				}
+			}
+
 			if (empty($error)) {
 				$this->db->commit();
 				return 1;
@@ -2074,7 +2086,7 @@ class Contrat extends CommonObject
 			$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '. $this->ref_customer;
 			if (!$nofetch) {
 				$langs->load('project');
-				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
+				if (is_null($this->project) || (is_object($this->project) && empty($this->project->id))) {
 					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');

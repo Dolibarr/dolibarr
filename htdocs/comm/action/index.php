@@ -771,10 +771,8 @@ $MAXONSAMEPAGE = $agendaeventresult['maxonsamepage'];
 
 
 // BIRTHDATES CALENDAR
-// Complete $eventarray with birthdates
-if ($check_birthday) {
-	agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents);
-}
+agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, $eventarray, $nbevents, $firstdaytoshow, $lastdaytoshow);
+
 
 // LEAVE-HOLIDAY CALENDAR
 if ($user->hasRight("holiday", "read")) {
@@ -1232,8 +1230,8 @@ $theme_datacolor = array(
 );
 
 // Define theme_datacolor array
-$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
-if (is_readable($color_file)) {
+$color_file = dol_getThemeFilePath('theme_vars.inc.php');
+if ($color_file && is_readable($color_file)) {
 	global $theme_datacolor;
 	include $color_file;
 	/** @var array<int,mixed> $theme_datacolor */

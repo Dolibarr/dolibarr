@@ -427,7 +427,7 @@ class Utils
 				} elseif ($compression == 'bz') {
 					$handle = bzopen($outputfile, 'w');
 				} elseif ($compression == 'zstd') {
-					$handle = fopen($outputfile, 'w');
+					$handle = fopen("compress.zstd://" . $outputfile, "wb");
 				}
 			} else {
 				// TODO Add a pipe into script to decrypt dolCrypted values
@@ -567,7 +567,7 @@ class Utils
 			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'r');
 			} elseif ($compression == 'zstd') {
-				$handle = fopen($outputfile, 'r');
+				$handle = fopen("compress.zstd://" . $outputfile, "rb");
 			}
 			if ($handle) {
 				// Get 2048 first chars of error message.
@@ -778,8 +778,8 @@ class Utils
 					$newcommand = $matches[1] ?: ($matches[2] ?: $matches[3]);
 				}
 				if (!in_array(basename($newcommand), $arrayofallowedcommand)) {
-					dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($newcommand)." is not in the whitelist of allowed commands.", LOG_WARNING);
-					return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($newcommand).' is not in the whitelist of allowed commands');
+					dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($newcommand)." is not in the whitelist of allowed commands (param dolibarr_main_restrict_os_commands).", LOG_WARNING);
+					return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($newcommand).' is not in the whitelist of allowed commands (param dolibarr_main_restrict_os_commands)');
 				}
 			}
 		}

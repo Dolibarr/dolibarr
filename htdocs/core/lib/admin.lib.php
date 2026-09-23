@@ -224,7 +224,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 								$qualified = 0;
 							}
 						} else { // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
-							$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
+							$dbcollation = strtoupper(preg_replace('/_/', '', (string) $conf->db->dolibarr_main_db_collation));
 							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) {
 								$qualified = 0;
 							}
@@ -680,7 +680,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  */
 function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
-	global $conf, $hookmanager;
+	global $conf, $hookmanager, $user;
 
 	// Clean parameters
 	$name = trim($name);
@@ -714,6 +714,26 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 
 	//dol_syslog("dolibarr_set_const name=$name, value=$value type=$type, visible=$visible, note=$note entity=$entity");
 
+	$userid = (!empty($user) && is_object($user) && $user->id > 0) ? (int) $user->id : 0;
+
+	// Keep the original creator across the delete+recreate done below
+	$fk_user_creat = 0;
+	$sql = "SELECT fk_user_creat FROM ".MAIN_DB_PREFIX."const";
+	$sql .= " WHERE name = ".$db->encrypt($name);
+	if ($entity >= 0) {
+		$sql .= " AND entity = ".((int) $entity);
+	}
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && $obj->fk_user_creat > 0) {
+			$fk_user_creat = (int) $obj->fk_user_creat;
+		}
+	}
+	if (empty($fk_user_creat)) {
+		$fk_user_creat = $userid;
+	}
+
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
@@ -727,7 +747,8 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
 		$tmpname = preg_replace('/(_TEST|_PROD)$/', '', $name);
-		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $tmpname))) {
+		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name)
+			&& (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_TOKEN|_REFRESH)$/', $tmpname))) {
 			// This seems a sensitive constant, we encrypt its value
 			// To list all sensitive constant, you can make a
 			// SELECT * from llx_const WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' ...
@@ -737,16 +758,32 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 			$newvalue = $value;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity, fk_user_creat, fk_user_modif)";
 		$sql .= " VALUES (";
 		$sql .= $db->encrypt($name);
 		$sql .= ", ".$db->encrypt($newvalue);
-		$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity).")";
+		$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity);
+		$sql .= ", ".($fk_user_creat > 0 ? (int) $fk_user_creat : "NULL");
+		$sql .= ", ".($userid > 0 ? (int) $userid : "NULL").")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);
 		dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
 		$resql = $db->query($sql);
+
+		if (!$resql) {
+			// This function is also called by very old migration scripts (upgrade of a Dolibarr instance from an
+			// old version), at a point of the upgrade chain where llx_const may not yet have the fk_user_creat/fk_user_modif
+			// columns (added by a later migration). Fall back to the legacy insert so old upgrade paths keep working.
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
+			$sql .= " VALUES (";
+			$sql .= $db->encrypt($name);
+			$sql .= ", ".$db->encrypt($newvalue);
+			$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity).")";
+
+			dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
+			$resql = $db->query($sql);
+		}
 	}
 
 	if ($resql) {
@@ -2068,6 +2105,297 @@ function delDocumentModel($name, $type)
 		$db->rollback();
 		return -1;
 	}
+}
+
+
+/**
+ *	Print the "Document templates generators" admin table: list of PDF/ODT models available for a
+ *	given document type, with enable/disable, set as default and preview actions. This factorizes the
+ *	block that was historically copy-pasted into most module setup pages (invoice.php, order.php,
+ *	reception_setup.php, ...).
+ *
+ *	@param	string					$type			Value of document_model.type and root of the ADDON_PDF conf constant (e.g. 'invoice', 'reception')
+ *	@param	string					$moduledir		Directory name under core/modules/ to scan for model classes (e.g. 'facture', 'reception'); may differ from $type
+ *	@param	string					$constpdf		Name of the conf constant storing the default model name (e.g. 'FACTURE_ADDON_PDF')
+ *	@param	string					$title			Already translated title printed above the table
+ *	@param	array<string,string>	$features		Ordered list of extra tooltip feature rows to show, as array('TranslationKey' => 'option_property')
+ *	@param	bool					$excludedisabled	If true, hide modules with version == 'disabled'
+ *	@param	string					$constpdfdefault	Default value to assume for $constpdf when the conf constant is not set
+ *	@return	void
+ */
+function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '')
+{
+	global $db, $langs, $conf;
+
+	$form = new Form($db);
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+	print load_fiche_titre($title, '', '');
+
+	$def = array();
+	$sql = "SELECT nom";
+	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+	$sql .= " WHERE type = '".$db->escape($type)."'";
+	$sql .= " AND entity = ".((int) $conf->entity);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$i = 0;
+		$num_rows = $db->num_rows($resql);
+		while ($i < $num_rows) {
+			$array = $db->fetch_array($resql);
+			if (is_array($array)) {
+				array_push($def, $array[0]);
+			}
+			$i++;
+		}
+	} else {
+		dol_print_error($db);
+	}
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Preview").'</td>';
+	print "</tr>\n";
+
+	clearstatcache();
+
+	foreach ($dirmodels as $reldir) {
+		foreach (array('', '/doc') as $valdir) {
+			$realpath = $reldir."core/modules/".$moduledir.$valdir;
+			$dir = dol_buildpath($realpath);
+
+			if (is_dir($dir)) {
+				$handle = opendir($dir);
+				if (is_resource($handle)) {
+					$filelist = array();
+					while (($file = readdir($handle)) !== false) {
+						$filelist[] = $file;
+					}
+					closedir($handle);
+					arsort($filelist);
+
+					foreach ($filelist as $file) {
+						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+							if (file_exists($dir.'/'.$file)) {
+								$name = dol_substr($file, 4, dol_strlen($file) - 16);
+								$classname = dol_substr($file, 0, dol_strlen($file) - 12);
+
+								require_once $dir.'/'.$file;
+								$module = new $classname($db);
+
+								'@phan-var-force CommonDocGenerator $module';
+								/** @var CommonDocGenerator $module */
+
+								$modulequalified = 1;
+								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+									$modulequalified = 0;
+								}
+								if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+									$modulequalified = 0;
+								}
+								if ($excludedisabled && $module->version == 'disabled') {
+									$modulequalified = 0;
+								}
+
+								if ($modulequalified) {
+									print '<tr class="oddeven"><td>';
+									print(empty($module->name) ? $name : $module->name);
+									print "</td><td>\n";
+									if (method_exists($module, 'info')) {
+										print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
+									} else {
+										print $module->description;
+									}
+									print '</td>';
+
+									// Active
+									if (in_array($name, $def)) {
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
+										print img_picto($langs->trans("Enabled"), 'switch_on');
+										print '</a>';
+										print '</td>';
+									} else {
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+										print "</td>";
+									}
+
+									// Default
+									print '<td class="center">';
+									if (getDolGlobalString($constpdf, $constpdfdefault) == (string) $name) {
+										print img_picto($langs->trans("Default"), 'on');
+									} else {
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									}
+									print '</td>';
+
+									// Info
+									$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+									$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+									if ($module->type == 'pdf') {
+										$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+									}
+									$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
+									$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+									foreach ($features as $key => $property) {
+										$htmltooltip .= '<br>'.$langs->trans($key).': '.yn($module->$property, 1, 1);
+									}
+
+									print '<td class="center">';
+									print $form->textwithpicto('', $htmltooltip, 1, 'info');
+									print '</td>';
+
+									// Preview
+									print '<td class="center">';
+									if ($module->type == 'pdf') {
+										print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], array('action' => 'specimen', 'module' => $name), true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									} else {
+										print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
+									}
+									print '</td>';
+
+									print "</tr>\n";
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	print '</table>';
+	print '</div>';
+}
+
+
+/**
+ *	Print the "Numbering module" admin table: list of ref-numbering modules available for a given
+ *	document type, with activate action and an info tooltip showing the version and next value. This
+ *	factorizes the block that was historically copy-pasted into most module setup pages, alongside
+ *	printDocumentModelList().
+ *
+ *	@param	string				$moduledir			Directory name under core/modules/ to scan for numbering module classes (e.g. 'propale', 'reception')
+ *	@param	string				$prefix				Filename prefix of numbering module classes to scan for (e.g. 'mod_propale_', 'mod_reception_')
+ *	@param	string				$constname			Name of the conf constant storing the active module (e.g. 'PROPALE_ADDON', 'RECEPTION_ADDON_NUMBER')
+ *	@param	string				$title				Already translated title printed above the table
+ *	@param	CommonObject		$specimenobject		Object instance (already ->initAsSpecimen()'d) to pass to getNextValue()
+ *	@param	string				$actionname			Name of the action that activates a module (default 'setmod')
+ *	@return	void
+ */
+function printNumberingModuleList($moduledir, $prefix, $constname, $title, $specimenobject, $actionname = 'setmod')
+{
+	global $db, $langs, $conf, $mysoc;
+
+	$form = new Form($db);
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+	print load_fiche_titre($title, '', '');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+	print "</tr>\n";
+
+	clearstatcache();
+
+	foreach ($dirmodels as $reldir) {
+		$dir = dol_buildpath($reldir."core/modules/".$moduledir);
+
+		if (is_dir($dir)) {
+			$handle = opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (dol_substr($file, 0, dol_strlen($prefix)) == $prefix && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+						$file = dol_substr($file, 0, dol_strlen($file) - 4);
+
+						require_once $dir.'/'.$file.'.php';
+
+						$module = new $file();
+						'@phan-var-force CommonNumRefGenerator $module';
+						/** @var CommonNumRefGenerator $module */
+
+						if ($module->isEnabled()) {
+							// Show modules according to features level
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+								continue;
+							}
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+								continue;
+							}
+
+							print '<tr class="oddeven"><td>'.$module->getName($langs)."</td>\n";
+							print '<td>';
+							print $module->info($langs);
+							print '</td>';
+
+							// Show example of numbering module
+							print '<td class="nowrap">';
+							$tmp = $module->getExample();  // @phan-suppress-current-line PhanUndeclaredMethod
+							if (preg_match('/^Error/', $tmp)) {
+								$langs->load("errors");
+								print '<div class="error">'.$langs->trans($tmp).'</div>';
+							} elseif ($tmp == 'NotConfigured') {
+								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+							} else {
+								print $tmp;
+							}
+							print '</td>'."\n";
+
+							print '<td class="center">';
+							if (getDolGlobalString($constname) == $file) {
+								print img_picto($langs->trans("Activated"), 'switch_on');
+							} else {
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$actionname.'&token='.newToken().'&value='.urlencode($file).'">';
+								print img_picto($langs->trans("Disabled"), 'switch_off');
+								print '</a>';
+							}
+							print '</td>';
+
+							// Info
+							$htmltooltip = '';
+							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+							$nextval = $module->getNextValue($mysoc, $specimenobject);  // @phan-suppress-current-line PhanUndeclaredMethod
+							if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
+								$htmltooltip .= ''.$langs->trans("NextValue").': ';
+								if ($nextval) {
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+										$nextval = $langs->trans($nextval);
+									}
+									$htmltooltip .= $nextval.'<br>';
+								} else {
+									$htmltooltip .= $langs->trans($module->error).'<br>';
+								}
+							}
+
+							print '<td class="center">';
+							print $form->textwithpicto('', $htmltooltip, 1, 'info');
+							print '</td>';
+
+							print '</tr>';
+						}
+					}
+				}
+				closedir($handle);
+			}
+		}
+	}
+
+	print '</table>';
+	print '</div>';
 }
 
 

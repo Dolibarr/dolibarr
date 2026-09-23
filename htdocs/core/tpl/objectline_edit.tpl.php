@@ -463,8 +463,8 @@ $coldisplay++;
 		?>
 		function prefill_service_dates()
 		{
-			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
-			$('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, 'day')); ?>").trigger('change');
+			$('#date_start').val(<?php echo "'".dol_escape_js(dol_print_date($date_start_prefill, 'day'))."'"; ?>).trigger('change');
+			$('#date_end').val(<?php echo "'".dol_escape_js(dol_print_date($date_end_prefill, 'day'))."'"; ?>).trigger('change');
 
 			return false; // Prevent default link behaviour (which is go to href URL)
 		}
@@ -558,13 +558,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		var ratejs = price2numjs(rate.val());
 		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("rateMustBeNumeric"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
@@ -670,7 +670,7 @@ jQuery(document).ready(function()
 				<?php if ($line->fk_fournprice > 0) { ?>
 				if (this.id == <?php echo $line->fk_fournprice; ?>) {
 					options += ' selected';
-					$("#buying_price").val(this.price);
+					$("#buying_price").val(pricejs(this.price, 'MU'));
 					trouve = true;
 				}
 				<?php } ?>
@@ -687,7 +687,7 @@ jQuery(document).ready(function()
 			$("#fournprice").change(function() {
 				var selval = $(this).find('option:selected').attr("price");
 				if (selval)
-					$("#buying_price").val(selval).hide();
+					$("#buying_price").val(pricejs(selval, 'MU')).hide();
 				else
 					$('#buying_price').show();
 			});

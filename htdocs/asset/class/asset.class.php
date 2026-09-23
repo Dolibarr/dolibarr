@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
@@ -26,6 +26,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 
 /**
  * Class for Asset
@@ -564,14 +565,13 @@ class Asset extends CommonObject
 		if ($result > 0 && $this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model) {
 			$result = $this->setDataFromAssetModel($user, $notrigger);
 		}
-		if ($result > 0 && (
+		if ($result > 0 && is_object($this->oldcopy) && (
 			$this->date_start != $this->oldcopy->date_start ||
-				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
-				$this->reversal_date != $this->oldcopy->reversal_date ||
-				$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
-				($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
-		)
-		) {
+			$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
+			$this->reversal_date != $this->oldcopy->reversal_date ||
+			$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
+			($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
+		)) {
 			$result = $this->calculationDepreciation();
 		}
 
@@ -667,6 +667,12 @@ class Asset extends CommonObject
 					foreach ($fields as $field_key => $value) {
 						$options->deprecation_options[$mode_key][$field_key] = $value;
 					}
+					// 'amount_base_depreciation_ht' only exists on the asset (not on the model, see 'only_on_asset'),
+					// so it is never part of $fields above and must be computed from the asset itself, otherwise
+					// it stays at 0 and all depreciation lines are calculated on a zero base.
+					if (!array_key_exists('amount_base_depreciation_ht', $options->deprecation_options[$mode_key])) {
+						$options->deprecation_options[$mode_key]['amount_base_depreciation_ht'] = $this->reversal_amount_ht > 0 ? $this->reversal_amount_ht : $this->acquisition_value_ht;
+					}
 				}
 
 				$result = $options->updateDeprecationOptions($user, $this->id, 0, $notrigger);
@@ -748,7 +754,11 @@ class Asset extends CommonObject
 		}
 
 		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht,";
-		$sql .= " " . $this->db->ifsql('EXISTS (SELECT fk_docdet FROM ' . MAIN_DB_PREFIX . 'accounting_bookkeeping as ab WHERE ab.doc_type = \'asset\' AND ab.fk_docdet = ad.rowid)', '1', '0') . " AS bookkeeping";
+		if (isModEnabled('accounting')) {
+			$sql .= " " . $this->db->ifsql('EXISTS (SELECT fk_docdet FROM ' . MAIN_DB_PREFIX . 'accounting_bookkeeping as ab WHERE ab.doc_type = \'asset\' AND ab.fk_docdet = ad.rowid)', '1', '0') . " AS bookkeeping";
+		} else {
+			$sql .= " 0 AS bookkeeping";
+		}
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " ORDER BY ad.depreciation_date ASC";
@@ -797,6 +807,9 @@ class Asset extends CommonObject
 		}
 		if ($error) {
 			return -1;
+		}
+		if (!isModEnabled('accounting')) {
+			return 0;
 		}
 
 		// Old request with 'WITH'
@@ -992,26 +1005,28 @@ class Asset extends CommonObject
 				$sql .= " LIMIT 1";
 				*/
 
-				$sql = "SELECT ad.depreciation_date, ad.cumulative_depreciation_ht";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
-				$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
-				$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
-				$sql .= " AND ad.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				$sql .= " AND iab.fk_docdet IS NOT NULL";
-				$sql .= " ORDER BY ad.depreciation_date DESC";
-				$sql .= " LIMIT 1";
-
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$this->errors[] = $langs->trans('AssetErrorFetchMaxDepreciationDateForMode', $mode_key) . ': ' . $this->db->lasterror();
-					$error++;
-					break;
-				}
 				$last_depreciation_date = '';
 				$last_cumulative_depreciation_ht = $this->reversal_amount_ht;
-				if ($obj = $this->db->fetch_object($resql)) {
-					$last_depreciation_date = $this->db->jdate($obj->depreciation_date);
-					$last_cumulative_depreciation_ht = $obj->cumulative_depreciation_ht;
+				if (isModEnabled('accounting')) {
+					$sql = "SELECT ad.depreciation_date, ad.cumulative_depreciation_ht";
+					$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
+					$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
+					$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
+					$sql .= " AND ad.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+					$sql .= " AND iab.fk_docdet IS NOT NULL";
+					$sql .= " ORDER BY ad.depreciation_date DESC";
+					$sql .= " LIMIT 1";
+
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$this->errors[] = $langs->trans('AssetErrorFetchMaxDepreciationDateForMode', $mode_key) . ': ' . $this->db->lasterror();
+						$error++;
+						break;
+					}
+					if ($obj = $this->db->fetch_object($resql)) {
+						$last_depreciation_date = $this->db->jdate($obj->depreciation_date);
+						$last_cumulative_depreciation_ht = $obj->cumulative_depreciation_ht;
+					}
 				}
 
 				// Set last cumulative depreciation
@@ -1029,7 +1044,9 @@ class Asset extends CommonObject
 				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "asset_depreciation";
 				$sql .= " WHERE fk_asset = " . (int) $this->id;
 				$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				$sql .= " AND NOT EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset' AND fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid)";
+				if (isModEnabled('accounting')) {
+					$sql .= " AND NOT EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset' AND fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid)";
+				}
 				if ($last_depreciation_date !== "") {
 					$sql .= " AND ref <> ''";
 				}
@@ -1061,9 +1078,9 @@ class Asset extends CommonObject
 				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
 				$finish_date = $disposal_date !== "" ? $disposal_date : $depreciation_date_end;
 				$accountancy_code_depreciation_debit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_debit'];
-				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key];
+				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key] ?? '';
 				$accountancy_code_depreciation_credit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_credit'];
-				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key];
+				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key] ?? '';
 
 				// Reversal depreciation line
 				//-----------------------------------------------------
@@ -1096,8 +1113,7 @@ class Asset extends CommonObject
 
 				// futures depreciation lines
 				//-----------------------------------------------------
-				$nb_days_in_year = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_YEAR', 360);
-				$nb_days_in_month = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_MONTH', 30);
+				$day_count_convention = getAssetDepreciationDayCountConvention();
 				$period_amount = (float) ($fields['duration'] > 0 ? price2num($depreciation_period_amount / $fields['duration'], 'MT') : 0);
 				$first_period_found = false;
 
@@ -1136,22 +1152,41 @@ class Asset extends CommonObject
 						if ($fields['duration_type'] == 2) { // Daily
 							$depreciation_ht = $period_amount;
 						} elseif ($fields['duration_type'] == 1) { // Monthly
-							$nb_days = min($nb_days_in_month, num_between_day($begin_date, $end_date, 1));
-							if ($nb_days >= 28) {
-								$date_temp = dol_getdate($begin_date);
-								if ($date_temp['mon'] == 2) {
-									$nb_days = 30;
+							// Same rule as the annual branch: the count of the days and the length of a full
+							// month must come from the same day count convention. Counting the real calendar
+							// days then dividing them by a conventional month of 30 made the depreciation of a
+							// partial month depend on the length of that month, and required a special case to
+							// give a full February a whole monthly amount.
+							$period_fraction = getAssetDepreciationMonthFraction($begin_date, $end_date, $day_count_convention, 'gmt');
+							$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
+						} else { // Annually, taking care for adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
+							// A standard fiscal year lasts 365 days, or 366 when it covers a leap day. Anything else
+							// is a shortened or an extended fiscal year (e.g. 9 or 15 months), whose depreciation is
+							// prorated with no upper limit.
+							$nb_days_fiscal_period = num_between_day($fiscal_period_start, $fiscal_period_end, 1);
+							$is_standard_fiscal_period = ($nb_days_fiscal_period >= 365 && $nb_days_fiscal_period <= 366);
+
+							if ($is_standard_fiscal_period && $begin_date <= $fiscal_period_start && $end_date >= $fiscal_period_end) {
+								// The asset is depreciated over the whole fiscal year: full annuity, whatever the
+								// convention. Computing a prorata here would give slightly less than a full annuity
+								// with THIRTY_360 when the fiscal year ends in February (a 30/360 count ending on
+								// Feb 28th or 29th is 358 or 359 days instead of 360).
+								$period_fraction = 1;
+							} else {
+								// The count of the days and the number of days of a full year must always come from
+								// the same day count convention, otherwise every partial period (so the first and the
+								// last year of every asset) is over or under evaluated. Counting the real calendar
+								// days then dividing them by 360 overestimated every prorata by about 1.39% (365/360).
+								// The bounds are anchored on GMT midnight, so the calendar decomposition of
+								// THIRTY_360 and ACT_ACT must be read in GMT too, otherwise a partial period is
+								// prorated on a day shifted by the UTC offset of the server.
+								$period_fraction = getAssetDepreciationPeriodFraction($begin_date, $end_date, $day_count_convention, 'gmt');
+								if ($is_standard_fiscal_period) {
+									// Never more than a full annuity on a standard fiscal year
+									$period_fraction = min(1, $period_fraction);
 								}
 							}
-							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
-						} else { // Annually, taking care for adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
-							$nb_days_real = num_between_day($begin_date, $end_date, 1);
-							if (($nb_days_real > 366) || (num_between_day($fiscal_period_start, $fiscal_period_end, 1) < $nb_days_in_year)) { // FY Period changed
-								$nb_days = $nb_days_real;
-							} else {
-								$nb_days = min($nb_days_in_year, $nb_days_real);
-							}
-							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+							$depreciation_ht = (float) price2num($period_amount * $period_fraction, 'MT');
 						}
 						if (getDolGlobalInt('ASSET_ROUND_INTEGER_NUMBER_UPWARDS') == 1) {
 							if ($idx_loop < $max_loop) { // avoid last depreciation value
@@ -1642,6 +1677,38 @@ class Asset extends CommonObject
 	}
 
 	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	string		$modele			Force template to use ('' to not force)
+	 *  @param	Translate	$outputlangs	Object lang to use for translation
+	 *  @param	int<0,1>	$hidedetails	Hide details of lines
+	 *  @param	int<0,1>	$hidedesc		Hide description
+	 *  @param	int<0,1>	$hideref		Hide ref
+	 *  @param	?array<string,mixed>	$moreparams	Array to provide more information
+	 *  @return	int							0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $langs;
+
+		$langs->load("assets");
+
+		if (!dol_strlen($modele)) {
+			$modele = 'standard_asset';
+
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('ASSET_ASSET_ADDON_PDF')) {
+				$modele = getDolGlobalString('ASSET_ASSET_ADDON_PDF');
+			}
+		}
+
+		$modelpath = "core/modules/asset/doc/";
+
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
 	 *
 	 *  @return string      		Object free reference
@@ -1765,7 +1832,7 @@ class Asset extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'asset/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'asset/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;

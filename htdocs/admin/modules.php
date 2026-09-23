@@ -1130,22 +1130,44 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			} else {
 				// @phan-suppress-next-line PhanUndeclaredMethod
 				if (is_object($objMod) && !empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
-					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
+					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $objMod->numero).'&token='.newToken().'&module_position='.$module_position.'&action=reset_confirm&confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&value='.urlencode($modName).'&mode='.urlencode($mode).$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
 					$codeenabledisable .= '</a>';
 					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
 						$codeenabledisable .= '&nbsp;';
-						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload_confirm&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $objMod->numero).'&token='.newToken().'&module_position='.$module_position.'&action=reload_confirm&value='.urlencode($modName).'&mode='.urlencode($mode).'&confirm=yes'.$param.'">';
 						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="opacitymedium"');
 						$codeenabledisable .= '</a>';
 					}
 				} else {
-					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+					// Check if some enabled modules depend on this one (requiredby). If yes, we show a confirmation popup before disabling.
+					$warningmessagefordisable = '';
+					if (is_array($objMod->requiredby) && count($objMod->requiredby) > 0) {
+						$listofdependentmodules = array();
+						foreach ($objMod->requiredby as $moduledisableclass) {
+							if (empty($moduledisableclass)) {
+								continue;
+							}
+							$moduleshortname = strtolower(preg_replace('/^mod/i', '', $moduledisableclass));
+							if (in_array($moduleshortname, $conf->modules)) {
+								$listofdependentmodules[] = isset($modules[$moduledisableclass]) ? $modules[$moduledisableclass]->getName() : $moduleshortname;
+							}
+						}
+						if (count($listofdependentmodules) > 0) {
+							$warningmessagefordisable = $langs->trans('ConfirmDisablingModuleWillDisableDependentModules', implode(', ', $listofdependentmodules));
+						}
+					}
+
+					$codeenabledisable .= '<a class="reposition valignmiddle" id="iddisable'.$objMod->numero.'" data-alreadyclicked="0" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $objMod->numero).'&token='.newToken().'&module_position='.$module_position.'&action=reset&value='.urlencode($modName).'&mode='.urlencode($mode).'&confirm=yes'.$param.'"';
+					if ($warningmessagefordisable) {
+						$codeenabledisable .= ' onclick="return confirmDolibarr(\''.dol_escape_js($warningmessagefordisable).'\', \'iddisable'.$objMod->numero.'\', 600, 300, 0);"';
+					}
+					$codeenabledisable .= '>';
 					$codeenabledisable .= img_picto($langs->trans("Activated").($warningstring ? ' '.$warningstring : ''), 'switch_on');
 					$codeenabledisable .= '</a>';
 					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
 						$codeenabledisable .= '&nbsp;';
-						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $objMod->numero).'&token='.newToken().'&module_position='.$module_position.'&action=reload&value='.urlencode($modName).'&mode='.urlencode($mode).'&confirm=yes'.$param.'">';
 						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="opacitymedium"');
 						$codeenabledisable .= '</a>';
 					}
@@ -1664,7 +1686,7 @@ if ($mode == 'deploy') {
 				$(document).ready(function() {
 					jQuery("#fileinstall").on("change", function() {
 						if(this.files[0].size > '.($maxmin * 1024).') {
-							alert("'.dol_escape_js($langs->transnoentitiesnoconv("ErrorFileSizeTooLarge")).'");
+							alert(\''.dol_escape_js($langs->transnoentitiesnoconv("ErrorFileSizeTooLarge")).'\');
 							this.value = "";
 						}
 					});

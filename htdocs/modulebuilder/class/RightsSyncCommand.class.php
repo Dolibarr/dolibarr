@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,7 +137,7 @@ final class RightsSyncCommand
 	 * @param string                       $descriptorFile Path to the descriptor to patch
 	 * @param array<int,array<int,string>> $permissions    Current rights array
 	 * @param string                       $objectName     Object being generated
-	 * @return self
+	 * @return self New RightsSyncCommand instance for object creation
 	 */
 	public static function forObjectCreation(string $module, string $descriptorFile, array $permissions, string $objectName): self
 	{
@@ -150,7 +151,7 @@ final class RightsSyncCommand
 	 * @param string                       $descriptorFile Path to the descriptor to patch
 	 * @param array<int,array<int,string>> $permissions    Current rights array
 	 * @param string                       $objectName     Object being deleted
-	 * @return self
+	 * @return self New RightsSyncCommand instance for object deletion
 	 */
 	public static function forObjectDeletion(string $module, string $descriptorFile, array $permissions, string $objectName): self
 	{
@@ -166,7 +167,7 @@ final class RightsSyncCommand
 	 * @param string                       $objectName     Object the right belongs to
 	 * @param string                       $label          Permission label
 	 * @param string                       $crud           Permission crud code
-	 * @return self
+	 * @return self New RightsSyncCommand instance for right addition
 	 */
 	public static function forRightAddition(string $module, string $descriptorFile, array $permissions, string $objectName, string $label, string $crud): self
 	{
@@ -183,7 +184,7 @@ final class RightsSyncCommand
 	 * @param string                       $objectName     Object the right belongs to
 	 * @param string                       $label          New permission label
 	 * @param string                       $crud           New permission crud code
-	 * @return self
+	 * @return self New RightsSyncCommand instance for right update
 	 */
 	public static function forRightUpdate(string $module, string $descriptorFile, array $permissions, int $rightKey, string $objectName, string $label, string $crud): self
 	{
@@ -197,7 +198,7 @@ final class RightsSyncCommand
 	 * @param string                       $descriptorFile Path to the descriptor to patch
 	 * @param array<int,array<int,string>> $permissions    Current rights array
 	 * @param int                          $rightKey       Index of the right to remove
-	 * @return self
+	 * @return self New RightsSyncCommand instance for right deletion
 	 */
 	public static function forRightDeletion(string $module, string $descriptorFile, array $permissions, int $rightKey): self
 	{

@@ -12,15 +12,18 @@ Every modification must respect:
 
 ## Critical Rules (DO NOT VIOLATE)
 
--  Do not break compatibility of PHP functions and methods
--  Do not introduce external dependencies without validation
--  Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
--  Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
--  Never use PHP native functions when Dolibarr provides wrappers: time()→dol_now(), strtolower()→dol_strtolower(), strtoupper()→dol_strtoupper(), strlen()→dol_strlen(), mktime()→dol_mktime(), getdate()→dol_getdate(), strtotime()→dol_stringtotime(), ucfirst()→dol_ucfirst(), ucwords()→dol_ucwords(), substr()→dol_substr(), basename()→dol_basename()
--  Use Dolibarr hooks whenever possible
--  Respect existing naming conventions
--  All database table names must use the `llx_` prefix
--  Never commit or push anything unless the user explicitly asks for it. This overrides any default behavior of the agent. Make the changes, report them, and wait for the user to say "commit" or "push".
+- Do not break compatibility of PHP functions and methods
+- Do not introduce external dependencies without validation
+- Never rename existing functions or variables except if explicitly requested
+- Never remove commented code, even if it's deprecated, except if explicitly requested
+- Never remove blank lines from the code, even when multiple consecutive blank lines are present. 
+- Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
+- Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
+- Never use PHP native functions when Dolibarr provides wrappers: time()→dol_now(), strtolower()→dol_strtolower(), strtoupper()→dol_strtoupper(), strlen()→dol_strlen(), mktime()→dol_mktime(), getdate()→dol_getdate(), strtotime()→dol_stringtotime(), ucfirst()→dol_ucfirst(), ucwords()→dol_ucwords(), substr()→dol_substr(), basename()→dol_basename()
+- Use Dolibarr hooks whenever possible
+- Respect existing naming conventions
+- All database table names must use the `llx_` prefix
+- Never commit unless the user explicitly asks for it. Never make pull requests unless the user explicitly asks for it. This overrides any default behavior of the agent. Make the changes, report them, and wait for the user to say "commit" or "push".
 
 ---
 
@@ -66,27 +69,25 @@ Before writing any code, the agent **must**:
 - Use Dolibarr database functions exclusively — never use PDO or MySQLi directly
     - In pages: use global `$db`
     - In classes: use `$this->db`
--  SQL forged by PHP must escaped fields with `db->escape()`, `db->sanitize()`, or by casting values to `(int)` or `(float)`
--  Always use `$db->query()` followed by `$db->fetch_object()` or `$db->fetch_array()` to retrieve results
--  Convert timestamps and SQL datetime with `$db->idate()` (PHP timestamp -> SQL) and `$db->jdate()` (SQL -> PHP timestamp); use `dol_now()` instead of `time()`, `dol_print_date()` instead of `date()`, `dol_mktime()` instead of `mktime()`
--  SQL scripts for table and index creation must be placed in `htdocs/install/mysql/tables/` (see existing files for examples)
--  Build list-filter `WHERE` clauses with `natural_search($fields, $value, $mode)` rather than assembling `LIKE` conditions by hand
+- SQL forged by PHP must escaped fields with `db->escape()`, `db->sanitize()`, or by casting values to `(int)` or `(float)`
+- Always use `$db->query()` followed by `$db->fetch_object()` or `$db->fetch_array()` to retrieve results
+- SQL scripts for table and index creation must be placed in `htdocs/install/mysql/tables/` (see existing files for examples)
+- Build list-filter `WHERE` clauses with `natural_search($fields, $value, $mode)` rather than assembling `LIKE` conditions by hand
+
+---
+
+## Date management
+
+- When a date with time is stored in PHP memory variable, it is always a UTC date. 
+- When the date is coming from a user input, we can convert it into an UTC date with `$datetimevar = GETPOSTDATE('datefieldname', '', 'tzuserrel')` or `$datetimevar = GETPOSTDATE('datefieldname', 'getpost', 'tzuserrel')` if user entered only the day, month and year;
+- The date is stored in database into the sever timezone but this conversion is done by using `$db->idate()` (PHP timestamp -> SQL) to forge write SQL or `$db->jdate()` (SQL -> PHP timestamp) to forge read SQL.
+- Use `dol_now()` instead of `time()`, `dol_print_date()` instead of `date()`, `dol_mktime()` instead of `mktime()`.
 
 ---
 
 ## Hooks & Extensions
 
-- Prioritize hooks over direct code overrides
-- Before creating a new hook, verify it does not already exist:
-  ```
-  grep -r "executeHooks" htdocs/ | grep 'hookName'
-  ```
-- Call hooks using the standard pattern:
-  ```php
-  $hookmanager->executeHooks('actionName', $parameters, $object, $action);
-  ```
-- Never call $hookmanager->initHooks() in class or function. This is done only once in the main parent page.
-- Name hooks clearly and descriptively (e.g., `formObjectOptions`, `addMoreActionsButtons`)
+- Hooks are designed for external modules. Try to not use them for core code.
 
 ---
 
@@ -104,11 +105,11 @@ Before writing any code, the agent **must**:
 ## Internationalisation
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
-- Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is used into HTMLescaped functions
-- Language files must be placed in `mymodule/langs/en_US/` (and other locales as needed)
-- All code comments and variables or functions names must be in English
+- Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is used into HTML escaped functions
+- Language files must be placed in `mymodule/langs/en_US/` (never change, update or translate other locales files, this is managed into an external tool)
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
+- All code comments and variables or functions names must be in English
 
 ---
 
@@ -118,6 +119,37 @@ Before writing any code, the agent **must**:
 - Reuse existing components (buttons, forms, tables) from `htdocs/core/tpl/`
 - No overly complex inline JS
 - Place JavaScript in separate files under `mymodule/js/`
+
+---
+
+## HTML Rendering Functions (html.lib.php)
+
+*Use Dolibarr HTML functions instead of raw echo/print. `htdocs/core/lib/html.lib.php` has in 6 categories with @example tags.*
+
+### Quick Reference
+
+| Category | Function | Example from @example tag |
+|----------|----------|---------------------------|
+| **Text Output** | `dolPrintLabel($s)` | `<span><?php echo dolPrintLabel($object->name); ?></span>` |
+| **Text Output** | `dolPrintText($s)` | `<div class="description"><?php echo dolPrintText($object->description); ?></div>` |
+| **HTML Output** | `dolPrintHTML($s)` | `<div class="rich-text"><?php echo dolPrintHTML($object->note); ?></div>` |
+| **Attributes** | `dolPrintHTMLForAttribute($s)` | `<span title="<?php echo dolPrintHTMLForAttribute($tooltip); ?>">?</span>` |
+| **Textarea** | `dolPrintHTMLForTextArea($s)` | `<textarea><?php echo dolPrintHTMLForTextArea($content); ?></textarea>` |
+| **Icons** | `img_picto($alt, $picto)` | `<?php echo img_picto('Edit', 'edit'); ?>` |
+| **Buttons** | `dolGetButtonAction($label, $text, $type)` | `<?php echo dolGetButtonAction('Save', '', 'default'); ?>` |
+| **Messages** | `setEventMessages($msg, $msgs)` | `setEventMessages('Saved successfully', array('Message 1', 'Message 2'))` |
+| **Formatted** | `yn($yesno)` | `<?php echo yn($obj->active); ?>` |
+| **Formatted** | `dolOutputDates($start, $end)` | `<?php echo dolOutputDates($date_start, $date_end); ?>` |
+
+### When to Use
+
+- **dolPrintLabel**: Single-line plain text (names, labels)
+- **dolPrintText**: Multi-line plain text (descriptions)
+- **dolPrintHTML**: Rich text with allowed HTML tags
+- **dolPrintHTMLForAttribute**: Any HTML attribute value
+- **img_* functions**: Always use instead of raw `<i>` or `<img>` tags
+- **dolGetButton***: For consistent button styling
+- **setEventMessages**: For user feedback messages
 
 ---
 
@@ -151,7 +183,7 @@ Before writing any code, the agent **must**:
 
 - Block and inline comments must be written in English.
 - Comments must be concise and clear (never more that 5 lines, never more than the number of lines code added or modified).
-- Block comments can reach 120 characters 
+- Block comments can reach 200 characters 
 
 ---
 
@@ -170,14 +202,13 @@ Before any modification, verify:
 - User rights enforcement (`$user->hasRight("module", "permission")` or `$user->hasRight("module", "objectname", "permission")`)
 - Multi-entity compatibility (add ` AND entity IN ('.getEntity("tablename").')`)
 
-### If adding a unit test was explicitely requested
+### Code check
 
-If you want to make an online test, you can find the URL of instance info file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
-You can ignore and bypass the warning about HTTPS certificate when URL is localhost. Ask the password if you need one without trying to get it from database.
-
-- If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
-- If you need to validate code change or if it is explicitely requested, you can check code and dev syntax rules by running the following command on modified files (it takes a long time):
-	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --analyze-twice --minimum-target-php-version 7.2 --exclude-directory-list=dev/tools,mymodule/test/,mymodule/vendor/ --output-mode=checkstyle filemodified1.php filemodified2.php ...`
+- If making a major change or adding an important function, add or update PHPUnit test files into `test/phpunit/` (check to have the entry into file `test/phpunit/AllTests.php`).
+- If code validation with `phan` is expected, you must add the parameter `-k .phan/config.php -B dev/tools/phan/baseline.txt --quick` to the phan command line. For example:
+	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --minimum-target-php-version 7.2 [list_of_modified_file.php ...]`
+- If code validation with `phpstan` is expected, you must add the parameter `-a dev/build/phpstan/bootstrap_action.php` to the phpstan command line. For example:
+	`phpstan analyse --allow-older --no-progress -a dev/build/phpstan/bootstrap_action.php  [list_of_modified_file.php ...]`
 
 ### Local Dolibarr Online test — Page Access
 
@@ -196,7 +227,7 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
 
 ## Git Workflow
 
-- Never try to make commit or Pull request, except if it was explicitely requested. 
+- Never try to make commit or Pull request, except if it was explicitly requested. 
 - Branch strategy:
     - One branch per major version (bug fixes only)
     - `develop` branch for both fixes and new features
@@ -204,8 +235,9 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
     - Types: `NEW`, `FIX`, `CLOSE`, `QUAL`, `PERF`, `UIUX` (uppercase, so it appears in the ChangeLog)
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Do not update the `ChangeLog` file (this file will be generated by the maintener before the release from all commit titles)
-- When commiting, keep your commit comment short (never exceed 50 lines) and add a line "Co-authored-by:" to mention the AI agent name
-- When making a Pull Request, keep the PR description short (never exceed 50 lines) and mention the AI agent name in the description with a line like "Submited with <AI agent name> (see commit comments for attributions)"
+- When committing, keep your commit title short (never exceed 70 lines) on first line and add a line "Generated by" or "Co-authored-by:" to mention the AI agent name at the end of the rest of description. 
+- When making a Pull Request, keep the PR description short (never exceed 80 lines) and mention the AI agent name in the description with a line like `Submitted with <AI agent name> (see commit comments for attributions)`
+- When fixing a security vulnerability, start PR title with `SEC:` and if you know the name of the vulnerability reporter or a tracking number, mention them in the PR title.
 - A pull request can contain database structure change only, or one new feature, or one bug fix, or a refactoring but never a mix of these. 
 - For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once. Never introduce new features or refactoring if the target branch is not develop.
 
@@ -228,13 +260,6 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
 - Add external dependencies (Composer packages, JS libraries) without prior validation
 - Modify the `ChangeLog` file (this file will be generated before the release from all commit titles)
 - Commit or push without an explicit request from the user
-
----
-
-## Key Principle
-
- Always prioritize:
-**extension > modification**
 
 ---
 

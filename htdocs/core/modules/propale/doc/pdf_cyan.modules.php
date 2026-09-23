@@ -9,7 +9,7 @@
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -758,7 +758,7 @@ class pdf_cyan extends ModelePDFPropales
 						}
 
 						// Total with tax line (TTC)
-						if ($this->getColumnStatus('totalincltax')) {
+						if ($this->getColumnStatus('totalincltax') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 							$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
 							$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
 						}
@@ -1766,7 +1766,7 @@ class pdf_cyan extends ModelePDFPropales
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($ref_customer), 65), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".pdf_truncate_text($pdf, $outputlangs->convToOutputCharset($ref_customer), 65), '', 'R');
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
@@ -1775,7 +1775,7 @@ class pdf_cyan extends ModelePDFPropales
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". dol_trunc($object->project->title, 50), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
 			}
 		}
 

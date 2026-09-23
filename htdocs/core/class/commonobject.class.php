@@ -24,6 +24,7 @@
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
 
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,7 +266,7 @@ abstract class CommonObject
 	public $linked_objects;
 
 	/**
-	 * @var array<string,int>|null		Array of external linked objects (set by hooks or external modules) to merge into $linked_objects during creation
+	 * @var array<string,int>|null		Array of external linked objects (set by hooks or external modules) to merge into during creation
 	 */
 	public $other_linked_objects;
 
@@ -1015,16 +1016,6 @@ abstract class CommonObject
 			}
 		}
 		return -1;
-	}
-
-	/**
-	 * isEmpty We consider CommonObject isEmpty if this->id is empty
-	 *
-	 * @return bool
-	 */
-	public function isEmpty()
-	{
-		return (empty($this->id));
 	}
 
 	/**
@@ -2146,9 +2137,11 @@ abstract class CommonObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+		/* Done with DolDeprecationHandler
 		if (empty($this->fk_project) && !empty($this->fk_projet)) {
 			$this->fk_project = $this->fk_projet; // For backward compatibility
 		}
+		*/
 		if (empty($this->fk_project)) {
 			return 0;
 		}
@@ -2865,7 +2858,8 @@ abstract class CommonObject
 	}
 
 	/**
-	 *  Change the payments methods
+	 *  Change the payments methods.
+	 *  Can be used on invoice, supplier invoice, salary, company, vat, ...
 	 *
 	 *  @param		int		$id		Id of new payment method
 	 *  @return		int				>0 if OK, <0 if KO
@@ -2993,6 +2987,12 @@ abstract class CommonObject
 				// Update line price
 				if (!empty($this->lines)) {
 					foreach ($this->lines as &$line) {
+						// A credit line (deposit, credit note, discount applied to the invoice) is not priced at the invoice rate:
+						// both its amounts are the historical ones of the credit, so a rate change must leave it untouched.
+						if (!empty($line->fk_remise_except)) {
+							continue;
+						}
+
 						// Amounts in company currency will be recalculated
 						if ($mode == 1) {
 							$line->subprice = 0;
@@ -5738,7 +5738,7 @@ abstract class CommonObject
 
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE') && empty($newlang) && is_object($this->thirdparty)) {
@@ -6935,9 +6935,9 @@ abstract class CommonObject
 						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								// We set a global variable to $objectoffield so we can use it inside computed formula
-								$objectoffield = dol_clone($this, 2);
+								// We set a global variable to $objectoffield so we can use it inside computed formula (must be before the assignment)
 								global $objectoffield;
+								$objectoffield = dol_clone($this, 2);
 								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
@@ -8079,7 +8079,9 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', (string) $type)) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($placeholder ? ' placeholder="'.dolPrintHTMLForAttribute($placeholder).'"' : '').($autofocusoncreate ? ' autofocus' : '').'>';
-		} elseif (in_array($type, array('email', 'mail', 'phone', 'url', 'ip'))) {
+		} elseif ($type == 'phone' && !preg_match('/search_/', $keyprefix)) {
+			$out = $form->showPhoneInput($value, $keyprefix.$key.$keysuffix, !empty($this->country_id) ? $this->country_id : 0);
+		} elseif (in_array($type, array('email', 'mail', 'url', 'ip'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', (string) $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -8792,11 +8794,11 @@ abstract class CommonObject
 				$out .= '
 					<script nonce="'.getNonce().'">
 					$(document).ready(function() {
-						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
-							$("'.dol_escape_js($newInput).'").insertBefore(this);
+						$(\'a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add\').click(function() {
+							$(\''.dol_escape_js($newInput).'\').insertBefore(this);
 						});
 
-						$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
+						$(document).on("click", \'a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del\', function() {
 							$(this).parent().remove();
 						});
 					});
@@ -9935,7 +9937,7 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value, '', $this->table_element);
 								break;
 							case "create":
-								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
+								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,ip,password'));
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
@@ -10218,9 +10220,10 @@ abstract class CommonObject
 	 * @param float		$unitPrice			Product unit price
 	 * @param float		$discountPercent	Line discount percent
 	 * @param int		$fk_product			Product id
+	 * @param float		$qty				Line quantity, to select the matching supplier price quantity range (0 = ignore quantity ranges)
 	 * @return float|int<-2,-1>				Return buy price if OK, integer <0 if KO
 	 */
-	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
+	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0, $qty = 0)
 	{
 		global $conf;
 
@@ -10262,7 +10265,12 @@ abstract class CommonObject
 				if (empty($buyPrice) && in_array(getDolGlobalString('MARGIN_TYPE'), array('1', 'pmp', 'costprice'))) {
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);
-					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0) {
+					$result = $productFournisseur->find_min_price_product_fournisseur($fk_product, $qty);
+					if ($result == 0 && $qty > 0) {
+						// No supplier price defined for such a low quantity, fall back on the lowest known price
+						$result = $productFournisseur->find_min_price_product_fournisseur($fk_product);
+					}
+					if ($result > 0) {
 						$buyPrice = $productFournisseur->fourn_unitprice;
 					} elseif ($result < 0) {
 						$this->errors[] = $productFournisseur->error;
@@ -11373,8 +11381,8 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($this->table_element);
-		$sql.= " SET ".implode(', ', $sanitized_tmp);
-		$sql.= " WHERE rowid = ".((int) $this->id);
+		$sql .= " SET ".implode(', ', $sanitized_tmp);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
