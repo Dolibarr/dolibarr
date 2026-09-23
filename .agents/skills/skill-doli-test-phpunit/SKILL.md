@@ -48,6 +48,12 @@ The user request should contain, when available:
 - clean up every object created during the test
 
 
+## Critical Rules (DO NOT VIOLATE)
+
+- Do not use @dataProvider or #[DataProvider] in test methods. Use a simple PHP loop instead. 
+- Do not use the `assertRegExp()`, `assertNotRegExp`, `assertMatchesRegularExpression()`, or `assertDoesNotMatchRegularExpression()` method. Use a simple PHP regex and an assert on result instead.
+
+
 ## Test Location
 
 Locate the most appropriate existing PHPUnit test file in `test/phpunit/`.
