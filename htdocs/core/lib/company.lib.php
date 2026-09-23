@@ -2789,11 +2789,11 @@ function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $a
 	}));
 
 
+	$sql = "";
 	if ($allownull) {
 		$sql .= "(t.fk_soc IS NULL OR ";
 	}
-
-	$sql = ($not ? 'NOT EXISTS' : 'EXISTS');
+	$sql .= ($not ? 'NOT EXISTS' : 'EXISTS');
 	// $socidfield is a column expression of the outer query (e.g. 's.rowid'); it is compared to sc.fk_soc
 	$sql .= ' (SELECT sc.fk_soc FROM '.$db->prefix().'societe_commerciaux as sc WHERE '.$db->sanitize($socidfield).' = sc.fk_soc';
 	if (!empty($userids)) {
