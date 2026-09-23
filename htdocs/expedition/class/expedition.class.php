@@ -2437,6 +2437,7 @@ class Expedition extends CommonObject
 				$line->id				= $objp->rowid;
 				$line->fk_expedition	= $this->id;
 				$line->description      = $objp->description;
+				$line->desc				= $objp->description;
 				$line->qty              = $objp->qty;
 				$line->fk_entrepot      = $objp->fk_entrepot;
 				$line->fk_product       = $objp->fk_product;
