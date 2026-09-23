@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - bills
+DisabledBecauseNotErasable=Deaktiviert, weil es nicht gelöscht werden kann
 InvoiceProForma=Proformarechnung
 InvoiceProFormaAsk=Proformarechnung
 InvoiceProFormaDesc=<b>Proformarechnung</b> entspricht dem Wert der echten Rechnung, wird aber nicht verbucht.
@@ -8,6 +9,7 @@ CardBill=Rechnungskarte
 BillShortStatusValidated=Bestätigt
 BillShortStatusClosedUnpaid=geschlossen
 ValidateBill=Validate Rechnung
+RecurringInvoiceSource=Source recurring invoice
 CreditNote=Gutschrift
 RelatedBill=Verwandte Rechnung
 PaymentTypeShortTRA=Entwurf

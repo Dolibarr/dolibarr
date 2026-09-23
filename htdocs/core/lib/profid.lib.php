@@ -229,7 +229,8 @@ function isValidTinForES($str)
 
 	//Check NIE T
 	if (preg_match('/^[T]{1}/', $str)) {
-		if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $str)) {
+		// A NIE starting with T has no control key to check, so the syntax check is enough.
+		if (preg_match('/^[T]{1}[A-Z0-9]{8}$/', $str)) {
 			return 3;
 		} else {
 			return -3;
@@ -247,6 +248,36 @@ function isValidTinForES($str)
 
 	//Can not be verified
 	return -4;
+}
+
+
+/**
+ *  Return whether the recorded value of a professional id never holds a space, in which case the spaces
+ *  of a value copy/pasted from an official document (SIREN "849 943 618") are only separators.
+ *
+ *  Some prof ids are free text where a space carries a meaning (French idprof4 "RCS Poitiers B 849 943
+ *  618"), so this cannot be assumed of all of them.
+ *
+ *  @param		int			$idprof			1,2,3,4,5,6 (Example: 1=siren, 2=siret, 3=naf, 4=rcs/rm)
+ *  @param		string		$country_code	Country code of the third party (Example: 'FR')
+ *  @return		bool						True if a space can only be a separator
+ *  @since		Dolibarr V24
+ */
+function isProfIdWithoutSpace($idprof, $country_code)
+{
+	// The ids checked by isValidProfIds(): every one of them is checked once its spaces are removed,
+	// which is to say a space is never part of the value itself.
+	$idprofwithoutspace = array(
+		'FR' => array(1, 2),
+		'ES' => array(1),
+		'PT' => array(1),
+		'DZ' => array(1),
+		'BE' => array(1),
+	);
+
+	$country_code = strtoupper((string) $country_code);
+
+	return isset($idprofwithoutspace[$country_code]) && in_array((int) $idprof, $idprofwithoutspace[$country_code], true);
 }
 
 

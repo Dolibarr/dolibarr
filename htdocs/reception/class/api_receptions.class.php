@@ -22,9 +22,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
-// Reception::addline() instantiates CommandeFournisseurLigne and CommandeFournisseurDispatch, and
-// Reception::setDraft()/delete() instantiate CommandeFournisseur through fetch_origin(), without
-// including the classes: nothing else loads them when we are called from the API.
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
@@ -139,9 +137,9 @@ class Receptions extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -300,6 +298,7 @@ class Receptions extends DolibarrApi
 		}
 		return $result;
 	}
+	*/
 
 	/**
 	 * Add a line to a given reception
@@ -343,7 +342,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// A line can only be added while the reception is a draft (no stock movement yet).
+	// A line can only be added while the reception is a draft (no stock movement yet).
 		if ((int) $this->reception->status != Reception::STATUS_DRAFT) {
 			throw new RestException(405, 'Lines can only be added to a draft reception');
 		}
@@ -398,7 +397,7 @@ class Receptions extends DolibarrApi
 		throw new RestException(500, $line->error ? $line->error : implode(', ', $line->errors));
 	}
 
-	/**
+		/**
 	 * Update a line of a given reception
 	 *
 	 * Only the quantity (and optionally the target warehouse) of the line can be changed,

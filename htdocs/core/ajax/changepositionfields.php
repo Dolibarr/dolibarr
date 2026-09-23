@@ -16,7 +16,7 @@
 
 /**
  *       \file       htdocs/core/ajax/changepositionfields.php
- *       \brief      File for we change position of fields on a list page
+ *       \brief      File to change the position of columns in a list page
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -94,4 +94,10 @@ if (!empty($action) && !empty($contextpage)) {
  * View
  */
 
+if ($result < 0) {
+	http_response_code(500);
+}
+
 top_httphead();
+
+// No output

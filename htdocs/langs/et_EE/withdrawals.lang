@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Krediidiülekandega maksmist ootavad palgad
 RefSalary=Palk
 NoSalaryInvoiceToWithdraw=Palka ei ole vaja oodata, kui on vaja '%s'. Taotluse esitamiseks minge palgakaardi vahekaardile '%s'.
 SalaryInvoiceWaitingWithdraw=Krediidiülekandega maksmist ootavad palgad
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

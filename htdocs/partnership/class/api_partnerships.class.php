@@ -20,6 +20,7 @@
 use Luracast\Restler\RestException;
 
 dol_include_once('/partnership/class/partnership.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -116,7 +117,8 @@ class Partnerships extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
-		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
+		// Partnership::$fields only has a 'fk_soc' field when PARTNERSHIP_IS_MANAGED_FOR is not 'member' (it has 'fk_member' instead in that case, see Partnership::__construct())
+		$restrictonsocid = (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 0 : 1;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -137,9 +139,9 @@ class Partnerships extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		if ($sqlfilters) {

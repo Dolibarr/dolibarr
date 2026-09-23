@@ -154,7 +154,11 @@ class DataPolicyCron
 				'picto' => img_picto('', 'contact', 'class="pictofixedwidth"'),
 				'const_delete' => '',
 				'const_anonymize' => 'DATAPOLICY_CONTACT_CLIENT_ANONYMIZE_DELAY',
-				'sql_template' => "SELECT c.rowid FROM ".$sanitized_prefix."socpeople as c INNER JOIN ".$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.client = ".Societe::CUSTOMER." AND s.fournisseur = 0 AND NOT EXISTS (SELECT a.id FROM ".$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM ".$sanitized_prefix."facture as f WHERE f.fk_soc = s.rowid)",
+				'sql_template' => "SELECT c.rowid FROM "
+					.$sanitized_prefix."socpeople as c INNER JOIN "
+					.$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.client = ".Societe::CUSTOMER." AND s.fournisseur = 0 AND NOT EXISTS (SELECT a.id FROM "
+					.$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM "
+					.$sanitized_prefix."facture as f WHERE f.fk_soc = s.rowid)",
 				'class' => 'Contact',
 				'file' => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
 				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'poste' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone_pro' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'geolat' => 0, 'geolong' => 0, 'ip' => '0.0.0.0'),
@@ -169,7 +173,11 @@ class DataPolicyCron
 				'picto' => img_picto('', 'contact', 'class="pictofixedwidth"'),
 				'const_delete' => '',
 				'const_anonymize' => 'DATAPOLICY_CONTACT_PROSPECT_ANONYMIZE_DELAY',
-				'sql_template' => "SELECT c.rowid FROM ".$sanitized_prefix."socpeople as c INNER JOIN ".$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.client = ".Societe::PROSPECT." AND s.fournisseur = 0 AND NOT EXISTS (SELECT a.id FROM ".$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM ".$sanitized_prefix."facture as f WHERE f.fk_soc = s.rowid)",
+				'sql_template' => "SELECT c.rowid FROM "
+					.$sanitized_prefix."socpeople as c INNER JOIN "
+					.$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.client = ".Societe::PROSPECT." AND s.fournisseur = 0 AND NOT EXISTS (SELECT a.id FROM "
+					.$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM "
+					.$sanitized_prefix."facture as f WHERE f.fk_soc = s.rowid)",
 				'class' => 'Contact',
 				'file' => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
 				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'poste' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone_pro' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'geolat' => 0, 'geolong' => 0, 'ip' => '0.0.0.0'),
@@ -184,7 +192,11 @@ class DataPolicyCron
 				'picto' => img_picto('', 'contact', 'class="pictofixedwidth"'),
 				'const_delete' => '',
 				'const_anonymize' => 'DATAPOLICY_CONTACT_PROSPECT_CLIENT_ANONYMIZE_DELAY',
-				'sql_template' => "SELECT c.rowid FROM ".$sanitized_prefix."socpeople as c INNER JOIN ".$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.client = ".Societe::CUSTOMER_AND_PROSPECT." AND s.fournisseur = 0 AND NOT EXISTS (SELECT a.id FROM ".$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM ".$sanitized_prefix."facture as f WHERE f.fk_soc = s.rowid)",
+				'sql_template' => "SELECT c.rowid FROM "
+					.$sanitized_prefix."socpeople as c INNER JOIN "
+					.$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.client = ".Societe::CUSTOMER_AND_PROSPECT." AND s.fournisseur = 0 AND NOT EXISTS (SELECT a.id FROM "
+					.$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM "
+					.$sanitized_prefix."facture as f WHERE f.fk_soc = s.rowid)",
 				'class' => 'Contact',
 				'file' => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
 				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'poste' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone_pro' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'geolat' => 0, 'geolong' => 0, 'ip' => '0.0.0.0'),
@@ -199,7 +211,11 @@ class DataPolicyCron
 				'picto' => img_picto('', 'contact', 'class="pictofixedwidth"'),
 				'const_delete' => '',
 				'const_anonymize' => 'DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT_ANONYMIZE_DELAY',
-				'sql_template' => "SELECT c.rowid FROM ".$sanitized_prefix."socpeople as c INNER JOIN ".$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.client = ".Societe::NO_CUSTOMER." AND s.fournisseur = 0 AND NOT EXISTS (SELECT a.id FROM ".$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM ".$sanitized_prefix."facture as f WHERE f.fk_soc = s.rowid)",
+				'sql_template' => "SELECT c.rowid FROM "
+					.$sanitized_prefix."socpeople as c INNER JOIN "
+					.$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.client = ".Societe::NO_CUSTOMER." AND s.fournisseur = 0 AND NOT EXISTS (SELECT a.id FROM "
+					.$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM "
+					.$sanitized_prefix."facture as f WHERE f.fk_soc = s.rowid)",
 				'class' => 'Contact',
 				'file' => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
 				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'poste' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone_pro' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'geolat' => 0, 'geolong' => 0, 'ip' => '0.0.0.0'),
@@ -216,7 +232,11 @@ class DataPolicyCron
 				'const_anonymize' => 'DATAPOLICY_CONTACT_FOURNISSEUR_ANONYMIZE_DELAY',
 				// Same as tiers_fournisseur above: a contact attached to a pure supplier
 				// must be checked against llx_facture_fourn, not llx_facture (#38788).
-				'sql_template' => "SELECT c.rowid FROM ".$sanitized_prefix."socpeople as c INNER JOIN ".$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.fournisseur = 1 AND NOT EXISTS (SELECT a.id FROM ".$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM ".$sanitized_prefix."facture_fourn as f WHERE f.fk_soc = s.rowid)",
+				'sql_template' => "SELECT c.rowid FROM "
+					.$sanitized_prefix."socpeople as c INNER JOIN "
+					.$sanitized_prefix."societe as s ON s.rowid = c.fk_soc WHERE c.entity = __ENTITY__ AND c.tms < DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH) AND s.fournisseur = 1 AND NOT EXISTS (SELECT a.id FROM "
+					.$sanitized_prefix."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(__NOW__, INTERVAL __DELAY__ MONTH)) AND NOT EXISTS (SELECT f.rowid FROM "
+					.$sanitized_prefix."facture_fourn as f WHERE f.fk_soc = s.rowid)",
 				'class' => 'Contact',
 				'file' => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
 				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'poste' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone_pro' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'geolat' => 0, 'geolong' => 0, 'ip' => '0.0.0.0'),
@@ -241,7 +261,11 @@ class DataPolicyCron
 				'sql_template' => $sqltemplate,
 				'class' => 'Adherent',
 				'file' => DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php',
-				'anonymize_fields' => array('lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---', 'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => dol_mktime(0, 0, 0, 1, 1, 1900), 'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0', 'note_private' => '---', 'note_public' => '---', 'statut' => 0), // Force status to "canceled"
+				'anonymize_fields' => array(
+					'lastname' => 'MAKEANONYMOUS', 'firstname' => 'MAKEANONYMOUS', 'societe' => '---', 'address' => '---', 'town' => '---', 'zip' => '---',
+					'phone' => '---', 'phone_perso' => '---', 'phone_mobile' => '---', 'email' => 'anonymous+__ID__@example.com', 'birth' => dol_mktime(0, 0, 0, 1, 1, 1900),
+					'photo' => '', 'url' => '---', 'fax' => '---', 'socialnetworks' => [], 'ip' => '0.0.0.0', 'note_private' => '---', 'note_public' => '---', 'statut' => 0
+				), // Force status to "canceled"
 				'call_params' => array(
 					'delete' => array('user'),   // $object->delete($user)
 					'update' => array('user')    // $object->update($user)

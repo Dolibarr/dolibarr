@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Τιμή για PBX SITE
 PAYBOX_PBX_RANG=Τιμή για PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Τιμή για PBX ID
 PAYBOX_HMAC_KEY=Κλειδί HMAC
+FeatureNotUsedAccordingtoSetup=Η λειτουργία δεν χρησιμοποιείται σύμφωνα με τη ρύθμιση %s σας

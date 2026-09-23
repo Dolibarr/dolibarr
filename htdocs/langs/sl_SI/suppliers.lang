@@ -5,7 +5,6 @@ SupplierInvoices=Prejeti računi
 ShowSupplierInvoice=Prikaži račun dobavitelja
 NewSupplier=Nov dobavitelj
 NewSupplierInvoice = Nov prejeti račun
-History=Zgodovina
 ListOfSuppliers=Seznam dobaviteljev
 ShowSupplier=Prikaži dobavitelja
 BuyingPriceMin=Najboljša nakupna cena

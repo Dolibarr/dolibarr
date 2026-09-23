@@ -142,7 +142,7 @@ if ($action == 'remove_file' && $permissiontoadd) {
 		$filetodelete = GETPOST('file', 'alpha');
 		$file = $upload_dir.'/'.$filetodelete;
 		$dirthumb = dirname($file).'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$ret = dol_delete_file($file, 1, 0, 0, $object);
 		if ($ret) {
 			// If it exists, remove thumb.
 			$regs = array();

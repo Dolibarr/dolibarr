@@ -137,7 +137,10 @@ if ($conf->use_javascript_ajax) {
 	 * @var string $badgeStatus6
 	 * @var string $badgeStatus8
 	 */
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+	if ($theme_vars_file) {
+		include $theme_vars_file;
+	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();

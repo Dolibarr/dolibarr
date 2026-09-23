@@ -310,7 +310,7 @@ $coldisplay++;
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-		print '<input type="text" class="flat right width50" name="qty" id="qty" value="'.(GETPOSTISSET('qty') ? GETPOST('qty') : $line->qty).'"';
+		print '<input type="text" class="flat right width50" name="qty" id="qty" value="'.(GETPOSTISSET('qty') ? GETPOST('qty') : price($line->qty, 0, '', 0, 0)).'"';
 		if ($situationinvoicelinewithparent) {	// Do not allow editing during a situation cycle
 			print ' readonly';
 		}
@@ -352,7 +352,7 @@ $coldisplay++;
 	// Discount
 	$coldisplay++;
 	if (($line->info_bits & 2) != 2) {
-		print '<input type="text" class="flat right width40" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : ($line->remise_percent ? $line->remise_percent : '')).'"';
+		print '<input type="text" class="flat right width40" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : ($line->remise_percent ? price($line->remise_percent, 0, '', 0, 0) : '')).'"';
 		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
@@ -463,8 +463,8 @@ $coldisplay++;
 		?>
 		function prefill_service_dates()
 		{
-			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
-			$('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, 'day')); ?>").trigger('change');
+			$('#date_start').val(<?php echo "'".dol_escape_js(dol_print_date($date_start_prefill, 'day'))."'"; ?>).trigger('change');
+			$('#date_end').val(<?php echo "'".dol_escape_js(dol_print_date($date_end_prefill, 'day'))."'"; ?>).trigger('change');
 
 			return false; // Prevent default link behaviour (which is go to href URL)
 		}
@@ -558,13 +558,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		var ratejs = price2numjs(rate.val());
 		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("rateMustBeNumeric"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
@@ -670,7 +670,7 @@ jQuery(document).ready(function()
 				<?php if ($line->fk_fournprice > 0) { ?>
 				if (this.id == <?php echo $line->fk_fournprice; ?>) {
 					options += ' selected';
-					$("#buying_price").val(this.price);
+					$("#buying_price").val(pricejs(this.price, 'MU'));
 					trouve = true;
 				}
 				<?php } ?>
@@ -687,7 +687,7 @@ jQuery(document).ready(function()
 			$("#fournprice").change(function() {
 				var selval = $(this).find('option:selected').attr("price");
 				if (selval)
-					$("#buying_price").val(selval).hide();
+					$("#buying_price").val(pricejs(selval, 'MU')).hide();
 				else
 					$('#buying_price').show();
 			});

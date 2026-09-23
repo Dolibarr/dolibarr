@@ -1,0 +1,12 @@
+# What kind of file a path is. One rule per line, "<kind> <shell glob>", first match wins, so the
+# narrow rules come before the wide ones. Read by .github/actions/changed, which turns the files of
+# a pull request into facts; what a workflow does with those facts is its own business.
+docs		*.md
+docs		.agents/*
+ci		.github/*
+build		dev/*
+langs		*/langs/*
+fixtures	*/test/*/fixtures/*
+fixtures	*/test/samples/*
+sql		*/sql/*
+code		*

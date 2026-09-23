@@ -442,7 +442,7 @@ if ($id > 0) {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'money-bill-alt', 0, '', '', 0, '', 1);
+		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'money-bill-alt', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 
 		// Loan card
 		$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';

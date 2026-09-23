@@ -193,7 +193,7 @@ if ($object->id) {
 
 	if ($action != 'ajout_photo' && $user->hasRight('categorie', 'creer')) {
 		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
+			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;token='.newToken().'&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip hideonsmartphone" href="#">';
@@ -248,7 +248,7 @@ if ($object->id) {
 					$filename = $obj['photo'];
 				}
 
-				// Nom affiche
+				// Displayed name
 				$viewfilename = $obj['photo'];
 
 				// Taille de l'image
@@ -278,7 +278,7 @@ if ($object->id) {
 				}
 			}
 
-			// Ferme tableau
+			// Close array
 			while ($nbphoto % $nbbyrow) {
 				print '<td width="'.ceil(100 / $nbbyrow).'%">&nbsp;</td>';
 				$nbphoto++;

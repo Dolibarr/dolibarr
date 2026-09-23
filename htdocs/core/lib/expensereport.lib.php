@@ -161,7 +161,7 @@ function expensereport_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/expensereport_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'expensereport'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['expensereport']['count'];
 	if ($nbExtrafields > 0) {
