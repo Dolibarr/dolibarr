@@ -182,6 +182,11 @@ ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_entity
 ALTER TABLE llx_user ADD COLUMN country_job_id integer DEFAULT NULL;
 ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
 
+-- SEPA files: category purpose (PmtTpInf/CtgyPurp) and local instrument (PmtTpInf/LclInstrm) per bank account.
+-- Allowed codes are the ISO 20022 lists kept as constants of the Account class (Account::SEPA_CATEGORY_PURPOSES, Account::SEPA_LOCAL_INSTRUMENTS).
+ALTER TABLE llx_bank_account ADD COLUMN sepa_category_purpose varchar(4) DEFAULT 'CORE' AFTER pti_in_ctti;
+ALTER TABLE llx_bank_account ADD COLUMN sepa_local_instrument varchar(4) DEFAULT 'CORE' AFTER sepa_category_purpose;
+
 -- end of migration - nothing after this line
 
 -- Variants: allow standard import/export of variants (attributes, values, combinations,
