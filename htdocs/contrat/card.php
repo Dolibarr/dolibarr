@@ -2547,7 +2547,7 @@ if (isModEnabled('margin') && $action == 'editline') {
 				if (fournprice > 0) {
 					if (this.id == fournprice) {
 					  options += ' selected';
-					  $("#buying_price").val(this.price);
+					  $("#buying_price").val(pricejs(this.price, 'MU'));
 					  trouve = true;
 					}
 				}
@@ -2565,7 +2565,7 @@ if (isModEnabled('margin') && $action == 'editline') {
 			  $("#fournprice").change(function() {
 				var selval = $(this).find('option:selected').attr("price");
 				if (selval)
-				  $("#buying_price").val(selval).hide();
+				  $("#buying_price").val(pricejs(selval, 'MU')).hide();
 				else
 				  $('#buying_price').show();
 			  });
