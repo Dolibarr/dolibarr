@@ -1161,3 +1161,6 @@ body.ai-fullpage {
 .ai-history-meta { font-size: .8em; opacity: .55; white-space: nowrap; }
 .ai-history-del { border: 0; background: none; cursor: pointer; font-size: 1.05em; opacity: .5; }
 .ai-history-del:hover { opacity: 1; color: #c00; }
+.ai-history-ren { border: 0; background: none; cursor: pointer; font-size: .85em; opacity: .5; color: inherit; }
+.ai-history-ren:hover { opacity: 1; color: #2c62ac; }
+#ai-history-panel .ai-sidebar-rename { flex: 1 1 auto; min-width: 0; }

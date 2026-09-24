@@ -1525,7 +1525,19 @@ export function initAiAssistant(container) {
                     row.className = 'ai-history-item';
                     row.innerHTML = '<span class="ai-history-title">' + escapeHtml(c.title || '…') + '</span>'
                         + '<span class="ai-history-meta">' + escapeHtml(c.date) + ' · ' + c.nb + '</span>'
-                        + '<button type="button" class="ai-history-del" title="' + t('Cancel') + '">&times;</button>';
+                        + '<button type="button" class="ai-history-ren" title="' + escapeHtml(t('AIHistoryRename')) + '"><i class="fa fa-pen"></i></button>'
+                        + '<button type="button" class="ai-history-del" title="' + escapeHtml(t('AIHistoryDelete')) + '">&times;</button>';
+                    row.querySelector('.ai-history-ren').onclick = (e2) => {
+                        e2.stopPropagation();
+                        startRenameRow(row, c, '.ai-history-title', (saved) => {
+                            // Keep the panel open: put the title span back with the new text
+                            const inp = row.querySelector('input');
+                            const span = document.createElement('span');
+                            span.className = 'ai-history-title';
+                            span.textContent = saved || c.title || '…';
+                            if (inp) inp.replaceWith(span);
+                        });
+                    };
                     row.querySelector('.ai-history-del').onclick = (e2) => {
                         e2.stopPropagation();
                         chatHistoryApi({ action: 'delete', id: c.id }).then(() => { row.remove(); if (conversationId === c.id) setConversationId(0); });
@@ -1539,7 +1551,7 @@ export function initAiAssistant(container) {
         // Any click outside closes the panel
         document.addEventListener('click', (ev) => {
             const panel = container.querySelector('#ai-history-panel');
-            if (panel && !panel.contains(ev.target) && ev.target !== historyBtn) panel.remove();
+            if (panel && !panel.contains(ev.target) && ev.target !== historyBtn && !panel.querySelector('input')) panel.remove();
         });
     }
 
@@ -1578,6 +1590,30 @@ export function initAiAssistant(container) {
         card.style.top = top + 'px';
         previewEl = card;
     }
+    // Rename in place (column and popover panel): the title span turns into an
+    // input; Enter / blur saves through the ownership-checked 'rename' action,
+    // Esc cancels; onDone(savedTitle|null) lets the caller refresh its list.
+    function startRenameRow(row, c, titleSelector, onDone) {
+        hideConversationPreview();
+        const span = row.querySelector(titleSelector);
+        if (!span || row.querySelector('input')) return;
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.className = 'ai-sidebar-rename'; inp.value = c.title || ''; inp.maxLength = 250;
+        span.replaceWith(inp);
+        inp.focus(); inp.select();
+        let done = false;
+        const finish = (save) => {
+            if (done) return; done = true;
+            const v = inp.value.trim();
+            if (save && v && v !== c.title) {
+                chatHistoryApi({ action: 'rename', id: c.id, title: v }).then((r) => { c.title = (r && r.title) || v; onDone(c.title); }).catch(() => onDone(null));
+            } else { onDone(null); }
+        };
+        inp.addEventListener('keydown', (ek) => { if (ek.key === 'Enter') { ek.preventDefault(); finish(true); } else if (ek.key === 'Escape') { finish(false); } });
+        inp.addEventListener('blur', () => finish(true));
+        inp.addEventListener('click', (ec) => ec.stopPropagation());
+    }
+
     function attachConversationPreview(row, c) {
         row.addEventListener('mouseenter', () => {
             clearTimeout(previewTimer);
@@ -1627,29 +1663,7 @@ export function initAiAssistant(container) {
                     row.innerHTML = '<span class="ai-sidebar-title">' + escapeHtml(c.title || '…') + '</span>'
                         + '<button type="button" class="ai-sidebar-act ai-sidebar-ren" title="' + escapeHtml(t('AIHistoryRename')) + '"><i class="fa fa-pen"></i></button>'
                         + '<button type="button" class="ai-sidebar-act ai-sidebar-del" title="' + escapeHtml(t('AIHistoryDelete')) + '"><i class="fa fa-trash-alt"></i></button>';
-                    // Rename in place: the title turns into an input; Enter / blur
-                    // saves (server re-checks ownership and cleans the text), Esc cancels.
-                    const startRename = (e2) => {
-                        e2.stopPropagation();
-                        hideConversationPreview();
-                        const span = row.querySelector('.ai-sidebar-title');
-                        if (!span || row.querySelector('input')) return;
-                        const inp = document.createElement('input');
-                        inp.type = 'text'; inp.className = 'ai-sidebar-rename'; inp.value = c.title || ''; inp.maxLength = 250;
-                        span.replaceWith(inp);
-                        inp.focus(); inp.select();
-                        let done = false;
-                        const finish = (save) => {
-                            if (done) return; done = true;
-                            const v = inp.value.trim();
-                            if (save && v && v !== c.title) {
-                                chatHistoryApi({ action: 'rename', id: c.id, title: v }).then((r) => { c.title = (r && r.title) || v; renderSidebar(); }).catch(() => renderSidebar());
-                            } else { renderSidebar(); }
-                        };
-                        inp.addEventListener('keydown', (ek) => { if (ek.key === 'Enter') { ek.preventDefault(); finish(true); } else if (ek.key === 'Escape') { finish(false); } });
-                        inp.addEventListener('blur', () => finish(true));
-                        inp.addEventListener('click', (ec) => ec.stopPropagation());
-                    };
+                    const startRename = (e2) => { e2.stopPropagation(); startRenameRow(row, c, '.ai-sidebar-title', () => renderSidebar()); };
                     row.querySelector('.ai-sidebar-ren').onclick = startRename;
                     row.addEventListener('dblclick', startRename);
                     row.querySelector('.ai-sidebar-del').onclick = (e2) => {
