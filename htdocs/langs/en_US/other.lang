@@ -522,6 +522,7 @@ AIHistoryYesterday=Yesterday
 AIHistoryLast7Days=Previous 7 days
 AIHistoryOlder=Older
 AIHistoryDelete=Delete this conversation
+AIHistoryRename=Rename this conversation
 AIHideConversations=Hide the conversations column
 AIShowConversations=Show the conversations column
 AIYou=You

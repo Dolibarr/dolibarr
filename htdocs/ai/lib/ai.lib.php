@@ -823,6 +823,7 @@ function getAiChatAssistantConfig()
 		'AIHistoryLast7Days',
 		'AIHistoryOlder',
 		'AIHistoryDelete',
+		'AIHistoryRename',
 		'AIHideConversations',
 		'AIShowConversations',
 		'AIYou',
@@ -1005,6 +1006,8 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 		$out .= '</div>';
 		$out .= '<div id="ai-sidebar-list" class="ai-sidebar-list"><div class="opacitymedium ai-sidebar-empty">…</div></div>';
 		$out .= '</aside>';
+		// Shown only while the column is collapsed: reopens it from the left edge
+		$out .= '<button type="button" id="ai-sidebar-expand" class="ai-sidebar-expand" title="'.dol_escape_htmltag($langs->trans("AIShowConversations")).'"><i class="fa fa-angle-double-right"></i></button>';
 		$out .= '<div class="ai-chat-main">';
 	}
 

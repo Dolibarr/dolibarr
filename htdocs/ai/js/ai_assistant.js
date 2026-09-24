@@ -1625,7 +1625,33 @@ export function initAiAssistant(container) {
                     const row = document.createElement('div');
                     row.className = 'ai-sidebar-item' + (c.id === conversationId ? ' active' : '');
                     row.innerHTML = '<span class="ai-sidebar-title">' + escapeHtml(c.title || '…') + '</span>'
-                        + '<button type="button" class="ai-sidebar-del" title="' + escapeHtml(t('AIHistoryDelete')) + '"><i class="fa fa-trash-alt"></i></button>';
+                        + '<button type="button" class="ai-sidebar-act ai-sidebar-ren" title="' + escapeHtml(t('AIHistoryRename')) + '"><i class="fa fa-pen"></i></button>'
+                        + '<button type="button" class="ai-sidebar-act ai-sidebar-del" title="' + escapeHtml(t('AIHistoryDelete')) + '"><i class="fa fa-trash-alt"></i></button>';
+                    // Rename in place: the title turns into an input; Enter / blur
+                    // saves (server re-checks ownership and cleans the text), Esc cancels.
+                    const startRename = (e2) => {
+                        e2.stopPropagation();
+                        hideConversationPreview();
+                        const span = row.querySelector('.ai-sidebar-title');
+                        if (!span || row.querySelector('input')) return;
+                        const inp = document.createElement('input');
+                        inp.type = 'text'; inp.className = 'ai-sidebar-rename'; inp.value = c.title || ''; inp.maxLength = 250;
+                        span.replaceWith(inp);
+                        inp.focus(); inp.select();
+                        let done = false;
+                        const finish = (save) => {
+                            if (done) return; done = true;
+                            const v = inp.value.trim();
+                            if (save && v && v !== c.title) {
+                                chatHistoryApi({ action: 'rename', id: c.id, title: v }).then((r) => { c.title = (r && r.title) || v; renderSidebar(); }).catch(() => renderSidebar());
+                            } else { renderSidebar(); }
+                        };
+                        inp.addEventListener('keydown', (ek) => { if (ek.key === 'Enter') { ek.preventDefault(); finish(true); } else if (ek.key === 'Escape') { finish(false); } });
+                        inp.addEventListener('blur', () => finish(true));
+                        inp.addEventListener('click', (ec) => ec.stopPropagation());
+                    };
+                    row.querySelector('.ai-sidebar-ren').onclick = startRename;
+                    row.addEventListener('dblclick', startRename);
                     row.querySelector('.ai-sidebar-del').onclick = (e2) => {
                         e2.stopPropagation();
                         chatHistoryApi({ action: 'delete', id: c.id }).then(() => {
@@ -1653,6 +1679,8 @@ export function initAiAssistant(container) {
         if (newBtn) newBtn.addEventListener('click', () => startNewConversation());
         const collapseBtn = sidebar.querySelector('#ai-sidebar-collapse');
         if (collapseBtn) collapseBtn.addEventListener('click', () => setSidebarCollapsed(true));
+        const expandBtn = container.querySelector('#ai-sidebar-expand');
+        if (expandBtn) expandBtn.addEventListener('click', () => setSidebarCollapsed(false));
         let stored = null;
         try { stored = localStorage.getItem('aiSidebarCollapsed'); } catch (e) { stored = null; }
         setSidebarCollapsed(stored === null ? (window.innerWidth <= 900) : stored === '1');

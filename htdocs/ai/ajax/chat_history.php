@@ -24,6 +24,7 @@
  * Storage is strictly per user and separate from the model context: reopening
  * a conversation restores the bubbles, but only the messages the user PINNED
  * are ever sent back to the model (see the context pins in ai_assistant.js).
+ * Actions: list, load, save, pin, rename, delete - every one is ownership-checked.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -191,6 +192,19 @@ try {
 			throw new Exception($db->lasterror());
 		}
 		$out['ok'] = 1;
+	} elseif ($action === 'rename') {
+		$convid = (int) ($input['id'] ?? 0);
+		if (!aiChatOwnsConversation($db, $user, $convid)) {
+			throw new Exception('Conversation not found');
+		}
+		// Plain text only, one line, within the column size; an empty title is refused
+		$title = dol_trunc(trim(preg_replace('/\s+/', ' ', dol_string_nohtmltag((string) ($input['title'] ?? ''), 0))), 250, 'right', 'UTF-8', 1);
+		if ($title === '') {
+			throw new Exception('Empty title');
+		}
+		$db->query("UPDATE ".$db->prefix()."ai_chat_conversation SET title = '".$db->escape($title)."' WHERE rowid = ".((int) $convid));
+		$out['ok'] = 1;
+		$out['title'] = $title;
 	} elseif ($action === 'delete') {
 		$convid = (int) ($input['id'] ?? 0);
 		if (!aiChatOwnsConversation($db, $user, $convid)) {
