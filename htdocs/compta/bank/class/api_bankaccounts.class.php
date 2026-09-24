@@ -22,6 +22,8 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/bankcateg.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 /**
  * API class for accounts
@@ -750,6 +752,122 @@ class BankAccounts extends DolibarrApi
 				'code' => 200,
 				'message' => "account line $line_id deleted"
 			)
+		);
+	}
+
+	/**
+	 * Reconcile account lines with a bank statement
+	 *
+	 * All lines are checked before any change and updated in one transaction, so a statement is
+	 * never left half reconciled. A line already reconciled with the same statement is accepted,
+	 * so the call can be replayed. A line reconciled with another statement is refused.
+	 *
+	 * @param int    $id            ID of account
+	 * @param string $num_releve    Bank statement number {@from body} {@required true}
+	 * @param int[]  $lines         IDs of the account lines to reconcile {@from body} {@required true} {@type int} {@min 1}
+	 * @param int    $conciliated   1=Set lines as reconciled, 0=Only save the statement number {@from body}
+	 * @param int    $catid         ID of a bank category to add to the lines {@from body}
+	 * @return array
+	 * @phan-return array{num_releve:string,conciliated:int,lines:int[]}
+	 * @phpstan-return array{num_releve:string,conciliated:int,lines:int[]}
+	 *
+	 * @throws RestException 400 Bad statement number or category, empty list of lines or line of another account
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Account or line not found
+	 * @throws RestException 409 Line already reconciled with another statement
+	 * @throws RestException 503 Error when updating a line
+	 *
+	 * @url POST {id}/reconcile
+	 *
+	 * @since 25.0.0 Initial implementation
+	 */
+	public function reconcile($id, $num_releve, $lines, $conciliated = 1, $catid = 0)
+	{
+		global $langs;
+
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire') || !DolibarrApiAccess::$user->hasRight('banque', 'consolidate')) {
+			throw new RestException(403);
+		}
+
+		$account = new Account($this->db);
+		$result = $account->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'account not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('banque', $account->id, 'bank_account&bank_account')) {
+			throw new RestException(403, 'Access to this bank account not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if ($account->canBeConciliated() <= 0) {
+			throw new RestException(400, 'Account can not be reconciled (reconciliation disabled, cash account or closed account)');
+		}
+
+		$num_releve = trim(sanitizeVal($num_releve));
+		if ($num_releve === '' || dol_strlen($num_releve) > 50) {
+			throw new RestException(400, 'num_releve field missing or longer than 50 characters');
+		}
+		if (getDolGlobalString('BANK_STATEMENT_REGEX_RULE') && !preg_match('/'.getDolGlobalString('BANK_STATEMENT_REGEX_RULE').'/', $num_releve)) {
+			$langs->load("errors");
+			throw new RestException(400, $langs->transnoentitiesnoconv("ErrorBankStatementNameMustFollowRegex", getDolGlobalString('BANK_STATEMENT_REGEX_RULE')));
+		}
+		if (!is_array($lines) || empty($lines)) {
+			throw new RestException(400, 'lines field missing or empty');
+		}
+		$conciliated = empty($conciliated) ? 0 : 1;
+		$catid = (int) $catid;
+		if ($catid > 0) {
+			$bankcateg = new BankCateg($this->db);
+			if ($bankcateg->fetch($catid) <= 0 || empty($bankcateg->id)) {
+				throw new RestException(400, 'Bank category '.$catid.' not found');
+			}
+		}
+		$categorie = new Categorie($this->db);
+
+		// Check every line before the first write
+		$lineids = array();
+		$toupdate = array();
+		foreach (array_unique(array_map('intval', $lines)) as $line_id) {
+			$accountLine = new AccountLine($this->db);
+			if ($line_id <= 0 || $accountLine->fetch($line_id) <= 0) {
+				throw new RestException(404, 'account line '.$line_id.' not found');
+			}
+			if ($accountLine->fk_account != $id) {
+				throw new RestException(400, 'Line '.$line_id.' does not belong to this account');
+			}
+			if ($accountLine->rappro && (string) $accountLine->num_releve !== $num_releve) {
+				throw new RestException(409, 'Line '.$line_id.' is already reconciled with statement '.$accountLine->num_releve.', cannot reconcile it with '.$num_releve);
+			}
+			$lineids[] = $line_id;
+			if (!$accountLine->rappro) {
+				// update_conciliation() inserts the category link without checking it already exists
+				$linecat = 0;
+				if ($catid > 0) {
+					$linecats = $categorie->containing($line_id, Categorie::TYPE_BANK_LINE, 'id');
+					if (!is_array($linecats)) {
+						throw new RestException(503, 'Error when reading categories of account line '.$line_id);
+					}
+					$linecat = in_array($catid, $linecats) ? 0 : $catid;
+				}
+				$toupdate[] = array($accountLine, $linecat);
+			}
+		}
+
+		$this->db->begin();
+		foreach ($toupdate as list($accountLine, $linecat)) {
+			$accountLine->num_releve = $num_releve;
+			if ($accountLine->update_conciliation(DolibarrApiAccess::$user, $linecat, $conciliated) < 0) {
+				$errors = array_merge(array($accountLine->error, $this->db->lasterror()), $accountLine->errors);
+				$this->db->rollback();
+				throw new RestException(503, 'Error when reconciling account line '.$accountLine->id, $errors);
+			}
+		}
+		if (!$this->db->commit()) {
+			throw new RestException(503, 'Error when reconciling account lines: '.$this->db->lasterror());
+		}
+
+		return array(
+			'num_releve' => $num_releve,
+			'conciliated' => $conciliated,
+			'lines' => $lineids
 		);
 	}
 

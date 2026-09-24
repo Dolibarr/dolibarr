@@ -948,6 +948,17 @@ abstract class CommonObject
 	 */
 	public $isextrafieldmanaged = 0;
 
+	/**
+	 * @var array{paths:string[],names:string[],mimes:string[]}
+	 *
+	 * For experimental feature: MAIN_COPY_FILE_IN_EVENT_AUTO
+	 * Array of pointer to attachedfiles, set by actions_sendmails.inc.php when using "Send email" button
+	 * so list of sent files are automatically propagated to triggers, so the trigger modAgenda_ActionsAuto
+	 * can save the files sent into the directory of object, and link them to the agenda event.
+	 */
+	public $attachedfiles;
+
+
 
 	// No constructor as it is an abstract class
 

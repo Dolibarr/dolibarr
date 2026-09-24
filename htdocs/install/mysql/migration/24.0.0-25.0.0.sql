@@ -161,6 +161,7 @@ ALTER TABLE llx_actioncomm ADD UNIQUE INDEX uk_actioncomm_uid (uid);
 -- Add contract type field (0=customer, 1=supplier)
 ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_ext;
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_warehouse integer DEFAULT NULL;
 -- Table to persist the data an online payment return page needs, server side, instead of relying
 -- on the PHP session, which is lost when the browser drops the cookie on the cross site return.
 create table llx_onlinepayment_session
@@ -270,6 +271,11 @@ ALTER TABLE llx_paiement_facture ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_ai_request_log ADD COLUMN tokens_input integer;
 ALTER TABLE llx_ai_request_log ADD COLUMN tokens_output integer;
 ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
+
+-- Link an event attendee to the individual contact represented by the registration.
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_contact integer AFTER fk_soc;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_contact (fk_contact);
+
 
 ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;
 
