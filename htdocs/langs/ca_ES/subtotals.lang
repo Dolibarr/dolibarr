@@ -4,51 +4,51 @@
 # Global
 #
 Subtotal=Subtotals
-SubTotalModuleDesc=Subtotal and title lines for certain documents
+SubTotalModuleDesc=Subtotals i línies de títol per a certs documents
 #
 # Admin
 #
-SubtotalSetup=Subtotals module setup
-MaxSubtotalLevel=Maximum level
-SubtotalLineBackColor=Level %s lines background color
-NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
+SubtotalSetup=Configuració del mòdul de subtotals
+MaxSubtotalLevel=Nivell màxim
+SubtotalLineBackColor=Color de fons de les línies de nivell %s
+NotSupportedByAllPDF=Funcionarà amb PDF més nous però no amb els antics %s
 
 #
 # Card
 #
-AddTitleLine=Add title line
-AddSubtotalLine=Add subtotal line
-TitleNeedDesc=You must enter a valid description to create a title.
-TitleAddedLevelTooHigh=Added title level too high (added with level %s instead).
-TitleEditedLevelTooHigh=Edited title level too high (edited with level %s instead).
-DeleteSubtotalLine=Delete subtotal line
-ConfirmDeleteSubtotalLine=Are you sure you want to delete this subtotal line?
-DeleteTitleLine=Delete title line
-ConfirmDeleteTitleLine=Are you sure you want to delete this title line?
-DeleteCorrespondingSubtotalLine=Delete the corresponding subtotal line ?
-SubtotalLevel=Level %s
-SubtotalLineDesc=Line description
-SubtotalLineLevel=Line level
-ShowUPOnPDF=Show unit price on PDF
-ShowTotalExludingVATOnPDF=Show the total excluding VAT on the PDF
-ForcePageBreak=Force page break before title
-NoTitleError=You have no title line or they already all have a corresponding subtotal line
-CorrespondingTitleLine=Corresponding title line
-SelectVATRate=Select VAT rate
-EnterRemisePercent=Enter discount percent
-ApplyVATForBlock=Apply VAT for this block
-ApplyDiscountForBlock=Apply discount for this block
-TitleUnderSameLevelSTLine=Title of the same level must be under the previous title's subtotal line.
-TitleUnderSameLevelOrGreater=Title must be under a title of the same level or greater.
-TitleAfterStLineOfSameLevelTitle=Title must be after the subtotal line of the previous title.
-PreviousTitleLevelTooHigh=Previous title is two level or more greater than moved line.
-STLineUnderCorrespondingTitleDesc=Subtotal line must be under a title with the same level that has the same description.
-STLineUnderCorrespondingTitle=Subtotal line must be under a title of the same level and the same description.
-STLineUnderTitle=Subtotal line must be under its title
-UnsupportedModuleError=You can't add a subtotals line in unsupported module
-CorrespondingTitleNotFound=The corresponding title was not found
+AddTitleLine=Afegeix una línia de títol
+AddSubtotalLine=Afegeix una línia de subtotal
+TitleNeedDesc=Heu d'introduir una descripció vàlida per a crear un títol.
+TitleAddedLevelTooHigh=El nivell de títol afegit és massa alt (s'ha afegit amb el nivell %s en comptes d'això).
+TitleEditedLevelTooHigh=El títol editat té un nivell massa alt (editat amb el nivell %s en comptes d'això).
+DeleteSubtotalLine=Suprimeix la línia del subtotal
+ConfirmDeleteSubtotalLine=Esteu segur que voleu suprimir aquesta línia de subtotal?
+DeleteTitleLine=Suprimeix la línia de títol
+ConfirmDeleteTitleLine=Esteu segur que voleu suprimir aquesta línia de títol?
+DeleteCorrespondingSubtotalLine=Voleu eliminar la línia de subtotal corresponent?
+SubtotalLevel=Nivell %s
+SubtotalLineDesc=Descripció de la línia
+SubtotalLineLevel=Nivell de línia
+ShowUPOnPDF=Mostra el preu unitari en PDF
+ShowTotalExludingVATOnPDF=Mostra el total sense IVA al PDF
+ForcePageBreak=Forçar salt de pàgina abans del títol
+NoTitleError=No teniu cap línia de títol o totes ja tenen una línia de subtotal corresponent.
+CorrespondingTitleLine=Línia de títol corresponent
+SelectVATRate=Selecciona el tipus d'IVA
+EnterRemisePercent=Introduïu el percentatge de descompte
+ApplyVATForBlock=Aplica l'IVA per a aquest bloc
+ApplyDiscountForBlock=Aplica el descompte per a aquest bloc
+TitleUnderSameLevelSTLine=El títol del mateix nivell ha d'estar per sota de la línia de subtotal del títol anterior.
+TitleUnderSameLevelOrGreater=El títol ha de ser inferior a un títol del mateix nivell o superior.
+TitleAfterStLineOfSameLevelTitle=El títol ha d'anar després de la línia de subtotal del títol anterior.
+PreviousTitleLevelTooHigh=El títol anterior és dos nivells o més superior a la línia desplaçada.
+STLineUnderCorrespondingTitleDesc=La línia del subtotal ha d'estar sota un títol amb el mateix nivell que tingui la mateixa descripció.
+STLineUnderCorrespondingTitle=La línia de subtotal ha d'estar sota un títol del mateix nivell i la mateixa descripció.
+STLineUnderTitle=La línia del subtotal ha d'estar sota el seu títol
+UnsupportedModuleError=No es pot afegir una línia de subtotals en un mòdul no compatible.
+CorrespondingTitleNotFound=No s'ha trobat el títol corresponent
 
 #
 # PDF
 #
-SubtotalOf=Subtotal of %s:
+SubtotalOf=Subtotal de %s:

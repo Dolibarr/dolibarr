@@ -662,6 +662,11 @@ function quickMemoIntefaceActionUpdateNote($jsonResponse)
 		return false;
 	}
 
+	if ($user->id != $memo->fk_user_creat && $memo->private) {
+		$jsonResponse->msg = $langs->trans('QuickMemoCantChangeThisPrivateNote');
+		return false;
+	}
+
 	$memo->quick_note = GETPOST("note", "alphanohtml");
 	$memo->tms = dol_now();
 	$memo->fk_user_modif = $user->id;

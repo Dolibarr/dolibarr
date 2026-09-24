@@ -34,5 +34,6 @@ ResourceTypeCode=Ressursi tüübi kood
 ImportDataset_resource_1=Ressursid
 ErrorResourcesAlreadyInUse=Mõned ressursid on kasutusel
 ErrorResourceUseInEvent=%s kasutusel %s sündmuse juures
-MaxUsers=Maksimaalne kasutajate arv (kohad, istekohad jne)
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
 MaxUsersLabel=Maksimaalne kasutajate arv

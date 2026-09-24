@@ -72,7 +72,8 @@ ExpenseReportRulesDesc=ניתן להגדיר כללי סכום מקסימלי ע
 ExpenseReportWaitingForApproval=דו"ח הוצאות חדש הוגש לאישור
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=דו"ח הוצאות הוגש לאישור מחדש
-ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=הגדרת דמי קילומטראז'
 ExpenseReportsRules=כללי דוח הוצאות
 ExpenseReportsToApprove=דוחות הוצאות לאישור
@@ -120,7 +121,6 @@ ValideTrip=אישור דוח הוצאות
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=ארוחת בוקר
@@ -156,3 +156,6 @@ TF_PEAGE=אַגרָה
 TF_TAXI=מוֹנִית
 TF_TRAIN=רכבת
 TF_TRIP=הוֹבָלָה
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

@@ -2309,7 +2309,7 @@ class ExpenseReport extends CommonObject
 
 			$this->line->id = ((int) $rowid);
 
-			// Select des infos sur le type fees
+			// Select info about the fee type
 			$sql = "SELECT c.code as code_type_fees, c.label as label_type_fees";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 			$sql .= " WHERE c.id = ".((int) $type_fees_id);
@@ -2322,7 +2322,7 @@ class ExpenseReport extends CommonObject
 			}
 
 			if ($projet_id > 0) {
-				// Select des information du projet
+				// Select information about the project
 				$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
 				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 				$sql .= " WHERE p.rowid = ".((int) $projet_id);

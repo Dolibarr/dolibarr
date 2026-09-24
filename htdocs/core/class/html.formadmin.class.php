@@ -215,7 +215,7 @@ class FormAdmin
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_file($dir."/".$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS' && substr($file, 0, 5) != 'index') {
+							if (is_file($dir."/".$file) && dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS' && dol_substr($file, 0, 5) != 'index') {
 								if (preg_match('/lib\.php$/i', $file)) {
 									continue; // We exclude library files
 								}
@@ -330,7 +330,7 @@ class FormAdmin
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
 						while (($file = readdir($handle)) !== false) {
-							if (is_file($dir."/".$file) && substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
+							if (is_file($dir."/".$file) && dol_substr($file, 0, 1) != '.' && dol_substr($file, 0, 3) != 'CVS') {
 								$filelib = preg_replace('/(_backoffice|_frontoffice)?\.php$/i', '', $file);
 								if (preg_match('/^index/i', $filelib)) {
 									continue;

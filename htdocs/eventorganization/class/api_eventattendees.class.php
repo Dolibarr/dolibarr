@@ -20,7 +20,6 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 
 /**
@@ -99,7 +98,7 @@ class EventAttendees extends DolibarrApi
 		}
 
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->errorsToString());
 		}
 
 		return array(
@@ -137,7 +136,7 @@ class EventAttendees extends DolibarrApi
 		}
 
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->errorsToString());
 		}
 
 		return array(

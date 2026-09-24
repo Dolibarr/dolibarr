@@ -132,7 +132,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch_optionals();
 }
 $extrafields->fetch_name_optionals_label($taskstatic->table_element);
-$search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_task_');
 
 // Default to no permission
 $permissiontoread = 0;
@@ -632,6 +632,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	// Add $param from extra fields
+	$search_options_pattern = 'search_task_options_';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	$arrayofmassactions = array();
@@ -825,7 +826,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 		$modTask = new $classnamemodtask();
 		'@phan-var-force ModeleNumRefTask $modTask';
-		$defaultref = $modTask->getNextValue($object->thirdparty, $object);
+		$tasktmp = new Task($db);	// Numbering modules expect a Task object (and use its creation date), not the project
+		$tasktmp->fk_project = $object->id;
+		$defaultref = $modTask->getNextValue($object->thirdparty, $tasktmp);
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -1144,6 +1147,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '</td>';
 	}
 
+	$search_options_pattern = 'search_task_options_';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook

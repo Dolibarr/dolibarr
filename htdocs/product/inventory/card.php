@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'in
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
+$startmode = GETPOST('startmode', 'aZ09');
 
 $hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -65,7 +67,6 @@ if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 $object = new Inventory($db);
 $extrafields = new ExtraFields($db);
 // no inventory docs yet
-$includedocgeneration = false;
 $diroutputmassaction = null;
 // $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -93,7 +94,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//restrictedArea($user, 'mymodule', $id);
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoread = $user->hasRight('stock', 'lire');
@@ -140,6 +140,14 @@ if (empty($reshook)) {
 	$triggermodname = 'STOCK_INVENTORY_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
+	if ($action == 'add' && $permissiontoadd && !GETPOST('ref', 'alphanohtml')) {
+		// A numbering module is configured and no reference was typed: generate it
+		$tmpnumref = $object->getNextNumRef();
+		if ($tmpnumref) {
+			$_POST['ref'] = $tmpnumref;
+		}
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// Actions when linking object each other
@@ -196,6 +204,14 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-invento
 
 // Part to create
 if ($action == 'create') {
+	// Suggest the next reference when a numbering module is configured
+	if (!GETPOSTISSET('ref')) {
+		$tmpnumref = $object->getNextNumRef();
+		if ($tmpnumref) {
+			$object->ref = $tmpnumref;
+			$_GET['ref'] = $tmpnumref;
+		}
+	}
 	print load_fiche_titre($langs->trans("NewInventory"), '', 'product');
 
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
@@ -295,13 +311,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action == 'validate') {
 		$form = new Form($db);
-		$formquestion = '';
-		if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
-			$formquestion = array(
-				array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10'),
-			);
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $langs->trans('IncludeSubWarehouseExplanation'), 'confirm_validate', $formquestion, '', 1);
+		$startmodes = array(
+			Inventory::START_MODE_CURRENT => $langs->trans("InventoryStartModeCurrent"),
+			Inventory::START_MODE_NONE => $langs->trans("InventoryStartModeNone"),
+			Inventory::START_MODE_ZERO => $langs->trans("InventoryStartModeZero"),
+		);
+		$defaultstartmode = getDolGlobalString('INVENTORY_DEFAULT_START_MODE', Inventory::START_MODE_CURRENT);
+		if (!array_key_exists($defaultstartmode, $startmodes)) {
+			$defaultstartmode = Inventory::START_MODE_CURRENT;
 		}
+		$formquestion = array(
+			array('type' => 'select', 'name' => 'startmode', 'label' => $form->textwithpicto($langs->trans("InventoryStartMode"), $langs->trans("InventoryStartModeHelp")), 'values' => $startmodes, 'default' => $defaultstartmode),
+		);
+		$text = $langs->trans('ConfirmStartInventory');
+		if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+			$formquestion[] = array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10');
+			$text .= '<br>'.$langs->trans('IncludeSubWarehouseExplanation');
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $text, 'confirm_validate', $formquestion, '', 1);
 	}
 
 	// Call Hook formConfirm
@@ -427,11 +454,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_CANCELED) {
 				if ($permissiontoadd) {
-					if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
-					} else {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
-					}
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
 				}
 			}
 
@@ -441,7 +464,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			//}
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $permissiontodelete);
 		}
 		print '</div>'."\n";
 	}
@@ -457,15 +480,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<a name="builddoc"></a>'; // ancre
 
 		// Documents
-		if ($includedocgeneration) {
-			$objref = dol_sanitizeFileName($object->ref);
-			$relativepath = $objref.'/'.$objref.'.pdf';
-			$filedir = $conf->mymodule->dir_output.'/'.$object->element.'/'.$objref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->hasRight('mymodule', 'myobject', 'read'); // If you can read, you can build the PDF to read content
-			$delallowed = $user->hasRight('mymodule', 'myobject', 'write'); // If you can create/edit, you can remove a file on card
-			print $formfile->showdocuments('mymodule:MyObject', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-		}
+		$objref = dol_sanitizeFileName($object->ref);
+		$relativepath = $objref.'/'.$objref.'.pdf';
+		$filedir = $conf->stock->multidir_output[$conf->entity].'/inventory/'.$objref;
+		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+		$genallowed = $user->hasRight('stock', 'lire'); // If you can read, you can build the PDF to read content
+		$delallowed = $user->hasRight('stock', 'creer'); // If you can create/edit, you can remove a file on card
+		print $formfile->showdocuments('inventory:Inventory', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object);
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('inventory'), 1);

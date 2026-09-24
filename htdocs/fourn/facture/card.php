@@ -16,6 +16,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,6 +96,8 @@ $origin		= GETPOST('origin', 'alpha');
 $originid = GETPOSTINT('originid');
 $fac_recid = GETPOSTINT('fac_rec');
 $rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
+
+$date_pointoftax = dol_mktime(12, 0, 0, GETPOSTINT('date_pointoftaxmonth'), GETPOSTINT('date_pointoftaxday'), GETPOSTINT('date_pointoftaxyear'), 'tzserver');
 
 // PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -363,11 +366,29 @@ if (empty($reshook)) {
 			/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
 			$action = '';
 		}
+	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
+		// Remove a subtotal / title / text line (subtotals module)
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+
+		$result = $object->deleteSubtotalLine($langs, $lineid, (bool) GETPOST('deletecorrespondingsubtotalline'));
+		if ($result > 0) {
+			$object->line_order(true);
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		}
 	} elseif ($action == 'unlinkdiscount' && $usercancreate) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOSTINT("discountid"));
 		$discount->unlink_invoice();
+		$object->fetch($id);
+		if ($object->paye == 1 && (float) $object->getRemainToPay() > 0) {
+			$object->setUnpaid($user);
+		}
 	} elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setPaid($user);
@@ -527,6 +548,17 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'setdate_pointoftax' && $usercancreate) {
+		$object->fetch($id);
+
+		$date_pointoftax = dol_mktime(0, 0, 0, GETPOSTINT('date_pointoftaxmonth'), GETPOSTINT('date_pointoftaxday'), GETPOSTINT('date_pointoftaxyear'), 'tzserver');
+		$object->date_pointoftax = $date_pointoftax;
+
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'editdate_pointoftax';
+		}
 	} elseif ($action == 'setdate_lim_reglement' && $usercancreate) {
 		$object->fetch($id);
 		$object->date_echeance = dol_mktime(12, 0, 0, GETPOSTINT('date_lim_reglementmonth'), GETPOSTINT('date_lim_reglementday'), GETPOSTINT('date_lim_reglementyear'));
@@ -544,9 +576,108 @@ if (empty($reshook)) {
 		if (GETPOSTINT("remise_id")) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount(GETPOSTINT("remise_id"));
-				if ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
+				$idremise = GETPOSTINT("remise_id");
+
+				// If the available credit is larger than what the invoice can still absorb, split it automatically:
+				// only the required part is inserted as a line, the rest stays available for another invoice.
+				$usemccompare = false;
+				$discount = new DiscountAbsolute($db);
+				if ($discount->fetch($idremise) > 0) {
+					// Under MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS, when the credit is in the invoice currency, compare and split
+					// in that currency (the company-currency amounts may use different exchange rates and would compare wrongly).
+					$usemccompare = (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')
+						&& !empty($discount->multicurrency_code) && !empty($object->multicurrency_code)
+						&& $discount->multicurrency_code == $object->multicurrency_code && $object->multicurrency_code != $conf->currency);
+					$maxtoabsorb = (float) price2num($usemccompare ? $object->getRemainToPay(1) : $object->getRemainToPay(0), 'MT');
+					$discountamountforcompare = (float) price2num($usemccompare ? $discount->multicurrency_amount_ttc : $discount->amount_ttc, 'MT');
+					if ($discountamountforcompare > $maxtoabsorb) {
+						if ($maxtoabsorb <= 0) {
+							// Nothing left to absorb: the credit cannot be used on this invoice at all
+							$error++;
+							setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
+						} else {
+							// Amount to apply, expressed in both currencies (the split itself works on company-currency amounts)
+							$depositeur = (float) $discount->amount_ttc;
+							$depositdev = (float) $discount->multicurrency_amount_ttc;
+							if ($usemccompare && $depositdev != 0) {
+								$applydev = $maxtoabsorb;
+								$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+							} else {
+								$applyeur = $maxtoabsorb;
+								$applydev = ($depositeur != 0 ? (float) price2num($applyeur / $depositeur * $depositdev, 'MT') : 0);
+							}
+							$splitparts = $discount->splitAmount($applyeur, (float) price2num($depositeur - $applyeur, 'MT'));
+							$applypart = $splitparts[0];
+							$remainpart = $splitparts[1];
+							$remaindev = 0.0;
+							if (!empty($discount->multicurrency_code) && $depositdev != 0) {
+								// Keep the foreign-currency value of each part in the same proportion
+								$remaindev = (float) price2num($depositdev - $applydev, 'MT');
+								$applypart->multicurrency_amount_ttc = $applydev;
+								$applypart->multicurrency_amount_ht = price2num($applydev / (1 + (float) $applypart->tva_tx / 100), 'MT');
+								$applypart->multicurrency_amount_tva = price2num($applydev - (float) $applypart->multicurrency_amount_ht);
+								$remainpart->multicurrency_amount_ttc = $remaindev;
+								$remainpart->multicurrency_amount_ht = price2num($remaindev / (1 + (float) $remainpart->tva_tx / 100), 'MT');
+								$remainpart->multicurrency_amount_tva = price2num($remaindev - (float) $remainpart->multicurrency_amount_ht);
+							}
+							$discount->fk_facture_source = 0;
+							$discount->fk_invoice_supplier_source = 0;
+							$resdelete = $discount->delete($user);
+							$newidapply = $applypart->create($user);
+							$newidremain = $remainpart->create($user);
+							if ($resdelete > 0 && $newidapply > 0 && $newidremain > 0) {
+								$idremise = $newidapply;
+								$splitappliedmsg = price($applyeur, 0, $langs, 1, -1, -1, $conf->currency);
+								$splitremainmsg = price((float) price2num($depositeur - $applyeur, 'MT'), 0, $langs, 1, -1, -1, $conf->currency);
+								if (!empty($discount->multicurrency_code) && $depositdev != 0) {
+									$splitappliedmsg .= ' / '.price($applydev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
+									$splitremainmsg .= ' / '.price($remaindev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
+								}
+								setEventMessages($langs->trans('DepositSplitAutomaticallyApplied', $splitappliedmsg, $splitremainmsg), null, 'warnings');
+							} else {
+								$error++;
+								setEventMessages($langs->trans("Error"), null, 'errors');
+							}
+						}
+					}
+				}
+
+				if (!$error) {
+					$result = $object->insert_discount($idremise);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+					if ($result > 0 && $usemccompare) {
+						// Follow the original currency: the part of the invoice covered by the credit keeps the company-currency value the
+						// credit was paid at, the rest stays at the invoice rate. The invoice rate becomes that effective rate, so the
+						// company-currency totals mirror the foreign-currency ones (no residual once the foreign amount is settled).
+						$object->fetch($id);
+						$object->fetch_lines();
+						$foreigngoods = 0.0;
+						$foreigncredits = 0.0;
+						$companycredits = 0.0;
+						foreach ($object->lines as $creditline) {
+							if (empty($creditline->fk_remise_except)) {
+								$foreigngoods += (float) $creditline->multicurrency_total_ttc;
+							} else {
+								$foreigncredits -= (float) $creditline->multicurrency_total_ttc;
+								$companycredits -= (float) $creditline->total_ttc;
+							}
+						}
+						$targetcompany = ((float) $object->multicurrency_tx > 0 ? ($foreigngoods - $foreigncredits) / (float) $object->multicurrency_tx : 0) + $companycredits;
+						if ($foreigngoods > 0 && $targetcompany > 0) {
+							$neweffectivetx = (float) price2num($foreigngoods / $targetcompany, 'CR');
+							if (abs($neweffectivetx - (float) $object->multicurrency_tx) >= 0.00000001) {
+								$resrate = $object->setMulticurrencyRate($neweffectivetx, 1);
+								if ($resrate < 0) {
+									$error++;
+									setEventMessages($object->error, $object->errors, 'errors');
+								} else {
+									setEventMessages($langs->trans('InvoiceRateRealigned', price2num($neweffectivetx, 'CR')), null, 'mesgs');
+								}
+							}
+						}
+					}
 				}
 			} else {
 				dol_print_error($db, $object->error);
@@ -606,6 +737,141 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
+	} elseif ($action == 'confirm_addtitleline' && $usercancreate) {
+		// Handling adding a new title line for subtotals module
+
+		$langs->load('subtotals');
+
+		$desc = GETPOST('subtotallinedesc', 'alphanohtml');
+		$depth = GETPOSTINT('subtotallinelevel') ?? 1;
+
+		$subtotal_options = array();
+
+		foreach (FactureFournisseur::$TITLE_OPTIONS as $option) {
+			$value = GETPOST($option, 'alphanohtml');
+			if ($value) {
+				$subtotal_options[$option] = $value == 'on' ? 1 : $value;
+			}
+		}
+
+		// Insert line
+		$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
+
+		if ($result >= 0) {
+			if ($result == 0) {
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = GETPOST('lang_id', 'alpha');
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
+		exit();
+	} elseif ($action == 'confirm_addsubtotalline' && $usercancreate) {
+		// Handling adding a new subtotal line for subtotals module
+
+		$langs->load('subtotals');
+
+		$choosen_line = GETPOST('subtotaltitleline', 'alphanohtml');
+		foreach ($object->lines as $line) {
+			if ($line->desc == $choosen_line && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				$desc = $line->desc;
+				$depth = -$line->qty;
+			}
+		}
+
+		$subtotal_options = array();
+
+		foreach (FactureFournisseur::$SUBTOTAL_OPTIONS as $option) {
+			$value = GETPOST($option, 'alphanohtml');
+			if ($value) {
+				$subtotal_options[$option] = $value == 'on' ? 1 : $value;
+			}
+		}
+
+		// Insert line
+		if (isset($desc) && isset($depth)) {
+			$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
+		} else {
+			$result = -1;
+			$object->errors[] = $langs->trans("CorrespondingTitleNotFound");
+		}
+
+		if ($result >= 0) {
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = GETPOST('lang_id', 'alpha');
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
+		exit();
+	} elseif ($action == 'confirm_addtextline' && $usercancreate) {
+		// Handling adding a new text line for subtotals module
+
+		$langs->load('subtotals');
+
+		$desc = GETPOST('subtotaltextcontent', 'restricthtml');
+
+		// Insert line
+		$result = $object->addSubtotalLine($langs, $desc, 0, array());
+
+		if ($result >= 0) {
+			if ($result == 0) {
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = GETPOST('lang_id', 'alpha');
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		header('Location: '.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $id]));
+		exit();
 	} elseif ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $usercancreate) {
 		// Convertir en reduc
 		$object->fetch($id);
@@ -868,6 +1134,7 @@ if (empty($reshook)) {
 				$object->label = GETPOST('label', 'alphanohtml');
 				$object->libelle = $object->label;	// deprecated
 				$object->date = $dateinvoice;
+				$object->date_pointoftax = $date_pointoftax;
 				$object->date_echeance = $datedue;
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->note_private = GETPOST('note_private', 'restricthtml');
@@ -942,6 +1209,7 @@ if (empty($reshook)) {
 				$object->label				= GETPOST('label', 'alphanohtml');
 				$object->libelle            = $object->label;  // Deprecated
 				$object->date               = $dateinvoice;
+				$object->date_pointoftax = $date_pointoftax;
 				$object->date_echeance      = $datedue;
 				$object->note_public        = GETPOST('note_public', 'restricthtml');
 				$object->note_private       = GETPOST('note_private', 'restricthtml');
@@ -1018,7 +1286,9 @@ if (empty($reshook)) {
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
 						$desc = $langs->trans('invoiceAvoirLineWithPaymentRestAmount');
-						$retAddLine = $object->addline($desc, $remain_to_pay, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'TTC');
+						// Pass the amount already signed: addline() forces -abs() on credit notes with the default setup, so this
+						// changes nothing there, but it keeps the line negative when that forcing is relaxed (see addline()).
+						$retAddLine = $object->addline($desc, -$remain_to_pay, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'TTC');
 
 						if ($retAddLine < 0) {
 							$error++;
@@ -1063,6 +1333,7 @@ if (empty($reshook)) {
 				$object->subtype            = GETPOSTINT('subtype');
 				$object->ref                = GETPOST('ref', 'alphanohtml');
 				$object->date               = $dateinvoice;
+				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public        = trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private       = trim(GETPOST('note_private', 'restricthtml'));
 				$object->ref_supplier       = GETPOST('ref_supplier', 'alphanohtml');
@@ -1131,6 +1402,7 @@ if (empty($reshook)) {
 				$object->label				= GETPOST('label', 'alphanohtml');
 				$object->libelle			= $object->label;	// deprecated
 				$object->date				= $dateinvoice;
+				$object->date_pointoftax = $date_pointoftax;
 				$object->date_echeance		= $datedue;
 				$object->note_public		= GETPOST('note_public', 'restricthtml');
 				$object->note_private		= GETPOST('note_private', 'restricthtml');
@@ -1411,7 +1683,13 @@ if (empty($reshook)) {
 								$object->special_code = $lines[$i]->special_code;
 
 								// FIXME If currency different from main currency, take multicurrency price
-								if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
+								// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+								$line_price_base_type = $lines[$i]->getPriceBaseType();
+								if ($line_price_base_type === 'TTC') {
+									// TTC mode: use the local TTC unit price; the currency price is re-derived (no rounding drift).
+									$pu = (float) $lines[$i]->subprice_ttc;
+									$pu_currency = 0;
+								} elseif ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 									$pu = 0;
 									$pu_currency = $lines[$i]->multicurrency_subprice;
 								} else {
@@ -1433,7 +1711,7 @@ if (empty($reshook)) {
 									(int) $date_end,
 									0,
 									$lines[$i]->info_bits,
-									'HT',
+									$line_price_base_type,
 									$product_type,
 									$lines[$i]->rang,
 									0,
@@ -1513,12 +1791,28 @@ if (empty($reshook)) {
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$tva_tx = str_replace('*', '', $tva_tx);
 
-		if (GETPOST('price_ht') != '' || GETPOST('multicurrency_subprice') != '') {
-			$up = price2num(GETPOST('price_ht'), '', 2);
-			$price_base_type = 'HT';
-		} else {
-			$up = price2num(GETPOST('price_ttc'), '', 2);
+		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
+		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
+
+		// The form JS clears the other field when the user edits one of them: only the modified field is filled.
+		// When both fields are submitted, the user did not change the price - we must preserve the original
+		// storage mode of the line, otherwise a no-op save would shift the total by rounding.
+		$up = $pu_ht;
+		$price_base_type = 'HT';
+		if (empty($pu_ht) && !empty($pu_ttc)) {
+			$up = $pu_ttc;
 			$price_base_type = 'TTC';
+		} elseif (!empty($pu_ht) && !empty($pu_ttc)) {
+			foreach ($object->lines as $line_obj) {
+				if ($line_obj->id == GETPOSTINT('lineid')) {
+					// Line was originally entered in TTC mode (subprice_ttc filled by addline)
+					if ($line_obj->wasEnteredIncludingTax()) {
+						$up = $pu_ttc;
+						$price_base_type = 'TTC';
+					}
+					break;
+				}
+			}
 		}
 
 		if (GETPOST('productid') > 0) {
@@ -1619,7 +1913,10 @@ if (empty($reshook)) {
 		$alldate_end = dol_mktime(GETPOSTINT('alldate_endhour'), GETPOSTINT('alldate_endmin'), 0, GETPOSTINT('alldate_endmonth'), GETPOSTINT('alldate_endday'), GETPOSTINT('alldate_endyear'));
 		foreach ($object->lines as $line) {
 			if ($line->product_type == 1) { // only service line
-				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->qty, $line->fk_product, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, 0, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
+				// Preserve the original entry mode of the line so the total is not drifted by rounding.
+				$line_price_base_type = $line->getPriceBaseType();
+				$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
+				$result = $object->updateline($line->id, $line->desc, $line_pu, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->qty, $line->fk_product, $line_price_base_type, $line->info_bits, $line->product_type, $line->remise_percent, 0, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
 			}
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('remiseforalllines', 'alpha') !== '' && $usercancreate) {
@@ -1627,7 +1924,10 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = (float) str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->qty, $line->fk_product, 'HT', $line->info_bits, $line->product_type, $remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
+			// Preserve the original entry mode of the line so the total is not drifted by rounding.
+			$line_price_base_type = $line->getPriceBaseType();
+			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$result = $object->updateline($line->id, $line->desc, $line_pu, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->qty, $line->fk_product, $line_price_base_type, $line->info_bits, $line->product_type, $remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') != '' && $usercancreate) {
 		// Define vat_rate
@@ -1636,7 +1936,10 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, $vat_rate, $localtax1_rate, $localtax2_rate, $line->qty, $line->fk_product, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
+			// Preserve the original entry mode of the line so the total is not drifted by rounding.
+			$line_price_base_type = $line->getPriceBaseType();
+			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$result = $object->updateline($line->id, $line->desc, $line_pu, $vat_rate, $localtax1_rate, $localtax2_rate, $line->qty, $line->fk_product, $line_price_base_type, $line->info_bits, $line->product_type, $line->remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
 		// Add a product line
@@ -1923,16 +2226,18 @@ if (empty($reshook)) {
 			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 			$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
+			// Keep the entry mode chosen by the user so the total is computed from the typed value (no rounding drift).
 			if (GETPOST('price_ht') != '' || GETPOST('multicurrency_price_ht') != '') {
-				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
+				$price_base_type = 'HT';
+				$pu = price2num($price_ht, 'MU'); // $pu must be rounded according to settings
+				$pu_devise = price2num($price_ht_devise, 'CU');
 			} else {
-				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
-				$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
+				$price_base_type = 'TTC';
+				$pu = price2num(GETPOST('price_ttc'), 'MU');
+				$pu_devise = price2num($price_ttc_devise, 'CU');
 			}
-			$price_base_type = 'HT';
-			$pu_devise = price2num($price_ht_devise, 'CU');
 
-			$result = $object->addline($line_desc, (float) $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
+			$result = $object->addline($line_desc, (float) $pu, $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -1994,6 +2299,9 @@ if (empty($reshook)) {
 			unset($_POST['date_endday']);
 			unset($_POST['date_endmonth']);
 			unset($_POST['date_endyear']);
+
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+			exit();
 		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -2822,6 +3130,14 @@ if ($action == 'create') {
 		print $form->selectDate($dateinvoice ? (int) $dateinvoice : '', '', 0, 0, 0, "add", 1, 1);
 		print '</td></tr>';
 
+		// Date point of tax
+		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
+			print '<tr><td class="fieldrequired">'.$langs->trans('DatePointOfTax').'</td><td>';
+			print img_picto('', 'action', 'class="pictofixedwidth"');
+			print $form->selectDate($date_pointoftax ? $date_pointoftax : -1, 'date_pointoftax', 0, 0, 0, "add", 1, 1);
+			print '</td></tr>';
+		}
+
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
@@ -3015,9 +3331,9 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
 
 			if (isModEnabled("multicurrency")) {
-				print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
-				print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
-				print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code).'</td></tr>';
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code)."</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code)."</td></tr>";
 			}
 		}
 
@@ -3360,6 +3676,20 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
 
+		// Confirmation to delete a subtotal / title / text line (subtotals module)
+		if ($action == 'ask_subtotal_deleteline') {
+			$langs->load('subtotals');
+			$subtotaltitle = 'DeleteSubtotalLine';
+			$subtotalquestion = 'ConfirmDeleteSubtotalLine';
+			$subtotalformquestion = array();
+			if (GETPOST('type') == 'title') {
+				$subtotalformquestion = array(array('type' => 'checkbox', 'name' => 'deletecorrespondingsubtotalline', 'label' => $langs->trans('DeleteCorrespondingSubtotalLine'), 'value' => 0));
+				$subtotaltitle = 'DeleteTitleLine';
+				$subtotalquestion = 'ConfirmDeleteTitleLine';
+			}
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans($subtotaltitle), $langs->trans($subtotalquestion), 'confirm_delete_subtotalline', $subtotalformquestion, 'no', 1);
+		}
+
 		// Subtotal line form
 		if ($action == 'add_title_line') {
 			$langs->load('subtotals');
@@ -3371,6 +3701,10 @@ if ($action == 'create') {
 			$type = 'subtotal';
 			$titles = $object->getPossibleTitles();
 			require  DOL_DOCUMENT_ROOT . '/core/tpl/subtotal_create.tpl.php';
+		} elseif ($action == 'add_text_line') {
+			$langs->load('subtotals');
+			$type = 'text';
+			require DOL_DOCUMENT_ROOT . '/core/tpl/subtotal_create.tpl.php';
 		}
 
 		// Call Hook formConfirm
@@ -3534,6 +3868,15 @@ if ($action == 'create') {
 			print $form->editfieldval("Date", 'datef', $object->date, $object, $form_permission, 'datepicker');
 			print '</td>';
 
+			if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
+				$pointoftax_form_permission = ($object->status == FactureFournisseur::STATUS_DRAFT) && $usercancreate;
+				print '<tr><td>';
+				print $form->editfieldkey("DatePointOfTax", 'date_pointoftax', (string) $object->date_pointoftax, $object, (int) $pointoftax_form_permission, 'datepicker');
+				print '</td><td colspan="3">';
+				print $form->editfieldval("DatePointOfTax", 'date_pointoftax', $object->date_pointoftax, $object, $pointoftax_form_permission, 'datepicker');
+				print '</td></tr>';
+			}
+
 			// Default terms of the settlement
 			$langs->load('bills');
 			print '<tr><td class="nowrap">';
@@ -3608,7 +3951,7 @@ if ($action == 'create') {
 				print $langs->trans('VATReverseCharge');
 				print '<td>';
 				if ($action != 'editvatreversecharge' && $usercancreate) {
-					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editvatreversecharge&amp;id='.$object->id.'">'.img_edit($langs->trans('SetVATReverseCharge'), 1).'</a></td>';
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editvatreversecharge&amp;token='.newToken().'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetVATReverseCharge'), 1).'</a></td>';
 				}
 				print '</tr></table>';
 				print '</td><td>';
@@ -3973,7 +4316,7 @@ if ($action == 'create') {
 						print '</td>';
 						// Delete
 						print '<td class="right">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&token='.newToken().'&discountid='.$obj->rowid.'">';
 						print img_picto($langs->transnoentitiesnoconv("RemoveDiscount"), 'unlink');
 						print '</a>';
 						print '</td>';
@@ -4233,7 +4576,8 @@ if ($action == 'create') {
 			// modified by hook
 			if (empty($reshook)) {
 				// Subtotal
-				if ($object->status === FactureFournisseur::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+				if ($object->status == FactureFournisseur::STATUS_DRAFT && isModEnabled('subtotals')
+					&& (getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalString('SUBTOTAL_'.strtoupper($object->element)) || getDolGlobalString('SUBTOTAL_TEXT_'.strtoupper($object->element)))) {
 					$langs->load('subtotals');
 
 					$url_button = array();
@@ -4254,7 +4598,15 @@ if ($action == 'create') {
 						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
 					);
 
-					print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
+					$url_button[] = array(
+						'lang' => 'subtotals',
+						'enabled' => true,
+						'perm' => (bool) $usercancreate,
+						'label' => $langs->trans('AddTextLine'),
+						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_text_line'], true)
+					);
+
+					print dolGetButtonAction('', $langs->trans('SubTotal'), 'default', $url_button, '', true);
 				}
 				// Modify a validated invoice with no payments
 				if ($object->status == FactureFournisseur::STATUS_VALIDATED && $action != 'confirm_edit' && $object->getSommePaiement() == 0 && $usercancreate) {
@@ -4380,7 +4732,7 @@ if ($action == 'create') {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=paid&token='.newToken().'">'.$langs->trans('ClassifyPaidPartially').'</a>';
 					} else {
 						if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_CANCELED')) {
-							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled&token='.newToken().'">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
 				}

@@ -152,7 +152,6 @@ CurrentInformationOnImage=Esta herramienta fue diseñada para ayudarte a redimen
 YouReceiveMailBecauseOfNotification=Recibirá este mensaje porque su correo electrónico se agregó a la lista de destinos para recibir información sobre eventos particulares en el software %s de %s.
 YouReceiveMailBecauseOfNotification2=Este evento es el siguiente:
 ThisIsListOfModules=Esta es una lista de módulos preseleccionados por este perfil de demostración (en esta demostración solo se ven los módulos más comunes). Edite esto para tener una demostración más personalizada y haga clic en "Inicio".
-UseAdvancedPerms=Utilice los permisos avanzados de algunos módulos.
 SelectAColor=Elige un color
 AddFiles=Agregar archivos
 StartUpload=Iniciar la subida

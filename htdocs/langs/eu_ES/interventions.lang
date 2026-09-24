@@ -10,7 +10,6 @@ ActionsOnFicheInter=Esku-hartzeari buruzko ekintzak
 LastInterventions=Azken %s esku-hartzeak
 AllInterventions=Esku-hartze guztiak
 CreateDraftIntervention=Sortu zirriborroa
-InterventionContact=Esku-hartze kontaktua
 DeleteIntervention=Ezabatu esku-hartzea
 ValidateIntervention=Balioztatu esku-hartzea
 SignIntervention=Seinaleen esku-hartzea

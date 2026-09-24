@@ -27,7 +27,7 @@ CREATE TABLE llx_quickmemo_memo(
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	fk_user_archived integer,
-    date_archived timestamp DEFAULT NULL,
+    date_archived datetime DEFAULT NULL,
 
 	import_key varchar(14),
 

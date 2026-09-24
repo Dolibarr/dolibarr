@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -46,6 +47,10 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredProperty
  */
 class ActionCommTest extends CommonClassTest
 {
@@ -92,6 +97,7 @@ class ActionCommTest extends CommonClassTest
 		$localobject->fk_project  = 0;
 		$localobject->datep       = $now;
 		$localobject->datef       = $now;
+		$localobject->max_participants = 25;
 		$localobject->percentage  = -1;   // Not applicable
 		$localobject->socid       = 0;
 		$localobject->contactid   = 0;
@@ -138,8 +144,58 @@ class ActionCommTest extends CommonClassTest
 		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
+		$this->assertSame(25, (int) $localobject->max_participants);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		return $localobject;
+	}
+
+	/**
+	 * testActionCommGetTranslatedCompanyCreateLabel
+	 *
+	 * @return void
+	 */
+	public function testActionCommGetTranslatedCompanyCreateLabel()
+	{
+		global $conf,$langs,$db;
+		$conf = $this->savconf;
+		$db = $this->savdb;
+
+		$thirdpartyname = 'Test company';
+
+		$englishlangs = new Translate('', $conf);
+		$englishlangs->setDefaultLang('en_US');
+		$englishlangs->load('agenda');
+		$englishlabel = $englishlangs->transnoentitiesnoconv('NewCompanyToDolibarr', $thirdpartyname);
+
+		$frenchlangs = new Translate('', $conf);
+		$frenchlangs->setDefaultLang('fr_FR');
+		$frenchlangs->load('agenda');
+		$frenchlabel = $frenchlangs->transnoentitiesnoconv('NewCompanyToDolibarr', $thirdpartyname);
+
+		$localobject = new ActionComm($db);
+		$localobject->code = 'AC_COMPANY_CREATE';
+		$localobject->thirdparty = new Societe($db);
+		$localobject->thirdparty->name = $thirdpartyname;
+
+		try {
+			$langs = new Translate('', $conf);
+			$langs->setDefaultLang('fr_FR');
+			$langs->load('agenda');
+			$localobject->label = $englishlabel;
+			$this->assertSame($frenchlabel, $localobject->getTranslatedLabel());
+
+			$langs = new Translate('', $conf);
+			$langs->setDefaultLang('en_US');
+			$langs->load('agenda');
+			$localobject->label = $frenchlabel;
+			$this->assertSame($englishlabel, $localobject->getTranslatedLabel());
+
+			$localobject->code = 'AC_OTH_AUTO';
+			$localobject->label = 'Manual agenda label';
+			$this->assertSame('Manual agenda label', $localobject->getTranslatedLabel());
+		} finally {
+			$langs = $this->savlangs;
+		}
 	}
 
 	/**
@@ -160,9 +216,14 @@ class ActionCommTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$localobject->label = 'New label';
+		$localobject->max_participants = 30;
 		$result = $localobject->update($user);
 
 		$this->assertLessThan($result, 0);
+		$updatedobject = new ActionComm($db);
+		$resultfetch = $updatedobject->fetch($localobject->id);
+		$this->assertLessThan($resultfetch, 0);
+		$this->assertSame(30, (int) $updatedobject->max_participants);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		return $localobject->id;
 	}

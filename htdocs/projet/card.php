@@ -515,7 +515,7 @@ if (empty($reshook)) {
 			$langs->load("other");
 			$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			$ret = dol_delete_file($file, 1, 0, 0, $object);
 			if ($ret) {
 				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 			} else {
@@ -993,7 +993,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
                 var element = jQuery("#opp_status option:selected");
                 var defaultpercent = element.attr("defaultpercent");
                 /*if (jQuery("#opp_percent_not_set").val() == "") */
-                jQuery("#opp_percent").val(defaultpercent);
+                /* defaultpercent is the raw DB value (double(5,2), ie "100.00"), so normalize it */
+                jQuery("#opp_percent").val(parseFloat(defaultpercent));
         	}
 
 			/*init_myfunc();*/
@@ -1472,7 +1473,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			$html_name_status 	= ($action == 'edit_opp_status') ? 'opp_status' : 'none';
 			$html_name_percent 	= ($action == 'edit_opp_status') ? 'opp_percent' : 'none';
 			$percent_value = (GETPOSTISSET('opp_percent') ? GETPOSTINT('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
-			$formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->opp_status, $percent_value, $html_name_status, $html_name_percent);
+			print $formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->opp_status, $percent_value, $html_name_status, $html_name_percent, '', 1);
 			print '</td></tr>';
 
 			// Opportunity Amount
@@ -1624,23 +1625,26 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
                         jQuery("#divtocloseproject").hide();
                     }
 
+                    /* Note: defaultpercent and oldpercent hold raw DB values (double(5,2), ie "100.00"),
+                       so they are already in universal numeric format and must not go through price2numjs(),
+                       which would strip the "." as a thousand separator in languages like de_DE. */
                     /* Change percent with default percent (defaultpercent) if new status (defaultpercent) is higher than current (jQuery("#opp_percent").val()) */
                     if (oldpercent != \'\' && (parseFloat(defaultpercent) < parseFloat(oldpercent)))
                     {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent+" def < old");
                         if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
-							jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+							jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+parseFloat(oldpercent)+\' %\');
 						}
 
-						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(oldpercent); }
-                        else { jQuery("#opp_percent").val(price2numjs(defaultpercent)); }
+						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(parseFloat(oldpercent)); }
+                        else { jQuery("#opp_percent").val(parseFloat(defaultpercent)); }
                     } else {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent);
                     	if (jQuery("#opp_percent").val() == \'\' || (parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent))) {
                         	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
-								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+parseFloat(oldpercent)+\' %\');
 							}
-                        	jQuery("#opp_percent").val(price2numjs(defaultpercent));
+                        	jQuery("#opp_percent").val(parseFloat(defaultpercent));
                     	}
                     }
             	}

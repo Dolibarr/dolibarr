@@ -425,10 +425,13 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			// Log action in ticket logs table
-			$object->fetch_user($usertoassign);
-
-			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
+			if ($usertoassign > 0) {
+				// Log action in ticket logs table
+				$object->fetch_user($usertoassign);
+				setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('TicketUnassigned'), null, 'mesgs');
+			}
 			header("Location: card.php?track_id=" . $object->track_id);
 			exit;
 		} else {
@@ -1320,7 +1323,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<table class="nobordernopadding centpercent"><tr><td class="none">';
 			print $langs->trans("Categories");
 			if ($permissiontoadd && !in_array($object->status, [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED]) && $action != 'categories' && !$user->socid) {
-				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
+				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 			print '</td>';
 			print '</table>';
@@ -1441,7 +1444,7 @@ if ($action == 'create' || $action == 'presend') {
 
 					print '<div class="tagtd center">';
 					if ($object->status >= 0) {
-						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab_i['rowid'].'">';
+						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;token='.newToken().'&amp;ligne='.$tab_i['rowid'].'">';
 					}
 
 					if ($tab_i['source'] == 'internal') {
