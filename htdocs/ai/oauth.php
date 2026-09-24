@@ -92,6 +92,7 @@ function mcpOauthJson(array $payload, $httpcode = 200)
 {
 	http_response_code($httpcode);
 	header('Content-Type: application/json');
+	header('X-Content-Type-Options: nosniff');
 	header('Cache-Control: no-store');
 	header('Pragma: no-cache');
 	print json_encode($payload);
@@ -196,8 +197,8 @@ switch ($mcp_route) {
 
 		// /register takes no credential by design, so the only thing standing
 		// between it and an unbounded table is this.
-		if ($oauth->countRecentRegistrations(getUserRemoteIP()) >= McpOauth::REGISTRATIONS_PER_HOUR) {
-			dol_syslog('[MCP OAuth] Registration rate limit reached for '.getUserRemoteIP(), LOG_WARNING);
+		if ($oauth->countRecentRegistrations(getUserRemoteIP(1)) >= McpOauth::REGISTRATIONS_PER_HOUR) {
+			dol_syslog('[MCP OAuth] Registration rate limit reached for '.getUserRemoteIP(1), LOG_WARNING);
 			mcpOauthError('temporarily_unavailable', 429, 'Too many registrations from this address. Try again later.');
 		}
 
@@ -300,6 +301,14 @@ switch ($mcp_route) {
  * /authorize — the only route a person ever sees
  */
 
+// main.inc.php empties $_POST on a stale token and lets the script continue,
+// so without this the next checks would read nothing and answer "unknown
+// client" — sending the administrator after a client problem that is really
+// an expired form.
+if (GETPOST('errorcode', 'aZ09') === 'InvalidToken') {
+	mcpOauthError('invalid_request', 400, 'The consent form expired. Start the authorization again from your client.');
+}
+
 $responsetype = GETPOST('response_type', 'alphanohtml');
 $clientid = GETPOST('client_id', 'alphanohtml');
 $redirecturi = GETPOST('redirect_uri', 'alphanohtml');
@@ -394,7 +403,7 @@ if ($clienthost === '') {
 $isloopback = in_array(strtolower($clienthost), array('127.0.0.1', '[::1]', '::1', 'localhost'), true);
 $hostline = $isloopback
 	? $langs->trans('AiMcpOauthConsentLocalApp')
-	: $langs->trans('AiMcpOauthConsentHost', dol_escape_htmltag($clienthost));
+	: $langs->trans('AiMcpOauthConsentHost', $clienthost);
 
 llxHeader('', $langs->trans('AiMcpOauthConsentTitle'), '', '', 0, 0, '', '', '', 'mod-ai page-oauth');
 
@@ -422,7 +431,7 @@ foreach (array(
 }
 
 print '<div class="center">';
-print '<p>'.$langs->trans('AiMcpOauthConsentQuestion', dol_escape_htmltag($clientname), dol_escape_htmltag($user->login)).'</p>';
+print '<p>'.$langs->trans('AiMcpOauthConsentQuestion', $clientname, $user->login).'</p>';
 print '<p>'.$hostline.'</p>';
 print '<p class="opacitymedium">'.$langs->trans('AiMcpOauthConsentScope').'</p>';
 print '<p class="opacitymedium"><small>'.$langs->trans('AiMcpOauthConsentExpiry').'</small></p>';

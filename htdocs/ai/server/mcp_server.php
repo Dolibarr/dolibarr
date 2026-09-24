@@ -41,6 +41,12 @@ if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', 1);
 }
 define('NOLOGIN', 1);
+// No session: a client authenticates with a Bearer token or an API key and
+// never sends a cookie, so every anonymous call — including the discovery
+// routes below — was leaving a session file behind for nothing.
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 require '../../main.inc.php';
 /**

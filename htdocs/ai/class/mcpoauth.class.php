@@ -133,11 +133,10 @@ class McpOauth
 	 */
 	public function metadataAuthorizationServer()
 	{
-		return array(
+		$metadata = array(
 			'issuer' => $this->issuer,
 			'authorization_endpoint' => $this->issuer.'/authorize',
 			'token_endpoint' => $this->issuer.'/token',
-			'registration_endpoint' => $this->issuer.'/register',
 			'response_types_supported' => array('code'),
 			'grant_types_supported' => array('authorization_code', 'refresh_token'),
 			// S256 only. RFC 7636 still allows 'plain'; it protects nothing on
@@ -148,10 +147,20 @@ class McpOauth
 			// RFC 9207: the authorization response names its issuer, so a client
 			// talking to several servers cannot be made to mix up two responses.
 			'authorization_response_iss_parameter_supported' => true,
-			// A client_id may be the HTTPS URL of a metadata document this
-			// server fetches, instead of a registration (spec 2026-07-28).
-			'client_id_metadata_document_supported' => true,
 		);
+
+		// Both ways a client has of onboarding itself, without an
+		// administrator declaring it first: the RFC 7591 endpoint, and a
+		// client_id that is the HTTPS URL of a metadata document this server
+		// fetches (spec 2026-07-28). They are advertised only when the
+		// setting that serves them is on, otherwise every client is sent
+		// down a path that answers 403.
+		if (getDolGlobalString('AI_MCP_OAUTH_DYNAMIC_REGISTRATION')) {
+			$metadata['registration_endpoint'] = $this->issuer.'/register';
+			$metadata['client_id_metadata_document_supported'] = true;
+		}
+
+		return $metadata;
 	}
 
 	/**
@@ -221,7 +230,7 @@ class McpOauth
 		$sql .= ", '".$this->db->escape($name)."'";
 		$sql .= ", '".$this->db->escape(implode("\n", $uris))."'";
 		$sql .= ", '".$this->db->escape($authmethod)."'";
-		$sql .= ", '".$this->db->escape(dol_trunc((string) getUserRemoteIP(), 64, 'right', 'UTF-8', 1))."'";
+		$sql .= ", '".$this->db->escape(dol_trunc((string) getUserRemoteIP(1), 64, 'right', 'UTF-8', 1))."'";
 		$sql .= ", '".$this->db->idate(dol_now())."')";
 
 		if (!$this->db->query($sql)) {
@@ -315,6 +324,18 @@ class McpOauth
 		global $conf;
 
 		$known = $this->fetchClientRow($url);
+
+		// A metadata document is self-registration by another name: it creates
+		// a client row on a stranger's word. The administrator switch has to
+		// govern it too, or "let connectors register themselves: off" would
+		// stop one way in and leave the other open.
+		if (!getDolGlobalString('AI_MCP_OAUTH_DYNAMIC_REGISTRATION')) {
+			if ($known === null) {
+				$this->error = 'access_denied';
+			}
+
+			return $known;
+		}
 		if ($known !== null && $this->db->jdate($known->tms) > (dol_now() - self::METADATA_DOCUMENT_TTL)) {
 			return $known;
 		}
@@ -322,8 +343,8 @@ class McpOauth
 		// Counted before the request goes out, not before the row is written:
 		// a document that never answers costs a worker just the same, and
 		// checking only on the way to the INSERT left that free.
-		if ($this->countRecentRegistrations(getUserRemoteIP()) >= self::REGISTRATIONS_PER_HOUR) {
-			dol_syslog('[MCP OAuth] Metadata document refused, rate limit reached for '.getUserRemoteIP(), LOG_WARNING);
+		if ($this->countRecentRegistrations(getUserRemoteIP(1)) >= self::REGISTRATIONS_PER_HOUR) {
+			dol_syslog('[MCP OAuth] Metadata document refused, rate limit reached for '.getUserRemoteIP(1), LOG_WARNING);
 			$this->error = 'temporarily_unavailable';
 			return $known;
 		}
@@ -366,7 +387,7 @@ class McpOauth
 			$sql .= ", '".$this->db->escape($name)."'";
 			$sql .= ", '".$this->db->escape(implode("\n", $uris))."'";
 			$sql .= ", 'none'";
-			$sql .= ", '".$this->db->escape(dol_trunc((string) getUserRemoteIP(), 64, 'right', 'UTF-8', 1))."'";
+			$sql .= ", '".$this->db->escape(dol_trunc((string) getUserRemoteIP(1), 64, 'right', 'UTF-8', 1))."'";
 			$sql .= ", '".$this->db->idate(dol_now())."')";
 		}
 
@@ -651,6 +672,13 @@ class McpOauth
 	{
 		$row = $this->getValidToken('refresh', $refresh);
 		if (!$row || (int) $row->fk_client !== (int) $client->rowid) {
+			// A refresh token that exists but is already spent is not a
+			// mistake, it is the signature of a stolen one being used behind
+			// the real client. OAuth 2.1 section 4.3.1 has the whole chain
+			// revoked at that point: whoever ends up holding the fresh pair,
+			// both of them have to start again from a consent.
+			$this->revokeReplayedFamily($refresh, (int) $client->rowid);
+
 			$this->error = 'invalid_grant';
 			return null;
 		}
@@ -661,6 +689,50 @@ class McpOauth
 		}
 
 		return $this->issueTokenPair((int) $client->rowid, (int) $row->fk_user, (string) $row->scope, (string) $row->resource);
+	}
+
+	/**
+	 * Revoke everything issued to a client for a user whose refresh token was
+	 * replayed.
+	 *
+	 * Called when a refresh token did not validate: if the value is known but
+	 * spent or revoked, the grant it belonged to is compromised, so nothing
+	 * issued under it may survive.
+	 *
+	 * @param  string $refresh     Refresh token presented
+	 * @param  int    $clientrowid Client that presented it
+	 * @return void
+	 */
+	private function revokeReplayedFamily($refresh, $clientrowid)
+	{
+		global $conf;
+
+		if (empty($refresh)) {
+			return;
+		}
+
+		$sql = "SELECT fk_user FROM ".$this->db->prefix()."ai_oauth_token";
+		$sql .= " WHERE token_type = 'refresh'";
+		$sql .= " AND token_hash = '".$this->db->escape(hash('sha256', $refresh))."'";
+		$sql .= " AND entity = ".((int) $conf->entity);
+		$sql .= " AND fk_client = ".((int) $clientrowid);
+
+		$resql = $this->db->query($sql);
+		if (!$resql || $this->db->num_rows($resql) != 1) {
+			return;
+		}
+		$obj = $this->db->fetch_object($resql);
+
+		$sql = "UPDATE ".$this->db->prefix()."ai_oauth_token";
+		$sql .= " SET revoked = 1";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND fk_client = ".((int) $clientrowid);
+		$sql .= " AND fk_user = ".((int) $obj->fk_user);
+		$sql .= " AND revoked = 0";
+
+		if ($this->db->query($sql)) {
+			dol_syslog('[MCP OAuth] Replayed refresh token: revoked every grant of client '.$clientrowid.' for user '.$obj->fk_user, LOG_WARNING);
+		}
 	}
 
 	/**

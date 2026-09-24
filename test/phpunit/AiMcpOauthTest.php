@@ -159,7 +159,12 @@ class AiMcpOauthTest extends CommonClassTest
 	 */
 	public function testMetadataDocuments()
 	{
+		global $conf;
+
 		$server = $this->getServer();
+
+		$old = getDolGlobalString('AI_MCP_OAUTH_DYNAMIC_REGISTRATION');
+		$conf->global->AI_MCP_OAUTH_DYNAMIC_REGISTRATION = '1';
 
 		$as = $server->metadataAuthorizationServer();
 		$this->assertSame('https://example.org/ai/oauth.php', $as['issuer']);
@@ -182,6 +187,20 @@ class AiMcpOauthTest extends CommonClassTest
 		$prm = $server->metadataProtectedResource();
 		$this->assertSame('https://example.org/ai/server/mcp_server.php', $prm['resource']);
 		$this->assertSame(array('https://example.org/ai/oauth.php'), $prm['authorization_servers']);
+
+		// With self-onboarding off, an unknown client must not be invited to
+		// try either of the two ways in. Advertising them anyway sends every
+		// client down a path that answers 403, and an administrator who
+		// turned the setting off would reasonably expect neither to be
+		// offered.
+		$conf->global->AI_MCP_OAUTH_DYNAMIC_REGISTRATION = '0';
+
+		$closed = $server->metadataAuthorizationServer();
+		$this->assertArrayNotHasKey('registration_endpoint', $closed);
+		$this->assertArrayNotHasKey('client_id_metadata_document_supported', $closed);
+		$this->assertSame('https://example.org/ai/oauth.php', $closed['issuer'], 'The rest of the document is unchanged');
+
+		$conf->global->AI_MCP_OAUTH_DYNAMIC_REGISTRATION = $old;
 	}
 
 	/**

@@ -116,6 +116,8 @@ class AllTests
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
+		require_once dirname(__FILE__).'/AiMcpAuthTest.php';
+		$suite->addTestSuite('AiMcpAuthTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
 		require_once dirname(__FILE__).'/AiMcpOauthTest.php';
