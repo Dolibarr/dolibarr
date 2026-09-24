@@ -49,7 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta", "accountancy"));
 
-$action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
+$action = GETPOST('action', 'aZ09') ? GETPOST('actio
+n', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
 $id = 35;
 $rowid = GETPOST('rowid', 'alpha');
@@ -111,7 +112,8 @@ $tablib[35] = "DictionaryAccountancyJournal";
 
 // Requests to extract data
 $tabsql = array();
-$tabsql[35] = "SELECT a.rowid as rowid, a.code as code, a.label, a.nature, a.active FROM ".MAIN_DB_PREFIX."accounting_journal as a";
+$tabsql[35] = "SELECT a.rowid as rowid, a.code as code, a.label, a.nature, a.active FROM ".MAIN_
+DB_PREFIX."accounting_journal as a";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -172,7 +174,8 @@ if (getDolGlobalInt('ACCOUNTING_DISSOCIATE_CASH_SALES')) {
  * Actions
  */
 
-if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha')) {
+if (GETPOST('button_
+removefilter', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter_x', 'alpha')) {
 	$search_country_id = '';
 }
 
@@ -233,7 +236,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$sql .= ",";
 			}
 			if (GETPOST($listfieldvalue[$i]) == '') {
-				$sql .= "null"; // For vat, we want/accept code = ''
+				$sql .= "null"; // For vat
+, we want/accept code = ''
 			} else {
 				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
@@ -304,7 +308,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
 	if (!$result) {
-		if ($db->errno() == 'DB_ERROR_CHILD_EXISTS') {
+		if ($db->errno() == 'DB_ERROR_CHILD_EXISTS
+') {
 			setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
 		} else {
 			dol_print_error($db);
@@ -379,7 +384,8 @@ print load_fiche_titre($titre, $linkback, $titlepicto);
 
 // Generate a form to confirm the deletion of the row
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->
+trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 /*
@@ -441,7 +447,8 @@ if ($tabname[$id]) {
 		}
 	}
 
-	print '<td>';
+	prin
+t '<td>';
 	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '</td>';
 	print '<td></td>';
@@ -504,7 +511,8 @@ if ($resql) {
 	// There is several pages
 	if ($num > $listlimit) {
 		print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span
+>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 		print '</td></tr>';
 	}
 
@@ -562,7 +570,8 @@ if ($resql) {
 		// Lines with values
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
-			//print_r($obj);
+			//print_
+r($obj);
 			print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 			if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
 				$tmpaction = 'edit';
@@ -601,7 +610,8 @@ if ($resql) {
 							$valuetoshow = $langs->trans('All');
 						} elseif ($fieldlist[$field] == 'nature' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
 							$key = $langs->trans("AccountingJournalType".strtoupper($obj->nature));
-							$valuetoshow = ($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature)) ? $key : $obj->{$fieldlist[$field]});
+							$valuetoshow = ($obj-
+>nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature)) ? $key : $obj->{$fieldlist[$field]});
 						} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
 							$valuetoshow = $langs->trans($obj->label);
 						}
@@ -616,7 +626,7 @@ if ($resql) {
 				$iserasable = 1;
 				$canbedisabled = 1;
 				$canbemodified = 1; // true by default
-				if (isset($obj->code) && $id != 10) {
+				if (isset($obj->code)) {
 					if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
 						$iserasable = 0;
 						$canbedisabled = 0;
@@ -654,7 +664,8 @@ if ($resql) {
 					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 					print '</td>';
 				} else {
-					print '<td>&nbsp;</td>';
+					print
+ '<td>&nbsp;</td>';
 				}
 
 				print '<td></td>';
@@ -723,7 +734,8 @@ function fieldListJournal($fieldlist, $obj = null, $tabname = '', $context = '')
 			if ($fieldlist[$field] == 'sortorder' || $fieldlist[$field] == 'sens' || $fieldlist[$field] == 'category_type') {
 				$size = 'size="2" ';
 			}
-			print '<input type="text" '.$size.'class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
+			print '<input type="text" '.$size.'class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $
+obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}
