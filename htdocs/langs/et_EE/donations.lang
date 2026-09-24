@@ -57,3 +57,7 @@ donAnonymous=Anonüümne annetus
 AnonymousDonationTooltip=Märkige see ruut, kui soovite, et teie annetus jääks anonüümseks. Teie isikuandmeid ei küsita.
 publicDonationFieldHelp=%s saab minu annetuse avalikus registris avaldada
 listOfPublicDonations=Avalike annetuste nimekiri
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

@@ -44,7 +44,7 @@ function mrpAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/admin/mrp_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'mrp_mo'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['mrp_mo']['count'];
 	if ($nbExtrafields > 0) {
@@ -53,7 +53,7 @@ function mrpAdminPrepareHead()
 	$head[$h][2] = 'mrp_extrafields';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/admin/mrp_production_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'mrp_production'));
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$head[$h][2] = 'mrp_production_extrafields';
 	$h++;

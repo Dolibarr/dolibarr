@@ -36,22 +36,25 @@ jsonpath "$.pagination.page" >= 0
 jsonpath "$.pagination.page_count" >= 0
 jsonpath "$.pagination.limit" == 100
 
-# GET order with ID 0 - which should not exist
+# GET order with ID 0 - which should be refused
 GET http://{{hostnport}}/api/index.php/orders/0
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: No order with id=0 can exist"}}
+[Asserts]
+jsonpath "$.error.message" == "Bad Request: No ID or Ref provided"
 
 # POST {}
 POST http://{{hostnport}}/api/index.php/orders
 {}
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: socid field missing"}}
+[Asserts]
+jsonpath "$.error.message" == "Bad Request: socid field missing"
 
 # POST topic required
 POST http://{{hostnport}}/api/index.php/orders
 { "socid" : "22"}
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: date field missing"}}
+[Asserts]
+jsonpath "$.error.message" == "Bad Request: date field missing"
 # this output should be adjusted for the real output when the check is done for required fields
 
 # DELETE

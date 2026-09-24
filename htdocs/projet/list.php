@@ -9,7 +9,7 @@
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
@@ -98,6 +98,8 @@ $search_entity = GETPOSTINT('search_entity');
 $search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alphanohtml');
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_societe_alias = GETPOST("search_societe_alias", 'alpha');
 $search_societe_country = GETPOST("search_societe_country", 'alpha');
@@ -133,9 +135,9 @@ if (GETPOSTISSET('formfilteraction')) {
 
 $searchCategoryProjectOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryUserOperator = GETPOSTINT('search_category_project_operator');
+	$searchCategoryProjectOperator = GETPOSTINT('search_category_project_operator');
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT')) {
-	$searchCategoryUserOperator = getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT');
+	$searchCategoryProjectOperator = getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT');
 }
 
 /*
@@ -285,6 +287,8 @@ $arrayfields['commercial'] = array('label' => "SaleRepresentativesOfThirdParty",
 $arrayfields['c.assigned'] = array('label' => "AssignedTo", 'checked' => '1', 'position' => 120);
 $arrayfields['opp_weighted_amount'] = array('label' => 'OpportunityWeightedAmountShort', 'checked' => '0', 'enabled' => (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? '0' : '1'), 'position' => 106);
 $arrayfields['u.login'] = array('label' => "Author", 'checked' => '-1', 'position' => 165);
+$arrayfields['p.note_public'] = array('label' => 'NotePublic', 'checked' => '0', 'position' => 170, 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PUBLIC_NOTES')));
+$arrayfields['p.note_private'] = array('label' => 'NotePrivate', 'checked' => '0', 'position' => 171, 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PRIVATE_NOTES')));
 // Force some fields according to search_usage filter...
 //if (GETPOST('search_usage_opportunity')) {
 //$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not required, filter on search_opp_status is enough
@@ -315,6 +319,9 @@ if ($contextpage == 'lead') {
 	}
 }
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -428,6 +435,8 @@ if (empty($reshook)) {
 		$search_id = "";
 		$search_ref = "";
 		$search_label = "";
+		$search_note_public = '';
+		$search_note_private = '';
 		$search_societe = "";
 		$search_societe_ref_customer = "";
 		$search_societe_ref_supplier = "";
@@ -623,6 +632,7 @@ $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, 
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
+$sql .= " p.note_public, p.note_private,";
 $sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.code_fournisseur,";
 $sql .= " country.code as country_code,";
 $sql .= " cls.code as opp_status_code,";
@@ -677,6 +687,12 @@ if ($search_ref) {
 }
 if ($search_label) {
 	$sql .= natural_search('p.title', $search_label);
+}
+if ($search_note_public != '') {
+	$sql .= natural_search('p.note_public', $search_note_public);
+}
+if ($search_note_private != '') {
+	$sql .= natural_search('p.note_private', $search_note_private);
 }
 if ($search_parent_ref) {
 	$sql .= natural_search('pa.ref', $search_parent_ref);
@@ -1169,6 +1185,12 @@ if ($search_ref != '') {
 if ($search_label != '') {
 	$param .= '&search_label='.urlencode($search_label);
 }
+if ($search_note_public != '') {
+	$param .= '&search_note_public='.urlencode($search_note_public);
+}
+if ($search_note_private != '') {
+	$param .= '&search_note_private='.urlencode($search_note_private);
+}
 if ($search_societe != '') {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
@@ -1365,7 +1387,8 @@ $moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$fo
 
 $moreforfilter .= '</div>';
 
-// If the user can view thirdparties other than his'
+// If the user can view thirdparties other than his', we offer the filter assigned to
+// TODO This must be moved on the dedicated column "Assigned to".
 if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -1610,6 +1633,16 @@ if (!empty($arrayfields['u.login']['checked'])) {
 	print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['p.note_public']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['p.note_private']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -1792,6 +1825,14 @@ if (!empty($arrayfields['u.login']['checked'])) {
 	print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['p.note_public']['label'], $_SERVER["PHP_SELF"], "p.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['p.note_private']['label'], $_SERVER["PHP_SELF"], "p.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1877,6 +1918,8 @@ while ($i < $imaxinloop) {
 	$object->usage_organize_event = $obj->usage_organize_event;
 	$object->email_msgid = $obj->email_msgid;
 	$object->import_key = $obj->import_key;
+	$object->note_public = $obj->note_public;
+	$object->note_private = $obj->note_private;
 	$object->thirdparty = $companystatic;
 
 	//$userAccess = $object->restrictedProjectArea($user); // disabled, permission on project must be done by the select
@@ -2108,7 +2151,7 @@ while ($i < $imaxinloop) {
 		// Project ref url
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax200">';
-			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''));
+			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''), 0, '', ' - ', 0, -1, '', '', 1);
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}
@@ -2121,7 +2164,9 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.title']['checked'])) {
 			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
 			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print '<span class="spantitle">';
 			print dolPrintHTML($obj->title);
+			print '</span>';
 			print '</div>';
 			print '</td>';
 			if (!$i) {
@@ -2174,9 +2219,9 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
+				print '<span class="spantitle">';
 				print $companystatic->name_alias;
-			} else {
-				print '&nbsp;';
+				print '</span>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2188,8 +2233,6 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
 				print $companystatic->code_client;
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2201,8 +2244,6 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
 				print $companystatic->code_fournisseur;
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2222,11 +2263,12 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['commercial']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
+				$PROJECT_MAX_SALES_TO_SHOW_IN_LIST = getDolGlobalInt('PROJECT_MAX_SALES_TO_SHOW_IN_LIST', 5);
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
 				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
-				if ($nbofsalesrepresentative > 6) {
+				if ($nbofsalesrepresentative > $PROJECT_MAX_SALES_TO_SHOW_IN_LIST) {
 					// We print only number
 					print $nbofsalesrepresentative;
 				} elseif ($nbofsalesrepresentative > 0) {
@@ -2299,7 +2341,7 @@ while ($i < $imaxinloop) {
 		}
 		// Assigned contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
-			print '<td class="center nowraponall tdoverflowmax200">';
+			print '<td class="center nowraponall tdoverflowmax150">';
 			print $stringassignedusers;
 			print '</td>';
 			if (!$i) {
@@ -2315,8 +2357,10 @@ while ($i < $imaxinloop) {
 					$s .= ' ('.dol_escape_htmltag(price2num($obj->opp_percent, 1)).'%)';
 				}
 			}
-			print '<td class="center tdoverflowmax150" title="'.$s.'">';
-			print $s;
+			print '<td class="center tdoverflowmax150" title="'.dolPrintHTMLForAttribute($s).'">';
+			print '<span class="badge badge-oppstatus">';
+			print dolPrintHTML($s);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2489,6 +2533,24 @@ while ($i < $imaxinloop) {
 				print $userstatic->getNomUrl(-1);
 			}
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note public
+		if (!empty($arrayfields['p.note_public']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['p.note_private']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -369,8 +369,8 @@ if ($release && $releaseblockedlog) {
 // Array of dir/files to include in the section
 foreach ($arrayofunalterablefiles as $entry) {
 	if ($entry['file'] == 'all') {
-		$regextoinclude = $entry['regextoinclude'];
-		$regextoexclude = $entry['regextoexclude'];
+		$regextoinclude = $entry['regextoinclude'] ?? null;
+		$regextoexclude = $entry['regextoexclude'] ?? null;
 		$files = dol_dir_list($entry['dir'], 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 		$dir = '';
 
@@ -419,12 +419,12 @@ foreach ($arrayofunalterablefiles as $entry) {
 			exit(1);
 		}
 		if ($newdir != $dir) {
-			//if ($needtoclose) {
-			if ($release) {
-				fputs($fp, '  </dir>'."\n");
-			}
+			if ($needtoclose) {
+				if ($release) {
+					fputs($fp, '  </dir>'."\n");
+				}
 				$needtoclose = 0;
-			//}
+			}
 			if ($release) {
 				fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 			}

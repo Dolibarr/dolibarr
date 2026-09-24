@@ -147,7 +147,7 @@ $dirtocompress = basename($fulldirtocompress);
 if ($compression == 'zip') {
 	$file .= '.zip';
 
-	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\])/i';
+	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\]|[\/\\\]admin[\/\\\]backup[\/\\\])/i';
 
 	//var_dump($fulldirtocompress);
 	//var_dump($outputdir."/".$file);exit;
@@ -179,6 +179,8 @@ if ($compression == 'zip') {
 } elseif (in_array($compression, array('gz', 'bz', 'zstd'))) {
 	$userlogin = ($user->login ? $user->login : 'unknown');
 
+	dol_mkdir($conf->admin->dir_temp);	// May have been removed by a "Clean temporary files" purge
+
 	$outputfile = $conf->admin->dir_temp.'/'.dol_sanitizeFileName('export_files.'.$userlogin.'.out'); // File used with popen method
 
 	$file .= '.tar';
@@ -191,9 +193,9 @@ if ($compression == 'zip') {
 	// users with an uncompressed .tar plus a misleading error (#37266).
 	$tmpfile = $conf->admin->dir_temp.'/'.dol_sanitizeFileName($file);
 
-	// We also exclude '/temp/' dir and 'documents/admin/documents'
+	// We also exclude '/temp/' dir, 'documents/admin/documents' (previous documents backups) and 'documents/admin/backup' (database dumps)
 	// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-	$cmd = "tar -cf '".escapeshellcmd($tmpfile)."' --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='documents/admin/documents' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
+	$cmd = "tar -cf '".escapeshellcmd($tmpfile)."' --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='admin/documents' --exclude='admin/backup' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
 
 	$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 

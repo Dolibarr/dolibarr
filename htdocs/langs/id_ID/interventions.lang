@@ -10,7 +10,6 @@ ActionsOnFicheInter=Tindakan intervensi
 LastInterventions=Intervensi %s terbaru
 AllInterventions=Semua intervensi
 CreateDraftIntervention=Buat konsep
-InterventionContact=Kontak intervensi
 DeleteIntervention=Hapus intervensi
 ValidateIntervention=Validasi intervensi
 SignIntervention=Tanda intervensi

@@ -258,7 +258,7 @@ OtherFilteredTasks=Detyra të tjera të filtruara
 NoAssignedTasks=Nuk u gjetën detyra të caktuara (cakto projekt/detyra përdoruesit aktual nga kutia e përzgjedhjes së sipërme për të futur kohën në të)
 ThirdPartyRequiredToGenerateIntervention=Një palë e tretë duhet të përcaktohet në projekt që të jetë në gjendje të krijojë ndërhyrje.
 ThirdPartyRequiredToGenerateInvoice=Një palë e tretë duhet të përcaktohet në projekt që të jetë në gjendje ta faturojë atë.
-ChooseANotYetAssignedTask=Zgjidhni një detyrë që nuk ju është caktuar ende
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Lejo komentet e përdoruesve për detyrat
 AllowCommentOnProject=Lejo komentet e përdoruesve për projektet

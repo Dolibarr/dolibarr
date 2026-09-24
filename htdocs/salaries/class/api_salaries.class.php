@@ -68,13 +68,14 @@ class Salaries extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.fk_user:=:6) and (t.datep:>:'20250101')"
 	 * @return array                List of salary objects
 	 * @phan-return Salary[]
 	 * @phpstan-return Salary[]
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
 	{
 		$list = array();
 
@@ -88,10 +89,19 @@ class Salaries extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
-				$sql .= ' AND t.fk_user = '.((int) DolibarrApiAccess::$user->id).')';
+				$sql .= ' AND t.fk_user = '.((int) DolibarrApiAccess::$user->id);
 			} else {
 				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
 				$sql .= ' AND t.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
+			}
+		}
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
 
@@ -221,7 +231,7 @@ class Salaries extends DolibarrApi
 		if ($salary->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $salary->error);
+			throw new RestException(500, $salary->errorsToString());
 		}
 	}
 
@@ -429,7 +439,7 @@ class Salaries extends DolibarrApi
 		if ($paymentsalary->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $paymentsalary->error);
+			throw new RestException(500, $paymentsalary->errorsToString());
 		}
 	}
 

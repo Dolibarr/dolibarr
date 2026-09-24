@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,11 @@ class Link extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'links';
+
+	/**
+	 * @var int<0,1> Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
 
 	/**
 	 * @var int Entity
@@ -102,7 +107,7 @@ class Link extends CommonObject
 		global $langs, $conf;
 
 		$error = 0;
-		$langs->load("errors");
+		$langs->loadLangs(array("errors", "admin"));
 		// Clean parameters
 		if (empty($this->label)) {
 			$this->label = trim(basename($this->url));
@@ -116,7 +121,7 @@ class Link extends CommonObject
 
 		// Check parameters
 		if (empty($this->url)) {
-			$this->error = $langs->trans("NoURL");
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("URL"));
 			return -1;
 		}
 
@@ -137,12 +142,20 @@ class Link extends CommonObject
 			$this->id = $this->db->last_insert_id($this->db->prefix()."links");
 
 			if ($this->id > 0) {
-				// Call trigger
-				$result = $this->call_trigger('LINK_CREATE', $user);
+				// Actions on extra fields
+				$result = $this->insertExtraFields();
 				if ($result < 0) {
 					$error++;
 				}
-				// End call triggers
+
+				if (!$error) {
+					// Call trigger
+					$result = $this->call_trigger('LINK_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
 			} else {
 				$error++;
 			}
@@ -158,7 +171,7 @@ class Link extends CommonObject
 			}
 		} else {
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", (string) $this->name);
+				$this->error = $langs->trans("ErrorDuplicateField");
 				$result = -1;
 			} else {
 				$this->error = $this->db->lasterror();
@@ -170,7 +183,7 @@ class Link extends CommonObject
 	}
 
 	/**
-	 *  Update parameters of third party
+	 *  Update parameters of link
 	 *
 	 *  @param  User	$user            			User executing update
 	 *  @param  int		$call_trigger    			0=no, 1=yes
@@ -181,14 +194,14 @@ class Link extends CommonObject
 		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$langs->load("errors");
+		$langs->loadLangs(array("errors", "admin"));
 		$error = 0;
 
 		dol_syslog(get_class($this)."::Update id = ".$this->id." call_trigger = ".$call_trigger);
 
 		// Check parameters
 		if (empty($this->url)) {
-			$this->error = $langs->trans("NoURL");
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("URL"));
 			return -1;
 		}
 
@@ -216,7 +229,13 @@ class Link extends CommonObject
 		dol_syslog(get_class($this)."::update sql = ".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if ($call_trigger) {
+			// Actions on extra fields
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+
+			if (!$error && $call_trigger) {
 				// Call trigger
 				$result = $this->call_trigger('LINK_MODIFY', $user);
 				if ($result < 0) {
@@ -291,6 +310,10 @@ class Link extends CommonObject
 					$link->objectid = $obj->objectid;
 					$link->share = $obj->share;
 					$link->share_pass = $obj->share_pass;
+
+					// Retrieve all extrafields for link
+					$link->fetch_optionals();
+
 					$links[] = $link;
 				}
 				return 1;
@@ -345,6 +368,11 @@ class Link extends CommonObject
 			$rowid = $this->id;
 		}
 
+		if (empty($rowid) && empty($hashforshare)) {
+			$this->error = 'ErrorBadParameters';
+			return -1;
+		}
+
 		$sqlwhere = [];
 
 		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid, share, share_pass FROM ".$this->db->prefix()."links";
@@ -377,6 +405,10 @@ class Link extends CommonObject
 				$this->objectid = $obj->objectid;
 				$this->share = $obj->share;
 				$this->share_pass = $obj->share_pass;
+
+				// Retrieve all extrafields for link
+				$this->fetch_optionals();
+
 				return 1;
 			} else {
 				return 0;
@@ -390,23 +422,26 @@ class Link extends CommonObject
 	/**
 	 *    Delete a link from database
 	 *
-	 *	  @param	User		$user		Object suer
+	 *	  @param	User		$user		Object user
+	 *    @param	int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *    @return	int						Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function delete($user)
+	public function delete(User $user, $notrigger = 0)
 	{
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$error = 0;
 
 		$this->db->begin();
 
-		// Call trigger
-		$result = $this->call_trigger('LINK_DELETE', $user);
-		if ($result < 0) {
-			$this->db->rollback();
-			return -1;
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LINK_DELETE', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
 		}
-		// End call triggers
 
 		// Remove link
 		$sql = "DELETE FROM ".$this->db->prefix()."links";
@@ -416,6 +451,14 @@ class Link extends CommonObject
 		if (!$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
+		}
+
+		// Removed extrafields
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
 		}
 
 		if (!$error) {

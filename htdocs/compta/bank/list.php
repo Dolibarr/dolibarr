@@ -134,6 +134,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -178,6 +181,7 @@ if (empty($reshook)) {
 		$search_number = '';
 		$search_status = '';
 		$search_category_list = array();
+		$search_array_options = array();
 	}
 
 	// Mass actions
@@ -614,7 +618,6 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $totalarray['val'] = array('balance' => 0);
-$total = array();
 $found = 0;
 $lastcurrencycode = '';
 $imaxinloop = ($limit ? min($num, $limit) : $num);
@@ -860,8 +863,13 @@ foreach ($accounts as $key => $type) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'balance';
+				$totalarray['pospercurrency'][$totalarray['nbfield']] = 'balance';
 			}
 			$totalarray['val']['balance'] += $solde;
+			// Balances can't be summed across different currencies, so also keep a per-currency
+			// breakdown ($totalarray['valpercurrency']); list_print_total.tpl.php shows it as
+			// additional "Total <CCY>" lines once there is more than one currency in the list.
+			$totalarray['valpercurrency'][$objecttmp->currency_code]['balance'] = ($totalarray['valpercurrency'][$objecttmp->currency_code]['balance'] ?? 0) + $solde;
 		}
 
 		// Action column
@@ -881,12 +889,6 @@ foreach ($accounts as $key => $type) {
 		}
 
 		print '</tr>'."\n";
-
-		if (empty($total[$objecttmp->currency_code])) {
-			$total[$objecttmp->currency_code] = $solde;
-		} else {
-			$total[$objecttmp->currency_code] += $solde;
-		}
 	}
 	$i++;
 }
@@ -903,10 +905,19 @@ if (!$found) {
 }
 
 // Show total line
-if ($lastcurrencycode != 'various') {	// If there is several currency, $lastcurrencycode is set to 'various' before
-	// Show total line
-	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+if ($lastcurrencycode == 'various') {
+	// Summing balances of accounts in different currencies is meaningless, so the main "Total"
+	// line leaves the balance cell empty instead of showing a nonsensical combined figure;
+	// list_print_total.tpl.php still prints one "Total <CCY>" line per currency below it, using
+	// $totalarray['valpercurrency'] (independent of 'pos', so removing it here does not affect
+	// the per-currency lines).
+	$posKey = array_search('balance', $totalarray['pos'] ?? array(), true);
+	if ($posKey !== false) {
+		unset($totalarray['pos'][$posKey]);
+	}
+	unset($totalarray['val']['balance']);
 }
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 print '</table>'."\n";
 print '</div>'."\n";

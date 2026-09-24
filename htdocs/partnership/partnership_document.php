@@ -129,7 +129,7 @@ if ($object->id) {
 	 */
 	$head = partnershipPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("Partnership"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("Partnership"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list
