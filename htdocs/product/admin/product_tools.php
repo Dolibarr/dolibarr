@@ -2,7 +2,7 @@
 /* Copyright (C) 2012	   Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jose Martinez		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'products'));
+$langs->loadLangs(array('admin', 'products', 'stocks'));
 
 // Security check
 if (!$user->admin) {
@@ -340,8 +340,8 @@ if (empty($mysoc->country_code)) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-	print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+	print '<td>'.$langs->trans("From").'/'.$langs->trans("To").'</td>'."\n";
+	print '<td class="right" width="60"></td>'."\n";
 	print '</tr>'."\n";
 
 
@@ -359,7 +359,7 @@ if (empty($mysoc->country_code)) {
 		$rateclean = price2num($objoldvat->tva_tx);
 		$hascode = !empty($objoldvat->default_vat_code);
 		$optval = $rateclean.($hascode ? ' ('.$objoldvat->default_vat_code.')' : '');
-		$optlbl = vatrate($rateclean, true).($hascode ? ' ('.$objoldvat->default_vat_code.')' : ' ('.$langs->trans("WithoutVATCode").')').' ('.$objoldvat->nb.')';
+		$optlbl = vatrate($rateclean, true).($hascode ? ' ('.$objoldvat->default_vat_code.')' : ' ('.$langs->trans("WithoutVATCode").')').' &nbsp; ['.$objoldvat->nb.' '.$langs->trans("Products").']';
 		print '<option value="'.dol_escape_htmltag($optval).'"'.((string) $oldvatrate === (string) $optval ? ' selected' : '').'>'.$optlbl.'</option>';
 	}
 	print '</select>';
@@ -402,7 +402,7 @@ if (empty($mysoc->country_code)) {
 	print '<script>
 	jQuery(function() {
 		jQuery("#convert_vatrate").closest("form").on("submit", function() {
-			dolBlockUI("'.dol_escape_js($langs->transnoentities("MassConvertInProgress")).'");
+			dolBlockUI(\''.dol_escape_js($langs->transnoentities("MassConvertInProgress")).'\');
 		});
 	});
 	</script>';

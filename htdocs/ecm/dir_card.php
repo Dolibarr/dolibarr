@@ -132,10 +132,7 @@ if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontou
 			$langs->load("errors");
 			if ($resupload < 0) {	// Unknown error
 				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
-				// Files infected by a virus
-				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-			} else { // Known error
+			} else { // Known error, $resupload is a translation key
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}

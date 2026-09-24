@@ -389,6 +389,8 @@ ErrorThirdPartyNotFound=Error ThirdParty Not Found
 ErrorDynamicPHPContentNotAllowed=Error: %s=1 so dynamic PHP content is allowed only if RCE PHP functions (exec, shell_exec, ...) are all disabled.
 ErrorTooManyLinksIntoHTMLString=The HTML content contains too many links or images. Reduce the number or raise MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
 ErrorDeletingAClosedCashControlIsNotPossible=Deleting a closed cash control is not possible
+ErrorFailedToConvertFileInText=Failed to convert file in text.
+ErrorCantSignDocument=Error, can't sign the document. May be the link has expired or the document was modified since the link was sent.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -482,4 +484,4 @@ SomeShipmentExists=Error, there is some shipment linked to the order. Deletion r
 WarningEvaluationEmptyValidate=Can't validate evaluation, levels on skills not defined
 ErrorBadParametersForDirectDebitFileCreate=Can't create bank transfer file: expected format parameter is not provided.
 ErrorBadParametersForDirectDebitFileCreateDids=Can't create bank transfer file: IDs of existing payment requests are not provided.
-ErrorExpeditionQtyTooHigh=Shipped quantity (%s) exceeds the remaining quantity to deliver (%s).
+ErrorExpeditionQtyTooHigh=Shipped quantity (%s) exceeds the remaining quantity to deliver (%s) for product %s.

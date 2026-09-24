@@ -1806,19 +1806,9 @@ if ($action == 'create') {
 		}
 		print img_picto('', 'contact', 'class="pictofixedwidth"');
 
-		if (getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && $conf->use_javascript_ajax) {
-			// FIXME Use a select without the "multiple" (not supported when CONTACT_USE_SEARCH_TO_SELECT is on) or allow use only when $object->socid is set...
-			/*
-			 $selected = array_keys($object->socpeopleassigned);
-			 print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, []);
-			 */
-			$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
-			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
-			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, [], 'multiple', 'contactid');
-			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
-		} else {
-			print $form->selectcontacts(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', 0, 0, 0, [], 'multiple', 'contactid');
-		}
+		// select_contact() itself renders the ajax select2 combo when CONTACT_USE_SEARCH_TO_SELECT is on
+		// (nokeyifsocid=false so a $socid does not force it off), or the full-list combo otherwise.
+		print $form->select_contact(GETPOSTISSET('socid') ? GETPOSTINT('socid') : $select_contact_default, $preselectedids, 'socpeopleassigned', 1, '', '', 0, 'minwidth300 widthcentpercentminusxx maxwidth500', false, 0, 0, array(), '', 'contactid', '', '', true);
 
 		print '</td></tr>';
 	}
@@ -2399,20 +2389,10 @@ if ($id > 0 && $action != 'create') {
 			print '<div class="maxwidth200onsmartphone">';
 
 			print img_picto('', 'contact', 'class="paddingrightonly"');
-			if (getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && $conf->use_javascript_ajax) {
-				// FIXME Use the select_contact supporting the "multiple"
-				/*
-				$selected = array_keys($object->socpeopleassigned);
-				print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, $selected, 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, []);
-				*/
-				$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
-				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
-				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : ($object->socid > 0 ? $object->socid : -1), array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, [], 'multiple', 'contactid');
-				$conf->global->CONTACT_USE_SEARCH_TO_SELECT = $sav;
-			} else {
-				// Warning: MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT will hangs on large databases
-				print $form->selectcontacts(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : $object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', 0, 0, 0, [], 'multiple', 'contactid');
-			}
+			// Warning: MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT will hangs on large databases.
+			// select_contact() itself renders the ajax select2 combo when CONTACT_USE_SEARCH_TO_SELECT is on
+			// (nokeyifsocid=false so a $socid does not force it off), or the full-list combo otherwise.
+			print $form->select_contact(getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : ($object->socid > 0 ? $object->socid : -1), array_keys($object->socpeopleassigned), 'socpeopleassigned', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array(), '', 'contactid', '', '', true);
 			print '</div>';
 			print '</td>';
 			print '</tr>';

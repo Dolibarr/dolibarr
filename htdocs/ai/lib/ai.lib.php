@@ -4,7 +4,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Damhet			<a.damhet@progiseize.fr>
  * Copyright (C) 2026		Nick Fragoulis
- * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,6 +301,103 @@ function testAIConnection(string $service, string $key, string $url): array
 	}
 }
 
+
+/**
+ * Validate chat attachments before they reach any LLM provider.
+ *
+ * The MIME type comes from the browser's File.type (client-controlled), so it
+ * is checked server-side against a strict allowlist of what every wired
+ * provider can natively consume (images and PDF). Size is bounded per
+ * attachment and in total: base64 travels inside the JSON POST body and is
+ * re-sent to the provider, so an unbounded payload is both a memory and a
+ * billing hazard. When the privacy redaction policy is enforced, attachments
+ * are refused entirely: text is masked by PrivacyGuard before a cloud call,
+ * but a document's content cannot be, so sending it would bypass the policy.
+ *
+ * @param array<int,array{mime:string,data:string}> $attachments Parsed attachments
+ * @param string $error Set to a client-safe message when validation fails
+ * @return bool True when all attachments may be sent
+ */
+function ai_validate_attachments(array $attachments, &$error)
+{
+	global $langs;
+
+	$error = '';
+	if (empty($attachments)) {
+		return true;
+	}
+	$langs->load("other");	// owns the AIAttachment* keys; callers load it later or not at all
+
+	if (getDolGlobalInt('AI_PRIVACY_REDACTION', 0)) {
+		$error = $langs->trans("AIAttachmentBlockedByPrivacy");
+
+		return false;
+	}
+
+	// Cap the number of attachments server-side too: the chat enforces it
+	// client-side only, and other callers may not. 0 means unlimited.
+	$maxfiles = getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5);
+	if ($maxfiles > 0 && count($attachments) > $maxfiles) {
+		$error = $langs->trans("AIAttachmentTooMany", (string) $maxfiles);
+
+		return false;
+	}
+
+	$allowedmimes = array('application/pdf', 'image/png', 'image/jpeg', 'image/gif', 'image/webp');
+	// HEIC/HEIF reach this point only through the native-send fallback of the
+	// chat (browser unable to transcode): acceptable solely when the active
+	// provider consumes them (Gemini); other providers 400 on the MIME.
+	if ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google') {
+		$allowedmimes[] = 'image/heic';
+		$allowedmimes[] = 'image/heif';
+	}
+	$maxbytes = getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) * 1024 * 1024;
+	$totalbytes = 0;
+	foreach ($attachments as $att) {
+		if (!in_array($att['mime'], $allowedmimes, true)) {
+			$error = $langs->trans("AIAttachmentTypeNotAllowed", $att['mime']);
+
+			return false;
+		}
+		// 3/4 ratio: decoded size of a base64 payload without decoding it.
+		$bytes = (int) (strlen($att['data']) * 3 / 4);
+		$totalbytes += $bytes;
+		if ($bytes > $maxbytes || $totalbytes > $maxbytes) {
+			$error = $langs->trans("AIAttachmentTooLarge", (string) getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10));
+
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/**
+ * Trim a payload for the request log, keeping the beginning and the end.
+ *
+ * Request payloads start with the tool schemas and end with what a human
+ * actually looks for: the system rules, the user query and the page context.
+ * A plain head cut removes the interesting half, so keep both sides and state
+ * how much was dropped in between.
+ *
+ * @param string $text Payload to trim.
+ * @param int    $max  Maximum number of characters to keep.
+ * @return string Trimmed payload, unchanged when short enough.
+ */
+function aiTruncateForLog($text, $max = 60000)
+{
+	$len = dol_strlen($text);
+	if ($len <= $max) {
+		return $text;
+	}
+	$head = (int) floor($max / 2);
+	$tail = $max - $head;
+
+	return dol_substr($text, 0, $head)
+		."\n... [Truncated ".($len - $max)." chars] ...\n"
+		.dol_substr($text, $len - $tail, $tail);
+}
+
 /**
  * Log AI Request with Raw Payloads
  *
@@ -315,11 +412,16 @@ function testAIConnection(string $service, string $key, string $url): array
  * @param   string                  $error      Error message, if any
  * @param   string                  $rawReq     Raw request payload
  * @param   string                  $rawRes     Raw response payload
+ * @param   array{fk_actioncomm?:int,input_hash?:string,output_hash?:string,security_hash?:string,preserve_payloads?:bool,tokens_input?:int,tokens_output?:int,model?:string} $context Optional event link, audit metadata and provider token usage
+ * @param   int|null                $logId      Output: inserted row id, or 0 when logging is disabled or fails
+ * @param-out int                   $logId
  * @return  int									Return 0
  */
-function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '')
+function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '', array $context = array(), &$logId = null)
 {
 	global $conf;
+
+	$logId = 0;
 
 	if (!getDolGlobalInt('AI_LOG_REQUESTS')) {
 		return 0;
@@ -327,18 +429,30 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 
 	$tool = isset($response['tool']) ? (string) $response['tool'] : '';
 
-	if (dol_strlen($rawReq) > 60000) {
-		$rawReq = dol_substr($rawReq, 0, 60000) . '... [Truncated]';
-	}
-
+	// Keep both ends when trimming: a request payload starts with the tool
+	// schemas (tens of kB, identical on every call) and ends with the system
+	// rules, the user query and the page context - the part anyone reads a
+	// log for. Cutting only the tail threw exactly that away.
+	// Structured tool output must remain valid JSON for subsequent reads.
 	$rawResStr = (string) $rawRes;
-	if (dol_strlen($rawResStr) > 60000) {
-		$rawResStr = dol_substr($rawResStr, 0, 60000) . '... [Truncated]';
+	if (empty($context['preserve_payloads'])) {
+		$rawReq = aiTruncateForLog($rawReq, 60000);
+		$rawResStr = aiTruncateForLog($rawResStr, 60000);
 	}
 
-	$sql = "INSERT INTO " . MAIN_DB_PREFIX . "ai_request_log (";
+	$sql = "INSERT INTO " . $db->prefix() . "ai_request_log (";
 	$sql .= "entity, date_request, fk_user, query_text, tool_name, provider, ";
 	$sql .= "execution_time, confidence, status, error_msg, raw_request_payload, raw_response_payload";
+	// Each optional group keys on ITS OWN entries, so a caller passing only
+	// token usage does not drag empty audit hashes along, and vice versa.
+	$hasAudit = isset($context['fk_actioncomm']) || isset($context['input_hash']) || isset($context['output_hash']) || isset($context['security_hash']);
+	$hasUsage = isset($context['tokens_input']) || isset($context['tokens_output']) || isset($context['model']);
+	if ($hasAudit) {
+		$sql .= ", fk_actioncomm, input_hash, output_hash, security_hash";
+	}
+	if ($hasUsage) {
+		$sql .= ", tokens_input, tokens_output, model";
+	}
 	$sql .= ") VALUES (";
 	$sql .= ((int) $conf->entity) . ", ";
 	$sql .= "'" . $db->idate(dol_now()) . "', ";
@@ -352,11 +466,24 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql .= "'" . $db->escape($error) . "', ";
 	$sql .= "'" . $db->escape($rawReq) . "', ";
 	$sql .= "'" . $db->escape($rawResStr) . "'";
+	if ($hasAudit) {
+		$sql .= ", ".(!empty($context['fk_actioncomm']) && $context['fk_actioncomm'] > 0 ? (int) $context['fk_actioncomm'] : 'NULL');
+		$sql .= ", '".$db->escape($context['input_hash'] ?? '')."'";
+		$sql .= ", '".$db->escape($context['output_hash'] ?? '')."'";
+		$sql .= ", '".$db->escape($context['security_hash'] ?? '')."'";
+	}
+	if ($hasUsage) {
+		$sql .= ", ".(isset($context['tokens_input']) ? (int) $context['tokens_input'] : 'NULL');
+		$sql .= ", ".(isset($context['tokens_output']) ? (int) $context['tokens_output'] : 'NULL');
+		$sql .= ", '".$db->escape((string) ($context['model'] ?? ''))."'";
+	}
 	$sql .= ")";
 
 	$resql = $db->query($sql);
 	if (!$resql) {
-		dol_print_error($db);
+		dol_syslog(__FUNCTION__.": ".$db->lasterror(), LOG_ERR);
+	} else {
+		$logId = (int) $db->last_insert_id($db->prefix()."ai_request_log");
 	}
 
 	return 0;
@@ -424,21 +551,21 @@ function aiAdminPrepareHead()
 	$head[$h][2] = 'custom';
 	$h++;
 
-	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$head[$h][0] = dol_buildpath("/ai/admin/assistant.php", 1);
 		$head[$h][1] = $langs->trans("Assistant");
 		$head[$h][2] = 'assistant';
 		$h++;
 	}
 
-	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$head[$h][0] = dol_buildpath("/ai/admin/server_mcp.php", 1);
 		$head[$h][1] = $langs->trans("MCPServer");
 		$head[$h][2] = 'servermcp';
 		$h++;
 	}
 
-	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$head[$h][0] = dol_buildpath("/ai/admin/configure_tools.php", 1);
 		$head[$h][1] = $langs->trans("ToolAccessControl");
 		$head[$h][2] = 'tools';
@@ -488,6 +615,123 @@ function getAiAssistantProviderLabel()
 }
 
 /**
+ * Return the list of model ids offered by the configured AI provider, with a
+ * 1-hour cache in the constant AI_MODELS_LIST_CACHE (Anthropic GET /models,
+ * Google GET /models, OpenAI-compatible GET /models). Shared by the AJAX
+ * endpoint ai/ajax/list_models.php (datalists, chat picker) and by the
+ * model-availability warning banner of the admin models page.
+ *
+ * @param DoliDB $db           Database handler (to store the cache constant)
+ * @param bool   $forcerefresh True to bypass the cache and query the live list
+ * @return array{service:string,models:string[]} Active service key and its sorted model ids (empty list when the provider is not configured, offers no listing API, or the call fails)
+ */
+function getAiProviderModelList($db, $forcerefresh = false)
+{
+	global $conf;
+
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey == '-1') {
+		return array('service' => '', 'models' => array());
+	}
+
+	if (!$forcerefresh) {
+		$cacheraw = getDolGlobalString('AI_MODELS_LIST_CACHE');
+		if ($cacheraw) {
+			$cache = json_decode($cacheraw, true);
+			if (is_array($cache) && !empty($cache['service']) && $cache['service'] === $serviceKey
+				&& !empty($cache['ts']) && (dol_now() - (int) $cache['ts']) < 3600
+				&& !empty($cache['models']) && is_array($cache['models'])) {
+				return array('service' => $serviceKey, 'models' => $cache['models']);
+			}
+		}
+	}
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+	$servicesList = getListOfAIServices();
+	$adapterType = $servicesList[$serviceKey]['adapter_type'] ?? 'openai';
+	$defUrl = $servicesList[$serviceKey]['url'] ?? '';
+	$baseUrl = rtrim(getDolGlobalString('AI_API_'.strtoupper($serviceKey).'_URL') ?: $defUrl, '/');
+
+	$apiKey = getDolGlobalString('AI_API_'.strtoupper($serviceKey).'_KEY');
+	if (preg_match('/^crypt:/', $apiKey)) {
+		$apiKey = dolDecrypt($apiKey, $conf->file->instance_unique_id);
+	}
+	if (empty($apiKey) || empty($baseUrl)) {
+		return array('service' => $serviceKey, 'models' => array());
+	}
+
+	$models = array();
+	if ($adapterType === 'anthropic') {
+		$headers = array('x-api-key: '.$apiKey, 'anthropic-version: 2023-06-01');
+		$res = getURLContent($baseUrl.'/models?limit=100', 'GET', '', 1, $headers, array('http', 'https'), 2);
+		$json = json_decode($res['content'] ?? '', true);
+		foreach ((array) ($json['data'] ?? array()) as $m) {
+			if (!empty($m['id'])) {
+				$models[] = (string) $m['id'];
+			}
+		}
+	} elseif ($adapterType === 'google') {
+		$res = getURLContent($baseUrl.'/models?pageSize=200&key='.urlencode($apiKey), 'GET', '', 1, array(), array('http', 'https'), 2);
+		$json = json_decode($res['content'] ?? '', true);
+		foreach ((array) ($json['models'] ?? array()) as $m) {
+			if (!empty($m['name'])) {
+				$models[] = preg_replace('/^models\//', '', (string) $m['name']);
+			}
+		}
+	} else {
+		// OpenAI-compatible providers (OpenAI, Mistral, Groq, DeepSeek, custom...)
+		$headers = array('Authorization: Bearer '.$apiKey);
+		$res = getURLContent($baseUrl.'/models', 'GET', '', 1, $headers, array('http', 'https'), 2);
+		$json = json_decode($res['content'] ?? '', true);
+		foreach ((array) ($json['data'] ?? array()) as $m) {
+			if (!empty($m['id'])) {
+				$models[] = (string) $m['id'];
+			}
+		}
+	}
+
+	$models = array_values(array_unique($models));
+	sort($models);
+
+	if (count($models)) {
+		dolibarr_set_const($db, 'AI_MODELS_LIST_CACHE', json_encode(array('service' => $serviceKey, 'ts' => dol_now(), 'models' => $models)), 'chaine', 0, '', $conf->entity);
+	}
+
+	return array('service' => $serviceKey, 'models' => $models);
+}
+
+/**
+ * Suggest the closest available model id for a model that disappeared from the
+ * provider's list: same family first (shared leading token, e.g. 'gemini',
+ * 'gpt', 'claude'), then overall string similarity. Used by the warning banner
+ * of the admin models page to propose a replacement.
+ *
+ * @param string   $missing Configured model id that is no longer offered
+ * @param string[] $models  Model ids currently offered by the provider
+ * @return string Closest model id, or '' when nothing is similar enough to be a useful suggestion
+ */
+function aiSuggestClosestModel($missing, array $models)
+{
+	$best = '';
+	$bestScore = -1.0;
+	foreach ($models as $cand) {
+		$pct = 0.0;
+		similar_text(strtolower($missing), strtolower($cand), $pct);
+		$score = $pct;
+		if (strtok(strtolower($missing), '-') === strtok(strtolower($cand), '-')) {
+			$score += 15.0;	// same family beats a slightly closer string of another family
+		}
+		if ($score > $bestScore) {
+			$bestScore = $score;
+			$best = $cand;
+		}
+	}
+	return ($bestScore >= 50.0) ? $best : '';
+}
+
+/**
  * Build the configuration array consumed by the AI Assistant chat frontend (ai/js/ai_assistant.js).
  * It is serialized as JSON into the data-ai-config attribute of the chat container.
  *
@@ -495,9 +739,16 @@ function getAiAssistantProviderLabel()
  */
 function getAiChatAssistantConfig()
 {
-	global $langs, $user;
+	global $conf, $langs, $user;
+
+	$langs->loadLangs(array('main', 'bills', 'companies', 'products', 'other'));
 
 	$keys = array(
+		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
+		'AIAttachmentBlockedByPrivacy', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
+		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
+		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
+		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
 		// General UI
 		'NoDataAvailable',
 		'Error',
@@ -513,8 +764,6 @@ function getAiChatAssistantConfig()
 
 		// Placeholders & Status
 		'TypeOrSpeak',
-		'UploadLocalDoc',
-		'UploadCloudDoc',
 		'DocLoaded',
 		'Listening',
 		'Transcribed',
@@ -552,6 +801,7 @@ function getAiChatAssistantConfig()
 		'AIError',
 		'EmptyAIResponse',
 		'BrowserNotSupported',
+		'AISessionExpiredReload',
 
 		// Actions & Dialogs
 		'YesProceed',
@@ -605,6 +855,18 @@ function getAiChatAssistantConfig()
 	return array(
 		'mode' => getDolGlobalString('AI_DEFAULT_INPUT_MODE'),
 		'labels' => $ai_translations,
+		// Presentation context for tool results: money, date and label
+		// formatting happen client-side on raw API data.
+		'privacyRedaction' => getDolGlobalInt('AI_PRIVACY_REDACTION', 0),
+		// Attachment count cap, so the client mirrors the server-side guard
+		// of ai_validate_attachments() instead of hardcoding its own.
+		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
+		// Gemini is the only wired provider taking HEIC natively; the chat JS
+		// falls back to it when the browser cannot transcode HEIC to JPEG.
+		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
+		'currency' => $conf->currency,
+		'locale' => str_replace('_', '-', $langs->getDefaultLang()),
+		'urlRoot' => DOL_URL_ROOT,
 		// Endpoints are called with absolute URLs so the chat also works when
 		// injected into another page (topbar popover) and not only when served
 		// from /ai/assistant/index.php.
@@ -678,8 +940,10 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Clear").'</span>';
 	$out .= '</button>';
 	if ($mode === 'popover') {
-		// Window controls of the popover (handled by the bootstrap JS in main.inc.php)
-		$out .= '<button type="button" id="ai-expand-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIExpandPanel")).'" data-title-expand="'.dol_escape_htmltag($langs->trans("AIExpandPanel")).'" data-title-reduce="'.dol_escape_htmltag($langs->trans("AIReducePanel")).'"><i class="fa fa-expand-alt"></i></button>';
+		// Window controls of the popover (handled by the bootstrap JS in main.inc.php).
+		// The expand button opens the standalone full page (/ai/assistant/index.php)
+		// in the current tab; the popover always stays in its large ("expanded") state.
+		$out .= '<button type="button" id="ai-expand-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIOpenFullPage")).'" data-fullscreen-url="'.dol_buildpath('/ai/assistant/index.php', 1).'"><i class="fa fa-expand"></i></button>';
 		$out .= '<button type="button" id="ai-close-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("Close")).'"><i class="fa fa-times"></i></button>';
 	}
 	$out .= '</div>';
@@ -730,7 +994,7 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<div class="chat-input-pill">';
 	// Upload Wrapper (always visible: documents can be attached in any mode)
 	$out .= '<div id="upload-wrapper" class="upload-wrapper">';
-	$out .= '<input type="file" id="file-upload" accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
+	$out .= '<input type="file" id="file-upload" multiple accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.heic,.heif,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
 	$out .= '<button type="button" id="upload-btn" class="round-btn" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AttachFile")).'">'.img_picto('', 'fa-paperclip').'</button>';
 	$out .= '</div>';
 	// Microphone Wrapper (Visible only in Voice modes)
@@ -753,4 +1017,119 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '</div>';
 
 	return $out;
+}
+
+/**
+ * Check the anti-CSRF token of a request sent to one of the AI Assistant endpoints.
+ *
+ * The check cannot be delegated to main.inc.php for those endpoints:
+ *  - it only runs when MAIN_SECURITY_CSRF_WITH_TOKEN is enabled (it is optional),
+ *  - it reads the token from $_GET/$_POST only,
+ *  - and when the token is present but invalid it merely clears $_POST, which does not
+ *    protect an endpoint reading its payload from the raw php://input body.
+ *
+ * The token is read from the X-CSRF-Token header, then from the 'token' parameter (the chat
+ * frontend appends it to the endpoint URL, see getAiChatAssistantConfig() and epUrl() in
+ * ai/js/ai_assistant.js). It is compared to both session tokens because the endpoints define
+ * NOTOKENRENEWAL and therefore never rotate them: 'newtoken' is the value handed to the
+ * frontend by newToken(), 'token' is the value it has been promoted to by a page that does
+ * rotate. Both are legitimate for a call issued from a page of the current session.
+ * (Port of #39393 to develop.)
+ *
+ * @param	string	$context	Endpoint name, used for logging only
+ * @return	void				Emits a 403 JSON response and exits when the token is invalid
+ */
+function aiCheckCsrfToken($context = '')
+{
+	$token = '';
+	if (!empty($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+		$token = (string) $_SERVER['HTTP_X_CSRF_TOKEN'];
+	} else {
+		$token = GETPOST('token', 'alpha');
+	}
+
+	$sessiontokens = array();
+	if (!empty($_SESSION['token'])) {
+		$sessiontokens[] = (string) $_SESSION['token'];
+	}
+	if (!empty($_SESSION['newtoken'])) {
+		$sessiontokens[] = (string) $_SESSION['newtoken'];
+	}
+
+	$valid = false;
+	foreach ($sessiontokens as $sessiontoken) {
+		if (!empty($token) && hash_equals($sessiontoken, $token)) {
+			$valid = true;
+			break;
+		}
+	}
+
+	if (!$valid) {
+		dol_syslog(
+			'[AI] Request to '.($context !== '' ? $context : $_SERVER['PHP_SELF'])
+			.' refused by CSRF protection (invalid or missing token).',
+			LOG_WARNING
+		);
+
+		http_response_code(403);
+		header('Content-Type: application/json');
+		echo json_encode(array('error' => 'Invalid CSRF token'));
+		exit;
+	}
+}
+
+/**
+ * Remove extrafields flagged as personal data from an API-shaped payload.
+ *
+ * Dolibarr lets an administrator mark an extrafield as personal data
+ * (GDPR). Such values must not travel to an AI provider, but the
+ * REST objects the bridge returns carry every extrafield in array_options,
+ * and the assistant tools that read array_options directly do the same.
+ * This walks an already-serialized payload (single object or list) and drops
+ * those keys, leaving everything else untouched.
+ *
+ * The per-element list is cached for the life of the process: a change to the
+ * personal_data flag is honored from the next request on.
+ *
+ * @param DoliDB              $db          Database handler.
+ * @param array<mixed>|mixed  $payload     Serialized API output (object or list of objects).
+ * @param string              $elementtype Element type as used by ExtraFields (e.g. 'facture').
+ * @return array<mixed>|mixed Payload without personal-data extrafields.
+ */
+function aiStripPersonalExtrafields($db, $payload, $elementtype)
+{
+	if (!is_array($payload) || $elementtype === '') {
+		return $payload;
+	}
+
+	static $cache = array();
+	if (!isset($cache[$elementtype])) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($db);
+		$extrafields->fetch_name_optionals_label($elementtype);
+		$attrs = $extrafields->attributes[$elementtype] ?? array();
+		$personal = array();
+		foreach (($attrs['personal_data'] ?? array()) as $code => $flag) {
+			if (!empty($flag)) {
+				$personal[] = 'options_'.$code;
+			}
+		}
+		$cache[$elementtype] = $personal;
+	}
+	if (empty($cache[$elementtype])) {
+		return $payload;
+	}
+
+	foreach ($payload as $key => $value) {
+		if ($key === 'array_options' && is_array($value)) {
+			foreach ($cache[$elementtype] as $personalKey) {
+				unset($payload[$key][$personalKey]);
+			}
+		} elseif (is_array($value)) {
+			// List responses: each row carries its own array_options.
+			$payload[$key] = aiStripPersonalExtrafields($db, $value, $elementtype);
+		}
+	}
+
+	return $payload;
 }

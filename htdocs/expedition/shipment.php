@@ -692,7 +692,7 @@ if ($order_id > 0 || !empty($ref)) {
 
 							$outputlangs = $langs;
 							$newlang = '';
-							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (empty($newlang)) {

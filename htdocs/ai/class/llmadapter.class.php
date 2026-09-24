@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2026		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026		Nick Fragoulis
- * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,9 @@ class UniversalLLMAdapter
 
 	/** @var string Stores the raw response for debugging */
 	public $lastResponse = "";
+
+	/** @var array{input?:int,output?:int,model?:string} Token usage reported by the provider for the LAST call (empty when the call failed before a usable response) */
+	public $lastUsage = array();
 
 	/** @var string The type of LLM (e.g., 'openai', 'ollama') */
 	private $type;
@@ -112,10 +115,22 @@ class UniversalLLMAdapter
 		if (!empty($attachments)) {
 			$userContent = array(array("type" => "text", "text" => $msg));
 			foreach ($attachments as $att) {
-				$userContent[] = array(
-					"type" => "image_url",
-					"image_url" => array("url" => "data:".$att['mime'].";base64,".$att['data'])
-				);
+				if ($att['mime'] === 'application/pdf') {
+					// OpenAI compatible APIs reject non-image MIME inside image_url;
+					// PDFs use the dedicated 'file' content part.
+					$userContent[] = array(
+						"type" => "file",
+						"file" => array(
+							"filename" => "document.pdf",
+							"file_data" => "data:application/pdf;base64,".$att['data']
+						)
+					);
+				} else {
+					$userContent[] = array(
+						"type" => "image_url",
+						"image_url" => array("url" => "data:".$att['mime'].";base64,".$att['data'])
+					);
+				}
 			}
 		}
 
@@ -127,6 +142,9 @@ class UniversalLLMAdapter
 			),
 			"temperature" => 0.1
 		);
+		if (!empty($attachments)) {
+			$data["max_tokens"] = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
+		}
 
 		// Only force JSON mode if explicitly requested
 		// This allows Email/Webpage generation to return raw HTML
@@ -137,7 +155,7 @@ class UniversalLLMAdapter
 			}
 		}
 
-		$this->lastRequest = json_encode($data, JSON_PRETTY_PRINT);
+		$this->lastRequest = $this->encodeRequestForLog($data);
 
 		return $this->curl($url, $data, array("Content-Type: application/json", "Authorization: Bearer " . $this->key));
 	}
@@ -166,11 +184,13 @@ class UniversalLLMAdapter
 			foreach ($attachments as $att) {
 				$userContent[] = array(
 					"type" => ($att['mime'] === 'application/pdf' ? "document" : "image"),
+					// Only application/pdf and image/* reach this point (see
+					// ai_validate_attachments()); anything else would 400.
 					"source" => array("type" => "base64", "media_type" => $att['mime'], "data" => $att['data'])
 				);
 			}
 			$userContent[] = array("type" => "text", "text" => $msg);
-			$maxTokens = 4096;	// document extraction answers are much longer than intent JSON
+			$maxTokens = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
 		}
 
 		$data = array(
@@ -180,7 +200,7 @@ class UniversalLLMAdapter
 			"max_tokens" => $maxTokens
 		);
 
-		$this->lastRequest = json_encode($data, JSON_PRETTY_PRINT);
+		$this->lastRequest = $this->encodeRequestForLog($data);
 
 		return $this->curl($url, $data, array("content-type: application/json", "x-api-key: " . $this->key, "anthropic-version: 2023-06-01"), true);
 	}
@@ -221,12 +241,80 @@ class UniversalLLMAdapter
 			"contents" => array(
 				array("parts" => $parts)
 			),
-			"generationConfig" => array("temperature" => 0.1)
+			"generationConfig" => (empty($attachments) ? array("temperature" => 0.1) : array("temperature" => 0.1, "maxOutputTokens" => 16384))	// thinking models count their reasoning tokens INSIDE maxOutputTokens: at 4096 a multi-line reception intent came back finishReason=MAX_TOKENS, cut mid-JSON
 		);
 
-		$this->lastRequest = json_encode($data, JSON_PRETTY_PRINT);
+		$this->lastRequest = $this->encodeRequestForLog($data);
 
 		return $this->curl($url, $data, array("Content-Type: application/json"), false, true);
+	}
+
+	/**
+	 * Record a "model not found / retired" type provider failure into the constant
+	 * AI_MODEL_RUNTIME_FAILURE, displayed as a warning banner on the models admin
+	 * page. Runtime is the only fully reliable signal for a retired model: a
+	 * provider's listing can be incomplete, and a listed model can still be
+	 * rejected at call time (e.g. models restricted to existing customers).
+	 *
+	 * @param int    $httpCode HTTP status returned by the provider
+	 * @param string $msg      Error message returned by the provider
+	 * @return void
+	 */
+	private function recordModelFailure(int $httpCode, string $msg)
+	{
+		global $db, $conf;
+
+		if (!is_object($db) || !is_object($conf)) {
+			return;	// no Dolibarr runtime (defensive: adapter may be unit-tested standalone)
+		}
+		// Only errors that talk about the model itself, not quota/auth/network ones.
+		if (!preg_match('/model/i', $msg)) {
+			return;
+		}
+		if (!preg_match('/not.?found|does not exist|not exist|unsupported|not supported|not available|unavailable|deprecated|no longer|retired|invalid/i', $msg)) {
+			return;
+		}
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		dolibarr_set_const($db, 'AI_MODEL_RUNTIME_FAILURE', json_encode(array(
+			'model' => $this->model,
+			'ts' => dol_now(),
+			'http_code' => $httpCode,
+			'message' => dol_trunc($msg, 300)
+		)), 'chaine', 0, '', $conf->entity);
+	}
+
+	/**
+	 * JSON-encode a request for the log with base64 payloads removed, so the
+	 * 60k truncation in ai_log_request() never swallows the text prompt (for
+	 * Anthropic the document block precedes the text block) and document
+	 * contents never land in llx_ai_request_log.
+	 *
+	 * @param array<string,mixed> $data Request payload
+	 * @return string JSON with long base64 runs replaced by a placeholder
+	 */
+	private function encodeRequestForLog(array $data)
+	{
+		$json = json_encode($data);	// compact on purpose: the log budget is 60k chars, and core's json.lib.php polyfill makes 2-arg json_encode a phpstan error
+
+		// Unanchored: base64 appears both as bare JSON string values (Anthropic,
+		// Google) and embedded inside data: URLs (OpenAI file/image_url parts).
+		$out = preg_replace_callback(
+			'~((?:[A-Za-z0-9+=]++|\\\\/)+)~',
+			/**
+			 * @param string[] $m Regex matches: [1] = base64-like run
+			 * @return string
+			 */
+			static function (array $m) {
+				if (strlen($m[1]) < 512) {
+					return $m[1];	// short runs (words, urls) stay as they are
+				}
+
+				return '[base64 elided, '.strlen($m[1]).' chars]';
+			},
+			$json
+		);
+
+		return ($out === null) ? $json : $out;
 	}
 
 	/**
@@ -246,16 +334,23 @@ class UniversalLLMAdapter
 		// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
 		// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 		global $dolibarr_ai_allow_local_endpoints;
-		$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
+
+		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
 
 		// Pass $this->timeout as the response timeout so the LLM-specific value configured
 		// at construction time is honored (getURLContent's $timeoutresponse is the 10th arg;
 		// preceding args $ssl_verifypeer=-1 and $timeoutconnect=0 keep their defaults).
+		$this->lastUsage = array();	// never carry over the previous call's usage
+
 		$result = getURLContent($url, 'POST', json_encode($data), 1, $headers, array('http', 'https'), $localurl, -1, 0, $this->timeout);
 
 		$body         = (string) ($result['content'] ?? '');
 		$httpCode     = (int) ($result['http_code'] ?? 0);
 		$effectiveUrl = (string) ($result['url'] ?? $url);
+		// The Gemini key travels as a ?key= query parameter: mask it before the
+		// URL lands in lastResponse, which is persisted into llx_ai_request_log
+		// and shown by the admin Log Viewer - a secret must never sit in a log.
+		$effectiveUrl = preg_replace('/([?&]key=)[^&\s]+/', '$1***', $effectiveUrl);
 		// Store an enriched payload so the admin Log Viewer ("VIEW LOGS" in the AI Server
 		// MCP setup page) shows something actionable when something goes wrong, not just
 		// a bare "Invalid JSON response from API." with an empty body.
@@ -277,7 +372,24 @@ class UniversalLLMAdapter
 
 		if (isset($json['error'])) {
 			$msg = $json['error']['message'] ?? json_encode($json['error']);
+			$this->recordModelFailure($httpCode, (string) $msg);
 			return "Error: API " . $msg;
+		}
+
+		// Token usage as reported by the provider, for the cost columns of the
+		// request log: every provider returns it inside the response body under
+		// its own name. Thinking tokens are billed as output, so Gemini's
+		// thoughtsTokenCount is counted with the visible candidates tokens.
+		$this->lastUsage = array('model' => $this->model);
+		if ($isGemini) {
+			$this->lastUsage['input']  = (int) ($json['usageMetadata']['promptTokenCount'] ?? 0);
+			$this->lastUsage['output'] = (int) ($json['usageMetadata']['candidatesTokenCount'] ?? 0) + (int) ($json['usageMetadata']['thoughtsTokenCount'] ?? 0);
+		} elseif ($isClaude) {
+			$this->lastUsage['input']  = (int) ($json['usage']['input_tokens'] ?? 0);
+			$this->lastUsage['output'] = (int) ($json['usage']['output_tokens'] ?? 0);
+		} else {
+			$this->lastUsage['input']  = (int) ($json['usage']['prompt_tokens'] ?? 0);
+			$this->lastUsage['output'] = (int) ($json['usage']['completion_tokens'] ?? 0);
 		}
 
 		// Extraction Logic

@@ -129,7 +129,7 @@ $dateend = null;
 $syear = (GETPOSTISSET('closeyear') ? GETPOSTINT('closeyear') : dol_print_date($now, "%Y", 'tzuserrel'));
 $smonth = (GETPOSTISSET('closemonth') ? GETPOSTINT('closemonth') : dol_print_date($now, "%m", 'tzuserrel'));
 $sday = (GETPOSTISSET('closeday') ? GETPOSTINT('closeday') : dol_print_date($now, "%d", 'tzuserrel'));
-// TODO Add a global option to define the end hours when doing a cash control
+// TODO Add a global option to allow to enter the end hours when doing a cash control (currently only end of hours 23:59:59 for local hour so :xx::xx for UTC is supported)
 $shour = 0;
 $smin = 0;
 $ssec = 0;
@@ -650,7 +650,7 @@ if ($action == "create" || $action == "start") {
 	if ($contextpage == 'takepos') {
 		print '<input type="hidden" name="contextpage" value="takepos">';
 	}
-	if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
+	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 		print '<input type="hidden" name="action" value="add">';
 	} elseif ($action == 'close') {
 		print '<input type="hidden" name="action" value="valid">';
@@ -732,7 +732,7 @@ if ($action == "create" || $action == "start") {
 
 	// Button Start
 	print '<td>';
-	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') {
+	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 		print '';
 	} else {
 		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Start").'">';
@@ -743,7 +743,7 @@ if ($action == "create" || $action == "start") {
 
 
 	// Table to see/enter balance
-	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') {
+	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
 
@@ -934,6 +934,13 @@ if (empty($action) || $action == "view" || $action == "close") {
 		$htmltooltip .= dol_print_date($datestart, 'standard', 'gmt').' - ';
 		$htmltooltip .= dol_print_date($dateend, 'standard', 'gmt');
 		$htmltooltip .= '</span>';
+		$htmltooltip .= '<br><br>';
+		if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+			$htmltooltip .= $langs->trans("UsedToSeletRecordOn", $langs->transnoentitiesnoconv("BlockedLog"), MAIN_DB_PREFIX."blockedlog", $langs->transnoentitiesnoconv("DateCreation"), "date_creation");
+		} else {
+			$htmltooltip .= $langs->trans("UsedToSeletRecordOn", $langs->transnoentitiesnoconv("Payment"), MAIN_DB_PREFIX."paiement", $langs->transnoentitiesnoconv("DatePayment"), "datep");
+		}
+
 		print $form->textwithpicto('', $htmltooltip);
 		print '</td></tr>';
 
@@ -1050,7 +1057,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 			if ($contextpage == 'takepos') {
 				print '<input type="hidden" name="contextpage" value="takepos">';
 			}
-			if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
+			if ($action == 'start' && GETPOST('posnumber') != '' && GETPOSTINT('posnumber') != 0 && GETPOSTINT('posnumber') != -1) {
 				print '<input type="hidden" name="action" value="add">';
 			} elseif ($action == 'close') {
 				print '<input type="hidden" name="action" value="valid">';
@@ -1066,7 +1073,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 
 				print '<br>';
 
-				print '<!-- section to enter declareda mount -->';
+				print '<!-- section to enter declared mount -->';
 				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder centpercent">';
 
@@ -1171,7 +1178,15 @@ if (empty($action) || $action == "view" || $action == "close") {
 					if ($action == 'start') {
 						print 'disabled '; // To start cash user only can set opening cash
 					}
-					print 'name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
+					print 'name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="';
+					$suggestedvalue = '';
+					if ($key == 'cash') {
+						$suggestedvalue = price($object->opening + $theoricalamountforterminal[$terminalid][$key]);
+					} else {
+						$suggestedvalue = price($theoricalamountforterminal[$terminalid][$key]);
+					}
+					print GETPOSTISSET($key.'_amount') ? GETPOST($key.'_amount', 'alpha') : $suggestedvalue;
+					print '">';
 					print '</td>';
 					$i++;
 				}

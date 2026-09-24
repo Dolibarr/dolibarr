@@ -256,6 +256,14 @@ if (empty($reshook)) {
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 	}
 
+	if ($action == 'classin' && $permissiontoadd) {
+		// Link to a project
+		$result = $object->setProject(GETPOSTINT('projectid'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	if ($action == 'setref_customer' && $permissiontoadd) {
 		$result = $object->fetch($id);
 		if ($result < 0) {
@@ -2600,17 +2608,17 @@ if ($action == 'create' && $usercancreate) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}
 							} elseif ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+								// If we are here, it means STOCK_SUPPORTS_SERVICES is off (otherwise the previous test would be true)
+								// So a service has no stock here, so neither a preselected warehouse nor STOCK_DISALLOW_NEGATIVE_TRANSFER is relevant here.
 								$disabled = '';
 								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
 								}
-								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
-									$disabled = 'disabled="disabled"';
-								}
 								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$quantityToBeDelivered.'"'.($disabled ? ' '.$disabled : '').'> ';
-								if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
-								}
+								// This hidden field must always be output: it is the marker the POST handler uses to detect that the quantities
+								// of this line are named qtyl<i>_<subj>. Without it the handler looks for qtyl<i> instead, finds nothing and
+								// silently drops the line. Value 0 = no warehouse, same as entl<i> in the single warehouse case above.
+								print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="0">';
 							} else {
 								print $langs->trans("NA");
 							}
@@ -3282,9 +3290,22 @@ if ($action == 'create' && $usercancreate) {
 			}
 		}
 
+		$origin = (string) $origin;
+		if (empty($origin) || $origin == 'order') {
+			$origin = 'commande';
+		}
+
+		// List of allowed value of $origin
+		if (!in_array($origin, array('supplier_proposal', 'supplier_order', 'commande_fournisseur', 'facture_fourn', 'propal', 'commande', 'facture'))) {
+			dol_print_error($db, 'Bad value for parameter origin in expedition/card.php');
+			exit;
+		}
+
 		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 		if ($origin_id > 0) {
+			$tablenametouse = (($origin == 'supplier_order') ? 'commande_fournisseur' : (($origin == 'facture_fourn') ? 'facture_fourn_' : $origin));
+
 			$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end, obj.special_code";
 			$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot";
 			$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
@@ -3292,7 +3313,7 @@ if ($action == 'create' && $usercancreate) {
 			$sql .= ', p.description as product_desc';
 			$sql .= " FROM " . MAIN_DB_PREFIX . "expeditiondet as ed";
 			$sql .= ", " . MAIN_DB_PREFIX . "expedition as e";
-			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize((string) $origin) . "det as obj";
+			$sql .= ", " . MAIN_DB_PREFIX . $db->sanitize($tablenametouse) . "det as obj";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON obj.fk_product = p.rowid";
 			$sql .= " WHERE e.entity IN (" . getEntity('expedition') . ")";
 			$sql .= " AND obj.fk_" . $db->sanitize((string) $origin) . " = " . ((int) $origin_id);
@@ -3768,7 +3789,7 @@ if ($action == 'create' && $usercancreate) {
 	 *    Boutons actions
 	 */
 
-	if (($user->socid == 0) && ($action != 'presend')) {
+	if (($user->socid == 0) && ($action != 'presend') && ($action != 'editline')) {
 		print '<div class="tabsAction">';
 
 		$parameters = array();

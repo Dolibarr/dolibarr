@@ -36,5 +36,6 @@ create table llx_payment_various
   note                  text,
   fk_bank               integer,
   fk_user_author        integer,                    -- utilisateur qui a cree l'info
-  fk_user_modif         integer                     -- utilisateur qui a modifié l'info
+  fk_user_modif         integer,                    -- utilisateur qui a modifié l'info
+  import_key            varchar(14)                 -- import key
 )ENGINE=innodb;

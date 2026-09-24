@@ -809,6 +809,16 @@ class Tva extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -965,7 +975,7 @@ class Tva extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label" >'.dol_print_date($this->datev).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, (float) $this->totalpaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

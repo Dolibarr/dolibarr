@@ -52,21 +52,21 @@ POST http://{{hostnport}}/api/index.php/contracts
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: date_contrat field missing"}}
 
-# POST type_template field required
+# POST socid must match an existing thirdparty
 POST http://{{hostnport}}/api/index.php/contracts
-{ "id" : 42, "socid" : "22", "date_contrat" : "873223122" }
-HTTP 400
-{"error":{"code":400,"message":"Bad Request: commercial_signature_id field missing"}}
+{ "id" : 42, "socid" : "0", "date_contrat" : "873223122" }
+HTTP 404
+{"error":{"code":404,"message":"Not Found: Thirdparty with id=0 not found or not allowed"}}
+
+# Capture an existing thirdparty ID
+GET http://{{hostnport}}/api/index.php/thirdparties?limit=1
+HTTP 200
+[Captures]
+thirdparty_id: jsonpath "$[0]['id']"
 
 # POST No id in post request data
 POST http://{{hostnport}}/api/index.php/contracts
-{ "id" : 42, "socid" : "22", "date_contrat" : "873223122", "commercial_signature_id" : "1" }
-HTTP 400
-{"error":{"code":400,"message":"Bad Request: commercial_suivi_id field missing"}}
-
-# POST No id in post request data
-POST http://{{hostnport}}/api/index.php/contracts
-{ "id" : 42, "socid" : "22", "date_contrat" : "873223122", "commercial_signature_id" : "1", "commercial_suivi_id" : "1" }
+{ "id" : 42, "socid" : "{{ thirdparty_id }}", "date_contrat" : "873223122", "commercial_signature_id" : "1", "commercial_suivi_id" : "1" }
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: Creating with id field is forbidden"}}
 
@@ -120,4 +120,4 @@ POST http://{{hostnport}}/api/index.php/contracts
 "note_public": "TEST 22.0.2"
 }
 HTTP 404
-{"error":{"code":404,"message":"Not Found: Thirdparty with id=0 not found"}}
+{"error":{"code":404,"message":"Not Found: Thirdparty with id=0 not found or not allowed"}}

@@ -240,8 +240,8 @@ $handle = opendir($dir);
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
 		if (preg_match('/\.modules\.php$/i', $file)) {
-			$name = substr($file, 0, dol_strlen($file) - 12);
-			$classname = substr($file, 0, dol_strlen($file) - 12);
+			$name = dol_substr($file, 0, dol_strlen($file) - 12);
+			$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
 			require_once $dir.'/'.$file;
 			$module = new $classname($db);

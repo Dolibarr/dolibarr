@@ -279,8 +279,9 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
-		// Remove order
-		$result = $object->delete($user);
+		// Remove order. idwarehouse stays empty when the user picked "no stock action", and delete()
+		// then leaves the stock untouched, which is the plain database cleanup case.
+		$result = $object->delete($user, 0, GETPOSTINT('idwarehouse'));
 		if ($result > 0) {
 			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
@@ -400,26 +401,6 @@ if (empty($reshook)) {
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (!empty($origin) && !empty($originid)) {
-				// Parse element/subelement (ex: project_task)
-				$element = $subelement = $origin;
-				$regs = array();
-				if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-					$element = $regs[1];
-					$subelement = $regs[2];
-				}
-
-				// For compatibility
-				if ($element == 'order') {
-					$element = $subelement = 'commande';
-				}
-				if ($element == 'propal') {
-					$element = 'comm/propal';
-					$subelement = 'propal';
-				}
-				if ($element == 'contract') {
-					$element = $subelement = 'contrat';
-				}
-
 				$object->origin = $origin; // deprecated
 				$object->origin_type = $origin;
 				$object->origin_id = $originid;
@@ -435,16 +416,14 @@ if (empty($reshook)) {
 					$object_id = $object->create($user);
 
 					if ($object_id > 0) {
-						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
-
-						$classname = ucfirst($subelement);
-						$srcobject = new $classname($db);
-						'@phan-var-force Commande|Propal|Contrat $srcobject';
-						/** @var Commande|Propal|Contrat $srcobject */
-
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
-						$result = $srcobject->fetch($object->origin_id);
-						if ($result > 0) {
+
+						// Resolve and load the source object from its element type (propal, commande, contract, ...)
+						$srcobject = fetchObjectByElement($object->origin_id, $origin);
+
+						if (is_object($srcobject) && $srcobject->id > 0) {
+							'@phan-var-force Commande|Propal|Contrat $srcobject';
+							/** @var Commande|Propal|Contrat $srcobject */
 							$lines = $srcobject->lines;
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
 								$srcobject->fetch_lines();
@@ -547,7 +526,12 @@ if (empty($reshook)) {
 								}
 							}
 						} else {
-							setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+							if (is_object($srcobject) && !empty($srcobject->error)) {
+								setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+							} else {
+								$langs->load("errors");
+								setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+							}
 							$error++;
 						}
 
@@ -577,7 +561,7 @@ if (empty($reshook)) {
 						}*/
 
 						// Hooks
-						$parameters = array('objFrom' => $srcobject);
+						$parameters = array('objFrom' => (is_object($srcobject) ? $srcobject : null));
 						// Note that $action and $object may be modified by hook
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action);
 						if ($reshook < 0) {
@@ -2101,7 +2085,7 @@ if (empty($reshook)) {
 		$fromElementid = GETPOST('fromelementid');
 		$importLines = GETPOST('line_checkbox');
 
-		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid)) {
+		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && preg_match('/^[a-zA-Z]+$/', $fromElement) && !empty($fromElementid)) {
 			if ($fromElement == 'commande') {
 				dol_include_once('/' . $fromElement . '/class/' . $fromElement . '.class.php');
 				$lineClassName = 'OrderLine';
@@ -2263,12 +2247,11 @@ if ($action == 'create' && $usercancreate) {
 	$fk_account = GETPOSTINT('fk_account');
 
 	if (!empty($origin) && !empty($originid)) {
-		// Parse element/subelement (ex: project_task)
-		$element = $subelement = $origin;
+		// Parse element (ex: project_task -> project) just to detect the 'project' origin handled below
+		$element = $origin;
 		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 			$element = $regs[1];
-			$subelement = $regs[2];
 		}
 
 		if ($element == 'project') {
@@ -2287,61 +2270,55 @@ if ($action == 'create' && $usercancreate) {
 				$remise_percent = $soc->remise_percent;
 			}
 		} else {
-			// For compatibility
-			if ($element == 'order' || $element == 'commande') {
-				$element = $subelement = 'commande';
-			} elseif ($element == 'propal') {
-				$element = 'comm/propal';
-				$subelement = 'propal';
-			} elseif ($element == 'contract') {
-				$element = $subelement = 'contrat';
-			}
+			// Resolve and load the source object from its element type (propal, commande, contract, ...)
+			$objectsrc = fetchObjectByElement($originid, $origin);
 
-			dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+			if (is_object($objectsrc)) {
+				'@phan-var-force Commande|Propal|Contrat $objectsrc';  // Can possibly be other class but CommonObject is too general
+				$classname = get_class($objectsrc);
 
-			$classname = ucfirst($subelement);
-			$objectsrc = new $classname($db);
-			'@phan-var-force Commande|Propal|Contrat $objectsrc';  // Can possibly be other class but CommonObject is too general
-			$objectsrc->fetch($originid);
-			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
-				$objectsrc->fetch_lines();
-			}
-			$objectsrc->fetch_thirdparty();
-
-			// Replicate extrafields
-			$objectsrc->fetch_optionals();
-			$object->array_options = $objectsrc->array_options;
-
-			$projectid = (int) $objectsrc->fk_project;
-			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
-
-			$soc = $objectsrc->thirdparty;
-			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
-			$deposit_percent	= (!empty($objectsrc->deposit_percent) ? $objectsrc->deposit_percent : (!empty($soc->deposit_percent) ? $soc->deposit_percent : null));
-			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-			$availability_id = (!empty($objectsrc->availability_id) ? $objectsrc->availability_id : 0);
-			$shipping_method_id = (!empty($objectsrc->shipping_method_id) ? $objectsrc->shipping_method_id : (!empty($soc->shipping_method_id) ? $soc->shipping_method_id : 0));
-			$warehouse_id = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
-			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
-			$dateorder = getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? '' : -1;
-
-			$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
-
-			if (isModEnabled("multicurrency")) {
-				if (!empty($objectsrc->multicurrency_code)) {
-					$currency_code = $objectsrc->multicurrency_code;
+				if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
+					$objectsrc->fetch_lines();
 				}
-				if (getDolGlobalString('MULTICURRENCY_USE_ORIGIN_TX') && !empty($objectsrc->multicurrency_tx)) {
-					$currency_tx = $objectsrc->multicurrency_tx;
+				$objectsrc->fetch_thirdparty();
+
+				// Replicate extrafields
+				$objectsrc->fetch_optionals();
+				$object->array_options = $objectsrc->array_options;
+
+				$projectid = (int) $objectsrc->fk_project;
+				$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
+
+				$soc = $objectsrc->thirdparty;
+				$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
+				$deposit_percent	= (!empty($objectsrc->deposit_percent) ? $objectsrc->deposit_percent : (!empty($soc->deposit_percent) ? $soc->deposit_percent : null));
+				$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
+				$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
+				$availability_id = (!empty($objectsrc->availability_id) ? $objectsrc->availability_id : 0);
+				$shipping_method_id = (!empty($objectsrc->shipping_method_id) ? $objectsrc->shipping_method_id : (!empty($soc->shipping_method_id) ? $soc->shipping_method_id : 0));
+				$warehouse_id = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
+				$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
+				$dateorder = getDolGlobalString('MAIN_AUTOFILL_DATE_ORDER') ? '' : -1;
+
+				$date_delivery = (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : '');
+
+				if (isModEnabled("multicurrency")) {
+					if (!empty($objectsrc->multicurrency_code)) {
+						$currency_code = $objectsrc->multicurrency_code;
+					}
+					if (getDolGlobalString('MULTICURRENCY_USE_ORIGIN_TX') && !empty($objectsrc->multicurrency_tx)) {
+						$currency_tx = $objectsrc->multicurrency_tx;
+					}
 				}
+
+				$note_private = $object->getDefaultCreateValueFor('note_private', (!empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+				$note_public = $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc->note_public) ? $objectsrc->note_public : null));
+
+				// Object source contacts list
+				$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
+			} else {
+				$objectsrc = null;
 			}
-
-			$note_private = $object->getDefaultCreateValueFor('note_private', (!empty($objectsrc->note_private) ? $objectsrc->note_private : null));
-			$note_public = $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc->note_public) ? $objectsrc->note_public : null));
-
-			// Object source contacts list
-			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
 	} else {
 		$cond_reglement_id  = empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;
@@ -2697,9 +2674,9 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
 
 			if (isModEnabled("multicurrency")) {
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code).'</td></tr>';
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code)."</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code)."</td></tr>";
 			}
 		}
 
@@ -2793,7 +2770,7 @@ if ($action == 'create' && $usercancreate) {
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOSTINT('idwarehouse') ? GETPOSTINT('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOSTINT('idwarehouse') ? GETPOSTINT('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"), 0, $forcecombo))
 				);
 			}
 
@@ -2971,7 +2948,8 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Confirmation of cancellation
-		if ($action == 'cancel') {
+		// Both actions may put the stock back, so they share the warehouse question
+		if ($action == 'cancel' || $action == 'delete') {
 			$qualified_for_stock_change = 0;
 			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
@@ -2979,7 +2957,16 @@ if ($action == 'create' && $usercancreate) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
-			$text = $langs->trans('ConfirmCancelOrder', $object->ref);
+			if ($action == 'cancel') {
+				$text = $langs->trans('ConfirmCancelOrder', $object->ref);
+				$title = $langs->trans("Cancel");
+				$confirmaction = 'confirm_cancel';
+			} else {
+				$text = $langs->trans('ConfirmDeleteOrder', $object->ref);
+				$title = $langs->trans('DeleteOrder');
+				$confirmaction = 'confirm_delete';
+			}
+
 			$formquestion = array();
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
@@ -2995,7 +2982,7 @@ if ($action == 'create' && $usercancreate) {
 				);
 			}
 
-			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans("Cancel"), $text, 'confirm_cancel', $formquestion, 0, 1);
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $title, $text, $confirmaction, $formquestion, 0, 1);
 		}
 
 		// Confirmation to delete line
@@ -3631,15 +3618,15 @@ if ($action == 'create' && $usercancreate) {
 				// Valid
 				if ($object->status == Commande::STATUS_DRAFT && ($object->total_ttc >= 0 || getDolGlobalString('ORDER_ENABLE_NEGATIVE')) && $usercanvalidate) {
 					if ($numlines > 0) {
-						print dolGetButtonAction('', $langs->trans('Validate'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'validate', 'id' => $object->id], true), (string) $object->id, 1);
+						print dolGetButtonAction('', $langs->trans('Validate'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'validate', 'id' => $object->id], true), 'action-validate', 1);
 					} else {
 						$langs->load("errors");
-						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'validate', 'id' => $object->id], true), (string) $object->id, -1);
+						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'validate', 'id' => $object->id], true), 'action-validate', -1);
 					}
 				}
 				// Edit
 				if (($object->status == Commande::STATUS_VALIDATED || ($object->status == Commande::STATUS_SHIPMENTONPROCESS && getDolGlobalString('EDIT_ORDER_SHIPMENT_ON_PROCESS'))) && $usercancreate) {
-					print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'modif', 'id' => $object->id], true), '');
+					print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'modif', 'id' => $object->id], true), 'action-modif');
 				}
 
 				// Create a purchase order
@@ -3836,6 +3823,14 @@ if ($action == 'create' && $usercancreate) {
 				print '<br><!-- Link to pay -->';
 				require_once DOL_DOCUMENT_ROOT . '/core/lib/payments.lib.php';
 				print showOnlinePaymentUrl('order', $object->ref) . '<br>';
+			}
+
+			// Show online signature link
+			$useonlinesignature = getDolGlobalInt('ORDER_ALLOW_ONLINESIGN');
+			if ($object->status != Commande::STATUS_DRAFT && $useonlinesignature) {
+				print '<br><!-- Link to sign -->';
+				require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
+				print showOnlineSignatureUrl('order', $object->ref, $object) . '<br>';
 			}
 
 			print '</div><div class="fichehalfright">';

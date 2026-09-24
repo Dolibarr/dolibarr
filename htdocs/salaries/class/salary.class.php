@@ -280,11 +280,11 @@ class Salary extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
-		$this->note_private = trim($this->note_private);
-		$this->note_public = trim($this->note_public);
+		$this->amount = trim((string) $this->amount);
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
+		$this->note_private = trim((string) $this->note_private);
+		$this->note_public = trim((string) $this->note_public);
 
 		// Check parameters
 		if (empty($this->fk_user) || $this->fk_user < 0) {
@@ -477,9 +477,9 @@ class Salary extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
+		$this->amount = price2num(trim((string) $this->amount));
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
 		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
@@ -613,16 +613,16 @@ class Salary extends CommonObject
 		$langs->loadLangs(['salaries']);
 
 		// Complete datas
-		if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
-			// Load the alreadypaid field
-			$this->alreadypaid = $this->getSommePaiement(0);
+		if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
+			// Load the totalpaid field
+			$this->totalpaid = $this->getSommePaiement(0);
 		}
 
 		$datas = [];
 
 		$datas['picto'] = '<u>'.$langs->trans("Salary").'</u>';
-		if (isset($this->status) && isset($this->alreadypaid)) {
-			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+		if (isset($this->status) && isset($this->totalpaid)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
@@ -953,7 +953,7 @@ class Salary extends CommonObject
 			}
 			$return .= '</span>';
 		}
-		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->totalpaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

@@ -4,7 +4,7 @@
  * Copyright (C) 2012       Christophe Battarel         <christophe.battarel@altairis.fr>
  * Copyright (C) 2022       Charlene Benke              <charlene@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +70,9 @@ $entitytoicon = array(
 	'other'        => 'generic',
 	'account'      => 'account',
 	'product'      => 'product',
+	'productattribute' => 'product',
+	'productattributevalue' => 'product',
+	'productcombination' => 'product',
 	'virtualproduct' => 'product',
 	'subproduct'   => 'product',
 	'product_supplier_ref'      => 'product',
@@ -114,6 +117,9 @@ $entitytolang = array(
 	'account'      => 'BankTransactions',
 	'payment'      => 'Payment',
 	'product'      => 'Product',
+	'productattribute' => 'ProductAttribute',
+	'productattributevalue' => 'ProductAttributeValue',
+	'productcombination' => 'ProductCombination',
 	'virtualproduct'  => 'AssociatedProducts',
 	'subproduct'      => 'SubProduct',
 	'product_supplier_ref'      => 'SupplierPrices',
@@ -247,7 +253,9 @@ if ($step == 2 && $datatoimport) {
 		$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 		$fullpath = $conf->import->dir_temp."/".$nowyearmonth.'-'.dol_string_nohtmltag(dol_sanitizeFileName($_FILES['userfile']['name']));
-		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
+		// Note: the returned value is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+		$resultupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1);
+		if (is_numeric($resultupload) && $resultupload > 0) {
 			dol_syslog("File ".$fullpath." was added for import");
 		} else {
 			$langs->load("errors");

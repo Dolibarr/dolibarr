@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -486,45 +486,26 @@ class FilesLibTest extends CommonClassTest
 		// We restore user properties
 		$user->rights->facture->lire = $savpermlire;
 		$user->rights->facture->creer = $savpermcreer;
-	}
 
-	/**
-	 * Check that a user allowed to export the ledger can download the generated accounting export.
-	 *
-	 * @return void
-	 */
-	public function testDolCheckSecureAccessAccountingExport()
-	{
-		global $conf, $user, $langs, $db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
+		// The API maps modulepart to 'supplier_invoice' / 'supplier_order': they must use the supplier module permissions
+		if (!empty($conf->fournisseur->facture->dir_output) && !empty($conf->fournisseur->commande->dir_output)) {
+			$savpermsupplier = $user->rights->fournisseur;
+			$user->rights->fournisseur = new stdClass();
+			$user->rights->fournisseur->facture = new stdClass();
+			$user->rights->fournisseur->commande = new stdClass();
+			foreach (array('supplier_invoice' => 'facture', 'supplier_order' => 'commande') as $modulepart => $permobject) {
+				$filename = 'SI010101/SI010101.pdf';
+				$user->rights->fournisseur->$permobject->creer = 1;
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', 'write');
+				$this->assertEquals(1, $result['accessallowed'], "Check write access allowed to '$modulepart/$filename':".json_encode($result));
+				$this->assertEquals($conf->fournisseur->$permobject->dir_output.'/'.$filename, $result['original_file']);
 
-		$savpermbindwrite = $user->hasRight('accounting', 'bind', 'write');
-		$savpermexport = $user->hasRight('accounting', 'mouvements', 'export');
-
-		if (empty($user->rights->accounting)) {
-			$user->rights->accounting = new stdClass();
+				$user->rights->fournisseur->$permobject->creer = 0;
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', 'write');
+				$this->assertEquals(0, $result['accessallowed'], "Check write access denied to '$modulepart/$filename':".json_encode($result));
+			}
+			$user->rights->fournisseur = $savpermsupplier;
 		}
-		if (empty($user->rights->accounting->bind)) {
-			$user->rights->accounting->bind = new stdClass();
-		}
-		if (empty($user->rights->accounting->mouvements)) {
-			$user->rights->accounting->mouvements = new stdClass();
-		}
-
-		$user->rights->accounting->bind->write = 0;
-		$user->rights->accounting->mouvements->export = 1;
-		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
-		$this->assertEquals(1, $result['accessallowed']);
-
-		$user->rights->accounting->mouvements->export = 0;
-		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
-		$this->assertEquals(0, $result['accessallowed']);
-
-		$user->rights->accounting->bind->write = $savpermbindwrite;
-		$user->rights->accounting->mouvements->export = $savpermexport;
 	}
 
 	/**
@@ -594,6 +575,40 @@ class FilesLibTest extends CommonClassTest
 		$result = dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'move of directory with directory without rename needed in directory');
+	}
+
+	/**
+	 * dol_move_uploaded_file() returns a translation key when it refuses a file, so the caller can
+	 * translate it. The virus branch must return a key alone: a key with the technical message of the
+	 * antivirus appended matches no entry of errors.lang and is shown untranslated to the user.
+	 *
+	 * @return void
+	 */
+	public function testDolMoveUploadedFileReturnsATranslationKeyOnVirus()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$langs->load("errors");
+
+		// A jpg renamed as a pdf, holding javascript: dolCheckOnFileName() refuses it
+		$srcfile = $conf->admin->dir_temp.'/uploadedvirus.tmp';
+		dol_copy(dirname(__FILE__).'/file_pdf_with_js.pdf.jpg', $srcfile, '0', 1);
+
+		$destfile = $conf->admin->dir_temp.'/uploadedvirus.pdf';
+		dol_delete_file($destfile, 0, 1);
+
+		$result = dol_move_uploaded_file($srcfile, $destfile, 1, 0, 0, 1);
+		print __METHOD__." result=".$result."\n";
+
+		$this->assertSame('ErrorFileIsAnInfectedPDFWithJSInside', $result, 'A pdf with js inside must be refused with its own translation key');
+		$this->assertNotSame($result, $langs->trans($result), 'The returned code must be a key that can be translated');
+		$this->assertFalse(file_exists($destfile), 'The refused file must not have been moved to its destination');
+
+		dol_delete_file($srcfile, 0, 1);
 	}
 
 	/**

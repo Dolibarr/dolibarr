@@ -143,10 +143,10 @@ class Societe extends CommonObject
 	public $restrictiononfksoc = 1;
 
 	/**
-	 * array of supplier categories
+	 * array of supplier categories. TODO Remove this.
 	 * @var string[]
 	 */
-	public $SupplierCategories = array();
+	public $supplierCategories = array();
 
 	/**
 	 * prefixCustomerIsRequired
@@ -188,7 +188,7 @@ class Societe extends CommonObject
 		'parent' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'position' => 20),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 30),
-		'nom' => array('type' => 'varchar(128)', 'length' => 128, 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
+		'nom' => array('type' => 'varchar(128)', 'length' => 128, 'label' => 'Nom', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
 		'name_alias' => array('type' => 'varchar(128)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 36, 'showoncombobox' => 2),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
@@ -1261,7 +1261,7 @@ class Societe extends CommonObject
 		$this->errors = array();
 
 		$result = 0;
-		$this->name = trim($this->name);
+		$this->name = trim((string) $this->name);
 		$this->nom = $this->name; // For backward compatibility
 
 		if (!$this->name) {
@@ -1524,8 +1524,8 @@ class Societe extends CommonObject
 		$this->localtax1_assuj = (int) trim((string) $this->localtax1_assuj);
 		$this->localtax2_assuj = (int) trim((string) $this->localtax2_assuj);
 
-		$this->localtax1_value = trim($this->localtax1_value);
-		$this->localtax2_value = trim($this->localtax2_value);
+		$this->localtax1_value = trim((string) $this->localtax1_value);
+		$this->localtax2_value = trim((string) $this->localtax2_value);
 
 		$this->capital = (!is_null($this->capital) && (string) $this->capital != '') ? (float) price2num(trim((string) $this->capital)) : null;
 
@@ -2800,7 +2800,7 @@ class Societe extends CommonObject
 		global $conf, $langs;
 
 		// Parameter cleaning
-		$note = trim($note);
+		$note = trim((string) $note);
 		if (!$note) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
@@ -2861,7 +2861,7 @@ class Societe extends CommonObject
 		global $conf, $langs;
 
 		// Parameter cleaning
-		$note = trim($note);
+		$note = trim((string) $note);
 		if (!$note) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NoteReason"));
 			return -2;
@@ -2926,7 +2926,7 @@ class Societe extends CommonObject
 
 		// Clean parameters
 		$remise = (float) price2num($remise);
-		$desc = trim($desc);
+		$desc = trim((string) $desc);
 
 		// Check parameters
 		if (!($remise > 0)) {
@@ -3416,9 +3416,10 @@ class Societe extends CommonObject
 	 *      @param	int<0,1>	$noaliasinname			  	1=Do not add alias into the link ref
 	 *      @param	string		$target			  		  	add attribute target
 	 *      @param	string		$morecss					More CSS
+	 *      @param	int<0,1>	$addlinktonotes				1=Add link to notes
 	 *		@return	string						          	String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '', $morecss = 'valignmiddle')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '', $morecss = 'valignmiddle', $addlinktonotes = 0)
 	{
 		global $conf, $langs, $hookmanager, $user;
 
@@ -3546,6 +3547,18 @@ class Societe extends CommonObject
 			$result .= dol_escape_htmltag($maxlen ? dol_trunc((string) $name, $maxlen) : $name);
 		}
 		$result .= $linkend;
+
+		if ($addlinktonotes) {
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/societe/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
+		}
 
 		global $action;
 		$hookmanager->initHooks(array('thirdpartydao'));
@@ -4676,7 +4689,7 @@ class Societe extends CommonObject
 	public function LoadSupplierCateg()
 	{
 		// phpcs:enable
-		$this->SupplierCategories = array();
+		$this->supplierCategories = array();
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE type = ".Categorie::TYPE_SUPPLIER;
@@ -4684,7 +4697,7 @@ class Societe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->SupplierCategories[$obj->rowid] = $obj->label;
+				$this->supplierCategories[$obj->rowid] = $obj->label;
 			}
 			return 0;
 		} else {

@@ -75,6 +75,7 @@ OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Order %s validated
 OrderDeliveredInDolibarr=Order %s classified delivered
 OrderCanceledInDolibarr=Order %s canceled
+OrderDeletedInDolibarr=Order %s deleted
 OrderBilledInDolibarr=Order %s classified billed
 OrderApprovedInDolibarr=Order %s approved
 OrderRefusedInDolibarr=Order %s refused

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,12 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
+
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+define("DOLENTITY", $entity);
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -73,6 +79,7 @@ $phone = GETPOST('phone', 'alpha');
 $message = GETPOST('message', 'alpha');
 $SECUREKEY = GETPOST("securekey");
 $requestedremuneration = GETPOST('requestedremuneration', 'alpha');
+$suffix = GETPOST("suffix", 'alpha');
 
 $ref = GETPOST('ref', 'alpha');
 
@@ -316,7 +323,7 @@ print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_S
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dosubmit">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
-print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'">'."\n";
+print '<input type="hidden" name="suffix" value="'.$suffix.'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
@@ -475,7 +482,7 @@ if ($action != 'dosubmit') {
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Phone").'</td><td class="left">';
-		print img_picto("", "phone", 'class="pictofixedwidth"').'<input type="text" class="flat minwidth100 --success" name="phone" value="'.$phone.'">';
+		print $form->showPhoneInput($phone, 'phone', 0, 'phone', 'flat minwidth100 --success');
 		print '</td></tr>'."\n";
 
 		print '<tr><td class="titlefieldcreate left minwidth300">'.$langs->trans("DateOfBirth").'</td><td class="left">';
@@ -488,6 +495,7 @@ if ($action != 'dosubmit') {
 
 		// Other attributes
 		$object = new RecruitmentCandidature($db);
+		$parameters = array();
 		$parameters['tpl_context'] = 'public';	// define template context to public
 		$parameters['tdclass'] = 'left';
 		$extrafields->fetch_name_optionals_label("recruitment_recruitmentcandidature");

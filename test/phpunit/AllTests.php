@@ -69,6 +69,9 @@ if (isModEnabled('ldap')) {
 if (isModEnabled('google')) {
 	print "Warning: Google module should not be enabled.\n";
 }
+if (isModEnabled('numberwords')) {
+	print "Warning: Numberwords module should not be enabled.\n";
+}
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
@@ -116,6 +119,10 @@ class AllTests
 		//$suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
+		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
+		$suite->addTestSuite('AiMcpApiBridgeTest');
+		require_once dirname(__FILE__).'/AiMcpWireTest.php';
+		$suite->addTestSuite('AiMcpWireTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
 		$suite->addTestSuite('CompanyLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
@@ -148,8 +155,14 @@ class AllTests
 		$suite->addTestSuite('FunctionsBELibTest');
 		require_once dirname(__FILE__).'/ProfidLibTest.php';
 		$suite->addTestSuite('ProfidLibTest');
+		require_once dirname(__FILE__).'/EmailSignatureLibTest.php';
+		$suite->addTestSuite('EmailSignatureLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
+		// Test disabled because it uses include of phpsessionindb.lib.php that run session_set_save_handler() but this function
+		// fails when output was already done (here by output log of unit tests)
+		//require_once dirname(__FILE__).'/PhpSessionInDbTest.php';
+		//$suite->addTestSuite('PhpSessionInDbTest');
 
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
@@ -191,10 +204,14 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ActionCommTest.php';
 		$suite->addTestSuite('ActionCommTest');
+		require_once dirname(__FILE__).'/FormMailTest.php';
+		$suite->addTestSuite('FormMailTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
 		$suite->addTestSuite('SocieteTest');
 		require_once dirname(__FILE__).'/ExpeditionTest.php';
 		$suite->addTestSuite('ExpeditionTest');
+		require_once dirname(__FILE__).'/ExpeditionLineFetchTest.php';
+		$suite->addTestSuite('ExpeditionLineFetchTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
 		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';
@@ -204,6 +221,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/ProductTest.php';
 		$suite->addTestSuite('ProductTest');
+		require_once dirname(__FILE__).'/VariantsTest.php';
+		$suite->addTestSuite('VariantsTest');
 
 		require_once dirname(__FILE__).'/PricesTest.php';
 		$suite->addTestSuite('PricesTest');
@@ -216,9 +235,6 @@ class AllTests
 
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
-		require_once dirname(__FILE__).'/MoTest.php';
-		$suite->addTestSuite('MoTest');
-
 		require_once dirname(__FILE__).'/MoTest.php';
 		$suite->addTestSuite('MoTest');
 
@@ -352,6 +368,10 @@ class AllTests
 			$suite->addTestSuite('RestAPIDocumentTest');
 			require_once dirname(__FILE__).'/RestAPIMoTest.php';
 			$suite->addTestSuite('RestAPIMoTest');
+			require_once dirname(__FILE__).'/RestAPICronJobTest.php';
+			$suite->addTestSuite('RestAPICronJobTest');
+			require_once dirname(__FILE__).'/RestAPIBankAccountsTest.php';
+			$suite->addTestSuite('RestAPIBankAccountsTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';
@@ -369,7 +389,6 @@ class AllTests
 		} else {
 			print "Check on API has been disabled by parameter or env var 'PHPUNIT_DISABLE_API'.\n";
 		}
-
 
 		require_once dirname(__FILE__).'/ExportTest.php';
 		$suite->addTestSuite('ExportTest');
@@ -395,6 +414,8 @@ class AllTests
 		// Email collector
 		require_once dirname(__FILE__).'/EmailCollectorTest.php';
 		$suite->addTestSuite('EmailCollectorTest');
+		require_once dirname(__FILE__).'/EmailCleanerTest.php';
+		$suite->addTestSuite('EmailCleanerTest');
 
 		// Website
 		require_once dirname(__FILE__).'/WebsiteTest.php';
@@ -425,8 +446,8 @@ class AllTests
 
 		// --- At very end, the LAST ONE.
 
-		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
-		// For example, this call init that run DDL functionsand break commit/rollback features.
+		// Also enabling and disabling modules is changing really in database some variables (so we must run it at end)
+		// For example, this call init that run DDL functions and break commit/rollback features.
 		require_once dirname(__FILE__).'/ModulesTest.php';
 		$suite->addTestSuite('ModulesTest');
 

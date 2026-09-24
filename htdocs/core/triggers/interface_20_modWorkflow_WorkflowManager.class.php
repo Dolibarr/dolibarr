@@ -80,6 +80,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->context['closedfromonlinesignature'])) {
 					// If signature was done from the online signature page,
 					// we must force permission to create order so the workflow action will work.
+					// The technical user of that page has no rights loaded, so initialise the object first.
+					if (empty($user->rights->commande)) {
+						$user->rights->commande = new stdClass();
+					}
 					$user->rights->commande->creer = 1;
 				}
 				$object->fetchObjectLinked();
@@ -311,14 +315,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$object->fetchObjectLinked(0, 'order_supplier', $object->id, $object->element);
 				if (!empty($object->linkedObjects['order_supplier'])) {
 					$totalonlinkedelements = 0;
+					$totalonlinkedelements_multicurrency = 0;
+					$samemulticurrencycode = true;
 					foreach ($object->linkedObjects['order_supplier'] as $element) {
 						/** @var CommandeFournisseur $element */
 						if ($element->status == CommandeFournisseur::STATUS_ACCEPTED || $element->status == CommandeFournisseur::STATUS_ORDERSENT || $element->status == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY || $element->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
 							$totalonlinkedelements += $element->total_ht;
+							$totalonlinkedelements_multicurrency += $element->multicurrency_total_ht;
+							$samemulticurrencycode = $samemulticurrencycode && ($element->multicurrency_code == $object->multicurrency_code);
 						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)
+						|| ($samemulticurrencycode && !empty($object->multicurrency_total_ht) && $this->shouldClassify($conf, $totalonlinkedelements_multicurrency, (float) $object->multicurrency_total_ht))) {
 						foreach ($object->linkedObjects['order_supplier'] as $element) {
 							/** @var CommandeFournisseur $element */
 							$ret = $element->classifyBilled($user);

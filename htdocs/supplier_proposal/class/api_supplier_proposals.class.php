@@ -77,7 +77,7 @@ class SupplierProposals extends DolibarrApi
 		}
 
 		if (!$this->supplier_proposal->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->error);
+			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->errorsToString());
 		}
 
 		return array(
@@ -213,14 +213,14 @@ class SupplierProposals extends DolibarrApi
 		}
 		if (!empty($this->supplier_proposal->fin_validite)) {
 			if ($this->supplier_proposal->set_echeance(DolibarrApiAccess::$user, $this->supplier_proposal->fin_validite) < 0) {
-				throw new RestException(500, $this->supplier_proposal->error);
+				throw new RestException(500, $this->supplier_proposal->errorsToString());
 			}
 		}
 
 		if ($this->supplier_proposal->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->supplier_proposal->error);
+			throw new RestException(500, $this->supplier_proposal->errorsToString());
 		}
 	}
 

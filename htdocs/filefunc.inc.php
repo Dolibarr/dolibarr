@@ -10,7 +10,7 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2026      Nathan Pixodeo       <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -159,11 +159,13 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
  * @var ?string $dolibarr_main_dolcrypt_key
  * @var ?string $dolibarr_main_force_https
  * @var ?string $dolibarr_main_limit_users
+ * @var ?string $dolibarr_main_limit_sessions_per_user
  * @var ?string $dolibarr_mailing_limit_sendbyweb
  * @var ?string $dolibarr_mailing_limit_sendbycli
  * @var ?string $dolibarr_mailing_limit_sendbyday
  * @var ?string $dolibarr_allow_unsecured_select_in_extrafields_filter;
  * @var ?string $dolibarr_nocsrfcheck
+ * @var ?string $dolibarr_main_restrict_password_generation_none
  *
  * @var ?string $dolibarr_font_DOL_DEFAULT_TTF
  * @var ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
@@ -285,6 +287,9 @@ if (empty($dolibarr_main_db_cryptkey)) {
 }
 if (empty($dolibarr_main_limit_users)) {
 	$dolibarr_main_limit_users = 0;
+}
+if (empty($dolibarr_main_limit_sessions_per_user)) {
+	$dolibarr_main_limit_sessions_per_user = 0;
 }
 if (empty($dolibarr_mailing_limit_sendbyweb)) {
 	$dolibarr_mailing_limit_sendbyweb = 0;
