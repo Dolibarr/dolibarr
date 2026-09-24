@@ -20,7 +20,7 @@ create table llx_ai_oauth_token
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   entity					integer DEFAULT 1 NOT NULL,
   token_type				varchar(8) NOT NULL,					-- code, access or refresh
-  token_hash				varchar(64) NOT NULL,					-- sha256 of the value; the value itself is never stored
+  token_hash				varchar(64) NOT NULL,					-- sha256 of the value, never the value itself
   fk_client					integer NOT NULL,						-- llx_ai_oauth_client.rowid
   fk_user					integer NOT NULL,						-- Dolibarr user who granted the consent
   scope						varchar(255),

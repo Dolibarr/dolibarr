@@ -85,6 +85,7 @@ function mcpOauthJson(array $payload, $httpcode = 200)
 	http_response_code($httpcode);
 	header('Content-Type: application/json');
 	header('Cache-Control: no-store');
+	header('Pragma: no-cache');
 	print json_encode($payload);
 	exit;
 }
@@ -121,6 +122,10 @@ function mcpOauthError($error, $httpcode = 400, $description = '')
  */
 function mcpOauthRedirect($redirecturi, array $params, $issuer)
 {
+	// RFC 6749 section 4.1.2: state comes back only when it was sent.
+	if (isset($params['state']) && $params['state'] === '') {
+		unset($params['state']);
+	}
 	$params['iss'] = $issuer;
 	$separator = (strpos($redirecturi, '?') === false) ? '?' : '&';
 
@@ -148,14 +153,33 @@ switch ($mcp_route) {
 		// no break
 
 	case '/.well-known/oauth-authorization-server':
-	case '/.well-known/openid-configuration':
-		// Some clients only know the OpenID discovery path. The document is the
-		// same one: this is not an OpenID provider, it just answers there too.
 		mcpOauthJson($oauth->metadataAuthorizationServer());
+		// no break
+
+	case '/.well-known/openid-configuration':
+		// A client that asks here is asking for OpenID Connect, and validates
+		// what it gets as such: without these three it refuses the document.
+		// They are added only on this route. On the RFC 8414 document above
+		// they would be a claim to be an OpenID provider, which this is not —
+		// opaque access tokens, never an id_token, nothing signed, no openid
+		// scope — and the claude.ai and ChatGPT connectors both refuse a
+		// document that makes it. Same server, two callers, two questions.
+		mcpOauthJson(array_merge($oauth->metadataAuthorizationServer(), array(
+			'jwks_uri' => $issuer.'/jwks',
+			'subject_types_supported' => array('public'),
+			'id_token_signing_alg_values_supported' => array('RS256'),
+		)));
+		// no break
+
+	case '/jwks':
+		// Advertised by the OpenID document above, and empty on purpose:
+		// nothing here is signed, so there is no key to publish.
+		mcpOauthJson(array('keys' => array()));
 		// no break
 
 	case '/register':
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			header('Allow: POST');
 			mcpOauthError('invalid_request', 405, 'Use POST to register a client.');
 		}
 		if (!getDolGlobalString('AI_MCP_OAUTH_DYNAMIC_REGISTRATION')) {
@@ -186,6 +210,7 @@ switch ($mcp_route) {
 
 	case '/token':
 		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			header('Allow: POST');
 			mcpOauthError('invalid_request', 405, 'Use POST to exchange a grant.');
 		}
 
@@ -249,13 +274,18 @@ switch ($mcp_route) {
 $responsetype = GETPOST('response_type', 'alphanohtml');
 $clientid = GETPOST('client_id', 'alphanohtml');
 $redirecturi = GETPOST('redirect_uri', 'alphanohtml');
-$state = GETPOST('state', 'alphanohtml');
+// RFC 6749 section 4.1.2 returns state to the client byte for byte, so it is
+// read raw: alphanohtml drops quotes and angle brackets, which mangles the
+// JSON or signed blob a client may legitimately put there. It is never
+// interpreted here, only echoed, and every echo escapes it.
+$state = isset($_GET['state']) ? (string) $_GET['state'] : (isset($_POST['state']) ? (string) $_POST['state'] : '');
+$statewasgiven = ($state !== '');
 $codechallenge = GETPOST('code_challenge', 'alphanohtml');
 $codechallengemethod = GETPOST('code_challenge_method', 'alphanohtml');
 $scope = GETPOST('scope', 'alphanohtml');
-$resourceparam = GETPOST('resource', 'alphanohtml');
+$resourceparam = isset($_GET['resource']) ? (string) $_GET['resource'] : (isset($_POST['resource']) ? (string) $_POST['resource'] : '');
 
-$client = $oauth->getClient($clientid);
+$client = $oauth->getClient($clientid, true);
 if ($client === null) {
 	// Nothing may be redirected before the client and its URI are known: that
 	// check is what stops this endpoint being used as an open redirector.
@@ -274,16 +304,31 @@ if ($codechallenge === '' || $codechallengemethod !== 'S256') {
 	mcpOauthRedirect($redirecturi, array('error' => 'invalid_request', 'error_description' => 'PKCE with S256 is required', 'state' => $state), $issuer);
 }
 
+// Checked before the consent screen rather than after it: a token for another
+// audience will be refused anyway (RFC 8707), and asking someone to approve
+// something that cannot work is worse than refusing it early.
+if ($resourceparam !== '' && !$oauth->isOwnResource($resourceparam)) {
+	mcpOauthRedirect($redirecturi, array('error' => 'invalid_target', 'error_description' => 'This authorization server issues tokens for its own MCP endpoint only', 'state' => $state), $issuer);
+}
+
 // The same right every other AI entry point checks. A user who may not talk to
 // the assistant cannot grant a client the ability to do it for them.
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	mcpOauthRedirect($redirecturi, array('error' => 'access_denied', 'error_description' => 'This Dolibarr user is not allowed to use the AI assistant', 'state' => $state), $issuer);
 }
 
-$action = GETPOST('action', 'aZ09');
+// Read from POST only. GETPOST would also read the query string, and a
+// consent given by following a link is a consent the user did not give:
+// main.inc.php only treats a GET action as sensitive at the highest
+// MAIN_SECURITY_CSRF_WITH_TOKEN setting, which an administrator may lower.
+$action = (string) GETPOST('action', 'aZ09', 2);
 
 if ($action === 'grant' || $action === 'deny') {
-	// main.inc.php has already checked the CSRF token on this POST.
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		mcpOauthError('invalid_request', 405, 'Use POST to answer the consent screen.');
+	}
+
+	// main.inc.php checked the CSRF token on this POST.
 	if ($action === 'deny') {
 		mcpOauthRedirect($redirecturi, array('error' => 'access_denied', 'state' => $state), $issuer);
 	}

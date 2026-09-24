@@ -255,19 +255,26 @@ class McpOauth
 	 * Load a client by its public identifier.
 	 *
 	 * @param  string      $clientid Client identifier
+	 * @param  bool        $mayfetch Whether a client_id that is a metadata document URL may be fetched
 	 * @return object|null           Client row, or null when unknown
 	 */
-	public function getClient($clientid)
+	public function getClient($clientid, $mayfetch = false)
 	{
 		if (empty($clientid)) {
 			return null;
 		}
 
-		// A client_id that is an HTTPS URL is a metadata document to fetch, not
-		// a registration to look up. The row it produces is keyed on that URL,
-		// so a client that comes back tomorrow reuses it instead of creating
-		// another one.
+		// A client_id that is an HTTPS URL is a metadata document. Fetching it
+		// is an outbound request this server makes on a caller's word, so it
+		// only happens where $mayfetch says so — on /authorize, behind a signed
+		// in user. The token endpoint takes no credential, and letting it fetch
+		// meant any anonymous caller could make Dolibarr hold a worker open on
+		// a URL of their choosing, and create a client row along the way.
 		if (self::isMetadataDocumentUrl($clientid)) {
+			if (!$mayfetch) {
+				return $this->fetchClientRow($clientid);
+			}
+
 			return $this->resolveMetadataDocument($clientid);
 		}
 
@@ -282,7 +289,10 @@ class McpOauth
 	 */
 	public static function isMetadataDocumentUrl($clientid)
 	{
-		return stripos($clientid, 'https://') === 0;
+		// Bounded by the column it has to fit in: a longer value would either
+		// be refused by a strict database or silently truncated by a lax one,
+		// and the row would then never be found again by the URL that wrote it.
+		return stripos($clientid, 'https://') === 0 && strlen($clientid) <= 255;
 	}
 
 	/**
@@ -339,14 +349,21 @@ class McpOauth
 			$sql .= ", tms = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $known->rowid);
 		} else {
+			if ($this->countRecentRegistrations(getUserRemoteIP()) >= self::REGISTRATIONS_PER_HOUR) {
+				dol_syslog('[MCP OAuth] Metadata document refused, registration rate limit reached for '.getUserRemoteIP(), LOG_WARNING);
+				$this->error = 'temporarily_unavailable';
+				return null;
+			}
+
 			$sql = "INSERT INTO ".$this->db->prefix()."ai_oauth_client";
-			$sql .= " (entity, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, datec)";
+			$sql .= " (entity, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, registered_from, datec)";
 			$sql .= " VALUES (".((int) $conf->entity);
 			$sql .= ", '".$this->db->escape($url)."'";
 			$sql .= ", NULL";
 			$sql .= ", '".$this->db->escape($name)."'";
 			$sql .= ", '".$this->db->escape(implode("\n", $uris))."'";
 			$sql .= ", 'none'";
+			$sql .= ", '".$this->db->escape(dol_trunc((string) getUserRemoteIP(), 64, 'right', 'UTF-8', 1))."'";
 			$sql .= ", '".$this->db->idate(dol_now())."')";
 		}
 
@@ -369,7 +386,11 @@ class McpOauth
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		$response = getURLContent($url, 'GET', '', 1, array('Accept: application/json'), array('https'), 0);
+		// $ssl_verifypeer is passed explicitly: its default (-1) means "verify
+		// only when $dolibarr_main_prod is set", and this document decides
+		// where an authorization code is allowed to go. It is a trust anchor
+		// on every install, production flag or not.
+		$response = getURLContent($url, 'GET', '', 1, array('Accept: application/json'), array('https'), 0, 1);
 
 		if (empty($response['content']) || !empty($response['curl_error_no'])) {
 			dol_syslog('[MCP OAuth] Metadata document unreachable: '.$url.' '.(isset($response['curl_error_msg']) ? $response['curl_error_msg'] : ''), LOG_NOTICE);
@@ -530,6 +551,15 @@ class McpOauth
 	 */
 	public function createAuthorizationCode($client, $userid, $redirecturi, $codechallenge, $scope, $resource)
 	{
+		// RFC 8707 and the MCP token audience binding: a token must be issued
+		// for this resource and no other, so a resource naming something else
+		// is refused rather than quietly honoured. Clients that send none are
+		// accepted; the token is then bound to this server by construction.
+		if ($resource !== '' && !$this->isOwnResource($resource)) {
+			$this->error = 'invalid_target';
+			return null;
+		}
+
 		if (empty($codechallenge)) {
 			// PKCE is not optional here. A code that can be exchanged without a
 			// verifier is a code an interceptor can exchange.
@@ -545,6 +575,19 @@ class McpOauth
 		}
 
 		return $code;
+	}
+
+	/**
+	 * Tell whether an audience names this MCP server.
+	 *
+	 * Compared without a trailing slash, which clients add or drop freely.
+	 *
+	 * @param  string $resource Audience presented by the caller
+	 * @return bool             True when it is this server
+	 */
+	public function isOwnResource($resource)
+	{
+		return hash_equals(rtrim($this->resource, '/'), rtrim((string) $resource, '/'));
 	}
 
 	/**
@@ -643,8 +686,11 @@ class McpOauth
 	 */
 	public function purgeExpired()
 	{
+		global $conf;
+
 		$sql = "DELETE FROM ".$this->db->prefix()."ai_oauth_token";
-		$sql .= " WHERE expires_at < '".$this->db->idate(dol_now() - 86400)."'";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND expires_at < '".$this->db->idate(dol_now() - 86400)."'";
 
 		$this->db->query($sql);
 
@@ -653,7 +699,8 @@ class McpOauth
 		// one row per connection attempt. Anything that did obtain a token is
 		// left alone whatever its age.
 		$sql = "DELETE FROM ".$this->db->prefix()."ai_oauth_client";
-		$sql .= " WHERE datec < '".$this->db->idate(dol_now() - self::UNUSED_CLIENT_TTL)."'";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND datec < '".$this->db->idate(dol_now() - self::UNUSED_CLIENT_TTL)."'";
 		$sql .= " AND rowid NOT IN (SELECT fk_client FROM ".$this->db->prefix()."ai_oauth_token)";
 
 		$this->db->query($sql);

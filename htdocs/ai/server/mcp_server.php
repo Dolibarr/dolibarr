@@ -96,12 +96,23 @@ if (in_array($mcp_wellknown, array('/.well-known/oauth-protected-resource', '/.w
 		DOL_MAIN_URL_ROOT . '/ai/server/mcp_server.php'
 	);
 
+	if ($mcp_wellknown === '/.well-known/oauth-protected-resource') {
+		$mcp_document = $mcpOauth->metadataProtectedResource();
+	} else {
+		$mcp_document = $mcpOauth->metadataAuthorizationServer();
+		if ($mcp_wellknown === '/.well-known/openid-configuration') {
+			// Asked at the OpenID name, answered as OpenID expects — same
+			// split as htdocs/ai/oauth.php, and for the same reason: these
+			// three belong to the client that asked for OpenID, not to the
+			// RFC 8414 document.
+			$mcp_document['jwks_uri'] = DOL_MAIN_URL_ROOT . '/ai/oauth.php/jwks';
+			$mcp_document['subject_types_supported'] = array('public');
+			$mcp_document['id_token_signing_alg_values_supported'] = array('RS256');
+		}
+	}
+
 	header('Cache-Control: no-store');
-	echo json_encode(
-		$mcp_wellknown === '/.well-known/oauth-protected-resource'
-		? $mcpOauth->metadataProtectedResource()
-		: $mcpOauth->metadataAuthorizationServer()
-	);
+	echo json_encode($mcp_document);
 	exit;
 }
 

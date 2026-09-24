@@ -216,11 +216,20 @@ class McpAuth
 		// never reaches the token table.
 		require_once DOL_DOCUMENT_ROOT.'/ai/class/mcpoauth.class.php';
 		if (McpOauth::looksLikeAccessToken($credential)) {
-			$oauth = new McpOauth($this->db, '', '');
+			$oauth = new McpOauth($this->db, '', DOL_MAIN_URL_ROOT.'/ai/server/mcp_server.php');
 			$tokenrow = $oauth->validateAccessToken($credential);
 			if ($tokenrow === null) {
 				dol_syslog('[MCP Server] OAuth access token rejected (unknown, expired or revoked)', LOG_NOTICE);
 				$this->error = 'Invalid or expired access token';
+				return -1;
+			}
+
+			// A token issued for another resource must not open this one, even
+			// when the same server minted it: that is what stops a token
+			// obtained for one audience being replayed against another.
+			if (!empty($tokenrow->resource) && !$oauth->isOwnResource($tokenrow->resource)) {
+				dol_syslog('[MCP Server] OAuth access token rejected: issued for another resource ('.$tokenrow->resource.')', LOG_WARNING);
+				$this->error = 'Access token was not issued for this server';
 				return -1;
 			}
 
@@ -309,11 +318,18 @@ class McpAuth
 	 */
 	public function getWwwAuthenticateHeader($resourcemetadataurl = '')
 	{
-		$challenge = 'Bearer';
+		// The parameters follow the scheme separated by a space, then commas:
+		// "Bearer, scope=..." would be malformed (RFC 7235 section 4.1).
+		$parameters = array();
 		if ($resourcemetadataurl !== '') {
-			$challenge .= ' resource_metadata="'.$resourcemetadataurl.'"';
+			$parameters[] = 'resource_metadata="'.$resourcemetadataurl.'"';
 		}
-		$challenge .= ', scope="dolibarr"';
+		$parameters[] = 'scope="dolibarr"';
+		if ($this->httpcode == 401 && $this->error !== '') {
+			$parameters[] = 'error="invalid_token"';
+		}
+
+		$challenge = 'Bearer '.implode(', ', $parameters);
 
 		return $challenge;
 	}

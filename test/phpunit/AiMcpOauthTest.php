@@ -64,12 +64,14 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * Skip when the ai module tables are not installed.
+	 * Make sure the ai module tables exist, creating them if they do not.
 	 *
 	 * The CI database enables a fixed list of modules and ai is not among
-	 * them, so llx_ai_oauth_client does not exist there. The tests that need
-	 * no storage still run; these say why they did not rather than failing on
-	 * a missing table.
+	 * them, so these tables are absent there. Skipping would leave every
+	 * security property of this server — PKCE, one-shot codes, refresh
+	 * rotation, client binding — unverified on the only run that gates a
+	 * merge, which is worse than the small cost of creating two tables from
+	 * the very files the module installs.
 	 *
 	 * @return void
 	 */
@@ -77,9 +79,30 @@ class AiMcpOauthTest extends CommonClassTest
 	{
 		global $db;
 
-		$resql = $db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0");
-		if (!$resql) {
-			$this->markTestSkipped('The ai module tables are not installed on this database');
+		if ($db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0")) {
+			return;
+		}
+
+		foreach (array('llx_ai_oauth_client-ai', 'llx_ai_oauth_token-ai') as $name) {
+			foreach (array($name.'.sql', $name.'.key.sql') as $file) {
+				$path = dirname(__FILE__).'/../../htdocs/install/mysql/tables/'.$file;
+				if (!file_exists($path)) {
+					$this->markTestSkipped('Missing table file '.$file);
+				}
+				// Comments first, then split: the licence header these files carry
+				// contains semicolons of its own.
+				$sql = preg_replace('/^\s*--.*$/m', '', (string) file_get_contents($path));
+				foreach (explode(';', (string) $sql) as $statement) {
+					$statement = trim($statement);
+					if ($statement !== '') {
+						$db->query(str_replace('llx_', $db->prefix(), $statement));
+					}
+				}
+			}
+		}
+
+		if (!$db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0")) {
+			$this->markTestSkipped('Could not create the ai module tables on this database');
 		}
 	}
 
@@ -144,13 +167,13 @@ class AiMcpOauthTest extends CommonClassTest
 		$this->assertTrue($as['authorization_response_iss_parameter_supported'], 'RFC 9207 must be advertised');
 		$this->assertTrue($as['client_id_metadata_document_supported'], 'Clients must be told they may use a metadata document');
 
-		// This is an OAuth 2.0 authorization server, not an OpenID provider: it
-		// issues opaque access tokens, never an id_token, and signs nothing.
-		// Advertising the OpenID fields says otherwise, and a client that
-		// believes it then validates the document as OpenID Connect and
-		// refuses it — claude.ai and the ChatGPT connector both did, while
-		// mcp-remote works either way. Keeping them out is the honest document
-		// and the one real clients accept.
+		// This document is the RFC 8414 one, and it must stay free of the
+		// OpenID fields: carrying them is a claim to be an OpenID provider,
+		// which this is not — opaque access tokens, never an id_token,
+		// nothing signed, no openid scope — and the claude.ai and ChatGPT
+		// connectors refuse a document that makes it. The three are served on
+		// the openid-configuration route instead, where the caller asked for
+		// OpenID and validates what it gets as such (htdocs/ai/oauth.php).
 		$this->assertArrayNotHasKey('jwks_uri', $as);
 		$this->assertArrayNotHasKey('subject_types_supported', $as);
 		$this->assertArrayNotHasKey('id_token_signing_alg_values_supported', $as);
