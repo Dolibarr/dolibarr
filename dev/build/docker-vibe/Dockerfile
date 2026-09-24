@@ -17,6 +17,7 @@ RUN apt-get update \
         graphviz \
         gzip \
 		hurl \
+		jq \
         memcached \
 		mysql-client \
 		openssh-client \
