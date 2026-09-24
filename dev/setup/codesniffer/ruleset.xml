@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE ruleset SYSTEM "ruleset.dtd">
-<ruleset name="Dolibarr">
+<ruleset name="Dolibarr" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<description>Dolibarr coding standard.</description>
 	<arg name="tab-width" value="4"/>
 	<arg name="extensions" value="php" />
@@ -19,6 +18,7 @@
 	<exclude-pattern>*/nltechno*</exclude-pattern>
 	<exclude-pattern>/source/</exclude-pattern>
 	<exclude-pattern>/\.git/</exclude-pattern>
+	<exclude-pattern>/\.github/</exclude-pattern>
 	<exclude-pattern>/\.cache/</exclude-pattern>
 
 	<!-- Custom rules -->
