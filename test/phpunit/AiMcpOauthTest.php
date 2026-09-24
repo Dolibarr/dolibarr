@@ -87,7 +87,11 @@ class AiMcpOauthTest extends CommonClassTest
 			foreach (array($name.'.sql', $name.'.key.sql') as $file) {
 				$path = dirname(__FILE__).'/../../htdocs/install/mysql/tables/'.$file;
 				if (!file_exists($path)) {
-					$this->markTestSkipped('Missing table file '.$file);
+					// The schema lives in its own pull request (#40762), as the
+					// rule here is that a pull request adding tables is reviewed
+					// on its own. Until it is merged and this branch rebased,
+					// everything below the schema line cannot run.
+					$this->markTestSkipped('Needs the schema of PR #40762: missing '.$file);
 				}
 				// Comments first, then split: the licence header these files carry
 				// contains semicolons of its own.
