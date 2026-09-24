@@ -1106,3 +1106,4 @@ body.ai-fullpage {
 .msg.ctx-auto .msg-bubble { box-shadow: 0 0 0 2px rgba(44, 98, 172, 0.2); }
 #ai-ctx-bar { font-size: 0.85em; opacity: .85; padding: 3px 10px; margin: 0 6px 4px; border-radius: 10px; background: rgba(44, 98, 172, 0.08); }
 #ai-ctx-bar a { margin-left: 8px; }
+#ai-ctx-bar a.ai-ctx-active { font-weight: 600; text-decoration: none; padding: 1px 6px; border-radius: 8px; background: rgba(44, 98, 172, 0.15); }

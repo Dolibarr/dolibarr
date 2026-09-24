@@ -809,6 +809,7 @@ function getAiChatAssistantConfig()
 		'AIContextPinOff',
 		'AIContextCounter',
 		'AIContextAuto',
+		'AIContextAutoTitle',
 		'AIContextClear',
 		'AIContextClearTitle',
 		'AIContextAll',
@@ -855,6 +856,7 @@ function getAiChatAssistantConfig()
 	// keep the placeholders intact for the JS .replace() calls.
 	$ai_translations['AIContextCounter'] = $langs->transnoentitiesnoconv('AIContextCounter', '%s', '%s', '%s');
 	$ai_translations['AIContextAuto'] = $langs->transnoentitiesnoconv('AIContextAuto', '%s');
+	$ai_translations['AIContextAutoTitle'] = $langs->transnoentitiesnoconv('AIContextAutoTitle', '%s');
 	$ai_translations['AIAttachmentTooMany'] = $langs->transnoentitiesnoconv('AIAttachmentTooMany', '%s');
 	$ai_translations['DownloadPdf'] = $langs->transnoentitiesnoconv("Download").' PDF';
 	$ai_translations['CloudVoiceRequiresSecureContext'] = $langs->trans(
