@@ -72,7 +72,7 @@ mor
 uptodate
 reenable
 
-# Function - rename to devalidate ?
+# Function - rename to invalidate ?
 unvalidate
 
 # Some french strings
@@ -102,3 +102,4 @@ alltime
 # other
 blacklists
 confirmactionxxx
+checkES

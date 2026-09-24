@@ -111,6 +111,11 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 				$resobject->object = dol_clone_in_array($object);
 
+				// dol_clone() only drops the db property of the object itself, the objects nested into
+				// arrays such as lines or linkedObjects keep theirs. That inflates the payload and sends
+				// the database host, name and user to the remote endpoint, so remove them too (#35818).
+				$this->removeDbFromPayload($resobject->object);
+
 				$jsonstr = json_encode($resobject);
 
 				$headers = array(
@@ -194,5 +199,34 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		}
 
 		return $nbPosts;
+	}
+
+	/**
+	 *  Remove the db property from a payload, including the objects nested into its arrays.
+	 *
+	 *  @param	object|array<mixed>	$payload	Payload to clean, modified in place
+	 *  @param	int					$depth		Current recursion depth, used as a safety stop
+	 *  @return	void
+	 */
+	private function removeDbFromPayload(&$payload, $depth = 0)
+	{
+		if ($depth > 10) {	// Safety stop, a linked object may refer back to its parent
+			return;
+		}
+
+		if (is_array($payload)) {
+			foreach ($payload as $key => $value) {
+				if (is_array($value) || is_object($value)) {
+					$this->removeDbFromPayload($payload[$key], $depth + 1);
+				}
+			}
+		} elseif (is_object($payload)) {
+			unset($payload->db);
+			foreach (get_object_vars($payload) as $key => $value) {
+				if (is_array($value) || is_object($value)) {
+					$this->removeDbFromPayload($payload->$key, $depth + 1);
+				}
+			}
+		}
 	}
 }

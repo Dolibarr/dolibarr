@@ -91,6 +91,13 @@ if (!is_object($conf)) {
 }
 
 
+// This page runs on the install bootstrap, which never sets $user.
+// dol_delete_file() -> EcmFiles::delete(User $user) requires a User,
+// so we force an empty one here, before any action that may need it.
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+$user = new User($db);
+
+
 /*
  * View
  */

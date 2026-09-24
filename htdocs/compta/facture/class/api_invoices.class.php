@@ -488,6 +488,9 @@ class Invoices extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Contract not found');
 		}
+		if (!DolibarrApi::_checkAccessToResource('contrat', $contract->id)) {
+			throw new RestException(403, 'Access to contract '.$contract->id.' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
 		$result = $this->invoice->createFromContract($contract, DolibarrApiAccess::$user);
 		if ($result < 0) {
@@ -564,6 +567,16 @@ class Invoices extends DolibarrApi
 
 		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 		$request_data->label = sanitizeVal($request_data->label);
+
+		$invoiceline = new FactureLigne($this->db);
+		$result = $invoiceline->fetch($lineid);
+		if (!$result) {
+			throw new RestException(404, 'Invoice line not found');
+		}
+
+		if ($invoiceline->fk_facture != $id) {
+			throw new RestException(403, 'Line does not belong to this invoice');
+		}
 
 		$updateRes = $this->invoice->updateline(
 			$lineid,

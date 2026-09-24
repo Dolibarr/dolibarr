@@ -519,7 +519,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Third party
 			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
-			if ($projectstatic->thirdparty->id) {
+			if (!empty($projectstatic->thirdparty->id)) {
 				print $projectstatic->thirdparty->getNomUrl(1);
 			} else {
 				print '&nbsp;';

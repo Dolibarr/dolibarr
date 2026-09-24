@@ -1450,7 +1450,7 @@ class ExtraFields
 										search: params.term,
 										page: params.page || 1,
 										objecttype: '".$extrafieldsobjectkey."',
-										objectid: '".$object->id."',
+										objectid: '".$objectid."',
 										objectkey: '".$key."',
 										mode: '".$mode."',
 										value: '".$value."'
@@ -1539,6 +1539,10 @@ class ExtraFields
 						} else {
 							$keyList .= ', '.$parentField;
 						}
+						// Re-add parent field that was removed by keyList reset above
+						if (!empty($parentField)) {
+							$keyList .= ', '.$parentField;
+						}
 					}
 
 					$filter_categorie = false;
@@ -1584,12 +1588,15 @@ class ExtraFields
 							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
-								// Replace 'column = $ID$' by "word"
+								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
 								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
-								// Replace '$ID$ = column' by "word"
+								$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+								// Replace '$ID$ = column' by an always true test
 								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
-								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+								// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
+								$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
@@ -1827,6 +1834,10 @@ class ExtraFields
 					} else {
 						$keyList .= ', '.$parentField;
 					}
+					// Re-add parent field that was removed by keyList reset above
+					if (!empty($parentField)) {
+						$keyList .= ', '.$parentField;
+					}
 				}
 
 				$InfoFieldList[5] = (string) ($InfoFieldList[5]??'');
@@ -1869,12 +1880,15 @@ class ExtraFields
 						} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 							// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 							// Do nothing if condition is using 'IN' keyword
-							// Replace 'column = $ID$' by "word"
+							// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
 							$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
-							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
-							// Replace '$ID$ = column' by "word"
+							$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+							// Replace '$ID$ = column' by an always true test
 							$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
-							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+							$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+							// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
+							$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
+							$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
@@ -2519,6 +2533,11 @@ class ExtraFields
 				$classpath = $InfoFieldList[1];
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
+					if (!$classname || !class_exists($classname)) {
+						// Without this, the raw id is printed with nothing telling why, which is very
+						// hard to diagnose. Most often the class path stored in the definition is wrong.
+						dol_syslog('Extrafields::showOutputField the class '.$classname.' of the link field '.$key.' could not be loaded from '.$classpath.', check the extrafield definition', LOG_WARNING);
+					}
 					if ($classname && class_exists($classname)) {
 						$tmpobject = new $classname($this->db);
 						'@phan-var-force CommonObject $tmpobject';

@@ -614,6 +614,9 @@ print '<input type="hidden" name="action" value="updateinventorylines">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
 print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
+// Keep the same limit as the displayed page, otherwise the save reads a different page slice
+// (plimit($limit, $offset)) than the one shown and quantities of the extra rows are lost (#35207).
+print '<input type="hidden" name="limit" value="' . ((int) $limit) . '">';
 if ($backtopage) {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
@@ -805,7 +808,12 @@ if ($action == 'updatebyscaning') {
 									type: \'POST\',
 									async: false,
 									success: function(response) {
-										response = JSON.parse(response);
+										if (typeof response == "object") {
+											console.log("response is already type object, no need to parse it");
+										} else {
+											console.log("response is type "+(typeof response));
+											response = JSON.parse(response);
+										}
 										if(response.status == "success"){
 											console.log(response.message);
 											$("<input type=\'text\' value=\'"+product.Qty+"\' />")
@@ -876,7 +884,12 @@ if ($action == 'updatebyscaning') {
 					type: \'POST\',
 					async: false,
 					success: function(response) {
-						response = JSON.parse(response);
+						if (typeof response == "object") {
+							console.log("response is already type object, no need to parse it");
+						} else {
+							console.log("response is type "+(typeof response));
+							response = JSON.parse(response);
+						}
 						if (response.status == "success"){
 							console.log(response.message);
 							if(!newproductrow){

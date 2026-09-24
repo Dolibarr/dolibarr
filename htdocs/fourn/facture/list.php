@@ -821,6 +821,11 @@ if ($filter && $filter != -1) {
 	$aFilter = explode(',', $filter);
 	foreach ($aFilter as $fil) {
 		$filt = explode(':', $fil);
+		// The parameter comes from the URL: without a colon there is no value to compare to,
+		// and $filt[1] would be an undefined key passed to trim(), deprecated since PHP 8.1.
+		if (count($filt) < 2) {
+			continue;
+		}
 		$sql .= " AND ".$db->escape(trim($filt[0]))." = '".$db->escape(trim($filt[1]))."'";
 	}
 }
@@ -1734,7 +1739,7 @@ while ($i < $imaxinloop) {
 	$remaintopay = price2num($facturestatic->total_ttc - $totalpay);
 
 	$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
-	$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
+	$multicurrency_remaintopay = (float) price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
 	if ($facturestatic->status == FactureFournisseur::STATUS_CLOSED && $facturestatic->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
 		$remaintopay = 0;
@@ -1746,7 +1751,7 @@ while ($i < $imaxinloop) {
 		$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
 		$multicurrency_remaincreditnote = $discount->getAvailableDiscounts($thirdparty, null, 'rc.fk_facture_source='.$facturestatic->id, 0, 0, 1);
 		$multicurrency_remaintopay = -$multicurrency_remaincreditnote;
-		$multicurrency_totalpay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
+		$multicurrency_totalpay = (float) price2num($facturestatic->multicurrency_total_ttc - $multicurrency_remaintopay);
 	}
 
 	$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
@@ -2108,7 +2113,7 @@ while ($i < $imaxinloop) {
 		// Currency rate
 		if (!empty($arrayfields['f.multicurrency_tx']['checked'])) {
 			print '<td class="nowrap">';
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->facid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

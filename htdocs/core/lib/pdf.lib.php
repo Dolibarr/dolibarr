@@ -1679,14 +1679,30 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Set desc
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
 			$textwasnotmodified = false;
+			$textdiffersonlybymarkup = false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
 				$textwasnotmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);
+			} elseif (!empty($desc) && !empty($prodser->description) && dol_textishtml($desc) != dol_textishtml($prodser->description)) {
+				// One side is HTML and the other is not. This happens as soon as a line is saved while the
+				// WYSIWYG editor is enabled on line details: the plain product description becomes "<p>...</p>".
+				// Comparing the raw strings would then report a manual change and silently drop the translation,
+				// so compare the text content instead.
+				$desctextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($desc, 1), ENT_QUOTES | ENT_HTML5));
+				$prodtextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($prodser->description, 1), ENT_QUOTES | ENT_HTML5));
+				$textwasnotmodified = ($prodtextonly !== '' && strpos($desctextonly, $prodtextonly) !== false);
+				$textdiffersonlybymarkup = ($textwasnotmodified && $desctextonly === $prodtextonly);
 			} else {
 				$textwasnotmodified = ($desc == $prodser->description);
 			}
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) {
 				if ($textwasnotmodified) {
-					$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					if ($textdiffersonlybymarkup && strpos($desc, $prodser->description) === false) {
+						// Same text, but wrapped in tags or written with HTML entities: the product description
+						// is not present verbatim, so the str_replace below would find nothing to replace.
+						$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
+					} else {
+						$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					}
 				} elseif ($translatealsoifmodified) {
 					$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
 				}
@@ -2523,8 +2539,22 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 				// - old mode but we want to show a delta or
 				// - new mode but we want to show a total
 				$prev_progress = 0;
-				if (method_exists($object->lines[$i], 'get_prev_progress')) {
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+				if ($isCumulative) {
+					// old mode: the previous line already holds the running total
+					if (method_exists($object->lines[$i], 'get_prev_progress')) {
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					}
+				} else {
+					// new mode: each line holds its own delta, so we must sum every previous one.
+					// get_prev_progress() only reads the line pointed by fk_prev_id, which is the last
+					// delta and not the accumulated progress, so it under-reports from the third
+					// situation on. getAllPrevProgress() walks the whole fk_prev_id chain, and it is
+					// what the screen uses to compute the same value.
+					if (method_exists($object->lines[$i], 'getAllPrevProgress')) {
+						$prev_progress = $object->lines[$i]->getAllPrevProgress($object->id);
+					} elseif (method_exists($object->lines[$i], 'get_prev_progress')) {
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					}
 				}
 				$result = $isCumulative ?
 					// old mode: we need to compute the delta (total - sum of previous)
@@ -2995,7 +3025,7 @@ function pdf_render_subtotals(
 
 	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
 		$outputlangs->load("subtotals");
-		$object->lines[$i]->desc = $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
+		$object->lines[$i]->desc = getDolGlobalString("SUBTOTAL_LINE_TEXT_DOES_NOT_INCLUDE_TITLE_TEXT") ? $outputlangs->trans("SubTotal") : $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
 		$generator->cols['desc']['content']['align'] = ($prevAlign === 'L') ? 'R' : 'L';
 	}
 
@@ -3015,6 +3045,13 @@ function pdf_render_subtotals(
 	} else {
 		$pdf->MultiCell($width, $pdf->getPageHeight() - $pdf->getBreakMargin() - $curY, '', 0, '', true);
 
+		// The page reached by the measuring pass above was discarded along with
+		// the transaction, and the MultiCell only recreates it when some room was
+		// left to fill. A line starting below the break margin leaves none, so
+		// the page must be added before it can be selected.
+		while ($pdf->getNumPages() < $pageAfter) {
+			$pdf->AddPage();
+		}
 		$pdf->setPage($pageAfter);
 		$pdf->SetXY($generator->marge_gauche, $pdf->getMargins()['top']);
 		$pdf->MultiCell($width, max(0, $yAfter - $pdf->getMargins()['top']), '', 0, '', true);

@@ -1144,7 +1144,7 @@ class Reception extends CommonObject
 			}
 
 			$qty = (float) $qty;
-			$description = trim($description);
+			$description = trim((string) $description);
 
 			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new ReceptionLineBatch($this->db);
@@ -1552,6 +1552,40 @@ class Reception extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Delete a line of the reception. Only allowed while the reception is a draft.
+	 *
+	 *	@param	User	$user		User that deletes
+	 *	@param	int		$lineid		Id of the line to delete (llx_receptiondet_batch.rowid)
+	 *	@return	int					>0 if OK, <0 if KO
+	 */
+	public function deleteLine($user, $lineid)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		$line = new ReceptionLineBatch($this->db);
+		if ($line->fetch($lineid) <= 0) {
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+		if ($line->fk_reception != $this->id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
+		$this->db->begin();
+		if ($line->delete($user) > 0) {
+			$this->db->commit();
+			return 1;
+		}
+		$this->error = $line->error;
+		$this->db->rollback();
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2076,7 +2110,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-						if ($qty <= 0) {
+						if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 							continue;
 						}
 
@@ -2236,7 +2270,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-						if ($qty <= 0) {
+						if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 							continue;
 						}
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
@@ -2373,7 +2407,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-						if ($qty <= 0) {
+						if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 							continue;
 						}
 

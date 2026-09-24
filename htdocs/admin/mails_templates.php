@@ -142,7 +142,7 @@ $tabname[25] = MAIN_DB_PREFIX."c_email_templates";
 // Nom des champs en resultat de select pour affichage du dictionnaire
 // Names of fields in select results for dictionary display (AI translated)
 $tabfield = array();
-$tabfield[25] = "label,lang,type_template,fk_user,position,module,topic,joinfiles,defaultfortype,content";
+$tabfield[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,defaultfortype,content";
 if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 	$tabfield[25] .= ',content_lines';
 }

@@ -633,6 +633,12 @@ class pdf_octopus extends ModelePDFFactures
 				$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 				$pdf->setTopMargin($this->tab_top_newpage);
 
+				// From here we are on the second page, which is the first page of the lines. This page
+				// has the short header (no address blocks), so the content must start at
+				// $this->tab_top_newpage and not at $this->tab_top that was computed for the first page.
+				$this->tab_top = $this->tab_top_newpage;
+				$nexY = $this->tab_top - 1;
+
 				// Incoterm
 				$height_incoterms = 0;
 				if (isModEnabled('incoterm')) {
@@ -806,9 +812,22 @@ class pdf_octopus extends ModelePDFFactures
 				//$this->pdfTabTitles($pdf, $this->tab_top, $tab_height, $outputlangs, $hidetop);
 				//$pdf->rollbackTransaction(true);
 
-				// We start the top of first line at tab_top_newpage and not tab_top because
-				// we are already on second page with this template.
-				$nexY = $this->tab_top_newpage + $this->tabTitleHeight;
+				// $this->tab_top holds the top of the table for this first page of lines (it was moved
+				// down if a note was printed above), the following pages use $this->tab_top_newpage.
+				$nexY = $this->tab_top + $this->tabTitleHeight;
+
+				// _tableau() always repeats the column headers, they occupy $this->tabTitleHeight below the
+				// top of the table. So on a page added in the middle of the table the lines must start below
+				// them, exactly like $nexY does above for the first page of lines, otherwise the line that
+				// triggered the page break is written on top of the column headers.
+				$linetop_newpage = $this->tab_top_newpage + $this->tabTitleHeight;
+
+				// When TCPDF breaks a page by itself, it restarts the text of the line at the top margin,
+				// without the top padding it applies to the cell of a line printed by the code below. So the
+				// padding is added to the top margin, otherwise the first line of the page would be printed
+				// against the bottom border of the column headers instead of keeping the same gap as the
+				// first line of the first page of lines.
+				$topmargin_newpage = $linetop_newpage + (isset($this->cols['desc']['content']['padding'][0]) ? $this->cols['desc']['content']['padding'][0] : 0);
 
 				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
@@ -828,7 +847,7 @@ class pdf_octopus extends ModelePDFFactures
 						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 					}
 
-					$pdf->setTopMargin($this->tab_top_newpage);
+					$pdf->setTopMargin($topmargin_newpage);
 					$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
@@ -848,7 +867,7 @@ class pdf_octopus extends ModelePDFFactures
 							}
 							$pdf->setPage($pageposbefore + 1);
 							$pdf->setPageOrientation('', true, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
-							$posy = $this->tab_top_newpage;
+							$posy = $linetop_newpage;
 							$showpricebeforepagebreak = 0;
 						}
 
@@ -915,7 +934,7 @@ class pdf_octopus extends ModelePDFFactures
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter);
-						$posy = $this->tab_top_newpage;
+						$posy = $linetop_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
@@ -1158,7 +1177,9 @@ class pdf_octopus extends ModelePDFFactures
 
 				// Show square
 				// special for situation invoices
-				$tabtop = $this->tab_top_newpage;
+				// When everything fits on the first page of lines, the frame of the table must start at
+				// $this->tab_top (below the note) and not at $this->tab_top_newpage.
+				$tabtop = ($pdf->getPage() == $pageposbeforeprintlines) ? $this->tab_top : $this->tab_top_newpage;
 				$tabhauteur = $this->page_hauteur - $tabtop - $this->heightforfooter - $this->heightforinfotot - $this->heightforfreetext;
 				$tabTitleHeight = 0;
 				$this->_tableau($pdf, $tabtop, $tabhauteur, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
@@ -1977,22 +1998,7 @@ class pdf_octopus extends ModelePDFFactures
 
 				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 					// VAT
-					$tvas = array();
-					$nblines = count($object->lines);
-					for ($i = 0; $i < $nblines; $i++) {
-						$tvaligne = $object->lines[$i]->total_tva;
-						$vatrate = (string) $object->lines[$i]->tva_tx;
-
-						if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
-							$vatrate .= '*';
-						}
-						if (! isset($tvas[$vatrate])) {
-							$tvas[$vatrate] = 0;
-						}
-						$tvas[$vatrate] += $tvaligne;
-					}
-
-					foreach ($tvas as $tvakey => $tvaval) {
+					foreach ($this->tva_array as $tvakey => $tvaval) {
 						if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
 							$this->atleastoneratenotnull++;
 

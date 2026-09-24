@@ -992,7 +992,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
                 var element = jQuery("#opp_status option:selected");
                 var defaultpercent = element.attr("defaultpercent");
                 /*if (jQuery("#opp_percent_not_set").val() == "") */
-                jQuery("#opp_percent").val(defaultpercent);
+                /* defaultpercent is the raw DB value (double(5,2), ie "100.00"), so normalize it */
+                jQuery("#opp_percent").val(parseFloat(defaultpercent));
         	}
 
 			/*init_myfunc();*/
@@ -1622,23 +1623,26 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
                         jQuery("#divtocloseproject").hide();
                     }
 
+                    /* Note: defaultpercent and oldpercent hold raw DB values (double(5,2), ie "100.00"),
+                       so they are already in universal numeric format and must not go through price2numjs(),
+                       which would strip the "." as a thousand separator in languages like de_DE. */
                     /* Change percent with default percent (defaultpercent) if new status (defaultpercent) is higher than current (jQuery("#opp_percent").val()) */
                     if (oldpercent != \'\' && (parseFloat(defaultpercent) < parseFloat(oldpercent)))
                     {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent+" def < old");
                         if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
-							jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+							jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+parseFloat(oldpercent)+\' %\');
 						}
 
-						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(oldpercent); }
-                        else { jQuery("#opp_percent").val(price2numjs(defaultpercent)); }
+						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(parseFloat(oldpercent)); }
+                        else { jQuery("#opp_percent").val(parseFloat(defaultpercent)); }
                     } else {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent);
                     	if (jQuery("#opp_percent").val() == \'\' || (parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent))) {
                         	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
-								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+parseFloat(oldpercent)+\' %\');
 							}
-                        	jQuery("#opp_percent").val(price2numjs(defaultpercent));
+                        	jQuery("#opp_percent").val(parseFloat(defaultpercent));
                     	}
                     }
             	}

@@ -2071,7 +2071,7 @@ class CommandeFournisseur extends CommonOrder
 			} else {
 				$pu = $pu_ttc;
 			}
-			$desc = trim($desc);
+			$desc = trim((string) $desc);
 
 			// Check parameters
 			if ($qty < 0 && !$fk_product) {
@@ -3796,6 +3796,10 @@ class CommandeFournisseur extends CommonOrder
 						}
 					}
 					foreach ($this->lines as $line) {
+						// Free lines have no product and cannot be dispatched to stock.
+						if (empty($line->fk_product)) {
+							continue;
+						}
 						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
 						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) {
 							continue;

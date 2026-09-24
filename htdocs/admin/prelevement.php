@@ -128,7 +128,7 @@ if ($action == "set") {
 
 if ($action == "addnotif") {
 	$bon = new BonPrelevement($db);
-	$bon->addNotification($db, GETPOSTINT('user'), $action);
+	$bon->addNotification($db, GETPOSTINT('user'), GETPOST('notifaction', 'int'));
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -470,7 +470,7 @@ if (isModEnabled('notification') )
 	print '</td>';
 
 	print '<td>';
-	print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
+	print $form->selectarray('notifaction', $actions);
 	print '</td>';
 
 	print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td></tr>';

@@ -1075,15 +1075,15 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->type_code)) {
-			$this->timing = trim($this->type_code);
+			$this->type_code = trim($this->type_code);
 		}
 
 		if (isset($this->category_code)) {
-			$this->timing = trim($this->category_code);
+			$this->category_code = trim($this->category_code);
 		}
 
 		if (isset($this->severity_code)) {
-			$this->timing = trim($this->severity_code);
+			$this->severity_code = trim($this->severity_code);
 		}
 		if (isset($this->model_pdf)) {
 			$this->model_pdf = trim($this->model_pdf);
@@ -2965,7 +2965,7 @@ class Ticket extends CommonObject
 									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
 									$external_contacts = array_merge($external_contacts, $array_external);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_email)) {
-									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
+									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->origin_email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0)); // no fk_soc here, so $object->thirdparty was never fetched (mirrors the origin_replyto branch above)
 									$external_contacts = array_merge($external_contacts, $array_external);
 								}
 							}

@@ -231,7 +231,10 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $separatedPMP = false;
 if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 	$separatedPMP = true;
-	$sql .= ", SUM(pa.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
+	// COALESCE: a product may have no row yet in llx_product_perentity (rows are created on the
+	// first stock movement), so fall back on the global p.pmp like Product::fetch() does, instead
+	// of valuing such a product at 0.
+	$sql .= ", SUM(COALESCE(pa.pmp, p.pmp) * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 } else {
 	$sql .= ", SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 }

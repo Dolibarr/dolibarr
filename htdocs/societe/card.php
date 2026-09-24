@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
@@ -597,7 +597,8 @@ if (empty($reshook)) {
 								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 								$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-								if (!($result > 0)) {
+								// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+								if (!is_numeric($result) || $result <= 0) {
 									$errors[] = "ErrorFailedToSaveFile";
 								} else {
 									// Create thumbs
@@ -770,7 +771,8 @@ if (empty($reshook)) {
 							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-							if (!($result > 0)) {
+							// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+							if (!is_numeric($result) || $result <= 0) {
 								$errors[] = "ErrorFailedToSaveFile";
 							} else {
 								// Create thumbs
@@ -1172,7 +1174,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 					$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-					if (!($result > 0)) {
+					// Note: $result is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+					if (!is_numeric($result) || $result <= 0) {
 						$errors[] = "ErrorFailedToSaveFile";
 					} else {
 						// Create thumbs
@@ -1910,7 +1913,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr>';
 
 			// Date birth
-			print '<tr class="morefields"><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+			print '<tr class="morefields"><td>'.$form->editfieldkey('CompanyBirthDate', 'birth', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 			print '</td></tr>';
@@ -2197,7 +2200,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				//Incoterms
 				if (isModEnabled('incoterm')) {
 					$object->fk_incoterms = GETPOSTINT('incoterm_id');
-					$object->location_incoterms = GETPOST('lcoation_incoterms', 'alpha');
+					$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				}
 
 				//Local Taxes
@@ -2777,7 +2780,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				// Date birth
-				print '<tr class="morefields"><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+				print '<tr class="morefields"><td>'.$form->editfieldkey('CompanyBirthDate', 'birth', '', $object, 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
 				print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 				print '</td></tr>';
@@ -3304,7 +3307,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.dolPrintHTML($object->forme_juridique).'</td></tr>';
 
 			// Date birth
-			print '<tr><td>'.$langs->trans('CompnanyBirthDate').'</td><td>'.dol_print_date($object->birth).'</td></tr>';
+			print '<tr><td>'.$langs->trans('CompanyBirthDate').'</td><td>'.dol_print_date($object->birth).'</td></tr>';
 
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';

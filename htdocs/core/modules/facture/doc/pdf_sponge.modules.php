@@ -913,7 +913,7 @@ class pdf_sponge extends ModelePDFFactures
 						}
 
 						// Total with tax line (TTC)
-						if ($this->getColumnStatus('totalincltax')) {
+						if ($this->getColumnStatus('totalincltax') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 							$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
 							$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
 						}

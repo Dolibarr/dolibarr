@@ -177,7 +177,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire") && is_object($pr
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -281,7 +281,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=".SupplierProposal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -382,7 +382,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($o
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("DraftOrders", "commande/list.php", "search_status=".Commande::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -487,7 +487,7 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=".CommandeFournisseur::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -589,7 +589,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("DraftFichinter", "fichinter/list.php", "search_status=".Fichinter::STATUS_DRAFT, 2, $num);
 
 		//print '<tr class="liste_titre">';
@@ -840,6 +840,7 @@ if (isModEnabled('propal') && is_object($propalstatic)) {
 			}
 		}
 
+		addSummaryTableLine(4, $num);
 		finishSimpleTable(true);
 		$db->free($resql);
 	} else {

@@ -819,7 +819,7 @@ class Mo extends CommonObject
 
 		$quantity /= $bom->qty;
 		foreach ($bom->lines as $line) {
-			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : 1;
+			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : $line->qty;
 
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($line->fk_product);

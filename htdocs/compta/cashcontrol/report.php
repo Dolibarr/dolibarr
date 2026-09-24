@@ -388,7 +388,9 @@ if ($resql) {
 
 	print $langs->trans("Cash").(!empty($transactionspertype['CASH']) ? ' ('.$transactionspertype['CASH'].' '.$langs->trans("Articles").')' : '').' : ';
 	if (!$summaryonly) {
-		print '<div class="inline-block amount width100">'.($cash >= 0 ? '+' : '').price($cash).'</div>';
+		// Cash is the only row where both boxes carry a value. width100 is set inside a min-width media
+		// query, so below that breakpoint the boxes shrink to their content and the two amounts touch.
+		print '<div class="inline-block amount width100 marginrightonly">'.($cash >= 0 ? '+' : '').price($cash).'</div>';
 		print '<div class="inline-block amount width100">'.price($newcash).'</div>';
 	} else {
 		print '<div class="inline-block amount width100"></div>';

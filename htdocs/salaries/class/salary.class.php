@@ -214,11 +214,11 @@ class Salary extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
-		$this->note_private = trim($this->note_private);
-		$this->note_public = trim($this->note_public);
+		$this->amount = trim((string) $this->amount);
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
+		$this->note_private = trim((string) $this->note_private);
+		$this->note_public = trim((string) $this->note_public);
 
 		// Check parameters
 		if (empty($this->fk_user) || $this->fk_user < 0) {
@@ -411,9 +411,9 @@ class Salary extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
-		$this->label = trim($this->label);
-		$this->note = trim($this->note);
+		$this->amount = price2num(trim((string) $this->amount));
+		$this->label = trim((string) $this->label);
+		$this->note = trim((string) $this->note);
 		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_author = (int) $this->fk_user_author;
 		$this->fk_user_modif = (int) $this->fk_user_modif;

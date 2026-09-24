@@ -219,7 +219,7 @@ class ViewImageController extends Controller
 			$fullpath_original_file = $check_access['original_file']; // $fullpath_original_file is now a full path name
 		}
 
-		if (!empty($hashp)) {
+		if (!empty($hashp) && $hashp != 'shared') {
 			$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 			$sqlprotectagainstexternals = '';
 		} else {

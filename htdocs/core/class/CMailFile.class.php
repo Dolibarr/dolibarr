@@ -1171,6 +1171,10 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
+							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
+							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
 							// Recreate the service with its configured scopes.
 							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
@@ -1356,6 +1360,10 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
+							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
+							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
 							// Recreate the service with its configured scopes.
 							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.

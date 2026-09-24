@@ -2070,7 +2070,7 @@ if (empty($reshook)) {
 											$lines[$i]->fk_unit,
 											0,
 											'',
-											0
+											1  // noupdateafterinsertline: update_price() is called once after the loop, calling it per line is quadratic
 										);
 
 										if ($result > 0) {
@@ -4160,7 +4160,7 @@ if ($action == 'create') {
 					}
 
 					$typedeposit = GETPOST('typedeposit', 'aZ09');
-					$valuedeposit = GETPOSTINT('valuedeposit');
+					$valuedeposit = GETPOSTFLOAT('valuedeposit');
 					if (empty($typedeposit) && !empty($objectsrc->deposit_percent)) {
 						$origin_payment_conditions_deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
 						if (!empty($origin_payment_conditions_deposit_percent)) {
@@ -4877,7 +4877,7 @@ if ($action == 'create') {
 
 	$head = facture_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, $object->picto);
+	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -6680,7 +6680,7 @@ if ($action == 'create') {
 					'label' => $langs->trans('AddSubtotalLine'),
 					'url' => '/compta/facture/card.php?facid='.$object->id.'&action=add_subtotal_line&token='.newToken()
 				);
-				print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
+				print dolGetButtonAction('', $langs->trans('SubTotal'), 'default', $url_button, '', true);
 			}
 
 			// Validate
