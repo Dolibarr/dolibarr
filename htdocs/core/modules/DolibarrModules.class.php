@@ -2069,9 +2069,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0, $existingrightsdefids = null)
 	{
 		// phpcs:enable
-		global $conf, $user;
+		global $conf, $langs, $user;
 
 		$err = 0;
+		$skippedperms = array();	// Permission ids not inserted because already used
 		$entity = (!empty($force_entity) ? $force_entity : $conf->entity);
 
 		dol_syslog(get_class($this)."::insert_permissions", LOG_DEBUG);
@@ -2195,6 +2196,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						}
 
 						$this->db->free($resqlinsert);
+					} else {
+						// Id already used, possibly by another module: the permission is silently
+						// not inserted, which leaves the module half installed. Collected to warn once.
+						$skippedperms[$r_id] = $r_perms.($r_subperms ? "->".$r_subperms : "");
 					}
 
 					// If we want to init permissions on admin users
@@ -2232,6 +2237,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$user->loadRights();
 				}
 			}
+			if (!empty($skippedperms)) {
+				$langs->load("admin");
+				$listofperms = array();
+				foreach ($skippedperms as $tmpid => $tmpperm) {
+					$listofperms[] = $tmpid." (".$tmpperm.")";
+				}
+				setEventMessages($langs->trans("WarningPermissionIdsAlreadyUsed", $this->name, implode(", ", $listofperms)), null, "warnings");
+			}
+
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();
