@@ -827,6 +827,11 @@ try {
 				"message" => $message
 			]
 		];
+		if (strpos($errorDetails, 'Error:') === 0) {
+			// Lets the chat tell a failed call from a real answer (e.g. keep it
+			// out of the conversation context by default).
+			$finalResponse['status'] = 'error';
+		}
 
 		// Log the failure
 		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 0.0, $langs->transnoentitiesnoconv('Error'), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
