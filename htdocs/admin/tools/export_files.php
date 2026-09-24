@@ -3,7 +3,7 @@
  * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,6 +155,19 @@ if ($export_type == 'app' && empty($dolibarr_allow_download_app)) {
 }
 
 if ($export_type == 'externalmodule' && !empty($what)) {
+	// Check is done here, before any compression method, so it can't be bypassed with compression=gz, bz or zstd
+	global $dolibarr_allow_download_app;
+	if (empty($dolibarr_allow_download_app)) {
+		print 'Download of external modules is not allowed by $dolibarr_allow_download_app in conf.php file';
+		$db->close();
+		exit();
+	}
+	// Only a module directory name is allowed (not '.' that would archive the whole custom directory)
+	if (!preg_match('/^[a-z0-9_]+$/i', $what) || !is_dir(DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what))) {
+		print 'Bad value for parameter what';
+		$db->close();
+		exit();
+	}
 	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
 } elseif ($export_type == 'app') {
 	$fulldirtocompress = DOL_DOCUMENT_ROOT;
@@ -175,13 +188,6 @@ if ($compression == 'zip') {
 	$rootdirinzip = '';
 	if ($export_type == 'externalmodule' && !empty($what)) {
 		$rootdirinzip = $what;
-
-		global $dolibarr_allow_download_app;
-		if (empty($dolibarr_allow_download_app)) {
-			print 'Download of external modules is not allowed by $dolibarr_allow_download_app in conf.php file';
-			$db->close();
-			exit();
-		}
 	}
 	if ($export_type == 'app') {
 		$rootdirinzip = basename(DOL_DOCUMENT_ROOT);
