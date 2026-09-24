@@ -21,7 +21,6 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
 /**
@@ -636,14 +635,8 @@ class ExpenseReports extends DolibarrApi
 		if ($this->expensereport->fetch($id) <= 0) {
 			throw new RestException(404, 'Expense report not found');
 		}
-		if (isModEnabled("bank")) {
-			if (!((int) $request_data['accountid'] > 0)) {
-				throw new RestException(400, "accountid field missing");
-			}
-			$account = new Account($this->db);
-			if ($account->fetch((int) $request_data['accountid']) <= 0) {
-				throw new RestException(400, 'Bank account '.((int) $request_data['accountid']).' not found');
-			}
+		if (isModEnabled("bank") && !((int) $request_data['accountid'] > 0)) {
+			throw new RestException(400, "accountid field missing");
 		}
 
 		$paymentExpenseReport = new PaymentExpenseReport($this->db);
@@ -657,7 +650,7 @@ class ExpenseReports extends DolibarrApi
 
 		if ($paymentExpenseReport->create(DolibarrApiAccess::$user) < 0) {
 			$this->db->rollback();
-			throw new RestException(500, 'Error creating paymentExpenseReport', array_merge(array($paymentExpenseReport->error), $paymentExpenseReport->errors));
+			throw new RestException(400, 'Payment error : '.$paymentExpenseReport->errorsToString());
 		}
 		if (isModEnabled("bank")) {
 			$result = $paymentExpenseReport->addPaymentToBank(
@@ -670,14 +663,14 @@ class ExpenseReports extends DolibarrApi
 			);
 			if ($result <= 0) {
 				$this->db->rollback();
-				throw new RestException(500, 'Error adding payment to bank', array_merge(array($paymentExpenseReport->error), $paymentExpenseReport->errors));
+				throw new RestException(400, 'Add payment to bank error : '.$paymentExpenseReport->errorsToString());
 			}
 		}
 
 		$remaintopay = price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments(), 'MT');
 		if ($remaintopay == 0 && $this->expensereport->setPaid($this->expensereport->id, DolibarrApiAccess::$user) < 0) {
 			$this->db->rollback();
-			throw new RestException(500, 'Error setting expense report paid', array_merge(array($this->expensereport->error), $this->expensereport->errors));
+			throw new RestException(400, 'Set paid error : '.$this->expensereport->errorsToString());
 		}
 
 		$this->db->commit();
