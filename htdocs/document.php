@@ -368,7 +368,7 @@ function dol_document_prepare_download($resolvedfile, $modulepart, $entity, &$ac
 					$hidedetails = 0;
 					$hidedesc = 0;
 					$hideref = 0;
-					$moreparams = '';
+					$moreparams = null;
 
 					$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 					if ($result < 0) {

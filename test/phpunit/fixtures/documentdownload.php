@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+namespace DolibarrTests\DocumentDownloadFixture;
+
+use stdClass;
+
 // CLI-only service doubles for DocumentDownloadTest. Never loads an instance or database.
 if (PHP_SAPI !== 'cli') {
 	exit(1);
@@ -137,12 +141,15 @@ class Facture
 	 * @param int $details Fixture details
 	 * @param int $desc Fixture desc
 	 * @param string|int $ref Fixture ref
-	 * @param string $params Fixture params
+	 * @param array<string,mixed>|null $params Optional document parameters
 	 * @return int
 	 */
 	public function generateDocument($model, $langs, $details, $desc, $ref, $params)
 	{
 		global $state;
+		if ($params !== null && !is_array($params)) {
+			throw new \InvalidArgumentException('Document parameters must match the native invoice contract.');
+		}
 		$state['regenerations']++;
 		file_put_contents(DOL_DATA_ROOT.'/A/report.pdf', 'DUPLICATA');
 		return 1;

@@ -6,7 +6,7 @@
 
 /**
  * Regression tests for document.php, run in isolated processes without a database.
- * The fixture replaces the bootstrap and services; the endpoint itself is unmodified.
+ * The fixture replaces bootstrap/services; a namespace isolates its doubles from core symbols.
  */
 class DocumentDownloadTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,7 +24,10 @@ class DocumentDownloadTest extends \PHPUnit\Framework\TestCase
 		mkdir($this->directory.'/htdocs/core/lib', 0700, true);
 		mkdir($this->directory.'/documents/A', 0700, true);
 		mkdir($this->directory.'/documents/B', 0700, true);
-		copy(__DIR__.'/../../htdocs/document.php', $this->directory.'/htdocs/document.php');
+		// Only add a namespace/imports; execute the endpoint's actual code in the fixture scope.
+		$endpoint = file_get_contents(__DIR__.'/../../htdocs/document.php');
+		$endpoint = preg_replace('/^<\?php/', '<?php namespace DolibarrTests\\DocumentDownloadFixture; use ZipArchive; use stdClass;', $endpoint, 1);
+		file_put_contents($this->directory.'/htdocs/document.php', $endpoint);
 		foreach (array('main.inc.php', 'core/lib/files.lib.php', 'core/lib/images.lib.php') as $file) {
 			file_put_contents($this->directory.'/htdocs/'.$file, '<?php');
 		}
