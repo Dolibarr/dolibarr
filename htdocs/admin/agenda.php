@@ -107,6 +107,11 @@ if ($action == "save" && empty($cancel)) {
 		}
 	}
 
+	$res = dolibarr_set_const($db, 'AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS', GETPOSTINT('AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS'), 'int', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		$db->commit();
@@ -224,6 +229,22 @@ if (!empty($triggers)) {
 		}
 	}
 }
+print '</table>';
+print '</div>';
+
+print '<br>';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th colspan="2">'.$langs->trans('AutoCompleteElapsedEvents').'</th></tr>';
+print '<tr class="oddeven">';
+print '<td>';
+print $langs->trans('EnableAutoCompleteElapsedEvents');
+print '<br><span class="opacitymedium">'.$langs->trans('AutoCompleteElapsedEventsHelp').'</span>';
+print '</td>';
+print '<td class="right">';
+print $form->selectyesno('AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS', getDolGlobalInt('AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS'), 1);
+print '</td>';
+print '</tr>';
 print '</table>';
 print '</div>';
 

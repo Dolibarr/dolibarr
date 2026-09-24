@@ -229,6 +229,81 @@ class ActionCommTest extends CommonClassTest
 	}
 
 	/**
+	 * testAutoCompleteElapsedEvents
+	 *
+	 * @return void
+	 */
+	public function testAutoCompleteElapsedEvents()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$autoCompleteWasEnabled = getDolGlobalInt('AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS');
+
+		$now = dol_now();
+		$eventDefinitions = array(
+			'elapsed' => array('percentage' => 0, 'start' => $now - 7200, 'end' => $now - 3600),
+			'canceled' => array('percentage' => -1, 'start' => $now - 7200, 'end' => $now - 3600),
+			'future' => array('percentage' => 0, 'start' => $now + 3600, 'end' => $now + 7200),
+			'endless' => array('percentage' => 0, 'start' => $now - 7200, 'end' => null),
+		);
+		$events = array();
+		foreach ($eventDefinitions as $eventKey => $eventDefinition) {
+			$event = new ActionComm($db);
+			$event->type_code = 'AC_OTH';
+			$event->code = 'AC_OTH';
+			$event->label = 'PHPUnit auto-complete event '.$eventKey;
+			$event->datep = $eventDefinition['start'];
+			$event->datef = $eventDefinition['end'];
+			$event->percentage = $eventDefinition['percentage'];
+			$event->authorid = $user->id;
+			$event->userownerid = $user->id;
+			$eventId = $event->create($user);
+			$this->assertGreaterThan(0, $eventId);
+			$events[$eventKey] = $event;
+		}
+
+		unset($conf->global->AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS);
+		$result = $events['elapsed']->autoCompleteElapsedEvents();
+		$this->assertSame(0, $result);
+		$disabledEvent = new ActionComm($db);
+		$this->assertGreaterThan(0, $disabledEvent->fetch($events['elapsed']->id));
+		$this->assertSame(0, (int) $disabledEvent->percentage);
+
+		$conf->global->AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS = 1;
+		$result = $events['elapsed']->autoCompleteElapsedEvents();
+		$this->assertSame(0, $result);
+
+		$completedEvent = new ActionComm($db);
+		$this->assertGreaterThan(0, $completedEvent->fetch($events['elapsed']->id));
+		$this->assertSame(100, (int) $completedEvent->percentage);
+
+		$canceledEvent = new ActionComm($db);
+		$this->assertGreaterThan(0, $canceledEvent->fetch($events['canceled']->id));
+		$this->assertSame(-1, (int) $canceledEvent->percentage);
+
+		$futureEvent = new ActionComm($db);
+		$this->assertGreaterThan(0, $futureEvent->fetch($events['future']->id));
+		$this->assertSame(0, (int) $futureEvent->percentage);
+
+		$endlessEvent = new ActionComm($db);
+		$this->assertGreaterThan(0, $endlessEvent->fetch($events['endless']->id));
+		$this->assertSame(0, (int) $endlessEvent->percentage);
+
+		foreach ($events as $event) {
+			$event->delete($user);
+		}
+		if ($autoCompleteWasEnabled) {
+			$conf->global->AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS = $autoCompleteWasEnabled;
+		} else {
+			unset($conf->global->AGENDA_AUTO_COMPLETE_ELAPSED_EVENTS);
+		}
+	}
+
+	/**
 	 * testActionCommDelete
 	 *
 	 * @param   int $id         Id of action comm
