@@ -1093,9 +1093,9 @@ body.ai-fullpage {
 .file-chip.chip-inline { margin-bottom: 4px; }
 
 /* --- Context pins: opt-in selection of past exchanges resent to the model --- */
-/* Context pin: two states only. ON = blue pin + ring (the bubble goes back to the AI
-   with the next question), OFF = grey pin (it does not). Always visible. */
-.msg .ctx-pin { position: absolute; top: 2px; right: 2px; border: 0; background: none; cursor: pointer; opacity: .45; font-size: 0.9em; color: #8a8a8a; padding: 3px 5px; transition: opacity .15s, color .15s; }
+/* Context checkbox on each bubble, two states only. Checked (blue) + ring = the
+   bubble goes back to the AI with the next question, unchecked (grey) = it does not. */
+.msg .ctx-pin { position: absolute; top: 2px; right: 2px; border: 0; background: none; cursor: pointer; opacity: .55; font-size: 1em; color: #8a8a8a; padding: 3px 5px; transition: opacity .15s, color .15s; }
 .msg .msg-bubble { position: relative; padding-right: 24px; }
 .msg.user .ctx-pin { color: rgba(255, 255, 255, 0.75); }
 .msg .ctx-pin:hover { opacity: 1; }
