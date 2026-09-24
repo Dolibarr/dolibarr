@@ -996,7 +996,7 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 
 	if ($mode === 'page') {
 		// Full page: under the header, a permanent left column lists the past
-		// conversations (like the mainstream chat UIs) next to the chat itself.
+		// conversations (like the mainstream chat applications) next to the chat itself.
 		// The popover keeps its history button + panel and a flat layout.
 		$out .= '<div class="ai-chat-body">';
 		$out .= '<aside id="ai-history-sidebar" class="ai-history-sidebar" aria-label="'.dol_escape_htmltag($langs->trans("AIHistory")).'">';

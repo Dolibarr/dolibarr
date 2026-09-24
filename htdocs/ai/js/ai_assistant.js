@@ -1630,7 +1630,7 @@ export function initAiAssistant(container) {
         row.addEventListener('click', hideConversationPreview);
     }
 
-    // --- Full page: permanent conversations column (like the mainstream chat UIs) ---
+    // --- Full page: permanent conversations column (like the mainstream chat applications) ---
     // The popover has no room for it and keeps the button + panel above.
     const sidebar = container.classList.contains('ai-in-popover') ? null : document.getElementById('ai-history-sidebar');
     let sidebarTimer = null;
