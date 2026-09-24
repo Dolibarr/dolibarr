@@ -2043,6 +2043,9 @@ if ($action == 'create') {
 
 						toggle_reminder_part();
 						$("#addreminder").click(toggle_reminder_part);
+						$("#remindcustomer").click(function(){
+							selectremindertype();
+						});
 
 	            		$("#selectremindertype").change(function(){
 							selectremindertype();
@@ -2051,7 +2054,8 @@ if ($action == 'create') {
 						function selectremindertype() {
 							console.log("Call selectremindertype");
 	            	        var selected_option = $("#selectremindertype option:selected").val();
-	            		    if(selected_option == "email") {
+	            		    // The mail template is used by an email reminder for the users, and by the reminder sent to the customer
+	            		    if(selected_option == "email" || $("#remindcustomer").is(":checked")) {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
 	            		    } else {
 	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
@@ -2543,6 +2547,14 @@ if ($id > 0 && $action != 'create') {
 				$firstreminderId = array_shift($keys);
 
 				$actionCommReminder = $object->reminders[$firstreminderId];
+
+				// The reminder that sets the type and template shown must be one of a user, not the one sent to the customer or a contact
+				foreach ($object->reminders as $tmpreminder) {
+					if (empty($tmpreminder->fk_soc) && empty($tmpreminder->fk_contact)) {
+						$actionCommReminder = $tmpreminder;
+						break;
+					}
+				}
 			} else {
 				$checked = '';
 				$actionCommReminder = new ActionCommReminder($db);
@@ -2576,8 +2588,21 @@ if ($id > 0 && $action != 'create') {
 			print $form->selectarray('selectremindertype', $TRemindTypes, $actionCommReminder->typeremind, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 			print '</td></tr>';
 
+			// State of the checkbox to also remind the customer by email
+			$remindcustomerchecked = '';
+			if (getDolGlobalString('AGENDA_REMINDER_EMAIL') && $object->socid > 0) {
+				$sqlcustomerreminder = "SELECT rowid FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+				$sqlcustomerreminder .= " WHERE fk_actioncomm = ".((int) $object->id)." AND typeremind = 'email' AND fk_soc IS NOT NULL";
+				$rescustomerreminder = $db->query($sqlcustomerreminder);
+				$remindcustomerchecked = ($rescustomerreminder && $db->num_rows($rescustomerreminder)) ? ' checked' : '';
+				if (GETPOSTISSET('remindcustomer')) {
+					$remindcustomerchecked = (GETPOST('remindcustomer') ? ' checked' : '');
+				}
+			}
+
+			// The mail template is used by an email reminder for the users, and by the reminder sent to the customer
 			$hide = '';
-			if ($actionCommReminder->typeremind == 'browser') {
+			if ($actionCommReminder->typeremind == 'browser' && empty($remindcustomerchecked)) {
 				$hide = 'style="display:none;"';
 			}
 
@@ -2590,13 +2615,8 @@ if ($id > 0 && $action != 'create') {
 
 			// Also remind the customer by email
 			if (getDolGlobalString('AGENDA_REMINDER_EMAIL') && $object->socid > 0) {
-				$sqlcustomerreminder = "SELECT rowid FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-				$sqlcustomerreminder .= " WHERE fk_actioncomm = ".((int) $object->id)." AND typeremind = 'email' AND fk_soc IS NOT NULL";
-				$rescustomerreminder = $db->query($sqlcustomerreminder);
-				$remindcustomerchecked = ($rescustomerreminder && $db->num_rows($rescustomerreminder)) ? ' checked' : '';
-
 				print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("AlsoRemindCustomer").'</td><td colspan="3">';
-				print '<input type="checkbox" id="remindcustomer" name="remindcustomer"'.(GETPOSTISSET('remindcustomer') ? (GETPOST('remindcustomer') ? ' checked' : '') : $remindcustomerchecked).'>';
+				print '<input type="checkbox" id="remindcustomer" name="remindcustomer"'.$remindcustomerchecked.'>';
 				print '</td></tr>';
 			}
 
@@ -2611,14 +2631,17 @@ if ($id > 0 && $action != 'create') {
 							$(".reminderparameters").hide();
 						}
 					});
-					$("#selectremindertype").change(function(){
+					function updatemailtemplaterow() {
 						var selected_option = $("#selectremindertype option:selected").val();
-						if(selected_option == "email") {
+						// The mail template is used by an email reminder for the users, and by the reminder sent to the customer
+						if(selected_option == "email" || $("#remindcustomer").is(":checked")) {
 							$("#select_actioncommsendmodel_mail").closest("tr").show();
 						} else {
 							$("#select_actioncommsendmodel_mail").closest("tr").hide();
 						}
-					});
+					}
+					$("#selectremindertype").change(updatemailtemplaterow);
+					$("#remindcustomer").click(updatemailtemplaterow);
 				});
 			</script>
 			<?php
