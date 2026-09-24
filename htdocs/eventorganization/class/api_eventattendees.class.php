@@ -42,6 +42,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public static $INTFIELDS = array(
 		'fk_soc',
+		'fk_contact',
 		'fk_actioncomm',
 		'fk_project',
 		'fk_invoice',
