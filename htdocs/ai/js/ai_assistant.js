@@ -1287,7 +1287,7 @@ export function initAiAssistant(container) {
                 pin.type = 'button';
                 pin.className = 'ctx-pin';
                 pin.title = t('AIContextPinOff');
-                pin.innerHTML = '<span class="far fa-square"></span>';
+                pin.innerHTML = '<span class="fas fa-thumbtack"></span>';
                 pin.onclick = (ev) => {
                     ev.stopPropagation();
                     toggleContextPin(div);
@@ -1590,8 +1590,9 @@ export function initAiAssistant(container) {
             m.classList.toggle('ctx-pinned', on);
             const pin = m.querySelector('.ctx-pin');
             if (pin) {
-                // The glyph is a checkbox: checked = travels with the next question.
-                pin.innerHTML = '<span class="far ' + (on ? 'fa-check-square' : 'fa-square') + '"></span>';
+                // Two glyphs: a planted blue pin (travels with the next question)
+                // or a grey pin struck through (does not) - see .ctx-pin-off in CSS.
+                pin.classList.toggle('ctx-pin-off', !on);
                 pin.title = on ? t('AIContextPinOn') : t('AIContextPinOff');
             }
         });
@@ -1650,7 +1651,7 @@ export function initAiAssistant(container) {
         // "Auto (3)" is lit as long as every bubble simply follows the window
         // (no manual pin, no exclusion): one glance says which mode is on.
         const isDefault = past.every((m) => !m.dataset.ctx);
-        bar.innerHTML = '<span class="far fa-check-square"></span> ' +
+        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
             t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
             ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double"></span> ' + t('AIContextAll') + '</a>' +
