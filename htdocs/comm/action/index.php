@@ -565,7 +565,8 @@ $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before t
 $newparam = '';
 $newcardbutton = '';
 if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-	$tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
+	// Force user timezone to get correct hour regardless of server timezone
+	$tmpforcreatebutton = dol_getdate(dol_now('gmt'), true, !empty($_SESSION['dol_tz_string']) ? $_SESSION['dol_tz_string'] : 'UTC');
 
 	$newparam .= '&month='.((int) $month).'&year='.((int) $tmpforcreatebutton['year']).'&mode='.urlencode($mode);
 
