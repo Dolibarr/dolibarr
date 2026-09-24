@@ -17,9 +17,15 @@
 	<exclude-pattern>/htdocs/([^/]+/)?conf\.php</exclude-pattern>
 	<exclude-pattern>*/nltechno*</exclude-pattern>
 	<exclude-pattern>/source/</exclude-pattern>
+	<exclude-pattern>/\.agents/</exclude-pattern>
+	<exclude-pattern>/\.cache/</exclude-pattern>
 	<exclude-pattern>/\.git/</exclude-pattern>
 	<exclude-pattern>/\.github/</exclude-pattern>
-	<exclude-pattern>/\.cache/</exclude-pattern>
+	<exclude-pattern>/\.idea/</exclude-pattern>
+	<exclude-pattern>/\.phan/</exclude-pattern>
+	<exclude-pattern>/\.settings/</exclude-pattern>
+	<exclude-pattern>/\.tx/</exclude-pattern>
+	<exclude-pattern>/\.vibe/</exclude-pattern>
 
 	<!-- Custom rules -->
 	<config name="installed_paths" value="/dev/setup/codesniffer" />
