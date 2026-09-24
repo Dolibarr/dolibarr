@@ -931,12 +931,50 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testIsModEnabled
+	 *
+	 * @return void
+	 */
+	public function testIsModEnabled()
+	{
+		global $conf;
+
+		// New names (the module is registered under its internal name in $conf->modules)
+		$this->assertSame(!empty($conf->modules['facture']), isModEnabled('invoice'));
+		$this->assertSame(!empty($conf->modules['societe']), isModEnabled('thirdparty'));
+		$this->assertFalse(isModEnabled('amodulethatdoesnotexist'));
+
+		// Old and new names of the mapping must give the same answer, whichever one is enabled. A new name that several old
+		// names point to ('intervention' <= 'fichinter' and 'ficheinter') is ambiguous by design (array_flip keeps the last one),
+		// so only the unambiguous pairs are checked.
+		$countbynewname = array_count_values(MODULE_MAPPING);
+		foreach (MODULE_MAPPING as $oldname => $newname) {
+			if ($countbynewname[$newname] > 1) {
+				continue;
+			}
+			$this->assertSame(isModEnabled($newname), isModEnabled($oldname), 'isModEnabled('.$oldname.') must equal isModEnabled('.$newname.')');
+		}
+
+		// supplier_order / supplier_invoice are the 'fournisseur' module unless MAIN_USE_NEW_SUPPLIERMOD is set
+		if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+			$this->assertSame(isModEnabled('supplier'), isModEnabled('supplier_order'));
+			$this->assertSame(isModEnabled('supplier'), isModEnabled('supplier_invoice'));
+		}
+	}
+
+	/**
 	 * testDolTextIsHtml
 	 *
 	 * @return void
 	 */
 	public function testDolTextIsHtml()
 	{
+		// Plain strings, without tag nor entity, must be refused quickly
+		$this->assertFalse(dol_textishtml('Customer proposal PR2609-0042, label with digits 12345'));
+		$this->assertFalse(dol_textishtml('a > b and "quotes" and 5 * 2 = 10'));
+		$this->assertFalse(dol_textishtml(''));
+		$this->assertFalse(dol_textishtml(null));
+
 		// True
 		$input = '<html>xxx</html>';
 		$after = dol_textishtml($input);
