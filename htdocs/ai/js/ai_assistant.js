@@ -1546,8 +1546,16 @@ export function initAiAssistant(container) {
 
     function collectPinnedContext() {
         return Array.from(chat.querySelectorAll('.msg.ctx-pinned'))
-            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }))
+            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '', id: parseInt(m.dataset.msgId, 10) || 0 }))
             .filter((p) => p.text);
+    }
+
+    // What the server receives for the pinned turns: ids only for persisted
+    // messages (the text is rebuilt server-side from the stored conversation,
+    // so the client is not trusted for what was said); the inline text is kept
+    // only for a message that has no row yet (history disabled or save in flight).
+    function pinnedContextPayload() {
+        return collectPinnedContext().map((p) => (p.id ? { id: p.id } : { role: p.role, text: p.text }));
     }
 
     // Small bar above the input: how many exchanges are pinned and their rough
@@ -1626,7 +1634,7 @@ export function initAiAssistant(container) {
                     chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
                     (function () {
                         // Pinned exchanges only: context is opt-in, its cost visible in the bar.
-                        const pinned = collectPinnedContext();
+                        const pinned = pinnedContextPayload();
                         return pinned.length ? { history: pinned } : {};
                     })(),
                     (function () {

@@ -682,8 +682,39 @@ try {
 			// stay one-shot), per-turn and global caps, privacy redaction applied.
 			$history = array();
 			if (!empty($data['history']) && is_array($data['history'])) {
+				$histTurns = array_slice($data['history'], 0, 12);
+
+				// Persisted turns arrive as ids only: the text is rebuilt here from
+				// the stored conversation (llx_ai_chat_message.content_raw), so the
+				// client is not trusted for what the conversation was. Only rows of
+				// conversations owned by the current user resolve; anything else
+				// silently drops. Turns of a not-yet-persisted message (history
+				// disabled, save still in flight) keep the inline text fallback.
+				$histIds = array();
+				foreach ($histTurns as $turn) {
+					if (is_array($turn) && !empty($turn['id']) && (int) $turn['id'] > 0) {
+						$histIds[] = (int) $turn['id'];
+					}
+				}
+				$histRows = array();
+				if (!empty($histIds)) {
+					$sqlh = "SELECT m.rowid, m.role, m.content_raw FROM ".$db->prefix()."ai_chat_message as m";
+					$sqlh .= " INNER JOIN ".$db->prefix()."ai_chat_conversation as c ON c.rowid = m.fk_conversation";
+					$sqlh .= " AND c.fk_user = ".((int) $user->id)." AND c.entity = ".((int) getEntity('ai'));
+					$sqlh .= " WHERE m.rowid IN (".$db->sanitize(implode(',', $histIds)).")";
+					$resqlh = $db->query($sqlh);
+					if ($resqlh) {
+						while ($objh = $db->fetch_object($resqlh)) {
+							$histRows[(int) $objh->rowid] = array('role' => (string) $objh->role, 'text' => (string) $objh->content_raw);
+						}
+					}
+				}
+
 				$histBudget = 6000;
-				foreach (array_slice($data['history'], 0, 12) as $turn) {
+				foreach ($histTurns as $turn) {
+					if (is_array($turn) && !empty($turn['id'])) {
+						$turn = $histRows[(int) $turn['id']] ?? null;
+					}
 					if (!is_array($turn) || empty($turn['text']) || !is_string($turn['text'])) {
 						continue;
 					}
