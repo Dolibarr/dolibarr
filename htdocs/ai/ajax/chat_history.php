@@ -107,7 +107,7 @@ try {
 		$resql = $db->query($sql);
 		$out['conversations'] = array();
 		while ($resql && ($obj = $db->fetch_object($resql))) {
-			$out['conversations'][] = array('id' => (int) $obj->rowid, 'title' => (string) $obj->title, 'date' => dol_print_date($db->jdate($obj->tms), 'dayhour'), 'nb' => (int) $obj->nbmsg);
+			$out['conversations'][] = array('id' => (int) $obj->rowid, 'title' => (string) $obj->title, 'date' => dol_print_date($db->jdate($obj->tms), 'dayhour'), 'ts' => (int) $db->jdate($obj->tms), 'nb' => (int) $obj->nbmsg);
 		}
 	} elseif ($action === 'load') {
 		$convid = (int) ($input['id'] ?? 0);

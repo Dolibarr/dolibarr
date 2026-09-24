@@ -91,7 +91,9 @@ export function initAiAssistant(container) {
     // "open in full page" button always carries it along (popover -> page
     // used to start from a blank chat).
     function setConversationId(id) {
+        const changed = (conversationId !== id);
         conversationId = id;
+        if (changed) renderSidebar();
         const expand = container.querySelector('#ai-expand-btn');
         if (expand && (expand.dataset.fullscreenBase || expand.dataset.fullscreenUrl)) {
             if (!expand.dataset.fullscreenBase) expand.dataset.fullscreenBase = expand.dataset.fullscreenUrl;
@@ -249,21 +251,25 @@ export function initAiAssistant(container) {
     }
 
     // Clear Chat History
-    clearBtn.addEventListener('click', () => {
-        if (confirm(t('ClearChatHistoryTitle'))) {
-            // Remove conversation messages; keep the welcome element so it can be
-            // shown again on the full page (the popover has no welcome screen).
-            chat.querySelectorAll('.msg').forEach((n) => n.remove());
-            if (welcome) {
-                welcome.style.display = '';
-            } else {
-                chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
-            }
-            lastResult = { data: null, tool: '', query: '' };
-            setConversationId(0);   // past conversation stays in the history, a new one starts
-            clarificationContext = null;
-            input.focus();
+    // Leave the current conversation (it stays in the history) and start a
+    // blank one: the Clear button and the sidebar's "New conversation" share it.
+    function startNewConversation() {
+        // Remove conversation messages; keep the welcome element so it can be
+        // shown again on the full page (the popover has no welcome screen).
+        chat.querySelectorAll('.msg').forEach((n) => n.remove());
+        if (welcome) {
+            welcome.style.display = '';
+        } else {
+            chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
         }
+        lastResult = { data: null, tool: '', query: '' };
+        setConversationId(0);
+        clarificationContext = null;
+        refreshContext();
+        input.focus();
+    }
+    clearBtn.addEventListener('click', () => {
+        if (confirm(t('ClearChatHistoryTitle'))) startNewConversation();
     });
 
     // Handle Engine Switching
@@ -1493,7 +1499,11 @@ export function initAiAssistant(container) {
     // that case and tell the user to sign back in instead.
     // --- Conversation history panel (list / reopen / delete) ---
     const historyBtn = container.querySelector('#ai-history-btn');
-    if (historyBtn) {
+    const pageSidebar = container.classList.contains('ai-in-popover') ? null : document.getElementById('ai-history-sidebar');
+    if (historyBtn && pageSidebar) {
+        // Full page: the header button shows / hides the conversations column.
+        historyBtn.addEventListener('click', (ev) => { ev.stopPropagation(); setSidebarCollapsed(!pageSidebar.parentElement.classList.contains('sidebar-collapsed')); });
+    } else if (historyBtn) {
         historyBtn.addEventListener('click', (ev) => {
             ev.stopPropagation();
             const existing = container.querySelector('#ai-history-panel');
@@ -1526,6 +1536,71 @@ export function initAiAssistant(container) {
             const panel = container.querySelector('#ai-history-panel');
             if (panel && !panel.contains(ev.target) && ev.target !== historyBtn) panel.remove();
         });
+    }
+
+    // --- Full page: permanent conversations column (like the mainstream chat UIs) ---
+    // The popover has no room for it and keeps the button + panel above.
+    const sidebar = container.classList.contains('ai-in-popover') ? null : document.getElementById('ai-history-sidebar');
+    let sidebarTimer = null;
+    function renderSidebar() {
+        if (!sidebar) return;
+        // Coalesce bursts (a save + an id change) into one listing call.
+        clearTimeout(sidebarTimer);
+        sidebarTimer = setTimeout(() => {
+            const list = sidebar.querySelector('#ai-sidebar-list');
+            if (!list) return;
+            chatHistoryApi({ action: 'list' }).then((res) => {
+                const items = (res && res.conversations) || [];
+                list.innerHTML = '';
+                if (!items.length) { list.innerHTML = '<div class="opacitymedium ai-sidebar-empty">' + t('AIHistoryEmpty') + '</div>'; return; }
+                // Group by age, client-side from the raw timestamp
+                const now = new Date(); const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
+                const groupOf = (ts) => (ts >= startOfToday ? 'AIHistoryToday' : ts >= startOfToday - 86400 ? 'AIHistoryYesterday' : ts >= startOfToday - 7 * 86400 ? 'AIHistoryLast7Days' : 'AIHistoryOlder');
+                let lastGroup = '';
+                items.forEach((c) => {
+                    const g = groupOf(c.ts || 0);
+                    if (g !== lastGroup) {
+                        const h = document.createElement('div');
+                        h.className = 'ai-sidebar-group';
+                        h.textContent = t(g);
+                        list.appendChild(h);
+                        lastGroup = g;
+                    }
+                    const row = document.createElement('div');
+                    row.className = 'ai-sidebar-item' + (c.id === conversationId ? ' active' : '');
+                    row.title = c.title || '';
+                    row.innerHTML = '<span class="ai-sidebar-title">' + escapeHtml(c.title || '…') + '</span>'
+                        + '<button type="button" class="ai-sidebar-del" title="' + escapeHtml(t('AIHistoryDelete')) + '"><i class="fa fa-trash-alt"></i></button>';
+                    row.querySelector('.ai-sidebar-del').onclick = (e2) => {
+                        e2.stopPropagation();
+                        chatHistoryApi({ action: 'delete', id: c.id }).then(() => {
+                            if (conversationId === c.id) startNewConversation(); else renderSidebar();
+                        }).catch(() => {});
+                    };
+                    row.onclick = () => { if (c.id !== conversationId) loadConversation(c.id); };
+                    list.appendChild(row);
+                });
+            }).catch(() => { list.innerHTML = '<div class="opacitymedium ai-sidebar-empty">' + t('AIError') + '</div>'; });
+        }, 150);
+    }
+    // Collapsible: "<<" in the column hides it, the header history button
+    // brings it back; the choice is remembered per browser. Narrow screens
+    // start collapsed (the column would eat the chat).
+    function setSidebarCollapsed(collapsed) {
+        if (!sidebar) return;
+        sidebar.parentElement.classList.toggle('sidebar-collapsed', collapsed);
+        if (historyBtn) historyBtn.title = collapsed ? t('AIShowConversations') : t('AIHideConversations');
+        try { localStorage.setItem('aiSidebarCollapsed', collapsed ? '1' : '0'); } catch (e) { /* private mode: no memory, no harm */ }
+    }
+    if (sidebar) {
+        const newBtn = sidebar.querySelector('#ai-new-chat');
+        if (newBtn) newBtn.addEventListener('click', () => startNewConversation());
+        const collapseBtn = sidebar.querySelector('#ai-sidebar-collapse');
+        if (collapseBtn) collapseBtn.addEventListener('click', () => setSidebarCollapsed(true));
+        let stored = null;
+        try { stored = localStorage.getItem('aiSidebarCollapsed'); } catch (e) { stored = null; }
+        setSidebarCollapsed(stored === null ? (window.innerWidth <= 900) : stored === '1');
+        renderSidebar();
     }
 
     function loadConversation(id) {
