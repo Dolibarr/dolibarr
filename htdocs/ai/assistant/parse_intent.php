@@ -812,7 +812,7 @@ try {
 		// rephrase when Gemini answers "503 high demand" sends them the wrong
 		// way. Say the service failed, with the provider's own reason, and
 		// for the transient cases (overloaded, rate limited) say to retry.
-		if (is_string($errorDetails) && strpos($errorDetails, 'Error:') === 0) {
+		if (strpos($errorDetails, 'Error:') === 0) {
 			$reason = trim(preg_replace('/^Error:\s*(API|cURL #\d+)?\s*/', '', $errorDetails));
 			$reason = dol_trunc(preg_replace('/\s+/', ' ', $reason), 200);
 			if (preg_match('/high demand|overloaded|rate limit|quota|too many requests|try again|timed? ?out|HTTP (429|502|503|504)/i', $errorDetails)) {
