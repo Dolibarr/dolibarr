@@ -2077,6 +2077,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							}
 
 							$this->db->free($resqlinsert);
+						} else {
+							dol_syslog(get_class($this)."::insert_permissions Permission id ".$r_id." already exists for entity ".$entity.", so permission ".$r_perms.($r_subperms ? "->".$r_subperms : "")." of module ".$this->name." was not added. Check the id of the module is not already used by another module.", LOG_WARNING);
 						}
 
 						$this->db->free($resqlselect);
