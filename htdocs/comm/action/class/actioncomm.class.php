@@ -2338,7 +2338,7 @@ class ActionComm extends CommonObject
 						$assignedUserArray[$key] = $assignedUser;
 					}
 
-					if (!empty($filters['module']) && $filters['module'] != 'project@eventorganization') {
+					if (empty($filters['module']) || $filters['module'] != 'project@eventorganization') {
 						$event['assignedUsers'] = $assignedUserArray;
 					}
 
