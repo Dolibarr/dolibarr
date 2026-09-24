@@ -51,6 +51,8 @@ $allow_download_app = GETPOSTINT('allow_download_app');
 // The optional step to export the application files is shown only if the parameter allow_download_app is provided
 // and the option $dolibarr_allow_download_app is set into the conf/conf.php file.
 $allowdownloadapp = ($allow_download_app && !empty($dolibarr_allow_download_app));
+// Parameter to add to the URLs and forms of the page to keep the step to export the application files visible
+$paramallowdownloadapp = ($allowdownloadapp ? '&allow_download_app=1' : '');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -79,6 +81,14 @@ if (!$user->admin) {
 if ($action == 'deletefile') {
 	if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha'))) {
 		$file = $conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
+		$ret = dol_delete_file($file, 1);
+		if ($ret) {
+			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+		}
+	} elseif (preg_match('/^backupapp\//', GETPOST('urlfile', 'alpha'))) {
+		$file = $conf->admin->dir_output.'/backupapp/'.basename(GETPOST('urlfile', 'alpha'));
 		$ret = dol_delete_file($file, 1);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -166,6 +176,9 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export.php" name
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
+if ($allowdownloadapp) {
+	print '<input type="hidden" name="allow_download_app" value="1" />';
+}
 
 print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>';
 
@@ -623,7 +636,7 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 print '<div id="backupdatabaseright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'backup/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -640,6 +653,9 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
+if ($allowdownloadapp) {
+	print '<input type="hidden" name="allow_download_app" value="1" />';
+}
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>';
 
@@ -725,7 +741,7 @@ print '</div>';
 print '<div id="backupfileright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'documents/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -804,8 +820,8 @@ if ($allowdownloadapp) {
 
 	print '<div id="backupappfilesright" class="fichehalfright">';
 
-	$filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '^application_', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-	$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+	$filearray = dol_dir_list($conf->admin->dir_output.'/backupapp', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
+	$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'backupapp/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 	print '<br>';
 
 	print '</div>';

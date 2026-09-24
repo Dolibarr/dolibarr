@@ -133,7 +133,13 @@ $dump_buffer_len = 0;
 $time_start = time();
 
 
-$outputdir  = $conf->admin->dir_output.'/documents';
+// The exports of the application files are stored into the backupapp directory
+// to keep them separated from the exports of the documents directory.
+if ($export_type == 'app') {
+	$outputdir = $conf->admin->dir_output.'/backupapp';
+} else {
+	$outputdir = $conf->admin->dir_output.'/documents';
+}
 $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
@@ -161,7 +167,7 @@ $dirtocompress = basename($fulldirtocompress);
 if ($compression == 'zip') {
 	$file .= '.zip';
 
-	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\]|[\/\\\]admin[\/\\\]backup[\/\\\])/i';
+	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\]|[\/\\\]admin[\/\\\]backup[\/\\\]|[\/\\\]admin[\/\\\]backupapp[\/\\\])/i';
 
 	//var_dump($fulldirtocompress);
 	//var_dump($outputdir."/".$file);exit;
@@ -210,9 +216,10 @@ if ($compression == 'zip') {
 	// users with an uncompressed .tar plus a misleading error (#37266).
 	$tmpfile = $conf->admin->dir_temp.'/'.dol_sanitizeFileName($file);
 
-	// We also exclude '/temp/' dir, 'documents/admin/documents' (previous documents backups) and 'documents/admin/backup' (database dumps)
+	// We also exclude '/temp/' dir, 'documents/admin/documents' (previous documents backups), 'documents/admin/backup' (database dumps)
+	// and 'documents/admin/backupapp' (application archives backups)
 	// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-	$cmd = "tar -cf '".escapeshellcmd($tmpfile)."' --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='admin/documents' --exclude='admin/backup' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
+	$cmd = "tar -cf '".escapeshellcmd($tmpfile)."' --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='admin/documents' --exclude='admin/backup' --exclude='admin/backupapp' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
 
 	$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
@@ -282,7 +289,7 @@ if ($export_type != 'externalmodule' || empty($what)) {
 
 	// Redirect to calling page
 	$returnto = 'dolibarr_export.php';
-	if ($export_type == 'app') {
+	if ($export_type == 'app' || GETPOSTINT('allow_download_app')) {
 		// Keep the parameter to keep the step to export the application files visible
 		$returnto .= '?allow_download_app=1';
 	}
