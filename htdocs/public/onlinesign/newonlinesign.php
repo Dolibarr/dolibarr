@@ -173,7 +173,7 @@ $mesg = '';
  * Actions
  */
 
-if ($action == 'confirm_refusepropal' && $confirm == 'yes' && $source === 'proposal' && $object instanceof Propal) {	// Public form. Security checked on the securekey and on mitigation
+if ($action == 'confirm_refusepropal' && $confirm == 'yes' && $source === 'proposal' && $object instanceof Propal) {	// Test on permission not required here. Public form. Security checked on the securekey and on mitigation
 	$db->begin();
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
