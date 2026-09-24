@@ -665,6 +665,39 @@ function dolibarr_get_const($db, $name, $entity = 1)
 
 
 /**
+ *	Tell whether a configuration constant value is forced from the conf.php file (so it always wins over the
+ *	database value at runtime, see Conf::setValues(), and cannot be changed from the back office). It is forced when:
+ *	 - an environment variable DOLIBARR_<NAME> is set (a real server environment variable, or one assigned into
+ *	   $_SERVER/$_ENV from the conf.php file), or
+ *	 - a dedicated conf.php variable is bridged into the constant (e.g. $dolibarr_main_csrf_with_token for
+ *	   MAIN_SECURITY_CSRF_WITH_TOKEN).
+ *
+ *	@param	string	$name	Name of the constant (e.g. MAIN_SECURITY_CSRF_WITH_TOKEN)
+ *	@return	bool			True when the constant is forced from conf.php.
+ */
+function isConstForcedByConfFile($name)
+{
+	global $conf;
+
+	if (isset($_SERVER['DOLIBARR_'.$name]) || isset($_ENV['DOLIBARR_'.$name])) {
+		return true;
+	}
+	// Dedicated conf.php variables bridged into a constant in Conf::setValues() (constant name => conf->file property).
+	$bridgedconstants = array(
+		'MAIN_SECURITY_CSRF_WITH_TOKEN' => 'csrf_with_token',
+		'MAIN_DISABLE_DNS_GET_RECORD' => 'disable_dns_get_record',
+	);
+	if (isset($bridgedconstants[$name]) && is_object($conf)) {
+		$fileprop = $bridgedconstants[$name];
+		if (isset($conf->file->$fileprop) && $conf->file->$fileprop !== '') {
+			return true;
+		}
+	}
+	return false;
+}
+
+
+/**
  *	Insert a parameter (key,value) into database (delete old key then insert it again).
  *
  *	@param	    DoliDB		$db         Database handler

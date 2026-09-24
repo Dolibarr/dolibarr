@@ -2,6 +2,8 @@
 BoldRefAndPeriodOnPDF=Put in bold the text of the product reference and period in the PDF
 BoldLabelOnPDF=Print the product item's label in bold in the PDF
 Foundation=Foundation
+ConstForcedByConfFile=This setting is enforced at server level: it cannot be changed here.
+ConstForcedByConfFileWarning=The setting "%s" is enforced at server level and cannot be changed here. Your change will not be taken into account.
 Version=Version
 Publisher=Publisher
 Provider=Provider
