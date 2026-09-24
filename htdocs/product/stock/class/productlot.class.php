@@ -160,6 +160,8 @@ class Productlot extends CommonObject
 		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY", 0)', 'visible'=>5, 'position'=>100),
 		'qc_frequency'        => array('type' => 'integer', 'label' => 'QCFrequency', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 1 : 0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 5 : 0', 'position' => 110),
 		'lifetime'        => array('type' => 'integer', 'label' => 'Lifetime', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 1 : 0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 5 : 0', 'position' => 110),
+		'barcode'       => array('type' => 'varchar(180)', 'label' => 'BarcodeValue', 'enabled' => 'isModEnabled("barcode") && getDolGlobalInt("BARCODE_USE_ON_PRODUCTLOT")', 'visible' => 1, 'position' => 120, 'searchall' => 1, 'picto' => 'barcode'),
+		'fk_barcode_type' => array('type' => 'sellist:c_barcode_type:libelle:rowid', 'label' => 'BarcodeType', 'enabled' => 'isModEnabled("barcode") && getDolGlobalInt("BARCODE_USE_ON_PRODUCTLOT")', 'visible' => 1, 'position' => 121),
 		'model_pdf'		=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -2, 'position' => 310),
 		'datec'         => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 500),
@@ -212,6 +214,17 @@ class Productlot extends CommonObject
 	 * @var int|''
 	 */
 	public $lifetime = '';
+
+	/**
+	 * @var string|null Barcode value
+	 */
+	public $barcode;
+
+	/**
+	 * @var int|null Barcode type as rowid into llx_c_barcode_type. Reference value, $barcode_type is only an alias kept in sync for CommonObject::fetchBarCode()
+	 */
+	public $fk_barcode_type;
+
 	/**
 	 * @var int|''
 	 */
@@ -391,6 +404,9 @@ class Productlot extends CommonObject
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
 		}
+		if (isset($this->barcode)) {
+			$this->barcode = trim($this->barcode);
+		}
 		if (isset($this->fk_user_creat)) {
 			$this->fk_user_creat = (int) $this->fk_user_creat;
 		}
@@ -414,6 +430,14 @@ class Productlot extends CommonObject
 		}
 
 		if (!$error) {
+			// Keep the in-memory object consistent with the row we are about to insert
+			if (!isset($this->entity)) {
+				$this->entity = (int) $conf->entity;
+			}
+
+			// Non-blocking on purpose: a failure here must never abort the stock movement that creates the lot
+			$this->generateBarcodeIfNeeded();
+
 			// Insert request
 			$sql = 'INSERT INTO ' . $this->db->prefix() . $this->table_element . '(';
 			$sql .= 'entity,';
@@ -427,6 +451,8 @@ class Productlot extends CommonObject
 			//$sql .= 'commissionning_date,';
 			$sql .= 'qc_frequency,';
 			$sql .= 'lifetime,';
+			$sql .= 'barcode,';
+			$sql .= 'fk_barcode_type,';
 			$sql .= 'datec,';
 			$sql .= 'fk_user_creat,';
 			$sql .= 'fk_user_modif,';
@@ -443,6 +469,8 @@ class Productlot extends CommonObject
 			//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
 			$sql .= ' '.(empty($this->qc_frequency) ? 'NULL' : ((int) $this->qc_frequency)).',';
 			$sql .= ' '.(empty($this->lifetime) ? 'NULL' : ((int) $this->lifetime)).',';
+			$sql .= ' '.(empty($this->barcode) ? 'NULL' : "'".$this->db->escape($this->barcode)."'").',';
+			$sql .= ' '.(empty($this->fk_barcode_type) ? 'NULL' : ((int) $this->fk_barcode_type)).',';	// 0 would break the foreign key
 			$sql .= ' ' . "'" . $this->db->idate(dol_now()) . "'" . ',';
 			$sql .= ' ' . (!isset($this->fk_user_creat) ? 'NULL' : ((int) $this->fk_user_creat)) . ',';
 			$sql .= ' ' . (!isset($this->fk_user_modif) ? 'NULL' : ((int) $this->fk_user_modif)) . ',';
@@ -454,7 +482,12 @@ class Productlot extends CommonObject
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
+				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS' && isModEnabled('barcode') && !empty($this->barcode)) {
+					$langs->load("errors");
+					$this->errors[] = $langs->trans("ErrorProductLotBarCodeAlreadyExists", $this->barcode);
+				} else {
+					$this->errors[] = 'Error ' . $this->db->lasterror();
+				}
 			}
 
 			if (!$error) {
@@ -521,6 +554,8 @@ class Productlot extends CommonObject
 		//$sql .= " t.commissionning_date,";
 		$sql .= " t.qc_frequency,";
 		$sql .= " t.lifetime,";
+		$sql .= " t.barcode,";
+		$sql .= " t.fk_barcode_type,";
 		$sql .= " t.model_pdf,";
 		$sql .= " t.last_main_doc,";
 		$sql .= " t.datec,";
@@ -558,6 +593,9 @@ class Productlot extends CommonObject
 				//$this->commissionning_date = $this->db->jdate($obj->commissionning_date);
 				$this->qc_frequency = $obj->qc_frequency;
 				$this->lifetime = $obj->lifetime;
+				$this->barcode = $obj->barcode;
+				$this->fk_barcode_type = $obj->fk_barcode_type;
+				$this->barcode_type = $obj->fk_barcode_type;	// Alias read by CommonObject::fetchBarCode()
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 
@@ -597,6 +635,8 @@ class Productlot extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
+		global $conf, $langs;
+
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -629,6 +669,8 @@ class Productlot extends CommonObject
 			$error++;
 		}
 
+		$this->ensureBarcodeTypeIsSet();
+
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
 			$this->oldcopy = dol_clone($this, 2);
@@ -637,7 +679,8 @@ class Productlot extends CommonObject
 		if (!$error) {
 			// Update request
 			$sql = 'UPDATE ' . $this->db->prefix() . $this->table_element . ' SET';
-			$sql .= ' entity = ' . (isset($this->entity) ? ((int) $this->entity) : "null") . ',';
+			// uk_product_lot_barcode includes entity: a null here would silently disable the unique check
+			$sql .= ' entity = ' . (isset($this->entity) ? ((int) $this->entity) : ((int) $conf->entity)) . ',';
 			$sql .= ' fk_product = ' . (isset($this->fk_product) ? ((int) $this->fk_product) : "null") . ',';
 			$sql .= ' batch = ' . (isset($this->batch) ? "'" . $this->db->escape($this->batch) . "'" : "null") . ',';
 			$sql .= ' eatby = ' . (!isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'" . $this->db->idate($this->eatby) . "'" : 'null') . ',';
@@ -648,6 +691,8 @@ class Productlot extends CommonObject
 			//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
 			$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
 			$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
+			$sql .= ' barcode = '.(empty($this->barcode) ? 'null' : "'".$this->db->escape($this->barcode)."'").',';
+			$sql .= ' fk_barcode_type = '.(empty($this->fk_barcode_type) ? 'null' : ((int) $this->fk_barcode_type)).',';	// 0 would break the foreign key
 			$sql .= ' datec = ' . (dol_strlen((string) $this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
 			$sql .= ' tms = ' . (dol_strlen((string) $this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
 			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null") . ',';
@@ -660,7 +705,12 @@ class Productlot extends CommonObject
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
+				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS' && isModEnabled('barcode') && !empty($this->barcode)) {
+					$langs->load("errors");
+					$this->errors[] = $langs->trans("ErrorProductLotBarCodeAlreadyExists", $this->barcode);
+				} else {
+					$this->errors[] = 'Error ' . $this->db->lasterror();
+				}
 			}
 
 			// Actions on extra fields
@@ -810,7 +860,8 @@ class Productlot extends CommonObject
 		$object->id = 0;
 
 		// Clear fields
-		// ...
+		$object->barcode = null;			// uk_product_lot_barcode forbids sharing the value with the source lot
+		$object->fk_barcode_type = null;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -835,6 +886,173 @@ class Productlot extends CommonObject
 
 			return -1;
 		}
+	}
+
+	/**
+	 * Generate and set the barcode value of the lot when automatic generation is configured
+	 *
+	 * Non-blocking by design: any failure leaves the barcode empty, logs a warning and feeds
+	 * $this->warnings, so a reception, a shipment or a manufacturing order is never aborted
+	 * because of the barcode module.
+	 *
+	 * @return	int<0,1>		1 if a barcode was generated, 0 if nothing was done
+	 */
+	public function generateBarcodeIfNeeded()
+	{
+		global $conf;
+
+		// A value was already provided by the caller. '-1' and 'auto' both mean "generate one"
+		if (!empty($this->barcode) && $this->barcode != '-1' && $this->barcode != 'auto') {
+			$this->ensureBarcodeTypeIsSet();
+			return 0;
+		}
+
+		$this->barcode = null;
+
+		if (!isModEnabled('barcode') || !getDolGlobalInt('BARCODE_USE_ON_PRODUCTLOT')) {
+			return 0;
+		}
+
+		$addon = getDolGlobalString('BARCODE_PRODUCTLOT_ADDON_NUM');
+		if (empty($addon)) {
+			return 0;
+		}
+
+		// A type guessed here is only kept if the generation succeeds, so a lot without barcode never carries one
+		$guessedtype = false;
+		if (empty($this->fk_barcode_type)) {
+			$this->fk_barcode_type = getDolGlobalInt('PRODUCTLOT_DEFAULT_BARCODE_TYPE');
+			$guessedtype = true;
+		}
+		if (empty($this->fk_barcode_type)) {
+			return $this->logBarcodeGenerationFailure('no barcode type set and PRODUCTLOT_DEFAULT_BARCODE_TYPE is empty', $guessedtype);
+		}
+
+		$module = strtolower($addon);
+		$dirbarcode = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
+		foreach ($dirbarcode as $dirroot) {
+			if (dol_include_once($dirroot.$module.'.php')) {
+				break;
+			}
+		}
+		if (!class_exists($module)) {
+			return $this->logBarcodeGenerationFailure('numbering module '.$addon.' not found', $guessedtype);
+		}
+
+		$mod = new $module();
+		'@phan-var-force ModeleNumRefBarCode $mod';
+		/** @var ModeleNumRefBarCode $mod */
+
+		// getNextValue() expects the barcode type as a rowid, unlike verif() which expects the literal code
+		// Cast: the shipped numbering modules return int -1 on an incompatible object although the
+		// inherited contract is a string, so '-1' has to be rejected as a sentinel below
+		$numFinal = (string) $mod->getNextValue($this, (string) $this->fk_barcode_type);
+		// get_next_value() substitutes ErrorMaxNumberReachForThisMask *inside* the value instead of
+		// returning it alone, so the sentinel must be searched anywhere, not only at the start
+		if ($numFinal === '' || $numFinal === '-1' || $numFinal === 'NotConfigured' || strpos($numFinal, 'Error') !== false) {
+			return $this->logBarcodeGenerationFailure('module returned '.($numFinal !== '' ? $numFinal : (string) $mod->error), $guessedtype);
+		}
+
+		// A '*' or '?' left in the value means the mask asked for a key the numbering module could not
+		// compute, typically a mask whose length does not match the barcode type. Storing it would
+		// yield an unscannable code.
+		if (preg_match('/[*?]/', $numFinal)) {
+			return $this->logBarcodeGenerationFailure('mask produced '.$numFinal.', the key placeholder was not resolved for barcode type '.((int) $this->fk_barcode_type), $guessedtype);
+		}
+
+		// get_next_value() reads the counter with a MAX() that ignores uncommitted rows, so two lots
+		// created in the same transaction can be handed the same value
+		if ($mod->verif_dispo($this->db, $numFinal, $this) != 0) {
+			return $this->logBarcodeGenerationFailure('value '.$numFinal.' is already used', $guessedtype);
+		}
+
+		$this->barcode = $numFinal;
+		$this->barcode_type = $this->fk_barcode_type;
+
+		return 1;
+	}
+
+	/**
+	 * Give a barcode type to a lot that carries a barcode without one
+	 *
+	 * uk_product_lot_barcode spans (barcode, fk_barcode_type, entity) and MySQL skips rows holding a
+	 * NULL in a unique index, so leaving the type empty would let the same barcode be stored twice.
+	 *
+	 * @return	void
+	 */
+	private function ensureBarcodeTypeIsSet()
+	{
+		if (!empty($this->barcode) && empty($this->fk_barcode_type)) {
+			$this->fk_barcode_type = getDolGlobalInt('PRODUCTLOT_DEFAULT_BARCODE_TYPE');
+			$this->barcode_type = $this->fk_barcode_type;
+		}
+	}
+
+	/**
+	 * Record a non-blocking barcode generation failure
+	 *
+	 * @param	string		$reason			Technical reason, logged only
+	 * @param	bool		$dropguessedtype	Whether the barcode type was guessed by the generator and must be given up
+	 * @return	int<0,0>					Always 0
+	 */
+	private function logBarcodeGenerationFailure($reason, $dropguessedtype = false)
+	{
+		global $langs;
+
+		$this->barcode = null;
+		if ($dropguessedtype) {
+			$this->fk_barcode_type = null;
+		}
+
+		dol_syslog(__METHOD__.' failed to generate barcode for lot '.$this->batch.' of product '.((int) $this->fk_product).': '.$reason, LOG_WARNING);
+
+		$langs->load("products");
+		$message = $langs->trans("WarningFailedToGenerateBarcodeForLot", $this->batch);
+		$this->warnings[] = $message;
+		// Every caller that creates a lot goes through MouvementStock::_create(), which drops the
+		// Productlot object once create() succeeded, so the warning would never reach the screen
+		setEventMessages($message, null, 'warnings');
+
+		return 0;
+	}
+
+	/**
+	 * Check the validity of a barcode value against the configured numbering module
+	 *
+	 * @param	string		$valuetotest	Barcode value to check. Passed by reference: the numbering module
+	 * 										normalises it, and the caller must store the normalised value so
+	 * 										that the uniqueness check and the stored value match
+	 * @param	string		$typefortest	Literal barcode type (EAN13, ISBN, ...), not the rowid
+	 * @return	int<-7,0>					0 if OK or no module configured, <0 if KO
+	 */
+	public function checkBarcode(&$valuetotest, $typefortest)
+	{
+		global $conf;
+
+		if (!isModEnabled('barcode') || !getDolGlobalString('BARCODE_PRODUCTLOT_ADDON_NUM')) {
+			return 0;
+		}
+
+		$module = strtolower(getDolGlobalString('BARCODE_PRODUCTLOT_ADDON_NUM'));
+
+		$dirbarcode = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
+		foreach ($dirbarcode as $dirroot) {
+			if (dol_include_once($dirroot.$module.'.php')) {
+				break;
+			}
+		}
+		if (!class_exists($module)) {
+			dol_syslog(get_class($this)."::checkBarcode numbering module ".$module." not found", LOG_ERR);
+			return 0;
+		}
+
+		$mod = new $module();
+		'@phan-var-force ModeleNumRefBarCode $mod';
+		/** @var ModeleNumRefBarCode $mod */
+
+		dol_syslog(get_class($this)."::checkBarcode value=".$valuetotest." type=".$typefortest." module=".$module);
+
+		return $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
 	}
 
 	/**

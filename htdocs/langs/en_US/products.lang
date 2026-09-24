@@ -108,6 +108,7 @@ PriceRemoved=Price removed
 BarCode=Barcode
 BarcodeType=Barcode type
 SetDefaultBarcodeType=Set barcode type
+WarningFailedToGenerateBarcodeForLot=Failed to generate a barcode for lot %s. The lot has been created without barcode.
 BarcodeValue=Barcode value
 BarcodeLabelProductRef=Add product reference to barcode label header
 BarcodeLabelProductLabel=Add product label to barcode label footer
@@ -510,6 +511,7 @@ UpdatedRecently=Updated recently
 ProductType=Type of product
 UseBarCodeForProducts=Use barcode for products
 UseBarCodeForThirdParties=Use barcode for third parties
+UseBarCodeForProductLots=Use barcode for lots/serial numbers
 NotSupportedOnKits=Not supported on kits
 ProductLangExtrafieldsSetup=Product translations Extrafields
 
