@@ -316,6 +316,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
+		if (empty($this->subprice_ttc)) {
+			$this->subprice_ttc = 0;
+		}
 		if (empty($this->info_bits)) {
 			$this->info_bits = 0;
 		}

@@ -255,7 +255,6 @@ DeliveryAddress=Endereço de entrega
 AddAddress=Adicionar endereço
 DeleteFile=Excluir arquivo
 ConfirmDeleteFile=Tem certeza de que deseja excluir este arquivo <b>%s</b>?
-AllocateCommercial=Atribuir a representantes de vendas
 Organization=Organização
 FiscalMonthStart=Primeiro mês do ano fiscal
 SocialNetworksFacebookURL=URL Facebook

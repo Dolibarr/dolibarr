@@ -97,6 +97,8 @@ $search_ref          = GETPOST('search_ref', 'alphanohtml');
 $search_day_create   = GETPOST('search_day_create', 'int');
 $search_month_create = GETPOST('search_month_create', 'int');
 $search_year_create  = GETPOST('search_year_create', 'int');
+$search_month_update = GETPOST('search_month_update', 'int');
+$search_year_update  = GETPOST('search_year_update', 'int');
 $search_day_start    = GETPOST('search_day_start', 'int');
 $search_month_start  = GETPOST('search_month_start', 'int');
 $search_year_start   = GETPOST('search_year_start', 'int');
@@ -143,6 +145,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 
 // Security check
@@ -207,6 +212,8 @@ if (empty($reshook)) {
 		$search_ref = "";
 		$search_month_create = "";
 		$search_year_create = "";
+		$search_month_update = "";
+		$search_year_update = "";
 		$search_month_start = "";
 		$search_year_start = "";
 		$search_month_end = "";
@@ -343,6 +350,8 @@ $sql .= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start
 $sql .= dolSqlDateFilter("cp.date_fin", $search_day_end, $search_month_end, $search_year_end);
 // Create date
 $sql .= dolSqlDateFilter("cp.date_create", $search_day_create, $search_month_create, $search_year_create);
+// Update date
+$sql .= dolSqlDateFilter("cp.tms", 0, $search_month_update, $search_year_update);
 // Employee
 if (!empty($search_employee) && $search_employee != -1) {
 	$sql .= " AND cp.fk_user = '".$db->escape($search_employee)."'\n";
@@ -436,6 +445,12 @@ if ($search_month_create) {
 }
 if ($search_year_create) {
 	$param .= '&search_year_create='.urlencode($search_year_create);
+}
+if ($search_month_update) {
+	$param .= '&search_month_update='.urlencode($search_month_update);
+}
+if ($search_year_update) {
+	$param .= '&search_year_update='.urlencode($search_year_update);
 }
 if ($search_day_start) {
 	$param .= '&search_day_start='.urlencode($search_day_start);

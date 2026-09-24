@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2025		Cloned from htdocs/comm/mailing/class/mailing.class.php then modified
  * Copyright (C) 2025		Jon Bendtsen <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -408,16 +409,16 @@ class MailingTarget extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " SET fk_mailing = '".((int) $this->fk_mailing)."'";
-		$sql .= ", fk_contact = '".((int) $this->fk_contact)."'";
+		$sql .= " SET fk_mailing = ".((int) $this->fk_mailing);
+		$sql .= ", fk_contact = ".((int) $this->fk_contact);
 		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
 		$sql .= ", other = '".$this->db->escape($this->other)."'";
 		$sql .= ", tag = '".$this->db->escape($this->tag)."'";
-		$sql .= ", statut = '".((int) $this->statut)."'";
+		$sql .= ", statut = ".((int) $this->statut);
 		$sql .= ", source_url = '".$this->db->escape($this->source_url)."'";
-		$sql .= ", source_id = '".((int) $this->source_id)."'";
+		$sql .= ", source_id = ".((int) $this->source_id);
 		$sql .= ", source_type = '".$this->db->escape($this->source_type)."'";
 		if ($this->date_envoi) {
 			$sql .= ", date_envoi = '".$this->db->idate($this->date_envoi)."'";

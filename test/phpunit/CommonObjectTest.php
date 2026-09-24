@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/defaultvalues.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -39,6 +40,33 @@ if (empty($user->id)) {
 	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+
+
+/**
+ * DefaultValues that records the trigger codes it emits instead of running the triggers
+ */
+class DefaultValuesTriggerSpy extends DefaultValues
+{
+	/**
+	 * @var string[]	Trigger codes emitted, in call order
+	 */
+	public $calledTriggers = array();
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Record the trigger code
+	 *
+	 * @param	string	$triggerName	Trigger code
+	 * @param	?User	$user			User
+	 * @return	int						Always 0
+	 */
+	public function call_trigger($triggerName, $user)
+	{
+		// phpcs:enable
+		$this->calledTriggers[] = $triggerName;
+		return 0;
+	}
+}
 
 
 /**
@@ -150,5 +178,80 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertFalse($localobject->isInt(array('type' => 'sellist:llx_c_typent:libelle:id')), 'sellist:...');
 
 		print __METHOD__." OK\n";
+	}
+
+	/**
+	 *  testCrudCommonTriggerCodesUseTriggerPrefix
+	 *
+	 *  @return void
+	 */
+	public function testCrudCommonTriggerCodesUseTriggerPrefix()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new DefaultValuesTriggerSpy($db);
+		$localobject->TRIGGER_PREFIX = 'MYMODULE_MYOBJECT';
+
+		$this->assertSame(
+			array('MYMODULE_MYOBJECT_CREATE', 'MYMODULE_MYOBJECT_MODIFY', 'MYMODULE_MYOBJECT_DELETE'),
+			$this->runCrudCommon($localobject, 'triggerprefixset')
+		);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 *  testCrudCommonTriggerCodesFallBackToClassName
+	 *
+	 *  @return void
+	 */
+	public function testCrudCommonTriggerCodesFallBackToClassName()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new DefaultValuesTriggerSpy($db);
+
+		$this->assertSame(
+			array('DEFAULTVALUESTRIGGERSPY_CREATE', 'DEFAULTVALUESTRIGGERSPY_MODIFY', 'DEFAULTVALUESTRIGGERSPY_DELETE'),
+			$this->runCrudCommon($localobject, 'triggerprefixempty')
+		);
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 * Create, update then delete the object with createCommon(), updateCommon() and deleteCommon()
+	 *
+	 * @param	DefaultValuesTriggerSpy	$localobject	Object to process
+	 * @param	string					$param			Value of the param field, unique per test
+	 * @return	string[]								Business trigger codes emitted, OBJECT_LINK_* excluded
+	 */
+	private function runCrudCommon(DefaultValuesTriggerSpy $localobject, $param)
+	{
+		global $user;
+
+		$localobject->type = 'createform';
+		$localobject->user_id = 0;
+		$localobject->page = 'test/phpunit/CommonObjectTest.php';
+		$localobject->param = $param;
+		$localobject->value = 'A';
+		$this->assertGreaterThan(0, $localobject->create($user), 'create: '.$localobject->error.implode(',', $localobject->errors));
+
+		$localobject->value = 'B';
+		$this->assertGreaterThan(0, $localobject->update($user), 'update: '.$localobject->error.implode(',', $localobject->errors));
+
+		$this->assertGreaterThan(0, $localobject->delete($user), 'delete: '.$localobject->error.implode(',', $localobject->errors));
+
+		return array_values(array_filter($localobject->calledTriggers, function ($code) {
+			return strpos($code, 'OBJECT_LINK_') !== 0;
+		}));
 	}
 }

@@ -116,6 +116,7 @@ BoxLastCustomerShipments=শেষ গ্রাহক চালান
 BoxTitleLastCustomerShipments=সর্বশেষ %s পরিবর্তিত গ্রাহক চালান
 BoxTitleLastLeaveRequests=সর্বশেষ %s পরিবর্তিত ছুটির অনুরোধ
 NoRecordedShipments=কোন রেকর্ড করা গ্রাহক চালান
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=বকেয়া সীমা পৌঁছেছেন গ্রাহকদের
 BoxTitleLastFediverseInfos=%s থেকে শেষ পোস্টগুলি
 BoxLastFediverseInfos=ফেডাইভার্সের সর্বশেষ আপডেট: সংবাদ এবং প্রবণতা

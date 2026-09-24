@@ -31,9 +31,9 @@ UseDiscountOnTotal=No subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global é tratado como um produto, um serviço, ou apenas no subtotal para cálculo de margem
 MARGIN_TYPE=Preço de compra / custo sugerido por padrão para cálculo de margem
 MargeType1=Margem no melhor preço do fornecedor
-MargeType2=Margem no Preço Médio Ponderado (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Margem no Preço de Custo
-MarginTypeDesc=* Margem sobre o melhor preço de compra = Preço de venda - Melhor preço Fornecedor, Vendedor definido no cartão do produto<br>* Margem sobre o preço médio ponderado (WAP) ) = Preço de venda - Preço médio ponderado do produto (WAP) ou melhor preço Fornecedor, Vendedor se o WAP ainda não estiver definido<br>* Margem sobre custo preço = Preço de venda - Preço de custo definido no cartão do produto ou WAP se o preço de custo não estiver definido, ou melhor preço Fornecedor, Vendedor se o WAP ainda não estiver definido
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Preço de custo
 UnitCharges=Custos unitários
 Charges=Custos

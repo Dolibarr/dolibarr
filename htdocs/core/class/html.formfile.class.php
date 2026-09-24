@@ -9,7 +9,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,13 +232,13 @@ class FormFile
 				}
 			}
 
-			// Update the ZIP action when an individual file checkbox changes.
-			jQuery(document).on("change", ".documentdownloadselect", function() {
+			// Replace only our handlers when an ECM fragment is loaded again by Ajax.
+			jQuery(document).off("change.documentDownloadSelection", ".documentdownloadselect").on("change.documentDownloadSelection", ".documentdownloadselect", function() {
 				updateDocumentDownloadSelection(jQuery(this).attr("form"));
 			});
 
 			// Select-all checkboxes only toggle files that belong to the same detached form.
-			jQuery(document).on("change", ".documentdownloadselectall", function() {
+			jQuery(document).off("change.documentDownloadSelection", ".documentdownloadselectall").on("change.documentDownloadSelection", ".documentdownloadselectall", function() {
 				var formId = jQuery(this).attr("data-download-form");
 				jQuery(".documentdownloadselect").filter(function() {
 					return jQuery(this).attr("form") === formId;
@@ -247,7 +247,7 @@ class FormFile
 			});
 
 			// Submit through the real form so Dolibarr receives the CSRF token and selected file payloads normally.
-			jQuery(document).on("click", ".document-download-selected-button", function(e) {
+			jQuery(document).off("click.documentDownloadSelection", ".document-download-selected-button").on("click.documentDownloadSelection", ".document-download-selected-button", function(e) {
 				e.preventDefault();
 				var formId = jQuery(this).attr("data-download-form");
 				if (jQuery(this).attr("aria-disabled") === "true") {
@@ -282,7 +282,6 @@ class FormFile
 	{
 		global $langs;
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
@@ -493,7 +492,7 @@ class FormFile
 				$out .= '<td>'.$options.'</td>';
 			}
 			$out .= '<td valign="middle" class="nowrap">';
-			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> ';
+			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dolPrintHTMLForAttribute($savingdocmask).'"> ';
 			$out .= '<label class="opacitymedium small" for="savingdocmask">';
 			$out .= $langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
 			$out .= '</label>';
@@ -737,13 +736,13 @@ class FormFile
 						{
 							jQuery(\'#'.$modulepart.'_table\').hide();
 							jQuery(\'#togglemassfilesarea\').attr("ref", "hidden");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Show")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Show")).')\');
 						}
 						else
 						{
 							jQuery(\'#'.$modulepart.'_table\').show();
 							jQuery(\'#togglemassfilesarea\').attr("ref","shown");
-							jQuery(\'#togglemassfilesarea\').text("('.dol_escape_js($langs->trans("Hide")).')");
+							jQuery(\'#togglemassfilesarea\').text(\'('.dol_escape_js($langs->trans("Hide")).')\');
 						}
 						return false;
 					});
@@ -1096,7 +1095,7 @@ class FormFile
 
 			if (!empty($hookmanager->hooks['formfile'])) {
 				foreach ($hookmanager->hooks['formfile'] as $module) {
-					if (method_exists($module, 'formBuilddocLineOptions')) {
+					if (is_object($module) && method_exists($module, 'formBuilddocLineOptions')) {
 						$colspanmore++;
 						$out .= '<th></th>';
 					}
@@ -1212,7 +1211,7 @@ class FormFile
 						if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
 							$tmpout .= 'target="_blank" ';
 						}
-						$tmpout .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+						$tmpout .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&'.$param.'"';
 						$mime = dol_mimetype($relativepath, '', 0);
 						if (preg_match('/text/', $mime)) {
 							$tmpout .= ' target="_blank" rel="noopener noreferrer"';
@@ -1274,14 +1273,14 @@ class FormFile
 					if ($delallowed) {
 						$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
 						$tmpout .= '<a class="maginleftonly marginrightonly reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
-						$tmpout .= ($param ? '&'.$param : '');
+						$tmpout .= '&'.$param;
 						//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 						//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
 						$tmpout .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 					}
 					if ($printer) {
 						$tmpout .= '<a class="maginleftonly marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
-						$tmpout .= ($param ? '&'.$param : '');
+						$tmpout .= '&'.$param;
 						$tmpout .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
 					}
 					if ($morepicto) {
@@ -1291,7 +1290,6 @@ class FormFile
 					$tmpout .= '</td>';
 
 					if (is_object($hookmanager)) {
-						$colspanmore = 0;
 						$parameters = array('tmpout' => &$tmpout, 'colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {
@@ -1328,6 +1326,9 @@ class FormFile
 					// for share link of files
 					$out .= '<td></td>';
 					$out .= '<td></td>';
+					if ($colspanmore) {
+						$out .= '<td colspan="'.$colspanmore.'"></td>';
+					}
 					$out .= '</tr>'."\n";
 				}
 				$this->numoffiles++;
@@ -2000,10 +2001,10 @@ class FormFile
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&rowid='.$object->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$object->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 								}
 								if ($i < ($nboffiles - 1)) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&rowid='.$object->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$object->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
 							} else {
@@ -2093,6 +2094,7 @@ class FormFile
 		global $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
+		global $search_doc_date_start, $search_doc_date_end;
 		global $dolibarr_main_url_root;
 
 		dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
@@ -2105,10 +2107,18 @@ class FormFile
 			$url = $_SERVER["PHP_SELF"];
 		}
 
+		$enablebulkdownload = ($modulepart == 'invoice_supplier');
+
 		if (!empty($addfilterfields)) {
-			print '<form action="'.$_SERVER['PHP_SELF'].'">';
+			print '<form action="'.dol_escape_htmltag($url).'" method="'.($enablebulkdownload ? 'POST' : 'GET').'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="module" value="'.$modulepart.'">';
+			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($modulepart).'">';
+			if ($sortfield) {
+				print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag($sortfield).'">';
+			}
+			if ($sortorder) {
+				print '<input type="hidden" name="sortorder" value="'.dol_escape_htmltag($sortorder).'">';
+			}
 		}
 
 		print '<div class="div-table-responsive-no-min">';
@@ -2116,6 +2126,11 @@ class FormFile
 
 		if (!empty($addfilterfields)) {
 			print '<tr class="liste_titre nodrag nodrop">';
+			if ($enablebulkdownload) {
+				print '<td class="liste_titre center">';
+				print $form->showCheckAddButtons('checkforselect', 0);
+				print '</td>';
+			}
 			// Ref
 			print '<td class="liste_titre"></td>';
 			// Name
@@ -2123,9 +2138,23 @@ class FormFile
 			// Size
 			print '<td class="liste_titre"></td>';
 			// Date
-			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre center">';
+			if ($enablebulkdownload) {
+				print '<div class="nowrap">';
+				print $form->selectDate(!empty($search_doc_date_start) ? $search_doc_date_start : '', 'search_doc_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+				print '</div>';
+				print '<div class="nowrap">';
+				print $form->selectDate(!empty($search_doc_date_end) ? $search_doc_date_end : '', 'search_doc_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+				print '</div>';
+			}
+			print '</td>';
 			// Shared and action column
 			print '<td class="liste_titre right">';
+			if ($enablebulkdownload) {
+				print '<button type="submit" class="button smallpaddingimp marginrightonly" name="action" value="download_selected">';
+				print img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download");
+				print '</button>';
+			}
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
 			print '</td>';
@@ -2133,6 +2162,9 @@ class FormFile
 		}
 
 		print '<tr class="liste_titre">';
+		if ($enablebulkdownload) {
+			print '<th class="liste_titre center maxwidthsearch"></th>';
+		}
 		$sortref = "fullname";
 		if ($modulepart == 'invoice_supplier') {
 			$sortref = 'level1name';
@@ -2359,9 +2391,17 @@ class FormFile
 				if ($found <= 0 || !is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					continue; // We do not show orphelins files
 				}
+				if ($modulepart == 'invoice_supplier' && (int) $conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref]->entity !== (int) $conf->entity) {
+					continue;
+				}
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
 				print '<tr class="oddeven">';
+				if ($enablebulkdownload) {
+					print '<td class="center">';
+					print '<input type="checkbox" class="flat checkforselect" name="selectedfiles[]" value="'.dol_escape_htmltag($relativefile).'">';
+					print '</td>';
+				}
 				// Ref
 				print '<td class="tdoverflowmax150">';
 				if ($found > 0 && is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
@@ -2449,7 +2489,7 @@ class FormFile
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
-				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.urlencode(GETPOST("section")).'&action=delete&token='.newToken().'&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				//else print '&nbsp;';
 				print "</td>";
 
@@ -2458,7 +2498,7 @@ class FormFile
 		}
 
 		if (count($filearray) == 0) {
-			print '<tr class="oddeven"><td colspan="5">';
+			print '<tr class="oddeven"><td colspan="'.($enablebulkdownload ? '6' : '5').'">';
 			if (empty($textifempty)) {
 				print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
 			} else {

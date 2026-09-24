@@ -53,8 +53,8 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
 $tmp2 = realpath(__FILE__);
-$i = strlen($tmp) - 1;
-$j = strlen($tmp2) - 1;
+$i = strlen($tmp) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+$j = strlen($tmp2) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
 	$i--;
 	$j--;
@@ -88,6 +88,7 @@ if (!$res) {
  */
 include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 dol_include_once('/mymodule/class/myobject.class.php');
@@ -190,11 +191,11 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card_d
 // Show tabs
 $head = myobjectPrepareHead($object);
 
-print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto);
+print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 // Build file list
-$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (dol_strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 $totalsize = 0;
 foreach ($filearray as $key => $file) {
 	$totalsize += $file['size'];
@@ -248,10 +249,12 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-$modulepart = 'mymodule';
+//$modulepart = 'mymodule';
+$modulepart = 'myobject@mymodule';
 $param = '&id='.$object->id;
 //$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
-$relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
+//$relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
+$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 

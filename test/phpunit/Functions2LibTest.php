@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                  <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,15 +74,58 @@ if (! defined("NOLOGIN")) {
 class Functions2LibTest extends CommonClassTest
 {
 	/**
-	 * testJsUnEscape
+	 * Data provider for testJsUnEscape.
 	 *
+	 * Note: Tests the behavior of jsUnEscape() which mimics JavaScript's deprecated unescape() function.
+	 * JavaScript unescape() reads exactly 4 hex digits after %u and 2 hex digits after %.
+	 *
+	 * @return array<int, array{0: string, 1: string}>
+	 */
+	public static function unescapeProvider(): array
+	{
+		return [
+			// Original Mixed %uXXXX only test
+			['%u03BD%u03B5%u03BF','νεο'],
+
+			// Mixed %uXXXX and raw UTF-8
+			['Hello %u0041 ❤ %u2764', 'Hello A ❤ ❤'],
+
+			// %u1F600 is decoded as %u1F60 (ὠ) + 0 (js unescape only reads 4 hex digits after %u)
+			['Café %u1F600 😊 %u2764', 'Café ὠ0 😊 ❤'],
+
+			// %F0%9F%8C%88 is decoded as individual bytes that form 🌈 in UTF-8
+			// %u1F308 is decoded as %u1F30 (ι with tonos) + 8 (js unescape only reads 4 hex digits after %u)
+			['%F0%9F%8C%88 %u1F308', "\xF0\x9F\x8C\x88 \xE1\xBC\xB0\x38"],
+
+			// %u20AC is correctly decoded to €, but %E2%82%AC is also decoded to € (bytes form UTF-8)
+			['Price: %u20AC100 or %E2%82%AC100', 'Price: €100 or ' . chr(0xE2) . chr(0x82) . chr(0xAC) . '100'],
+
+			// %u26A1 is correct, but %F0%9F%8C%88 is decoded as individual bytes
+			['%u26A1 %F0%9F%8C%88 %u2194', '⚡ ' . chr(0xF0) . chr(0x9F) . chr(0x8C) . chr(0x88) . ' ↔'],
+
+			// %u0024 is correctly decoded to $
+			['%u0024100', '$100'],
+
+			// %20 is correctly decoded to space
+			['%20', ' '],
+
+			// %u0020 is correctly decoded to space
+			['%u0020', ' ']
+		];
+	}
+
+	/**
+	 * Test jsUnEscape function.
 	 * @return void
 	 */
 	public function testJsUnEscape()
 	{
-		$result = jsUnEscape('%u03BD%u03B5%u03BF');
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('νεο', $result);
+		foreach ($this->unescapeProvider() as $case) {
+			list($input, $expected) = $case;
+			$result = jsUnEscape($input);
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals($result, $expected);
+		}
 	}
 
 	/**
@@ -235,18 +278,14 @@ class Functions2LibTest extends CommonClassTest
 	/**
 	 * Test get_string_between()
 	 *
-	 * @param string $string String to search in.
-	 * @param string $start String indicating start
-	 * @param string $end String indicating end
-	 * @param string $expected Expected result
-	 *
 	 * @return void
-	 *
-	 * @dataProvider stringBetweenDataProvider
 	 */
-	public function testGetStringBetween($string, $start, $end, $expected)
+	public function testGetStringBetween()
 	{
-		$this->assertEquals($expected, get_string_between($string, $start, $end));
+		foreach ($this->stringBetweenDataProvider() as $case) {
+			list($string, $start, $end, $expected) = $case;
+			$this->assertEquals($expected, get_string_between($string, $start, $end));
+		}
 	}
 
 
@@ -276,19 +315,17 @@ class Functions2LibTest extends CommonClassTest
 	/**
 	 * Test numero_semaine()
 	 *
-	 * @param string $time_str Time (string) to test
-	 * @param int    $expected_week Week expected
-	 *
 	 * @return void
-	 *
-	 * @dataProvider numeroSemaineDataProvider
 	 */
-	public function testNumeroSemaine($time_str, $expected_week)
+	public function testNumeroSemaine()
 	{
-		$time = strtotime($time_str);
-		$str = date(DATE_ATOM, $time).PHP_EOL;
-		print __METHOD__." time=".$time."\n";
-		$this->assertEquals($expected_week, numero_semaine($time), "Computed week incorrect for $str");
+		foreach ($this->numeroSemaineDataProvider() as $case) {
+			list($time_str, $expected_week) = $case;
+			$time = strtotime($time_str);
+			$str = date(DATE_ATOM, $time).PHP_EOL;
+			print __METHOD__." time=".$time."\n";
+			$this->assertEquals($expected_week, numero_semaine($time), "Computed week incorrect for $str");
+		}
 	}
 
 

@@ -1,0 +1,43 @@
+---
+# Check the title (label) of a PR starts with a valid keyword (Fix|Close|New|Perf|Doc|Qual|Sec)
+# and that the description of the PR does not contain the mention @eldy.
+# If this is not the case, the CI fails, so the PR is refused.
+# Note: the keyword can be in upper or lower case (use upper case to see the PR into the ChangeLog)
+# and must be followed by a space, a '#' or a ':' (for example: "Fix #456 Short description", "Fix: Short description", "New Short description").
+# Draft PRs are skipped (they are not analyzed until they are ready for review).
+name: Check PR title and description
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, ready_for_review, synchronize]
+
+permissions: {}
+
+jobs:
+  check-pr:
+    name: Check PR title and description
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if echo "$PR_TITLE" | grep -Eiq '^(Fix|Close|New|Perf|Doc|Qual|Sec)\b'; then
+            echo "Title of PR is valid: '$PR_TITLE'"
+            exit 0
+          fi
+
+          echo "::error::The title of the PR must start with one of the keywords (Fix|Close|New|Perf|Doc|Qual|Sec) followed by a space, a ':' (or a '#ID'). Current title: '$PR_TITLE'"
+          exit 1
+
+      - name: Check PR description
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if echo "$PR_BODY" | grep -Eiq '@eldy\b'; then
+            echo "::error::The description of the PR must not contain the mention of the maintener (@eldy). This is useless as the maintener is already watching and notified for PR."
+            exit 1
+          fi
+
+          echo "Description of PR is valid."
