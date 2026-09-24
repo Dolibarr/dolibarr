@@ -175,7 +175,7 @@ if (empty($reshook)) {
 			// otherwise the default 'origin_id LIKE %..%' filter can return an unrelated line (or none),
 			// which would let the child MO be created from the leftover parent POST data (duplicate MO).
 			$filter = '(fk_mo:=:'.((int) $mo_parent->id).') AND (origin_id:=:'.((int) $id_bom_line).") AND (origin_type:=:'bomline')";
-			$TMoLines = $moline->fetchAll('DESC', 'rowid', '1', '', $filter);
+			$TMoLines = $moline->fetchAll('DESC', 'rowid', 1, 0, $filter);
 
 			if (empty($TMoLines)) {
 				continue;

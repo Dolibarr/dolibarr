@@ -1383,7 +1383,7 @@ if ($action == 'create') {
 		$hselected = '0';
 		$formconfirm = '';
 
-		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
+		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract', 0, '', '', 0, '', 1);
 
 
 		if ($action == 'delete') {
@@ -1410,7 +1410,7 @@ if ($action == 'create') {
 			);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
 		} elseif ($action == 'clone') {
-			$filter = '(s.client:IN:1,2,3)';
+			$filter = '(s.client:IN:1,2,3) OR (s.fournisseur:=:1)';
 			// Clone confirmation
 			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', $filter)));
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);

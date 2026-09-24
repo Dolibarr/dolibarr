@@ -343,8 +343,11 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(404, 'Supplier invoice not found');
 		}
 
-		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
+		$result = $this->invoice->delete(DolibarrApiAccess::$user);
+		if ($result < 0) {
 			throw new RestException(500, 'Error when deleting invoice');
+		} elseif ($result == 0) {
+			throw new RestException(403, 'Invoice not erasable');
 		}
 
 		return array(
@@ -562,7 +565,15 @@ class SupplierInvoices extends DolibarrApi
 		$amounts[$id] = $paymentamount;
 
 		// Multicurrency
-		$newvalue = (float) price2num($this->invoice->multicurrency_total_ttc, 'MT');
+		// getWay() switches the payment to the invoice currency as soon as a multicurrency amount is set, so
+		// this value must match the partial amount, not always the full invoice TTC. When a partial amount was
+		// requested, convert it at the invoice rate (multicurrency_total_ttc / total_ttc); otherwise use the
+		// full multicurrency TTC (full payment).
+		if (null !== $amount && $amount > 0 && !empty($this->invoice->total_ttc)) {
+			$newvalue = (float) price2num($paymentamount * $this->invoice->multicurrency_total_ttc / $this->invoice->total_ttc, 'MT');
+		} else {
+			$newvalue = (float) price2num($this->invoice->multicurrency_total_ttc, 'MT');
+		}
 		$multicurrency_amounts[$id] = $newvalue;
 
 		// Creation of payment line

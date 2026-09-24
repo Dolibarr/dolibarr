@@ -5,7 +5,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ class html_cerfafr extends ModeleDon
 				} else {
 					$paymentmode = '';
 				}
-				$modepaymentcode = !empty($formclass->cache_types_paiements[$modepaymentid]['code']) ? $formclass->cache_types_paiements[$modepaymentid]['code'] : "";
+				$modepaymentcode = !empty($formclass->cache_types_paiements[(int) $modepaymentid]['code']) ? $formclass->cache_types_paiements[(int) $modepaymentid]['code'] : "";
 				if ($modepaymentcode == 'CHQ') {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				} elseif ($modepaymentcode == 'LIQ') {

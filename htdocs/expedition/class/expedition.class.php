@@ -1886,9 +1886,9 @@ class Expedition extends CommonObject
 
 						// We delete PDFs
 						$ref = dol_sanitizeFileName($this->ref);
-						if (!empty($conf->expedition->dir_output)) {
-							$dir = $conf->expedition->dir_output . '/sending/' . $ref;
-							$file = $dir . '/' . $ref . '.pdf';
+						if (!empty($conf->expedition->dir_output) && !empty($ref)) {
+							$dir = $conf->expedition->dir_output.'/sending/'.$ref;
+							$file = $dir.'/'.$ref.'.pdf';
 							if (file_exists($file)) {
 								if (!dol_delete_file($file)) {
 									return 0;
@@ -1902,36 +1902,7 @@ class Expedition extends CommonObject
 							}
 						}
 
-						if (!$error) {
-							$this->db->commit();
-
-							// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-							$this->deleteEcmFiles(0);	 // Deleting files physically is done later with the dol_delete_dir_recursive
-							$this->deleteEcmFiles(1);	 // Deleting files physically is done later with the dol_delete_dir_recursive
-
-							// We delete PDFs
-							$ref = dol_sanitizeFileName($this->ref);
-							if (!empty($conf->expedition->dir_output) && !empty($ref)) {
-								$dir = $conf->expedition->dir_output.'/sending/'.$ref;
-								$file = $dir.'/'.$ref.'.pdf';
-								if (file_exists($file)) {
-									if (!dol_delete_file($file)) {
-										return 0;
-									}
-								}
-								if (file_exists($dir)) {
-									if (!dol_delete_dir_recursive($dir)) {
-										$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
-										return 0;
-									}
-								}
-							}
-
-							return 1;
-						} else {
-							$this->db->rollback();
-							return -1;
-						}
+						return 1;
 					} else {
 						$this->db->rollback();
 						return -1;
@@ -2921,7 +2892,7 @@ class Expedition extends CommonObject
 			$this->billed = 0;
 
 			// If stock increment is done on closing
-			if (!$error && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");

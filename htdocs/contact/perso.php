@@ -2,7 +2,7 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -96,7 +96,9 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 				if (@is_dir($dir)) {
 					$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-					if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
+					$resultupload = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
+					// Note: $resultupload is a string when the file was refused and, in PHP 8, such a string compares as greater than 0
+					if (!is_numeric($resultupload) || $resultupload <= 0) {
 						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 					} else {
 						// Create thumbs

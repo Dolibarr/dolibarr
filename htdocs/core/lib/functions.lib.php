@@ -158,7 +158,13 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)];
+				// An entity with no declared directory returned an undefined index, so an empty path that
+				// made the caller read or write a relative path under the web root. Answer the error instead.
+				$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
+				if (!isset($conf->$module->multidir_output[$entity])) {
+					return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
+				}
+				$s = $conf->$module->multidir_output[$entity];
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '').get_exdir(0, 0, 0, 0, $object);
@@ -174,15 +180,20 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			}
 			return $s;
 		} else {
-			return 'error-diroutput-not-defined-for-this-object='.$module;
+			return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
-			return $conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)];
+			// Same guard as the 'output' mode above, see the comment there
+			$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
+			if (!isset($conf->$module->multidir_temp[$entity])) {
+				return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
+			}
+			return $conf->$module->multidir_temp[$entity];
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
 			return $conf->$module->dir_temp;
 		} else {
-			return 'error-dirtemp-not-defined-for-this-object='.$module;
+			return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 		}
 	} else {
 		return 'error-bad-value-for-mode';
@@ -1172,6 +1183,10 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				$user->lastsearch_values_tmp[$relativepathstring][$paramname] = $out;
 			}
 		}
+	}
+
+	if ($paramname == 'hashp' && $out == 'shared') {
+		$out = ''; // We refuse to have hashp=shared as a parameter
 	}
 
 	return $out;
@@ -10541,7 +10556,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	$divstart = $divend = '';
 
 	// If inline message with no format, we add it.
-	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
+	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || defined('DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
 		$divstart = '<div class="'.$style.' clearboth">';
 		$divend = '</div>';
 	}
@@ -10566,7 +10581,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	}
 
 	if ($out) {
-		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
+		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
 			$return = '<script nonce="'.getNonce().'">
 				$(document).ready(function() {
 					/* jnotify(message, preset of message type, keepmessage) */
@@ -14868,7 +14883,7 @@ function dolForgeSQLCriteriaCallback($matches)
 			$tmpelem = trim($tmpelem);
 			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
 				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 2, 1, 1, 1))."'";
-			} elseif (ctype_digit((string) $tmpelem)) {	// if only 0-9 chars, no .
+			} elseif (preg_match('/^[0-9]+$/', (string) $tmpelem)) {	// if only 0-9 chars, no .
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
@@ -14895,7 +14910,7 @@ function dolForgeSQLCriteriaCallback($matches)
 	} else {
 		if (strtoupper($tmpescaped) == 'NULL') {
 			$tmpescaped = 'NULL';
-		} elseif (ctype_digit((string) $tmpescaped)) {	// if only 0-9 chars, no .
+		} elseif (preg_match('/^[0-9]+$/', (string) $tmpescaped)) {	// if only 0-9 chars, no .
 			$tmpescaped = (int) $tmpescaped;
 		} elseif (is_numeric((string) $tmpescaped)) {	// it can be a float with a .
 			$tmpescaped = (float) $tmpescaped;

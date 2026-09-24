@@ -33,7 +33,6 @@ define('NOTOKENRENEWAL', 1); // Disables token renewal
 // is a security hole if anybody can access without
 // being an authenticated user.
 require_once '../../../../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var User $user

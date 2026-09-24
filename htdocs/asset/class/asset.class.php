@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -200,7 +200,7 @@ class Asset extends CommonObject
 	 */
 	public $disposal_date;
 	/**
-	 * @var null|string|int  Is string, but asset/Card.php assigns int.
+	 * @var null|string|float
 	 */
 	public $disposal_amount_ht;
 	/**
@@ -561,14 +561,13 @@ class Asset extends CommonObject
 		if ($result > 0 && $this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model) {
 			$result = $this->setDataFromAssetModel($user, $notrigger);
 		}
-		if ($result > 0 && (
+		if ($result > 0 && is_object($this->oldcopy) && (
 			$this->date_start != $this->oldcopy->date_start ||
-				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
-				$this->reversal_date != $this->oldcopy->reversal_date ||
-				$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
-				($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
-		)
-		) {
+			$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
+			$this->reversal_date != $this->oldcopy->reversal_date ||
+			$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
+			($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
+		)) {
 			$result = $this->calculationDepreciation();
 		}
 
@@ -1071,9 +1070,9 @@ class Asset extends CommonObject
 				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
 				$finish_date = $disposal_date !== "" ? $disposal_date : $depreciation_date_end;
 				$accountancy_code_depreciation_debit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_debit'];
-				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key];
+				$accountancy_code_depreciation_debit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_debit_key] ?? '';
 				$accountancy_code_depreciation_credit_key = $accountancy_codes->accountancy_codes_fields[$mode_key]['depreciation_credit'];
-				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key];
+				$accountancy_code_credit = $accountancy_codes->accountancy_codes[$mode_key][$accountancy_code_depreciation_credit_key] ?? '';
 
 				// Reversal depreciation line
 				//-----------------------------------------------------

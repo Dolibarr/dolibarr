@@ -386,7 +386,7 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
-		$input = "usace.army.mil";
+		$input = "microsoft.com";
 		$result = isValidMXRecord($input);
 		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
