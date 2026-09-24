@@ -1591,6 +1591,23 @@ if (empty($reshook)) {
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+	$substitutionarrayextra = array();
+	if (in_array($action, array('presend', 'send', 'relance'), true) || GETPOST('modelselected') || GETPOST('addfile') || GETPOST('removedfile') || GETPOST('removeAll')) {
+		$substitutionarrayextra['__SUPPLIER_BANK_ACCOUNT_MASKED__'] = '';
+		$supplierId = (int) ($object->socid ?? 0);
+		if ($supplierId > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+			$bankAccount = new CompanyBankAccount($db);
+			if ($bankAccount->fetch(0, '', $supplierId, 1, 'ban') > 0 && $bankAccount->id > 0) {
+				$accountIdentifier = (string) ($bankAccount->iban ?: $bankAccount->number);
+				$accountIdentifier = preg_replace('/[^A-Za-z0-9]/', '', $accountIdentifier);
+				if (is_string($accountIdentifier) && strlen($accountIdentifier) >= 4) {
+					$substitutionarrayextra['__SUPPLIER_BANK_ACCOUNT_MASKED__'] = '****'.substr($accountIdentifier, -4);
+				}
+			}
+		}
+	}
+
 	// Actions to send emails
 	$triggersendname = 'ORDER_SUPPLIER_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO';

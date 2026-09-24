@@ -43,6 +43,7 @@
  * @var int $hideref
  * @var string $recruitername
  * @var string $recruitermail
+ * @var ?array<string,string> $substitutionarrayextra Substitutions prepared by the caller
  */
 '
 @phan-var-force int<0,1> $diroutput
@@ -311,6 +312,9 @@ if ($action == 'presend') {
 		$formmail->setSubstitFromObject($object, $outputlangs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
+	if (!empty($substitutionarrayextra)) {
+		$substitutionarray = array_replace($substitutionarray, $substitutionarrayextra);
+	}
 
 	$emailsendersignature = null;
 	// Overwrite __SENDEREMAIL_SIGNATURE__ with value select into form
