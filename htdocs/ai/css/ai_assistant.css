@@ -1093,17 +1093,16 @@ body.ai-fullpage {
 .file-chip.chip-inline { margin-bottom: 4px; }
 
 /* --- Context pins: opt-in selection of past exchanges resent to the model --- */
-/* Always faintly visible (discoverability: hover-only was invisible on touch
-   and nobody found it), full opacity on hover or when pinned. */
-.msg .ctx-pin { position: absolute; top: 2px; right: 2px; border: 0; background: none; cursor: pointer; opacity: .3; font-size: 0.85em; color: inherit; padding: 3px 5px; transition: opacity .15s; }
+/* Context pin: two states only. ON = blue pin + ring (the bubble goes back to the AI
+   with the next question), OFF = grey pin (it does not). Always visible. */
+.msg .ctx-pin { position: absolute; top: 2px; right: 2px; border: 0; background: none; cursor: pointer; opacity: .45; font-size: 0.9em; color: #8a8a8a; padding: 3px 5px; transition: opacity .15s, color .15s; }
 .msg .msg-bubble { position: relative; padding-right: 24px; }
-.msg:hover .ctx-pin { opacity: .8; }
+.msg.user .ctx-pin { color: rgba(255, 255, 255, 0.75); }
 .msg .ctx-pin:hover { opacity: 1; }
 .msg.ctx-pinned .ctx-pin { opacity: 1; color: #2c62ac; }
+.msg.user.ctx-pinned .ctx-pin { color: #fff; }
 .msg.ctx-pinned .msg-bubble { box-shadow: 0 0 0 2px rgba(44, 98, 172, 0.45); }
-/* Bubbles that follow the sliding window (not pinned by hand): a lighter ring and pin */
-.msg.ctx-auto .ctx-pin { opacity: .55; }
-.msg.ctx-auto .msg-bubble { box-shadow: 0 0 0 2px rgba(44, 98, 172, 0.2); }
+.msg.user.ctx-pinned .msg-bubble { box-shadow: 0 0 0 2px #8fc0ff; }
 #ai-ctx-bar { font-size: 0.85em; opacity: .85; padding: 3px 10px; margin: 0 6px 4px; border-radius: 10px; background: rgba(44, 98, 172, 0.08); }
 #ai-ctx-bar a { margin-left: 8px; }
 #ai-ctx-bar a.ai-ctx-active { font-weight: 600; text-decoration: none; padding: 1px 6px; border-radius: 8px; background: rgba(44, 98, 172, 0.15); }
