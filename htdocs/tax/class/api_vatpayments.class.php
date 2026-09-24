@@ -210,7 +210,7 @@ class VatPayments extends DolibarrApi
 		}
 
 		if ($vat->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating VAT payment: '.$vat->error);
+			throw new RestException(500, 'Error when creating VAT payment: '.$vat->errorsToString());
 		}
 
 		return $vat->id;
@@ -265,7 +265,7 @@ class VatPayments extends DolibarrApi
 		if ($vat->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating VAT payment: '.$vat->error);
+			throw new RestException(500, 'Error when updating VAT payment: '.$vat->errorsToString());
 		}
 	}
 
@@ -296,7 +296,7 @@ class VatPayments extends DolibarrApi
 		}
 
 		if ($vat->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting VAT payment: '.$vat->error);
+			throw new RestException(500, 'Error when deleting VAT payment: '.$vat->errorsToString());
 		}
 
 		return array(
@@ -502,7 +502,7 @@ class VatPayments extends DolibarrApi
 		}
 
 		if ($payment->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting VAT payment: '.$payment->error);
+			throw new RestException(500, 'Error when deleting VAT payment: '.$payment->errorsToString());
 		}
 
 		return array(

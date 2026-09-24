@@ -576,9 +576,108 @@ if (empty($reshook)) {
 		if (GETPOSTINT("remise_id")) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount(GETPOSTINT("remise_id"));
-				if ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
+				$idremise = GETPOSTINT("remise_id");
+
+				// If the available credit is larger than what the invoice can still absorb, split it automatically:
+				// only the required part is inserted as a line, the rest stays available for another invoice.
+				$usemccompare = false;
+				$discount = new DiscountAbsolute($db);
+				if ($discount->fetch($idremise) > 0) {
+					// Under MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS, when the credit is in the invoice currency, compare and split
+					// in that currency (the company-currency amounts may use different exchange rates and would compare wrongly).
+					$usemccompare = (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')
+						&& !empty($discount->multicurrency_code) && !empty($object->multicurrency_code)
+						&& $discount->multicurrency_code == $object->multicurrency_code && $object->multicurrency_code != $conf->currency);
+					$maxtoabsorb = (float) price2num($usemccompare ? $object->getRemainToPay(1) : $object->getRemainToPay(0), 'MT');
+					$discountamountforcompare = (float) price2num($usemccompare ? $discount->multicurrency_amount_ttc : $discount->amount_ttc, 'MT');
+					if ($discountamountforcompare > $maxtoabsorb) {
+						if ($maxtoabsorb <= 0) {
+							// Nothing left to absorb: the credit cannot be used on this invoice at all
+							$error++;
+							setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
+						} else {
+							// Amount to apply, expressed in both currencies (the split itself works on company-currency amounts)
+							$depositeur = (float) $discount->amount_ttc;
+							$depositdev = (float) $discount->multicurrency_amount_ttc;
+							if ($usemccompare && $depositdev != 0) {
+								$applydev = $maxtoabsorb;
+								$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+							} else {
+								$applyeur = $maxtoabsorb;
+								$applydev = ($depositeur != 0 ? (float) price2num($applyeur / $depositeur * $depositdev, 'MT') : 0);
+							}
+							$splitparts = $discount->splitAmount($applyeur, (float) price2num($depositeur - $applyeur, 'MT'));
+							$applypart = $splitparts[0];
+							$remainpart = $splitparts[1];
+							$remaindev = 0.0;
+							if (!empty($discount->multicurrency_code) && $depositdev != 0) {
+								// Keep the foreign-currency value of each part in the same proportion
+								$remaindev = (float) price2num($depositdev - $applydev, 'MT');
+								$applypart->multicurrency_amount_ttc = $applydev;
+								$applypart->multicurrency_amount_ht = price2num($applydev / (1 + (float) $applypart->tva_tx / 100), 'MT');
+								$applypart->multicurrency_amount_tva = price2num($applydev - (float) $applypart->multicurrency_amount_ht);
+								$remainpart->multicurrency_amount_ttc = $remaindev;
+								$remainpart->multicurrency_amount_ht = price2num($remaindev / (1 + (float) $remainpart->tva_tx / 100), 'MT');
+								$remainpart->multicurrency_amount_tva = price2num($remaindev - (float) $remainpart->multicurrency_amount_ht);
+							}
+							$discount->fk_facture_source = 0;
+							$discount->fk_invoice_supplier_source = 0;
+							$resdelete = $discount->delete($user);
+							$newidapply = $applypart->create($user);
+							$newidremain = $remainpart->create($user);
+							if ($resdelete > 0 && $newidapply > 0 && $newidremain > 0) {
+								$idremise = $newidapply;
+								$splitappliedmsg = price($applyeur, 0, $langs, 1, -1, -1, $conf->currency);
+								$splitremainmsg = price((float) price2num($depositeur - $applyeur, 'MT'), 0, $langs, 1, -1, -1, $conf->currency);
+								if (!empty($discount->multicurrency_code) && $depositdev != 0) {
+									$splitappliedmsg .= ' / '.price($applydev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
+									$splitremainmsg .= ' / '.price($remaindev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
+								}
+								setEventMessages($langs->trans('DepositSplitAutomaticallyApplied', $splitappliedmsg, $splitremainmsg), null, 'warnings');
+							} else {
+								$error++;
+								setEventMessages($langs->trans("Error"), null, 'errors');
+							}
+						}
+					}
+				}
+
+				if (!$error) {
+					$result = $object->insert_discount($idremise);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+					if ($result > 0 && $usemccompare) {
+						// Follow the original currency: the part of the invoice covered by the credit keeps the company-currency value the
+						// credit was paid at, the rest stays at the invoice rate. The invoice rate becomes that effective rate, so the
+						// company-currency totals mirror the foreign-currency ones (no residual once the foreign amount is settled).
+						$object->fetch($id);
+						$object->fetch_lines();
+						$foreigngoods = 0.0;
+						$foreigncredits = 0.0;
+						$companycredits = 0.0;
+						foreach ($object->lines as $creditline) {
+							if (empty($creditline->fk_remise_except)) {
+								$foreigngoods += (float) $creditline->multicurrency_total_ttc;
+							} else {
+								$foreigncredits -= (float) $creditline->multicurrency_total_ttc;
+								$companycredits -= (float) $creditline->total_ttc;
+							}
+						}
+						$targetcompany = ((float) $object->multicurrency_tx > 0 ? ($foreigngoods - $foreigncredits) / (float) $object->multicurrency_tx : 0) + $companycredits;
+						if ($foreigngoods > 0 && $targetcompany > 0) {
+							$neweffectivetx = (float) price2num($foreigngoods / $targetcompany, 'CR');
+							if (abs($neweffectivetx - (float) $object->multicurrency_tx) >= 0.00000001) {
+								$resrate = $object->setMulticurrencyRate($neweffectivetx, 1);
+								if ($resrate < 0) {
+									$error++;
+									setEventMessages($object->error, $object->errors, 'errors');
+								} else {
+									setEventMessages($langs->trans('InvoiceRateRealigned', price2num($neweffectivetx, 'CR')), null, 'mesgs');
+								}
+							}
+						}
+					}
 				}
 			} else {
 				dol_print_error($db, $object->error);

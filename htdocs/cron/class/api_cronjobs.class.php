@@ -112,7 +112,7 @@ class Cronjobs extends DolibarrApi
 
 		$result = $this->cronjob->fetchAll($sortorder, $sortfield, $limit, $offset, $status, $sqlfilters);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving cron job list: '.$this->cronjob->error);
+			throw new RestException(503, 'Error when retrieving cron job list: '.$this->cronjob->errorsToString());
 		}
 
 		foreach ($this->cronjob->lines as $cronjob_static) {
@@ -200,7 +200,7 @@ class Cronjobs extends DolibarrApi
 		if ($this->cronjob->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->cronjob->error);
+			throw new RestException(500, $this->cronjob->errorsToString());
 		}
 	}
 
@@ -230,7 +230,7 @@ class Cronjobs extends DolibarrApi
 		}
 
 		if (!$this->cronjob->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting cron job: '.$this->cronjob->error);
+			throw new RestException(500, 'Error when deleting cron job: '.$this->cronjob->errorsToString());
 		}
 
 		return array(
@@ -281,12 +281,12 @@ class Cronjobs extends DolibarrApi
 
 		$result = $this->cronjob->run_jobs(DolibarrApiAccess::$user->login);
 		if ($result < 0) {
-			throw new RestException(500, 'Error when running cron job: '.$this->cronjob->error);
+			throw new RestException(500, 'Error when running cron job: '.$this->cronjob->errorsToString());
 		}
 
 		$result = $this->cronjob->reprogram_jobs(DolibarrApiAccess::$user->login, $now);
 		if ($result <= 0) {
-			throw new RestException(500, 'Job ran but failed to reprogram next run: '.$this->cronjob->error);
+			throw new RestException(500, 'Job ran but failed to reprogram next run: '.$this->cronjob->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->cronjob);

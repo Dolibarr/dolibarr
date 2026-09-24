@@ -53,6 +53,18 @@ function getOnlineSignatureSourceDefinition($source, $ref = '', $entity = 0, $ob
 	}
 
 	$definitions = array(
+		'order' => array(
+			'source' => 'order',
+			'module' => 'commande',
+			'elementtype' => 'commande',
+			'modulepart' => 'commande',
+			'document_modulepart' => 'order',
+			'langfiles' => array('orders', 'commercial'),
+			'allow_const' => 'ORDER_ALLOW_ONLINESIGN',
+			'securekey_const' => 'ORDER_ONLINE_SIGNATURE_SECURITY_TOKEN',
+			'signature_position_prefix' => 'ORDER',
+			'native_finalizer' => 'order',
+		),
 		'proposal' => array(
 			'source' => 'proposal',
 			'module' => 'propal',

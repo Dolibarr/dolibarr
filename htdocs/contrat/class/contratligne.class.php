@@ -680,7 +680,7 @@ class ContratLigne extends CommonObjectLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0) {
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return -1;
 			} else {
@@ -952,6 +952,7 @@ class ContratLigne extends CommonObjectLine
 		}
 		$sql .= " fk_user_ouverture = ".((int) $this->fk_user_ouverture).",";
 		$sql .= " date_cloture = null,";
+		$sql .= " fk_user_cloture = null,";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND (statut = ".ContratLigne::STATUS_INITIAL." OR statut = ".ContratLigne::STATUS_CLOSED.")";
 

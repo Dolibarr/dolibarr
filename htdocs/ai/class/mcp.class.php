@@ -380,6 +380,12 @@ class McpHandler
 
 				$def['is_system'] = false;
 
+				// Same rule as getToolsSchemaForLLM(): this is what tools/list on the
+				// MCP server returns, so a caller must not be offered what it cannot run.
+				if ($this->checkToolRights($tool, $name) !== '') {
+					continue;
+				}
+
 				if (empty($allowed)) {
 					// No restriction configured — include everything
 					if (empty($def['categories'])) {

@@ -439,9 +439,32 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Tools
+	// For an external user, show the entry only if its left menu contains at least one entry this user is
+	// allowed to use: the hardcoded entries of get_left_menu_tools() and the entries added by modules into
+	// $tabMenu (already filtered on user type, enabled and perms by menuLoad()).
+	$toolsperms = 1;
+	if ($type_user) {
+		$toolsperms = 0;
+		$tmpmenu = new Menu();
+		get_left_menu_tools('tools', $tmpmenu, 0, 'none', $type_user);
+		foreach ($tmpmenu->liste as $val) {
+			if (!empty($val['enabled'])) {
+				$toolsperms = 1;
+				break;
+			}
+		}
+		if (!$toolsperms) {
+			foreach ($tabMenu as $val) {
+				if ($val['type'] == 'left' && $val['fk_mainmenu'] == 'tools' && $val['perms']) {
+					$toolsperms = 1;
+					break;
+				}
+			}
+		}
+	}
 	$tmpentry = array(
 		'enabled' => 1,
-		'perms' => '1',
+		'perms' => (string) $toolsperms,
 		'module' => ''
 	);
 	$menu_arr[] = array(

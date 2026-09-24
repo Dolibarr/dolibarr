@@ -40,11 +40,11 @@ jobs:
             exit 0
           fi
 
-          echo "Comparing $BASE_SHA..$HEAD_SHA"
+          echo "Comparing $BASE_SHA...$HEAD_SHA"
 
           # List of files changed (added or modified) under htdocs/langs/,
           # excluding the htdocs/langs/en_US/ subdirectory.
-          CHANGED_FILES=$(git diff --name-only --diff-filter=AM "$BASE_SHA" "$HEAD_SHA" -- 'htdocs/langs/' ':!htdocs/langs/en_US/')
+          CHANGED_FILES=$(git diff --name-only --diff-filter=AM "$BASE_SHA...$HEAD_SHA" -- 'htdocs/langs/' ':!htdocs/langs/en_US/')
 
           if [ -n "$CHANGED_FILES" ]; then
             echo "::error::Translation files outside htdocs/langs/en_US must not be modified in a pull request. Translations are generated from en_US. The following files were modified:"
