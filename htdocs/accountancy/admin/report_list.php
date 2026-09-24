@@ -48,7 +48,8 @@ $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
 $id = 45;
 $rowid = GETPOST('rowid', 'alpha');
-$code = GETPOST('code', 'alpha');
+$code = GETPOST('code', 'alp
+ha');
 
 // Security access
 if (!$user->hasRight('accounting', 'chartofaccount')) {
@@ -101,7 +102,8 @@ $tabsql[45] = "SELECT r.rowid as rowid, r.code as code, r.label, r.fk_country as
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
-$tabsqlsort[45] = "code ASC";
+$tabsqlsort[45] = "code 
+ASC";
 
 // Name of the fields in the result of select to display the dictionary
 $tabfield = array();
@@ -160,7 +162,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		if (($value == 'country' || $value == 'country_id') && GETPOST('country_id')) {
 			continue;
 		}
-		if (!GETPOSTISSET($value) || GETPOST($value) == '') {
+		if (!GETPOSTISSET($va
+lue) || GETPOST($value) == '') {
 			$ok = 0;
 			$fieldnamekey = $listfield[$f];
 			// We take translate key of field
@@ -231,7 +234,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 		$sql .= ",1)";
 
-		dol_syslog("actionadd", LOG_DEBUG);
+		dol_syslog("actionadd", LOG
+_DEBUG);
 		$result = $db->query($sql);
 		if ($result) {	// Add is ok
 			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
@@ -297,7 +301,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
 	if (!$result) {
-		if ($db->errno() == 'DB_ERROR_CHILD_EXISTS') {
+		if ($db->errno() == 'DB_ERROR_CHILD
+_EXISTS') {
 			setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
 		} else {
 			dol_print_error($db);
@@ -364,7 +369,8 @@ print '<span class="opacitymedium">'.$langs->trans("AccountingAccountReportsDesc
 
 // Confirmation of the deletion of the line
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id.($search_country_id > 0 ? '&search_country_id='.$search_country_id : ''), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id.($search_country_id > 0 ? '&search_country_id='.$search_country_id : ''), $langs->trans('DeleteLine'), $l
+angs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 // Complete search query with sorting criteria
@@ -430,7 +436,8 @@ if ($tabname[$id]) {
 	foreach ($fieldlist as $field => $value) {
 		// Determine the field name based on the possible names
 		// in the data dictionaries.
-		$valuetoshow = ucfirst($fieldlist[$field]); // By default
+	
+	$valuetoshow = ucfirst($fieldlist[$field]); // By default
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$class = "left";
 		if ($fieldlist[$field] == 'code') {
@@ -495,7 +502,8 @@ if ($tabname[$id]) {
 		fieldListAccountingReport($fieldlist, $obj, $tabname[$id], 'add');
 	}
 
-	print '<td colspan="2" class="right">';
+	print '<td colspan="2" class="ri
+ght">';
 	print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 	print '</td>';
 
@@ -507,9 +515,7 @@ if ($tabname[$id]) {
 	print "</tr>";
 
 	$colspan = count($fieldlist) + 3;
-	if ($id == 45) {
-		$colspan++;
-	}
+	$colspan++;
 }
 
 print '</table>';
@@ -571,7 +577,8 @@ if ($resql) {
 			if ($value == 'country') {
 				print '<td class="liste_titre">';
 				print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth150 maxwidthonsmartphone');
-				print '</td>';
+				print '<
+/td>';
 				$filterfound++;
 			} else {
 				print '<td class="liste_titre"></td>';
@@ -639,7 +646,8 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 
 			//print_r($obj);
-			print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+			pr
+int '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 			if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
 				$tmpaction = 'edit';
 				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
@@ -683,7 +691,8 @@ if ($resql) {
 				$url .= '&'.$param;
 				$url .= '&';
 
-				$canbemodified = $iserasable;
+				$canbemodified = $isera
+sable;
 
 				$tmpaction = 'view';
 				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
@@ -738,7 +747,8 @@ if ($resql) {
 				}
 
 				// Active
-				print '<td class="center" class="nowrap">';
+		
+		print '<td class="center" class="nowrap">';
 				if ($canbedisabled) {
 					print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
@@ -803,7 +813,8 @@ function fieldListAccountingReport($fieldlist, $obj = null, $tabname = '', $cont
 			if ($context == 'add') {
 				$fieldname = 'country_id';
 				$preselectcountrycode = GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $mysoc->country_code;
-				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
+		
+		print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
 			} else {
 				$preselectcountrycode = (empty($obj->country_code) ? (empty($obj->country) ? $mysoc->country_code : $obj->country) : $obj->country_code);
 				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
