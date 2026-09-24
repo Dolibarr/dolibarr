@@ -1099,8 +1099,9 @@ body.ai-fullpage {
 .msg .msg-bubble { position: relative; padding-right: 24px; }
 .msg .ctx-pin .fa-thumbtack { position: relative; display: inline-block; }
 .msg .ctx-pin.ctx-pin-off { color: #9a9a9a; opacity: .85; }
-/* the strike-through of the unpinned glyph */
-.msg .ctx-pin.ctx-pin-off .fa-thumbtack::after { content: ''; position: absolute; left: 50%; top: -15%; width: 2px; height: 130%; margin-left: -1px; background: currentColor; transform: rotate(45deg); border-radius: 1px; }
+/* the unpinned glyph leans over (pulled out) and is struck through */
+.msg .ctx-pin.ctx-pin-off .fa-thumbtack { transform: rotate(45deg); }
+.msg .ctx-pin.ctx-pin-off .fa-thumbtack::after { content: ''; position: absolute; left: 50%; top: -15%; width: 2px; height: 130%; margin-left: -1px; background: currentColor; transform: rotate(90deg); border-radius: 1px; }
 .msg .ctx-pin:hover { opacity: 1; color: #2c62ac; }
 .msg.user .ctx-pin { color: #fff; }
 .msg.user .ctx-pin.ctx-pin-off { color: rgba(255, 255, 255, 0.6); }
