@@ -487,7 +487,7 @@ class Documents extends DolibarrApi
 			// Supplier invoices are stored under a hashed subdir, as in the other methods of this file
 			$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
 		} else {
-			$upload_dir = getMultidirOutput($object, '', 1);
+			$upload_dir = (string) getMultidirOutput($object, '', 1);
 		}
 
 		// Check object-level permissions
