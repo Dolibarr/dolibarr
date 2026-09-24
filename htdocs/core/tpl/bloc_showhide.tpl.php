@@ -68,8 +68,10 @@ print '		var id			= '.((int) $object->id).";\n";
 print "		var element		= '".dol_escape_js($object->element)."';\n";
 print "		var htmlelement	= '".dol_escape_js($blocname)."';\n";
 print '		var type		= "showhide";'."\n";
-print '		$.get("'.dol_buildpath('/core/ajax/extraparams.php', 1);
-print '?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);'."\n";
+// Remove this. Show/Hide must be store into a cookie (set only if on per type of object) or into the llx_user_param table.
+// A setup "per object" is overkill, above all on a non standard feature. Should be moved into an external module.
+//print '		$.get("'.dol_buildpath('/core/ajax/extraparams.php', 1);
+//print '?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);'."\n";
 print '}'."\n";
 
 print '});'."\n";

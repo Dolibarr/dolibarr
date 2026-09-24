@@ -202,14 +202,14 @@ body not contains "Warning: [^I]"
 
 ### Running Tests
 
-#### Using run_with_server.sh
+#### Using run.sh
 The recommended way to run hurl tests locally:
 ```bash
 # Run specific test path
-test/hurl/run_with_server.sh gui/fourn/commande
+test/hurl/run.sh gui/fourn/commande
 
 # Run with custom port
-test/hurl/run_with_server.sh --port=9000 gui/fourn/commande
+test/hurl/run.sh --port=9000 gui/fourn/commande
 ```
 
 #### Using run.sh Directly

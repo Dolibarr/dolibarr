@@ -1458,25 +1458,124 @@ function getModuleBuilderObjectTabs()
 }
 
 /**
- * Filter a list of requested tab keys against the known optional tabs map.
+ * Return the map of optional action buttons that can be generated on the card page of a
+ * ModuleBuilder object. The "Modify" button is not listed on purpose: a generated card
+ * without it could not be edited any more.
+ *
+ * 'mode' drives the generation: 'remove' means the block is present in the template and is
+ * dropped when the action is not selected, 'activate' means the block ships commented out in
+ * the template and is uncommented when the action is selected.
+ *
+ * @return	array<string,array{marker:string,label:string,default:int,mode:string}>	Map: action key => metadata
+ */
+function getModuleBuilderObjectCardActions()
+{
+	return array(
+		'sendmail'     => array('marker' => 'SENDMAIL',     'label' => 'SendMail',        'default' => 1, 'mode' => 'remove'),
+		'clone'        => array('marker' => 'CLONE',        'label' => 'ToClone',         'default' => 1, 'mode' => 'remove'),
+		'validate'     => array('marker' => 'VALIDATE',     'label' => 'Validate',        'default' => 1, 'mode' => 'remove'),
+		'setdraft'     => array('marker' => 'SETDRAFT',     'label' => 'SetToDraft',      'default' => 1, 'mode' => 'remove'),
+		'statuschange' => array('marker' => 'STATUSCHANGE', 'label' => 'CancelAndReopen', 'default' => 0, 'mode' => 'activate'),
+		'delete'       => array('marker' => 'DELETE',       'label' => 'Delete',          'default' => 1, 'mode' => 'remove'),
+	);
+}
+
+/**
+ * Return the keys enabled by default in a ModuleBuilder generation map.
+ * An entry without a 'default' index is considered enabled.
+ *
+ * @param	array<string,array<string,mixed>>	$map	Map of known elements, keyed by element key
+ * @return	string[]	Keys enabled by default, in map order
+ */
+function getModuleBuilderDefaultEnabledKeys($map)
+{
+	$defaults = array();
+	foreach ($map as $key => $meta) {
+		if (!isset($meta['default']) || !empty($meta['default'])) {
+			$defaults[] = $key;
+		}
+	}
+	return $defaults;
+}
+
+/**
+ * Build the regular expression matching every block of a card action in the object card template.
+ * A marker can anchor several non-contiguous blocks: the pattern is non greedy and is meant to be
+ * used with removePatternFromFile(), which replaces all the occurrences at once.
+ *
+ * @param	string	$marker	Marker of the action, from getModuleBuilderObjectCardActions()
+ * @return	string	Regular expression matching the whole block, delimiters included
+ */
+function getModuleBuilderCardActionBlockPattern($marker)
+{
+	$quotedmarker = preg_quote($marker, '/');
+	// The trailing \R must not be a \s*: that would also eat the indentation of the next line
+	return '/\h*\/\/ BEGIN MODULEBUILDER ACTION '.$quotedmarker.'.*?\/\/ END MODULEBUILDER ACTION '.$quotedmarker.'\h*\R(?:\h*\R)?/s';
+}
+
+/**
+ * Build the regular expressions removing the comment fence of a card action generated in 'activate'
+ * mode. Removing both sentinel lines turns the commented block into live code.
+ *
+ * @param	string	$marker	Marker of the action, from getModuleBuilderObjectCardActions()
+ * @return	string[]	Regular expressions, to apply in order
+ */
+function getModuleBuilderCardActionUncommentPatterns($marker)
+{
+	$quotedmarker = preg_quote($marker, '/');
+	// \R and not \n, to stay aligned with getModuleBuilderCardActionBlockPattern()
+	return array(
+		'/\h*\/\* BEGIN COMMENTED '.$quotedmarker.'\h*\R/',
+		'/\h*END COMMENTED '.$quotedmarker.'\h*\*\/\h*\R/',
+	);
+}
+
+/**
+ * Return the regular expression matching a block of object lines code in the templates, used when
+ * the user asks not to manage lines on the generated object.
+ * The pattern is non greedy, so the BEGIN/END markers of a file must be balanced and never nested:
+ * a nested pair makes the outer BEGIN match the inner END and cuts an unbalanced fragment.
+ *
+ * @return	string	Regular expression, usable with removePatternFromFile()
+ */
+function getModuleBuilderLinesBlockPattern()
+{
+	return '/\/\/BEGIN MODULEBUILDER LINES.*?\/\/END MODULEBUILDER LINES\s*/s';
+}
+
+/**
+ * Filter a list of requested keys against a known map of generable elements.
  * Protects against injection of unknown keys, removes duplicates, normalizes order.
  *
- * @param	string[]	$requested	Raw tab keys requested by the user (e.g. from GETPOST array)
- * @param	array<string,array{file:string,var:string,marker:string,label:string}>	$map	Map from getModuleBuilderObjectTabs()
- * @return	string[]	Sanitized list of valid tab keys, in map order
+ * @param	string[]|string	$requested	Raw keys requested by the user (e.g. from GETPOST array)
+ * @param	array<string,array<string,mixed>>	$map	Map of known elements, keyed by element key
+ * @return	string[]	Sanitized list of valid keys, in map order
  */
-function filterEnabledTabs($requested, $map)
+function filterEnabledKeys($requested, $map)
 {
 	$valid = array();
 	if (!is_array($requested) || empty($requested)) {
 		return $valid;
 	}
-	foreach (array_keys($map) as $tabkey) {
-		if (in_array($tabkey, $requested, true)) {
-			$valid[] = $tabkey;
+	foreach (array_keys($map) as $key) {
+		if (in_array($key, $requested, true)) {
+			$valid[] = $key;
 		}
 	}
 	return $valid;
+}
+
+/**
+ * Filter a list of requested tab keys against the known optional tabs map.
+ * Protects against injection of unknown keys, removes duplicates, normalizes order.
+ *
+ * @param	string[]|string	$requested	Raw tab keys requested by the user (e.g. from GETPOST array)
+ * @param	array<string,array{file:string,var:string,marker:string,label:string}>	$map	Map from getModuleBuilderObjectTabs()
+ * @return	string[]	Sanitized list of valid tab keys, in map order
+ */
+function filterEnabledTabs($requested, $map)
+{
+	return filterEnabledKeys($requested, $map);
 }
 
 /**

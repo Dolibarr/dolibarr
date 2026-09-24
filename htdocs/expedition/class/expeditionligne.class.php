@@ -161,6 +161,12 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $entrepot_id;
 
+	/**
+	 * @var int|null Id of warehouse, also exposed as entrepot_id
+	 * @deprecated Use $entrepot_id
+	 */
+	public $fk_entrepot;
+
 
 	/**
 	 * @var float qty asked From llx_commandedet or llx_propaldet
@@ -335,7 +341,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.description, ed.fk_unit, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang, ed.extraparams';
+		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_product, ed.fk_parent, ed.description, ed.fk_unit, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang, ed.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
 		$sql .= ' WHERE ed.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
@@ -344,6 +350,9 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->id = $objp->rowid;
 			$this->fk_expedition = $objp->fk_expedition;
 			$this->entrepot_id = $objp->fk_entrepot;
+			$this->fk_entrepot = $objp->fk_entrepot;
+			$this->fk_product = $objp->fk_product;
+			$this->fk_parent = $objp->fk_parent;
 			$this->description = $objp->description;
 			$this->fk_unit = $objp->fk_unit;
 			$this->fk_elementdet = $objp->fk_elementdet;

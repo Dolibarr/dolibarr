@@ -34,7 +34,6 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', 1);
 }
