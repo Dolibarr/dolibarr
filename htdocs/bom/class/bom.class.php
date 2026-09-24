@@ -1424,7 +1424,11 @@ class BOM extends CommonObject
 				$tmpproduct->pmp = 0;
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 
-				$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
+				// Fix #38378: the previous is_null() check did not catch cost_price = "0.00000000"
+				// (the DDL default returned as a non-null string by mysqlnd), so unit_cost was forced
+				// to 0 instead of falling back to PMP. Use (double) cast inside empty() so the check
+				// evaluates the numeric value: "0.00000000" -> 0.0 -> empty() true -> PMP fallback.
+				$unit_cost = (float) (!empty((double) $tmpproduct->cost_price) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 				if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
 					if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 						if ($productFournisseur->fourn_remise_percent != "0") {
