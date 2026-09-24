@@ -331,13 +331,58 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *	Return the amount of payments already done for several invoices, with one query. Same rule as getSommePaiement(): only the
+	 *  records of the payment table, the discounts, credit notes and deposits used are not included. For a list page, where
+	 *  getSommePaiement() would mean one query per row.
+	 *
+	 *	@param	DoliDB		$dbs			Database handler (not named $db: this is a static method, and a .class.php file must use
+	 *										$this->db, never a bare $db, checked by CodingPhpTest)
+	 *	@param	int[]		$invoiceids		Ids of the invoices
+	 *	@param	int<0,1>	$supplier		0=Customer invoices, 1=Supplier invoices
+	 *	@return	array<int,array{alreadypaid:float,alreadypaid_multicurrency:float}>	Amounts by invoice id (no entry for an invoice without payment), empty array if KO
+	 *  @see getSommePaiement()
+	 */
+	public static function getSommePaiementForIds($dbs, $invoiceids, $supplier = 0)
+	{
+		$ret = [];
+
+		$invoiceids = array_filter(array_map('intval', $invoiceids));
+		if (empty($invoiceids)) {
+			return $ret;
+		}
+
+		// Sanitized into their own variables (named so both the phan SqlInjection plugin and CodingPhpTest recognize them as safe):
+		// this is a static method, so the calls below can not be $this->db->sanitize(), the only form both checks otherwise accept.
+		$sanitizedtable = $dbs->sanitize($supplier ? 'paiementfourn_facturefourn' : 'paiement_facture');
+		$sanitizedfield = $dbs->sanitize($supplier ? 'fk_facturefourn' : 'fk_facture');
+		$sanitizedids = $dbs->sanitize(implode(',', $invoiceids));
+
+		$sql = "SELECT ".$sanitizedfield." as fk_invoice, sum(amount) as amount, sum(multicurrency_amount) as multicurrency_amount";
+		$sql .= " FROM ".$dbs->prefix().$sanitizedtable;
+		$sql .= " WHERE ".$sanitizedfield." IN (".$sanitizedids.")";
+		$sql .= " GROUP BY ".$sanitizedfield;
+
+		$resql = $dbs->query($sql);
+		if (!$resql) {
+			dol_syslog(__METHOD__." ".$dbs->lasterror(), LOG_ERR);
+			return $ret;
+		}
+		while ($obj = $dbs->fetch_object($resql)) {
+			$ret[(int) $obj->fk_invoice] = ['alreadypaid' => (float) $obj->amount, 'alreadypaid_multicurrency' => (float) $obj->multicurrency_amount];
+		}
+		$dbs->free($resql);
+
+		return $ret;
+	}
+
+	/**
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments done using discounts, credit notes, etc are not included.
 	 *  This also set ->totalpaid and ->totalpaid_multicurrency
 	 *
 	 *  @param 		int<-1,1>		$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
 	 *	@return		float|int|array{alreadypaid:float,alreadypaid_multicurrency:float}	Amount of payment already done, <0 and set ->error if KO
-	 *  @see getSumDepositsUsed(), getSumCreditNotesUsed()
+	 *  @see getSumDepositsUsed(), getSumCreditNotesUsed(), getSommePaiementForIds()
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{

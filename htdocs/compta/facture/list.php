@@ -2302,8 +2302,24 @@ if ($num > 0) {
 	$total_margin = 0;
 
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
+
+	// The rows are read first, so that the payments, credit notes and deposits used are summed with one query per kind for the
+	// whole page, instead of 6 queries per row (getSommePaiement(), getSumCreditNotesUsed() and getSumDepositsUsed(), each in
+	// both currencies).
+	$rows = [];
+	while (count($rows) < $imaxinloop && ($objrow = $db->fetch_object($resql))) {
+		$rows[] = $objrow;
+	}
+	$invoiceids = [];
+	foreach ($rows as $objrow) {
+		$invoiceids[] = (int) $objrow->id;
+	}
+	$sumpaidbyinvoice = CommonInvoice::getSommePaiementForIds($db, $invoiceids);
+	$sumcreditnotesbyinvoice = $discount->getSumDiscountsUsedForIds($invoiceids, 'creditnotes');
+	$sumdepositsbyinvoice = $discount->getSumDiscountsUsedForIds($invoiceids, 'deposits');
+
 	while ($i < $imaxinloop) {
-		$obj = $db->fetch_object($resql);
+		$obj = (isset($rows[$i]) ? $rows[$i] : null);
 		if (empty($obj)) {
 			break; // Should not happen
 		}
@@ -2370,15 +2386,20 @@ if ($num > 0) {
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;
 
-		$paiement = $facturestatic->getSommePaiement();
-		$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
-		$totaldeposits = $facturestatic->getSumDepositsUsed();
+		// Sums computed above for the whole page (an invoice without any payment or discount used has no entry)
+		$paiement = (isset($sumpaidbyinvoice[$obj->id]) ? $sumpaidbyinvoice[$obj->id]['alreadypaid'] : 0);
+		$totalcreditnotes = (isset($sumcreditnotesbyinvoice[$obj->id]) ? $sumcreditnotesbyinvoice[$obj->id]['amount'] : 0);
+		$totaldeposits = (isset($sumdepositsbyinvoice[$obj->id]) ? $sumdepositsbyinvoice[$obj->id]['amount'] : 0);
 		$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
 		$remaintopay = $obj->total_ttc - $totalallpayments;
 
-		$multicurrency_paiement = $facturestatic->getSommePaiement(1);
-		$multicurrency_totalcreditnotes = $facturestatic->getSumCreditNotesUsed(1);
-		$multicurrency_totaldeposits = $facturestatic->getSumDepositsUsed(1);
+		$multicurrency_paiement = (isset($sumpaidbyinvoice[$obj->id]) ? $sumpaidbyinvoice[$obj->id]['alreadypaid_multicurrency'] : 0);
+		$multicurrency_totalcreditnotes = (isset($sumcreditnotesbyinvoice[$obj->id]) ? $sumcreditnotesbyinvoice[$obj->id]['multicurrency_amount'] : 0);
+		$multicurrency_totaldeposits = (isset($sumdepositsbyinvoice[$obj->id]) ? $sumdepositsbyinvoice[$obj->id]['multicurrency_amount'] : 0);
+		// The methods replaced above also set these properties, used by the tooltip of the invoice link
+		$facturestatic->totalpaid_multicurrency = $multicurrency_paiement;
+		$facturestatic->totalcreditnotes_multicurrency = $multicurrency_totalcreditnotes;
+		$facturestatic->totaldeposits_multicurrency = $multicurrency_totaldeposits;
 
 		$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
 		$remaintopay = price2num($facturestatic->total_ttc - $totalallpayments);

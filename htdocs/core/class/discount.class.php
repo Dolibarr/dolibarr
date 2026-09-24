@@ -787,11 +787,66 @@ class DiscountAbsolute extends CommonObject
 	}
 
 	/**
+	 *  Return, for several invoices with one query, the amount (with tax) of the discounts of a kind used as a payment: the credit
+	 *  notes and excess received (same rule as getSumCreditNotesUsed()) or the deposits (same rule as getSumDepositsUsed()). For a
+	 *  list page, where the methods above would mean one query per row.
+	 *
+	 *	@param	int[]							$invoiceids		Ids of the invoices
+	 *	@param	'creditnotes'|'deposits'		$kind			Kind of discounts to sum
+	 *	@param	int<0,1>						$supplier		0=Customer invoices, 1=Supplier invoices
+	 *	@return	array<int,array{amount:float,multicurrency_amount:float}>	Amounts by invoice id (no entry for an invoice without such discount), empty array if KO
+	 *  @see getSumCreditNotesUsed(), getSumDepositsUsed()
+	 */
+	public function getSumDiscountsUsedForIds($invoiceids, $kind, $supplier = 0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+
+		$ret = [];
+
+		$invoiceids = array_filter(array_map('intval', $invoiceids));
+		if (empty($invoiceids)) {
+			return $ret;
+		}
+
+		if ($kind == 'deposits') {
+			$types = [CommonInvoice::TYPE_DEPOSIT];
+		} elseif ($supplier) {
+			$types = [CommonInvoice::TYPE_STANDARD, CommonInvoice::TYPE_CREDIT_NOTE];
+		} else {
+			$types = [CommonInvoice::TYPE_STANDARD, CommonInvoice::TYPE_CREDIT_NOTE, CommonInvoice::TYPE_SITUATION];
+		}
+
+		$table = ($supplier ? 'facture_fourn' : 'facture');
+		$fieldsource = ($supplier ? 'fk_invoice_supplier_source' : 'fk_facture_source');
+		$fieldinvoice = ($supplier ? 'fk_invoice_supplier' : 'fk_facture');
+
+		$sql = "SELECT rc.".$this->db->sanitize($fieldinvoice)." as fk_invoice, sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+		$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix().$this->db->sanitize($table)." as f";
+		$sql .= " WHERE rc.".$this->db->sanitize($fieldsource)." = f.rowid AND rc.".$this->db->sanitize($fieldinvoice)." IN (".$this->db->sanitize(implode(',', $invoiceids)).")";
+		$sql .= " AND f.type IN (".$this->db->sanitize(implode(',', $types)).")";
+		$sql .= " GROUP BY rc.".$this->db->sanitize($fieldinvoice);
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__." ".$this->error, LOG_ERR);
+			return $ret;
+		}
+		while ($obj = $this->db->fetch_object($resql)) {
+			$ret[(int) $obj->fk_invoice] = ['amount' => (float) $obj->amount, 'multicurrency_amount' => (float) $obj->multicurrency_amount];
+		}
+		$this->db->free($resql);
+
+		return $ret;
+	}
+
+	/**
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice as a payment
 	 *
 	 *	@param      CommonInvoice	  $invoice	    	Object invoice
 	 *	@param      int<-1,1>	      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
 	 *	@return     float|string		        		Return string 'Error...' if KO, Sum of credit notes and excess received amount otherwise
+	 *  @see getSumDiscountsUsedForIds()
 	 */
 	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
 	{
