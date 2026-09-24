@@ -347,33 +347,71 @@ class modHoliday extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		global $langs;
 		// Permissions
 		$this->remove($options);
-
-		//ODT template
-		/*$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/holiday/template_holiday.odt';
-		$dirodt=DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/holiday';
-		$dest=$dirodt.'/template_order.odt';
-
-		if (file_exists($src) && ! file_exists($dest))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_mkdir($dirodt);
-			$result=dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
-				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
-				return 0;
-			}
-		}
-		*/
 
 		$sql = array(
 			//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".((int) $conf->entity),
 			//	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','holiday',".((int) $conf->entity).")"
 		);
 
-		return $this->_init($sql, $options);
+		$res = $this->_init($sql, $options);
+
+		if ($res < 0) {
+			return -1;
+		}
+
+		$error = 0;
+		$entity = getEntity('c_holiday_types');
+		$data_to_insert = array(
+			array(
+				'code'    => 'LEAVE_MATERNITY',
+				'label'   => 'Maternity leave',
+				'affect'  => 0,
+				'delay'   => 0,
+				'newbymonth' => 0,
+				'sortorder' => 2,
+				'active'  => 1
+			),
+			array(
+				'code'    => 'LEAVE_PATERNITY',
+				'label'   => 'Paternity leave',
+				'affect'  => 0,
+				'delay'   => 0,
+				'newbymonth' => 0,
+				'sortorder' => 2,
+				'active'  => 1
+			)
+		);
+
+		foreach ($data_to_insert as $row) {
+			$sql_check = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."c_holiday_types WHERE code = '".$this->db->escape($row['code'])."' AND entity = ".(int) $entity;
+
+			$resql_check = $this->db->query($sql_check);
+			if ($resql_check) {
+				$obj = $this->db->fetch_object($resql_check);
+				$nb = (int) $obj->nb;
+
+				if ($nb == 0) {
+					$sql_insert = "INSERT INTO ".MAIN_DB_PREFIX."c_holiday_types (entity, code, label, affect, delay, newbymonth, fk_country, sortorder, active) ";
+					$sql_insert .= "VALUES (".(int) $entity.", '".$this->db->escape($row['code'])."', '".$this->db->escape($row['label'])."', ".((int) $row['affect']).", ".((int) $row['delay']).", ".((int) $row['newbymonth']).", NULL, ".((int) $row['sortorder']).", ".((int) $row['active']).")";
+
+					$resql_insert = $this->db->query($sql_insert);
+
+					if ($resql_insert) {
+						dol_syslog("modHoliday::init Adding holiday type into " . MAIN_DB_PREFIX . "c_holiday_types: code=" . $row['code'] . ", label=" . $row['label'], LOG_INFO);
+					} else {
+						$error++;
+						$this->error = $langs->trans("ErrorSQL", $this->db->error());
+					}
+				}
+			} else {
+				$error++;
+				$this->error = $langs->trans("ErrorRefNotFound", $row['code']);
+			}
+		}
+
+		return ($error > 0) ? 0 : 1;
 	}
 }
