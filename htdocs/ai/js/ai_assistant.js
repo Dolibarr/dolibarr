@@ -1264,9 +1264,12 @@ export function initAiAssistant(container) {
         return avatar;
     }
 
-    function appendMsg(type, html, actions = null, rawText = null) {
+    function appendMsg(type, html, actions = null, rawText = null, opts = {}) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
+        // A provider failure ("service overloaded, retry") is noise as context:
+        // such a bubble starts, and stays, out of the window (still pinnable).
+        if (opts && opts.error) div.dataset.aiError = '1';
 
         if (type === 'user' || type === 'bot') {
             // Row layout: avatar + bubble (CSS reverses the row for the user)
@@ -1284,7 +1287,7 @@ export function initAiAssistant(container) {
                 pin.type = 'button';
                 pin.className = 'ctx-pin';
                 pin.title = t('AIContextPinOff');
-                pin.innerHTML = '<span class="fa fa-thumbtack"></span>';
+                pin.innerHTML = '<span class="far fa-square"></span>';
                 pin.onclick = (ev) => {
                     ev.stopPropagation();
                     toggleContextPin(div);
@@ -1352,9 +1355,9 @@ export function initAiAssistant(container) {
         if (clarInput) clarInput.focus();
     }
 
-    function handleResponse(message) {
+    function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
-        appendMsg('bot', renderMarkdownLite(message), null, message);
+        appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
     }
 
     function handleConfirmation(action, details, originalIntent) {
@@ -1582,11 +1585,15 @@ export function initAiAssistant(container) {
         msgs.forEach((m, i) => {
             const inWindow = i >= windowStart;
             const state = m.dataset.ctx || '';
-            const on = state === 'on' || (state === '' && inWindow);
+            const on = state === 'on' || (state === '' && inWindow && !m.dataset.aiError);
             m.dataset.ctxWindow = inWindow ? '1' : '';
             m.classList.toggle('ctx-pinned', on);
             const pin = m.querySelector('.ctx-pin');
-            if (pin) pin.title = on ? t('AIContextPinOn') : t('AIContextPinOff');
+            if (pin) {
+                // The glyph is a checkbox: checked = travels with the next question.
+                pin.innerHTML = '<span class="far ' + (on ? 'fa-check-square' : 'fa-square') + '"></span>';
+                pin.title = on ? t('AIContextPinOn') : t('AIContextPinOff');
+            }
         });
         updateContextBar();
     }
@@ -1604,7 +1611,7 @@ export function initAiAssistant(container) {
         const on = div.classList.contains('ctx-pinned');
         const inWindow = div.dataset.ctxWindow === '1';
         if (on) div.dataset.ctx = inWindow ? 'off' : '';
-        else div.dataset.ctx = inWindow ? '' : 'on';
+        else div.dataset.ctx = (inWindow && !div.dataset.aiError) ? '' : 'on';
         refreshContext();
     }
 
@@ -1643,7 +1650,7 @@ export function initAiAssistant(container) {
         // "Auto (3)" is lit as long as every bubble simply follows the window
         // (no manual pin, no exclusion): one glance says which mode is on.
         const isDefault = past.every((m) => !m.dataset.ctx);
-        bar.innerHTML = '<span class="fa fa-thumb-tack"></span> ' +
+        bar.innerHTML = '<span class="far fa-check-square"></span> ' +
             t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
             ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double"></span> ' + t('AIContextAll') + '</a>' +
@@ -1757,7 +1764,7 @@ export function initAiAssistant(container) {
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
             if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
+            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'generate_navigation_url') {
                 appendMsg('system', t('GeneratingLink'));
