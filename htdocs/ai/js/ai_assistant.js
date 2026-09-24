@@ -1283,7 +1283,7 @@ export function initAiAssistant(container) {
                 const pin = document.createElement('button');
                 pin.type = 'button';
                 pin.className = 'ctx-pin';
-                pin.title = t('AIContextPin');
+                pin.title = t('AIContextPinOff');
                 pin.innerHTML = '<span class="fa fa-thumbtack"></span>';
                 pin.onclick = (ev) => {
                     ev.stopPropagation();
@@ -1570,7 +1570,7 @@ export function initAiAssistant(container) {
         // The question being answered is the query itself, never context: it
         // waits outside the window until its answer arrives.
         const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
-        if (pending) { pending.classList.remove('ctx-pinned', 'ctx-auto'); pending.dataset.ctxWindow = ''; }
+        if (pending) { pending.classList.remove('ctx-pinned'); pending.dataset.ctxWindow = ''; }
         let windowStart = msgs.length;
         if (AUTO_CONTEXT > 0) {
             let questions = 0;
@@ -1585,9 +1585,8 @@ export function initAiAssistant(container) {
             const on = state === 'on' || (state === '' && inWindow);
             m.dataset.ctxWindow = inWindow ? '1' : '';
             m.classList.toggle('ctx-pinned', on);
-            m.classList.toggle('ctx-auto', on && state === '');
             const pin = m.querySelector('.ctx-pin');
-            if (pin) pin.title = on ? (state === '' ? t('AIContextPinAuto') : t('AIContextPin')) : (inWindow ? t('AIContextPinOff') : t('AIContextPin'));
+            if (pin) pin.title = on ? t('AIContextPinOn') : t('AIContextPinOff');
         });
         updateContextBar();
     }

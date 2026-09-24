@@ -804,8 +804,7 @@ function getAiChatAssistantConfig()
 		'AISessionExpiredReload',
 
 		// Context pins
-		'AIContextPin',
-		'AIContextPinAuto',
+		'AIContextPinOn',
 		'AIContextPinOff',
 		'AIContextCounter',
 		'AIContextAuto',
