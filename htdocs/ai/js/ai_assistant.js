@@ -1641,11 +1641,23 @@ export function initAiAssistant(container) {
             const pill = input.closest('.chat-input-pill') || input.parentElement;
             pill.insertAdjacentElement('beforebegin', bar);
         }
-        const auto = chat.querySelector('.msg.ctx-auto') ? ' <span class="opacitymedium">· ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</span>' : '';
+        // "Auto (3)" is lit as long as every bubble simply follows the window
+        // (no manual pin, no exclusion): one glance says which mode is on.
+        const isDefault = past.every((m) => !m.dataset.ctx);
         bar.innerHTML = '<span class="fa fa-thumb-tack"></span> ' +
-            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) + auto +
+            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+            (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
             ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double"></span> ' + t('AIContextAll') + '</a>' +
             ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser"></span> ' + t('AIContextClear') + '</a>';
+        const auto = bar.querySelector('#ai-ctx-auto');
+        if (auto) {
+            auto.onclick = (ev) => {
+                ev.preventDefault();
+                // Auto = back to the default: every bubble follows the window again.
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; persistPinState(m); });
+                refreshContext();
+            };
+        }
         const all = bar.querySelector('#ai-ctx-all');
         if (all) {
             all.onclick = (ev) => {
