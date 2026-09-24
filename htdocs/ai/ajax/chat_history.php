@@ -153,7 +153,9 @@ try {
 			throw new Exception('Conversation not found');
 		}
 		if ($convid <= 0) {
-			$title = dol_trunc(($role === 'user' && $raw !== '') ? $raw : 'Conversation', 60, 'right', 'UTF-8', 1);
+			// The whole first question (the list truncates it with an ellipsis, the
+			// hover preview shows it in full); 250 keeps under the column's 255.
+			$title = dol_trunc(preg_replace('/\s+/', ' ', ($role === 'user' && $raw !== '') ? $raw : 'Conversation'), 250, 'right', 'UTF-8', 1);
 			$sql = "INSERT INTO ".$db->prefix()."ai_chat_conversation (entity, fk_user, title, date_creation)";
 			$sql .= " VALUES (".((int) $conf->entity).", ".((int) $user->id).", '".$db->escape($title)."', '".$db->idate(dol_now())."')";
 			if (!$db->query($sql)) {

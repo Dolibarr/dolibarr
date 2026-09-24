@@ -1139,6 +1139,13 @@ body.ai-fullpage {
     .ai-history-sidebar { position: absolute; left: 0; top: 0; bottom: 0; z-index: 1150; box-shadow: 4px 0 16px rgba(0,0,0,.12); background: var(--ai-surface, #fff); }
 }
 
+/* Hover preview card of a past conversation (column and popover panel) */
+.ai-conv-preview { position: fixed; z-index: 1300; width: 340px; max-height: 60vh; overflow: hidden; background: var(--ai-surface, #fff); color: var(--ai-text, #222); border: 1px solid var(--ai-border, #d0d5e0); border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 8px 10px; font-size: .85em; pointer-events: none; }
+.ai-conv-preview-head { opacity: .6; font-size: .9em; margin-bottom: 6px; }
+.ai-conv-preview-msg { padding: 4px 0; border-top: 1px solid rgba(0,0,0,.05); }
+.ai-conv-preview-msg b { color: #2c62ac; margin-right: 4px; }
+.ai-conv-preview-msg.bot b { color: #555; }
+
 /* --- Conversation history panel --- */
 #ai-history-panel { position: absolute; top: 44px; right: 8px; z-index: 1200; width: 320px; max-height: 55%; overflow-y: auto; background: #fff; border: 1px solid #d0d0d8; border-radius: 8px; box-shadow: 0 6px 24px rgba(0,0,0,.18); padding: 6px; }
 .ai-history-item { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 6px; cursor: pointer; }

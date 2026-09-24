@@ -825,6 +825,8 @@ function getAiChatAssistantConfig()
 		'AIHistoryDelete',
 		'AIHideConversations',
 		'AIShowConversations',
+		'AIYou',
+		'AIAssistant',
 		'AIHistoryEmpty',
 
 		// Actions & Dialogs

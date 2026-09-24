@@ -119,7 +119,7 @@ export function initAiAssistant(container) {
             raw: String(rawText).slice(0, 8000), html: String(html).slice(0, 200000),
             pinned: (div.dataset.ctx === 'on') ? 1 : 0
         }).then((res) => {
-            if (res && res.id) setConversationId(res.id);
+            if (res && res.id) { setConversationId(res.id); delete previewCache[res.id]; }
             if (res && res.message_id) div.dataset.msgId = String(res.message_id);
         })).catch(() => { /* history is best-effort, the chat must never break on it */ });
     }
@@ -1530,6 +1530,7 @@ export function initAiAssistant(container) {
                         chatHistoryApi({ action: 'delete', id: c.id }).then(() => { row.remove(); if (conversationId === c.id) setConversationId(0); });
                     };
                     row.onclick = () => { panel.remove(); loadConversation(c.id); };
+                    attachConversationPreview(row, c);
                     panel.appendChild(row);
                 });
             }).catch(() => { panel.innerHTML = '<div class="opacitymedium">' + t('AIError') + '</div>'; });
@@ -1539,6 +1540,57 @@ export function initAiAssistant(container) {
             const panel = container.querySelector('#ai-history-panel');
             if (panel && !panel.contains(ev.target) && ev.target !== historyBtn) panel.remove();
         });
+    }
+
+    // --- Hover preview of a past conversation (column and popover panel alike):
+    // the whole thread, fetched once per conversation and cached, shown in a
+    // floating card next to the hovered row. ---
+    const previewCache = {};
+    let previewEl = null;
+    let previewTimer = null;
+    function hideConversationPreview() {
+        clearTimeout(previewTimer);
+        if (previewEl) { previewEl.remove(); previewEl = null; }
+    }
+    function showConversationPreview(row, c, messages) {
+        hideConversationPreview();
+        const card = document.createElement('div');
+        card.className = 'ai-conv-preview';
+        let html = '<div class="ai-conv-preview-head">' + escapeHtml(c.date || '') + ' · ' + escapeHtml(String(c.nb || messages.length)) + '</div>';
+        messages.forEach((m) => {
+            const who = (m.role === 'assistant') ? t('AIAssistant') : t('AIYou');
+            const text = String(m.raw || '').replace(/\s+/g, ' ').trim();
+            html += '<div class="ai-conv-preview-msg ' + (m.role === 'assistant' ? 'bot' : 'user') + '"><b>' + escapeHtml(who) + '</b> ' + escapeHtml(text.length > 300 ? text.slice(0, 300) + '…' : text) + '</div>';
+        });
+        card.innerHTML = html;
+        document.body.appendChild(card);
+        // Next to the row: right of a column row, left of a popover panel row; clamped to the viewport.
+        const r = row.getBoundingClientRect();
+        const cw = card.offsetWidth, ch = card.offsetHeight;
+        const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+        let left = (row.closest('#ai-history-sidebar')) ? r.right + 8 : r.left - cw - 8;
+        if (left + cw > vw - 8) left = vw - cw - 8;
+        if (left < 8) left = 8;
+        let top = r.top;
+        if (top + ch > vh - 8) top = Math.max(8, vh - ch - 8);
+        card.style.left = left + 'px';
+        card.style.top = top + 'px';
+        previewEl = card;
+    }
+    function attachConversationPreview(row, c) {
+        row.addEventListener('mouseenter', () => {
+            clearTimeout(previewTimer);
+            previewTimer = setTimeout(() => {
+                if (previewCache[c.id]) { showConversationPreview(row, c, previewCache[c.id]); return; }
+                chatHistoryApi({ action: 'load', id: c.id }).then((res) => {
+                    if (!res || !res.messages) return;
+                    previewCache[c.id] = res.messages;
+                    if (row.matches(':hover')) showConversationPreview(row, c, res.messages);
+                }).catch(() => {});
+            }, 350);
+        });
+        row.addEventListener('mouseleave', hideConversationPreview);
+        row.addEventListener('click', hideConversationPreview);
     }
 
     // --- Full page: permanent conversations column (like the mainstream chat UIs) ---
@@ -1571,7 +1623,6 @@ export function initAiAssistant(container) {
                     }
                     const row = document.createElement('div');
                     row.className = 'ai-sidebar-item' + (c.id === conversationId ? ' active' : '');
-                    row.title = c.title || '';
                     row.innerHTML = '<span class="ai-sidebar-title">' + escapeHtml(c.title || '…') + '</span>'
                         + '<button type="button" class="ai-sidebar-del" title="' + escapeHtml(t('AIHistoryDelete')) + '"><i class="fa fa-trash-alt"></i></button>';
                     row.querySelector('.ai-sidebar-del').onclick = (e2) => {
@@ -1581,6 +1632,7 @@ export function initAiAssistant(container) {
                         }).catch(() => {});
                     };
                     row.onclick = () => { if (c.id !== conversationId) loadConversation(c.id); };
+                    attachConversationPreview(row, c);
                     list.appendChild(row);
                 });
             }).catch(() => { list.innerHTML = '<div class="opacitymedium ai-sidebar-empty">' + t('AIError') + '</div>'; });

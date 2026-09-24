@@ -524,6 +524,7 @@ AIHistoryOlder=Older
 AIHistoryDelete=Delete this conversation
 AIHideConversations=Hide the conversations column
 AIShowConversations=Show the conversations column
+AIYou=You
 EmptyAIResponse=Empty AI Response
 BrowserNotSupported=Browser is not supported
 YesProceed=Yes Proceed
