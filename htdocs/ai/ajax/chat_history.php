@@ -114,7 +114,7 @@ try {
 		if (!aiChatOwnsConversation($db, $user, $convid)) {
 			throw new Exception('Conversation not found');
 		}
-		$sql = "SELECT rowid, role, content_raw, content_html, tool_name, pinned FROM ".$db->prefix()."ai_chat_message";
+		$sql = "SELECT rowid, role, content_raw, content_html, tool_name, pinned, is_error FROM ".$db->prefix()."ai_chat_message";
 		$sql .= " WHERE fk_conversation = ".((int) $convid)." ORDER BY position, rowid";
 		$resql = $db->query($sql);
 		$out['id'] = $convid;
@@ -127,6 +127,7 @@ try {
 				'html' => (string) $obj->content_html,
 				'tool' => (string) $obj->tool_name,
 				'pinned' => (int) $obj->pinned,
+				'error' => (int) $obj->is_error,
 			);
 		}
 	} elseif ($action === 'save') {
@@ -136,6 +137,7 @@ try {
 		$html = (string) ($input['html'] ?? '');
 		$toolname = dol_trunc((string) ($input['tool'] ?? ''), 250, 'right', 'UTF-8', 1);
 		$pinned = empty($input['pinned']) ? 0 : 1;
+		$iserror = empty($input['error']) ? 0 : 1;   // provider failure: never context by default
 		if ($raw === '' && $html === '') {
 			throw new Exception('Empty message');
 		}
@@ -169,8 +171,8 @@ try {
 		$objpos = $resql ? $db->fetch_object($resql) : null;
 		$position = $objpos ? ((int) $objpos->maxpos + 1) : 1;
 
-		$sql = "INSERT INTO ".$db->prefix()."ai_chat_message (fk_conversation, role, content_raw, content_html, tool_name, pinned, position, datec)";
-		$sql .= " VALUES (".((int) $convid).", '".$db->escape($role)."', '".$db->escape($raw)."', '".$db->escape($html)."', '".$db->escape($toolname)."', ".((int) $pinned).", ".((int) $position).", '".$db->idate(dol_now())."')";
+		$sql = "INSERT INTO ".$db->prefix()."ai_chat_message (fk_conversation, role, content_raw, content_html, tool_name, pinned, is_error, position, datec)";
+		$sql .= " VALUES (".((int) $convid).", '".$db->escape($role)."', '".$db->escape($raw)."', '".$db->escape($html)."', '".$db->escape($toolname)."', ".((int) $pinned).", ".((int) $iserror).", ".((int) $position).", '".$db->idate(dol_now())."')";
 		if (!$db->query($sql)) {
 			throw new Exception($db->lasterror());
 		}

@@ -1112,9 +1112,9 @@ body.ai-fullpage {
 #ai-ctx-bar a { margin-left: 8px; }
 #ai-ctx-bar a.ai-ctx-active { font-weight: 600; text-decoration: none; padding: 1px 6px; border-radius: 8px; background: rgba(44, 98, 172, 0.15); }
 
-/* --- Full page: conversations column on the left (page mode only) --- */
-.ai-page-layout { display: flex; align-items: stretch; width: 100%; height: 100%; }
-.ai-page-layout .ai-chat-container { flex: 1 1 auto; min-width: 0; }
+/* --- Full page: conversations column on the left, under the header (page mode only) --- */
+.ai-chat-body { display: flex; align-items: stretch; flex: 1 1 auto; min-height: 0; }
+.ai-chat-main { flex: 1 1 auto; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
 .ai-history-sidebar { flex: 0 0 260px; width: 260px; display: flex; flex-direction: column; background: rgba(44, 98, 172, 0.04); border-right: 1px solid var(--ai-border, #e3e6ee); padding: 10px 8px; box-sizing: border-box; overflow: hidden; }
 .ai-sidebar-head { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
 .ai-sidebar-new { display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; border: 1px solid var(--ai-border, #d0d5e0); background: var(--ai-surface, #fff); color: inherit; border-radius: 10px; padding: 9px 12px; cursor: pointer; font: inherit; font-weight: 600; }
@@ -1132,10 +1132,10 @@ body.ai-fullpage {
 .ai-sidebar-del:hover { opacity: 1 !important; color: #c00; }
 .ai-sidebar-empty { padding: 10px; font-size: .9em; }
 /* Collapsed: the column goes, the header history button brings it back. */
-.ai-page-layout.sidebar-collapsed .ai-history-sidebar { display: none; }
+.ai-chat-container.sidebar-collapsed .ai-history-sidebar { display: none; }
 /* On narrow screens the open column floats over the chat instead of squeezing it. */
 @media (max-width: 900px) {
-    .ai-page-layout { position: relative; }
+    .ai-chat-body { position: relative; }
     .ai-history-sidebar { position: absolute; left: 0; top: 0; bottom: 0; z-index: 1150; box-shadow: 4px 0 16px rgba(0,0,0,.12); background: var(--ai-surface, #fff); }
 }
 

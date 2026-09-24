@@ -928,19 +928,6 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 
 	$out = '';
 
-	if ($mode === 'page') {
-		// Full page: a permanent left column lists the past conversations, like
-		// the mainstream chat UIs. The popover keeps its history button + panel.
-		$out .= '<div class="ai-page-layout">';
-		$out .= '<aside id="ai-history-sidebar" class="ai-history-sidebar" aria-label="'.dol_escape_htmltag($langs->trans("AIHistory")).'">';
-		$out .= '<div class="ai-sidebar-head">';
-		$out .= '<button type="button" id="ai-new-chat" class="ai-sidebar-new"><i class="fa fa-plus"></i> '.$langs->trans("AINewConversation").'</button>';
-		$out .= '<button type="button" id="ai-sidebar-collapse" class="ai-sidebar-collapse" title="'.dol_escape_htmltag($langs->trans("AIHideConversations")).'"><i class="fa fa-angle-double-left"></i></button>';
-		$out .= '</div>';
-		$out .= '<div id="ai-sidebar-list" class="ai-sidebar-list"><div class="opacitymedium ai-sidebar-empty">…</div></div>';
-		$out .= '</aside>';
-	}
-
 	// Config travels as a data attribute: <script> tags injected via innerHTML
 	// are never executed by the browser, so a window.AI_CONFIG inline script
 	// would not work for the AJAX-loaded popover.
@@ -1005,6 +992,21 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 	}
 	$out .= '</div>';
 	$out .= '</div>';
+
+	if ($mode === 'page') {
+		// Full page: under the header, a permanent left column lists the past
+		// conversations (like the mainstream chat UIs) next to the chat itself.
+		// The popover keeps its history button + panel and a flat layout.
+		$out .= '<div class="ai-chat-body">';
+		$out .= '<aside id="ai-history-sidebar" class="ai-history-sidebar" aria-label="'.dol_escape_htmltag($langs->trans("AIHistory")).'">';
+		$out .= '<div class="ai-sidebar-head">';
+		$out .= '<button type="button" id="ai-new-chat" class="ai-sidebar-new"><i class="fa fa-plus"></i> '.$langs->trans("AINewConversation").'</button>';
+		$out .= '<button type="button" id="ai-sidebar-collapse" class="ai-sidebar-collapse" title="'.dol_escape_htmltag($langs->trans("AIHideConversations")).'"><i class="fa fa-angle-double-left"></i></button>';
+		$out .= '</div>';
+		$out .= '<div id="ai-sidebar-list" class="ai-sidebar-list"><div class="opacitymedium ai-sidebar-empty">…</div></div>';
+		$out .= '</aside>';
+		$out .= '<div class="ai-chat-main">';
+	}
 
 	// Chat History
 	$out .= '<div id="chat-history" class="chat-history">';
@@ -1071,11 +1073,12 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 
 	$out .= '<div id="status-bar"></div>';
 
-	$out .= '</div>';
-
 	if ($mode === 'page') {
-		$out .= '</div>'; // .ai-page-layout
+		$out .= '</div>'; // .ai-chat-main
+		$out .= '</div>'; // .ai-chat-body
 	}
+
+	$out .= '</div>';
 
 	return $out;
 }

@@ -24,6 +24,7 @@ create table llx_ai_chat_message
   content_html				MEDIUMTEXT,								-- Rendered bubble, sanitized server-side at save time
   tool_name					varchar(255),
   pinned					smallint DEFAULT 0,						-- Context pin state, restored on reopen
+  is_error					smallint DEFAULT 0,						-- Provider failure: never sent back as context by default
   position					integer DEFAULT 0,
   datec						datetime NOT NULL
 )ENGINE=innodb;

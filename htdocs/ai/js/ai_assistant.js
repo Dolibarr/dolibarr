@@ -117,7 +117,8 @@ export function initAiAssistant(container) {
             action: 'save', id: conversationId,
             role: (type === 'bot') ? 'assistant' : 'user',
             raw: String(rawText).slice(0, 8000), html: String(html).slice(0, 200000),
-            pinned: (div.dataset.ctx === 'on') ? 1 : 0
+            pinned: (div.dataset.ctx === 'on') ? 1 : 0,
+            error: div.dataset.aiError ? 1 : 0
         }).then((res) => {
             if (res && res.id) { setConversationId(res.id); delete previewCache[res.id]; }
             if (res && res.message_id) div.dataset.msgId = String(res.message_id);
@@ -1505,7 +1506,7 @@ export function initAiAssistant(container) {
     const pageSidebar = container.classList.contains('ai-in-popover') ? null : document.getElementById('ai-history-sidebar');
     if (historyBtn && pageSidebar) {
         // Full page: the header button shows / hides the conversations column.
-        historyBtn.addEventListener('click', (ev) => { ev.stopPropagation(); setSidebarCollapsed(!pageSidebar.parentElement.classList.contains('sidebar-collapsed')); });
+        historyBtn.addEventListener('click', (ev) => { ev.stopPropagation(); setSidebarCollapsed(!container.classList.contains('sidebar-collapsed')); });
     } else if (historyBtn) {
         historyBtn.addEventListener('click', (ev) => {
             ev.stopPropagation();
@@ -1643,7 +1644,7 @@ export function initAiAssistant(container) {
     // start collapsed (the column would eat the chat).
     function setSidebarCollapsed(collapsed) {
         if (!sidebar) return;
-        sidebar.parentElement.classList.toggle('sidebar-collapsed', collapsed);
+        container.classList.toggle('sidebar-collapsed', collapsed);
         if (historyBtn) historyBtn.title = collapsed ? t('AIShowConversations') : t('AIHideConversations');
         try { localStorage.setItem('aiSidebarCollapsed', collapsed ? '1' : '0'); } catch (e) { /* private mode: no memory, no harm */ }
     }
@@ -1671,6 +1672,7 @@ export function initAiAssistant(container) {
                 if (div) {
                     div.dataset.msgId = String(m.id);
                     if (m.pinned) div.dataset.ctx = 'on';
+                    if (m.error) div.dataset.aiError = '1';   // stays out of the window on reopen too
                 }
             });
             restoringHistory = false;
