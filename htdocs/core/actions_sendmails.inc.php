@@ -352,6 +352,8 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
 
 			$subject = make_substitutions($subject, $substitutionarray);
+			// Decode HTML entities in subject to avoid displaying &gt; instead of > in email clients
+			$subject = html_entity_decode($subject, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 			$message = make_substitutions($message, $substitutionarray);
 
 			if (is_object($object) && method_exists($object, 'makeSubstitution')) {
