@@ -385,6 +385,21 @@ if ($reshook < 0) {
 	exit;
 }
 
+// Browsers cannot display DOCX directly, so provide its text for inline previews.
+if (empty($attachment) && preg_match('/\.docx$/i', $original_file)) {
+	$textPreview = dolExtractTextFromDocxFile($fullpath_original_file_osencoded);
+	top_httphead('text/plain; charset=UTF-8');
+	header('Content-Disposition: inline; filename="'.preg_replace('/\.docx$/i', '.txt', $filename).'"');
+	header('Cache-Control: Public, must-revalidate');
+	header('Pragma: public');
+	header('Content-Length: '.strlen($textPreview));
+	if (is_object($db)) {
+		$db->close();
+	}
+	print $textPreview;
+	exit;
+}
+
 // Set this for test
 //$type = 'text/html'; $attachment = -1;
 
