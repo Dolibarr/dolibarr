@@ -97,22 +97,20 @@ if (in_array($mcp_wellknown, array('/.well-known/oauth-protected-resource', '/.w
 	);
 
 	if ($mcp_wellknown === '/.well-known/oauth-protected-resource') {
-		$mcp_document = $mcpOauth->metadataProtectedResource();
-	} else {
-		$mcp_document = $mcpOauth->metadataAuthorizationServer();
-		if ($mcp_wellknown === '/.well-known/openid-configuration') {
-			// Asked at the OpenID name, answered as OpenID expects — same
-			// split as htdocs/ai/oauth.php, and for the same reason: these
-			// three belong to the client that asked for OpenID, not to the
-			// RFC 8414 document.
-			$mcp_document['jwks_uri'] = DOL_MAIN_URL_ROOT . '/ai/oauth.php/jwks';
-			$mcp_document['subject_types_supported'] = array('public');
-			$mcp_document['id_token_signing_alg_values_supported'] = array('RS256');
-		}
+		// Served here: this document describes the resource, and the resource
+		// is the URL it was asked at, so it is consistent.
+		header('Cache-Control: no-store');
+		echo json_encode($mcpOauth->metadataProtectedResource());
+		exit;
 	}
 
-	header('Cache-Control: no-store');
-	echo json_encode($mcp_document);
+	// The authorization server documents are redirected rather than copied.
+	// They carry an issuer, and RFC 8414 section 3.3 has the client reject a
+	// document whose issuer does not match the URL it came from — which it
+	// could not, since the server lives at another address. A redirect answers
+	// the client that derived the location from this endpoint, and answers it
+	// with a document that is correct where it is served.
+	header('Location: ' . DOL_MAIN_URL_ROOT . '/ai/oauth.php' . $mcp_wellknown, true, 302);
 	exit;
 }
 

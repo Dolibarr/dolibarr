@@ -24,5 +24,8 @@ ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_entity (entity);
 -- Index for listing or revoking what a user granted
 ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_fk_user (fk_user);
 
+-- Index for the purge, which asks which clients hold no token
+ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_fk_client (fk_client);
+
 -- Index for the opportunistic purge of expired rows
 ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_expires_at (expires_at);

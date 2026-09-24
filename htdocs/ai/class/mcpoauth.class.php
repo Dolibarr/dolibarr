@@ -319,6 +319,15 @@ class McpOauth
 			return $known;
 		}
 
+		// Counted before the request goes out, not before the row is written:
+		// a document that never answers costs a worker just the same, and
+		// checking only on the way to the INSERT left that free.
+		if ($this->countRecentRegistrations(getUserRemoteIP()) >= self::REGISTRATIONS_PER_HOUR) {
+			dol_syslog('[MCP OAuth] Metadata document refused, rate limit reached for '.getUserRemoteIP(), LOG_WARNING);
+			$this->error = 'temporarily_unavailable';
+			return $known;
+		}
+
 		$document = $this->readMetadataDocument($url);
 		if ($document === null) {
 			// Keep serving a client that already worked: a document that is
@@ -349,12 +358,6 @@ class McpOauth
 			$sql .= ", tms = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $known->rowid);
 		} else {
-			if ($this->countRecentRegistrations(getUserRemoteIP()) >= self::REGISTRATIONS_PER_HOUR) {
-				dol_syslog('[MCP OAuth] Metadata document refused, registration rate limit reached for '.getUserRemoteIP(), LOG_WARNING);
-				$this->error = 'temporarily_unavailable';
-				return null;
-			}
-
 			$sql = "INSERT INTO ".$this->db->prefix()."ai_oauth_client";
 			$sql .= " (entity, client_id, client_secret_hash, client_name, redirect_uris, token_endpoint_auth_method, registered_from, datec)";
 			$sql .= " VALUES (".((int) $conf->entity);
@@ -607,9 +610,14 @@ class McpOauth
 			return null;
 		}
 
-		// One-shot, revoked before anything else can go wrong. A code that
-		// survives a failed exchange is a code that can be replayed.
-		$this->revokeToken((int) $row->rowid);
+		// One-shot, and the revocation is what claims it: whoever loses the
+		// race gets invalid_grant rather than a second set of tokens. Burned
+		// before anything else can go wrong, since a code that survives a
+		// failed exchange is a code that can be replayed.
+		if (!$this->revokeToken((int) $row->rowid)) {
+			$this->error = 'invalid_grant';
+			return null;
+		}
 
 		if (!empty($row->redirect_uri) && !hash_equals((string) $row->redirect_uri, $redirecturi)) {
 			$this->error = 'invalid_grant';
@@ -647,7 +655,10 @@ class McpOauth
 			return null;
 		}
 
-		$this->revokeToken((int) $row->rowid);
+		if (!$this->revokeToken((int) $row->rowid)) {
+			$this->error = 'invalid_grant';
+			return null;
+		}
 
 		return $this->issueTokenPair((int) $client->rowid, (int) $row->fk_user, (string) $row->scope, (string) $row->resource);
 	}
@@ -888,10 +899,23 @@ class McpOauth
 	 */
 	private function revokeToken($rowid)
 	{
+		// The WHERE carries "revoked = 0" and the caller checks how many rows
+		// it touched, so the database decides which of two concurrent requests
+		// spends the grant. Reading then writing let both through: twelve
+		// parallel exchanges of one authorization code produced five token
+		// pairs, and a stolen refresh token could be used alongside the real
+		// client for as long as it lived, which is exactly what rotation is
+		// supposed to make impossible.
 		$sql = "UPDATE ".$this->db->prefix()."ai_oauth_token";
 		$sql .= " SET revoked = 1";
 		$sql .= " WHERE rowid = ".((int) $rowid);
+		$sql .= " AND revoked = 0";
 
-		return (bool) $this->db->query($sql);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return false;
+		}
+
+		return $this->db->affected_rows($resql) == 1;
 	}
 }

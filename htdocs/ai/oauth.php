@@ -54,6 +54,14 @@ if ($mcp_route !== '/authorize') {
 		define('NOSESSION', '1');
 	}
 }
+if ($mcp_route === '/authorize') {
+	// Forces the CSRF token check on this route whatever
+	// MAIN_SECURITY_CSRF_WITH_TOKEN is set to, and even when the install sets
+	// $dolibarr_nocsrfcheck: a consent minted by a page the user merely
+	// visited is an account handed over silently. Same guard as user/perms.php
+	// and admin/modules.php.
+	define('CSRFCHECK_WITH_TOKEN', '1');
+}
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -222,6 +230,27 @@ switch ($mcp_route) {
 		if (!empty($_SERVER['PHP_AUTH_USER'])) {
 			$clientid = $_SERVER['PHP_AUTH_USER'];
 			$clientsecret = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
+		} else {
+			// PHP_AUTH_* is never filled under PHP-FPM or CGI, which is where
+			// the .htaccess next to this file republishes the header. Without
+			// reading it, client_secret_basic is advertised and dead on
+			// exactly the setups that rule exists for.
+			$authheader = '';
+			if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
+				$authheader = (string) $_SERVER['HTTP_AUTHORIZATION'];
+			} elseif (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+				$authheader = (string) $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+			}
+			$reg = array();
+			if ($authheader !== '' && preg_match('/^Basic\s+(\S+)$/i', $authheader, $reg)) {
+				$decoded = base64_decode($reg[1], true);
+				if ($decoded !== false && strpos($decoded, ':') !== false) {
+					list($basicid, $basicsecret) = explode(':', $decoded, 2);
+					// RFC 6749 section 2.3.1 form-urlencodes both halves.
+					$clientid = urldecode($basicid);
+					$clientsecret = urldecode($basicsecret);
+				}
+			}
 		}
 
 		$client = $oauth->getClient($clientid);
@@ -279,17 +308,25 @@ $redirecturi = GETPOST('redirect_uri', 'alphanohtml');
 // JSON or signed blob a client may legitimately put there. It is never
 // interpreted here, only echoed, and every echo escapes it.
 $state = isset($_GET['state']) ? (string) $_GET['state'] : (isset($_POST['state']) ? (string) $_POST['state'] : '');
-$statewasgiven = ($state !== '');
-$codechallenge = GETPOST('code_challenge', 'alphanohtml');
+$codechallenge = dol_trunc((string) GETPOST('code_challenge', 'alphanohtml'), 128, 'right', 'UTF-8', 1);
 $codechallengemethod = GETPOST('code_challenge_method', 'alphanohtml');
-$scope = GETPOST('scope', 'alphanohtml');
+$scope = dol_trunc((string) GETPOST('scope', 'alphanohtml'), 255, 'right', 'UTF-8', 1);
 $resourceparam = isset($_GET['resource']) ? (string) $_GET['resource'] : (isset($_POST['resource']) ? (string) $_POST['resource'] : '');
+
+// Before resolving the client: resolving a metadata document means an
+// outbound request on a URL the caller chose, and a user who may not use the
+// assistant has no business making this server issue one.
+if (!$user->hasRight('ai', 'assistant', 'use')) {
+	mcpOauthError('access_denied', 403, 'This Dolibarr user is not allowed to use the AI assistant.');
+}
 
 $client = $oauth->getClient($clientid, true);
 if ($client === null) {
 	// Nothing may be redirected before the client and its URI are known: that
 	// check is what stops this endpoint being used as an open redirector.
-	mcpOauthError('invalid_client', 400, 'Unknown client_id.');
+	// The reason comes from the resolver when it has one, so a client whose
+	// metadata document is unusable is not told its identifier is unknown.
+	mcpOauthError($oauth->error !== '' ? $oauth->error : 'invalid_client', 400, 'No usable client for this client_id.');
 }
 if (!$oauth->isRegisteredRedirectUri($client, $redirecturi)) {
 	mcpOauthError('invalid_request', 400, 'redirect_uri does not match a registered URI for this client.');
@@ -309,12 +346,6 @@ if ($codechallenge === '' || $codechallengemethod !== 'S256') {
 // something that cannot work is worse than refusing it early.
 if ($resourceparam !== '' && !$oauth->isOwnResource($resourceparam)) {
 	mcpOauthRedirect($redirecturi, array('error' => 'invalid_target', 'error_description' => 'This authorization server issues tokens for its own MCP endpoint only', 'state' => $state), $issuer);
-}
-
-// The same right every other AI entry point checks. A user who may not talk to
-// the assistant cannot grant a client the ability to do it for them.
-if (!$user->hasRight('ai', 'assistant', 'use')) {
-	mcpOauthRedirect($redirecturi, array('error' => 'access_denied', 'error_description' => 'This Dolibarr user is not allowed to use the AI assistant', 'state' => $state), $issuer);
 }
 
 // Read from POST only. GETPOST would also read the query string, and a
@@ -384,7 +415,10 @@ foreach (array(
 	'scope' => $scope,
 	'resource' => $resourceparam,
 ) as $name => $value) {
-	print '<input type="hidden" name="'.$name.'" value="'.dol_escape_htmltag($value).'">';
+	// htmlspecialchars, not dol_escape_htmltag: the latter strips anything that
+	// looks like a tag and turns a newline into a literal \n, which would send
+	// back a state the client did not issue and fail its own CSRF check.
+	print '<input type="hidden" name="'.$name.'" value="'.htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8').'">';
 }
 
 print '<div class="center">';

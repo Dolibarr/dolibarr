@@ -312,4 +312,5 @@ create table llx_ai_oauth_token
 ALTER TABLE llx_ai_oauth_token ADD UNIQUE INDEX uk_ai_oauth_token_hash (token_type, token_hash);
 ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_entity (entity);
 ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_fk_user (fk_user);
+ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_fk_client (fk_client);
 ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_expires_at (expires_at);
