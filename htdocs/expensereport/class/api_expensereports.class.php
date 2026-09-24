@@ -21,6 +21,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
 /**
@@ -635,8 +636,14 @@ class ExpenseReports extends DolibarrApi
 		if ($this->expensereport->fetch($id) <= 0) {
 			throw new RestException(404, 'Expense report not found');
 		}
-		if (isModEnabled("bank") && !((int) $request_data['accountid'] > 0)) {
-			throw new RestException(400, "accountid field missing");
+		if (isModEnabled("bank")) {
+			if (!((int) $request_data['accountid'] > 0)) {
+				throw new RestException(400, "accountid field missing");
+			}
+			$account = new Account($this->db);
+			if ($account->fetch((int) $request_data['accountid']) <= 0) {
+				throw new RestException(400, 'Bank account '.((int) $request_data['accountid']).' not found');
+			}
 		}
 
 		$paymentExpenseReport = new PaymentExpenseReport($this->db);
