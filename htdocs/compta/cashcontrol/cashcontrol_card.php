@@ -1185,7 +1185,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 					} else {
 						$suggestedvalue = price($theoricalamountforterminal[$terminalid][$key]);
 					}
-					print GETPOSTISSET($key.'_amount', 'alpha') ? GETPOST($key.'_amount', 'alpha') : $suggestedvalue;
+					print GETPOSTISSET($key.'_amount') ? GETPOST($key.'_amount', 'alpha') : $suggestedvalue;
 					print '">';
 					print '</td>';
 					$i++;
