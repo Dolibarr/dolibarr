@@ -36,6 +36,8 @@ require '../../main.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var int $dolibarr_allow_download_app
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -136,8 +138,20 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
+// Export of application files is allowed only if the option $dolibarr_allow_download_app is set
+// into the conf/conf.php file, because the application directory contains the external modules
+// installed into the 'custom' directory.
+if ($export_type == 'app' && empty($dolibarr_allow_download_app)) {
+	setEventMessages($langs->trans("DownloadOfAppFileDisallowed"), null, 'errors');
+	$db->close();
+	header("Location: dolibarr_export.php");
+	exit();
+}
+
 if ($export_type == 'externalmodule' && !empty($what)) {
 	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
+} elseif ($export_type == 'app') {
+	$fulldirtocompress = DOL_DOCUMENT_ROOT;
 } else {
 	$fulldirtocompress = DOL_DATA_ROOT;
 }
@@ -156,12 +170,15 @@ if ($compression == 'zip') {
 	if ($export_type == 'externalmodule' && !empty($what)) {
 		$rootdirinzip = $what;
 
-		global $dolibarr_allow_download_external_modules;
-		if (empty($dolibarr_allow_download_external_modules)) {
-			print 'Download of external modules is not allowed by $dolibarr_allow_download_external_modules in conf.php file';
+		global $dolibarr_allow_download_app;
+		if (empty($dolibarr_allow_download_app)) {
+			print 'Download of external modules is not allowed by $dolibarr_allow_download_app in conf.php file';
 			$db->close();
 			exit();
 		}
+	}
+	if ($export_type == 'app') {
+		$rootdirinzip = basename(DOL_DOCUMENT_ROOT);
 	}
 
 	global $errormsg;
@@ -265,6 +282,10 @@ if ($export_type != 'externalmodule' || empty($what)) {
 
 	// Redirect to calling page
 	$returnto = 'dolibarr_export.php';
+	if ($export_type == 'app') {
+		// Keep the parameter to keep the step to export the application files visible
+		$returnto .= '?allow_download_app=1';
+	}
 
 	header("Location: ".$returnto);
 
