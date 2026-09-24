@@ -33,6 +33,7 @@
     flex-direction: column;
     height: 70vh;
     min-height: 650px;
+    position: relative;   /* anchors the history panel in both modes */
 }
 
 /* Full page (body.ai-fullpage): the chat is no longer a centered card but fills

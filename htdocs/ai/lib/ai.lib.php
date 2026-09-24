@@ -909,9 +909,10 @@ function getAiChatAssistantConfig()
  * fragment (ai/assistant/popover.php) so both render the exact same chat.
  *
  * @param	string	$mode	'page' for the standalone full page, 'popover' for the topbar popover fragment
+ * @param	int		$openconversation	Conversation id to reopen on load (page mode only, 0 = none)
  * @return	string			HTML content
  */
-function getAiChatAssistantHtml($mode = 'page')
+function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 {
 	global $langs, $user, $conf;
 
@@ -924,6 +925,10 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= ' data-ai-config="'.dol_escape_htmltag(json_encode(getAiChatAssistantConfig())).'"';
 	if ($mode === 'page') {
 		$out .= ' data-ai-autoinit="1"';
+		if ((int) $openconversation > 0) {
+			// Conversation to reopen on load (popover -> full page hand-over)
+			$out .= ' data-ai-open-conversation="'.((int) $openconversation).'"';
+		}
 	}
 	$out .= '>';
 
@@ -966,11 +971,12 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("ClearChatHistoryTitle")).'">';
 	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Clear").'</span>';
 	$out .= '</button>';
+	// Past conversations (list / reopen / delete), on the page and in the popover alike.
+	$out .= '<button type="button" id="ai-history-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIHistory")).'"><i class="fa fa-history"></i></button>';
 	if ($mode === 'popover') {
 		// Window controls of the popover (handled by the bootstrap JS in main.inc.php).
 		// The expand button opens the standalone full page (/ai/assistant/index.php)
 		// in the current tab; the popover always stays in its large ("expanded") state.
-		$out .= '<button type="button" id="ai-history-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIHistory")).'"><i class="fa fa-history"></i></button>';
 		$out .= '<button type="button" id="ai-expand-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIOpenFullPage")).'" data-fullscreen-url="'.dol_buildpath('/ai/assistant/index.php', 1).'"><i class="fa fa-expand"></i></button>';
 		$out .= '<button type="button" id="ai-close-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("Close")).'"><i class="fa fa-times"></i></button>';
 	}

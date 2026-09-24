@@ -87,6 +87,19 @@ export function initAiAssistant(container) {
     let restoringHistory = false;    // guard: reopening must not re-save messages
     let persistQueue = Promise.resolve();   // keeps message order server-side
 
+    // Every change of the current conversation goes through here, so the
+    // "open in full page" button always carries it along (popover -> page
+    // used to start from a blank chat).
+    function setConversationId(id) {
+        conversationId = id;
+        const expand = container.querySelector('#ai-expand-btn');
+        if (expand && (expand.dataset.fullscreenBase || expand.dataset.fullscreenUrl)) {
+            if (!expand.dataset.fullscreenBase) expand.dataset.fullscreenBase = expand.dataset.fullscreenUrl;
+            const base = expand.dataset.fullscreenBase;
+            expand.dataset.fullscreenUrl = base + (id ? (base.indexOf('?') >= 0 ? '&' : '?') + 'conv=' + encodeURIComponent(id) : '');
+        }
+    }
+
     function chatHistoryApi(payload) {
         return fetch(epUrl('../ajax/chat_history.php'), {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -101,7 +114,7 @@ export function initAiAssistant(container) {
             raw: String(rawText).slice(0, 8000), html: String(html).slice(0, 200000),
             pinned: (div.dataset.ctx === 'on') ? 1 : 0
         }).then((res) => {
-            if (res && res.id) conversationId = res.id;
+            if (res && res.id) setConversationId(res.id);
             if (res && res.message_id) div.dataset.msgId = String(res.message_id);
         })).catch(() => { /* history is best-effort, the chat must never break on it */ });
     }
@@ -247,7 +260,7 @@ export function initAiAssistant(container) {
                 chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
             }
             lastResult = { data: null, tool: '', query: '' };
-            conversationId = 0;   // past conversation stays in the history, a new one starts
+            setConversationId(0);   // past conversation stays in the history, a new one starts
             clarificationContext = null;
             input.focus();
         }
@@ -1501,7 +1514,7 @@ export function initAiAssistant(container) {
                         + '<button type="button" class="ai-history-del" title="' + t('Cancel') + '">&times;</button>';
                     row.querySelector('.ai-history-del').onclick = (e2) => {
                         e2.stopPropagation();
-                        chatHistoryApi({ action: 'delete', id: c.id }).then(() => { row.remove(); if (conversationId === c.id) conversationId = 0; });
+                        chatHistoryApi({ action: 'delete', id: c.id }).then(() => { row.remove(); if (conversationId === c.id) setConversationId(0); });
                     };
                     row.onclick = () => { panel.remove(); loadConversation(c.id); };
                     panel.appendChild(row);
@@ -1531,7 +1544,7 @@ export function initAiAssistant(container) {
                 }
             });
             restoringHistory = false;
-            conversationId = res.id;
+            setConversationId(res.id);
             refreshContext();
         }).catch(() => {});
     }
@@ -1975,6 +1988,11 @@ export function initAiAssistant(container) {
         }
         return content;
     }
+
+    // Popover -> full page: the page reopens the conversation the popover was
+    // in (id passed in the URL, ownership re-checked server-side on load).
+    const openConv = parseInt(container.dataset.aiOpenConversation, 10) || 0;
+    if (openConv > 0) loadConversation(openConv);
 }
 
 // Auto-init for server-rendered containers (standalone page mode). The topbar
