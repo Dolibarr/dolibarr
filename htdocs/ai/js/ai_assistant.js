@@ -1529,6 +1529,9 @@ export function initAiAssistant(container) {
         const pinned = collectPinnedContext();
         if (!past.length) { if (bar) bar.remove(); return; }
         const tokens = Math.round(pinned.reduce((n, p) => n + p.text.length, 0) / 4);
+        // The setting counts exchanges (question + answer), so the bar says
+        // both: exchanges, then messages - one unit on its own misleads.
+        const exchanges = pinned.filter((p) => p.role === 'user').length;
         if (!bar) {
             bar = document.createElement('div');
             bar.id = 'ai-ctx-bar';
@@ -1537,7 +1540,7 @@ export function initAiAssistant(container) {
         }
         const auto = chat.querySelector('.msg.ctx-auto') ? ' <span class="opacitymedium">· ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</span>' : '';
         bar.innerHTML = '<span class="fa fa-thumb-tack"></span> ' +
-            t('AIContextCounter').replace('%s', String(pinned.length)).replace('%s', String(tokens)) + auto +
+            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) + auto +
             ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double"></span> ' + t('AIContextAll') + '</a>' +
             ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser"></span> ' + t('AIContextClear') + '</a>';
         const all = bar.querySelector('#ai-ctx-all');
