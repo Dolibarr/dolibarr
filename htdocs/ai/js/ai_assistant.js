@@ -94,6 +94,9 @@ export function initAiAssistant(container) {
         const changed = (conversationId !== id);
         conversationId = id;
         if (changed) renderSidebar();
+        // Remember the conversation in progress in this browser, so the popover
+        // on the next page (or the full page) resumes it instead of a blank chat.
+        try { if (id) localStorage.setItem('aiCurrentConversation', String(id)); else localStorage.removeItem('aiCurrentConversation'); } catch (e) { /* no storage: nothing to resume */ }
         const expand = container.querySelector('#ai-expand-btn');
         if (expand && (expand.dataset.fullscreenBase || expand.dataset.fullscreenUrl)) {
             if (!expand.dataset.fullscreenBase) expand.dataset.fullscreenBase = expand.dataset.fullscreenUrl;
@@ -2064,9 +2067,12 @@ export function initAiAssistant(container) {
         return content;
     }
 
-    // Popover -> full page: the page reopens the conversation the popover was
-    // in (id passed in the URL, ownership re-checked server-side on load).
-    const openConv = parseInt(container.dataset.aiOpenConversation, 10) || 0;
+    // Resume the conversation in progress: the id in the URL (popover -> full
+    // page hand-over) wins, else the one this browser was last in (full page ->
+    // popover, or the popover reopened on another page). Ownership is
+    // re-checked server-side on load; a deleted one simply stays blank.
+    let openConv = parseInt(container.dataset.aiOpenConversation, 10) || 0;
+    if (!openConv) { try { openConv = parseInt(localStorage.getItem('aiCurrentConversation'), 10) || 0; } catch (e) { openConv = 0; } }
     if (openConv > 0) loadConversation(openConv);
 }
 
