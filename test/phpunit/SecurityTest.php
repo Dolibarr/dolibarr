@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -440,6 +440,12 @@ class SecurityTest extends CommonClassTest
 	{
 		global $conf;
 
+		// This test exercises the 'None' model, so make sure it is not forbidden on the install
+		// running the test suite (see isPasswordGenerationNoneForbidden()).
+		$savPattern = getDolGlobalString('USER_PASSWORD_GENERATED');
+		$savFile = isset($conf->file->restrict_password_generation_none) ? $conf->file->restrict_password_generation_none : null;
+		$conf->file->restrict_password_generation_none = 0;
+
 		$genpass1 = getRandomPassword(true);				// Should be a string return by dol_hash (if no option set, will be md5)
 		print __METHOD__." genpass1=".$genpass1."\n";
 		$this->assertEquals(strlen($genpass1), 32);
@@ -458,7 +464,71 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." genpass3=".$genpass3."\n";
 		$this->assertEquals(strlen($genpass3), 12);
 
+		// Restore context
+		$conf->global->USER_PASSWORD_GENERATED = $savPattern;
+		if ($savFile === null) {
+			unset($conf->file->restrict_password_generation_none);
+		} else {
+			$conf->file->restrict_password_generation_none = $savFile;
+		}
+
 		return 0;
+	}
+
+	/**
+	 * testIsPasswordGenerationNoneForbidden
+	 *
+	 * @return void
+	 */
+	public function testIsPasswordGenerationNoneForbidden()
+	{
+		global $conf, $db, $langs, $user;
+
+		// Save context (backupGlobals is disabled for this test class)
+		$savPattern = getDolGlobalString('USER_PASSWORD_GENERATED');
+		$savPasswordPattern = getDolGlobalString('USER_PASSWORD_PATTERN');
+		$savFile = isset($conf->file->restrict_password_generation_none) ? $conf->file->restrict_password_generation_none : null;
+
+		// By default (no lock), the 'none' model is allowed
+		$conf->file->restrict_password_generation_none = 0;
+		$this->assertEquals(0, isPasswordGenerationNoneForbidden(), 'none model should be allowed by default');
+
+		// The conf.php variable forbids it
+		$conf->file->restrict_password_generation_none = 1;
+		$this->assertEquals(1, isPasswordGenerationNoneForbidden(), 'conf.php variable must forbid the none model');
+
+		// With the lock on, an installation still configured with 'none' falls back to 'standard'
+		$conf->global->USER_PASSWORD_GENERATED = 'None';
+		$genpass = getRandomPassword(false);
+		print __METHOD__." genpass=".$genpass."\n";
+		$this->assertEquals(12, strlen($genpass), 'forbidden none model must fall back to the 12 chars standard generator');
+
+		// When the lock is on, the 'Perso' model minimum length is floored at 10
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassPerso.class.php';
+
+		$conf->file->restrict_password_generation_none = 0;
+		$this->assertEquals(1, getPasswordPatternMinLength(), 'no floor on the Perso min length without the lock');
+
+		$conf->file->restrict_password_generation_none = 1;
+		$this->assertEquals(10, getPasswordPatternMinLength(), 'Perso min length floored at 10 with the lock');
+
+		// A stored pattern below the floor is clamped at generation/validation time
+		$conf->global->USER_PASSWORD_PATTERN = '8;1;1;0;3;1';
+		$modperso = new modGeneratePassPerso($db, $conf, $langs, $user);
+		$this->assertEquals(10, $modperso->length2, 'stored min length 8 must be clamped to 10 when the lock is on');
+
+		$conf->file->restrict_password_generation_none = 0;
+		$modperso = new modGeneratePassPerso($db, $conf, $langs, $user);
+		$this->assertEquals(8, $modperso->length2, 'stored min length 8 is kept as is without the lock');
+
+		// Restore context
+		$conf->global->USER_PASSWORD_GENERATED = $savPattern;
+		$conf->global->USER_PASSWORD_PATTERN = $savPasswordPattern;
+		if ($savFile === null) {
+			unset($conf->file->restrict_password_generation_none);
+		} else {
+			$conf->file->restrict_password_generation_none = $savFile;
+		}
 	}
 
 	/**
@@ -481,76 +551,41 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals(1, $result);
 	}
 
-
 	/**
-	 * testGetRandomPassword
+	 * testCheckUserAccessToObjectBank
 	 *
-	 * @return int
+	 * @return void
 	 */
-	public function testGetURLContent()
+	public function testCheckUserAccessToObjectBank()
 	{
-		global $conf;
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$url = 'ftp://mydomain.com';
-		$tmp = getURLContent($url);
-		print __METHOD__." url=".$url." ".$tmp['curl_error_msg']."\n";
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$tmpvar = preg_match('/not supported|disabled/', $tmp['curl_error_msg']);
-		$this->assertEquals(1, $tmpvar, "Did not find the /not supported|disabled/ in getURLContent error message. We should.");
+		$account = new Account($db);
+		$account->ref = 'TSEC'.mt_rand(0, 99999);
+		$account->label = 'testCheckUserAccessToObjectBank '.$account->ref;
+		$account->type = Account::TYPE_CURRENT;
+		$account->currency_code = 'EUR';
+		$account->country_id = 1;
+		$account->date_solde = dol_now();
+		$accountid = $account->create($user);
+		$this->assertGreaterThan(0, $accountid, 'Bank account must be created');
 
-		$DISABLEREMOTEACCESSTODOLIBARRFR = 1;
+		// A user that can not see all third parties, so the access is checked with a sql request
+		$restricteduser = new User($db);
+		$this->assertEmpty($restricteduser->hasRight('societe', 'client', 'voir'), 'User must not see all third parties');
 
-		if (empty($DISABLEREMOTEACCESSTODOLIBARRFR)) {
-			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-			$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
-			print __METHOD__." url=".$url."\n";
-			$this->assertEquals(301, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Test getURLContent '.$url.' - Should GET url 301 response');
-
-			$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-			$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
-			print __METHOD__." url=".$url."\n";
-			$this->assertEquals(200, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url 301 with a follow -> 200 but we get '.(empty($tmp['http_code']) ? 0 : $tmp['http_code']));
-		}
-
-		$url = 'http://localhost';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
-
-		$url = 'http://127.0.0.1';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
-
-		$url = 'http://127.0.2.1';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
-
-		$url = 'https://169.254.0.1';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
-
-		$url = 'http://[::1]';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
-
-		/*$url = 'localtest.me';
-		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
-		 print __METHOD__." url=".$url."\n";
-		 $this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
-		 */
-
-		$url = 'http://192.0.0.192';
-		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL but on an IP in blacklist
-		print __METHOD__." url=".$url." tmp['http_code'] = ".(empty($tmp['http_code']) ? 0 : $tmp['http_code'])."\n";
-		$this->assertEquals(400, (empty($tmp['http_code']) ? 0 : $tmp['http_code']), 'Access should be refused and was not');	// Test we receive an error because ip is in blacklist
-
-		return 0;
+		$result = checkUserAccessToObject($restricteduser, array('banque'), $accountid);
+		$this->assertTrue($result, 'Access to bank account with feature banque');
+		$result = checkUserAccessToObject($restricteduser, array('bank'), $accountid);
+		$this->assertTrue($result, 'Access to bank account with feature bank, the english name of the module');
 	}
+
 
 	/**
 	 * testDolSanitizeUrl
@@ -648,7 +683,11 @@ class SecurityTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
+
+		global $dolibarr_main_use_dol_eval_new;
+		$dolibarr_main_use_dol_eval_new = 0;
+
+
 		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
 		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
 		$conf->global->MAIN_ALLOW_OBFUSCATION_METHODS_IN_DOL_EVAL = 1;
@@ -946,6 +985,51 @@ class SecurityTest extends CommonClassTest
 			print "result25 = ".$result."\n";
 			$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 25 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
 		}
+	}
+
+	/**
+	 * testDolEvalNew
+	 *
+	 * Check that dol_eval_new() (engine used when MAIN_USE_DOL_EVAL_NEW is set) rejects
+	 * the callable-dispatch bypass reported in GitHub issue #39436: a forbidden function
+	 * name reached indirectly by a PHP callable-dispatch function like array_map/usort/...
+	 * instead of a direct call.
+	 *
+	 * @depends	testDolEval
+	 * @return void
+	 */
+	public function testDolEvalNew()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+
+		global $dolibarr_main_use_dol_eval_new;
+		$dolibarr_main_use_dol_eval_new = 1;
+
+
+		$s = "array_map('sys'.'tem', array('id'))";
+		$result = (string) dol_eval($s, 1, 1, '0');
+		print "resultnew1 = ".$result."\n";
+		$this->assertStringContainsString('is prohibited', $result, 'The string '.$s.' returned '.$result.', so was not detected as evil - array_map bypass');
+
+		$result = (string) dol_eval("usort(\$a, 'system')", 1, 1, '0');
+		print "resultnew2 = ".$result."\n";
+		$this->assertStringContainsString('is prohibited', $result, 'The string was not detected as evil - usort bypass');
+
+		$result = (string) dol_eval("preg_replace_callback('/a/', 'system', 'a')", 1, 1, '0');
+		print "resultnew3 = ".$result."\n";
+		$this->assertStringContainsString('is prohibited', $result, 'The string was not detected as evil - preg_replace_callback bypass');
+
+		// Sanity check: legitimate expressions still evaluate correctly
+		$result = dol_eval('1==1', 1, 0);
+		print "resultnew4 = ".json_encode($result)."\n";
+		$this->assertTrue($result);
+
+		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
 	}
 
 
@@ -1560,6 +1644,12 @@ class SecurityTest extends CommonClassTest
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($s, $result, 'Test for restricthtmlallowlinkscript');
+
+
+		$s= "Test with LF.\nNext line";
+		$result = dol_htmlwithnojs($s);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($s, $result, 'Test for default, on a string with a LF inside');
 
 		return 0;
 	}

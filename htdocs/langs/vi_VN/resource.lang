@@ -34,5 +34,6 @@ ResourceTypeCode=Mã loại tài nguyên
 ImportDataset_resource_1=Tài nguyên
 ErrorResourcesAlreadyInUse=Một số tài nguyên đang được sử dụng
 ErrorResourceUseInEvent=%s được sử dụng trong %s sự kiện
-MaxUsers=Người dùng tối đa (địa điểm, chỗ ngồi, v.v.)
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
 MaxUsersLabel=Số người dùng tối đa

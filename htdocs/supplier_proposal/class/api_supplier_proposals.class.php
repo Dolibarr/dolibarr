@@ -21,6 +21,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -76,7 +77,7 @@ class SupplierProposals extends DolibarrApi
 		}
 
 		if (!$this->supplier_proposal->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->error);
+			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->errorsToString());
 		}
 
 		return array(
@@ -212,14 +213,14 @@ class SupplierProposals extends DolibarrApi
 		}
 		if (!empty($this->supplier_proposal->fin_validite)) {
 			if ($this->supplier_proposal->set_echeance(DolibarrApiAccess::$user, $this->supplier_proposal->fin_validite) < 0) {
-				throw new RestException(500, $this->supplier_proposal->error);
+				throw new RestException(500, $this->supplier_proposal->errorsToString());
 			}
 		}
 
 		if ($this->supplier_proposal->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->supplier_proposal->error);
+			throw new RestException(500, $this->supplier_proposal->errorsToString());
 		}
 	}
 
@@ -267,9 +268,9 @@ class SupplierProposals extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters

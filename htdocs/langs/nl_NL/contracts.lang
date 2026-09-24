@@ -36,10 +36,18 @@ ActivateAllOnContract=Activeer alle services
 CloseAContract=Sluit een contract
 ConfirmDeleteAContract=Weet u zeker dat u dit contract met alle diensten wilt verwijderen?
 ConfirmValidateContract=Weet u zeker dat u dit contract wilt bevestigen onder <b>%s</b>?
+ConfirmSignContract=Weet u zeker dat u dit contract als ondertekend wilt instellen?
+ConfirmUnsignContract=Weet u zeker dat u dit contract als niet-ondertekend wilt instellen?
 ConfirmActivateAllOnContract=Openen alle diensten (nog niet actief). Weet u zeker dat u dit wilt doen?
 ConfirmCloseContract=Hiermee worden alle services gesloten (verlopen of niet). Weet u zeker dat u dit contract wilt sluiten?
 ConfirmCloseService=Weet u zeker dat u de dienst met datum <b>%s</b> wilt sluiten?
 ValidateAContract=Valideer een contract
+UnsignContract=Contract opzeggen
+ContractSign=Set Gesigneerd
+ContractUnsign=Ongetekend instellen
+ContractSignedInDolibarr=Contract getekend
+ContractSignedOnline=Contract online getekend
+ContractUnsignedInDolibarr=Contract niet ondertekend
 ActivateService=Activeer een contract
 ConfirmActivateService=Weet u zeker dat u de dienst met de datum van <b>%s</b> wilt activeren?
 RefContract=Contract referentie
@@ -95,7 +103,13 @@ ConfirmCloneContract=Weet u zeker dat u contract <b>%s</b> wilt dupliceren?
 LowerDateEndPlannedShort=Lagere geplande einddatum van actieve diensten
 SendContractRef=Contract informatie __REF__
 OtherContracts=Overige contracten
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Statistieken van het contract
+NbOfContracts=Aantal contracten
+NumberOfContractsByMonth=Aantal contracten per maand
+AmountOfServices=Aantal diensten
+AmountOfServicesByMonthHT=Aantal services (excl. belasting) per maand
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertegenwoordiger ondertekening contract
 TypeContact_contrat_internal_SALESREPFOLL=Vertegenwoordiger opvolging contract
 TypeContact_contrat_external_BILLING=Afnemersfactuurcontactpersoon

@@ -68,3 +68,4 @@ ApplyJobCandidature=Złóż podanie o tę pracę
 ErrorRecruitmmentCandidatureAlreadyExists= Kandydatura rekrutacyjna już istnieje i ma adres e-mail %s
 RecruitmentCandidatureSaved=Kandydatura rekrutacyjna została pomyślnie zapisana
 NoOpenJobOffer=W tej chwili nie mamy żadnych ofert pracy
+ShowPositionToBeFilled=Show Position to be filled

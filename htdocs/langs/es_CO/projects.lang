@@ -174,7 +174,6 @@ LatestProjects=Últimos proyectos %s
 LatestModifiedProjects=Últimos proyectos modificados %s
 NoAssignedTasks=No se encontraron tareas asignadas (asigne proyectos / tareas al usuario actual desde el cuadro de selección superior para ingresar el tiempo)
 ThirdPartyRequiredToGenerateIntervention=Es necesario definir un tercero en el proyecto para poder crear la intervención.
-ChooseANotYetAssignedTask=Elija una tarea que aún no se le haya asignado
 AllowCommentOnTask=Permitir comentarios de usuarios en tareas
 AllowCommentOnProject=Permitir comentarios de usuarios en proyectos
 DontHavePermissionForCloseProject=No tiene permisos para cerrar el proyecto %s

@@ -1,29 +1,55 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=ለደመወዝ ክፍያዎች በነባሪ የሂሳብ አያያዝ መለያ
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=በነባሪ ደመወዝ ሲፈጥሩ "ጠቅላላ ክፍያን በራስ-ሰር ፍጠር" የሚለውን አማራጭ ባዶ ይተዉት።
 Salary=ደሞዝ
 Salaries=ደሞዝ
 NewSalary=አዲስ ደመወዝ
 AddSalary=ደሞዝ ጨምር
 NewSalaryPayment=አዲስ የደመወዝ ካርድ
 AddSalaryPayment=የደመወዝ ክፍያ ጨምር
-SalaryID=Salary ID
-SalaryAmount=Salary amount
 SalaryPayment=የደመወዝ ክፍያ
 SalariesPayments=የደመወዝ ክፍያዎች
 SalariesPaymentsOf=የ%s የደመወዝ ክፍያዎች
 ShowSalaryPayment=የደመወዝ ክፍያ አሳይ
-THM=አማካይ የሰዓት ተመን
-TJM=አማካይ ዕለታዊ ተመን
+SalaryID=Salary ID
+SalaryAmount=Salary amount
+SalaryDate=Salary date
+SalaryPaid=Salary paid
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=Net paid
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=ለደመወዝ ክፍያዎች በነባሪ የሂሳብ አያያዝ መለያ
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=በነባሪ ደመወዝ ሲፈጥሩ "ጠቅላላ ክፍያን በራስ-ሰር ፍጠር" የሚለውን አማራጭ ባዶ ይተዉት።
+
+# Stats / Info
 CurrentSalary=የአሁኑ ደመወዝ
-THMDescription=ይህ ዋጋ ሞጁል ፕሮጀክት ጥቅም ላይ ከዋለ በተጠቃሚዎች የገባ ፕሮጀክት ላይ የሚፈጀውን ጊዜ ለማስላት ጥቅም ላይ ሊውል ይችላል።
-TJMDescription=ይህ ዋጋ በአሁኑ ጊዜ ለመረጃ ብቻ ነው እና ለማንኛውም ስሌት ጥቅም ላይ አይውልም
 LastSalaries=የቅርብ ጊዜ %s ደመወዝ
 AllSalaries=ሁሉም ደሞዝ
 SalariesStatistics=የደመወዝ ስታቲስቲክስ
 SalariesAndPayments=ደመወዝ እና ክፍያዎች
+UserPaySlip=Pay Slip
+PayPeriod=Pay period
+
+# THM / TJM
+THM=አማካይ የሰዓት ተመን
+THMDescription=ይህ ዋጋ ሞጁል ፕሮጀክት ጥቅም ላይ ከዋለ በተጠቃሚዎች የገባ ፕሮጀክት ላይ የሚፈጀውን ጊዜ ለማስላት ጥቅም ላይ ሊውል ይችላል።
+TJM=አማካይ ዕለታዊ ተመን
+TJMDescription=ይህ ዋጋ በአሁኑ ጊዜ ለመረጃ ብቻ ነው እና ለማንኛውም ስሌት ጥቅም ላይ አይውልም
+
+# Other actions
 ConfirmDeleteSalaryPayment=ይህን የደመወዝ ክፍያ መሰረዝ ይፈልጋሉ?
 FillFieldFirst=መጀመሪያ የሰራተኛውን መስክ ይሙሉ
 UpdateAmountWithLastSalary=የመጨረሻውን የደመወዝ መጠን ያዘጋጁ
@@ -32,8 +58,10 @@ VirementOrder=የብድር ማስተላለፍ ጥያቄ
 WithdrawalReceipt=የዱቤ ማስተላለፍ ትዕዛዝ
 OrderWaiting=በመጠባበቅ ላይ ያለ ትዕዛዝ
 FillEndOfMonth=End of month
+
+# Shortcuts
 PreviousMonthShort=Previous month
 CurrentMonthShort=Current month
+NextMonthShort=Next month
 PreviousWeekShort=Previous week
 CurrentWeekShort=Current week
-UserPaySlip=Pay Slip

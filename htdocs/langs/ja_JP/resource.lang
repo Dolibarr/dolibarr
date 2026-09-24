@@ -34,5 +34,6 @@ ResourceTypeCode=リソースタイプコード
 ImportDataset_resource_1=リソース
 ErrorResourcesAlreadyInUse=一部のリソースが使用されている
 ErrorResourceUseInEvent=%sイベントで使用される%s
-MaxUsers=最大ユーザー数（場所、座席など）
+MaxUsers=最大ユーザー数
+MaxUsersResourceDesc=リソースを複数の人が同時に使用できる場合（車、部屋など）、リソースを同時に使用できるユーザーの最大数（座席数、場所数など）をここで入力できる。
 MaxUsersLabel=最大ユーザー数

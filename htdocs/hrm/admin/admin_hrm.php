@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015 		Alexandre Spangaro <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -97,8 +97,6 @@ $title = $langs->trans('Parameters');
 llxHeader('', $title, '');
 
 $form = new Form($db);
-
-dol_htmloutput_mesg($mesg);
 
 // Subheader
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';

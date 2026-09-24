@@ -281,7 +281,7 @@ $tmpuser = new User($db);
 llxHeader('', $langs->trans("GlobalDiscount"));
 
 if ($socid > 0) {
-	// On recupere les donnees societes par l'objet
+	// Retrieve third-party data via the object
 	$object = new Societe($db);
 	$object->fetch($socid);
 

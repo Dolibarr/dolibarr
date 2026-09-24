@@ -68,10 +68,6 @@ class PricesTest extends CommonClassTest
 	public function testCalculPriceTotal()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		global $mysoc;
 		$mysoc = new Societe($db);
@@ -243,10 +239,6 @@ class PricesTest extends CommonClassTest
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
 
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0;
 

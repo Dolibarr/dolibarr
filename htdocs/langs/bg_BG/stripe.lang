@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Стойност за PBX SITE
 PAYBOX_PBX_RANG=Стойност за PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Стойност за PBX ID
 PAYBOX_HMAC_KEY=HMAC ключ
+FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup
