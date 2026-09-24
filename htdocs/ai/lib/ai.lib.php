@@ -978,9 +978,11 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 	// are now attached with the always-visible paperclip button and routed
 	// automatically (local extraction first, cloud parsing as fallback).
 	$out .= '</select>';
-	// Clear Button
-	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("ClearChatHistoryTitle")).'">';
-	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Clear").'</span>';
+	// Clear button: with the conversations kept, it just starts a new one (the
+	// current one stays in the list). "Reset" is a core key translated everywhere
+	// with the right meaning ("Vider" in French, where "Clear" came out as "Clair").
+	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("AINewConversation")).'">';
+	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Reset").'</span>';
 	$out .= '</button>';
 	// Past conversations (list / reopen / delete), on the page and in the popover alike.
 	$out .= '<button type="button" id="ai-history-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIHistory")).'"><i class="fa fa-history"></i></button>';

@@ -272,9 +272,8 @@ export function initAiAssistant(container) {
         refreshContext();
         input.focus();
     }
-    clearBtn.addEventListener('click', () => {
-        if (confirm(t('ClearChatHistoryTitle'))) startNewConversation();
-    });
+    // Non-destructive since the conversation stays in the history: no confirm.
+    clearBtn.addEventListener('click', () => startNewConversation());
 
     // Handle Engine Switching
     engineSelect.addEventListener('change', () => {
