@@ -50,6 +50,26 @@ ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_
 
 -- v25 migration
 
+-- Backfill n-n links for existing expense report payments
+INSERT INTO llx_paymentexpensereport_expensereport
+	(fk_payment, fk_expensereport, amount, multicurrency_code, multicurrency_tx, multicurrency_amount)
+SELECT
+	pe.rowid AS fk_payment,
+	pe.fk_expensereport,
+	pe.amount,
+	NULL AS multicurrency_code,
+	1 AS multicurrency_tx,
+	pe.amount AS multicurrency_amount
+FROM llx_payment_expensereport AS pe
+WHERE pe.fk_expensereport IS NOT NULL
+	AND pe.fk_expensereport > 0
+	AND NOT EXISTS (
+		SELECT 1
+		FROM llx_paymentexpensereport_expensereport AS per
+		WHERE per.fk_payment = pe.rowid
+			AND per.fk_expensereport = pe.fk_expensereport
+	);
+
 -- Add per entity payment terms/modes and bank account (issue #39146)
 ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
 ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement integer DEFAULT NULL;
