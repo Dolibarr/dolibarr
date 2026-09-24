@@ -283,7 +283,8 @@ class modSociete extends DolibarrModules
 			's.tva_intra' => "VATIntraShort", 's.capital' => "Capital", 's.note_private' => "NotePrivate",
 			's.note_public' => "NotePublic", 't.code' => "ThirdPartyType", 'ce.code' => "DictionaryStaff", "cfj.libelle" => "JuridicalStatus", 's.fk_prospectlevel' => 'ProspectLevel',
 			'st.code' => 'ProspectStatus', 'payterm.libelle' => 'PaymentConditions', 'paymode.libelle' => 'PaymentMode',
-			's.outstanding_limit' => 'OutstandingBill', 'pbacc.ref' => 'PaymentBankAccount', 'incoterm.code' => 'IncotermLabel'
+			's.outstanding_limit' => 'OutstandingBill', 'pbacc.ref' => 'PaymentBankAccount', 'incoterm.code' => 'IncotermLabel',
+			'cat.rowid' => 'CategoryId', 'cat.label' => 'CategoryName', 'cat.color' => 'CategoryColor', 'cat.description' => 'CategoryDescription'
 		);
 		if (getDolGlobalString('SOCIETE_USEPREFIX')) {
 			$this->export_fields_array[$r]['s.prefix'] = 'Prefix';
@@ -325,6 +326,7 @@ class modSociete extends DolibarrModules
 			'st.code' => 'List:c_stcomm:libelle:code',
 			'payterm.libelle' => 'Text', 'paymode.libelle' => 'Text',
 			's.outstanding_limit' => 'Numeric', 'pbacc.ref' => 'Text', 'incoterm.code' => 'Text',
+			'cat.rowid' => 'Numeric', 'cat.label' => 'Text', 'cat.color' => 'Text', 'cat.description' => 'Text',
 			'u.login' => 'Text', 'u.firstname' => 'Text', 'u.lastname' => 'Text',
 			's.entity' => 'List:entity:label:rowid', 's.price_level' => 'Numeric',
 			's.accountancy_code_sell' => 'Text', 's.accountancy_code_buy' => 'Text'
@@ -333,7 +335,12 @@ class modSociete extends DolibarrModules
 		$this->export_entities_array[$r] = array(	// We define here only fields that use another picto
 			'u.login' => 'user',
 			'u.firstname' => 'user',
-			'u.lastname' => 'user');
+			'u.lastname' => 'user',
+			'cat.rowid' => 'category',
+			'cat.label' => 'category',
+			'cat.color' => 'category',
+			'cat.description' => 'category'
+		);
 		$this->export_examplevalues_array[$r] = array('s.client' => '0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur' => '0 (not a supplier) or 1 (supplier)');
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -351,6 +358,8 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as pbacc ON s.fk_account = pbacc.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as incoterm ON s.fk_incoterms = incoterm.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cc ON s.rowid = cc.fk_soc';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cc.fk_categorie = cat.rowid';
 		$this->export_sql_end[$r] .= ' WHERE s.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
@@ -378,7 +387,8 @@ class modSociete extends DolibarrModules
 			's.client' => 'Customer', 's.fournisseur' => 'Supplier',
 			's.address' => 'Address', 's.zip' => "Zip", 's.town' => "Town", 's.phone' => 'Phone', 's.email' => "Email",
 			's.note_private' => 'NotePrivate', 's.note_public' => "NotePublic",
-			't.code' => "ThirdPartyType"
+			't.code' => "ThirdPartyType",
+			'cat.rowid' => 'CategoryId', 'cat.label' => 'CategoryName', 'cat.color' => 'CategoryColor', 'cat.description' => 'CategoryDescription'
 		);
 		// Add multicompany field
 		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
@@ -405,6 +415,7 @@ class modSociete extends DolibarrModules
 			's.client' => "Numeric", 's.fournisseur' => "Numeric",
 			's.address' => "Text", 's.zip' => "Text", 's.town' => "Text", 's.phone' => "Text", 's.email' => "Text",
 			't.code' => "List:c_typent:libelle:code",
+			'cat.rowid' => 'Numeric', 'cat.label' => 'Text', 'cat.color' => 'Text', 'cat.description' => 'Text',
 			'c.entity' => 'List:entity:label:rowid',
 			's.entity' => 'List:entity:label:rowid',
 		);
@@ -416,6 +427,7 @@ class modSociete extends DolibarrModules
 			's.note_private' => 'company', 's.note_public' => "company",
 			't.code' => "company",
 			's.entity' => 'company',
+			'cat.rowid' => 'category', 'cat.label' => 'category', 'cat.color' => 'category', 'cat.description' => 'category'
 		); // We define here only fields that use another picto
 		if (!isModEnabled("supplier_order") && !isModEnabled("supplier_invoice")) {
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
@@ -441,6 +453,8 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_contact as cc ON c.rowid = cc.fk_socpeople';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cc.fk_categorie = cat.rowid';
 		$this->export_sql_end[$r] .= ' WHERE c.entity IN ('.getEntity('contact').')';
 		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
