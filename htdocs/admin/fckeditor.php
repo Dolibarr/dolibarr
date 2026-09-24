@@ -122,6 +122,13 @@ if (GETPOST('action') == 'disable_specialchar') {
 	dolibarr_del_const($db, "FCKEDITOR_ENABLE_SPECIALCHAR", $conf->entity);
 }
 
+if (GETPOST('action') == 'enable_uploadmedia') {
+	dolibarr_set_const($db, "WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES", "1", 'chaine', 0, '', $conf->entity);
+}
+if (GETPOST('action') == 'disable_uploadmedia') {
+	dolibarr_del_const($db, "WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES", $conf->entity);
+}
+
 if (GETPOST('action', 'aZ09') == 'setbackend') {
 	$newbackend = GETPOST('editorbackend', 'aZ09');
 	if (in_array($newbackend, array('ckeditor', 'tinymce'), true)) {
@@ -269,6 +276,23 @@ if (empty($conf->use_javascript_ajax)) {
 		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_specialchar&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	} elseif ($value == 1) {
 		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_specialchar&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+	}
+
+	print "</td>";
+	print '</tr>';
+
+	$constante = 'WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES';
+	print '<!-- constant = '.$constante.' -->'."\n";
+	print '<tr class="oddeven">';
+	print '<td>';
+	print $langs->trans('AllowUploadMediaFiles');
+	print '</td>';
+	print '<td class="center width100" colspan="2">';
+	$value = getDolGlobalInt($constante, 0);
+	if ($value == 0) {
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_uploadmedia&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	} elseif ($value == 1) {
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_uploadmedia&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 	}
 
 	print "</td>";
