@@ -1101,6 +1101,9 @@ body.ai-fullpage {
 .msg .ctx-pin:hover { opacity: 1; }
 .msg.ctx-pinned .ctx-pin { opacity: 1; color: #2c62ac; }
 .msg.ctx-pinned .msg-bubble { box-shadow: 0 0 0 2px rgba(44, 98, 172, 0.45); }
+/* Bubbles that follow the sliding window (not pinned by hand): a lighter ring and pin */
+.msg.ctx-auto .ctx-pin { opacity: .55; }
+.msg.ctx-auto .msg-bubble { box-shadow: 0 0 0 2px rgba(44, 98, 172, 0.2); }
 #ai-ctx-bar { font-size: 0.85em; opacity: .85; padding: 3px 10px; margin: 0 6px 4px; border-radius: 10px; background: rgba(44, 98, 172, 0.08); }
 #ai-ctx-bar a { margin-left: 8px; }
 

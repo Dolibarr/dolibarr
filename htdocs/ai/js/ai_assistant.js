@@ -99,7 +99,7 @@ export function initAiAssistant(container) {
             action: 'save', id: conversationId,
             role: (type === 'bot') ? 'assistant' : 'user',
             raw: String(rawText).slice(0, 8000), html: String(html).slice(0, 200000),
-            pinned: div.classList.contains('ctx-pinned') ? 1 : 0
+            pinned: (div.dataset.ctx === 'on') ? 1 : 0
         }).then((res) => {
             if (res && res.id) conversationId = res.id;
             if (res && res.message_id) div.dataset.msgId = String(res.message_id);
@@ -1274,8 +1274,9 @@ export function initAiAssistant(container) {
             bubble.className = 'msg-bubble';
             bubble.innerHTML = html;
             if (actions) bubble.appendChild(buildActions(actions));
-            // Context pin: the user explicitly selects which past exchanges are
-            // sent back to the model (opt-in context = visible token cost).
+            // Context pin: the last AUTO_CONTEXT exchanges follow the model by
+            // default (sliding window), the user pins older ones explicitly or
+            // excludes recent ones - the token cost stays visible in the bar.
             if (rawText) {
                 div.dataset.aiRaw = String(rawText).slice(0, 4000);
                 div.dataset.aiRole = (type === 'bot') ? 'assistant' : 'user';
@@ -1286,12 +1287,8 @@ export function initAiAssistant(container) {
                 pin.innerHTML = '<span class="fa fa-thumbtack"></span>';
                 pin.onclick = (ev) => {
                     ev.stopPropagation();
-                    div.classList.toggle('ctx-pinned');
-                    updateContextBar();
-                    // Persist the pin state so it survives a reopen
-                    if (div.dataset.msgId) {
-                        chatHistoryApi({ action: 'pin', message_id: parseInt(div.dataset.msgId, 10), pinned: div.classList.contains('ctx-pinned') ? 1 : 0 }).catch(() => {});
-                    }
+                    toggleContextPin(div);
+                    persistPinState(div);
                 };
                 bubble.appendChild(pin);
                 if (!restoringHistory) {
@@ -1308,6 +1305,7 @@ export function initAiAssistant(container) {
 
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
+        if (div.dataset.aiRaw) refreshContext();
     }
 
     // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
@@ -1526,12 +1524,12 @@ export function initAiAssistant(container) {
                 const div = chat.lastElementChild;
                 if (div) {
                     div.dataset.msgId = String(m.id);
-                    if (m.pinned) div.classList.add('ctx-pinned');
+                    if (m.pinned) div.dataset.ctx = 'on';
                 }
             });
             restoringHistory = false;
             conversationId = res.id;
-            updateContextBar();
+            refreshContext();
         }).catch(() => {});
     }
 
@@ -1544,8 +1542,75 @@ export function initAiAssistant(container) {
         return '[' + (toolName || 'tool') + ' result] ' + s;
     }
 
+    // Number of recent exchanges (question + answer) that follow the model by
+    // default. 0 = fully manual: nothing goes back unless the user pins it.
+    const AUTO_CONTEXT = Math.max(0, parseInt(config.autoContext, 10) || 0);
+
+    // Bubbles that can be sent back as context (they carry a plain-text form).
+    function contextBubbles() {
+        return Array.from(chat.querySelectorAll('.msg')).filter((m) => m.dataset.aiRaw);
+    }
+
+    // Same, without the question currently being answered: that one IS the
+    // query, it never travels as context.
+    function pastContextBubbles() {
+        const msgs = contextBubbles();
+        if (msgs.length && msgs[msgs.length - 1].dataset.aiRole === 'user') msgs.pop();
+        return msgs;
+    }
+
+    // Effective context = the sliding window of the last AUTO_CONTEXT exchanges
+    // (counted from the questions) + explicit pins - explicit exclusions. Each
+    // bubble holds its own decision in data-ctx: '' follows the window, 'on' is
+    // pinned for good, 'off' is excluded. Recomputed after every change, so the
+    // window slides as the conversation grows while the pins stay put.
+    function refreshContext() {
+        const all = contextBubbles();
+        const msgs = pastContextBubbles();
+        // The question being answered is the query itself, never context: it
+        // waits outside the window until its answer arrives.
+        const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
+        if (pending) { pending.classList.remove('ctx-pinned', 'ctx-auto'); pending.dataset.ctxWindow = ''; }
+        let windowStart = msgs.length;
+        if (AUTO_CONTEXT > 0) {
+            let questions = 0;
+            for (let i = msgs.length - 1; i >= 0; i--) {
+                if (msgs[i].dataset.aiRole === 'user' && ++questions === AUTO_CONTEXT) { windowStart = i; break; }
+                if (i === 0) windowStart = 0;
+            }
+        }
+        msgs.forEach((m, i) => {
+            const inWindow = i >= windowStart;
+            const state = m.dataset.ctx || '';
+            const on = state === 'on' || (state === '' && inWindow);
+            m.dataset.ctxWindow = inWindow ? '1' : '';
+            m.classList.toggle('ctx-pinned', on);
+            m.classList.toggle('ctx-auto', on && state === '');
+            const pin = m.querySelector('.ctx-pin');
+            if (pin) pin.title = on ? (state === '' ? t('AIContextPinAuto') : t('AIContextPin')) : (inWindow ? t('AIContextPinOff') : t('AIContextPin'));
+        });
+        updateContextBar();
+    }
+
+    // Persist the explicit pin so it survives a reopen (the window itself is
+    // recomputed on reopen, not stored). Best-effort, like the rest of history.
+    function persistPinState(div) {
+        if (!div.dataset.msgId) return;
+        chatHistoryApi({ action: 'pin', message_id: parseInt(div.dataset.msgId, 10), pinned: (div.dataset.ctx === 'on') ? 1 : 0 }).catch(() => {});
+    }
+
+    // One click flips the bubble: inside the window it toggles between "follows
+    // the window" and "excluded"; outside it toggles the explicit pin.
+    function toggleContextPin(div) {
+        const on = div.classList.contains('ctx-pinned');
+        const inWindow = div.dataset.ctxWindow === '1';
+        if (on) div.dataset.ctx = inWindow ? 'off' : '';
+        else div.dataset.ctx = inWindow ? '' : 'on';
+        refreshContext();
+    }
+
     function collectPinnedContext() {
-        return Array.from(chat.querySelectorAll('.msg.ctx-pinned'))
+        return contextBubbles().filter((m) => m.classList.contains('ctx-pinned'))
             .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '', id: parseInt(m.dataset.msgId, 10) || 0 }))
             .filter((p) => p.text);
     }
@@ -1562,8 +1627,10 @@ export function initAiAssistant(container) {
     // token weight (chars/4) - the cost of the selected context stays visible.
     function updateContextBar() {
         let bar = container.querySelector('#ai-ctx-bar');
+        // Past exchanges the user can act on (the pending question is not one).
+        const past = pastContextBubbles();
         const pinned = collectPinnedContext();
-        if (!pinned.length) { if (bar) bar.remove(); return; }
+        if (!past.length) { if (bar) bar.remove(); return; }
         const tokens = Math.round(pinned.reduce((n, p) => n + p.text.length, 0) / 4);
         if (!bar) {
             bar = document.createElement('div');
@@ -1571,15 +1638,29 @@ export function initAiAssistant(container) {
             const pill = input.closest('.chat-input-pill') || input.parentElement;
             pill.insertAdjacentElement('beforebegin', bar);
         }
+        const auto = chat.querySelector('.msg.ctx-auto') ? ' <span class="opacitymedium">· ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</span>' : '';
         bar.innerHTML = '<span class="fa fa-thumb-tack"></span> ' +
-            t('AIContextCounter').replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
-            ' <a href="#" id="ai-ctx-clear">' + t('AIContextClear') + '</a>';
+            t('AIContextCounter').replace('%s', String(pinned.length)).replace('%s', String(tokens)) + auto +
+            ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double"></span> ' + t('AIContextAll') + '</a>' +
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser"></span> ' + t('AIContextClear') + '</a>';
+        const all = bar.querySelector('#ai-ctx-all');
+        if (all) {
+            all.onclick = (ev) => {
+                ev.preventDefault();
+                // All = every past exchange pinned for good (the bar shows the price).
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; persistPinState(m); });
+                refreshContext();
+            };
+        }
         const clear = bar.querySelector('#ai-ctx-clear');
         if (clear) {
             clear.onclick = (ev) => {
                 ev.preventDefault();
-                chat.querySelectorAll('.msg.ctx-pinned').forEach((m) => m.classList.remove('ctx-pinned'));
-                updateContextBar();
+                // Clear = nothing goes back with the NEXT question: recent bubbles
+                // are excluded, older pins dropped. New exchanges re-enter the
+                // window on their own afterwards.
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; persistPinState(m); });
+                refreshContext();
             };
         }
     }

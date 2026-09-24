@@ -805,8 +805,14 @@ function getAiChatAssistantConfig()
 
 		// Context pins
 		'AIContextPin',
+		'AIContextPinAuto',
+		'AIContextPinOff',
 		'AIContextCounter',
+		'AIContextAuto',
 		'AIContextClear',
+		'AIContextClearTitle',
+		'AIContextAll',
+		'AIContextAllTitle',
 		'AIContextAttachmentOnly',
 
 		// Conversation history
@@ -852,6 +858,7 @@ function getAiChatAssistantConfig()
 	// TakePOS split-amount labels), so re-feed literal '%s' as parameters to
 	// keep the placeholders intact for the JS .replace() calls.
 	$ai_translations['AIContextCounter'] = $langs->transnoentitiesnoconv('AIContextCounter', '%s', '%s');
+	$ai_translations['AIContextAuto'] = $langs->transnoentitiesnoconv('AIContextAuto', '%s');
 	$ai_translations['AIAttachmentTooMany'] = $langs->transnoentitiesnoconv('AIAttachmentTooMany', '%s');
 	$ai_translations['DownloadPdf'] = $langs->transnoentitiesnoconv("Download").' PDF';
 	$ai_translations['CloudVoiceRequiresSecureContext'] = $langs->trans(
@@ -877,6 +884,9 @@ function getAiChatAssistantConfig()
 		// Attachment count cap, so the client mirrors the server-side guard
 		// of ai_validate_attachments() instead of hardcoding its own.
 		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
+		// Recent exchanges that follow the model by default (sliding window);
+		// 0 keeps the context strictly opt-in.
+		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 3),
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
