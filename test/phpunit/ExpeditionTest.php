@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,9 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/stock/class/entrepot.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/stock/class/mouvementstock.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 $langs->load("dict");
@@ -49,6 +53,162 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  */
 class ExpeditionTest extends CommonClassTest
 {
+	/**
+	 * Restore the configuration after each standalone shipment scenario.
+	 *
+	 * @return void
+	 */
+	protected function tearDown(): void
+	{
+		global $conf;
+		$conf = $this->savconf;
+		parent::tearDown();
+	}
+
+	/**
+	 * Enable the modules and constants needed by standalone shipment stock tests.
+	 *
+	 * @param	bool	$calculateOnShipment	Stock decrease on shipment validation
+	 * @param	bool	$calculateOnClose		Stock decrease on shipment closing
+	 * @param	bool	$productBatchEnabled	Enable lot/serial module
+	 * @return	void
+	 */
+	private function configureStandaloneShipmentStock($calculateOnShipment, $calculateOnClose, $productBatchEnabled = false)
+	{
+		global $conf;
+
+		$conf = clone $this->savconf;
+		$conf->global = clone $this->savconf->global;
+		foreach (array('product' => 1, 'stock' => 1, 'productbatch' => (int) $productBatchEnabled, 'service' => 1) as $module => $enabled) {
+			$conf->$module = isset($this->savconf->$module) ? clone $this->savconf->$module : new stdClass();
+			$conf->$module->enabled = $enabled;
+			$conf->modules[$module] = (string) $enabled;
+		}
+
+		$conf->global->MAIN_USE_ADVANCED_PERMS = '';
+		$conf->global->SHIPMENT_STANDALONE = 1;
+		$conf->global->STOCK_CALCULATE_ON_SHIPMENT = $calculateOnShipment ? 1 : '';
+		$conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = $calculateOnClose ? 1 : '';
+		$conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS = '';
+		$conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT = 1;
+		$conf->global->STOCK_SUPPORTS_SERVICES = '';
+		$conf->global->SHIPMENT_SUPPORTS_SERVICES = '';
+		$conf->global->PRODUIT_SOUSPRODUITS = 0;
+	}
+
+	/**
+	 * Create a product for standalone shipment stock tests.
+	 *
+	 * @param	string	$scenario		Test scenario
+	 * @param	int		$statusBatch		Lot/serial status
+	 * @param	int		$productType			Product type
+	 * @param	int		$stockableProduct		Stockable product flag
+	 * @return	int							Product id
+	 */
+	private function createShipmentStockProduct($scenario, $statusBatch = 0, $productType = Product::TYPE_PRODUCT, $stockableProduct = Product::ENABLED_STOCK)
+	{
+		global $db, $user;
+
+		$product = new Product($db);
+		$product->initAsSpecimen();
+		$product->ref = 'EXPSTANDALONE-'.$scenario;
+		$product->label = 'Expedition standalone stock phpunit';
+		$product->type = $productType;
+		$product->status = 1;
+		$product->status_buy = 1;
+		$product->status_batch = $statusBatch;
+		$product->stockable_product = $stockableProduct;
+
+		$productId = $product->create($user);
+		$this->assertGreaterThan(0, $productId, $product->errorsToString());
+
+		return $productId;
+	}
+
+	/**
+	 * Create an open warehouse for standalone shipment stock tests.
+	 *
+	 * @param	string	$scenario		Test scenario
+	 * @return	int		Warehouse id
+	 */
+	private function createShipmentStockWarehouse($scenario)
+	{
+		global $db, $user;
+
+		$warehouse = new Entrepot($db);
+		$warehouse->initAsSpecimen();
+		$warehouse->ref = 'EXPSTANDALONE-'.$scenario;
+		$warehouse->label = 'Expedition standalone stock phpunit '.$warehouse->ref;
+		$warehouse->statut = $warehouse->status = Entrepot::STATUS_OPEN_ALL;
+
+		$warehouseId = $warehouse->create($user);
+		$this->assertGreaterThan(0, $warehouseId, $warehouse->errorsToString());
+		$result = $warehouse->fetch($warehouseId);
+		$this->assertGreaterThan(0, $result, $warehouse->errorsToString());
+		$this->assertEquals(Entrepot::STATUS_OPEN_ALL, $warehouse->status);
+
+		return $warehouseId;
+	}
+
+	/**
+	 * Create a standalone shipment for stock tests.
+	 *
+	 * @return	Expedition	Shipment object
+	 */
+	private function createStandaloneShipment()
+	{
+		global $db, $user;
+
+		$soc = new Societe($db);
+		$soc->name = 'Expedition standalone stock phpunit';
+		$socId = $soc->create($user);
+		$this->assertGreaterThan(0, $socId, $soc->errorsToString());
+
+		$shipment = new Expedition($db);
+		$shipment->socid = $socId;
+		$result = $shipment->create($user);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+
+		return $shipment;
+	}
+
+	/**
+	 * Add stock for a product into a warehouse.
+	 *
+	 * @param	int		$productId		Product id
+	 * @param	int		$warehouseId	Warehouse id
+	 * @param	float	$qty			Quantity to add
+	 * @return	void
+	 */
+	private function addStockForShipmentProduct($productId, $warehouseId, $qty)
+	{
+		global $db, $user;
+
+		$mouvS = new MouvementStock($db);
+		$result = $mouvS->reception($user, $productId, $warehouseId, $qty, 0, 'Stock for standalone shipment phpunit');
+		$this->assertGreaterThan(0, $result, $mouvS->errorsToString());
+	}
+
+	/**
+	 * Get real product stock in a warehouse.
+	 *
+	 * @param	int	$productId		Product id
+	 * @param	int	$warehouseId	Warehouse id
+	 * @return	float				Real stock
+	 */
+	private function getWarehouseRealStock($productId, $warehouseId)
+	{
+		global $db;
+
+		$product = new Product($db);
+		$result = $product->fetch($productId);
+		$this->assertGreaterThan(0, $result, $product->errorsToString());
+		$result = $product->load_stock('warehouseopen');
+		$this->assertGreaterThan(0, $result, $product->errorsToString());
+
+		return empty($product->stock_warehouse[$warehouseId]) ? 0 : (float) $product->stock_warehouse[$warehouseId]->real;
+	}
+
 	/**
 	 * testExpeditionCreate
 	 *
@@ -290,6 +450,245 @@ class ExpeditionTest extends CommonClassTest
 		$this->assertEquals(Expedition::STATUS_DRAFT, $obj->status);
 
 		return $obj;
+	}
+
+	/**
+	 * testStandaloneShipmentLineStoresWarehouse
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentLineStoresWarehouse()
+	{
+		global $db;
+
+		$this->configureStandaloneShipmentStock(false, false);
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+
+		$shipment = $this->createStandaloneShipment();
+		$lineId = $shipment->addlinefree(2, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), $warehouseId);
+		$this->assertGreaterThan(0, $lineId, $shipment->errorsToString());
+
+		$line = new ExpeditionLigne($db);
+		$result = $line->fetch($lineId);
+		$this->assertGreaterThan(0, $result, $line->errorsToString());
+		$this->assertEquals($productId, $line->fk_product);
+		$this->assertEquals($warehouseId, $line->entrepot_id);
+	}
+
+	/**
+	 * testStandaloneShipmentDecreasesStockOnValidation
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentDecreasesStockOnValidation()
+	{
+		global $user;
+
+		$this->configureStandaloneShipmentStock(true, false);
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+
+		$shipment = $this->createStandaloneShipment();
+		$lineId = $shipment->addlinefree(3, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), $warehouseId);
+		$this->assertGreaterThan(0, $lineId, $shipment->errorsToString());
+
+		$result = $shipment->valid($user);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(7, $this->getWarehouseRealStock($productId, $warehouseId));
+	}
+
+	/**
+	 * testStandaloneShipmentDecreasesStockOnClose
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentDecreasesStockOnClose()
+	{
+		global $user;
+
+		$this->configureStandaloneShipmentStock(false, true);
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+
+		$shipment = $this->createStandaloneShipment();
+		$lineId = $shipment->addlinefree(4, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), $warehouseId);
+		$this->assertGreaterThan(0, $lineId, $shipment->errorsToString());
+
+		$result = $shipment->valid($user);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(10, $this->getWarehouseRealStock($productId, $warehouseId));
+
+		$result = $shipment->setClosed();
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(6, $this->getWarehouseRealStock($productId, $warehouseId));
+	}
+
+	/**
+	 * testStandaloneShipmentRequiresWarehouse
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentRequiresWarehouse()
+	{
+		$this->configureStandaloneShipmentStock(true, false);
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$shipment = $this->createStandaloneShipment();
+
+		$result = $shipment->addlinefree(1, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), 0);
+		$this->assertLessThan(0, $result);
+		$this->assertNotEmpty($shipment->error);
+	}
+
+	/**
+	 * testStandaloneShipmentAllowsMissingWarehouseWhenConfigured
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentAllowsMissingWarehouseWhenConfigured()
+	{
+		global $conf;
+
+		$this->configureStandaloneShipmentStock(true, false);
+		$conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS = 1;
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+
+		$shipment = $this->createStandaloneShipment();
+		$result = $shipment->addlinefree(1, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), 0);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+	}
+
+	/**
+	 * testStandaloneShipmentSupportsServicesWithoutStock
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentSupportsServicesWithoutStock()
+	{
+		global $conf;
+
+		$this->configureStandaloneShipmentStock(true, false);
+		$conf->global->SHIPMENT_SUPPORTS_SERVICES = 1;
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__, 0, Product::TYPE_SERVICE, Product::ENABLED_STOCK);
+		$shipment = $this->createStandaloneShipment();
+
+		$result = $shipment->addlinefree(1, 'shipping', $productId, 0, -1, 'Standalone service', 0, array(), 0);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+	}
+
+	/**
+	 * testStandaloneShipmentSupportsServicesWithStock
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentSupportsServicesWithStock()
+	{
+		global $conf;
+
+		$this->configureStandaloneShipmentStock(true, false);
+		$conf->global->STOCK_SUPPORTS_SERVICES = 1;
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__, 0, Product::TYPE_SERVICE, Product::ENABLED_STOCK);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+
+		$shipment = $this->createStandaloneShipment();
+		$result = $shipment->addlinefree(1, 'shipping', $productId, 0, -1, 'Standalone service', 0, array(), $warehouseId);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+	}
+
+	/**
+	 * testStandaloneShipmentRejectsBatchProduct
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentRejectsBatchProduct()
+	{
+		$this->configureStandaloneShipmentStock(true, false, true);
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__, 1);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$shipment = $this->createStandaloneShipment();
+
+		$result = $shipment->addlinefree(1, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), $warehouseId);
+		$this->assertLessThan(0, $result);
+		$this->assertEquals('ErrorTryToMakeMoveOnProductRequiringBatchData', $shipment->errorhidden);
+	}
+
+	/**
+	 * Stock checks also apply to edits, using the stored product and warehouse.
+	 *
+	 * @return void
+	 */
+	public function testStandaloneShipmentChecksStockWhenUpdatingLine()
+	{
+		global $db;
+		$this->configureStandaloneShipmentStock(false, false);
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+		$shipment = $this->createStandaloneShipment();
+		$lineId = $shipment->addlinefree(2, 'shipping', $productId, 0, 1, 'Standalone product', 0, array(), $warehouseId);
+		$this->assertGreaterThan(0, $lineId, $shipment->errorsToString());
+
+		$result = $shipment->updatelinefree($lineId, 11, 'shipping', 0, 0, 1, 'Standalone product', 0, 1);
+		$this->assertSame(-3, $result);
+		$this->assertSame('ErrorStockIsNotEnoughToAddProductOnShipment', $shipment->errorhidden);
+		$line = new ExpeditionLigne($db);
+		$this->assertGreaterThan(0, $line->fetch($lineId));
+		$this->assertEquals(2, $line->qty);
+		$this->assertEquals($productId, $line->fk_product);
+		$this->assertEquals($warehouseId, $line->entrepot_id);
+
+		$result = $shipment->updatelinefree($lineId, 3, 'shipping', 0, 0, 1, 'Standalone product', 0, 1);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertGreaterThan(0, $line->fetch($lineId));
+		$this->assertEquals(3, $line->qty);
+		$this->assertEquals($warehouseId, $line->entrepot_id);
+
+		$otherWarehouseId = $this->createShipmentStockWarehouse(__FUNCTION__.'-other');
+		// A warehouse without a product_stock row has zero available stock.
+		$result = $shipment->updatelinefree($lineId, 3, 'shipping', 0, 0, 1, 'Standalone product', 0, 1, array(), $otherWarehouseId);
+		$this->assertSame(-3, $result);
+		$this->assertGreaterThan(0, $line->fetch($lineId));
+		$this->assertEquals($warehouseId, $line->entrepot_id);
+
+		$this->addStockForShipmentProduct($productId, $otherWarehouseId, 5);
+		$result = $shipment->updatelinefree($lineId, 3, 'shipping', 0, 0, 1, 'Standalone product', 0, 1, array(), $otherWarehouseId);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertGreaterThan(0, $line->fetch($lineId));
+		$this->assertEquals($otherWarehouseId, $line->entrepot_id);
+		$this->assertEquals($productId, $line->fk_product);
+	}
+
+	/**
+	 * Insufficient stock is rejected, while text-only lines need no warehouse.
+	 *
+	 * @return void
+	 */
+	public function testStandaloneShipmentChecksStockOnlyForProductLines()
+	{
+		$this->configureStandaloneShipmentStock(false, false);
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 1);
+		$shipment = $this->createStandaloneShipment();
+		$result = $shipment->addlinefree(2, 'shipping', $productId, 0, 1, 'Standalone product', 0, array(), $warehouseId);
+		$this->assertSame(-3, $result);
+		$this->assertSame('ErrorStockIsNotEnoughToAddProductOnShipment', $shipment->errorhidden);
+		$result = $shipment->addlinefree(2, 'shipping', 0, 0, 1, 'Free text', 0);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
 	}
 
 	/**
