@@ -1148,7 +1148,7 @@ abstract class CommonObject
 	 */
 	public function errorsToString()
 	{
-		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
+		return $this->error.(is_array($this->errors) && count($this->errors) > 0 ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
 	}
 
 

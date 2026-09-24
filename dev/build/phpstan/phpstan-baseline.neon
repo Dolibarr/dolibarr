@@ -8467,12 +8467,6 @@ parameters:
 			path: ../../../htdocs/website/samples/wrapper.php
 
 		-
-			message: '#^Path in require_once\(\) "\./master\.inc\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
