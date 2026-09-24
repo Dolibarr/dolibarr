@@ -1792,8 +1792,7 @@ class Expedition extends CommonObject
 
 		// Stock control
 		$can_update_stock = isModEnabled('stock') &&
-			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status > self::STATUS_DRAFT) ||
-				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->status == self::STATUS_CLOSED && $also_update_stock));
+			(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED);
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
@@ -1987,8 +1986,7 @@ class Expedition extends CommonObject
 		// Stock control
 		$can_update_stock = isModEnabled('stock') &&
 			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED) ||
-				(!getDolGlobalString('NO_AUTO_RESTOCK_ON_SHIPMENT_DELETE') && (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) && $this->status == self::STATUS_CLOSED) ||
-				(getDolGlobalString('NO_AUTO_RESTOCK_ON_SHIPMENT_DELETE') && (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) && $this->status == self::STATUS_CLOSED && $also_update_stock));
+				((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) && $this->status == self::STATUS_CLOSED && $also_update_stock));
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 

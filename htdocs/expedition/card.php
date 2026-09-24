@@ -656,8 +656,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('expedition', 'creer')) {
-		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
-		$result = $object->cancel($user, 0, (bool) $also_update_stock);
+		$result = $object->cancel($user, 0);
 		if ($result > 0) {
 			$result = $object->setStatut(Expedition::STATUS_CANCELED);
 		} else {
@@ -2695,13 +2694,13 @@ if ($action == 'create' && $usercancreate) {
 	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('NO_AUTO_RESTOCK_ON_SHIPMENT_DELETE')) {
+		if ($object->status == Expedition::STATUS_CLOSED) {
 			$formquestion = array(
 				array(
 					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
 					'name' => 'alsoUpdateStock',
 					'type' => 'checkbox',
-					'value' => 0
+					'value' => getDolGlobalString('AUTO_RESTOCK_ON_SHIPMENT_DELETE')
 				),
 			);
 		}
