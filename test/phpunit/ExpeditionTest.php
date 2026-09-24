@@ -139,10 +139,13 @@ class ExpeditionTest extends CommonClassTest
 		$warehouse->initAsSpecimen();
 		$warehouse->ref = 'EXPSTANDALONE-'.$scenario;
 		$warehouse->label = 'Expedition standalone stock phpunit '.$warehouse->ref;
-		$warehouse->statut = Entrepot::STATUS_OPEN_ALL;
+		$warehouse->statut = $warehouse->status = Entrepot::STATUS_OPEN_ALL;
 
 		$warehouseId = $warehouse->create($user);
 		$this->assertGreaterThan(0, $warehouseId, $warehouse->errorsToString());
+		$result = $warehouse->fetch($warehouseId);
+		$this->assertGreaterThan(0, $result, $warehouse->errorsToString());
+		$this->assertEquals(Entrepot::STATUS_OPEN_ALL, $warehouse->status);
 
 		return $warehouseId;
 	}
