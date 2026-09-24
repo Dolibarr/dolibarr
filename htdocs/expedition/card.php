@@ -3155,8 +3155,11 @@ if ($action == 'create' && $usercancreate) {
 		}
 	}
 
-	// Lines of products of origin
-	if (!empty($object->origin) && $object->origin_id > 0) {
+	$showoriginlines = ($object->origin_id > 0);
+	$showimportedstandalonelines = (empty($object->origin_id) && $object->id > 0 && !empty($object->lines) && !getDolGlobalString('SHIPMENT_STANDALONE'));
+
+	// Lines of products of origin or imported standalone shipments
+	if ($showoriginlines || $showimportedstandalonelines) {
 		if ($action == 'editline') {
 			print '	<form name="updateline" id="updateline" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;lineid=' . $line_id . '" method="POST">
 			<input type="hidden" name="token" value="' . newToken() . '">
@@ -3178,8 +3181,8 @@ if ($action == 'create' && $usercancreate) {
 		// Product/Service
 		print '<td  class="linecoldescription" >' . $langs->trans("Products") . '</td>';
 		// Qty
-		print '<td class="center linecolqty">' . $langs->trans("QtyOrdered") . '</td>';
 		if ($origin_id > 0) {
+			print '<td class="center linecolqty">' . $langs->trans("QtyOrdered") . '</td>';
 			print '<td class="center linecolqtyinothershipments">' . $langs->trans("QtyInOtherShipments") . '</td>';
 		}
 		if ($action == 'editline') {
@@ -3388,7 +3391,9 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Qty ordered
-				print '<td class="center linecolqty">' . $lines[$i]->qty_asked . ' ' . $unit_order . '</td>';
+				if ($origin_id > 0) {
+					print '<td class="center linecolqty">' . $lines[$i]->qty_asked . ' ' . $unit_order . '</td>';
+				}
 
 				// Qty in other shipments (with shipment and warehouse used)
 				if ($origin_id > 0) {
@@ -3680,7 +3685,7 @@ if ($action == 'create' && $usercancreate) {
 				// Display lines extrafields.
 				// $line is a line of shipment
 
-				$colspan = 6;
+				$colspan = ($origin_id > 0 ? 6 : 5);
 				if ($origin_id > 0) {
 					$colspan++;
 				}
