@@ -423,25 +423,26 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
  *	Convert a string date into a GM Timestamps date
  *	Warning: YYYY-MM-DDTHH:MM:SS+02:00 (RFC3339) is not supported. If parameter gm is 1, we will use no TZ, if not we will use TZ of server, not the one inside string.
  *
- *	@param	string		$string		Date in a string
- *				     		        YYYYMMDD
- *	                 				YYYYMMDDHHMMSS
- *									YYYYMMDDTHHMMSSZ
- *									YYYY-MM-DDTHH:MM:SSZ (RFC3339)
- *		                			DD/MM/YY or DD/MM/YYYY (deprecated)
- *		                			DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
+ *	@param	string		$string					Date in a string
+ *				     		        			YYYYMMDD
+ *	                 							YYYYMMDDHHMMSS
+ *												YYYYMMDDTHHMMSSZ
+ *												YYYY-MM-DDTHH:MM:SSZ (RFC3339)
+ *		                						DD/MM/YY or DD/MM/YYYY (deprecated)
+ *		                						DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
  *  @param  int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'|'dayrfc'	$gm		'gmt' or 1 =Input date is GM date,
  *                                                                                  'tzserver' or 0 =Input date is date using PHP server timezone
- *  @return	int						Date as a timestamp
- *		                			19700101020000 -> 7200 with gm=1
- *									19700101000000 -> 0 with gm=1
+ *  @param	int			$processnotimeasnoon	If set to 1, if time is not provided, we take noon (12:00:00) instead of midnight (00:00:00)
+ *  @return	int									Date as a timestamp
+ *		                						19700101020000 -> 7200 with gm=1
+ *												19700101000000 -> 0 with gm=1
  *
  *  @see    dol_print_date(), dol_mktime(), dol_getdate()
  */
-function dol_stringtotime($string, $gm = 1)
+function dol_stringtotime($string, $gm = 1, $processnotimeasnoon = 0)
 {
 	$reg = array();
-	// Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
+	// Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used as receiving a non standard format should not happen.
 	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $string, $reg)) {
 		dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
 		// Date is in format 'DD/MM/YY' or 'DD/MM/YY HH:MM:SS'
@@ -473,7 +474,12 @@ function dol_stringtotime($string, $gm = 1)
 	}
 
 	$string = preg_replace('/([^0-9])/i', '', $string);
-	$tmp = $string.'000000';
+	// If not time was provided, we add it (if it was, it won't be seen)
+	if ($processnotimeasnoon) {
+		$tmp = $string.'120000';
+	} else {
+		$tmp = $string.'000000';
+	}
 	// Clean $gm
 	if ($gm === 1) {
 		$gm = 'gmt';
