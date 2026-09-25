@@ -6142,14 +6142,15 @@ class Product extends CommonObject
 		}
 
 		if ($option == 'supplier' || $option == 'category') {
-			$url = DOL_URL_ROOT.'/product/price_suppliers.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/product/price_suppliers.php';
 		} elseif ($option == 'stock') {
-			$url = DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/product/stock/product.php';
 		} elseif ($option == 'composition') {
-			$url = DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/product/composition/card.php';
 		} else {
-			$url = DOL_URL_ROOT.'/product/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/product/card.php';
 		}
+		$query = ['id' => $this->id];
 
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -6158,9 +6159,10 @@ class Product extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
