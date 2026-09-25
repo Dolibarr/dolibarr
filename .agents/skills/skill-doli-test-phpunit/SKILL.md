@@ -11,7 +11,9 @@ allowed-tools:
  - grep
 ---
 
+
 # Skill: Add or modify a PHP Unit Test for Dolibarr
+
 
 ## When to Use This Skill
 
@@ -21,7 +23,7 @@ The goal is to produce a unit test that follows Dolibarr conventions and integra
 
 ## Relationship with AGENTS.md
 
-The instructions in this file are **complementary to** the instructions defined in `AGENTS.md`.
+The instructions in this file are **complementary to** the instructions defined in `.agents/AGENTS.md`.
 
 - `AGENTS.md` contains the general instructions and rules for the project.
 - `SKILLS.md` contains additional instructions specific to skills.
@@ -46,6 +48,7 @@ The user request should contain, when available:
 - tests must be deterministic and independent
 - avoid dependencies on external services
 - clean up every object created during the test
+- when launching phpunit, set the cache directory to `/tmp` with `--cache-directory "/tmp"`
 
 
 ## Critical Rules (DO NOT VIOLATE)
