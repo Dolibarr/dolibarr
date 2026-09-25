@@ -522,26 +522,31 @@ if (empty($error) && !empty($xml)) {
 		$out .= '</div>';
 
 		// Ajax loader for the per-file diff against the original version
-		$out .= '<script>'."\n";
-		$out .= 'jQuery(document).ready(function() {'."\n";
-		$out .= '	jQuery(".showfilediff").on("click", function(e) {'."\n";
-		$out .= '		e.preventDefault();'."\n";
-		$out .= '		var link = jQuery(this);'."\n";
-		$out .= '		var row = link.closest("tr");'."\n";
-		$out .= '		var existing = row.next(".filediffrow");'."\n";
-		$out .= '		if (existing.length) { existing.toggle(); return false; }'."\n";
-		$out .= '		var colspan = row.children("td").length;'."\n";
-		$out .= '		var newrow = jQuery(\'<tr class="filediffrow"><td colspan="\'+colspan+\'"><div class="filediffcontent opacitymedium">'.dol_escape_js($langs->trans("Loading").'...').'</div></td></tr>\');'."\n";
-		$out .= '		row.after(newrow);'."\n";
-		$out .= '		jQuery.get(\''.dol_escape_js(DOL_URL_ROOT.'/blockedlog/admin/filecheck_diff.php').'\', { file: link.attr("data-file"), algo: link.attr("data-algo"), expectedhash: link.attr("data-hash"), token: \''.newToken().'\' }, function(data) {'."\n";
-		$out .= '			newrow.find(".filediffcontent").removeClass("opacitymedium").html(data);'."\n";
-		$out .= '		}).fail(function() {'."\n";
-		$out .= '			newrow.find(".filediffcontent").html(\''.dol_escape_js($langs->trans("Error")).'\');'."\n";
-		$out .= '		});'."\n";
-		$out .= '		return false;'."\n";
-		$out .= '	});'."\n";
-		$out .= '});'."\n";
-		$out .= '</script>'."\n";
+		$out .= "<script>\n";
+		$out .= "jQuery(document).ready(function() {\n";
+		$out .= "	jQuery(\".showfilediff\").on(\"click\", function(e) {\n";
+		$out .= "		e.preventDefault();\n";
+		$out .= "		var link = jQuery(this);\n";
+		$out .= "		var row = link.closest(\"tr\");\n";
+		$out .= "		var existing = row.next(\".filediffrow\");\n";
+		$out .= "		if (existing.length) { existing.toggle(); return false; }\n";
+		$out .= "		var colspan = row.children(\"td\").length;\n";
+		$out .= "		var newrowstring = '';\n";
+		$out .= "		newrowstring = newrowstring + '<tr class=\"filediffrow\"><td colspan=\"'+colspan+'\"><div class=\"filediffcontent opacitymedium\">';\n";
+		$out .= "		newrowstring = newrowstring + '".dol_escape_js($langs->trans("Loading")."...")."';\n";
+		$out .= "		newrowstring = newrowstring + '</div></td></tr>';\n";
+		$out .= "		newrow = jQuery(newrowstring);\n";
+		$out .= "		row.after(newrow);\n";
+		$out .= "		jQuery.get('".dol_escape_js(DOL_URL_ROOT.'/blockedlog/admin/filecheck_diff.php')."', ";
+		$out .= '			{ file: link.attr("data-file"), algo: link.attr("data-algo"), expectedhash: link.attr("data-hash"), token: \''.newToken().'\' }, function(data) {'."\n";
+		$out .= "			newrow.find(\".filediffcontent\").removeClass(\"opacitymedium\").html(data);\n";
+		$out .= "		}).fail(function() {\n";
+		$out .= "			newrow.find(\".filediffcontent\").html('".dol_escape_js($langs->trans("Error"))."');\n";
+		$out .= "		});\n";
+		$out .= "		return false;\n";
+		$out .= "	});\n";
+		$out .= "});\n";
+		$out .= "</script>\n";
 
 		$out .= '<br>';
 

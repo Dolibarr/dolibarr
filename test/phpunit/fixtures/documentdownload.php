@@ -19,9 +19,11 @@ define('DOL_DATA_ROOT', $directory.'/documents');
 define('MAIN_DB_PREFIX', 'test_');
 $_POST = $scenario['post'];
 $_GET = $scenario['get'];
-$_POST['selecteddocuments'] = array_map(static function ($selection) {
-	return base64_encode(json_encode($selection));
-}, $scenario['selection']);
+if ($scenario['selection'] !== null) {
+	$_POST['selecteddocuments'] = array_map(static function ($selection) {
+		return base64_encode(json_encode($selection));
+	}, $scenario['selection']);
+}
 $_SERVER['REQUEST_METHOD'] = isset($scenario['method']) ? $scenario['method'] : 'POST';
 $_SERVER['HTTP_USER_AGENT'] = 'DocumentDownloadTest';
 $state = array('hooks' => array(), 'triggers' => array(), 'regenerations' => 0, 'counterupdates' => 0);
@@ -32,7 +34,7 @@ register_shutdown_function(static function () use ($directory, &$state) {
 	file_put_contents($directory.'/state.json', json_encode($state));
 });
 $conf = (object) array('entity' => 2);
-$user = (object) array('id' => empty($scenario['anonymous']) ? 7 : 0, 'socid' => 0);
+$user = (object) array('id' => empty($scenario['anonymous']) ? 7 : 0, 'socid' => 0, 'admin' => !empty($scenario['admin']));
 $langs = new Translate();
 $db = new class {
 	/**

@@ -247,7 +247,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($newUrl);
-		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
+		if (!is_array($newUrlArray) || (empty($newUrlArray['host']) && empty($newUrlArray['path']))) {
+			// parse_url() returns false on a malformed URL (like 'http:///path')
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Bad URL '.$newUrl);
+		}
+		$hosttocheck = !empty($newUrlArray['host']) ? $newUrlArray['host'] : $newUrlArray['path'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names
@@ -260,27 +264,28 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => $info['content']);
 		}
 
-		/* Discard full numeric hostname */
-		if (preg_match('/^[x0-9a-f]+$/', $hosttocheck)) {
+		// Discard a host name that is a plain integer (decimal like 2130706433, hex like 0x7f000001, octal like 017700000001): the
+		// gethostbyname() fallback of resolveDns() would turn it into an IP (127.0.0.1 for these three) while it is not a host name.
+		// Only integers are refused: a single label host name made of hex letters, like 'db' or 'cafe', is a legitimate host name.
+		if (preg_match('/^(0x[0-9a-f]+|[0-9]+)$/i', $hosttocheck)) {
 			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
 		}
 
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
-		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
+		if (filter_var($hosttocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {
+			$iptocheck = $hosttocheck;	// Already an IP (v4, or v6 without its brackets), nothing to resolve
+		} elseif (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
 			$iptocheck = '127.0.0.1';
 		} elseif (in_array($hosttocheck, array('ip6-localhost', 'ip6-loopback'))) {
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
-			// Not that a bad numeric hostname like 2130706433 will be resolved int 127.0.0.1 but
-			// this case is filtered previously.
 			$iptocheck = resolveDns($hosttocheck);
 		}
 
-		// Check $iptocheck is an IP (v4 or v6), if not clear value.
+		// Check $iptocheck is an IP (v4 or v6). resolveDns() returns the host name itself when the resolution failed.
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
-			$iptocheck = '0'; // will disabled check on IP
-			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host '.$hosttocheck.' can not be resolved into an IP');
 		}
 
 		if ($iptocheck) {
@@ -299,7 +304,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
 			// Format is "host:port:ip:port". Port fields MUST use %s, not %d: an empty port (default 80/443) must stay empty so it matches "any port" and pins to the same port. With %d the empty string becomes 0 ("host:0:ip:0"), never matches the real port, and libcurl ignores the pin, re-opening a DNS-rebinding SSRF bypass.
 			if (defined('CURLOPT_CONNECT_TO')) {
-				$connect_to = array(sprintf("%s:%s:%s:%s", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $iptocheck, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
+				// An IPv6 must be in brackets, like in a URL, else libcurl can not tell it from the port separators ("host:80:::1:80" fails with "No valid port number in connect to host string").
+				$ipforconnect = (strpos($iptocheck, ':') !== false) ? '['.$iptocheck.']' : $iptocheck;
+				$connect_to = array(sprintf("%s:%s:%s:%s", $newUrlArray['host'], empty($newUrlArray['port']) ? '' : $newUrlArray['port'], $ipforconnect, empty($newUrlArray['port']) ? '' : $newUrlArray['port']));
 				//var_dump($newUrlArray);
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
@@ -417,7 +424,9 @@ function resolveDns($hosttocheck)
 	// Resolve $hosttocheck to get the IP $iptocheck
 	if (function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION')) {
 		try {
-			$records = dns_get_record($hosttocheck, DNS_A + DNS_AAAA);
+			// A failed resolution (host not found, DNS server failure) raises a PHP warning, that we silence: the caller handles the "not resolved" case.
+			// The try/catch is still needed when an error handler converts warnings into exceptions (the @ does not prevent that).
+			$records = @dns_get_record($hosttocheck, DNS_A + DNS_AAAA);
 
 			if (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ip'])) {			// We take the first one
 				$iptocheck = $records[0]['ip'];

@@ -284,7 +284,7 @@ class SocialContributions extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
-	 * @throws RestException 403 Access denied
+	 * @throws RestException 403 Access denied, or social contribution with payments
 	 * @throws RestException 404 Social contribution not found
 	 * @throws RestException 500 Error when deleting the social contribution
 	 */
@@ -298,6 +298,11 @@ class SocialContributions extends DolibarrApi
 		$result = $contrib->fetch($id);
 		if ($result <= 0 || empty($contrib->id)) {
 			throw new RestException(404, 'Social contribution not found');
+		}
+
+		// As the card does, and as DELETE /invoices/{id}: not once something is paid
+		if (!empty($contrib->getSommePaiement())) {
+			throw new RestException(403, 'Social contribution not erasable, it has payments');
 		}
 
 		if ($contrib->delete(DolibarrApiAccess::$user) < 0) {

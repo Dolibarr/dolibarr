@@ -807,7 +807,20 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		// Normalize Inputs
-		$productIdentifier = isset($args['product']) ? (string) $args['product'] : (isset($args['product_ref']) ? (string) $args['product_ref'] : (isset($args['description']) ? (string) $args['description'] : ''));
+		// product_id is advertised by the schema and is what a model sends when it
+		// already resolved the product, so it must be honoured first: taking only
+		// the ref left $prod null and the line was written at price 0.
+		if (!empty($args['product_id'])) {
+			$productIdentifier = (string) ((int) $args['product_id']);
+		} elseif (isset($args['product'])) {
+			$productIdentifier = (string) $args['product'];
+		} elseif (isset($args['product_ref'])) {
+			$productIdentifier = (string) $args['product_ref'];
+		} elseif (isset($args['description'])) {
+			$productIdentifier = (string) $args['description'];
+		} else {
+			$productIdentifier = '';
+		}
 
 		$qtyInput = $args['qty'] ?? $args['quantity'] ?? 1;
 		$qty = (float) $qtyInput;

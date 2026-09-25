@@ -180,4 +180,63 @@ class DocumentDownloadTest extends \PHPUnit\Framework\TestCase
 		$this->assertSame(405, $state['status']);
 		$this->assertSame(array(), $state['hooks']);
 	}
+
+	/** @return void */
+	public function testPublicMediaKeepsNativeAccessWithoutRequiringAnObject()
+	{
+		foreach (array(false, true) as $denymodule) {
+			$state = $this->runDownload(array(
+				'selection' => null,
+				'post' => array(),
+				'get' => array('modulepart' => 'medias', 'file' => 'A/report.pdf', 'entity' => 2),
+				'anonymous' => true,
+				'missingref' => 'A',
+				'denymodule' => $denymodule,
+			));
+			$this->assertTrue($state['nologin']);
+			$this->assertTrue($state['nocsrfcheck']);
+			$this->assertSame($denymodule ? 403 : 200, $state['status']);
+			$this->assertSame($denymodule ? 'Forbidden' : 'First document', $state['body']);
+			$this->assertCount($denymodule ? 0 : 1, $state['hooks']);
+		}
+	}
+
+	/** @return void */
+	public function testBatchMediaParameterCannotBypassObjectRestrictions()
+	{
+		$state = $this->runDownload(array('get' => array('modulepart' => 'medias'), 'missingref' => 'A'));
+		$this->assertFalse($state['nologin']);
+		$this->assertFalse($state['nocsrfcheck']);
+		$this->assertSame(403, $state['status']);
+		$this->assertSame(array(), $state['hooks']);
+	}
+
+	/** @return void */
+	public function testSystemToolsKeepsNativeAdminAccessForSingleAndBatchDownloads()
+	{
+		foreach (array(false, true) as $batch) {
+			foreach (array(false, true) as $admin) {
+				foreach (array(false, true) as $denymodule) {
+					$state = $this->runDownload(array(
+						'selection' => $batch ? array(array('modulepart' => 'systemtools', 'file' => 'A/report.pdf', 'entity' => 2)) : null,
+						'post' => array('action' => $batch ? 'downloadselected' : '', 'modulepart' => 'systemtools', 'file' => 'A/report.pdf'),
+						'missingref' => 'A',
+						'admin' => $admin,
+						'denymodule' => $denymodule,
+					));
+					$allowed = $admin && !$denymodule;
+					$this->assertSame($allowed ? 200 : 403, $state['status']);
+					$this->assertCount($allowed ? 1 : 0, $state['hooks']);
+					if ($allowed && $batch) {
+						$zip = new ZipArchive();
+						$this->assertTrue($zip->open($this->directory.'/response'));
+						$this->assertSame('First document', $zip->getFromName('report.pdf'));
+						$zip->close();
+					} else {
+						$this->assertSame($allowed ? 'First document' : 'Forbidden', $state['body']);
+					}
+				}
+			}
+		}
+	}
 }

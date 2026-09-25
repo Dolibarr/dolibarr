@@ -55,21 +55,20 @@ $isbatchdownloadrequest = (isset($_POST['action']) && is_string($_POST['action']
 	|| (isset($_GET['action']) && is_string($_GET['action']) && trim($_GET['action']) === 'downloadselected')
 	|| isset($_POST['selecteddocuments']) || isset($_GET['selecteddocuments']);
 
+// Some value of modulepart can be used to get resources that are public so no login are required.
+// Note that only directory logo is free to access without login.
+$needlogin = 1;
 // For direct external download link, we don't need to load/check we are into a login session
 if (!$isbatchdownloadrequest && isset($_GET["hashp"]) && !defined("NOLOGIN")) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
+	$needlogin = 0;
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Keep $_GET here, GETPOST is not available yet
 if (!$isbatchdownloadrequest && (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
+	$needlogin = 0;
+}
+// If nologin required
+if (!$needlogin) {
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
@@ -186,9 +185,10 @@ function dol_document_send_content_disposition($disposition, $filename)
  * @param	int		$entity			Entity id
  * @param	User	$fuser			User requesting the document
  * @param	string	$hashp			Public hash, if any
+ * @param	bool	$needlogin		Whether per-object login checks are required (always true for batches)
  * @return	array{original_file:string,refname:string,accessallowed:int,sqlprotectagainstexternals:string,fullpath_original_file:string,fullpath_original_file_osencoded:string,filename:string,type:string}
  */
-function dol_document_resolve_secure_file($modulepart, $original_file, $entity, $fuser, $hashp = '')
+function dol_document_resolve_secure_file($modulepart, $original_file, $entity, $fuser, $hashp = '', $needlogin = true)
 {
 	global $db, $langs;
 
@@ -239,9 +239,15 @@ function dol_document_resolve_secure_file($modulepart, $original_file, $entity, 
 	}
 
 	// Keep develop's per-object restrictions for individual files and every ZIP entry.
-	if ($accessallowed && (empty($hashp) || $hashp == 'shared')) {
+	if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
 		$object = fetchObjectByElement(0, $modulepart, $refname);
-		$accessallowed = is_object($object) ? restrictedArea($fuser, $modulepart, $object) : 0;
+		if (is_object($object)) {
+			$accessallowed = restrictedArea($fuser, $modulepart, $object);
+		} elseif ($modulepart == 'systemtools' && $fuser->admin) {
+			$accessallowed = 1;
+		} else {
+			$accessallowed = 0;
+		}
 	}
 
 	// Security: Limit access if permissions are wrong.
@@ -655,7 +661,7 @@ if ($forceattachment) {
 }
 
 // Resolve access after deciding the requested disposition so both preview and forced-download links share the same file checks.
-$resolvedfile = dol_document_resolve_secure_file($modulepart, $original_file, (int) $entity, $user, $hashp);
+$resolvedfile = dol_document_resolve_secure_file($modulepart, $original_file, (int) $entity, $user, $hashp, (bool) $needlogin);
 $original_file = $resolvedfile['original_file'];
 $accessallowed = $resolvedfile['accessallowed'];
 $sqlprotectagainstexternals = $resolvedfile['sqlprotectagainstexternals'];

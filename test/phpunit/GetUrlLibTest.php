@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,6 +269,43 @@ class GetUrlLibTest extends CommonClassTest
 		$this->assertEquals('abcbbdef', $result, 'Test 1');
 
 		return 1;
+	}
+
+
+	/**
+	 * testGetURLContentHostParsing
+	 *
+	 * How getURLContent() reads the host of the URL before the anti SSRF check: numeric forms, host names that look numeric,
+	 * malformed URLs, IPv6.
+	 *
+	 * @return void
+	 */
+	public function testGetURLContentHostParsing()
+	{
+		$url = 'https://0X7F000001';	// Upper case hex integer
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url."\n";
+		$this->assertEquals("Host is a numeric address that is not allowed", $tmp['curl_error_msg'], 'An upper case hex integer is a numeric address too');
+
+		// A single label host name made of hex letters is a host name, not a numeric address (it may or may not resolve here)
+		$url = 'http://db/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2, -1, 2, 3);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertStringNotContainsString('numeric address', $tmp['curl_error_msg'], 'db is a host name, not a numeric address');
+
+		// A malformed URL (parse_url() returns false) must be refused without any PHP warning
+		$url = 'http:///foo';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code']);
+		$this->assertStringStartsWith('Bad URL', $tmp['curl_error_msg']);
+
+		// An IPv6 target must reach curl with a valid CURLOPT_CONNECT_TO (error 49 was "No valid port number in connect to host string")
+		$url = 'http://[::1]:8/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 1, -1, 2, 3);		// Only local URL
+		print __METHOD__." url=".$url." curl_error_no=".$tmp['curl_error_no']." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertNotEquals(400, $tmp['http_code'], 'A local IPv6 URL must pass the anti SSRF check when local URLs are allowed');
+		$this->assertNotEquals(49, $tmp['curl_error_no'], 'CURLOPT_CONNECT_TO must be valid for an IPv6: '.$tmp['curl_error_msg']);
 	}
 
 
