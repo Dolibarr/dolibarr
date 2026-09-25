@@ -71,10 +71,10 @@ if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibe" ]; then
 	echo "Create link $WORKDIR/.vibe"
 	ln -fs .agents .vibe 2>/dev/null
 fi
-if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/AGENTS.md" ]; then
-	echo "Create link $WORKDIR/AGENTS.md"
-	ln -fs .agents/AGENTS.md AGENTS.md 2>/dev/null
-fi
+#if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/AGENTS.md" ]; then
+#	echo "Create link $WORKDIR/AGENTS.md"
+#	ln -fs .agents/AGENTS.md AGENTS.md 2>/dev/null
+#fi
 
 
 # Create .cache directory
