@@ -22,7 +22,7 @@
  *          into the generated object class for any field, not only ref/code.
  */
 
-global $conf, $user, $langs, $db;
+global $conf, $user, $langs, $db, $mysoc;
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
