@@ -1515,6 +1515,18 @@ class FunctionsLibTest extends CommonClassTest
 		</div>';
 		$result = dol_escape_htmltag($input, 1, 1, 'common,code');
 		$this->assertEquals($input, $result);
+
+		// A string without any tag, with tags to keep: the tag protection is skipped for tags that are not in the string, result must not change
+		$input = 'Customer proposal PR2609-0042 & "quoted" < 10 > 5 \'single\' &amp; &lt;b&gt;';
+		$this->assertEquals('Customer proposal PR2609-0042 &amp; &quot;quoted&quot; &lt; 10 &gt; 5 \'single\' &amp; &lt;b&gt;', dol_escape_htmltag($input, 1, 1, 'common'));
+
+		// Tags in another case: the check "is the tag in the string" is case insensitive, the protection itself keeps its case rules
+		$input = 'a <B>X</B> <span style="color:red">s</span> </br>';
+		$this->assertEquals('a &lt;B&gt;X</b> <span style="color:red">s</span> </br>', dol_escape_htmltag($input, 1, 1, 'common'));
+
+		// A reserved marker in the source is still removed, and only the tags present are restored
+		$input = '__BEGINTAGTOREPLACEb__ <i>x</i>';
+		$this->assertEquals('b__ <i>x</i>', dol_escape_htmltag($input, 1, 1, 'common'));
 	}
 
 
