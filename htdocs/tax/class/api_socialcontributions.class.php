@@ -23,6 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution
 // PaymentSocialContribution::delete() instantiates AccountLine without requiring
 // it; load it here so deleting a bank-linked payment via the API does not fatal.
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 /**
  * API class for social/fiscal contributions (taxes) and their payments
@@ -464,7 +465,8 @@ class SocialContributions extends DolibarrApi
 		if (isModEnabled("bank") && !((int) ($request_data['accountid'] ?? 0) > 0)) {
 			throw new RestException(400, 'accountid field missing');
 		}
-		$datepaye = $this->_parsePaymentDate($request_data['datepaye']);
+		// A day alone is taken at noon, as the payment form does
+		$datepaye = is_numeric($request_data['datepaye']) ? (int) $request_data['datepaye'] : dol_stringtotime((string) $request_data['datepaye'], 1, 1);
 		if (empty($datepaye)) {
 			throw new RestException(400, 'datepaye must be a timestamp or a date YYYY-MM-DD');
 		}
@@ -590,29 +592,6 @@ class SocialContributions extends DolibarrApi
 			$payment[$field] = $data[$field];
 		}
 		return $payment;
-	}
-
-	/**
-	 * Convert a payment date given as a timestamp or as an ISO date into a timestamp
-	 *
-	 * @param	string		$value	Timestamp, 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' / 'YYYY-MM-DDTHH:MM:SSZ'
-	 * @return	int|string			Timestamp, or '' if the value is not a valid date
-	 */
-	private function _parsePaymentDate($value)
-	{
-		$value = trim((string) $value);
-		$reg = array();
-		if (preg_match('/^\d+$/', $value)) {
-			return (int) $value;
-		}
-		if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value, $reg) && checkdate((int) $reg[2], (int) $reg[3], (int) $reg[1])) {
-			// A day alone is taken at noon, as the payment form does
-			return dol_mktime(12, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1]);
-		}
-		if (preg_match('/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}Z?$/', $value)) {
-			return dol_stringtotime($value);
-		}
-		return '';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
