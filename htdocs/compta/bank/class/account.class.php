@@ -1682,11 +1682,13 @@ class Account extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/compta/bank/card.php';
+		$query = ['id' => $this->id];
 		if ($mode == 'transactions') {
-			$url = DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/bank/bankentries_list.php';
 		} elseif ($mode == 'receipts') {
-			$url = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/bank/releve.php';
+			$query = ['account' => $this->id];
 		}
 
 		if ($option != 'nolink') {
@@ -1696,9 +1698,10 @@ class Account extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
