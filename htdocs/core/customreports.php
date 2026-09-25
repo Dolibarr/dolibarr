@@ -65,6 +65,8 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
+	$search_xaxis = array();
+	$search_groupby = array();
 
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
 		$search_xaxis = array(GETPOST('search_xaxis', 'alpha'));
