@@ -1357,7 +1357,7 @@ if (empty($reshook)) {
 			$desc = dol_htmlcleanlastbr($desc);
 
 			// Insert line
-			$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $fk_parent, $array_options, $fk_entrepot);
+			$result = $object->addlinefree((float) $qty, $element_type, (int) $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $fk_parent, $array_options, $fk_entrepot);
 
 			if ($result > 0) {
 				$ret = $object->fetch($object->id); // Reload to get new records
