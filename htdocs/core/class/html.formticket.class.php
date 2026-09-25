@@ -259,6 +259,7 @@ class FormTicket
 	 */
 	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, $with_contact = null, $action = '', $object = null)
 	{
+		dol_syslog('FormTicket::showForm', LOG_DEBUG);
 		global $conf, $langs, $user, $hookmanager;
 
 		$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
@@ -472,6 +473,7 @@ class FormTicket
 		$filter = '';
 		if ($public) {
 			$filter = '(public:=:1)';
+			print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 		}
 		$this->selectGroupTickets($category_code, 'category_code', $filter, 2, 'ifone', 0, 0, 'minwidth200 maxwidth500');
 		print '</td></tr>';

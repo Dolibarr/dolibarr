@@ -118,6 +118,7 @@ $encoding = '';
 $original_file = GETPOST('file', 'alphanohtml');
 $modulepart = 'ticket';		// Forced to be sure wrapper is not used for something else
 $entity = GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity;
+$projectid = GETPOSTINT('projectid');
 
 // Security check
 $socid = 0;

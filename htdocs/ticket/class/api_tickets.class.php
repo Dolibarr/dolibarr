@@ -79,6 +79,9 @@ class Tickets extends DolibarrApi
 	 */
 	public function get($id, $contact_list = 1)
 	{
+		if ($id < 1) {
+			throw new RestException(400, 'Error: id < 1');
+		}
 		return $this->getCommon($id, '', '', $contact_list);
 	}
 
@@ -549,6 +552,9 @@ class Tickets extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
 		}
+		if ($id < 1) {
+			throw new RestException(400, 'Error: id < 1');
+		}
 
 		$result = $this->ticket->fetch($id);
 		if (!$result) {
@@ -612,6 +618,10 @@ class Tickets extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'delete')) {
 			throw new RestException(403);
 		}
+		if ($id < 1) {
+			throw new RestException(400, 'Error: id < 1');
+		}
+
 		$result = $this->ticket->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Ticket not found');
@@ -798,7 +808,9 @@ class Tickets extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
 		}
-
+		if ($id < 1) {
+			throw new RestException(400, 'Error: id < 1');
+		}
 		// test source
 		if (empty($source)) {
 			throw new RestException(400, 'Source can not be empty');
@@ -907,6 +919,9 @@ class Tickets extends DolibarrApi
 		// Check permissions
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'write')) {
 			throw new RestException(403);
+		}
+		if ($id < 1) {
+			throw new RestException(400, 'Error: id < 1');
 		}
 
 		// test source
