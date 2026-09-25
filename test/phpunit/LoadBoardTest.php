@@ -73,12 +73,14 @@ class LoadBoardTest extends CommonClassTest
 	 *
 	 * @param	DoliDB	$db		Database handler
 	 * @param	string	$sql	INSERT statement
-	 * @return	int				Id of the new row
+	 * @param	string	$table	Table name without prefix, when the id of the new row is needed: last_insert_id() needs it to
+	 *							find the sequence of the auto increment column on pgsql (rowid for every table needing it here)
+	 * @return	int				Id of the new row, 0 when $table is empty
 	 */
-	private function insert($db, $sql)
+	private function insert($db, $sql, $table = '')
 	{
 		$this->assertTrue((bool) $db->query($sql), $db->lasterror().' - '.$sql);
-		return (int) $db->last_insert_id('');
+		return $table === '' ? 0 : (int) $db->last_insert_id($db->prefix().$table);
 	}
 
 	/**
@@ -194,7 +196,7 @@ class LoadBoardTest extends CommonClassTest
 			foreach (['inactive', 'expired', 'active'] as $mode) {
 				$before[$mode] = $object->load_board($user, $mode);
 			}
-			$contratid = $this->insert($db, "INSERT INTO ".$db->prefix()."contrat (ref, entity, fk_soc, statut, datec, fk_user_author) VALUES ('TESTBRD".$suffix."', ".$entity.", 1, 1, '".$db->idate($now)."', ".$userid.")");
+			$contratid = $this->insert($db, "INSERT INTO ".$db->prefix()."contrat (ref, entity, fk_soc, statut, datec, fk_user_author) VALUES ('TESTBRD".$suffix."', ".$entity.", 1, 1, '".$db->idate($now)."', ".$userid.")", 'contrat');
 			// [status, planned start, end of validity]
 			foreach ([[0, "'".$old."'", 'NULL'], [0, "'".$recent."'", 'NULL'], [0, 'NULL', 'NULL'], [4, 'NULL', "'".$old."'"], [4, 'NULL', "'".$recent."'"], [4, 'NULL', 'NULL']] as [$status, $datestart, $dateend]) {
 				$this->insert($db, "INSERT INTO ".$db->prefix()."contratdet (fk_contrat, statut, qty, date_ouverture_prevue, date_fin_validite) VALUES (".$contratid.", ".$status.", 1, ".$datestart.", ".$dateend.")");
@@ -227,7 +229,7 @@ class LoadBoardTest extends CommonClassTest
 			$beforetask = $task->load_board($user);
 			$projectids = [];
 			foreach (["'".$old."'", "'".$recent."'", 'NULL'] as $k => $dateend) {
-				$projectids[] = $this->insert($db, "INSERT INTO ".$db->prefix()."projet (ref, title, entity, fk_soc, fk_statut, fk_user_creat, datec, datee) VALUES ('TESTBRD".$suffix."-".$k."', 'Board test', ".$entity.", 1, 1, ".$userid.", '".$db->idate($now)."', ".$dateend.")");
+				$projectids[] = $this->insert($db, "INSERT INTO ".$db->prefix()."projet (ref, title, entity, fk_soc, fk_statut, fk_user_creat, datec, datee) VALUES ('TESTBRD".$suffix."-".$k."', 'Board test', ".$entity.", 1, 1, ".$userid.", '".$db->idate($now)."', ".$dateend.")", 'projet');
 			}
 			$this->assertBoard($beforeproject, $project->load_board($user), 3, 1, 'projects');
 			// [end date, progress]
@@ -277,7 +279,7 @@ class LoadBoardTest extends CommonClassTest
 		if (isModEnabled('member')) {
 			$this->setDelay($conf, ['adherent', 'subscription']);
 			$this->setDelay($conf, ['member', 'subscription']);
-			$typeid = $this->insert($db, "INSERT INTO ".$db->prefix()."adherent_type (libelle, morphy, entity, subscription, statut) VALUES ('Board test', 'phy', ".$entity.", 1, 1)");
+			$typeid = $this->insert($db, "INSERT INTO ".$db->prefix()."adherent_type (libelle, morphy, entity, subscription, statut) VALUES ('Board test', 'phy', ".$entity.", 1, 1)", 'adherent_type');
 			$object = new Adherent($db);
 			$beforeexpired = $object->load_board($user, 'expired');
 			$beforeshift = $object->load_board($user, 'shift');
@@ -292,7 +294,7 @@ class LoadBoardTest extends CommonClassTest
 		if (isModEnabled('bank')) {
 			$this->setDelay($conf, ['bank', 'cheque']);
 			$this->setDelay($conf, ['bank', 'rappro']);
-			$accountid = $this->insert($db, "INSERT INTO ".$db->prefix()."bank_account (ref, label, entity, fk_pays, currency_code, rappro, courant, clos) VALUES ('TESTBRD', 'Board test', ".$entity.", 1, 'EUR', 1, ".Account::TYPE_CURRENT.", 0)");
+			$accountid = $this->insert($db, "INSERT INTO ".$db->prefix()."bank_account (ref, label, entity, fk_pays, currency_code, rappro, courant, clos) VALUES ('TESTBRD', 'Board test', ".$entity.", 1, 'EUR', 1, ".Account::TYPE_CURRENT.", 0)", 'bank_account');
 			$cheque = new RemiseCheque($db);
 			$account = new Account($db);
 			$beforecheque = $cheque->load_board($user);
