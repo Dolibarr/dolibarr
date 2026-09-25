@@ -373,3 +373,6 @@ VirtualStockHorizonHelp=Number of days ahead used to include incoming supply int
 VirtualStockHorizonKeepUndatedOrders=Count supplier orders with no planned delivery date
 VirtualStockHorizonKeepUndatedOrdersHelp=When a horizon is set, supplier orders with no planned delivery date are not counted, because their arrival is unknown. Enable this to count them anyway.
 ReplenishQuantityZeroExplanation=Quantity to order is zero because enought quantity has already been ordered.
+ErrorStockMovementAlreadyReversed=The stock movement %s has already been reversed
+ErrorStockMovementIsAlreadyAReverse=The stock movement %s is itself a reverse movement and can not be reversed
+ErrorStockMovementBadType=The stock movement %s has a type that can not be reversed
