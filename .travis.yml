@@ -433,8 +433,16 @@ script:
     set -e
     CACHE_OPT="--cache=${HOME}/.cache/dolibarr-phpcs-${TRAVIS_PHP_VERSION}.cache"
     # Exclusions are defined in the ruleset.xml file
-    if [ "x$TRAVIS_RUN_PHPCS" = "xyes" ]; then
-      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
+    # For a pull request, we check only the php files it changes (list got in before_install): the cache is
+    # never found for a new pull request and a scan of the whole tree takes 3 minutes. A change of the rules checks all.
+    PHPCS_FILES=.
+    if [ -n "${changed_files:-}" ] && ! echo "$changed_files" | grep -qE '^(dev/setup/codesniffer/|\.travis\.yml$)'; then
+      PHPCS_FILES=$(echo "$changed_files" | grep -E '\.php$' | while read -r f; do [ -f "$f" ] && echo "$f"; done)
+    fi
+    if [ "x$TRAVIS_RUN_PHPCS" = "xyes" ] && [ -z "$PHPCS_FILES" ]; then
+      echo "No php file changed by the pull request"
+    elif [ "x$TRAVIS_RUN_PHPCS" = "xyes" ]; then
+      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true $PHPCS_FILES;
     else
       echo "Skipped"
     fi
