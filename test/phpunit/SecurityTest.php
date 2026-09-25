@@ -586,6 +586,55 @@ class SecurityTest extends CommonClassTest
 		$this->assertTrue($result, 'Access to bank account with feature bank, the english name of the module');
 	}
 
+	/**
+	 * testRestrictedAreaBank
+	 *
+	 * restrictedArea() accepts 'bank' (the module name given by fetchObjectByElement() for a bank account, used by the
+	 * ajax pages like ajaxtooltip.php) as an alias of 'banque': the right to check is banque->lire, nothing else.
+	 *
+	 * @return void
+	 */
+	public function testRestrictedAreaBank()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+		$account = new Account($db);
+		$account->ref = 'TSEC'.mt_rand(0, 99999);
+		$account->label = 'testRestrictedAreaBank '.$account->ref;
+		$account->type = Account::TYPE_CURRENT;
+		$account->currency_code = 'EUR';
+		$account->country_id = 1;
+		$account->date_solde = dol_now();
+		$accountid = $account->create($user);
+		$this->assertGreaterThan(0, $accountid, 'Bank account must be created');
+
+		try {
+			// The right to read bank accounts is enough (whatever the other rights of the module)
+			$reader = new User($db);
+			$reader->id = $user->id;
+			$reader->entity = $user->entity;
+			$reader->rights = new stdClass();
+			$reader->rights->banque = new stdClass();
+			$reader->rights->banque->lire = 1;
+			$reader->rights->banque->cheque = 0;
+			$this->assertEquals(1, restrictedArea($reader, 'bank', $account, 'bank_account', '', 'fk_soc', 'rowid', 0, 1), 'A user with banque->lire must be allowed with the feature bank');
+			$this->assertEquals(1, restrictedArea($reader, 'banque', $account, 'bank_account', '', 'fk_soc', 'rowid', 0, 1), 'A user with banque->lire must be allowed with the feature banque');
+
+			// Without the right to read bank accounts, the access is refused even with the right on cheque receipts
+			$reader->rights->banque->lire = 0;
+			$reader->rights->banque->cheque = 1;
+			$this->assertEquals(0, restrictedArea($reader, 'bank', $account, 'bank_account', '', 'fk_soc', 'rowid', 0, 1), 'A user without banque->lire must be refused with the feature bank');
+		} finally {
+			$account->delete($user);
+		}
+	}
+
 
 	/**
 	 * testDolSanitizeUrl

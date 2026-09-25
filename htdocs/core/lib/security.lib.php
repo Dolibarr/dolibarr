@@ -214,7 +214,6 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$dbt_select = 'id';
 	} elseif ($features == 'bank') {
 		$features = 'banque';
-		$feature2 = 'cheque';
 	} elseif ($features == 'remisecheque') {
 		$features = 'banque';
 	} elseif ($features == 'facturerec') {
