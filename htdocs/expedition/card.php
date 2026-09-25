@@ -3228,10 +3228,10 @@ if ($action == 'create' && $usercancreate) {
 					print '</table></div></form>';
 				}
 			}
-
-
 		}
 	}
+
+
 
 	// Lines of products of origin
 	if (!empty($object->origin) && $object->origin_id > 0) {
