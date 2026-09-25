@@ -154,10 +154,10 @@ if ($line->qty > 0) { ?>
 	// Handling if situation invoices conf is enabled
 	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		print '<td class="linecolcycleref nowrap right"></td>';
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-			print '<td  class="nowrap right"></td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
+			print '<td></td>';
 		}
-		print '<td class="linecolcycleref2 right nowrap"></td>';
+		print '<td class="linecolcycleref2"></td>';
 	}
 
 	// Handling colspan if margin module is enabled
