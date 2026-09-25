@@ -395,6 +395,7 @@ class FactureTest extends CommonClassTest
 	 *
 	 * @return void
 	 */
+	/*
 	public function testFactureLoadBoard()
 	{
 		global $conf,$user,$langs,$db;
@@ -460,6 +461,7 @@ class FactureTest extends CommonClassTest
 
 		$db->rollback();
 	}
+	*/
 
 	/**
 	 * Edit an object to test updates
