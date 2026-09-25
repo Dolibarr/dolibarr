@@ -53,7 +53,7 @@ class Ai
 	 * @var string
 	 */
 	private $apiEndpoint;
-	
+
 	/**
 	 * @var array|null $tokenUsage
 	 */
