@@ -503,7 +503,7 @@ class ExpenseReports extends DolibarrApi
 		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->expensereport->error);
+			throw new RestException(500, $this->expensereport->errorsToString());
 		}
 	}
 
@@ -535,7 +535,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if (!$this->expensereport->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Expense Report : '.$this->expensereport->error);
+			throw new RestException(500, 'Error when delete Expense Report : '.$this->expensereport->errorsToString());
 		}
 
 		return array(
@@ -584,7 +584,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error when validating expense report: '.$this->expensereport->errorsToString());
 		}
 
 		$this->expensereport->fetchObjectLinked();
@@ -631,7 +631,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->errorsToString());
 		}
 
 		$this->expensereport->fetchObjectLinked();
@@ -679,7 +679,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already denied');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when denying expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error when denying expense report: '.$this->expensereport->errorsToString());
 		}
 
 		$this->expensereport->fetchObjectLinked();
@@ -855,7 +855,7 @@ class ExpenseReports extends DolibarrApi
 		if ($paymentExpenseReport->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $paymentExpenseReport->error);
+			throw new RestException(500, $paymentExpenseReport->errorsToString());
 		}
 	}
 

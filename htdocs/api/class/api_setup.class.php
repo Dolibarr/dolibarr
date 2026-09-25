@@ -700,7 +700,7 @@ class Setup extends DolibarrApi
 
 		$result = $region->fetch($id, (int) $code);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving region : '.$region->error);
+			throw new RestException(503, 'Error when retrieving region : '.$region->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Region not found');
 		}
@@ -725,7 +725,7 @@ class Setup extends DolibarrApi
 
 		$result = $state->fetch($id, $code);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving state : '.$state->error);
+			throw new RestException(503, 'Error when retrieving state : '.$state->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'State not found');
 		}
@@ -753,7 +753,7 @@ class Setup extends DolibarrApi
 		$result = $country->fetch($id, $code, $iso);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving country : '.$country->error);
+			throw new RestException(503, 'Error when retrieving country : '.$country->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Country not found');
 		}
@@ -1344,7 +1344,7 @@ class Setup extends DolibarrApi
 		}
 
 		if (!$extrafields->delete($attrname, $elementtype)) {
-			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->error);
+			throw new RestException(500, 'Error when delete extrafield : '.$extrafields->errorsToString());
 		}
 
 		return array(
@@ -2435,7 +2435,7 @@ class Setup extends DolibarrApi
 
 		$result = $establishment->fetch($id);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->error);
+			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(404, 'Establishment not found');
 		}

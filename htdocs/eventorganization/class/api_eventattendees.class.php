@@ -95,7 +95,7 @@ class EventAttendees extends DolibarrApi
 		}
 
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->errorsToString());
 		}
 
 		return array(
@@ -133,7 +133,7 @@ class EventAttendees extends DolibarrApi
 		}
 
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->errorsToString());
 		}
 
 		return array(

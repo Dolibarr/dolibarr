@@ -452,7 +452,7 @@ class Users extends DolibarrApi
 			if ($field == 'statut' || $field == 'status') {
 				$result = $this->useraccount->setstatus($value);
 				if ($result < 0) {
-					throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
+					throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->errorsToString());
 				}
 			} else {
 				$this->useraccount->$field = $this->_checkValForAPI($field, $value, $this->useraccount);
@@ -464,7 +464,7 @@ class Users extends DolibarrApi
 		if ($this->useraccount->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->useraccount->error);
+			throw new RestException(500, $this->useraccount->errorsToString());
 		}
 	}
 
@@ -510,14 +510,14 @@ class Users extends DolibarrApi
 
 		$newpassword = $this->useraccount->setPassword($this->useraccount, '');	// This will generate a new password
 		if (is_int($newpassword) && $newpassword < 0) {
-			throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
+			throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->errorsToString());
 		} else {
 			// Success
 			if ($send_password) {
 				if ($this->useraccount->send_password($this->useraccount, $newpassword) > 0) {
 					return 2;
 				} else {
-					throw new RestException(500, 'ErrorFailedSendingNewPassword - '.$this->useraccount->error);
+					throw new RestException(500, 'ErrorFailedSendingNewPassword - '.$this->useraccount->errorsToString());
 				}
 			} else {
 				return 1;
@@ -605,7 +605,7 @@ class Users extends DolibarrApi
 
 		$result = $this->useraccount->SetInGroup($group, $entity);
 		if (!($result > 0)) {
-			throw new RestException(500, $this->useraccount->error);
+			throw new RestException(500, $this->useraccount->errorsToString());
 		}
 
 		return 1;

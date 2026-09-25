@@ -488,7 +488,7 @@ class Tasks extends DolibarrApi
 		if ($this->task->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->task->error);
+			throw new RestException(500, $this->task->errorsToString());
 		}
 	}
 
@@ -517,7 +517,7 @@ class Tasks extends DolibarrApi
 		}
 
 		if ($this->task->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when delete task : '.$this->task->error);
+			throw new RestException(500, 'Error when delete task : '.$this->task->errorsToString());
 		}
 
 		return array(
@@ -620,7 +620,7 @@ class Tasks extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when adding time: '.$this->task->error);
+			throw new RestException(500, 'Error when adding time: '.$this->task->errorsToString());
 		}
 
 		return array(
@@ -676,7 +676,7 @@ class Tasks extends DolibarrApi
 			throw new RestException(304, 'Error nothing done.');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when updating time spent: '.$this->task->error);
+			throw new RestException(500, 'Error when updating time spent: '.$this->task->errorsToString());
 		}
 
 		return array(
@@ -711,7 +711,7 @@ class Tasks extends DolibarrApi
 		}
 
 		if ($this->task->delTimeSpent(DolibarrApiAccess::$user, 0) < 0) {
-			throw new RestException(500, 'Error when deleting time spent: '.$this->task->error);
+			throw new RestException(500, 'Error when deleting time spent: '.$this->task->errorsToString());
 		}
 
 		return array(

@@ -547,7 +547,7 @@ class Documents extends DolibarrApi
 			if ($result == 0) {
 				throw new RestException(404, 'Product not found');
 			} elseif ($result < 0) {
-				throw new RestException(500, 'Error while fetching object: '.$object->error);
+				throw new RestException(500, 'Error while fetching object: '.$object->errorsToString());
 			}
 
 			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product');
@@ -900,7 +900,7 @@ class Documents extends DolibarrApi
 				if ($result == 0) {
 					throw new RestException(404, "Object with ref '".$ref."' was not found.");
 				} elseif ($result < 0) {
-					throw new RestException(500, 'Error while fetching object: '.$object->error);
+					throw new RestException(500, 'Error while fetching object: '.$object->errorsToString());
 				}
 			}
 

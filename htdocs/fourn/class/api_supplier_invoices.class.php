@@ -397,7 +397,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. The invoice is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Invoice: ' . $this->invoice->error);
+			throw new RestException(500, 'Error when validating Invoice: ' . $this->invoice->errorsToString());
 		}
 
 		return array(
@@ -442,7 +442,7 @@ class SupplierInvoices extends DolibarrApi
 			throw new RestException(304, 'Nothing done.');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : ' . $this->invoice->error);
+			throw new RestException(500, 'Error : ' . $this->invoice->errorsToString());
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -487,8 +487,8 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		$result = $this->invoice->getListOfPayments();
-		if ($this->invoice->error !== '') {
-			throw new RestException(405, $this->invoice->error);
+		if ($this->invoice->errorsToString() !== '') {
+			throw new RestException(405, $this->invoice->errorsToString());
 		}
 
 		return $result;
@@ -589,14 +589,14 @@ class SupplierInvoices extends DolibarrApi
 		$paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
 		if ($paiement_id < 0) {
 			$this->db->rollback();
-			throw new RestException(400, 'Payment error : ' . $paiement->error);
+			throw new RestException(400, 'Payment error : ' . $paiement->errorsToString());
 		}
 
 		if (isModEnabled("bank")) {
 			$result = $paiement->addPaymentToBank(DolibarrApiAccess::$user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, $chqemetteur, $chqbank);
 			if ($result < 0) {
 				$this->db->rollback();
-				throw new RestException(400, 'Add payment to bank error : ' . $paiement->error);
+				throw new RestException(400, 'Add payment to bank error : ' . $paiement->errorsToString());
 			}
 		}
 
@@ -706,7 +706,7 @@ class SupplierInvoices extends DolibarrApi
 		);
 
 		if ($updateRes < 0) {
-			throw new RestException(400, 'Unable to insert the new line. Check your inputs. ' . $this->invoice->error);
+			throw new RestException(400, 'Unable to insert the new line. Check your inputs. ' . $this->invoice->errorsToString());
 		}
 
 		return $updateRes;
@@ -777,7 +777,7 @@ class SupplierInvoices extends DolibarrApi
 			unset($result->line);
 			return $this->_cleanObjectDatas($result);
 		} else {
-			throw new RestException(304, $this->invoice->error);
+			throw new RestException(304, $this->invoice->errorsToString());
 		}
 	}
 
@@ -827,7 +827,7 @@ class SupplierInvoices extends DolibarrApi
 				)
 			);
 		} else {
-			throw new RestException(405, $this->invoice->error);
+			throw new RestException(405, $this->invoice->errorsToString());
 		}
 	}
 
