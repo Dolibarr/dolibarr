@@ -78,6 +78,7 @@ mkdir -p "/home/$USER_NAME/.cache"
 chmod 700 "/home/$USER_NAME/.cache"
 chown -R "$USER_NAME:$USER_NAME" "/home/$USER_NAME/.cache"
 
+export XDG_CACHE_HOME="/home/$USER_NAME/.cache"
 
 install -d -m 700 -o "$USER_NAME" -g "$USER_NAME" "/home/$USER_NAME/.ssh"
 
