@@ -938,6 +938,93 @@ class FormProjets extends Form
 	}
 
 	/**
+	 * Output a form with Multi Selection of event organisation 4 cloning
+	 *
+	 * @param 	string 		$page 		Page - if empty no form tags are printed, else they are
+	 * @param	string		$htmlname	Name of HTML field
+	 * @param 	string 		$title 		Text above the multi select form., default is '' and not shown, could be a <h4>...</h4>
+	 * @param	int[] 	$status_list 	List of event organisations
+	 * @param	int[] 		$toplist 	List of event organisations
+	 * @param 	string 		$toptext 	Text in top/main optgroup (optional) - default is '' and not shown
+	 * @param	int 		$size 		How high the table should be in lines, default is 8
+	 * @param	string 		$morecss 	More css
+	 * @param	int			$nooutput 	No print output. Return it only.
+	 *
+	 * @return 	string 					HTML
+	 */
+	public function formMultiSelectEventOrg4Clone($page, $htmlname, $title = '', $status_list = array(), $toplist = array(), $toptext = '', $size = 8, $morecss = '', $nooutput = 0)
+	{
+		dol_syslog(__METHOD__.'::', LOG_DEBUG);
+		global $langs;
+		$langs->load("mails");
+
+		$out = '';
+		if (!empty($page)) {
+			$out .= '<form action="'.$page.'">';
+		}
+		if (!empty($title)) {
+			$out .= $title;
+		}
+
+		$out .= '<div id="select_'.$htmlname.'">';
+		$out .= '<select class="select" name="select_'.$htmlname.'[]" id="select_'.$htmlname.'" multiple size="'.$size.'" style="'.$morecss.'">';
+
+		foreach ($toplist as $key => $value) {
+			$project_id = $value["rowid"];
+			$project_title = $value["title"];
+			$out .= '    <option class="option" value="'.$project_id.'">'.$project_title.'</option>';
+		}
+
+		$out .= '</select>';
+		$out .= '</div>';
+
+		$out .= '<br>';
+		$out .= '<input type="checkbox" id="verbosereporting" name="verbosereporting" value="1"><label for="verbosereporting">'.$langs->trans("Show").' '.$langs->trans("ListOf", $langs->trans("CloneOf", $langs->trans("Attendee"))).'</label><br>';
+		$out .= '<div id="oldobject_status">';
+		$out .= '<label for="oldobject_status"><h4>'.$langs->trans("Source").' &mdash; '.$langs->trans("SetToStatus").'</h4></label>';
+		$out .= '<select class="select" name="oldobject_status" id="oldobject_status" size="6">';
+		$out .= '    <option class="option" value="-1" selected>'.$langs->trans("IsBefore").'</option>';
+		$out .= '    <option class="option" value="" disabled>&mdash;&mdash;&mdash;</option>';
+		foreach ($status_list as $key => $value) {
+			$out .= '    <option class="option" value="'.$key.'">'.$value.'</option>';
+		}
+		$out .= '</select>';
+		$out .= '</div><br>';
+
+		$out .= '<div id="newobject_status">';
+		$out .= '<label for="newobject_status"><h4>'.$langs->trans("Clone").' &mdash; '.$langs->trans("SetToStatus").'</h4></label>';
+		$out .= '<select class="select" name="newobject_status" id="newobject_status" size="6">';
+		$out .= '    <option class="option" value="-1" selected>'.$langs->trans("Copy").'</option>';
+		$out .= '    <option class="option" value="" disabled>&mdash;&mdash;&mdash;</option>';
+		foreach ($status_list as $key => $value) {
+			$out .= '    <option class="option" value="'.$key.'">'.$value.'</option>';
+		}
+		$out .= '</select>';
+		$out .= '</div>';
+
+		$actionname = $htmlname;
+		$out .= '<div id="massmail_selection_buttons_'.$htmlname.'"><br>';
+		$out .= '<input type="hidden" name="massaction" value="confirm_preclone">';
+		$out .= '<input type="checkbox" id="notrigger" name="notrigger" value="1" checked><label for="notrigger">'.$langs->trans("NoTrigger").' '.$langs->trans("CloneOf", $langs->trans("Attendee")).'</label><br>';
+		$out .= '<input type="checkbox" id="objlink" name="objlink" value="1" checked><label for="objlink">'.$langs->trans("Create").' '.$langs->trans("LinkedObject").'</label><br><br>';
+		$out .= '<!-- 2 buttons Add and Cancel -->';
+		$out .= '<input type="submit" class="butAction button-add small reposition" id="button_clone_attendee" name="button_clone_attendee" value="'.$langs->trans("Clone").'">';
+		$out .= '<input type="submit" class="button button-cancel reposition" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
+		$out .= '</div><br>';
+
+		if (!empty($page)) {
+			$out .= '</form>';
+		}
+
+		if (empty($nooutput)) {
+			print $out;
+			return '';
+		} else {
+			return $out;
+		}
+	}
+
+	/**
 	 *  Output html select to select opportunity status
 	 *
 	 *  @param	string $page       		Page

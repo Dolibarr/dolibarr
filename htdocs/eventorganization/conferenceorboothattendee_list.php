@@ -207,7 +207,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'preclone' && $massaction != 'confirm_preclone') {
 	$massaction = '';
 }
 
@@ -246,7 +246,163 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+// Massaction add/delete recipients to/from mass mailing
+$button_clone_attendee = GETPOST('button_clone_attendee', 'aZ09');
+if ($massaction == 'confirm_preclone' && $button_clone_attendee && $permissiontoadd) {
+	$langs->loadLangs(array("errors", "main", "mails", "companies", "accountancy"));
 
+	$verbosereporting = GETPOSTINT('verbosereporting') ? GETPOSTINT('verbosereporting') : 0;
+	$oldobject_status_id = GETPOSTINT('oldobject_status') ? GETPOSTINT('oldobject_status') : -1; // default is not to change old attendee status
+	$newobject_status_id = GETPOSTINT('newobject_status') ? GETPOSTINT('newobject_status') : 0;  // default for new cloned attendee is draft
+	$oldobject_status_txt = ($oldobject_status_id < 0) ? ($langs->trans("IsBefore")) : $object->LibStatut($oldobject_status_id, 1);
+	$newobject_status_txt = ($newobject_status_id < 0) ? ($langs->trans("Copy").' '.$langs->trans("Source")) : $object->LibStatut($newobject_status_id, 1);
+	$notrigger = GETPOSTINT('notrigger') ? GETPOSTINT('notrigger') : 0;
+	$nolink = GETPOSTINT('objlink') ? 0 : 1;
+	dol_syslog("nolink=".$nolink, LOG_DEBUG);
+	$select_eventorg = GETPOST('select_eventorg', 'array:int') ?? array();
+	if (empty($select_eventorg)) {
+		setEventMessages($langs->trans("OrganizedEvent").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
+	if (empty($toselect)) {
+		setEventMessages($langs->trans("Attendees").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
+
+	// Verify all eventattendees actually exist before actually inserting them, where successful insert verifies the mailing
+	$attendeestatic = new ConferenceOrBoothAttendee($db);
+	$attendeeclone = new ConferenceOrBoothAttendee($db);
+	$verified_attendees = array();
+	$verified_eventorgs = array();
+	$whatchanged = array();
+	$info_mesgs = array();
+	$info_warnings = array();
+	$info_errors = array();
+	$changetomailing = null;
+	foreach ($toselect as $attendeeid) {
+		$faresult = $attendeestatic->fetch($attendeeid);
+		if ($faresult) {
+			$verified_attendees[] = $attendeeid;
+			foreach ($select_eventorg as $target_event) {
+				$pfresult = $projectstatic->fetch($target_event);
+				if ($pfresult) {
+					$verified_eventorgs[] = $target_event;
+					$userHasProjectRights = $projectstatic->restrictedProjectArea($user, 'write');
+					if ($userHasProjectRights) {
+						// copied 2 next lines from the single clone in htdocs/eventorganization/conferenceorboothattendee_card.php
+						// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+						$objectutil = dol_clone($attendeestatic, 1);
+						// we REALLY want to trigger creation with the correct project
+						$changes = array();
+						$changes["fk_project"] = $target_event;
+						$attendeeclone = $objectutil->createFromClone($user, $attendeeid, $notrigger, $nolink, $changes);
+						if (is_object($attendeeclone)) {
+							// @phan-suppress-next-line PhanTypeMismatchReturn
+							/** @var ConferenceOrBoothAttendee $attendeeclone */
+							// basic clone successful, let's report that
+							$whatchanged[$target_event] = isset($whatchanged[$target_event]) ? $whatchanged[$target_event] + 1 : 1;
+
+							// possible update clone with new status
+							if ($newobject_status_id != -1) {
+								$clonestatusresult = (int) $attendeeclone->setStatusCommon($user, $newobject_status_id, $notrigger, 'auto');
+								if (!$clonestatusresult) {
+									$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+									$info_warnings[$target_event][] = '&emsp;'.$warn_message;
+								}
+							} else {
+								$clonestatusresult = (int) $attendeeclone->setStatusCommon($user, $attendeestatic->status, $notrigger, 'auto');
+								if (!$clonestatusresult) {
+									$warn_message = $langs->trans("Clone").' '.((string) $attendeeclone->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$newobject_status_txt.'</i>';
+									$info_warnings[$target_event][] = '&emsp;'.$warn_message;
+								}
+							}
+
+							// possible update old status
+							$sourcestatusresult = 0;
+							if ($oldobject_status_id != -1) {
+								$sourcestatusresult = (int) $attendeestatic->setStatusCommon($user, $oldobject_status_id, $notrigger, 'auto');
+								if (!$sourcestatusresult) {
+									$warn_message = $langs->trans("Source").' '.((string) $attendeestatic->getNomUrl()).' '.$langs->trans("ResultKo").' '.$langs->trans("SetToStatus").'= <i>'.$oldobject_status_txt.'</i>';
+									$info_warnings[$target_event][] = '&emsp;'.$warn_message;
+								}
+							}
+
+							// we should also try creating a link between the cloned objects
+
+							// all okay
+							if ($clonestatusresult >= 0 && $sourcestatusresult >= 0) {
+								$info_mesgs[$target_event][] = '&emsp;'.$langs->trans("NewObject", $langs->trans("Attendee")).' '.$attendeeclone->getNomUrl(1).' &mdash; '.$langs->trans("CloneOf", $attendeestatic->firstname.' '.$attendeestatic->lastname.' '.$attendeestatic->getNomUrl(1));
+							}
+						} elseif ($attendeeclone == -1) {
+							$error_message = $langs->trans("ResultKo").' '.$langs->trans("ConfirmMassCloneToOneProject", $target_event).' '.$langs->trans("Attendee").'='.$attendeeid;
+							$info_errors[$target_event][] = '&emsp;'.$error_message;
+						} else {
+							dol_syslog('Unknown error cloning attendeeid='.$attendeeid.' to target project='.$target_event.' in array select_eventorg on page eventorganization/conferenceorboothattendee_list.php massaction confirm_preclone', LOG_ERR);
+							$error_message = $langs->trans("ConfirmMassCloneToOneProject", $target_event).' '.$langs->trans("Attendee").'='.$attendeeid;
+							setEventMessages($langs->trans("ErrorUnknown"), [$error_message], 'errors');
+							continue;
+						}
+					} else {
+						dol_syslog('User='.$user->id.' does not have write access to id='.$target_event.' in array select_eventorg on page eventorganization/conferenceorboothattendee_list.php massaction confirm_preclone', LOG_ERR);
+						setEventMessages($langs->trans("ErrorForbidden", "project id=".$target_event), null, 'errors');
+						continue;
+					}
+				} else {
+					dol_syslog('fetch failed for project id='.$target_event.' in array select_eventorg on page eventorganization/conferenceorboothattendee_list.php massaction confirm_preclone', LOG_ERR);
+					setEventMessages($langs->trans("ErrorRefNotFound", "project id=".$target_event), null, 'errors');
+					continue;
+				}
+			}
+		} else {
+			dol_syslog('fetch failed for attendee id='.$attendeeid.' in array toselect on page eventorganization/conferenceorboothattendee_list.php massaction confirm_preclone', LOG_ERR);
+			setEventMessages($langs->trans("ErrorRefNotFound", "attendeeid=".$attendeeid), null, 'errors');
+			continue;
+		}
+	}
+
+	// 1. report errors first
+	foreach ($info_errors as $key => $value) {
+		$fpresult = $projectstatic->fetch($key);
+		if ($fpresult) {
+			$vmailing_title = $projectstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("Errors").' '.$langs->trans("OrganizedEvent").' &mdash; '.$vmailing_title, $value, 'errors');
+	}
+	// 2. report warnings
+	foreach ($info_warnings as $key => $value) {
+		$fpresult = $projectstatic->fetch($key);
+		if ($fpresult) {
+			$vmailing_title = $projectstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("Warnings").' '.$langs->trans("OrganizedEvent").' &mdash; '.$vmailing_title, $value, 'warnings');
+	}
+	// 3. report success
+	foreach ($info_mesgs as $key => $value) {
+		$fpresult = $projectstatic->fetch($key);
+		if ($fpresult) {
+			$vmailing_title = $projectstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		$actionmessage = $langs->trans("Unknown").' '.$langs->trans("BulkActions").' '.$langs->trans("RecordsModified", count($value));
+		$actionmessage = $langs->trans("XTargetsAdded", count($value));
+		if ($verbosereporting) {
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("OrganizedEvent").' &mdash; '.$vmailing_title, $value, 'mesgs');
+		} else {
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("OrganizedEvent").' &mdash; '.$vmailing_title, null, 'mesgs');
+		}
+	}
+
+	$total_changes = 0;
+	foreach ($select_eventorg as $target_event) {
+		$total_changes += $whatchanged[$target_event];
+	}
+	setEventMessages($langs->trans("GrandTotal").' '.$langs->trans("RecordsModified", $total_changes), null, 'mesgs');
+
+	dol_syslog("eventorganization/conferenceorboothattendee_list::END confirmmassaction confirm_preclone && permissiontoadd", LOG_DEBUG);
+}
 
 /*
  * View
@@ -832,11 +988,12 @@ $arrayofmassactions = array(
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	'preclone' => img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone").' '.$langs->trans("Attendees"),
 );
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'preclone', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
