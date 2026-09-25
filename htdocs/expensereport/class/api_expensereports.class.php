@@ -635,7 +635,7 @@ class ExpenseReports extends DolibarrApi
 		if ($this->expensereport->fetch($id) <= 0) {
 			throw new RestException(404, 'Expense report not found');
 		}
-		if (isModEnabled("bank") && !((int) $request_data['accountid'] > 0)) {
+		if (isModEnabled("bank") && !((int) ($request_data['accountid'] ?? 0) > 0)) {
 			throw new RestException(400, "accountid field missing");
 		}
 
