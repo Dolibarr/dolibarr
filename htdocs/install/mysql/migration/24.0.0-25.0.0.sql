@@ -342,7 +342,7 @@ ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcod
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
 
 
--- AI chat: conversation persistence (reopen past conversations; storage is separate from the pinned context sent to the model)
+-- AI chat: conversation history (reopen past conversations; storage is separate from the pinned context sent to the model)
 create table llx_ai_chat_conversation
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
@@ -361,7 +361,29 @@ create table llx_ai_chat_message
   content_html				MEDIUMTEXT,
   tool_name					varchar(255),
   pinned					smallint DEFAULT 0,
-  is_error					smallint DEFAULT 0,						-- Provider failure: never sent back as context by default
+  is_error					smallint DEFAULT 0,
   position					integer DEFAULT 0,
   datec						datetime NOT NULL
 )ENGINE=innodb;
+ALTER TABLE llx_ai_chat_conversation ADD INDEX idx_ai_chat_conversation_user (fk_user, tms);
+ALTER TABLE llx_ai_chat_message ADD INDEX idx_ai_chat_message_conv (fk_conversation, position);
+ALTER TABLE llx_ai_chat_message ADD CONSTRAINT fk_ai_chat_message_conv FOREIGN KEY (fk_conversation) REFERENCES llx_ai_chat_conversation (rowid);
+
+-- Add table for the AI assistant pending write confirmations (MCP multi-round-trip)
+create table llx_ai_write_confirmation
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  state_hash				varchar(80) NOT NULL,					-- Hash of the requestState handed to the caller
+  fk_user					integer NOT NULL,						-- User the state was issued to
+  tool_name					varchar(255) NOT NULL,					-- Tool the confirmation is for
+  args_hash					varchar(80) NOT NULL,					-- Hash of the arguments, so confirmed arguments cannot change
+  preview					text,									-- Description of the pending write
+  date_creation				datetime NOT NULL,
+  date_expiration			datetime NOT NULL,						-- After this date the state is refused
+  date_consumed				datetime,								-- Set when the write was confirmed and executed
+  ip						varchar(250)							-- Origin of the request that asked for the write
+)ENGINE=innodb;
+ALTER TABLE llx_ai_write_confirmation ADD UNIQUE INDEX uk_ai_write_confirmation_state (state_hash, entity);
+ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_expiration (date_expiration);
+ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_fk_user (fk_user);
