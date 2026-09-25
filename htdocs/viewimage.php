@@ -330,11 +330,13 @@ if (!empty($hashp) && $hashp != 'shared') {
 // Check permission on per object basis
 if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin && !$imagepublicfortakepos) {
 	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
-	//var_dump($object);
+
 	if (is_object($object)) {
 		$accessallowed = restrictedArea($user, $modulepart, $object);
 	} else {
 		if ($modulepart == 'systemtools' && $user->admin) {
+			$accessallowed = 1;
+		} elseif (in_array($modulepart, array('userphoto', 'memberphoto'))) {
 			$accessallowed = 1;
 		} else {
 			$accessallowed = 0;
