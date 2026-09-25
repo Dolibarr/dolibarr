@@ -131,7 +131,7 @@ if ($reshook < 0) {
 $isStandaloneShipment = !empty($object->id) && !($object->origin_id > 0) && getDolGlobalString('SHIPMENT_STANDALONE');
 
 if (empty($reshook)) {
-	if ($action == 'updatelines' && ($object->status != Expedition::STATUS_DRAFT || (!$isStandaloneShipment && !($object->origin_id > 0)))) {
+	if ($action == 'updatelines' && (!$usercancreate || $object->status != Expedition::STATUS_DRAFT || (!$isStandaloneShipment && !($object->origin_id > 0)))) {
 		accessforbidden();
 	}
 	// Update a dispatched line
