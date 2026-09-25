@@ -82,7 +82,7 @@ if (isset($_GET["modulepart"])) {
 		$needlogin = 0;
 	}
 	// Used by TakePOS Auto Order. TODO Image product may became public in this case. A security check to check that product is in takepos tree must be done later.
-	// isModEnabled is not defined, DOL_DOCUMENT_ROOT is not defined
+	// isModEnabled is not yet defined, DOL_DOCUMENT_ROOT is not yet defined
 	if ($_GET["modulepart"] == 'product' /* && isModEnabled('takepos') */ && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
 	}
@@ -297,7 +297,7 @@ $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 
-$imagepublicfortakepos = (GETPOSTINT("publictakepos") && getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category')));
+$imagepublicfortakepos = (GETPOSTISSET("publictakepos") && getDolGlobalString('TAKEPOS_AUTO_ORDER') && isModEnabled('takepos') && in_array($modulepart, array('product', 'category')));
 
 if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
@@ -328,13 +328,17 @@ if (!empty($hashp) && $hashp != 'shared') {
 }
 
 // Check permission on per object basis
-if (!empty($hashp) && $hashp != 'shared' && $accessallowed && !$imagepublicfortakepos) {
+if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin && !$imagepublicfortakepos) {
 	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
 	//var_dump($object);
 	if (is_object($object)) {
 		$accessallowed = restrictedArea($user, $modulepart, $object);
 	} else {
-		$accessallowed = 0;
+		if ($modulepart == 'systemtools' && $user->admin) {
+			$accessallowed = 1;
+		} else {
+			$accessallowed = 0;
+		}
 	}
 }
 

@@ -1,7 +1,9 @@
 ---
+# This is a basic workflow to check pre-commit tool
 name: pre-commit
 
 
+# Controls when the workflow will run
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:

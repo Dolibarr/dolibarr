@@ -670,14 +670,6 @@ if ($object->id > 0 || !empty($object->ref)) {
 					print '<td class="right">'.$langs->trans("Details");
 					print '<td width="32"></td>';
 
-					if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
-						if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
-							print '<td class="right">'.$langs->trans("Price").'</td>';
-							print '<td class="right">'.$langs->trans("ReductionShort").' (%)</td>';
-							print '<td class="right">'.$langs->trans("UpdatePrice").'</td>';
-						}
-					}
-
 					print '<td class="right">'.$langs->trans("Warehouse");
 
 					// Select warehouse to force it everywhere

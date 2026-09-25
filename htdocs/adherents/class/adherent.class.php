@@ -2764,7 +2764,15 @@ class Adherent extends CommonObject
 
 		$now = dol_now();
 
-		$sql = "SELECT a.rowid, a.datefin, a.statut as status";
+		// The count and the number of late members are computed by the database instead of reading every member. A validated
+		// member is late when the end date of the subscription is set and before now minus the warning delay (the rule of
+		// hasDelay()); a draft member ('shift' mode) is never late.
+		$sql = "SELECT COUNT(a.rowid) as nb,";
+		if ($mode == 'expired') {
+			$sql .= " SUM(CASE WHEN a.datefin IS NOT NULL AND a.datefin < '".$this->db->idate($now - getWarningDelay('member', 'subscription'))."' THEN 1 ELSE 0 END) as nblate";
+		} else {
+			$sql .= " 0 as nblate";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE a.fk_adherent_type = t.rowid";
@@ -2805,18 +2813,10 @@ class Adherent extends CommonObject
 			$response->url = $url;
 			$response->img = img_object('', "user");
 
-			$adherentstatic = new Adherent($this->db);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				$adherentstatic->datefin = $this->db->jdate($obj->datefin);
-				$adherentstatic->statut = $obj->status;
-				$adherentstatic->status = $obj->status;
-
-				if ($adherentstatic->hasDelay()) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
