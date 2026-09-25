@@ -1455,18 +1455,21 @@ class Project extends CommonObject
 
 		$url = '';
 		if ($option != 'nolink') {
+			$query = ['id' => $this->id];
 			if (preg_match('/\.php$/', $option)) {
-				$url = dol_buildpath($option, 1).'?id='.$this->id;
+				$baseurl = dol_buildpath($option, 1);
 			} elseif ($option == 'task') {
-				$url = DOL_URL_ROOT.'/projet/tasks.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/tasks.php';
 			} elseif ($option == 'preview') {
-				$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/element.php';
 			} elseif ($option == 'eventorganization') {
-				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?projectid='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php';
+				$query = ['projectid' => $this->id];
 			} elseif ($option == 'mailing') {
-				$url = DOL_URL_ROOT.'/comm/mailing/list.php?projectid='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/comm/mailing/list.php';
+				$query = ['projectid' => $this->id];
 			} else {
-				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/card.php';
 			}
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -1474,12 +1477,12 @@ class Project extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query['save_lastsearch_values'] = 1;
 			}
-			$add_save_backpagefor = ($save_pageforbacktolist ? 1 : 0);
-			if ($add_save_backpagefor) {
-				$url .= "&save_pageforbacktolist=".urlencode($save_pageforbacktolist);
+			if ($save_pageforbacktolist) {
+				$query['save_pageforbacktolist'] = $save_pageforbacktolist;
 			}
+			$url = dolBuildUrl($baseurl, $query);
 		}
 
 		$linkclose = '';
