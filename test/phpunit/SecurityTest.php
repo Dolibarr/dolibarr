@@ -588,6 +588,73 @@ class SecurityTest extends CommonClassTest
 
 
 	/**
+	 * testGetObjectIdsRefusedToUser
+	 *
+	 * The mass actions of the lists get the ids to process from the request. getObjectIdsRefusedToUser() must refuse the
+	 * objects of the third parties that are not assigned to a user who can not see all third parties, and accept them once
+	 * the user is a sales representative of the third party, like the lists and the cards do.
+	 *
+	 * @return void
+	 */
+	public function testGetObjectIdsRefusedToUser()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
+
+		$soc = new Societe($db);
+		$soc->name = 'testGetObjectIdsRefusedToUser '.mt_rand(0, 99999);
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, 'Third party must be created');
+
+		$invoice = new Facture($db);
+		$invoice->socid = $socid;
+		$invoice->date = dol_now();
+		$invoice->type = Facture::TYPE_STANDARD;
+		$invoiceid = $invoice->create($user);
+		$this->assertGreaterThan(0, $invoiceid, 'Invoice must be created');
+
+		try {
+			// A user who can see the third parties, but only the ones assigned to him: he is not assigned to this one
+			$restricteduser = new User($db);
+			$restricteduser->id = $user->id;
+			$restricteduser->entity = $user->entity;
+			$restricteduser->socid = 0;
+			$restricteduser->rights = new stdClass();
+			$restricteduser->rights->societe = new stdClass();
+			$restricteduser->rights->societe->lire = 1;
+			$restricteduser->rights->societe->client = new stdClass();
+			$restricteduser->rights->societe->client->voir = 0;
+
+			$this->assertSame(array($invoiceid), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'The invoice of a third party not assigned to the restricted user must be refused');
+			$this->assertSame(array($socid), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'The third party not assigned to the restricted user must be refused');
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Bookmark($db), array(1, 2)), 'A type of object without third party is not checked');
+
+			// The same user with the permission to see all third parties
+			$restricteduser->rights->societe->client->voir = 1;
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'A user who sees all third parties can access the invoice');
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'A user who sees all third parties can access the third party');
+
+			// The restricted user, once he is a sales representative of the third party
+			$restricteduser->rights->societe->client->voir = 0;
+			$this->assertGreaterThanOrEqual(0, $soc->add_commercial($user, $restricteduser->id), 'User must be added as sales representative');
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'The sales representative of the third party can access its invoice');
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'The sales representative can access the third party');
+		} finally {
+			$invoice->delete($user);
+			$soc->delete($socid, $user);
+		}
+	}
+
+	/**
 	 * testDolSanitizeUrl
 	 *
 	 * @return void

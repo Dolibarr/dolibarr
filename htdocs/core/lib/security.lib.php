@@ -1224,6 +1224,67 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	return true;
 }
 
+/**
+ * Return, among a list of ids of objects of the same type, the ids of the objects the user is not allowed to access,
+ * with the same rules as checkUserAccessToObject(): entity, third parties of the sales representative when the user can not
+ * see all third parties, projects the user can see... It is used by the mass actions of the lists, where the ids come from
+ * the request and not from the list (the list only showed the objects the user can see, the request can contain any id).
+ * Only the types of objects linked to a third party or to a project are checked, an empty array is returned for the others.
+ *
+ * @param	User			$user		User
+ * @param	CommonObject	$object		An instance of the class of the objects (used for its element and table_element)
+ * @param	int[]			$ids		Ids of the objects
+ * @return	int[]						Ids of the objects the user can not access (empty if the user can access all of them)
+ * @see checkUserAccessToObject()
+ */
+function getObjectIdsRefusedToUser(User $user, $object, array $ids)
+{
+	$feature = '';
+	switch ($object->element) {
+		case 'societe':
+		case 'contact':
+		case 'contrat':
+		case 'ticket':
+		case 'facture':
+		case 'commande':
+		case 'propal':
+		case 'supplier_proposal':
+		case 'fichinter':
+		case 'shipping':
+		case 'reception':
+		case 'order_supplier':
+		case 'invoice_supplier':
+			$feature = $object->element;
+			break;
+		case 'action':
+			$feature = 'agenda';
+			break;
+		case 'project':
+			$feature = 'projet';
+			break;
+		case 'project_task':
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$feature = 'project_task';
+			break;
+	}
+	if (empty($feature)) {
+		return [];
+	}
+
+	$refusedids = [];
+	foreach ($ids as $id) {
+		$id = (int) $id;
+		if ($id <= 0) {
+			continue;
+		}
+		if (!checkUserAccessToObject($user, [$feature], $id, $object->table_element.'&'.$object->element, '', 'fk_soc', 'rowid')) {
+			$refusedids[] = $id;
+		}
+	}
+
+	return $refusedids;
+}
+
 
 /**
  *	Show a message to say access is forbidden and stop program.
