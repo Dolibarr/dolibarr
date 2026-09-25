@@ -80,6 +80,7 @@ $offsetvalue = GETPOSTINT('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
 $remindertype = GETPOST('selectremindertype', 'aZ09');
 $modelmail = GETPOSTINT('actioncommsendmodel_mail');
+$remindcustomer = GETPOST('remindcustomer', 'alpha');
 $complete = GETPOST('complete', 'alpha');	// 'na' must be allowed
 $private = GETPOST('private', 'alphanohtml');
 if ($complete == 'na' || $complete == -2) {
@@ -730,6 +731,28 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 							break;
 						}
 					}
+
+					// Also create a reminder by email for the linked customer, if requested
+					if (!$error && $remindcustomer == 'on' && $object->socid > 0) {
+						$actionCommReminderCustomer = new ActionCommReminder($db);
+						$actionCommReminderCustomer->dateremind = $dateremind;
+						$actionCommReminderCustomer->typeremind = 'email';
+						$actionCommReminderCustomer->offsetunit = $offsetunit;
+						$actionCommReminderCustomer->offsetvalue = $offsetvalue;
+						$actionCommReminderCustomer->status = $actionCommReminderCustomer::STATUS_TODO;
+						$actionCommReminderCustomer->fk_actioncomm = $object->id;
+						$actionCommReminderCustomer->fk_soc = $object->socid;
+						$actionCommReminderCustomer->fk_email_template = $modelmail;
+						$res = $actionCommReminderCustomer->create($user);
+
+						if ($res <= 0) {
+							$langs->load("errors");
+							$error++;
+							setEventMessages($langs->trans('ErrorReminderActionCommCreation'), null, 'errors');
+							$action = 'create';
+							$donotclearsession = 1;
+						}
+					}
 				}
 
 				// Modify $moreparam so we are sure to see the event we have just created, whatever are the default value of filter on next page.
@@ -850,6 +873,28 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 									$action = 'create';
 									$donotclearsession = 1;
 									break;
+								}
+							}
+
+							// Also create a reminder by email for the linked customer, if requested
+							if (!$error && $remindcustomer == 'on' && $finalobject->socid > 0) {
+								$actionCommReminderCustomer = new ActionCommReminder($db);
+								$actionCommReminderCustomer->dateremind = $dateremind;
+								$actionCommReminderCustomer->typeremind = 'email';
+								$actionCommReminderCustomer->offsetunit = $offsetunit;
+								$actionCommReminderCustomer->offsetvalue = $offsetvalue;
+								$actionCommReminderCustomer->status = $actionCommReminderCustomer::STATUS_TODO;
+								$actionCommReminderCustomer->fk_actioncomm = $finalobject->id;
+								$actionCommReminderCustomer->fk_soc = $finalobject->socid;
+								$actionCommReminderCustomer->fk_email_template = $modelmail;
+								$res = $actionCommReminderCustomer->create($user);
+
+								if ($res <= 0) {
+									$error++;
+									$langs->load("errors");
+									setEventMessages($langs->trans('ErrorReminderActionCommCreation'), null, 'errors');
+									$action = 'create';
+									$donotclearsession = 1;
 								}
 							}
 						}
@@ -1174,6 +1219,37 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 							$action = 'create';
 							$donotclearsession = 1;
 							break;
+						}
+					}
+				}
+
+				// Also (re)create a reminder by email for the linked customer, if requested.
+				// This is independent of $remindertype (the assigned users' reminder channel), so we
+				// clean up any previous customer reminder for this event ourselves instead of relying
+				// on the loadReminders($remindertype, ...) cleanup above.
+				if (!$error) {
+					$sqldeletecustomer = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+					$sqldeletecustomer .= " WHERE fk_actioncomm = ".((int) $object->id)." AND typeremind = 'email' AND fk_soc IS NOT NULL AND status < 1";
+					$db->query($sqldeletecustomer);
+
+					if ($remindcustomer == 'on' && $object->socid > 0) {
+						$actionCommReminderCustomer = new ActionCommReminder($db);
+						$actionCommReminderCustomer->dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
+						$actionCommReminderCustomer->typeremind = 'email';
+						$actionCommReminderCustomer->offsetunit = $offsetunit;
+						$actionCommReminderCustomer->offsetvalue = $offsetvalue;
+						$actionCommReminderCustomer->status = $actionCommReminderCustomer::STATUS_TODO;
+						$actionCommReminderCustomer->fk_actioncomm = $object->id;
+						$actionCommReminderCustomer->fk_soc = $object->socid;
+						$actionCommReminderCustomer->fk_email_template = $modelmail;
+						$res = $actionCommReminderCustomer->create($user);
+
+						if ($res <= 0) {
+							$langs->load("errors");
+							$error = $langs->trans('ErrorReminderActionCommCreation');
+							setEventMessages($error, null, 'errors');
+							$action = 'create';
+							$donotclearsession = 1;
 						}
 					}
 				}
@@ -1894,6 +1970,13 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		// Also remind the customer by email
+		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') && $socid > 0) {
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("AlsoRemindCustomer").'</td><td colspan="3">';
+			print '<input type="checkbox" id="remindcustomer" name="remindcustomer"'.(GETPOST('remindcustomer') ? ' checked' : '').'>';
+			print '</td></tr>';
+		}
+
 		print '</table>';
 		print '</div>';
 
@@ -1950,6 +2033,9 @@ if ($action == 'create') {
 
 						toggle_reminder_part();
 						$("#addreminder").click(toggle_reminder_part);
+						$("#remindcustomer").click(function(){
+							selectremindertype();
+						});
 
 	            		$("#selectremindertype").change(function(){
 							selectremindertype();
@@ -1958,7 +2044,8 @@ if ($action == 'create') {
 						function selectremindertype() {
 							console.log("Call selectremindertype");
 	            	        var selected_option = $("#selectremindertype option:selected").val();
-	            		    if(selected_option == "email") {
+	            		    // The mail template is used by an email reminder for the users, and by the reminder sent to the customer
+	            		    if(selected_option == "email" || $("#remindcustomer").is(":checked")) {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
 	            		    } else {
 	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
@@ -2440,6 +2527,14 @@ if ($id > 0 && $action != 'create') {
 				$firstreminderId = array_shift($keys);
 
 				$actionCommReminder = $object->reminders[$firstreminderId];
+
+				// The reminder that sets the type and template shown must be one of a user, not the one sent to the customer or a contact
+				foreach ($object->reminders as $tmpreminder) {
+					if (empty($tmpreminder->fk_soc) && empty($tmpreminder->fk_contact)) {
+						$actionCommReminder = $tmpreminder;
+						break;
+					}
+				}
 			} else {
 				$checked = '';
 				$actionCommReminder = new ActionCommReminder($db);
@@ -2473,8 +2568,21 @@ if ($id > 0 && $action != 'create') {
 			print $form->selectarray('selectremindertype', $TRemindTypes, $actionCommReminder->typeremind, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 			print '</td></tr>';
 
+			// State of the checkbox to also remind the customer by email
+			$remindcustomerchecked = '';
+			if (getDolGlobalString('AGENDA_REMINDER_EMAIL') && $object->socid > 0) {
+				$sqlcustomerreminder = "SELECT rowid FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+				$sqlcustomerreminder .= " WHERE fk_actioncomm = ".((int) $object->id)." AND typeremind = 'email' AND fk_soc IS NOT NULL";
+				$rescustomerreminder = $db->query($sqlcustomerreminder);
+				$remindcustomerchecked = ($rescustomerreminder && $db->num_rows($rescustomerreminder)) ? ' checked' : '';
+				if (GETPOSTISSET('remindcustomer')) {
+					$remindcustomerchecked = (GETPOST('remindcustomer') ? ' checked' : '');
+				}
+			}
+
+			// The mail template is used by an email reminder for the users, and by the reminder sent to the customer
 			$hide = '';
-			if ($actionCommReminder->typeremind == 'browser') {
+			if ($actionCommReminder->typeremind == 'browser' && empty($remindcustomerchecked)) {
 				$hide = 'style="display:none;"';
 			}
 
@@ -2482,6 +2590,13 @@ if ($id > 0 && $action != 'create') {
 			if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 				print '<tr '.$hide.'><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
 				print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1, (string) $actionCommReminder->fk_email_template);
+				print '</td></tr>';
+			}
+
+			// Also remind the customer by email
+			if (getDolGlobalString('AGENDA_REMINDER_EMAIL') && $object->socid > 0) {
+				print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("AlsoRemindCustomer").'</td><td colspan="3">';
+				print '<input type="checkbox" id="remindcustomer" name="remindcustomer"'.$remindcustomerchecked.'>';
 				print '</td></tr>';
 			}
 
@@ -2496,14 +2611,17 @@ if ($id > 0 && $action != 'create') {
 							$(".reminderparameters").hide();
 						}
 					});
-					$("#selectremindertype").change(function(){
+					function updatemailtemplaterow() {
 						var selected_option = $("#selectremindertype option:selected").val();
-						if(selected_option == "email") {
+						// The mail template is used by an email reminder for the users, and by the reminder sent to the customer
+						if(selected_option == "email" || $("#remindcustomer").is(":checked")) {
 							$("#select_actioncommsendmodel_mail").closest("tr").show();
 						} else {
 							$("#select_actioncommsendmodel_mail").closest("tr").hide();
 						}
-					});
+					}
+					$("#selectremindertype").change(updatemailtemplaterow);
+					$("#remindcustomer").click(updatemailtemplaterow);
 				});
 			</script>
 			<?php
