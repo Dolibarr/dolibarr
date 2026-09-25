@@ -645,8 +645,9 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// Check that user has permission on thirdparty ID
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company)) {
+			throw new RestException(404, 'Third party not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$categories = new Categorie($this->db);
@@ -763,8 +764,9 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// Check that user has permission on thirdparty ID
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company)) {
+			throw new RestException(404, 'Third party not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$categories = new Categorie($this->db);
@@ -1369,11 +1371,13 @@ class Thirdparties extends DolibarrApi
 
 		$account->fetch($bankaccount_id);
 
-		if ((int) $account->socid != $id) {
+		$socid = (int) $account->socid;
+
+		if ($socid == $id) {
+			return $account->delete(DolibarrApiAccess::$user);
+		} else {
 			throw new RestException(401, "Not allowed due to bad consistency of input data");
 		}
-
-		return $account->delete(DolibarrApiAccess::$user);
 	}
 
 	/**
