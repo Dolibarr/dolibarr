@@ -137,6 +137,19 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 	$error++;
 }
 
+// The ids in $toselect come from the request and not from the list: the list only showed the objects the user can see, the
+// request can contain any id. Refuse the selection if the user can not access one of the objects, with the same rules as the
+// lists and the cards (entity, third parties of the sales representative, projects the user can see...).
+if (!$error && $massaction && !empty($toselect) && is_array($toselect)) {
+	$objecttmpforaccesscheck = new $objectclass($db);
+	$refusedids = getObjectIdsRefusedToUser($user, $objecttmpforaccesscheck, $toselect);
+	if (!empty($refusedids)) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+		$error++;
+	}
+}
+
 if (!$error && $massaction == 'confirm_presend' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend';
 }
