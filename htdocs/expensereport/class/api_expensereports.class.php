@@ -980,9 +980,13 @@ class ExpenseReports extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validatepayment($request_data);
 
+		if (isModEnabled("bank") && !((int) ($request_data['accountid'] ?? 0) > 0)) {
+			throw new RestException(400, "accountid field missing");
+		}
+
 		// Check access to the parent expense report
 		$result = $this->expensereport->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Expense report not found');
 		}
 
@@ -996,11 +1000,15 @@ class ExpenseReports extends DolibarrApi
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
 		}
 
+		// Same sequence as expensereport/payment/payment.php: all or nothing
+		$this->db->begin();
+
 		if ($paymentExpenseReport->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error creating paymentExpenseReport', array_merge(array($paymentExpenseReport->error), $paymentExpenseReport->errors));
+			$this->db->rollback();
+			throw new RestException(400, 'Payment error : '.$paymentExpenseReport->errorsToString());
 		}
 		if (isModEnabled("bank")) {
-			$paymentExpenseReport->addPaymentToBank(
+			$result = $paymentExpenseReport->addPaymentToBank(
 				DolibarrApiAccess::$user,
 				'payment_expensereport',
 				'(ExpenseReportPayment)',
@@ -1008,7 +1016,19 @@ class ExpenseReports extends DolibarrApi
 				'',
 				''
 			);
+			if ($result <= 0) {
+				$this->db->rollback();
+				throw new RestException(400, 'Add payment to bank error : '.$paymentExpenseReport->errorsToString());
+			}
 		}
+
+		$remaintopay = price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments(), 'MT');
+		if ($remaintopay == 0 && $this->expensereport->setPaid($this->expensereport->id, DolibarrApiAccess::$user) < 0) {
+			$this->db->rollback();
+			throw new RestException(400, 'Set paid error : '.$this->expensereport->errorsToString());
+		}
+
+		$this->db->commit();
 
 		return $paymentExpenseReport->id;
 	}

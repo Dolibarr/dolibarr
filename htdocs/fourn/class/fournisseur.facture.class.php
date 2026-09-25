@@ -1281,6 +1281,10 @@ class FactureFournisseur extends CommonInvoice
 		// Check parameters
 		// Put here code to add control on parameters values
 
+		if (dol_strlen((string) $this->date_modification) == 0) {
+			$this->tms = dol_now();
+		}
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
@@ -1491,10 +1495,10 @@ class FactureFournisseur extends CommonInvoice
 
 		dol_syslog("FactureFournisseur::delete rowid=".$rowid, LOG_DEBUG);
 
-		// Test to avoid invoice deletion (invoice transferred into accountancy, with payment, ...), same test as Facture::delete()
+		// Test to avoid invoice deletion (invoice transferred into accountancy, with payment, ...), same test as Facture::delete() does
 		$result = $this->is_erasable();
 		if ($result <= 0) {
-			dol_syslog(get_class($this)."::delete refused, invoice is not erasable (code ".$result.")", LOG_WARNING);
+			dol_syslog(get_class($this)."::delete refused, invoice is not erasable (code ".$result.")", LOG_DEBUG);
 			return 0;
 		}
 
