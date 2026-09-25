@@ -71,7 +71,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 // Product
-print '<th class="linecoldescription">'.$langs->trans('Description');
+print '<th class="linecoldescription">'.$langs->trans('Description').'</th>';
 
 // Qty
 print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
@@ -80,6 +80,10 @@ print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 // Unit
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<th class="linecoluseunit left">'.$langs->trans('Unit').'</th>';
+}
+
+if (isModEnabled('stock')) {
+	print '<th class="linecolwarehouse">'.$langs->trans('Warehouse').'</th>';
 }
 
 print '<td class="linecoledit" style="width: 10px"></td>'; // No width to allow autodim

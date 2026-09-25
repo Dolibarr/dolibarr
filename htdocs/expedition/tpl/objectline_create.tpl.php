@@ -93,6 +93,10 @@ if ($nolinesbefore) {
 		print $langs->trans('Unit');
 		print '</span></td>';
 	}
+	if (isModEnabled('stock')) {
+		print '<td class="linecolwarehouse">'.$langs->trans('Warehouse').'</td>';
+	}
+	print '<td colspan="'.$colspan.'"></td>';
 
 	print '</tr>';
 }
@@ -111,8 +115,14 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription line minwidth500imp">';
 
 // Predefined product/service
-if (isModEnabled("product")) {
-	if ($filtertype == 1) {
+if (isModEnabled('product') || (isModEnabled('service') && (getDolGlobalInt('STOCK_SUPPORTS_SERVICES') || getDolGlobalInt('SHIPMENT_SUPPORTS_SERVICES')))) {
+	$filtertype = 0;
+	if (isModEnabled('service') && (getDolGlobalInt('STOCK_SUPPORTS_SERVICES') || getDolGlobalInt('SHIPMENT_SUPPORTS_SERVICES'))) {
+		$filtertype = isModEnabled('product') ? '' : 1;
+	}
+	if ($filtertype === '') {
+		print $langs->trans('ProductOrService');
+	} elseif ($filtertype == 1) {
 		print $langs->trans("Service");
 	} else {
 		print $langs->trans("Product");
@@ -121,6 +131,8 @@ if (isModEnabled("product")) {
 	echo '<span class="prod_entry_mode_predef nowraponall">';
 
 	$statustoshow = -1;
+	print '<input type="hidden" name="prod_entry_mode" value="predef">';
+	$form->select_produits(GETPOSTINT('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 1, '', GETPOST('combinations', 'array:alphanohtml'));
 
 	echo '</span>';
 }
@@ -139,13 +151,20 @@ print '</td>';
 
 // Qty
 $coldisplay++;
-print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
+print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? dol_escape_htmltag(GETPOST("qty", 'alpha')) : 1).'">';
 print '</td>';
 
 // Unit
 if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 	$coldisplay++;
 	print '<td class="nobottom linecoluseunit">';
+	print '</td>';
+}
+
+if (isModEnabled('stock')) {
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecolwarehouse">';
+	print $formproduct->selectWarehouses(GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : 'ifone', 'entrepot_id', 'warehouseopen', 1);
 	print '</td>';
 }
 
