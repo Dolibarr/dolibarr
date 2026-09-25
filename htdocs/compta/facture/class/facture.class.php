@@ -22,7 +22,7 @@
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025-2026	Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
@@ -5475,7 +5475,15 @@ class Facture extends CommonInvoice
 
 		$sanitizedclause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin, f.fk_statut as status, f.total_ht";
+		$now = dol_now();
+		$warningdelay = getWarningDelay('invoice', 'client');
+
+		// The count, the total and the number of late invoices are computed by the database: reading every unpaid invoice to
+		// count them in PHP took seconds on the home page of an instance with a lot of unpaid invoices. An invoice is late when
+		// its due date is before now minus the warning delay, the rule of hasDelay() for a validated invoice (an invoice without
+		// due date was counted as late by that rule, this is kept).
+		$sql = "SELECT COUNT(f.rowid) as nb, SUM(f.total_ht) as total,";
+		$sql .= " SUM(CASE WHEN f.date_lim_reglement IS NULL OR f.date_lim_reglement < '".$this->db->idate($now - $warningdelay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
@@ -5492,26 +5500,19 @@ class Facture extends CommonInvoice
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("bills");
-			$now = dol_now();
 			$response = new WorkboardResponse();
-			$response->warning_delay = getWarningDelay('invoice', 'client') / 60 / 60 / 24;
+			$response->warning_delay = $warningdelay / 60 / 60 / 24;
 			$response->label = $langs->trans("CustomerBillsUnpaid");
 			$response->labelShort = $langs->trans("Unpaid");
 			$response->url = DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&mainmenu=billing&leftmenu=customers_bills';
 			$response->img = img_object('', "bill");
 
-			$generic_facture = new Facture($this->db);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$generic_facture->date_lim_reglement = $this->db->jdate($obj->datefin);
-				$generic_facture->statut = $obj->status;
-				$generic_facture->status = $obj->status;
-
-				$response->nbtodo++;
-				$response->total += $obj->total_ht;
-
-				if ($generic_facture->hasDelay()) {
-					$response->nbtodolate++;
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->total = (float) $obj->total;
+				$response->nbtodolate = (int) $obj->nblate;
+				if ($response->nbtodolate > 0) {
 					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_option=late&mainmenu=billing&leftmenu=customers_bills';
 				}
 			}

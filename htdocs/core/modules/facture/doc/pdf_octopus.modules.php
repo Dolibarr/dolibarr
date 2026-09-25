@@ -15,6 +15,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
  * Copyright (C) 2026		Vincent Maury			<vmaury@timgroup.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -734,6 +735,9 @@ class pdf_octopus extends ModelePDFFactures
 							$pdf->setPage($pageposbefore + 1);
 							$pdf->setPageOrientation('', true, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							$posy = $this->tab_top_newpage;
+							// The 'position' and 'totalexcltax' columns are output at $curY, not at $posy.
+							// Without this update, they stay at the coordinate of the previous page.
+							$curY = $posy;
 							$showpricebeforepagebreak = 0;
 						}
 
@@ -801,6 +805,8 @@ class pdf_octopus extends ModelePDFFactures
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						$pdf->setPage($pageposafter);
 						$posy = $this->tab_top_newpage;
+						// Same as above: 'position' and 'totalexcltax' are output at $curY.
+						$curY = $posy;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
