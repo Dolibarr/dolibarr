@@ -26,7 +26,7 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -78,11 +78,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureCreate()
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new Facture($db);
 		$localobject->initAsSpecimen();
@@ -103,11 +104,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureFetch($id)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject = new Facture($db);
 		$result = $localobject->fetch($id);
@@ -134,11 +136,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureUpdate($localobject)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$this->changeProperties($localobject);
 		$result = $localobject->update($user);
@@ -159,11 +162,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureAddLine($localobject)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject->fetch_thirdparty();
 		$beforelinecount = count($localobject->lines);
@@ -193,11 +197,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureUpdateLine($params)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		list($localobject, $lineid) = $params;
 		$beforelinecount = count($localobject->lines);
@@ -227,11 +232,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureDeleteLine($params)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		list($localobject, $lineid) = $params;
 		$beforelinecount = count($localobject->lines);
@@ -262,11 +268,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureValid($localobject)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		// Force to default setup
 		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
@@ -311,11 +318,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureOther($localobject)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$localobject->info($localobject->id);
 		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
@@ -339,11 +347,12 @@ class FactureTest extends CommonClassTest
 	 */
 	public function testFactureDelete($id)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		// Force default setup
 		unset($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED);
@@ -398,11 +407,12 @@ class FactureTest extends CommonClassTest
 	/*
 	public function testFactureLoadBoard()
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		$now = dol_now();
 		$db->begin();
