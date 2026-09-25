@@ -105,7 +105,11 @@ if (!$facid && (string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 }
 $object = new Facture($db);
 if ($facid > 0 && !GETPOST('specimen')) {
-	$object->fetch($facid);
+	$result = $object->fetch($facid);
+	// Only an invoice of the POS, in an entity of the user, can be printed from the POS
+	if ($result <= 0 || $object->module_source != 'takepos' || !in_array($object->entity, explode(',', getEntity('invoice')))) {
+		accessforbidden();
+	}
 } else {
 	$object->initAsSpecimen('takepos');
 }
