@@ -477,6 +477,12 @@ if ($search_company) {
 if ($search_desc) {
 	$param .= "&search_desc=".urlencode($search_desc);
 }
+if ($search_projet_ref) {
+	$param .= "&search_projet_ref=".urlencode($search_projet_ref);
+}
+if ($search_contrat_ref) {
+	$param .= "&search_contrat_ref=".urlencode($search_contrat_ref);
+}
 if ($search_status != '' && $search_status > -1) {
 	$param .= "&search_status=".urlencode($search_status);
 }

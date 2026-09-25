@@ -904,6 +904,11 @@ class Paiement extends CommonObject
 				if (!$error) {
 					$linkaddedforthirdparty = array();
 					foreach ($this->amounts as $key => $value) {  // We should have invoices always for same third party but we loop in case of.
+						// Skip the invoices that were listed but not paid, the same way create() does. Without this,
+						// a 'company' link is added to the bank line for a third party that received no payment.
+						if (!is_numeric($value) || $value == 0) {
+							continue;
+						}
 						if ($mode == 'payment') {
 							$fac = new Facture($this->db);
 							$fac->fetch($key);
