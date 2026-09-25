@@ -488,3 +488,48 @@ ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref
 -- the API authenticates against tokenstring (where the upgrade that moves user api_key values
 -- puts them). Those keys never worked: copy them where they are read.
 UPDATE llx_oauth_token SET tokenstring = token WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
+
+-- MCP OAuth: the module tables are only created when a module is enabled, so an install that
+-- already had the ai module on would never get them and every OAuth call would fail on a
+-- missing table. Created here for those, with the same definition as the table files.
+create table llx_ai_oauth_client
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  client_id					varchar(255) NOT NULL,
+  client_secret_hash		varchar(128),
+  client_name				varchar(255),
+  redirect_uris				text NOT NULL,
+  token_endpoint_auth_method varchar(32) DEFAULT 'none',
+  registered_from			varchar(64),
+  datec						datetime NOT NULL,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+
+ALTER TABLE llx_ai_oauth_client ADD UNIQUE INDEX uk_ai_oauth_client_client_id (entity, client_id);
+ALTER TABLE llx_ai_oauth_client ADD INDEX idx_ai_oauth_client_entity (entity);
+ALTER TABLE llx_ai_oauth_client ADD INDEX idx_ai_oauth_client_registered_from (registered_from, datec);
+
+create table llx_ai_oauth_token
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  token_type				varchar(8) NOT NULL,
+  token_hash				varchar(64) NOT NULL,
+  fk_client					integer NOT NULL,
+  fk_user					integer NOT NULL,
+  scope						varchar(255),
+  resource					varchar(255),
+  code_challenge			varchar(128),
+  redirect_uri				text,
+  expires_at				datetime NOT NULL,
+  revoked					smallint DEFAULT 0 NOT NULL,
+  datec						datetime NOT NULL,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+
+ALTER TABLE llx_ai_oauth_token ADD UNIQUE INDEX uk_ai_oauth_token_hash (token_type, token_hash);
+ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_entity (entity);
+ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_fk_user (fk_user);
+ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_fk_client (fk_client);
+ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_expires_at (expires_at);
