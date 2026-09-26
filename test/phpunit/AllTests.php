@@ -210,6 +210,8 @@ class AllTests
 		$suite->addTestSuite('FormMailTest');
 		require_once dirname(__FILE__).'/NotifyTest.php';
 		$suite->addTestSuite('NotifyTest');
+		require_once dirname(__FILE__).'/DeletionLogTest.php';
+		$suite->addTestSuite('DeletionLogTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
 		$suite->addTestSuite('SocieteTest');
 		require_once dirname(__FILE__).'/ExpeditionTest.php';
