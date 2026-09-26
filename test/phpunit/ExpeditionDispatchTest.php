@@ -13,6 +13,9 @@
  * \brief      Unit tests for standalone shipment dispatch groups.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+
 // These unit tests need no configured Dolibarr installation or database connection.
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', dirname(__FILE__).'/../../htdocs');
@@ -60,7 +63,6 @@ class ExpeditionDispatchTest extends \PHPUnit\Framework\TestCase
 	 */
 	protected function tearDown(): void
 	{
-		global $conf;
 		$conf = $this->savedConf;
 		parent::tearDown();
 	}
