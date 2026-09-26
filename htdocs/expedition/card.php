@@ -75,7 +75,7 @@ if (isModEnabled('project')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'productbatch'));
+$langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'products', 'propal', 'productbatch'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -1230,8 +1230,7 @@ if (empty($reshook)) {
 			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
 				$prod->fetch($idprod);
-				$desc = $prod->label;
-				$description = $desc;
+				$description = '';
 				// Define output language
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
@@ -1252,7 +1251,7 @@ if (empty($reshook)) {
 					$description = $prod->description;
 				}
 				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 0) {
-					$description = dol_concatdesc($desc, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
+					$description = dol_concatdesc($description, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
 				} else {
 					$description = $line_desc;
 				}
@@ -1295,19 +1294,18 @@ if (empty($reshook)) {
 						}
 					}
 					$tmptxt .= ')';
-					$description = dol_concatdesc($desc, $tmptxt);
+					$description = dol_concatdesc($description, $tmptxt);
 				}
 				$type = $prod->type;
 				$fk_unit = $prod->fk_unit;
 			} else {
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
-				$desc = $line_desc;
 				$type = GETPOST('type');
 				$fk_unit = GETPOST('units', 'alpha');
-				$description = $desc;
+				$description = $line_desc;
 				$fk_elementdet = '';
 			}
-			$desc = dol_htmlcleanlastbr($desc);
+			$description = dol_htmlcleanlastbr($description);
 
 			// Insert line
 			$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $fk_parent, $array_options);
