@@ -2906,7 +2906,7 @@ class Ticket extends CommonObject
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
 			$resarray = $object->copyFilesForTicket();
 			if (is_numeric($resarray) && $resarray == -1) {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 				return -1;
 			}
 
@@ -3376,11 +3376,10 @@ class Ticket extends CommonObject
 
 				return 1;
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 				return -1;
 			}
 		} else {
-			setEventMessages($this->error, $this->errors, 'errors');
 			return -1;
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
@@ -194,6 +194,10 @@ if (in_array($action, array("view_ticket", "presend", "close", "confirm_public_c
 
 	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message')) {	// Test on permission already done
 		$ret = $object->dao->newMessage($user, $action, 0, 1);
+		if ($ret < 0) {
+			$error++;
+			setEventMessages($object->dao->error, $object->dao->errors, 'errors');
+		}
 
 		if (!$error) {
 			$action = 'view_ticket';
