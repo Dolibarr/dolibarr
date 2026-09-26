@@ -303,7 +303,7 @@ if ($errorstr) {
 		$i2++; // a criteria for 1 more field was added to string
 
 		if ($newres) {
-			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
+			$res = $res.($res ? ' AND ' : '').($i3 > 1 ? '(' : '').$newres.($i3 > 1 ? ')' : '');
 		}
 		$i1++;
 	}
