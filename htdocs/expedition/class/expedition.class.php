@@ -2479,6 +2479,12 @@ class Expedition extends CommonObject
 				$originline = $obj->fk_elementdet;
 			}
 			$this->db->free($resql);
+			$orderedLines = $this->lines;
+			$result = $this->fetch_lines_free(true);
+			if ($result < 0) {
+				return $result;
+			}
+			$this->lines = array_merge($orderedLines, $this->lines);
 			return 1;
 		} else {
 			$this->error = $this->db->error();
@@ -2489,11 +2495,12 @@ class Expedition extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load lines of simple shipment
+	 *	Load lines of simple shipment, or catalog lines added to an order shipment
 	 *
+	 *	@param bool $onlyadditional Only catalog lines without an origin order line
 	 *	@return	int		>0 if OK, Otherwise if KO
 	 */
-	public function fetch_lines_free()
+	public function fetch_lines_free($onlyadditional = false)
 	{
 		// phpcs:enable
 		global $mysoc;
@@ -2501,9 +2508,19 @@ class Expedition extends CommonObject
 		$this->lines = array();
 
 		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_product, ed.fk_parent, ed.fk_unit, ed.description, ed.fk_elementdet, ed.fk_element, ed.element_type, ed.qty, ed.rang';
+		if ($onlyadditional) {
+			$sql .= ', p.ref as product_ref, p.label as product_label, p.description as product_desc, p.fk_product_type, p.barcode as product_barcode';
+			$sql .= ', p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch, p.stockable_product';
+			$sql .= ', p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units';
+			$sql .= ', p.surface, p.surface_units, p.volume, p.volume_units';
+		}
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as ed';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = ed.fk_product)';
 		$sql .= ' WHERE ed.fk_expedition = '.((int) $this->id);
+		if ($onlyadditional) {
+			$sql .= " AND (ed.fk_elementdet IS NULL OR ed.fk_elementdet = 0) AND ed.element_type = 'shipping'";
+			$sql .= ' AND (ed.fk_parent IS NULL OR ed.fk_parent = 0)';
+		}
 		$sql .= ' ORDER BY ed.rang, ed.rowid';
 
 		dol_syslog(get_class($this)."::fetch_lines_free", LOG_DEBUG);
@@ -2532,6 +2549,42 @@ class Expedition extends CommonObject
 				$line->fk_unit          = $objp->fk_unit;
 				$line->fk_elementdet 	= $objp->fk_elementdet;
 				$line->element_type     = $objp->element_type;
+				if ($onlyadditional) {
+					// Expose the same product/quantity contract to the card, API and PDF models.
+					$line->origin_id = 0;
+					$line->origin_line_id = 0;
+					$line->qty_asked = 0;
+					$line->qty_shipped = $line->qty;
+					// These lines carry no price from the source order.
+					$line->subprice = 0;
+					$line->total_ht = $line->total_tva = $line->total_ttc = 0;
+					$line->multicurrency_subprice = 0;
+					$line->multicurrency_total_ht = $line->multicurrency_total_tva = $line->multicurrency_total_ttc = 0;
+					$line->ref = $line->product_ref = $objp->product_ref;
+					$line->libelle = $line->product_label = $objp->product_label;
+					$line->product_desc = $objp->product_desc;
+					$line->product_type = $line->fk_product_type = (int) $objp->fk_product_type;
+					$line->product_barcode = $objp->product_barcode;
+					$line->product_tosell = $objp->product_tosell;
+					$line->product_tobuy = $objp->product_tobuy;
+					$line->product_tobatch = $objp->product_tobatch;
+					$line->stockable_product = $objp->stockable_product;
+					$line->weight = $objp->weight;
+					$line->weight_units = $objp->weight_units;
+					$line->length = $objp->length;
+					$line->length_units = $objp->length_units;
+					$line->width = $objp->width;
+					$line->width_units = $objp->width_units;
+					$line->height = $objp->height;
+					$line->height_units = $objp->height_units;
+					$line->surface = $objp->surface;
+					$line->surface_units = $objp->surface_units;
+					$line->volume = $objp->volume;
+					$line->volume_units = $objp->volume_units;
+					$line->details_entrepot = array();
+					$line->detail_batch = array();
+					$line->detail_children = array();
+				}
 				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
