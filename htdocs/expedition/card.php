@@ -3213,7 +3213,7 @@ if ($action == 'create' && $usercancreate) {
 					print '<input type="hidden" name="action" value="addline">';
 					print '<input type="hidden" name="id" value="'.$object->id.'">';
 					print '<div class="div-table-responsive-no-min">';
-					print '<table id="tablelines_add" class="noborder noshadow centpercent">';
+					print '<table id="tablelines_add" class="noborder noshadow borderbottom centpercent">';
 
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
