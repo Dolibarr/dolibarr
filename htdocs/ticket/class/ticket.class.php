@@ -413,7 +413,8 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			if (dol_strlen($this->message) > 65000) {
+			// Default is the capacity in bytes of the mediumtext column llx_ticket.message
+			if (strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16777215)) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
@@ -1050,7 +1051,8 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			if (dol_strlen($this->message) > 65000) {
+			// Default is the capacity in bytes of the mediumtext column llx_ticket.message
+			if (strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16777215)) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
