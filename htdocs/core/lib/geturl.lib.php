@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,34 @@
  *	\file			htdocs/core/lib/geturl.lib.php
  *	\brief			This file contains functions dedicated to get URLs.
  */
+
+/**
+ * Mask the credentials an HTTP call carries, so a URL or a raw header block can
+ * be written into the log without leaking the secret it authenticates with.
+ * Covers both places a credential travels: a query-string parameter (Gemini's
+ * '?key=', many webhooks' '?token=') and a header value (Anthropic's
+ * 'x-api-key', OAuth's 'Authorization: Bearer', cookies...).
+ *
+ * @param	string	$text	URL, raw header block (CURLINFO_HEADER_OUT), or any string mixing both
+ * @return	string			Same string with every credential replaced by '***'
+ */
+function dolMaskSecretsForLog($text)
+{
+	if (!is_string($text) || $text === '') {
+		return (string) $text;
+	}
+
+	// 1) Query-string parameters whose value is a credential. The value stops at
+	// the next separator, so the rest of the URL (and of the log line) is kept.
+	$sensitiveparams = array('key', 'api_key', 'apikey', 'token', 'access_token', 'auth', 'password', 'secret', 'signature', 'dolapikey');
+	$text = (string) preg_replace('/([?&](?:'.implode('|', $sensitiveparams).')=)[^&\s"\']+/i', '$1***', $text);
+
+	// 2) Header names whose VALUE is a credential. Matched case-insensitively at
+	// the start of a header line, so a body that merely mentions them is untouched.
+	$sensitiveheaders = array('authorization', 'proxy-authorization', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'cookie', 'set-cookie', 'x-goog-api-key', 'dolapikey');
+
+	return (string) preg_replace('/^('.implode('|', $sensitiveheaders).')\s*:\s*.*$/im', '$1: ***', $text);
+}
 
 /**
  * Function to get a content from an URL (use proxy if proxy defined).
@@ -57,12 +86,17 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
 	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 
-	dol_syslog("getURLContent postorget=".$postorget." URL=".$url);
+	// The URL may itself carry the credential as a query parameter (Gemini's
+	// '?key=', many webhooks' '?token='): never log it raw. Masked into a
+	// dedicated variable so the real $url keeps being used for the call.
+	$urlforlog = dolMaskSecretsForLog($url);
+
+	dol_syslog("getURLContent postorget=".$postorget." URL=".$urlforlog);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
-		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$urlforlog." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, '_curl');
 	}
 	if ($morelogsuffix) {
-		dol_syslog("getURLContent postorget=".$postorget." URL=".$url." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, $morelogsuffix);
+		dol_syslog("getURLContent postorget=".$postorget." URL=".$urlforlog." json_encode(param)=".json_encode($param), LOG_DEBUG, 0, $morelogsuffix);
 	}
 
 	if (!function_exists('curl_init')) {
@@ -218,7 +252,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	//if USE_PROXY constant set at begin of this method.
 	if ($USE_PROXY) {
-		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".$PROXY_PASS);
+		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".($PROXY_PASS ? '***' : ''));
 		//curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
 		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST.":".$PROXY_PORT);
 		if ($PROXY_USER) {
@@ -370,6 +404,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} while ($http_code);	// Stop if http_code is 0
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
+	// The outgoing header block carries the credentials of the call (API keys,
+	// bearer tokens, cookies): mask them BEFORE any log write. This log line is
+	// emitted at LOG_INFO, so lowering the syslog level to 6 does not stop it.
+	$request = dolMaskSecretsForLog($request);
 
 	dol_syslog("getURLContent request without content body=".$request);
 	if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
