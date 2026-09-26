@@ -19,6 +19,7 @@ Every modification must respect:
 - Never remove blank lines from the code, even when multiple consecutive blank lines are present. 
 - Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
 - Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
+- Never use PHP native exec functions to call a CLI, but use instead the Dolibarr method Utils->executeCLI()
 - Never use PHP native functions when Dolibarr provides wrappers: time()→dol_now(), strtolower()→dol_strtolower(), strtoupper()→dol_strtoupper(), strlen()→dol_strlen(), mktime()→dol_mktime(), getdate()→dol_getdate(), strtotime()→dol_stringtotime(), ucfirst()→dol_ucfirst(), ucwords()→dol_ucwords(), substr()→dol_substr(), basename()→dol_basename()
 - Use Dolibarr hooks whenever possible
 - Respect existing naming conventions
@@ -54,9 +55,7 @@ Before writing any code, the agent **must**:
 
 ## PHP Best Practices
 
-- Try to use the more portable PHP code possible >= 7.2
-- When writing a **bug fix**, always target the lowest compatible PHP version
-  of the branch being patched — do not use PHP 8.x syntax on a fix targeting v19 or v20
+- Try to use the more portable PHP code possible >= 7.0
 - Respect PSR-12, but **indentations must use Tabs, not Spaces**
 - Write short, readable, and testable functions
 - Avoid side effects
@@ -205,10 +204,10 @@ Before any modification, verify:
 ### Code check
 
 - If making a major change or adding an important function, add or update PHPUnit test files into `test/phpunit/` (check to have the entry into file `test/phpunit/AllTests.php`).
-- If code validation with `phan` is expected, you must add the parameter `-k .phan/config.php -B dev/tools/phan/baseline.txt --quick` to the phan command line. For example:
-	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --minimum-target-php-version 7.2 [list_of_modified_file.php ...]`
 - If code validation with `phpstan` is expected, you must add the parameter `-a dev/build/phpstan/bootstrap_action.php` to the phpstan command line. For example:
 	`phpstan analyse --allow-older --no-progress -a dev/build/phpstan/bootstrap_action.php  [list_of_modified_file.php ...]`
+- Do not validate the code with `phan` as it is too slow, except if it is explicitly requested. In this case, you must add the parameter `-k .phan/config.php -B dev/tools/phan/baseline.txt --quick` to the phan command line. For example:
+	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --minimum-target-php-version 7.2 [list_of_modified_file.php ...]`
 
 ### Local Dolibarr Online test — Page Access
 

@@ -26,7 +26,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -788,5 +788,75 @@ class BonPrelevementTest extends CommonClassTest
 		}
 
 		return $result;
+	}
+
+	/**
+	 * testLoadBoardLateOrders
+	 *
+	 * load_board() counts as late the pending orders older than the warning delay: transmitted more than the delay ago, or,
+	 * when not transmitted yet, created more than the delay ago. The delay is in seconds; the board once compared the dates
+	 * with the delay converted in days, so every pending order was late. Synthetic orders inserted in a transaction that is
+	 * rolled back; the counts are compared to the ones got before the insertion, so existing orders do not matter.
+	 *
+	 * @return void
+	 */
+	public function testLoadBoardLateOrders()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
+
+		if (empty($conf->warning_delays['bank_direct_debit'])) {
+			$conf->warning_delays['bank_direct_debit'] = 7 * 86400;
+		}
+		if (empty($conf->warning_delays['bank_credit_transfer'])) {
+			$conf->warning_delays['bank_credit_transfer'] = 7 * 86400;
+		}
+
+		$now = dol_now();
+		$object = new BonPrelevement($db);
+
+		$db->begin();
+
+		foreach (['direct-debit' => 'bank_direct_debit', 'credit-transfer' => 'bank_credit_transfer'] as $mode => $delaykey) {
+			$before = $object->load_board($user, $mode);
+			$this->assertInstanceOf('WorkboardResponse', $before);
+
+			$old = $db->idate($now - $conf->warning_delays[$delaykey] - 2 * 86400);	// Older than the delay
+			$recent = $db->idate($now - 3600);		// Within the delay
+			// [status, datec, date_trans, expected late]
+			$orders = [
+				[BonPrelevement::STATUS_DRAFT, $old, 'NULL', 1],
+				[BonPrelevement::STATUS_DRAFT, $recent, 'NULL', 0],
+				[BonPrelevement::STATUS_TRANSFERED, $old, "'".$old."'", 1],
+				[BonPrelevement::STATUS_TRANSFERED, $old, "'".$recent."'", 0],	// Created long ago but transmitted recently: waiting since the transmission
+				[BonPrelevement::STATUS_DEBITED, $old, "'".$old."'", 0],		// Done, not pending: not counted at all
+			];
+			$expectedtodo = 0;
+			$expectedlate = 0;
+			foreach ($orders as $k => [$status, $datec, $datetrans, $late]) {
+				$sql = "INSERT INTO ".$db->prefix()."prelevement_bons (ref, entity, type, statut, datec, date_trans, amount)";
+				$sql .= " VALUES ('TESTB".substr($mode, 0, 1).$k."', ".((int) $conf->entity).", '".$mode."', ".$status.", '".$datec."', ".$datetrans.", 10)";	// ref is unique per entity
+				$this->assertTrue((bool) $db->query($sql), $db->lasterror());
+				if ($status < BonPrelevement::STATUS_DEBITED) {
+					$expectedtodo++;
+					$expectedlate += $late;
+				}
+			}
+
+			$after = $object->load_board($user, $mode);
+
+			print __METHOD__." mode=".$mode." nbtodo ".$before->nbtodo." -> ".$after->nbtodo.", nbtodolate ".$before->nbtodolate." -> ".$after->nbtodolate."\n";
+
+			$this->assertSame($expectedtodo, $after->nbtodo - $before->nbtodo, $mode.' pending orders added');
+			$this->assertSame($expectedlate, $after->nbtodolate - $before->nbtodolate, $mode.' late orders added');
+			$this->assertEqualsWithDelta($conf->warning_delays[$delaykey] / 86400, $after->warning_delay, 0.0001, $mode.' the delay of the response is in days');
+		}
+
+		$db->rollback();
 	}
 }

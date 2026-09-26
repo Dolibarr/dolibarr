@@ -529,26 +529,33 @@ function isModEnabled($module)
 {
 	global $conf;
 
-	// Fix old names (map to new names)
-	$arrayconv = MODULE_MAPPING;
-	$arrayconvbis = array_flip(MODULE_MAPPING);
-
-	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
-		// Special cases: both use the same module.
-		$arrayconv['supplier_order'] = 'fournisseur';
-		$arrayconv['supplier_invoice'] = 'fournisseur';
+	if (!empty($conf->modules[$module])) {
+		return true;	// Most calls use the real name of the module: no need to look at the old/new names mapping
 	}
 
-	$module_alt = $module;
-	if (!empty($arrayconv[$module])) {
-		$module_alt = $arrayconv[$module];
-	}
-	$module_bis = $module;
-	if (!empty($arrayconvbis[$module])) {
-		$module_bis = $arrayconvbis[$module];
+	// Fix old names (map to new names). The mappings are constant for the request, so they are built once: this function is
+	// called thousands of times per page (hooks, rights, logs...), and array_flip() on each call was most of its cost.
+	static $arrayconv = null;
+	static $arrayconvbis = null;
+	if ($arrayconv === null) {
+		$arrayconv = MODULE_MAPPING;
+		$arrayconvbis = array_flip(MODULE_MAPPING);
+
+		if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+			// Special cases: both use the same module.
+			$arrayconv['supplier_order'] = 'fournisseur';
+			$arrayconv['supplier_invoice'] = 'fournisseur';
+		}
 	}
 
-	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]) || !empty($conf->modules[$module_bis]);
+	if (!empty($arrayconv[$module]) && !empty($conf->modules[$arrayconv[$module]])) {
+		return true;
+	}
+	if (!empty($arrayconvbis[$module]) && !empty($conf->modules[$arrayconvbis[$module]])) {
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -2079,7 +2086,8 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 0, $allowdash = 0
 }
 
 /**
- *  Clean a string to use it as an URL (into a href or src attribute)
+ *  Clean a string to use it as an URL (into a href or src attribute, or into a js string that is a location).
+ *  Raw '<' and '>' are url encoded (a browser always sends them encoded, so a real URL never holds them).
  *
  *  @param      string		$stringtoclean		String to clean
  *  @param		int			$type				0=Accept all Url, 1=Clean external Url (keep only relative Url)
@@ -2111,6 +2119,9 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 		// removing '//' should disable links to external url like //aaa or http//)
 		$stringtoclean = preg_replace(array('/^[a-z]*\/\/+/i'), '', $stringtoclean);
 	}
+
+	// A raw < or > can not be part of a valid URL. We encode them, so the result can not open an html tag or close an inline script block (</script does not need a >).
+	$stringtoclean = str_replace(array('<', '>'), array('%3C', '%3E'), $stringtoclean);
 
 	return $stringtoclean;
 }
@@ -6860,6 +6871,12 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
 function dol_textishtml($msg, $option = 0)
 {
 	if (is_null($msg)) {
+		return false;
+	}
+
+	// Every pattern below needs a '<' (a tag) or a '&' (an entity): without both, the string can not be HTML. This saves the
+	// dozen of preg_match() below for the very common case of a plain label.
+	if (strpos($msg, '<') === false && strpos($msg, '&') === false) {
 		return false;
 	}
 

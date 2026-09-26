@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Rafael San José     <rsanjose@alxarafe.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,8 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			$return = 1;
 
 			// We add subscription if we change category (new category may means more mailing-list to subscribe)
+			// The object in the context is a member, phan can not know it: the call is guarded by method_exists()
+			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 			if (is_object($object->context['linkto']) && method_exists($object->context['linkto'], 'add_to_abo') && $object->context['linkto']->add_to_abo() < 0) {
 				$this->error = $object->context['linkto']->error;
 				$this->errors = $object->context['linkto']->errors;
@@ -81,6 +83,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			}
 
 			// We remove subscription if we change category (lessw category may means less mailing-list to subscribe)
+			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 			if (is_object($object->context['unlinkoff']) && method_exists($object->context['unlinkoff'], 'del_to_abo') && $object->context['unlinkoff']->del_to_abo() < 0) {
 				$this->error = $object->context['unlinkoff']->error;
 				$this->errors = $object->context['unlinkoff']->errors;

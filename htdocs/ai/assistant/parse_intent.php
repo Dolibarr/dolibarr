@@ -675,7 +675,38 @@ try {
 				$query .= "\n\n(Context: ".$aiPageContextShort.")";
 			}
 
-			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments);
+			// Pinned context turns: past exchanges the user EXPLICITLY selected in
+			// the chat (nothing is carried over by default - context is opt-in, so
+			// its token cost is a visible, deliberate choice). Hard-sanitized here:
+			// roles constrained, embedded attachment payloads stripped (attachments
+			// stay one-shot), per-turn and global caps, privacy redaction applied.
+			$history = array();
+			if (!empty($data['history']) && is_array($data['history'])) {
+				$histBudget = 6000;
+				foreach (array_slice($data['history'], 0, 12) as $turn) {
+					if (!is_array($turn) || empty($turn['text']) || !is_string($turn['text'])) {
+						continue;
+					}
+					$htext = preg_replace('/__FILE_ATTACHMENT__\[[^\]]*\]::[^\s]+/', '[attachment removed]', $turn['text']);
+					$htext = trim((string) $htext);
+					if ($htext === '') {
+						continue;
+					}
+					if (dol_strlen($htext) > 1500) {
+						$htext = dol_substr($htext, 0, 1500).' ...';
+					}
+					if ($guard) {
+						$htext = $guard->mask($htext);
+					}
+					$histBudget -= dol_strlen($htext);
+					if ($histBudget < 0) {
+						break;
+					}
+					$history[] = array('role' => ((($turn['role'] ?? '') === 'assistant') ? 'assistant' : 'user'), 'text' => $htext);
+				}
+			}
+
+			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
 			dol_syslog('rawResponse='.$rawResponse, LOG_DEBUG);
@@ -807,12 +838,31 @@ try {
 
 	// Handle no AI Intent
 	if (!$intentJSON || !isset($intentJSON['tool'])) {
+		$message = $langs->transnoentitiesnoconv('AICannotUnderstandRequest');
+		// A provider failure is not a misunderstanding: asking the user to
+		// rephrase when Gemini answers "503 high demand" sends them the wrong
+		// way. Say the service failed, with the provider's own reason, and
+		// for the transient cases (overloaded, rate limited) say to retry.
+		if (strpos($errorDetails, 'Error:') === 0) {
+			$reason = trim(preg_replace('/^Error:\s*(API|cURL #\d+)?\s*/', '', $errorDetails));
+			$reason = dol_trunc(preg_replace('/\s+/', ' ', $reason), 200);
+			if (preg_match('/high demand|overloaded|rate limit|quota|too many requests|try again|timed? ?out|HTTP (429|502|503|504)/i', $errorDetails)) {
+				$message = $langs->transnoentitiesnoconv('AIProviderBusy', $reason);
+			} else {
+				$message = $langs->transnoentitiesnoconv('AIProviderError', $reason);
+			}
+		}
 		$finalResponse = [
 			"tool" => "respond_to_user",
 			"arguments" => [
-				"message" => "I'm having trouble understanding your request. Please try rephrasing it differently. If the problem persists, please contact your administrator to check the AI connection status."
+				"message" => $message
 			]
 		];
+		if (strpos($errorDetails, 'Error:') === 0) {
+			// Lets the chat tell a failed call from a real answer (e.g. keep it
+			// out of the conversation context by default).
+			$finalResponse['status'] = 'error';
+		}
 
 		// Log the failure
 		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 0.0, $langs->transnoentitiesnoconv('Error'), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);

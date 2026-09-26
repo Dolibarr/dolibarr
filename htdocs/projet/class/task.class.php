@@ -1639,7 +1639,10 @@ class Task extends CommonObjectLine
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
-		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || empty($this->timespent_withhour)) {
+			// Sync datehour from the day-level date when no start hour was provided (withhour = 0), or when
+			// datehour is empty. When a start hour was entered (withhour = 1), keep datehour untouched so the
+			// hour is not discarded (#39276). This still resynchronizes datehour when only the day changes.
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
@@ -2097,7 +2100,10 @@ class Task extends CommonObjectLine
 		}
 
 		// Clean parameters
-		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || empty($this->timespent_withhour)) {
+			// Sync datehour from the day-level date when no start hour was provided (withhour = 0), or when
+			// datehour is empty. When a start hour was entered (withhour = 1), keep datehour untouched so the
+			// hour is not discarded (#39276). This still resynchronizes datehour when only the day changes.
 			$this->timespent_datehour = $this->timespent_date;
 		}
 		if (isset($this->timespent_note)) {
@@ -2662,9 +2668,10 @@ class Task extends CommonObjectLine
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
-		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
-		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
-		$sql .= " t.dateo as date_start, t.datee as date_end";
+		// The count and the number of late tasks are computed by the database instead of reading every task. A task to do is late
+		// when it has an end date and that date is before now minus the warning delay (the rule of hasDelay()).
+		$sql = "SELECT COUNT(t.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN (t.progress IS NULL OR t.progress >= 0) AND t.datee IS NOT NULL AND t.datee < '".$this->db->idate(dol_now() - $conf->project->task->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -2684,8 +2691,6 @@ class Task extends CommonObjectLine
 		//print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$task_static = new Task($this->db);
-
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
@@ -2697,19 +2702,10 @@ class Task extends CommonObjectLine
 			$response->img = img_object('', "task");
 
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				$task_static->projectstatus = $obj->projectstatus;
-				$task_static->progress = $obj->progress;
-				$task_static->fk_statut = $obj->status;
-				$task_static->status = $obj->status;
-				$task_static->date_start = $this->db->jdate($obj->date_start);
-				$task_static->date_end = $this->db->jdate($obj->date_end);
-
-				if ($task_static->hasDelay()) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;

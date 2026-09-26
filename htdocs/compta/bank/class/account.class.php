@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Sylvain Legrand			<contact@infras.fr>
  * Copyright (C) 2026		Lucky Ranasolonirina	<technique@infras.fr>
@@ -1481,7 +1481,13 @@ class Account extends CommonObject
 			return -1; // Protection to prevent calls by external users
 		}
 
-		$sql = "SELECT b.rowid, b.datev as datefin";
+		$now = dol_now();
+
+		// The count and the number of late transactions are computed by the database instead of reading every transaction to
+		// conciliate (there can be a lot of them). A transaction is late when its value date is before now minus the warning
+		// delay (a transaction without value date was counted as late, this is kept).
+		$sql = "SELECT COUNT(b.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN b.datev IS NULL OR b.datev < '".$this->db->idate($now - $conf->bank->rappro->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b,";
 		$sql .= " ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.rappro=0";
@@ -1495,7 +1501,6 @@ class Account extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
-			$now = dol_now();
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
@@ -1506,11 +1511,10 @@ class Account extends CommonObject
 			$response->url = DOL_URL_ROOT.'/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank';
 			$response->img = img_object('', "payment");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-				if ((int) $this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 			return $response;
 		} else {
