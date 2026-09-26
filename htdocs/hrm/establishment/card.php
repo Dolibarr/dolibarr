@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015      Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,6 +87,7 @@ if (empty($permissiontoread)) {
  */
 
 if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: ../admin/admin_establishment.php");

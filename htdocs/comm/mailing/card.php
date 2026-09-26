@@ -770,6 +770,7 @@ if (empty($reshook)) {
 
 	// Action of delete confirmation
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		if ($object->delete($user)) {
 			$url = (!empty($urlfrom) ? $urlfrom : 'list.php');
 			header("Location: ".$url);

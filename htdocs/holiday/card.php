@@ -460,6 +460,7 @@ if (empty($reshook)) {
 
 		// If this is a rough draft, approved, canceled or refused
 		if ($object->status == Holiday::STATUS_DRAFT || $object->status == Holiday::STATUS_CANCELED || $object->status == Holiday::STATUS_REFUSED) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
 		} else {
 			$error++;

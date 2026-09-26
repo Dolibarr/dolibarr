@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -187,6 +187,7 @@ if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // al
 	$result = $object->fetch($id);
 
 	if (!empty($object->id)) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 
 		if ($result > 0) {

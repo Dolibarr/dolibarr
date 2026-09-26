@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -193,6 +193,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete' && $permissiontodelete) {
 		$savtype = $object->type;
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$res = $object->delete($user);
 		if ($res > 0) {
 			if ($savtype == 'bank-transfer') {

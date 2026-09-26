@@ -1505,6 +1505,7 @@ if (empty($reshook)) {
 
 		// @phpstan-ignore-next-line
 		if (empty($errOnDelete)) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
 			if ($result > 0) {
 				$db->commit();

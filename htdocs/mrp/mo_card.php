@@ -209,6 +209,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user, 0, (bool) $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
 			header("Location: " . $backurlforlist);
@@ -252,6 +253,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
 
 			if ($result > 0) {

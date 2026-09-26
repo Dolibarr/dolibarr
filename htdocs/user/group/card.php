@@ -126,6 +126,7 @@ if (empty($reshook)) {
 	// Action remove group
 	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoedit) {
 		$object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$object->delete($user);
 		header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
 		exit;

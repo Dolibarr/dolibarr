@@ -282,6 +282,7 @@ if (empty($reshook)) {
 
 	// Delete
 	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$object->delete($user);
 
 		header('Location: ' . DOL_URL_ROOT . '/fourn/facture/list-rec.php');

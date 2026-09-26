@@ -247,6 +247,7 @@ if ($action == 'add' && $permissiontoadd) {
 } elseif ($action == 'delete' && $permissiontodelete) {
 	// delete modele
 	$object->fetch($id);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$object->delete($user);
 	$id = 0;
 	header('Location: '.$_SERVER["PHP_SELF"]);
