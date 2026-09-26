@@ -989,7 +989,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							}
 																		<?php
 									} else { ?>
-							jQuery('#dp_desc').text(proddesc);
+							jQuery('#dp_desc').val(proddesc);
 										<?php
 									} ?>
 									<?php
@@ -1262,7 +1262,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						<?php
 					} else {
 						?>
-				jQuery('#dp_desc').text(description);
+				jQuery('#dp_desc').val(description);
 						<?php
 					}
 				}
@@ -1310,7 +1310,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						<?php
 					} else {
 						?>
-				jQuery('#dp_desc').text('');
+				jQuery('#dp_desc').val('');
 						<?php
 					}
 				}
