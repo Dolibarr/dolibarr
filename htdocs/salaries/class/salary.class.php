@@ -234,7 +234,8 @@ class Salary extends CommonObject
 		global $conf, $langs;
 
 		if (!dol_strlen($model)) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model")), null, 'errors');
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model"));
+			$this->errors[] = $this->error;
 			return 0;
 		}
 
@@ -255,15 +256,18 @@ class Salary extends CommonObject
 				if ($result > 0) {
 					return 1;
 				} else {
-					setEventMessages($module->error, $module->errors, 'errors');
+					$this->error = $module->error;
+					$this->errors = $module->errors;
 					return 0;
 				}
 			} else {
-				setEventMessages('Failed to load class '.$classname, null, 'errors');
+				$this->error = 'Failed to load class '.$classname;
+				$this->errors[] = $this->error;
 				return 0;
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorModuleNotFound", $model), null, 'errors');
+			$this->error = $langs->trans("ErrorModuleNotFound", $model);
+			$this->errors[] = $this->error;
 			return 0;
 		}
 	}

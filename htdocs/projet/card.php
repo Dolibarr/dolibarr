@@ -139,6 +139,7 @@ if (empty($reshook)) {
 	// Cancel
 	if ($cancel) {
 		if (GETPOST("comefromclone") == 1) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
 			if ($result > 0) {
 				header("Location: index.php");
@@ -549,6 +550,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');

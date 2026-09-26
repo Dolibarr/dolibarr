@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026	Jose MARTINEZ							<jose.martinez@pichinov.com>
  *
@@ -351,6 +351,9 @@ if (empty($reshook)) {
 
 				if ($result < 0 || $resultupdate < 0) {
 					$error++;
+					if ($resultupdate < 0) {
+						setEventMessages($inventoryline->error, $inventoryline->errors, 'errors');
+					}
 				}
 
 				$i++;

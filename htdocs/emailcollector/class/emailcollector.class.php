@@ -3538,7 +3538,8 @@ class EmailCollector extends CommonObject
 										if ($savesocid > 0) {
 											if ($savesocid != $projecttocreate->socid) {
 												$errorforactions++;
-												setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+												$this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value';
+												$this->errors[] = $this->error;
 											}
 										} else {
 											if ($projecttocreate->socid > 0) {
@@ -3693,7 +3694,8 @@ class EmailCollector extends CommonObject
 										if ($savesocid > 0) {
 											if ($savesocid != $tickettocreate->socid) {
 												$errorforactions++;
-												setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+												$this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value';
+												$this->errors[] = $this->error;
 											}
 										} else {
 											if ($tickettocreate->socid > 0) {
@@ -3832,7 +3834,8 @@ class EmailCollector extends CommonObject
 								 if ($savesocid > 0) {
 								 if ($savesocid != $candidaturetocreate->socid) {
 								 $errorforactions++;
-								 setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+								 $this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value';
+								 $this->errors[] = $this->error;
 								 }
 								 } else {
 								 if ($candidaturetocreate->socid > 0)

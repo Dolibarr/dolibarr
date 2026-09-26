@@ -235,6 +235,7 @@ if (empty($reshook)) {
 		if ($object->rappro == 0) {
 			$db->begin();
 
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$ret = $object->delete($user);
 			if ($ret > 0) {
 				$accountline = null;

@@ -281,6 +281,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Remove order. idwarehouse stays empty when the user picked "no stock action", and delete()
 		// then leaves the stock untouched, which is the plain database cleanup case.
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user, 0, GETPOSTINT('idwarehouse'));
 		if ($result > 0) {
 			header('Location: list.php?restore_lastsearch_values=1');
