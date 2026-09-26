@@ -1540,7 +1540,7 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwidth200imp tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
+					print '<td class="minwidth200imp tdoverflowmax300" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
