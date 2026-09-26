@@ -953,7 +953,7 @@ class Categorie extends CommonObject
 	 * @return  int          1 if OK, -1 if KO
 	 * @see add_type()
 	 */
-	public function del_type($obj, $type, $notrigger =0)
+	public function del_type($obj, $type, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
