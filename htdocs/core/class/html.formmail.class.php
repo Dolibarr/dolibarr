@@ -2046,6 +2046,8 @@ class FormMail extends Form
 		}
 		if ($type_template === 'societe') {
 			$type_template = 'thirdparty';
+		} elseif ($type_template === 'action') {	// Object type used by notifications for an event of the agenda
+			$type_template = 'actioncomm';
 		}
 		$ret = new CEmailTemplate($dbs);
 

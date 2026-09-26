@@ -3481,40 +3481,42 @@ class Societe extends CommonObject
 		$linkstart = '';
 		$linkend = '';
 
+		$query = ['socid' => $this->id];
 		if ($option == 'customer' || $option == 'compta' || $option == 'category') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/comm/card.php';
 		} elseif ($option == 'prospect' && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/comm/card.php';
 		} elseif ($option == 'supplier' || $option == 'category_supplier') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/fourn/card.php';
 		} elseif ($option == 'agenda') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/societe/agenda.php';
 		} elseif ($option == 'project') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/societe/project.php';
 		} elseif ($option == 'margin') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
+			$baseurl = DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php';
+			$query['type'] = 1;
 		} elseif ($option == 'contact') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/societe/contact.php';
 		} elseif ($option == 'ban') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
-		}
-
-		// By default
-		if (empty($linkstart)) {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/societe/paymentmodes.php';
+		} else {
+			// By default
+			$baseurl = DOL_URL_ROOT.'/societe/card.php';
 		}
 
 		// Add type of canvas
-		$linkstart .= (!empty($this->canvas) ? '&canvas='.$this->canvas : '');
+		if (!empty($this->canvas)) {
+			$query['canvas'] = $this->canvas;
+		}
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
-			$linkstart .= '&save_lastsearch_values=1';
+			$query['save_lastsearch_values'] = 1;
 		}
-		$linkstart .= '"';
+		$linkstart = '<a href="'.dolBuildUrl($baseurl, $query).'"';
 
 		$linkclose = '';
 		if (empty($notooltip)) {

@@ -282,7 +282,7 @@ ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEF
 -- NEW schemas table and schemas extrafields
 CREATE TABLE llx_schemas (
     rowid 			integer AUTO_INCREMENT PRIMARY KEY,
-    uuid 			varchar(64) NOT NULL,                
+    uuid 			varchar(64) NOT NULL,
     name 			varchar(64) NOT NULL,
     label 			varchar(255) NOT NULL,
     schema_kind 	varchar(32) NULL,
@@ -341,6 +341,34 @@ ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
 ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
 
+
+-- AI chat: conversation history (reopen past conversations; storage is separate from the pinned context sent to the model)
+create table llx_ai_chat_conversation
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  fk_user					integer NOT NULL,
+  title						varchar(255),
+  date_creation				datetime NOT NULL,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+create table llx_ai_chat_message
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  fk_conversation			integer NOT NULL,
+  role						varchar(16) NOT NULL,
+  content_raw				text,
+  content_html				MEDIUMTEXT,
+  tool_name					varchar(255),
+  pinned					smallint DEFAULT 0,
+  is_error					smallint DEFAULT 0,
+  position					integer DEFAULT 0,
+  datec						datetime NOT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_ai_chat_conversation ADD INDEX idx_ai_chat_conversation_user (fk_user, tms);
+ALTER TABLE llx_ai_chat_message ADD INDEX idx_ai_chat_message_conv (fk_conversation, position);
+ALTER TABLE llx_ai_chat_message ADD CONSTRAINT fk_ai_chat_message_conv FOREIGN KEY (fk_conversation) REFERENCES llx_ai_chat_conversation (rowid);
+
 -- Add table for the AI assistant pending write confirmations (MCP multi-round-trip)
 create table llx_ai_write_confirmation
 (
@@ -359,3 +387,10 @@ create table llx_ai_write_confirmation
 ALTER TABLE llx_ai_write_confirmation ADD UNIQUE INDEX uk_ai_write_confirmation_state (state_hash, entity);
 ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_expiration (date_expiration);
 ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_fk_user (fk_user);
+
+-- The events of leaves HOLIDAY_VALIDATE, HOLIDAY_MODIFY and HOLIDAY_APPROVE were inserted with the elementtype of the expense reports
+-- by the migrations 8.0.0-9.0.0 and 16.0.0-17.0.0 (and the correct rows inserted after were rejected by the unique key on code).
+-- Same values as in data/llx_c_action_trigger.sql.
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday validated', description = 'Executed when a holiday is validated', rang = 802 WHERE code = 'HOLIDAY_VALIDATE' AND elementtype = 'expensereport';
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday modified', description = 'Executed when a holiday is modified', rang = 801 WHERE code = 'HOLIDAY_MODIFY' AND elementtype = 'expensereport';
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approved', description = 'Executed when a holiday is aprouved', rang = 803 WHERE code = 'HOLIDAY_APPROVE' AND elementtype = 'expensereport';

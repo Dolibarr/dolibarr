@@ -2907,6 +2907,8 @@ KeyGenerationSuccessfull=New API Key Generated Successfully
 KeySaveFailed=Failed to save new API key
 AIMCPConfig=AI & MCP Configuration
 LogRetention=Log Retention (Days)
+AIContextAutoExchanges=Recent exchanges sent back as context
+AIContextAutoExchangesHelp=How many of the latest exchanges (question + answer) of the chat are automatically sent back to the AI with the next question. 0 = nothing unless the user pins a message. Each exchange costs tokens: the chat shows the running total above the input.
 AI_API_MODEL=AI API model
 AI_API_MODEL_HELP=The AI model to use
 DisplayExtraOnTooltip = Display on Tooltips

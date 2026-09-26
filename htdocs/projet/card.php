@@ -1294,7 +1294,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</tr>';
 
 			// Opportunity amount
-			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
+			print '<tr class="classuseopportunity'.$classfortr.' "><td>'.$langs->trans("OpportunityAmount").'</td>';
 			print '<td><input class="width75 right marginright2" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'">';
 			print '<span class="opacitymedium">'.$langs->getCurrencySymbol($conf->currency).'</span>';
 			print '</td>';
@@ -1465,10 +1465,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 			// Opportunity status
-			print '<tr><td>'.$langs->trans("OpportunityStatus");
-			if ($action != 'edit_opp_status' && $user->hasRight('projet', 'creer')) {
-				print '<a class="editfielda paddingtop" href="'.$_SERVER["PHP_SELF"].'?action=edit_opp_status&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
-			}
+			print '<tr><td>';
+			print $form->editfieldkey("OpportunityStatus", '_opp_status', (string) $object->opp_status, $object, (int) $user->hasRight('projet', 'creer'), 'string');
 			print '</td><td>';
 			$html_name_status 	= ($action == 'edit_opp_status') ? 'opp_status' : 'none';
 			$html_name_percent 	= ($action == 'edit_opp_status') ? 'opp_percent' : 'none';
