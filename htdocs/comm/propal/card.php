@@ -298,6 +298,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete proposal
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header('Location: ' . dolBuildUrl(DOL_URL_ROOT . '/comm/propal/list.php', ['restore_lastsearch_values' => 1]));

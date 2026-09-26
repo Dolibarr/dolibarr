@@ -270,6 +270,7 @@ if (empty($reshook)) {
 
 			$action = 'create';
 		} elseif ($result > 0) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');

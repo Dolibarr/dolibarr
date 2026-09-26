@@ -140,7 +140,10 @@ if (empty($reshook)) {
 		if (!empty($TNote)) {
 			foreach ($object->lines as $line) {
 				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
-				$line->update($user);
+				$result = $line->update($user);
+				if ($result < 0) {
+					setEventMessages($line->error, $line->errors, 'errors');
+				}
 			}
 			//setEventMessage($langs->trans("SaveLevelSkill"));
 		}
@@ -223,7 +226,10 @@ if (empty($reshook)) {
 					$updSkill = $SkillrecordsForActiveUser[$keyFind];
 
 					$updSkill->rankorder = $line->rankorder;
-					$updSkill->update($user);
+					$result = $updSkill->update($user);
+					if ($result < 0) {
+						setEventMessages($updSkill->error, $updSkill->errors, 'errors');
+					}
 				} else { // else we create the skill
 					$newSkill = new SkillRank($db);
 					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);

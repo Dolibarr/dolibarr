@@ -370,6 +370,7 @@ if (empty($reshook)) {
 		// Delete
 		$object = new Account($db);
 		$object->fetch(GETPOSTINT("id"));
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 
 		if ($result > 0) {

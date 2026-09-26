@@ -309,6 +309,7 @@ if (empty($reshook)) {
 		$isErasable = $object->is_erasable();
 
 		if (($isErasable > 0) || ($usercancreate && $isErasable == 1)) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user, 0, (int) $idwarehouse);
 			if ($result > 0) {
 				header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1');

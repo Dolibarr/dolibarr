@@ -1420,6 +1420,7 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 	$website = $object;
 
 	if ($res > 0) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$res = $object->delete($user);
 		if ($res <= 0) {
 			$error++;

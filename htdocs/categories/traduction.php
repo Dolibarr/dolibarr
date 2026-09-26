@@ -137,7 +137,10 @@ if (empty($reshook) && $action == 'vadd' && $cancel != $langs->trans("Cancel") &
 				$object->label = $label;
 				$object->description = dol_htmlcleanlastbr($desc);
 
-				$object->update($user);
+				$res = $object->update($user);
+				if ($res < 0) {
+					$error++;
+				}
 			} else {
 				$object->multilangs[$forcelangprod]["label"] = $label;
 				$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr($desc);
@@ -176,7 +179,10 @@ if (empty($reshook) && $action == 'vedit' && $cancel != $langs->trans("Cancel") 
 		if ($key == $current_lang) {
 			$object->label       = $label;
 			$object->description = dol_htmlcleanlastbr($desc);
-			$object->update($user, 1);
+			$res = $object->update($user, 1);
+			if ($res < 0) {
+				$error++;
+			}
 		} else {
 			$object->multilangs[$key]["label"]       = $label;
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($desc);
