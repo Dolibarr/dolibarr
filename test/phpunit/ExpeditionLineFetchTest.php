@@ -145,6 +145,7 @@ class ExpeditionLineFetchTest extends \PHPUnit\Framework\TestCase
 		$row = $this->createLineRow(3);
 		$unassignedRow = $this->createLineRow(null);
 		$unassignedRow->rowid = 43;
+		$unassignedRow->fk_parent = null;
 		$unassignedRow->element_type = 'shipping';
 		$unassignedRow->fk_element = null;
 		$unassignedRow->fk_elementdet = null;
@@ -165,10 +166,83 @@ class ExpeditionLineFetchTest extends \PHPUnit\Framework\TestCase
 			$line = $shipment->lines[$index];
 			$this->assertSame($expected->rowid, $line->id);
 			$this->assertSame($expected->fk_product, $line->fk_product);
+			$this->assertSame($expected->fk_parent, $line->fk_parent);
 			$this->assertSame($expected->fk_entrepot, $line->entrepot_id);
 			$this->assertSame($expected->fk_entrepot, $line->fk_entrepot);
 			$this->assertSame($expected->element_type, $line->element_type);
 			$this->assertSame($expected->fk_elementdet, $line->fk_elementdet);
 		}
+	}
+
+	/**
+	 * Editing keeps the stored product and defaults to the stored warehouse.
+	 * Explicit warehouse changes and removals are written by the native line method.
+	 *
+	 * @return void
+	 */
+	public function testUpdateFreeLinePreservesProductAndHandlesWarehouse()
+	{
+		global $extrafields;
+		foreach (array(null, 5, 0) as $warehouse) {
+			$row = $this->createLineRow(3);
+			$row->element_type = 'shipping';
+			$row->fk_elementdet = null;
+			$row->fk_parent = null;
+			$expectedWarehouse = $warehouse === null ? 3 : $warehouse;
+			$db = $this->createMock(Database::class);
+			$db->method('escape')->willReturnArgument(0);
+			$db->expects($this->exactly(3))->method('query')->willReturnCallback(function ($sql) use ($expectedWarehouse) {
+				if (strpos($sql, 'UPDATE ') === 0) {
+					$this->assertStringContainsString('fk_entrepot = '.($expectedWarehouse ?: 'null'), $sql);
+					$this->assertStringContainsString('qty = 4', $sql);
+					$this->assertStringContainsString('WHERE rowid = 42', $sql);
+				} else {
+					$this->assertStringContainsString('SELECT ', $sql);
+					$this->assertStringContainsString('expeditiondet', $sql);
+				}
+				return true;
+			});
+			$db->expects($this->exactly(2))->method('fetch_object')->willReturn($row);
+			$db->expects($this->exactly(2))->method('begin');
+			$db->expects($this->exactly(2))->method('commit');
+			$db->expects($this->never())->method('rollback');
+			$extrafields = new ExtraFields($db);
+			$extrafields->attributes['expeditiondet'] = array('loaded' => 1, 'label' => array());
+
+			$shipment = new Expedition($db);
+			$shipment->id = 12;
+			$shipment->status = Expedition::STATUS_DRAFT;
+			if ($warehouse === null) {
+				$result = $shipment->updatelinefree(42, 4, 'shipping', 0, 0, 1, 'Updated line', 0, 1);
+			} else {
+				// Even a different supplied product must not change which product is checked.
+				$result = $shipment->updatelinefree(42, 4, 'shipping', 99, 0, 1, 'Updated line', 0, 1, array(), $warehouse);
+			}
+			$this->assertSame(1, $result);
+			$this->assertSame(7, $shipment->line->fk_product);
+			$this->assertSame($expectedWarehouse, $shipment->line->entrepot_id);
+			$this->assertSame($expectedWarehouse, $shipment->line->fk_entrepot);
+			$this->assertSame(3, $shipment->line->oldline->entrepot_id);
+		}
+	}
+
+	/**
+	 * A failed read must not reach the update or lose the database error.
+	 *
+	 * @return void
+	 */
+	public function testUpdateFreeLineStopsOnFetchFailure()
+	{
+		$db = $this->createMock(Database::class);
+		$db->expects($this->once())->method('query')->willReturn(false);
+		$db->method('lasterror')->willReturn('Shipment line read failed');
+		$db->expects($this->once())->method('begin');
+		$db->expects($this->once())->method('rollback');
+		$db->expects($this->never())->method('commit');
+		$shipment = new Expedition($db);
+		$shipment->id = 12;
+		$shipment->status = Expedition::STATUS_DRAFT;
+		$this->assertSame(-1, $shipment->updatelinefree(42, 4, 'shipping', 0, 0, 1, 'Updated line', 0, 1));
+		$this->assertSame('Shipment line read failed', $shipment->error);
 	}
 }
