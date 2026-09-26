@@ -6250,6 +6250,9 @@ class Facture extends CommonInvoice
 
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
+		// Label of the agenda event recorded for each reminder sent. It also allows to know that a reminder was already sent for an invoice.
+		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+
 		// Select all action comm reminder
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
@@ -6266,13 +6269,19 @@ class Facture extends CommonInvoice
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
 		}
-		// TODO Add a filter to check there is no payment started yet
+		// A credit note is not an amount that the customer has to pay, and an invoice without an amount to pay has nothing to remind
+		$sql .= " AND f.type <> ".self::TYPE_CREDIT_NOTE;
+		$sql .= " AND f.total_ttc > 0";
+		// Do not send the same reminder twice if the batch is run again the same day (an event is recorded when a reminder is sent)
+		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.elementtype = 'invoice' AND a.fk_element = f.rowid AND a.code = 'AC_EMAIL'";
+		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
 		if ($datetouse == 'invoicedate') {
 			$sql .= $this->db->order("datef", "ASC");
 		} else {
 			$sql .= $this->db->order("date_lim_reglement", "ASC");
 		}
-		// TODO Add a date date_last_remind_email in select. We can update date after the result of sendfile() later. To avoid to send it twiceif we rerun the batch.
 
 		$resql = $this->db->query($sql);
 
@@ -6296,6 +6305,10 @@ class Facture extends CommonInvoice
 				$res = $tmpinvoice->fetch($obj->id);
 				if ($res > 0) {
 					$tmpinvoice->fetch_thirdparty();
+					// Load paid amounts so that __AMOUNT_REMAIN__ is the real remaining amount
+					$tmpinvoice->getSommePaiement();
+					$tmpinvoice->getSumCreditNotesUsed();
+					$tmpinvoice->getSumDepositsUsed();
 
 					$outputlangs = new Translate('', $conf);
 					if ($tmpinvoice->thirdparty->default_lang) {
@@ -6422,7 +6435,7 @@ class Facture extends CommonInvoice
 							$actioncomm->contact_id = 0;
 
 							$actioncomm->code = 'AC_EMAIL';
-							$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+							$actioncomm->label = $labelreminderok;
 							$actioncomm->note_private = $sendContent;
 							$actioncomm->fk_project = $tmpinvoice->fk_project;
 							$actioncomm->datep = dol_now();
