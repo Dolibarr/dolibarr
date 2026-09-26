@@ -8465,6 +8465,93 @@ function isStringVarMatching($var, $regextext, $matchrule = 1)
 
 
 /**
+ * Evaluate a condition made of simple terms, without eval(). Recognized terms, optionally preceded by '!', separated by '&&' or by '||'
+ * (but not both, so there is no precedence to handle), with no other parenthesis than the ones of the calls:
+ * isModEnabled('xxx'), $user->hasRight('xxx', 'yyy'[, 'zzz']), $user->rights->xxx->yyy[->zzz], $user->admin, $conf->xxx->enabled,
+ * getDolGlobalString('XXX'), getDolGlobalInt('XXX'), $leftmenu == 'xxx', $mainmenu != 'xxx', and the literals 1, 0, true, false.
+ * The result is the one eval() would give (a property that is not set is false, no warning is raised), so verifCond() can use
+ * this function first and keep dol_eval() for the other conditions.
+ *
+ * @param	string		$s		Condition to evaluate
+ * @return	bool|null			Result of the condition, or null if the condition is not made of the known terms only
+ * @see verifCond(), dol_eval()
+ */
+function dolEvalSimpleCondition($s)
+{
+	global $conf, $user, $leftmenu, $mainmenu;
+
+	$s = trim((string) $s);
+	if ($s === '1' || $s === 'true') {
+		return true;
+	}
+	if ($s === '0' || $s === 'false') {
+		return false;
+	}
+	// Only the characters of the known terms, and parentheses only around the quoted arguments of a call
+	if (!preg_match('/^[a-zA-Z0-9_$>=!&|\s\'",()-]+$/', $s)) {
+		return null;
+	}
+	if (strpbrk($s, '()') !== false && !preg_match('/^(?:[^()]*\((?:\s*[\'"][a-zA-Z0-9_]+[\'"]\s*)(?:,\s*[\'"][a-zA-Z0-9_]+[\'"]\s*)*\))*[^()]*$/', $s)) {
+		return null;
+	}
+	$hasand = (strpos($s, '&&') !== false);
+	$hasor = (strpos($s, '||') !== false);
+	if ($hasand && $hasor) {
+		return null;
+	}
+	$terms = ($hasor ? explode('||', $s) : ($hasand ? explode('&&', $s) : array($s)));
+
+	$result = null;
+	foreach ($terms as $term) {
+		$term = trim($term);
+		$negation = false;
+		if (substr($term, 0, 1) === '!') {
+			$negation = true;
+			$term = ltrim(substr($term, 1));
+		}
+		$reg = array();
+		if (preg_match('/^isModEnabled\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			$value = isModEnabled($reg[1]);
+		} elseif (preg_match('/^\$user->hasRight\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*,\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*(?:,\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*)?\)$/', $term, $reg)) {
+			$value = (bool) (!empty($reg[3]) ? $user->hasRight($reg[1], $reg[2], $reg[3]) : $user->hasRight($reg[1], $reg[2]));
+		} elseif (preg_match('/^\$user->rights->([a-zA-Z0-9_]+)->([a-zA-Z0-9_]+)(?:->([a-zA-Z0-9_]+))?$/', $term, $reg)) {
+			if (!empty($reg[3])) {
+				$value = !empty($user->rights->{$reg[1]}->{$reg[2]}->{$reg[3]});
+			} else {
+				$value = !empty($user->rights->{$reg[1]}->{$reg[2]});
+			}
+		} elseif ($term === '$user->admin') {
+			$value = !empty($user->admin);
+		} elseif (preg_match('/^\$conf->([a-zA-Z0-9_]+)->enabled$/', $term, $reg)) {
+			$value = !empty($conf->{$reg[1]}->enabled);
+		} elseif (preg_match('/^getDolGlobal(String|Int)\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			$value = ($reg[1] == 'Int' ? (bool) getDolGlobalInt($reg[2]) : (bool) getDolGlobalString($reg[2]));
+		} elseif (preg_match('/^\$(leftmenu|mainmenu)\s*(==|!=)\s*[\'"]([a-zA-Z0-9_]*)[\'"]$/', $term, $reg)) {
+			$current = ($reg[1] == 'leftmenu' ? $leftmenu : $mainmenu);
+			$value = ($reg[2] == '==' ? ($current == $reg[3]) : ($current != $reg[3]));
+		} elseif ($term === '1' || $term === 'true') {
+			$value = true;
+		} elseif ($term === '0' || $term === 'false') {
+			$value = false;
+		} else {
+			return null;	// Not a known term, the caller will use eval()
+		}
+		if ($negation) {
+			$value = !$value;
+		}
+		if ($result === null) {
+			$result = $value;
+		} elseif ($hasor) {
+			$result = ($result || $value);
+		} else {
+			$result = ($result && $value);
+		}
+	}
+
+	return $result;
+}
+
+/**
  * Verify if condition in string is ok or not
  *
  * @param 	string	$strToEvaluate		String with condition to check
@@ -8478,6 +8565,12 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
+		// Most of the conditions are simple (isModEnabled('xxx'), $user->hasRight('xxx', 'yyy'), $conf->xxx->enabled...): they are
+		// evaluated directly, without eval() and its checks, when they match one of the known shapes.
+		$rights = dolEvalSimpleCondition($strToEvaluate);
+		if ($rights !== null) {
+			return $rights;
+		}
 		//var_dump($strToEvaluate);
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
