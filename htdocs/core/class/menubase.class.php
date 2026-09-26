@@ -668,7 +668,7 @@ class Menubase
 			// Many entries share the same condition (isModEnabled('xxx'), $user->hasRight('xxx', 'yyy')...): a condition is evaluated once
 			// per call, the result is reused for the other entries. The cache is local to the call, the conditions depend on $mainmenu
 			// and $leftmenu, that are fixed for the call.
-			$resultofconditions = array();
+			$cacheresultofconditions = array();
 
 			$a = 0;
 			$b = 0;
@@ -683,10 +683,10 @@ class Menubase
 					if ($leftmenu == 'all') {
 						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
-					if (!isset($resultofconditions[$tmpcond])) {
-						$resultofconditions[$tmpcond] = verifCond($tmpcond);
+					if (!isset($cacheresultofconditions[$tmpcond])) {
+						$cacheresultofconditions[$tmpcond] = verifCond($tmpcond);
 					}
-					$perms = $resultofconditions[$tmpcond];
+					$perms = $cacheresultofconditions[$tmpcond];
 					//var_dump($menu['rowid'].' - '.$menu['titre'].' - '.$menu['perms'].' => '.$tmpcond.":".$perms);
 				}
 
@@ -697,10 +697,10 @@ class Menubase
 					if ($leftmenu == 'all') {
 						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
-					if (!isset($resultofconditions[$tmpcond])) {
-						$resultofconditions[$tmpcond] = verifCond($tmpcond);
+					if (!isset($cacheresultofconditions[$tmpcond])) {
+						$cacheresultofconditions[$tmpcond] = verifCond($tmpcond);
 					}
-					$enabled = $resultofconditions[$tmpcond];
+					$enabled = $cacheresultofconditions[$tmpcond];
 					//var_dump($menu['type'].' - '.$menu['titre'].' - '.$menu['enabled'].' => '.$enabled);
 				}
 
