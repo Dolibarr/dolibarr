@@ -54,10 +54,11 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
-		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Task"); ?>
+		<td class="linkedcol-element tdoverflowmax100">
 		<?php if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
-			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 		} ?>
+		<?php echo $langs->trans("Task"); ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
 		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_start, 'day'); ?></td>
