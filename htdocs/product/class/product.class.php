@@ -7021,7 +7021,10 @@ class Product extends CommonObject
 		} elseif ($this->duration_unit == 'y') {
 			$prodDurationHours = 24. * 365;
 		} else {
-			$prodDurationHours = 0.0;
+			// Unknown unit: the duration cannot be converted. Returning 0 silently made callers
+			// compute a zero duration, and time.php divides by this value (#40805).
+			$this->errors[] = 'ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice';
+			return -1;
 		}
 		$prodDurationHours *= $this->duration_value;
 
