@@ -95,6 +95,8 @@ if ($nolinesbefore) {
 	}
 	if (isModEnabled('stock')) {
 		print '<td class="linecolwarehouse">'.$langs->trans('Warehouse').'</td>';
+		print '<td class="right">'.$langs->trans('StockAvailable').'</td>';
+		print '<td class="right">'.$langs->trans('StockAfterShipment').'</td>';
 	}
 	print '<td colspan="'.$colspan.'"></td>';
 
@@ -166,6 +168,9 @@ if (isModEnabled('stock')) {
 	print '<td class="bordertop nobottom linecolwarehouse">';
 	print $formproduct->selectWarehouses(GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : 'ifone', 'entrepot_id', 'warehouseopen', 1);
 	print '</td>';
+	$coldisplay += 2;
+	print '<td class="right" id="shipment-stock-preview" data-url="'.DOL_URL_ROOT.'/expedition/ajax/stockpreview.php" data-keep-warehouse="'.(GETPOSTISSET('entrepot_id') ? '1' : '0').'"><span class="shipment-stock-available"></span></td>';
+	print '<td class="right"><span class="shipment-stock-after"></span></td>';
 }
 
 $coldisplay += $colspan;
