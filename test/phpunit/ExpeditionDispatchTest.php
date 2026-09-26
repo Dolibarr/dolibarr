@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 Pierre Ardoin <developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,9 +174,9 @@ class ExpeditionDispatchTest extends \PHPUnit\Framework\TestCase
 		global $conf;
 		$conf->global->PRODUIT_SOUSPRODUITS = 0;
 		foreach (array(false, true) as $fail) {
+			// setMethods() and not onlyMethods()/addMethods(): Travis still runs the test suite with PHPUnit 7.5
 			$db = $this->getMockBuilder(Database::class)
-				->onlyMethods(get_class_methods(Database::class))
-				->addMethods(array('prefix'))
+				->setMethods(array_merge(get_class_methods(Database::class), array('prefix')))
 				->getMock();
 			$db->method('prefix')->willReturn(MAIN_DB_PREFIX);
 			$db->method('lasterror')->willReturn('Test allocation deletion failure');
@@ -190,7 +191,7 @@ class ExpeditionDispatchTest extends \PHPUnit\Framework\TestCase
 			});
 			$line = $this->getMockBuilder(ExpeditionLigne::class)
 				->setConstructorArgs(array($db))
-				->onlyMethods(array('findAllChild', 'deleteExtraFields'))
+				->setMethods(array('findAllChild', 'deleteExtraFields'))
 				->getMock();
 			$line->id = 42;
 			$line->fk_expedition = 12;
