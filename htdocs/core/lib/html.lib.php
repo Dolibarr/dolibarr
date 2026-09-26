@@ -242,6 +242,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	} else {
 		// Now we protect all the tags we want to keep
 		$tmparrayoftags = array();
+		$tmparrayoftagsfound = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
@@ -254,6 +255,13 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 			$tmp = str_ireplace(array('__DOUBLEQUOTE', '__BEGINTAGTOREPLACE', '__ENDTAGTOREPLACE', '__BEGINENDTAGTOREPLACE'), '', $tmp);
 
 			foreach ($tmparrayoftags as $tagtoreplace) {
+				// The 4 patterns below all start with '<tag' or '</tag': a tag that is not in the string can not be protected, so it
+				// does not need the 4 regex passes, nor to be restored later. On a list page, most strings hold no tag at all.
+				if (stripos($tmp, '<' . $tagtoreplace) === false && stripos($tmp, '</' . $tagtoreplace) === false) {
+					continue;
+				}
+				$tmparrayoftagsfound[] = $tagtoreplace;
+
 				// For case of tag without attributes '<abc>', '</abc>', '<abc />', we protect them to avoid transformation by htmlentities() later
 				$tmp = preg_replace('/<' . preg_quote($tagtoreplace, '/') . '>/', '__BEGINTAGTOREPLACE' . $tagtoreplace . '__', $tmp);
 				$tmp = str_ireplace('</' . $tagtoreplace . '>', '__ENDTAGTOREPLACE' . $tagtoreplace . '__', $tmp);
@@ -294,7 +302,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 		if (count($tmparrayoftags)) {
 			// Restore protected tags
-			foreach ($tmparrayoftags as $tagtoreplace) {
+			foreach ($tmparrayoftagsfound as $tagtoreplace) {
 				$result = str_ireplace('__BEGINTAGTOREPLACE' . $tagtoreplace . '__', '<' . $tagtoreplace . '>', $result);
 				$result = preg_replace('/__BEGINTAGTOREPLACE' . $tagtoreplace . '\[([^\]]*)\]__/', '<' . $tagtoreplace . ' \1>', $result);
 				$result = str_ireplace('__ENDTAGTOREPLACE' . $tagtoreplace . '__', '</' . $tagtoreplace . '>', $result);

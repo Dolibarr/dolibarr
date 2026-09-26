@@ -502,6 +502,14 @@ if (empty($reshook)) {
 				$result = $object->update($contactid, $user);
 
 				if ($result > 0) {
+					// Warn if the third party of the contact is modified and differs from the one of the linked user
+					if ($object->user_id > 0 && $object->oldcopy->socid != $object->socid) {
+						$tmpuser = new User($db);
+						if ($tmpuser->fetch($object->user_id) > 0 && $tmpuser->socid != $object->socid) {
+							setEventMessages($langs->trans("WarningUserDifferentContactSocid"), null, 'warnings');
+						}
+					}
+
 					// Categories association
 					$categories = GETPOST('contcats', 'array');
 					$object->setCategories($categories);

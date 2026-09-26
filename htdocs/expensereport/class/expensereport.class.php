@@ -2584,8 +2584,13 @@ class ExpenseReport extends CommonObject
 		}
 
 		$now = dol_now();
+		$warning_delay = ($option == 'toapprove' ? $conf->expensereport->approve->warning_delay : $conf->expensereport->payment->warning_delay);
 
-		$sql = "SELECT ex.rowid, ex.date_valid";
+		// The count and the number of late expense reports are computed by the database instead of reading every report. A
+		// report is late when its validation date is before now minus the warning delay (a report without validation date was
+		// counted as late, this is kept).
+		$sql = "SELECT COUNT(ex.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN ex.date_valid IS NULL OR ex.date_valid < '".$this->db->idate($now - $warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
 		if ($option == 'toapprove') {
 			$sql .= " WHERE ex.fk_statut = ".self::STATUS_VALIDATED;
@@ -2617,18 +2622,10 @@ class ExpenseReport extends CommonObject
 			}
 			$response->img = img_object('', "trip");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if ($option == 'toapprove') {
-					if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->approve->warning_delay)) {
-						$response->nbtodolate++;
-					}
-				} else {
-					if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->payment->warning_delay)) {
-						$response->nbtodolate++;
-					}
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;

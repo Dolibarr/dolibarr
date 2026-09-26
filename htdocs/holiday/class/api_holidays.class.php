@@ -323,7 +323,7 @@ class Holidays extends DolibarrApi
 		if ($this->holiday->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->holiday->error);
+			throw new RestException(500, $this->holiday->errorsToString());
 		}
 	}
 
@@ -355,7 +355,7 @@ class Holidays extends DolibarrApi
 		}
 
 		if (!$this->holiday->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting Leave : '.$this->holiday->error);
+			throw new RestException(500, 'Error when deleting Leave : '.$this->holiday->errorsToString());
 		}
 
 		return array(
@@ -405,7 +405,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating leave: '.$this->holiday->error);
+			throw new RestException(500, 'Error when validating leave: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -451,7 +451,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving holiday: '.$this->holiday->error);
+			throw new RestException(500, 'Error when approving holiday: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -497,7 +497,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already canceled');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->error);
+			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -545,7 +545,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already refused');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when refusing holiday: '.$this->holiday->error);
+			throw new RestException(500, 'Error when refusing holiday: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -595,7 +595,7 @@ class Holidays extends DolibarrApi
 		$this->holiday->status = Holiday::STATUS_VALIDATED;
 		$result = $this->holiday->validate(DolibarrApiAccess::$user, $notrigger);
 		if ($result < 0) {
-			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->error);
+			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);

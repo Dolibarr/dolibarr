@@ -370,7 +370,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!$this->actioncomm->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Agenda Event : '.$this->actioncomm->error);
+			throw new RestException(500, 'Error when delete Agenda Event : '.$this->actioncomm->errorsToString());
 		}
 
 		return array(

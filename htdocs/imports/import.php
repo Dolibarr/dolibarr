@@ -210,6 +210,9 @@ if ($action == 'deleteprof' && $user->hasRight('import', 'run')) {
 	if (GETPOSTINT("id")) {
 		$objimport->fetch(GETPOSTINT("id"));
 		$result = $objimport->delete($user);
+		if ($result < 0) {
+			setEventMessages($objimport->error, $objimport->errors, 'errors');
+		}
 	}
 }
 

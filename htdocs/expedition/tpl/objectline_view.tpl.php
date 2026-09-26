@@ -41,6 +41,7 @@
  * @var CommonObject $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
+ * @var ?ExtraFields $extrafields
  * @var Translate $langs
  * @var User $user
  *
@@ -109,6 +110,16 @@ if ($line->fk_product > 0) {
 	print ' - '.$tmpproduct->label;
 } else {
 	print ' - '.$line->description;
+}
+
+// Line extrafield
+if (!empty($extrafields)) {
+	$temps = $line->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
+	if (!empty($temps)) {
+		print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+		print $temps;
+		print '</div>';
+	}
 }
 print '</td>';
 

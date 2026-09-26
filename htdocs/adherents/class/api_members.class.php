@@ -462,17 +462,17 @@ class Members extends DolibarrApi
 				if ($value == '0') {
 					$result = $member->resiliate(DolibarrApiAccess::$user);
 					if ($result < 0) {
-						throw new RestException(500, 'Error when resiliating member: '.$member->error);
+						throw new RestException(500, 'Error when resiliating member: '.$member->errorsToString());
 					}
 				} elseif ($value == '1') {
 					$result = $member->validate(DolibarrApiAccess::$user);
 					if ($result < 0) {
-						throw new RestException(500, 'Error when validating member: '.$member->error);
+						throw new RestException(500, 'Error when validating member: '.$member->errorsToString());
 					}
 				} elseif ($value == '-2') {
 					$result = $member->exclude(DolibarrApiAccess::$user);
 					if ($result < 0) {
-						throw new RestException(500, 'Error when excluding member: '.$member->error);
+						throw new RestException(500, 'Error when excluding member: '.$member->errorsToString());
 					}
 				}
 			} else {
@@ -487,7 +487,7 @@ class Members extends DolibarrApi
 		if ($member->update(DolibarrApiAccess::$user, 0, $nosyncuser, $nosyncpassword) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating member: '.$member->error);
+			throw new RestException(500, 'Error when updating member: '.$member->errorsToString());
 		}
 	}
 
@@ -722,7 +722,7 @@ class Members extends DolibarrApi
 
 		$result =  $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
 		if ($result < 1) {
-			throw new RestException(500, $member->error);
+			throw new RestException(500, $member->errorsToString());
 		} else {
 			return $result;
 		}
@@ -762,7 +762,7 @@ class Members extends DolibarrApi
 		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
 		return $result;
@@ -989,7 +989,7 @@ class Members extends DolibarrApi
 		if ($membertype->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating member type: '.$membertype->error);
+			throw new RestException(500, 'Error when updating member type: '.$membertype->errorsToString());
 		}
 	}
 

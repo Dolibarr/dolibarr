@@ -486,7 +486,7 @@ class Recruitments extends DolibarrApi
 		if ($this->jobposition->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->getJobPosition($id);
 		} else {
-			throw new RestException(500, $this->jobposition->error);
+			throw new RestException(500, $this->jobposition->errorsToString());
 		}
 	}
 
@@ -537,7 +537,7 @@ class Recruitments extends DolibarrApi
 		if ($this->candidature->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->getCandidature($id);
 		} else {
-			throw new RestException(500, $this->candidature->error);
+			throw new RestException(500, $this->candidature->errorsToString());
 		}
 	}
 
@@ -569,7 +569,7 @@ class Recruitments extends DolibarrApi
 		}
 
 		if (!$this->jobposition->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting jobposition : '.$this->jobposition->error);
+			throw new RestException(500, 'Error when deleting jobposition : '.$this->jobposition->errorsToString());
 		}
 
 		return array(
@@ -607,7 +607,7 @@ class Recruitments extends DolibarrApi
 		}
 
 		if (!$this->candidature->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting candidature : '.$this->candidature->error);
+			throw new RestException(500, 'Error when deleting candidature : '.$this->candidature->errorsToString());
 		}
 
 		return array(

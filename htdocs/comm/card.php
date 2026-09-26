@@ -830,7 +830,7 @@ if ($object->id > 0) {
 		if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened) {
 			$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 		}
-		$text = $langs->trans("CurrentOutstandingBill");
+		$text = $langs->transnoentitiesnoconv("CurrentOutstandingBill");
 
 		$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 		$icon = 'bill';
@@ -851,7 +851,7 @@ if ($object->id > 0) {
 			if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpenedLate) {
 				$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 			}
-			$text = $langs->trans("CurrentOutstandingBillLate");
+			$text = $langs->transnoentitiesnoconv("CurrentOutstandingBillLate");
 
 			$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 			$icon = 'bill';

@@ -275,7 +275,7 @@ class Partnerships extends DolibarrApi
 		if ($this->partnership->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->partnership->error);
+			throw new RestException(500, $this->partnership->errorsToString());
 		}
 	}
 
@@ -306,7 +306,7 @@ class Partnerships extends DolibarrApi
 		}
 
 		if (!$this->partnership->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting Partnership : '.$this->partnership->error);
+			throw new RestException(500, 'Error when deleting Partnership : '.$this->partnership->errorsToString());
 		}
 
 		return array(

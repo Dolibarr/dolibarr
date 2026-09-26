@@ -3073,13 +3073,13 @@ class BonPrelevement extends CommonObject
 		}
 
 		if ($mode == 'direct-debit') {
-			$sql = "SELECT p.rowid, p.date_trans as date_trans, p.date_credit as date_credit";
+			$sql = "SELECT p.rowid, p.datec, p.date_trans as date_trans, p.date_credit as date_credit";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons as p";
 			$sql .= " WHERE p.entity IN (" . getEntity('prelevement_bons') . ")";
 			$sql .= " AND (p.type = 'debit-order' OR p.type = 'direct-debit')";			// direct debit
 			$sql .= " AND p.statut < ".((int) BonPrelevement::STATUS_DEBITED);
 		} else {
-			$sql = "SELECT p.rowid, p.date_trans as date_trans, p.date_credit as date_credit";
+			$sql = "SELECT p.rowid, p.datec, p.date_trans as date_trans, p.date_credit as date_credit";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons as p";
 			$sql .= " WHERE p.entity IN (" . getEntity('prelevement_bons') . ")";
 			$sql .= " AND (p.type = 'bank-transfer' OR p.type = 'credit-transfer')";	// credit transfer
@@ -3093,13 +3093,15 @@ class BonPrelevement extends CommonObject
 
 			$response = new WorkboardResponse();
 			if ($mode == 'direct-debit') {
-				$response->warning_delay = $conf->warning_delays['bank_direct_debit'] / 60 / 60 / 24;
+				$warning_delay = (int) $conf->warning_delays['bank_direct_debit'];	// In seconds. The one of the response is in days.
+				$response->warning_delay = $warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("PendingDirectDebitToComplete");
 				$response->labelShort = $langs->trans("PendingDirectDebitToCompleteShort");
 				$response->url = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&search_status=0,1';
 				$response->url_late = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&search_status=0,1';
 			} else {
-				$response->warning_delay = $conf->warning_delays['bank_credit_transfer'] / 60 / 60 / 24;
+				$warning_delay = (int) $conf->warning_delays['bank_credit_transfer'];	// In seconds. The one of the response is in days.
+				$response->warning_delay = $warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("PendingCreditTransferToComplete");
 				$response->labelShort = $langs->trans("PendingCreditTransferToCompleteShort");
 				$response->url = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&type=bank-transfer&search_status=0,1';
@@ -3113,7 +3115,9 @@ class BonPrelevement extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
 
-				if ($this->db->jdate($obj->date_trans) < ($now - $response->warning_delay)) {
+				// An order is waiting since it was transmitted to the bank, or since its creation when it was not transmitted yet
+				$datetotest = $this->db->jdate(!empty($obj->date_trans) ? $obj->date_trans : $obj->datec);
+				if ($datetotest && $datetotest < ($now - $warning_delay)) {
 					$response->nbtodolate++;
 				}
 			}

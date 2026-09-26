@@ -858,7 +858,8 @@ class User extends CommonObject
 			//$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
 
 			if (!is_array($result) && $result < 0) {
-				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
+				$this->error = $defaultValues->error;
+				$this->errors = $defaultValues->errors;
 				dol_print_error($this->db);
 				return -1;
 			} elseif (count($result) > 0) {
