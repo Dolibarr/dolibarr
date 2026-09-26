@@ -8,7 +8,7 @@
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026      Pierre Ardoin        <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1215,13 +1215,13 @@ class Notify
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-						$object_type = 'order_supplier';
+						$object_type = 'shipping';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
 						break;
 					case 'SHIPPING_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-						$object_type = 'order_supplier';
+						$object_type = 'shipping';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 						break;
 					case 'EXPENSE_REPORT_VALIDATE':
@@ -1258,7 +1258,7 @@ class Notify
 						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->contract->multidir_output;
-						$object_type = 'contrat';
+						$object_type = 'contract';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 						break;
 					default:
