@@ -41,6 +41,12 @@ if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', 1);
 }
 define('NOLOGIN', 1);
+// No session: a client authenticates with a Bearer token or an API key and
+// never sends a cookie, so every anonymous call — including the discovery
+// routes below — was leaving a session file behind for nothing.
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 require '../../main.inc.php';
 /**
@@ -74,6 +80,46 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 
+// Discovery asked for under this endpoint's own path.
+//
+// A client that has just met a 401 here looks for the authorization server by
+// deriving well-known locations from the URL it was talking to, rather than
+// from the authorization_servers value the protected resource metadata gives
+// it. Codex asks this endpoint for /.well-known/openid-configuration; without
+// an answer it never finds the server and falls back to posting a registration
+// at the site root.
+//
+// Answering here costs nothing, needs no rewrite rule, and works wherever
+// Dolibarr is installed — which the canonical locations, being at the domain
+// root, do not.
+$mcp_wellknown = empty($_SERVER['PATH_INFO']) ? '' : (string) $_SERVER['PATH_INFO'];
+if (in_array($mcp_wellknown, array('/.well-known/oauth-protected-resource', '/.well-known/oauth-authorization-server', '/.well-known/openid-configuration'), true)) {
+	require_once DOL_DOCUMENT_ROOT . '/ai/class/mcpoauth.class.php';
+
+	$mcpOauth = new McpOauth(
+		$db,
+		DOL_MAIN_URL_ROOT . '/ai/oauth.php',
+		DOL_MAIN_URL_ROOT . '/ai/server/mcp_server.php'
+	);
+
+	if ($mcp_wellknown === '/.well-known/oauth-protected-resource') {
+		// Served here: this document describes the resource, and the resource
+		// is the URL it was asked at, so it is consistent.
+		header('Cache-Control: no-store');
+		echo json_encode($mcpOauth->metadataProtectedResource());
+		exit;
+	}
+
+	// The authorization server documents are redirected rather than copied.
+	// They carry an issuer, and RFC 8414 section 3.3 has the client reject a
+	// document whose issuer does not match the URL it came from — which it
+	// could not, since the server lives at another address. A redirect answers
+	// the client that derived the location from this endpoint, and answers it
+	// with a document that is correct where it is served.
+	header('Location: ' . DOL_MAIN_URL_ROOT . '/ai/oauth.php' . $mcp_wellknown, true, 302);
+	exit;
+}
+
 // Request headers, used by the transport-header validation further down.
 $headers = function_exists('getallheaders') ? getallheaders() : [];
 $headers = array_change_key_case($headers, CASE_LOWER);
@@ -83,7 +129,12 @@ $mcpAuth = new McpAuth($db);
 if ($mcpAuth->authenticate() < 0) {
 	if ($mcpAuth->httpcode == 401) {
 		// RFC 6750 section 3: a rejected Bearer request must say what it wanted.
-		header('WWW-Authenticate: ' . $mcpAuth->getWwwAuthenticateHeader());
+		// RFC 9728 section 5.1: pointing at the Protected Resource Metadata is
+		// what lets an OAuth-capable client discover the authorization server
+		// and sign the user in, instead of just failing.
+		header('WWW-Authenticate: ' . $mcpAuth->getWwwAuthenticateHeader(
+			DOL_MAIN_URL_ROOT . '/ai/oauth.php/.well-known/oauth-protected-resource'
+		));
 	}
 
 	http_response_code($mcpAuth->httpcode);

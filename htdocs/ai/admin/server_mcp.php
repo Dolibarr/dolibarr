@@ -385,30 +385,51 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '</td>';
 	print '</tr>';
 
+	// A connector signs the user in with OAuth instead of being handed a key.
+	// Self-registration is what lets it do that without an administrator
+	// creating anything first, which is how claude.ai and the ChatGPT
+	// connector expect to arrive. It is off until someone decides otherwise:
+	// the endpoint accepts registrations from anyone who can reach it.
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans('AiMcpOauthDynamicRegistration'), $langs->trans('AiMcpOauthDynamicRegistrationHelp')).'</td>';
+	print '<td>';
+	print ajax_constantonoff('AI_MCP_OAUTH_DYNAMIC_REGISTRATION', array(), null, 0, 0, 1);
+	print '</td>';
+	print '</tr>';
+
 	print '</table>';
 	print '</div>';
 
 	print '</form>';
 
-	// Configuration Examples
+	// How to connect a client
 	print '<br>';
 	print '<div style="background:#fcfcfc; border:1px solid #eee; padding:15px; border-radius:5px;">';
-	print '<strong>' . $langs->trans("ClaudeDesktopConfig") . '</strong><br>';
-	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto; margin-top:10px;">';
-	echo htmlspecialchars('
-	{
-	  "mcpServers": {
-	    "dolibarr": {
-	      "command": "node",
-	      "args": ["/path/to/mcp-bridge.js"],
-	      "env": {
-	        "DOLIBARR_URL": "'.$endpoint.'",
-	        "DOLIBARR_API_KEY": "'.($apiKey ? $apiKey : "YOUR_KEY_HERE").'"
-	      }
-	    }
-	  }
-	}');
+
+	print '<strong>'.$langs->trans("AiMcpConnectTitle").'</strong>';
+
+	print '<p>'.$langs->trans("AiMcpConnectConnector").'</p>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
+	print dol_escape_htmltag($endpoint);
 	print '</pre>';
+
+	print '<p>'.$langs->trans("AiMcpConnectLocalClient").'</p>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
+	print htmlspecialchars('{
+  "mcpServers": {
+    "dolibarr": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "'.$endpoint.'"]
+    }
+  }
+}');
+	print '</pre>';
+
+	print '<p>'.$langs->trans("AiMcpConnectApiKey").'</p>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
+	print dol_escape_htmltag('Authorization: Bearer <'.$langs->trans("AiMcpConnectYourApiKey").'>');
+	print '</pre>';
+
 	print '</div>';
 }
 
