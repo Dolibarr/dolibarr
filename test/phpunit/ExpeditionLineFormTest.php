@@ -144,6 +144,42 @@ class ExpeditionLineFormTest extends \PHPUnit\Framework\TestCase
 	}
 
 	/**
+	 * A single warehouse must not override an intentional empty selection.
+	 *
+	 * @return void
+	 */
+	public function testCreateFormLeavesWarehouseEmptyByDefault()
+	{
+		global $conf, $user;
+		foreach (array('none', 'global', 'user') as $default) {
+			$conf->global->MAIN_DEFAULT_WAREHOUSE = $default === 'global' ? 3 : 0;
+			$conf->global->MAIN_DEFAULT_WAREHOUSE_USER = $default === 'user' ? 1 : 0;
+			$user->fk_warehouse = $default === 'user' ? 3 : 0;
+			$html = $this->renderCreateForm();
+			$this->assertStringContainsString('<option value="-1">', $html);
+			$this->assertStringContainsString('<option value="3"', $html);
+			$this->assertStringNotContainsString('<option value="3" selected', $html);
+		}
+	}
+
+	/**
+	 * An empty warehouse submitted on error must remain empty.
+	 *
+	 * @return void
+	 */
+	public function testCreateFormKeepsSubmittedEmptyWarehouse()
+	{
+		global $conf;
+		$conf->global->MAIN_DEFAULT_WAREHOUSE = 3;
+		foreach (array('-1', '0') as $warehouse) {
+			$_POST = array('entrepot_id' => $warehouse);
+			$html = $this->renderCreateForm();
+			$this->assertStringContainsString('<option value="-1">', $html);
+			$this->assertStringNotContainsString('<option value="3" selected', $html);
+		}
+	}
+
+	/**
 	 * Stock-disabled installations show neither a warehouse field nor its header.
 	 * Services are selectable only with shipment service support enabled.
 	 *

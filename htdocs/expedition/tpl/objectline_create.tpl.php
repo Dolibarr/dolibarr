@@ -164,7 +164,7 @@ if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 if (isModEnabled('stock')) {
 	$coldisplay++;
 	print '<td class="bordertop nobottom linecolwarehouse">';
-	print $formproduct->selectWarehouses(GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : 'ifone', 'entrepot_id', 'warehouseopen', 1);
+	print $formproduct->selectWarehouses(GETPOSTISSET('entrepot_id') ? GETPOSTINT('entrepot_id') : -1, 'entrepot_id', 'warehouseopen', 1);
 	print '</td>';
 }
 
