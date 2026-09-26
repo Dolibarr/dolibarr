@@ -476,7 +476,9 @@ class pdf_ledger extends ModelePdfAccountancy
 			}
 
 			if ($this->getColumnStatus('balance')) {
-				$solde = $object->lines[$i]->credit - $object->lines[$i]->debit;
+				// Running balance of the account, not of the single line: the screen ledger shows the
+				// accumulated balance per account, and the accumulators are already fed above (#40789).
+				$solde = $accountCredit - $accountDebit;
 				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' C' : ' D');
 				$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 				$nexY = max($pdf->GetY(), $nexY);
