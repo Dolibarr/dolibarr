@@ -181,6 +181,7 @@ $note_private = null;
 
 $error = 0;
 $parameters = array();
+$isCatalogLine = false;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -225,12 +226,25 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
-	// Standalone line actions must target an existing draft shipment.
-	if (in_array($action, array('addline', 'editline', 'updateline', 'deleteline')) && empty($object->origin_id)) {
-		if (!$usercancreate || $object->id <= 0 || !getDolGlobalString('SHIPMENT_STANDALONE') || $object->status != Expedition::STATUS_DRAFT) {
+	// Catalog lines and order lines must belong to the current draft shipment.
+	if (in_array($action, array('addline', 'editline', 'updateline', 'deleteline'))) {
+		if (!$usercancreate || $object->id <= 0 || $object->status != Expedition::STATUS_DRAFT) {
 			accessforbidden();
 		}
-		if (in_array($action, array('addline', 'updateline')) && isModEnabled('stock') && GETPOSTINT('entrepot_id') > 0) {
+		if ($action == 'addline' && !shippingCanAddCatalogLine($object)) { // Test on permission already done
+			accessforbidden();
+		}
+		if ($action != 'addline') {
+			$requestedLine = new ExpeditionLigne($db);
+			if ($requestedLine->fetch(GETPOSTINT('lineid')) <= 0 || $requestedLine->fk_expedition != $object->id) {
+				accessforbidden();
+			}
+			$isCatalogLine = empty($requestedLine->fk_elementdet) && $requestedLine->element_type == 'shipping';
+			if (empty($object->origin_id) && !getDolGlobalInt('SHIPMENT_STANDALONE')) {
+				accessforbidden();
+			}
+		}
+		if (($action == 'addline' || ($action == 'updateline' && $isCatalogLine)) && isModEnabled('stock') && GETPOSTINT('entrepot_id') > 0) { // Test on permission already done
 			$warehouse = new Entrepot($db);
 			$warehouses = $warehouse->list_array(1);
 			if (!isset($warehouses[GETPOSTINT('entrepot_id')])) {
@@ -867,7 +881,7 @@ if (empty($reshook)) {
 					}
 				} else {
 					// delete single warehouse line
-					$line->id = $line_id;
+					$line = $lines[$i];
 					if (!$error && $line->delete($user) < 0) {
 						$error++;
 					}
@@ -883,7 +897,7 @@ if (empty($reshook)) {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('cancel', 'alpha') != $langs->trans("Cancel")) {
-		if (empty($object->origin_id) && getDolGlobalString('SHIPMENT_STANDALONE')) {
+		if ($isCatalogLine || (empty($object->origin_id) && getDolGlobalString('SHIPMENT_STANDALONE'))) {
 			// Update a line
 			// Clean parameters
 
@@ -1204,7 +1218,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // To redisplay the form being edited
 		exit();
-	} elseif ($action == 'addline' && empty($object->origin_id) && getDolGlobalString('SHIPMENT_STANDALONE') && $usercancreate) {	// Add a new line
+	} elseif ($action == 'addline' && shippingCanAddCatalogLine($object) && $usercancreate) {	// Add a new line
 		$langs->load('errors');
 		$error = 0;
 		$line_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
@@ -2704,6 +2718,17 @@ if ($action == 'create' && $usercancreate) {
 	// Edit and view mode
 
 	$lines = $object->lines;
+	$catalogLines = array();
+	if ($object->origin_id > 0) {
+		$lines = array();
+		foreach ($object->lines as $shipmentLine) {
+			if (empty($shipmentLine->fk_elementdet) && $shipmentLine->element_type == 'shipping') {
+				$catalogLines[] = $shipmentLine;
+			} else {
+				$lines[] = $shipmentLine;
+			}
+		}
+	}
 
 	$num_prod = count($lines);
 
@@ -3169,14 +3194,23 @@ if ($action == 'create' && $usercancreate) {
 
 
 	/*
-	* Lines of simple shipment
+	* Catalog lines of standalone or order-based shipments
 	*/
-	if (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
+	if ((!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) || shippingCanAddCatalogLine($object) || !empty($catalogLines)) {
 		if (!empty($object->table_element_line)) {
 			// Show object lines
-			$result = $object->getLinesArray();
+			$allShipmentLines = $object->lines;
+			$savedDisableMove = $disablemove ?? 0;
+			if ($object->origin_id > 0) {
+				print load_fiche_titre($langs->trans('AdditionalShipmentLines'));
+				$object->lines = $catalogLines;
+				$disablemove = 1;
+			} else {
+				$result = $object->getLinesArray();
+			}
 
-			print '	<form name="updateline" id="updateline" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
+			$lineFormId = $object->origin_id > 0 ? 'updatecatalogline' : 'updateline';
+			print '	<form name="'.$lineFormId.'" id="'.$lineFormId.'" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
 			<input type="hidden" name="token" value="' . newToken().'">
 			<input type="hidden" name="action" value="updateline">
 			<input type="hidden" name="mode" value="">
@@ -3184,13 +3218,13 @@ if ($action == 'create' && $usercancreate) {
 			<input type="hidden" name="id" value="' . $object->id.'">
 			';
 
-			if (!empty($conf->use_javascript_ajax) && $object->status == 0 && $permissiontoadd) {
+			if (empty($object->origin_id) && !empty($conf->use_javascript_ajax) && $object->status == 0 && $permissiontoadd) {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 			}
 
 			print '<div class="div-table-responsive-no-min">';
 			if (!empty($object->lines)) {
-				print '<table id="tablelines" class="noborder noshadow" width="100%">';
+				print '<table id="'.($object->origin_id > 0 ? 'tablelines_catalog' : 'tablelines').'" class="noborder noshadow" width="100%">';
 			}
 
 			if (!empty($object->lines)) {
@@ -3204,8 +3238,11 @@ if ($action == 'create' && $usercancreate) {
 
 			print "</form>\n";
 
+			$object->lines = $allShipmentLines;
+			$disablemove = $savedDisableMove;
+
 			// Form to add new line
-			if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
+			if (shippingCanAddCatalogLine($object) && $permissiontoadd && $action != 'selectlines') {
 				if ($action != 'editline') {
 					// Add products/services form
 					print '<form name="addproduct" id="addproduct" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
@@ -3235,7 +3272,7 @@ if ($action == 'create' && $usercancreate) {
 
 	// Lines of products of origin
 	if (!empty($object->origin) && $object->origin_id > 0) {
-		if ($action == 'editline') {
+		if ($action == 'editline' && !$isCatalogLine) {
 			print '	<form name="updateline" id="updateline" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;lineid=' . $line_id . '" method="POST">
 			<input type="hidden" name="token" value="' . newToken() . '">
 			<input type="hidden" name="action" value="updateline">
@@ -3263,7 +3300,7 @@ if ($action == 'create' && $usercancreate) {
 		if ($origin_id > 0) {
 			print '<td class="center linecolqtyinothershipments">' . $langs->trans("QtyInOtherShipments") . '</td>';
 		}
-		if ($action == 'editline') {
+		if ($action == 'editline' && !$isCatalogLine) {
 			$editColspan = 3;
 			if (!isModEnabled('stock')) {
 				$editColspan--;
@@ -3814,7 +3851,7 @@ if ($action == 'create' && $usercancreate) {
 		print '</tbody>';
 		print "</table>\n";
 		print '</div>';
-		if ($action == 'editline') {
+		if ($action == 'editline' && !$isCatalogLine) {
 			print "</form>\n";
 		}
 
@@ -3832,7 +3869,7 @@ if ($action == 'create' && $usercancreate) {
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		// modified by hook
 		if (empty($reshook)) {
-			if ($object->status == Expedition::STATUS_DRAFT && $num_prod > 0) {
+			if ($object->status == Expedition::STATUS_DRAFT && count($object->lines) > 0) {
 				if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'creer'))
 					|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'shipping_advance', 'validate'))
 				) {

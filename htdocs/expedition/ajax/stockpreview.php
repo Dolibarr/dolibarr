@@ -10,7 +10,7 @@
 /**
  * \file htdocs/expedition/ajax/stockpreview.php
  * \ingroup expedition
- * \brief Read-only stock preview for a standalone shipment catalog line.
+ * \brief Read-only stock preview for a shipment catalog line.
  */
 
 define('NOTOKENRENEWAL', 1);
@@ -26,10 +26,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 
 $object = new Expedition($db);
 $permissiontoadd = $user->hasRight('expedition', 'creer');
-if (!isModEnabled('shipping') || !isModEnabled('stock') || !$permissiontoadd || !getDolGlobalInt('SHIPMENT_STANDALONE')) {
+if (!isModEnabled('shipping') || !isModEnabled('stock') || !$permissiontoadd) {
 	accessforbidden();
 }
-if ($object->fetch(GETPOSTINT('id')) <= 0 || $object->origin_id > 0 || $object->status != Expedition::STATUS_DRAFT) {
+if ($object->fetch(GETPOSTINT('id')) <= 0 || !shippingCanAddCatalogLine($object)) {
 	accessforbidden();
 }
 restrictedArea($user, 'expedition', $object->id, '');

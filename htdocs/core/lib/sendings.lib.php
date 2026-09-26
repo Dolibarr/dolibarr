@@ -29,6 +29,29 @@ require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
 
 
 /**
+ * Whether the shipment accepts a new catalog line without an origin order line.
+ * The caller must separately check shipment access and creation permissions.
+ *
+ * @param Expedition $object Shipment
+ * @return bool
+ */
+function shippingCanAddCatalogLine($object)
+{
+	if ($object->id <= 0 || $object->status != Expedition::STATUS_DRAFT) {
+		return false;
+	}
+	if (empty($object->origin_id)) {
+		return (bool) getDolGlobalInt('SHIPMENT_STANDALONE');
+	}
+	// The order dispatch page cannot move stock for lines without an order line.
+	if (getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_DISPATCH_ORDER')) {
+		return false;
+	}
+	return in_array($object->origin, array('commande', 'order'), true) && getDolGlobalInt('SHIPMENT_FROM_ORDER_CAN_ADD_LINE') > 0;
+}
+
+
+/**
  * Suggest an open warehouse and preview stock after the loaded draft shipment.
  * The caller must check access to the shipment and the selected product.
  *

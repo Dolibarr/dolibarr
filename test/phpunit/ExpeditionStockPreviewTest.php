@@ -127,6 +127,27 @@ class ExpeditionStockPreviewTest extends \PHPUnit\Framework\TestCase
 	}
 
 	/** @return void */
+	public function testMixedOrderAndCatalogAllocations()
+	{
+		list($shipment, $product) = $this->fixtures(array(1 => 10.0, 2 => 8.0));
+		$ordered = new ExpeditionLigne($shipment->db);
+		$ordered->fk_product = 42;
+		$ordered->qty = 5;
+		$ordered->details_entrepot = array(
+			(object) array('entrepot_id' => 1, 'qty_shipped' => 2),
+			(object) array('entrepot_id' => 2, 'qty_shipped' => 3),
+		);
+		$extra = new ExpeditionLigne($shipment->db);
+		$extra->fk_product = 42;
+		$extra->entrepot_id = 1;
+		$extra->qty = 1.5;
+		$shipment->lines = array($ordered, $extra);
+		$result = shippingGetStockPreview($shipment, $product, 2.5, 1, true);
+		$this->assertSame(6.5, $result['stock_available']);
+		$this->assertSame(4.0, $result['stock_after']);
+	}
+
+	/** @return void */
 	public function testManualSelectionAndUnavailableWarehouse()
 	{
 		foreach (array(1, 99, 0) as $warehouse) {

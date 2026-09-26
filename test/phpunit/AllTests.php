@@ -220,6 +220,8 @@ class AllTests
 		$suite->addTestSuite('ExpeditionLineFormTest');
 		require_once dirname(__FILE__).'/ExpeditionStockPreviewTest.php';
 		$suite->addTestSuite('ExpeditionStockPreviewTest');
+		require_once dirname(__FILE__).'/ExpeditionCatalogLineTest.php';
+		$suite->addTestSuite('ExpeditionCatalogLineTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
 		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';
