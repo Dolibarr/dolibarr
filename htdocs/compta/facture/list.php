@@ -1485,6 +1485,9 @@ $arrayofmassactions = array(
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
+if ($user->hasRight('facture', 'creer')) {
+	$arrayofmassactions['edit_extrafields'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields");
+}
 if (isModEnabled('category') && $user->hasRight('facture', 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
@@ -1505,7 +1508,7 @@ if ($user->hasRight("facture", "creer")) {
 		$arrayofmassactions['precreatecreditnote'] = img_picto('', 'undo', 'class="pictofixedwidth"').$langs->trans("cancelByCreditNote");
 	}
 }
-if (in_array($massaction, array('presend', 'predelete', 'makepayment'))) {
+if (in_array($massaction, array('presend', 'predelete', 'makepayment', 'edit_extrafields'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
