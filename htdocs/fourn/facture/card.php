@@ -792,6 +792,7 @@ if (empty($reshook)) {
 				$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 				$object->fk_account			= GETPOST('fk_account', 'int');
 				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
+				$tmpproject = GETPOST('projectid', 'int');
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
