@@ -2952,6 +2952,12 @@ abstract class CommonObject
 				// Update line price
 				if (!empty($this->lines)) {
 					foreach ($this->lines as &$line) {
+						// A credit line (deposit, credit note, discount applied to the invoice) is not priced at the invoice rate:
+						// both its amounts are the historical ones of the credit, so a rate change must leave it untouched.
+						if (!empty($line->fk_remise_except)) {
+							continue;
+						}
+
 						// Amounts in company currency will be recalculated
 						if ($mode == 1) {
 							$line->subprice = 0;
