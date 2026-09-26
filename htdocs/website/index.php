@@ -2625,6 +2625,7 @@ if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 			// Uncompress the exported web site into a destination directory
 			$result = $object->overwriteTemplate($fileofzip, $pathToExport);
 			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'preview';
 			}
 		} else {
