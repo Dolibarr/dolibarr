@@ -321,6 +321,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		}
 	}
 
+	// If the $features parameter is empty, there is no permission we can check, so the access must
+	// be refused. Without this test, all the checks of permission below would be silently skipped and
+	// the access would be granted to any user without any test (see also selectobject.php that forces
+	// its features parameter to 'unknownobject' instead of '' for the same reason).
+	if (empty($features) || trim((string) $features) === '') {
+		dol_syslog('restrictedArea() called with an empty features parameter, we refuse the access', LOG_WARNING);
+		if ($nodie) {
+			return 0;
+		} else {
+			accessforbidden('Bad value for parameter features');
+		}
+	}
+
 	// print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks

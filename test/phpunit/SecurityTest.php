@@ -549,6 +549,17 @@ class SecurityTest extends CommonClassTest
 
 		$result = restrictedArea($user, 'societe', 0, '', '', 'fk_soc', 'rowid', 0, 1);
 		$this->assertEquals(1, $result);
+
+		// A call with an empty features parameter must refuse the access, even for a user with
+		// all the permissions: no permission can be checked, so nothing may be allowed.
+		$result = restrictedArea($user, '', 0, '', '', 'fk_soc', 'rowid', 0, 1);
+		$this->assertEquals(0, $result, 'restrictedArea() with an empty features parameter must return 0 (access refused)');
+
+		$result = restrictedArea($user, '   ', 0, '', '', 'fk_soc', 'rowid', 0, 1);
+		$this->assertEquals(0, $result, 'restrictedArea() with a features parameter of spaces must return 0 (access refused)');
+
+		$result = restrictedArea($user, null, 0, '', '', 'fk_soc', 'rowid', 0, 1);
+		$this->assertEquals(0, $result, 'restrictedArea() with a null features parameter must return 0 (access refused)');
 	}
 
 	/**
