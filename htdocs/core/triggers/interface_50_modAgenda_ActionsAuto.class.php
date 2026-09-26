@@ -1683,17 +1683,26 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			if (property_exists($object, 'attachedfiles') && is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
 				// Note: None of the dolibarr classes seem to have an attachedfiles property
 				// Get directory of object
-				$tmpelems = getElementProperties($object->element.($object->module ? '@'.$object->module : ''));
-				$destdir = $tmpelems['dir_output'].'/'.$ret;
+				$destdir = getMultidirOutput($object, '', 1);
 
 				// @phan-suppress-next-line PhanUndeclaredProperty
 				foreach ($object->attachedfiles['paths'] as $key => $filespath) {
 					$srcfile = $filespath;
 					// @phan-suppress-next-line PhanUndeclaredProperty
-					$destfile = $destdir.'/'.$object->attachedfiles['names'][$key];
-					if (dol_mkdir($destdir) >= 0) {
-						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-						dol_copy($srcfile, $destfile);
+					$destfile = $destdir.$object->attachedfiles['names'][$key];
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					// We must not overwrite main file
+					if (!dol_is_file($destfile)) {
+						if (dol_mkdir($destdir, DOL_DATA_ROOT) >= 0) {
+							$moreinfo = array(
+								'gen_or_uploaded' => 1,
+								'src_object_type' => $object->element,
+								'src_object_id' => $object->id,
+								'agenda_id' => $ret
+							);
+							// No need to test virus, should be already done when uploading the file.
+							dol_move($srcfile, $destfile, '0', 0, 0, 1, $moreinfo);
+						}
 					}
 				}
 			}

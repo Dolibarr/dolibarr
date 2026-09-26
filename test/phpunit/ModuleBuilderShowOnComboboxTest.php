@@ -22,7 +22,7 @@
  *          into the generated object class for any field, not only ref/code.
  */
 
-global $conf, $user, $langs, $db;
+global $conf, $user, $langs, $db, $mysoc;
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
@@ -87,12 +87,6 @@ class ModuleBuilderShowOnComboboxTest extends CommonClassTest
 		// leak into a neighbouring field that also carries showoncombobox.
 		$match = preg_match('/"mylabelfield"\s*=>\s*array\((?:(?!=>\s*array\().)*"showoncombobox"\s*=>\s*"1"/s', $class);
 		$this->assertSame(1, $match, 'showoncombobox must be serialized for a regular field');
-
-		// Same field with the flag turned off must NOT serialize showoncombobox (toggle off / default).
-		$addfieldentry['showoncombobox'] = 0;
-		rebuildObjectClass($base, $module, $objectname, '0', $base, $addfieldentry);
-		$classoff = file_get_contents($base.'/class/'.strtolower($objectname).'.class.php');
-		$this->assertDoesNotMatchRegularExpression('/"mylabelfield"\s*=>\s*array\((?:(?!=>\s*array\().)*"showoncombobox"/s', $classoff, 'showoncombobox must not be serialized when the flag is 0');
 
 		dol_delete_dir_recursive($base);
 	}

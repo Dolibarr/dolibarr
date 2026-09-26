@@ -86,7 +86,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $moduledir = 'asset';
 $myTmpObjects = [
-	'asset' => array('label' => 'Asset', 'includerefgeneration' => 1, 'includedocgeneration' => 0, 'class' => 'Asset')
+	'asset' => array('label' => 'Asset', 'includerefgeneration' => 1, 'includedocgeneration' => 1, 'class' => 'Asset')
 ];
 
 $tmpobjectkey = GETPOST('object', 'aZ09');

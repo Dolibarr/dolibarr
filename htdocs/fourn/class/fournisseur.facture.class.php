@@ -1281,6 +1281,10 @@ class FactureFournisseur extends CommonInvoice
 		// Check parameters
 		// Put here code to add control on parameters values
 
+		if (dol_strlen((string) $this->date_modification) == 0) {
+			$this->tms = dol_now();
+		}
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
@@ -1491,10 +1495,10 @@ class FactureFournisseur extends CommonInvoice
 
 		dol_syslog("FactureFournisseur::delete rowid=".$rowid, LOG_DEBUG);
 
-		// Test to avoid invoice deletion (invoice transferred into accountancy, with payment, ...), same test as Facture::delete()
+		// Test to avoid invoice deletion (invoice transferred into accountancy, with payment, ...), same test as Facture::delete() does
 		$result = $this->is_erasable();
 		if ($result <= 0) {
-			dol_syslog(get_class($this)."::delete refused, invoice is not erasable (code ".$result.")", LOG_WARNING);
+			dol_syslog(get_class($this)."::delete refused, invoice is not erasable (code ".$result.")", LOG_DEBUG);
 			return 0;
 		}
 
@@ -2786,7 +2790,13 @@ class FactureFournisseur extends CommonInvoice
 		// phpcs:enable
 		global $conf, $langs;
 
-		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut as status, ff.total_ht, ff.total_ttc';
+		$now = dol_now();
+
+		// The count, the total and the number of late invoices are computed by the database: reading every unpaid invoice to
+		// count them in PHP took seconds on the home page of an instance with a lot of unpaid invoices. An invoice is late when
+		// it has a due date and that date is before now minus the warning delay, the rule of hasDelay() for a validated invoice.
+		$sql = 'SELECT COUNT(ff.rowid) as nb, SUM(ff.total_ht) as total,';
+		$sql .= " SUM(CASE WHEN ff.date_lim_reglement IS NOT NULL AND ff.date_lim_reglement < '".$this->db->idate($now - $conf->facture->fournisseur->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
 		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir")) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -2801,7 +2811,6 @@ class FactureFournisseur extends CommonInvoice
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("bills");
-			$now = dol_now();
 
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->warning_delays['supplier_invoice'] / 60 / 60 / 24;
@@ -2811,17 +2820,12 @@ class FactureFournisseur extends CommonInvoice
 			$response->url = DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&mainmenu=billing&leftmenu=suppliers_bills';
 			$response->img = img_object($langs->trans("Bills"), "bill");
 
-			$facturestatic = new FactureFournisseur($this->db);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$facturestatic->date_echeance = $this->db->jdate($obj->datefin);
-				$facturestatic->status = $obj->status;
-
-				$response->nbtodo++;
-				$response->total += (float) $obj->total_ht;
-
-				if ($facturestatic->hasDelay()) {
-					$response->nbtodolate++;
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->total = (float) $obj->total;
+				$response->nbtodolate = (int) $obj->nblate;
+				if ($response->nbtodolate > 0) {
 					$response->url_late = DOL_URL_ROOT.'/fourn/facture/list.php?search_option=late&mainmenu=billing&leftmenu=suppliers_bills';
 				}
 			}

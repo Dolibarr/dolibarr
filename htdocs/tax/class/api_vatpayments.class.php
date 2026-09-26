@@ -210,7 +210,7 @@ class VatPayments extends DolibarrApi
 		}
 
 		if ($vat->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating VAT payment: '.$vat->error);
+			throw new RestException(500, 'Error when creating VAT payment: '.$vat->errorsToString());
 		}
 
 		return $vat->id;
@@ -265,7 +265,7 @@ class VatPayments extends DolibarrApi
 		if ($vat->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating VAT payment: '.$vat->error);
+			throw new RestException(500, 'Error when updating VAT payment: '.$vat->errorsToString());
 		}
 	}
 
@@ -277,7 +277,7 @@ class VatPayments extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
-	 * @throws RestException 403 Access denied
+	 * @throws RestException 403 Access denied, or VAT declaration with payments
 	 * @throws RestException 404 VAT payment not found
 	 * @throws RestException 500 Error when deleting the VAT payment
 	 */
@@ -295,8 +295,13 @@ class VatPayments extends DolibarrApi
 			throw new RestException(404, 'VAT payment not found');
 		}
 
+		// As the card does, and as DELETE /invoices/{id}: not once something is paid
+		if (!empty($vat->getSommePaiement())) {
+			throw new RestException(403, 'VAT declaration not erasable, it has payments');
+		}
+
 		if ($vat->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting VAT payment: '.$vat->error);
+			throw new RestException(500, 'Error when deleting VAT payment: '.$vat->errorsToString());
 		}
 
 		return array(
@@ -502,7 +507,7 @@ class VatPayments extends DolibarrApi
 		}
 
 		if ($payment->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting VAT payment: '.$payment->error);
+			throw new RestException(500, 'Error when deleting VAT payment: '.$payment->errorsToString());
 		}
 
 		return array(

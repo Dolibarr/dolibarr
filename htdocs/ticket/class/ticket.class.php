@@ -3552,7 +3552,9 @@ class Ticket extends CommonObject
 
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
+		// The count is computed by the database instead of reading every ticket. No ticket is counted as late: the delay is 0
+		// and the check on the creation date was doing nothing.
+		$sql = "SELECT COUNT(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
 		if (empty($user->socid) && isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
@@ -3587,14 +3589,9 @@ class Ticket extends CommonObject
 			$response->img = img_object('', "ticket");
 
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-				if ($mode == 'opened') {
-					$datelimit = (int) $this->db->jdate($obj->datec) + (int) $delay_warning;
-					if ($datelimit < $now) {
-						//$response->nbtodolate++;
-					}
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
 			}
 			return $response;
 		} else {

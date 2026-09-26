@@ -931,12 +931,50 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testIsModEnabled
+	 *
+	 * @return void
+	 */
+	public function testIsModEnabled()
+	{
+		global $conf;
+
+		// New names (the module is registered under its internal name in $conf->modules)
+		$this->assertSame(!empty($conf->modules['facture']), isModEnabled('invoice'));
+		$this->assertSame(!empty($conf->modules['societe']), isModEnabled('thirdparty'));
+		$this->assertFalse(isModEnabled('amodulethatdoesnotexist'));
+
+		// Old and new names of the mapping must give the same answer, whichever one is enabled. A new name that several old
+		// names point to ('intervention' <= 'fichinter' and 'ficheinter') is ambiguous by design (array_flip keeps the last one),
+		// so only the unambiguous pairs are checked.
+		$countbynewname = array_count_values(MODULE_MAPPING);
+		foreach (MODULE_MAPPING as $oldname => $newname) {
+			if ($countbynewname[$newname] > 1) {
+				continue;
+			}
+			$this->assertSame(isModEnabled($newname), isModEnabled($oldname), 'isModEnabled('.$oldname.') must equal isModEnabled('.$newname.')');
+		}
+
+		// supplier_order / supplier_invoice are the 'fournisseur' module unless MAIN_USE_NEW_SUPPLIERMOD is set
+		if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+			$this->assertSame(isModEnabled('supplier'), isModEnabled('supplier_order'));
+			$this->assertSame(isModEnabled('supplier'), isModEnabled('supplier_invoice'));
+		}
+	}
+
+	/**
 	 * testDolTextIsHtml
 	 *
 	 * @return void
 	 */
 	public function testDolTextIsHtml()
 	{
+		// Plain strings, without tag nor entity, must be refused quickly
+		$this->assertFalse(dol_textishtml('Customer proposal PR2609-0042, label with digits 12345'));
+		$this->assertFalse(dol_textishtml('a > b and "quotes" and 5 * 2 = 10'));
+		$this->assertFalse(dol_textishtml(''));
+		$this->assertFalse(dol_textishtml(null));
+
 		// True
 		$input = '<html>xxx</html>';
 		$after = dol_textishtml($input);
@@ -1477,6 +1515,18 @@ class FunctionsLibTest extends CommonClassTest
 		</div>';
 		$result = dol_escape_htmltag($input, 1, 1, 'common,code');
 		$this->assertEquals($input, $result);
+
+		// A string without any tag, with tags to keep: the tag protection is skipped for tags that are not in the string, result must not change
+		$input = 'Customer proposal PR2609-0042 & "quoted" < 10 > 5 \'single\' &amp; &lt;b&gt;';
+		$this->assertEquals('Customer proposal PR2609-0042 &amp; &quot;quoted&quot; &lt; 10 &gt; 5 \'single\' &amp; &lt;b&gt;', dol_escape_htmltag($input, 1, 1, 'common'));
+
+		// Tags in another case: the check "is the tag in the string" is case insensitive, the protection itself keeps its case rules
+		$input = 'a <B>X</B> <span style="color:red">s</span> </br>';
+		$this->assertEquals('a &lt;B&gt;X</b> <span style="color:red">s</span> </br>', dol_escape_htmltag($input, 1, 1, 'common'));
+
+		// A reserved marker in the source is still removed, and only the tags present are restored
+		$input = '__BEGINTAGTOREPLACEb__ <i>x</i>';
+		$this->assertEquals('b__ <i>x</i>', dol_escape_htmltag($input, 1, 1, 'common'));
 	}
 
 
@@ -1639,19 +1689,17 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testVerifCond
 	 *
-	 * @dataProvider verifCondDataProvider
-	 *
-	 * @param string $cond     Condition to test using verifCond
-	 * @param string $expected Expected outcome of verifCond
-	 *
 	 * @return	void
 	 */
-	public function testVerifCond($cond, $expected)
+	public function testVerifCond()
 	{
-		if ($expected) {
-			$this->assertTrue(verifCond($cond));
-		} else {
-			$this->assertFalse(verifCond($cond));
+		foreach ($this->verifCondDataProvider() as $case) {
+			list($cond, $expected) = $case;
+			if ($expected) {
+				$this->assertTrue(verifCond($cond));
+			} else {
+				$this->assertFalse(verifCond($cond));
+			}
 		}
 	}
 

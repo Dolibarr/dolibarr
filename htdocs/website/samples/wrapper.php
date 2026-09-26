@@ -22,7 +22,7 @@ if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 	die("Sample file for website module. Can't be called directly.");
 }
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
-	require_once './master.inc.php';
+	require_once './master.inc.php'; // @phpstan-ignore requireOnce.fileNotFound (exists only in the deployed website directory)
 } // Load master if not already loaded
 /**
  * @var Conf $conf

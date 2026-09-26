@@ -43,7 +43,7 @@ if (! defined('NOREQUIREUSER')) {
 	define('PHPUNIT_MODE', 1);
 }
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 
@@ -68,6 +68,9 @@ if (isModEnabled('ldap')) {
 }
 if (isModEnabled('google')) {
 	print "Warning: Google module should not be enabled.\n";
+}
+if (isModEnabled('numberwords')) {
+	print "Warning: Numberwords module should not be enabled.\n";
 }
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -142,6 +145,8 @@ class AllTests
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
 		$suite->addTestSuite('JsonLibTest');
+		require_once dirname(__FILE__).'/LoadBoardTest.php';
+		$suite->addTestSuite('LoadBoardTest');
 		require_once dirname(__FILE__).'/ImagesLibTest.php';
 		$suite->addTestSuite('ImagesLibTest');
 		require_once dirname(__FILE__).'/FunctionsLibTest.php';
@@ -207,6 +212,10 @@ class AllTests
 		$suite->addTestSuite('SocieteTest');
 		require_once dirname(__FILE__).'/ExpeditionTest.php';
 		$suite->addTestSuite('ExpeditionTest');
+		require_once dirname(__FILE__).'/ExpeditionLineFetchTest.php';
+		$suite->addTestSuite('ExpeditionLineFetchTest');
+		require_once dirname(__FILE__).'/ExpeditionDispatchTest.php';
+		$suite->addTestSuite('ExpeditionDispatchTest');
 		require_once dirname(__FILE__).'/ReceptionTest.php';
 		$suite->addTestSuite('ReceptionTest');
 		require_once dirname(__FILE__).'/ContactTest.php';
@@ -230,9 +239,6 @@ class AllTests
 
 		require_once dirname(__FILE__).'/BOMTest.php';
 		$suite->addTestSuite('BOMTest');
-		require_once dirname(__FILE__).'/MoTest.php';
-		$suite->addTestSuite('MoTest');
-
 		require_once dirname(__FILE__).'/MoTest.php';
 		$suite->addTestSuite('MoTest');
 
@@ -368,6 +374,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIMoTest');
 			require_once dirname(__FILE__).'/RestAPICronJobTest.php';
 			$suite->addTestSuite('RestAPICronJobTest');
+			require_once dirname(__FILE__).'/RestAPIBankAccountsTest.php';
+			$suite->addTestSuite('RestAPIBankAccountsTest');
 
 			// Old WS
 			require_once dirname(__FILE__).'/WebservicesProductsTest.php';

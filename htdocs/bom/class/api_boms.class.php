@@ -274,7 +274,7 @@ class Boms extends DolibarrApi
 		if ($this->bom->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->bom->error);
+			throw new RestException(500, $this->bom->errorsToString());
 		}
 	}
 
@@ -307,7 +307,7 @@ class Boms extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating BOM: '.$this->bom->error);
+			throw new RestException(500, 'Error when validating BOM: '.$this->bom->errorsToString());
 		}
 		$result = $this->bom->fetch($id);
 
@@ -341,7 +341,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!$this->bom->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting BOM : '.$this->bom->error);
+			throw new RestException(500, 'Error when deleting BOM : '.$this->bom->errorsToString());
 		}
 
 		return array(
@@ -438,7 +438,7 @@ class Boms extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(500, $this->bom->error);
+			throw new RestException(500, $this->bom->errorsToString());
 		}
 	}
 
@@ -559,7 +559,7 @@ class Boms extends DolibarrApi
 				)
 			);
 		} else {
-			throw new RestException(500, $this->bom->error);
+			throw new RestException(500, $this->bom->errorsToString());
 		}
 	}
 

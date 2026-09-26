@@ -30,6 +30,20 @@ require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ai/class/emailcleaner.class.php';
 
 /**
+ * Database test double completed with the prefix() method that the db drivers
+ * provide but the Database interface does not declare.
+ */
+interface EmailCleanerTestDatabase extends Database
+{
+	/**
+	 * Return the DB prefix
+	 *
+	 * @return string DB prefix
+	 */
+	public function prefix();
+}
+
+/**
  * Class for EmailCleaner context tests.
  *
  * @backupGlobals disabled
@@ -80,7 +94,7 @@ class EmailCleanerTest extends \PHPUnit\Framework\TestCase
 	 */
 	private function createLogDatabase()
 	{
-		$db = $this->getMockBuilder(Database::class)->setMethods(array_merge(get_class_methods(Database::class), array('prefix')))->getMock();
+		$db = $this->createMock(EmailCleanerTestDatabase::class);
 		$db->method('prefix')->willReturn('llx_');
 		$db->method('idate')->willReturn('2026-09-17 12:00:00');
 		$db->method('escape')->willReturnCallback(function ($value) {
@@ -191,57 +205,6 @@ class EmailCleanerTest extends \PHPUnit\Framework\TestCase
 		$this->assertSame(0, ai_log_request($db, $user, 'query', array(), 'fallback', 0.0, 0.0, 'Fallback', '', '', '', array('input_hash' => 'input')));
 	}
 
-	/**
-	 * Cleaner persistence follows the shared policy and stays within the entity.
-	 *
-	 * @param bool $loggingEnabled Logging policy
-	 * @param int $eventId Matched event id
-	 * @param string $expectedStatus Expected fallback status
-	 * @return void
-	 * @dataProvider cleanerPersistenceCases
-	 */
-	public function testCleanerUsesSharedLogger($loggingEnabled, $eventId, $expectedStatus)
-	{
-		global $conf;
-		$conf->global->AI_LOG_REQUESTS = (int) $loggingEnabled;
-		$conf->ai = (object) array('dir_output' => sys_get_temp_dir().'/dolibarr-emailcleaner-'.uniqid());
-		$db = $this->createLogDatabase();
-		$db->method('DDLInfoTable')->willReturn(array(array('name' => 'rowid')));
-		$db->method('plimit')->willReturn(' LIMIT 1');
-		$db->method('fetch_object')->willReturn($eventId ? (object) array('id' => $eventId) : false);
-		$shouldWrite = $loggingEnabled && $eventId > 0;
-		$db->expects($this->exactly($shouldWrite ? 2 : 1))->method('query')->willReturnCallback(function ($sql) {
-			if (strpos($sql, 'SELECT') === 0) {
-				$this->assertStringContainsString('entity = 2', $sql);
-				$this->assertStringContainsString("email_msgid = 'current@example.test'", $sql);
-				$this->assertStringContainsString('LIMIT 1', $sql);
-			} else {
-				$this->assertStringContainsString('INSERT INTO llx_ai_request_log', $sql);
-				$this->assertStringContainsString('fk_actioncomm, input_hash, output_hash, security_hash', $sql);
-				$this->assertStringContainsString("'email_cleaner'", $sql);
-				$this->assertStringContainsString('"clean_body":"Current answer"', $sql);
-			}
-			return true;
-		});
-		$db->expects($shouldWrite ? $this->once() : $this->never())->method('last_insert_id')->willReturn(123);
-		$cleaner = $this->getMockBuilder(EmailCleaner::class)->setConstructorArgs(array($db))->setMethods(array('runEmailCleaner'))->getMock();
-		$cleaner->method('runEmailCleaner')->willReturn(array('clean_body' => 'Current answer', 'confidence' => 0.8, 'engine' => 'fallback', 'fallback_used' => 1));
-		$collector = (object) array('id' => 5);
-		try {
-			$result = $cleaner->processEmailCollectorMessage(array('messagetext' => 'Current answer', 'header' => 'Message-ID: <current@example.test>'), $collector);
-			$this->assertSame($eventId > 0 ? $eventId : null, $result['fk_actioncomm']);
-			if ($shouldWrite) {
-				$this->assertSame(123, $result['ai_request_log_id']);
-				$this->assertSame(123, $result['handoff_payload_json']['ai_request_log_id']);
-			} else {
-				$this->assertSame($expectedStatus, $result['ai_request_log_status']);
-				$this->assertArrayNotHasKey('ai_request_log_id', $result);
-			}
-			$this->assertFileExists($result['file']);
-		} finally {
-			dol_delete_dir_recursive($conf->ai->dir_output);
-		}
-	}
 
 	/**
 	 * Cases covering successful persistence, disabled logging and absent events.

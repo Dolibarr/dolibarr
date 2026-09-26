@@ -40,7 +40,7 @@ Exclude Patterns:
   For example: $0 --exclude=setup_modules --exclude=status
 
 Examples:
-  $0 --cookiefile=/path/to/cookie.jar --port=8080 --host=localhost --user=foobar --pass=topsecret --apikey=your_api_key --suburl=/dolibarr setup_modules
+  $0 --cookiefile=/path/to/cookie.jar --host=localhost --port=8080 --suburl=/dolibarr --user=foobar --pass=topsecret --apikey=your_api_key setup_modules
   $0 --exclude=setup_modules --exclude=status
   $0 setup_modules status
 EOHELP
