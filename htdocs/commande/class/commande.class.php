@@ -1585,8 +1585,8 @@ class Commande extends CommonOrder
 			} else {
 				$pu = $pu_ttc;
 			}
-			$label = trim($label);
-			$desc = trim($desc);
+			$label = trim((string) $label);
+			$desc = trim((string) $desc);
 
 			// Check parameters
 			if ($type < 0) {
