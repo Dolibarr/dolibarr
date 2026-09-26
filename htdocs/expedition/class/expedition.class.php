@@ -15,7 +15,7 @@
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2025-2026	Nick Fragoulis
  * Copyright (C) 2026		Pierre Ardoin			<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1250,9 +1250,10 @@ class Expedition extends CommonObject
 	 * @param	float		$qty					Quantity
 	 * @param	int|null	$product_type			Product type, null to fetch it from product
 	 * @param	bool		$forbid_batch_product	True to reject products managed by lot/serial
+	 * @param	bool		$allowEmptyWarehouse	True for a line with no origin order line, where an empty warehouse means no stock movement
 	 * @return	int									Return integer <0 if KO, >0 if OK
 	 */
-	private function checkLineStockRequirements($fk_product, $fk_entrepot, $qty, $product_type = null, $forbid_batch_product = false)
+	private function checkLineStockRequirements($fk_product, $fk_entrepot, $qty, $product_type = null, $forbid_batch_product = false, $allowEmptyWarehouse = false)
 	{
 		global $langs;
 
@@ -1290,10 +1291,19 @@ class Expedition extends CommonObject
 			return 1;
 		}
 
-		if (!empty($qty) && !($warehouseId > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $product_type == Product::TYPE_SERVICE) && $product->stockable_product == Product::ENABLED_STOCK) {
+		// An order-independent line may deliberately carry NO warehouse: a sample,
+		// goods sent out for servicing, or a delivery note issued for e-reporting
+		// with no stock effect. Empty warehouse = no stock movement, as merged for
+		// receptions in #39293. Order-based lines keep the requirement.
+		if (!$allowEmptyWarehouse && !empty($qty) && !($warehouseId > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $product_type == Product::TYPE_SERVICE) && $product->stockable_product == Product::ENABLED_STOCK) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
 			return -1;
+		}
+
+		// No warehouse, by intent: there is nothing to check stock against.
+		if ($allowEmptyWarehouse && !($warehouseId > 0)) {
+			return 1;
 		}
 
 		if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT') && ($qty > 0 || !getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
@@ -1445,7 +1455,7 @@ class Expedition extends CommonObject
 
 			$qty = (float) price2num($qty);
 
-			$result = $this->checkLineStockRequirements((int) $fk_product, $fk_entrepot, (float) $qty, null, true);
+			$result = $this->checkLineStockRequirements((int) $fk_product, $fk_entrepot, (float) $qty, null, true, true);
 			if ($result < 0) {
 				return $result;
 			}
@@ -1560,7 +1570,7 @@ class Expedition extends CommonObject
 				$fk_entrepot = (int) $line->entrepot_id;
 			}
 
-			$result = $this->checkLineStockRequirements((int) $fk_product, $fk_entrepot, (float) $qty, null, true);
+			$result = $this->checkLineStockRequirements((int) $fk_product, $fk_entrepot, (float) $qty, null, true, true);
 			if ($result < 0) {
 				$this->db->rollback();
 				return $result;
