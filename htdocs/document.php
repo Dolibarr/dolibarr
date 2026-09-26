@@ -50,16 +50,21 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Batch downloads must never inherit the public-link login or CSRF exemptions.
+$isbatchdownloadrequest = (isset($_POST['action']) && is_string($_POST['action']) && trim($_POST['action']) === 'downloadselected')
+	|| (isset($_GET['action']) && is_string($_GET['action']) && trim($_GET['action']) === 'downloadselected')
+	|| isset($_POST['selecteddocuments']) || isset($_GET['selecteddocuments']);
+
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Note that only directory logo is free to access without login.
 $needlogin = 1;
 // For direct external download link, we don't need to load/check we are into a login session
-if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
+if (!$isbatchdownloadrequest && isset($_GET["hashp"]) && !defined("NOLOGIN")) {
 	$needlogin = 0;
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Keep $_GET here, GETPOST is not available yet
-if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
+if (!$isbatchdownloadrequest && (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	$needlogin = 0;
 }
 // If nologin required
@@ -139,6 +144,258 @@ require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
+/**
+ * Print a translated plain text document error and stop.
+ *
+ * @param	string	$message	Message to print
+ * @param	int		$status		HTTP status code
+ * @return	never
+ */
+function dol_document_print_plain_error($message, $status = 400)
+{
+	top_httphead('text/plain');
+	http_response_code($status);
+	print $message;
+	exit;
+}
+
+/**
+ * Send a Content-Disposition header with an RFC 5987 UTF-8 filename.
+ *
+ * @param	string	$disposition	Disposition, usually attachment or inline
+ * @param	string	$filename		Filename
+ * @return	void
+ */
+function dol_document_send_content_disposition($disposition, $filename)
+{
+	$filenamefallback = dol_sanitizeFileName($filename);
+	if ($filenamefallback === '') {
+		$filenamefallback = 'document';
+	}
+
+	// Send both a sanitized fallback filename and the UTF-8 filename so non-ASCII names survive modern browsers.
+	header('Content-Disposition: '.$disposition.'; filename="'.$filenamefallback.'"; filename*=UTF-8\'\''.rawurlencode($filename));
+}
+
+/**
+ * Resolve and validate access to a document using Dolibarr native security rules.
+ *
+ * @param	string	$modulepart		Module part
+ * @param	string	$original_file	Relative document path
+ * @param	int		$entity			Entity id
+ * @param	User	$fuser			User requesting the document
+ * @param	string	$hashp			Public hash, if any
+ * @param	bool	$needlogin		Whether per-object login checks are required (always true for batches)
+ * @return	array{original_file:string,refname:string,accessallowed:int,sqlprotectagainstexternals:string,fullpath_original_file:string,fullpath_original_file_osencoded:string,filename:string,type:string}
+ */
+function dol_document_resolve_secure_file($modulepart, $original_file, $entity, $fuser, $hashp = '', $needlogin = true)
+{
+	global $db, $langs;
+
+	// The single-file and ZIP download paths must share the same sanitizing, entity and permission checks.
+	$original_file = dol_sanitizePathName($original_file);
+
+	if (in_array($modulepart, array('facture_paiement', 'unpaid')) && !$fuser->hasRight('societe', 'client', 'voir')) {
+		$original_file = 'private/'.$fuser->id.'/'.$original_file;
+	}
+
+	$refname = basename(dirname($original_file).'/');
+	if ($refname == 'thumbs' || $refname == 'temp') {
+		$refname = basename(dirname(dirname($original_file)).'/');
+	}
+
+	if (empty($modulepart)) {
+		accessforbidden('Bad value for parameter modulepart');
+	}
+
+	// Check security and set return info with full path of file.
+	$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $fuser, $refname, 'read');
+	$accessallowed              = $check_access['accessallowed'];
+	$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
+	$fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
+
+	if (!empty($hashp) && $hashp != 'shared') {
+		$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
+		$sqlprotectagainstexternals = '';
+	} else {
+		// Keep the existing external-user SQL protection after the native resolver returns its extra check.
+		if ($fuser->socid > 0) {
+			if ($sqlprotectagainstexternals) {
+				$resql = $db->query($sqlprotectagainstexternals);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $db->fetch_object($resql);
+						if ($fuser->socid != $obj->fk_soc) {
+							$accessallowed = 0;
+							break;
+						}
+						$i++;
+					}
+				}
+			}
+		}
+	}
+
+	// Keep develop's per-object restrictions for individual files and every ZIP entry.
+	if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
+		$object = fetchObjectByElement(0, $modulepart, $refname);
+		if (is_object($object)) {
+			$accessallowed = restrictedArea($fuser, $modulepart, $object);
+		} elseif ($modulepart == 'systemtools' && $fuser->admin) {
+			$accessallowed = 1;
+		} else {
+			$accessallowed = 0;
+		}
+	}
+
+	// Security: Limit access if permissions are wrong.
+	if (!$accessallowed) {
+		accessforbidden();
+	}
+
+	// Security: We refuse directory transversal changes and shell-sensitive characters in resolved file names.
+	if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {
+		dol_syslog("Refused to deliver file ".$fullpath_original_file);
+		print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);
+		exit;
+	}
+
+	clearstatcache();
+
+	$filename = basename($fullpath_original_file);
+	$filename = preg_replace('/\.noexe$/i', '', $filename);
+	$fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // New file name encoded in OS encoding charset
+
+	// This test if file exists should be useless. We keep it to find bug more easily.
+	if (!file_exists($fullpath_original_file_osencoded)) {
+		dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
+		print $langs->trans("ErrorFileDoesNotExists") . ' : ' . dol_escape_htmltag($original_file);
+		exit;
+	}
+
+	// Define mime type after access validation so rejected files do not leak filesystem details.
+	$type = 'application/octet-stream'; // By default
+	if (GETPOST('type', 'alpha')) {
+		$type = GETPOST('type', 'alpha');
+	} else {
+		$type = dol_mimetype($original_file);
+	}
+	// Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
+	// We do not force if file is a javascript to be able to get js from website module with <script src="
+	// Note: Force whatever is $modulepart seems ok.
+	if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file)) {
+		$type = 'application/octet-stream';
+	}
+
+	return array(
+		'original_file' => $original_file,
+		'refname' => $refname,
+		'accessallowed' => $accessallowed,
+		'sqlprotectagainstexternals' => $sqlprotectagainstexternals,
+		'fullpath_original_file' => $fullpath_original_file,
+		'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded,
+		'filename' => $filename,
+		'type' => $type,
+	);
+}
+
+/**
+ * Run the native hook and invoice download handling before reading a document.
+ *
+ * @param array{original_file:string,refname:string,accessallowed:int,sqlprotectagainstexternals:string,fullpath_original_file:string,fullpath_original_file_osencoded:string,filename:string,type:string} $resolvedfile Resolved document
+ * @param string $modulepart Module part
+ * @param int $entity Document entity
+ * @param string $action Download action, possibly updated by hooks or invoice handling
+ * @param EcmFiles|string $ecmfile File loaded for a public link, or an empty string
+ * @return void
+ */
+function dol_document_prepare_download($resolvedfile, $modulepart, $entity, &$action, $ecmfile = '')
+{
+	global $db, $conf, $user, $hookmanager;
+
+	$original_file = $resolvedfile['original_file'];
+	$refname = $resolvedfile['refname'];
+	$fullpath_original_file = $resolvedfile['fullpath_original_file'];
+	$fullpath_original_file_osencoded = $resolvedfile['fullpath_original_file_osencoded'];
+	$filename = $resolvedfile['filename'];
+
+	// Hooks
+	$hookmanager->initHooks(array('document'));
+	$parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
+		'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
+		'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
+	$object = new stdClass();
+	$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
+	if ($reshook < 0) {
+		$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
+		dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : ".$errors);
+		print "ErrorDownloadDocumentHooks: ".$errors;
+		exit;
+	}
+
+	// Set this for test
+	//$type = 'text/html'; $attachment = -1;
+
+
+	// If we show an invoice, we test if we must regenerate the PDF
+	if ($modulepart == 'facture') {
+		$invoice = fetchObjectByElement(0, $modulepart, $refname);
+
+		if ($invoice instanceof Facture && $original_file == preg_replace('/facture\//', '', $invoice->last_main_doc)) {
+			// We are on the download or print of the main document
+			if ($invoice->status > Facture::STATUS_DRAFT) {
+				$action = 'DOC_DOWNLOAD';
+				if (GETPOSTISSET('attachement') || GETPOST('preview')) {
+					$action = 'DOC_PREVIEW';
+				}
+
+				dol_syslog("Print for action=".$action.". Current counter of this non draft invoice is already ".$invoice->id.", so file was already printed, so we regenerate the PDF to add mention DUPLICATA", LOG_DEBUG);
+
+				// $object->pos_print_counter is current value. We increase it here.
+				if ($invoice->status == Facture::STATUS_CLOSED) {
+					// Increase counter by 1
+					$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+					$sql .= " WHERE rowid = ".((int) $invoice->id);
+					$db->query($sql);
+
+					$invoice->pos_print_counter += 1;
+					//$invoice->update($user, 1);	// disabled update, we already did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
+				}
+
+				// When we reach the second print, we must regenerate the document to have the mention duplicata on PDF)
+				// No need if we are at print 3, 4 or more. The PDF was regenerated when counter was 2,
+				if ($invoice->pos_print_counter == 2) {
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(GETPOST('lang'));
+					$outputlangs->loadLangs(array("admin", "blockedlog"));
+
+					$hidedetails = 0;
+					$hidedesc = 0;
+					$hideref = 0;
+					$moreparams = null;
+
+					$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+					if ($result < 0) {
+						dol_syslog("Failed to regenerate PDF", LOG_WARNING);
+					}
+				}
+
+				// Call trigger
+				$result = $invoice->call_trigger($action, $user);
+				if ($result < 0) {
+					top_httphead();
+
+					http_response_code(500);
+					print 'Error in trigger: '.$invoice->errorsToString();
+					exit;
+				}
+			}
+		}
+	}
+}
+
 $encoding = '';
 $action = GETPOST('action', 'aZ09');
 $original_file = GETPOST('file', 'alphanohtml');
@@ -151,7 +408,7 @@ $entity = ($entity > 0 ? $entity : $conf->entity);
 if (empty($modulepart) && empty($hashp)) {
 	httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
 }
-if (empty($original_file) && empty($hashp)) {
+if (empty($original_file) && empty($hashp) && $action != 'downloadselected') {
 	httponly_accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 400);
 }
 if ($hashp == 'shared') {
@@ -166,19 +423,155 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-// For some module part, dir may be privates
-if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
-	if (!$user->hasRight('societe', 'client', 'voir')) {
-		$original_file = 'private/'.$user->id.'/'.$original_file; // If user has no permission to see all, output dir is specific to user
-	}
-}
-
-
 /*
  * Actions
  */
 
-// None
+if ($action == 'downloadselected') { // Test on permission already done by dol_document_resolve_secure_file() for each selected file.
+	// The batch action is POST-only so the CSRF token generated by the detached form is enforced by main.inc.php.
+	if (empty($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] != 'POST') {
+		httponly_accessforbidden('Bad request method for batch download', 405);
+	}
+	if (empty($user->id) || !empty($hashp)) {
+		accessforbidden();
+	}
+
+	// The browser posts compact encoded selections, but every entry is treated as untrusted input below.
+	$selecteddocuments = GETPOST('selecteddocuments', 'array:restricthtml');
+	if (!is_array($selecteddocuments) || empty($selecteddocuments)) {
+		dol_document_print_plain_error($langs->trans('NoDocumentSelected'), 400);
+	}
+
+	// ZipArchive is a native PHP extension, not a Dolibarr dependency, so fail explicitly when the host lacks it.
+	if (!class_exists('ZipArchive')) {
+		dol_document_print_plain_error($langs->trans('ZipArchiveUnavailable'), 500);
+	}
+
+
+	$selectedfiles = array();
+	foreach ($selecteddocuments as $selecteddocument) {
+		// Ignore malformed entries instead of trusting client-side checkboxes to be well formed.
+		if (!is_string($selecteddocument) || $selecteddocument === '') {
+			continue;
+		}
+
+		$decodedselection = base64_decode($selecteddocument, true);
+		if ($decodedselection === false) {
+			continue;
+		}
+		$documentselection = json_decode($decodedselection, true);
+		if (!is_array($documentselection)
+			|| !isset($documentselection['file']) || !is_string($documentselection['file'])
+			|| (isset($documentselection['modulepart']) && !is_string($documentselection['modulepart']))
+			|| (isset($documentselection['entity']) && (!is_int($documentselection['entity']) || $documentselection['entity'] <= 0))) {
+			dol_document_print_plain_error($langs->trans('ErrorBadParameters'), 400);
+		}
+
+		$selectedmodulepart = empty($documentselection['modulepart']) ? $modulepart : (string) $documentselection['modulepart'];
+		$selectedfile = empty($documentselection['file']) ? '' : (string) $documentselection['file'];
+		$selectedentity = isset($documentselection['entity']) ? (int) $documentselection['entity'] : (int) $entity;
+
+		if ($selectedfile === '' || !preg_match('/^[a-zA-Z0-9_\-]+(?:@[a-zA-Z0-9_]+)?$/D', $selectedmodulepart)) {
+			continue;
+		}
+
+		// Re-run the same secure document resolver used by individual downloads for each selected file.
+		$resolvedfile = dol_document_resolve_secure_file($selectedmodulepart, $selectedfile, $selectedentity, $user);
+		if (!is_file($resolvedfile['fullpath_original_file_osencoded'])) {
+			continue;
+		}
+
+		// Validate the whole selection before hooks can produce download side effects.
+		$selectedfiles[$resolvedfile['fullpath_original_file_osencoded']] = array(
+			'modulepart' => $selectedmodulepart,
+			'entity' => $selectedentity,
+			'file' => $resolvedfile,
+		);
+	}
+	if (empty($selectedfiles)) {
+		dol_document_print_plain_error($langs->trans('NoDocumentSelected'), 400);
+	}
+
+	foreach ($selectedfiles as $selectedfile) {
+		$downloadaction = 'downloadselected';
+		dol_document_prepare_download($selectedfile['file'], $selectedfile['modulepart'], $selectedfile['entity'], $downloadaction);
+	}
+
+	// Store the archive in Dolibarr's private documents area and remove it immediately after streaming.
+	$ziptmpdir = DOL_DATA_ROOT.'/admin/temp';
+	if (!dol_is_dir($ziptmpdir) && dol_mkdir($ziptmpdir) < 0) {
+		dol_document_print_plain_error($langs->trans('UnableToCreateZipArchive'), 500);
+	}
+	$ziptmpfile = tempnam($ziptmpdir, 'documentzip_');
+	if ($ziptmpfile === false) {
+		dol_document_print_plain_error($langs->trans('UnableToCreateZipArchive'), 500);
+	}
+
+	$zip = new ZipArchive();
+	$zipopenresult = $zip->open($ziptmpfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+	if ($zipopenresult !== true) {
+		dol_delete_file($ziptmpfile, 1, 1, 1, null, false, 0, 1);
+		dol_document_print_plain_error($langs->trans('UnableToCreateZipArchive'), 500);
+	}
+
+	// Also remove the archive if streaming is interrupted by a disconnected client.
+	register_shutdown_function(static function () use ($zip, $ziptmpfile) {
+		if ($zip->filename !== '') {
+			$zip->close();
+		}
+		if (dol_is_file($ziptmpfile)) {
+			dol_delete_file($ziptmpfile, 1, 1, 1, null, false, 0, 1);
+		}
+	});
+
+	$zipnames = array();
+	foreach ($selectedfiles as $selectedfile) {
+		$resolvedfile = $selectedfile['file'];
+
+		// ZIP entries are flat and unique, so duplicate basenames receive a numeric suffix.
+		$zipname = $resolvedfile['filename'];
+		$pathinfo = pathinfo($zipname);
+		$zipfilename = isset($pathinfo['filename']) ? $pathinfo['filename'] : $zipname;
+		$zipextension = empty($pathinfo['extension']) ? '' : '.'.$pathinfo['extension'];
+		$zipnamecandidate = $zipname;
+		$counter = 2;
+		while (isset($zipnames[$zipnamecandidate])) {
+			$zipnamecandidate = $zipfilename.'-'.$counter.$zipextension;
+			$counter++;
+		}
+		$zipnames[$zipnamecandidate] = 1;
+
+		if (!$zip->addFile($resolvedfile['fullpath_original_file_osencoded'], $zipnamecandidate)) {
+			dol_document_print_plain_error($langs->trans('UnableToCreateZipArchive'), 500);
+		}
+	}
+
+	$zipcloseresult = $zip->close();
+	if (!$zipcloseresult) {
+		dol_document_print_plain_error($langs->trans('UnableToCreateZipArchive'), 500);
+	}
+
+	// The archive is generated for immediate download and must never be indexed or kept as a business document.
+	$zipdownloadfilename = dol_sanitizeFileName($modulepart.'-documents-'.dol_print_date(dol_now(), '%Y%m%d-%H%M%S')).'.zip';
+
+	top_httphead('application/zip');
+	header('Content-Description: File Transfer');
+	// Attachment is forced for this explicit download action. Browser preferences may still save automatically without prompting.
+	dol_document_send_content_disposition('attachment', $zipdownloadfilename);
+	header('Cache-Control: private, no-store');
+	header('Pragma: no-cache');
+	header('Content-Length: '.dol_filesize($ziptmpfile));
+
+	// Close the database connection before streaming a potentially large file to the client.
+	if (is_object($db)) {
+		$db->close();
+	}
+
+	readfileLowMemory($ziptmpfile);
+	// Remove the temporary archive only after readfileLowMemory has finished using it.
+	dol_delete_file($ziptmpfile, 1, 1, 1, null, false, 0, 1);
+	exit;
+}
 
 
 
@@ -251,6 +644,8 @@ if (!empty($hashp) && $hashp != 'shared') {
 }
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
+// Existing document links still honor MAIN_DISABLE_FORCE_SAVEAS; only the explicit forcedownload action bypasses it.
+$forceattachment = (GETPOSTINT('forcedownload') || $action == 'forcedownload');
 $attachment = true;
 if (preg_match('/\.(html|htm)$/i', $original_file)) {
 	$attachment = false;
@@ -258,197 +653,27 @@ if (preg_match('/\.(html|htm)$/i', $original_file)) {
 if (isset($_GET["attachment"])) {
 	$attachment = GETPOST("attachment", 'alpha') ? true : false;
 }
-if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
+if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS') && !$forceattachment) {
 	$attachment = false;
 }
-
-// Define mime type
-$type = 'application/octet-stream'; // By default
-if (GETPOST('type', 'alpha')) {
-	$type = GETPOST('type', 'alpha');
-} else {
-	$type = dol_mimetype($original_file);
-}
-// Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
-// We do not force if file is a javascript to be able to get js from website module with <script src="
-// Note: Force whatever is $modulepart seems ok.
-if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file)) {
-	$type = 'application/octet-stream';
+if ($forceattachment) {
+	$attachment = true;
 }
 
-// Security: Delete string ../ or ..\ into $original_file
-$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
-$original_file = str_replace('../', '/', $original_file);
-$original_file = str_replace('..\\', '/', $original_file);
-
-// Find the subdirectory name as the reference
-$refname = basename(dirname($original_file)."/");
-if ($refname == 'thumbs' || $refname == 'temp') {
-	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
-	$refname = basename(dirname(dirname($original_file))."/");
-}
-
-// Security check
-if (empty($modulepart)) {
-	accessforbidden('Bad value for parameter modulepart');
-}
-
-// Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, $refname, 'read');
-$accessallowed              = $check_access['accessallowed'];
-$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-$fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($modulepart.' '.$entity.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
-
-if (!empty($hashp) && $hashp != 'shared') {
-	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
-	$sqlprotectagainstexternals = '';
-} else {
-	// Basic protection (against external users only)
-	if ($user->socid > 0) {
-		if ($sqlprotectagainstexternals) {
-			$resql = $db->query($sqlprotectagainstexternals);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $db->fetch_object($resql);
-					if ($user->socid != $obj->fk_soc) {
-						$accessallowed = 0;
-						break;
-					}
-					$i++;
-				}
-			}
-		}
-	}
-}
-
-// Check permission on per object basis
-if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
-	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
-
-	//var_dump($object);
-	if (is_object($object)) {
-		$accessallowed = restrictedArea($user, $modulepart, $object);
-	} else {
-		if ($modulepart == 'systemtools' && $user->admin) {
-			$accessallowed = 1;
-		} else {
-			$accessallowed = 0;
-		}
-	}
-}
-
-// Security:
-// Limit access if permissions are wrong
-if (!$accessallowed) {
-	accessforbidden();
-}
-
-// Security:
-// We refuse directory transversal change and pipes in file names
-if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {
-	dol_syslog("Refused to deliver file ".$fullpath_original_file);
-	print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);
-	exit;
-}
-
-
-clearstatcache();
-
-$filename = basename($fullpath_original_file);
-$filename = preg_replace('/\.noexe$/i', '', $filename);
+// Resolve access after deciding the requested disposition so both preview and forced-download links share the same file checks.
+$resolvedfile = dol_document_resolve_secure_file($modulepart, $original_file, (int) $entity, $user, $hashp, (bool) $needlogin);
+$original_file = $resolvedfile['original_file'];
+$accessallowed = $resolvedfile['accessallowed'];
+$sqlprotectagainstexternals = $resolvedfile['sqlprotectagainstexternals'];
+$fullpath_original_file = $resolvedfile['fullpath_original_file'];
+$fullpath_original_file_osencoded = $resolvedfile['fullpath_original_file_osencoded'];
+$filename = $resolvedfile['filename'];
+$type = $resolvedfile['type'];
 
 // Output file on browser
 dol_syslog("document.php download $fullpath_original_file filename=$filename content-type=$type");
-$fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // New file name encoded in OS encoding charset
 
-// This test if file exists should be useless. We keep it to find bug more easily
-if (!file_exists($fullpath_original_file_osencoded)) {
-	dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
-	print $langs->trans("ErrorFileDoesNotExists") . ' : ' . dol_escape_htmltag($original_file);
-	exit;
-}
-
-// Hooks
-$hookmanager->initHooks(array('document'));
-$parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
-	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
-	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
-$object = new stdClass();
-$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
-if ($reshook < 0) {
-	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
-	dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : ".$errors);
-	print "ErrorDownloadDocumentHooks: ".$errors;
-	exit;
-}
-
-// Set this for test
-//$type = 'text/html'; $attachment = -1;
-
-
-// If we show an invoice, we test if we must regenerate the PDF
-if ($modulepart == 'facture') {
-	$invoice = fetchObjectByElement(0, $modulepart, $refname);
-
-	if ($original_file == preg_replace('/facture\//', '', $invoice->last_main_doc)) {
-		// We are on the download or print of the main document
-		if ($invoice instanceOf Facture && $invoice->status > Facture::STATUS_DRAFT) {
-			$action = 'DOC_DOWNLOAD';
-			if (GETPOSTISSET('attachement') || GETPOST('preview')) {
-				$action = 'DOC_PREVIEW';
-			}
-
-			dol_syslog("Print for action=".$action.". Current counter of this non draft invoice is already ".$invoice->id.", so file was already printed, so we regenerate the PDF to add mention DUPLICATA", LOG_DEBUG);
-
-			// $object->pos_print_counter is current value. We increase it here.
-			if ($invoice->status == Facture::STATUS_CLOSED) {
-				// Increase counter by 1
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
-				$sql .= " WHERE rowid = ".((int) $invoice->id);
-				$db->query($sql);
-
-				$invoice->pos_print_counter += 1;
-				//$invoice->update($user, 1);	// disabled update, we already did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
-			}
-
-			// When we reach the second print, we must regenerate the document to have the mention duplicata on PDF)
-			// No need if we are at print 3, 4 or more. The PDF was regenerated when counter was 2,
-			if ($invoice->pos_print_counter == 2) {
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(GETPOST('lang'));
-				$outputlangs->loadLangs(array("admin", "blockedlog"));
-
-				$hidedetails = 0;
-				$hidedesc = 0;
-				$hideref = 0;
-				$moreparams = '';
-				$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0); // @phpstan-ignore-line as variable $hidedetails is forced
-				$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0); // @phpstan-ignore-line as variable $hidedesc is forced
-				$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0); // @phpstan-ignore-line as variable $hideref is forced
-				$moreparams = isset($moreparams) ? $moreparams : null; // @phpstan-ignore-line as variable $moreparams is forced
-
-				$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-				if ($result < 0) {
-					dol_syslog("Failed to regenerate PDF", LOG_WARNING);
-				}
-			}
-
-			// Call trigger
-			$result = $invoice->call_trigger($action, $user);
-			if ($result < 0) {
-				top_httphead();
-
-				http_response_code(500);
-				print 'Error in trigger: '.$invoice->errorsToString();
-				exit;
-			}
-		}
-	}
-}
-
+dol_document_prepare_download($resolvedfile, $modulepart, (int) $entity, $action, $ecmfile);
 
 
 // Permissions are ok and file found, so we return it
@@ -461,9 +686,10 @@ if ($encoding) {
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
 
 if ($attachment > 0) {
-	header('Content-Disposition: attachment; filename="'.$filename.'"');
+	// Attachment asks the browser to download the file; browser preferences may still save automatically without prompting.
+	dol_document_send_content_disposition('attachment', $filename);
 } elseif (empty($attachment)) {
-	header('Content-Disposition: inline; filename="'.$filename.'"');
+	dol_document_send_content_disposition('inline', $filename);
 }
 // Add directives to fix IE bug
 header('Cache-Control: Public, must-revalidate');
