@@ -1893,10 +1893,6 @@ class EmailCollector extends CommonObject
 			$richarrayofemail = array();
 
 			foreach ($arrayofemail as $imapemail) {
-				if ($nbemailprocessed > 1000) {
-					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
-				}
-
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
@@ -1924,6 +1920,10 @@ class EmailCollector extends CommonObject
 
 			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
+				if ($nbemailprocessed > 1000) {
+					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
+				}
+
 				$iforemailloop++;
 
 				$imapemail = $tmpval['imapemail'];
