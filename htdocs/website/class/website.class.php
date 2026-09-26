@@ -834,19 +834,23 @@ class Website extends CommonObject
 					// Save page alias
 					$result = dolSavePageAlias($filealias, $object, $objectpagenew);
 					if (!$result) {
-						setEventMessages('Failed to write file '.$filealias, null, 'errors');
+						$this->error = 'Failed to write file '.$filealias;
+						$this->errors[] = $this->error;
+						$error++;
 					}
 
 					$result = dolSavePageContent($filetplnew, $object, $objectpagenew);
 					if (!$result) {
-						setEventMessages('Failed to write file '.$filetplnew, null, 'errors');
+						$this->error = 'Failed to write file '.$filetplnew;
+						$this->errors[] = $this->error;
+						$error++;
 					}
 
 					if ($pageid == $oldidforhome) {
 						$newidforhome = $objectpagenew->id;
 					}
 				} else {
-					setEventMessages($objectpageold->error, $objectpageold->errors, 'errors');
+					$this->setErrorsFromObject($objectpageold);
 					$error++;
 				}
 			}
@@ -858,7 +862,7 @@ class Website extends CommonObject
 			$res = $object->update($user);
 			if (!($res > 0)) {
 				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 			}
 
 			if (!$error) {
@@ -1014,14 +1018,16 @@ class Website extends CommonObject
 		$website = $this;
 
 		if (empty($website->id) || empty($website->ref)) {
-			setEventMessages("Website id or ref is not defined", null, 'errors');
+			$this->error = "Website id or ref is not defined";
+			$this->errors[] = $this->error;
 			return '';
 		}
 
 		dol_syslog("Create temp dir ".$conf->website->dir_temp);
 		dol_mkdir($conf->website->dir_temp);
 		if (!is_writable($conf->website->dir_temp)) {
-			setEventMessages("Temporary dir ".$conf->website->dir_temp." is not writable", null, 'errors');
+			$this->error = "Temporary dir ".$conf->website->dir_temp." is not writable";
+			$this->errors[] = $this->error;
 			return '';
 		}
 
@@ -1031,7 +1037,8 @@ class Website extends CommonObject
 		$countreallydeleted = 0;
 		$counttodelete = dol_delete_dir_recursive($destdir, $count, 1, 0, $countreallydeleted);
 		if ($counttodelete != $countreallydeleted) {
-			setEventMessages("Failed to clean temp directory ".$destdir, null, 'errors');
+			$this->error = "Failed to clean temp directory ".$destdir;
+			$this->errors[] = $this->error;
 			return '';
 		}
 
@@ -1104,7 +1111,8 @@ class Website extends CommonObject
 		$filesql_path = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
 		$fp = fopen($filesql_path, "w");
 		if (empty($fp)) {
-			setEventMessages("Failed to create file ".$filesql_path, null, 'errors');
+			$this->error = "Failed to create file ".$filesql_path;
+			$this->errors[] = $this->error;
 			return '';
 		}
 
@@ -1869,15 +1877,18 @@ class Website extends CommonObject
 
 		$website = $this;
 		if (empty($website->id) || empty($website->ref)) {
-			setEventMessages("Website id or ref is not defined", null, 'errors');
+			$this->error = "Website id or ref is not defined";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 		if (empty($website->name_template) && empty($exportPath)) {
-			setEventMessages("To export the website template into a directory of the server, the name of the directory/template must be provided.", null, 'errors');
+			$this->error = "To export the website template into a directory of the server, the name of the directory/template must be provided.";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 		if (!is_writable($conf->website->dir_temp)) {
-			setEventMessages("Temporary dir ".$conf->website->dir_temp." is not writable", null, 'errors');
+			$this->error = "Temporary dir ".$conf->website->dir_temp." is not writable";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 
@@ -1892,18 +1903,21 @@ class Website extends CommonObject
 			} else {
 				$exportPath = rtrim($exportPath, '/');
 				if (strpos($exportPath, '..') !== false) {
-					setEventMessages("Invalid path.", null, 'errors');
+					$this->error = "Invalid path.";
+					$this->errors[] = $this->error;
 					return -1;
 				}
 				// if path start with / (absolute path)
 				if (strpos($exportPath, '/') === 0 || preg_match('/^[a-zA-Z]:/', $exportPath)) {
 					if (!is_dir($exportPath)) {
-						setEventMessages("The specified absolute path does not exist.", null, 'errors');
+						$this->error = "The specified absolute path does not exist.";
+						$this->errors[] = $this->error;
 						return -1;
 					}
 
 					if (!is_writable($exportPath)) {
-						setEventMessages("The specified absolute path is not writable.", null, 'errors');
+						$this->error = "The specified absolute path is not writable.";
+						$this->errors[] = $this->error;
 						return -1;
 					}
 					$destdirrel = $exportPath;
@@ -1917,14 +1931,16 @@ class Website extends CommonObject
 		}
 
 		if ($destdir === null) {
-			setEventMessages("The destination path is not determined.", null, 'errors');
+			$this->error = "The destination path is not determined.";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 
 		dol_mkdir($destdir);
 
 		if (!is_writable($destdir)) {
-			setEventMessages("The specified path ".$destdir." is not writable.", null, 'errors');
+			$this->error = "The specified path ".$destdir." is not writable.";
+			$this->errors[] = $this->error;
 			return -1;
 		}
 
@@ -1953,10 +1969,12 @@ class Website extends CommonObject
 		// TODO
 
 		if (!empty($resultarray)) {
-			setEventMessages("Error, failed to unzip the export into target dir ".$destdir.": ".implode(',', $resultarray), null, 'errors');
-		} else {
-			setEventMessages("Website content written into ".$destdirrel, null, 'mesgs');
+			$this->error = "Error, failed to unzip the export into target dir ".$destdir.": ".implode(',', $resultarray);
+			$this->errors[] = $this->error;
+			return -1;
 		}
+
+		setEventMessages("Website content written into ".$destdirrel, null, 'mesgs');
 
 		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website->ref);
 		exit();
