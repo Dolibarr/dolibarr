@@ -394,7 +394,7 @@ if ($socid > 0) {
 $filter_dateouvertureprevue = '';
 $filter_date1 = '';
 $filter_date2 = '';
-$sqlfilter_opcloture = '';
+$filter_date_cloture = '';
 
 $filter_dateouvertureprevue_start = dol_mktime(0, 0, 0, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);
 $filter_dateouvertureprevue_end = dol_mktime(23, 59, 59, (int) $opouvertureprevuemonth, (int) $opouvertureprevueday, (int) $opouvertureprevueyear);
