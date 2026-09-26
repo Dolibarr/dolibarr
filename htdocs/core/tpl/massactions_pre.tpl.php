@@ -377,7 +377,10 @@ if ($massaction == 'presend') {
 
 if ($massaction == 'edit_extrafields') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	$elementtype = $objecttmp->element;
+	//Begin Customisation: Bug in Mass update as extratable info is keyed by table_element
+	//$elementtype = $objecttmp->element;
+	$elementtype = $objecttmp->table_element;
+	//End Customisation
 	/** @var CommonObject $objecttmp */
 	$keysuffix = '';
 	$extrafields->fetch_name_optionals_label($elementtype);
