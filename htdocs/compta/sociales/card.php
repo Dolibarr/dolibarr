@@ -142,7 +142,10 @@ if (empty($reshook)) {
 
 	if ($action == 'setfk_user' && $permissiontoadd) {
 		$object->fk_user = $fk_user;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	if ($action == 'setlib' && $permissiontoadd) {

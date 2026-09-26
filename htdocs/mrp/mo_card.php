@@ -312,7 +312,10 @@ if (empty($reshook)) {
 						&& empty($line->qty_frozen)
 						&& (float) $line->qty != (float) $object->qty) {
 						$line->qty = (float) $object->qty;
-						$line->update($user);
+						$resultline = $line->update($user);
+						if ($resultline < 0) {
+							setEventMessages($line->error, $line->errors, 'errors');
+						}
 					}
 				}
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');

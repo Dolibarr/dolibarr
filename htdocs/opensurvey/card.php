@@ -98,21 +98,30 @@ if (empty($reshook)) {
 
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user, 0, $numsondage);
-
-		header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
-		exit();
+		if ($result > 0) {
+			header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
+			exit();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Close
 	if ($action == 'close' && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_CLOSED;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Valid or Reopend
 	if (($action == 'reopen' || $action == 'validate') && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_VALIDATED;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Update

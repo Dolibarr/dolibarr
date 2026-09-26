@@ -162,7 +162,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('adheren
 		header("Location: ".DOL_URL_ROOT."/adherents/card.php?rowid=".$object->fk_adherent);
 		exit;
 	} else {
-		$errmesg = $adh->error;
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 

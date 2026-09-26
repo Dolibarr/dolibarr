@@ -396,7 +396,9 @@ if (empty($reshook)) {
 							$l->total_tva = 0;
 							$l->total_ttc = 0;
 							$l->ref_supplier = '';
-							$l->update();
+							if ($l->update() < 0) {
+								setEventMessages($l->error, $l->errors, 'errors');
+							}
 						} else {
 							// No need for loop to keep best supplier price
 							$obj = $db->fetch_object($resql);
@@ -406,7 +408,9 @@ if (empty($reshook)) {
 							$l->total_tva = $l->total_ht * ($obj->tva_tx / 100);
 							$l->total_ttc = $l->total_ht + $l->total_tva;
 							$l->ref_supplier = $obj->ref_fourn;
-							$l->update();
+							if ($l->update() < 0) {
+								setEventMessages($l->error, $l->errors, 'errors');
+							}
 						}
 					} else {
 						dol_print_error($db);

@@ -201,6 +201,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		exit;
 	} else {
 		$db->rollback();
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
