@@ -1717,7 +1717,7 @@ class Ticket extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1726,9 +1726,10 @@ class Ticket extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query['save_lastsearch_values'] = 1;
 			}
 		}
+		$url = dolBuildUrl(DOL_URL_ROOT.'/ticket/card.php', $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
