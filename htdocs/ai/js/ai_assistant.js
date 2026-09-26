@@ -80,6 +80,50 @@ export function initAiAssistant(container) {
     // Document attached via the paperclip: {name, payload}. Sent as context with
     // the NEXT message; only a small chip (icon + name) is shown in the UI.
     let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
+
+    // --- Conversation persistence (storage is separate from the model context:
+    // reopening restores the bubbles, only PINNED messages are ever resent). ---
+    let conversationId = 0;          // 0 = the next message starts a new conversation
+    let restoringHistory = false;    // guard: reopening must not re-save messages
+    let persistQueue = Promise.resolve();   // keeps message order server-side
+
+    // Every change of the current conversation goes through here, so the
+    // "open in full page" button always carries it along (popover -> page
+    // used to start from a blank chat).
+    function setConversationId(id) {
+        const changed = (conversationId !== id);
+        conversationId = id;
+        if (changed) renderSidebar();
+        // Remember the conversation in progress in this browser, so the popover
+        // on the next page (or the full page) resumes it instead of a blank chat.
+        try { if (id) localStorage.setItem('aiCurrentConversation', String(id)); else localStorage.removeItem('aiCurrentConversation'); } catch (e) { /* no storage: nothing to resume */ }
+        const expand = container.querySelector('#ai-expand-btn');
+        if (expand && (expand.dataset.fullscreenBase || expand.dataset.fullscreenUrl)) {
+            if (!expand.dataset.fullscreenBase) expand.dataset.fullscreenBase = expand.dataset.fullscreenUrl;
+            const base = expand.dataset.fullscreenBase;
+            expand.dataset.fullscreenUrl = base + (id ? (base.indexOf('?') >= 0 ? '&' : '?') + 'conv=' + encodeURIComponent(id) : '');
+        }
+    }
+
+    function chatHistoryApi(payload) {
+        return fetch(epUrl('../ajax/chat_history.php'), {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then((r) => r.json());
+    }
+
+    function persistMessage(div, type, rawText, html) {
+        persistQueue = persistQueue.then(() => chatHistoryApi({
+            action: 'save', id: conversationId,
+            role: (type === 'bot') ? 'assistant' : 'user',
+            raw: String(rawText).slice(0, 8000), html: String(html).slice(0, 200000),
+            pinned: (div.dataset.ctx === 'on') ? 1 : 0,
+            error: div.dataset.aiError ? 1 : 0
+        }).then((res) => {
+            if (res && res.id) { setConversationId(res.id); delete previewCache[res.id]; }
+            if (res && res.message_id) div.dataset.msgId = String(res.message_id);
+        })).catch(() => { /* history is best-effort, the chat must never break on it */ });
+    }
     // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
     // the per-file/total size caps live server-side too.
     const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
@@ -211,21 +255,25 @@ export function initAiAssistant(container) {
     }
 
     // Clear Chat History
-    clearBtn.addEventListener('click', () => {
-        if (confirm(t('ClearChatHistoryTitle'))) {
-            // Remove conversation messages; keep the welcome element so it can be
-            // shown again on the full page (the popover has no welcome screen).
-            chat.querySelectorAll('.msg').forEach((n) => n.remove());
-            if (welcome) {
-                welcome.style.display = '';
-            } else {
-                chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
-            }
-            lastResult = { data: null, tool: '', query: '' };
-            clarificationContext = null;
-            input.focus();
+    // Leave the current conversation (it stays in the history) and start a
+    // blank one: the Clear button and the sidebar's "New conversation" share it.
+    function startNewConversation() {
+        // Remove conversation messages; keep the welcome element so it can be
+        // shown again on the full page (the popover has no welcome screen).
+        chat.querySelectorAll('.msg').forEach((n) => n.remove());
+        if (welcome) {
+            welcome.style.display = '';
+        } else {
+            chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
         }
-    });
+        lastResult = { data: null, tool: '', query: '' };
+        setConversationId(0);
+        clarificationContext = null;
+        refreshContext();
+        input.focus();
+    }
+    // Non-destructive since the conversation stays in the history: no confirm.
+    clearBtn.addEventListener('click', () => startNewConversation());
 
     // Handle Engine Switching
     engineSelect.addEventListener('change', () => {
@@ -1265,8 +1313,12 @@ export function initAiAssistant(container) {
                 pin.onclick = (ev) => {
                     ev.stopPropagation();
                     toggleContextPin(div);
+                    persistPinState(div);
                 };
                 bubble.appendChild(pin);
+                if (!restoringHistory) {
+                    persistMessage(div, type, rawText, html);
+                }
             }
             div.appendChild(buildAvatar(type));
             div.appendChild(bubble);
@@ -1448,6 +1500,228 @@ export function initAiAssistant(container) {
     // expired, the endpoints answer with the HTML login form (HTTP 200), which
     // used to surface as a cryptic "Unexpected token '<'" network error: detect
     // that case and tell the user to sign back in instead.
+    // --- Conversation history panel (list / reopen / delete) ---
+    const historyBtn = container.querySelector('#ai-history-btn');
+    const pageSidebar = container.classList.contains('ai-in-popover') ? null : document.getElementById('ai-history-sidebar');
+    if (historyBtn && pageSidebar) {
+        // Full page: the header button shows / hides the conversations column.
+        historyBtn.addEventListener('click', (ev) => { ev.stopPropagation(); setSidebarCollapsed(!container.classList.contains('sidebar-collapsed')); });
+    } else if (historyBtn) {
+        historyBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            const existing = container.querySelector('#ai-history-panel');
+            if (existing) { existing.remove(); return; }
+            const panel = document.createElement('div');
+            panel.id = 'ai-history-panel';
+            panel.innerHTML = '<div class="opacitymedium">…</div>';
+            historyBtn.insertAdjacentElement('afterend', panel);
+            chatHistoryApi({ action: 'list' }).then((res) => {
+                const items = (res && res.conversations) || [];
+                if (!items.length) { panel.innerHTML = '<div class="opacitymedium">' + t('AIHistoryEmpty') + '</div>'; return; }
+                panel.innerHTML = '';
+                items.forEach((c) => {
+                    const row = document.createElement('div');
+                    row.className = 'ai-history-item';
+                    row.innerHTML = '<span class="ai-history-title">' + escapeHtml(c.title || '…') + '</span>'
+                        + '<span class="ai-history-meta">' + escapeHtml(c.date) + ' · ' + c.nb + '</span>'
+                        + '<button type="button" class="ai-history-ren" title="' + escapeHtml(t('AIHistoryRename')) + '"><i class="fa fa-pen"></i></button>'
+                        + '<button type="button" class="ai-history-del" title="' + escapeHtml(t('AIHistoryDelete')) + '">&times;</button>';
+                    row.querySelector('.ai-history-ren').onclick = (e2) => {
+                        e2.stopPropagation();
+                        startRenameRow(row, c, '.ai-history-title', (saved) => {
+                            // Keep the panel open: put the title span back with the new text
+                            const inp = row.querySelector('input');
+                            const span = document.createElement('span');
+                            span.className = 'ai-history-title';
+                            span.textContent = saved || c.title || '…';
+                            if (inp) inp.replaceWith(span);
+                        });
+                    };
+                    row.querySelector('.ai-history-del').onclick = (e2) => {
+                        e2.stopPropagation();
+                        chatHistoryApi({ action: 'delete', id: c.id }).then(() => { row.remove(); if (conversationId === c.id) setConversationId(0); });
+                    };
+                    row.onclick = () => { panel.remove(); loadConversation(c.id); };
+                    attachConversationPreview(row, c);
+                    panel.appendChild(row);
+                });
+            }).catch(() => { panel.innerHTML = '<div class="opacitymedium">' + t('AIError') + '</div>'; });
+        });
+        // Any click outside closes the panel
+        document.addEventListener('click', (ev) => {
+            const panel = container.querySelector('#ai-history-panel');
+            if (panel && !panel.contains(ev.target) && ev.target !== historyBtn && !panel.querySelector('input')) panel.remove();
+        });
+    }
+
+    // --- Hover preview of a past conversation (column and popover panel alike):
+    // the whole thread, fetched once per conversation and cached, shown in a
+    // floating card next to the hovered row. ---
+    const previewCache = {};
+    let previewEl = null;
+    let previewTimer = null;
+    function hideConversationPreview() {
+        clearTimeout(previewTimer);
+        if (previewEl) { previewEl.remove(); previewEl = null; }
+    }
+    function showConversationPreview(row, c, messages) {
+        hideConversationPreview();
+        const card = document.createElement('div');
+        card.className = 'ai-conv-preview';
+        let html = '<div class="ai-conv-preview-head">' + escapeHtml(c.date || '') + ' · ' + escapeHtml(String(c.nb || messages.length)) + '</div>';
+        messages.forEach((m) => {
+            const who = (m.role === 'assistant') ? t('AIAssistant') : t('AIYou');
+            const text = String(m.raw || '').replace(/\s+/g, ' ').trim();
+            html += '<div class="ai-conv-preview-msg ' + (m.role === 'assistant' ? 'bot' : 'user') + '"><b>' + escapeHtml(who) + '</b> ' + escapeHtml(text.length > 300 ? text.slice(0, 300) + '…' : text) + '</div>';
+        });
+        card.innerHTML = html;
+        document.body.appendChild(card);
+        // Next to the row: right of a column row, left of a popover panel row; clamped to the viewport.
+        const r = row.getBoundingClientRect();
+        const cw = card.offsetWidth, ch = card.offsetHeight;
+        const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+        let left = (row.closest('#ai-history-sidebar')) ? r.right + 8 : r.left - cw - 8;
+        if (left + cw > vw - 8) left = vw - cw - 8;
+        if (left < 8) left = 8;
+        let top = r.top;
+        if (top + ch > vh - 8) top = Math.max(8, vh - ch - 8);
+        card.style.left = left + 'px';
+        card.style.top = top + 'px';
+        previewEl = card;
+    }
+    // Rename in place (column and popover panel): the title span turns into an
+    // input; Enter / blur saves through the ownership-checked 'rename' action,
+    // Esc cancels; onDone(savedTitle|null) lets the caller refresh its list.
+    function startRenameRow(row, c, titleSelector, onDone) {
+        hideConversationPreview();
+        const span = row.querySelector(titleSelector);
+        if (!span || row.querySelector('input')) return;
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.className = 'ai-sidebar-rename'; inp.value = c.title || ''; inp.maxLength = 250;
+        span.replaceWith(inp);
+        inp.focus(); inp.select();
+        let done = false;
+        const finish = (save) => {
+            if (done) return; done = true;
+            const v = inp.value.trim();
+            if (save && v && v !== c.title) {
+                chatHistoryApi({ action: 'rename', id: c.id, title: v }).then((r) => { c.title = (r && r.title) || v; onDone(c.title); }).catch(() => onDone(null));
+            } else { onDone(null); }
+        };
+        inp.addEventListener('keydown', (ek) => { if (ek.key === 'Enter') { ek.preventDefault(); finish(true); } else if (ek.key === 'Escape') { finish(false); } });
+        inp.addEventListener('blur', () => finish(true));
+        inp.addEventListener('click', (ec) => ec.stopPropagation());
+    }
+
+    function attachConversationPreview(row, c) {
+        row.addEventListener('mouseenter', () => {
+            clearTimeout(previewTimer);
+            previewTimer = setTimeout(() => {
+                if (previewCache[c.id]) { showConversationPreview(row, c, previewCache[c.id]); return; }
+                chatHistoryApi({ action: 'load', id: c.id }).then((res) => {
+                    if (!res || !res.messages) return;
+                    previewCache[c.id] = res.messages;
+                    if (row.matches(':hover')) showConversationPreview(row, c, res.messages);
+                }).catch(() => {});
+            }, 350);
+        });
+        row.addEventListener('mouseleave', hideConversationPreview);
+        row.addEventListener('click', hideConversationPreview);
+    }
+
+    // --- Full page: permanent conversations column (like the mainstream chat applications) ---
+    // The popover has no room for it and keeps the button + panel above.
+    const sidebar = container.classList.contains('ai-in-popover') ? null : document.getElementById('ai-history-sidebar');
+    let sidebarTimer = null;
+    function renderSidebar() {
+        if (!sidebar) return;
+        // Coalesce bursts (a save + an id change) into one listing call.
+        clearTimeout(sidebarTimer);
+        sidebarTimer = setTimeout(() => {
+            const list = sidebar.querySelector('#ai-sidebar-list');
+            if (!list) return;
+            chatHistoryApi({ action: 'list' }).then((res) => {
+                const items = (res && res.conversations) || [];
+                list.innerHTML = '';
+                if (!items.length) { list.innerHTML = '<div class="opacitymedium ai-sidebar-empty">' + t('AIHistoryEmpty') + '</div>'; return; }
+                // Group by age, client-side from the raw timestamp
+                const now = new Date(); const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000;
+                const groupOf = (ts) => (ts >= startOfToday ? 'AIHistoryToday' : ts >= startOfToday - 86400 ? 'AIHistoryYesterday' : ts >= startOfToday - 7 * 86400 ? 'AIHistoryLast7Days' : 'AIHistoryOlder');
+                let lastGroup = '';
+                items.forEach((c) => {
+                    const g = groupOf(c.ts || 0);
+                    if (g !== lastGroup) {
+                        const h = document.createElement('div');
+                        h.className = 'ai-sidebar-group';
+                        h.textContent = t(g);
+                        list.appendChild(h);
+                        lastGroup = g;
+                    }
+                    const row = document.createElement('div');
+                    row.className = 'ai-sidebar-item' + (c.id === conversationId ? ' active' : '');
+                    row.innerHTML = '<span class="ai-sidebar-title">' + escapeHtml(c.title || '…') + '</span>'
+                        + '<button type="button" class="ai-sidebar-act ai-sidebar-ren" title="' + escapeHtml(t('AIHistoryRename')) + '"><i class="fa fa-pen"></i></button>'
+                        + '<button type="button" class="ai-sidebar-act ai-sidebar-del" title="' + escapeHtml(t('AIHistoryDelete')) + '"><i class="fa fa-trash-alt"></i></button>';
+                    const startRename = (e2) => { e2.stopPropagation(); startRenameRow(row, c, '.ai-sidebar-title', () => renderSidebar()); };
+                    row.querySelector('.ai-sidebar-ren').onclick = startRename;
+                    row.addEventListener('dblclick', startRename);
+                    row.querySelector('.ai-sidebar-del').onclick = (e2) => {
+                        e2.stopPropagation();
+                        chatHistoryApi({ action: 'delete', id: c.id }).then(() => {
+                            if (conversationId === c.id) startNewConversation(); else renderSidebar();
+                        }).catch(() => {});
+                    };
+                    row.onclick = () => { if (c.id !== conversationId) loadConversation(c.id); };
+                    attachConversationPreview(row, c);
+                    list.appendChild(row);
+                });
+            }).catch(() => { list.innerHTML = '<div class="opacitymedium ai-sidebar-empty">' + t('AIError') + '</div>'; });
+        }, 150);
+    }
+    // Collapsible: "<<" in the column hides it, the header history button
+    // brings it back; the choice is remembered per browser. Narrow screens
+    // start collapsed (the column would eat the chat).
+    function setSidebarCollapsed(collapsed) {
+        if (!sidebar) return;
+        container.classList.toggle('sidebar-collapsed', collapsed);
+        if (historyBtn) historyBtn.title = collapsed ? t('AIShowConversations') : t('AIHideConversations');
+        try { localStorage.setItem('aiSidebarCollapsed', collapsed ? '1' : '0'); } catch (e) { /* private mode: no memory, no harm */ }
+    }
+    if (sidebar) {
+        const newBtn = sidebar.querySelector('#ai-new-chat');
+        if (newBtn) newBtn.addEventListener('click', () => startNewConversation());
+        const collapseBtn = sidebar.querySelector('#ai-sidebar-collapse');
+        if (collapseBtn) collapseBtn.addEventListener('click', () => setSidebarCollapsed(true));
+        const expandBtn = container.querySelector('#ai-sidebar-expand');
+        if (expandBtn) expandBtn.addEventListener('click', () => setSidebarCollapsed(false));
+        let stored = null;
+        try { stored = localStorage.getItem('aiSidebarCollapsed'); } catch (e) { stored = null; }
+        setSidebarCollapsed(stored === null ? (window.innerWidth <= 900) : stored === '1');
+        renderSidebar();
+    }
+
+    function loadConversation(id) {
+        chatHistoryApi({ action: 'load', id: id }).then((res) => {
+            if (!res || !res.messages) return;
+            chat.querySelectorAll('.msg').forEach((n) => n.remove());
+            if (welcome) welcome.style.display = 'none';
+            restoringHistory = true;
+            res.messages.forEach((m) => {
+                const html = m.html || escapeHtml(m.raw).replace(/\n/g, '<br>');
+                appendMsg(m.role === 'assistant' ? 'bot' : 'user', html, null, m.raw);
+                const div = chat.lastElementChild;
+                if (div) {
+                    div.dataset.msgId = String(m.id);
+                    if (m.pinned) div.dataset.ctx = 'on';
+                    if (m.error) div.dataset.aiError = '1';   // stays out of the window on reopen too
+                }
+            });
+            restoringHistory = false;
+            setConversationId(res.id);
+            refreshContext();
+        }).catch(() => {});
+    }
+
     // Compact, model-oriented snippet of a tool result for the pinned context:
     // the model needs the shape and the ids, not the full rendered table.
     function contextSnippetOf(result, toolName) {
@@ -1511,6 +1785,13 @@ export function initAiAssistant(container) {
         updateContextBar();
     }
 
+    // Persist the explicit pin so it survives a reopen (the window itself is
+    // recomputed on reopen, not stored). Best-effort, like the rest of history.
+    function persistPinState(div) {
+        if (!div.dataset.msgId) return;
+        chatHistoryApi({ action: 'pin', message_id: parseInt(div.dataset.msgId, 10), pinned: (div.dataset.ctx === 'on') ? 1 : 0 }).catch(() => {});
+    }
+
     // One click flips the bubble: inside the window it toggles between "follows
     // the window" and "excluded"; outside it toggles the explicit pin.
     function toggleContextPin(div) {
@@ -1523,8 +1804,16 @@ export function initAiAssistant(container) {
 
     function collectPinnedContext() {
         return contextBubbles().filter((m) => m.classList.contains('ctx-pinned'))
-            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }))
+            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '', id: parseInt(m.dataset.msgId, 10) || 0 }))
             .filter((p) => p.text);
+    }
+
+    // What the server receives for the pinned turns: ids only for persisted
+    // messages (the text is rebuilt server-side from the stored conversation,
+    // so the client is not trusted for what was said); the inline text is kept
+    // only for a message that has no row yet (history disabled or save in flight).
+    function pinnedContextPayload() {
+        return collectPinnedContext().map((p) => (p.id ? { id: p.id } : { role: p.role, text: p.text }));
     }
 
     // Small bar above the input: how many exchanges are pinned and their rough
@@ -1558,7 +1847,7 @@ export function initAiAssistant(container) {
             auto.onclick = (ev) => {
                 ev.preventDefault();
                 // Auto = back to the default: every bubble follows the window again.
-                pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; });
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; persistPinState(m); });
                 refreshContext();
             };
         }
@@ -1567,7 +1856,7 @@ export function initAiAssistant(container) {
             all.onclick = (ev) => {
                 ev.preventDefault();
                 // All = every past exchange pinned for good (the bar shows the price).
-                pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; });
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; persistPinState(m); });
                 refreshContext();
             };
         }
@@ -1578,7 +1867,7 @@ export function initAiAssistant(container) {
                 // Clear = nothing goes back with the NEXT question: recent bubbles
                 // are excluded, older pins dropped. New exchanges re-enter the
                 // window on their own afterwards.
-                pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; });
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; persistPinState(m); });
                 refreshContext();
             };
         }
@@ -1634,7 +1923,7 @@ export function initAiAssistant(container) {
                     chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
                     (function () {
                         // Pinned exchanges only: context is opt-in, its cost visible in the bar.
-                        const pinned = collectPinnedContext();
+                        const pinned = pinnedContextPayload();
                         return pinned.length ? { history: pinned } : {};
                     })(),
                     (function () {
@@ -1872,6 +2161,14 @@ export function initAiAssistant(container) {
         }
         return content;
     }
+
+    // Resume the conversation in progress: the id in the URL (popover -> full
+    // page hand-over) wins, else the one this browser was last in (full page ->
+    // popover, or the popover reopened on another page). Ownership is
+    // re-checked server-side on load; a deleted one simply stays blank.
+    let openConv = parseInt(container.dataset.aiOpenConversation, 10) || 0;
+    if (!openConv) { try { openConv = parseInt(localStorage.getItem('aiCurrentConversation'), 10) || 0; } catch (e) { openConv = 0; } }
+    if (openConv > 0) loadConversation(openConv);
 }
 
 // Auto-init for server-rendered containers (standalone page mode). The topbar

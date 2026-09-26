@@ -811,6 +811,21 @@ function getAiChatAssistantConfig()
 		'AIContextAllTitle',
 		'AIContextAttachmentOnly',
 
+		// Conversation history
+		'AIHistory',
+		'AINewConversation',
+		'AIHistoryToday',
+		'AIHistoryYesterday',
+		'AIHistoryLast7Days',
+		'AIHistoryOlder',
+		'AIHistoryDelete',
+		'AIHistoryRename',
+		'AIHideConversations',
+		'AIShowConversations',
+		'AIYou',
+		'AIAssistant',
+		'AIHistoryEmpty',
+
 		// Actions & Dialogs
 		'YesProceed',
 		'Cancel',
@@ -901,9 +916,10 @@ function getAiChatAssistantConfig()
  * fragment (ai/assistant/popover.php) so both render the exact same chat.
  *
  * @param	string	$mode	'page' for the standalone full page, 'popover' for the topbar popover fragment
+ * @param	int		$openconversation	Conversation id to reopen on load (page mode only, 0 = none)
  * @return	string			HTML content
  */
-function getAiChatAssistantHtml($mode = 'page')
+function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 {
 	global $langs, $user, $conf;
 
@@ -916,6 +932,10 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= ' data-ai-config="'.dol_escape_htmltag(json_encode(getAiChatAssistantConfig())).'"';
 	if ($mode === 'page') {
 		$out .= ' data-ai-autoinit="1"';
+		if ((int) $openconversation > 0) {
+			// Conversation to reopen on load (popover -> full page hand-over)
+			$out .= ' data-ai-open-conversation="'.((int) $openconversation).'"';
+		}
 	}
 	$out .= '>';
 
@@ -954,10 +974,14 @@ function getAiChatAssistantHtml($mode = 'page')
 	// are now attached with the always-visible paperclip button and routed
 	// automatically (local extraction first, cloud parsing as fallback).
 	$out .= '</select>';
-	// Clear Button
-	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("ClearChatHistoryTitle")).'">';
-	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Clear").'</span>';
+	// Clear button: with the conversations kept, it just starts a new one (the
+	// current one stays in the list). "Reset" is a core key translated everywhere
+	// with the right meaning ("Vider" in French, where "Clear" came out as "Clair").
+	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("AINewConversation")).'">';
+	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Reset").'</span>';
 	$out .= '</button>';
+	// Past conversations (list / reopen / delete), on the page and in the popover alike.
+	$out .= '<button type="button" id="ai-history-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIHistory")).'"><i class="fa fa-history"></i></button>';
 	if ($mode === 'popover') {
 		// Window controls of the popover (handled by the bootstrap JS in main.inc.php).
 		// The expand button opens the standalone full page (/ai/assistant/index.php)
@@ -967,6 +991,23 @@ function getAiChatAssistantHtml($mode = 'page')
 	}
 	$out .= '</div>';
 	$out .= '</div>';
+
+	if ($mode === 'page') {
+		// Full page: under the header, a permanent left column lists the past
+		// conversations (like the mainstream chat applications) next to the chat itself.
+		// The popover keeps its history button + panel and a flat layout.
+		$out .= '<div class="ai-chat-body">';
+		$out .= '<aside id="ai-history-sidebar" class="ai-history-sidebar" aria-label="'.dol_escape_htmltag($langs->trans("AIHistory")).'">';
+		$out .= '<div class="ai-sidebar-head">';
+		$out .= '<button type="button" id="ai-new-chat" class="ai-sidebar-new"><i class="fa fa-plus"></i> '.$langs->trans("AINewConversation").'</button>';
+		$out .= '<button type="button" id="ai-sidebar-collapse" class="ai-sidebar-collapse" title="'.dol_escape_htmltag($langs->trans("AIHideConversations")).'"><i class="fa fa-angle-double-left"></i></button>';
+		$out .= '</div>';
+		$out .= '<div id="ai-sidebar-list" class="ai-sidebar-list"><div class="opacitymedium ai-sidebar-empty">…</div></div>';
+		$out .= '</aside>';
+		// Shown only while the column is collapsed: reopens it from the left edge
+		$out .= '<button type="button" id="ai-sidebar-expand" class="ai-sidebar-expand" title="'.dol_escape_htmltag($langs->trans("AIShowConversations")).'"><i class="fa fa-angle-double-right"></i></button>';
+		$out .= '<div class="ai-chat-main">';
+	}
 
 	// Chat History
 	$out .= '<div id="chat-history" class="chat-history">';
@@ -1032,6 +1073,11 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '</div>';
 
 	$out .= '<div id="status-bar"></div>';
+
+	if ($mode === 'page') {
+		$out .= '</div>'; // .ai-chat-main
+		$out .= '</div>'; // .ai-chat-body
+	}
 
 	$out .= '</div>';
 
