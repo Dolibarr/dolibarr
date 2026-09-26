@@ -54,6 +54,12 @@ class Ai
 	 */
 	private $apiEndpoint;
 
+	/**
+	 * @var array<string,string>|null $tokenUsage
+	 */
+	public $tokenUsage;
+
+
 	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return only the content of the message. Do not add explanation.';	// Note: This instruction will also be completed by generateContent() to manage text versus HTML content.
 	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, answer with one and only one translation with no comment and explanation.';
@@ -438,6 +444,8 @@ class Ai
 				$generatedContent = $decodedResponse['choices'][0]['message']['content'];
 			}
 			dol_syslog("ai->generatedContent returned: ".dol_trunc($generatedContent, 50));
+
+			$this->tokenUsage = $decodedResponse['usage'] ?? null;
 
 			// If content is not HTML, we convert it into HTML
 			if ($format == 'html') {
