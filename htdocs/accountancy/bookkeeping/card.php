@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2017	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -554,6 +554,7 @@ if (empty($reshook)) {
 
 		if ($result == -1) {
 			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		if (!$error) {

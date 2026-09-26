@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2017	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2015-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2020	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
@@ -3461,7 +3461,8 @@ class BookKeeping extends CommonObject
 					if ($result > 0) {
 						$nb++;
 					} else {
-						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						$this->error = $bookkeeping->error;
+						$this->errors = $bookkeeping->errors;
 						$error++;
 						break;
 					}
@@ -3470,7 +3471,8 @@ class BookKeeping extends CommonObject
 
 			$echecImplode = implode(",", $echecT);
 		} else {
-			setEventMessages($langs->trans('NoAccountSelected'), null, 'errors');
+			$this->error = $langs->trans('NoAccountSelected');
+			$this->errors[] = $this->error;
 			$error++;
 			$this->db->rollback();
 		}
@@ -3480,7 +3482,8 @@ class BookKeeping extends CommonObject
 		} elseif ($nb > 0) {
 			setEventMessages($nb ." " . $langs->trans('AssignAccountSuccess'), null, 'mesgs');
 		} else {
-			setEventMessages($langs->trans('AssignAccountError'), null, 'errors');
+			$this->error = $langs->trans('AssignAccountError');
+			$this->errors[] = $this->error;
 			$error++;
 		}
 
@@ -3527,11 +3530,11 @@ class BookKeeping extends CommonObject
 			return -1;
 		} elseif ($periodeFiscal == 0) {
 			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
-				setEventMessages($langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod'), null, 'errors');
+				$this->error = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
 			} else {
-				setEventMessages($langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod'), null, 'errors');
-				header("Location: " . $_SERVER['HTTP_REFERER']);
+				$this->error = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
 			}
+			$this->errors[] = $this->error;
 			$error++;
 			return -1;
 		}
@@ -3582,7 +3585,8 @@ class BookKeeping extends CommonObject
 							if ($resqlInsert) {
 								setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
 							} else {
-								setEventMessages($langs->trans('CloningFailed') . $this->db->lasterror(), null, 'errors');
+								$this->error = $langs->trans('CloningFailed') . $this->db->lasterror();
+								$this->errors[] = $this->error;
 								$error++;
 							}
 						}
@@ -3640,11 +3644,11 @@ class BookKeeping extends CommonObject
 					$error++;
 				} elseif ($periodeFiscal == 0) {
 					if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
-						setEventMessages($langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod'), null, 'errors');
+						$this->error = $langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod');
 					} else {
-						setEventMessages($langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod'), null, 'errors');
-						header("Location: " . $_SERVER['HTTP_REFERER']);
+						$this->error = $langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod');
 					}
+					$this->errors[] = $this->error;
 					$error++;
 				}
 
@@ -3725,7 +3729,8 @@ class BookKeeping extends CommonObject
 									if ($resqlInsert) {
 										setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
 									} else {
-										setEventMessages($langs->trans('CloningFailed'), null, 'errors');
+										$this->error = $langs->trans('CloningFailed') . $this->db->lasterror();
+										$this->errors[] = $this->error;
 										$error++;
 									}
 								}
@@ -3839,7 +3844,8 @@ class BookKeeping extends CommonObject
 								$newBookKeeping->update($user);
 								setEventMessages($langs->trans("SuccessReturnedAccount", $bookKeeping->piece_num), null, 'mesgs');
 							} else {
-								setEventMessages($langs->trans("ErrorWhileCreating", $newBookKeeping->error), $newBookKeeping->errors, 'errors');
+								$this->error = $langs->trans("ErrorWhileCreating", $newBookKeeping->error);
+								$this->errors = $newBookKeeping->errors;
 								$error++;
 							}
 						}
