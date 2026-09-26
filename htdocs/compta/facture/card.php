@@ -688,9 +688,108 @@ if (empty($reshook)) {
 		if (GETPOSTINT("remise_id") > 0) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount(GETPOSTINT("remise_id"));
-				if ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
+				$idremise = GETPOSTINT("remise_id");
+
+				// If the available credit is larger than what the invoice can still absorb, split it automatically:
+				// only the required part is inserted as a line, the rest stays available for another invoice.
+				$usemccompare = false;
+				$discount = new DiscountAbsolute($db);
+				if ($discount->fetch($idremise) > 0) {
+					// Under MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS, when the credit is in the invoice currency, compare and split
+					// in that currency (the company-currency amounts may use different exchange rates and would compare wrongly).
+					$usemccompare = (getDolGlobalInt('MULTICURRENCY_PAYMENT_USE_REAL_AMOUNTS') && isModEnabled('multicurrency')
+						&& !empty($discount->multicurrency_code) && !empty($object->multicurrency_code)
+						&& $discount->multicurrency_code == $object->multicurrency_code && $object->multicurrency_code != $conf->currency);
+					$maxtoabsorb = (float) price2num($usemccompare ? $object->getRemainToPay(1) : $object->getRemainToPay(0), 'MT');
+					$discountamountforcompare = (float) price2num($usemccompare ? $discount->multicurrency_amount_ttc : $discount->amount_ttc, 'MT');
+					if ($discountamountforcompare > $maxtoabsorb) {
+						if ($maxtoabsorb <= 0) {
+							// Nothing left to absorb: the credit cannot be used on this invoice at all
+							$error++;
+							setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
+						} else {
+							// Amount to apply, expressed in both currencies (the split itself works on company-currency amounts)
+							$depositeur = (float) $discount->amount_ttc;
+							$depositdev = (float) $discount->multicurrency_amount_ttc;
+							if ($usemccompare && $depositdev != 0) {
+								$applydev = $maxtoabsorb;
+								$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+							} else {
+								$applyeur = $maxtoabsorb;
+								$applydev = ($depositeur != 0 ? (float) price2num($applyeur / $depositeur * $depositdev, 'MT') : 0);
+							}
+							$splitparts = $discount->splitAmount($applyeur, (float) price2num($depositeur - $applyeur, 'MT'));
+							$applypart = $splitparts[0];
+							$remainpart = $splitparts[1];
+							$remaindev = 0.0;
+							if (!empty($discount->multicurrency_code) && $depositdev != 0) {
+								// Keep the foreign-currency value of each part in the same proportion
+								$remaindev = (float) price2num($depositdev - $applydev, 'MT');
+								$applypart->multicurrency_amount_ttc = $applydev;
+								$applypart->multicurrency_amount_ht = price2num($applydev / (1 + (float) $applypart->tva_tx / 100), 'MT');
+								$applypart->multicurrency_amount_tva = price2num($applydev - (float) $applypart->multicurrency_amount_ht);
+								$remainpart->multicurrency_amount_ttc = $remaindev;
+								$remainpart->multicurrency_amount_ht = price2num($remaindev / (1 + (float) $remainpart->tva_tx / 100), 'MT');
+								$remainpart->multicurrency_amount_tva = price2num($remaindev - (float) $remainpart->multicurrency_amount_ht);
+							}
+							$discount->fk_facture_source = 0;
+							$discount->fk_invoice_supplier_source = 0;
+							$resdelete = $discount->delete($user);
+							$newidapply = $applypart->create($user);
+							$newidremain = $remainpart->create($user);
+							if ($resdelete > 0 && $newidapply > 0 && $newidremain > 0) {
+								$idremise = $newidapply;
+								$splitappliedmsg = price($applyeur, 0, $langs, 1, -1, -1, $conf->currency);
+								$splitremainmsg = price((float) price2num($depositeur - $applyeur, 'MT'), 0, $langs, 1, -1, -1, $conf->currency);
+								if (!empty($discount->multicurrency_code) && $depositdev != 0) {
+									$splitappliedmsg .= ' / '.price($applydev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
+									$splitremainmsg .= ' / '.price($remaindev, 0, $langs, 1, -1, -1, $discount->multicurrency_code);
+								}
+								setEventMessages($langs->trans('DepositSplitAutomaticallyApplied', $splitappliedmsg, $splitremainmsg), null, 'warnings');
+							} else {
+								$error++;
+								setEventMessages($langs->trans("Error"), null, 'errors');
+							}
+						}
+					}
+				}
+
+				if (!$error) {
+					$result = $object->insert_discount($idremise);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+					if ($result > 0 && $usemccompare) {
+						// Follow the original currency: the part of the invoice covered by the credit keeps the company-currency value the
+						// credit was paid at, the rest stays at the invoice rate. The invoice rate becomes that effective rate, so the
+						// company-currency totals mirror the foreign-currency ones (no residual once the foreign amount is settled).
+						$object->fetch($id);
+						$object->fetch_lines();
+						$foreigngoods = 0.0;
+						$foreigncredits = 0.0;
+						$companycredits = 0.0;
+						foreach ($object->lines as $creditline) {
+							if (empty($creditline->fk_remise_except)) {
+								$foreigngoods += (float) $creditline->multicurrency_total_ttc;
+							} else {
+								$foreigncredits -= (float) $creditline->multicurrency_total_ttc;
+								$companycredits -= (float) $creditline->total_ttc;
+							}
+						}
+						$targetcompany = ((float) $object->multicurrency_tx > 0 ? ($foreigngoods - $foreigncredits) / (float) $object->multicurrency_tx : 0) + $companycredits;
+						if ($foreigngoods > 0 && $targetcompany > 0) {
+							$neweffectivetx = (float) price2num($foreigngoods / $targetcompany, 'CR');
+							if (abs($neweffectivetx - (float) $object->multicurrency_tx) >= 0.00000001) {
+								$resrate = $object->setMulticurrencyRate($neweffectivetx, 1);
+								if ($resrate < 0) {
+									$error++;
+									setEventMessages($object->error, $object->errors, 'errors');
+								} else {
+									setEventMessages($langs->trans('InvoiceRateRealigned', price2num($neweffectivetx, 'CR')), null, 'mesgs');
+								}
+							}
+						}
+					}
 				}
 			} else {
 				$error++;
@@ -1952,7 +2051,12 @@ if (empty($reshook)) {
 									}
 								}
 
-								$amount_ttc_diff = $amountdeposit[0];
+								// For variable deposits, use source TTC x percent to avoid 1-cent rounding diff vs final invoice.
+								if ($typeamount == 'variable') {
+									$amount_ttc_diff = (float) price2num($srcobject->total_ttc * ((float) $valuedeposit / 100), 'MT');
+								} else {
+									$amount_ttc_diff = $amountdeposit[0];
+								}
 							}
 
 							foreach ($amountdeposit as $tva => $amount) {
@@ -2008,9 +2112,11 @@ if (empty($reshook)) {
 								);
 							}
 
+							$object->update_price(1, 'auto', 0, $mysoc); // Refresh total_ttc (addline used noupdateafterinsertline=1)
+
 							$diff = $object->total_ttc - $amount_ttc_diff;
 
-							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA') && $diff != 0) {
+							if ($diff != 0) {
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
@@ -2508,6 +2614,33 @@ if (empty($reshook)) {
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 			$result = $object->updateline($line->id, $line->desc, $line_pu, $line->qty, (float) $remise_percent, $line->date_start, $line->date_end, $tvatx, $line->localtax1_tx, $line->localtax2_tx, $line_price_base_type, $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
 		}
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('progressforalllines', 'alpha') !== '' && $usercancreate && $object->situation_cycle_ref) {
+		// Update the situation progress for all lines
+		$all_progress = GETPOSTFLOAT('progressforalllines');
+		if ($all_progress > 100) {
+			$all_progress = 100;
+		}
+
+		foreach ($object->lines as $line) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				continue;
+			}
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				$percent = $line->getAllPrevProgress($object->id);
+			} else {
+				$percent = $line->get_prev_progress($object->id);
+			}
+			if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
+				$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
+				setEventMessages($mesg, null, 'warnings');
+			} elseif ($object->type == $object::TYPE_CREDIT_NOTE && (float) $all_progress > (float) $percent) {
+				$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeMoreThanMinPercent");
+				setEventMessages($mesg, null, 'warnings');
+			} else {
+				$object->update_percent($line, $all_progress, false);
+			}
+		}
+		$object->update_price(1);
 	} elseif ($action == 'confirm_addtextline' && $usercancreate) {
 		// Handling adding a new text line for subtotals module
 
@@ -3584,36 +3717,6 @@ if (empty($reshook)) {
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-		}
-	} elseif ($action == 'updatealllines' && $usercancreate && GETPOSTISSET('all_percent')) {	// Update all lines of situation invoice
-		if (!$object->fetch($id) > 0) {
-			dol_print_error($db);
-		}
-		if (GETPOST('all_progress') != "") {
-			$all_progress = GETPOSTFLOAT('all_progress');
-			if ($all_progress > 100) {
-				$all_progress = 100;
-			}
-
-			foreach ($object->lines as $line) {
-				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-					$percent = $line->getAllPrevProgress($object->id);
-				} else {
-					$percent = $line->get_prev_progress($object->id);
-				}
-				if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
-					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
-					setEventMessages($mesg, null, 'warnings');
-					$result = -1;
-				} elseif ($object->type == $object::TYPE_CREDIT_NOTE && (float) $all_progress > (float) $percent) {
-					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeMoreThanMinPercent");
-					setEventMessages($mesg, null, 'warnings');
-					$result = -1;
-				} else {
-					$object->update_percent($line, $all_progress, false);
-				}
-			}
-			$object->update_price(1);
 		}
 	} elseif ($action == 'updateline' && $usercancreate && !$cancel) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id); // To show again edited page
@@ -6746,50 +6849,6 @@ if ($action == 'create') {
 		//$forceall = 1;
 		global $inputalsopricewithtax;
 		$inputalsopricewithtax = 1;
-
-		// Show global modifiers for situation invoices
-		if (getDolGlobalString('INVOICE_USE_SITUATION')) {
-			if ($object->situation_cycle_ref && $object->status == 0) {
-				print '<!-- Area to change globally the situation percent -->'."\n";
-				print '<div class="div-table-responsive-no-min">';
-
-				print '<form name="updatealllines" id="updatealllines" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'#updatealllines" method="POST">';
-				print '<input type="hidden" name="token" value="'.newToken().'" />';
-				print '<input type="hidden" name="action" value="updatealllines" />';
-				print '<input type="hidden" name="id" value="'.$object->id.'" />';
-				print '<input type="hidden" name="page_y" value="" />';
-				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-
-				print '<table id="tablelines_all_progress" class="noborder noshadow centpercent">';
-
-				print '<tr class="liste_titre nodrag nodrop">';
-
-				// Adds a line numbering column
-				if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
-					print '<td align="center" width="5">&nbsp;</td>';
-				}
-				print '<td class="minwidth500imp">'.$langs->trans('ModifyAllLines').'</td>';
-				print '<td class="right">'.$langs->trans('CumulativeProgression').'</td>';
-				print '<td>&nbsp;</td>';
-				print "</tr>\n";
-
-				print '<tr class="nodrag nodrop">';
-				// Adds a line numbering column
-				if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
-					print '<td align="center" width="5">&nbsp;</td>';
-				}
-				print '<td>&nbsp;</td>';
-				print '<td class="nowrap right"><input type="text" size="1" value="" name="all_progress">%</td>';
-				print '<td class="right"><input type="submit" class="button reposition small" name="all_percent" value="'.$langs->trans("Modify").'" /></td>';
-				print '</tr>';
-
-				print '</table>';
-
-				print '</form>';
-
-				print '</div>';
-			}
-		}
 
 		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">

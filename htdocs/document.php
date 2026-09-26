@@ -50,21 +50,20 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Some value of modulepart can be used to get resources that are public so no login are required.
+// Note that only directory logo is free to access without login.
+$needlogin = 1;
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
+	$needlogin = 0;
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Keep $_GET here, GETPOST is not available yet
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
+	$needlogin = 0;
+}
+// If nologin required
+if (!$needlogin) {
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
 	}
@@ -326,13 +325,18 @@ if (!empty($hashp) && $hashp != 'shared') {
 }
 
 // Check permission on per object basis
-if (!empty($hashp) && $hashp != 'shared' && $accessallowed) {
+if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
 	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
+
 	//var_dump($object);
 	if (is_object($object)) {
 		$accessallowed = restrictedArea($user, $modulepart, $object);
 	} else {
-		$accessallowed = 0;
+		if ($modulepart == 'systemtools' && $user->admin) {
+			$accessallowed = 1;
+		} else {
+			$accessallowed = 0;
+		}
 	}
 }
 

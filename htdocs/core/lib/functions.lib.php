@@ -147,7 +147,7 @@ function formatLogObject($data)
  *
  * @param 	CommonObject|BlockedLog|null	$object 	Dolibarr common object.
  * @param 	string 							$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int								$forobject	Return the more complete path for the given object (including ref) instead of for the module only.
+ * @param	int								$forobject	Use 1 to return the more complete path for the given object (including ref) instead of for the module only.
  * @param	string							$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
  * @return 	string|null									The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
@@ -529,26 +529,33 @@ function isModEnabled($module)
 {
 	global $conf;
 
-	// Fix old names (map to new names)
-	$arrayconv = MODULE_MAPPING;
-	$arrayconvbis = array_flip(MODULE_MAPPING);
-
-	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
-		// Special cases: both use the same module.
-		$arrayconv['supplier_order'] = 'fournisseur';
-		$arrayconv['supplier_invoice'] = 'fournisseur';
+	if (!empty($conf->modules[$module])) {
+		return true;	// Most calls use the real name of the module: no need to look at the old/new names mapping
 	}
 
-	$module_alt = $module;
-	if (!empty($arrayconv[$module])) {
-		$module_alt = $arrayconv[$module];
-	}
-	$module_bis = $module;
-	if (!empty($arrayconvbis[$module])) {
-		$module_bis = $arrayconvbis[$module];
+	// Fix old names (map to new names). The mappings are constant for the request, so they are built once: this function is
+	// called thousands of times per page (hooks, rights, logs...), and array_flip() on each call was most of its cost.
+	static $arrayconv = null;
+	static $arrayconvbis = null;
+	if ($arrayconv === null) {
+		$arrayconv = MODULE_MAPPING;
+		$arrayconvbis = array_flip(MODULE_MAPPING);
+
+		if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+			// Special cases: both use the same module.
+			$arrayconv['supplier_order'] = 'fournisseur';
+			$arrayconv['supplier_invoice'] = 'fournisseur';
+		}
 	}
 
-	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]) || !empty($conf->modules[$module_bis]);
+	if (!empty($arrayconv[$module]) && !empty($conf->modules[$arrayconv[$module]])) {
+		return true;
+	}
+	if (!empty($arrayconvbis[$module]) && !empty($conf->modules[$arrayconvbis[$module]])) {
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -2079,7 +2086,8 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 0, $allowdash = 0
 }
 
 /**
- *  Clean a string to use it as an URL (into a href or src attribute)
+ *  Clean a string to use it as an URL (into a href or src attribute, or into a js string that is a location).
+ *  Raw '<' and '>' are url encoded (a browser always sends them encoded, so a real URL never holds them).
  *
  *  @param      string		$stringtoclean		String to clean
  *  @param		int			$type				0=Accept all Url, 1=Clean external Url (keep only relative Url)
@@ -2111,6 +2119,9 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 		// removing '//' should disable links to external url like //aaa or http//)
 		$stringtoclean = preg_replace(array('/^[a-z]*\/\/+/i'), '', $stringtoclean);
 	}
+
+	// A raw < or > can not be part of a valid URL. We encode them, so the result can not open an html tag or close an inline script block (</script does not need a >).
+	$stringtoclean = str_replace(array('<', '>'), array('%3C', '%3E'), $stringtoclean);
 
 	return $stringtoclean;
 }
@@ -6863,6 +6874,12 @@ function dol_textishtml($msg, $option = 0)
 		return false;
 	}
 
+	// Every pattern below needs a '<' (a tag) or a '&' (an entity): without both, the string can not be HTML. This saves the
+	// dozen of preg_match() below for the very common case of a plain label.
+	if (strpos($msg, '<') === false && strpos($msg, '&') === false) {
+		return false;
+	}
+
 	if ($option == 1) {
 		if (preg_match('/<(html|link|script)/i', $msg)) {
 			return true;
@@ -10472,7 +10489,7 @@ function getElementProperties($elementType)
 
 	$regs = array();
 
-	//$element_type='facture';
+	//var_dump($elementType);
 
 	$classfile = $classname = $classpath = $subdir = $dir_output = $dir_temp = $parent_element = '';
 
@@ -10524,16 +10541,27 @@ function getElementProperties($elementType)
 		$subelement = 'adherent_type';
 		$classname = 'AdherentType';
 		$table_element = 'adherent_type';
-	} elseif ($elementType == 'bank_account') {
+	} elseif ($elementType == 'bank_account' || $elementType == 'bank' || $elementType == 'banque') {
+		// 'bank' is the value used for the modulepart when downloading files attached to a bank account
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
+		$element = $subelement = 'bank_account';
+		$table_element = 'bank_account';
 	} elseif ($elementType == 'bank_line') {
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'AccountLine';
+	} elseif ($elementType == 'remisecheque') {
+		$classpath = 'compta/paiement/cheque/class';
+		$classfile = 'remisecheque';
+		$classname = 'RemiseCheque';
+		$module = 'bank';
+		$element = 'chequereceipt';
+		$subelement = 'cheque';
+		$table_element = 'bordereau_cheque';
 	} elseif ($elementType == 'category') {
 		$classpath = 'categories/class';
 		$module = 'categorie';
@@ -10560,10 +10588,12 @@ function getElementProperties($elementType)
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
 		$table_element = 'entrepot';
-	} elseif ($elementType == 'project') {
+	} elseif ($elementType == 'project' || $elementType == 'projet') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$table_element = 'projet';
+		$classfile = 'project';
+		$classname = 'Project';
 	} elseif ($elementType == 'project_task') {
 		$classpath = 'projet/class';
 		$module = 'projet';
@@ -10926,6 +10956,17 @@ function getElementProperties($elementType)
 		$classname = 'RecruitmentJobPosition';
 		$subelement = 'recruitmentjobposition';
 		$subdir = '/recruitmentjobposition';
+	} elseif ($elementType == 'recruitment') {
+		// The recruitment module has no class of its own, and the document links of its objects use
+		// the module name as modulepart (see document.php), so the module name resolves to the job
+		// position, the main object of the module.
+		$module = 'recruitment';
+		$classfile = 'recruitmentjobposition';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentJobPosition';
+		$element = $subelement = 'recruitmentjobposition';
+		$table_element = 'recruitment_recruitmentjobposition';
+		$subdir = '/recruitmentjobposition';
 	} elseif ($elementType == 'product_attribute_combination') {
 		$module = 'variants';
 		$classpath = 'variants/class';
@@ -11076,7 +11117,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
-	//var_dump($element_prop);
+	//var_dump($element_type, $element_prop);
 
 	// Check special cases
 	if ($element_prop['module'] == 'product' || $element_prop['module'] == 'service') {
@@ -11107,6 +11148,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 		if ($includeresult === false) {
 			dol_syslog('fetchObjectByElement: class file /' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php not found for element ' . $element_type, LOG_WARNING);
 		}
+		//var_dump('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php', $element_prop['classname']);
 
 		if (class_exists($element_prop['classname'])) {
 			$className = $element_prop['classname'];
@@ -11124,7 +11166,15 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			$objecttmp = new $className($db);
 			'@phan-var-force CommonObject $objecttmp';
 			/** @var CommonObject $objecttmp */
+
 			if ($element_id > 0 || !empty($element_ref)) {
+				// Special case for job, there is no ref, it is the id
+				// TODO Replace hard coded code with a test if object has a ref or not.
+				if (empty($element_id) && !empty($element_ref) && (in_array($objecttmp->element, array('evaluation', 'job', 'position', 'skill')))) {
+					$element_id = $element_ref;
+					$element_ref = '';
+				}
+
 				$ret = $objecttmp->fetch($element_id, $element_ref);
 				if ($ret >= 0) {
 					if (empty($objecttmp->module)) {
@@ -11150,7 +11200,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 				return $objecttmp;	// returned an object without fetch
 			}
 		} else {
-			dol_syslog($element_prop['classname'] . ' doesn\'t exists in /' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
+			dol_syslog($element_prop['classname'] . " doesn't exists in /" . $element_prop['classpath'] . "/" . $element_prop['classfile'] . ".class.php");
 			return -1;
 		}
 	}

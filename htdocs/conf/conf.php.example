@@ -327,12 +327,12 @@ $dolibarr_main_prod='1';
 // ==================================
 // To restrict commands you can execute by the backup feature, enter allowed command here.
 // Note: If you can, defining permission on OS linux (using SELinux for example) may be a better choice.
-// Default value: 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamdscan.exe, ls, tar, gzip, bz2, zstd'
+// Default value: 'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamdscan.exe, ls, tar, gzip, bzip2, zstd'
 // Examples:
 // $dolibarr_main_restrict_os_commands='mysqldump, /usr/local/bin/otherdumptool';
-// $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bz2, zstd';
+// $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bzip2, zstd';
 //
-$dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bz2, zstd';
+$dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe, ls, tar, gzip, bzip2, zstd';
 
 // dolibarr_main_restrict_eval_methods
 // ===================================
@@ -387,6 +387,19 @@ $dolibarr_nocsrfcheck='0';
 // $dolibarr_api_count_always_enabled='1';
 //
 // $dolibarr_api_count_always_enabled='1';
+
+// dolibarr_main_restrict_password_generation_none
+// ===============================================
+// Set this value to 1 so the 'none' password generation model (the one that applies no rule at
+// all when validating passwords) can never be used. It is then hidden from the admin security
+// page and cannot be selected. An installation still set to 'none' falls back to the 'standard'
+// model. It also forces a floor of 10 characters on the minimum length of the 'Perso' model.
+// Default value: 0
+// Possible values: 0 or 1
+// Examples:
+// $dolibarr_main_restrict_password_generation_none='1';
+//
+// $dolibarr_main_restrict_password_generation_none='1';
 
 // dolibarr_cron_allow_cli
 // =======================
@@ -523,12 +536,13 @@ $dolibarr_cron_allow_cli='0';
 // Examples:
 // $dolibarr_strict_mode=0;
 
-// dolibarr_allow_download_external_modules
-// ========================================
+// dolibarr_allow_download_app
+// ============================
 // Provide a link to download the zip of an external modules, installed into custom directory, from the web admin.
+// Also allows the export of the application files from the backup page (this includes the external modules).
 // Default value: 0
 // Examples:
-// $dolibarr_allow_download_external_modules=0;
+// $dolibarr_allow_download_app=0;
 
 
 

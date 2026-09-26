@@ -993,7 +993,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
                 var element = jQuery("#opp_status option:selected");
                 var defaultpercent = element.attr("defaultpercent");
                 /*if (jQuery("#opp_percent_not_set").val() == "") */
-                jQuery("#opp_percent").val(defaultpercent);
+                /* defaultpercent is the raw DB value (double(5,2), ie "100.00"), so normalize it */
+                jQuery("#opp_percent").val(parseFloat(defaultpercent));
         	}
 
 			/*init_myfunc();*/
@@ -1293,7 +1294,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print '</tr>';
 
 			// Opportunity amount
-			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
+			print '<tr class="classuseopportunity'.$classfortr.' "><td>'.$langs->trans("OpportunityAmount").'</td>';
 			print '<td><input class="width75 right marginright2" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'">';
 			print '<span class="opacitymedium">'.$langs->getCurrencySymbol($conf->currency).'</span>';
 			print '</td>';
@@ -1464,15 +1465,13 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 			// Opportunity status
-			print '<tr><td>'.$langs->trans("OpportunityStatus");
-			if ($action != 'edit_opp_status' && $user->hasRight('projet', 'creer')) {
-				print '<a class="editfielda paddingtop" href="'.$_SERVER["PHP_SELF"].'?action=edit_opp_status&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
-			}
+			print '<tr><td>';
+			print $form->editfieldkey("OpportunityStatus", '_opp_status', (string) $object->opp_status, $object, (int) $user->hasRight('projet', 'creer'), 'string');
 			print '</td><td>';
 			$html_name_status 	= ($action == 'edit_opp_status') ? 'opp_status' : 'none';
 			$html_name_percent 	= ($action == 'edit_opp_status') ? 'opp_percent' : 'none';
 			$percent_value = (GETPOSTISSET('opp_percent') ? GETPOSTINT('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
-			$formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->opp_status, $percent_value, $html_name_status, $html_name_percent);
+			print $formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->opp_status, $percent_value, $html_name_status, $html_name_percent, '', 1);
 			print '</td></tr>';
 
 			// Opportunity Amount
@@ -1624,23 +1623,26 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
                         jQuery("#divtocloseproject").hide();
                     }
 
+                    /* Note: defaultpercent and oldpercent hold raw DB values (double(5,2), ie "100.00"),
+                       so they are already in universal numeric format and must not go through price2numjs(),
+                       which would strip the "." as a thousand separator in languages like de_DE. */
                     /* Change percent with default percent (defaultpercent) if new status (defaultpercent) is higher than current (jQuery("#opp_percent").val()) */
                     if (oldpercent != \'\' && (parseFloat(defaultpercent) < parseFloat(oldpercent)))
                     {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent+" def < old");
                         if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
-							jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+							jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+parseFloat(oldpercent)+\' %\');
 						}
 
-						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(oldpercent); }
-                        else { jQuery("#opp_percent").val(price2numjs(defaultpercent)); }
+						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(parseFloat(oldpercent)); }
+                        else { jQuery("#opp_percent").val(parseFloat(defaultpercent)); }
                     } else {
 	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent);
                     	if (jQuery("#opp_percent").val() == \'\' || (parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent))) {
                         	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
-								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+								jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+parseFloat(oldpercent)+\' %\');
 							}
-                        	jQuery("#opp_percent").val(price2numjs(defaultpercent));
+                        	jQuery("#opp_percent").val(parseFloat(defaultpercent));
                     	}
                     }
             	}

@@ -4,7 +4,7 @@
  * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -214,6 +214,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$dbt_select = 'id';
 	} elseif ($features == 'bank') {
 		$features = 'banque';
+		$feature2 = 'cheque';
+	} elseif ($features == 'remisecheque') {
+		$features = 'banque';
 	} elseif ($features == 'facturerec') {
 		$features = 'facture';
 	} elseif ($features == 'supplier_invoicerec') {
@@ -232,6 +235,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$parentfortableentity = 'fk_website@website';
 	} elseif ($features == 'project') {
 		$features = 'projet';
+	} elseif ($features == 'project_task') {
+		$features = 'projet';
+		$objectid = (int) $object->fk_project;
+		$object = $objectid;
 	} elseif (is_object($object) && ($features == 'conferenceorbooth@eventorganization' || ($features == 'eventorganization' && $object->element == 'conferenceorbooth'))) {
 		// The module of an event organization declares no permission of its own, on purpose.
 		// Permission are done on project table.
@@ -256,6 +263,16 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'workstation';
 	} elseif ($features == 'hrm' && is_object($object) && in_array($object->element, array('job', 'position', 'skill'))) {
 		$feature2 = 'all';	// These 3 objects have no permission of their own, they share the level "all"
+	} elseif ($features == 'recruitment' && is_object($object) && in_array($object->element, array('recruitmentjobposition', 'recruitmentcandidature'))) {
+		// The recruitment module declares no permission at its first level, all its objects share the
+		// second level "recruitmentjobposition". When the caller provides the module name only
+		// (like document.php with its modulepart), we complete the missing parameters from the object.
+		if (empty($feature2)) {
+			$feature2 = 'recruitmentjobposition';
+		}
+		if (empty($tableandshare)) {
+			$tableandshare = $object->table_element;
+		}
 	} elseif ($features == 'stocktransfer' && is_object($object) && $object->element == 'stocktransfer') {
 		$feature2 = 'stocktransfer';	// This module declares no permission at its first level, only this one
 	} elseif (in_array($features, array('fournisseur', 'commande_fournisseur', 'facture_fournisseur', 'order_supplier', 'invoice_supplier'))) {	// When vendor invoice and purchase order are into module 'fournisseur'
@@ -388,11 +405,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif ($feature == 'produit') {
-			if ($object->type == 0 && !$user->hasRight('produit', 'lire')) {
+			// $object is only a real Product/Service when the check is scoped to one specific
+			// record (e.g. a product card); a generic area check (e.g. the product/service
+			// dashboard) never sets it, so it keeps its default int value and has no ->type to
+			// tell products and services apart - fall back to requiring either right.
+			if (!is_object($object)) {
+				if (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire')) {
+					$readok = 0;
+					$nbko++;
+				}
+			} elseif ($object->type == 0 && !$user->hasRight('produit', 'lire')) {
 				$readok = 0;
 				$nbko++;
-			}
-			if ($object->type == 1 && !$user->hasRight('service', 'lire')) {
+			} elseif ($object->type == 1 && !$user->hasRight('service', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -811,6 +836,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'category') {
 			$feature = 'categorie';
 		}
+		if ($feature == 'bank') {
+			$feature = 'banque';
+		}
 		if ($feature == 'contract') {
 			$dbtablename = 'contrat';
 		}
@@ -825,6 +853,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 		if ($feature == 'produit') {
 			$dbtablename = 'product';
+		}
+		if ($feature == 'ficheinter') {
+			$dbtablename = 'fichinter';
+		}
+		if ($feature == 'banque') {
+			// The module name (and permission name) is 'banque', but the table of the bank account object is 'bank_account'
+			$dbtablename = 'bank_account';
 		}
 		if ($feature == 'project') {
 			$feature = 'projet';
@@ -1187,6 +1222,67 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 	dol_syslog("security.lib.php::checkUserAccessToObject::return True", LOG_DEBUG);
 	return true;
+}
+
+/**
+ * Return, among a list of ids of objects of the same type, the ids of the objects the user is not allowed to access,
+ * with the same rules as checkUserAccessToObject(): entity, third parties of the sales representative when the user can not
+ * see all third parties, projects the user can see... It is used by the mass actions of the lists, where the ids come from
+ * the request and not from the list (the list only showed the objects the user can see, the request can contain any id).
+ * Only the types of objects linked to a third party or to a project are checked, an empty array is returned for the others.
+ *
+ * @param	User			$user		User
+ * @param	CommonObject	$object		An instance of the class of the objects (used for its element and table_element)
+ * @param	int[]			$ids		Ids of the objects
+ * @return	int[]						Ids of the objects the user can not access (empty if the user can access all of them)
+ * @see checkUserAccessToObject()
+ */
+function getObjectIdsRefusedToUser(User $user, $object, array $ids)
+{
+	$feature = '';
+	switch ($object->element) {
+		case 'societe':
+		case 'contact':
+		case 'contrat':
+		case 'ticket':
+		case 'facture':
+		case 'commande':
+		case 'propal':
+		case 'supplier_proposal':
+		case 'fichinter':
+		case 'shipping':
+		case 'reception':
+		case 'order_supplier':
+		case 'invoice_supplier':
+			$feature = $object->element;
+			break;
+		case 'action':
+			$feature = 'agenda';
+			break;
+		case 'project':
+			$feature = 'projet';
+			break;
+		case 'project_task':
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$feature = 'project_task';
+			break;
+	}
+	if (empty($feature)) {
+		return [];
+	}
+
+	$refusedids = [];
+	foreach ($ids as $id) {
+		$id = (int) $id;
+		if ($id <= 0) {
+			continue;
+		}
+		if (!checkUserAccessToObject($user, [$feature], $id, $object->table_element.'&'.$object->element, '', 'fk_soc', 'rowid')) {
+			$refusedids[] = $id;
+		}
+	}
+
+	return $refusedids;
 }
 
 

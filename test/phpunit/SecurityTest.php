@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf, $user, $langs, $db;
+global $conf, $user, $langs, $db, $mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 
@@ -440,6 +440,12 @@ class SecurityTest extends CommonClassTest
 	{
 		global $conf;
 
+		// This test exercises the 'None' model, so make sure it is not forbidden on the install
+		// running the test suite (see isPasswordGenerationNoneForbidden()).
+		$savPattern = getDolGlobalString('USER_PASSWORD_GENERATED');
+		$savFile = isset($conf->file->restrict_password_generation_none) ? $conf->file->restrict_password_generation_none : null;
+		$conf->file->restrict_password_generation_none = 0;
+
 		$genpass1 = getRandomPassword(true);				// Should be a string return by dol_hash (if no option set, will be md5)
 		print __METHOD__." genpass1=".$genpass1."\n";
 		$this->assertEquals(strlen($genpass1), 32);
@@ -458,7 +464,71 @@ class SecurityTest extends CommonClassTest
 		print __METHOD__." genpass3=".$genpass3."\n";
 		$this->assertEquals(strlen($genpass3), 12);
 
+		// Restore context
+		$conf->global->USER_PASSWORD_GENERATED = $savPattern;
+		if ($savFile === null) {
+			unset($conf->file->restrict_password_generation_none);
+		} else {
+			$conf->file->restrict_password_generation_none = $savFile;
+		}
+
 		return 0;
+	}
+
+	/**
+	 * testIsPasswordGenerationNoneForbidden
+	 *
+	 * @return void
+	 */
+	public function testIsPasswordGenerationNoneForbidden()
+	{
+		global $conf, $db, $langs, $user;
+
+		// Save context (backupGlobals is disabled for this test class)
+		$savPattern = getDolGlobalString('USER_PASSWORD_GENERATED');
+		$savPasswordPattern = getDolGlobalString('USER_PASSWORD_PATTERN');
+		$savFile = isset($conf->file->restrict_password_generation_none) ? $conf->file->restrict_password_generation_none : null;
+
+		// By default (no lock), the 'none' model is allowed
+		$conf->file->restrict_password_generation_none = 0;
+		$this->assertEquals(0, isPasswordGenerationNoneForbidden(), 'none model should be allowed by default');
+
+		// The conf.php variable forbids it
+		$conf->file->restrict_password_generation_none = 1;
+		$this->assertEquals(1, isPasswordGenerationNoneForbidden(), 'conf.php variable must forbid the none model');
+
+		// With the lock on, an installation still configured with 'none' falls back to 'standard'
+		$conf->global->USER_PASSWORD_GENERATED = 'None';
+		$genpass = getRandomPassword(false);
+		print __METHOD__." genpass=".$genpass."\n";
+		$this->assertEquals(12, strlen($genpass), 'forbidden none model must fall back to the 12 chars standard generator');
+
+		// When the lock is on, the 'Perso' model minimum length is floored at 10
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassPerso.class.php';
+
+		$conf->file->restrict_password_generation_none = 0;
+		$this->assertEquals(1, getPasswordPatternMinLength(), 'no floor on the Perso min length without the lock');
+
+		$conf->file->restrict_password_generation_none = 1;
+		$this->assertEquals(10, getPasswordPatternMinLength(), 'Perso min length floored at 10 with the lock');
+
+		// A stored pattern below the floor is clamped at generation/validation time
+		$conf->global->USER_PASSWORD_PATTERN = '8;1;1;0;3;1';
+		$modperso = new modGeneratePassPerso($db, $conf, $langs, $user);
+		$this->assertEquals(10, $modperso->length2, 'stored min length 8 must be clamped to 10 when the lock is on');
+
+		$conf->file->restrict_password_generation_none = 0;
+		$modperso = new modGeneratePassPerso($db, $conf, $langs, $user);
+		$this->assertEquals(8, $modperso->length2, 'stored min length 8 is kept as is without the lock');
+
+		// Restore context
+		$conf->global->USER_PASSWORD_GENERATED = $savPattern;
+		$conf->global->USER_PASSWORD_PATTERN = $savPasswordPattern;
+		if ($savFile === null) {
+			unset($conf->file->restrict_password_generation_none);
+		} else {
+			$conf->file->restrict_password_generation_none = $savFile;
+		}
 	}
 
 	/**
@@ -481,6 +551,108 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals(1, $result);
 	}
 
+	/**
+	 * testCheckUserAccessToObjectBank
+	 *
+	 * @return void
+	 */
+	public function testCheckUserAccessToObjectBank()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+		$account = new Account($db);
+		$account->ref = 'TSEC'.mt_rand(0, 99999);
+		$account->label = 'testCheckUserAccessToObjectBank '.$account->ref;
+		$account->type = Account::TYPE_CURRENT;
+		$account->currency_code = 'EUR';
+		$account->country_id = 1;
+		$account->date_solde = dol_now();
+		$accountid = $account->create($user);
+		$this->assertGreaterThan(0, $accountid, 'Bank account must be created');
+
+		// A user that can not see all third parties, so the access is checked with a sql request
+		$restricteduser = new User($db);
+		$this->assertEmpty($restricteduser->hasRight('societe', 'client', 'voir'), 'User must not see all third parties');
+
+		$result = checkUserAccessToObject($restricteduser, array('banque'), $accountid);
+		$this->assertTrue($result, 'Access to bank account with feature banque');
+		$result = checkUserAccessToObject($restricteduser, array('bank'), $accountid);
+		$this->assertTrue($result, 'Access to bank account with feature bank, the english name of the module');
+	}
+
+
+	/**
+	 * testGetObjectIdsRefusedToUser
+	 *
+	 * The mass actions of the lists get the ids to process from the request. getObjectIdsRefusedToUser() must refuse the
+	 * objects of the third parties that are not assigned to a user who can not see all third parties, and accept them once
+	 * the user is a sales representative of the third party, like the lists and the cards do.
+	 *
+	 * @return void
+	 */
+	public function testGetObjectIdsRefusedToUser()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
+
+		$soc = new Societe($db);
+		$soc->name = 'testGetObjectIdsRefusedToUser '.mt_rand(0, 99999);
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, 'Third party must be created');
+
+		$invoice = new Facture($db);
+		$invoice->socid = $socid;
+		$invoice->date = dol_now();
+		$invoice->type = Facture::TYPE_STANDARD;
+		$invoiceid = $invoice->create($user);
+		$this->assertGreaterThan(0, $invoiceid, 'Invoice must be created');
+
+		try {
+			// A user who can see the third parties, but only the ones assigned to him: he is not assigned to this one
+			$restricteduser = new User($db);
+			$restricteduser->id = $user->id;
+			$restricteduser->entity = $user->entity;
+			$restricteduser->socid = 0;
+			$restricteduser->rights = new stdClass();
+			$restricteduser->rights->societe = new stdClass();
+			$restricteduser->rights->societe->lire = 1;
+			$restricteduser->rights->societe->client = new stdClass();
+			$restricteduser->rights->societe->client->voir = 0;
+
+			$this->assertSame(array($invoiceid), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'The invoice of a third party not assigned to the restricted user must be refused');
+			$this->assertSame(array($socid), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'The third party not assigned to the restricted user must be refused');
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Bookmark($db), array(1, 2)), 'A type of object without third party is not checked');
+
+			// The same user with the permission to see all third parties
+			$restricteduser->rights->societe->client->voir = 1;
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'A user who sees all third parties can access the invoice');
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'A user who sees all third parties can access the third party');
+
+			// The restricted user, once he is a sales representative of the third party
+			$restricteduser->rights->societe->client->voir = 0;
+			$this->assertGreaterThanOrEqual(0, $soc->add_commercial($user, $restricteduser->id), 'User must be added as sales representative');
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Facture($db), array($invoiceid)), 'The sales representative of the third party can access its invoice');
+			$this->assertSame(array(), getObjectIdsRefusedToUser($restricteduser, new Societe($db), array($socid)), 'The sales representative can access the third party');
+		} finally {
+			$invoice->delete($user);
+			$soc->delete($socid, $user);
+		}
+	}
 
 	/**
 	 * testDolSanitizeUrl
@@ -506,6 +678,25 @@ class SecurityTest extends CommonClassTest
 		$test = '/javas:cript/google.com';
 		$result = dol_sanitizeUrl($test);
 		$this->assertEquals('google.com', $result, 'Test on dol_sanitizeUrl C');
+
+		// A normal relative url is not modified when we accept all urls
+		$test = '/comm/propal/card.php?id=23&search_ref=a:b@c;d';
+		$result = dol_sanitizeUrl($test, 0);
+		$this->assertEquals($test, $result, 'Test on dol_sanitizeUrl D: a url without evil chars is unchanged with type 0');
+
+		// A raw < or > (that a browser never sends in a url) is encoded, so it can not close an html tag or an inline script block
+		$test = '/comm/propal/card.php?id=23&x=</script><b>X</b>';
+		$result = dol_sanitizeUrl($test, 0);
+		$this->assertEquals('/comm/propal/card.php?id=23&x=%3C/script%3E%3Cb%3EX%3C/b%3E', $result, 'Test on dol_sanitizeUrl E: < and > are encoded');
+
+		$test = '/comm/propal/card.php?id=23&x=</script/x';
+		$result = dol_sanitizeUrl($test, 0);
+		$this->assertEquals('/comm/propal/card.php?id=23&x=%3C/script/x', $result, 'Test on dol_sanitizeUrl F: < is encoded even with no closing >');
+
+		$test = '/x?a=<img src=x onerror=alert(1)>';
+		$result = dol_sanitizeUrl($test);
+		$this->assertStringNotContainsString('<', $result, 'Test on dol_sanitizeUrl G');
+		$this->assertStringNotContainsString('>', $result, 'Test on dol_sanitizeUrl G');
 	}
 
 	/**

@@ -19,12 +19,14 @@
  * \file    test/phpunit/ModuleBuilderTemplateConventionsTest.php
  * \ingroup modulebuilder
  * \brief   PHPUnit test for ModuleBuilder template conventions: status labels derived from
- *          arrayofkeyval, and normalized trigger naming (MYMODULE_MYOBJECT_ACTION).
+ *          arrayofkeyval, normalized trigger naming (MYMODULE_MYOBJECT_ACTION), and card action
+ *          markers that must survive the generation time block removal.
  */
 
-global $conf, $user, $langs, $db;
+global $conf, $user, $langs, $db, $mysoc;
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -60,6 +62,15 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 	 * @var string Absolute path to the seed data SQL template.
 	 */
 	const DATA_SQL = __DIR__.'/../../htdocs/modulebuilder/template/sql/data.sql';
+
+	/**
+	 * @var string[] Templates the 'do not manage lines' option strips MODULEBUILDER LINES blocks from.
+	 */
+	const LINES_TPL = array(
+		__DIR__.'/../../htdocs/modulebuilder/template/myobject_card.php',
+		__DIR__.'/../../htdocs/modulebuilder/template/class/myobject.class.php',
+		__DIR__.'/../../htdocs/modulebuilder/template/class/api_mymodule.class.php',
+	);
 
 	/**
 	 * getLibStatut() must use the label defined in the status field arrayofkeyval, not a hardcoded one.
@@ -115,6 +126,164 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 		foreach (array(self::CLASS_TPL, self::CARD_TPL, self::DATA_SQL) as $tpl) {
 			$content = file_get_contents($tpl);
 			$this->assertSame(0, preg_match($legacy, $content), 'Legacy unprefixed trigger code found in '.basename($tpl));
+		}
+	}
+
+	/**
+	 * Assert that a PHP source string is parsable, by linting it in a temporary file.
+	 *
+	 * @param	string	$content	PHP source to lint
+	 * @param	string	$message	Message reported on failure
+	 * @return	void
+	 */
+	private function assertPhpSourceIsParsable($content, $message)
+	{
+		$tmpfile = tempnam(sys_get_temp_dir(), 'mbcardaction').'.php';
+		file_put_contents($tmpfile, $content);
+
+		$output = array();
+		$returncode = 0;
+		exec(escapeshellarg(PHP_BINARY).' -l '.escapeshellarg($tmpfile).' 2>&1', $output, $returncode);
+		unlink($tmpfile);
+
+		$this->assertSame(0, $returncode, $message.' : '.implode("\n", $output));
+	}
+
+	/**
+	 * Every card action marker must open and close the same number of times, otherwise the generation
+	 * time removal eats an unrelated part of the card page.
+	 *
+	 * @return void
+	 */
+	public function testCardActionMarkersAreBalancedInTemplate()
+	{
+		$content = file_get_contents(self::CARD_TPL);
+
+		foreach (getModuleBuilderObjectCardActions() as $actionkey => $meta) {
+			$begin = preg_match_all('/\/\/ BEGIN MODULEBUILDER ACTION '.$meta['marker'].'$/m', $content);
+			$end = preg_match_all('/\/\/ END MODULEBUILDER ACTION '.$meta['marker'].'$/m', $content);
+
+			$this->assertGreaterThan(0, $begin, 'No block anchored for card action '.$actionkey);
+			$this->assertSame($begin, $end, 'Unbalanced markers for card action '.$actionkey);
+		}
+	}
+
+	/**
+	 * MODULEBUILDER LINES markers must be balanced and never nested: the removal pattern is non greedy,
+	 * so a nested pair makes the outer BEGIN match the inner END and cuts an unbalanced fragment.
+	 *
+	 * @return void
+	 */
+	public function testLinesMarkersAreBalancedAndNotNestedInTemplates()
+	{
+		foreach (self::LINES_TPL as $tpl) {
+			$content = file_get_contents($tpl);
+			$name = basename($tpl);
+
+			$begin = preg_match_all('/^\h*\/\/BEGIN MODULEBUILDER LINES$/m', $content);
+			$end = preg_match_all('/^\h*\/\/END MODULEBUILDER LINES$/m', $content);
+			$this->assertGreaterThan(0, $begin, 'No MODULEBUILDER LINES block in '.$name);
+			$this->assertSame($begin, $end, 'Unbalanced MODULEBUILDER LINES markers in '.$name);
+
+			$markers = array();
+			preg_match_all('/^\h*\/\/(BEGIN|END) MODULEBUILDER LINES$/m', $content, $markers);
+			$depth = 0;
+			foreach ($markers[1] as $marker) {
+				$depth += ($marker === 'BEGIN' ? 1 : -1);
+				$this->assertGreaterThanOrEqual(0, $depth, 'END before BEGIN in '.$name);
+				$this->assertLessThanOrEqual(1, $depth, 'Nested MODULEBUILDER LINES markers in '.$name);
+			}
+			$this->assertSame(0, $depth, 'Unclosed MODULEBUILDER LINES block in '.$name);
+
+			// A correctly paired file lets the production pattern match every block
+			$this->assertSame($begin, preg_match_all(getModuleBuilderLinesBlockPattern(), $content), 'Pattern does not pair every block in '.$name);
+		}
+	}
+
+	/**
+	 * The Cancel / Re-Open block ships commented out: its two sentinel lines are what the generator
+	 * removes to activate it.
+	 *
+	 * @return void
+	 */
+	public function testStatusChangeSentinelsArePresentOnceInTemplate()
+	{
+		$content = file_get_contents(self::CARD_TPL);
+
+		$this->assertSame(1, preg_match_all('/\/\* BEGIN COMMENTED STATUSCHANGE$/m', $content));
+		$this->assertSame(1, preg_match_all('/^\h*END COMMENTED STATUSCHANGE \*\/$/m', $content));
+	}
+
+	/**
+	 * Removing a card action block must leave a parsable card page: this is what catches a marker
+	 * dropped in the middle of a control structure.
+	 *
+	 * @return void
+	 */
+	public function testCardTemplateStaysParsableWhenEachActionIsRemoved()
+	{
+		$content = file_get_contents(self::CARD_TPL);
+
+		foreach (getModuleBuilderObjectCardActions() as $actionkey => $meta) {
+			$stripped = preg_replace(getModuleBuilderCardActionBlockPattern($meta['marker']), '', $content);
+
+			$this->assertNotNull($stripped, 'Block pattern failed for card action '.$actionkey);
+			$this->assertStringNotContainsString('MODULEBUILDER ACTION '.$meta['marker'], $stripped, 'Block left behind for card action '.$actionkey);
+			$this->assertPhpSourceIsParsable($stripped, 'Card page is not parsable without card action '.$actionkey);
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testCardTemplateStaysParsableWhenAllActionsAreRemoved()
+	{
+		$stripped = file_get_contents(self::CARD_TPL);
+		foreach (getModuleBuilderObjectCardActions() as $meta) {
+			$stripped = preg_replace(getModuleBuilderCardActionBlockPattern($meta['marker']), '', $stripped);
+		}
+
+		$this->assertPhpSourceIsParsable($stripped, 'Card page is not parsable without any card action');
+	}
+
+	/**
+	 * Activating Cancel / Re-Open must produce live code, not a leftover comment.
+	 *
+	 * @return void
+	 */
+	public function testStatusChangeActivationProducesParsableCode()
+	{
+		$activated = file_get_contents(self::CARD_TPL);
+		foreach (getModuleBuilderCardActionUncommentPatterns('STATUSCHANGE') as $pattern) {
+			$activated = preg_replace($pattern, '', $activated);
+			$this->assertNotNull($activated, 'Uncomment pattern failed for STATUSCHANGE');
+		}
+
+		$this->assertStringNotContainsString('COMMENTED STATUSCHANGE', $activated);
+		$this->assertMatchesRegularExpression('/^\h*print dolGetButtonAction\(.*Re-Open/m', $activated, 'Re-Open button is still commented out after activation');
+		$this->assertPhpSourceIsParsable($activated, 'Card page is not parsable once Cancel / Re-Open is activated');
+	}
+
+	/**
+	 * Templates must stay parsable once the object lines code is stripped.
+	 *
+	 * @return void
+	 */
+	public function testTemplatesStayParsableWithoutLines()
+	{
+		foreach (self::LINES_TPL as $tpl) {
+			$stripped = preg_replace(getModuleBuilderLinesBlockPattern(), '', file_get_contents($tpl));
+			$this->assertNotNull($stripped, 'Lines pattern failed on '.basename($tpl));
+			$this->assertStringNotContainsString('MODULEBUILDER LINES', $stripped, 'Leftover marker in '.basename($tpl));
+
+			$tmpfile = tempnam(sys_get_temp_dir(), 'mbnolines').'.php';
+			file_put_contents($tmpfile, $stripped);
+			$output = array();
+			$returncode = 0;
+			exec(escapeshellarg(PHP_BINARY).' -l '.escapeshellarg($tmpfile).' 2>&1', $output, $returncode);
+			unlink($tmpfile);
+
+			$this->assertSame(0, $returncode, basename($tpl).' is not parsable without lines : '.implode("\n", $output));
 		}
 	}
 }

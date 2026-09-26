@@ -472,6 +472,10 @@ class Documents extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
+		if ($modulepart == 'facture_fournisseur') {
+			$modulepart = 'supplier_invoice';	// Alias unknown by fetchObjectByElement()
+		}
+
 		// Define $object
 		$object = fetchObjectByElement($id, $modulepart, $ref);		// Note that we don't mind id and ref, we want to get a valid instantiated $object but not necessarily initialized
 		if (!is_object($object)) {
@@ -479,7 +483,12 @@ class Documents extends DolibarrApi
 		}
 
 		// Define $upload_dir to scan
-		$upload_dir = getMultidirOutput($object, '', 1);
+		if ($object->element == 'invoice_supplier' && $object->id > 0) {
+			// Supplier invoices are stored under a hashed subdir, as in the other methods of this file
+			$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+		} else {
+			$upload_dir = (string) getMultidirOutput($object, '', 1);
+		}
 
 		// Check object-level permissions
 		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($object->element), $object, $object->table_element, '');
@@ -896,7 +905,7 @@ class Documents extends DolibarrApi
 			if ($result == 0) {
 				throw new RestException(404, "Object with ref '".$ref."' was not found.");
 			} elseif ($result < 0) {
-				throw new RestException(500, 'Error while fetching object: '.$object->error);
+				throw new RestException(500, 'Error while fetching object: '.$object->errorsToString());
 			}
 
 			if (!($object->id > 0)) {

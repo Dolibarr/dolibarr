@@ -2539,7 +2539,11 @@ class Holiday extends CommonObject
 
 		$now = dol_now();
 
-		$sql = "SELECT h.rowid, h.date_debut";
+		// The count and the number of late requests are computed by the database instead of reading every request. A request is
+		// late when its start date is before now minus the warning delay (a request without start date was counted as late,
+		// this is kept).
+		$sql = "SELECT COUNT(h.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN h.date_debut IS NULL OR h.date_debut < '".$this->db->idate($now - $conf->holiday->approve->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut = 2";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
@@ -2560,12 +2564,10 @@ class Holiday extends CommonObject
 			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_status=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
 			$response->img = img_object('', "holiday");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if ($this->db->jdate($obj->date_debut) < ($now - $conf->holiday->approve->warning_delay)) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;

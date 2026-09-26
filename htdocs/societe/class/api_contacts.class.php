@@ -350,7 +350,7 @@ class Contacts extends DolibarrApi
 			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
 			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
 			if ($id < 0) {
-				throw new RestException(404, 'Country code not found in database: ' . $this->db->error);
+				throw new RestException(404, 'Country code not found in database: ' . $this->db->lasterror());
 			}
 			$request_data['country_id'] = $id;
 		}
@@ -459,7 +459,7 @@ class Contacts extends DolibarrApi
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 0, 'update') > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->contact->error);
+			throw new RestException(500, $this->contact->errorsToString());
 		}
 	}
 
@@ -489,7 +489,7 @@ class Contacts extends DolibarrApi
 		$this->contact->oldcopy = clone $this->contact; // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if ($this->contact->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when delete contact ' . $this->contact->error);
+			throw new RestException(500, 'Error when delete contact ' . $this->contact->errorsToString());
 		}
 
 		return array(
@@ -584,7 +584,7 @@ class Contacts extends DolibarrApi
 		$result = $categories->getListForItem($id, 'contact', $sortfield, $sortorder, $limit, $page);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
 		return $result;
