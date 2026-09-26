@@ -331,13 +331,9 @@ if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin) {
 	//var_dump($object);
 	if (is_object($object)) {
 		$accessallowed = restrictedArea($user, $modulepart, $object);
-	} else {
-		if ($modulepart == 'systemtools' && $user->admin) {
-			$accessallowed = 1;
-		} else {
-			$accessallowed = 0;
-		}
 	}
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
 }
 
 // Security:

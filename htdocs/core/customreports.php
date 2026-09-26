@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -364,7 +364,7 @@ if ($errorstr) {
 		$i2++; // a criteria for 1 more field was added to string
 
 		if ($newres) {
-			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
+			$res = $res.($res ? ' AND ' : '').($i3 > 1 ? '(' : '').$newres.($i3 > 1 ? ')' : '');
 		}
 		$i1++;
 	}

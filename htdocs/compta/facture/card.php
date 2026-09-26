@@ -309,6 +309,7 @@ if (empty($reshook)) {
 		$isErasable = $object->is_erasable();
 
 		if (($isErasable > 0) || ($usercancreate && $isErasable == 1)) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user, 0, (int) $idwarehouse);
 			if ($result > 0) {
 				header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1');
@@ -2614,6 +2615,33 @@ if (empty($reshook)) {
 			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
 			$result = $object->updateline($line->id, $line->desc, $line_pu, $line->qty, (float) $remise_percent, $line->date_start, $line->date_end, $tvatx, $line->localtax1_tx, $line->localtax2_tx, $line_price_base_type, $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
 		}
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('progressforalllines', 'alpha') !== '' && $usercancreate && $object->situation_cycle_ref) {
+		// Update the situation progress for all lines
+		$all_progress = GETPOSTFLOAT('progressforalllines');
+		if ($all_progress > 100) {
+			$all_progress = 100;
+		}
+
+		foreach ($object->lines as $line) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				continue;
+			}
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+				$percent = $line->getAllPrevProgress($object->id);
+			} else {
+				$percent = $line->get_prev_progress($object->id);
+			}
+			if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
+				$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
+				setEventMessages($mesg, null, 'warnings');
+			} elseif ($object->type == $object::TYPE_CREDIT_NOTE && (float) $all_progress > (float) $percent) {
+				$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeMoreThanMinPercent");
+				setEventMessages($mesg, null, 'warnings');
+			} else {
+				$object->update_percent($line, $all_progress, false);
+			}
+		}
+		$object->update_price(1);
 	} elseif ($action == 'confirm_addtextline' && $usercancreate) {
 		// Handling adding a new text line for subtotals module
 
@@ -3690,36 +3718,6 @@ if (empty($reshook)) {
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-		}
-	} elseif ($action == 'updatealllines' && $usercancreate && GETPOSTISSET('all_percent')) {	// Update all lines of situation invoice
-		if (!$object->fetch($id) > 0) {
-			dol_print_error($db);
-		}
-		if (GETPOST('all_progress') != "") {
-			$all_progress = GETPOSTFLOAT('all_progress');
-			if ($all_progress > 100) {
-				$all_progress = 100;
-			}
-
-			foreach ($object->lines as $line) {
-				if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-					$percent = $line->getAllPrevProgress($object->id);
-				} else {
-					$percent = $line->get_prev_progress($object->id);
-				}
-				if ($object->type != $object::TYPE_CREDIT_NOTE && (float) $all_progress < (float) $percent) {
-					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
-					setEventMessages($mesg, null, 'warnings');
-					$result = -1;
-				} elseif ($object->type == $object::TYPE_CREDIT_NOTE && (float) $all_progress > (float) $percent) {
-					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeMoreThanMinPercent");
-					setEventMessages($mesg, null, 'warnings');
-					$result = -1;
-				} else {
-					$object->update_percent($line, $all_progress, false);
-				}
-			}
-			$object->update_price(1);
 		}
 	} elseif ($action == 'updateline' && $usercancreate && !$cancel) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id); // To show again edited page
@@ -6852,50 +6850,6 @@ if ($action == 'create') {
 		//$forceall = 1;
 		global $inputalsopricewithtax;
 		$inputalsopricewithtax = 1;
-
-		// Show global modifiers for situation invoices
-		if (getDolGlobalString('INVOICE_USE_SITUATION')) {
-			if ($object->situation_cycle_ref && $object->status == 0) {
-				print '<!-- Area to change globally the situation percent -->'."\n";
-				print '<div class="div-table-responsive-no-min">';
-
-				print '<form name="updatealllines" id="updatealllines" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'#updatealllines" method="POST">';
-				print '<input type="hidden" name="token" value="'.newToken().'" />';
-				print '<input type="hidden" name="action" value="updatealllines" />';
-				print '<input type="hidden" name="id" value="'.$object->id.'" />';
-				print '<input type="hidden" name="page_y" value="" />';
-				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-
-				print '<table id="tablelines_all_progress" class="noborder noshadow centpercent">';
-
-				print '<tr class="liste_titre nodrag nodrop">';
-
-				// Adds a line numbering column
-				if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
-					print '<td align="center" width="5">&nbsp;</td>';
-				}
-				print '<td class="minwidth500imp">'.$langs->trans('ModifyAllLines').'</td>';
-				print '<td class="right">'.$langs->trans('CumulativeProgression').'</td>';
-				print '<td>&nbsp;</td>';
-				print "</tr>\n";
-
-				print '<tr class="nodrag nodrop">';
-				// Adds a line numbering column
-				if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
-					print '<td align="center" width="5">&nbsp;</td>';
-				}
-				print '<td>&nbsp;</td>';
-				print '<td class="nowrap right"><input type="text" size="1" value="" name="all_progress">%</td>';
-				print '<td class="right"><input type="submit" class="button reposition small" name="all_percent" value="'.$langs->trans("Modify").'" /></td>';
-				print '</tr>';
-
-				print '</table>';
-
-				print '</form>';
-
-				print '</div>';
-			}
-		}
 
 		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">

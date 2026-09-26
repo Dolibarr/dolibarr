@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -330,16 +330,12 @@ if (!empty($hashp) && $hashp != 'shared') {
 // Check permission on per object basis
 if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin && !$imagepublicfortakepos) {
 	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
-	//var_dump($object);
+
 	if (is_object($object)) {
 		$accessallowed = restrictedArea($user, $modulepart, $object);
-	} else {
-		if ($modulepart == 'systemtools' && $user->admin) {
-			$accessallowed = 1;
-		} else {
-			$accessallowed = 0;
-		}
 	}
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
 }
 
 // Security:

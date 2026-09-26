@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -156,12 +156,13 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'update' &&
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('adherent', 'cotisation', 'creer')) {
 	$result = $object->fetch($rowid);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		header("Location: ".DOL_URL_ROOT."/adherents/card.php?rowid=".$object->fk_adherent);
 		exit;
 	} else {
-		$errmesg = $adh->error;
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 

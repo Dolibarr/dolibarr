@@ -437,7 +437,8 @@ script:
     # never found for a new pull request and a scan of the whole tree takes 3 minutes. A change of the rules checks all.
     PHPCS_FILES=.
     if [ -n "${changed_files:-}" ] && ! echo "$changed_files" | grep -qE '^(dev/setup/codesniffer/|\.travis\.yml$)'; then
-      PHPCS_FILES=$(echo "$changed_files" | grep -E '\.php$' | while read -r f; do [ -f "$f" ] && echo "$f"; done)
+      # A file deleted by the pull request is skipped. With "[ -f ] && echo" the loop, so the assignment (set -e), fails when the last file of the list is deleted.
+      PHPCS_FILES=$(echo "$changed_files" | grep -E '\.php$' | while read -r f; do if [ -f "$f" ]; then echo "$f"; fi; done)
     fi
     if [ "x$TRAVIS_RUN_PHPCS" = "xyes" ] && [ -z "$PHPCS_FILES" ]; then
       echo "No php file changed by the pull request"

@@ -25,7 +25,7 @@
  *					code reads php://input when the file is not a real http upload.
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/fileupload.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';

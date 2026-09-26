@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 $langs->loadLangs(array("admin", "errors"));
 
-if (!$user->admin && !$user->hasRight('bockedlog', 'read')) {
+if (!$user->admin && !$user->hasRight('blockedlog', 'read')) {
 	accessforbidden();
 }
 

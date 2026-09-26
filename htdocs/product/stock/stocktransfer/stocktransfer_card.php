@@ -224,10 +224,13 @@ if (empty($reshook)) {
 
 			$line->pmp = $prod->pmp;
 			if ($line->id > 0) {
-				$line->update($user);
+				$result = $line->update($user);
 			} else {
 				$line->rang = (is_array($object->lines) || $object->lines instanceof Countable) ? count($object->lines) + 1 : 1;
-				$line->create($user);
+				$result = $line->create($user);
+			}
+			if ($result < 0) {
+				setEventMessages($line->error, $line->errors, 'errors');
 			}
 			$object->fetchLines();
 		}
@@ -308,8 +311,12 @@ if (empty($reshook)) {
 			$object->setStatut($object::STATUS_TRANSFERED, $id);
 			$object->status = $object::STATUS_TRANSFERED;
 			$object->date_reelle_depart = dol_now();
-			$object->update($user);
-			setEventMessage('StockStransferDecremented');
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessage('StockStransferDecremented');
+			}
 		}
 	}
 
@@ -335,8 +342,12 @@ if (empty($reshook)) {
 			$object->setStatut($object::STATUS_VALIDATED, $id);
 			$object->status = $object::STATUS_VALIDATED;
 			$object->date_reelle_depart = null;
-			$object->update($user);
-			setEventMessage('StockStransferDecrementedCancel', 'warnings');
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessage('StockStransferDecrementedCancel', 'warnings');
+			}
 		}
 	}
 
@@ -362,13 +373,21 @@ if (empty($reshook)) {
 			$object->setStatut($object::STATUS_CLOSED, $id);
 			$object->status = $object::STATUS_CLOSED;
 			$object->date_reelle_arrivee = dol_now();
-			$object->update($user);
-			$result = $object->call_trigger('STOCKTRANSFER_CLOSE', $user);
+			$result = $object->update($user);
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			setEventMessage('StockStransferIncrementedShort');
+			if (!$error) {
+				$result = $object->call_trigger('STOCKTRANSFER_CLOSE', $user);
+				if ($result < 0) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+			if (!$error) {
+				setEventMessage('StockStransferIncrementedShort');
+			}
 		}
 	}
 
@@ -394,8 +413,12 @@ if (empty($reshook)) {
 			$object->setStatut($object::STATUS_TRANSFERED, $id);
 			$object->status = $object::STATUS_TRANSFERED;
 			$object->date_reelle_arrivee = null;
-			$object->update($user);
-			setEventMessage('StockStransferIncrementedShortCancel', 'warnings');
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessage('StockStransferIncrementedShortCancel', 'warnings');
+			}
 		}
 	}
 

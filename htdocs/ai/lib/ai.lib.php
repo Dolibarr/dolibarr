@@ -271,32 +271,28 @@ function testAIConnection(string $service, string $key, string $url): array
 		];
 	}
 
-	// Execute cURL
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-	// Optional: Add SSL verification if behind a proxy with self-signed certs
-	// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	// Execute request with the Dolibarr HTTP wrapper (handles proxy, SSL and logging)
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-	$result = curl_exec($ch);
-	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	$err = curl_error($ch);
-	curl_close($ch);
+	// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
+	// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
+	global $dolibarr_ai_allow_local_endpoints;
+	$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
 
-	if ($err) {
-		return ['success' => false, 'message' => "Curl Error: $err"];
+	$result = getURLContent($url, 'POST', json_encode($data), 1, $headers, array('http', 'https'), $localurl, -1, 0, 10);
+	$httpCode = (int) ($result['http_code'] ?? 0);
+	$responseContent = (string) ($result['content'] ?? '');
+
+	if (!empty($result['curl_error_no'])) {
+		return ['success' => false, 'message' => "Curl Error: ".($result['curl_error_msg'] ?? '')];
 	}
 
 	if ($httpCode >= 200 && $httpCode < 300) {
 		return ['success' => true, 'message' => "OK (HTTP $httpCode)."];
 	} else {
-		$json = json_decode($result, true);
+		$json = json_decode($responseContent, true);
 		// Attempt to find the error message in various common structures
-		$msg = $json['error']['message'] ?? $json['message'] ?? substr($result, 0, 150);
+		$msg = $json['error']['message'] ?? $json['message'] ?? substr($responseContent, 0, 150);
 		return ['success' => false, 'message' => "HTTP $httpCode. Error: $msg"];
 	}
 }

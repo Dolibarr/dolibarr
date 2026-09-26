@@ -5,7 +5,7 @@
  * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
@@ -310,12 +310,11 @@ if (empty($reshook)) {
 			$tmpmember->fetch($idtoclose);
 			$result = $tmpmember->resiliate($user);
 
-			if ($result < 0 && !count($tmpmember->errors)) {
+			if ($result < 0) {
+				$error++;
 				setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
-			} else {
-				if ($result > 0) {
-					$nbclose++;
-				}
+			} elseif ($result > 0) {
+				$nbclose++;
 			}
 		}
 
@@ -344,12 +343,11 @@ if (empty($reshook)) {
 
 				$result = $nuser->create_from_member($tmpuser, $tmpmember->login);
 
-				if ($result < 0 && !count($tmpmember->errors)) {
-					setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
-				} else {
-					if ($result > 0) {
-						$nbcreated++;
-					}
+				if ($result < 0) {
+					$error++;
+					setEventMessages($nuser->error, $nuser->errors, 'errors');
+				} elseif ($result > 0) {
+					$nbcreated++;
 				}
 			}
 		}
