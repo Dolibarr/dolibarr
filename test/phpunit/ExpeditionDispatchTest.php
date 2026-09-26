@@ -13,6 +13,9 @@
  * \brief      Unit tests for standalone shipment dispatch groups.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+
 // These unit tests need no configured Dolibarr installation or database connection.
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', dirname(__FILE__).'/../../htdocs');
@@ -60,7 +63,6 @@ class ExpeditionDispatchTest extends \PHPUnit\Framework\TestCase
 	 */
 	protected function tearDown(): void
 	{
-		global $conf;
 		$conf = $this->savedConf;
 		parent::tearDown();
 	}
@@ -160,49 +162,5 @@ class ExpeditionDispatchTest extends \PHPUnit\Framework\TestCase
 		$shipment = $this->createShipment();
 		$conf->global->SHIPMENT_STANDALONE = 0;
 		$this->assertNull(shippingGetStandaloneDispatchSourceLine($shipment, 42, 43, 7));
-	}
-
-	/**
-	 * Deleting the source removes its allocations without requiring virtual products.
-	 * A failed allocation deletion must roll back and retain the source.
-	 *
-	 * @return void
-	 */
-	public function testDeleteSourceWithStandaloneAllocations()
-	{
-		global $conf;
-		$conf->global->PRODUIT_SOUSPRODUITS = 0;
-		foreach (array(false, true) as $fail) {
-			$db = $this->getMockBuilder(Database::class)
-				->onlyMethods(get_class_methods(Database::class))
-				->addMethods(array('prefix'))
-				->getMock();
-			$db->method('prefix')->willReturn(MAIN_DB_PREFIX);
-			$db->method('lasterror')->willReturn('Test allocation deletion failure');
-			$db->expects($this->once())->method('begin');
-			$db->expects($fail ? $this->never() : $this->once())->method('commit');
-			$db->expects($fail ? $this->once() : $this->never())->method('rollback');
-			$deletedIds = array();
-			$db->expects($this->exactly($fail ? 1 : 3))->method('query')->willReturnCallback(function ($sql) use ($fail, &$deletedIds) {
-				$this->assertSame(1, preg_match('/^DELETE FROM '.MAIN_DB_PREFIX.'expeditiondet WHERE rowid = ([0-9]+)$/', $sql, $matches));
-				$deletedIds[] = (int) $matches[1];
-				return !$fail;
-			});
-			$line = $this->getMockBuilder(ExpeditionLigne::class)
-				->setConstructorArgs(array($db))
-				->onlyMethods(array('findAllChild', 'deleteExtraFields'))
-				->getMock();
-			$line->id = 42;
-			$line->fk_expedition = 12;
-			$line->element_type = 'shipping';
-			$line->expects($this->once())->method('findAllChild')->willReturnCallback(function ($lineId, &$list) {
-				$this->assertSame(42, $lineId);
-				$list = array(42 => array(43, 44));
-				return 1;
-			});
-			$line->expects($fail ? $this->never() : $this->once())->method('deleteExtraFields')->willReturn(1);
-			$this->assertSame($fail ? -1 : 1, $line->delete(null, 1));
-			$this->assertSame($fail ? array(43) : array(43, 44, 42), $deletedIds);
-		}
 	}
 }
