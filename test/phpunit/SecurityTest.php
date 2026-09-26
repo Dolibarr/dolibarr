@@ -678,6 +678,25 @@ class SecurityTest extends CommonClassTest
 		$test = '/javas:cript/google.com';
 		$result = dol_sanitizeUrl($test);
 		$this->assertEquals('google.com', $result, 'Test on dol_sanitizeUrl C');
+
+		// A normal relative url is not modified when we accept all urls
+		$test = '/comm/propal/card.php?id=23&search_ref=a:b@c;d';
+		$result = dol_sanitizeUrl($test, 0);
+		$this->assertEquals($test, $result, 'Test on dol_sanitizeUrl D: a url without evil chars is unchanged with type 0');
+
+		// A raw < or > (that a browser never sends in a url) is encoded, so it can not close an html tag or an inline script block
+		$test = '/comm/propal/card.php?id=23&x=</script><b>X</b>';
+		$result = dol_sanitizeUrl($test, 0);
+		$this->assertEquals('/comm/propal/card.php?id=23&x=%3C/script%3E%3Cb%3EX%3C/b%3E', $result, 'Test on dol_sanitizeUrl E: < and > are encoded');
+
+		$test = '/comm/propal/card.php?id=23&x=</script/x';
+		$result = dol_sanitizeUrl($test, 0);
+		$this->assertEquals('/comm/propal/card.php?id=23&x=%3C/script/x', $result, 'Test on dol_sanitizeUrl F: < is encoded even with no closing >');
+
+		$test = '/x?a=<img src=x onerror=alert(1)>';
+		$result = dol_sanitizeUrl($test);
+		$this->assertStringNotContainsString('<', $result, 'Test on dol_sanitizeUrl G');
+		$this->assertStringNotContainsString('>', $result, 'Test on dol_sanitizeUrl G');
 	}
 
 	/**
