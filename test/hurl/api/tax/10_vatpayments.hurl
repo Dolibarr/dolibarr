@@ -124,9 +124,9 @@ POST http://{{hostnport}}/api/index.php/vatpayments/{{vat_id}}/payments
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: accountid field missing"}}
 
-# POST payment with a date that is neither a timestamp nor YYYY-MM-DD
+# POST payment with a datepaye that is not a date
 POST http://{{hostnport}}/api/index.php/vatpayments/{{vat_id}}/payments
-{ "datepaye": "05/08/2026", "amount": 330, "paiementtype": 2, "accountid": {{vat_bank_id}} }
+{ "datepaye": "not a date", "amount": 330, "paiementtype": 2, "accountid": {{vat_bank_id}} }
 HTTP 400
 {"error":{"code":400,"message":"Bad Request: datepaye must be a timestamp or a date YYYY-MM-DD"}}
 
