@@ -329,6 +329,8 @@ class AllTests
 		$suite->addTestSuite('EntrepotTest');
 		require_once dirname(__FILE__).'/MouvementStockTest.php';
 		$suite->addTestSuite('MouvementStockTest');
+		require_once dirname(__FILE__).'/StockTransferTest.php';
+		$suite->addTestSuite('StockTransferTest');
 		require_once dirname(__FILE__).'/InventoryTest.php';
 		$suite->addTestSuite('InventoryTest');
 
