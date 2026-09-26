@@ -91,7 +91,7 @@ try {
 		$days = getDolGlobalInt('AI_CHAT_HISTORY_RETENTION_DAYS', 90);
 		if ($days > 0) {
 			$limitdate = $db->idate(dol_now() - $days * 86400);
-			$sqlold = "SELECT rowid FROM ".$db->prefix()."ai_chat_conversation WHERE fk_user = ".((int) $user->id)." AND tms < '".$db->escape($limitdate)."'";
+			$sqlold = "SELECT rowid FROM ".$db->prefix()."ai_chat_conversation WHERE fk_user = ".((int) $user->id)." AND entity = ".((int) getEntity('ai'))." AND tms < '".$db->escape($limitdate)."'";
 			$resold = $db->query($sqlold);
 			while ($resold && ($objold = $db->fetch_object($resold))) {
 				$db->query("DELETE FROM ".$db->prefix()."ai_chat_message WHERE fk_conversation = ".((int) $objold->rowid));
@@ -177,10 +177,13 @@ try {
 		if (!$db->query($sql)) {
 			throw new Exception($db->lasterror());
 		}
-		// Touch the conversation so the list sorts by real activity
-		$db->query("UPDATE ".$db->prefix()."ai_chat_conversation SET tms = tms WHERE rowid = ".((int) $convid));
+		// Read the id BEFORE any other statement (last_insert_id is per statement)
+		$msgid = (int) $db->last_insert_id($db->prefix()."ai_chat_message");
+		// Touch the conversation so the list sorts by real activity ("SET tms = tms"
+		// is a no-op for MySQL: an unchanged row does not refresh its timestamp)
+		$db->query("UPDATE ".$db->prefix()."ai_chat_conversation SET tms = '".$db->idate(dol_now())."' WHERE rowid = ".((int) $convid));
 		$out['id'] = $convid;
-		$out['message_id'] = (int) $db->last_insert_id($db->prefix()."ai_chat_message");
+		$out['message_id'] = $msgid;
 	} elseif ($action === 'pin') {
 		$msgid = (int) ($input['message_id'] ?? 0);
 		$pinned = empty($input['pinned']) ? 0 : 1;
@@ -188,8 +191,14 @@ try {
 		$sql = "UPDATE ".$db->prefix()."ai_chat_message as m";
 		$sql .= " INNER JOIN ".$db->prefix()."ai_chat_conversation as c ON c.rowid = m.fk_conversation AND c.fk_user = ".((int) $user->id);
 		$sql .= " SET m.pinned = ".((int) $pinned)." WHERE m.rowid = ".((int) $msgid);
-		if (!$db->query($sql)) {
+		$resql = $db->query($sql);
+		if (!$resql) {
 			throw new Exception($db->lasterror());
+		}
+		// A message that is not the caller's (or does not exist) matches no row:
+		// say so, a silent "ok" would let the client believe the pin was kept
+		if ($db->affected_rows($resql) < 1) {
+			throw new Exception('Message not found');
 		}
 		$out['ok'] = 1;
 	} elseif ($action === 'rename') {
