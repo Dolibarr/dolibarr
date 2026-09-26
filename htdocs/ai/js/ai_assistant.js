@@ -1238,9 +1238,12 @@ export function initAiAssistant(container) {
         return avatar;
     }
 
-    function appendMsg(type, html, actions = null) {
+    function appendMsg(type, html, actions = null, rawText = null, opts = {}) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
+        // A provider failure ("service overloaded, retry") is noise as context:
+        // such a bubble starts, and stays, out of the window (still pinnable).
+        if (opts && opts.error) div.dataset.aiError = '1';
 
         if (type === 'user' || type === 'bot') {
             // Row layout: avatar + bubble (CSS reverses the row for the user)
@@ -1248,6 +1251,23 @@ export function initAiAssistant(container) {
             bubble.className = 'msg-bubble';
             bubble.innerHTML = html;
             if (actions) bubble.appendChild(buildActions(actions));
+            // Context pin: the last AUTO_CONTEXT exchanges follow the model by
+            // default (sliding window), the user pins older ones explicitly or
+            // excludes recent ones - the token cost stays visible in the bar.
+            if (rawText) {
+                div.dataset.aiRaw = String(rawText).slice(0, 4000);
+                div.dataset.aiRole = (type === 'bot') ? 'assistant' : 'user';
+                const pin = document.createElement('button');
+                pin.type = 'button';
+                pin.className = 'ctx-pin';
+                pin.title = t('AIContextPinOff');
+                pin.innerHTML = '<span class="fas fa-thumbtack"></span>';
+                pin.onclick = (ev) => {
+                    ev.stopPropagation();
+                    toggleContextPin(div);
+                };
+                bubble.appendChild(pin);
+            }
             div.appendChild(buildAvatar(type));
             div.appendChild(bubble);
         } else {
@@ -1258,6 +1278,7 @@ export function initAiAssistant(container) {
 
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
+        if (div.dataset.aiRaw) refreshContext();
     }
 
     // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
@@ -1304,9 +1325,9 @@ export function initAiAssistant(container) {
         if (clarInput) clarInput.focus();
     }
 
-    function handleResponse(message) {
+    function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
-        appendMsg('bot', renderMarkdownLite(message));
+        appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
     }
 
     function handleConfirmation(action, details, originalIntent) {
@@ -1415,7 +1436,7 @@ export function initAiAssistant(container) {
             const result = await aiJson(toolRes);
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
-            appendMsg('bot', formatResult(result, false, pendingIntent.tool));
+            appendMsg('bot', formatResult(result, false, pendingIntent.tool), null, contextSnippetOf(result, pendingIntent.tool));
             resolveThirdpartyNames(chat.lastElementChild);
             pendingIntent = null;
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
@@ -1427,6 +1448,142 @@ export function initAiAssistant(container) {
     // expired, the endpoints answer with the HTML login form (HTTP 200), which
     // used to surface as a cryptic "Unexpected token '<'" network error: detect
     // that case and tell the user to sign back in instead.
+    // Compact, model-oriented snippet of a tool result for the pinned context:
+    // the model needs the shape and the ids, not the full rendered table.
+    function contextSnippetOf(result, toolName) {
+        let s = '';
+        try { s = JSON.stringify(result); } catch (e) { s = String(result); }
+        if (s.length > 1500) s = s.slice(0, 1500) + '…';
+        return '[' + (toolName || 'tool') + ' result] ' + s;
+    }
+
+    // Number of recent exchanges (question + answer) that follow the model by
+    // default. 0 = fully manual: nothing goes back unless the user pins it.
+    const AUTO_CONTEXT = Math.max(0, parseInt(config.autoContext, 10) || 0);
+
+    // Bubbles that can be sent back as context (they carry a plain-text form).
+    function contextBubbles() {
+        return Array.from(chat.querySelectorAll('.msg')).filter((m) => m.dataset.aiRaw);
+    }
+
+    // Same, without the question currently being answered: that one IS the
+    // query, it never travels as context.
+    function pastContextBubbles() {
+        const msgs = contextBubbles();
+        if (msgs.length && msgs[msgs.length - 1].dataset.aiRole === 'user') msgs.pop();
+        return msgs;
+    }
+
+    // Effective context = the sliding window of the last AUTO_CONTEXT exchanges
+    // (counted from the questions) + explicit pins - explicit exclusions. Each
+    // bubble holds its own decision in data-ctx: '' follows the window, 'on' is
+    // pinned for good, 'off' is excluded. Recomputed after every change, so the
+    // window slides as the conversation grows while the pins stay put.
+    function refreshContext() {
+        const all = contextBubbles();
+        const msgs = pastContextBubbles();
+        // The question being answered is the query itself, never context: it
+        // waits outside the window until its answer arrives.
+        const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
+        if (pending) { pending.classList.remove('ctx-pinned'); pending.dataset.ctxWindow = ''; }
+        let windowStart = msgs.length;
+        if (AUTO_CONTEXT > 0) {
+            let questions = 0;
+            for (let i = msgs.length - 1; i >= 0; i--) {
+                if (msgs[i].dataset.aiRole === 'user' && ++questions === AUTO_CONTEXT) { windowStart = i; break; }
+                if (i === 0) windowStart = 0;
+            }
+        }
+        msgs.forEach((m, i) => {
+            const inWindow = i >= windowStart;
+            const state = m.dataset.ctx || '';
+            const on = state === 'on' || (state === '' && inWindow && !m.dataset.aiError);
+            m.dataset.ctxWindow = inWindow ? '1' : '';
+            m.classList.toggle('ctx-pinned', on);
+            const pin = m.querySelector('.ctx-pin');
+            if (pin) {
+                // Two glyphs: a planted blue pin (travels with the next question)
+                // or a grey pin struck through (does not) - see .ctx-pin-off in CSS.
+                pin.classList.toggle('ctx-pin-off', !on);
+                pin.title = on ? t('AIContextPinOn') : t('AIContextPinOff');
+            }
+        });
+        updateContextBar();
+    }
+
+    // One click flips the bubble: inside the window it toggles between "follows
+    // the window" and "excluded"; outside it toggles the explicit pin.
+    function toggleContextPin(div) {
+        const on = div.classList.contains('ctx-pinned');
+        const inWindow = div.dataset.ctxWindow === '1';
+        if (on) div.dataset.ctx = inWindow ? 'off' : '';
+        else div.dataset.ctx = (inWindow && !div.dataset.aiError) ? '' : 'on';
+        refreshContext();
+    }
+
+    function collectPinnedContext() {
+        return contextBubbles().filter((m) => m.classList.contains('ctx-pinned'))
+            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }))
+            .filter((p) => p.text);
+    }
+
+    // Small bar above the input: how many exchanges are pinned and their rough
+    // token weight (chars/4) - the cost of the selected context stays visible.
+    function updateContextBar() {
+        let bar = container.querySelector('#ai-ctx-bar');
+        // Past exchanges the user can act on (the pending question is not one).
+        const past = pastContextBubbles();
+        const pinned = collectPinnedContext();
+        if (!past.length) { if (bar) bar.remove(); return; }
+        const tokens = Math.round(pinned.reduce((n, p) => n + p.text.length, 0) / 4);
+        // The setting counts exchanges (question + answer), so the bar says
+        // both: exchanges, then messages - one unit on its own misleads.
+        const exchanges = pinned.filter((p) => p.role === 'user').length;
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'ai-ctx-bar';
+            const pill = input.closest('.chat-input-pill') || input.parentElement;
+            pill.insertAdjacentElement('beforebegin', bar);
+        }
+        // "Auto (3)" is lit as long as every bubble simply follows the window
+        // (no manual pin, no exclusion): one glance says which mode is on.
+        const isDefault = past.every((m) => !m.dataset.ctx);
+        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
+            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+            (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
+            ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double"></span> ' + t('AIContextAll') + '</a>' +
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser"></span> ' + t('AIContextClear') + '</a>';
+        const auto = bar.querySelector('#ai-ctx-auto');
+        if (auto) {
+            auto.onclick = (ev) => {
+                ev.preventDefault();
+                // Auto = back to the default: every bubble follows the window again.
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; });
+                refreshContext();
+            };
+        }
+        const all = bar.querySelector('#ai-ctx-all');
+        if (all) {
+            all.onclick = (ev) => {
+                ev.preventDefault();
+                // All = every past exchange pinned for good (the bar shows the price).
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; });
+                refreshContext();
+            };
+        }
+        const clear = bar.querySelector('#ai-ctx-clear');
+        if (clear) {
+            clear.onclick = (ev) => {
+                ev.preventDefault();
+                // Clear = nothing goes back with the NEXT question: recent bubbles
+                // are excluded, older pins dropped. New exchanges re-enter the
+                // window on their own afterwards.
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; });
+                refreshContext();
+            };
+        }
+    }
+
     async function aiJson(response) {
         const raw = await response.text();
         try {
@@ -1459,7 +1616,7 @@ export function initAiAssistant(container) {
             displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
         }
 
-        appendMsg('user', displayHtml);
+        appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
         clearChip();
         input.value = '';
         input.style.height = '44px';
@@ -1475,6 +1632,11 @@ export function initAiAssistant(container) {
                 // ids against the user's rights before trusting them.
                 body: JSON.stringify(Object.assign(
                     chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                    (function () {
+                        // Pinned exchanges only: context is opt-in, its cost visible in the bar.
+                        const pinned = collectPinnedContext();
+                        return pinned.length ? { history: pinned } : {};
+                    })(),
                     (function () {
                         const ctx = window.aiPageContext;
                         if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
@@ -1500,7 +1662,7 @@ export function initAiAssistant(container) {
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
             if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
+            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'generate_navigation_url') {
                 appendMsg('system', t('GeneratingLink'));
@@ -1525,7 +1687,7 @@ export function initAiAssistant(container) {
             const result = await aiJson(toolRes);
             loadingData.remove();
             lastResult = { data: result, tool: intent.tool, query: query };
-            appendMsg('bot', formatResult(result, false, intent.tool));
+            appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
             resolveThirdpartyNames(chat.lastElementChild);
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
