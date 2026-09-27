@@ -1,4 +1,0 @@
-htdocs/api/class/api_setup.class.php: 1 match(es)
-CONTEXT: '* @url\tGET /modules\n\t *\n\t * @return  array Data without useless information\n\t * @phan-return array<string,string>'
-htdocs/api/index.php: 1 match(es)
-CONTEXT: '$url = (isset($_SERVER[\'SCRIPT_URI\']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER[\'PHP_SELF\'];'
