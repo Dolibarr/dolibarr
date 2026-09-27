@@ -104,7 +104,7 @@ class box_invoices_dispute extends ModeleBoxes
 			}
 			$sql .= " AND f.fk_soc = s.rowid";
 			$sql .= " AND f.dispute_status > 0";
-			$sql .= " AND f.datef >= '".$this->db->idate($tmpdate)."' AND f.paye=1";
+			$sql .= " AND f.datef >= '".$this->db->idate($tmpdate)."'";
 			$sql .= " GROUP BY f.dispute_status, f.fk_statut";
 			$sql .= " ORDER BY f.dispute_status ASC";
 
@@ -125,26 +125,30 @@ class box_invoices_dispute extends ModeleBoxes
 			if (!empty($data)) {
 				$j = 0;
 				while ($j < count($data)) {
-					$billurl = "search_status=2&paye=1&search_dispute_status=".$data[$j]->dispute_status;
+					$billurlparam = "search_dispute_status=".$data[$j]->dispute_status;
+					// Column picto
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="left" width="16"',
 						'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0, -1, -1, array("dispute_status" => $data[$j]->dispute_status)),
-						'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&mainmenu=accountancy&leftmenu=customers_bills",
+						'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurlparam."&mainmenu=accountancy&leftmenu=customers_bills",
 						'logo' => 'bill',
 					);
 
+					// Column label
 					$this->info_box_contents[$line][1] = array(
 						'td' => '',
 						'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0, -1, -1, array("dispute_status" => $data[$j]->dispute_status)),
 					);
 
+					// Column value
 					$this->info_box_contents[$line][2] = array(
 						'td' => 'class="right"',
 						'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0, -1, -1, array("dispute_status" => $data[$j]->dispute_status)),
-						'text' => $data[$j]->nb,
-						'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurl."&mainmenu=accountancy&leftmenu=customers_bills",
+						'textnoformat' => '<div class="center badge badge-danger nounderlineimp">'.$data[$j]->nb.'</div>',
+						'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurlparam."&mainmenu=accountancy&leftmenu=customers_bills",
 					);
 
+					// Column amount
 					$this->info_box_contents[$line][3] = array(
 						'td' => 'class="nowraponall right amount"',
 						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency)
