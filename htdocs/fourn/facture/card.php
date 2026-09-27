@@ -602,7 +602,15 @@ if (empty($reshook)) {
 							$depositdev = (float) $discount->multicurrency_amount_ttc;
 							if ($usemccompare && $depositdev != 0) {
 								$applydev = $maxtoabsorb;
-								$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+								// Convert the applied part with the rate the credit carries, when it has one. Deriving it from the
+								// rounded company-currency total of the credit shifts the part by a cent, which then shows up as a
+								// phantom exchange difference on an invoice that uses the very same rate.
+								$creditrate = !empty($discount->multicurrency_tx) ? (float) $discount->multicurrency_tx : 0;
+								if ($creditrate > 0) {
+									$applyeur = (float) price2num($applydev / $creditrate, 'MT');
+								} else {
+									$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+								}
 							} else {
 								$applyeur = $maxtoabsorb;
 								$applydev = ($depositeur != 0 ? (float) price2num($applyeur / $depositeur * $depositdev, 'MT') : 0);

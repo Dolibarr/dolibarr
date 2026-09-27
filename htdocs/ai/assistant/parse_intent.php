@@ -943,6 +943,17 @@ try {
 		$details = formatArgumentsForDisplay($arguments);
 		$action = extractActionFromTool($toolName);
 
+		// A write tool describes its own effect in a sentence, which is what the
+		// user has to act on: prefer it over the raw argument dump, and keep the
+		// dump underneath for the detail.
+		$toolInstance = $mcp->toolsByName[$toolName] ?? null;
+		if (is_object($toolInstance) && method_exists($toolInstance, 'writeConfirmationPreview')) {
+			$preview = (string) $toolInstance->writeConfirmationPreview($toolName, $arguments);
+			if ($preview !== McpTool::NO_WRITE) {
+				$action = $preview;
+			}
+		}
+
 		$confirmationResponse = [
 			"tool" => "ask_for_confirmation",
 			"arguments" => [

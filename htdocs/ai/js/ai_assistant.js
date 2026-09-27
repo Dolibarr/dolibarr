@@ -1393,8 +1393,16 @@ export function initAiAssistant(container) {
 		}
 		pendingIntent = originalIntent.arguments.original_intent;
 		const toolName = pendingIntent.tool || 'unknown tool';
-        let template = t('ConfirmAiAction');
-        let messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
+        // A write tool sends a full sentence describing what it would write; it
+        // is the question itself, not a verb to slot into another sentence.
+        const isSentence = typeof action === 'string' && /[.!?]\s*$/.test(action.trim());
+        let messageHtml;
+        if (isSentence) {
+            messageHtml = `<strong>${action}</strong>`;
+        } else {
+            const template = t('ConfirmAiAction');
+            messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
+        }
         let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
         const actions = [
             { text: t('YesProceed'), class: 'danger', icon: 'fa-check', onclick: () => confirmAction() },
@@ -1444,11 +1452,21 @@ export function initAiAssistant(container) {
     }
 
     function cancelAction() {
+        // The question behind a cancelled action must not travel as context:
+        // left as an unanswered request in the window, the model re-proposes
+        // it on the next question (field case: "set the phone of X" answered
+        // by creating the thirdparty a cancelled request had named). Out of
+        // the window by default, like a failed answer; still pinnable by hand.
+        // (contextBubbles, not pastContextBubbles: at this point the question
+        // is the trailing bubble, which the latter leaves out on purpose.)
+        const asked = contextBubbles().filter((m) => m.dataset.aiRole === 'user').pop();
+        if (asked) asked.dataset.aiError = '1';
         if (confirmationRecognition) try { confirmationRecognition.stop(); } catch (e) { }
         const msg = chat.lastElementChild;
         if (msg && msg.classList.contains('confirmation')) msg.remove();
         appendMsg('system', t('ActionCancelled'));
         pendingIntent = null;
+        refreshContext();
     }
 
     function showVoiceFeedback(message) {
