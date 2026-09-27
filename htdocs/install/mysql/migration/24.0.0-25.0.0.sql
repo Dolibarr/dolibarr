@@ -38,6 +38,8 @@
 --noqa:disable=RF03
 
 
+ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
+
 -- V24 forgotten
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';

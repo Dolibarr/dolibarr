@@ -101,6 +101,7 @@ if (empty($reshook)) {
 	// Delete loan
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoadd) {
 		$object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans('LoanDeleted'), null, 'mesgs');

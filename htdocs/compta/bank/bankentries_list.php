@@ -713,15 +713,6 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$nbtotalofpages = ceil($nbtotalofrecords / $limit);
 }
 
-if (($id > 0 || !empty($ref)) && ((string) $page == '')) {
-	// We open a list of transaction of a dedicated account and no page was set by default
-	// We force on last page.
-	$page = ($nbtotalofpages - 1);
-	$offset = $limit * $page;
-	if ($page < 0) {
-		$page = 0;
-	}
-}
 if ($page >= $nbtotalofpages) {
 	// If we made a search and result has low page than the page number we were on
 	$page = ($nbtotalofpages - 1);

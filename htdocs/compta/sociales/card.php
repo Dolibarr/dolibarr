@@ -142,7 +142,10 @@ if (empty($reshook)) {
 
 	if ($action == 'setfk_user' && $permissiontoadd) {
 		$object->fk_user = $fk_user;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	if ($action == 'setlib' && $permissiontoadd) {
@@ -172,6 +175,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $permissiontodelete && $confirm == 'yes') {
 		$totalpaid = $object->getSommePaiement();
 		if (empty($totalpaid)) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
 			if ($result > 0) {
 				header("Location: list.php");
