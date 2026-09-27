@@ -393,15 +393,16 @@ try {
 	$count = count($words);
 	$candidates = array();
 
-	// Helper function to validate a phrase without a dictionary
-	$isValidPhrase = function (string $phrase) use ($dynamicStopWords): bool {
+	// Helper function to validate a phrase without a dictionary.
+	// Returns 0 (not a candidate), 1 (candidate) or 2 (strict candidate, see RULE 2).
+	$isValidPhrase = function (string $phrase) use ($dynamicStopWords): int {
 		$phrase = trim($phrase);
 
 		// RULE 1: Minimum Length
 		// Filter out extremely short words (1-2 chars).
 		// This catches "a", "le", "la", "de", "y", "to", "in", "von", "zu" in almost all languages.
 		if (mb_strlen($phrase) < 3) {
-			return false;
+			return 0;
 		}
 
 		// RULE 2: First Word Check
@@ -415,10 +416,10 @@ try {
 		$firstWord = dol_strtolower($parts[0]);
 
 		if (in_array($firstWord, $dynamicStopWords)) {
-			return count($parts) > 1 ? 'strict' : false;
+			return count($parts) > 1 ? 2 : 0;
 		}
 
-		return true;
+		return 1;
 	};
 
 	// Fill array $candidates of thirdparty name we may want to work with
@@ -433,9 +434,9 @@ try {
 		}
 		foreach ($phrases as $phrase) {
 			$valid = $isValidPhrase($phrase);
-			if ($valid) {
+			if ($valid > 0) {
 				$candidates[] = $phrase;
-				if ($valid === 'strict') {
+				if ($valid === 2) {
 					$strictCandidates[$phrase] = true;
 				}
 			}
