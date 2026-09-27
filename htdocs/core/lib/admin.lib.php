@@ -733,7 +733,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 			// To list all sensitive constant, you can make a
 			// SELECT * from llx_const WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' ...
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-			$newvalue = dolEncrypt($value);
+			$newvalue = dolEncrypt($value);		// Encode using dolcrypt() function
 		} else {
 			$newvalue = $value;
 		}
