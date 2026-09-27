@@ -405,35 +405,39 @@ try {
 		}
 
 		// RULE 2: First Word Check
-		// If the phrase starts with a translated keyword (e.g. "Invoice Acme"), skip it.
+		// A phrase starting with a translated keyword ("Invoice Acme") is most
+		// often a verb or an object name read as a company. A single such word
+		// is never a candidate. A longer phrase is kept as a STRICT candidate:
+		// it only resolves when a company carries that whole phrase as its name
+		// (a third party legitimately named "Test Corp" was collateral damage of
+		// the plain rejection - review sonikf on #38356).
 		$parts = explode(' ', $phrase);
 		$firstWord = dol_strtolower($parts[0]);
 
 		if (in_array($firstWord, $dynamicStopWords)) {
-			return false;
+			return count($parts) > 1 ? 'strict' : false;
 		}
 
 		return true;
 	};
 
 	// Fill array $candidates of thirdparty name we may want to work with
+	$strictCandidates = array();	// phrases that must match a whole company name
 	for ($i = 0; $i < $count; $i++) {
-		// Single Word
-		if ($isValidPhrase($words[$i])) {
-			$candidates[] = $words[$i];
-		}
-
+		$phrases = array($words[$i]);
 		if ($i + 1 < $count) {
-			$phrase = $words[$i] . ' ' . $words[$i + 1];
-			if ($isValidPhrase($phrase)) {
-				$candidates[] = $phrase;
-			}
+			$phrases[] = $words[$i] . ' ' . $words[$i + 1];
 		}
-
 		if ($i + 2 < $count) {
-			$phrase = $words[$i] . ' ' . $words[$i + 1] . ' ' . $words[$i + 2];
-			if ($isValidPhrase($phrase)) {
+			$phrases[] = $words[$i] . ' ' . $words[$i + 1] . ' ' . $words[$i + 2];
+		}
+		foreach ($phrases as $phrase) {
+			$valid = $isValidPhrase($phrase);
+			if ($valid) {
 				$candidates[] = $phrase;
+				if ($valid === 'strict') {
+					$strictCandidates[$phrase] = true;
+				}
 			}
 		}
 	}
@@ -446,8 +450,15 @@ try {
 
 	if (!empty($candidates)) {
 		foreach ($candidates as $phrase) {
-			// We use LIKE '...' to match the start of the company name.
-			$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '" . $db->escape($phrase) . "%' LIMIT 1";
+			if (isset($strictCandidates[$phrase])) {
+				// Strict: the whole phrase must be the company name, or the name
+				// must continue with a space ("Test Corp" for "Test Corp SAS"),
+				// the shortest (closest) name first.
+				$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom = '" . $db->escape($phrase) . "' OR nom LIKE '" . $db->escape($phrase) . " %' ORDER BY LENGTH(nom) LIMIT 1";
+			} else {
+				// We use LIKE '...' to match the start of the company name.
+				$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '" . $db->escape($phrase) . "%' LIMIT 1";
+			}
 
 			$res = $db->query($sql);
 
