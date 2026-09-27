@@ -1460,7 +1460,11 @@ export function initAiAssistant(container) {
         // (contextBubbles, not pastContextBubbles: at this point the question
         // is the trailing bubble, which the latter leaves out on purpose.)
         const asked = contextBubbles().filter((m) => m.dataset.aiRole === 'user').pop();
-        if (asked) asked.dataset.aiError = '1';
+        if (asked) {
+            asked.dataset.aiError = '1';
+            // Persisted, so a reopened conversation keeps it out of the window too
+            if (asked.dataset.msgId) chatHistoryApi({ action: 'pin', message_id: parseInt(asked.dataset.msgId, 10), pinned: (asked.dataset.ctx === 'on') ? 1 : 0, error: 1 }).catch(() => {});
+        }
         if (confirmationRecognition) try { confirmationRecognition.stop(); } catch (e) { }
         const msg = chat.lastElementChild;
         if (msg && msg.classList.contains('confirmation')) msg.remove();

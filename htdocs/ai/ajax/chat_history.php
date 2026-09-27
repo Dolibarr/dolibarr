@@ -187,10 +187,12 @@ try {
 	} elseif ($action === 'pin') {
 		$msgid = (int) ($input['message_id'] ?? 0);
 		$pinned = empty($input['pinned']) ? 0 : 1;
-		// Ownership travels through the conversation
+		// Ownership travels through the conversation. 'error' (optional) marks a
+		// turn that must stay out of the context window on reopen, e.g. the
+		// question behind an action the user cancelled.
 		$sql = "UPDATE ".$db->prefix()."ai_chat_message as m";
 		$sql .= " INNER JOIN ".$db->prefix()."ai_chat_conversation as c ON c.rowid = m.fk_conversation AND c.fk_user = ".((int) $user->id);
-		$sql .= " SET m.pinned = ".((int) $pinned)." WHERE m.rowid = ".((int) $msgid);
+		$sql .= " SET m.pinned = ".((int) $pinned).(isset($input['error']) ? ", m.is_error = ".(empty($input['error']) ? 0 : 1) : "")." WHERE m.rowid = ".((int) $msgid);
 		$resql = $db->query($sql);
 		if (!$resql) {
 			throw new Exception($db->lasterror());
