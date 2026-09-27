@@ -144,7 +144,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 				$parameters = array();
 				$parameters['row'] = array('rowid' => $prod->id, 'object' => 'product');
 				$parameters['obj'] = $prod;
-				$hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
+				$hookmanager->executeHooks('takeposCompleteProductOrCategory', $parameters);
 				foreach ($hookmanager->resArray as $key => $val) {
 					if (!isset($prod->$key)) {
 						$prod->$key = $val;
@@ -409,7 +409,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 			$parameters = array();
 			$parameters['row'] = $row;
 			$parameters['obj'] = $obj;
-			$reshook = $hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
+			$reshook = $hookmanager->executeHooks('takeposCompleteProductOrCategory', $parameters);
 			if ($reshook > 0) {
 				// replace
 				if (count($hookmanager->resArray)) {
