@@ -3228,9 +3228,10 @@ class Setup extends DolibarrApi
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
 		}
 
-		sort($conf->modules);
+		$modules = $conf->modules;
+		asort($modules); // Sort a copy to keep array keys and avoid mutating the global $conf->modules
 
-		return $conf->modules;
+		return $modules;
 	}
 
 	/**
