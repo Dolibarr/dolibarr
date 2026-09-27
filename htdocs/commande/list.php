@@ -162,13 +162,6 @@ $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '-2';
 }
-$search_orderday = '';
-$search_ordermonth = '';
-$search_orderyear = '';
-$search_deliveryday = '';
-$search_deliverymonth = '';
-$search_deliveryyear = '';
-
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 
 $diroutputmassaction = $conf->order->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
@@ -684,7 +677,10 @@ if (empty($reshook)) {
 
 			if ($currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')'));
-				$objecttmp->update($user);
+				if ($objecttmp->update($user) < 0) {
+					$error++;
+					$errors[] = $objecttmp->error;
+				}
 			}
 
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
@@ -778,24 +774,6 @@ if (empty($reshook)) {
 			}
 			if ($search_option) {
 				$param .= "&search_option=".urlencode($search_option);
-			}
-			if ($search_orderday) {
-				$param .= '&search_orderday='.urlencode($search_orderday);
-			}
-			if ($search_ordermonth) {
-				$param .= '&search_ordermonth='.urlencode($search_ordermonth);
-			}
-			if ($search_orderyear) {
-				$param .= '&search_orderyear='.urlencode($search_orderyear);
-			}
-			if ($search_deliveryday) {
-				$param .= '&search_deliveryday='.urlencode($search_deliveryday);
-			}
-			if ($search_deliverymonth) {
-				$param .= '&search_deliverymonth='.urlencode($search_deliverymonth);
-			}
-			if ($search_deliveryyear) {
-				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
 			}
 			if ($search_id) {
 				$param .= '&search_id='.urlencode((string) $search_id);

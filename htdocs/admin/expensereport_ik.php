@@ -3,7 +3,7 @@
  * Copyright (C) 2017      ATM Consulting         <contact@atm-consulting.fr>
  * Copyright (C) 2017      Pierre-Henry Favre     <phf@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,10 @@ if ($action == 'updateik') {
 			dol_print_error(null, $expIk->error, $expIk->errors);
 		}
 
-		$expIk->delete($user);
+		$result = $expIk->delete($user);
+		if ($result < 0) {
+			setEventMessages($expIk->error, $expIk->errors, 'errors');
+		}
 	}
 
 	header('Location: '.$_SERVER['PHP_SELF']);

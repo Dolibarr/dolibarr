@@ -22,7 +22,7 @@
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025-2026	Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
@@ -2131,9 +2131,11 @@ class Facture extends CommonInvoice
 		$result = '';
 
 		if ($option == 'withdraw') {
-			$url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/facture/prelevement.php';
+			$query = ['facid' => $this->id];
 		} else {
-			$url = DOL_URL_ROOT.'/compta/facture/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/facture/card.php';
+			$query = ['id' => $this->id];
 		}
 
 		if (!$user->hasRight("facture", "read")) {
@@ -2147,9 +2149,10 @@ class Facture extends CommonInvoice
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		if ($short) {
 			return $url;
@@ -5475,7 +5478,15 @@ class Facture extends CommonInvoice
 
 		$sanitizedclause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin, f.fk_statut as status, f.total_ht";
+		$now = dol_now();
+		$warningdelay = getWarningDelay('invoice', 'client');
+
+		// The count, the total and the number of late invoices are computed by the database: reading every unpaid invoice to
+		// count them in PHP took seconds on the home page of an instance with a lot of unpaid invoices. An invoice is late when
+		// its due date is before now minus the warning delay, the rule of hasDelay() for a validated invoice (an invoice without
+		// due date was counted as late by that rule, this is kept).
+		$sql = "SELECT COUNT(f.rowid) as nb, SUM(f.total_ht) as total,";
+		$sql .= " SUM(CASE WHEN f.date_lim_reglement IS NULL OR f.date_lim_reglement < '".$this->db->idate($now - $warningdelay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
@@ -5492,26 +5503,19 @@ class Facture extends CommonInvoice
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("bills");
-			$now = dol_now();
 			$response = new WorkboardResponse();
-			$response->warning_delay = getWarningDelay('invoice', 'client') / 60 / 60 / 24;
+			$response->warning_delay = $warningdelay / 60 / 60 / 24;
 			$response->label = $langs->trans("CustomerBillsUnpaid");
 			$response->labelShort = $langs->trans("Unpaid");
 			$response->url = DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&mainmenu=billing&leftmenu=customers_bills';
 			$response->img = img_object('', "bill");
 
-			$generic_facture = new Facture($this->db);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$generic_facture->date_lim_reglement = $this->db->jdate($obj->datefin);
-				$generic_facture->statut = $obj->status;
-				$generic_facture->status = $obj->status;
-
-				$response->nbtodo++;
-				$response->total += $obj->total_ht;
-
-				if ($generic_facture->hasDelay()) {
-					$response->nbtodolate++;
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->total = (float) $obj->total;
+				$response->nbtodolate = (int) $obj->nblate;
+				if ($response->nbtodolate > 0) {
 					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_option=late&mainmenu=billing&leftmenu=customers_bills';
 				}
 			}
@@ -6246,6 +6250,9 @@ class Facture extends CommonInvoice
 
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
+		// Label of the agenda event recorded for each reminder sent. It also allows to know that a reminder was already sent for an invoice.
+		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+
 		// Select all action comm reminder
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
@@ -6262,13 +6269,19 @@ class Facture extends CommonInvoice
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
 		}
-		// TODO Add a filter to check there is no payment started yet
+		// A credit note is not an amount that the customer has to pay, and an invoice without an amount to pay has nothing to remind
+		$sql .= " AND f.type <> ".self::TYPE_CREDIT_NOTE;
+		$sql .= " AND f.total_ttc > 0";
+		// Do not send the same reminder twice if the batch is run again the same day (an event is recorded when a reminder is sent)
+		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.elementtype = 'invoice' AND a.fk_element = f.rowid AND a.code = 'AC_EMAIL'";
+		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
 		if ($datetouse == 'invoicedate') {
 			$sql .= $this->db->order("datef", "ASC");
 		} else {
 			$sql .= $this->db->order("date_lim_reglement", "ASC");
 		}
-		// TODO Add a date date_last_remind_email in select. We can update date after the result of sendfile() later. To avoid to send it twiceif we rerun the batch.
 
 		$resql = $this->db->query($sql);
 
@@ -6292,6 +6305,10 @@ class Facture extends CommonInvoice
 				$res = $tmpinvoice->fetch($obj->id);
 				if ($res > 0) {
 					$tmpinvoice->fetch_thirdparty();
+					// Load paid amounts so that __AMOUNT_REMAIN__ is the real remaining amount
+					$tmpinvoice->getSommePaiement();
+					$tmpinvoice->getSumCreditNotesUsed();
+					$tmpinvoice->getSumDepositsUsed();
 
 					$outputlangs = new Translate('', $conf);
 					if ($tmpinvoice->thirdparty->default_lang) {
@@ -6418,7 +6435,7 @@ class Facture extends CommonInvoice
 							$actioncomm->contact_id = 0;
 
 							$actioncomm->code = 'AC_EMAIL';
-							$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+							$actioncomm->label = $labelreminderok;
 							$actioncomm->note_private = $sendContent;
 							$actioncomm->fk_project = $tmpinvoice->fk_project;
 							$actioncomm->datep = dol_now();

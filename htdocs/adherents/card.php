@@ -689,6 +689,7 @@ if (empty($reshook)) {
 	}
 
 	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_delete' && $confirm == 'yes') {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');

@@ -904,7 +904,7 @@ class pdf_sponge extends ModelePDFFactures
 						}
 
 						// Total with tax line (TTC)
-						if ($this->getColumnStatus('totalincltax')) {
+						if ($this->getColumnStatus('totalincltax') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 							$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
 							$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
 						}
@@ -2548,7 +2548,7 @@ class pdf_sponge extends ModelePDFFactures
 					$companystatic = new Societe($this->db);
 					$companystatic->fetch($object->contact->fk_soc);
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'target', $object);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'targetshipping', $object);
 				} else {
 					// When no explicit shipping address is defined, it means it is same than the billing address. It must not be shown twice.
 					//$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);

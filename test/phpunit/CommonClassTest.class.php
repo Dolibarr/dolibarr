@@ -151,7 +151,7 @@ abstract class CommonClassTest extends TestCase
 	 */
 	protected function setUp(): void
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 
 		// Populate instance snapshots from the global snapshot captured at file load time
 		$this->savconf = $GLOBALS['PHPUNIT_SAVCONF'];
@@ -164,6 +164,7 @@ abstract class CommonClassTest extends TestCase
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+		$mysoc = $this->savmysoc;
 
 		// Record the filesize to determine which part of the log to show on error
 		if (file_exists($this->logfile)) {

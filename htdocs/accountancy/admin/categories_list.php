@@ -701,10 +701,7 @@ if ($tabname[$id]) {
 
 	print "</tr>";
 
-	$colspan = count($fieldlist) + 3;
-	if ($id == 32) {
-		$colspan++;
-	}
+	$colspan = count($fieldlist) + 4;
 }
 
 print '</table>';

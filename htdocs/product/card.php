@@ -415,13 +415,6 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// Delete the product
-					if ($productOrigin->delete($user) < 1) {
-						$error++;
-					}
-				}
-
-				if (!$error) {
 					// Move files from the dir of the product being deleted into the dir of the product kept.
 					// This must happen on success only: the filesystem is not part of the transaction, so
 					// moving the files on the failing path stripped the origin product of its documents
@@ -440,6 +433,13 @@ if (empty($reshook)) {
 						}
 					}
 
+					// Delete the product
+					if ($productOrigin->delete($user) < 1) {
+						$error++;
+					}
+				}
+
+				if (!$error) {
 					setEventMessages($langs->trans('ProductsMergeSuccess'), null, 'mesgs');
 					$db->commit();
 				} else {
@@ -1102,6 +1102,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 
 		if ($result > 0) {

@@ -10,6 +10,7 @@ WARNING:
 --------
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * All names of functions for hooks in the webportal module have been renamed into webPortalX... to avoid conflict with backoffice.
+* The config $dolibarr_allow_download_external_modules has been renamed into $dolibarr_allow_download_app (Value 1 allows to download the application binaries)
 
 
 

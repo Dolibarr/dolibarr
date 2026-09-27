@@ -948,6 +948,17 @@ abstract class CommonObject
 	 */
 	public $isextrafieldmanaged = 0;
 
+	/**
+	 * @var array{paths:string[],names:string[],mimes:string[]}
+	 *
+	 * For experimental feature: MAIN_COPY_FILE_IN_EVENT_AUTO
+	 * Array of pointer to attachedfiles, set by actions_sendmails.inc.php when using "Send email" button
+	 * so list of sent files are automatically propagated to triggers, so the trigger modAgenda_ActionsAuto
+	 * can save the files sent into the directory of object, and link them to the agenda event.
+	 */
+	public $attachedfiles;
+
+
 
 	// No constructor as it is an abstract class
 
@@ -1137,7 +1148,7 @@ abstract class CommonObject
 	 */
 	public function errorsToString()
 	{
-		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
+		return $this->error.(is_array($this->errors) && count($this->errors) > 0 ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
 	}
 
 
@@ -11150,7 +11161,8 @@ abstract class CommonObject
 		// Triggers
 		if (!$error && !$notrigger) {
 			// Call triggers
-			$result = $this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+			$result = $this->call_trigger($triggerPrefix.'_CREATE', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -11405,7 +11417,8 @@ abstract class CommonObject
 		// Triggers
 		if (!$error && !$notrigger) {
 			// Call triggers
-			$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+			$result = $this->call_trigger($triggerPrefix.'_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			} //Do also here what you must do to rollback action if trigger fail
@@ -11512,7 +11525,8 @@ abstract class CommonObject
 		if (!$error) {
 			if (!$notrigger) {
 				// Call triggers
-				$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
+				$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+				$result = $this->call_trigger($triggerPrefix.'_DELETE', $user);
 				if ($result < 0) {
 					$error++;
 				} // Do also here what you must do to rollback action if trigger fail

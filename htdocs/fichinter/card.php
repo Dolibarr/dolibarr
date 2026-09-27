@@ -585,6 +585,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');

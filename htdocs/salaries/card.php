@@ -172,7 +172,10 @@ if ($action == 'classin' && $permissiontoadd) {
 if ($action == 'setlabel' && $permissiontoadd) {
 	$object->fetch($id);
 	$object->label = $label;
-	$object->update($user);
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 // Classify paid
@@ -185,7 +188,10 @@ if ($action == 'setfk_user' && $permissiontoadd) {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$object->fk_user = $fk_user;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} else {
 		dol_print_error($db);
 		exit;
@@ -355,6 +361,7 @@ if ($action == 'confirm_delete' && $permissiontodelete) {
 	if (empty($totalpaid)) {
 		$db->begin();
 
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$ret = $object->delete($user);
 		if ($ret > 0) {
 			$db->commit();

@@ -211,6 +211,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete askprice
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header('Location: '.DOL_URL_ROOT.'/supplier_proposal/list.php');
@@ -1584,6 +1585,7 @@ if ($action == 'create') {
 			$cond_reglement_id = (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0);
 			$deposit_percent = (!empty($soc->deposit_percent) ? $soc->deposit_percent : 0);
 			$mode_reglement_id = (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0);
+			$fk_account = (!empty($soc->fk_account) ? $soc->fk_account : 0);
 		}
 	} else {
 		$cond_reglement_id 	= $soc->cond_reglement_supplier_id;

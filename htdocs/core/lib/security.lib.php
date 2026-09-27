@@ -214,6 +214,8 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$dbt_select = 'id';
 	} elseif ($features == 'bank') {
 		$features = 'banque';
+	} elseif ($features == 'remisecheque') {
+		$features = 'banque';
 	} elseif ($features == 'facturerec') {
 		$features = 'facture';
 	} elseif ($features == 'supplier_invoicerec') {
@@ -232,6 +234,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$parentfortableentity = 'fk_website@website';
 	} elseif ($features == 'project') {
 		$features = 'projet';
+	} elseif ($features == 'project_task') {
+		$features = 'projet';
+		$objectid = (int) $object->fk_project;
+		$object = $objectid;
 	} elseif (is_object($object) && ($features == 'conferenceorbooth@eventorganization' || ($features == 'eventorganization' && $object->element == 'conferenceorbooth'))) {
 		// The module of an event organization declares no permission of its own, on purpose.
 		// Permission are done on project table.
@@ -256,6 +262,16 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'workstation';
 	} elseif ($features == 'hrm' && is_object($object) && in_array($object->element, array('job', 'position', 'skill'))) {
 		$feature2 = 'all';	// These 3 objects have no permission of their own, they share the level "all"
+	} elseif ($features == 'recruitment' && is_object($object) && in_array($object->element, array('recruitmentjobposition', 'recruitmentcandidature'))) {
+		// The recruitment module declares no permission at its first level, all its objects share the
+		// second level "recruitmentjobposition". When the caller provides the module name only
+		// (like document.php with its modulepart), we complete the missing parameters from the object.
+		if (empty($feature2)) {
+			$feature2 = 'recruitmentjobposition';
+		}
+		if (empty($tableandshare)) {
+			$tableandshare = $object->table_element;
+		}
 	} elseif ($features == 'stocktransfer' && is_object($object) && $object->element == 'stocktransfer') {
 		$feature2 = 'stocktransfer';	// This module declares no permission at its first level, only this one
 	} elseif (in_array($features, array('fournisseur', 'commande_fournisseur', 'facture_fournisseur', 'order_supplier', 'invoice_supplier'))) {	// When vendor invoice and purchase order are into module 'fournisseur'
@@ -301,6 +317,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'project_task';
 		if (empty($tableandshare)) {
 			$tableandshare = 'projet_task';
+		}
+	}
+
+	// If the $features parameter is empty, there is no permission we can check, so the access must
+	// be refused. Without this test, all the checks of permission below would be silently skipped and
+	// the access would be granted to any user without any test (see also selectobject.php that forces
+	// its features parameter to 'unknownobject' instead of '' for the same reason).
+	if (empty($features) || trim((string) $features) === '') {
+		dol_syslog('restrictedArea() called with an empty features parameter, we refuse the access', LOG_WARNING);
+		if ($nodie) {
+			return 0;
+		} else {
+			accessforbidden('Bad value for parameter features');
 		}
 	}
 
@@ -819,6 +848,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'category') {
 			$feature = 'categorie';
 		}
+		if ($feature == 'bank') {
+			$feature = 'banque';
+		}
 		if ($feature == 'contract') {
 			$dbtablename = 'contrat';
 		}
@@ -1202,6 +1234,67 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 	dol_syslog("security.lib.php::checkUserAccessToObject::return True", LOG_DEBUG);
 	return true;
+}
+
+/**
+ * Return, among a list of ids of objects of the same type, the ids of the objects the user is not allowed to access,
+ * with the same rules as checkUserAccessToObject(): entity, third parties of the sales representative when the user can not
+ * see all third parties, projects the user can see... It is used by the mass actions of the lists, where the ids come from
+ * the request and not from the list (the list only showed the objects the user can see, the request can contain any id).
+ * Only the types of objects linked to a third party or to a project are checked, an empty array is returned for the others.
+ *
+ * @param	User			$user		User
+ * @param	CommonObject	$object		An instance of the class of the objects (used for its element and table_element)
+ * @param	int[]			$ids		Ids of the objects
+ * @return	int[]						Ids of the objects the user can not access (empty if the user can access all of them)
+ * @see checkUserAccessToObject()
+ */
+function getObjectIdsRefusedToUser(User $user, $object, array $ids)
+{
+	$feature = '';
+	switch ($object->element) {
+		case 'societe':
+		case 'contact':
+		case 'contrat':
+		case 'ticket':
+		case 'facture':
+		case 'commande':
+		case 'propal':
+		case 'supplier_proposal':
+		case 'fichinter':
+		case 'shipping':
+		case 'reception':
+		case 'order_supplier':
+		case 'invoice_supplier':
+			$feature = $object->element;
+			break;
+		case 'action':
+			$feature = 'agenda';
+			break;
+		case 'project':
+			$feature = 'projet';
+			break;
+		case 'project_task':
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$feature = 'project_task';
+			break;
+	}
+	if (empty($feature)) {
+		return [];
+	}
+
+	$refusedids = [];
+	foreach ($ids as $id) {
+		$id = (int) $id;
+		if ($id <= 0) {
+			continue;
+		}
+		if (!checkUserAccessToObject($user, [$feature], $id, $object->table_element.'&'.$object->element, '', 'fk_soc', 'rowid')) {
+			$refusedids[] = $id;
+		}
+	}
+
+	return $refusedids;
 }
 
 

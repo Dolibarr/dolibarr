@@ -11,6 +11,7 @@
  * Copyright (C) 2024-2026  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -461,7 +462,17 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	if (empty($line->fk_remise_except)) {
 		print price($sign * $line->multicurrency_subprice);
 	} else {
-		print '<!-- '.price($sign * $line->multicurrency_subprice).' -->';
+		// Credit line (deposit, credit note, discount): show its value in the invoice currency. Its company-currency unit
+		// price stays hidden like for any credit line, so the rate it was paid at - which may differ from the invoice
+		// rate - is shown in a tooltip, to keep the column as narrow as it is today.
+		print '<span class="opacitymedium">'.price($sign * $line->multicurrency_subprice).'</span>';
+		if (!empty($line->subprice) && !empty($line->multicurrency_subprice)) {
+			// The tooltip carries what the cells cannot show for a credit line: its unit price in the company currency,
+			// hidden by design, and the rate it was paid at.
+			$creditlinetooltip = $langs->trans("PriceUHT").': '.price($sign * $line->subprice, 0, $langs, 1, -1, -1, $conf->currency);
+			$creditlinetooltip .= '<br>'.$langs->trans("Rate").': '.price2num(abs((float) $line->multicurrency_subprice / (float) $line->subprice), 'CR').' '.$this->multicurrency_code.'/'.$conf->currency;
+			print ' '.$form->textwithpicto('', $creditlinetooltip, 1, 'help', '', 1);
+		}
 	}
 	?>
 	</td>
@@ -496,6 +507,9 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	}
 	if (empty($line->fk_remise_except)) {
 		print(isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));		// if upinctax can't be known, we show subprice excl ta
+	} else {
+		// Credit line: its value in the invoice currency, tax included (see the excl. tax cell for the rate it was paid at)
+		print '<span class="opacitymedium">'.(isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice)).'</span>';
 	}
 	?></td>
 <?php } ?>
@@ -570,19 +584,19 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + (float) $line->situation_percent;
-		print '<td class="linecolcycleref nowrap right">'.$current_progress.'%</td>';
+		print '<td class="linecolcycleref nowraponall right">'.$current_progress.'%</td>';
 		$coldisplay++;
 		print '<td  class="nowrap right">'.$line->situation_percent.'%</td>';
 		$coldisplay++;
 		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
-		print '<td class="linecolcycleref2 right nowrap">'.price($sign * (float) $tmp[0]).'</td>';
+		print '<td class="linecolcycleref2 right nowraponall">'.price($sign * (float) $tmp[0]).'</td>';
 	} else {
-		print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';
+		print '<td class="linecolcycleref nowraponall right">'.$line->situation_percent.'%</td>';
 		$coldisplay++;
 		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
-		print '<td class="linecolcycleref2 right nowrap">'.price($sign * (float) $tmp[0]).'</td>';
+		print '<td class="linecolcycleref2 right nowraponall">'.price($sign * (float) $tmp[0]).'</td>';
 	}
 }
 
