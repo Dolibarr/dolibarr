@@ -2054,6 +2054,11 @@ class BlockedLog
 			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
 		}
 
+		if (preg_match('/^BLOCKEDLOGHMAC/', $hmac_encoded_secret_key)) {
+			// If key was not encoded in db yet (old version before migration)
+			$hmac_secret_key = $hmac_encoded_secret_key;
+		}
+
 		if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
 			throw new Exception('getClearHMACSecretKey Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the decrypt or obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).'.($errormsg ? ' Additional message: '.$errormsg : ''));
 		}
