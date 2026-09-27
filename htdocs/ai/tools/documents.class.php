@@ -67,7 +67,7 @@ class ToolDocuments extends McpTool
 		return array(
 			array(
 				"name" => "list_documents",
-				"description" => "List the files attached to a business object. Answers \"what files does this invoice have\", \"show the documents of that order\", \"is there anything attached to this third party\". Returns each file name, size, date and a download link, never the content. Give the object by id or by ref; search for it first when neither is known.",
+				"description" => "List the files attached to a business object. Answers \"what files does this invoice have\", \"show the documents of that order\", \"is there anything attached to this third party\". Returns each file name, size, date and a download link, never the content. Give the object by id or by ref; search for it first when neither is known. A draft ref may be written PROV42 or (PROV42), both work.",
 				"inputSchema" => array(
 					"type" => "object",
 					"properties" => array(
@@ -98,6 +98,8 @@ class ToolDocuments extends McpTool
 	 */
 	public function getCategories(): array
 	{
+		// The elements it serves span several intents, and a tool declaring only
+		// 'global' is dropped as soon as the classifier detects any category.
 		return array('billing', 'commercial', 'thirdparty', 'stock', 'project', 'global');
 	}
 
@@ -144,6 +146,12 @@ class ToolDocuments extends McpTool
 		}
 
 		$object = fetchObjectByElement($id, $element, $ref);
+		// A draft carries its provisional ref in parentheses, "(PROV42)", which a
+		// model drops when it repeats the ref back. Retry with them rather than
+		// answering "not found" for an object the user is looking at.
+		if ((!is_object($object) || empty($object->id)) && preg_match('/^\(?PROV\d+\)?$/i', $ref)) {
+			$object = fetchObjectByElement(0, $element, '('.trim($ref, '()').')');
+		}
 		if (!is_object($object) || empty($object->id)) {
 			return array("error" => "Object not found.");
 		}
@@ -172,7 +180,7 @@ class ToolDocuments extends McpTool
 				"url" => DOL_URL_ROOT."/document.php?modulepart=".urlencode($element)."&file=".urlencode(dol_sanitizeFileName($object->ref).'/'.$file['name'])
 			);
 			if (count($files) >= 50) {
-				break;
+				break;	// a prompt does not need more, and the model pays per token
 			}
 		}
 
