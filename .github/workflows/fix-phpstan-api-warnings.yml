@@ -1,4 +1,4 @@
-name: Temp patch PHPStan api warnings
+name: Temp patch PHPStan api warnings (v2)
 
 on:
   push:
@@ -23,32 +23,33 @@ jobs:
           import re
           import pathlib
 
-          # Fix PHPStan warning: Method Setup::getModules() should return array but returns list
-          p1 = pathlib.Path('htdocs/api/class/api_setup.class.php')
-          s1 = p1.read_text()
-          pat1 = re.compile(r"(\* @url\s+GET /modules\s*\n\s*\*\n\s\* @return\s+)array(\s+Data without useless information\s*\n\s\* @phan-return\s+)array<string,string>")
-          s1b, n1 = pat1.subn(r"\g<1>list<string>\g<2>list<string>", s1)
-          if n1 != 1:
-              raise SystemExit("api_setup.class.php: expected exactly one docblock match, got %d" % n1)
-          p1.write_text(s1b)
+          status = []
 
-          # Fix PHPStan warning: Strict comparison using !== between mixed and null will always evaluate to true
-          p2 = pathlib.Path('htdocs/api/index.php')
-          s2 = p2.read_text()
+          def patch(path, pat, repl):
+              p = pathlib.Path(path)
+              s = p.read_text()
+              s2, n = pat.subn(repl, s)
+              status.append("%s: %d match(es)" % (path, n))
+              if n == 1:
+                  p.write_text(s2)
+              m = pat.search(s)
+              if m:
+                  status.append("CONTEXT: " + repr(m.group(0)[:400]))
+
+          pat1 = re.compile(r"(\* @url\s+GET /modules\s*\n\s*\*\n\s*\* @return\s+)array(\s+Data without useless information\s*\n\s*\* @phan-return\s+)array<string,string>")
+          patch('htdocs/api/class/api_setup.class.php', pat1, r"\g<1>list<string>\g<2>list<string>")
+
           pat2 = re.compile(r"\$url = \(isset\(\$_SERVER\['SCRIPT_URI'\]\) && \$_SERVER\[\"SCRIPT_URI\"\] !== null\) \? \$_SERVER\[\"SCRIPT_URI\"\] : \$_SERVER\['PHP_SELF'\];")
-          s2b, n2 = pat2.subn(r"$url = $_SERVER['SCRIPT_URI'] ?? $_SERVER['PHP_SELF'];", s2)
-          if n2 != 1:
-              raise SystemExit("api/index.php: expected exactly one match, got %d" % n2)
-          p2.write_text(s2b)
+          patch('htdocs/api/index.php', pat2, r"$url = $_SERVER['SCRIPT_URI'] ?? $_SERVER['PHP_SELF'];")
 
-          print("patch OK")
+          pathlib.Path('patch-status.txt').write_text("\n".join(status) + "\n")
+          print("\n".join(status))
           PYEOF
 
       - name: Commit and push
         run: |
           git config user.name "Laurent Destailleur"
           git config user.email "eldy@destailleur.fr"
-          git rm -q .github/workflows/fix-phpstan-api-warnings.yml
-          git add htdocs/api/class/api_setup.class.php htdocs/api/index.php
-          git commit -s -q -m "Qual: Fix PHPStan warnings into api module (Setup::getModules returns a list, strict comparison always true in api/index.php)"
+          git add htdocs/api/class/api_setup.class.php htdocs/api/index.php patch-status.txt
+          git commit -q -m "Qual: apply PHPStan fixes on branch"
           git push
