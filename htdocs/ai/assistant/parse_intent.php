@@ -891,6 +891,24 @@ try {
 		}
 	}
 
+	// ask_for_confirmation is ours, built below around a real tool call; a model
+	// that emits it by itself (it does, on a follow-up question: "do you really
+	// want to update the phone of X?") sends the client a confirmation with
+	// nothing to confirm, which it rejects as malformed. Hand the question to
+	// the user as a plain answer instead: he replies, and the next turn acts.
+	if ($toolName === 'ask_for_confirmation' && empty($intentJSON['arguments']['original_intent'])) {
+		$question = '';
+		foreach (array('message', 'action', 'question', 'text') as $altkey) {
+			if (!empty($intentJSON['arguments'][$altkey]) && is_string($intentJSON['arguments'][$altkey])) {
+				$question = $intentJSON['arguments'][$altkey];
+				break;
+			}
+		}
+		dol_syslog("parse_intent.php model emitted ask_for_confirmation without an action, downgraded to respond_to_user", LOG_WARNING);
+		$toolName = 'respond_to_user';
+		$intentJSON = array('tool' => 'respond_to_user', 'arguments' => array('message' => ($question !== '' ? $question : $langs->transnoentitiesnoconv('AICannotUnderstandRequest'))));
+	}
+
 	if ($askForConfirmation > 0) {
 		$isModifyOperation = preg_match('/(create|update|delete|add|remove|modify|edit)/i', $toolName);
 
