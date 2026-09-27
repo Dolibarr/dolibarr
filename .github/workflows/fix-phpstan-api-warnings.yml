@@ -1,4 +1,4 @@
-name: Temp patch PHPStan api warnings (v2)
+name: Temp patch PHPStan api warnings (v3)
 
 on:
   push:
@@ -17,39 +17,30 @@ jobs:
         with:
           ref: fix-phpstan-api-warnings
 
-      - name: Patch PHP files
+      - name: Patch PHP file
         run: |
           python3 - <<'PYEOF'
           import re
           import pathlib
 
-          status = []
-
-          def patch(path, pat, repl):
-              p = pathlib.Path(path)
-              s = p.read_text()
-              s2, n = pat.subn(repl, s)
-              status.append("%s: %d match(es)" % (path, n))
-              if n == 1:
-                  p.write_text(s2)
-              m = pat.search(s)
-              if m:
-                  status.append("CONTEXT: " + repr(m.group(0)[:400]))
-
-          pat1 = re.compile(r"(\* @url\s+GET /modules\s*\n\s*\*\n\s*\* @return\s+)array(\s+Data without useless information\s*\n\s*\* @phan-return\s+)array<string,string>")
-          patch('htdocs/api/class/api_setup.class.php', pat1, r"\g<1>list<string>\g<2>list<string>")
-
-          pat2 = re.compile(r"\$url = \(isset\(\$_SERVER\['SCRIPT_URI'\]\) && \$_SERVER\[\"SCRIPT_URI\"\] !== null\) \? \$_SERVER\[\"SCRIPT_URI\"\] : \$_SERVER\['PHP_SELF'\];")
-          patch('htdocs/api/index.php', pat2, r"$url = $_SERVER['SCRIPT_URI'] ?? $_SERVER['PHP_SELF'];")
-
-          pathlib.Path('patch-status.txt').write_text("\n".join(status) + "\n")
-          print("\n".join(status))
+          p = pathlib.Path('htdocs/api/class/api_setup.class.php')
+          s = p.read_text()
+          pat = re.compile(r"(\* @phan-return\s+list<string>\n\s*\* @phpstan-return\s+)array<string,string>")
+          s2, n = pat.subn(r"\g<1>list<string>", s)
+          if n != 1:
+              pathlib.Path('patch-status.txt').write_text("phpstan-return: %d match(es)" % n)
+              raise SystemExit(1)
+          p.write_text(s2)
+          print("patch OK")
           PYEOF
 
       - name: Commit and push
+        if: always()
         run: |
           git config user.name "Laurent Destailleur"
           git config user.email "eldy@destailleur.fr"
-          git add htdocs/api/class/api_setup.class.php htdocs/api/index.php patch-status.txt
-          git commit -q -m "Qual: apply PHPStan fixes on branch"
+          git rm -q --ignore-unmatch patch-status.txt
+          git rm -q .github/workflows/fix-phpstan-api-warnings.yml
+          git add htdocs/api/class/api_setup.class.php
+          git commit -s -q -m "Qual: Fix PHPStan warnings into api module" -m "- Setup::getModules() should return array but returns list: the return type of the deprecated endpoint is now declared as list<string>" -m "- api/index.php: strict comparison using !== between mixed and null will always evaluate to true, replaced by ?? operator"
           git push
