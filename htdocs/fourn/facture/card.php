@@ -4269,7 +4269,7 @@ if ($action == 'create') {
 			// modified by hook
 			if (empty($reshook)) {
 				// Subtotal
-				if ($object->status === FactureFournisseur::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+				if ($object->status == FactureFournisseur::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
 					$langs->load('subtotals');
 
 					$url_button = array();
