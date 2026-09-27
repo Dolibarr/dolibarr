@@ -1523,20 +1523,39 @@ function agenda_build_eventarray($db, $hookmanager, $user, &$object, &$action, $
  * Complete an agenda calendar event array with contact birthday pseudo-events.
  * Shared by the month, week and day agenda views (comm/action/index.php, comm/action/peruser.php).
  *
- * @param	DoliDB							$db			Database handler
- * @param	Translate						$langs		Language object (already loaded)
- * @param	User							$user		Current user (used for private contact visibility)
- * @param	string							$mode		'show_day' restricts to the given day, any other value = whole month
- * @param	int								$month		Month number (1-12)
- * @param	int								$day		Day of month (only used when $mode == 'show_day')
- * @param	int								$year		Year the birthday events must be placed in
- * @param	array<int,ActionComm[]>			$eventarray	Event array to complete, keyed by GMT day timestamp (modified by reference)
- * @param	int								$nbevents	Running event counter (modified by reference)
- * @return	int											Number of birthday events added, or <0 if the SQL query failed
+ * @param	DoliDB						$db					Database handler
+ * @param	Translate					$langs				Language object (already loaded)
+ * @param	User						$user				Current user (used for private contact visibility)
+ * @param	string						$mode				'show_day' restricts to the given day, any other value = whole month
+ * @param	int							$month				Month number (1-12)
+ * @param	int							$day				Day of month (only used when $mode == 'show_day')
+ * @param	int							$year				Year the birthday events must be placed in
+ * @param	array<int,ActionComm[]>		$eventarray			Event array to complete, keyed by GMT day timestamp (modified by reference)
+ * @param	int							$nbevents			Running event counter (modified by reference)
+ * @param	int							$firstdaytoshow		Start of the visible date range (Unix timestamp)
+ * @param	int							$lastdaytoshow		End of the visible date range (Unix timestamp, exclusive)
+ * @return	int												Number of birthday events added, or <0 if the SQL query failed
  */
-function agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, &$eventarray, &$nbevents)
+function agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $year, &$eventarray, &$nbevents, $firstdaytoshow, $lastdaytoshow)
 {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+	// Build the map of month => year for the displayed period so we can load birthdays
+	// for all months covered by the view. A week or a month grid can span two or three months,
+	// and a week at a year boundary can even span two years, so we cannot rely on the reference
+	// $month/$year only.
+	$birthdaymonthyearmap = array();
+	$tmpstamp = $firstdaytoshow;
+	$i = 0;
+	while ($tmpstamp < $lastdaytoshow && $i < 1000) {	// 1000 is a protection against infinite loops
+		$m = (int) dol_print_date($tmpstamp, '%m', 'tzuserrel');
+		if (!isset($birthdaymonthyearmap[$m])) {
+			$birthdaymonthyearmap[$m] = (int) dol_print_date($tmpstamp, '%Y', 'tzuserrel');
+		}
+		$tmpstamp = dol_time_plus_duree($tmpstamp, 1, 'd');
+		$i++;
+	}
+
 
 	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
@@ -1546,7 +1565,8 @@ function agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $ye
 		$sql .= ' AND MONTH(birthday) = '.((int) $month);
 		$sql .= ' AND DAY(birthday) = '.((int) $day);
 	} else {
-		$sql .= ' AND MONTH(birthday) = '.((int) $month);
+		// Load birthdays for all months covered by the displayed period (week or month grid)
+		$sql .= ' AND MONTH(birthday) IN ('.$db->sanitize(implode(',', array_keys($birthdaymonthyearmap))).')';
 	}
 	$sql .= ' ORDER BY birthday';
 
@@ -1571,7 +1591,10 @@ function agenda_get_birthday_events($db, $langs, $user, $mode, $month, $day, $ye
 
 		$datebirth = dol_stringtotime($obj->birthday, 1);
 		$datearray = dol_getdate($datebirth, true);
-		$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
+		// Use the year that matches the birthday month within the displayed period
+		// (handles a week/month grid spanning two months or a year boundary)
+		$birthdayyear = isset($birthdaymonthyearmap[(int) $datearray['mon']]) ? $birthdaymonthyearmap[(int) $datearray['mon']] : $year;
+		$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $birthdayyear, true); // For full day events, date are also GMT but they won't but converted during output
 		$event->datef = $event->datep;
 
 		$event->type_code = 'BIRTHDAY';

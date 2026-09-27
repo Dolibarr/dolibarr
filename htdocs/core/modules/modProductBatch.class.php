@@ -137,6 +137,8 @@ class modProductBatch extends DolibarrModules
 	{
 		global $db, $conf;
 
+		$this->_load_tables('/install/mysql/', 'productbatch');
+
 		$sql = array();
 
 		if (isModEnabled('cashdesk')) {

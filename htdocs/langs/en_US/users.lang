@@ -80,6 +80,7 @@ Inherited=Inherited
 UserWillBe=Created user will be
 UserWillBeInternalUser=Created user will be an internal user (because not linked to a particular third party)
 UserWillBeExternalUser=Created user will be an external user (because linked to a particular third party)
+WarningUserDifferentContactSocid=The third party of the contact is different from the third party of the linked user.
 IdPhoneCaller=Id phone caller
 NewUserCreated=User %s created
 NewUserPassword=Password change for %s

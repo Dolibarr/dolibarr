@@ -147,7 +147,13 @@ class modAi extends DolibarrModules
 		// Example: $this->const=array(1 => array('BOOKCAL_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('BOOKCAL_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array();
+		$this->const = array(
+			1 => array('AI_EMAILCLEANER_ENABLED', 'yesno', '0', 'Enable AI cleaner hook for EmailCollector (no business decision)', 0, 'current'),
+			2 => array('AI_EMAILCLEANER_MAX_INPUT', 'integer', '16000', 'Max input size for EmailCleaner prompt', 0, 'current'),
+			3 => array('AI_EMAILCLEANER_MIN_CONFIDENCE', 'chaine', '0.60', 'Minimum confidence to trust AI cleaned text', 0, 'current'),
+			4 => array('AI_EMAILCLEANER_EXPOSE_OPERATION', 'yesno', '0', 'Expose AI Email Cleaner operation in EmailCollector card', 0, 'current'),
+			5 => array('AI_EMAILCLEANER_ISOLATED_MODE', 'yesno', '1', 'Force isolated cleaner runtime (no business decision / no cross-module side effects)', 0, 'current'),
+		);
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
@@ -285,6 +291,26 @@ class modAi extends DolibarrModules
 		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AI */
+		// The full-page assistant (ai/assistant/index.php) was reachable only by
+		// typing its URL: the topbar popover opens the quick chat, but nothing in
+		// the menus leads to the page with the welcome screen and its ready-made
+		// prompts. One entry under Tools, hideable with AI_MENU_HIDE_TOOLSMENU
+		// and gated by the same ai->assistant->use right as the page itself.
+		$this->menu[$r++] = array(
+			'fk_menu' => 'fk_mainmenu=tools',
+			'type' => 'left',
+			'titre' => 'AIAssistant',
+			'prefix' => img_picto('', 'fa-robot', 'class="paddingright pictofixedwidth"'),
+			'mainmenu' => 'tools',
+			'leftmenu' => 'ai',
+			'url' => '/ai/assistant/index.php?mainmenu=tools&leftmenu=ai',
+			'langs' => 'other',
+			'position' => 200,
+			'enabled' => 'isModEnabled("ai") && getDolGlobalString("AI_ASSISTANT_ENABLED") && getDolGlobalString("AI_MENU_SHOW_TOOLSMENU")',
+			'perms' => '$user->hasRight("ai", "assistant", "use")',
+			'target' => '',
+			'user' => 2,
+		);
 		/* END MODULEBUILDER LEFTMENU AI */
 
 		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES

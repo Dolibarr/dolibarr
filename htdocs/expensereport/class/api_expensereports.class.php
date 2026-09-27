@@ -361,7 +361,7 @@ class ExpenseReports extends DolibarrApi
 		if ($result > 0) {
 			return $result;
 		} else {
-			throw new RestException(500, 'Error adding line to expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error adding line to expense report: '.$this->expensereport->errorsToString());
 		}
 	}
 
@@ -432,7 +432,7 @@ class ExpenseReports extends DolibarrApi
 			unset($result->line);
 			return $this->_cleanObjectDatas($result);
 		} else {
-			throw new RestException(500, 'Error updating line: '.$this->expensereport->error);
+			throw new RestException(500, 'Error updating line: '.$this->expensereport->errorsToString());
 		}
 	}
 
@@ -489,7 +489,7 @@ class ExpenseReports extends DolibarrApi
 		if ($result > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error deleting line: '.$this->expensereport->error);
+			throw new RestException(500, 'Error deleting line: '.$this->expensereport->errorsToString());
 		}
 	}
 
@@ -549,7 +549,7 @@ class ExpenseReports extends DolibarrApi
 		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->expensereport->error);
+			throw new RestException(500, $this->expensereport->errorsToString());
 		}
 	}
 
@@ -581,7 +581,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if (!$this->expensereport->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Expense Report : '.$this->expensereport->error);
+			throw new RestException(500, 'Error when delete Expense Report : '.$this->expensereport->errorsToString());
 		}
 
 		return array(
@@ -626,7 +626,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when setting to draft expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error when setting to draft expense report: '.$this->expensereport->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->expensereport);
@@ -670,7 +670,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error when validating expense report: '.$this->expensereport->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->expensereport);
@@ -715,7 +715,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->expensereport);
@@ -761,7 +761,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already denied');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when denying expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error when denying expense report: '.$this->expensereport->errorsToString());
 		}
 
 
@@ -807,7 +807,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->expensereport);
@@ -849,7 +849,7 @@ class ExpenseReports extends DolibarrApi
 		}
 		$result = $this->expensereport->set_cancel(DolibarrApiAccess::$user, $detail, $notrigger);
 		if ($result < 0) {
-			throw new RestException(500, 'Error when cancelling expense report: '.$this->expensereport->error);
+			throw new RestException(500, 'Error when cancelling expense report: '.$this->expensereport->errorsToString());
 		}
 
 		$result = $this->expensereport->fetch($id);
@@ -980,9 +980,13 @@ class ExpenseReports extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validatepayment($request_data);
 
+		if (isModEnabled("bank") && !((int) ($request_data['accountid'] ?? 0) > 0)) {
+			throw new RestException(400, "accountid field missing");
+		}
+
 		// Check access to the parent expense report
 		$result = $this->expensereport->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Expense report not found');
 		}
 
@@ -996,11 +1000,15 @@ class ExpenseReports extends DolibarrApi
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
 		}
 
+		// Same sequence as expensereport/payment/payment.php: all or nothing
+		$this->db->begin();
+
 		if ($paymentExpenseReport->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error creating paymentExpenseReport', array_merge(array($paymentExpenseReport->error), $paymentExpenseReport->errors));
+			$this->db->rollback();
+			throw new RestException(400, 'Payment error : '.$paymentExpenseReport->errorsToString());
 		}
 		if (isModEnabled("bank")) {
-			$paymentExpenseReport->addPaymentToBank(
+			$result = $paymentExpenseReport->addPaymentToBank(
 				DolibarrApiAccess::$user,
 				'payment_expensereport',
 				'(ExpenseReportPayment)',
@@ -1008,7 +1016,19 @@ class ExpenseReports extends DolibarrApi
 				'',
 				''
 			);
+			if ($result <= 0) {
+				$this->db->rollback();
+				throw new RestException(400, 'Add payment to bank error : '.$paymentExpenseReport->errorsToString());
+			}
 		}
+
+		$remaintopay = price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments(), 'MT');
+		if ($remaintopay == 0 && $this->expensereport->setPaid($this->expensereport->id, DolibarrApiAccess::$user) < 0) {
+			$this->db->rollback();
+			throw new RestException(400, 'Set paid error : '.$this->expensereport->errorsToString());
+		}
+
+		$this->db->commit();
 
 		return $paymentExpenseReport->id;
 	}
@@ -1059,7 +1079,7 @@ class ExpenseReports extends DolibarrApi
 		if ($paymentExpenseReport->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $paymentExpenseReport->error);
+			throw new RestException(500, $paymentExpenseReport->errorsToString());
 		}
 	}
 

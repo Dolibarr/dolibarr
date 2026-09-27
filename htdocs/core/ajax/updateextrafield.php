@@ -19,7 +19,8 @@
 /**
  *      \file       htdocs/core/ajax/updateextrafield.php
  *      \ingroup    core
- *      \brief      File to update an extrafield (for example for stars or AI update)
+ *      \brief      File to update an extrafield (for example for stars or AI update).
+ *      			See htdocs/core/ajax/ajaxextrafield.php for aja component to read extrafield value.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -79,7 +80,20 @@ if ($usesublevelpermission && !$user->hasRight($module, $element, 'write') && !$
 
 restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 
-
+// Add blacklist of some forbidden field name.
+/* Removed, this is useful only for main fields not for etrafields
+$blacklistedfields = array('pass', 'pass_crypted', 'pass_temp', 'api_key', 'openid', 'admin', 'status', 'statut');
+$canreadsalary = ((isModEnabled('salaries') && $user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+if (!$canreadsalary) {
+	$blacklistedfields[] = 'salary';
+	$blacklistedfields[] = 'salaryextra';
+	$blacklistedfields[] = 'thm';
+	$blacklistedfields[] = 'tjm';
+}
+if (in_array($field, $blacklistedfields)) {
+	access_forbidden("Can't edit a field blacklisted with name ".$field);
+}
+*/
 
 
 /*

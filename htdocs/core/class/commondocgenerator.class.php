@@ -1591,7 +1591,9 @@ abstract class CommonDocGenerator
 			$columnText = $hookmanager->resArray['columnText'];
 		}
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 		if (!$reshook || $reshook > 0) {
 			if (empty($columnText)) {
@@ -1667,7 +1669,9 @@ abstract class CommonDocGenerator
 		);
 		$reshook = $hookmanager->executeHooks('printColDescContent', $parameters, $this); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 	}
 
@@ -1735,7 +1739,9 @@ abstract class CommonDocGenerator
 		);
 		$reshook = $hookmanager->executeHooks('getPDFExtrafieldContent', $parameters, $this); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 		if ($reshook) {
 			$extrafieldOutputContent = $hookmanager->resPrint;
@@ -1992,7 +1998,9 @@ abstract class CommonDocGenerator
 
 			$reshook = $hookmanager->executeHooks('pdfTabTitles', $parameters, $this); // Note that $object may have been modified by hook
 			if ($reshook < 0) {
-				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 			} elseif (empty($reshook)) {
 				if (!$this->getColumnStatus($colKey)) {
 					continue;
@@ -2012,6 +2020,9 @@ abstract class CommonDocGenerator
 
 					// Add space for lines (more if we need to show a second alternative language)
 					global $outputlangsbis;
+					/** @var Translate $outputlangsbis */
+					'@phan-var-force Translate $outputlangsbis';
+
 					if (is_object($outputlangsbis)) {
 						// set cell padding with column title definition
 						$pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], 0.5);

@@ -185,6 +185,27 @@ class ToolInvoices extends McpTool
 	}
 
 	/**
+	 * Customer and supplier invoice reads and lifecycle actions.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'search_invoice' => array(array('facture', 'lire')),
+			'search_invoices' => array(array('facture', 'lire')),
+			'get_invoice' => array(array('facture', 'lire')),
+			'validate_invoice' => array(array('facture', 'creer')),
+			'pay_invoice' => array(array('facture', 'paiement')),
+			'search_supplier_invoice' => array(array('fournisseur', 'facture', 'lire')),
+			'get_supplier_invoice' => array(array('fournisseur', 'facture', 'lire'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *

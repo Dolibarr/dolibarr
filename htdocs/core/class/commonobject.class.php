@@ -24,6 +24,7 @@
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
 
+ * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -947,6 +948,17 @@ abstract class CommonObject
 	 */
 	public $isextrafieldmanaged = 0;
 
+	/**
+	 * @var array{paths:string[],names:string[],mimes:string[]}
+	 *
+	 * For experimental feature: MAIN_COPY_FILE_IN_EVENT_AUTO
+	 * Array of pointer to attachedfiles, set by actions_sendmails.inc.php when using "Send email" button
+	 * so list of sent files are automatically propagated to triggers, so the trigger modAgenda_ActionsAuto
+	 * can save the files sent into the directory of object, and link them to the agenda event.
+	 */
+	public $attachedfiles;
+
+
 
 	// No constructor as it is an abstract class
 
@@ -1015,16 +1027,6 @@ abstract class CommonObject
 			}
 		}
 		return -1;
-	}
-
-	/**
-	 * isEmpty We consider CommonObject isEmpty if this->id is empty
-	 *
-	 * @return bool
-	 */
-	public function isEmpty()
-	{
-		return (empty($this->id));
 	}
 
 	/**
@@ -1146,7 +1148,7 @@ abstract class CommonObject
 	 */
 	public function errorsToString()
 	{
-		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
+		return $this->error.(is_array($this->errors) && count($this->errors) > 0 ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
 	}
 
 
@@ -2146,9 +2148,11 @@ abstract class CommonObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+		/* Done with DolDeprecationHandler
 		if (empty($this->fk_project) && !empty($this->fk_projet)) {
 			$this->fk_project = $this->fk_projet; // For backward compatibility
 		}
+		*/
 		if (empty($this->fk_project)) {
 			return 0;
 		}
@@ -2865,7 +2869,8 @@ abstract class CommonObject
 	}
 
 	/**
-	 *  Change the payments methods
+	 *  Change the payments methods.
+	 *  Can be used on invoice, supplier invoice, salary, company, vat, ...
 	 *
 	 *  @param		int		$id		Id of new payment method
 	 *  @return		int				>0 if OK, <0 if KO
@@ -2993,6 +2998,12 @@ abstract class CommonObject
 				// Update line price
 				if (!empty($this->lines)) {
 					foreach ($this->lines as &$line) {
+						// A credit line (deposit, credit note, discount applied to the invoice) is not priced at the invoice rate:
+						// both its amounts are the historical ones of the credit, so a rate change must leave it untouched.
+						if (!empty($line->fk_remise_except)) {
+							continue;
+						}
+
 						// Amounts in company currency will be recalculated
 						if ($mode == 1) {
 							$line->subprice = 0;
@@ -10220,9 +10231,10 @@ abstract class CommonObject
 	 * @param float		$unitPrice			Product unit price
 	 * @param float		$discountPercent	Line discount percent
 	 * @param int		$fk_product			Product id
+	 * @param float		$qty				Line quantity, to select the matching supplier price quantity range (0 = ignore quantity ranges)
 	 * @return float|int<-2,-1>				Return buy price if OK, integer <0 if KO
 	 */
-	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
+	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0, $qty = 0)
 	{
 		global $conf;
 
@@ -10264,7 +10276,12 @@ abstract class CommonObject
 				if (empty($buyPrice) && in_array(getDolGlobalString('MARGIN_TYPE'), array('1', 'pmp', 'costprice'))) {
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);
-					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0) {
+					$result = $productFournisseur->find_min_price_product_fournisseur($fk_product, $qty);
+					if ($result == 0 && $qty > 0) {
+						// No supplier price defined for such a low quantity, fall back on the lowest known price
+						$result = $productFournisseur->find_min_price_product_fournisseur($fk_product);
+					}
+					if ($result > 0) {
 						$buyPrice = $productFournisseur->fourn_unitprice;
 					} elseif ($result < 0) {
 						$this->errors[] = $productFournisseur->error;
@@ -11144,7 +11161,8 @@ abstract class CommonObject
 		// Triggers
 		if (!$error && !$notrigger) {
 			// Call triggers
-			$result = $this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+			$result = $this->call_trigger($triggerPrefix.'_CREATE', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -11399,7 +11417,8 @@ abstract class CommonObject
 		// Triggers
 		if (!$error && !$notrigger) {
 			// Call triggers
-			$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+			$result = $this->call_trigger($triggerPrefix.'_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			} //Do also here what you must do to rollback action if trigger fail
@@ -11506,7 +11525,8 @@ abstract class CommonObject
 		if (!$error) {
 			if (!$notrigger) {
 				// Call triggers
-				$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
+				$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+				$result = $this->call_trigger($triggerPrefix.'_DELETE', $user);
 				if ($result < 0) {
 					$error++;
 				} // Do also here what you must do to rollback action if trigger fail

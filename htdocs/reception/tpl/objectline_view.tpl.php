@@ -4,12 +4,12 @@
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013		    Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2017		    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		    Nick Fragoulis
- * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2026		Jose MARTINEZ		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,6 +123,7 @@ print '</td>';
 
 // Qty
 print '<td class="linecolrefsupplier">';
+$coldisplay++;
 print dol_escape_htmltag((string) (!empty($line->ref_fourn) ? $line->ref_fourn : ''));
 if (!empty($line->fk_product) && !empty($object->socid) && getDolGlobalString('RECEPTION_MANAGE_SUPPLIER_PRICES')) {
 	// Button to manage the buying prices of the product, using the standard core popup
@@ -131,6 +132,7 @@ if (!empty($line->fk_product) && !empty($object->socid) && getDolGlobalString('R
 }
 print '</td>';
 print '<td class="linecolcostprice nowrap right">'.(!empty($line->cost_price) ? price($line->cost_price) : '').'</td>';
+$coldisplay++;
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
@@ -147,6 +149,7 @@ if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only 
 	print '</td>';
 }
 print '<td class="linecolwarehouse nowrap right">';
+$coldisplay++;
 if (!empty($line->fk_entrepot)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 	$tmpwarehouse = new Entrepot($object->db);
@@ -157,6 +160,7 @@ if (!empty($line->fk_entrepot)) {
 print '</td>';
 if (isModEnabled('productbatch')) {
 	print '<td class="linecolbatch">'.dol_escape_htmltag((string) (!empty($line->batch) ? $line->batch : '')).'</td>';
+	$coldisplay++;
 }
 
 if ($this->status == 0 && $user->hasRight('reception', 'write') && $action != 'selectlines') {

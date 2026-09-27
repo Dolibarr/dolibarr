@@ -476,6 +476,8 @@ function hash_call($methodName, $nvpStr)
 
 	dol_syslog("Paypal API endpoint ".$API_Endpoint);
 
+	// TODO Replace this part with getURLContent()
+
 	//setting the curl parameters.
 	$ch = curl_init();
 

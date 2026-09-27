@@ -481,6 +481,15 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key (try ".$tryid."/".$maxretry."): ".$logerrormessage, LOG_WARNING);
 				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key (try ".$tryid."/".$maxretry."): ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
 				$retryable = true;	// Remote server error, may be transient
+			} elseif ($tmpresult['http_code'] == 403) {
+				$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+				$obfuscationkey = 'ERROR '.$tmpresult['http_code'].' '.$tmpresult['content'];
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key (try ".$tryid."/".$maxretry."): ".$logerrormessage, LOG_WARNING);
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key (try ".$tryid."/".$maxretry."): ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+				$retryable = true;	// ping.dolibarr.org is Cloudflare-fronted; a 403 from a
+									// shared/CI IP is far more likely bot-mitigation on that
+									// specific request than a permanent application-level
+									// rejection, so it is worth a retry too
 			} elseif ($tmpresult['http_code'] != 200) {
 				$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
 				$obfuscationkey = 'ERROR '.$tmpresult['http_code'].' '.$tmpresult['content'];

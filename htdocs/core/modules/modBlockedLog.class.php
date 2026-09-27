@@ -199,7 +199,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Check the context of running company is defined
 		if (empty($mysoc->country_code)) {
-			$errmsg = 'Error: The context of the running company is not defined';
+			$errmsg = 'Error: The context of the running company (country code) is not defined';
 			dol_syslog($errmsg, LOG_ERR);
 			$this->error = $errmsg;
 			return 0;

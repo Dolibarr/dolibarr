@@ -134,7 +134,7 @@ $dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 $url = $_SERVER['PHP_SELF'];
 if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] is 'api\/index\.php' instead of 'api\/index\.php/explorer.php' or 'api\/index\.php/method'
-	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : $_SERVER['PATH_INFO']);
+	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? ($_SERVER['ORIG_PATH_INFO'] ?? '') : $_SERVER['PATH_INFO']);
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (getDolGlobalString('MAIN_NGINX_FIX')) {
@@ -549,18 +549,20 @@ if ((getDolGlobalInt("API_ENABLE_COUNT_CALLS") || !empty($dolibarr_api_count_alw
 
 // Call API termination method
 $apiMethodInfo = &$api->r->apiMethodInfo;
-$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
-if (method_exists($apiMethodInfo->className, $terminateCall)) {
-	// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
-	ob_end_flush();
+if (!is_null($apiMethodInfo)) {
+	$terminateCall = '_terminate_' . $apiMethodInfo->methodName . '_' . $api->r->responseFormat->getExtension();
+	if (method_exists($apiMethodInfo->className, $terminateCall)) {
+		// Now flush output buffers so that response data is sent to the client even if we still have action to do in a termination method.
+		ob_end_flush();
 
-	// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
-	if (function_exists('fastcgi_finish_request')) {
-		fastcgi_finish_request();
+		// If you're using PHP-FPM, this function will allow you to send the response and then continue processing
+		if (function_exists('fastcgi_finish_request')) {
+			fastcgi_finish_request();
+		}
+
+		// Call a termination method. Warning: This method can do I/O, sync but must not make output.
+		call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 	}
-
-	// Call a termination method. Warning: This method can do I/O, sync but must not make output.
-	call_user_func(array(Luracast\Restler\Scope::get($apiMethodInfo->className), $terminateCall), $responsedata);
 }
 
 //session_destroy();

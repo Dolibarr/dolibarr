@@ -27,7 +27,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -486,45 +486,26 @@ class FilesLibTest extends CommonClassTest
 		// We restore user properties
 		$user->rights->facture->lire = $savpermlire;
 		$user->rights->facture->creer = $savpermcreer;
-	}
 
-	/**
-	 * Check that a user allowed to export the ledger can download the generated accounting export.
-	 *
-	 * @return void
-	 */
-	public function testDolCheckSecureAccessAccountingExport()
-	{
-		global $conf, $user, $langs, $db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
+		// The API maps modulepart to 'supplier_invoice' / 'supplier_order': they must use the supplier module permissions
+		if (!empty($conf->fournisseur->facture->dir_output) && !empty($conf->fournisseur->commande->dir_output)) {
+			$savpermsupplier = $user->rights->fournisseur;
+			$user->rights->fournisseur = new stdClass();
+			$user->rights->fournisseur->facture = new stdClass();
+			$user->rights->fournisseur->commande = new stdClass();
+			foreach (array('supplier_invoice' => 'facture', 'supplier_order' => 'commande') as $modulepart => $permobject) {
+				$filename = 'SI010101/SI010101.pdf';
+				$user->rights->fournisseur->$permobject->creer = 1;
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', 'write');
+				$this->assertEquals(1, $result['accessallowed'], "Check write access allowed to '$modulepart/$filename':".json_encode($result));
+				$this->assertEquals($conf->fournisseur->$permobject->dir_output.'/'.$filename, $result['original_file']);
 
-		$savpermbindwrite = $user->hasRight('accounting', 'bind', 'write');
-		$savpermexport = $user->hasRight('accounting', 'mouvements', 'export');
-
-		if (empty($user->rights->accounting)) {
-			$user->rights->accounting = new stdClass();
+				$user->rights->fournisseur->$permobject->creer = 0;
+				$result = dol_check_secure_access_document($modulepart, $filename, 0, '', '', 'write');
+				$this->assertEquals(0, $result['accessallowed'], "Check write access denied to '$modulepart/$filename':".json_encode($result));
+			}
+			$user->rights->fournisseur = $savpermsupplier;
 		}
-		if (empty($user->rights->accounting->bind)) {
-			$user->rights->accounting->bind = new stdClass();
-		}
-		if (empty($user->rights->accounting->mouvements)) {
-			$user->rights->accounting->mouvements = new stdClass();
-		}
-
-		$user->rights->accounting->bind->write = 0;
-		$user->rights->accounting->mouvements->export = 1;
-		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
-		$this->assertEquals(1, $result['accessallowed']);
-
-		$user->rights->accounting->mouvements->export = 0;
-		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
-		$this->assertEquals(0, $result['accessallowed']);
-
-		$user->rights->accounting->bind->write = $savpermbindwrite;
-		$user->rights->accounting->mouvements->export = $savpermexport;
 	}
 
 	/**

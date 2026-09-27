@@ -13,7 +13,7 @@
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Nick Fragoulis
  * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
@@ -610,6 +610,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: ".DOL_URL_ROOT.'/reception/index.php');
@@ -674,8 +675,13 @@ if (empty($reshook)) {
 		$error = 0;
 
 		if ($action == 'setwarehouse') {	// Test on permission already done. Default warehouse for the lines
-			$object->setValueFrom('fk_warehouse', (GETPOSTINT('warehouse_id') > 0 ? GETPOSTINT('warehouse_id') : null), '', null, 'int', '', $user);
-			$object->fk_warehouse = GETPOSTINT('warehouse_id');
+			// Note: setValueFrom() casts the value to int, so it can not store an empty warehouse.
+			// We use update() to keep a NULL, because a line without warehouse must not move stock.
+			$object->fk_warehouse = (GETPOSTINT('warehouse_id') > 0 ? GETPOSTINT('warehouse_id') : null);
+			if ($object->update($user) < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 
 		if ($action == 'settracking_number') {		// Test on permission already done
@@ -2646,6 +2652,9 @@ if ($action == 'create' && $permissiontoadd) {
 		$alreadysent = array();
 
 		$origin = (string) $origin;
+
+		// The origin may arrive as 'order_supplier' from some callers, while the table name below is
+		// built from 'supplier_order'. Normalise it or the query targets a table that does not exist.
 		if (empty($origin) || $origin == 'order_supplier') {
 			$origin = 'supplier_order';
 		}
@@ -3113,7 +3122,6 @@ if ($action == 'create' && $permissiontoadd) {
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
-
 
 llxFooter();
 

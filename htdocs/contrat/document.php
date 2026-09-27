@@ -121,7 +121,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_do
 if ($object->id) {
 	$head = contract_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("Contract"), -1, 'contract');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Contract"), -1, 'contract', 0, '', '', 0, '', 1);
 
 
 	// Build file list

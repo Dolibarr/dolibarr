@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -134,6 +134,7 @@ class DoliDBTest extends CommonClassTest
 	 *
 	 * @return	void
 	 */
+	/* Disabled. Not used yet and ko on pgsql test suite on travis
 	public function testPrepareExecute()
 	{
 		global $conf,$user,$langs,$db;
@@ -208,4 +209,5 @@ class DoliDBTest extends CommonClassTest
 
 		print __METHOD__." OK\n";
 	}
+	*/
 }

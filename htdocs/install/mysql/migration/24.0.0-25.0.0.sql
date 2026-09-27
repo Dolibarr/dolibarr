@@ -38,6 +38,8 @@
 --noqa:disable=RF03
 
 
+ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
+
 -- V24 forgotten
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
@@ -45,6 +47,7 @@ ALTER TABLE llx_blockedlog ADD COLUMN signature_backward varchar(100) DEFAULT ''
 ALTER TABLE llx_blockedlog ADD COLUMN type_code varchar(8) DEFAULT '';
 ALTER TABLE llx_blockedlog ADD COLUMN note varchar(128) DEFAULT NULL;
 
+ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_projet;
 
 
 -- v25 migration
@@ -133,24 +136,34 @@ ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFT
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
--- Short-lived tombstone log of deleted objects (see llx_deletion_log.sql).
+-- Short-lived tombstone log of deleted agenda events (see llx_deletion_log.sql).
 CREATE TABLE llx_deletion_log(
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity			integer NOT NULL DEFAULT 1,
-	element_type	varchar(64) NOT NULL,
-	fk_object		integer NOT NULL,
+	fk_actioncomm	integer NOT NULL,
+	uid				varchar(36) NULL,
+	fk_user_action	integer NULL,
+	assigned_users	varchar(255) NULL,
 	date_deletion	datetime NOT NULL,
 	fk_user			integer NULL
 ) ENGINE=innodb;
+ALTER TABLE llx_deletion_log ADD COLUMN uid	varchar(36) NULL;
+ALTER TABLE llx_deletion_log ADD COLUMN fk_user_action integer NULL;
 
-ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_element (element_type, entity, date_deletion);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_entity_date (entity, date_deletion);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_uid (uid);
+ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_fk_user_action (fk_user_action);
 ALTER TABLE llx_deletion_log ADD INDEX idx_deletion_log_date_deletion (date_deletion);
 
+-- Stable unique identifier of an agenda event, kept in llx_deletion_log after the event is deleted.
+ALTER TABLE llx_actioncomm ADD COLUMN uid char(36) NULL AFTER ref_ext;
+ALTER TABLE llx_actioncomm ADD UNIQUE INDEX uk_actioncomm_uid (uid);
 
 
 -- Add contract type field (0=customer, 1=supplier)
 ALTER TABLE llx_contrat ADD COLUMN fk_contract_type tinyint DEFAULT 0 AFTER ref_ext;
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_warehouse integer DEFAULT NULL;
 -- Table to persist the data an online payment return page needs, server side, instead of relying
 -- on the PHP session, which is lost when the browser drops the cookie on the cross site return.
 create table llx_onlinepayment_session
@@ -171,6 +184,11 @@ ALTER TABLE llx_onlinepayment_session ADD INDEX idx_onlinepayment_session_entity
 -- Human Resources Management(HRM): Add `country_job_id` and `state_job_id` to the `llx_user` table to store the workplace location, enabling vacation filtering by workplace.
 ALTER TABLE llx_user ADD COLUMN country_job_id integer DEFAULT NULL;
 ALTER TABLE llx_user ADD COLUMN state_job_id integer DEFAULT NULL;
+
+-- SEPA files: category purpose (PmtTpInf/CtgyPurp) and local instrument (PmtTpInf/LclInstrm) per bank account.
+-- Allowed codes are the ISO 20022 lists kept as constants of the Account class (Account::SEPA_CATEGORY_PURPOSES, Account::SEPA_LOCAL_INSTRUMENTS).
+ALTER TABLE llx_bank_account ADD COLUMN sepa_category_purpose varchar(4) DEFAULT 'CORE' AFTER pti_in_ctti;
+ALTER TABLE llx_bank_account ADD COLUMN sepa_local_instrument varchar(4) DEFAULT 'CORE' AFTER sepa_category_purpose;
 
 -- end of migration - nothing after this line
 
@@ -230,3 +248,151 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD CONSTRAINT fk_prod
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_societe.entity FROM llx_societe WHERE llx_notify_def.fk_soc = llx_societe.rowid AND llx_notify_def.fk_soc > 0;
 -- VMYSQL10.3 UPDATE llx_notify_def INNER JOIN llx_user ON llx_notify_def.fk_user = llx_user.rowid SET llx_notify_def.entity = llx_user.entity WHERE llx_notify_def.fk_user > 0;
 -- VPGSQL9.1 UPDATE llx_notify_def SET entity = llx_user.entity FROM llx_user WHERE llx_notify_def.fk_user = llx_user.rowid AND llx_notify_def.fk_user > 0;
+
+-- Payment tables predate the modulebuilder convention of always adding import_key, so unlike
+-- most other object tables they never got it. Add it so a future import profile for payments
+-- (see htdocs/core/modules/mod*.class.php import_tables_array) is possible.
+ALTER TABLE llx_paiement ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_paiementfourn ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_paiementcharge ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_various ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_salary ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_loan ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
+
+-- llx_paiement_facture (the n-n link between a payment and the invoice(s) it pays) is also
+-- needed as an import target, for a "which invoices does this payment apply to" dataset: the
+-- generic import engine unconditionally writes import_key on every table of a dataset
+-- (modules_import.class.php), including link tables, once they are actually used as a target -
+-- unlike llx_element_element/llx_actioncomm_resources, which no current dataset targets.
+ALTER TABLE llx_paiement_facture ADD COLUMN import_key varchar(14);
+
+-- AI request log: token usage reported by the provider and the exact model id, for cost reporting in the log viewer
+ALTER TABLE llx_ai_request_log ADD COLUMN tokens_input integer;
+ALTER TABLE llx_ai_request_log ADD COLUMN tokens_output integer;
+ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
+
+-- Link an event attendee to the individual contact represented by the registration.
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_contact integer AFTER fk_soc;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_contact (fk_contact);
+
+
+ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;
+
+-- NEW schemas table and schemas extrafields
+CREATE TABLE llx_schemas (
+    rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+    uuid 			varchar(64) NOT NULL,
+    name 			varchar(64) NOT NULL,
+    label 			varchar(255) NOT NULL,
+    schema_kind 	varchar(32) NULL,
+    description 	text,
+    composed_of 	JSON NULL,
+    json_schema 	JSON,
+    active 			integer DEFAULT 1 NOT NULL,
+    date_creation 	datetime NOT NULL,
+    tms 			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_user_creat 	integer,
+    fk_user_modif 	integer,
+    entity 			integer DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+CREATE TABLE llx_extrafields_schemas (
+	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+    name 			varchar(64) NOT NULL,
+    entity 			integer DEFAULT 1 NOT NULL,
+    label 			varchar(255) NOT NULL,
+    type 			varchar(64),
+    size 			varchar(8) DEFAULT NULL,
+    fieldcomputed 	text,
+    fielddefault 	text,
+    fieldunique 	integer DEFAULT 0,
+    fieldrequired 	integer DEFAULT 0,
+    perms 			varchar(255),
+    enabled 		varchar(255),
+    pos 			integer DEFAULT 0,
+    alwayseditable 	integer DEFAULT 0,
+    emptyonclone 	integer DEFAULT 0,
+    param 			text,
+    list 			varchar(255) DEFAULT '1',
+	printable 		integer DEFAULT 0,
+	showintooltip	integer DEFAULT 0,
+    totalizable 	boolean default false,
+    langs 			varchar(64),
+    help 			text,
+	aiprompt		text,
+    css 			varchar(255),
+    cssview 		varchar(255),
+    csslist 		varchar(255),
+    personal_data	integer DEFAULT 0,
+	fk_user_author	integer,
+	fk_user_modif	integer,
+    fk_schema 		integer NOT NULL,
+	datec			datetime,
+	tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=innodb;
+
+
+-- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
+-- Empty strings must become NULL first: the unique index does not tolerate them like NULL.
+UPDATE llx_product_lot SET barcode = NULL WHERE barcode = '';
+
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
+ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
+
+
+-- AI chat: conversation history (reopen past conversations; storage is separate from the pinned context sent to the model)
+create table llx_ai_chat_conversation
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  fk_user					integer NOT NULL,
+  title						varchar(255),
+  date_creation				datetime NOT NULL,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+create table llx_ai_chat_message
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  fk_conversation			integer NOT NULL,
+  role						varchar(16) NOT NULL,
+  content_raw				text,
+  content_html				MEDIUMTEXT,
+  tool_name					varchar(255),
+  pinned					smallint DEFAULT 0,
+  is_error					smallint DEFAULT 0,
+  position					integer DEFAULT 0,
+  datec						datetime NOT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_ai_chat_conversation ADD INDEX idx_ai_chat_conversation_user (fk_user, tms);
+ALTER TABLE llx_ai_chat_message ADD INDEX idx_ai_chat_message_conv (fk_conversation, position);
+ALTER TABLE llx_ai_chat_message ADD CONSTRAINT fk_ai_chat_message_conv FOREIGN KEY (fk_conversation) REFERENCES llx_ai_chat_conversation (rowid);
+
+-- Add table for the AI assistant pending write confirmations (MCP multi-round-trip)
+create table llx_ai_write_confirmation
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  state_hash				varchar(80) NOT NULL,					-- Hash of the requestState handed to the caller
+  fk_user					integer NOT NULL,						-- User the state was issued to
+  tool_name					varchar(255) NOT NULL,					-- Tool the confirmation is for
+  args_hash					varchar(80) NOT NULL,					-- Hash of the arguments, so confirmed arguments cannot change
+  preview					text,									-- Description of the pending write
+  date_creation				datetime NOT NULL,
+  date_expiration			datetime NOT NULL,						-- After this date the state is refused
+  date_consumed				datetime,								-- Set when the write was confirmed and executed
+  ip						varchar(250)							-- Origin of the request that asked for the write
+)ENGINE=innodb;
+ALTER TABLE llx_ai_write_confirmation ADD UNIQUE INDEX uk_ai_write_confirmation_state (state_hash, entity);
+ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_expiration (date_expiration);
+ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_fk_user (fk_user);
+
+-- The events of leaves HOLIDAY_VALIDATE, HOLIDAY_MODIFY and HOLIDAY_APPROVE were inserted with the elementtype of the expense reports
+-- by the migrations 8.0.0-9.0.0 and 16.0.0-17.0.0 (and the correct rows inserted after were rejected by the unique key on code).
+-- Same values as in data/llx_c_action_trigger.sql.
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday validated', description = 'Executed when a holiday is validated', rang = 802 WHERE code = 'HOLIDAY_VALIDATE' AND elementtype = 'expensereport';
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday modified', description = 'Executed when a holiday is modified', rang = 801 WHERE code = 'HOLIDAY_MODIFY' AND elementtype = 'expensereport';
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approved', description = 'Executed when a holiday is aprouved', rang = 803 WHERE code = 'HOLIDAY_APPROVE' AND elementtype = 'expensereport';

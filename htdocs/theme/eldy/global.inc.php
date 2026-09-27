@@ -4678,6 +4678,24 @@ table.liste tr.lastvisible td, div.noborder tr:last-of-type td {
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
+
+
+/* Block of CSS to fix border on firefox */
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type {
+	background: unset !important;	/* note using background-color here does not work */
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type th,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type th,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre:first-of-type td,
+table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:first-of-type td {
+	background: var(--colorbacktitle1) !important;
+}
+table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type {
+	background: unset;	/* note using background-color here does not work */
+}
+
+
 /* CSS to remove the interline border */
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
@@ -9383,7 +9401,7 @@ table.jPicker {
 	}
 	div.login_block_user {
 		min-width: 0;
-		width: 100%;
+		/* width: 100%; */
 	}
 	div.login_block_tools, div.login_block_user {
 		line-height: unset;

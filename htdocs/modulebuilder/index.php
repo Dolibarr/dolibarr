@@ -1179,8 +1179,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$destdir = $dirins.'/'.dol_strtolower($module);
 
-	// Optional tabs selected by user, and detection of an already generated object (for idempotence warning)
-	$enabledtabs = filterEnabledTabs(GETPOST('enabledtab', 'array'), getModuleBuilderObjectTabs());
+	// Optional tabs and card actions selected by user, and detection of an already generated object (for idempotence warning)
+	$enabledtabs = filterEnabledKeys(GETPOST('enabledtab', 'array'), getModuleBuilderObjectTabs());
+	$enabledcardactions = filterEnabledKeys(GETPOST('enabledcardaction', 'array'), getModuleBuilderObjectCardActions());
 	$objectalreadyexists = dol_is_file($destdir.'/class/'.dol_strtolower($objectname).'.class.php');
 
 	// The dir was not created by init
@@ -1764,7 +1765,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			];
 
 			// Pattern to remove everything between the tags
-			$pattern = '/\/\/BEGIN MODULEBUILDER LINES.*?\/\/END MODULEBUILDER LINES\s*/s';
+			$pattern = getModuleBuilderLinesBlockPattern();
 			foreach ($TFilePaths as $filePath) {
 				// Skip files that were not generated (e.g. the API class when API generation is disabled);
 				// a missing optional file must not abort the whole object generation.
@@ -1797,16 +1798,39 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				}
 			}
 		}
+		$carddestfile = $destdir.'/'.$ncObj->applyToFilename('myobject_card.php');
+
 		// Agenda has an extra event widget on the card page: purge it too to avoid a dead link when the agenda tab is excluded
 		if (!$error && !in_array('agenda', $enabledtabs, true)) {
-			$carddestfile = $destdir.'/'.$ncObj->applyToFilename('myobject_card.php');
 			if (!removePatternFromFile($carddestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB AGENDA.*?\/\/ END MODULEBUILDER TAB AGENDA\s*/s')) {
 				$error++;
 				dol_syslog("modulebuilder: failed to purge agenda widget in ".$carddestfile, LOG_ERR);
 			}
 		}
+
+		// Apply card action selection on the generated card page:
+		// unselected action -> purge every block it anchors ; selected action shipped commented out -> uncomment it
+		if (!$error) {
+			foreach (getModuleBuilderObjectCardActions() as $actionkey => $actioninfo) {
+				if (!in_array($actionkey, $enabledcardactions, true)) {
+					if (!removePatternFromFile($carddestfile, getModuleBuilderCardActionBlockPattern($actioninfo['marker']))) {
+						$error++;
+						dol_syslog("modulebuilder: failed to purge card action '".$actionkey."' in ".$carddestfile, LOG_ERR);
+					}
+				} elseif ($actioninfo['mode'] == 'activate') {
+					foreach (getModuleBuilderCardActionUncommentPatterns($actioninfo['marker']) as $uncommentpattern) {
+						if (!removePatternFromFile($carddestfile, $uncommentpattern)) {
+							$error++;
+							dol_syslog("modulebuilder: failed to activate card action '".$actionkey."' in ".$carddestfile, LOG_ERR);
+						}
+					}
+				}
+			}
+		}
+
 		if ($objectalreadyexists) {
 			setEventMessages($langs->trans("WarningTabSelectionOnRegeneration"), null, 'warnings');
+			setEventMessages($langs->trans("WarningCardActionSelectionOnRegeneration"), null, 'warnings');
 		}
 	}
 
@@ -4328,6 +4352,8 @@ if ($module == 'initmodule') {
 
 				// Tabs selected by default = all optional tabs; reflect posted state on redisplay
 				$enabledtabsdefault = GETPOSTISSET('enabledtab') ? GETPOST('enabledtab', 'array') : array_keys(getModuleBuilderObjectTabs());
+				// Not array_keys() here: an action shipped commented out in the template stays off by default
+				$enabledcardactionsdefault = GETPOSTISSET('enabledcardaction') ? GETPOST('enabledcardaction', 'array') : getModuleBuilderDefaultEnabledKeys(getModuleBuilderObjectCardActions());
 
 				print '<span class="opacitymedium">'.$langs->trans("EnterNameOfObjectDesc").'</span><br><br>';
 
@@ -4373,6 +4399,13 @@ if ($module == 'initmodule') {
 					$checked = in_array($tabkey, $enabledtabsdefault, true) ? ' checked' : '';
 					print '<input type="checkbox" name="enabledtab[]" id="enabledtab_'.$tabkey.'" value="'.dol_escape_htmltag($tabkey).'"'.$checked.'> ';
 					print '<label for="enabledtab_'.$tabkey.'">'.dol_escape_htmltag($langs->trans($tabinfo['label'])).'</label> &nbsp; ';
+				}
+				print '<br>';
+				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("EnabledCardActionsForObject"), $langs->trans("EnabledCardActionsForObjectHelp")).'</span><br>';
+				foreach (getModuleBuilderObjectCardActions() as $actionkey => $actioninfo) {
+					$checked = in_array($actionkey, $enabledcardactionsdefault, true) ? ' checked' : '';
+					print '<input type="checkbox" name="enabledcardaction[]" id="enabledcardaction_'.$actionkey.'" value="'.dol_escape_htmltag($actionkey).'"'.$checked.'> ';
+					print '<label for="enabledcardaction_'.$actionkey.'">'.dol_escape_htmltag($langs->trans($actioninfo['label'])).'</label> &nbsp; ';
 				}
 				print '<br>';
 				print '<br>';

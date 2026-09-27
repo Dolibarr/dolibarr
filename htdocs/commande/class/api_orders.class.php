@@ -512,7 +512,7 @@ class Orders extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->commande->error);
+			throw new RestException(400, $this->commande->errorsToString());
 		}
 	}
 
@@ -627,7 +627,7 @@ class Orders extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(405, $this->commande->error);
+			throw new RestException(405, $this->commande->errorsToString());
 		}
 	}
 
@@ -901,7 +901,7 @@ class Orders extends DolibarrApi
 		if ($this->commande->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->commande->error);
+			throw new RestException(500, $this->commande->errorsToString());
 		}
 	}
 
@@ -932,7 +932,7 @@ class Orders extends DolibarrApi
 		}
 
 		if ($this->commande->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when deleting order : '.$this->commande->error);
+			throw new RestException(500, 'Error when deleting order : '.$this->commande->errorsToString());
 		}
 
 		return array(
@@ -986,7 +986,7 @@ class Orders extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Order: '.$this->commande->error);
+			throw new RestException(500, 'Error when validating Order: '.$this->commande->errorsToString());
 		}
 		$result = $this->commande->fetch($id);
 
@@ -1036,7 +1036,7 @@ class Orders extends DolibarrApi
 
 		$result = $this->commande->set_reopen(DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(405, $this->commande->error);
+			throw new RestException(405, $this->commande->errorsToString());
 		} elseif ($result == 0) {
 			throw new RestException(304);
 		}
@@ -1077,7 +1077,7 @@ class Orders extends DolibarrApi
 
 		$result = $this->commande->classifyBilled(DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(400, $this->commande->error);
+			throw new RestException(400, $this->commande->errorsToString());
 		}
 
 		$this->commande->fetchObjectLinked();
@@ -1114,7 +1114,7 @@ class Orders extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
+			throw new RestException(500, 'Error when closing Order: '.$this->commande->errorsToString());
 		}
 
 		$result = $this->commande->fetch($id);
@@ -1161,7 +1161,7 @@ class Orders extends DolibarrApi
 			throw new RestException(304, 'Nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
+			throw new RestException(500, 'Error when closing Order: '.$this->commande->errorsToString());
 		}
 
 		$result = $this->commande->fetch($id);
@@ -1220,7 +1220,7 @@ class Orders extends DolibarrApi
 
 		$result = $this->commande->createFromProposal($propal, DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(405, $this->commande->error);
+			throw new RestException(405, $this->commande->errorsToString());
 		}
 		$this->commande->fetchObjectLinked();
 

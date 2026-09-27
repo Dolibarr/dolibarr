@@ -31,6 +31,13 @@
  */
 abstract class McpTool
 {
+	const RIGHTS_ENFORCED_DOWNSTREAM = 'downstream';
+
+	/**
+	 * Default of getRequiredRights(): the class never declared anything, deny.
+	 */
+	const RIGHTS_UNDECLARED = 'undeclared';
+
 	/** @var DoliDB Database handler */
 	protected $db;
 
@@ -105,5 +112,25 @@ abstract class McpTool
 	public function isSystem()
 	{
 		return false;
+	}
+
+	/**
+	 * Rights the caller must hold to run a tool of this class.
+	 *
+	 * Returns a list of [module, permission, sub-permission] triples; all of
+	 * them must hold. Three answers are meaningful:
+	 *  - array()                            the tool reads no business data
+	 *  - array(array('facture', 'lire'))    checked before the tool runs
+	 *  - self::RIGHTS_ENFORCED_DOWNSTREAM   the callee checks (REST API classes)
+	 *
+	 * Tools that do not override this are denied: a caller authenticates as a
+	 * real user since #40425, so a missing declaration must fail closed.
+	 *
+	 * @param string $toolName Tool being executed, for classes exposing several.
+	 * @return array<int,array<int,string>>|string Triples, or RIGHTS_ENFORCED_DOWNSTREAM.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return self::RIGHTS_UNDECLARED;
 	}
 }

@@ -206,7 +206,7 @@ class Paiements extends DolibarrApi
 		if ($this->paiement->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->paiement->error);
+			throw new RestException(500, $this->paiement->errorsToString());
 		}
 	}
 
@@ -236,9 +236,9 @@ class Paiements extends DolibarrApi
 		}
 
 		if ($this->paiement->delete(DolibarrApiAccess::$user) == 0) {
-			throw new RestException(409, 'Error when deleting Paiement : '.$this->paiement->error);
+			throw new RestException(409, 'Error when deleting Paiement : '.$this->paiement->errorsToString());
 		} elseif ($this->paiement->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting Paiement : '.$this->paiement->error);
+			throw new RestException(500, 'Error when deleting Paiement : '.$this->paiement->errorsToString());
 		}
 
 		return array(
