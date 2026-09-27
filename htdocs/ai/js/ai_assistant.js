@@ -1341,8 +1341,16 @@ export function initAiAssistant(container) {
 		}
 		pendingIntent = originalIntent.arguments.original_intent;
 		const toolName = pendingIntent.tool || 'unknown tool';
-        let template = t('ConfirmAiAction');
-        let messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
+        // A write tool sends a full sentence describing what it would write; it
+        // is the question itself, not a verb to slot into another sentence.
+        const isSentence = typeof action === 'string' && /[.!?]\s*$/.test(action.trim());
+        let messageHtml;
+        if (isSentence) {
+            messageHtml = `<strong>${action}</strong>`;
+        } else {
+            const template = t('ConfirmAiAction');
+            messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
+        }
         let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
         const actions = [
             { text: t('YesProceed'), class: 'danger', icon: 'fa-check', onclick: () => confirmAction() },

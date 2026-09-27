@@ -1343,6 +1343,15 @@ class Account extends CommonObject
 			}
 		}
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BANKACCOUNT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -2611,14 +2620,24 @@ class AccountLine extends CommonObjectLine
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			$this->db->commit();
-			return 1;
-		} else {
+		if (!$resql) {
 			$this->db->rollback();
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 
@@ -2652,12 +2671,13 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *	Update conciliation field
 	 *
-	 *	@param	User	$user			Object user making update
-	 *	@param 	int		$cat			Category id
-	 *	@param	int		$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@param	User		$user			Object user making update
+	 *	@param 	int			$cat			Category id
+	 *	@param	int			$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
+	 *	@param	int<0,1>	$notrigger		1=Disable triggers
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function update_conciliation(User $user, $cat, $conciliated = 1)
+	public function update_conciliation(User $user, $cat, $conciliated = 1, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -2701,6 +2721,16 @@ class AccountLine extends CommonObjectLine
 			}
 
 			$this->rappro = (int) $conciliated;
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+			}
 
 			$this->db->commit();
 			return 1;
