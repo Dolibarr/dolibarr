@@ -396,3 +396,8 @@ ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_fk_use
 UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday validated', description = 'Executed when a holiday is validated', rang = 802 WHERE code = 'HOLIDAY_VALIDATE' AND elementtype = 'expensereport';
 UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday modified', description = 'Executed when a holiday is modified', rang = 801 WHERE code = 'HOLIDAY_MODIFY' AND elementtype = 'expensereport';
 UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approved', description = 'Executed when a holiday is aprouved', rang = 803 WHERE code = 'HOLIDAY_APPROVE' AND elementtype = 'expensereport';
+
+-- Add type of contacts for stock transfer (module is new in v25). Same values as in data/llx_c_type_contact.sql.
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1);
