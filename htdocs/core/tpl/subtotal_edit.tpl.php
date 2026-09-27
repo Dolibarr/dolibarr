@@ -132,7 +132,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$disabled = 1;
 			}
 			print '>';
-			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+			print dol_escape_htmltag(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, 0, 1);
 			print '</textarea>';
 		} else {
 			print '<input type="text" name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc" value="';
