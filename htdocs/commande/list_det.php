@@ -173,7 +173,7 @@ $checkedtypetiers = 0;
 $arrayfields = array(
 	// Détail commande
 	'pr.ref'=> array('label'=>'ProductRef', 'checked'=>1, 'position'=>1),
-	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>-1, 'position'=>1),
+	'pr.label'=> array('label'=>'ProductDescription', 'checked'=>-1, 'position'=>1),
 	'cdet.qty'=> array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1),
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
 	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
@@ -948,7 +948,7 @@ if ($resql) {
 		print '</td>';
 	}
 	// Product Description
-	if (!empty($arrayfields['pr.desc']['checked'])) {
+	if (!empty($arrayfields['pr.label']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="6" type="text" name="search_descProduct" value="'.dol_escape_htmltag($search_descProduct).'">';
 		print '</td>';
@@ -1233,8 +1233,8 @@ if ($resql) {
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['pr.desc']['checked'])) {
-		print_liste_field_titre($arrayfields['pr.desc']['label'], $_SERVER["PHP_SELF"], 'pr.desc', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['pr.label']['checked'])) {
+		print_liste_field_titre($arrayfields['pr.label']['label'], $_SERVER["PHP_SELF"], 'pr.label', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['cdet.qty']['checked'])) {
 		print_liste_field_titre($arrayfields['cdet.qty']['label'], $_SERVER["PHP_SELF"], 'cdet.qty', '', $param, '', $sortfield, $sortorder);
@@ -1521,7 +1521,7 @@ if ($resql) {
 			}
 		}
 		// Product Description
-		if (!empty($arrayfields['pr.desc']['checked'])) {
+		if (!empty($arrayfields['pr.label']['checked'])) {
 			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
 			!empty($obj->product_label) ? $labelproduct = $obj->product_label : $labelproduct = $obj->description;
 			print '<td class="nowrap tdoverflowmax200">aa';
