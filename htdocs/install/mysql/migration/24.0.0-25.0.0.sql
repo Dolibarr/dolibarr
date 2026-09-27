@@ -38,6 +38,8 @@
 --noqa:disable=RF03
 
 
+ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
+
 -- V24 forgotten
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
@@ -339,7 +341,6 @@ UPDATE llx_product_lot SET barcode = NULL WHERE barcode = '';
 
 ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
 ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
-ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
 
 
