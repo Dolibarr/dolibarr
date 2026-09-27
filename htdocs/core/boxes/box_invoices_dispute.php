@@ -144,8 +144,7 @@ class box_invoices_dispute extends ModeleBoxes
 					$this->info_box_contents[$line][2] = array(
 						'td' => 'class="right"',
 						'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0, -1, -1, array("dispute_status" => $data[$j]->dispute_status)),
-						'textnoformat' => '<div class="center badge badge-danger nounderlineimp">'.$data[$j]->nb.'</div>',
-						'url' => DOL_URL_ROOT."/compta/facture/list.php?".$billurlparam."&mainmenu=accountancy&leftmenu=customers_bills",
+						'textnoformat' => '<a href="'.DOL_URL_ROOT."/compta/facture/list.php?".$billurlparam.'&mainmenu=accountancy&leftmenu=customers_bills"><div class="center badge badge-danger nounderlineimp">'.$data[$j]->nb.'</div></a>',
 					);
 
 					// Column amount
