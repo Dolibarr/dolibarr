@@ -3212,8 +3212,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @url	GET /modules
 	 *
-	 * @return  array Data without useless information
-	 * @phan-return array<string,string>
+	 * @return  list<string> Data without useless information
+	 * @phan-return list<string>
 	 * @phpstan-return array<string,string>
 	 *
 	 * @throws RestException 403 Forbidden
