@@ -1713,6 +1713,11 @@ class Contrat extends CommonObject
 	{
 		global $user, $langs, $mysoc;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$error = 0;
 
 		// Clean parameters

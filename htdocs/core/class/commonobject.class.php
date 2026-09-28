@@ -11335,6 +11335,26 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Check that a line belongs to this object, using $this->table_element_line and $this->fk_element.
+	 * Returns true when the object is not loaded or does not define them.
+	 *
+	 * @param	int		$lineid		Id of the line
+	 * @return	bool				True if the line is a line of this object
+	 */
+	public function isLineOfObject($lineid)
+	{
+		if (!($this->id > 0) || empty($this->table_element_line) || empty($this->fk_element)) {
+			return true;
+		}
+
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE rowid = ".((int) $lineid)." AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+
+		return ($resql && $this->db->num_rows($resql) > 0);
+	}
+
+	/**
 	 *  Delete a line of object in database
 	 *
 	 *	@param  User	$user       User that delete
