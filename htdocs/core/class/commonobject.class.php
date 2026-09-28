@@ -4653,6 +4653,11 @@ abstract class CommonObject
 			$sql .= " WHERE";
 			if ($rowid > 0) {
 				$sql .= " rowid = " . ((int) $rowid);
+				if ($this->id > 0) {
+					// The link must involve this object (else any link could be deleted by its rowid alone)
+					$sql .= " AND ((fk_source = " . ((int) $this->id) . " AND sourcetype = '" . $this->db->escape($element) . "')";
+					$sql .= " OR (fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($element) . "'))";
+				}
 			} else {
 				if ($deletesource) {
 					$sql .= " fk_source = " . ((int) $sourceid) . " AND sourcetype = '" . $this->db->escape($sourcetype) . "'";
