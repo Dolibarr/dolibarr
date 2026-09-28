@@ -13,7 +13,7 @@
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2025-2026	Nick Fragoulis
  * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
@@ -981,6 +981,11 @@ class Reception extends CommonObject
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = null, $sellby = null, $batch = '', $cost_price = 0)
 	{
+		// Instantiated below: required here because a caller outside the
+		// reception card (the REST API, a job) has not loaded them.
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 		global $conf, $langs, $user;
 
 		$num = count($this->lines);
@@ -1647,6 +1652,11 @@ class Reception extends CommonObject
 	 */
 	public function fetch_lines()
 	{
+		// Instantiated below: required here because a caller outside the
+		// reception card (the REST API, a job) has not loaded them.
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 		// phpcs:enable
 		$this->lines = array();
 
