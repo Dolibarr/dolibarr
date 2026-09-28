@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025 		Open-Dsi         <support@open-dsi.fr>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +54,11 @@ class ChkbxlstField extends CommonSellistField
 
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
-		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
+		if (empty($moreAttrib)) {
+			$moreAttrib = ' ' . $moreAttrib;
+		}
 		$htmlName = $keyPrefix . $key . $keySuffix;
-		$values = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value: array($value)));
+		$values = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value : array($value)));
 
 		$optionsList = array();
 		$options = $this->getOptions($fieldInfos, $key);
@@ -84,9 +87,11 @@ class ChkbxlstField extends CommonSellistField
 
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$moreAttrib = trim((string) $moreAttrib);
-		if (empty($moreAttrib)) $moreAttrib = ' ' . $moreAttrib;
+		if (empty($moreAttrib)) {
+			$moreAttrib = ' ' . $moreAttrib;
+		}
 		$htmlName = $keyPrefix . $key . $keySuffix;
-		$values = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value: array($value)));
+		$values = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value : array($value)));
 
 		$options = $this->getOptions($fieldInfos, $key);
 
@@ -107,7 +112,7 @@ class ChkbxlstField extends CommonSellistField
 	 */
 	public function printOutputField($fieldInfos, $key, $value, $keyPrefix = '', $keySuffix = '', $moreCss = '', $moreAttrib = '')
 	{
-		$values = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value: array($value)));
+		$values = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value : array($value)));
 
 		$out = '';
 		if (!$this->isEmptyValue($fieldInfos, $values)) {
@@ -167,7 +172,7 @@ class ChkbxlstField extends CommonSellistField
 	 */
 	public function verifyFieldValue($fieldInfos, $key, $value)
 	{
-		$values = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value: array($value)));
+		$values = $this->isEmptyValue($fieldInfos, $value) ? array() : (is_string($value) ? explode(',', $value) : (is_array($value) ? $value : array($value)));
 
 		$result = parent::verifyFieldValue($fieldInfos, $key, $values);
 		if ($result && !$this->isEmptyValue($fieldInfos, $values)) {
@@ -217,7 +222,9 @@ class ChkbxlstField extends CommonSellistField
 
 		if (GETPOSTISSET($htmlName)) {
 			$values = GETPOST($htmlName, 'array');
-			if (is_array($values)) $values = implode(',', $values);
+			if (is_array($values)) {
+				$values = implode(',', $values);
+			}
 		} else {
 			$values = $defaultValue;
 		}
@@ -264,8 +271,9 @@ class ChkbxlstField extends CommonSellistField
 			$alias = $fieldInfos->sqlAlias ?? 't.';
 			$field = $this->db->sanitize($alias . ($fieldInfos->nameInTable ?? $key));
 
-			$tmp = "'" . implode("','", array_map(array($this->db, 'escape'), $value)) . "'";
-			return " AND " . $field . " IN (" . $this->db->sanitize($tmp, 1) . ")";
+			$sanitizedSqlIn = "'" . implode("','", array_map(array($this->db, 'escape'), $value)) . "'";
+			$sqlPartialCond = " AND " . $field . " IN (" . $sanitizedSqlIn . ")";
+			return $sqlPartialCond;
 		}
 
 		return '';

@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,6 +115,10 @@ $setupnotempty = + count($formSetup->items);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 // Access control
+// Setup intentionally stays admin-only: per @sonikf and @eldy feedback,
+// the AI module's technical setup (API keys, provider configuration) is
+// a task done by the admin user, just like for every other Dolibarr module.
+// Per-user/group AI usage is gated separately by 'ai/assistant/use'.
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -184,7 +189,7 @@ foreach ($arrayofai as $key => $airecord) {
 		print ', ';
 	}
 	$i++;
-	print dol_escape_js($key).': \''.dol_escape_js($airecord['url']).'\'';
+	print dol_sanitizeKeyCode($key).': \''.dol_escape_js($airecord['url']).'\'';
 }
 print '};
 				const arrayofextlink = {';
@@ -197,7 +202,7 @@ foreach ($arrayofai as $key => $airecord) {
 		print ', ';
 	}
 	$i++;
-	print dol_escape_js($key).': \''.dol_escape_js($airecord['setup']).'\'';
+	print dol_sanitizeKeyCode($key).': \''.dol_escape_js($airecord['setup']).'\'';
 }
 print '};
 				console.log("Check URL for .iaurl."+aiservice+" .input"+aiservice);

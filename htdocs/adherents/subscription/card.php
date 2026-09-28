@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -156,12 +156,13 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'update' &&
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('adherent', 'cotisation', 'creer')) {
 	$result = $object->fetch($rowid);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		header("Location: ".DOL_URL_ROOT."/adherents/card.php?rowid=".$object->fk_adherent);
 		exit;
 	} else {
-		$errmesg = $adh->error;
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -194,7 +195,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 
 	$head = subscription_prepare_head($object);
 
-	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
@@ -244,12 +245,12 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	// Amount
 	print '<tr><td>'.$langs->trans("Amount").'</td>';
 	print '<td class="valeur">';
-	print '<input type="text" class="flat width200" name="amount" value="'.price($object->amount).'"></td></tr>';
+	print '<input type="text" class="width100" name="amount" value="'.price($object->amount).'"></td></tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td>';
+	// Note
+	print '<tr><td>'.$langs->trans("Note").'</td>';
 	print '<td class="valeur">';
-	print '<input type="text" class="flat" name="note" value="'.$object->note_public.'"></td></tr>';
+	print '<input type="text" class="minwidth500" name="note" value="'.$object->note_public.'"></td></tr>';
 
 	// Bank line
 	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
@@ -344,8 +345,8 @@ if ($rowid && $action != 'edit') {
 	// Amount
 	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public)).'</td></tr>';
+	// Note
+	print '<tr><td>'.$langs->trans("Note").'</td><td class="valeur sensiblehtmlcontent">'.dolPrintHTML((string) $object->note_public).'</td></tr>';
 
 	// Bank line
 	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {

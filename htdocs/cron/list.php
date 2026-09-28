@@ -3,7 +3,7 @@
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,6 +59,7 @@ $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
 $search_processing = GETPOST("search_processing", 'int');
 $securitykey = GETPOST('securitykey', 'alpha');
+$filter = array();	// Search filter built later, initialized here so it is always defined (e.g. when a hook intercepts the Actions section)
 
 $id = GETPOSTINT('id');
 
@@ -117,6 +118,9 @@ $fieldstosearchall = array();
 // Definition of array of fields for columns from ->fields
 $tableprefix = 't';
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 /*
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
@@ -138,9 +142,10 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 $permissiontoread = $user->hasRight('cron', 'read');
-$permissiontoadd = $user->hasRight('cron', 'create') ? $user->hasRight('cron', 'create') : $user->hasRight('cron', 'write');
+// TODO Because the cron is run by an admin user, to allow write/run of con tasks without begin admin, we must first manage a field runner_user_id with ID of user to set who run the cron.
+$permissiontoadd = $user->hasRight('cron', 'write') && $user->admin;
+$permissiontoexecute = $user->hasRight('cron', 'write') && $user->admin;
 $permissiontodelete = $user->hasRight('cron', 'delete');
-$permissiontoexecute = $user->hasRight('cron', 'execute');
 
 // Security
 if (!$permissiontoread) {
@@ -178,8 +183,9 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_label = '';
 		$search_status = -1;
+		$search_module_name = '';
 		$search_lastresult = '';
-		$search_all = '';
+		$search_module_name = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -246,6 +252,15 @@ if (empty($reshook)) {
 			}
 			if ($search_label) {
 				$param .= '&search_label='.urlencode($search_label);
+			}
+			if ($search_module_name) {
+				$param .= '&search_module_name='.urlencode($search_module_name);
+			}
+			if ($search_lastresult) {
+				$param .= '&search_lastresult='.urlencode($search_lastresult);
+			}
+			if ($mode) {
+				$param .= '&mode='.urlencode($mode);
 			}
 			if ($optioncss != '') {
 				$param .= '&optioncss='.urlencode($optioncss);
@@ -346,7 +361,7 @@ $sql .= " t.nbrun,";
 $sql .= " t.libname,";
 $sql .= " t.test";
 $sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
-$sql .= " WHERE entity IN (0,".$conf->entity.")";
+$sql .= " WHERE entity IN (0,".((int) $conf->entity).")";
 if (!empty($TTestNotAllowed)) {
 	$sql .= ' AND t.rowid NOT IN ('.$db->sanitize(implode(',', $TTestNotAllowed)).')';
 }
@@ -360,7 +375,7 @@ if (GETPOSTISSET('search_processing')) {
 	$sql .= " AND t.processing = ".((int) $search_processing);
 }
 // Manage filter
-if (is_array($filter) && count($filter) > 0) {
+if (count($filter) > 0) {
 	foreach ($filter as $key => $value) {
 		$sql .= " AND ".$db->sanitize($key)." LIKE '%".$db->escape($value)."%'";
 	}
@@ -456,7 +471,7 @@ $arrayofmassactions = array(
 	'enable' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
 	'disable' => img_picto('', 'uncheck', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
 );
-if ($user->hasRight('cron', 'delete')) {
+if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
@@ -487,7 +502,7 @@ print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Line with explanation and button new
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $user->hasRight('cron', 'create'));
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $permissiontoadd ? 1 : 0);
 
 
 if ($mode == 'modulesetup') {
@@ -800,7 +815,7 @@ if ($num > 0) {
 
 		// Duration
 		print '<td class="center nowraponall" title="'.dol_escape_htmltag($datefromto).'">';
-		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
+		if (!empty($datelastresult) && !empty($datelastrun) && ($datelastresult >= $datelastrun)) {
 			$nbseconds = max($datelastresult - $datelastrun, 1);
 			print $nbseconds.' '.$langs->trans("SecondShort");
 		}
@@ -874,20 +889,20 @@ if ($num > 0) {
 		// Action
 		print '<td class="nowraponall right">';
 		$backtopage = urlencode($_SERVER["PHP_SELF"].'?'.$param.'&sortfield='.$sortfield.'&sortorder='.$sortorder);
-		if ($user->hasRight('cron', 'create')) {
+		if ($permissiontoadd) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid.'&action=edit&token='.newToken().'&sortfield='.$sortfield.'&sortorder='.$sortorder.$param;
 			print "&backtopage=".$backtopage."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'), 'edit')."</a> &nbsp;";
 		}
-		if ($user->hasRight('cron', 'delete')) {
+		if ($permissiontodelete) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"]."?id=".$obj->rowid.'&action=delete&token='.newToken().($page ? '&page='.$page : '').'&sortfield='.$sortfield.'&sortorder='.$sortorder.$param;
 			print '" title="'.dol_escape_htmltag($langs->trans('CronDelete')).'">'.img_picto($langs->trans('CronDelete'), 'delete', '', 0, 0, 0, '', 'marginleftonly').'</a> &nbsp; ';
 		} else {
 			print '<a href="#" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'), 'delete', '', 0, 0, 0, '', 'marginleftonly').'</a> &nbsp; ';
 		}
-		if ($user->hasRight('cron', 'execute')) {
+		if ($permissiontoexecute) {
 			if (!empty($obj->status)) {
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute&token='.newToken();
-				print (!getDolGlobalString('CRON_KEY') ? '' : '&securitykey=' . getDolGlobalString('CRON_KEY'));
+				print(!getDolGlobalString('CRON_KEY') ? '' : '&securitykey=' . getDolGlobalString('CRON_KEY'));
 				print '&sortfield='.$sortfield;
 				print '&sortorder='.$sortorder;
 				print $param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play", '', 0, 0, 0, '', 'marginleftonly').'</a>';

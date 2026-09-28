@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,7 @@ require '../../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT . '/ai/class/mcp_protocol.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ai/class/mcpauth.class.php';
 
 while (ob_get_level()) {
 	ob_end_clean();
@@ -72,66 +74,46 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 
+// Request headers, used by the transport-header validation further down.
 $headers = function_exists('getallheaders') ? getallheaders() : [];
 $headers = array_change_key_case($headers, CASE_LOWER);
 
-$authHeader   = $headers['authorization'] ?? '';
-$apiKeyHeader = $headers['x-api-key'] ?? '';
-// Fallback: also accept the key in a query string parameter (?api_key=XXX or ?key=XXX).
-// Required for MCP clients that don't support custom auth headers in their connector UI
-// (e.g. Claude Desktop "Custom Connectors" in beta only exposes OAuth fields).
-// SECURITY NOTE: query-string keys appear in webserver access logs and possibly in Referer
-// headers. Header-based auth (X-API-Key / Authorization) remains preferred and is tried first.
-// Administrators relying on the fallback should restrict access at the webserver level
-// and/or rotate AI_MCP_API_KEY regularly.
-$apiKeyQuery  = $_GET['api_key'] ?? $_GET['key'] ?? '';
-$storedKey    = getDolGlobalString('AI_MCP_API_KEY');
+$mcpAuth = new McpAuth($db);
 
-$valid = false;
-
-if (!empty($storedKey)) {
-	// X-API-Key header (preferred)
-	if (!empty($apiKeyHeader)) {
-		$valid = hash_equals($storedKey, $apiKeyHeader);
+if ($mcpAuth->authenticate() < 0) {
+	if ($mcpAuth->httpcode == 401) {
+		// RFC 6750 section 3: a rejected Bearer request must say what it wanted.
+		header('WWW-Authenticate: ' . $mcpAuth->getWwwAuthenticateHeader());
 	}
 
-	// Authorization: Bearer <token>
-	if (!$valid && !empty($authHeader)) {
-		$matches = array();
-		if (preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
-			$token = trim($matches[1]);
-			$valid = hash_equals($storedKey, $token);
-		}
-	}
-
-	// Query-string fallback (last resort for header-less clients)
-	if (!$valid && !empty($apiKeyQuery)) {
-		$valid = hash_equals($storedKey, $apiKeyQuery);
-	}
-}
-
-if (!$valid) {
-	dol_syslog('[MCP Server] Unauthorized access attempt. IP=' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), LOG_WARNING);
-
-	http_response_code(401);
+	http_response_code($mcpAuth->httpcode);
 	echo json_encode([
 		"jsonrpc" => "2.0",
-		"error" => ["code" => -32000, "message" => "Unauthorized"]
+		"error" => ["code" => -32000, "message" => $mcpAuth->error]
 	]);
 	exit;
 }
 
 
-// Load service user
-$userId = getDolGlobalInt('AI_MCP_USER_ID');
-$serviceUser = new User($db);
+// Determine the user the request runs as. An individual API key names its own
+// owner, already loaded and checked by McpAuth; the shared server key falls
+// back to the AI_MCP_USER_ID service user.
+$serviceUser = $mcpAuth->user;
 
-if ($userId > 0) {
-	$result = $serviceUser->fetch($userId);
+if ($serviceUser === null) {
+	$userId = getDolGlobalInt('AI_MCP_USER_ID');
 
-	if ($result > 0) {
-		$serviceUser->loadRights();
-	} else {
+	if ($userId <= 0) {
+		http_response_code(503);
+		echo json_encode([
+			"jsonrpc" => "2.0",
+			"error" => ["code" => -32000, "message" => "MCP Server Misconfigured: authenticate with a user API key, or set AI_MCP_USER_ID for the shared server key"]
+		]);
+		exit;
+	}
+
+	$serviceUser = new User($db);
+	if ($serviceUser->fetch($userId) <= 0) {
 		http_response_code(500);
 		echo json_encode([
 			"jsonrpc" => "2.0",
@@ -139,14 +121,16 @@ if ($userId > 0) {
 		]);
 		exit;
 	}
-} else {
-	http_response_code(503);
-	echo json_encode([
-		"jsonrpc" => "2.0",
-		"error" => ["code" => -32000, "message" => "MCP Server Misconfigured: AI_MCP_USER_ID not set"]
-	]);
-	exit;
+	$serviceUser->loadRights();
 }
+
+// Promote the user to the global $user so MCP tools that legitimately rely on
+// the `global $user` pattern (Dolibarr core convention) see an authenticated
+// user. Without this, there is no PHP web session in HTTP MCP context and any
+// tool reading `global $user` would treat the request as unauthenticated even
+// though authentication succeeded above.
+global $user;
+$user = $serviceUser;
 
 // Load the AI request log helper so we can persist tools/call invocations to
 // llx_ai_request_log (same table the AI Assistant web UI logs to). This gives
@@ -244,6 +228,30 @@ try {
 
 		$responses = [];
 
+		// Transport headers describe the HTTP request, not individual batch
+		// items: if a Mcp-* / MCP-Protocol-Version header disagrees with ANY
+		// item, the header lies about the request and the WHOLE batch fails
+		// with a single error and HTTP 400 (review finding on #40356). This
+		// also keeps the rate-limiting contract simple: a proxy trusting the
+		// headers never lets a mismatching batch through as 200.
+		foreach ($request as $precheck) {
+			if (!is_array($precheck)) {
+				continue;
+			}
+			$headerError = $server->validateTransportHeaders($headers, $precheck);
+			if ($headerError !== null || $server->getHttpStatus() !== 200) {
+				http_response_code($server->getHttpStatus());
+				if ($headerError === null) {
+					// The offending item was a notification (no id): the error
+					// response was suppressed per JSON-RPC, but the transport
+					// status must still tell the truth.
+					$headerError = ["jsonrpc" => "2.0", "id" => null, "error" => ["code" => -32020, "message" => "Transport header does not match a batch item"]];
+				}
+				echo json_encode($headerError);
+				exit;
+			}
+		}
+
 		// Answer to all MCP requests following the MCP protocol
 		foreach ($request as $req) {
 			if (!is_array($req)) {
@@ -268,7 +276,20 @@ try {
 			throw new Exception("Invalid request format");
 		}
 
-		$response = $server->handleRequest($request);
+		$response = $server->validateTransportHeaders($headers, $request);
+		if ($response === null && $server->getHttpStatus() === 200) {
+			$response = $server->handleRequest($request);
+		}
+
+		if ($server->getHttpStatus() !== 200) {
+			http_response_code($server->getHttpStatus());
+			if ($response === null) {
+				// The offending request was a notification (no id): the error
+				// response body was suppressed per JSON-RPC, but a 400 must
+				// not go out empty - same handling as the batch path.
+				$response = ["jsonrpc" => "2.0", "id" => null, "error" => ["code" => -32020, "message" => "Transport header does not match the request"]];
+			}
+		}
 
 		if ($response !== null) {
 			echo json_encode($response);

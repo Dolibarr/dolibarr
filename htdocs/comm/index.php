@@ -74,7 +74,8 @@ if (!empty($user->socid) && $user->socid > 0) {
 
 $total = 0;
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
+
 $maxofloop = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 $now = dol_now();
 
@@ -176,7 +177,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire") && is_object($pr
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -280,7 +281,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=".SupplierProposal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -381,7 +382,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire') && is_object($o
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("DraftOrders", "commande/list.php", "search_status=".Commande::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -486,7 +487,7 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=".CommandeFournisseur::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
@@ -588,7 +589,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, $maxofloop);
+		$nbofloop = min($num, $max);
 		startSimpleTable("DraftFichinter", "fichinter/list.php", "search_status=".Fichinter::STATUS_DRAFT, 2, $num);
 
 		//print '<tr class="liste_titre">';
@@ -624,7 +625,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 				print $fichinterstatic->getNomUrl(1);
 				print "</td>";
 				print '<td class="tdoverflowmax250 minwidth100">';
-				print $companystatic->getNomUrl(1, 'customer');
+				print $companystatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="nowraponall tdoverflowmax100 right">';
 				print convertSecondToTime($obj->duration);
@@ -839,6 +840,7 @@ if (isModEnabled('propal') && is_object($propalstatic)) {
 			}
 		}
 
+		addSummaryTableLine(4, $num);
 		finishSimpleTable(true);
 		$db->free($resql);
 	} else {

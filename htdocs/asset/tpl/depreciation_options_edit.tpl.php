@@ -109,6 +109,11 @@ if (empty($reshook)) {
 			if (array_key_exists('enabled', $field_info) && isset($field_info['enabled']) && !verifCond($field_info['enabled'])) {
 				continue; // We don't want this field
 			}
+			// This loop walks the raw definition of the fields, not the one filtered by
+			// setInfosForMode(), so the fields reserved to an asset must be discarded here too
+			if (!empty($field_info['only_on_asset']) && !empty($class_type)) {
+				continue;
+			}
 
 
 			$html_name = $prefix_html_name . $field_key;

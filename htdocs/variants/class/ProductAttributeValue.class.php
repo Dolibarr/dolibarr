@@ -83,6 +83,11 @@ class ProductAttributeValue extends CommonObjectLine
 	public $id;
 
 	/**
+	 * @var int		Alias of id, written by the import engine on the object it hands to the triggers
+	 */
+	public $rowid;
+
+	/**
 	 * ID of the parent attribute (ex: ID of the attribute "COLOR")
 	 * @var int
 	 */
@@ -234,21 +239,29 @@ class ProductAttributeValue extends CommonObjectLine
 	}
 
 	/**
-	 * Gets a product attribute value
+	 * Gets a product attribute value, from its id or from its ref
 	 *
-	 * @param int $id Product attribute value id
-	 * @return int Return integer <0 KO, >0 OK
+	 * Note: $id must not be typed as int, see ProductAttribute::fetch().
+	 * A value ref is only unique for a given attribute, so $fk_product_attribute is
+	 * required to look a value up by ref.
+	 *
+	 * @param	int|string	$id						Product attribute value id
+	 * @param	string		$ref					Value ref, used when $id is empty
+	 * @param	int			$fk_product_attribute	Parent attribute id, required with $ref
+	 * @return	int									Return integer <0 KO, 0 not found, >0 OK
 	 */
-	public function fetch($id)
+	public function fetch($id, $ref = '', $fk_product_attribute = 0)
 	{
 		global $langs;
 		$error = 0;
 
 		// Clean parameters
-		$id = $id > 0 ? $id : 0;
+		$id = $id > 0 ? (int) $id : 0;
+		$ref = trim((string) $ref);
+		$fk_product_attribute = (int) $fk_product_attribute;
 
 		// Check parameters
-		if (empty($id)) {
+		if (empty($id) && ($ref === '' || empty($fk_product_attribute))) {
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("TechnicalID"));
 			$error++;
 		}
@@ -257,9 +270,14 @@ class ProductAttributeValue extends CommonObjectLine
 			return -1;
 		}
 
-		$sql = "SELECT rowid, fk_product_attribute, ref, value";
+		$sql = "SELECT rowid, fk_product_attribute, ref, value, position";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE rowid = " . ((int) $id);
+		if (!empty($id)) {
+			$sql .= " WHERE rowid = " . ((int) $id);
+		} else {
+			$sql .= " WHERE ref = '" . $this->db->escape($ref) . "'";
+			$sql .= " AND fk_product_attribute = " . ((int) $fk_product_attribute);
+		}
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -278,6 +296,7 @@ class ProductAttributeValue extends CommonObjectLine
 			$this->fk_product_attribute = $obj->fk_product_attribute;
 			$this->ref = $obj->ref;
 			$this->value = $obj->value;
+			$this->position = (int) $obj->position;
 			$this->fetch_optionals();
 		}
 		$this->db->free($resql);
@@ -386,6 +405,13 @@ class ProductAttributeValue extends CommonObjectLine
 			$error++;
 		}
 
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_VALUE_MODIFY', $user);
@@ -459,7 +485,7 @@ class ProductAttributeValue extends CommonObjectLine
 			}
 		}
 		if (!$error) {
-			$result = $this->insertExtraFields();
+			$result = $this->deleteExtraFields();
 			if ($result < 0) {
 				$error++;
 			}

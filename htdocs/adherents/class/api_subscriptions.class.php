@@ -102,8 +102,6 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		global $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
@@ -254,7 +252,7 @@ class Subscriptions extends DolibarrApi
 		if ($subscription->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating contribution: '.$subscription->error);
+			throw new RestException(500, 'Error when updating contribution: '.$subscription->errorsToString());
 		}
 	}
 

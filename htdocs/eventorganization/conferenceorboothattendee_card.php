@@ -66,7 +66,7 @@ $lineid   = GETPOSTINT('lineid');
 
 $conf_or_booth_id = GETPOSTINT('conforboothid');
 $fk_project = GETPOSTINT('fk_project');
-$withproject = 1;
+$withproject = GETPOSTISSET('withproject') ? GETPOSTINT('withproject'): 1;
 
 // Initialize a technical objects
 $object = new ConferenceOrBoothAttendee($db);
@@ -501,6 +501,7 @@ if ($action == 'create' && $confOrBooth === null) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].(empty($withproject) ? '' : '?withproject=1').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 	if ($projectstatic->id > 0) {
 		print '<input type="hidden" name="fk_project" value="'.$projectstatic->id.'">';

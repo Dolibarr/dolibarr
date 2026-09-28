@@ -48,6 +48,7 @@ ConferenceOrBoothTab = सम्मेलन या बूथ
 AmountPaid = राशि का भुगतान
 DateOfRegistration = पंजीकरण की तिथि
 ConferenceOrBoothAttendee = सम्मेलन या बूथ सहभागी
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=आवेदक या आगंतुक
 Speaker=वक्ता
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=कार्यक्रम परियोजनाओ�
 ListOfConfOrBoothOfEvent=सम्मेलनों या आयोजन परियोजनाओं के बूथों की सूची
 DownloadICSLink=ICS फ़ाइल डाउनलोड करें
 EVENTORGANIZATION_SECUREKEY=किसी सम्मेलन का सुझाव देने के लिए सार्वजनिक पंजीकरण पृष्ठ की कुंजी सुरक्षित करने के लिए सीड
-SERVICE_BOOTH_LOCATION=बूथ स्थान के बारे में चालान पंक्ति के लिए उपयोग की जाने वाली सेवा
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=किसी इवेंट में सहभागी की सदस्यता के बारे में चालान पंक्ति के लिए उपयोग की जाने वाली सेवा
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=वोटों की संख्या
 # Status
 EvntOrgDraft = मसौदा
@@ -122,7 +123,7 @@ NewSubscription=पंजीकरण
 OrganizationEventConfRequestWasReceived=सम्मेलन के लिए आपका सुझाव प्राप्त हो गया है
 OrganizationEventBoothRequestWasReceived=बूथ के लिए आपका अनुरोध प्राप्त हो गया है
 OrganizationEventPaymentOfBoothWasReceived=आपके बूथ के लिए आपका भुगतान दर्ज कर लिया गया है
-OrganizationEventPaymentOfRegistrationWasReceived=आपके इवेंट पंजीकरण के लिए आपका भुगतान दर्ज कर लिया गया है
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=यह एक सहभागी के रूप में कार्यक्रम में आपकी भागीदारी के बारे में एक अनुस्मारक है
 OrganizationEventBulkMailToSpeakers=यह कार्यक्रम में वक्ता के रूप में आपकी भागीदारी की याद दिलाता है
 OrganizationEventLinkToThirdParty=तीसरे पक्ष (ग्राहक, आपूर्तिकर्ता या भागीदार) से लिंक करें

@@ -75,7 +75,7 @@ if (!$sortfield) {
 
 // Initialize a technical objects
 $object = new BOM($db);
-$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object, '', 0, 'temp') . 'massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomdocument', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -123,7 +123,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = bomPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list

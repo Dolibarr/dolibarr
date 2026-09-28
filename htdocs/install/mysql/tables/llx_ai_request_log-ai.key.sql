@@ -27,5 +27,14 @@ ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_date (date_request);
 -- Index for searching by user
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_user (fk_user);
 
+-- Index for searching by linked agenda event
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_fk_actioncomm (fk_actioncomm);
+
 -- Index for filtering by status
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_status (status);
+
+-- Index for searching by input hash
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_input_hash (input_hash);
+
+-- Index for searching by security hash
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_security_hash (security_hash);

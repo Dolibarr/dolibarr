@@ -173,5 +173,5 @@ RefSalary=Salariu
 NoSalaryInvoiceToWithdraw=Niciun salariu în așteptare pentru un '%s'. Accesează fila '%s' de pe cardul de salariu pentru a face o cerere.
 SalaryInvoiceWaitingWithdraw=Salariile care așteaptă plata prin transfer de credit
 ErrorBankTransferNoPaymentRequestSelected=Nicio cerere de plată selectată.
-AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
-AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests
+AmountRequestedAlreadyReachesTotal=Valoarea totală a facturii a fost deja solicitată pentru plată.
+AmountExceedsRemainingToRequest=Valoarea solicitată depășește suma rămasă disponibilă pentru cererile de plată

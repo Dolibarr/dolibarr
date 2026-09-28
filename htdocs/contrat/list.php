@@ -9,8 +9,8 @@
  * Copyright (C) 2016-2018	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2019		Nicolas Zabouri				<info@inovea-conseil.com>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2025		Charlene Benke				<charlene@patas-monkey.com>
  *
@@ -45,6 +45,7 @@ require '../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -80,6 +81,7 @@ $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
+$search_type = (GETPOSTISSET('search_type') ? GETPOSTINT('search_type') : -1);
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
 $search_signed_status = GETPOST('search_signed_status', 'alpha');
@@ -194,6 +196,7 @@ $arrayfields = array(
 	'c.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 10),
 	'c.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 12),
 	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1', 'position' => 14),
+	'c.fk_contract_type' => array('label' => $langs->trans("ContractType"), 'checked' => '1', 'position' => 16),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 30),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => '0', 'position' => 31),
 	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1', 'position' => 32),
@@ -214,6 +217,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -266,6 +272,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_contract = "";
 	$search_ref_customer = "";
 	$search_ref_supplier = "";
+	$search_type = -1;
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
@@ -327,19 +334,19 @@ $now = dol_now();
 $title = "";
 
 $sql = 'SELECT';
-$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
+$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.fk_contract_type, c.note_private, c.note_public, c.entity, c.signed_status,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.phone, s.phone_mobile, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code, c.note_public, c.note_private,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 // TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove this subrequests ?
 if ($arrayfields['lower_planned_end_date']['checked'] || ($search_dfyear > 0 && $search_op2df)) {
-	$sql .= " (SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as lower_planned_end_date,";	// lowest expiration date among open service lines
+	$sql .= " (SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid) as lower_planned_end_date,";	// lowest expiration date among open service lines
 }
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=0", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_initial,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_running,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_expired,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contract->services->expires->warning_delay)."')", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_late,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=5", '1', '0').') FROM llx_contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_closed';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=0", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_initial,';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_running,';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_expired,';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contract->services->expires->warning_delay)."')", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_late,';
+$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=5", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_closed';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -390,10 +397,10 @@ if ($search_email) {
 	$sql .= natural_search('s.email', $search_email);
 }
 if ($search_phone) {
-	$sql .= natural_search(array('s.phone', 's.phone_mobile'), $search_phone);
+	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone);
 }
 if ($search_phone_mobile) {
-	$sql .= natural_search(array('s.phone', 's.phone_mobile'), $search_phone_mobile);
+	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone_mobile);
 }
 if ($search_contract) {
 	$sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
@@ -403,6 +410,9 @@ if (!empty($search_ref_customer)) {
 }
 if (!empty($search_ref_supplier)) {
 	$sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
+}
+if ($search_type >= 0) {
+	$sql .= " AND c.fk_contract_type = ".((int) $search_type);
 }
 if ($search_zip) {
 	$sql .= natural_search(array('s.zip'), $search_zip);
@@ -432,9 +442,9 @@ if ($search_user > 0) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
@@ -526,7 +536,7 @@ if ($search_date_modif_end) {
 	$sql .= " AND c.tms <= '".$db->idate($search_date_modif_end)."'";
 }
 if ($search_signed_status != '' && $search_signed_status >= 0) {
-	$sql .= ' AND c.signed_status = '.urlencode($search_signed_status);
+	$sql .= " AND c.signed_status = ".((int) $search_signed_status);
 }
 
 // Add where from extra fields
@@ -684,6 +694,9 @@ if ($search_ref_customer != '') {
 if ($search_ref_supplier != '') {
 	$param .= '&search_ref_supplier='.urlencode($search_ref_supplier);
 }
+if ($search_type >= 0) {
+	$param .= '&search_type='.$search_type;
+}
 if ($search_note_private != '') {
 	$param .= '&search_note_private='.urlencode($search_note_private);
 }
@@ -816,6 +829,7 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/contrat/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('contrat', 'creer'));
 
@@ -939,6 +953,11 @@ if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 	print '<input type="text" class="flat" size="6" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->selectarray('search_type', array('-1' => '', '0' => $langs->trans('CustomerContract'), '1' => $langs->trans('SupplierContract')), $search_type, 0, 0, 0, '', 0, 0, 0, '', 'flat maxwidth100');
+	print '</td>';
+}
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'"'.($user->socid > 0 ? " disabled" : "").'>';
@@ -1054,7 +1073,7 @@ if (!empty($arrayfields['lower_planned_end_date']['checked'])) {
 	print '<td class="liste_titre nowraponall center">';
 	$arrayofoperators = array('0' => '', '=' => '=', '<=' => '<=', '>=' => '>=');
 	print $form->selectarray('search_op2df', $arrayofoperators, $search_op2df, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth50imp');
-	print '</br>';
+	print '<br>';
 	print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0);
 	print ' ';
 	print $formother->selectyear($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
@@ -1096,6 +1115,10 @@ if (!empty($arrayfields['c.ref_customer']['checked'])) {
 if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 	print_liste_field_titre($arrayfields['c.ref_supplier']['label'], $_SERVER["PHP_SELF"], "c.ref_supplier", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+	print_liste_field_titre($arrayfields['c.fk_contract_type']['label'], $_SERVER["PHP_SELF"], "c.fk_contract_type", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
@@ -1196,6 +1219,7 @@ $totalarray['nbfield'] = 0;
 $typenArray = array();
 $cacheCountryIDCode = array();
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1300,6 +1324,13 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">'.dol_escape_htmltag($obj->ref_supplier).'</td>';
 		}
+		if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+			$contractTypeLabels = array(0 => $langs->trans('CustomerContract'), 1 => $langs->trans('SupplierContract'));
+			print '<td>'.dol_escape_htmltag($contractTypeLabels[(int) $obj->fk_contract_type] ?? '').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($obj->socid > 0) {
@@ -1352,8 +1383,9 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, 1, 1).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
 		}
+
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
 			print '<td class="center">';

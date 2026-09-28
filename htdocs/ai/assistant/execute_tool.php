@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	Anthony Damhet			<a.damhet@progiseize.fr>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,19 +36,31 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', 1);
 }
-if (!defined('NOCSRFCHECK')) {		// TODO Enable the CSRF check
+// The payload is read from the raw php://input body, so the CSRF token cannot be checked by
+// main.inc.php. It is checked explicitly below by aiCheckCsrfToken().
+if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', 1);
 }
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ai/class/mcp.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ai/lib/ai.lib.php';
 
 // Security check
 if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
 
-global $db, $user;
+global $db, $user, $conf;
+
+// Per-user gate: same right as the assistant page and parse_intent.php
+if (!$user->hasRight('ai', 'assistant', 'use')) {
+	accessforbidden();
+}
+
+// This endpoint creates, updates and deletes documents, so it must not be reachable from
+// another site. Must stay after the login is done by main.inc.php (the session is needed).
+aiCheckCsrfToken('ai/assistant/execute_tool.php');
 
 top_httphead('application/json');
 
@@ -59,14 +73,69 @@ try {
 		throw new Exception("Invalid Request: No tool specified.");
 	}
 
-	// Initialize Handler
-	$mcp = new McpHandler($db, $user);
+	// Initialize Handler with the private assistant context so that the correct
+	// allow-list (AI_ASSISTANT_ALLOWED_TOOLS) is enforced on both schema and execution.
+	$mcp = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
+	$mcp->loadTools();
 
+	$tStart = microtime(true);
 	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
+
+	// A write answers with a confirmation request instead of running. This
+	// endpoint is only reached after the user pressed the confirmation button of
+	// the chat, on a CSRF-checked request, so the round trip is completed here
+	// rather than asking the same human twice. The state is still issued, bound
+	// to these arguments and consumed once, so the write leaves its trace in
+	// llx_ai_write_confirmation like any other.
+	if (is_array($result) && ($result['resultType'] ?? '') === 'input_required' && !empty($result['requestState'])) {
+		$confirmedargs = $input['arguments'] ?? [];
+		$confirmedargs['requestState'] = $result['requestState'];
+		$result = $mcp->executeTool($input['tool'], $confirmedargs);
+	}
+
+	// This endpoint runs the executions the user confirmed - the calls that actually
+	// create, update or delete data - so they must land in the audit table just like
+	// the parse rounds (parse_intent.php) and the MCP server calls already do.
+	$status = 'Success';
+	$errorMsg = '';
+	// Two failure conventions coexist: the write tools return success=false,
+	// everything else (missing record, unknown tool, bridge error, rights
+	// refusal) returns a bare non-empty 'error' key - both must log as Error.
+	if ((array_key_exists('success', $result) && empty($result['success'])) || !empty($result['error'])) {
+		$status = 'Error';
+		$errorMsg = isset($result['error']) ? (string) $result['error'] : '';
+	}
+	ai_log_request(
+		$db,
+		$user,
+		'[Assistant] '.$input['tool'].' '.aiTruncateForLog((string) json_encode($input['arguments'] ?? []), 20000),
+		['tool' => (string) $input['tool']],
+		'assistant',
+		microtime(true) - $tStart,
+		1.0,
+		$status,
+		$errorMsg,
+		$raw,
+		(string) json_encode($result)
+	);
 
 	echo json_encode($result);
 } catch (Throwable $e) {
 	// Set HTTP response code to error (400 Bad Request)
 	http_response_code(400);
+	$toolName = (isset($input) && is_array($input) && !empty($input['tool'])) ? (string) $input['tool'] : '';
+	ai_log_request(
+		$db,
+		$user,
+		'[Assistant] '.($toolName !== '' ? $toolName : 'invalid_request'),
+		['tool' => $toolName],
+		'assistant',
+		0.0,
+		0.0,
+		'Error',
+		$e->getMessage(),
+		isset($raw) && is_string($raw) ? $raw : '',
+		''
+	);
 	echo json_encode(["error" => $e->getMessage()]);
 }

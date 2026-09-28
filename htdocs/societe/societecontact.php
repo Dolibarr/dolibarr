@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2015	Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014       Charles-Fr Benke	<charles.fr@benke.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
-		// bascule du statut d'un contact
+		// toggle the status of a contact
 		if ($object->fetch($id)) {
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
@@ -315,7 +315,7 @@ if ($id > 0 || !empty($ref)) {
 						// EMail
 						print "<td>".dol_print_email($objp->email, 0, 0, 1)."</td>\n";
 
-						// Statut
+						// Status
 						print '<td class="nowrap">';
 						print $memberstatic->LibStatut($objp->statut, $objp->subscription, $datefin, 2);
 						print "</td>";

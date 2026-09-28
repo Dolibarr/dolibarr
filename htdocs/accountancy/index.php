@@ -263,7 +263,7 @@ if (isModEnabled('accounting')) {
 
 	$langs->loadLangs(array('bills', 'trips'));
 
-	print '<div class="info">';
+	print '<div class="neutral">';
 
 	$step++;
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsCustomers"), '{s}')."\n";

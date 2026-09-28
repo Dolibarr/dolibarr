@@ -2,7 +2,7 @@
 /* Copyright (C) 2012       Mikael Carlavan         <contact@mika-carl.fr>
  * Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2017       Pierre-Henry Favre      <phf@atm-consulting.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,6 +164,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'delete') {
 		// TODO add confirm
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$res = $object->delete($user);
 
 		if ($res < 0) {
@@ -209,7 +210,7 @@ echo '<span class="opacitymedium">' . $langs->trans('ExpenseReportRulesDesc') . 
 print '<br><br>';
 
 if ($action != 'edit') {
-	echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
+	echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post" spellcheck="false">';
 	echo '<input type="hidden" name="token" value="' . newToken() . '" />';
 	echo '<input type="hidden" name="action" value="save" />';
 
@@ -247,7 +248,7 @@ if ($action != 'edit') {
 }
 
 
-echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
+echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post" spellcheck="false">';
 echo '<input type="hidden" name="token" value="' . newToken() . '" />';
 
 if ($action == 'edit') {

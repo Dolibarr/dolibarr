@@ -7,8 +7,8 @@
  * Copyright (C) 2008       Raphael Bertrand (Resultic)     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013  Juanjo Menent                   <jmenent@2byte.es>
  * Copyright (C) 2011-2018  Philippe Grand                  <philippe.grand@atoo-net.com>
- * Copyright (C) 2024-2025  MDW                             <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France                 <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW                             <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France                 <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro              <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -136,8 +136,8 @@ if ($action == 'updateMask') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
 		$conf->global->FICHEINTER_ADDON_PDF = $value;
 	}
 
@@ -297,7 +297,7 @@ foreach ($dirmodels as $reldir) {
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
 					$file = $reg[1];
-					$classname = substr($file, 4);
+					$classname = dol_substr($file, 4);
 
 					require_once $dir.$file.'.php';
 
@@ -381,146 +381,13 @@ print '<br>';
  *  Documents models for Interventions
  */
 
-print load_fiche_titre($langs->trans("TemplatePDFInterventions"), '', '');
-
-// Defini tableau def des modeles
-$type = 'ficheinter';
-$def = array();
-$sql = "SELECT nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".((int) $conf->entity);
-$resql = $db->query($sql);
-if ($resql) {
-	$i = 0;
-	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		if (is_array($array)) {
-			array_push($def, $array[0]);
-		}
-		$i++;
-	}
-} else {
-	dol_print_error($db);
-}
-
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$realpath = $reldir."core/modules/fichinter/doc";
-	$dir = dol_buildpath($realpath);
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			$filelist = array();
-			while (($file = readdir($handle)) !== false) {
-				$filelist[] = $file;
-			}
-			closedir($handle);
-			arsort($filelist);
-
-			foreach ($filelist as $file) {
-				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-					if (file_exists($dir.'/'.$file)) {
-						$name = substr($file, 4, dol_strlen($file) - 16);
-						$classname = substr($file, 0, dol_strlen($file) - 12);
-
-						require_once $dir.'/'.$file;
-						$module = new $classname($db);
-
-						'@phan-var-force ModelePDFFicheinter $module';
-
-						$modulequalified = 1;
-						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-							$modulequalified = 0;
-						}
-						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-							$modulequalified = 0;
-						}
-
-						if ($modulequalified) {
-							print '<tr class="oddeven"><td width="100">';
-							print(empty($module->name) ? $name : $module->name);
-							print "</td><td>\n";
-							if (method_exists($module, 'info')) {
-								print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
-							} else {
-								print $module->description;
-							}
-							print '</td>';
-
-							// Active
-							if (in_array($name, $def)) {
-								print "<td align=\"center\">\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">';
-								print img_picto($langs->trans("Enabled"), 'switch_on');
-								print '</a>';
-								print "</td>";
-							} else {
-								print "<td align=\"center\">\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-								print "</td>";
-							}
-
-							// Default
-							print "<td align=\"center\">";
-							if (getDolGlobalString('FICHEINTER_ADDON_PDF') == "$name") {
-								print img_picto($langs->trans("Default"), 'on');
-							} else {
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-							}
-							print '</td>';
-
-							// Info
-							$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-							$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-							$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-							$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
-
-							$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-							$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-							$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-							$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-							$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-							$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, -1, 'info');
-							print '</td>';
-
-							// Preview
-							print '<td class="center">';
-							if ($module->type == 'pdf') {
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
-							} else {
-								print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
-							}
-							print '</td>';
-
-							print '</tr>';
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-print '</table>';
-print '</div>';
+printDocumentModelList('ficheinter', 'fichinter', 'FICHEINTER_ADDON_PDF', $langs->trans("TemplatePDFInterventions"), array(
+	'Logo' => 'option_logo',
+	'PaymentMode' => 'option_modereg',
+	'PaymentConditions' => 'option_condreg',
+	'MultiLanguage' => 'option_multilang',
+	'WatermarkOnDraftOrders' => 'option_draft_watermark',
+));
 print "<br>";
 
 /*
@@ -545,7 +412,7 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
@@ -564,7 +431,7 @@ print "</td></tr>\n";
 print '</form>';
 
 //Use draft Watermark
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';

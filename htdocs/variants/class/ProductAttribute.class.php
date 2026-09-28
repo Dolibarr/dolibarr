@@ -113,6 +113,11 @@ class ProductAttribute extends CommonObject
 	public $id;
 
 	/**
+	 * @var int		Alias of id, written by the import engine on the object it hands to the triggers
+	 */
+	public $rowid;
+
+	/**
 	 * @var string ref
 	 */
 	public $ref;
@@ -280,21 +285,26 @@ class ProductAttribute extends CommonObject
 	}
 
 	/**
-	 * Fetches the properties of a product attribute
+	 * Fetches the properties of a product attribute, from its id or from its ref
 	 *
-	 * @param int $id Attribute id
-	 * @return int Return integer <1 KO, >1 OK
+	 * Note: $id must not be typed as int. The import engine resolves a foreign key by
+	 * calling fetch('', $ref) and an empty string is not a numeric string in PHP 8.
+	 *
+	 * @param	int|string	$id		Attribute id
+	 * @param	string		$ref	Attribute ref, used when $id is empty
+	 * @return	int					Return integer <0 KO, 0 not found, >0 OK
 	 */
-	public function fetch($id)
+	public function fetch($id, $ref = '')
 	{
 		global $langs;
 		$error = 0;
 
 		// Clean parameters
-		$id = $id > 0 ? $id : 0;
+		$id = $id > 0 ? (int) $id : 0;
+		$ref = trim((string) $ref);
 
 		// Check parameters
-		if (empty($id)) {
+		if (empty($id) && $ref === '') {
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("TechnicalID"));
 			$error++;
 		}
@@ -305,7 +315,11 @@ class ProductAttribute extends CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext, label, position";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE rowid = " . ((int) $id);
+		if (!empty($id)) {
+			$sql .= " WHERE rowid = " . ((int) $id);
+		} else {
+			$sql .= " WHERE ref = '" . $this->db->escape($ref) . "'";
+		}
 		$sql .= " AND entity IN (" . getEntity('product') . ")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -517,6 +531,14 @@ class ProductAttribute extends CommonObject
 		}
 
 		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$this->errors[] = "Error " . $this->error;
+				$error++;
+			}
+		}
+
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -529,10 +551,10 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Load array lines
 	 *
-	 * @param	string		$filters	Filter on other fields
+	 * @param	string		$sql_filters	Filter on other fields
 	 * @return	int						    Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch_lines($filters = '')
+	public function fetch_lines($sql_filters = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -559,8 +581,8 @@ class ProductAttribute extends CommonObject
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($this->table_element) . " AS t ON t.rowid = td." . $this->db->sanitize($this->fk_element);
 		$sql .= " WHERE t.rowid = " . ((int) $this->id);
 		$sql .= " AND t.entity IN (" . getEntity('product') . ")";
-		if ($filters) {
-			$sql .= $filters;
+		if ($sql_filters) {
+			$sql .= $sql_filters;
 		}
 		$sql .= $this->db->order("td.position", "asc");
 
@@ -1199,7 +1221,7 @@ class ProductAttribute extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
+					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . dol_substr($filename, 0, $pospoint) . '_mini' . dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
 					} else {
@@ -1411,6 +1433,8 @@ class ProductAttribute extends CommonObject
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
+						/** @var CommonObject $object */
+						'@phan-var-force CommonObject $object';
 						$object->formAddObjectLine(1, $mysoc, $buyer);
 					}
 				}

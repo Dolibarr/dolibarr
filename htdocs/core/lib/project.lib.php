@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2018-2025 Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
@@ -587,9 +587,8 @@ function project_timesheet_prepare_head($mode, $fuser = null)
  */
 function project_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('projet');
 	$extrafields->fetch_name_optionals_label('projet_task');
 
@@ -603,7 +602,7 @@ function project_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_admin');
 
-	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project_extrafields.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'projet'));
 	$head[$h][1] = $langs->trans("ExtraFieldsProject");
 	$nbExtrafields = $extrafields->attributes['projet']['count'];
 	if ($nbExtrafields > 0) {
@@ -613,7 +612,7 @@ function project_admin_prepare_head()
 	$h++;
 
 	if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
-		$head[$h][0] = DOL_URL_ROOT . '/projet/admin/project_task_extrafields.php';
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'projet_task'));
 		$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
 		$nbExtrafields = $extrafields->attributes['projet_task']['count'];
 		if ($nbExtrafields > 0) {
@@ -2708,8 +2707,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			if (empty($project_year_filter) || !is_numeric($project_year_filter)) {
 				$project_year_filter = date("Y");
 			}
-			$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day((int) $project_year_filter, 12, false)).")";
-			$sql .= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day((int) $project_year_filter, 1, false)).")";
+			$sql .= " AND (p.dateo IS NULL OR p.dateo <= '".$db->idate(dol_get_last_day((int) $project_year_filter, 12, false))."')";
+			$sql .= " AND (p.datee IS NULL OR p.datee >= '".$db->idate(dol_get_first_day((int) $project_year_filter, 1, false))."')";
 		}
 	}
 
@@ -3010,13 +3009,15 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 	$progressBarClass = 'progress-bar-info';
 	$progressCalculated = 0;
 	if ($task->planned_workload) {
-		$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
+		if (is_numeric($task->duration_effective)) {
+			$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
+		}
 
 		// this conf is actually hidden, by default we use 10% for "be careful or warning"
-		$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
+		$warningRatio = getDolGlobalInt('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + getDolGlobalInt('PROJECT_TIME_SPEND_WARNING_PERCENT') / 100) : 1.10;
 
 		$diffTitle = '<br>'.$langs->trans('ProgressDeclared').' : '.$task->progress.(isset($task->progress) ? '%' : '');
-		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.(isset($progressCalculated) ? '%' : '');
+		$diffTitle .= '<br>'.$langs->trans('ProgressCalculated').' : '.(is_numeric($task->duration_effective) ? $progressCalculated.'%' : '');
 
 		//var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.floatval($task->progress * $warningRatio));
 		if ((float) $progressCalculated > (float) ($task->progress * $warningRatio)) {

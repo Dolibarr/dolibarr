@@ -4,7 +4,7 @@
  * Copyright (C) 2021       Greg Rastklan       <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021       Jean-Pascal BOUDET  <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021       Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -606,7 +606,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 
-	// liste des evaluation liées
+	// list of linked evaluations
 	if ($objecttype == 'user' && $permissiontoadd) {
 		$evaltmp = new Evaluation($db);
 		$job = new Job($db);

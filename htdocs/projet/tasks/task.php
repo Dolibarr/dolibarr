@@ -2,7 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
@@ -207,6 +207,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet'
 	$projectstatic->fetch_thirdparty();
 
 	// $object is task to delete
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	if ($object->delete($user) > 0) {
 		header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
 		exit;
@@ -519,7 +520,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Third party
 			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
-			if ($projectstatic->thirdparty->id) {
+			if (!empty($projectstatic->thirdparty->id)) {
 				print $projectstatic->thirdparty->getNomUrl(1);
 			} else {
 				print '&nbsp;';
@@ -598,7 +599,7 @@ if ($id > 0 || !empty($ref)) {
 		$param = ($withproject ? '&withproject=1' : '');
 		$linkback = $withproject ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>' : '';
 
-		print dol_get_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
+		print dol_get_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition', 0, '', 1);
 
 		if ($action == 'clone') {
 			$formquestion = array(
@@ -778,6 +779,9 @@ if ($id > 0 || !empty($ref)) {
 					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("SetToDraft").'">'.$langs->trans('SetToDraft').'</a>';
 				} elseif ($object->status == $object::STATUS_DRAFT) {
 					print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=valid&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Validate').'</a>';
+				} elseif ($object->status == $object::STATUS_CLOSED) {
+					// A closed task had no way back, the reopen action above already accepts it
+					print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('ReOpen').'</a>';
 				}
 				//if ($object->status != $object::STATUS_CLOSED) {
 				print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';

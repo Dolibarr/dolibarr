@@ -3,12 +3,13 @@
  * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
  * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +172,10 @@ if ($action == 'classin' && $permissiontoadd) {
 if ($action == 'setlabel' && $permissiontoadd) {
 	$object->fetch($id);
 	$object->label = $label;
-	$object->update($user);
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 // Classify paid
@@ -184,7 +188,10 @@ if ($action == 'setfk_user' && $permissiontoadd) {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$object->fk_user = $fk_user;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} else {
 		dol_print_error($db);
 		exit;
@@ -296,7 +303,7 @@ if ($action == 'add' && empty($cancel) && $permissiontoadd) {
 			$paiement->chid         = $object->id;	// deprecated
 			$paiement->datep        = $datep;
 			$paiement->datev		= $datev;
-			$paiement->amounts      = array($object->id => $amount); // Tableau de montant
+			$paiement->amounts      = array($object->id => $amount); // Amount array
 			$paiement->fk_typepayment = $type_payment;
 			$paiement->num_payment = GETPOST("num_payment", 'alphanohtml');
 			$paiement->note_private = GETPOST("note", 'restricthtml');
@@ -354,6 +361,7 @@ if ($action == 'confirm_delete' && $permissiontodelete) {
 	if (empty($totalpaid)) {
 		$db->begin();
 
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$ret = $object->delete($user);
 		if ($ret > 0) {
 			$db->commit();
@@ -495,8 +503,7 @@ llxHeader('', $title, $help_url);
 if ($id > 0) {
 	$result = $object->fetch($id);
 	if ($result <= 0) {
-		dol_print_error($db);
-		exit;
+		recordNotFound('', 0);
 	}
 }
 
@@ -764,7 +771,7 @@ if ($action == 'create' && $permissiontoadd) {
 						);
 
 					} else {
-						alert("'.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'");
+						alert(\''.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'\');
 					}
 		});
 
@@ -896,7 +903,7 @@ if ($id > 0) {
 	print $formconfirm;
 
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 
 	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/salaries/list.php', ['restore_lastsearch_values' => 1]).(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

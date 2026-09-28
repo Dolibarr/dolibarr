@@ -140,7 +140,10 @@ if (empty($reshook)) {
 		if (!empty($TNote)) {
 			foreach ($object->lines as $line) {
 				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
-				$line->update($user);
+				$result = $line->update($user);
+				if ($result < 0) {
+					setEventMessages($line->error, $line->errors, 'errors');
+				}
 			}
 			//setEventMessage($langs->trans("SaveLevelSkill"));
 		}
@@ -223,7 +226,10 @@ if (empty($reshook)) {
 					$updSkill = $SkillrecordsForActiveUser[$keyFind];
 
 					$updSkill->rankorder = $line->rankorder;
-					$updSkill->update($user);
+					$result = $updSkill->update($user);
+					if ($result < 0) {
+						setEventMessages($updSkill->error, $updSkill->errors, 'errors');
+					}
 				} else { // else we create the skill
 					$newSkill = new SkillRank($db);
 					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
@@ -251,7 +257,7 @@ if (empty($reshook)) {
 
 		$upload_dir = $conf->hrm->dir_output;
 		$file = $upload_dir.'/'.GETPOST('file');
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$ret = dol_delete_file($file, 1, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -358,7 +364,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = evaluationPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -483,7 +489,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		$conf->modules_parts['tpl']['hrm'] = '/hrm/core/tpl/'; // Pour utilisation du tpl hrm sur cet écran
+		$conf->modules_parts['tpl']['hrm'] = '/hrm/core/tpl/'; // To use the hrm tpl on this screen
 
 		print '<div class="div-table-responsive-no-min">';
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {

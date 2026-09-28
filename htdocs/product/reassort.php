@@ -6,7 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Vincent de Grandpré  	<vincent@de-grandpre.quebec>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -300,7 +300,7 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 		} else {
 			$sql_having .= " HAVING";
 		}
-		$sql_having .= $natural_search_physique;
+		$sql_having .= $natural_search_physique;  // natural_search gives save sql @phan-suppress-current-line SqlInjection
 	}
 }
 
@@ -347,14 +347,10 @@ if ($resql) {
 		exit;
 	}
 
-	if (isset($type)) {
-		if ($type == 1) {
-			$texte = $langs->trans("Services");
-		} else {
-			$texte = $langs->trans("Products");
-		}
+	if ($type == 1) {
+		$texte = $langs->trans("Services");
 	} else {
-		$texte = $langs->trans("ProductsAndServices");
+		$texte = $langs->trans("Products");
 	}
 	$texte .= ' ('.$langs->trans("MenuStocks").')';
 

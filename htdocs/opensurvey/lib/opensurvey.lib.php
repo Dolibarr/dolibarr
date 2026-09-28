@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 		Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2014 		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -161,8 +161,8 @@ function issetAndNoEmpty($name, $tableau = null)
 /**
  * Function for generating URLs for surveys.
  *
- * @param   string    $id     L'identifiant du sondage
- * @param   bool      $admin  True pour générer une URL pour l'administration d'un sondage, False pour un URL publique
+ * @param   string    $id     Survey ID
+ * @param   bool      $admin  True to generate a URL for survey administration, False for a public URL
  * @return  string            The url of the survey
  */
 function getUrlSondage($id, $admin = false)

@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Pengiriman pelanggan terakhir
 BoxTitleLastCustomerShipments=Pengiriman pelanggan yang dimodifikasi %s terbaru
 BoxTitleLastLeaveRequests=%s permintaan cuti terbaru yang diubah
 NoRecordedShipments=Tidak ada pengiriman pelanggan yang direkam
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Pelanggan dengan limit terutang telah tercapai
 BoxTitleLastFediverseInfos=Posting terakhir %s dari %s
 BoxLastFediverseInfos=Pembaruan Fediverse Terbaru: Berita dan Tren

@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -76,7 +76,7 @@ if ($user->socid) {
 
 $hookmanager->initHooks(array('ordersupplierdispatch'));
 
-// Recuperation de l'id de projet
+// Retrieve the project id
 $projectid = 0;
 if (GETPOSTISSET("projectid")) {
 	$projectid = GETPOSTINT("projectid");
@@ -824,6 +824,10 @@ if ($id > 0 || !empty($ref)) {
 								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 									$type = 'batch';
 									print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+									if ($objp->tobatch == 2) {
+										// Product managed with unique serial numbers: allow to enter several serial numbers at once (one line per serial)
+										print img_picto($langs->trans('EnterMultipleSerialNumbers'), 'barcode', 'class="splitbutton marginleftonly" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLinesFromSerialList('.$i.', \''.$type.'\')"');
+									}
 								} else {
 									$type = 'dispatch';
 									print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
@@ -997,6 +1001,10 @@ if ($id > 0 || !empty($ref)) {
 							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 								$type = 'batch';
 								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
+								if ($objp->tobatch == 2) {
+									// Product managed with unique serial numbers: allow to enter several serial numbers at once (one line per serial)
+									print img_picto($langs->trans('EnterMultipleSerialNumbers'), 'barcode', 'class="splitbutton marginleftonly" onClick="addDispatchLinesFromSerialList('.$i.', \''.$type.'\')"');
+								}
 							} else {
 								$type = 'dispatch';
 								print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
@@ -1121,7 +1129,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print dol_get_fiche_end();
 
-	// traitement entrepot par défaut
+	// Handling of the default warehouse
 	print '<script type="text/javascript">
 		$(document).ready(function () {
 			$("select[name=fk_default_warehouse]").change(function() {

@@ -80,7 +80,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
 		<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo $refSupplierWithThirdparty; ?></td>
-		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
+		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->date_reception, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
 		if ($user->hasRight('reception', 'lire')) {
 			$total += $objectlink->total_ht;

@@ -54,6 +54,21 @@ class ProductCombination
 	public $id;
 
 	/**
+	 * @var int		Alias of id, written by the import engine on the object it hands to the triggers
+	 */
+	public $rowid;
+
+	/**
+	 * @var string	Key of the import run that created or updated the row
+	 */
+	public $import_key;
+
+	/**
+	 * @var array<string,mixed>	Context of the current operation, set by the import engine
+	 */
+	public $context = array();
+
+	/**
 	 * Rowid of the parent Product
 	 * @var int
 	 */
@@ -128,26 +143,59 @@ class ProductCombination
 	}
 
 	/**
-	 * Retrieves a ProductCombination by its rowid
+	 * Retrieves a ProductCombination by its rowid or by the ref of its child product
 	 *
-	 * @param   int     	$rowid      ID of the ProductCombination
-	 * @return  int<-1,1>               -1 if KO, 1 if OK
+	 * Note: $rowid must not be typed as int. The import engine resolves a foreign key by
+	 * calling fetch('', $ref) and an empty string is not a numeric string in PHP 8.
+	 *
+	 * @param	int|string	$rowid				ID of the ProductCombination
+	 * @param	string		$ref_product_child	Ref of the child (variant) product, used when $rowid is empty
+	 * @return	int<-1,1>						-1 if KO, 0 if not found, 1 if OK
 	 */
-	public function fetch($rowid)
+	public function fetch($rowid, $ref_product_child = '')
 	{
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight, variation_ref_ext FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE rowid = ".((int) $rowid)." AND entity IN (".getEntity('product').")";
+		$rowid = $rowid > 0 ? (int) $rowid : 0;
+		$ref_product_child = trim((string) $ref_product_child);
 
-		$query = $this->db->query($sql);
-
-		if (!$query) {
+		if (empty($rowid) && $ref_product_child === '') {
+			$this->error = 'ErrorFieldRequired';
+			dol_syslog(__METHOD__.' called without rowid nor ref of child product', LOG_ERR);
 			return -1;
 		}
 
-		if (!$this->db->num_rows($query)) {
+		$sql = "SELECT pac.rowid, pac.fk_product_parent, pac.fk_product_child, pac.variation_price,";
+		$sql .= " pac.variation_price_percentage, pac.variation_weight, pac.variation_ref_ext";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination as pac";
+		if (empty($rowid)) {
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pac.fk_product_child";
+			$sql .= " WHERE p.ref = '".$this->db->escape($ref_product_child)."'";
+			$sql .= " AND p.entity IN (".getEntity('product').")";
+		} else {
+			$sql .= " WHERE pac.rowid = ".((int) $rowid);
+		}
+		$sql .= " AND pac.entity IN (".getEntity('product').")";
+		if (empty($rowid)) {
+			// A product ref is only unique per entity: with shared products several rows can match,
+			// so make the choice deterministic instead of depending on the storage order.
+			$sql .= $this->db->order('p.entity', 'ASC');
+			$sql .= $this->db->plimit(1);
+		}
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 			return -1;
 		}
 
-		$obj = $this->db->fetch_object($query);
+		if (!$this->db->num_rows($resql)) {
+			$this->db->free($resql);
+			return 0;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
 
 		$this->id = $obj->rowid;
 		$this->fk_product_parent = $obj->fk_product_parent;
@@ -430,7 +478,14 @@ class ProductCombination
 		$parent = new Product($this->db);
 		$parent->fetch($this->fk_product_parent);
 
-		$this->updateProperties($parent, $user);
+		// Propagate failure of updateProperties (otherwise an update where the variant
+		// percentage drives the new price below the parent product's price_min returns
+		// success but leaves the variant product at the price=0 it had right after
+		// createProductCombination, see issue #32372).
+		$result = $this->updateProperties($parent, $user);
+		if ($result < 0) {
+			return $result;
+		}
 
 		return 1;
 	}
@@ -466,6 +521,60 @@ class ProductCombination
 	}
 
 	/**
+	 * Delete every combination row referencing a product, without deleting any product.
+	 *
+	 * Used when the product is removed while the variants module is disabled: the rows would
+	 * otherwise be refused by the foreign key on fk_product_parent.
+	 *
+	 * @param	int			$fk_product		Id of the product, as a parent or as a child
+	 * @return	int<-1,1>					-1 if KO, 1 if OK
+	 */
+	public function deleteLinksByProduct($fk_product)
+	{
+		// The satellite rows are removed through a subquery rather than through a list of ids read
+		// in PHP: no id list to assemble, and the combinations of the product are the only rows
+		// matched. Both columns are indexed, so the subquery is resolved by an index merge.
+		$whereproduct = " WHERE fk_product_parent = ".((int) $fk_product)." OR fk_product_child = ".((int) $fk_product);
+
+		$resql = $this->db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute_combination".$whereproduct.$this->db->plimit(1));
+		if (!$resql) {
+			// The tables are created when the module is enabled, never by the installer, which
+			// skips every file whose name holds a dash (install/step2.php). On an instance where
+			// the module was never enabled there is nothing to clean, and failing here would make
+			// every product undeletable.
+			if ($this->db->lasterrno() === 'DB_ERROR_NOSUCHTABLE') {
+				return 1;
+			}
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
+		// num_rows() and not fetch_object(): pg_fetch_object() returns false, never null
+		$hascombination = ($this->db->num_rows($resql) > 0);
+		$this->db->free($resql);
+
+		// Deleting a product is a frequent operation on instances that carry no variant at all
+		if (!$hascombination) {
+			return 1;
+		}
+
+		$sqls = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."product_attribute_combination2val WHERE fk_prod_combination IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute_combination".$whereproduct.")",
+			"DELETE FROM ".MAIN_DB_PREFIX."product_attribute_combination_price_level WHERE fk_product_attribute_combination IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute_combination".$whereproduct.")",
+			"DELETE FROM ".MAIN_DB_PREFIX."product_attribute_combination".$whereproduct,
+		);
+		foreach ($sqls as $sqltorun) {
+			if (!$this->db->query($sqltorun)) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+				return -1;
+			}
+		}
+
+		return 1;
+	}
+
+	/**
 	 * Deletes all product combinations of a parent product
 	 *
 	 * @param User		$user 				Object user
@@ -483,16 +592,15 @@ class ProductCombination
 		$this->db->begin();
 
 		foreach ($arrayofparent as $prodcomb) {
-			$prodstatic = new Product($this->db);
-
-			$res = $prodstatic->fetch($prodcomb->fk_product_child);
+			// Delete the combination first and unconditionally: when the child product has already
+			// disappeared, leaving the row behind would keep the parent product undeletable.
+			$res = $prodcomb->delete($user);
 
 			if ($res > 0) {
-				$res = $prodcomb->delete($user);
-			}
-
-			if ($res > 0 && !$prodstatic->isObjectUsed($prodstatic->id)) {
-				$res = $prodstatic->delete($user);
+				$prodstatic = new Product($this->db);
+				if ($prodstatic->fetch($prodcomb->fk_product_child) > 0 && !$prodstatic->isObjectUsed($prodstatic->id)) {
+					$res = $prodstatic->delete($user);
+				}
 			}
 
 			if ($res < 0) {
@@ -676,6 +784,80 @@ class ProductCombination
 	}
 
 	/**
+	 * Resolves the id of an attribute value from its ref, for the 'compute' rule of the import
+	 * of the attribute/value links.
+	 *
+	 * A value ref is only unique for a given attribute, and the fetchidfromref rule of the
+	 * import engine resolves every column without any context, so the attribute ref has to be
+	 * read from the same file line. The 'pac2v.fk_prod_attr' alias is hard coded here on
+	 * purpose: it is the alias declared by the import dataset of modVariants, and the engine
+	 * has no way to pass it.
+	 *
+	 * @param	array<int,array{val:string,type:int}>	$arrayrecord	Line read from the file, by reference (the signature of the engine requires it)
+	 * @param	array<string,int>						$arrayfield		Field alias => column index of the line
+	 * @param	int										$pos			Column index of the value ref
+	 * @return	int														Id of the attribute value, 0 on error
+	 */
+	public function resolveAttributeValueId(&$arrayrecord, $arrayfield, $pos)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
+
+		$this->error = '';
+		$this->errors = array();
+
+		$valueref = isset($arrayrecord[$pos]['val']) ? trim((string) $arrayrecord[$pos]['val']) : '';
+		$attributecolumn = isset($arrayfield['pac2v.fk_prod_attr']) ? (int) $arrayfield['pac2v.fk_prod_attr'] : -1;
+		$attributeref = ($attributecolumn >= 0 && isset($arrayrecord[$attributecolumn]['val'])) ? trim((string) $arrayrecord[$attributecolumn]['val']) : '';
+
+		if ($valueref === '') {
+			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('VariantValueRef'));
+			dol_syslog(__METHOD__.' called without value ref', LOG_ERR);
+			return 0;
+		}
+		if ($attributeref === '') {
+			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('VariantAttributeRef'));
+			dol_syslog(__METHOD__.' called without attribute ref', LOG_ERR);
+			return 0;
+		}
+
+		// Same convention as the fetchidfromref rule of the engine: a numeric value or a value
+		// prefixed with id: is an id, anything else is a ref.
+		$attributeisid = (preg_match('/^id:/i', $attributeref) || is_numeric($attributeref)) && !preg_match('/^ref:/i', $attributeref);
+		$valueisid = (preg_match('/^id:/i', $valueref) || is_numeric($valueref)) && !preg_match('/^ref:/i', $valueref);
+		$attributeref = preg_replace('/^(id|ref):/i', '', $attributeref);
+		$valueref = preg_replace('/^(id|ref):/i', '', $valueref);
+
+		$attribute = new ProductAttribute($this->db);
+		$result = $attributeisid ? $attribute->fetch((int) $attributeref) : $attribute->fetch('', $attributeref);
+		if ($result <= 0) {
+			$this->error = $langs->trans('ErrorVariantAttributeRefNotFound', $attributeref);
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return 0;
+		}
+
+		$attributevalue = new ProductAttributeValue($this->db);
+		$fkproductattribute = $attribute->id;
+		$result = $valueisid ? $attributevalue->fetch((int) $valueref) : $attributevalue->fetch('', $valueref, $fkproductattribute);
+		if ($result <= 0) {
+			$this->error = $langs->trans('ErrorVariantAttributeValueRefNotFound', $valueref, $attributeref);
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return 0;
+		}
+
+		// An id given by the file must still belong to the attribute of the same line.
+		if ($valueisid && $attributevalue->fk_product_attribute != $attribute->id) {
+			$this->error = $langs->trans('ErrorVariantAttributeValueRefNotFound', $valueref, $attributeref);
+			dol_syslog(__METHOD__.' value '.$valueref.' does not belong to attribute '.$attribute->id, LOG_ERR);
+			return 0;
+		}
+
+		return (int) $attributevalue->id;
+	}
+
+	/**
 	 * Retrieves all unique attributes for a parent product
 	 * (filtered on its 'to sell' variants)
 	 *
@@ -754,22 +936,37 @@ class ProductCombination
 	 * @param false|string              $forced_refvar          Value of the reference if it is forced
 	 * @param string                    $ref_ext                External reference
 	 * @param bool                      $clone_categories       Add parent product categories to the created variant
-	 * @return int<-1,1>                                        Return integer <0 KO, >0 OK
+	 * @param ?ProductCombination       $forcedcombination      Combination to reconcile. Without it, the combination is looked up from its value set, which is ambiguous as long as the set is partial.
+	 * @return int                                              Return integer <0 KO, >0 OK (id of the child product)
 	 */
-	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '', $clone_categories = false)
+	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '', $clone_categories = false, $forcedcombination = null)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
 		$this->db->begin();
 
 		$price_impact = array(1 => 0); // init level price impact
+		$variantdescription = '';
+		$expectedblockprefixes = array();
 
 		$forced_refvar = trim((string) $forced_refvar);
 
-		if (!empty($forced_refvar) && $forced_refvar != $product->ref) {
+		if ($forced_refvar !== '' && $forced_refvar === (string) $product->ref) {
+			// Would silently fall back to the automatic ref mode and create a clone of the parent.
+			// Strict comparison: '123' and '0123' are two different refs, not the same number.
+			$this->error = $langs->trans('ErrorVariantRefIsParentRef');
+			dol_syslog(__METHOD__.' refused: the variant ref is the ref of its parent product', LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
+
+		// Not empty(): a ref of '0' is a ref, and falling back to the automatic mode here would
+		// create a clone of the parent product. Same strict test as the guard above.
+		if ($forced_refvar !== '') {
 			$existingProduct = new Product($this->db);
 			$result = $existingProduct->fetch(0, $forced_refvar);
 			if ($result > 0) {
@@ -802,8 +999,45 @@ class ProductCombination
 			$price_var_percent = array(1 => (bool) $price_var_percent);
 		}
 
-		$newcomb = new ProductCombination($this->db);
-		$existingCombination = $newcomb->fetchByProductCombination2ValuePairs($product->id, $combinations);
+		// Init all price levels before the loops below read or increment them, otherwise PHP 8
+		// raises "Undefined array key". Level 1 is initialised whatever the configuration: it is
+		// read unconditionally below, and PRODUIT_MULTIPRICES_LIMIT may be 0.
+		if (!isset($price_impact[1])) {
+			$price_impact[1] = 0;
+		}
+		if (!isset($price_var_percent[1])) {
+			$price_var_percent[1] = false;
+		}
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$multipriceslimit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+			for ($i = 1; $i <= $multipriceslimit; $i++) {
+				if (!isset($price_impact[$i])) {
+					$price_impact[$i] = 0;
+				}
+				if (!isset($price_var_percent[$i])) {
+					$price_var_percent[$i] = false;
+				}
+			}
+		}
+
+		// A caller that already knows which combination it reconciles must impose it: looking a
+		// combination up from its value set returns the first combination of the parent whose set
+		// matches, and an imported set is partial until the last line of the variant has been read,
+		// so the lookup could match another variant and repoint its child product.
+		if ($forcedcombination instanceof ProductCombination && $forcedcombination->id > 0) {
+			if ($forcedcombination->fk_product_parent != $product->id) {
+				// Would silently reparent the combination and propagate the prices of another parent
+				$this->error = $langs->trans('ErrorVariantCombinationOfAnotherParent');
+				dol_syslog(__METHOD__.' combination '.$forcedcombination->id.' belongs to product '.$forcedcombination->fk_product_parent.', not to '.$product->id, LOG_ERR);
+				$this->db->rollback();
+				return -1;
+			}
+			$newcomb = $forcedcombination;
+			$existingCombination = $forcedcombination;
+		} else {
+			$newcomb = new ProductCombination($this->db);
+			$existingCombination = $newcomb->fetchByProductCombination2ValuePairs($product->id, $combinations);
+		}
 
 		if ($existingCombination) {
 			$newcomb = $existingCombination;
@@ -820,17 +1054,40 @@ class ProductCombination
 			}
 		}
 
+		// Value pairs already attached to the combination, so that an imposed combination gets the
+		// missing ones without duplicating those the caller has already written. Read after the
+		// combination has been resolved, so that $newcomb->id is the final one.
+		$existingpairs = array();
+		if ($existingCombination) {
+			$tmppair = new ProductCombination2ValuePair($this->db);
+			$tmppairs = $tmppair->fetchByFkCombination($newcomb->id);
+			if (!is_array($tmppairs)) {
+				$this->error = $tmppair->error;
+				$this->db->rollback();
+				return -1;
+			}
+			foreach ($tmppairs as $tmpvalue) {
+				$existingpairs[(int) $tmpvalue->fk_prod_attr] = (int) $tmpvalue->fk_prod_attr_val;
+			}
+		}
+
 		$prodattr = new ProductAttribute($this->db);
 		$prodattrval = new ProductAttributeValue($this->db);
 
 		// $combination contains list of attributes pairs key->value. Example: array('id Color'=>id Blue, 'id Size'=>id Small, 'id Option'=>id val a, ...)
 		foreach ($combinations as $currcombattr => $currcombval) {
-			//This was checked earlier, so no need to double check
-			$prodattr->fetch($currcombattr);
-			$prodattrval->fetch($currcombval);
+			// The label and the value feed the description of the child product, and both objects
+			// are reused from one iteration to the next, so a failed fetch would silently reinject
+			// the label of the previous attribute.
+			if ($prodattr->fetch($currcombattr) <= 0 || $prodattrval->fetch($currcombval) <= 0) {
+				$this->error = $langs->trans('ErrorVariantAttributeValueNotFound', $currcombattr, $currcombval);
+				dol_syslog(__METHOD__.' attribute '.$currcombattr.' or value '.$currcombval.' not found', LOG_ERR);
+				$this->db->rollback();
+				return -1;
+			}
 
-			//If there is an existing combination, there is no need to duplicate the valuepair
-			if (!$existingCombination) {
+			// Don't duplicate a value pair the combination already carries
+			if (!isset($existingpairs[(int) $currcombattr])) {
 				$tmp = new ProductCombination2ValuePair($this->db);
 				$tmp->fk_prod_attr = $currcombattr;
 				$tmp->fk_prod_attr_val = $currcombval;
@@ -851,8 +1108,8 @@ class ProductCombination
 
 				// Manage Price levels
 				if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-					$produit_multiprices_limit = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
-					for ($i = 2; $i <= $produit_multiprices_limit; $i++) {
+					$multipriceslimit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+					for ($i = 2; $i <= $multipriceslimit; $i++) {
 						$price_impact[$i] += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 					}
 				}
@@ -862,22 +1119,81 @@ class ProductCombination
 				$newproduct->ref .= getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR', '_') . $prodattrval->ref;
 			}
 
-			//The first one should not contain a linebreak
-			if ($newproduct->description) {
-				$newproduct->description .= '<br>';
+			// Build the variant part of the description apart, so that replaying the creation
+			// on an existing child product does not append the same block again and again.
+			if ($variantdescription !== '') {
+				$variantdescription .= '<br>';
 			}
-			$newproduct->description .= '<strong>'.$prodattr->label.':</strong> '.$prodattrval->value;
+			$blockprefix = '<strong>'.dol_escape_htmltag($prodattr->label).':</strong> ';
+			$expectedblockprefixes[] = $blockprefix;
+			$variantdescription .= $blockprefix.dol_escape_htmltag($prodattrval->value);
+		}
+
+		$generateddescription = (string) $product->description;
+		if ($generateddescription !== '' && $variantdescription !== '') {
+			$generateddescription .= '<br>';
+		}
+		$generateddescription .= $variantdescription;
+
+		// Write the description when the child carries none (the usual case of an import, where the
+		// child product has been created by its own dataset), and refresh it as long as the user
+		// has not modified it. Same rule as the label in updateProperties().
+		// An import reads one attribute per file line, so the description written by a previous
+		// line holds only part of the blocks: such a description has to be recognised as generated
+		// too, otherwise the last attribute of every multi attribute variant would be lost. The
+		// comparison is made block by block rather than with a pattern, so that a description
+		// written by the user is never mistaken for a generated one.
+		$currentdescription = (string) $newproduct->description;
+		$isgenerateddescription = ($currentdescription === '' || $currentdescription === (string) $product->description || $currentdescription === $generateddescription);
+		if (!$isgenerateddescription) {
+			// A description generated by a previous line starts with the description of the parent
+			// and is made of nothing but expected feature blocks.
+			$remainder = $currentdescription;
+			$prefix = (string) $product->description;
+			$isgenerateddescription = true;
+			if ($prefix !== '') {
+				if (strpos($remainder, $prefix) === 0) {
+					$remainder = (string) substr($remainder, strlen($prefix));
+				} else {
+					$isgenerateddescription = false;
+				}
+			}
+			if ($isgenerateddescription) {
+				$notempty = static function (string $block): bool {
+					return $block !== '';
+				};
+				foreach (array_filter(explode('<br>', $remainder), $notempty) as $block) {
+					// A block is recognised by the attribute label it opens with, not by the value
+					// it holds: correcting a value by re-import must refresh the description, and
+					// comparing whole blocks would classify the outdated one as user content.
+					$isknownblock = false;
+					foreach ($expectedblockprefixes as $blockprefix) {
+						if (strpos($block, $blockprefix) === 0) {
+							$isknownblock = true;
+							break;
+						}
+					}
+					if (!$isknownblock) {
+						$isgenerateddescription = false;
+						break;
+					}
+				}
+			}
+		}
+		if ($existingProduct === false || $isgenerateddescription) {
+			$newproduct->description = $generateddescription;
 		}
 
 		$newcomb->variation_price_percentage = (bool) $price_var_percent[1];
 		$newcomb->variation_price = $price_impact[1];
 		$newcomb->variation_weight = $weight_impact;
-		$newcomb->variation_ref_ext = $this->db->escape($ref_ext);
+		// No escape here: create() and update() escape variation_ref_ext themselves.
+		$newcomb->variation_ref_ext = $ref_ext;
 
 		// Init price level
 		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-			$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
-			for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
+			$multipriceslimit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+			for ($i = 1; $i <= $multipriceslimit; $i++) {
 				$productCombinationLevel = new ProductCombinationLevel($this->db);
 				$productCombinationLevel->fk_product_attribute_combination = $newcomb->id;
 				$productCombinationLevel->fk_price_level = $i;
@@ -1083,6 +1399,21 @@ class ProductCombinationLevel
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'product_attribute_combination_price_level';
+
+	/**
+	 * @var int		Alias of id, written by the import engine on the object it hands to the triggers
+	 */
+	public $rowid;
+
+	/**
+	 * @var string	Key of the import run that created or updated the row
+	 */
+	public $import_key;
+
+	/**
+	 * @var array<string,mixed>	Context of the current operation, set by the import engine
+	 */
+	public $context = array();
 
 	/**
 	 * Rowid of combination

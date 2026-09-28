@@ -26,6 +26,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -216,9 +217,9 @@ class Proposals extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		$parameters = array();
@@ -474,7 +475,7 @@ class Proposals extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->propal->error);
+			throw new RestException(400, $this->propal->errorsToString());
 		}
 	}
 
@@ -609,6 +610,10 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal line not found');
 		}
 
+		if ($propalline->fk_propal != $id) {
+			throw new RestException(403, 'Line does not belong to this proposal');
+		}
+
 		$updateRes = $this->propal->updateline(
 			$lineid,
 			isset($request_data->subprice) ? $request_data->subprice : $propalline->subprice,
@@ -677,7 +682,7 @@ class Proposals extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(405, $this->propal->error);
+			throw new RestException(405, $this->propal->errorsToString());
 		}
 	}
 	/**
@@ -945,14 +950,14 @@ class Proposals extends DolibarrApi
 		}
 		if (!empty($this->propal->fin_validite)) {
 			if ($this->propal->set_echeance(DolibarrApiAccess::$user, $this->propal->fin_validite) < 0) {
-				throw new RestException(500, $this->propal->error);
+				throw new RestException(500, $this->propal->errorsToString());
 			}
 		}
 
 		if ($this->propal->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->propal->error);
+			throw new RestException(500, $this->propal->errorsToString());
 		}
 	}
 
@@ -987,7 +992,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!$this->propal->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->error);
+			throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->errorsToString());
 		}
 
 		return array(
@@ -1029,7 +1034,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->propal->error);
+			throw new RestException(500, 'Error : '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1088,7 +1093,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->error);
+			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1141,7 +1146,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->error);
+			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1187,7 +1192,7 @@ class Proposals extends DolibarrApi
 
 		$result = $this->propal->classifyBilled(DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->propal->error);
+			throw new RestException(500, 'Error : '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);

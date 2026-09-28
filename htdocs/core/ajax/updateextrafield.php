@@ -19,7 +19,8 @@
 /**
  *      \file       htdocs/core/ajax/updateextrafield.php
  *      \ingroup    core
- *      \brief      File to update an extrafield (for example for stars or AI update)
+ *      \brief      File to update an extrafield (for example for stars or AI update).
+ *      			See htdocs/core/ajax/ajaxextrafield.php for aja component to read extrafield value.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -79,7 +80,20 @@ if ($usesublevelpermission && !$user->hasRight($module, $element, 'write') && !$
 
 restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 
-
+// Add blacklist of some forbidden field name.
+/* Removed, this is useful only for main fields not for etrafields
+$blacklistedfields = array('pass', 'pass_crypted', 'pass_temp', 'api_key', 'openid', 'admin', 'status', 'statut');
+$canreadsalary = ((isModEnabled('salaries') && $user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+if (!$canreadsalary) {
+	$blacklistedfields[] = 'salary';
+	$blacklistedfields[] = 'salaryextra';
+	$blacklistedfields[] = 'thm';
+	$blacklistedfields[] = 'tjm';
+}
+if (in_array($field, $blacklistedfields)) {
+	access_forbidden("Can't edit a field blacklisted with name ".$field);
+}
+*/
 
 
 /*
@@ -95,10 +109,26 @@ if ($object->id > 0 && $field && isset($value)) {
 	// Fetch optionals attributes and labels
 	$extrafields->fetch_name_optionals_label($object->table_element);
 
-	// TODO Test specific permission of extrafield $field for object $object. It is stored into
-	// $extrafields->attributes[$object->table_element]['label']['perms'][$key]
+	// Test specific permission of extrafield $field for object $object. It is stored into $extrafields->attributes[$object->table_element]['label']['perms'][$key]
+	if (empty($field)
+	 || empty($extrafields->attributes[$object->table_element]['label'][$field])
+	 || !dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$field])) {
+		http_response_code(403);
+		accessforbidden('Can\'t edit the invalid or disabled extrafield '.$field);
+	}
+
+	$fieldPermsExpr = $extrafields->attributes[$object->table_element]['perms'][$field] ?? '';
+
+	if (!empty($fieldPermsExpr)) {
+		$allowed = (int) dol_eval((string) $fieldPermsExpr);
+		if (empty($allowed)) {
+			http_response_code(403);
+			accessforbidden('The extrafield '.$field.' has dedicated permission and you are not allowed to edit it.');
+		}
+	}
 
 	$object->array_options['options_'.$field] = $value;
+
 	if ($object instanceof Societe) {
 		$result = $object->update($object->id, $user);
 	} else {

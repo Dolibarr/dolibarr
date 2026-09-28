@@ -155,7 +155,7 @@ if ($object->id > 0) {
 
 	$head = actions_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action', 0, '', '', 0, '', 1);
 
 	// Link to other agenda views
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';

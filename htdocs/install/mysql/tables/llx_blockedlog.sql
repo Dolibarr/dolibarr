@@ -46,5 +46,6 @@ CREATE TABLE llx_blockedlog
 	certified integer,							-- not used, reserved for future use
 	actionrefisunique varchar(16) DEFAULT NULL,	-- not used, reserved for future use
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	debuginfo mediumtext
+	debuginfo mediumtext,						-- debug information
+	note varchar(128) NULL						-- note information
 ) ENGINE=innodb;

@@ -31,9 +31,9 @@ UseDiscountOnTotal=Azpitotalean
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Marjina kalkulatzeko deskontu global bat produktu, zerbitzu edo azpitotal gisa soilik hartzen den definitzen du.
 MARGIN_TYPE=Marjina kalkulatzeko lehenespenez iradokitako erosketa/kostu prezioa
 MargeType1=Saltzaile onenaren prezioaren marjina
-MargeType2=Batez besteko prezio haztatuaren (BHA) marjina
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Kostu Prezioaren gaineko Marjina
-MarginTypeDesc=* Erosketa prezio onenaren marjina = Salmenta prezioa - Produktuaren txartelean definitutako saltzailearen prezio onena<br>* Batez besteko prezio haztatuaren (BHA) marjina = Salmenta prezioa - Produktuaren batez besteko prezio haztatua (BHA) edo saltzailearen prezio onena BHA oraindik definitu ez badago<br>* Kostu prezioaren marjina = Salmenta prezioa - Produktuaren txartelean edo BHAn definitutako kostu prezioa, kostu prezioa definitu ez badago, edo saltzailearen prezio onena BHA oraindik definitu ez badago
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Kostu prezioa
 UnitCharges=Unitate-kargak
 Charges=Karguak

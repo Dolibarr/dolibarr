@@ -131,9 +131,11 @@ diff "${AVAILABLE_FILE}" "${EXPECTED_FILE}" \
 	> "${MISSING_AND_UNUSED_FILE}"
 
 rm -f "${UNUSED_FILE}.grep" >/dev/null 2>&1
-sed -n 's@< \(.*\)@^\1\\s*=@p' \
-	< "${MISSING_AND_UNUSED_FILE}" \
-	> "${UNUSED_FILE}.grep"
+if [ "$1" == "--showunused" ]; then
+	sed -n 's@< \(.*\)@^\1\\s*=@p' \
+		< "${MISSING_AND_UNUSED_FILE}" \
+		> "${UNUSED_FILE}.grep"
+fi
 
 
 # Prepare file with exact matches for use with `git grep`, supposing " quotes

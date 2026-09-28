@@ -97,7 +97,7 @@ class ExpeditionStats extends Stats
 		$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where .= " AND c.entity = ".$conf->entity;
+		$this->where .= " AND c.entity = ".((int) $conf->entity);
 
 		if ($this->socid) {
 			$this->where .= " AND c.fk_soc = ".((int) $this->socid);

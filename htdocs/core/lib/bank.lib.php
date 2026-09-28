@@ -198,13 +198,12 @@ function bank_report_prepare_head(Account $object)
  * @param   ?CommonObject	$object						Object related to tabs
  * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function bank_admin_prepare_head($object)
+function bank_admin_prepare_head($object = null)
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
 	$langs->loadLangs(array("compta"));
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
 	$extrafields->fetch_name_optionals_label('bank');
 	$extrafields->fetch_name_optionals_label('paiement');
@@ -230,7 +229,7 @@ function bank_admin_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bank_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bank_account'));
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankAccounts").')';
 	$nbExtrafields = $extrafields->attributes['bank_account']['count'];
 	if ($nbExtrafields > 0) {
@@ -239,7 +238,7 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bankline_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'bank'));
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankTransactions").')';
 	$nbExtrafields = $extrafields->attributes['bank']['count'];
 	if ($nbExtrafields > 0) {
@@ -248,7 +247,7 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'bankline_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bank_payments_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'paiement'));
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("Payments").')';
 	$nbExtrafields = $extrafields->attributes['paiement']['count'];
 	if ($nbExtrafields > 0) {
@@ -257,7 +256,7 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'bank_payments_extrafields';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/bank_various_payment_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'payment_various'));
 	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("VariousPayments").')';
 	$nbExtrafields = $extrafields->attributes['payment_various']['count'];
 	if ($nbExtrafields > 0) {
@@ -457,11 +456,12 @@ function checkBanForAccount($account)
 		// Separation du rib en 3 groups de 7 + 1 group de 2.
 		// Multiplication of each group by the coefficients in the array.
 
-		for ($i = 0, $s = 0; $i < 3; $i++) {
+		$s = 0;
+		for ($i = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
 			$s += ((int) $code) * $coef[$i];
 		}
-		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
+		// Subtract modulo 97 of $s from 97 to get the key
 		$cle_rib = 97 - ($s % 97);
 		if ($cle_rib == $account->cle) {
 			return true;
@@ -552,7 +552,7 @@ function checkES($IentOfi, $InumCta)
 
 	$sum = 0;
 
-	for ($i = 0; $i < 11; $i++) {
+	for ($i = 0; $i < 10; $i++) {
 		$sum += $values[$i] * (int) substr($InumCta, $i, 1); //int to cast result of substr to a number
 	}
 

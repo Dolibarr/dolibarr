@@ -21,7 +21,7 @@
 
 /**
  * 		\defgroup   expensereport	Module expensereport
- *      \brief      Module to manage expense report. Replace old module Deplacement.
+ *      \brief      Module to manage expense report.
  *      \file       htdocs/core/modules/modExpenseReport.class.php
  *      \ingroup    expensereport
  *      \brief      Description and activation file for the module ExpenseReport
@@ -65,7 +65,6 @@ class modExpenseReport extends DolibarrModules
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
 		$this->depends = []; // List of module class names as string that must be enabled if this module is enabled
-		// $this->conflictwith = ["modDeplacement"]; // Deactivate for access on old information
 		$this->requiredby = []; // List of modules id to disable if this one is disabled
 		$this->langfiles = ["companies", "trips"];
 
@@ -236,6 +235,11 @@ class modExpenseReport extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';
 		$this->export_sql_end[$r] .= ' AND d.entity IN ('.getEntity('expensereport').')';
+		if (is_object($user) && !$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+			&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
+			$childids = $user->getAllChildIds(1);
+			$this->export_sql_end[$r] .= ' AND d.fk_user_author IN ('.$this->db->sanitize(implode(',', $childids)).')';
+		}
 	}
 
 	/**

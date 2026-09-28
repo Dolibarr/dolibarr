@@ -48,7 +48,6 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -73,6 +72,7 @@ global $dolibarr_main_url_root;
 $errmsg = '';
 $num = 0;
 $error = 0;
+$errors = [];
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -107,8 +107,6 @@ $langs->loadLangs(array("main", "companies", "install", "other", "eventorganizat
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
-
-$extrafields = new ExtraFields($db);
 
 $user->loadDefaultValues();
 
@@ -252,6 +250,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 
+	$tmpcode = '';
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
@@ -278,7 +277,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$thirdparty->fournisseur  = 0;
 			$thirdparty->country_id   = GETPOSTINT("country_id");
 			$thirdparty->state_id     = GETPOSTINT("state_id");
-			$thirdparty->email        = ($emailcompany ? $emailcompany : $email);
+			$thirdparty->email        = $email;
 
 			// Load object modCodeTiers
 			$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
@@ -542,7 +541,7 @@ if ($project->date_start_event || $project->date_end_event) {
 if ($project->date_start_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_start_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_start_event, $format);
@@ -553,7 +552,7 @@ if ($project->date_start_event && $project->date_end_event) {
 if ($project->date_end_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_end_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_end_event, $format);
@@ -603,11 +602,11 @@ print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."
 
 // Last Name
 print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span></label></td>';
-print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ? GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
+print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha')).'" autofocus="autofocus"></td>';
 print '</tr>';
 // First Name
 print '<tr><td><label for="firstname">'.$langs->trans("Firstname").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span></label></td>';
-print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ? GETPOST("firstname", 'alpha') : $object->firstname).'" autofocus="autofocus"></td>';
+print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha')).'" autofocus="autofocus"></td>';
 print '</tr>';
 // Email
 print '<tr><td>'.$langs->trans("Email").'<span class="star" title="'.dolPrintHTMLForAttribute("Mandatory").'">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";

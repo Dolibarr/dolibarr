@@ -1,5 +1,8 @@
 #!/bin/bash
-# Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2025-2026	MDW	<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+
+# shellcheck disable=2129,2128,2034,2016
 
 set -euo pipefail
 
@@ -7,6 +10,8 @@ set -euo pipefail
 # using the GitHub API and sets two outputs:
 #   - any_changed: "true" if at least one PHP file changed, "false" otherwise
 #   - all_changed_files: space-separated list of changed PHP file paths
+#   - travis_changed: "true" if at least one changed file may change the result
+#                     of the full travis build (install + upgrade + phpunit)
 #
 # Required environment variables:
 #   GITHUB_TOKEN      - GitHub token with repo access
@@ -41,19 +46,41 @@ repo="${GITHUB_REPOSITORY##*/}"   # Extract text after the last '/'
 page=1
 per_page=100
 changed_php_files=()
+changed_phan_files=()
 changed_lang_files=()
+changed_all_files=()
+
+# Get phan path configuration
+phan_directory_list=$(php -r '$config = require("dev/tools/phan/config.php"); echo "^".implode("|",$config["directory_list"]);')
+phan_exclude_directory=$(php -r '$config = require("dev/tools/phan/config.php"); echo "^".implode("|",$config["exclude_analysis_directory_list"]);')
+
+phan_exclude_file_regex=$(php -r '$config = require("dev/tools/phan/config.php"); echo $config["exclude_file_regex"];')
+phan_exclude_file_regex=${phan_exclude_file_regex#@}
+phan_exclude_file_regex=${phan_exclude_file_regex%@}
 
 # Loop through all pages to gather changed files
 while true; do
 	response=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
 		"https://api.github.com/repos/${owner}/${repo}/pulls/${pr_number}/files?per_page=${per_page}&page=${page}")
 
+
+
 	# Filter for files ending with .php and add them to the list
-	mapfile -t files < <(echo "$response" | jq -r '.[] | select(.filename | test("\\.php$")) | .filename')
+	# Deleted files (status "removed") are excluded: they no longer exist on disk, so
+	# passing them to phpstan/phan would just fail trying to analyse a missing path.
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("^dev/") | not) and (.status != "removed")) | .filename')
 	changed_php_files+=("${files[@]}")
 
-	mapfile -t files < <(echo "$response" | jq -r '.[] | select(.filename | test("\\.lang$")) | .filename')
-    changed_lang_files+=("${files[@]}")
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("'"$phan_directory_list"'")) and (.status != "removed")) | .filename' | grep -vP "$phan_exclude_file_regex")
+	changed_phan_files+=("${files[@]}")
+
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.lang$")) and (.status != "removed")) | .filename')
+	changed_lang_files+=("${files[@]}")
+
+	# Every changed file, whatever its extension or status (a deleted file can
+	# break the build too). Used to decide if the travis build is required.
+	mapfile -t files < <(echo "$response" | jq -r '.[].filename')
+	changed_all_files+=("${files[@]}")
 
 	# Check if we have reached the last page (less than per_page results)
 	count=$(echo "$response" | jq 'length')
@@ -66,10 +93,12 @@ done
 
 # Build a space-separated string of changed PHP and lang files
 # This does not cope with files that have spaces.
+
 # But such files do not exist in the project (at least not for the
 # files we are filtering).
 all_changed_files=$(IFS=" " ; echo "${changed_php_files[*]}")
 all_changed_lang=$(IFS=" " ; echo "${changed_lang_files[*]}")
+phan_changed_files=$(IFS=" " ; echo "${changed_phan_files[*]}")
 
 
 forbidden_files=""
@@ -82,21 +111,42 @@ forbidden_files=""
 #fi
 
 
-# Determine changed files flag
-if [ -z "$all_changed_files" ]; then
+# Decide if the full travis build (install + database upgrade + phpunit) is
+# required. The same decision is taken by .travis.yml to end a build early, so
+# the rules live in a single script.
+travis_changed="false"
+if printf '%s\n' "${changed_all_files[@]}" | bash dev/build/ci/build_required.sh; then
+	travis_changed="true"
+fi
+
+
+# Determine changed files flags
+if [ -z "${all_changed_files}" ]; then
     any_changed="false"
 else
     any_changed="true"
 fi
 
+if [ -z "${phan_changed_files}" ]; then
+    phan_changed="false"
+else
+    phan_changed="true"
+fi
+
 # Set outputs for GitHub Actions if GITHUB_OUTPUT is available
 if [ -n "${GITHUB_OUTPUT:-}" ]; then
 	echo "any_changed=${any_changed}" >> "$GITHUB_OUTPUT"
+	echo "phan_changed=${phan_changed}" >> "$GITHUB_OUTPUT"
+	echo "travis_changed=${travis_changed}" >> "$GITHUB_OUTPUT"
 	echo "all_changed_files=${all_changed_files}" >> "$GITHUB_OUTPUT"
+	echo "phan_changed_files=${phan_changed_files[*]}" >> "$GITHUB_OUTPUT"
 	echo "forbidden_files=${forbidden_files}" >> "$GITHUB_OUTPUT"
 else
 	# Otherwise, print the outputs
 	echo "any_changed=${any_changed}"
+	echo "phan_changed=${phan_changed}"
+	echo "travis_changed=${travis_changed}"
+	echo "phan_changed_files=${phan_changed_files[*]}"
 	echo "all_changed_files=${all_changed_files}"
 	echo "forbidden_files=${forbidden_files}"
 fi

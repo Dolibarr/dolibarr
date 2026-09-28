@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -513,6 +513,54 @@ class DateLibTest extends CommonClassTest
 		return 1;
 	}
 
+	/**
+	 * testGetFirstDayOfEachWeek
+	 *
+	 * @return int
+	 */
+	public function testGetFirstDayOfEachWeek()
+	{
+		// June 2026 (no year overlap): weeks 23 to 27
+		$TWeek = getWeekNumbersOfMonth(6, 2026);
+		$this->assertEquals(array('23' => '01', '24' => '08', '25' => '15', '26' => '22', '27' => '29'), getFirstDayOfEachWeek($TWeek, 2026));
+
+		// December 2025 ends with week 01 of 2026: week 01 starts on monday 2025-12-29
+		$TWeek = getWeekNumbersOfMonth(12, 2025);
+		$this->assertEquals(array('49' => '01', '50' => '08', '51' => '15', '52' => '22', '01' => '29'), getFirstDayOfEachWeek($TWeek, 2025));
+
+		// January 2022 starts with week 52 of 2021 (monday 2021-12-27). Week 01 of 2022 starts on monday the 3rd,
+		// week 02 on the 10th, ... (weeks 01 to 05 must not be shifted to next year)
+		$TWeek = getWeekNumbersOfMonth(1, 2022);
+		$this->assertEquals(array('52' => '27', '01' => '03', '02' => '10', '03' => '17', '04' => '24', '05' => '31'), getFirstDayOfEachWeek($TWeek, 2022));
+
+		// January 2021 starts with week 53 of 2020 (monday 2020-12-28)
+		$TWeek = getWeekNumbersOfMonth(1, 2021);
+		$this->assertEquals(array('53' => '28', '01' => '04', '02' => '11', '03' => '18', '04' => '25'), getFirstDayOfEachWeek($TWeek, 2021));
+
+		return 1;
+	}
+
+	/**
+	 * testGetLastDayOfEachWeek
+	 *
+	 * @return int
+	 */
+	public function testGetLastDayOfEachWeek()
+	{
+		// June 2026 (no year overlap): weeks 23 to 27
+		$TWeek = getWeekNumbersOfMonth(6, 2026);
+		$this->assertEquals(array('23' => '07', '24' => '14', '25' => '21', '26' => '28', '27' => '05'), getLastDayOfEachWeek($TWeek, 2026));
+
+		// December 2025 ends with week 01 of 2026: week 01 ends on sunday 2026-01-04
+		$TWeek = getWeekNumbersOfMonth(12, 2025);
+		$this->assertEquals(array('49' => '07', '50' => '14', '51' => '21', '52' => '28', '01' => '04'), getLastDayOfEachWeek($TWeek, 2025));
+
+		// January 2022 starts with week 52 of 2021: week 52 ends on sunday 2022-01-02
+		$TWeek = getWeekNumbersOfMonth(1, 2022);
+		$this->assertEquals(array('52' => '02', '01' => '09', '02' => '16', '03' => '23', '04' => '30', '05' => '06'), getLastDayOfEachWeek($TWeek, 2022));
+
+		return 1;
+	}
 
 	/**
 	 * testDolGetFirstHour
@@ -521,8 +569,6 @@ class DateLibTest extends CommonClassTest
 	 */
 	public function testDolGetFirstHour()
 	{
-		global $conf;
-
 		$now = 1800 + (24 * 3600 * 10);	// The 11th of january 1970 at 0:30 in UTC
 		$result = dol_get_first_hour($now, 'gmt');
 		print __METHOD__." now = ".$now.", dol_print_date(now, 'dayhourrfc', 'gmt') = ".dol_print_date($now, 'dayhourrfc', 'gmt').", result = ".$result.", dol_print_date(result, 'dayhourrfc', 'gmt') = ".dol_print_date($result, 'dayhourrfc', 'gmt')."\n";
@@ -543,8 +589,6 @@ class DateLibTest extends CommonClassTest
 	 */
 	public function testDolSqlDateFilter()
 	{
-		global $conf;
-
 		$result = dolSqlDateFilter('field1', 0, 0, 1970, 0);
 		print __METHOD__." result = ".$result."\n";
 		$this->assertEquals(" AND field1 BETWEEN '1970-01-01 00:00:00' AND '1970-12-31 23:59:59'", $result, 'Test dolSqlDateFilter 1');

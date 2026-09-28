@@ -34,6 +34,7 @@ CREATE TABLE llx_inventory
   title varchar(255) NOT NULL,
   date_inventory datetime DEFAULT NULL,
   date_validation datetime DEFAULT NULL,
+  last_main_doc varchar(255) DEFAULT NULL,		-- relative filepath+filename of last main generated document
   import_key               varchar(14)       	-- import key
 )
 ENGINE=innodb;

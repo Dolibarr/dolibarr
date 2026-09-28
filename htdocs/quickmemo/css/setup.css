@@ -70,3 +70,10 @@
 	border-radius: 50%;
 	cursor: pointer;
 }
+
+.quickmemo-fontsize-config {
+	width: 100%;
+}
+.example-of-memo-text-size{
+	font-size: 14px;
+}

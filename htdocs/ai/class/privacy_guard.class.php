@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,11 @@ class PrivacyGuard
 	private $map = [];
 
 	/**
+	 * @var string Per-request salt appended to every token (see createToken).
+	 */
+	private $salt = '';
+
+	/**
 	 * @var int Counter for generating unique token indices
 	 */
 	private $index = 0;
@@ -52,8 +58,7 @@ class PrivacyGuard
 	 */
 	public function mask($text)
 	{
-		$this->map = [];
-		$this->index = 0;
+		$this->startSession();
 
 		// References / IDs (e.g. FA24-001, CUS-999)
 		// Must contain letters and numbers and separators
@@ -176,8 +181,21 @@ class PrivacyGuard
 		// Phone numbers
 		$phonePatterns = [
 			[
+				'name' => 'Greek International Numbers',
+				// +30 / 0030 followed by exactly 10 national digits with the valid
+				// prefixes (2x landline, 69 mobile) — Greek numbers are 10 digits,
+				// so this is checked strictly; other countries fall through to the
+				// length-flexible generic pattern below.
+				'regex' => '/(?<![\w+])(?:\+30|0030)[\s.\-]?(?:2\d|69)(?:[\s.\-()]?\d){8}(?!\d)/',
+				'token' => 'PHONE'
+			],
+			[
 				'name' => 'Generic International Numbers',
-				'regex' => '/\b(?:\+|00)[0-9][0-9-.\s()]{8,}\b/',
+				// Counts DIGITS (9-14 after the prefix) with optional single separators
+				// between them; the old char-counting class broke on spaced formats.
+				// No \b before '+': space->'+' is not a word boundary, so that \b
+				// could never match and the pattern was dead for '+30 ...' numbers.
+				'regex' => '/(?<![\w+])(?:\+|00)\d{1,3}(?:[\s.\-()]?\d){8,13}(?!\d)/',
 				'token' => 'PHONE'
 			],
 			[
@@ -186,7 +204,13 @@ class PrivacyGuard
 				// Landlines: 10 digits starting with '2' (e.g., 210 123 4567).
 				// Mobiles: 10 digits starting with '69' (e.g., 698 123 4567).
 				// It matches numbers with optional separators like spaces, hyphens, or dots.
-				'regex' => '/\b(?:2[0-9-.\s()]{9}|69[0-9-.\s()]{8})\b/',
+				// Exactly 10 digits (landline 2x..., mobile 69...), separators optional
+				// BETWEEN digits. The old pattern counted characters: '210 2461234'
+				// (11 chars) overflowed {9} and slipped through unmasked, while
+				// '2026-09-07' (9 chars after the 2) was masked as a phone. The
+				// lookarounds forbid digit-adjacency, so it never fires inside longer
+				// digit runs (EAN barcodes, references).
+				'regex' => '/(?<!\d)(?:2\d|69)(?:[\s.\-()]?\d){8}(?!\d)/',
 				'token' => 'PHONE'
 			],
 			[
@@ -568,18 +592,87 @@ class PrivacyGuard
 	}
 
 	/**
+	 * Start the masking session for this guard instance, once.
+	 *
+	 * @return void
+	 */
+	private function startSession()
+	{
+		// One masking session per guard instance: mask() and maskNames() may
+		// be called several times for one request (query, context line), and
+		// every token they issue must survive in the same map until unmask.
+		if ($this->salt !== '') {
+			return;
+		}
+		$this->map = [];
+		$this->index = 0;
+		$this->salt = dol_substr(dol_hash(uniqid((string) mt_rand(), true), 'md5'), 0, 4);
+	}
+
+	/**
 	 * Create a unique token and store the original value in the map.
 	 *
 	 * @param string $value The original sensitive value.
-	 * @param string $type The type of data (e.g., 'EMAIL').
-	 * @return string The generated token (e.g., [[EMAIL_1]]).
+	 * @param string $type  The type of data (e.g., 'EMAIL').
+	 * @return string The generated token (e.g., [[EMAIL_1a2b]]).
 	 */
 	private function createToken($value, $type)
 	{
+		// Reuse the token already issued for this value in this request, so
+		// the same entity reads as the same placeholder throughout the prompt.
+		$existing = array_search($value, $this->map, true);
+		if ($existing !== false) {
+			return (string) $existing;
+		}
+
 		$this->index++;
-		// Format: [[EMAIL_1]]
-		$token = "[[{$type}_{$this->index}]]";
+		// Format: [[EMAIL_1a2b3c]]. The per-request salt keeps placeholders
+		// unpredictable (a provider cannot correlate "entity 1" across
+		// requests) and prevents collisions with literal [[TYPE_n]] text.
+		$token = "[[{$type}_{$this->index}{$this->salt}]]";
 		$this->map[$token] = $value;
 		return $token;
+	}
+
+	/**
+	 * Mask the names of the objects carried in this payload.
+	 *
+	 * Thirdparty and product names are arbitrary strings: no pattern can
+	 * recognize them, so they are masked from a dictionary built out of the
+	 * values actually present in the text. Longest first, so "ACME Ltd" is
+	 * replaced before "ACME".
+	 *
+	 * @param string        $text  Text to mask.
+	 * @param array<string> $names Candidate names to look for.
+	 * @return string Masked text.
+	 */
+	public function maskNames($text, $names)
+	{
+		$this->startSession();
+
+		$clean = array();
+		foreach ($names as $name) {
+			$name = trim((string) $name);
+			// Very short names would shred unrelated words.
+			if (dol_strlen($name) >= 4) {
+				$clean[] = $name;
+			}
+		}
+		if (empty($clean)) {
+			return $text;
+		}
+		$clean = array_unique($clean);
+		usort($clean, /** @return int */ function (string $a, string $b) {
+			return dol_strlen($b) - dol_strlen($a);
+		});
+		foreach ($clean as $name) {
+			if (stripos($text, $name) === false) {
+				continue;
+			}
+			$token = $this->createToken($name, 'NAME');
+			$text = str_ireplace($name, $token, $text);
+		}
+
+		return $text;
 	}
 }

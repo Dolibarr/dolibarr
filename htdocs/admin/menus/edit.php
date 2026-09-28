@@ -440,7 +440,7 @@ if ($action == 'create') {
 } elseif ($action == 'edit') {
 	print load_fiche_titre($langs->trans("ModifMenu"), '', 'title_setup');
 
-	print '<form action="./edit.php" method="POST" name="formmenuedit" specllcheck="false">';
+	print '<form action="./edit.php" method="POST" name="formmenuedit" specllcheck="false" spellcheck="false">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="handler_origine" value="'.$menu_handler.'">';

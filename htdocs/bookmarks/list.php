@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,9 @@ if (!$sortorder) {
 $object = new Bookmark($db);
 
 $arrayfields = array();
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $hookmanager->initHooks(array('bookmarklist')); // Note that conf->hooks_modules contains array
 
 if ($id > 0) {
@@ -130,6 +133,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete' && $permissiontodelete) {
 		$object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$res = $object->delete($user);
 		if ($res > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]);

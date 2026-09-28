@@ -29,11 +29,13 @@ ViewWeek=Týdenní zobrazení
 ViewPerUser=Zobrazení za uživatele
 ViewPerType=Podle zobrazení typu
 AutoActions= Automatické naplnění
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= Zde můžete definovat události, které chcete vytvořit v programu Agenda automaticky. Pokud nic není zaškrtnuto, budou do protokolů zahrnuty pouze ruční akce a zobrazeny v Agendě. Automatické sledování obchodních akcí prováděných na objektech (ověřování, změna stavu) nebude uloženo.
 AgendaSetupOtherDesc= Tato stránka obsahuje možnosti umožňující export událostí Dolibarr do externího kalendáře (Thunderbird, Kalendář Google atd.)
 AgendaExtSitesDesc=Tato stránka umožňuje deklarovat externí zdroje kalendářů pro možnost vidět své akce v agendách programu.
 ActionsEvents=Události, pro které Dolibarr vytvoří akci v programu automaticky
 EventRemindersByEmailNotEnabled=Připomenutí událostí e-mailem nebyla povolena do %snastavení modulu .
+EventRemindersBySmsNotEnabled=Event reminders by sms was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Subjekt %s vytvořen
 COMPANY_MODIFYInDolibarr=Upraveno třetí stranou %s
@@ -43,7 +45,7 @@ CONTRACT_DELETEInDolibarr=Smlouva %s byla smazána
 PropalClosedSignedInDolibarr=Nabídka %s podepsána
 PropalClosedRefusedInDolibarr=Nabídka %s odmítnuta
 PropalValidatedInDolibarr=Návrh %s ověřen
-PropalBackToDraftInDolibarr=Návrh %s vrátit se do stavu konceptu
+PropalBackToDraftInDolibarr=Návrh %s vrácen do stavu konceptu
 PropalClassifiedBilledInDolibarr=Nabídka %s klasifikovaná jako zaúčtovaná
 InvoiceCreatedInDolibarr=Faktura %s vytvořena
 InvoiceValidatedInDolibarr=Faktura %s ověřena
@@ -58,7 +60,7 @@ MemberResiliatedInDolibarr=Členské %s ukončeno
 MemberDeletedInDolibarr=Uživatel %s smazán
 MemberExcludedInDolibarr=Člen %s byl vyloučen
 MemberSubscriptionAddedInDolibarr=Odběr %s pro člena %s přidán
-MemberSubscriptionModifiedInDolibarr=Předplatné %s pro člena %supraveno
+MemberSubscriptionModifiedInDolibarr=Předplatné %s pro člena %s upraveno
 MemberSubscriptionDeletedInDolibarr=Předplatné %s pro člena %s bylo smazáno
 ShipmentValidatedInDolibarr=Doprava %s ověřena
 ShipmentClassifyClosedInDolibarr=Zásilka %s klasifikována jako uzavřená
@@ -68,8 +70,8 @@ ShipmentDeletedInDolibarr=Doprava %s odstraněna
 ShipmentCanceledInDolibarr=Zásilka %s zrušena
 ReceptionValidatedInDolibarr=Příjem %s byl ověřen
 ReceptionDeletedInDolibarr=Příjem %s smazán
-ReceptionClassifyClosedInDolibarr=Recepce %s inzerována uzavřena
-OrderCreatedInDolibarr=Objednat %s vytvořil
+ReceptionClassifyClosedInDolibarr=Příjem %s klasifikován jako uzavřený
+OrderCreatedInDolibarr=Objednávka %s vytvořena
 OrderValidatedInDolibarr=Objednávka %s ověřena
 OrderDeliveredInDolibarr=Objednávka %s označena jako dodaná
 OrderCanceledInDolibarr=Objednávka %s zrušena
@@ -113,11 +115,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Zpráva o výdajích %s byla odmítnuta
 PROJECT_CREATEInDolibarr=Projekt %s vytvořen
 PROJECT_MODIFYInDolibarr=Projekt %s modifikované
 PROJECT_DELETEInDolibarr=Projekt %s byl smazán
-TICKET_CREATEInDolibarr=Lístek %s byl vytvořen
-TICKET_MODIFYInDolibarr=Změna lístku %s
+TICKET_CREATEInDolibarr=Tiket %s byl vytvořen
+TICKET_MODIFYInDolibarr=Změna tiketu %s
 TICKET_ASSIGNEDInDolibarr=Tiket %s byl přiřazen
-TICKET_CLOSEInDolibarr=Lístek %s uzavřen
-TICKET_DELETEInDolibarr=Lístek %s byl smazán
+TICKET_CLOSEInDolibarr=Tiket %s uzavřen
+TICKET_DELETEInDolibarr=Tiket %s byl smazán
 BOM_VALIDATEInDolibarr=Kusovník ověřen
 BOM_UNVALIDATEInDolibarr=Kusovník neověřen
 BOM_CLOSEInDolibarr=Kusovník deaktivován
@@ -130,7 +132,7 @@ MRP_MO_DELETEInDolibarr=MO smazáno
 MRP_MO_CANCELInDolibarr=MO zrušeno
 PAIDInDolibarr=%s zaplaceno
 ENABLEDISABLEInDolibarr=Uživatel povolen nebo zakázán
-CANCELInDolibarr=Zrušený
+CANCELInDolibarr=Zrušeno
 ##### End agenda events #####
 AgendaModelModule=Šablony dokumentů pro události
 DateActionStart=Datum zahájení
@@ -141,7 +143,7 @@ AgendaUrlOptions4=<b> logint = %s</b> omezit výstup na akce přiřazené uživa
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </b> pro omezení výstupu na akce spojené s projektem <b> __ PROJECT_ID __ </b>.
 AgendaUrlOptionsType=<b>actiontype=%s</b> pro získání automatických nebo manuálních událostí
 AgendaUrlOptionsCode=<b>actioncode=%s</b> pro získání pouze událostí s daným kódem
-AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> pro zahrnutí událostí svátků.
+AgendaUrlOptionsIncludeHolidays=<b> includeholidays = 1 </b> pro zahrnutí událostí svátků.
 AgendaUrlOptionsLimitDays=<b>noolderthan=%s</b> pro omezení na události v posledních %s dnech (výchozí hodnota je %s).
 AgendaUrlOptionsLimit=<b>limit=50</b> pro omezení na posledních 50 událostí (výchozí a maximální hodnota je %s).
 AgendaShowBirthdayEvents=Narozeniny kontaktů
@@ -164,14 +166,16 @@ AddEvent=Vytvořit událost
 MyAvailability=Moje dostupnost
 ActionType=Typ události
 DateActionBegin=Datum zahájení události
-ConfirmCloneEvent=Jste si jisti, že chcete naklonovat událost <b> %s </ b>?
+ConfirmCloneEvent=Jste si jisti, že chcete naklonovat událost <b>%s</b>?
 RepeatEvent=Opakujte akci
 OnceOnly=Pouze jednou
 EveryDay=Každý den
 EveryWeek=Každý týden
 EveryMonth=Každý měsíc
+EveryYear=Every year
 DayOfMonth=Den v měsíci
 DayOfWeek=Den v týdnu
+DayOfYear=Day of year
 DateStartPlusOne=Datum zahájení + 1 hodina
 SetAllEventsToTodo=Nastavte všechny události na todo
 SetAllEventsToInProgress=Nastavit všechny probíhající události
@@ -184,7 +188,7 @@ ErrorReminderActionCommCreation=Chyba při vytváření připomenutí pro tuto u
 BrowserPush=Vyskakovací oznámení v prohlížeči
 Reminders=Upomínky
 ActiveByDefault=Ve výchozím nastavení povoleno
-Until=dokud
+Until=Do
 DataFromWasMerged=Data z %s byla sloučena
 AgendaShowBookcalCalendar=Kalendář rezervací: %s
 MenuBookcalIndex=Online schůzka
@@ -210,3 +214,10 @@ ReadLess = Číst méně
 RecurringEvent=Opakující se událost
 EventPartOfARecurringSerie=Událost je součástí opakující se série s ID %s
 BookCalSystem=Online rezervace
+BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
+PublicLinkForBooking=Public link for booking
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

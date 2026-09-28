@@ -10,7 +10,6 @@ ActionsOnFicheInter=Åtgärder för intervention
 LastInterventions=Senaste %s interventionerna
 AllInterventions=Alla interventioner
 CreateDraftIntervention=Skapa utkast
-InterventionContact=Kontakt för intervention
 DeleteIntervention=Ta bort intervention
 ValidateIntervention=Bekräfta intervention
 SignIntervention=Signera intervention

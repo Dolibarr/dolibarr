@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Hodnota pre PBX SITE
 PAYBOX_PBX_RANG=Hodnota pre PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Hodnota pre PBX ID
 PAYBOX_HMAC_KEY=HMAC key
+FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup

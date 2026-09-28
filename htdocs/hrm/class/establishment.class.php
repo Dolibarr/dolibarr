@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,6 +226,14 @@ class Establishment extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$this->db->query($sql);
 
+			// Call trigger
+			$triggerres = $this->call_trigger('ESTABLISHMENT_CREATE', $user);
+			if ($triggerres < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
 			$this->db->commit();
 			return $this->id;
 		}
@@ -255,7 +263,7 @@ class Establishment extends CommonObject
 		$sql .= ", address = '".$this->db->escape($this->address)."'";
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
-		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
+		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : 'null');
 		$sql .= ", status = ".((int) $this->status);
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", entity = ".((int) $this->entity);
@@ -264,6 +272,14 @@ class Establishment extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
+			// Call trigger
+			$triggerres = $this->call_trigger('ESTABLISHMENT_MODIFY', $user);
+			if ($triggerres < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
 			$this->db->commit();
 			return 1;
 		} else {
@@ -325,12 +341,20 @@ class Establishment extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $user->id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
 		$result = $this->db->query($sql);
 		if ($result) {
+			// Call trigger
+			$triggerres = $this->call_trigger('ESTABLISHMENT_DELETE', $user);
+			if ($triggerres < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
 			$this->db->commit();
 			return 1;
 		} else {

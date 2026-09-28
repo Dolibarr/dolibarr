@@ -4,7 +4,7 @@
  * Copyright (C) 2015		Raphaël Doursenaud	    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017		Regis Houssin		    <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,9 +222,8 @@ function member_type_prepare_head(AdherentType $object)
  */
 function member_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('adherent');
 	$extrafields->fetch_name_optionals_label('adherent_type');
 
@@ -247,7 +246,7 @@ function member_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'member_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/admin/member_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'adherent'));
 	$head[$h][1] = $langs->trans("ExtraFieldsMember");
 	$nbExtrafields = $extrafields->attributes['adherent']['count'];
 	if ($nbExtrafields > 0) {
@@ -256,7 +255,7 @@ function member_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/admin/member_type_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'adherent_type'));
 	$head[$h][1] = $langs->trans("ExtraFieldsMemberType");
 	$nbExtrafields = $extrafields->attributes['adherent_type']['count'];
 	if ($nbExtrafields > 0) {

@@ -109,14 +109,34 @@ $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
 $picto = 'contract';
-$title = $langs->trans("ContractsStatistics");
+$title = $langs->trans("Contracts");
 $dir = $conf->contract->dir_temp;
-
 
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-contract page-stats');
 
-print load_fiche_titre($title, '', $picto);
+$page = 0;
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+
+$urlnew = DOL_URL_ROOT.'/contrat/card.php?action=create';
+if (!empty($socid)) {
+	$urlnew .= '&socid='.$socid;
+}
+
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contrat/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/contrat/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/contrat/stats/index.php', '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $urlnew, '', $user->hasRight('contrat', 'creer'));
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 
@@ -205,8 +225,6 @@ if (!$mesg) {
 
 	$px2->draw($filenameamount, $fileurlamount);
 }
-
-
 
 
 

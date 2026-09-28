@@ -141,6 +141,11 @@ class PaymentVarious extends CommonObject
 	public $fk_bank;
 
 	/**
+	 * @var int|string	Third party ID
+	 */
+	public $socid;
+
+	/**
 	 * @var int transaction category
 	 */
 	public $categorie_transaction;
@@ -261,7 +266,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
 		$sql .= " subledger_account='".$this->db->escape($this->subledger_account)."',";
 		$sql .= " fk_projet='".$this->db->escape((string) $this->fk_project)."',";
-		$sql .= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank : "null").",";
+		$sql .= " fk_bank=".($this->fk_bank > 0 ? ((int) $this->fk_bank) : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -645,6 +650,9 @@ class PaymentVarious extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if ($result) {
+			// Keep the in memory object in sync, so a trigger called right after create() reports
+			// the real bank line instead of 0 (#40673).
+			$this->fk_bank = (int) $id_bank;
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -661,7 +669,7 @@ class PaymentVarious extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

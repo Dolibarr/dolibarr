@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,6 +112,7 @@ if ($action == 'delete' && $permissiontodelete) {
 	if ($object->rappro == 0) {
 		$db->begin();
 
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$ret = $object->delete($user);
 		if ($ret > 0) {
 			if ($object->fk_bank) {
@@ -152,8 +154,7 @@ $form = new Form($db);
 if ($id) {
 	$result = $object->fetch($id);
 	if ($result <= 0) {
-		dol_print_error($db);
-		exit;
+		recordNotFound();
 	}
 }
 
@@ -240,7 +241,7 @@ if ($id) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/localtax/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+	dol_banner_tab($object, 'id', $linkback);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';

@@ -10,7 +10,6 @@ ActionsOnFicheInter=Sekkumise tegevused
 LastInterventions=Viimased %s sekkumist
 AllInterventions=Kõik sekkumised
 CreateDraftIntervention=Loo mustand
-InterventionContact=Sekkumise kontakt
 DeleteIntervention=Kustuta sekkumine
 ValidateIntervention=Kinnita sekkumine
 SignIntervention=Allkirjasta sekkumine
