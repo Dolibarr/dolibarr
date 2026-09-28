@@ -478,7 +478,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
 					if (count($diff_array) == 0) {
 						//No diff => mean everything is shipped
-						$ret = $order->cloture($user);
+						$ret = $order->cloture($user, 0, 0);	// 0 = do not check the close permission: this is an automatic action of the workflow, the user right checked is the one on the shipment
 						if ($ret < 0) {
 							$this->setErrorsFromObject($order);
 							return $ret;
