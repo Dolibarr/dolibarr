@@ -2354,6 +2354,17 @@ class ExpenseReport extends CommonObject
 	{
 		$error = 0;
 
+		if ($this->id > 0) {
+			// The line must belong to this expense report
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+			$sql .= " WHERE rowid = ".((int) $rowid)." AND fk_expensereport = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		if (!$notrigger) {
