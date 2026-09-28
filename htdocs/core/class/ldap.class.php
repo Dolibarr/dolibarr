@@ -241,7 +241,7 @@ class Ldap
 	public $ldapcharset = 'UTF-8';
 
 	/**
-	 * @var bool|resource The internal LDAP connection handle
+	 * @var bool|resource|LDAP\Connection The internal LDAP connection handle
 	 */
 	public $connection;
 
