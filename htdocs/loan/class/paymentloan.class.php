@@ -444,7 +444,16 @@ class PaymentLoan extends CommonObject
 
 		$this->db->begin();
 
-		if ($this->bank_line > 0) {
+		// Schedule lines paid by this payment are no longer paid
+		if ($this->fk_bank > 0) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".((int) $this->fk_bank);
+			if (!$this->db->query($sql)) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		if (!$error && $this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
 			$result = $accline->delete($user);
