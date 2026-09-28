@@ -2122,9 +2122,10 @@ function delDocumentModel($name, $type)
  *	@param	bool					$excludedisabled	If true, hide modules with version == 'disabled'
  *	@param	string					$constpdfdefault	Default value to assume for $constpdf when the conf constant is not set
  *	@param	int<0,1>				$usedefault			If 1, show also the column Default.
+ *	@param	string					$actionunset	If not empty, action name used on the Default pictogram to unset the default model (e.g. 'unsetdoc'), if empty the pictogram is not clickable
  *	@return	void
  */
-function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '', $usedefault = 1)
+function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '', $usedefault = 1, $actionunset = '')
 {
 	global $db, $langs, $conf;
 
@@ -2240,7 +2241,11 @@ function printDocumentModelList($type, $moduledir, $constpdf, $title, array $fea
 									if ($usedefault) {
 										print '<td class="center">';
 										if (getDolGlobalString($constpdf, $constpdfdefault) == (string) $name) {
-											print img_picto($langs->trans("Default"), 'on');
+											if ($actionunset) {
+												print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$actionunset.'&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Default"), 'on').'</a>';
+											} else {
+												print img_picto($langs->trans("Default"), 'on');
+											}
 										} else {
 											print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 										}
