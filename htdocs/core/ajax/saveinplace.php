@@ -89,7 +89,7 @@ if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is
 print 'object->id='.$object->id.' - object->module='.$object->module.' - object->element='.$object->element.' - object->table_element='.$object->table_element.' - usesublevelpermission='.$usesublevelpermission."\n";
 
 // Security check
-$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1, 'write');	// Call with mode return
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1, 'write');	// Call with nodie return
 if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea');
 }
@@ -153,8 +153,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		$newelement = $element;
 	}
 
-	$_POST['action'] = 'update'; // Keep this. It is a hack so restrictarea will test permissions on write too
-
 	$feature = $newelement;
 	$feature2 = $subelement;
 	$object_id = $fk_element;
@@ -172,9 +170,8 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		$feature = 'fournisseur';
 		$feature2 = 'facture';
 	}
-	//var_dump(GETPOST('action','aZ09'));
 	//var_dump($newelement.'-'.$subelement."-".$feature."-".$object_id);
-	$check_access = restrictedArea($user, $feature, $object_id, '', (string) $feature2);
+	$check_access = restrictedArea($user, $feature, $object_id, '', (string) $feature2, 'fk_soc', 'rowid', 0, 0, 'write');	// Call with mode write, so the write permission is tested too
 	//var_dump($user->rights);
 
 	if ($check_access) {
