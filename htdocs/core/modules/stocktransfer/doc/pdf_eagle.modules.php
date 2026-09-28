@@ -201,7 +201,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		}
 
 		// Load translation files required by page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch", "stocks", "other", "stocktransfer@stocktransfer"));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
@@ -835,10 +835,10 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$object->volume_units = $object->size_units * 3;
 		}
 
-		if ($totalWeight != '') {
+		if (!empty($totalWeight)) {
 			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
 		}
-		if ($totalVolume != '') {
+		if (!empty($totalVolume)) {
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
 		}
 		if (!empty($object->trueWeight)) {
