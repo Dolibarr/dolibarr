@@ -361,13 +361,6 @@ class Orders extends DolibarrApi
 
 			$this->commande->$field = $this->_checkValForAPI($field, $value, $this->commande);
 		}
-		/*if (isset($request_data["lines"])) {
-		  $lines = array();
-		  foreach ($request_data["lines"] as $line) {
-			array_push($lines, (object) $line);
-		  }
-		  $this->commande->lines = $lines;
-		}*/
 
 		if ($this->commande->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating order", array_merge(array($this->commande->error), $this->commande->errors));
