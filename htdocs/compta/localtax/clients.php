@@ -140,7 +140,7 @@ $fsearch .= '<input type="hidden" name="localTaxType" value="'.$local.'">';
 $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';
 $fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
-$calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
+$calc = getDolGlobalInt('MAIN_INFO_LOCALTAX_CALC'.$local);
 // Affiche en-tete du rapport
 $description='';
 if ($calc == 0 || $calc == 1) {	// Calculate on invoice for goods and services
