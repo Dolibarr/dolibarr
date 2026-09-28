@@ -891,6 +891,95 @@ try {
 		}
 	}
 
+	// --- Second step: a write was asked, a read was answered -------------------
+	// "Set the phone of X", "delete the draft order of Y": when the object's id
+	// is neither in the message nor in the context, the model answers with a
+	// READ tool (a search). The chat runs one tool per turn, so it would show
+	// the search result and stop, and the user has to ask again with the id.
+	// When the administrator allows it, that read is executed here (rights and
+	// allow-list apply exactly as for a client call), its result goes back to
+	// the model as one extra assistant turn, and the write it then produces
+	// lands in the confirmation gate below like a direct call would.
+	//
+	// SAFETY PROPERTY - ONE STEP, NEVER A LOOP: the second answer is taken only
+	// when it is a write tool of the schema; anything else (another read, a
+	// question, an error) ends the turn on the first answer, unchanged. There
+	// is no third call whatever the model answers.
+	$twoStepLabel = '';
+	if (getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE') && is_array($intentJSON) && $toolName !== '' && isset($adapter) && is_object($adapter)) {
+		$isWriteTool = function ($name, array $args) use ($mcp) {
+			if (preg_match('/(create|update|delete|add|remove|modify|edit|validate|pay|send)/i', $name)) {
+				return true;
+			}
+			$inst = $mcp->toolsByName[$name] ?? null;
+			if (is_object($inst) && method_exists($inst, 'writeConfirmationPreview')) {
+				return ((string) $inst->writeConfirmationPreview($name, $args)) !== McpTool::NO_WRITE;
+			}
+			return false;
+		};
+		$readArgs = (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array();
+		$systemTools = array('respond_to_user', 'reject_general_question', 'ask_for_clarification', 'ask_for_confirmation', 'navigate_to_page');
+		if (aiQueryAsksForWrite($query, $langs) && !in_array($toolName, $systemTools, true) && !$isWriteTool($toolName, $readArgs)) {
+			$readResult = $mcp->executeTool($toolName, $readArgs);
+			if (is_array($readResult) && !isset($readResult['error']) && (($readResult['resultType'] ?? '') !== 'input_required')) {
+				// The first call is a step of its own in the log (tokens included).
+				ai_log_request($db, $user, $query, $intentJSON, $providerUsed, microtime(true) - $startTime, $confidence, 'Step1', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
+
+				// Compact result, capped like a pinned tool result, and passed
+				// through the privacy guard exactly like the pinned history is.
+				$snippet = (string) json_encode($readResult, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+				if (dol_strlen($snippet) > 1500) {
+					$snippet = dol_substr($snippet, 0, 1500).' ...';
+				}
+				$snippet = '['.$toolName.' result] '.$snippet;
+				if ($guard) {
+					$snippet = $guard->mask($snippet);
+				}
+				$history2 = $history;
+				$history2[] = array('role' => 'assistant', 'text' => $snippet);
+				$systemPrompt2 = $systemPrompt."\n\nSTEP 2: the read tool ".$toolName." was already executed for you; its result is the last assistant turn. Now perform the WRITE the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the write cannot be done, answer with respond_to_user and say why. Do not call a read tool again.";
+
+				$rawResponse2 = $adapter->generate($systemPrompt2, $query, 'text', $attachments, $history2);
+				$rawRequestLog = $adapter->lastRequest;
+				$rawResponseLog = $adapter->lastResponse;
+				if (!empty($adapter->lastUsage)) {
+					$usageContext = array(
+						'tokens_input' => (int) ($adapter->lastUsage['input'] ?? 0),
+						'tokens_output' => (int) ($adapter->lastUsage['output'] ?? 0),
+						'model' => (string) ($adapter->lastUsage['model'] ?? $model),
+					);
+				}
+
+				$intent2 = null;
+				if (is_string($rawResponse2) && strpos($rawResponse2, 'Error:') !== 0) {
+					$clean2 = trim((string) preg_replace('/```json\s*|\s*```/s', '', $rawResponse2));
+					$m2 = array();
+					if (preg_match('/\{.*\}/s', $clean2, $m2)) {
+						$clean2 = $m2[0];
+					}
+					if ($guard) {
+						$clean2 = $guard->unmaskAiResponse($clean2);
+					}
+					$intent2 = json_decode((string) preg_replace('/[\r\n]/', ' ', $clean2), true);
+					if (is_array($intent2) && $guard && isset($intent2['arguments'])) {
+						$intent2['arguments'] = recursiveUnmaskValues($intent2['arguments'], $guard);
+					}
+				}
+				$args2 = (is_array($intent2) && isset($intent2['arguments']) && is_array($intent2['arguments'])) ? $intent2['arguments'] : array();
+				if (is_array($intent2) && !empty($intent2['tool']) && is_string($intent2['tool']) && in_array($intent2['tool'], array_column($allToolsSchema, 'name'), true) && $isWriteTool($intent2['tool'], $args2)) {
+					dol_syslog("parse_intent.php two-step: read ".$toolName." then write ".$intent2['tool'], LOG_INFO);
+					$intentJSON = $intent2;
+					$toolName = $intent2['tool'];
+					$confidence = calculateConfidence($intentJSON, array_column($toolsSchema, null, 'name'), $rawResponse2);
+					// The preview must name the object the read resolved, not an id.
+					$twoStepLabel = aiLabelOfResolvedObject($readResult, $args2);
+				} else {
+					dol_syslog("parse_intent.php two-step: second answer is not a write, the turn ends on the read ".$toolName, LOG_INFO);
+				}
+			}
+		}
+	}
+
 	if ($askForConfirmation > 0) {
 		$isModifyOperation = preg_match('/(create|update|delete|add|remove|modify|edit)/i', $toolName);
 
@@ -921,6 +1010,10 @@ try {
 			if ($preview !== McpTool::NO_WRITE) {
 				$action = $preview;
 			}
+		}
+		if (!empty($twoStepLabel)) {
+			// The id came from a read the user never saw: say which object it is.
+			$action .= ' - '.$twoStepLabel;
 		}
 
 		$confirmationResponse = [
@@ -1021,6 +1114,76 @@ try {
  *
  * @return mixed The data with all string values unmasked.
  */
+/**
+ * Does the user's message ask for a write (create / update / delete / ...)?
+ * Translated keys of the current language plus the short verbs users type in
+ * French and English whatever the UI language; whole words only.
+ *
+ * @param string    $query Message of the user
+ * @param Translate $langs Translations
+ * @return bool            True when a write verb is present
+ */
+function aiQueryAsksForWrite($query, $langs)
+{
+	$verbs = array();
+	foreach (array('Create', 'Add', 'Modify', 'Update', 'Delete', 'Remove', 'Validate', 'Send') as $key) {
+		$word = dol_strtolower((string) $langs->transnoentities($key));
+		if ($word !== '' && $word !== dol_strtolower($key)) {
+			$verbs[] = $word;
+		}
+	}
+	$verbs = array_merge($verbs, array(
+		'create', 'add', 'modify', 'update', 'delete', 'remove', 'validate', 'send', 'change', 'set', 'edit', 'rename', 'close', 'cancel',
+		'crée', 'cree', 'créer', 'creer', 'ajoute', 'ajouter', 'modifie', 'modifier', 'mets', 'met', 'mettre', 'change', 'changer', 'passe', 'passer',
+		'supprime', 'supprimer', 'efface', 'effacer', 'retire', 'retirer', 'valide', 'valider', 'envoie', 'envoyer', 'enregistre', 'enregistrer', 'renomme', 'renommer', 'clôture', 'cloture', 'annule', 'annuler'
+	));
+	$verbs = array_unique(array_filter($verbs));
+	$pattern = '/(^|[^\p{L}])('.implode('|', array_map(function ($v) { return preg_quote($v, '/'); }, $verbs)).')([^\p{L}]|$)/iu';
+	return (bool) preg_match($pattern, dol_strtolower((string) $query));
+}
+
+/**
+ * Name of the object a write targets, taken from the read result that
+ * produced its id (so the confirmation names "Dupont SA", not "socid 2305").
+ *
+ * @param array<mixed> $readResult Result of the read tool (a row, a list of rows, or {data:[...]})
+ * @param array<mixed> $writeArgs  Arguments of the write tool
+ * @return string                  Name / ref / label of the matching row, '' when not found
+ */
+function aiLabelOfResolvedObject(array $readResult, array $writeArgs)
+{
+	$ids = array();
+	foreach ($writeArgs as $k => $v) {
+		if ((is_int($v) || (is_string($v) && ctype_digit($v))) && preg_match('/(^id$|_id$|^socid$|^fk_)/', (string) $k)) {
+			$ids[] = (int) $v;
+		}
+	}
+	if (empty($ids)) {
+		return '';
+	}
+	$rows = $readResult;
+	if (isset($rows['data']) && is_array($rows['data'])) {
+		$rows = $rows['data'];
+	}
+	if (isset($rows['id']) || isset($rows['rowid'])) {
+		$rows = array($rows);
+	}
+	foreach ($rows as $row) {
+		if (!is_array($row)) {
+			continue;
+		}
+		$rowid = (int) ($row['id'] ?? $row['rowid'] ?? 0);
+		if ($rowid > 0 && in_array($rowid, $ids, true)) {
+			foreach (array('name', 'nom', 'ref', 'label', 'subject', 'title', 'login') as $key) {
+				if (!empty($row[$key]) && is_string($row[$key])) {
+					return dol_trunc($row[$key], 80);
+				}
+			}
+		}
+	}
+	return '';
+}
+
 function recursiveUnmaskValues($data, ?PrivacyGuard $guard)
 {
 	if ($guard === null) {
