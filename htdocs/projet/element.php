@@ -737,7 +737,7 @@ $listofreferent = array(
 		'table' => 'projet_task',
 		'datefieldname' => 'element_date',
 		'disableamount' => ($canSeeFinancials ? 0 : 1),
-		'urlnew' => DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'urlnew' => DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 		'buttonnew' => 'AddTimeSpent',
 		'testnew' => $user->hasRight('project', 'creer'),
 		'test' => isModEnabled('project') && $user->hasRight('projet', 'lire') && !getDolGlobalString('PROJECT_HIDE_TASKS')
