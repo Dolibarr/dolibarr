@@ -831,19 +831,32 @@ if (!empty($hookmanager->resArray)) {
 	$listofreferent = $hookmanager->resPrint;
 }
 
-if ($action == "addelement") {
+if (in_array($action, ['addelement', 'unlink'])) {
+	// Only an element type listed (and allowed) on this page can be linked or unlinked, using the project field it declares
 	$tablename = GETPOST("tablename", "aZ09");
-	$elementselectid = GETPOSTINT("elementselect");
-	$result = $object->update_element($tablename, $elementselectid);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
+	$projectField = '';
+	$excludeselect = ['payment_various'];
+	foreach ($listofreferent as $value) {
+		if (!empty($value['test']) && isset($value['table']) && $value['table'] === $tablename) {
+			$projectField = empty($value['project_field']) ? 'fk_projet' : $value['project_field'];
+			if (!empty($value['exclude_select_element'])) {
+				$excludeselect[] = $value['exclude_select_element'];
+			}
+			break;
+		}
 	}
-} elseif ($action == "unlink") {
-	$tablename = GETPOST("tablename", "aZ09");
-	$projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
-	$elementselectid = GETPOSTINT("elementselect");
+	if (!$permissiontoadd || $projectField === ''
+		|| ($action == 'addelement' && (getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') || in_array($tablename, $excludeselect)))
+		|| ($action == 'unlink' && (in_array($tablename, ['projet_task', 'stock_mouvement']) || (getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') && !$user->admin)))) {
+		accessforbidden('', 0, 0);
+	}
 
-	$result = $object->remove_element($tablename, $elementselectid, $projectField);
+	$elementselectid = GETPOSTINT("elementselect");
+	if ($action == "addelement") {
+		$result = $object->update_element($tablename, $elementselectid);
+	} else {
+		$result = $object->remove_element($tablename, $elementselectid, $projectField);
+	}
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -1238,7 +1251,7 @@ foreach ($listofreferent as $key => $value) {
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 
 
-		if (!getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
+		if ($permissiontoadd && !getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
 			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
 			if ((int) $selectList < 0) {  // cast to int because ''<0 is true.
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
@@ -1477,7 +1490,7 @@ foreach ($listofreferent as $key => $value) {
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement') {
-					if (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by default, so this test true
+					if ($permissiontoadd && (!getDolGlobalString('PROJECT_DISABLE_UNLINK_FROM_OVERVIEW') || $user->admin)) {		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by default, so this test true
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unlink&tablename='.$tablename.'&elementselect='.$element->id.($project_field ? '&projectfield='.$project_field : '').'" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
