@@ -935,6 +935,11 @@ class SupplierProposal extends CommonObject
 			// For triggers
 			$line->fetch($lineid);
 
+			if ($this->id > 0 && (int) $line->fk_supplier_proposal !== (int) $this->id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+
 			if ($line->delete($user) > 0) {
 				$this->update_price(1);
 

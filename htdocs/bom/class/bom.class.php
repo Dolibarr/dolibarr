@@ -830,11 +830,15 @@ class BOM extends CommonObject
 			return -2;
 		}
 
-		$this->db->begin();
-
 		// Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new BOMLine($this->db);
 		$line->fetch($idline);
+		if ($this->id > 0 && (int) $line->fk_bom !== (int) $this->id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
+		$this->db->begin();
 		$line->fetch_optionals();
 
 		$staticLine = clone $line;

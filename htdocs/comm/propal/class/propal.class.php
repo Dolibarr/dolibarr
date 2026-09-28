@@ -1120,7 +1120,11 @@ class Propal extends CommonObject
 			// Load data
 			$line->fetch($lineid);
 
-			if ($id > 0 && $line->fk_propal != $id) {
+			if ($id <= 0) {
+				$id = $this->id;
+			}
+			if ($id > 0 && (int) $line->fk_propal !== (int) $id) {
+				$this->db->rollback();
 				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 				return -1;
 			}

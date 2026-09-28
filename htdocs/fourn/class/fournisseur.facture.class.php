@@ -2573,6 +2573,16 @@ class FactureFournisseur extends CommonInvoice
 			$rowid = $this->id;
 		}
 
+		$line = new SupplierInvoiceLine($this->db);
+
+		if ($line->fetch($rowid) < 1) {
+			return -1;
+		}
+		if ($this->id > 0 && (int) $line->fk_facture_fourn !== (int) $this->id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$this->db->begin();
 
 		// Free the discount linked to a line of invoice
@@ -2586,12 +2596,6 @@ class FactureFournisseur extends CommonInvoice
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -2;
-		}
-
-		$line = new SupplierInvoiceLine($this->db);
-
-		if ($line->fetch($rowid) < 1) {
-			return -1;
 		}
 
 		$res = $line->delete($notrigger);
