@@ -263,6 +263,7 @@ if (empty($reshook)) {
 		$object = new ExpenseReport($db);
 		$result = $object->fetch($id);
 		$result = $object->delete($user);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		if ($result >= 0) {
 			header("Location: index.php");
 			exit;
