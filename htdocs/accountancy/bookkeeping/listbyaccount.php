@@ -560,7 +560,7 @@ if (empty($reshook)) {
 		if ($result == -1) {
 			$error += 1;
 		}
-		if ($error) {
+		if (!$error) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit;
