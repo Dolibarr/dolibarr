@@ -1144,6 +1144,12 @@ class Ldap
 
 		// We need to search for this user in order to get their entry.
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
+		if ($this->result === false) {
+			// Invalid filter or search error: do not pass false to ldap_first_entry() (TypeError with PHP 8)
+			$this->ldapErrorCode = ldap_errno($this->connection);
+			$this->ldapErrorText = ldap_error($this->connection);
+			return false;
+		}
 
 		// Pourquoi cette ligne ?
 		//$info = ldap_get_entries($this->connection, $this->result);
