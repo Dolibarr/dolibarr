@@ -129,6 +129,8 @@ class AllTests
 		$suite->addTestSuite('CompanyLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
+		require_once dirname(__FILE__).'/AgendaLibTest.php';
+		$suite->addTestSuite('AgendaLibTest');
 		require_once dirname(__FILE__).'/UtilsTest.php';
 		$suite->addTestSuite('UtilsTest');
 
