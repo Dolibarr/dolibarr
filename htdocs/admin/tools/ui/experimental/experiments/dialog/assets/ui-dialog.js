@@ -8,6 +8,7 @@ document.addEventListener('Dolibarr:Init', function () {
 	// Counter used to generate unique ids for non-persistent dialogs without dialogId
 	let autoDialogIdCounter = 0;
 
+	// TODO: Remove this when Select2 has proper initNewContent support.
 	// Select2 inside dialogs: inline scripts of AJAX content are not executed (innerHTML), so Dolibarr's
 	// ajax_combobox() init never runs. Until form elements are DOM based, apply a generic select2 on selects
 	// of freshly injected dialog content. dropdownParent is required: a modal <dialog> lives in the top layer.
