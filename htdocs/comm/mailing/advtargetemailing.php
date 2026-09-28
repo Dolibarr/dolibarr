@@ -384,6 +384,7 @@ if ($action == 'deletefilter' && $permissiontoadd) {
 if ($action == 'delete' && $permissiontoadd) {
 	// Ici, rowid indique le destinataire et id le mailing
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
+	$sql .= " AND fk_mailing = ".((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {
