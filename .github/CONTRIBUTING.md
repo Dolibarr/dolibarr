@@ -49,7 +49,7 @@ If a CI error is thrown, the developer must fix it (The maintener will not proce
 
 If a conflict is reported (so PR is not mergeable, status "Mergeable" appear on the PR itself), the developer must fix it too, also if the conflict is not the fault of yourself. Again the principle of solidarity rules.
 
-Note also that, to fight agains excessive AI report, there is now a quota of PR per day and per user (defined into the CI).
+Note also that, to fight against excessive AI reports, there is a quota of PR per day and per user (defined into the CI).
 
 
 As the PR Maintainer:
