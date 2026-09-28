@@ -143,6 +143,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 
 			return $return;
 		} elseif (($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE') && $object instanceof Adherent) {
+			'@phan-var-force Adherent $object';
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 0;
