@@ -19,6 +19,7 @@
  * Copyright (C) 2025		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2026		Pierre Ardoin			<developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1705,7 +1706,14 @@ class CommandeFournisseur extends CommonOrder
 				for ($i = 0; $i < $num; $i++) {
 					$line = $this->lines[$i];
 					if (!is_object($line)) {
-						$line = (object) $line;
+						// Build a real line object: the loop below calls methods on it
+						// (getPriceBaseType), which a cast to stdClass cannot answer.
+						$lineobj = new CommandeFournisseurLigne($this->db);
+						foreach ($line as $key => $val) {
+							$lineobj->$key = $val;
+						}
+						$line = $lineobj;
+						$this->lines[$i] = $line;
 					}
 
 					//$this->special_code = $line->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
