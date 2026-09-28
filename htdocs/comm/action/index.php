@@ -10,6 +10,7 @@
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,7 +290,7 @@ if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
 				'color' => dol_string_nohtmltag(getDolGlobalString($color)),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-				'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
+				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile, ''))
 			);
 		}
 	}
@@ -318,7 +319,7 @@ if (!getDolUserString('AGENDA_DISABLE_EXT')) {
 				'color' => dol_string_nohtmltag(getDolUserString($color)),
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				'default' => dol_string_nohtmltag(getDolUserString($default)),
-				'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
+				'buggedfile' => dol_string_nohtmltag(getDolUserString($buggedfile, ''))
 			);
 		}
 	}
