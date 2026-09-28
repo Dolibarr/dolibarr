@@ -897,7 +897,7 @@ class ExpenseReport extends CommonObject
 					$summary = rtrim($summary).'...';
 				}
 
-				return $summary;
+				return dolGetFirstLineOfText($summary);
 			}
 		}
 
