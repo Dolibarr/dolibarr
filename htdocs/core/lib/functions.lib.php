@@ -147,7 +147,7 @@ function formatLogObject($data)
  *
  * @param 	CommonObject|BlockedLog|null	$object 	Dolibarr common object.
  * @param 	string 							$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int								$forobject	Return the more complete path for the given object (including ref) instead of for the module only.
+ * @param	int								$forobject	Use 1 to return the more complete path for the given object (including ref) instead of for the module only.
  * @param	string							$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
  * @return 	string|null									The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
@@ -529,26 +529,33 @@ function isModEnabled($module)
 {
 	global $conf;
 
-	// Fix old names (map to new names)
-	$arrayconv = MODULE_MAPPING;
-	$arrayconvbis = array_flip(MODULE_MAPPING);
-
-	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
-		// Special cases: both use the same module.
-		$arrayconv['supplier_order'] = 'fournisseur';
-		$arrayconv['supplier_invoice'] = 'fournisseur';
+	if (!empty($conf->modules[$module])) {
+		return true;	// Most calls use the real name of the module: no need to look at the old/new names mapping
 	}
 
-	$module_alt = $module;
-	if (!empty($arrayconv[$module])) {
-		$module_alt = $arrayconv[$module];
-	}
-	$module_bis = $module;
-	if (!empty($arrayconvbis[$module])) {
-		$module_bis = $arrayconvbis[$module];
+	// Fix old names (map to new names). The mappings are constant for the request, so they are built once: this function is
+	// called thousands of times per page (hooks, rights, logs...), and array_flip() on each call was most of its cost.
+	static $arrayconv = null;
+	static $arrayconvbis = null;
+	if ($arrayconv === null) {
+		$arrayconv = MODULE_MAPPING;
+		$arrayconvbis = array_flip(MODULE_MAPPING);
+
+		if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+			// Special cases: both use the same module.
+			$arrayconv['supplier_order'] = 'fournisseur';
+			$arrayconv['supplier_invoice'] = 'fournisseur';
+		}
 	}
 
-	return !empty($conf->modules[$module]) || !empty($conf->modules[$module_alt]) || !empty($conf->modules[$module_bis]);
+	if (!empty($arrayconv[$module]) && !empty($conf->modules[$arrayconv[$module]])) {
+		return true;
+	}
+	if (!empty($arrayconvbis[$module]) && !empty($conf->modules[$arrayconvbis[$module]])) {
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -2079,7 +2086,8 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 0, $allowdash = 0
 }
 
 /**
- *  Clean a string to use it as an URL (into a href or src attribute)
+ *  Clean a string to use it as an URL (into a href or src attribute, or into a js string that is a location).
+ *  Raw '<' and '>' are url encoded (a browser always sends them encoded, so a real URL never holds them).
  *
  *  @param      string		$stringtoclean		String to clean
  *  @param		int			$type				0=Accept all Url, 1=Clean external Url (keep only relative Url)
@@ -2111,6 +2119,9 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 		// removing '//' should disable links to external url like //aaa or http//)
 		$stringtoclean = preg_replace(array('/^[a-z]*\/\/+/i'), '', $stringtoclean);
 	}
+
+	// A raw < or > can not be part of a valid URL. We encode them, so the result can not open an html tag or close an inline script block (</script does not need a >).
+	$stringtoclean = str_replace(array('<', '>'), array('%3C', '%3E'), $stringtoclean);
 
 	return $stringtoclean;
 }
@@ -6863,6 +6874,12 @@ function dol_textishtml($msg, $option = 0)
 		return false;
 	}
 
+	// Every pattern below needs a '<' (a tag) or a '&' (an entity): without both, the string can not be HTML. This saves the
+	// dozen of preg_match() below for the very common case of a plain label.
+	if (strpos($msg, '<') === false && strpos($msg, '&') === false) {
+		return false;
+	}
+
 	if ($option == 1) {
 		if (preg_match('/<(html|link|script)/i', $msg)) {
 			return true;
@@ -7056,6 +7073,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_PROFID8__' => $mysoc->idprof8,
 			'__MYCOMPANY_PROFID9__' => $mysoc->idprof9,
 			'__MYCOMPANY_PROFID10__' => $mysoc->idprof10,
+			'__MYCOMPANY_OBJECT__'    => $mysoc->socialobject,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
 			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
@@ -7066,6 +7084,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_COUNTRY__'    => $mysoc->country,
 			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id,
 			'__MYCOMPANY_COUNTRY_CODE__' => $mysoc->country_code,
+			'__MYCOMPANY_CURRENCY__' => $outputlangs->transnoentitiesnoconv("Currency".$conf->currency),
 			'__MYCOMPANY_CURRENCY_CODE__' => $conf->currency
 		));
 	}
@@ -8446,6 +8465,93 @@ function isStringVarMatching($var, $regextext, $matchrule = 1)
 
 
 /**
+ * Evaluate a condition made of simple terms, without eval(). Recognized terms, optionally preceded by '!', separated by '&&' or by '||'
+ * (but not both, so there is no precedence to handle), with no other parenthesis than the ones of the calls:
+ * isModEnabled('xxx'), $user->hasRight('xxx', 'yyy'[, 'zzz']), $user->rights->xxx->yyy[->zzz], $user->admin, $conf->xxx->enabled,
+ * getDolGlobalString('XXX'), getDolGlobalInt('XXX'), $leftmenu == 'xxx', $mainmenu != 'xxx', and the literals 1, 0, true, false.
+ * The result is the one eval() would give (a property that is not set is false, no warning is raised), so verifCond() can use
+ * this function first and keep dol_eval() for the other conditions.
+ *
+ * @param	string		$s		Condition to evaluate
+ * @return	bool|null			Result of the condition, or null if the condition is not made of the known terms only
+ * @see verifCond(), dol_eval()
+ */
+function dolEvalSimpleCondition($s)
+{
+	global $conf, $user, $leftmenu, $mainmenu;
+
+	$s = trim((string) $s);
+	if ($s === '1' || $s === 'true') {
+		return true;
+	}
+	if ($s === '0' || $s === 'false') {
+		return false;
+	}
+	// Only the characters of the known terms, and parentheses only around the quoted arguments of a call
+	if (!preg_match('/^[a-zA-Z0-9_$>=!&|\s\'",()-]+$/', $s)) {
+		return null;
+	}
+	if (strpbrk($s, '()') !== false && !preg_match('/^(?:[^()]*\((?:\s*[\'"][a-zA-Z0-9_]+[\'"]\s*)(?:,\s*[\'"][a-zA-Z0-9_]+[\'"]\s*)*\))*[^()]*$/', $s)) {
+		return null;
+	}
+	$hasand = (strpos($s, '&&') !== false);
+	$hasor = (strpos($s, '||') !== false);
+	if ($hasand && $hasor) {
+		return null;
+	}
+	$terms = ($hasor ? explode('||', $s) : ($hasand ? explode('&&', $s) : array($s)));
+
+	$result = null;
+	foreach ($terms as $term) {
+		$term = trim($term);
+		$negation = false;
+		if (substr($term, 0, 1) === '!') {
+			$negation = true;
+			$term = ltrim(substr($term, 1));
+		}
+		$reg = array();
+		if (preg_match('/^isModEnabled\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			$value = isModEnabled($reg[1]);
+		} elseif (preg_match('/^\$user->hasRight\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*,\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*(?:,\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*)?\)$/', $term, $reg)) {
+			$value = (bool) (!empty($reg[3]) ? $user->hasRight($reg[1], $reg[2], $reg[3]) : $user->hasRight($reg[1], $reg[2]));
+		} elseif (preg_match('/^\$user->rights->([a-zA-Z0-9_]+)->([a-zA-Z0-9_]+)(?:->([a-zA-Z0-9_]+))?$/', $term, $reg)) {
+			if (!empty($reg[3])) {
+				$value = !empty($user->rights->{$reg[1]}->{$reg[2]}->{$reg[3]});
+			} else {
+				$value = !empty($user->rights->{$reg[1]}->{$reg[2]});
+			}
+		} elseif ($term === '$user->admin') {
+			$value = !empty($user->admin);
+		} elseif (preg_match('/^\$conf->([a-zA-Z0-9_]+)->enabled$/', $term, $reg)) {
+			$value = !empty($conf->{$reg[1]}->enabled);
+		} elseif (preg_match('/^getDolGlobal(String|Int)\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			$value = ($reg[1] == 'Int' ? (bool) getDolGlobalInt($reg[2]) : (bool) getDolGlobalString($reg[2]));
+		} elseif (preg_match('/^\$(leftmenu|mainmenu)\s*(==|!=)\s*[\'"]([a-zA-Z0-9_]*)[\'"]$/', $term, $reg)) {
+			$current = ($reg[1] == 'leftmenu' ? $leftmenu : $mainmenu);
+			$value = ($reg[2] == '==' ? ($current == $reg[3]) : ($current != $reg[3]));
+		} elseif ($term === '1' || $term === 'true') {
+			$value = true;
+		} elseif ($term === '0' || $term === 'false') {
+			$value = false;
+		} else {
+			return null;	// Not a known term, the caller will use eval()
+		}
+		if ($negation) {
+			$value = !$value;
+		}
+		if ($result === null) {
+			$result = $value;
+		} elseif ($hasor) {
+			$result = ($result || $value);
+		} else {
+			$result = ($result && $value);
+		}
+	}
+
+	return $result;
+}
+
+/**
  * Verify if condition in string is ok or not
  *
  * @param 	string	$strToEvaluate		String with condition to check
@@ -8459,6 +8565,12 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
+		// Most of the conditions are simple (isModEnabled('xxx'), $user->hasRight('xxx', 'yyy'), $conf->xxx->enabled...): they are
+		// evaluated directly, without eval() and its checks, when they match one of the known shapes.
+		$rights = dolEvalSimpleCondition($strToEvaluate);
+		if ($rights !== null) {
+			return $rights;
+		}
 		//var_dump($strToEvaluate);
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
@@ -10470,7 +10582,7 @@ function getElementProperties($elementType)
 
 	$regs = array();
 
-	//$element_type='facture';
+	//var_dump($elementType);
 
 	$classfile = $classname = $classpath = $subdir = $dir_output = $dir_temp = $parent_element = '';
 
@@ -10481,13 +10593,16 @@ function getElementProperties($elementType)
 	$table_element = $elementType;
 
 	// If we ask a resource form external module (instead of default path)
-	if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {	// 'myobject@mymodule'
+	if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {	// 'myobject@mymodule' (usually external modules)
 		$element = $subelement = $regs[1];
+		$table_element = $regs[2].'_'.$regs[1];
+		$subdir = '/'.$regs[1];
 		$module = $regs[2];
-	} elseif (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// 'myobject_mysubobject' with myobject=mymodule, example 'project_task'
+	} elseif (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {	// old deprecated syntax: 'myobject_mysubobject' with myobject=mymodule, example 'project_task'
 		// This is an alternative syntax to 'myobject@mymodule', so it must not be applied when the previous case already matched,
 		// otherwise the module resolved from the '@' syntax would be overwritten by a wrong guess when $element contains a '_'.
 		$module = $element = $regs[1];
+		$table_element = $elementType;
 		$subelement = $regs[2];
 	}
 
@@ -10498,7 +10613,7 @@ function getElementProperties($elementType)
 		$classpath = $module . '/class';
 		$classfile = $module;
 		$classname = preg_replace('/det$/', 'Line', $element);
-		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'supplier_order', 'commandefournisseur'))) {
+		if (in_array($module, array('expedition', 'propale', 'facture', 'contrat', 'fichinter', 'ficheinter', 'supplier_order', 'commandefournisseur'))) {
 			$classname = preg_replace('/det$/', 'Ligne', $element);
 		}
 	}
@@ -10519,16 +10634,27 @@ function getElementProperties($elementType)
 		$subelement = 'adherent_type';
 		$classname = 'AdherentType';
 		$table_element = 'adherent_type';
-	} elseif ($elementType == 'bank_account') {
+	} elseif ($elementType == 'bank_account' || $elementType == 'bank' || $elementType == 'banque') {
+		// 'bank' is the value used for the modulepart when downloading files attached to a bank account
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
+		$element = $subelement = 'bank_account';
+		$table_element = 'bank_account';
 	} elseif ($elementType == 'bank_line') {
 		$classpath = 'compta/bank/class';
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'AccountLine';
+	} elseif ($elementType == 'remisecheque') {
+		$classpath = 'compta/paiement/cheque/class';
+		$classfile = 'remisecheque';
+		$classname = 'RemiseCheque';
+		$module = 'bank';
+		$element = 'chequereceipt';
+		$subelement = 'cheque';
+		$table_element = 'bordereau_cheque';
 	} elseif ($elementType == 'category') {
 		$classpath = 'categories/class';
 		$module = 'categorie';
@@ -10555,10 +10681,12 @@ function getElementProperties($elementType)
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
 		$table_element = 'entrepot';
-	} elseif ($elementType == 'project') {
+	} elseif ($elementType == 'project' || $elementType == 'projet') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$table_element = 'projet';
+		$classfile = 'project';
+		$classname = 'Project';
 	} elseif ($elementType == 'project_task') {
 		$classpath = 'projet/class';
 		$module = 'projet';
@@ -10696,7 +10824,7 @@ function getElementProperties($elementType)
 		$module = 'cabinetmed';
 		$subelement = 'cabinetmedcons';
 		$table_element = 'cabinetmedcons';
-	} elseif ($elementType == 'fichinter') {
+	} elseif ($elementType == 'fichinter' || $elementType == 'ficheinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$subelement = 'fichinter';
@@ -10921,6 +11049,17 @@ function getElementProperties($elementType)
 		$classname = 'RecruitmentJobPosition';
 		$subelement = 'recruitmentjobposition';
 		$subdir = '/recruitmentjobposition';
+	} elseif ($elementType == 'recruitment') {
+		// The recruitment module has no class of its own, and the document links of its objects use
+		// the module name as modulepart (see document.php), so the module name resolves to the job
+		// position, the main object of the module.
+		$module = 'recruitment';
+		$classfile = 'recruitmentjobposition';
+		$classpath = 'recruitment/class';
+		$classname = 'RecruitmentJobPosition';
+		$element = $subelement = 'recruitmentjobposition';
+		$table_element = 'recruitment_recruitmentjobposition';
+		$subdir = '/recruitmentjobposition';
 	} elseif ($elementType == 'product_attribute_combination') {
 		$module = 'variants';
 		$classpath = 'variants/class';
@@ -10996,13 +11135,15 @@ function getElementProperties($elementType)
 		$dir_output = $conf->fournisseur->payment->dir_output;
 		$dir_temp = $conf->fournisseur->payment->dir_temp;
 	}
+
 	// The sub directory must not be appended when the module is disabled, because $dir_output is then empty
 	// and we would return a path at the root of the file system instead of an empty string.
 	if (!empty($dir_output)) {
 		$dir_output .= $subdir;
 	}
 	if (!empty($dir_temp)) {
-		$dir_temp .= $subdir;
+		//$dir_temp = preg_replace('/\/temp$/', '', $dir_temp).$subdir.'/temp';		// To get mymoduledir/myobject/temp
+		$dir_temp .= $subdir;														// To get mymoduledir/temp/myobject
 	}
 
 	$elementProperties = array(
@@ -11069,8 +11210,9 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
-	//var_dump($element_prop); exit;
+	//var_dump($element_type, $element_prop);
 
+	// Check special cases
 	if ($element_prop['module'] == 'product' || $element_prop['module'] == 'service') {
 		// For example, for an extrafield 'product' (shared for both product and service) that is a link to an object,
 		// this is called with $element_type = 'product' when we need element properties of a service, we must return a product. If we create the
@@ -11082,6 +11224,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	} else {
 		$ismodenabled = isModEnabled($element_prop['module']);
 	}
+
 	//var_dump('element_type='.$element_type);
 	//var_dump($element_prop);
 	//var_dump($element_prop['module'].' '.$ismodenabled);
@@ -11098,6 +11241,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 		if ($includeresult === false) {
 			dol_syslog('fetchObjectByElement: class file /' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php not found for element ' . $element_type, LOG_WARNING);
 		}
+		//var_dump('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php', $element_prop['classname']);
 
 		if (class_exists($element_prop['classname'])) {
 			$className = $element_prop['classname'];
@@ -11117,6 +11261,13 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			/** @var CommonObject $objecttmp */
 
 			if ($element_id > 0 || !empty($element_ref)) {
+				// Special case for job, there is no ref, it is the id
+				// TODO Replace hard coded code with a test if object has a ref or not.
+				if (empty($element_id) && !empty($element_ref) && (in_array($objecttmp->element, array('evaluation', 'job', 'position', 'skill')))) {
+					$element_id = $element_ref;
+					$element_ref = '';
+				}
+
 				$ret = $objecttmp->fetch($element_id, $element_ref);
 				if ($ret >= 0) {
 					if (empty($objecttmp->module)) {
@@ -11142,7 +11293,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 				return $objecttmp;	// returned an object without fetch
 			}
 		} else {
-			dol_syslog($element_prop['classname'] . ' doesn\'t exists in /' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
+			dol_syslog($element_prop['classname'] . " doesn't exists in /" . $element_prop['classpath'] . "/" . $element_prop['classfile'] . ".class.php");
 			return -1;
 		}
 	}

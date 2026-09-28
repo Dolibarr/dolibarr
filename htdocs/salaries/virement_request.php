@@ -153,7 +153,10 @@ if ($action == 'classin' && $user->hasRight('banque', 'modifier')) {
 if ($action == 'setlabel' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$object->label = $label;
-	$object->update($user);
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 $parameters = array('socid' => $socid);

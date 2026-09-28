@@ -200,7 +200,7 @@ class VariousPayments extends DolibarrApi
 		}
 
 		if ($payment->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating various payment: '.$payment->error);
+			throw new RestException(500, 'Error when creating various payment: '.$payment->errorsToString());
 		}
 
 		return $payment->id;
@@ -255,7 +255,7 @@ class VariousPayments extends DolibarrApi
 		if ($payment->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating various payment: '.$payment->error);
+			throw new RestException(500, 'Error when updating various payment: '.$payment->errorsToString());
 		}
 	}
 
@@ -286,7 +286,7 @@ class VariousPayments extends DolibarrApi
 		}
 
 		if ($payment->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting various payment: '.$payment->error);
+			throw new RestException(500, 'Error when deleting various payment: '.$payment->errorsToString());
 		}
 
 		return array(

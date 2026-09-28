@@ -24,9 +24,6 @@ on:
     types: [opened, synchronize, reopened]
     branches:
       - "18.0"
-  push:
-    branches:
-      - "18.0"
 
 permissions:
   pull-requests: write

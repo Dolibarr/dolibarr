@@ -921,6 +921,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: list.php?restore_lastsearch_values=1");
@@ -2547,7 +2548,7 @@ if (isModEnabled('margin') && $action == 'editline') {
 				if (fournprice > 0) {
 					if (this.id == fournprice) {
 					  options += ' selected';
-					  $("#buying_price").val(this.price);
+					  $("#buying_price").val(pricejs(this.price, 'MU'));
 					  trouve = true;
 					}
 				}
@@ -2565,7 +2566,7 @@ if (isModEnabled('margin') && $action == 'editline') {
 			  $("#fournprice").change(function() {
 				var selval = $(this).find('option:selected').attr("price");
 				if (selval)
-				  $("#buying_price").val(selval).hide();
+				  $("#buying_price").val(pricejs(selval, 'MU')).hide();
 				else
 				  $('#buying_price').show();
 			  });
@@ -2583,5 +2584,5 @@ if (isModEnabled('margin') && $action == 'editline') {
 		}
 	});
 	<?php
-	print "\n".'<script type="text/javascript">'."\n";
+	print '</script>'."\n";
 }

@@ -1354,34 +1354,94 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 * Reverse movement for object by updating infos
+	 * Return the type of the movement that reverses a movement of a given type.
 	 *
-	 * @return int    1 if OK,-1 if KO
+	 * @param	int		$type	Type of movement: 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase)
+	 * @return	int				Type of the reverse movement, or -1 if the type is unknown
+	 */
+	private static function getReverseType($type)
+	{
+		$reversetypes = array(0 => 1, 1 => 0, 2 => 3, 3 => 2);
+
+		return (isset($reversetypes[(int) $type]) ? $reversetypes[(int) $type] : -1);
+	}
+
+	/**
+	 * Count the movements that have the same product, warehouse, batch, quantity, type and code as the movement given.
+	 * Used to know if a movement has already been reversed: a reverse movement carries the code of the movement
+	 * that it reverses, prefixed by 'REVERT-', with the opposite quantity and the opposite type.
+	 *
+	 * @param	string	$code		Code of the movements to count (value of column inventorycode)
+	 * @param	float	$qty		Quantity of the movements to count
+	 * @param	int		$type		Type of the movements to count
+	 * @param	int		$datem		Date of the movement. Used only when the code is empty, to distinguish the movements.
+	 * @return	int					Number of movements found, or -1 if error
+	 */
+	private function countMovementsWithSameSignature($code, $qty, $type, $datem = 0)
+	{
+		$sql = "SELECT COUNT(rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
+		$sql .= " WHERE fk_product = ".((int) $this->product_id);
+		$sql .= " AND fk_entrepot = ".((int) $this->warehouse_id);
+		$sql .= " AND COALESCE(batch, '') = '".$this->db->escape((string) $this->batch)."'";
+		$sql .= " AND value = ".((float) $qty);
+		$sql .= " AND type_mouvement = ".((int) $type);
+		$sql .= " AND COALESCE(inventorycode, '') = '".$this->db->escape($code)."'";
+		if ($datem) {
+			$sql .= " AND datem = '".$this->db->idate($datem)."'";
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		return ($obj ? (int) $obj->nb : 0);
+	}
+
+	/**
+	 * Reverse movement for object by updating infos.
+	 * A movement can be reversed only once, and a reverse movement can not be reversed.
+	 *
+	 * @return int    1 if OK,-1 if KO (the reason is then set into $this->error)
 	 */
 	public function reverseMovement()
 	{
-		global $user;
+		global $user, $langs;
+
+		$langs->load("stocks");
 
 		$formattedDate = "REVERT-" .($this->inventorycode ? $this->inventorycode : dol_print_date($this->datem, '%Y%m%d%His'));
-		if ($this->inventorycode == $formattedDate) {
+
+		// A reverse movement can not be reversed
+		if (strpos((string) $this->inventorycode, 'REVERT-') === 0) {
+			$this->error = $langs->trans("ErrorStockMovementIsAlreadyAReverse", $this->id);
 			return -1;
 		}
 
-		$newlabel = 'Revert '.$this->label;
-		// type is 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase)
-		// Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
-		if ($this->type == 0) {
-			$newtype = 1;
-		} elseif ($this->type == 1) {
-			$newtype = 0;
-		} elseif ($this->type == 2) {
-			$newtype = 3;
-		} elseif ($this->type == 3) {
-			$newtype = 2;
-		} else {
+		$newtype = self::getReverseType($this->type);
+		if ($newtype < 0) {
+			$this->error = $langs->trans("ErrorStockMovementBadType", $this->id);
 			return -1;
 		}
+		$newlabel = 'Revert '.$this->label;
+		// Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
 		$newqty = - $this->qty;
+
+		// A movement can be reversed only once. Several movements can be the same (same code, product, warehouse, batch, quantity and type),
+		// so we compare the number of such movements with the number of reverse movements already done.
+		$nbmovements = $this->countMovementsWithSameSignature((string) $this->inventorycode, $this->qty, $this->type, ($this->inventorycode ? 0 : $this->datem));
+		$nbreverses = $this->countMovementsWithSameSignature($formattedDate, $newqty, $newtype);
+		if ($nbmovements < 0 || $nbreverses < 0) {
+			return -1;
+		}
+		if ($nbreverses >= $nbmovements) {
+			$this->error = $langs->trans("ErrorStockMovementAlreadyReversed", $this->id);
+			return -1;
+		}
 
 		$this->db->begin();
 

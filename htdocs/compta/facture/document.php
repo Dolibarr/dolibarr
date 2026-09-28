@@ -141,7 +141,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
-		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, $object->picto);
+		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, $object->picto, 0, '', '', 0, '', 1);
 
 		$totalpaid = $object->getSommePaiement();
 

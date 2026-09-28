@@ -247,10 +247,15 @@ if ($action == 'add' && $permissiontoadd) {
 } elseif ($action == 'delete' && $permissiontodelete) {
 	// delete modele
 	$object->fetch($id);
-	$object->delete($user);
-	$id = 0;
-	header('Location: '.$_SERVER["PHP_SELF"]);
-	exit;
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+	$result = $object->delete($user);
+	if ($result > 0) {
+		$id = 0;
+		header('Location: '.$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 } elseif ($action == 'setfrequency' && $permissiontoadd) {
 	// Set frequency and unit frequency
 	$object->fetch($id);

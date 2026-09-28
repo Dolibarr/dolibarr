@@ -650,6 +650,9 @@ class PaymentVarious extends CommonObject
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if ($result) {
+			// Keep the in memory object in sync, so a trigger called right after create() reports
+			// the real bank line instead of 0 (#40673).
+			$this->fk_bank = (int) $id_bank;
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -666,7 +669,7 @@ class PaymentVarious extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

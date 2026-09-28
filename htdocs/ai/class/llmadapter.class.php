@@ -32,6 +32,9 @@ class UniversalLLMAdapter
 	/** @var string Stores the raw response for debugging */
 	public $lastResponse = "";
 
+	/** @var array{input?:int,output?:int,model?:string} Token usage reported by the provider for the LAST call (empty when the call failed before a usable response) */
+	public $lastUsage = array();
+
 	/** @var string The type of LLM (e.g., 'openai', 'ollama') */
 	private $type;
 
@@ -76,17 +79,18 @@ class UniversalLLMAdapter
 	 * @param string $userMsg  The specific user query
 	 * @param string $mode     'json' for strict JSON (MCP), 'text' for legacy (default)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional documents/images, each entry is array('mime' => 'image/png', 'data' => '<base64>')
+	 * @param array<int,array{role:string,text:string}> $history     Optional prior conversation turns (role 'user'|'assistant'), sent as native multi-turn messages before the current query. Caller sanitizes and caps them.
 	 * @return string|null     The text response from the AI or null on failure
 	 */
-	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array()): ?string
+	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array(), array $history = array()): ?string
 	{
 		switch ($this->type) {
 			case 'anthropic':
-				return $this->callAnthropic($system, $userMsg, $mode, $attachments);
+				return $this->callAnthropic($system, $userMsg, $mode, $attachments, $history);
 			case 'google':
-				return $this->callGoogle($system, $userMsg, $mode, $attachments);
+				return $this->callGoogle($system, $userMsg, $mode, $attachments, $history);
 			default:
-				return $this->callOpenAI($system, $userMsg, $mode, $attachments);
+				return $this->callOpenAI($system, $userMsg, $mode, $attachments, $history);
 		}
 	}
 
@@ -97,9 +101,10 @@ class UniversalLLMAdapter
 	 * @param string $msg User message
 	 * @param string $mode 'json' or 'text'
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
+	 * @param array<int,array{role:string,text:string}> $history Optional prior turns inserted before the current query
 	 * @return string|null Response content or null on failure
 	 */
-	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array()): ?string
+	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array()): ?string
 	{
 		$url = $this->baseUrl;
 		if (strpos($url, '/chat/completions') === false && strpos($url, '/generate') === false) {
@@ -131,12 +136,15 @@ class UniversalLLMAdapter
 			}
 		}
 
+		$messages = array(array("role" => "system", "content" => $sys));
+		foreach ($history as $turn) {
+			$messages[] = array("role" => (($turn['role'] ?? '') === 'assistant' ? 'assistant' : 'user'), "content" => (string) $turn['text']);
+		}
+		$messages[] = array("role" => "user", "content" => $userContent);
+
 		$data = array(
 			"model" => $this->model,
-			"messages" => array(
-				array("role" => "system", "content" => $sys),
-				array("role" => "user", "content" => $userContent)
-			),
+			"messages" => $messages,
 			"temperature" => 0.1
 		);
 		if (!empty($attachments)) {
@@ -164,10 +172,11 @@ class UniversalLLMAdapter
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
+	 * @param array<int,array{role:string,text:string}> $history Optional prior turns inserted before the current query
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callAnthropic(string $sys, string $msg, string $mode = 'text', array $attachments = array())
+	private function callAnthropic(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array())
 	{
 
 		$url = $this->baseUrl . (strpos($this->baseUrl, '/messages') === false ? '/messages' : '');
@@ -190,10 +199,16 @@ class UniversalLLMAdapter
 			$maxTokens = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
 		}
 
+		$messages = array();
+		foreach ($history as $turn) {
+			$messages[] = array("role" => (($turn['role'] ?? '') === 'assistant' ? 'assistant' : 'user'), "content" => (string) $turn['text']);
+		}
+		$messages[] = array("role" => "user", "content" => $userContent);
+
 		$data = array(
 			"model" => $this->model,
 			"system" => $sys,
-			"messages" => array(array("role" => "user", "content" => $userContent)),
+			"messages" => $messages,
 			"max_tokens" => $maxTokens
 		);
 
@@ -209,10 +224,11 @@ class UniversalLLMAdapter
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
+	 * @param array<int,array{role:string,text:string}> $history Optional prior turns inserted before the current query
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callGoogle(string $sys, string $msg, string $mode = 'text', array $attachments = array())
+	private function callGoogle(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array())
 	{
 		$url = $this->baseUrl;
 
@@ -234,10 +250,25 @@ class UniversalLLMAdapter
 		}
 		$parts[] = array("text" => $sys . "\nUser: " . $msg);
 
+		// Single-turn payload stays exactly as before (no 'role' key) so the
+		// historical behavior is untouched; only a non-empty history switches
+		// to Gemini's multi-turn format, where every content needs its role
+		// ('model' is Gemini's name for the assistant role).
+		$contents = array();
+		if (!empty($history)) {
+			foreach ($history as $turn) {
+				$contents[] = array(
+					"role" => (($turn['role'] ?? '') === 'assistant' ? 'model' : 'user'),
+					"parts" => array(array("text" => (string) $turn['text']))
+				);
+			}
+			$contents[] = array("role" => "user", "parts" => $parts);
+		} else {
+			$contents[] = array("parts" => $parts);
+		}
+
 		$data = array(
-			"contents" => array(
-				array("parts" => $parts)
-			),
+			"contents" => $contents,
 			"generationConfig" => (empty($attachments) ? array("temperature" => 0.1) : array("temperature" => 0.1, "maxOutputTokens" => 16384))	// thinking models count their reasoning tokens INSIDE maxOutputTokens: at 4096 a multi-line reception intent came back finishReason=MAX_TOKENS, cut mid-JSON
 		);
 
@@ -337,11 +368,17 @@ class UniversalLLMAdapter
 		// Pass $this->timeout as the response timeout so the LLM-specific value configured
 		// at construction time is honored (getURLContent's $timeoutresponse is the 10th arg;
 		// preceding args $ssl_verifypeer=-1 and $timeoutconnect=0 keep their defaults).
+		$this->lastUsage = array();	// never carry over the previous call's usage
+
 		$result = getURLContent($url, 'POST', json_encode($data), 1, $headers, array('http', 'https'), $localurl, -1, 0, $this->timeout);
 
 		$body         = (string) ($result['content'] ?? '');
 		$httpCode     = (int) ($result['http_code'] ?? 0);
 		$effectiveUrl = (string) ($result['url'] ?? $url);
+		// The Gemini key travels as a ?key= query parameter: mask it before the
+		// URL lands in lastResponse, which is persisted into llx_ai_request_log
+		// and shown by the admin Log Viewer - a secret must never sit in a log.
+		$effectiveUrl = preg_replace('/([?&]key=)[^&\s]+/', '$1***', $effectiveUrl);
 		// Store an enriched payload so the admin Log Viewer ("VIEW LOGS" in the AI Server
 		// MCP setup page) shows something actionable when something goes wrong, not just
 		// a bare "Invalid JSON response from API." with an empty body.
@@ -365,6 +402,22 @@ class UniversalLLMAdapter
 			$msg = $json['error']['message'] ?? json_encode($json['error']);
 			$this->recordModelFailure($httpCode, (string) $msg);
 			return "Error: API " . $msg;
+		}
+
+		// Token usage as reported by the provider, for the cost columns of the
+		// request log: every provider returns it inside the response body under
+		// its own name. Thinking tokens are billed as output, so Gemini's
+		// thoughtsTokenCount is counted with the visible candidates tokens.
+		$this->lastUsage = array('model' => $this->model);
+		if ($isGemini) {
+			$this->lastUsage['input']  = (int) ($json['usageMetadata']['promptTokenCount'] ?? 0);
+			$this->lastUsage['output'] = (int) ($json['usageMetadata']['candidatesTokenCount'] ?? 0) + (int) ($json['usageMetadata']['thoughtsTokenCount'] ?? 0);
+		} elseif ($isClaude) {
+			$this->lastUsage['input']  = (int) ($json['usage']['input_tokens'] ?? 0);
+			$this->lastUsage['output'] = (int) ($json['usage']['output_tokens'] ?? 0);
+		} else {
+			$this->lastUsage['input']  = (int) ($json['usage']['prompt_tokens'] ?? 0);
+			$this->lastUsage['output'] = (int) ($json['usage']['completion_tokens'] ?? 0);
 		}
 
 		// Extraction Logic

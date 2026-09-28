@@ -3533,7 +3533,24 @@ class Propal extends CommonObject
 		// phpcs:enable
 		global $langs, $hookmanager;
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
+		$now = dol_now();
+		$delay_warning = 0;
+		if ($mode == 'opened') {
+			$delay_warning = getWarningDelay('propal', 'cloture');
+		}
+		if ($mode == 'signed') {
+			$delay_warning = getWarningDelay('propal', 'facturation');
+		}
+
+		// The count, the total and the number of late proposals are computed by the database instead of reading every proposal.
+		// An open proposal is late when its validity end date is before now minus the warning delay (a proposal without validity
+		// end date was counted as late, this is kept); nothing is late in the 'signed' mode.
+		$sql = "SELECT COUNT(p.rowid) as nb, SUM(p.total_ht) as total,";
+		if ($mode == 'opened') {
+			$sql .= " SUM(CASE WHEN p.fin_validite IS NULL OR p.fin_validite < '".$this->db->idate($now - $delay_warning)."' THEN 1 ELSE 0 END) as nblate";
+		} else {
+			$sql .= " 0 as nblate";
+		}
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
@@ -3579,19 +3596,15 @@ class Propal extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("propal");
-			$now = dol_now();
 
-			$delay_warning = 0;
 			$status = 0;
 			$label = $labelShort = '';
 			if ($mode == 'opened') {
-				$delay_warning = getWarningDelay('propal', 'cloture');
 				$status = self::STATUS_VALIDATED;
 				$label = $langs->transnoentitiesnoconv("PropalsToClose");
 				$labelShort = $langs->transnoentitiesnoconv("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
-				$delay_warning = getWarningDelay('propal', 'facturation');
 				$status = self::STATUS_SIGNED;
 				$label = $langs->trans("PropalsToBill"); // We set here bill but may be billed or ordered
 				$labelShort = $langs->trans("ToBill");
@@ -3606,18 +3619,12 @@ class Propal extends CommonObject
 			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-				$response->total += $obj->total_ht;
-
-				if ($mode == 'opened') {
-					$datelimit = $this->db->jdate($obj->datefin);
-					if ($datelimit < ($now - $delay_warning)) {
-						$response->nbtodolate++;
-					}
-				}
-				// TODO Definir regle des propales a facturer en retard
-				// if ($mode == 'signed' && ! count($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
+			// TODO Definir regle des propales a facturer en retard (mode 'signed')
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->total = (float) $obj->total;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
@@ -3866,7 +3873,7 @@ class Propal extends CommonObject
 			}
 			if (!$nofetch) {
 				$langs->load('project');
-				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
+				if (is_null($this->project) || (is_object($this->project) && empty($this->project->id))) {
 					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, '1');

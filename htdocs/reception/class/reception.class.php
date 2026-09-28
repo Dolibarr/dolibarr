@@ -15,7 +15,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
- * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1419,6 +1419,7 @@ class Reception extends CommonObject
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " fk_projet=".((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_warehouse=".((isset($this->fk_warehouse) && $this->fk_warehouse > 0) ? ((int) $this->fk_warehouse) : "null").",";
 		$sql .= " entity = ".((int) $conf->entity);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1602,6 +1603,40 @@ class Reception extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Delete a line of the reception. Only allowed while the reception is a draft.
+	 *
+	 *	@param	User	$user		User that deletes
+	 *	@param	int		$lineid		Id of the line to delete (llx_receptiondet_batch.rowid)
+	 *	@return	int					>0 if OK, <0 if KO
+	 */
+	public function deleteLine($user, $lineid)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		$line = new ReceptionLineBatch($this->db);
+		if ($line->fetch($lineid) <= 0) {
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+		if ($line->fk_reception != $this->id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
+		$this->db->begin();
+		if ($line->delete($user) > 0) {
+			$this->db->commit();
+			return 1;
+		}
+		$this->error = $line->error;
+		$this->db->rollback();
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

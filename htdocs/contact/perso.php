@@ -312,6 +312,7 @@ if ($action == 'edit') {
 
 		print ' &nbsp; ';
 		//var_dump($birthdatearray);
+		print '<span class="opacitymedium">';
 		$ageyear = (int) convertSecondToTime($now - $object->birthday, 'year') - 1970;
 		$agemonth = (int) convertSecondToTime($now - $object->birthday, 'month') - 1;
 		if ($ageyear >= 2) {
@@ -321,14 +322,15 @@ if ($action == 'edit') {
 		} else {
 			print '('.$agemonth.' '.$langs->trans("DurationMonth").')';
 		}
+		print '</span>';
 
-
-		print ' &nbsp; - &nbsp; ';
+		print ' &nbsp; <span class="opacitymedium">- &nbsp; ';
 		if ($object->birthday_alert) {
-			print $langs->trans("BirthdayAlertOn");
+			print img_picto('', 'birthday-cake', 'class="pictofixedwidth"').$langs->trans("BirthdayAlertOn");
 		} else {
 			print $langs->trans("BirthdayAlertOff");
 		}
+		print '</span>';
 		print '</td>';
 	} else {
 		print '<td>'.$langs->trans("DateOfBirth").'</td><td colspan="3"></td>';

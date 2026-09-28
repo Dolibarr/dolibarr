@@ -371,7 +371,7 @@ class Shipments extends DolibarrApi
 		// (warehouse requirement, stock availability, batch rejection).
 		$addResult = $this->shipment->addline((int) $warehouse_id, $fk_origin_line, $qty, array(), (int) $fk_product);
 		if ($addResult <= 0) {
-			$msg = $this->shipment->error ? $this->shipment->error : 'Error while adding shipment line';
+			$msg = $this->shipment->errorsToString() ? $this->shipment->errorsToString() : 'Error while adding shipment line';
 			// -1 missing warehouse, -3 not enough stock, -4 batch product: bad request from the caller.
 			if (in_array((int) $addResult, array(-1, -3, -4), true)) {
 				throw new RestException(400, $msg);
@@ -388,7 +388,7 @@ class Shipments extends DolibarrApi
 			return $insertRes;
 		}
 
-		throw new RestException(500, $line->error ? $line->error : implode(', ', $line->errors));
+		throw new RestException(500, $line->errorsToString());
 	}
 
 	/**
@@ -466,7 +466,7 @@ class Shipments extends DolibarrApi
 			return $this->get($id);
 		}
 
-		throw new RestException(500, $line->error ? $line->error : $this->shipment->error);
+		throw new RestException(500, $line->errorsToString() ? $line->errorsToString() : $this->shipment->errorsToString());
 	}
 
 	/**
@@ -522,7 +522,7 @@ class Shipments extends DolibarrApi
 			return $this->get($id);
 		}
 
-		throw new RestException(500, $this->shipment->error ? $this->shipment->error : 'Error while deleting shipment line');
+		throw new RestException(500, $this->shipment->errorsToString() ? $this->shipment->errorsToString() : 'Error while deleting shipment line');
 	}
 
 	/**
@@ -570,7 +570,7 @@ class Shipments extends DolibarrApi
 		if ($this->shipment->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->shipment->error);
+			throw new RestException(500, $this->shipment->errorsToString());
 		}
 	}
 
@@ -598,7 +598,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if (!$this->shipment->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->error);
+			throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->errorsToString());
 		}
 
 		return array(
@@ -647,7 +647,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
+			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->errorsToString());
 		}
 
 		// Reload shipment
@@ -689,7 +689,7 @@ class Shipments extends DolibarrApi
 
 	$result = $this->shipment->classifyBilled(DolibarrApiAccess::$user);
 	if( $result < 0) {
-			throw new RestException(400, $this->shipment->error);
+			throw new RestException(400, $this->shipment->errorsToString());
 	}
 	return $result;
 	}
@@ -733,7 +733,7 @@ class Shipments extends DolibarrApi
 
 	$result = $this->shipment->createFromOrder($order, DolibarrApiAccess::$user);
 	if( $result < 0) {
-			throw new RestException(405, $this->shipment->error);
+			throw new RestException(405, $this->shipment->errorsToString());
 	}
 	$this->shipment->fetchObjectLinked();
 	return $this->_cleanObjectDatas($this->shipment);
@@ -770,7 +770,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Order: '.$this->shipment->error);
+			throw new RestException(500, 'Error when closing Order: '.$this->shipment->errorsToString());
 		}
 
 		// Reload shipment
@@ -818,7 +818,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when setting shipment back to draft: '.$this->shipment->error);
+			throw new RestException(500, 'Error when setting shipment back to draft: '.$this->shipment->errorsToString());
 		}
 
 		// Reload shipment

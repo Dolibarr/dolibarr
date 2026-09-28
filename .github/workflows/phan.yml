@@ -3,6 +3,7 @@
 name: Phan
 
 
+# Controls when the workflow will run
 on:
   # workflow called by the parent workflow ci.yml
   workflow_call:

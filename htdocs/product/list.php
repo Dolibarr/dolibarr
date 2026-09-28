@@ -94,6 +94,8 @@ $search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');	// ref of suppli
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_default_workstation = GETPOST("search_default_workstation", 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alphanohtml');
 $search_type = GETPOST("search_type", "int");
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = 0;
@@ -313,6 +315,8 @@ $arrayfields = array(
 	$alias_product_perentity . '.accountancy_code_buy_export' => array('label' => "ProductAccountancyBuyExportCode", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 405),
 	'p.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'p.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'p.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'p.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'p.tosell' => array('label' => $langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Sell").')', 'checked' => '1', 'position' => 1000),
 	'p.tobuy' => array('label' => $langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked' => '1', 'position' => 1000),
 	'p.import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'notnull' => -1, 'index' => 0, 'checked' => '-1', 'position' => 1100),
@@ -414,6 +418,8 @@ if (empty($reshook)) {
 		$search_ref_supplier = "";
 		$search_label = "";
 		$search_default_workstation = "";
+		$search_note_public = '';
+		$search_note_private = '';
 		$search_barcode = "";
 		$searchCategoryProductOperator = 0;
 		$searchCategoryProductList = array();
@@ -534,6 +540,7 @@ if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 $sql .= ' p.datec as date_creation, p.tms as date_modification, p.pmp, p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units,';
 $sql .= ' p.fk_country, p.fk_state, p.stockable_product,';
+$sql .= ' p.note_public, p.note as note_private,';
 $sql .= ' p.import_key,';
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
@@ -646,6 +653,12 @@ if ($search_ref_ext) {
 }
 if ($search_default_workstation) {
 	$sql .= natural_search('ws.ref', $search_default_workstation);
+}
+if ($search_note_public != '') {
+	$sql .= natural_search('p.note_public', $search_note_public);
+}
+if ($search_note_private != '') {
+	$sql .= natural_search('p.note', $search_note_private);
 }
 if ($search_barcode) {
 	$sql .= natural_search('p.barcode', $search_barcode);
@@ -871,6 +884,12 @@ if ($search_label) {
 }
 if ($search_default_workstation) {
 	$param .= "&search_default_workstation=".urlencode($search_default_workstation);
+}
+if ($search_note_public != '') {
+	$param .= '&search_note_public='.urlencode($search_note_public);
+}
+if ($search_note_private != '') {
+	$param .= '&search_note_private='.urlencode($search_note_private);
 }
 if ($search_tosell != '') {
 	$param .= "&search_tosell=".urlencode($search_tosell);
@@ -1279,6 +1298,18 @@ if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 	print '<input class="flat width75" type="text" name="search_default_workstation" value="'.dol_escape_htmltag($search_default_workstation).'">';
 	print '</td>';
 }
+// Note public
+if (!empty($arrayfields['p.note_public']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
+	print '</td>';
+}
+// Note private
+if (!empty($arrayfields['p.note_private']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
+	print '</td>';
+}
 
 // Sell price
 if (!empty($arrayfields['p.sellprice']['checked'])) {
@@ -1563,6 +1594,14 @@ if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_default_workstation']['label'], $_SERVER['PHP_SELF'], 'ws.ref', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['p.note_public']['label'], $_SERVER["PHP_SELF"], "p.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['p.note_private']['label'], $_SERVER["PHP_SELF"], "p.note", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['p.sellprice']['checked'])) {
 	print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -1756,6 +1795,8 @@ while ($i < $imaxinloop) {
 		$product_static->surface = $obj->surface;
 		$product_static->surface_units = $obj->surface_units;
 		$product_static->stockable_product = $obj->stockable_product;
+		$product_static->note_public = $obj->note_public;
+		$product_static->note_private = $obj->note_private;
 		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			$product_static->fk_unit = $obj->fk_unit;
 		}
@@ -1838,7 +1879,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="tdlineheightsmall" data-key="ref">';
 			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
-			print $product_static->getNomUrl(1);
+			print $product_static->getNomUrl(1, '', 0, -1, 0, '', 0, ' - ', 1);
 			if (empty($arrayfields['p.label']['checked'])) {
 				print '<br><span class="spantitle">'.dolPrintHTML($product_static->label).'</span>';
 			}
@@ -2126,6 +2167,25 @@ while ($i < $imaxinloop) {
 
 				print $workstation_static->getNomUrl(1);
 			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Note public
+		if (!empty($arrayfields['p.note_public']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['p.note_private']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

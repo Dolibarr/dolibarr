@@ -747,7 +747,8 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
 		$tmpname = preg_replace('/(_TEST|_PROD)$/', '', $name);
-		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $tmpname))) {
+		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name)
+			&& (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_TOKEN|_REFRESH)$/', $tmpname))) {
 			// This seems a sensitive constant, we encrypt its value
 			// To list all sensitive constant, you can make a
 			// SELECT * from llx_const WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' ...
@@ -2113,16 +2114,18 @@ function delDocumentModel($name, $type)
  *	block that was historically copy-pasted into most module setup pages (invoice.php, order.php,
  *	reception_setup.php, ...).
  *
- *	@param	string					$type			Value of document_model.type and root of the ADDON_PDF conf constant (e.g. 'invoice', 'reception')
- *	@param	string					$moduledir		Directory name under core/modules/ to scan for model classes (e.g. 'facture', 'reception'); may differ from $type
- *	@param	string					$constpdf		Name of the conf constant storing the default model name (e.g. 'FACTURE_ADDON_PDF')
- *	@param	string					$title			Already translated title printed above the table
- *	@param	array<string,string>	$features		Ordered list of extra tooltip feature rows to show, as array('TranslationKey' => 'option_property')
+ *	@param	string					$type				Value of document_model.type and root of the ADDON_PDF conf constant (e.g. 'invoice', 'reception')
+ *	@param	string					$moduledir			Directory name under core/modules/ to scan for model classes (e.g. 'facture', 'reception'); may differ from $type
+ *	@param	string					$constpdf			Name of the conf constant storing the default model name (e.g. 'FACTURE_ADDON_PDF')
+ *	@param	string					$title				Already translated title printed above the table
+ *	@param	array<string,string>	$features			Ordered list of extra tooltip feature rows to show, as array('TranslationKey' => 'option_property')
  *	@param	bool					$excludedisabled	If true, hide modules with version == 'disabled'
  *	@param	string					$constpdfdefault	Default value to assume for $constpdf when the conf constant is not set
+ *	@param	int<0,1>				$usedefault			If 1, show also the column Default.
+ *	@param	string					$actionunset	If not empty, action name used on the Default pictogram to unset the default model (e.g. 'unsetdoc'), if empty the pictogram is not clickable
  *	@return	void
  */
-function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '')
+function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '', $usedefault = 1, $actionunset = '')
 {
 	global $db, $langs, $conf;
 
@@ -2157,7 +2160,9 @@ function printDocumentModelList($type, $moduledir, $constpdf, $title, array $fea
 	print '<td>'.$langs->trans("Name").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
 	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-	print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
+	if ($usedefault) {
+		print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
+	}
 	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 	print '<td class="center" width="60">'.$langs->trans("Preview").'</td>';
 	print "</tr>\n";
@@ -2216,24 +2221,36 @@ function printDocumentModelList($type, $moduledir, $constpdf, $title, array $fea
 									// Active
 									if (in_array($name, $def)) {
 										print '<td class="center">'."\n";
-										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 										print img_picto($langs->trans("Enabled"), 'switch_on');
 										print '</a>';
 										print '</td>';
 									} else {
-										print '<td class="center">'."\n";
-										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-										print "</td>";
+										if (!empty($module->phpmin) && versioncompare($module->phpmin, versionphparray()) > 0) {
+											print '<td class="center">'."\n";
+											print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", implode('.', $module->phpmin))), 'switch_off', 'class="opacitymedium"');
+											print "</td>";
+										} else {
+											print '<td class="center">'."\n";
+											print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+											print "</td>";
+										}
 									}
 
 									// Default
-									print '<td class="center">';
-									if (getDolGlobalString($constpdf, $constpdfdefault) == (string) $name) {
-										print img_picto($langs->trans("Default"), 'on');
-									} else {
-										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									if ($usedefault) {
+										print '<td class="center">';
+										if (getDolGlobalString($constpdf, $constpdfdefault) == (string) $name) {
+											if ($actionunset) {
+												print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$actionunset.'&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Default"), 'on').'</a>';
+											} else {
+												print img_picto($langs->trans("Default"), 'on');
+											}
+										} else {
+											print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+										}
+										print '</td>';
 									}
-									print '</td>';
 
 									// Info
 									$htmltooltip = ''.$langs->trans("Name").': '.$module->name;

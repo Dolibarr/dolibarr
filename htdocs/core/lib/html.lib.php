@@ -242,6 +242,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	} else {
 		// Now we protect all the tags we want to keep
 		$tmparrayoftags = array();
+		$tmparrayoftagsfound = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
@@ -254,6 +255,13 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 			$tmp = str_ireplace(array('__DOUBLEQUOTE', '__BEGINTAGTOREPLACE', '__ENDTAGTOREPLACE', '__BEGINENDTAGTOREPLACE'), '', $tmp);
 
 			foreach ($tmparrayoftags as $tagtoreplace) {
+				// The 4 patterns below all start with '<tag' or '</tag': a tag that is not in the string can not be protected, so it
+				// does not need the 4 regex passes, nor to be restored later. On a list page, most strings hold no tag at all.
+				if (stripos($tmp, '<' . $tagtoreplace) === false && stripos($tmp, '</' . $tagtoreplace) === false) {
+					continue;
+				}
+				$tmparrayoftagsfound[] = $tagtoreplace;
+
 				// For case of tag without attributes '<abc>', '</abc>', '<abc />', we protect them to avoid transformation by htmlentities() later
 				$tmp = preg_replace('/<' . preg_quote($tagtoreplace, '/') . '>/', '__BEGINTAGTOREPLACE' . $tagtoreplace . '__', $tmp);
 				$tmp = str_ireplace('</' . $tagtoreplace . '>', '__ENDTAGTOREPLACE' . $tagtoreplace . '__', $tmp);
@@ -294,7 +302,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 		if (count($tmparrayoftags)) {
 			// Restore protected tags
-			foreach ($tmparrayoftags as $tagtoreplace) {
+			foreach ($tmparrayoftagsfound as $tagtoreplace) {
 				$result = str_ireplace('__BEGINTAGTOREPLACE' . $tagtoreplace . '__', '<' . $tagtoreplace . '>', $result);
 				$result = preg_replace('/__BEGINTAGTOREPLACE' . $tagtoreplace . '\[([^\]]*)\]__/', '<' . $tagtoreplace . ' \1>', $result);
 				$result = str_ireplace('__ENDTAGTOREPLACE' . $tagtoreplace . '__', '</' . $tagtoreplace . '>', $result);
@@ -561,7 +569,6 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		}
 	}
 
-	// Show tabs
 	// if =0 we don't use the feature
 	if (empty($limittoshow)) {
 		$limittoshow = getDolGlobalInt('MAIN_MAXTABS_IN_CARD', 99);
@@ -1019,9 +1026,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	} elseif (in_array($object->element, array('salary'))) {
 		/** @var Salary $object */
 		'@phan-var-force Salary $object';
-		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
+		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {
@@ -3570,7 +3577,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	$divstart = $divend = '';
 
 	// If inline message with no format, we add it.
-	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
+	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || defined('DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
 		$divstart = '<div class="' . $style . ' clearboth">';
 		$divend = '</div>';
 	}
@@ -3595,7 +3602,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	}
 
 	if ($out) {
-		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
+		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
 			if ($style == "ok") {
 				// For success messages (green), allow manual click to close immediately without fade
 				$return = '<script nonce="' . getNonce() . '">

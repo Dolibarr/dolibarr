@@ -13,7 +13,7 @@
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2022       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
@@ -2276,7 +2276,23 @@ class SupplierProposal extends CommonObject
 
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.date_cloture as datefin";
+		$delay_warning = 0;
+		if ($mode == 'opened') {
+			$delay_warning = !empty($conf->supplier_proposal->cloture->warning_delay) ? $conf->supplier_proposal->cloture->warning_delay : 0;
+		}
+		if ($mode == 'signed') {
+			$delay_warning = !empty($conf->supplier_proposal->facturation->warning_delay) ? $conf->supplier_proposal->facturation->warning_delay : 0;
+		}
+
+		// The count and the number of late proposals are computed by the database instead of reading every proposal. An open
+		// proposal is late when its closing date is before now minus the warning delay (a proposal without closing date was
+		// counted as late, this is kept); nothing is late in the 'signed' mode.
+		$sql = "SELECT COUNT(p.rowid) as nb,";
+		if ($mode == 'opened') {
+			$sql .= " SUM(CASE WHEN p.date_cloture IS NULL OR p.date_cloture < '".$this->db->idate($now - $delay_warning)."' THEN 1 ELSE 0 END) as nblate";
+		} else {
+			$sql .= " 0 as nblate";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
@@ -2298,15 +2314,12 @@ class SupplierProposal extends CommonObject
 		if ($resql) {
 			$label = $labelShort = '';
 			$status = '';
-			$delay_warning = 0;
 			if ($mode == 'opened') {
-				$delay_warning = !empty($conf->supplier_proposal->cloture->warning_delay) ? $conf->supplier_proposal->cloture->warning_delay : 0;
 				$status = self::STATUS_VALIDATED;
 				$label = $langs->trans("SupplierProposalsToClose");
 				$labelShort = $langs->trans("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
-				$delay_warning = !empty($conf->supplier_proposal->facturation->warning_delay) ? $conf->supplier_proposal->facturation->warning_delay : 0;
 				$status = self::STATUS_SIGNED;
 				$label = $langs->trans("SupplierProposalsToProcess"); // May be billed or ordered
 				$labelShort = $langs->trans("ToClose");
@@ -2320,16 +2333,11 @@ class SupplierProposal extends CommonObject
 			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-				if ($mode == 'opened') {
-					$datelimit = $this->db->jdate($obj->datefin);
-					if ($datelimit < ($now - $delay_warning)) {
-						$response->nbtodolate++;
-					}
-				}
-				// TODO Definir regle des propales a facturer en retard
-				// if ($mode == 'signed' && ! count($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
+			// TODO Definir regle des propales a facturer en retard (mode 'signed')
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 			return $response;
 		} else {
@@ -3324,7 +3332,7 @@ class SupplierProposalLine extends CommonObjectLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0) {
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return $result;
 			} else {
@@ -3531,7 +3539,7 @@ class SupplierProposalLine extends CommonObjectLine
 
 		// if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0) {
-			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product, $this->qty);
 			if ($result < 0) {
 				return $result;
 			} else {

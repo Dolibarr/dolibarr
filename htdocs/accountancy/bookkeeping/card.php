@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2017	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "bills", "compta"));
+$langs->loadLangs(array("accountancy", "bills", "compta", "errors"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -270,6 +270,7 @@ if (empty($reshook)) {
 
 			$action = 'create';
 		} elseif ($result > 0) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -286,6 +287,11 @@ if (empty($reshook)) {
 		}
 		if (!GETPOST('doc_ref', 'alpha')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Piece")), null, 'errors');
+			$action = 'create';
+			$error++;
+		}
+		if (dol_strlen(GETPOST('ref', 'alpha')) > 30) {	// Size of field ref in database
+			setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 			$action = 'create';
 			$error++;
 		}
@@ -433,7 +439,13 @@ if (empty($reshook)) {
 
 	if ($action == 'setref' && $permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
 		$newref = GETPOST('ref', 'alpha');
-		$result = $object->updateByMvt($piece_num, 'ref', $newref, $mode);
+		if (dol_strlen($newref) > 30) {	// Size of field ref in database
+			$result = -1;
+			$object->error = $langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Ref"));
+			$object->errors = array();
+		} else {
+			$result = $object->updateByMvt($piece_num, 'ref', $newref, $mode);
+		}
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -543,6 +555,7 @@ if (empty($reshook)) {
 
 		if ($result == -1) {
 			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		if (!$error) {
@@ -661,7 +674,7 @@ if ($action == 'create') {
 	print '<td>'.$form->textwithpicto($langs->trans("Ref"), $langs->trans("BankTransactionRef")).'</td>';
 	print '<td>';
 	if ($numRefModel === 'mod_bookkeeping_neon') {
-		print '<input type="text" class="minwidth200" name="ref" value="">';
+		print '<input type="text" class="minwidth200" name="ref" maxlength="30" value="">';
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("Automatic").'</span>';
 	}
@@ -829,7 +842,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print '<input type="hidden" name="type" value="'.$type.'">';
-			print '<input type="text" size="20" name="ref" value="'.dol_escape_htmltag($object->ref).'">';
+			print '<input type="text" size="20" name="ref" maxlength="30" value="'.dol_escape_htmltag($object->ref).'">';
 			print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {

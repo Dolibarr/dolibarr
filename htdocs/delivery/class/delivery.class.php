@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2023  Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry	        <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -250,6 +250,15 @@ class Delivery extends CommonObject
 							$error++;
 						}
 					}
+				}
+
+				if (!$error) {
+					// Call trigger
+					$result = $this->call_trigger('DELIVERY_CREATE', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 				}
 
 				if (!$error) {
