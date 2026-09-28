@@ -1682,7 +1682,7 @@ export function initAiAssistant(container) {
                 const nav = await aiJson(navRes);
                 loadingNav.remove();
                 if (nav.error) { appendMsg('error', nav.error); }
-                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fa fa-external-link"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
+                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
                 input.disabled = false; input.focus(); return;
             }
 
@@ -1773,6 +1773,23 @@ export function initAiAssistant(container) {
         api_contracts: '/contrat/card.php?id=%id%',
         api_tickets: '/ticket/card.php?id=%id%'
     };
+    // The picto of the object a card link points to, like getNomUrl() does in
+    // Dolibarr pages: the icons are the ones the core assigns to each object
+    // (see the picto table of img_picto()), keyed on the card's path.
+    const CARD_PICTOS = [
+        ['/societe/', 'building'], ['/compta/facture/', 'file-invoice-dollar'], ['/fourn/facture/', 'file-invoice-dollar'],
+        ['/commande/', 'file-invoice'], ['/fourn/commande/', 'file-invoice'], ['/comm/propal/', 'file-signature'],
+        ['/supplier_proposal/', 'file-signature'], ['/product/', 'cube'], ['/projet/', 'project-diagram'],
+        ['/contrat/', 'suitcase'], ['/ticket/', 'ticket-alt'], ['/fichinter/', 'ambulance'], ['/expedition/', 'dolly'],
+        ['/reception/', 'dolly'], ['/user/', 'user'], ['/contact/', 'address-book'], ['/adherents/', 'user-alt'],
+        ['/categories/', 'tag'], ['/document.php', 'file']
+    ];
+    function pictoForUrl(url) {
+        if (typeof url !== 'string') return '';
+        const hit = CARD_PICTOS.find((p) => url.indexOf(p[0]) >= 0);
+        return hit ? `<span class="fas fa-${hit[1]} chat-picto"></span>` : '';
+    }
+
     function cardUrlFor(tool, id) {
         if (!tool || !id) return null;
         const prefix = Object.keys(TOOL_CARD_URLS).find(p => tool.indexOf(p) === 0);
@@ -1837,7 +1854,11 @@ export function initAiAssistant(container) {
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid');
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
-            keys.forEach(k => content += `<th>${fieldLabel(k)}</th>`);
+            // Rows that are files (their url is a document.php download): the
+            // "name" column is the file, not a third party, and the file gets a
+            // magnifier opening Dolibarr's preview (same link, attachment=0).
+            const isFileList = data.length > 0 && typeof data[0].url === 'string' && /\/document\.php\?/.test(data[0].url);
+            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : fieldLabel(k)}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
                 content += '<tr>';
@@ -1845,7 +1866,11 @@ export function initAiAssistant(container) {
                     let val = formatCell(k, row[k]);
                     const cardUrl = row.url || cardUrlFor(toolName, row.id || row.rowid);
                     if (cardUrl && val.indexOf('<a ') !== 0 && ['ref', 'name', 'nom', 'label', 'customer', 'supplier', 'subject'].includes(k)) {
-                        val = `<a href="${cardUrl}" target="_blank" class="chat-link">${val}</a>`;
+                        val = `<a href="${cardUrl}" target="_blank" class="chat-link">${pictoForUrl(cardUrl)}${val}</a>`;
+                        if (isFileList && k === 'name') {
+                            const previewUrl = cardUrl + (cardUrl.indexOf('attachment=') >= 0 ? '' : '&attachment=0');
+                            val += ` <a href="${previewUrl}" target="_blank" class="chat-link chat-preview" title="${escapeHtml(t('Preview'))}"><span class="fas fa-search-plus"></span></a>`;
+                        }
                     }
                     if ((k === 'socid' || k === 'fk_soc') && row[k]) {
                         content += `<td data-socid="${escapeHtml(String(row[k]))}">${val}</td>`;
@@ -1872,9 +1897,9 @@ export function initAiAssistant(container) {
         if (!isRecursive) {
             let toolbarContent = '';
             if (isArray) {
-                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
+                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fas fa-file-pdf"></span> ${t('DownloadPdf')}</button>`;
             } else if (isObject && objectUrl) {
-                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
+                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fas fa-external-link-alt"></span> ${t('OpenVerb')}</a>`;
             }
             if (toolbarContent) { content += `<div class="msg-toolbar">${toolbarContent}</div>`; }
         }
