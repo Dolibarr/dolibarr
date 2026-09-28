@@ -203,8 +203,16 @@ if ($result >= 0) {
 					if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS') === 'memberUid') {
 						$userKey = array($userdn);
 					} else { // Pour les autres schémas, les membres sont listés sous forme de DN completes
-						$userFilter = explode(',', $userdn);
-						$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', getDolGlobalString('LDAP_KEY_USERS'));
+						// Build the filter from the first RDN of the DN. The RDN value uses DN escaping (ex: 'CN=\+ Group',
+						// 'CN=Doe\, John') which is not valid in a search filter, so unescape it and escape it again for a filter.
+						$userKey = false;
+						$rdnParts = explode('=', preg_split('/(?<!\\\\),/', $userdn, 2)[0], 2);
+						if (count($rdnParts) == 2) {
+							$rdnValue = preg_replace_callback('/\\\\([0-9A-Fa-f]{2}|.)/', /** @param array<int,string> $m */ function (array $m) {
+								return strlen($m[1]) == 2 ? chr((int) hexdec($m[1])) : $m[1];
+							}, $rdnParts[1]);
+							$userKey = $ldap->getAttributeValues('('.$rdnParts[0].'='.ldap_escape((string) $rdnValue, '', LDAP_ESCAPE_FILTER).')', getDolGlobalString('LDAP_KEY_USERS'));
+						}
 					}
 					if (!is_array($userKey)) {
 						continue;
