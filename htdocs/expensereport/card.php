@@ -262,8 +262,8 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $candelete) {
 		$object = new ExpenseReport($db);
 		$result = $object->fetch($id);
-		$result = $object->delete($user);
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: index.php");
 			exit;
