@@ -21,7 +21,7 @@ jobs:
     name: Check PR quota per user
     runs-on: ubuntu-latest
     env:
-      MAX_PR_PER_USER_PER_DAY: 25
+      MAX_PR_PER_USER_PER_DAY: 20
     steps:
       - name: Check the number of PR created by the author of the PR during the current day (UTC)
         env:
@@ -49,7 +49,7 @@ jobs:
           echo "Maximum number of PR allowed per user and per day: ${MAX_PR_PER_USER_PER_DAY}"
 
           if [ "${NB_PR_TODAY}" -ge "${MAX_PR_PER_USER_PER_DAY}" ]; then
-            echo "::error::The user ${PR_AUTHOR} has already created ${NB_PR_TODAY} pull requests today (UTC) and the limit is ${MAX_PR_PER_USER_PER_DAY} pull requests per user and per day. This pull request is refused. Please wait for the next day (UTC) before creating new pull requests, or close this pull request and reopen it the next day to run the check again."
+            echo "::error::The user ${PR_AUTHOR} has already created ${NB_PR_TODAY} pull requests today (UTC) and the limit is ${MAX_PR_PER_USER_PER_DAY} pull requests per user and per day. This pull request is refused and will be automatically deleted soon. Please wait for the next day (UTC) before creating new pull requests, or close this pull request and reopen it the next day to run the check again."
             exit 1
           fi
 
