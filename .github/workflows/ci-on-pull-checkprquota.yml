@@ -1,0 +1,56 @@
+---
+# Check the number of PR created by the same user during the current day (UTC) does not exceed
+# the quota defined in the variable MAX_PR_PER_USER_PER_DAY (20).
+# All the PR are counted, whatever their state (open, closed or merged), including the drafts.
+# If the quota is exceeded, the CI fails, so the PR is refused.
+# The PR can be closed and reopened the next day (the quota is reset at midnight UTC)
+# to run the check again and pass it.
+# Note: the GitHub search API used to count the PR has an indexing delay of 1 or 2 minutes,
+# so a burst of PR opened at the same time may not be all detected by this control.
+name: Check PR quota per user
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  check-pr-quota:
+    name: Check PR quota per user
+    runs-on: ubuntu-latest
+    env:
+      MAX_PR_PER_USER_PER_DAY: 25
+    steps:
+      - name: Check the number of PR created by the author of the PR during the current day (UTC)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+
+          # Get the PR created by the author of the PR during the current day (UTC),
+          # using the GitHub search API so no git history is needed (no checkout).
+          # The PR being checked may or may not be already indexed by the search engine,
+          # so it is excluded from the result to count only the other PR of the author.
+          SEARCH_RESULT=$(gh api --method GET search/issues \
+            -f q="repo:${REPO} is:pr author:${PR_AUTHOR} created:>=${TODAY}" \
+            -f per_page=100)
+
+          NB_PR_TODAY=$(echo "${SEARCH_RESULT}" | jq --argjson pr "${PR_NUMBER}" \
+            '[.items[].number | select(. != $pr)] | length')
+
+          echo "Date of the check (UTC): ${TODAY}"
+          echo "Author of the PR #${PR_NUMBER}: ${PR_AUTHOR}"
+          echo "Number of PR created today (UTC) by ${PR_AUTHOR}, except this one: ${NB_PR_TODAY}"
+          echo "Maximum number of PR allowed per user and per day: ${MAX_PR_PER_USER_PER_DAY}"
+
+          if [ "${NB_PR_TODAY}" -ge "${MAX_PR_PER_USER_PER_DAY}" ]; then
+            echo "::error::The user ${PR_AUTHOR} has already created ${NB_PR_TODAY} pull requests today (UTC) and the limit is ${MAX_PR_PER_USER_PER_DAY} pull requests per user and per day. This pull request is refused. Please wait for the next day (UTC) before creating new pull requests, or close this pull request and reopen it the next day to run the check again."
+            exit 1
+          fi
+
+          echo "The number of PR created today (UTC) by ${PR_AUTHOR} is lower than the limit of ${MAX_PR_PER_USER_PER_DAY} PR per user and per day. OK."

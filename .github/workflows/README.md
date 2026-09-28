@@ -25,6 +25,7 @@ The other worklows are:
 - ci-on-closepr-cache-clean-pr 		to clean cache when closing a PR.
 - ci-on-pushpull-checkfiltesetlock 	to check we do not modify a file that is locked by a signature in dev/lockedfiles.txt
 - ci-on-pull-checkpr 				to check the title of a PR starts with a valid keyword (Fix, Close, New, Perf, Doc, Qual, Sec) and its description does not contain the mention @eldy
+- ci-on-pull-checkprquota			to check the number of PR created by a user per day does not exceed the quota (20).
 - ci-on-comment-moderation			to experiment automatic moderation of comments (bot).
 - ci-on-comment-unstale 			to remove the stale label of an issue when a comment is added.
 - ci-on-pull-v18-autoassign 		to set the reviewers and add the label on PRs targeting the branch 18.0.
