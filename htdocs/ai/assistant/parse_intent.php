@@ -718,6 +718,14 @@ try {
 				}
 			}
 
+			// With past turns in the payload, the model must know what they are
+			// for. Two consecutive user turns (a request whose action the user
+			// cancelled, then a new one) read as "two things to do", and with a
+			// single tool call per answer the model picks the older one - field
+			// case: "set the phone of X" answered by creating "X bis".
+			if (!empty($history)) {
+				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references like \"this one\" or \"the second\". The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
+			}
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
