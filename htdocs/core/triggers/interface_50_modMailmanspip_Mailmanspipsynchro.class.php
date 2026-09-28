@@ -69,7 +69,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 		if ($action == 'CATEGORY_MODIFY' && $object instanceof Categorie) {
-			'@phan-var-force $object Categorie';
+			'@phan-var-force Categorie $object';
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 1;
