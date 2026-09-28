@@ -1743,12 +1743,12 @@ class CommandeFournisseur extends CommonOrder
 						0,
 						$line->date_start ?? null,
 						$line->date_end ?? null,
-						$line->array_options ?? [],
+						$line->array_options,
 						$line->fk_unit ?? null,
 						$line_pu_devise,  // pu_ht_devise
 						(string) $line->origin,  // origin
 						(int) $line->origin_id,  // origin_id
-						(int) ($line->rang ?? -1),       // rang
+						(int) ($line->rang > 0 ? $line->rang : -1),       // rang
 						(int) $line->special_code,
 						isset($line->product_label) ? $line->product_label : ''
 					);
