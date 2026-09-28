@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2022       Quatadah Nasdami     <quatadah.nasdami@gmail.com>
+/* Copyright (C) 2022       Quatadah Nasdami     	<quatadah.nasdami@gmail.com>
  * Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -887,7 +888,14 @@ class Receptions extends DolibarrApi
 			$data = array();
 		}
 		$reception = array();
-		foreach (Receptions::$FIELDS as $field) {
+		// A standalone reception carries no source document, exactly as the card
+		// allows when RECEPTION_STANDALONE is enabled: do not demand an origin the
+		// user is entitled to omit.
+		$mandatory = Receptions::$FIELDS;
+		if (getDolGlobalString('RECEPTION_STANDALONE') && !isset($data['origin_id']) && !isset($data['origin_type'])) {
+			$mandatory = array_values(array_diff($mandatory, array('origin_id', 'origin_type')));
+		}
+		foreach ($mandatory as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}

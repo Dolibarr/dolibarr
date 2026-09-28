@@ -4,6 +4,7 @@
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke  		<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -891,7 +892,14 @@ class Shipments extends DolibarrApi
 			$data = array();
 		}
 		$shipment = array();
-		foreach (Shipments::$FIELDS as $field) {
+		// A standalone shipment carries no source document, exactly as the card
+		// allows when SHIPMENT_STANDALONE is enabled: do not demand an origin the
+		// user is entitled to omit.
+		$mandatory = Shipments::$FIELDS;
+		if (getDolGlobalString('SHIPMENT_STANDALONE') && !isset($data['origin_id']) && !isset($data['origin_type'])) {
+			$mandatory = array_values(array_diff($mandatory, array('origin_id', 'origin_type')));
+		}
+		foreach ($mandatory as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
