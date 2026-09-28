@@ -525,13 +525,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 								continue;
 							}
 
+							/** @var Reception[] $shipping_array */
 							foreach ($shipping_array as $shipping) {
-								if (!is_array($shipping->lines) || count($shipping->lines) == 0) {
+								// A draft reception has received nothing yet
+								if ($shipping->status <= 0 || !is_array($shipping->lines) || count($shipping->lines) == 0) {
 									continue;
 								}
 
 								foreach ($shipping->lines as $shippingline) {
-									$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+									if (isset($qtyshipped[$shippingline->fk_product])) {
+										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+									} else {
+										$qtyshipped[$shippingline->fk_product] = $shippingline->qty;
+									}
 								}
 							}
 						}
@@ -549,7 +555,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							if ($orderline->product_type == 9) {
 								continue;
 							}
-							$qtyordred[$orderline->fk_product] += $orderline->qty;
+							if (isset($qtyordred[$orderline->fk_product])) {
+								$qtyordred[$orderline->fk_product] += $orderline->qty;
+							} else {
+								$qtyordred[$orderline->fk_product] = $orderline->qty;
+							}
 						}
 					}
 					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
