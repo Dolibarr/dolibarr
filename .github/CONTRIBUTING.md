@@ -69,14 +69,13 @@ Note: Mainteners of a branch can directly commit to the project (in their branch
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 
-If you're fixing a bug, it is preferred that you make a pull request against the oldest version affected.
+If you're fixing a simple bug, it is preferred that you make a Pull Request against the stable version.
 
-We recommend to push it into N - 2 where N is the latest version available, if not possible into version N - 1, and finally into develop.
+If you're fixing a critical bug, it is preferred that you make a Pull request against the oldest version affected
+or detected. First check that the bug is not already fixed in a more recent version and if yes, backport it by 
+doing a cherry-pick instead of rewriting it.
 
-The rule N - 2 is just a tip if you don't know which version to choose to get the best compromise between ease of correction and number of potential beneficiaries of the correction.
-
-If you push a bug fix on a very old version it is still going to be merged and propagated into newer versions(choose wisely because old versions depend on old deprecated/unsupported versions of PHP and external libraries). 
-
+Pull Requests on old branches are still going to be merged and propagated into newer versions (so please make a Pull Request on a very old version only for very critical bugs, like security or data integrity). If bug is not enough critical PR may be refused.
 
 
 ### General rules
