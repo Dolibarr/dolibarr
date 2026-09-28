@@ -1260,7 +1260,9 @@ abstract class CommonDocGenerator
 		);
 		$reshook = $hookmanager->executeHooks('printStdColumnContent', $parameters, $this); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 		if (!$reshook) {
 			if (empty($columnText)) {
@@ -1380,7 +1382,9 @@ abstract class CommonDocGenerator
 		);
 		$reshook = $hookmanager->executeHooks('getPDFExtrafieldContent', $parameters, $this); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 		if ($reshook) {
 			$extrafieldOutputContent = $hookmanager->resPrint;
@@ -1619,7 +1623,9 @@ abstract class CommonDocGenerator
 
 			$reshook = $hookmanager->executeHooks('pdfTabTitles', $parameters, $this); // Note that $object may have been modified by hook
 			if ($reshook < 0) {
-				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 			} elseif (empty($reshook)) {
 				if (!$this->getColumnStatus($colKey)) {
 					continue;
