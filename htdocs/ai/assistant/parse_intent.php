@@ -738,6 +738,12 @@ try {
 				$matches = array();
 				if (preg_match('/^\{.*\}$/s', $clean, $matches)) {
 					$clean = $matches[0];
+				} elseif (preg_match('/\{.*\}/s', $clean, $matches) && strpos($matches[0], '"tool"') !== false) {
+					// The model prefixed its tool call with a sentence ("I first need
+					// to find the third party... {"tool":...}"): the call is the
+					// answer, the sentence is not. Without this the whole text became
+					// a respond_to_user and the tool never ran.
+					$clean = $matches[0];
 				}
 
 				// Unmask the JSON string
