@@ -59,7 +59,7 @@ if (!is_object($object) || $object->id <= 0) {
 // Security check. Set the action to 'update' so restrictedArea() tests the write permission
 // and not only the read permission.
 $_POST['action'] = 'update';
-$result = restrictedArea($user, empty($object->module) ? $element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+$result = restrictedArea($user, empty($object->module) ? $element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1, 'write');	// Call with mode return
 if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea');
 }

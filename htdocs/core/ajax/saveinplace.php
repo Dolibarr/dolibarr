@@ -89,7 +89,7 @@ if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is
 print 'object->id='.$object->id.' - object->module='.$object->module.' - object->element='.$object->element.' - object->table_element='.$object->table_element.' - usesublevelpermission='.$usesublevelpermission."\n";
 
 // Security check
-$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1, 'write');	// Call with mode return
 if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea');
 }
