@@ -610,10 +610,14 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
+					// Bottom of the highest cell of the line (batch and warehouses may be written on several lines)
+					$posYAfterCells = $nexY;
+
 					// Lot / série
 					if (isModEnabled('productbatch')) {
 						$pdf->SetXY($this->posxlot, $curY);
 						$pdf->MultiCell(($this->posxweightvol - $this->posxlot), 3, $object->lines[$i]->batch, '', 'C');
+						$posYAfterCells = max($posYAfterCells, $pdf->GetY());
 					}
 
 					// weight
@@ -649,6 +653,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 					$pdf->SetXY($this->posxwarehousesource, $curY);
 					$pdf->MultiCell(($this->posxwarehousedestination - $this->posxwarehousesource), 3, $wh_source->ref.(!empty($wh_source->lieu) ? ' - '.$wh_source->lieu : ''), '', 'C');
+					$posYAfterCells = max($posYAfterCells, $pdf->GetY());
 
 					// Warehouse destination
 					$wh_destination = new Entrepot($this->db);
@@ -660,6 +665,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 					$pdf->SetXY($this->posxwarehousedestination, $curY);
 					$pdf->MultiCell(($this->posxpuht - $this->posxwarehousedestination), 3, $wh_destination->ref.(!empty($wh_destination->lieu) ? ' - '.$wh_destination->lieu : ''), '', 'C');
+					$posYAfterCells = max($posYAfterCells, $pdf->GetY());
 
 					if (getDolGlobalString('STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT')) {
 						$pdf->SetXY($this->posxpuht, $curY);
@@ -669,6 +675,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 3, price($object->lines[$i]->total_ht, 0, $outputlangs), '', 'R');
 					}
 
+					$nexY = max($nexY, $posYAfterCells);
 					$nexY += 3;
 					if ($weighttxt && $voltxt) {
 						$nexY += 2;
