@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
+/* Copyright (C) 2015	Jean-FranÃ§ois Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
  * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024   Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024   FrÃ©dÃ©ric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
 }
-if (!defined('NOREQUIREMENU')) {
+if (!defined('NOREQUIREME
+NU')) {
 	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
 }
 if (!defined('NOREQUIREHTML')) {
@@ -87,7 +88,8 @@ if (preg_match('/\/explorer\/swagger\.json/', $_SERVER["PHP_SELF"])) {
 if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
+	header('Access-Control-Allow-Headers: Content-Type, Autho
+rization, api_key, DOLAPIKEY, DOLAPIENTITY');
 }
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -138,14 +140,15 @@ if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] 
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (getDolGlobalString('MAIN_NGINX_FIX')) {
-	$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+	$url = (isset($_SERVER['SCRIPT_URI'])) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
 }
 
 // Enable and test if module Api is enabled
 if (!isModEnabled('api')) {
 	$langs->load("admin");
 	dol_syslog("Call of Dolibarr API interfaces with module API REST are disabled");
-	print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
+	print $langs->trans("WarningModuleNotActive", 'Api').'.<b
+r><br>';
 	print $langs->trans("ToActivateModule");
 	//session_destroy();
 	exit(0);
@@ -187,7 +190,8 @@ $hookmanager->initHooks(array('api'));
 // using the explorer. And when we make another call for another API, the API is not into the api/temp/routes.php and a 404 is returned.
 // So we force refresh to each call.
 $refreshcache = (getDolGlobalString('API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE') ? false : true);
-if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
+if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '
+/resources.json' || $reg[2] == '/resources.json/root')) {
 	$refreshcache = true;
 	if (!is_writable($conf->api->dir_temp)) {
 		dol_syslog("ErrorFailedToWriteInApiTempDirectory ".$conf->api->dir_temp, LOG_ERR);
@@ -236,7 +240,8 @@ if (getDolGlobalString('API_RESTRICT_ON_IP')) {
 	$ipremote = getUserRemoteIP();
 	if (!in_array($ipremote, $allowedip)) {
 		dol_syslog('Remote ip is '.$ipremote.', not into list ' . getDolGlobalString('API_RESTRICT_ON_IP'));
-		print 'APIs are not allowed from the IP '.$ipremote;
+		print 'APIs are not allowed from th
+e IP '.$ipremote;
 		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
 		//session_destroy();
 		exit(0);
@@ -287,6 +292,7 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 						// @todo : use getElementProperties() function ?
 						$dir_part = dol_buildpath('/'.$moduledirforclass.'/class/');
 
+
 						$handle_part = @opendir(dol_osencode($dir_part));
 						if (is_resource($handle_part)) {
 							while (($file_searched = readdir($handle_part)) !== false) {
@@ -334,7 +340,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 
 // Call one APIs or one definition of an API
 $regbis = array();
-if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && $reg[2] != '/resources.json' && preg_match('/^\/(swagger|resources)\.json\/(.+)$/', $reg[2], $regbis) && $regbis[2] != 'root'))) {
+if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && $reg[2] != '/resources.json' && preg_match('/^\/(swagger|resour
+ces)\.json\/(.+)$/', $reg[2], $regbis) && $regbis[2] != 'root'))) {
 	$moduleobject = $reg[1];
 	if ($moduleobject == 'explorer') {  // If we call page to explore details of a service
 		$moduleobject = $regbis[2];
@@ -389,7 +396,8 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 		$listofendpoints = explode(',', getDolGlobalString('API_ENDPOINT_RULES'));
 		$endpointisallowed = false;
 
-		foreach ($listofendpoints as $endpointrule) {
+		foreach ($listofendpoints as 
+$endpointrule) {
 			$tmparray = explode(':', $endpointrule);
 			if (($classfile == $tmparray[0] || $classfile.'api' == $tmparray[0]) && $tmparray[1] == 1) {
 				$endpointisallowed = true;
@@ -435,7 +443,8 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	// even though the api explorer lists it (#37282).
 	// When the class name does not match the called endpoint (for example the endpoint /resources
 	// served by the class Dolresources), the endpoint must be given to Restler as the resource path,
-	// because Restler builds its routes from the class name and would answer 404 otherwise.
+	// because Restler builds it
+s routes from the class name and would answer 404 otherwise.
 	$resourcepath = (strtolower($classname) != $moduleobject) ? $moduleobject : null;
 
 	if (class_exists($classname.'Api')) {
@@ -484,7 +493,8 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 	// We try to compress the data received data
 	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && function_exists('brotli_compress') && defined('BROTLI_TEXT')) {
 		header('Content-Encoding: br');
-		$result = brotli_compress($responsedata, 11, constant('BROTLI_TEXT'));
+		$result = brotli_co
+mpress($responsedata, 11, constant('BROTLI_TEXT'));
 	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && function_exists('bzcompress')) {
 		header('Content-Encoding: bz');
 		$result = bzcompress($responsedata, 9);
@@ -537,7 +547,8 @@ if ((getDolGlobalInt("API_ENABLE_COUNT_CALLS") || !empty($dolibarr_api_count_alw
 		}
 	} else {
 		dol_syslog('Error on select API_COUNT_CALL for user '.$userid, LOG_ERR);
-		$error++;
+		$erro
+r++;
 	}
 
 	if ($error) {
@@ -566,3 +577,4 @@ if (!is_null($apiMethodInfo)) {
 }
 
 //session_destroy();
+
