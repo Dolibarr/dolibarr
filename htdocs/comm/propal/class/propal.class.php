@@ -21,6 +21,8 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Nick Fragoulis
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -1346,8 +1348,14 @@ class Propal extends CommonObject
 
 					for ($i = 0; $i < $num; $i++) {
 						if (!is_object($this->lines[$i])) {	// If this->lines is not array of objects, coming from REST API
-							// Convert into object this->lines[$i].
-							$line = (object) $this->lines[$i];
+							// Build a real line object: the loop below calls methods on it
+							// (getPriceBaseType), which a cast to stdClass cannot answer.
+							$lineobj = new PropaleLigne($this->db);
+							foreach ($this->lines[$i] as $key => $val) {
+								$lineobj->$key = $val;
+							}
+							$line = $lineobj;
+							$this->lines[$i] = $line;
 						} else {
 							$line = $this->lines[$i];
 						}
