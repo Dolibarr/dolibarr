@@ -2503,7 +2503,11 @@ class Commande extends CommonOrder
 			// Load data
 			$line->fetch($lineid);
 
-			if ($id > 0 && $line->fk_commande != $id) {
+			if ($id <= 0) {
+				$id = $this->id;
+			}
+			if ($id > 0 && (int) $line->fk_commande !== (int) $id) {
+				$this->db->rollback();
 				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 				return -1;
 			}
