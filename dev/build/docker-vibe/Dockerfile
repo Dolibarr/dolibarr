@@ -14,7 +14,11 @@ RUN apt-get update \
         dialog \
 		gh \
 		git \
+        graphviz \
+        gzip \
 		hurl \
+		jq \
+        memcached \
 		mysql-client \
 		openssh-client \
 		phpunit \
@@ -35,19 +39,12 @@ RUN apt-get update \
 		python3-pip \
 		shellcheck \
 		sshpass \
+		time \
 		unzip \
 		w3m \
 		zip \
+        zstd \
     && rm -rf /var/lib/apt/lists/*
-
-# Install RTK - Rust Token Killer
-RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh \
-    && cp /root/.local/bin/rtk /usr/local/bin/rtk \
-    && chmod +x /usr/local/bin/rtk \
-    && rtk --version \
-    && rtk gain
-
-WORKDIR /workspace
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
 
@@ -58,14 +55,26 @@ RUN mkdir -p /opt/vibe \
 ENV PATH="/opt/vibe/bin:$PATH"
 
 
+# Install RTK - Rust Token Killer
+RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh \
+    && cp /root/.local/bin/rtk /usr/local/bin/rtk \
+    && chmod +x /usr/local/bin/rtk \
+    && rtk --version \
+    && rtk gain
+
+
+
 RUN mkdir -p /opt/php-tools \
 	&& composer require \
     --working-dir=/opt/php-tools \
     phan/phan \
     phpstan/phpstan:^2.2 \
+	squizlabs/php_codesniffer \
     --ignore-platform-reqs \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
-	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan
+	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan \
+	&& ln -s /opt/php-tools/vendor/bin/phpcs /usr/local/bin/phpcs \
+	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpc
 
 
 # Prompt
@@ -91,6 +100,8 @@ PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
 
 PS1='\[\e[1;31m\][CONTAINER]\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \[\e[1;32m\]$(git_branch)\[\e[0m\] \$ '
 EOF
+
+WORKDIR /workspace
 
 # Add the launcher
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
