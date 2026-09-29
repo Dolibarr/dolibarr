@@ -12,6 +12,9 @@
 # so they can pull the branch of a contributor and create the PR with their own login,
 # or add merge or fix commits on the PR of a contributor, without being blocked by this control.
 # If the quota is exceeded, the CI fails, so the PR is refused.
+# The check runs when the PR is opened or reopened, and also each time commits are pushed
+# on the branch of the PR (synchronize), so the PR becomes or stays red if the quota of
+# the author or of one of the commit authors is exceeded at any time.
 # The PR can be closed and reopened the next day (the quota is reset at midnight UTC)
 # to run the check again and pass it.
 # Note: the GitHub search API used to count the PR has an indexing delay of 1 or 2 minutes,
@@ -20,7 +23,7 @@ name: Check PR quota per user
 
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
 
 permissions:
   pull-requests: read
