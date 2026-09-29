@@ -2582,7 +2582,7 @@ class BonPrelevement extends CommonObject
 				$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
 				$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
 				if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) {
-					$XML_DEBITOR .= '						' . ($this->sepaSchemaVersion == '8' ? '<BICFI>' : '<BIC>') . $row_bic . ($this->sepaSchemaVersion == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
+					$XML_DEBITOR .= '						' . ($this->sepa_schema_version == '8' ? '<BICFI>' : '<BIC>') . $row_bic . ($this->sepa_schema_version == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
 				}
 				$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
 				$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
