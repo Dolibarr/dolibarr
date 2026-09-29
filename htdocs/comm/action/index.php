@@ -417,7 +417,7 @@ if ($status == 'todo') {
 */
 
 $param = '';
-if (($actioncode && $actioncode !== '-1') || GETPOSTISSET('search_actioncode')) {
+if ($actioncode || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) {
 			if ($str_action != '-1') {
