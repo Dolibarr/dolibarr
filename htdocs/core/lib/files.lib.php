@@ -444,6 +444,9 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->gen_or_uploaded = 'unknown';
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
+				if (is_object($object) && isset($object->entity)) {
+					$ecmfile->entity = $object->entity; // Use the entity of the object owning the file, not the current session entity (multicompany)
+				}
 				$result = $ecmfile->create($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
