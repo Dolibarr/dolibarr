@@ -1920,7 +1920,7 @@ if ($source == 'donation') {
 	// Debitor
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow2"><b>';
-	if ($don->morphy == 'mor' && !empty($don->societe)) {
+	if (!empty($don->societe)) {
 		print $don->societe;
 	} else {
 		print $don->getFullName($langs);
