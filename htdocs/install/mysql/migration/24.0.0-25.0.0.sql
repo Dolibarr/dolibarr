@@ -38,6 +38,8 @@
 --noqa:disable=RF03
 
 
+ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
+
 -- V24 forgotten
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
@@ -103,6 +105,24 @@ UPDATE llx_commande SET model_pdf = 'eratosthene' WHERE model_pdf = 'einstein';
 UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='COMMANDE_ADDON_PDF';
 UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
+
+-- Switch all aurore templates into zenith
+UPDATE llx_supplier_proposal SET model_pdf = 'zenith' WHERE model_pdf = 'aurore';
+UPDATE llx_const SET value = 'zenith' WHERE value = 'aurore' AND name ='SUPPLIER_PROPOSAL_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'zenith' WHERE nom = 'aurore' AND type = 'supplier_proposal' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'zenith' AND type = 'supplier_proposal') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'aurore' AND type = 'supplier_proposal';
+
+-- Switch all muscadet templates into cornas
+UPDATE llx_commande_fournisseur SET model_pdf = 'cornas' WHERE model_pdf = 'muscadet';
+UPDATE llx_const SET value = 'cornas' WHERE value = 'muscadet' AND name ='COMMANDE_SUPPLIER_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'cornas' WHERE nom = 'muscadet' AND type = 'order_supplier' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'cornas' AND type = 'order_supplier') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'muscadet' AND type = 'order_supplier';
+
+-- Switch all rouget templates into espadon
+UPDATE llx_expedition SET model_pdf = 'espadon' WHERE model_pdf = 'rouget';
+UPDATE llx_const SET value = 'espadon' WHERE value = 'rouget' AND name ='EXPEDITION_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'espadon' WHERE nom = 'rouget' AND type = 'shipping' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'espadon' AND type = 'shipping') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'rouget' AND type = 'shipping';
 
 -- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
 ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
@@ -394,3 +414,8 @@ ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_fk_use
 UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday validated', description = 'Executed when a holiday is validated', rang = 802 WHERE code = 'HOLIDAY_VALIDATE' AND elementtype = 'expensereport';
 UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday modified', description = 'Executed when a holiday is modified', rang = 801 WHERE code = 'HOLIDAY_MODIFY' AND elementtype = 'expensereport';
 UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approved', description = 'Executed when a holiday is aprouved', rang = 803 WHERE code = 'HOLIDAY_APPROVE' AND elementtype = 'expensereport';
+
+-- Add type of contacts for stock transfer (module is new in v25). Same values as in data/llx_c_type_contact.sql.
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1);

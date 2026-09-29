@@ -13,7 +13,7 @@
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2025-2026	Nick Fragoulis
  * Copyright (C) 2026		Mathieu Moulin			<mathieu@iprospective.fr>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
@@ -908,8 +908,27 @@ class Reception extends CommonObject
 				$this->setErrorsFromObject($supplierorderdispatch);
 				return $ret;
 			} else {
+				// Lines of draft receptions are not received yet
+				$draft_lines = array();
+				$sql = "SELECT rb.rowid FROM ".MAIN_DB_PREFIX."receptiondet_batch as rb";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."reception as r ON r.rowid = rb.fk_reception";
+				$sql .= " WHERE rb.fk_element = ".((int) $this->origin_id);
+				$sql .= " AND r.fk_statut = ".self::STATUS_DRAFT;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
+				while ($obj = $this->db->fetch_object($resql)) {
+					$draft_lines[(int) $obj->rowid] = (int) $obj->rowid;
+				}
+				$this->db->free($resql);
+
 				// build array with quantity received by product in all supplier orders (origin)
 				foreach ($supplierorderdispatch->lines as $dispatch_line) {
+					if (isset($draft_lines[(int) $dispatch_line->id])) {
+						continue;
+					}
 					if (array_key_exists($dispatch_line->fk_product, $qty_received)) {
 						$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
 					} else {
@@ -981,6 +1000,11 @@ class Reception extends CommonObject
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = null, $sellby = null, $batch = '', $cost_price = 0)
 	{
+		// Instantiated below: required here because a caller outside the
+		// reception card (the REST API, a job) has not loaded them.
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 		global $conf, $langs, $user;
 
 		$num = count($this->lines);
@@ -1647,6 +1671,11 @@ class Reception extends CommonObject
 	 */
 	public function fetch_lines()
 	{
+		// Instantiated below: required here because a caller outside the
+		// reception card (the REST API, a job) has not loaded them.
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 		// phpcs:enable
 		$this->lines = array();
 

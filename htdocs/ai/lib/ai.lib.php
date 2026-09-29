@@ -752,7 +752,7 @@ function getAiChatAssistantConfig()
 		'Download',
 		'Show',
 		'Confirm',
-		'ConfirmAiAction',
+		'ConfirmAiAction', 'ConfirmAiWrite',
 		'ClearChatHistoryTitle',
 		'HistoryCleared',
 		'Send',
@@ -820,6 +820,8 @@ function getAiChatAssistantConfig()
 		'FetchingData',
 		'GeneratingLink',
 		'Found',
+		'File',
+		'Preview',
 		'TypeResponse',
 		'OpenVerb',
 
@@ -877,9 +879,11 @@ function getAiChatAssistantConfig()
 		// Attachment count cap, so the client mirrors the server-side guard
 		// of ai_validate_attachments() instead of hardcoding its own.
 		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
-		// Recent exchanges that follow the model by default (sliding window);
-		// 0 keeps the context strictly opt-in.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 3),
+		// Recent exchanges that follow the model by default (sliding window).
+		// Off (0) until an administrator decides otherwise: past answers carry
+		// business content the privacy masking does not cover, so sending them
+		// back on every request is not a default the module takes by itself.
+		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0),
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),

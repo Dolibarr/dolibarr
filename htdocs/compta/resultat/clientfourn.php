@@ -298,10 +298,14 @@ $total_ht_outcome = $total_ttc_outcome = $total_ht_income = $total_ttc_income = 
 
 
 if ($modecompta == 'BOOKKEEPING') {
+	// Some shipped charts of accounts (e.g. US-BASE) split income and expense
+	// accounts across more than one pcg_type value (COGS, OTHER_REVENUE,
+	// OTHER_EXPENSES), unlike FR/GB-style charts which only use INCOME/EXPENSE.
+	// Include those here so this report does not silently omit them.
 	$sanitizedpredefinedgroupwhere = "(";
-	$sanitizedpredefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
+	$sanitizedpredefinedgroupwhere .= " (pcg_type IN ('EXPENSE', 'COGS', 'OTHER_EXPENSES'))";
 	$sanitizedpredefinedgroupwhere .= " OR ";
-	$sanitizedpredefinedgroupwhere .= " (pcg_type = 'INCOME')";
+	$sanitizedpredefinedgroupwhere .= " (pcg_type IN ('INCOME', 'OTHER_REVENUE'))";
 	$sanitizedpredefinedgroupwhere .= ")";
 
 	$charofaccountstring = getDolGlobalInt('CHARTOFACCOUNTS');
@@ -368,11 +372,11 @@ if ($modecompta == 'BOOKKEEPING') {
 				$total_ht += (isset($objp->amount) ? $objp->amount : 0);
 				$total_ttc += (isset($objp->amount) ? $objp->amount : 0);
 
-				if ($objp->pcg_type == 'INCOME') {
+				if (in_array($objp->pcg_type, array('INCOME', 'OTHER_REVENUE'))) {
 					$total_ht_income += (isset($objp->amount) ? $objp->amount : 0);
 					$total_ttc_income += (isset($objp->amount) ? $objp->amount : 0);
 				}
-				if ($objp->pcg_type == 'EXPENSE') {
+				if (in_array($objp->pcg_type, array('EXPENSE', 'COGS', 'OTHER_EXPENSES'))) {
 					$total_ht_outcome -= (isset($objp->amount) ? $objp->amount : 0);
 					$total_ttc_outcome -= (isset($objp->amount) ? $objp->amount : 0);
 				}

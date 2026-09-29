@@ -21,6 +21,8 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Nick Fragoulis
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -936,6 +938,11 @@ class Propal extends CommonObject
 	{
 		global $mysoc, $langs;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise_percent=$remise_percent,
         txtva=$txtva, desc=".dol_trunc($desc, 16).", price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1129,7 +1136,11 @@ class Propal extends CommonObject
 			// Load data
 			$line->fetch($lineid);
 
-			if ($id > 0 && $line->fk_propal != $id) {
+			if ($id <= 0) {
+				$id = $this->id;
+			}
+			if ($id > 0 && (int) $line->fk_propal !== (int) $id) {
+				$this->db->rollback();
 				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 				return -1;
 			}
@@ -1346,8 +1357,14 @@ class Propal extends CommonObject
 
 					for ($i = 0; $i < $num; $i++) {
 						if (!is_object($this->lines[$i])) {	// If this->lines is not array of objects, coming from REST API
-							// Convert into object this->lines[$i].
-							$line = (object) $this->lines[$i];
+							// Build a real line object: the loop below calls methods on it
+							// (getPriceBaseType), which a cast to stdClass cannot answer.
+							$lineobj = new PropaleLigne($this->db);
+							foreach ($this->lines[$i] as $key => $val) {
+								$lineobj->$key = $val;
+							}
+							$line = $lineobj;
+							$this->lines[$i] = $line;
 						} else {
 							$line = $this->lines[$i];
 						}

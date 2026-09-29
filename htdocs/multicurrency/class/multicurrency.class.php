@@ -643,8 +643,6 @@ class MultiCurrency extends CommonObject
 	 */
 	public function recalculRates(&$TRate)
 	{
-		global $conf;
-
 		if (getDolCurrency() != getDolGlobalString('MULTICURRENCY_APP_SOURCE')) {
 			$alternate_source = 'USD'.getDolCurrency();
 			if (!empty($TRate->$alternate_source)) {

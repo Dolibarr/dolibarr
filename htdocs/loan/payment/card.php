@@ -72,9 +72,6 @@ if (!$user->hasRight('loan', 'read')) {
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'delete')) {
 	$db->begin();
 
-	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".((int) $payment->fk_bank);
-	$db->query($sql);
-
 	$fk_loan = $payment->fk_loan;
 
 	$result = $payment->delete($user);

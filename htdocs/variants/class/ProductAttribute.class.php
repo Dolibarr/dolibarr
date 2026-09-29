@@ -706,6 +706,11 @@ class ProductAttribute extends CommonObject
 	{
 		global $user;
 
+		if (!$this->isLineOfObject($lineid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		dol_syslog(__METHOD__ . " lineid=$lineid, ref=$ref, value=$value, notrigger=$notrigger");
 
 		// Clean parameters
@@ -757,6 +762,10 @@ class ProductAttribute extends CommonObject
 		// Fetch current line from the database
 		$this->line = new ProductAttributeValue($this->db);
 		$result = $this->line->fetch($lineid);
+		if ($result > 0 && $this->id > 0 && (int) $this->line->fk_product_attribute !== (int) $this->id) {
+			$this->line->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			$result = -1;
+		}
 		if ($result > 0) {
 			$this->line->context = $this->context;
 
