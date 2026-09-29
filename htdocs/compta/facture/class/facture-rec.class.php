@@ -1799,7 +1799,8 @@ class FactureRec extends CommonInvoice
 						$this->output .= $langs->trans("InvoiceSentFromTemplate", $facture->ref, $facturerec->ref)."\n";
 					}
 				} else {
-					$this->output .= $langs->trans("InvoiceGeneratedFromTemplateError", $facture->ref, $facturerec->ref, $this->error)."\n";
+					// $facture is still null when $facturerec->fetch() failed above
+					$this->output .= $langs->trans("InvoiceGeneratedFromTemplateError", (is_object($facture) ? $facture->ref : ''), $facturerec->ref, $this->error)."\n";
 					$this->db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
