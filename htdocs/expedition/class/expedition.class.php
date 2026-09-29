@@ -2359,6 +2359,8 @@ class Expedition extends CommonObject
 		$this->lines = array();
 
 		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_product, ed.fk_unit, ed.description, ed.fk_elementdet, ed.fk_element, ed.element_type, ed.qty, ed.rang';
+		$sql .= ', p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode';
+		$sql .= ', p.weight, p.weight_units, p.volume, p.volume_units';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as ed';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = ed.fk_product)';
 		$sql .= ' WHERE ed.fk_expedition = '.((int) $this->id);
@@ -2379,9 +2381,20 @@ class Expedition extends CommonObject
 				$line->id				= $objp->rowid;
 				$line->fk_expedition	= $this->id;
 				$line->description      = $objp->description;
+				$line->desc             = $objp->description; // We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty              = $objp->qty;
+				$line->qty_shipped      = $objp->qty; // this is a property of a shipment line, read by PDF models and getTotalWeightVolume()
 				$line->fk_entrepot      = $objp->fk_entrepot;
 				$line->fk_product       = $objp->fk_product;
+				$line->product_ref      = $objp->product_ref;
+				$line->product_label    = $objp->product_label;
+				$line->product_barcode  = $objp->product_barcode;
+				$line->fk_product_type  = $objp->fk_product_type;
+				$line->product_type     = $objp->fk_product_type;
+				$line->weight           = $objp->weight;
+				$line->weight_units     = $objp->weight_units;
+				$line->volume           = $objp->volume;
+				$line->volume_units     = $objp->volume_units;
 				$line->rang             = $objp->rang;
 				$line->fk_element 		= $objp->fk_element;
 				$line->fk_unit          = $objp->fk_unit;
