@@ -90,7 +90,7 @@ jobs:
             echo "Number of PR created during the last 24 hours by ${USER_TO_CHECK}, except this one: ${NB_PR_24H}"
 
             if [ "${NB_PR_24H}" -ge "${MAX_PR_PER_USER_PER_DAY}" ]; then
-              echo "::error::The user ${USER_TO_CHECK} has already created ${NB_PR_24H} pull requests during the last 24 hours and the limit is ${MAX_PR_PER_USER_PER_DAY} pull requests per user and per day. This pull request is refused and will be automatically deleted after a delay if no repushed. Please wait 24 hours before creating new pull requests and close this pull request and reopen it later to run the check again."
+              echo "::error::The user ${USER_TO_CHECK} has already created ${NB_PR_24H} pull requests during the last 24 hours and the limit is ${MAX_PR_PER_USER_PER_DAY} pull requests per user and per day. This pull request is refused and will be automatically deleted after a delay if not repushed. Please wait 24 hours before creating new pull requests and close this pull request and reopen it later to run the check again."
               FAILED=1
             fi
           done <<< "${USERS_TO_CHECK}"
