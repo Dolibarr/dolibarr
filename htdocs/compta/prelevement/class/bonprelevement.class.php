@@ -2062,10 +2062,10 @@ class BonPrelevement extends CommonObject
 				 */
 				// SEPA File Header
 				fwrite($this->file, '<' . '?xml version="1.0" encoding="UTF-8" standalone="yes"?' . '>' . $CrLf);
-			$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
-			$sepaSchemaVersion = $this->sepa_schema_version;
-			$sepaNamespace = 'urn:iso:std:iso:20022:tech:xsd:pain.008.001.0' . $sepaSchemaVersion;
-			fwrite($this->file, '<Document xmlns="' . $sepaNamespace . '" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
+				$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
+				$sepaSchemaVersion = $this->sepa_schema_version;
+				$sepaNamespace = 'urn:iso:std:iso:20022:tech:xsd:pain.008.001.0' . $sepaSchemaVersion;
+				fwrite($this->file, '<Document xmlns="' . $sepaNamespace . '" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
 				fwrite($this->file, '	<CstmrDrctDbtInitn>' . $CrLf);
 				// SEPA Group header
 				fwrite($this->file, '		<GrpHdr>' . $CrLf);
@@ -2855,7 +2855,7 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</CdtrAcct>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CdtrAgt>' . $CrLf;
 				$XML_SEPA_INFO .= '				<FinInstnId>' . $CrLf;
-			$XML_SEPA_INFO .= '				' . ($this->sepa_schema_version == '8' ? '<BICFI>' : '<BIC>') . $this->emetteur_bic . ($this->sepa_schema_version == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
+				$XML_SEPA_INFO .= '				' . ($this->sepa_schema_version == '8' ? '<BICFI>' : '<BIC>') . $this->emetteur_bic . ($this->sepa_schema_version == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
 				$XML_SEPA_INFO .= '				</FinInstnId>' . $CrLf;
 				$XML_SEPA_INFO .= '			</CdtrAgt>' . $CrLf;
 				/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
