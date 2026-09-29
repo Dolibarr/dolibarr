@@ -331,7 +331,9 @@ if (empty($reshook)) {
 							$htemp->fetch($result);
 
 							$htemp->status = Holiday::STATUS_VALIDATED;
-							$resultValidated = $htemp->validate($approverid);
+							$approver = new User($db);
+							$approver->fetch($approverid);
+							$resultValidated = $htemp->validate($approver);
 
 							if ($resultValidated < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
