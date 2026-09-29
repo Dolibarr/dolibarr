@@ -843,7 +843,7 @@ if (empty($reshook)) {
 
 							$resql = $db->query($sql);
 						} else {
-							$card->delete($user);
+							$card->delete();
 						}
 					}
 				}
@@ -876,7 +876,7 @@ if (empty($reshook)) {
 
 							$resql = $db->query($sql);
 						} else {
-							$card->delete($user);
+							$card->delete();
 						}
 					}
 				}
