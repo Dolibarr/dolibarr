@@ -1647,6 +1647,7 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
 			if ($ret > 0) {
 				$objecttmp->insertExtraFields();
+				$nbok++;
 			} else {
 				$error++;
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1660,9 +1661,9 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 
 	if (!$error) {
 		if ($nbok > 1) {
-			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("save"), null, 'mesgs');
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		} elseif ($nbok == 1) {
+			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {
@@ -1779,6 +1780,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 				if ($verif <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
+				} else {
+					$nbok++;
 				}
 
 				// If no SQL error, we redirect to the request form

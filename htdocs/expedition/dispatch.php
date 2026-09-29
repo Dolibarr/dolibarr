@@ -221,6 +221,11 @@ if (empty($reshook)) {
 
 						if ($idline > 0) {
 							$result = $expeditiondispatch->fetch($idline);	// get line from llx_expeditiondet
+							if ($result > 0 && (int) $expeditiondispatch->fk_expedition !== (int) $object->id) {
+								// The line must be a line of the shipment of the page
+								$expeditiondispatch->error = $langs->trans('ErrorRecordNotFound');
+								$result = -1;
+							}
 							if ($result < 0) {
 								setEventMessages($expeditiondispatch->error, $expeditiondispatch->errors, 'errors');
 								$error++;
