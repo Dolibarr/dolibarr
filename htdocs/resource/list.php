@@ -84,6 +84,11 @@ $search_email		= GETPOST("search_email", 'alpha');
 $search_max_users	= GETPOST("search_max_users", 'alpha');
 $search_url			= GETPOST("search_url", 'alpha');
 
+
+$search_status = GETPOST("search_status");
+if (empty($search_status))	$search_status=Dolresource::STATUS_VALIDATED;
+if ($search_status<0)		$search_status='';
+
 $filter = array();
 
 $hookmanager->initHooks(array('resourcelist'));
@@ -170,6 +175,11 @@ $arrayfields = array(
 		'checked' => '0',
 		'position' => 11
 	),
+	't.status' => array(
+			'label' => $langs->trans("Status"),
+			'checked' => 1,
+			'position' => 12
+	)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -197,6 +207,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_url = "";
 	$toselect = array();
 	$search_array_options = array();
+	$search_status='';//
 }
 
 $permissiontoread = $user->hasRight('resource', 'read');
@@ -265,6 +276,7 @@ $sql .= " t.datec as date_creation, ";
 $sql .= " ty.label as type_label, ";
 $sql .= " st.nom as state_label, ";
 $sql .= " co.label as country_label ";
+$sql .= " ,t.fk_statut as status";//
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -328,6 +340,9 @@ if ($search_max_users) {
 }
 if ($search_url) {
 	$sql .= natural_search('t.url', $search_url);
+}
+if ($search_status) {
+	$sql .= " AND t.fk_statut = ". $search_status;
 }
 
 // Add where from extra fields
@@ -425,6 +440,9 @@ if ($search_max_users != '') {
 }
 if ($search_url != '') {
 	$param .= '&search_url='.urlencode($search_url);
+}
+if ($search_status != '') {
+	$param .= '&search_status='.urlencode($search_status);
 }
 
 // Add $param from extra fields
@@ -548,6 +566,13 @@ if (!empty($arrayfields['t.url']['checked'])) {
 	print '<input type="text" class="flat" name="search_url" value="'.$search_url.'" size="8">';
 	print '</td>';
 }
+//
+if (!empty($arrayfields['t.status']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->selectarray('search_status', array(0=>'Borrador', 1=>'Validado', 9=>'Cancelado'), $search_status, ' ', 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
+	//print '<input type="text" class="flat" name="search_status" value="'.$search_status.'" size="6">';
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -604,6 +629,10 @@ if (!empty($arrayfields['t.max_users']['checked'])) {
 if (!empty($arrayfields['t.url']['checked'])) {
 	print_liste_field_titre($arrayfields['t.url']['label'], $_SERVER["PHP_SELF"], "t.url", "", $param, "", $sortfield, $sortorder);
 }
+//
+if (!empty($arrayfields['t.status']['checked'])) {
+	print_liste_field_titre($arrayfields['t.status']['label'], $_SERVER["PHP_SELF"], "t.status", "", $param, "", $sortfield, $sortorder);
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Action column
@@ -633,6 +662,7 @@ while ($i < $imaxinloop) {
 	$objectstatic->email = $obj->email;
 	$objectstatic->max_users = $obj->max_users;
 	$objectstatic->url = $obj->url;
+	$objectstatic->status = $obj->status;//
 
 	print '<tr data-rowid="'.$obj->rowid.'" class="oddeven row-with-select">';
 
@@ -725,6 +755,15 @@ while ($i < $imaxinloop) {
 
 	if (!empty($arrayfields['t.url']['checked'])) {
 		print '<td>'.dol_print_url($objectstatic->url, '_blank', 32, 1).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['t.status']['checked'])) {
+		print '<td>';
+		print $objectstatic->getLibStatut(5);
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
