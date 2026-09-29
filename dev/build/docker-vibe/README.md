@@ -28,6 +28,12 @@ dev/build/docker-vibe/vibes.sh
 
 This script will build the docker image, and then run it with the current directory mounted into the container and launch vibe.
 
+When you exit vibe (for example with CTRL+C), the container is stopped too, so you return immediately to your host.
+If you want to stay into the container with a bash shell after vibe has ended, you can run
+````
+vibes --no-exit
+````
+
 ### Build (or rebuild) image of the container. 
 sudo docker build -dev/build/docker-vibe -t dockervibe --no-cache
 
