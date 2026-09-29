@@ -2275,8 +2275,12 @@ class User extends CommonObject
 			$sql .= ", salaryextra= ".($this->salaryextra != '' ? "'".$this->db->escape($this->salaryextra)."'" : "null");
 		}
 		$sql .= ", weeklyhours= ".($this->weeklyhours != '' ? "'".$this->db->escape($this->weeklyhours)."'" : "null");
-		if (!empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
-			$sql .= ", entity = ".((int) $this->entity); // entity flag can be set/unset only by an another superadmin user
+		if (isModEnabled('multicompany') && !empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
+			// entity flag can be set/unset only by another superadmin user, and only when multicompany is enabled.
+			// Without multicompany, entity must never be written here: fetch() forces an admin's entity to 0 in memory
+			// (an admin is a global admin without multicompany), and persisting that would wrongly turn the user into
+			// a "whole database" (entity 0) admin.
+			$sql .= ", entity = ".((int) $this->entity);
 		}
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
