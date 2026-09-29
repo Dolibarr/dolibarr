@@ -416,6 +416,22 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document');
 			}
+		} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+			
+			$tmpobject = new CommandeFournisseur($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'Intervention not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document');
+			}
 		} else {
 			throw new RestException(403, 'Generation not available for this modulepart');
 		}
