@@ -2445,6 +2445,10 @@ class CommandeFournisseur extends CommonOrder
 			if ($line->fetch($idline) <= 0) {
 				return 0;
 			}
+			if ($this->id > 0 && (int) $line->fk_commande !== (int) $this->id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
 			// check if not yet received
 			$dispatchedLines = $this->getDispachedLines();
@@ -3122,6 +3126,12 @@ class CommandeFournisseur extends CommonOrder
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = 0, $date_end = 0, $array_options = [], $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{
 		global $mysoc, $conf, $langs;
+
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 

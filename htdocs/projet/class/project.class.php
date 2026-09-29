@@ -2087,9 +2087,11 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project = NULL";
 			$sql .= " WHERE id = ".((int) $elementSelectId);
+			$sql .= " AND fk_project = ".((int) $this->id);
 		} else {
 			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
 			$sql .= " WHERE rowid = ".((int) $elementSelectId);
+			$sql .= " AND ".$this->db->sanitize($projectfield)." = ".((int) $this->id);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
