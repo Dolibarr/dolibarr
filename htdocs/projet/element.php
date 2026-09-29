@@ -742,11 +742,26 @@ $listofreferent = array(
 		'testnew' => $user->hasRight('project', 'creer'),
 		'test' => isModEnabled('project') && $user->hasRight('projet', 'lire') && !getDolGlobalString('PROJECT_HIDE_TASKS')
 	),
+	'stocktransfer' => array(
+		'name' => "StockTransfer",
+		'title' => "ListStockTransferProject",
+		'class' => 'StockTransfer',
+		'table' => 'stocktransfer_stocktransfer',
+		'datefieldname' => 'datem',
+		'margin' => '',
+		'project_field' => 'fk_project',
+		'disableamount' => 1,
+		'urlnew' => DOL_URL_ROOT.'/product/stock/stocktransfer/stocktransfer_card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang' => 'stocks',
+		'buttonnew' => 'StockTransferNew',
+		'testnew' => $user->hasRight('stocktransfer', 'stocktransfer', 'write'),
+		'test' => isModEnabled('stocktransfer') && $user->hasRight('stocktransfer', 'stocktransfer', 'read')
+	),
 	'stock_mouvement' => array(
 		'name' => "MouvementStockAssociated",
 		'title' => "ListMouvementStockProject",
-		'class' => 'StockTransfer',
-		'table' => 'stocktransfer_stocktransfer',
+		'class' => 'MouvementStock',
+		'table' => 'stock_mouvement',
 		'datefieldname' => 'datem',
 		'margin' => 'minus',
 		'project_field' => 'fk_project',
