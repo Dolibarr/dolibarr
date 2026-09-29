@@ -1,5 +1,6 @@
 ---
-# Check the number of PR created by the same user during the current day (UTC) does not exceed
+# Check the number of PR created by the same user during the last 24 hours (rolling window,
+# and not a reset of the counter at 00:00 UTC) does not exceed
 # the quota defined in the variable MAX_PR_PER_USER_PER_DAY (20).
 # All the PR are counted, whatever their state (open, closed or merged), including the drafts.
 # The quota is checked for the author of the PR but also for each author of the commits of the PR,
@@ -15,8 +16,10 @@
 # The check runs when the PR is opened or reopened, and also each time commits are pushed
 # on the branch of the PR (synchronize), so the PR becomes or stays red if the quota of
 # the author or of one of the commit authors is exceeded at any time.
-# The PR can be closed and reopened the next day (the quota is reset at midnight UTC)
-# to run the check again and pass it.
+# A PR is counted during the 24 hours following its creation, so the counter of a user
+# decreases progressively as its old PR reach 24 hours of age.
+# The PR can be closed and reopened later, when the other PR of the author are older
+# than 24 hours, to run the check again and pass it.
 # Note: the GitHub search API used to count the PR has an indexing delay of 1 or 2 minutes,
 # so a burst of PR opened at the same time may not be all detected by this control.
 name: Check PR quota per user
@@ -36,16 +39,19 @@ jobs:
       MAX_PR_PER_USER_PER_DAY: 20
       EXCLUDED_MAINTAINERS: '^(eldy|rycks|lvessiller-opendsi)$'
     steps:
-      - name: Check the number of PR created by the author of the PR and by the authors of its commits during the current day (UTC)
+      - name: Check the number of PR created by the author of the PR and by the authors of its commits during the last 24 hours
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
-          TODAY=$(date -u +%Y-%m-%d)
+          # The counting is a rolling window of 24 hours: only the PR created after this
+          # datetime are counted, so there is no reset of the counter at 00:00 UTC.
+          SINCE_24H=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)
 
-          echo "Date of the check (UTC): ${TODAY}"
+          echo "Date of the check (UTC): $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "PR created after this datetime are counted: ${SINCE_24H}"
           echo "Author of the PR #${PR_NUMBER}: ${PR_AUTHOR}"
 
           # Get the authors of the commits of the PR (the GitHub accounts linked to the emails
@@ -70,21 +76,21 @@ jobs:
               continue
             fi
 
-            # Get the PR created by the user during the current day (UTC),
+            # Get the PR created by the user during the last 24 hours,
             # using the GitHub search API so no git history is needed (no checkout).
             # The PR being checked may or may not be already indexed by the search engine,
             # so it is excluded from the result to count only the other PR of the user.
             SEARCH_RESULT=$(gh api --method GET search/issues \
-              -f q="repo:${REPO} is:pr author:${USER_TO_CHECK} created:>=${TODAY}" \
+              -f q="repo:${REPO} is:pr author:${USER_TO_CHECK} created:>=${SINCE_24H}" \
               -f per_page=100)
 
-            NB_PR_TODAY=$(echo "${SEARCH_RESULT}" | jq --argjson pr "${PR_NUMBER}" \
+            NB_PR_24H=$(echo "${SEARCH_RESULT}" | jq --argjson pr "${PR_NUMBER}" \
               '[.items[].number | select(. != $pr)] | length')
 
-            echo "Number of PR created today (UTC) by ${USER_TO_CHECK}, except this one: ${NB_PR_TODAY}"
+            echo "Number of PR created during the last 24 hours by ${USER_TO_CHECK}, except this one: ${NB_PR_24H}"
 
-            if [ "${NB_PR_TODAY}" -ge "${MAX_PR_PER_USER_PER_DAY}" ]; then
-              echo "::error::The user ${USER_TO_CHECK} has already created ${NB_PR_TODAY} pull requests today (UTC) and the limit is ${MAX_PR_PER_USER_PER_DAY} pull requests per user and per day. This pull request is refused and will be automatically deleted after a delay if no repushed. Please wait for the next day (UTC) before creating new pull requests and close this pull request and reopen it the next day to run the check again."
+            if [ "${NB_PR_24H}" -ge "${MAX_PR_PER_USER_PER_DAY}" ]; then
+              echo "::error::The user ${USER_TO_CHECK} has already created ${NB_PR_24H} pull requests during the last 24 hours and the limit is ${MAX_PR_PER_USER_PER_DAY} pull requests per user and per day. This pull request is refused and will be automatically deleted after a delay if no repushed. Please wait 24 hours before creating new pull requests and close this pull request and reopen it later to run the check again."
               FAILED=1
             fi
           done <<< "${USERS_TO_CHECK}"
@@ -93,4 +99,4 @@ jobs:
             exit 1
           fi
 
-          echo "The number of PR created today (UTC) by the author of this PR and by the authors of its commits is lower than the limit of ${MAX_PR_PER_USER_PER_DAY} PR per user and per day. OK."
+          echo "The number of PR created during the last 24 hours by the author of this PR and by the authors of its commits is lower than the limit of ${MAX_PR_PER_USER_PER_DAY} PR per user and per day. OK."
