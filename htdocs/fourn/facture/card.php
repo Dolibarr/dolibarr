@@ -2435,7 +2435,8 @@ if ($action == 'create') {
 							// reload page
 							$("input[name=action]").val("create");
 							$("input[name=changecompany]").val("1");
-							$("form[name=add]").submit();
+							// Native submit: this reload is not a user save, it must not be cancelled by the form validators
+							$("form[name=add]")[0].submit();
 						});
 					});
 					</script>';
@@ -2500,7 +2501,8 @@ if ($action == 'create') {
 								console.log("We have changed the template invoice - Reload page");
 								// reload page
 								$("input[name=action]").val("create");
-								$("form[name=add]").submit();
+								// Native submit: this reload is not a user save, it must not be cancelled by the form validators
+								$("form[name=add]")[0].submit();
 							});
 						});
 						</script>';
