@@ -883,25 +883,7 @@ class ExpenseReport extends CommonObject
 	public function getSummary()
 	{
 		$note = preg_replace('/(?:<br\s*\/?>|<\/(?:p|div|li)>)/i', "\n", (string) $this->note_public);
-		$lines = preg_split('/\r\n|\r|\n/', (string) $note);
-
-		foreach ($lines as $line) {
-			$summary = trim(dol_string_nohtmltag($line));
-			if ($summary !== '') {
-				if (dol_strlen($summary) > 80) {
-					$summary = dol_substr($summary, 0, 77);
-					$lastSpace = strrpos($summary, ' ');
-					if ($lastSpace !== false) {
-						$summary = dol_substr($summary, 0, dol_strlen(substr($summary, 0, $lastSpace)));
-					}
-					$summary = rtrim($summary).'...';
-				}
-
-				return dolGetFirstLineOfText($summary);
-			}
-		}
-
-		return '';
+		return dolGetFirstLineOfText($note);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
