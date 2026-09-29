@@ -2146,17 +2146,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$cssclass .= " unmovable";
 					} elseif ($event->type_code == 'ICALEVENT') {
 						$cssclass .= " unmovable";
-					} elseif ($event->date_start_in_calendar && $event->date_end_in_calendar && date('Ymd', $event->date_start_in_calendar) != date('Ymd', $event->date_end_in_calendar)) {
-						// If the event is on several days
-						$tmpyearend = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
-						$tmpmonthend = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
-						$tmpdayend = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
-						//var_dump($tmpyearend.' '.$tmpmonthend.' '.$tmpdayend);
-						if ($tmpyearend != $annee || $tmpmonthend != $mois || $tmpdayend != $jour) {
-							$cssclass .= " unmovable unmovable-mustusefirstdaytodrag";
-						} else {
-							$cssclass .= ' movable cursormove';
-						}
+					} elseif (dol_print_date($event->datep, '%Y%m%d', 'tzuserrel') != sprintf("%04d%02d%02d", $annee, $mois, $jour)) {
+						// The event is shown on a day that is not its real start day (it is on several days, maybe
+						// starting before the displayed range). A drop sets the start to the drop day, so only its
+						// real start day can be dragged.
+						$cssclass .= " unmovable unmovable-mustusefirstdaytodrag";
 					} else {
 						if ($user->hasRight('agenda', 'allactions', 'create') ||
 							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
