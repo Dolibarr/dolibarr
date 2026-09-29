@@ -76,13 +76,13 @@ function getListOfAIServices()
 			'label'           => 'ChatGPT (OpenAI)',
 			'url'             => 'https://api.openai.com/v1/',
 			'setup'           => 'https://platform.openai.com/account/api-keys',
-			'textgeneration'  => array('default' => 'gpt-5.2'),             // Flagship model released late 2025, updated Feb 2026
-			'imagegeneration' => array('default' => 'gpt-image-1.5'),       // Replaced DALL-E 3; 4x faster and native to GPT-5
+			'textgeneration'  => array('default' => 'gpt-5.6'),             //  updated Oct 2026
+			'imagegeneration' => array('default' => 'gpt-image-2'),       // Replaced DALL-E 3; 4x faster and native to GPT-5
 			'audiogeneration' => array('default' => 'gpt-audio-1.5'),       // New Feb 23, 2026 release for high-fidelity audio out
 			'videogeneration' => array('default' => 'sora-2'),              // OpenAI's standard API video model
-			'transcription'   => array('default' => 'whisper-large-v3-turbo'), // The current speed/accuracy benchmark for ASR
-			'translation'     => array('default' => 'whisper-large-v3-turbo'), // Still the best for multi-language audio translation
-			'docparsing'      => array('default' => 'gpt-5.2'),             // Uses the new Responses API / Vision capabilities
+			'transcription'   => array('default' => 'gpt-transcribe'), 		// Dedicated model
+			'translation'     => array('default' => 'gpt-5.6'),				 // Still the best for multi-language audio translation
+			'docparsing'      => array('default' => 'gpt-5.6'),             // Uses the new Responses API / Vision capabilities
 			'adapter_type'    => 'openai'
 		),
 		'groq' => array(
