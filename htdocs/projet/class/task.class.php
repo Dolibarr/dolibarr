@@ -8,6 +8,7 @@
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré <vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -620,6 +621,47 @@ class Task extends CommonObjectLine
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
+	}
+
+	/**
+	 * Return authorized tasks for selected ids.
+	 *
+	 * @param	User	$user		Current user
+	 * @param	array<int>	$toselect	List of selected task ids
+	 * @return	array<int,object>	Tasks indexed by task id
+	 */
+	public function getAuthorizedTasksForMassAction($user, $toselect)
+	{
+		$toselect = array_unique(array_filter(array_map('intval', (array) $toselect)));
+		if (empty($toselect)) {
+			return array();
+		}
+
+		$projectstatic = new Project($this->db);
+		$projectlistfilter = '';
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+			$projectlistfilter = " AND p.rowid IN (".$this->db->sanitize($projectsListId ? $projectsListId : '0').")";
+		}
+
+		$sql = "SELECT t.rowid, t.ref, t.label, t.dateo, t.datee, t.progress, t.fk_statut, t.fk_projet";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet AS p ON p.rowid = t.fk_projet";
+		$sql .= " WHERE t.rowid IN (".$this->db->sanitize(implode(',', $toselect)).")";
+		$sql .= " AND p.entity IN (".getEntity('project').")";
+		$sql .= $projectlistfilter;
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return array();
+		}
+
+		$tasksById = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$tasksById[(int) $obj->rowid] = $obj;
+		}
+
+		return $tasksById;
 	}
 
 
