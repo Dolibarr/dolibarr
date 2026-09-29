@@ -416,7 +416,9 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
-		$oldproduct = dol_clone($this->product, 2);
+		$this->product->oldcopy = dol_clone($this->product, 1);
+
+		$oldproduct = $this->product->oldcopy;
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
