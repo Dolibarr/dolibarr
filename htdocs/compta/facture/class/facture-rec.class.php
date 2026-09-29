@@ -1794,7 +1794,8 @@ class FactureRec extends CommonInvoice
 				}
 
 				// Commit or rollback. Only the result of the current template must be tested (not the cumulative $error), so that a failure on one template does not cancel the templates processed after it.
-				if (!$errorforinvoice && $invoiceidgenerated >= 0) {
+				// $invoiceidgenerated must be > 0 (not >= 0): it is still 0 when $facturerec->fetch() failed above, in which case $facture is still null.
+				if (!$errorforinvoice && $invoiceidgenerated > 0) {
 					$this->db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
@@ -1810,7 +1811,8 @@ class FactureRec extends CommonInvoice
 						$this->output .= $langs->trans("InvoiceSentFromTemplate", $facture->ref, $facturerec->ref)."\n";
 					}
 				} else {
-					$this->output .= $langs->trans("InvoiceGeneratedFromTemplateError", $facture->ref, $facturerec->ref, $this->error)."\n";
+					// $facture is still null when $facturerec->fetch() failed above
+					$this->output .= $langs->trans("InvoiceGeneratedFromTemplateError", (is_object($facture) ? $facture->ref : ''), $facturerec->ref, $this->error)."\n";
 					$this->db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 

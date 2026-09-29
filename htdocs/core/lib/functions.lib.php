@@ -4039,7 +4039,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
  * 	@param	string	$ip			IP
  * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
  *  @param	int		$showname	1=Show reverse domain name instead of IP
- * 	@return string 				Formatted IP, with country if GeoIP module is enabled
+ * 	@return string 				Formatted IP, with country (and city, if the GeoIP datafile is a City database) if GeoIP module is enabled
  */
 function dol_print_ip($ip, $mode = 0, $showname = 0)
 {
@@ -4061,6 +4061,11 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
 			$ret .= '&nbsp;';
 		} else {
 			// Nothing
+		}
+
+		$cityname = dolGetCityFromIp($ip);
+		if ($cityname) {	// Only set if the GeoIP datafile in use is a City database
+			$ret .= dol_escape_htmltag($cityname) . '&nbsp;';
 		}
 	}
 
@@ -4154,6 +4159,38 @@ function dolGetCountryCodeFromIp($ip)
 	}
 
 	return $countrycode;
+}
+
+/**
+ * 	Return a city name from IP. Empty string if not found or if the configured GeoIP
+ *  datafile is a Country-only database (no city record available in that case).
+ *
+ * 	@param	string	$ip			IP
+ * 	@return string 				City name, or ''
+ */
+function dolGetCityFromIp($ip)
+{
+	$cityname = '';
+
+	if (isModEnabled('geoipmaxmind')) {
+		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
+			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		} else {
+			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
+			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
+		}
+		if ($datafile) {
+			try {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
+				$geoip = new DolGeoIP('country', $datafile);
+				$cityname = $geoip->getCityNameFromIP($ip);
+			} catch (Exception $e) {
+				//print 'Error with GeoIP database: '.$e->getMessage();
+			}
+		}
+	}
+
+	return $cityname;
 }
 
 
