@@ -2565,6 +2565,7 @@ if ($placeid > 0) {
 								if ($obj) {
 									$stock_real = price2num($obj->reel, 'MS');
 								}
+								$htmlforlines .= $line->qty;
 								$htmlforlines .= '&nbsp; ';
 								$htmlforlines .= '<span class="opacitylow" title="'.$langs->trans("Stock").' '.price($stock_real, 1, '', 1, 0).'">';
 								$htmlforlines .= '(';

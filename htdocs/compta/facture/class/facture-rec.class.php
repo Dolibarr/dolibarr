@@ -694,7 +694,10 @@ class FactureRec extends CommonInvoice
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
 				$this->subtype				  = $obj->subtype;
+
+				$this->status	              = $obj->suspended;
 				$this->suspended              = $obj->suspended;
+
 				$this->total_ht               = $obj->total_ht;
 				$this->total_tva              = $obj->total_tva;
 				$this->total_localtax1        = $obj->localtax1;
@@ -1205,6 +1208,11 @@ class FactureRec extends CommonInvoice
 	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
 	{
 		global $mysoc;
+
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
 
 		$facid = $this->id;
 
@@ -2800,8 +2808,6 @@ class FactureLigneRec extends CommonInvoiceLine
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		// Clean parameters

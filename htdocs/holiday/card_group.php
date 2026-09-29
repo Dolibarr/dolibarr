@@ -203,10 +203,10 @@ if (empty($reshook)) {
 					$action = 'create';
 				}
 			} else {
-				if (!$user->hasRight('holiday', 'write') && !$user->hasRight('holiday', 'writeall_advance')) {
+				if (!$user->hasRight('holiday', 'write') && !$user->hasRight('holiday', 'writeall')) {
 					$error++;
 					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
-				} elseif (!$user->hasRight('holiday', 'writeall_advance') && !in_array($fuserid, $childids)) {
+				} elseif (!$user->hasRight('holiday', 'writeall') && !in_array($fuserid, $childids)) {
 					$error++;
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 					$action = 'create';
@@ -381,7 +381,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-card_gr
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'writeall')) || (!in_array($fuserid, $childids) && (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('holiday', 'writeall_advance')))) {
+	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'writeall')) || (!in_array($fuserid, $childids) && (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('holiday', 'writeall')))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request

@@ -348,6 +348,8 @@ class FactureFournisseurRec extends CommonInvoice
 		$error = 0;
 		$now = dol_now();
 
+		$label = $this->label ?? $this->libelle;
+
 		// Clean parameters
 		$this->titre = empty($this->titre) ? '' : $this->titre;	// deprecated
 		$this->title = empty($this->title) ? '' : $this->title;
@@ -414,7 +416,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ", ".((int) $facfourn_src->socid);
 			$sql .= ", '".$this->db->idate($now)."'";
 			$sql .= ", ".((int) $this->suspended);
-			$sql .= ", '".$this->db->escape($this->libelle)."'";
+			$sql .= ", '".$this->db->escape($label)."'";
 			$sql .= ", " .(!empty($facfourn_src->total_ttc) ? (float) $facfourn_src->total_ttc : '0');                              // amount
 			$sql .= ", " .((int) $user->id);
 			$sql .= ", " .(!empty($this->fk_project) ? ((int) $this->fk_project) : 'NULL');
@@ -707,9 +709,10 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->socid                    = $obj->fk_soc;
 				$this->date_creation            = $obj->datec;
 				$this->date_modification        = $obj->tms;
+
 				$this->status	                = $obj->suspended;
 				$this->suspended                = $obj->suspended;
-				$this->libelle                  = $obj->label;
+
 				$this->label                    = $obj->label;
 				$this->vat_src_code             = $obj->vat_src_code;
 				$this->total_localtax1          = $obj->localtax1;
@@ -1175,6 +1178,11 @@ class FactureFournisseurRec extends CommonInvoice
 	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0, $pu_ttc = 0)
 	{
 		global $mysoc, $user;
+
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
 
 		$facid = $this->id;
 
