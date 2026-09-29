@@ -277,7 +277,9 @@ class PaymentLoan extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'loan as l ON t.fk_loan = l.rowid';	// Restrict to the entity of the parent loan
 		$sql .= " WHERE t.rowid = ".((int) $id);
+		$sql .= " AND l.entity IN (".getEntity('loan').")";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
