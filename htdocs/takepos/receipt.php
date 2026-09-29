@@ -105,6 +105,7 @@ if (!$facid && (string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 	}
 }
 $object = new Facture($db);
+
 if ($facid > 0 && !GETPOST('specimen')) {
 	$result = $object->fetch($facid);
 	// Only an invoice of the POS, in an entity of the user, can be printed from the POS

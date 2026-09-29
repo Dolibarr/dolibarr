@@ -821,13 +821,15 @@ class Commande extends CommonOrder
 	 *
 	 * 	@param      User	$user       Object user that close
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *  @param		int		$checkpermission	1=Check the user can close the order, 0=Do not check (automatic action such as a workflow trigger)
 	 *	@return		int					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function cloture($user, $notrigger = 0)
+	public function cloture($user, $notrigger = 0, $checkpermission = 1)
 	{
 		$error = 0;
 
-		$usercanclose = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
+		$usercanclose = (!$checkpermission
+			|| (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'creer'))
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'close')));
 
 		if ($usercanclose) {
@@ -2536,7 +2538,11 @@ class Commande extends CommonOrder
 			// Load data
 			$line->fetch($lineid);
 
-			if ($id > 0 && $line->fk_commande != $id) {
+			if ($id <= 0) {
+				$id = $this->id;
+			}
+			if ($id > 0 && (int) $line->fk_commande !== (int) $id) {
+				$this->db->rollback();
 				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 				return -1;
 			}
@@ -3235,6 +3241,11 @@ class Commande extends CommonOrder
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
 	{
 		global $mysoc, $langs, $user;
+
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
 
 		dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code, ref_ext=$ref_ext");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -4351,7 +4362,7 @@ class Commande extends CommonOrder
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'einstein';
+			$modele = 'eratosthene';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
