@@ -88,6 +88,9 @@ $result = restrictedArea($user, 'banque', '', '', '');
 
 $object = new PaymentVarious($db);
 
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
+
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
@@ -111,15 +114,11 @@ if (empty($reshook)) {
 			header("Location: ".$urltogo);
 			exit;
 		}
-		if ($id > 0) {
-			$ret = $object->fetch($id);
-		}
 		$action = '';
 	}
 
 	// Link to a project
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->fetch($id);
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
@@ -230,8 +229,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
-		$result = $object->fetch($id);
-
 		if ($object->rappro == 0) {
 			$db->begin();
 
@@ -268,8 +265,6 @@ if (empty($reshook)) {
 	if ($action == 'setaccountancy_code' && $permissiontodelete) {
 		$db->begin();
 
-		$result = $object->fetch($id);
-
 		$object->accountancy_code = GETPOST('accountancy_code', 'alphanohtml');
 
 		$res = $object->update($user);
@@ -283,8 +278,6 @@ if (empty($reshook)) {
 
 	if ($action == 'setsubledger_account' && $permissiontodelete) {
 		$db->begin();
-
-		$result = $object->fetch($id);
 
 		$object->subledger_account = $subledger_account;
 
@@ -307,8 +300,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	$db->begin();
 
 	$originalId = $id;
-
-	$object->fetch($id);
 
 	if ($object->id > 0) {
 		unset($object->id);
@@ -389,12 +380,8 @@ if (isModEnabled('project')) {
 	$formproject = null;
 }
 
-if ($id) {
-	$object = new PaymentVarious($db);
-	$result = $object->fetch($id);
-	if ($result <= 0) {
-		recordNotFound();
-	}
+if ($action != 'create' && ! $object->id) {
+	recordNotFound();
 }
 
 $title = $object->ref." - ".$langs->trans('Card');
@@ -617,7 +604,7 @@ if ($action == 'create') {
 }
 
 // View in read or edit mode
-if ($id) {
+if ($object->id > 0) {
 	$alreadyaccounted = $object->getVentilExportCompta();
 
 	$head = various_payment_prepare_head($object);

@@ -1010,7 +1010,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
-		$this->name = $this->name ? trim($this->name) : trim((string) $this->nom);
+		$this->name = $this->name ? trim((string) $this->name) : trim((string) $this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
 
@@ -1471,7 +1471,7 @@ class Societe extends CommonObject
 		// Clean parameters
 		$this->id 			= $id;
 		$this->entity 		= ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-		$this->name 		= $this->name ? trim($this->name) : trim((string) $this->nom);
+		$this->name 		= $this->name ? trim((string) $this->name) : trim((string) $this->nom);
 		$this->nom 			= $this->name; // For backward compatibility
 		$this->name_alias 	= trim((string) $this->name_alias);
 		$this->ref_ext		= (empty($this->ref_ext) ? '' : trim($this->ref_ext));
