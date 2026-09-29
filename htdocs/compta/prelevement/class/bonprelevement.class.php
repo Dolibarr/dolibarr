@@ -110,6 +110,11 @@ class BonPrelevement extends CommonObject
 	public $emetteur_ics;
 
 	/**
+	 * @var string		SEPA schema version for direct debit files ('2' = pain.008.001.02, '8' = pain.008.001.08)
+	 */
+	public $sepa_schema_version = '2';
+
+	/**
 	 * @var int
 	 */
 	public $user_trans;
@@ -321,6 +326,7 @@ class BonPrelevement extends CommonObject
 		$this->emetteur_numero_compte = "";
 		$this->emetteur_code_banque = "";
 		$this->emetteur_number_key = "";
+		$this->sepa_schema_version = '2';
 		$this->sepa_xml_pti_in_ctti = false;
 
 		$this->emetteur_iban = "";
@@ -2056,7 +2062,10 @@ class BonPrelevement extends CommonObject
 				 */
 				// SEPA File Header
 				fwrite($this->file, '<' . '?xml version="1.0" encoding="UTF-8" standalone="yes"?' . '>' . $CrLf);
-				fwrite($this->file, '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
+			$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
+			$sepaSchemaVersion = $this->sepa_schema_version;
+			$sepaNamespace = 'urn:iso:std:iso:20022:tech:xsd:pain.008.001.0' . $sepaSchemaVersion;
+			fwrite($this->file, '<Document xmlns="' . $sepaNamespace . '" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
 				fwrite($this->file, '	<CstmrDrctDbtInitn>' . $CrLf);
 				// SEPA Group header
 				fwrite($this->file, '		<GrpHdr>' . $CrLf);
@@ -2573,7 +2582,7 @@ class BonPrelevement extends CommonObject
 				$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
 				$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
 				if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) {
-					$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+					$XML_DEBITOR .= '						' . ($sepaSchemaVersion == '8' ? '<BICFI>' : '<BIC>') . $row_bic . ($sepaSchemaVersion == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
 				}
 				$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
 				$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
@@ -2846,7 +2855,7 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</CdtrAcct>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CdtrAgt>' . $CrLf;
 				$XML_SEPA_INFO .= '				<FinInstnId>' . $CrLf;
-				$XML_SEPA_INFO .= '					<BIC>' . $this->emetteur_bic . '</BIC>' . $CrLf;
+			$XML_SEPA_INFO .= '				' . ($this->sepa_schema_version == '8' ? '<BICFI>' : '<BIC>') . $this->emetteur_bic . ($this->sepa_schema_version == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
 				$XML_SEPA_INFO .= '				</FinInstnId>' . $CrLf;
 				$XML_SEPA_INFO .= '			</CdtrAgt>' . $CrLf;
 				/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
