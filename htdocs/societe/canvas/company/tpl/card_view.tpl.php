@@ -20,6 +20,7 @@
  * @var Conf $conf
  * @var CommonObject $this
  * @var DoliDB $db
+ * @var FormFile $formfile
  * @var Translate $langs
  * @var User $user
  *
