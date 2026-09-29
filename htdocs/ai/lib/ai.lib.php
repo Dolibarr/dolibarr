@@ -154,12 +154,15 @@ function getListOfAIServices()
 			'label' => 'Custom',
 			'url' => 'https://domainofapi.com/v1/',
 			'setup' => 'Ask your AI provider how to get your API key',
-			'textgeneration' => array('default' => 'tinyllama-1.1b'),
-			'imagegeneration' => array('default' => 'mixtral-8x7b-32768'),
-			'audiogeneration' => array('default' => 'mixtral-8x7b-32768'),
-			'videogeneration' => array('default' => 'na'),
-			'transcription' => array('default' => 'mixtral-8x7b-32768'),
-			'translation' => array('default' => 'mixtral-8x7b-32768'),
+			// No default model: a custom endpoint serves whatever its owner chose,
+			// and guessing a name that does not exist there fails as a 403 with
+			// nothing on screen to explain it.
+			'textgeneration' => array('default' => ''),
+			'imagegeneration' => array('default' => ''),
+			'audiogeneration' => array('default' => ''),
+			'videogeneration' => array('default' => ''),
+			'transcription' => array('default' => ''),
+			'translation' => array('default' => ''),
 			'docparsing' => array('default' => 'na'),
 			'adapter_type' => 'openai'
 		),
