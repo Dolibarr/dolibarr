@@ -332,9 +332,9 @@ class pdf_squille extends ModelePdfReception
 
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url)) {
-							if ($object->reception_method_id > 0) {
+							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, $object->shipment_method_id, 'c_shipment_mode', 'rowid', 'code');
+								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 								$label = '';
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
