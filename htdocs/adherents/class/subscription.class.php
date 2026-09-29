@@ -245,6 +245,8 @@ class Subscription extends CommonObject
 		$sql .= " subscription, note as note_public, fk_bank";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
 		$sql .= " WHERE rowid = ".((int) $rowid);
+		// Restrict to the entity of the member the subscription belongs to (subscription has no entity column)
+		$sql .= " AND fk_adherent IN (SELECT d.rowid FROM ".MAIN_DB_PREFIX."adherent as d WHERE d.entity IN (".getEntity('adherent')."))";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
