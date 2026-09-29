@@ -71,6 +71,10 @@ if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibe" ]; then
 	echo "Create link $WORKDIR/.vibe"
 	ln -fs .agents .vibe 2>/dev/null
 fi
+#if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/AGENTS.md" ]; then
+#	echo "Create link $WORKDIR/AGENTS.md"
+#	ln -fs .agents/AGENTS.md AGENTS.md 2>/dev/null
+#fi
 
 
 # Create .cache directory
@@ -89,14 +93,25 @@ su -s /bin/sh "$USER_NAME" -c \
 chmod 644 "/home/$USER_NAME/.ssh/known_hosts"
 
 
-if [ "$1" = "--yolo" ]; then
-    VIBE_OPTIONS="--yolo"
-else
-    VIBE_OPTIONS=""
-fi
+VIBE_OPTIONS=""
+KEEP_CONTAINER=0
+
+for arg in "$@"; do
+    case "$arg" in
+        --yolo)
+            VIBE_OPTIONS="--yolo"
+            ;;
+        --no-exit)
+            KEEP_CONTAINER=1
+            ;;
+    esac
+done
 
 echo "VIBE_OPTIONS=$VIBE_OPTIONS"
 
-# Execute order
-exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"'; exec bash'
-#exec "$@"
+# Execute order. Once vibe has ended, stay into the container only when --no-exit was provided.
+if [ "$KEEP_CONTAINER" = "1" ]; then
+    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"'; exec bash'
+else
+    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"
+fi

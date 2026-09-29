@@ -1,6 +1,8 @@
 #!/bin/bash
 # Launch a vibe container with the current directory mounted as a volume
-# Syntax:  vibes.sh [--no-cache] [--yolo]
+# Syntax:  vibes.sh [--no-cache] [--yolo] [--no-exit]
+# --no-exit: stay into the container with a bash shell after vibe has ended
+#            (by default, when vibe is terminated, the container is terminated too)
 
 # Extract --no-cache flag from arguments (consumed by docker build, not passed to container)
 BUILD_ARGS=()
