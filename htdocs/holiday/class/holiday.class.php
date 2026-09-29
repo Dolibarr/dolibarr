@@ -782,7 +782,7 @@ class Holiday extends CommonObject
 			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
 			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -911,7 +911,7 @@ class Holiday extends CommonObject
 			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
 			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -1045,7 +1045,7 @@ class Holiday extends CommonObject
 			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
 			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1);
 
-			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
+			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
