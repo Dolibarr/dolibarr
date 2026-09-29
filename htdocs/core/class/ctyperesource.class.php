@@ -87,7 +87,7 @@ class Ctyperesource extends CommonDict
 		// Insert request
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
 		$sql .= 'code,';
-		$sql .= 'label';
+		$sql .= 'label,';
 		$sql .= 'active';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
