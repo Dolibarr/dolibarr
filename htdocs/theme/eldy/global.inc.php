@@ -6171,6 +6171,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
 	box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 15px;
+	font-size: 0.95em;
 }
 .ui-dialog {
 	padding-left: 5px;
@@ -9573,7 +9574,8 @@ table.jPicker {
 
 	.ui-dialog {
 		min-width: 280px;
-		max-width: 95%;
+		max-width: 90%;
+		max-height: 90%;
 	}
 
 	.pictofixedwidth {
