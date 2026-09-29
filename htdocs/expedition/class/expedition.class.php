@@ -1064,11 +1064,13 @@ class Expedition extends CommonObject
 		}
 
 		// Change status of order to "shipment in process"
-		$triggerKey = 'SHIPPING_'; // Because when the trigger is fired the object is a shipping and not the real target object, so I add a prefix like SHIPPING_ to avoid confusion
-		if ($this->origin == 'commande') {
-			$triggerKey .= 'ORDER_SHIPMENTONPROCESS';
-		} else {
-			$triggerKey .= strtoupper($this->origin).'_SHIPMENTONPROCESS';
+		if (!$error) {
+			$triggerKey = 'SHIPPING_'; // Because when the trigger is fired the object is a shipping and not the real target object, so I add a prefix like SHIPPING_ to avoid confusion
+			if ($this->origin == 'commande') {
+				$triggerKey.= 'ORDER_SHIPMENTONPROCESS';
+			} else {
+				$triggerKey.= strtoupper($this->origin).'_SHIPMENTONPROCESS';
+			}
 		}
 
 		// TODO : load the origin object to trigger the right setStatus according to origin object
