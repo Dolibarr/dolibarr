@@ -173,40 +173,116 @@ class Segment implements IteratorAggregate, Countable
 		return $this->xmlParsed;
 	}
 
-	/**
-	* Function to replace macros for invoice short and long month, invoice year
-	*
-	* Substitution occur when the invoice is generated, not considering the invoice date
-	* so do not (re)generate in a diferent date than the one that the invoice belongs to
-	* Perhaps it would be better to use the invoice issued date but I still do not know
-	* how to get it here
-	*
-	* Miguel Erill 09/04/2017
-	*
-	* @param	string	$text	String to convert
-	*/
-	public function macroReplace($text)
-	{
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		global $langs;
+   /**
+    * Function to replace macros for invoice short and long month, invoice year
+    *
+    * Substitution occur when the invoice is generated, not considering the invoice date
+    * so do not (re)generate in a diferent date than the one that the invoice belongs to
+    * Perhaps it would be better to use the invoice issued date but I still do not know
+    * how to get it here
+    *
+    * Miguel Erill 09/04/2017
+    *
+    * * 01/02/2019 - Changed the replacement mode to adapt to new way of doing things
+    *
+    * + 27/03/2019 - Added a function in odf.php to retrieve odf variables. Use it here to 
+    *                get the actual invoice creation date so that date functions are relative
+    *                to invoice dates not to invoice generation dates as before. Now you can 
+    *                (re)generate the invoice when you need and the substitutions will not change
+    *
+    * @param	string	$value	String to convert
+    */
+    public function macroReplace($value)
+    {
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+        global $langs;
 
-		$hoy = dol_getdate(dol_now('tzuser'));
-		$dateinonemontharray = dol_get_next_month($hoy['mon'], $hoy['year']);
-		$nextMonth = $dateinonemontharray['month'];
+		// Use our NEW function in odf.php to get the invoice date
+		$tmp = $this->odf->getVar('object_date');
 
-		$patterns=array( '/__CURRENTDAY__/u','/__CURENTWEEKDAY__/u',
-						 '/__CURRENTMONTH__/u','/__CURRENTMONTHLONG__/u',
-						 '/__NEXTMONTH__/u','/__NEXTMONTHLONG__/u',
-						 '/__CURRENTYEAR__/u','/__NEXTYEAR__/u' );
-		$values=array( $hoy['mday'], $langs->transnoentitiesnoconv($hoy['wday']),
-					   $hoy['mon'], monthArray($langs)[$hoy['mon']],
-					   $nextMonth, monthArray($langs)[$nextMonth],
-					   $hoy['year'], $hoy['year']+1 );
+		// Find the format the invoice date is in. We may have d-m-y, y-m-d or m-d-y depending on the locale
+		$invarr = false;
+		if     ( strpos($tmp, '-') !== false ) 	{ $invarr = explode('-', $tmp); }
+		elseif ( strpos($tmp, '/') !== false )	{ $invarr = explode('/', $tmp);	}
 
-		$text=preg_replace($patterns, $values, $text);
+    // Reformat it as appropriate
+		$fmt = str_replace('%', '', $langs->trans("FormatDateShortInput"));
+		if ( ($dayPos = stripos ($fmt, 'd')) === false )
+		{
+			// We MUST have day in the date format
+			throw new OdfException("Invalid date format $fmt");
+		}
+		// If $invarr is false it means that no separator in date was found
+		// so $tmp should contain the right date
+		if ( $invarr !== false )
+		{
+			if ( $dayPos == 0 )  // We had d-m-y
+			{
+				$tmp = $invarr[2].$invarr[1].$invarr[0];
+			} else if ( $dayPos == 2 ) // We already had y-m-d
+			{
+				$tmp = $invarr[0].$invarr[1].$invarr[2];				
+			} else // We had y-d-m
+				$tmp = $invarr[0].$invarr[2].$invarr[1];
+		}
+		// Now we have, at last, the invoice date in the format that the dol_stringtotime/dol_getdate needs
+  	$tmp = dol_stringtotime($tmp);
+  	$tmp = dol_getdate($tmp, true);
 
-		return $text;
-	}
+		// Get related dates (prev, next)
+  	$tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+  	$tmp3=dol_get_prev_month($tmp['mon'], $tmp['year']);
+  	$tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+  	$tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
+
+		// We get now the current date for the current date replacements
+		$cur = dol_getdate(dol_now(), true);
+
+		// Get related dates (prev, next)
+		$cur2=dol_get_prev_day($cur['mday'], $cur['mon'], $cur['year']);
+		$cur3=dol_get_prev_month($cur['mon'], $cur['year']);
+		$cur4=dol_get_next_day($cur['mday'], $cur['mon'], $cur['year']);
+		$cur5=dol_get_next_month($cur['mon'], $cur['year']);
+
+		$substitutionarray=array(
+			// Compatibility
+			'__DAY__' => strval($cur['mday']),
+			'__MONTH__' => strval($cur['mon']),
+			'__YEAR__' => strval($cur['year']),
+			'__MONTHTEXT__' => monthArray($langs)[$cur['mon']],
+			'__NEXTMONTH__' => strval($cur5['month']),
+			'__NEXTYEAR__' => strval($cur['year'] + 1),
+
+			// New format for replacements of current date
+			'__CURRENTDAY__' => strval($cur['mday']),
+			'__CURRENTMONTH__' => strval($cur['mon']),
+			'__CURRENTMONTHLONG__' => monthArray($langs)[$cur['mon']],
+			'__CURRENTYEAR__' => strval($cur['year']),
+			'__PREVIOUS_DAY__' => strval($cur2['day']),
+			'__PREVIOUS_MONTH__' => strval($cur3['month']),
+			'__PREVIOUS_YEAR__' => strval($cur['year'] - 1),
+			'__NEXT_DAY__' => strval($cur4['day']),
+			'__NEXT_MONTH__' => strval($cur5['month']),
+			'__NEXTMONTHLONG__' => monthArray($langs)[$cur5['month']],
+			'__NEXT_YEAR__' => strval($cur['year'] + 1),
+
+			// Replacements of invoice date
+			'__INVOICEDAY__' => strval($tmp['mday']),
+			'__INVOICEMONTH__' => strval($tmp['mon']),
+			'__INVOICEMONTHLONG__' => monthArray($langs)[$tmp['mon']],
+			'__INVOICEYEAR__' => strval($tmp['year']),
+			'__PREVIOUS_INVOICEDAY__' => strval($tmp2['day']),
+			'__PREVIOUS_INVOICEMONTH__' => strval($tmp3['month']),
+			'__PREVIOUS_INVOICEYEAR__' => strval($tmp['year'] - 1),
+			'__NEXT_INVOICEDAY__' => strval($tmp4['day']),
+ 			'__NEXT_INVOICEMONTH__' => strval($tmp5['month']),
+			'__NEXTINVOICEMONTHLONG__' => monthArray($langs)[$tmp5['month']],
+			'__NEXT_INVOICEYEAR__' => strval($tmp['year'] + 1)
+		);
+		
+		complete_substitutions_array($substitutionarray, $langs);
+		return make_substitutions($value, $substitutionarray);
+    }
 
 	/**
 	 * Analyse the XML code in order to find children
