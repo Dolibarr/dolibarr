@@ -205,6 +205,7 @@ if ($calc == 0 || $calc == 2) {
 
 	$action = "tvaclient";
 	$object = &$coll_list;
+	$parameters = array();
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
