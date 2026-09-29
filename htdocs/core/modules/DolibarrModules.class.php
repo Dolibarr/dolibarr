@@ -2199,7 +2199,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					} else {
 						// Id already used, possibly by another module: the permission is silently
 						// not inserted, which leaves the module half installed. Collected to warn once.
-						$skippedperms[$r_id] = $r_perms.($r_subperms ? "->".$r_subperms : "");
+						$sql = "SELECT module FROM ".MAIN_DB_PREFIX."rights_def";
+						$sql .= " WHERE entity = ".((int) $entity);
+						$sql .= " AND id = ".((int) $r_id);
+
+						$resqlowner = $this->db->query($sql);
+						if ($resqlowner) {
+							$objowner = $this->db->fetch_object($resqlowner);
+							if ($objowner && $objowner->module != $r_module) {
+								$skippedperms[$r_id] = $r_perms.($r_subperms ? "->".$r_subperms : "");
+								dol_syslog(get_class($this)."::insert_permissions permission id ".$r_id." of module ".$r_module." already used by module ".$objowner->module.", permission not added", LOG_WARNING);
+							}
+							$this->db->free($resqlowner);
+						}
 					}
 
 					// If we want to init permissions on admin users
