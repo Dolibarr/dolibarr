@@ -984,7 +984,7 @@ while ($i < $imaxinloop) {
 						print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 					}
 				} else {
-					if ($adherent->subscription == 'yes') {
+					if (!empty($adherent->need_subscription)) {
 						print $langs->trans("SubscriptionNotReceived");
 						if ($adherent->statut > 0) {
 							print " ".img_warning();
