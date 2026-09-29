@@ -2587,6 +2587,12 @@ class Expedition extends CommonObject
 			// For triggers
 			$line->fetch($lineid);
 
+			if ($this->id > 0 && (int) $line->fk_expedition !== (int) $this->id) {
+				$this->db->rollback();
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+
 			if ($line->delete($user) > 0) {
 				//$this->update_price(1);
 
@@ -3126,7 +3132,7 @@ class Expedition extends CommonObject
 				if ($shipments_match_order) {
 					dol_syslog("Qty for the ".count($order->lines)." lines of the origin order is same than qty for lines in the shipment we close (shipments_match_order is true), with new status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
 					// We close the order
-					$order->cloture($user);		// Note this may also create an invoice if module workflow ask it
+					$order->cloture($user, 0, 0);		// 0 = do not check the close permission: this is an automatic action of the shipment closing. Note this may also create an invoice if module workflow ask it
 				}
 			}
 
