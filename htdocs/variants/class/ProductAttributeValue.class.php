@@ -198,7 +198,7 @@ class ProductAttributeValue extends CommonObjectLine
 		$sql .= " fk_product_attribute, ref, value, entity, position";
 		$sql .= ")";
 		$sql .= " VALUES (";
-		$sql .= "  " . ((int) $this->fk_product_attribute);
+		$sql .= " " . ((int) $this->fk_product_attribute);
 		$sql .= ", '" . $this->db->escape($this->ref) . "'";
 		$sql .= ", '" . $this->db->escape($this->value) . "'";
 		$sql .= ", " . ((int) $this->entity);
