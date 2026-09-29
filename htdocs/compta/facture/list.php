@@ -985,10 +985,18 @@ if ($search_dispute_status != '-1' && $search_dispute_status != '') {
 	}
 }
 if (is_array($search_status) && count($search_status) > 0) {
-	$search_statusArray = $search_status;
-	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', array_map('intval', $search_statusArray))) . ")";
+	// 99 is not a real status but a filter for partially paid invoices
+	$search_statusArray = array_diff($search_status, array('99'));
+	$sqlstatus = array();
+	if (count($search_statusArray) > 0) {
+		$sqlstatus[] = "f.fk_statut IN (" . $db->sanitize(implode(',', array_map('intval', $search_statusArray))) . ")";
+	}
+	if (in_array('99', $search_status)) {
+		// Partially paid: validated invoice with at least one payment recorded
+		$sqlstatus[] = "(f.fk_statut = ".Facture::STATUS_VALIDATED." AND EXISTS (SELECT pf.rowid FROM ".MAIN_DB_PREFIX."paiement_facture as pf WHERE pf.fk_facture = f.rowid))";
+	}
+	$sql .= " AND (".implode(" OR ", $sqlstatus).")";
 }
-
 if ($search_paymentmode > 0) {
 	$sql .= " AND f.fk_mode_reglement = ".((int) $search_paymentmode);
 }
@@ -1997,6 +2005,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	$liststatus = array(
 		'0' => $langs->trans("BillShortStatusDraft"),
 		'1' => $langs->trans("BillShortStatusNotPaid"),
+		'99' => $langs->trans("BillStatusStarted"),
 		'2' => $langs->trans("BillShortStatusPaid"),
 		'3' => $langs->trans("BillShortStatusCanceled")
 	);
