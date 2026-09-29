@@ -1428,6 +1428,18 @@ class ActionComm extends CommonObject
 
 		$sql = "SELECT a.id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		if ($elementtype == 'user' && !empty($fk_element)) {
+			// Join on a materialized list of event ids linked to this user (direct owner or resource).
+			// Note: we intentionally avoid "a.fk_user_action = X OR EXISTS(...)" in the WHERE clause: with ORDER BY a.datep LIMIT n,
+			// MySQL can no longer stop scanning the datep index as soon as it has found n matching rows once a row is
+			// checked against a correlated OR EXISTS, so for a user with zero linked events it has to scan the whole
+			// actioncomm table instead of stopping early (seen in prod: ~9s for a user with no event vs ~0.2s for one with events).
+			$sql .= " INNER JOIN (";
+			$sql .= " SELECT id AS cid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_user_action = ".((int) $fk_element);
+			$sql .= " UNION";
+			$sql .= " SELECT fk_actioncomm AS cid FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE element_type = 'user' AND fk_element = ".((int) $fk_element);
+			$sql .= " ) as userevents ON userevents.cid = a.id";
+		}
 		// Fields from hook
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
 		$reshook = $hookmanager->executeHooks('getActionsListFrom', $parameters);    // Note that $action and $object may have been modified by hook
@@ -1446,10 +1458,14 @@ class ActionComm extends CommonObject
 				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
 				$sql .= " r.element_type = 'socpeople' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
 			} elseif ($elementtype == 'user') {
-				$sql .= " AND (a.fk_user_action = ".((int) $fk_element)." OR EXISTS";
-				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
-				$sql .= " r.element_type = 'user' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
-				$sql .= ")";
+				if (empty($fk_element)) {
+					// No join was added above (nothing to filter on), keep old behavior for this edge case.
+					$sql .= " AND (a.fk_user_action = ".((int) $fk_element)." OR EXISTS";
+					$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+					$sql .= " r.element_type = 'user' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
+					$sql .= ")";
+				}
+				// Otherwise, filtering for user is done with the "userevents" join added right after the FROM clause.
 			} else {
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
