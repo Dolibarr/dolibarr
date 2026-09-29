@@ -145,7 +145,7 @@ if ($export_type == 'externalmodule' && !empty($what)) {
 		exit();
 	}
 	// Only a module directory name is allowed (not '.' that would archive the whole custom directory)
-	if (!preg_match('/^[a-z0-9_]+$/i', $what) || !is_dir(DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what))) {
+	if (!preg_match('/^[a-z0-9_\-]+$/i', $what) || !is_dir(DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what))) {
 		print 'Bad value for parameter what';
 		$db->close();
 		exit();
