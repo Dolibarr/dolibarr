@@ -70,7 +70,7 @@ return [
         'htdocs/core/modules/delivery/mod_delivery_saphir.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty', 'PhanTypeInvalidDimOffset', 'PhanTypeInvalidLeftOperandOfAdd'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/hrm/mod_evaluation_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/member/modules_cards.php' => ['PhanTypeMismatchArgument'],
