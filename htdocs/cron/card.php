@@ -814,7 +814,7 @@ if (($action == "create") || ($action == "edit")) {
 	}
 
 
-	print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+	print dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id, '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 
 	if (empty($object->status)) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';

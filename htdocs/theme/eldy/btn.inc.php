@@ -215,6 +215,19 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
+/* Button Clone */
+#action-clone .textbutton, .butAction.butActionClone .textbutton {
+  font-size: 0;
+  display: inline-block;
+}
+#action-clone .textbutton::before, .butAction.butActionClone .textbutton::before {
+  content: "\f24d";            /* fa-clone */
+  font-family: "Font Awesome 5 Free";  /* ou "Font Awesome 5 Free" selon votre version */
+  font-weight: 900;            /* obligatoire pour la version "solid" */
+  font-size: 14px;				/* using 1em does not work */
+  /* vertical-align: middle; */
+}
+
 
 /*
 .butActionDelete#action-delete::before {
