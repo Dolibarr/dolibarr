@@ -157,7 +157,7 @@ $h++;
 if ($id) {
 	$lipre = new LignePrelevement($db);
 
-	if ($lipre->fetch($id) >= 0) {
+	if ($lipre->fetch($id) == 0) {	// fetch() returns 0 when found
 		$bon = new BonPrelevement($db);
 		$bon->fetch($lipre->bon_rowid);
 
@@ -206,7 +206,7 @@ if ($id) {
 		print '</table>';
 		print dol_get_fiche_end();
 	} else {
-		dol_print_error($db);
+		recordNotFound('', 0);
 	}
 
 	// Form to record a reject
