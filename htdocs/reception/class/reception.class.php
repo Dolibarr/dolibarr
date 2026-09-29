@@ -889,8 +889,27 @@ class Reception extends CommonObject
 				$this->setErrorsFromObject($supplierorderdispatch);
 				return $ret;
 			} else {
+				// Lines of draft receptions are not received yet
+				$draft_lines = array();
+				$sql = "SELECT rb.rowid FROM ".MAIN_DB_PREFIX."receptiondet_batch as rb";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."reception as r ON r.rowid = rb.fk_reception";
+				$sql .= " WHERE rb.fk_element = ".((int) $this->origin_id);
+				$sql .= " AND r.fk_statut = ".self::STATUS_DRAFT;
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = $this->db->lasterror();
+					return -1;
+				}
+				while ($obj = $this->db->fetch_object($resql)) {
+					$draft_lines[(int) $obj->rowid] = (int) $obj->rowid;
+				}
+				$this->db->free($resql);
+
 				// build array with quantity received by product in all supplier orders (origin)
 				foreach ($supplierorderdispatch->lines as $dispatch_line) {
+					if (isset($draft_lines[(int) $dispatch_line->id])) {
+						continue;
+					}
 					if (array_key_exists($dispatch_line->fk_product, $qty_received)) {
 						$qty_received[$dispatch_line->fk_product] += $dispatch_line->qty;
 					} else {

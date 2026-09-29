@@ -127,6 +127,15 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+// Actions on an existing dispatch line: the line must be a line of the purchase order of the page
+if (in_array($action, ['checkdispatchline', 'uncheckdispatchline', 'denydispatchline', 'confirm_deleteline', 'updateline'])) {
+	$tmpdispatchline = new CommandeFournisseurDispatch($db);
+	if ($tmpdispatchline->fetch($lineid) <= 0 || (int) $tmpdispatchline->fk_element !== (int) $object->id) {
+		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+		$action = '';
+	}
+}
+
 if ($action == 'checkdispatchline' && $permissiontocontrol) {
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 

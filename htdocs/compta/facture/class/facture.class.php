@@ -4585,6 +4585,11 @@ class Facture extends CommonInvoice
 	{
 		global $user;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__.": using line label is deprecated", LOG_WARNING);
@@ -4950,7 +4955,10 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 
-		if ($id > 0 && $line->fk_facture != $id) {
+		if ($id <= 0) {
+			$id = $this->id;
+		}
+		if ($id > 0 && (int) $line->fk_facture !== (int) $id) {
 			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 			return -1;
 		}
