@@ -2385,9 +2385,11 @@ while ($i < $imaxinloop) {
 				}
 			}
 			print '<td class="center tdoverflowmax150" title="'.dolPrintHTMLForAttribute($s).'">';
-			print '<span class="badge badge-oppstatus">';
-			print dolPrintHTML($s);
-			print '</span>';
+			if ($s) {
+				print '<span class="badge badge-oppstatus">';
+				print dolPrintHTML($s);
+				print '</span>';
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
