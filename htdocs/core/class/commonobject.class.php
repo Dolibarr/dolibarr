@@ -3813,6 +3813,32 @@ abstract class CommonObject
 		return $row[0];
 	}
 
+	/**
+	 * Round a quantity up to the next multiple of a packaging quantity (options PRODUCT_USE_CUSTOMER_PACKAGING
+	 * and PRODUCT_USE_SUPPLIER_PACKAGING). The rounding is done on the absolute value, so a negative quantity
+	 * stays negative.
+	 *
+	 * @param	float|string		$qty		Quantity
+	 * @param	float|string|null	$packaging	Packaging quantity. Nothing is done if it is empty or not > 0.
+	 * @return	float|string					Quantity rounded to the packaging, or $qty if no rounding is needed
+	 */
+	public function roundQtyToPackaging($qty, $packaging)
+	{
+		if (empty($packaging) || !is_numeric($packaging) || (float) $packaging <= 0) {
+			return $qty;
+		}
+		$sign = ((float) $qty < 0 ? -1 : 1);
+		$absqty = abs((float) $qty);
+		if ($absqty < (float) $packaging) {
+			return $sign * (float) $packaging;
+		}
+		if ((float) price2num(fmod($absqty, (float) $packaging), 'MS')) {
+			$coeff = intval($absqty / (float) $packaging) + 1;
+			return $sign * (float) price2num((float) $packaging * $coeff, 'MS');
+		}
+		return $qty;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Get max value used for position of line (rang)
