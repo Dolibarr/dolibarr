@@ -52,6 +52,15 @@ ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_
 
 -- v25 migration
 
+-- Add an independent project address using the third-party address structure.
+ALTER TABLE llx_projet ADD COLUMN address varchar(255) DEFAULT NULL;
+ALTER TABLE llx_projet ADD COLUMN zip varchar(25) DEFAULT NULL;
+ALTER TABLE llx_projet ADD COLUMN town varchar(50) DEFAULT NULL;
+ALTER TABLE llx_projet ADD COLUMN fk_departement integer DEFAULT 0;
+ALTER TABLE llx_projet ADD COLUMN fk_pays integer DEFAULT 0;
+ALTER TABLE llx_projet ADD INDEX idx_projet_fk_pays (fk_pays);
+ALTER TABLE llx_projet ADD INDEX idx_projet_fk_departement (fk_departement);
+
 -- Add per entity payment terms/modes and bank account (issue #39146)
 ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
 ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement integer DEFAULT NULL;

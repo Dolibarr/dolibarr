@@ -31,6 +31,11 @@ create table llx_projet
   entity           	integer DEFAULT 1 NOT NULL,	-- multi company id
   title            	varchar(255) NOT NULL,
   description      	text,
+  address               varchar(255) DEFAULT NULL,
+  zip                   varchar(25) DEFAULT NULL,
+  town                  varchar(50) DEFAULT NULL,
+  fk_departement        integer DEFAULT 0,
+  fk_pays               integer DEFAULT 0,
   fk_user_creat    	integer NOT NULL,			-- createur du projet
   fk_user_modif    	integer,
   public           	integer,						-- project is public or not
