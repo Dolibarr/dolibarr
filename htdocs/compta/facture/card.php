@@ -334,7 +334,11 @@ if (empty($reshook)) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOSTINT("discountid"));
-		$discount->unlink_invoice();
+		if ($result > 0 && $discount->fk_facture == $object->id) {	// The credit note must be linked to this invoice
+			$discount->unlink_invoice();
+		} else {
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+		}
 	} elseif ($action == 'valid' && $usercancreate) {
 		// Validation
 		$object->fetch($id);
@@ -1038,15 +1042,18 @@ if (empty($reshook)) {
 		if ($object->status == Facture::STATUS_VALIDATED && $object->paye == 0) {
 			$paiement = new Paiement($db);
 			$result = $paiement->fetch(GETPOSTINT('paiement_id'));
-			if ($result > 0) {
+			$paymentbills = ($result > 0) ? $paiement->getBillsArray() : array();
+			if ($result > 0 && is_array($paymentbills) && in_array($object->id, $paymentbills)) {	// The payment must be linked to this invoice
 				$result = $paiement->delete($user); // If fetch ok and found
 				if ($result >= 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 					exit;
 				}
-			}
-			if ($result < 0) {
-				setEventMessages($paiement->error, $paiement->errors, 'errors');
+				if ($result < 0) {
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
+				}
+			} else {
+				setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 			}
 		}
 	} elseif ($action == 'add' && $usercancreate) {

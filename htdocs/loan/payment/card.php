@@ -50,6 +50,13 @@ if ($id > 0) {
 	}
 }
 
+// PaymentLoan::fetch() is a low-level by-id primitive (returns a record regardless of entity), so the
+// access restriction is enforced here in the caller, on the parent loan: restrictedArea() checks the
+// loan read right and that the loan belongs to an allowed entity.
+if ($payment->id > 0) {
+	restrictedArea($user, 'loan', $payment->fk_loan, '', '');
+}
+
 
 /*
  * Actions
