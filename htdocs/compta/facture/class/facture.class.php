@@ -6301,6 +6301,9 @@ class Facture extends CommonInvoice
 					$errormesg = '';
 
 					// Make substitution in email content
+					$tmpinvoice->totalpaid = $tmpinvoice->getSommePaiement();
+					$tmpinvoice->totalcreditnotes = $tmpinvoice->getSumCreditNotesUsed();
+					$tmpinvoice->totaldeposits = $tmpinvoice->getSumDepositsUsed();
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $tmpinvoice);
 
 					complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
