@@ -107,6 +107,17 @@ foreach ($arrayofai as $ia => $iarecord) {
 	if ($ia == 'custom') {
 		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
 	}
+
+	// Model used for text generation. It was readable on the assistant page but
+	// nothing could set it, so a provider whose default model does not exist
+	// answered 403 with no way to correct it from the interface.
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MODEL_TEXT');
+	$item->nameText = $langs->trans("AI_API_MODEL").' ('.$ialabel.')';
+	$item->defaultFieldValue = $iarecord['textgeneration']['default'] ?? '';
+	$item->fieldParams['trClass'] = 'iaservice '.$ia;
+	$item->cssClass = 'minwidth500 input'.$ia.' aimodelinput aimodelinput'.$ia;
+	$item->fieldAttr['placeholder'] = $iarecord['textgeneration']['default'] ?? $langs->trans("AIModelNamePlaceholder");
+	$item->helpText = $langs->trans("AIModelNameHelp");
 }
 
 $setupnotempty = + count($formSetup->items);
@@ -152,11 +163,65 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = aiAdminPrepareHead();
+/**
+ * Models the configured provider actually serves, offered as a fill-in for the
+ * model field. Typing a name that does not exist there answers 403 with nothing
+ * on screen to explain it, so the list is shown where the field is edited.
+ *
+ * @param  DoliDB   $db    Database handler.
+ * @param  Translate $langs Language object.
+ * @return string          HTML block, empty when no provider is configured.
+ */
+function aiModelPickerOutput($db, $langs)
+{
+	$service = getDolGlobalString('AI_API_SERVICE');
+	if (empty($service) || $service === '-1') {
+		return '';
+	}
+
+	$list = getAiProviderModelList($db, (GETPOST('action', 'aZ09') === 'refreshaimodels'));
+	if (empty($list['models'])) {
+		return '<div class="opacitymedium">'.$langs->trans("AIModelListUnavailable").' <a href="'.$_SERVER["PHP_SELF"].'?action=refreshaimodels&token='.newToken().'">'.$langs->trans("Refresh").'</a></div>';
+	}
+
+	// A configured or defaulted model that the provider does not serve fails at
+	// runtime as a 403 with nothing on screen to explain it. Say so here, while
+	// the field is in front of the administrator.
+	$services = getListOfAIServices();
+	$configured = getDolGlobalString('AI_API_'.strtoupper($service).'_MODEL_TEXT', $services[$service]['textgeneration']['default'] ?? '');
+	$out = '';
+	if ($configured !== '' && !in_array($configured, $list['models'], true)) {
+		$warn = $langs->trans("AIModelNotServedByProvider", dol_escape_htmltag($configured));
+		$closest = aiSuggestClosestModel($configured, $list['models']);
+		if ($closest !== '') {
+			$warn .= ' '.$langs->trans("AIModelClosestAvailable", dol_escape_htmltag($closest));
+		}
+		$out .= info_admin($warn, 0, 0, 'warning');
+	}
+
+	$out .= '<div class="aimodellist"><span class="opacitymedium">'.$langs->trans("AIModelsAvailableOnProvider").'</span> ';
+	foreach ($list['models'] as $model) {
+		$out .= '<a href="#" class="aimodelpick marginrightonly" data-model="'.dol_escape_htmltag($model).'">'.dol_escape_htmltag($model).'</a> ';
+	}
+	$out .= ' <a href="'.$_SERVER["PHP_SELF"].'?action=refreshaimodels&token='.newToken().'">'.$langs->trans("Refresh").'</a></div>';
+	$out .= '<script>
+	jQuery(document).ready(function () {
+		jQuery(".aimodelpick").click(function (e) {
+			e.preventDefault();
+			jQuery(".aimodelinput'.strtolower($service).'").val(jQuery(this).data("model"));
+		});
+	});
+	</script>';
+
+	return $out;
+}
+
 print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "ai");
 
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
+	print aiModelPickerOutput($db, $langs);
 } elseif (!empty($formSetup->items)) {
 	print $formSetup->generateOutput();
 	print '<div class="tabsAction">';
