@@ -1747,10 +1747,6 @@ class EmailCollector extends CommonObject
 			$richarrayofemail = array();
 
 			foreach ($arrayofemail as $imapemail) {
-				if ($nbemailprocessed > 1000) {
-					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
-				}
-
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
@@ -1778,6 +1774,10 @@ class EmailCollector extends CommonObject
 
 			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
+				if ($nbemailprocessed > 1000) {
+					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
+				}
+
 				$iforemailloop++;
 
 				try {
@@ -3848,9 +3848,9 @@ class EmailCollector extends CommonObject
 	 * getmsg
 	 *
 	 * @param 	IMAP\Connection|resource $mbox   	Structure
-	 * @param 	int				$mid		Message Id / Message Number  Email
-	 * @param 	string			$destdir    Target dir for attachments. Leave blank to parse without writing to disk.
-	 * @return 	-1|1						Return -1 if error, 1 if OK
+	 * @param 	int						$mid		Message Id / Message Number  Email
+	 * @param 	string					$destdir    Target dir for attachments. Leave blank to parse without writing to disk.
+	 * @return 	int <-1,1>							Return -1 if error, 1 if OK
 	 */
 	private function getmsg($mbox, $mid, $destdir = ''): int
 	{
