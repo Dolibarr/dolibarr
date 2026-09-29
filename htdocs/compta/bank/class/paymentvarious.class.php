@@ -324,6 +324,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
 		$sql .= " WHERE v.rowid = ".((int) $id);
+		$sql .= " AND v.entity IN (".getEntity('payment_various').")";	// Prevent fetching a various payment of another entity by its id
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
