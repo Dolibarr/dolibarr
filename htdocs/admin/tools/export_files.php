@@ -137,6 +137,19 @@ $result = dol_mkdir($outputdir);
 $utils = new Utils($db);
 
 if ($export_type == 'externalmodule' && !empty($what)) {
+	// Check is done here, before any compression method, so it can't be bypassed with compression=gz, bz or zstd
+	global $dolibarr_allow_download_external_modules;
+	if (empty($dolibarr_allow_download_external_modules)) {
+		print 'Download of external modules is not allowed by $dolibarr_allow_download_external_modules in conf.php file';
+		$db->close();
+		exit();
+	}
+	// Only a module directory name is allowed (not '.' that would archive the whole custom directory)
+	if (!preg_match('/^[a-z0-9_\-]+$/i', $what) || !is_dir(DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what))) {
+		print 'Bad value for parameter what';
+		$db->close();
+		exit();
+	}
 	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
 } else {
 	$fulldirtocompress = DOL_DATA_ROOT;
@@ -155,13 +168,6 @@ if ($compression == 'zip') {
 	$rootdirinzip = '';
 	if ($export_type == 'externalmodule' && !empty($what)) {
 		$rootdirinzip = $what;
-
-		global $dolibarr_allow_download_external_modules;
-		if (empty($dolibarr_allow_download_external_modules)) {
-			print 'Download of external modules is not allowed by $dolibarr_allow_download_external_modules in conf.php file';
-			$db->close();
-			exit();
-		}
 	}
 
 	global $errormsg;
