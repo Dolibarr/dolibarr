@@ -998,8 +998,8 @@ class pdf_squille extends ModelePdfReception
 
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$text = $linkedobject->ref;
-				if (isset($linkedobject->ref_client) && !empty($linkedobject->ref_client)) {
-					$text .= ' ('.$linkedobject->ref_client.')';
+				if (isset($linkedobject->ref_supplier) && !empty($linkedobject->ref_supplier)) {
+					$text .= ' ('.$linkedobject->ref_supplier.')';
 				}
 				$Yoff = $Yoff + 8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
