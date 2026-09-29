@@ -245,6 +245,10 @@ if (empty($reshook)) {
  * View
  */
 
+if ($action != 'create' && ! $object->id) {
+	recordNotFound();
+}
+
 $form = new Form($db);
 $formfile = new FormFile($db);
 
@@ -316,7 +320,7 @@ if ($action == 'create') {
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit') {
+if ($object->id > 0 && $action == 'edit') {
 	print load_fiche_titre($langs->trans("MyObject"), '', $object->picto);
 
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
