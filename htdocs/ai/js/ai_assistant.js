@@ -6,6 +6,7 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  */
+
 /**
  * \file htdocs/ai/js/ai_assistant.js
  * \brief Frontend logic for the AI Assistant
@@ -1781,7 +1782,11 @@ export function initAiAssistant(container) {
         api_orders: '/commande/card.php?id=%id%',
         api_projects: '/projet/card.php?id=%id%',
         api_contracts: '/contrat/card.php?id=%id%',
-        api_tickets: '/ticket/card.php?id=%id%'
+        api_tickets: '/ticket/card.php?id=%id%',
+        api_supplier_invoices: '/fourn/facture/card.php?facid=%id%',
+        api_supplier_orders: '/fourn/commande/card.php?id=%id%',
+        api_supplier_proposals: '/supplier_proposal/card.php?id=%id%',
+        api_categories: '/categories/card.php?id=%id%'
     };
     // The picto of the object a card link points to, like getNomUrl() does in
     // Dolibarr pages: the icons are the ones the core assigns to each object
@@ -1894,13 +1899,23 @@ export function initAiAssistant(container) {
         }
         else if (typeof data === 'object') {
             isObject = true;
-            objectUrl = data.url || null;
+            // A create answers with its new id and no url: build the card link from
+            // the tool name, so the user can open what was just written.
+            objectUrl = data.url || cardUrlFor(toolName, data.id || data.rowid) || null;
             content += '<div class="chat-object"><ul>';
+            let nested = '';
             for (const [key, value] of Object.entries(data)) {
                 if (key === 'url') continue;
                 if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
+                // A list inside the answer is the answer: a tool that wraps its rows
+                // in {count, offset, limit, results} would otherwise show only the
+                // counters, and the rows would never reach the user.
+                else if (Array.isArray(value) && value.length && typeof value[0] === 'object') {
+                    nested += formatResult(value, true, toolName);
+                }
             }
             content += '</ul></div>';
+            content += nested;
         }
         else { return String(data); }
 
