@@ -13,11 +13,10 @@ return [
     // FunctionMissingSingleQuoteWrapping : 50+ occurrences
     // PhanTypeMismatchArgument : 20+ occurrences
     // PhanTypeMismatchProperty : 15+ occurrences
-    // PhanTypeInvalidDimOffset : 10+ occurrences
+    // PhanTypeInvalidDimOffset : 6 occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
     // PhanUndeclaredGlobalVariable : 10+ occurrences
     // PhanUndeclaredMethod : 5 occurrences
-    // PhanTypeArraySuspiciousNull : 4 occurrences
     // PhanPluginUndeclaredVariableIsset : 2 occurrences
     // PhanParamTooMany : 1 occurrence
     // PhanPluginSuspiciousParamPosition : 1 occurrence
@@ -30,7 +29,6 @@ return [
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
         'htdocs/blockedlog/admin/filecheck.php' => ['FunctionMissingSingleQuoteWrapping'],
-        'htdocs/compta/tva/clients.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset'],
         'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_massactions.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_sendmails.inc.php' => ['PhanUndeclaredProperty'],

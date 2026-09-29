@@ -278,8 +278,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'pid'       => $x_coll[$my_coll_thirdpartyid]['pid'][$id],
 				'pref'      => isset($x_coll[$my_coll_thirdpartyid]['pref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['pref'][$id] : '',
 				'ptype'     => $x_coll[$my_coll_thirdpartyid]['ptype'][$id],
-				'pstatus'   => isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatus'][$id] : '',  // @phan-suppress-current-line PhanTypeInvalidDimOffset,PhanTypeArraySuspiciousNull
-				'pstatusbuy' => isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id] : '',  // @phan-suppress-current-line PhanTypeInvalidDimOffset,PhanTypeArraySuspiciousNull
+				'pstatus'   => isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatus'][$id] : '',
+				'pstatusbuy' => isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id] : '',
 
 				'payment_id' => $x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
 				'payment_ref' => isset($x_coll[$my_coll_thirdpartyid]['payment_ref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['payment_ref'][$id] : '',
