@@ -3505,7 +3505,7 @@ class Expedition extends CommonObject
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'rouget';
+			$modele = 'espadon';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;

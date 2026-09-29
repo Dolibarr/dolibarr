@@ -4362,7 +4362,7 @@ class Commande extends CommonOrder
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'einstein';
+			$modele = 'eratosthene';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;

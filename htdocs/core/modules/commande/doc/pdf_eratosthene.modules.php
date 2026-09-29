@@ -95,7 +95,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bills", "products"));
