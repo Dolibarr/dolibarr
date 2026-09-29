@@ -637,6 +637,16 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 		}
+		if (!$error && !($rowid > 0)) {
+			// A new line can only be attached to a price line of the product being edited
+			$sql = "SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp";
+			$sql .= " WHERE pp.rowid = ".((int) $priceid)." AND pp.fk_product = ".((int) $object->id);
+			$resql = $db->query($sql);
+			if (!$resql || !$db->num_rows($resql)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+			}
+		}
 		if (!$error) {
 			// Calcul du prix HT et du prix unitaire
 			if ($object->price_base_type == 'TTC') {
@@ -655,6 +665,7 @@ if (empty($reshook)) {
 				$sql .= " remise_percent=".((float) $remise_percent).",";
 				$sql .= " remise=".((float) $remise);
 				$sql .= " WHERE rowid = ".((int) $rowid);
+				$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $object->id).")";
 
 				$result = $db->query($sql);
 				if (!$result) {
@@ -681,6 +692,7 @@ if (empty($reshook)) {
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE rowid = ".((int) $rowid);
+			$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $object->id).")";
 
 			$result = $db->query($sql);
 		} else {
@@ -693,6 +705,7 @@ if (empty($reshook)) {
 		if (!empty($priceid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE fk_product_price = ".((int) $priceid);
+			$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $object->id).")";
 
 			$result = $db->query($sql);
 		} else {
@@ -837,6 +850,15 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				$action = '';
 			}
+		}
+	}
+
+	// A customer price line can only be removed or updated from the page of its own product
+	if (in_array($action, ['confirm_remove_customer_price', 'update_customer_price_confirm']) && $prodcustprice !== null) {
+		$prodcustprice->fetch(GETPOSTINT('lineid'));
+		if ((int) $prodcustprice->fk_product !== (int) $object->id) {
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+			$action = '';
 		}
 	}
 
