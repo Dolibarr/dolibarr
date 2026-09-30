@@ -1084,7 +1084,8 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if ($paymentExpenseReport->update(DolibarrApiAccess::$user) > 0) {
-			return $this->get($id);
+			// $id is the id of the payment, get() expects the id of an expense report
+			return $this->get($paymentExpenseReport->fk_expensereport);
 		} else {
 			throw new RestException(500, $paymentExpenseReport->errorsToString());
 		}
