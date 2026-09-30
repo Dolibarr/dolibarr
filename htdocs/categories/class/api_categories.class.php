@@ -759,7 +759,6 @@ class Categories extends DolibarrApi
 		unset($object->country_id);
 		unset($object->country_code);
 		unset($object->total_ht);
-		unset($object->total_ht);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
