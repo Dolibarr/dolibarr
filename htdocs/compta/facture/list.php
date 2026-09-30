@@ -2291,7 +2291,7 @@ if ($num > 0) {
 	$totalarray['val']['f.total_ht'] = 0;
 	$totalarray['val']['f.total_tva'] = 0;
 	$totalarray['val']['f.total_localtax1'] = 0;
-	$totalarray['val']['f.total_localtax1'] = 0;
+	$totalarray['val']['f.total_localtax2'] = 0;
 	$totalarray['val']['f.total_ttc'] = 0;
 	$totalarray['val']['dynamount_payed'] = 0;
 	$totalarray['val']['rtp'] = 0;
@@ -2350,8 +2350,7 @@ if ($num > 0) {
 		if (getDolGlobalString('INVOICE_USE_SITUATION') && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$facturestatic->retained_warranty = $obj->retained_warranty;
 			$facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
-			$facturestatic->situation_final = $obj->retained_warranty_date_limit;
-			$facturestatic->situation_final = $obj->retained_warranty_date_limit;
+			$facturestatic->situation_final = $obj->situation_final;
 			$facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 			$facturestatic->situation_counter = $obj->situation_counter;
 		}
