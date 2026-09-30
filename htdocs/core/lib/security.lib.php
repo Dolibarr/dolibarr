@@ -227,6 +227,8 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} elseif ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
+		$tableandshare = 'subscription&adherent';
+		$parentfortableentity = 'fk_adherent@adherent';	// A subscription has no entity, the entity is the one of its member
 	} elseif ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
 	} elseif ($features == 'project') {

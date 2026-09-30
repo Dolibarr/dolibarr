@@ -2378,7 +2378,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Delete a price line
+	 *  Delete a price line of this product
 	 *
 	 * @param  User	$user	Object user
 	 * @param  int	$rowid	Line id to delete
@@ -2389,6 +2389,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price_by_qty";
 		$sql .= " WHERE fk_product_price = ".((int) $rowid);
+		$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".$this->db->prefix()."product_price as pp WHERE pp.fk_product = ".((int) $this->id).")";
 		$resql = $this->db->query($sql);
 
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price_extrafields";
@@ -2397,6 +2398,7 @@ class Product extends CommonObject
 
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price";
 		$sql .= " WHERE rowid = ".((int) $rowid);
+		$sql .= " AND fk_product = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
