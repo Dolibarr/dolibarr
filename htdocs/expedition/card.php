@@ -2714,7 +2714,7 @@ if ($action == 'create' && $usercancreate) {
 					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
 					'name' => 'alsoUpdateStock',
 					'type' => 'checkbox',
-					'value' => 1
+					'value' => 0	/* Default must be "No stock change". Deletion is rarely used to cancel a shipment (not the correct business event for that). Re-open + Cancel is better for this. Deletion is usually used to clean db and should not impact the stock */
 				),
 			);
 		}
