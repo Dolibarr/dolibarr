@@ -883,6 +883,14 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'paymentExpenseReport not found');
 		}
 
+		// A payment carries no permission of its own: it is readable only if its expense report is.
+		if ($this->expensereport->fetch($paymentExpenseReport->fk_expensereport) <= 0) {
+			throw new RestException(404, 'Expense report not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		return $this->_cleanObjectDatas($paymentExpenseReport);
 	}
 
@@ -980,6 +988,14 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'payment of expense report not found');
 		}
 
+		// A payment carries no permission of its own: it is writable only if its expense report is.
+		if ($this->expensereport->fetch($paymentExpenseReport->fk_expensereport) <= 0) {
+			throw new RestException(404, 'Expense report not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -988,7 +1004,8 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if ($paymentExpenseReport->update(DolibarrApiAccess::$user) > 0) {
-			return $this->get($id);
+			// $id is the id of the payment, get() expects the id of an expense report.
+			return $this->get($paymentExpenseReport->fk_expensereport);
 		} else {
 			throw new RestException(500, $paymentExpenseReport->error);
 		}
