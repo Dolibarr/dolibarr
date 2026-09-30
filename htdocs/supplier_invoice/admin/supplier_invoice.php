@@ -186,6 +186,20 @@ if ($action == 'addcat') {
 	$fourn->CreateCategory($user, GETPOST('cat', 'alphanohtml'));
 }
 
+if ($action == 'set_SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS') {
+	$res = dolibarr_set_const($db, "SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS", max(0, GETPOSTINT('SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS')), 'chaine', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT') {
 	$freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 
@@ -382,10 +396,6 @@ print '</table></div><br>';
  * Other options
  */
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_SUPPLIER_INVOICE_FREE_TEXT">';
-
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
@@ -404,6 +414,9 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_SUPPLIER_INVOICE_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SUPPLIER_INVOICE_FREE_TEXT';
@@ -417,6 +430,20 @@ if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
+print '</form>';
+
+// Number of days the recurring supplier invoices are generated in advance
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS">';
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("RecurringInvoiceGenerationAddDays"), $langs->trans("RecurringInvoiceGenerationAddDaysHelp"), 1, 'help');
+print '</td><td>';
+print '<input class="width50" type="number" min="0" name="SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS" value="'.dol_escape_htmltag((string) getDolGlobalInt('SUPPLIER_INVOICE_RECURRING_GENERATION_ADDDAYS')).'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
 
 // Allow external download
 print '<tr class="oddeven">';
@@ -442,8 +469,6 @@ print '</td></tr>';
 */
 
 print '</table></div><br>';
-
-print '</form>';
 
 print '</table>';
 print '</div>';

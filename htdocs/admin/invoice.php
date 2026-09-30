@@ -249,6 +249,18 @@ if ($action == 'updateMask') {
 	if (!($res > 0)) {
 		$error++;
 	}
+} elseif ($action == 'set_INVOICE_RECURRING_GENERATION_ADDDAYS') {
+	$res = dolibarr_set_const($db, 'INVOICE_RECURRING_GENERATION_ADDDAYS', max(0, GETPOSTINT('INVOICE_RECURRING_GENERATION_ADDDAYS')), 'chaine', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
 	$value = (GETPOST($code) ? GETPOST($code) : 1);
@@ -741,6 +753,21 @@ print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
 	print img_picto($langs->trans("PreviousOptionGuaranteeThatDateIsAlwaysHigher"), 'switch_off', 'class="opacitymedium"');
 }*/
 print '</td></tr>';
+
+// Number of days the recurring invoices are generated in advance
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
+print '<input type="hidden" name="token" value="'.newToken().'" />';
+print '<input type="hidden" name="action" value="set_INVOICE_RECURRING_GENERATION_ADDDAYS" />';
+print '<input type="hidden" name="page_y" value="" />';
+print '<tr class="oddeven"><td>';
+$htmlhelp = $langs->trans("RecurringInvoiceGenerationAddDaysHelp").'<br>'.$langs->trans("RecurringInvoiceGenerationAddDaysHelpDateOptions", $langs->transnoentitiesnoconv("ForceInvoiceDate"), $langs->transnoentitiesnoconv("InvoiceCheckPosteriorDate"));
+print $form->textwithpicto($langs->trans("RecurringInvoiceGenerationAddDays"), $htmlhelp, 1, 'help');
+print '</td><td>';
+print '<input class="width50" type="number" min="0" name="INVOICE_RECURRING_GENERATION_ADDDAYS" value="'.dol_escape_htmltag((string) getDolGlobalInt('INVOICE_RECURRING_GENERATION_ADDDAYS')).'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'" />';
+print "</td></tr>\n";
+print '</form>';
 
 // Allow external download
 print '<tr class="oddeven">';
