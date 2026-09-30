@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "members", "other"));
+$langs->loadLangs(array("admin", "companies", "members", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -675,6 +675,41 @@ print '</div>';
 
 print '</form>';
 
+
+print '<br>';
+
+
+// Optional fields of the member record
+
+print load_fiche_titre($langs->trans("MemberFieldsOnCard"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Field").'</td>';
+print '<td class="soixantepercent">'.$langs->trans("Visibility").'</td>';
+print "</tr>\n";
+
+$optionalfields = array(
+	'MEMBER_DISABLE_GENDER' => $langs->trans("Gender"),
+	'MEMBER_DISABLE_PHOTO' => $langs->trans("Photo"),
+	'MEMBER_DISABLE_URL' => $langs->trans("Web"),
+	'MEMBER_DISABLE_ADDRESS' => $langs->trans("Address").', '.$langs->trans("Zip").' / '.$langs->trans("Town"),
+	'MEMBER_DISABLE_STATE' => $langs->trans("State"),
+	'MEMBER_DISABLE_PHONE' => $langs->trans("PhonePro"),
+	'MEMBER_DISABLE_PHONE_PERSO' => $langs->trans("PhonePerso"),
+	'MEMBER_DISABLE_PHONE_MOBILE' => $langs->trans("PhoneMobile"),
+	'MEMBER_DISABLE_BIRTH' => $langs->trans("DateOfBirth"),
+	'MEMBER_DISABLE_PUBLIC' => $langs->trans("MembershipPublic"),
+);
+foreach ($optionalfields as $constname => $label) {
+	print '<tr class="oddeven"><td>'.$label.'</td><td>';
+	print ajax_constantonoff($constname, array(), null, 1);
+	print "</td></tr>\n";
+}
+
+print '</table>';
+print '</div>';
 
 print '<br>';
 

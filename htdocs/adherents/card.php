@@ -340,7 +340,10 @@ if (empty($reshook)) {
 			$object->civility_code = trim(GETPOST("civility_code", 'alphanohtml'));
 			$object->firstname   = trim(GETPOST("firstname", 'alphanohtml'));
 			$object->lastname    = trim(GETPOST("lastname", 'alphanohtml'));
-			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
+			// Fields disabled by a MEMBER_DISABLE_xxx option are not in the form, so we keep their current value
+			if (!getDolGlobalString('MEMBER_DISABLE_GENDER')) {
+				$object->gender  = trim(GETPOST("gender", 'alphanohtml'));
+			}
 			$object->login       = trim(GETPOST("login", 'alphanohtml'));
 			if (GETPOSTISSET('pass')) {
 				$object->pass        = trim(GETPOST("pass", 'password'));	// For password, we must use 'none'
@@ -349,24 +352,38 @@ if (empty($reshook)) {
 			$object->societe     = trim(GETPOST("societe", 'alphanohtml')); // deprecated
 			$object->company     = trim(GETPOST("societe", 'alphanohtml'));
 
-			$object->address     = trim(GETPOST("address", 'alphanohtml'));
-			$object->zip         = trim(GETPOST("zipcode", 'alphanohtml'));
-			$object->town        = trim(GETPOST("town", 'alphanohtml'));
-			$object->state_id    = GETPOSTINT("state_id");
+			if (!getDolGlobalString('MEMBER_DISABLE_ADDRESS')) {
+				$object->address = trim(GETPOST("address", 'alphanohtml'));
+				$object->zip     = trim(GETPOST("zipcode", 'alphanohtml'));
+				$object->town    = trim(GETPOST("town", 'alphanohtml'));
+			}
+			if (!getDolGlobalString('MEMBER_DISABLE_STATE')) {
+				$object->state_id = GETPOSTINT("state_id");
+			}
 			$object->country_id  = GETPOSTINT("country_id");
 
-			$object->phone       = trim(GETPOST("phone", 'alpha'));
-			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
-			$object->phone_mobile = trim(GETPOST("phone_mobile", 'alpha'));
+			if (!getDolGlobalString('MEMBER_DISABLE_PHONE')) {
+				$object->phone = trim(GETPOST("phone", 'alpha'));
+			}
+			if (!getDolGlobalString('MEMBER_DISABLE_PHONE_PERSO')) {
+				$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
+			}
+			if (!getDolGlobalString('MEMBER_DISABLE_PHONE_MOBILE')) {
+				$object->phone_mobile = trim(GETPOST("phone_mobile", 'alpha'));
+			}
 			$object->email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-			$object->url = trim(GETPOST('member_url', 'url'));
+			if (!getDolGlobalString('MEMBER_DISABLE_URL')) {
+				$object->url = trim(GETPOST('member_url', 'url'));
+			}
 			$object->socialnetworks = array();
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
 				}
 			}
-			$object->birth = $birthdate;
+			if (!getDolGlobalString('MEMBER_DISABLE_BIRTH')) {
+				$object->birth = $birthdate;
+			}
 			$object->default_lang = GETPOST('default_lang', 'alpha');
 			$object->typeid = GETPOSTINT("typeid");
 			//$object->note = trim(GETPOST("comment", "restricthtml"));
@@ -385,7 +402,9 @@ if (empty($reshook)) {
 			// Get status and public property
 			$object->statut = GETPOSTINT("statut");
 			$object->status = GETPOSTINT("statut");
-			$object->public = GETPOSTINT("public");
+			if (!getDolGlobalString('MEMBER_DISABLE_PUBLIC')) {
+				$object->public = GETPOSTINT("public");
+			}
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -1209,31 +1228,39 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</tr>';
 
 		// Gender
-		print '<tr><td>'.$langs->trans("Gender").'</td>';
-		print '<td>';
-		$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
-		print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
-		print '</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_GENDER')) {
+			print '<tr><td>'.$langs->trans("Gender").'</td>';
+			print '<td>';
+			$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
+			print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
+			print '</td></tr>';
+		}
 
 		// EMail
 		print '<tr><td>'.(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '</span>' : '').'</td>';
 		print '<td>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
 
 		// Website
-		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_URL')) {
+			print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
+			print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		}
 
 		// Address
-		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ? GETPOST('address', 'alphanohtml') : $soc->address).'</textarea>';
-		print '</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_ADDRESS')) {
+			print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
+			print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ? GETPOST('address', 'alphanohtml') : $soc->address).'</textarea>';
+			print '</td></tr>';
+		}
 
 		// Zip / Town
-		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-		print $formcompany->select_ziptown((GETPOSTISSET('zipcode') ? GETPOST('zipcode', 'alphanohtml') : $soc->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
-		print ' ';
-		print $formcompany->select_ziptown((GETPOSTISSET('town') ? GETPOST('town', 'alphanohtml') : $soc->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
-		print '</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_ADDRESS')) {
+			print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+			print $formcompany->select_ziptown((GETPOSTISSET('zipcode') ? GETPOST('zipcode', 'alphanohtml') : $soc->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+			print ' ';
+			print $formcompany->select_ziptown((GETPOSTISSET('town') ? GETPOST('town', 'alphanohtml') : $soc->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+			print '</td></tr>';
+		}
 
 		// Country
 		if (empty($soc->country_id)) {
@@ -1262,16 +1289,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Pro phone
-		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.$form->showPhoneInput($soc->phone, 'phone', $soc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_PHONE')) {
+			print '<tr><td>'.$langs->trans("PhonePro").'</td>';
+			print '<td>'.$form->showPhoneInput($soc->phone, 'phone', $soc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		}
 
 		// Personal phone
-		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
-		print '<td>'.$form->showPhoneInput($object->phone_perso, 'phone_perso', $soc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_PHONE_PERSO')) {
+			print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
+			print '<td>'.$form->showPhoneInput($object->phone_perso, 'phone_perso', $soc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		}
 
 		// Mobile phone
-		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
-		print '<td>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $soc->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_PHONE_MOBILE')) {
+			print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
+			print '<td>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $soc->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		}
 
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1284,17 +1317,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Birth Date
-		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
-		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', 0, 0, 1, 'formsoc');
-		print "</td></tr>\n";
+		if (!getDolGlobalString('MEMBER_DISABLE_BIRTH')) {
+			print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
+			print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', 0, 0, 1, 'formsoc');
+			print "</td></tr>\n";
+		}
 
 		// Public profil
-		print "<tr><td>";
-		$htmltext = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
-		print $form->textwithpicto($langs->trans("MembershipPublic"), $htmltext, 1, 'help', '', 0, 3, 'membershippublic');
-		print "</td><td>\n";
-		print $form->selectyesno("public", $object->public, 1, false, 0, 1);
-		print "</td></tr>\n";
+		if (!getDolGlobalString('MEMBER_DISABLE_PUBLIC')) {
+			print "<tr><td>";
+			$htmltext = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
+			print $form->textwithpicto($langs->trans("MembershipPublic"), $htmltext, 1, 'help', '', 0, 3, 'membershippublic');
+			print "</td><td>\n";
+			print $form->selectyesno("public", $object->public, 1, false, 0, 1);
+			print "</td></tr>\n";
+		}
 
 		// Categories
 		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
@@ -1445,55 +1482,65 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</tr>';
 
 		// Gender
-		print '<tr><td>'.$langs->trans("Gender").'</td>';
-		print '<td>';
-		$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
-		print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ? GETPOST('gender', 'alphanohtml') : $object->gender, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
-		print '</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_GENDER')) {
+			print '<tr><td>'.$langs->trans("Gender").'</td>';
+			print '<td>';
+			$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
+			print $form->selectarray('gender', $arraygender, GETPOSTISSET('gender') ? GETPOST('gender', 'alphanohtml') : $object->gender, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
+			print '</td></tr>';
+		}
 
 		// Photo
-		print '<tr><td>'.$langs->trans("Photo").'</td>';
-		print '<td class="hideonsmartphone" valign="middle">';
-		print $form->showphoto('memberphoto', $object)."\n";
-		if ($caneditfieldmember) {
-			if ($object->photo) {
-				print "<br>\n";
+		if (!getDolGlobalString('MEMBER_DISABLE_PHOTO')) {
+			print '<tr><td>'.$langs->trans("Photo").'</td>';
+			print '<td class="hideonsmartphone" valign="middle">';
+			print $form->showphoto('memberphoto', $object)."\n";
+			if ($caneditfieldmember) {
+				if ($object->photo) {
+					print "<br>\n";
+				}
+				print '<table class="nobordernopadding">';
+				if ($object->photo) {
+					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"><label for="photodelete" class="paddingleft">'.$langs->trans("Delete").'</label><br></td></tr>';
+				}
+				print '<tr><td>';
+				$maxfilesizearray = getMaxFileSizeArray();
+				$maxmin = $maxfilesizearray['maxmin'];
+				if ($maxmin > 0) {
+					print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+				}
+				print '<input type="file" class="flat" name="photo" id="photoinput">';
+				print '</td></tr>';
+				print '</table>';
 			}
-			print '<table class="nobordernopadding">';
-			if ($object->photo) {
-				print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"><label for="photodelete" class="paddingleft">'.$langs->trans("Delete").'</label><br></td></tr>';
-			}
-			print '<tr><td>';
-			$maxfilesizearray = getMaxFileSizeArray();
-			$maxmin = $maxfilesizearray['maxmin'];
-			if ($maxmin > 0) {
-				print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
-			}
-			print '<input type="file" class="flat" name="photo" id="photoinput">';
 			print '</td></tr>';
-			print '</table>';
 		}
-		print '</td></tr>';
 
 		// EMail
 		print '<tr><td>'.(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? '</span>' : '').'</td>';
 		print '<td>'.img_picto('', 'object_email', 'class="pictofixedwidth"').'<input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET("member_email") ? GETPOST("member_email", 'alphanohtml', 2) : $object->email).'"></td></tr>';
 
 		// Website
-		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').'<input type="text" name="member_url" id="member_url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_URL')) {
+			print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
+			print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').'<input type="text" name="member_url" id="member_url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		}
 
 		// Address
-		print '<tr><td>'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_2.'">'.(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml', 2) : $object->address).'</textarea>';
-		print '</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_ADDRESS')) {
+			print '<tr><td>'.$langs->trans("Address").'</td><td>';
+			print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_2.'">'.(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml', 2) : $object->address).'</textarea>';
+			print '</td></tr>';
+		}
 
 		// Zip / Town
-		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-		print $formcompany->select_ziptown((GETPOSTISSET("zipcode") ? GETPOST("zipcode", 'alphanohtml', 2) : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
-		print ' ';
-		print $formcompany->select_ziptown((GETPOSTISSET("town") ? GETPOST("town", 'alphanohtml', 2) : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
-		print '</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_ADDRESS')) {
+			print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+			print $formcompany->select_ziptown((GETPOSTISSET("zipcode") ? GETPOST("zipcode", 'alphanohtml', 2) : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+			print ' ';
+			print $formcompany->select_ziptown((GETPOSTISSET("town") ? GETPOST("town", 'alphanohtml', 2) : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+			print '</td></tr>';
+		}
 
 		// Country
 		//$object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;    // In edit mode we don't force to company country if not defined
@@ -1514,16 +1561,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Pro phone
-		print '<tr><td>'.$langs->trans("PhonePro").'</td>';
-		print '<td>'.$form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_PHONE')) {
+			print '<tr><td>'.$langs->trans("PhonePro").'</td>';
+			print '<td>'.$form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		}
 
 		// Personal phone
-		print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
-		print '<td>'.$form->showPhoneInput($object->phone_perso, 'phone_perso', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_PHONE_PERSO')) {
+			print '<tr><td>'.$langs->trans("PhonePerso").'</td>';
+			print '<td>'.$form->showPhoneInput($object->phone_perso, 'phone_perso', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		}
 
 		// Mobile phone
-		print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
-		print '<td>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_PHONE_MOBILE')) {
+			print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
+			print '<td>'.$form->showPhoneInput($object->phone_mobile, 'phone_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx').'</td></tr>';
+		}
 
 		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1535,9 +1588,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Birth Date
-		print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
-		print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', 0, 0, 1, 'formsoc');
-		print "</td></tr>\n";
+		if (!getDolGlobalString('MEMBER_DISABLE_BIRTH')) {
+			print "<tr><td>".$langs->trans("DateOfBirth")."</td><td>\n";
+			print img_picto('', 'object_calendar', 'class="pictofixedwidth"').$form->selectDate(($object->birth ? $object->birth : -1), 'birth', 0, 0, 1, 'formsoc');
+			print "</td></tr>\n";
+		}
 
 		// Default language
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -1548,12 +1603,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Public profil
-		print "<tr><td>";
-		$htmltext = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
-		print $form->textwithpicto($langs->trans("MembershipPublic"), $htmltext, 1, 'help', '', 0, 3, 'membershippublic');
-		print "</td><td>\n";
-		print $form->selectyesno("public", (GETPOSTISSET("public") ? GETPOST("public", 'alphanohtml', 2) : $object->public), 1, false, 0, 1);
-		print "</td></tr>\n";
+		if (!getDolGlobalString('MEMBER_DISABLE_PUBLIC')) {
+			print "<tr><td>";
+			$htmltext = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
+			print $form->textwithpicto($langs->trans("MembershipPublic"), $htmltext, 1, 'help', '', 0, 3, 'membershippublic');
+			print "</td><td>\n";
+			print $form->selectyesno("public", (GETPOSTISSET("public") ? GETPOST("public", 'alphanohtml', 2) : $object->public), 1, false, 0, 1);
+			print "</td></tr>\n";
+		}
 
 		// Categories
 		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
@@ -2001,7 +2058,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Birth Date
-		print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_BIRTH')) {
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+		}
 
 		// Default language
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -2017,10 +2076,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Public
-		print '<tr><td>';
-		$htmltext = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
-		print $form->textwithpicto($langs->trans("MembershipPublic"), $htmltext, 1, 'help', '', 0, 3, 'membershippublic');
-		print '</td><td class="valeur">'.yn($object->public).'</td></tr>';
+		if (!getDolGlobalString('MEMBER_DISABLE_PUBLIC')) {
+			print '<tr><td>';
+			$htmltext = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist);
+			print $form->textwithpicto($langs->trans("MembershipPublic"), $htmltext, 1, 'help', '', 0, 3, 'membershippublic');
+			print '</td><td class="valeur">'.yn($object->public).'</td></tr>';
+		}
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
