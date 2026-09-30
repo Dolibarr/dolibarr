@@ -787,7 +787,7 @@ if ($id > 0) {
 
 				// Delete
 				if (($object->paid == 0 || $object->paid == 2) && $user->hasRight('loan', 'delete')) {
-					print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=delete&token='.newToken()).'</div>'."\n";
+					print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 				}
 
 				print "</div>";

@@ -478,7 +478,7 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	if ($backtopage) {
 		$paramsdelete['backtopage'] = $backtopage;
 	}
-	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], $paramsdelete, true), '', $permissiontoadd)."\n";
+	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], $paramsdelete, true), '', $permissiontoadd, array('attr' => array('class' => 'reposition')))."\n";
 
 	print '</div>';
 }

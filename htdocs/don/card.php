@@ -925,7 +925,7 @@ if (!empty($id) && $action != 'edit') {
 		// Delete
 		if ($user->hasRight('don', 'supprimer')) {
 			if ($object->status != $object::STATUS_PAID && $remaintopay == $object->amount) {
-				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?rowid='.$object->id.'&action=delete&token='.newToken())."</div>\n";
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?rowid='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."</div>\n";
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DeletionNotPossibleWhenAPaymentExists").'">'.$langs->trans("Delete")."</a></div>";
 			}

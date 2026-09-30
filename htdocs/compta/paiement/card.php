@@ -642,9 +642,9 @@ if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
 	}
 }
 
-$params = array();
+$params = array('attr' => array('class' => 'reposition'));
 if (! empty($title_button)) {
-	$params['attr'] = array('title' => $title_button);
+	$params['attr']['title'] = $title_button;
 }
 
 if ($user->socid == 0 && $action == '') {

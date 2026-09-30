@@ -343,7 +343,7 @@ if ($action == 'create') {
 
 	print '</table>';
 	print '<div class="tabsAction">';
-	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'tokenid' => $token->token_id, 'action' => 'delete'], true), '', $canedittoken)."\n";
+	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'tokenid' => $token->token_id, 'action' => 'delete'], true), '', $canedittoken, array('attr' => array('class' => 'reposition')))."\n";
 	print '</div>';
 	print '</div>';
 

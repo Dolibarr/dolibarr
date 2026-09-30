@@ -479,9 +479,9 @@ if ($id > 0 || $ref) {
 			}
 
 			if ($object->type == 'bank-transfer') {
-				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'))."\n";
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'), array('attr' => array('class' => 'reposition')))."\n";
 			} else {
-				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'))."\n";
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'), array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 		print '</div>';

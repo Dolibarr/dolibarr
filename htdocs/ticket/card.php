@@ -1538,7 +1538,7 @@ if ($action == 'create' || $action == 'presend') {
 
 				// Delete ticket
 				if ($permissiontodelete && !$user->socid) {
-					print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&track_id='.$object->track_id, '')."\n";
+					print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&track_id='.$object->track_id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 				}
 			}
 			print '</div>'."\n";

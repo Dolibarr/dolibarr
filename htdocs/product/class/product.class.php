@@ -2284,7 +2284,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load array this->multilangs
+	 * Load array this->multilangs
 	 *
 	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
@@ -2292,7 +2292,10 @@ class Product extends CommonObject
 	{
 		global $langs;
 
-		$current_lang = $langs->getDefaultLang();
+		$current_lang = '';
+		if ($langs instanceOf Translate) {
+			$current_lang = $langs->getDefaultLang();
+		}
 
 		$sql = "SELECT lang, label, description, note as other";
 		$sql .= " FROM ".$this->db->prefix()."product_lang";

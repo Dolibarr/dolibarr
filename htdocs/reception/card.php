@@ -3080,7 +3080,7 @@ if ($action == 'create' && $permissiontoadd) {
 			}
 
 			if ($user->hasRight('reception', 'supprimer')) {
-				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken())."\n";
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 

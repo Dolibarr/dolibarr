@@ -304,7 +304,7 @@ if (empty($action) || $action == 'delete_section') {
 	print '<div class="tabsAction">';
 
 	// Delete
-	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section, 'action' => 'delete_section'), true), '', $user->hasRight('ecm', 'setup'))."\n";
+	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section, 'action' => 'delete_section'), true), '', $user->hasRight('ecm', 'setup'), array('attr' => array('class' => 'reposition')))."\n";
 
 	print '</div>';
 }
