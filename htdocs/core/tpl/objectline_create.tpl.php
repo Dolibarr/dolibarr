@@ -1244,7 +1244,7 @@ if (!empty($object->thirdparty)) {
 										}
 									}
 								} else {
-									jQuery('#dp_desc').text(proddesc);
+									jQuery('#dp_desc').val(proddesc);
 								}
 							}
 
@@ -1540,7 +1540,7 @@ if (!empty($object->thirdparty)) {
 							}
 						}
 					} else {
-						jQuery('#dp_desc').text(description);
+						jQuery('#dp_desc').val(description);
 					}
 				}
 			} else if (jQuery('#idprodfournprice').length > 0) {
@@ -1583,7 +1583,7 @@ if (!empty($object->thirdparty)) {
 							}
 						}
 					} else {
-						jQuery('#dp_desc').text('');
+						jQuery('#dp_desc').val('');
 					}
 				}
 			}
