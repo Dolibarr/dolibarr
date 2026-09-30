@@ -8154,6 +8154,15 @@ span.select2-dropdown--above {
 .parentonrightofpage {
   direction: rtl;
 }
+/* Fix the rendering of the list of options when the dropdown of a select2 combo is rendered into the pagination bar
+   (a select into a parent with class parentonrightofpage): cancel the rules div.pagination ul and div.pagination li */
+div.pagination ul.select2-results__options {
+	display: block;
+}
+div.pagination li.select2-results__option {
+	display: block;
+	padding: 8px;	/* Must repeat the padding of .select2-results__option because the rule div.pagination li sets it to 0 */
+}
 
 select.multiselectononeline {
 	padding: 0;

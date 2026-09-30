@@ -687,7 +687,11 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	$viewmode .= '<div class="divadvancedsearchfield">';
 	$arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
 	$viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-	$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100');
+	// The class onrightofpage allows to align the popup list on the right of the select component (so it can't go out of screen on the right).
+	// For this the select must also be inside a parent with class parentonrightofpage (and a fixed width to avoid the parent to be enlarged when the dropdown list is open).
+	$viewmode .= '<div class="inline-block width100 parentonrightofpage">';
+	$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100 onrightofpage');
+	$viewmode .= '</div>';
 	$viewmode .= '</div>';
 
 	$num = 0;
