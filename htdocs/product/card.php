@@ -3193,9 +3193,9 @@ if ($action != 'create' && $action != 'edit') {
 			if (empty($object_is_used)) {
 				if (!isset($hookmanager->resArray['no_button_delete']) || $hookmanager->resArray['no_button_delete'] != 1) {
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-						print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
+						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '#', 'action-delete', true)."\n";
 					} else {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '');
+						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '')."\n";
 					}
 				}
 			} else {

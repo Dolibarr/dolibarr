@@ -474,16 +474,16 @@ if ($id > 0 || $ref) {
 			// Cancel
 			if ($object->status == BonPrelevement::STATUS_TRANSFERED) {
 				if ($object->type == 'bank-transfer') {
-					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'card.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+					print dolGetButtonAction($langs->trans("Cancel"), '', 'default', 'card.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'), array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 				} else {
-					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'card.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+					print dolGetButtonAction($langs->trans("Cancel"), '', 'default', 'card.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'), array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 				}
 			}
 
 			if ($object->type == 'bank-transfer') {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'));
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'))."\n";
 			} else {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'));
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'))."\n";
 			}
 		}
 		print '</div>';

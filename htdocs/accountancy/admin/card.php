@@ -429,7 +429,7 @@ if ($action == 'create') {
 
 			// Delete
 			$permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete)."\n";
 
 			print '</div>';
 		}

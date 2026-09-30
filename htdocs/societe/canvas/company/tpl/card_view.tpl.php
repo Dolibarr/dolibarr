@@ -272,9 +272,9 @@ for ($i = 1; $i <= 4; $i++) {
 
 <?php if ($user->hasRight('societe', 'supprimer')) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
-		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
+		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '', 'action-delete', true)."\n"; ?>
 	<?php } else { ?>
-		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans('Delete'); ?></a>
+		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas))."\n"; ?>
 	<?php } ?>
 <?php } ?>
 </div>

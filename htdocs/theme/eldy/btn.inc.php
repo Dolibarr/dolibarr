@@ -197,6 +197,12 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	box-shadow: unset !important;
 }
 
+.butActionDanger, .butActionDanger:link, .butActionDanger:visited, .butActionDanger:hover, .butActionDanger:active, .buttonDanger {
+	background: var(--butactiondeletebg) !important;
+	/* border: 1px solid #633; */
+	color: #633 !important;
+}
+
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
 	background: var(--butactiondeletebg) !important;
 	/* border: 1px solid #633; */
@@ -229,18 +235,17 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 
-/*
-.butActionDelete#action-delete::before {
-	content: "\f1f8";
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
-	font-weight: 600;
-	width: 20px;
-	visibility: visible;
+/* Button Delete */
+#action-delete .textbutton, .butAction.butActionDelete .textbutton {
+  font-size: 0;
+  display: inline-block;
 }
-.butActionDelete#action-delete span.textbutton {
-	display: none;
+#action-delete .textbutton::before, .butAction.butActionDelete .textbutton::before {
+  content: "\f1f8";            /* fa-trash */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;            /* required for the "solid" version */
+  font-size: 14px;				/* using 1em does not work */
 }
-*/
 
 .butActionRefused {
 	/* pointer-events: none; Removed as this break the use of title */

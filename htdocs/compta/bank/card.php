@@ -942,7 +942,7 @@ if ($action == 'create') {
 
 			$canbedeleted = $object->can_be_deleted(); // Return true if account without movements
 			if ($user->hasRight('banque', 'configurer') && $canbedeleted) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id)."\n";
 			}
 		}
 
