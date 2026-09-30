@@ -586,7 +586,8 @@ class CMailFile
 				$smtps->setInReplyTo($this->in_reply_to);
 			}
 			if (!empty($this->references)) {
-				$smtps->setReferences($this->references);
+				// SMTPs expects the list of Message-IDs as an array
+				$smtps->setReferences(preg_split('/[\s,]+/', trim($this->references), -1, PREG_SPLIT_NO_EMPTY));
 			}
 
 			if (!empty($moreinheader)) {
@@ -690,12 +691,17 @@ class CMailFile
 			}
 
 			// Add 'In-Reply-To:' header
+			// Swift adds the angle brackets itself and rejects an id that still has them
 			if (!empty($this->in_reply_to)) {
-				$headers->addIdHeader('In-Reply-To', $this->in_reply_to);
+				$headers->addIdHeader('In-Reply-To', trim($this->in_reply_to, " \t<>"));
 			}
 			// Add 'References:' header
 			if (!empty($this->references)) {
-				$headers->addIdHeader('References', $this->references);
+				$references = array();
+				foreach (preg_split('/[\s,]+/', trim($this->references), -1, PREG_SPLIT_NO_EMPTY) as $reference) {
+					$references[] = trim($reference, '<>');
+				}
+				$headers->addIdHeader('References', $references);
 			}
 
 			if (!empty($moreinheader)) {
