@@ -1902,9 +1902,13 @@ if ($action == 'create') {
 							print '</td>';
 							print '</tr>';
 						}
+						
+						$parameters = ['line' => $object->lines[$cursorline - 1], 'i' => $cursorline - 1, 'coldisplay' => &$coldisplay, 'colspan' => $colspan, 'moreparam' => $moreparam];
+						$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						print $hookmanager->resPrint;
 
 						// Display lines extrafields
-						if (is_array($extralabelslines) && count($extralabelslines) > 0) {
+						if (empty($reshook) && is_array($extralabelslines) && count($extralabelslines) > 0) {
 							$line = new ContratLigne($db);
 							$line->id = $objp->rowid;
 							$line->fetch_optionals();
