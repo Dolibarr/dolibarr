@@ -662,6 +662,8 @@ class Productlot extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -708,18 +710,21 @@ class Productlot extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// TODO
-		//if (!$error) {
-		//if (!$notrigger) {
-		// Uncomment this and change PRODUCTLOT to your own tag if you
-		// want this action calls a trigger.
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('PRODUCTLOT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
 
-		//// Call triggers
-		//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
-		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		//// End call triggers
-		//}
-		//}
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
@@ -740,6 +745,19 @@ class Productlot extends CommonObject
 			return -1 * $error;
 		} else {
 			$this->db->commit();
+
+			// Delete the directory of the documents of the lot
+			if (!empty($conf->productbatch->multidir_output[$this->entity])) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				$dir = $conf->productbatch->multidir_output[$this->entity].'/'.get_exdir(0, 0, 0, 1, $this, 'product_batch');
+				if (file_exists($dir)) {
+					if (!dol_delete_dir_recursive($dir)) {
+						$this->error = 'ErrorFailToDeleteDir';
+						$this->errors[] = $this->error;
+						return -2;
+					}
+				}
+			}
 
 			return 1;
 		}
