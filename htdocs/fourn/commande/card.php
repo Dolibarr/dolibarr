@@ -1340,6 +1340,8 @@ if (empty($reshook)) {
 						$element = 'supplier_proposal';
 						$subelement = 'supplier_proposal';
 					}
+					// Lines of a customer document carry selling prices: supplier prices must be fetched instead
+					$isCustomerOrigin = in_array($subelement, ['commande', 'propal']);
 
 					$object->origin = $origin;
 					$object->origin_type = $origin;
@@ -1404,37 +1406,16 @@ if (empty($reshook)) {
 
 								$ref_supplier = '';
 								$product_fourn_price_id = 0;
-								if ($origin == "commande") {
+								if ($isCustomerOrigin) {
 									$productsupplier = new ProductFournisseur($db);
 									$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $object->socid);
 									$lines[$i]->subprice = 0;
+									$lines[$i]->remise_percent = 0;
 									if ($result > 0) {
 										$ref_supplier = $productsupplier->ref_supplier;
 										$product_fourn_price_id = $productsupplier->product_fourn_price_id;
-										// we need supplier subprice
-										foreach ($srcobject->lines as $li) {
-											$sql = 'SELECT price, unitprice, tva_tx, remise_percent, entity, ref_fourn';
-											$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
-											$sql .= ' WHERE fk_product = '.((int) $li->fk_product);
-											$sql .= ' AND entity IN ('.getEntity('product_fournisseur_price').')';
-											$sql .= ' AND fk_soc = '.((int) $object->socid);
-											$sql .= ' ORDER BY unitprice ASC';
-
-											$resql = $db->query($sql);
-											if ($resql) {
-												$num_row = $db->num_rows($resql);
-												if (empty($num_row)) {
-													$li->remise_percent = 0;
-												} else {
-													$obj = $db->fetch_object($resql);
-													$li->subprice = $obj->unitprice;
-													$li->remise_percent = $obj->remise_percent;
-												}
-											} else {
-												dol_print_error($db);
-											}
-											$db->free($resql);
-										}
+										$lines[$i]->subprice = $productsupplier->fourn_unitprice;
+										$lines[$i]->remise_percent = $productsupplier->fourn_remise_percent;
 									}
 								} else {
 									$ref_supplier = $lines[$i]->ref_fourn;
@@ -1443,7 +1424,7 @@ if (empty($reshook)) {
 
 								$tva_tx = $lines[$i]->tva_tx;
 
-								if ($origin == "commande") {
+								if ($isCustomerOrigin) {
 									$soc = new Societe($db);
 									$soc->fetch($socid);
 									$tva_tx = get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
