@@ -296,6 +296,10 @@ ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_contact integer AFTER fk_soc;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_contact (fk_contact);
 
+-- Link an event attendee to the member represented by the registration.
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_member integer AFTER fk_contact;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_member (fk_member);
+
 
 ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;
 
