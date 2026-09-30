@@ -444,6 +444,10 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->gen_or_uploaded = 'unknown';
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
+				// When you scan file with dol_dir_list_in_database, you scan for files in entity of object (like with projects), even if you
+				// are connected into another entity. So we must also create record that was not found into the entity scan, so the one of the object).
+				$ecmfile->entity = empty($object->entity) ? $conf->entity : $object->entity;
+
 				$result = $ecmfile->create($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
