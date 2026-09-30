@@ -2410,7 +2410,7 @@ if ($action == 'create') {
 						'perm' => $user->hasRight('ficheinter', 'creer') ? true : false,
 						'enabled' => true,
 					);
-				}				
+				}
 				if (count($arrayofcreatebutton)) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
