@@ -950,7 +950,14 @@ try {
 	// question, an error) ends the turn on the first answer, unchanged. There
 	// is no third call whatever the model answers.
 	$twoStepLabel = '';
-	if (getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE') && is_array($intentJSON) && $toolName !== '' && isset($adapter) && is_object($adapter)) {
+	// Only on the model path: the shortcut paths above (classifier, page
+	// context...) answer without $adapter / $mcp / $history / $systemPrompt.
+	if (getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE') && is_array($intentJSON) && $toolName !== '' && isset($adapter, $mcp, $history, $systemPrompt, $toolsSchema) && is_object($adapter) && is_object($mcp) && is_array($history) && is_array($toolsSchema)) {
+		/**
+		 * @param string              $name Tool name
+		 * @param array<string,mixed> $args Tool arguments
+		 * @return bool                     True when the tool writes
+		 */
 		$isWriteTool = function ($name, array $args) use ($mcp) {
 			if (preg_match('/(create|update|delete|add|remove|modify|edit|validate|pay|send)/i', $name)) {
 				return true;
@@ -990,7 +997,7 @@ try {
 					$usageContext = array(
 						'tokens_input' => (int) ($adapter->lastUsage['input'] ?? 0),
 						'tokens_output' => (int) ($adapter->lastUsage['output'] ?? 0),
-						'model' => (string) ($adapter->lastUsage['model'] ?? $model),
+						'model' => (string) ($adapter->lastUsage['model'] ?? (isset($model) ? $model : '')),
 					);
 				}
 
@@ -1014,7 +1021,7 @@ try {
 					dol_syslog("parse_intent.php two-step: read ".$toolName." then write ".$intent2['tool'], LOG_INFO);
 					$intentJSON = $intent2;
 					$toolName = $intent2['tool'];
-					$confidence = calculateConfidence($intentJSON, array_column($toolsSchema, null, 'name'), $rawResponse2);
+					$confidence = calculateConfidence($intentJSON, array_column($toolsSchema, null, 'name'), (string) $rawResponse2);
 					// The preview must name the object the read resolved, not an id.
 					$twoStepLabel = aiLabelOfResolvedObject($readResult, $args2);
 				} else {
