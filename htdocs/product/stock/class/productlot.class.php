@@ -446,7 +446,7 @@ class Productlot extends CommonObject
 			$sql .= ' ' . "'" . $this->db->idate(dol_now()) . "'" . ',';
 			$sql .= ' ' . (!isset($this->fk_user_creat) ? 'NULL' : ((int) $this->fk_user_creat)) . ',';
 			$sql .= ' ' . (!isset($this->fk_user_modif) ? 'NULL' : ((int) $this->fk_user_modif)) . ',';
-			$sql .= ' ' . (!isset($this->import_key) ? 'NULL' : '"'.$this->db->escape($this->import_key).'"');
+			$sql .= ' ' . (!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 			$sql .= ')';
 
 			$this->db->begin();
@@ -652,7 +652,7 @@ class Productlot extends CommonObject
 			$sql .= ' tms = ' . (dol_strlen((string) $this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
 			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null") . ',';
 			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null") . ',';
-			$sql .= ' import_key = ' . (isset($this->import_key) ? '"'.$this->db->escape($this->import_key).'"' : "null");
+			$sql .= ' import_key = ' . (isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 			$sql .= ' WHERE rowid=' . ((int) $this->id);
 
 			$this->db->begin();
