@@ -423,3 +423,6 @@ UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approv
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1);
+
+-- Top menu "Banks | Cash" now opens the new bank dashboard page instead of the list of accounts
+UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' WHERE type = 'top' AND mainmenu = 'bank' AND url LIKE '/compta/bank/list.php?search_status=opened%';
