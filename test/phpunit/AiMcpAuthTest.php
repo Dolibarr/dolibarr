@@ -188,7 +188,7 @@ class AiMcpAuthTest extends CommonClassTest
 
 		// Repoint the token at another audience, which is what a server that
 		// did not check the resource at /authorize would have stored.
-		$sql = "UPDATE ".$db->prefix()."ai_oauth_token SET resource = 'https://elsewhere.example/mcp'";
+		$sql = "UPDATE ".$db->prefix()."oauth_token SET resource = 'https://elsewhere.example/mcp'";
 		$sql .= " WHERE token_hash = '".$db->escape(hash('sha256', $tokens['access_token']))."'";
 		$db->query($sql);
 
@@ -257,7 +257,8 @@ class AiMcpAuthTest extends CommonClassTest
 	{
 		global $db;
 
-		if (!$db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0")) {
+		if (!$db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0")
+			|| !$db->query("SELECT token_hash FROM ".$db->prefix()."oauth_token WHERE 1 = 0")) {
 			return null;
 		}
 

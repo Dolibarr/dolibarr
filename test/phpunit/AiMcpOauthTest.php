@@ -79,34 +79,38 @@ class AiMcpOauthTest extends CommonClassTest
 	{
 		global $db;
 
+		// Tokens live in the core llx_oauth_token, extended by #40762. A
+		// database installed before that has the table but not the columns,
+		// and nothing below can run on it.
+		if (!$db->query("SELECT token_hash, fk_oauth_client, revoked FROM ".$db->prefix()."oauth_token WHERE 1 = 0")) {
+			$this->markTestSkipped('Needs the llx_oauth_token columns added by PR #40762');
+		}
+
 		if ($db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0")) {
 			return;
 		}
 
-		foreach (array('llx_ai_oauth_client-ai', 'llx_ai_oauth_token-ai') as $name) {
-			foreach (array($name.'.sql', $name.'.key.sql') as $file) {
-				$path = dirname(__FILE__).'/../../htdocs/install/mysql/tables/'.$file;
-				if (!file_exists($path)) {
-					// The schema lives in its own pull request (#40762), as the
-					// rule here is that a pull request adding tables is reviewed
-					// on its own. Until it is merged and this branch rebased,
-					// everything below the schema line cannot run.
-					$this->markTestSkipped('Needs the schema of PR #40762: missing '.$file);
-				}
-				// Comments first, then split: the licence header these files carry
-				// contains semicolons of its own.
-				$sql = preg_replace('/^\s*--.*$/m', '', (string) file_get_contents($path));
-				foreach (explode(';', (string) $sql) as $statement) {
-					$statement = trim($statement);
-					if ($statement !== '') {
-						$db->query(str_replace('llx_', $db->prefix(), $statement));
-					}
+		// The client table is a module table: created on module enable, which
+		// the CI never does, so it is created here from the file the module
+		// installs.
+		foreach (array('llx_ai_oauth_client-ai.sql', 'llx_ai_oauth_client-ai.key.sql') as $file) {
+			$path = dirname(__FILE__).'/../../htdocs/install/mysql/tables/'.$file;
+			if (!file_exists($path)) {
+				$this->markTestSkipped('Needs the schema of PR #40762: missing '.$file);
+			}
+			// Comments first, then split: the licence header these files carry
+			// contains semicolons of its own.
+			$sql = preg_replace('/^\s*--.*$/m', '', (string) file_get_contents($path));
+			foreach (explode(';', (string) $sql) as $statement) {
+				$statement = trim($statement);
+				if ($statement !== '') {
+					$db->query(str_replace('llx_', $db->prefix(), $statement));
 				}
 			}
 		}
 
 		if (!$db->query("SELECT 1 FROM ".$db->prefix()."ai_oauth_client WHERE 1 = 0")) {
-			$this->markTestSkipped('Could not create the ai module tables on this database');
+			$this->markTestSkipped('Could not create the ai module client table on this database');
 		}
 	}
 
@@ -422,7 +426,7 @@ class AiMcpOauthTest extends CommonClassTest
 		$this->assertNull($server->validateAccessToken('dolmcp_a'.str_repeat('0', 64)), 'An unknown token resolves to nothing');
 
 		// Expire it in place rather than waiting an hour.
-		$sql = "UPDATE ".$db->prefix()."ai_oauth_token SET expires_at = '".$db->idate(dol_now() - 60)."'";
+		$sql = "UPDATE ".$db->prefix()."oauth_token SET expire_at = '".$db->idate(dol_now() - 60)."'";
 		$sql .= " WHERE token_hash = '".$db->escape(hash('sha256', $tokens['access_token']))."'";
 		$db->query($sql);
 
@@ -598,5 +602,61 @@ class AiMcpOauthTest extends CommonClassTest
 			$server->isRegisteredRedirectUri($public, 'https://example.org:8443/callback'),
 			'Off loopback the port is part of the identity'
 		);
+	}
+
+	/**
+	 * The token table is the core llx_oauth_token, shared with every other
+	 * OAuth and API credential of the instance. Purging what this server
+	 * issued must never reach a row it did not issue — an expired Google or
+	 * Stripe token is one its module still means to refresh.
+	 *
+	 * @return void
+	 */
+	public function testPurgeLeavesOtherServicesAlone()
+	{
+		global $conf, $db;
+
+		$this->requireSchema();
+
+		$old = $db->idate(dol_now() - 10 * 86400);
+		$sql = "INSERT INTO ".$db->prefix()."oauth_token (service, tokenstring, expire_at, entity, datec)";
+		$sql .= " VALUES ('PHPUnitOtherService', 'kept', '".$old."', ".((int) $conf->entity).", '".$old."')";
+		$this->assertTrue((bool) $db->query($sql));
+		$otherid = $db->last_insert_id($db->prefix().'oauth_token');
+
+		$server = $this->getServer();
+		$server->purgeExpired();
+
+		$resql = $db->query("SELECT rowid FROM ".$db->prefix()."oauth_token WHERE rowid = ".((int) $otherid));
+		$this->assertSame(1, $db->num_rows($resql), 'A foreign expired token must survive our purge');
+
+		$db->query("DELETE FROM ".$db->prefix()."oauth_token WHERE rowid = ".((int) $otherid));
+	}
+
+	/**
+	 * An access token counts its uses in the columns the shared table has for
+	 * that, as the REST API does for its own keys.
+	 *
+	 * @return void
+	 */
+	public function testAccessTokenUseIsCounted()
+	{
+		global $db, $user;
+
+		$this->requireSchema();
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+		$tokens = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
+
+		$server->validateAccessToken($tokens['access_token']);
+		$server->validateAccessToken($tokens['access_token']);
+
+		$resql = $db->query("SELECT apicount_total, apicount_month, lastaccess FROM ".$db->prefix()."oauth_token WHERE token_hash = '".$db->escape(hash('sha256', $tokens['access_token']))."'");
+		$obj = $db->fetch_object($resql);
+		$this->assertSame(2, (int) $obj->apicount_total);
+		$this->assertSame(2, (int) $obj->apicount_month);
+		$this->assertNotEmpty($obj->lastaccess);
 	}
 }

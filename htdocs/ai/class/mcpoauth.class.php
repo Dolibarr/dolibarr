@@ -711,11 +711,11 @@ class McpOauth
 			return;
 		}
 
-		$sql = "SELECT fk_user FROM ".$this->db->prefix()."ai_oauth_token";
-		$sql .= " WHERE token_type = 'refresh'";
+		$sql = "SELECT fk_user FROM ".$this->db->prefix()."oauth_token";
+		$sql .= " WHERE service = '".$this->db->escape(self::serviceFor('refresh'))."'";
 		$sql .= " AND token_hash = '".$this->db->escape(hash('sha256', $refresh))."'";
 		$sql .= " AND entity = ".((int) $conf->entity);
-		$sql .= " AND fk_client = ".((int) $clientrowid);
+		$sql .= " AND fk_oauth_client = ".((int) $clientrowid);
 
 		$resql = $this->db->query($sql);
 		if (!$resql || $this->db->num_rows($resql) != 1) {
@@ -723,10 +723,11 @@ class McpOauth
 		}
 		$obj = $this->db->fetch_object($resql);
 
-		$sql = "UPDATE ".$this->db->prefix()."ai_oauth_token";
+		$sql = "UPDATE ".$this->db->prefix()."oauth_token";
 		$sql .= " SET revoked = 1";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
-		$sql .= " AND fk_client = ".((int) $clientrowid);
+		$sql .= " AND service IN (".$this->db->sanitize($this->ownServicesSql(), 1).")";
+		$sql .= " AND fk_oauth_client = ".((int) $clientrowid);
 		$sql .= " AND fk_user = ".((int) $obj->fk_user);
 		$sql .= " AND revoked = 0";
 
@@ -743,7 +744,68 @@ class McpOauth
 	 */
 	public function validateAccessToken($token)
 	{
-		return $this->getValidToken('access', $token);
+		$row = $this->getValidToken('access', $token);
+		if ($row !== null) {
+			$this->recordUse((int) $row->rowid);
+		}
+
+		return $row;
+	}
+
+	/**
+	 * Count one use of a token, in the columns the shared table has for it.
+	 *
+	 * The month rollover is decided on the value lastaccess had before this
+	 * update, so the assignments are ordered to read the old values on both
+	 * MySQL, which applies them left to right, and PostgreSQL, which does not.
+	 *
+	 * @param  int  $rowid Token row
+	 * @return void
+	 */
+	private function recordUse($rowid)
+	{
+		$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
+		$monthstart = $this->db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt');
+		$newmonth = "lastaccess < '".$monthstart."'";
+
+		$sql = "UPDATE ".$this->db->prefix()."oauth_token SET";
+		$sql .= " apicount_total = apicount_total + 1,";
+		$sql .= " apicount_previous_month = ".$this->db->ifsql($newmonth, 'apicount_month', 'apicount_previous_month').",";
+		$sql .= " apicount_month = ".$this->db->ifsql($newmonth, '1', 'apicount_month + 1').",";
+		$sql .= " lastaccess = '".$this->db->idate(dol_now('gmt'), 'gmt')."'";
+		$sql .= " WHERE rowid = ".((int) $rowid);
+
+		$this->db->query($sql);
+	}
+
+	/**
+	 * The llx_oauth_token service name for one kind of credential.
+	 *
+	 * The table is shared with every other OAuth and API credential of the
+	 * instance; the service column is what keeps ours apart, and every query
+	 * here filters on it.
+	 *
+	 * @param  string $type code, access or refresh
+	 * @return string       Service name
+	 */
+	public static function serviceFor($type)
+	{
+		return 'mcp_'.$type;
+	}
+
+	/**
+	 * The three service names, quoted for an IN () list.
+	 *
+	 * @return string 'mcp_code', 'mcp_access', 'mcp_refresh'
+	 */
+	private function ownServicesSql()
+	{
+		$list = array();
+		foreach (array('code', 'access', 'refresh') as $type) {
+			$list[] = "'".$this->db->escape(self::serviceFor($type))."'";
+		}
+
+		return implode(',', $list);
 	}
 
 	/**
@@ -771,9 +833,14 @@ class McpOauth
 	{
 		global $conf;
 
-		$sql = "DELETE FROM ".$this->db->prefix()."ai_oauth_token";
+		// The table is shared with every other OAuth and API credential of the
+		// instance, and those carry an expire_at too. Without the service
+		// filter this would delete an expired Google or Stripe token the
+		// owning module still means to refresh.
+		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
-		$sql .= " AND expires_at < '".$this->db->idate(dol_now() - 86400)."'";
+		$sql .= " AND service IN (".$this->db->sanitize($this->ownServicesSql(), 1).")";
+		$sql .= " AND expire_at < '".$this->db->idate(dol_now() - 86400)."'";
 
 		$this->db->query($sql);
 
@@ -784,7 +851,10 @@ class McpOauth
 		$sql = "DELETE FROM ".$this->db->prefix()."ai_oauth_client";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND datec < '".$this->db->idate(dol_now() - self::UNUSED_CLIENT_TTL)."'";
-		$sql .= " AND rowid NOT IN (SELECT fk_client FROM ".$this->db->prefix()."ai_oauth_token)";
+		// IS NOT NULL is not decoration: every other row of the shared table
+		// has no client, and NOT IN over a list holding a NULL is never true,
+		// so without it this would silently stop deleting anything.
+		$sql .= " AND rowid NOT IN (SELECT fk_oauth_client FROM ".$this->db->prefix()."oauth_token WHERE fk_oauth_client IS NOT NULL)";
 
 		$this->db->query($sql);
 	}
@@ -907,10 +977,12 @@ class McpOauth
 	{
 		global $conf;
 
-		$sql = "INSERT INTO ".$this->db->prefix()."ai_oauth_token";
-		$sql .= " (entity, token_type, token_hash, fk_client, fk_user, scope, resource, code_challenge, redirect_uri, expires_at, datec)";
+		// Only the SHA-256 goes in: token_hash, not tokenstring, which other
+		// services use for secrets they must be able to read back.
+		$sql = "INSERT INTO ".$this->db->prefix()."oauth_token";
+		$sql .= " (entity, service, token_hash, fk_oauth_client, fk_user, state, resource, code_challenge, redirect_uri, expire_at, datec)";
 		$sql .= " VALUES (".((int) $conf->entity);
-		$sql .= ", '".$this->db->escape($type)."'";
+		$sql .= ", '".$this->db->escape(self::serviceFor($type))."'";
 		$sql .= ", '".$this->db->escape(hash('sha256', $token))."'";
 		$sql .= ", ".((int) $clientrowid);
 		$sql .= ", ".((int) $userid);
@@ -947,13 +1019,13 @@ class McpOauth
 			return null;
 		}
 
-		$sql = "SELECT rowid, token_type, fk_client, fk_user, scope, resource, code_challenge, redirect_uri";
-		$sql .= " FROM ".$this->db->prefix()."ai_oauth_token";
-		$sql .= " WHERE token_type = '".$this->db->escape($type)."'";
+		$sql = "SELECT rowid, fk_oauth_client as fk_client, fk_user, state as scope, resource, code_challenge, redirect_uri";
+		$sql .= " FROM ".$this->db->prefix()."oauth_token";
+		$sql .= " WHERE service = '".$this->db->escape(self::serviceFor($type))."'";
 		$sql .= " AND token_hash = '".$this->db->escape(hash('sha256', $token))."'";
 		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " AND revoked = 0";
-		$sql .= " AND expires_at > '".$this->db->idate(dol_now())."'";
+		$sql .= " AND expire_at > '".$this->db->idate(dol_now())."'";
 
 		$resql = $this->db->query($sql);
 		if (!$resql || $this->db->num_rows($resql) != 1) {
@@ -978,7 +1050,7 @@ class McpOauth
 		// pairs, and a stolen refresh token could be used alongside the real
 		// client for as long as it lived, which is exactly what rotation is
 		// supposed to make impossible.
-		$sql = "UPDATE ".$this->db->prefix()."ai_oauth_token";
+		$sql = "UPDATE ".$this->db->prefix()."oauth_token";
 		$sql .= " SET revoked = 1";
 		$sql .= " WHERE rowid = ".((int) $rowid);
 		$sql .= " AND revoked = 0";
