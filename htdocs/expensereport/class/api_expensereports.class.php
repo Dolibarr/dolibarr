@@ -918,6 +918,11 @@ class ExpenseReports extends DolibarrApi
 		if ($this->expensereport->fetch($id) <= 0) {
 			throw new RestException(404, 'Expense report not found');
 		}
+		// The 'creer' right alone says nothing about whose report this is. expensereport/payment/payment.php
+		// gets the hierarchy check from restrictedArea(); the API must ask for it explicitly, like get() does.
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 		if (isModEnabled("bank") && !((int) ($request_data['accountid'] ?? 0) > 0)) {
 			throw new RestException(400, "accountid field missing");
 		}
