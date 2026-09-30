@@ -439,9 +439,32 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Tools
+	// For an external user, show the entry only if its left menu contains at least one entry this user is
+	// allowed to use: the hardcoded entries of get_left_menu_tools() and the entries added by modules into
+	// $tabMenu (already filtered on user type, enabled and perms by menuLoad()).
+	$toolsperms = 1;
+	if ($type_user) {
+		$toolsperms = 0;
+		$tmpmenu = new Menu();
+		get_left_menu_tools('tools', $tmpmenu, 0, 'none', $type_user);
+		foreach ($tmpmenu->liste as $val) {
+			if (!empty($val['enabled'])) {
+				$toolsperms = 1;
+				break;
+			}
+		}
+		if (!$toolsperms) {
+			foreach ($tabMenu as $val) {
+				if ($val['type'] == 'left' && $val['fk_mainmenu'] == 'tools' && $val['perms']) {
+					$toolsperms = 1;
+					break;
+				}
+			}
+		}
+	}
 	$tmpentry = array(
 		'enabled' => 1,
-		'perms' => '1',
+		'perms' => (string) $toolsperms,
 		'module' => ''
 	);
 	$menu_arr[] = array(
@@ -513,7 +536,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$url = $shorturl = $tmp[0];
 			$param = (isset($tmp[1]) ? $tmp[1] : '');
 
-			if ((!preg_match('/mainmenu/i', $param)) || !preg_match('/leftmenu/i', $param)) {
+			// Complete the url only when neither mainmenu nor leftmenu is already set, like print_left_eldy_menu() does.
+			// With a OR, a url already carrying only mainmenu got a second one, and a url already carrying only leftmenu
+			// got an empty leftmenu appended that overrode the real value.
+			if ((!preg_match('/mainmenu/i', $param)) && (!preg_match('/leftmenu/i', $param))) {
 				// @phan-suppress-next-line PhanTypeSuspiciousStringExpression
 				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 			}
@@ -2218,7 +2244,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT') && isModEnabled('bank') && (isModEnabled('invoice') || getDolGlobalString('MAIN_MENU_CHEQUE_DEPOSIT_ON'))) {
 			$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->hasRight('banque', 'cheque'), '', $mainmenu, 'checks', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 			if (preg_match('/checks/', $leftmenu)) {
-				$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&action=new&mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->hasRight('banque', 'cheque'));
+				$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&action=create2&mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->hasRight('banque', 'cheque'));
 				$newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('banque', 'cheque'));
 			}
 		}

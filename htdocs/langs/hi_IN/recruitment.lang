@@ -68,3 +68,4 @@ ApplyJobCandidature=इस नौकरी के लिए आवेदन क�
 ErrorRecruitmmentCandidatureAlreadyExists= भर्ती उम्मीदवारी पहले से ही ईमेल %s के साथ मौजूद है
 RecruitmentCandidatureSaved=भर्ती उम्मीदवारी सफलतापूर्वक सहेजी गई
 NoOpenJobOffer=फिलहाल कोई खुली नौकरी की पेशकश नहीं है
+ShowPositionToBeFilled=Show Position to be filled

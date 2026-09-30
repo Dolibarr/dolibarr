@@ -19,6 +19,7 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	ref varchar(128) NOT NULL,
 	fk_soc integer,
+	fk_contact integer,
 	fk_actioncomm integer,
 	fk_project integer NOT NULL,
 	fk_invoice integer NULL,
@@ -35,7 +36,7 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
 	fk_user_creat integer,
 	fk_user_modif integer,
 	last_main_doc varchar(255),
-	ip varchar(250),              --ip used to create record (for public submission page)
+	ip varchar(250),              -- ip used to create record (for public submission page)
 	import_key varchar(14),
 	model_pdf varchar(255),
 	status smallint NOT NULL,

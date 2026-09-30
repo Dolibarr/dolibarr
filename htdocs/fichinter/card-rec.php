@@ -247,10 +247,15 @@ if ($action == 'add' && $permissiontoadd) {
 } elseif ($action == 'delete' && $permissiontodelete) {
 	// delete modele
 	$object->fetch($id);
-	$object->delete($user);
-	$id = 0;
-	header('Location: '.$_SERVER["PHP_SELF"]);
-	exit;
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+	$result = $object->delete($user);
+	if ($result > 0) {
+		$id = 0;
+		header('Location: '.$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 } elseif ($action == 'setfrequency' && $permissiontoadd) {
 	// Set frequency and unit frequency
 	$object->fetch($id);
@@ -748,7 +753,7 @@ if ($action == 'create') {
 			$num = count($object->lines);
 			$i = 0;
 			while ($i < $num) {
-				$type =0;
+				$type = 0;
 				// Show product and description
 				if (isset($object->lines[$i]->product_type)) {
 					$type = $object->lines[$i]->product_type;
@@ -789,7 +794,7 @@ if ($action == 'create') {
 			}
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->hasRight('ficheinter', 'supprimer'));
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $user->hasRight('ficheinter', 'supprimer'));
 
 			print '</div>';
 		} else {
@@ -808,7 +813,7 @@ if ($action == 'create') {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}

@@ -77,6 +77,10 @@ $hookmanager->initHooks(array('bankcard', 'globalcard'));
 // Security check
 $id = GETPOSTINT("id") ? GETPOSTINT("id") : GETPOST('ref');
 $fieldid = GETPOSTINT("id") ? 'rowid' : 'ref';
+if ($action == 'create' || $action == 'add') {
+	// On creation, the posted ref is the ref of the record to create, not the ref of an existing record to check permission on
+	$id = '';
+}
 
 if (GETPOSTINT("id") || GETPOST("ref")) {
 	if (GETPOSTINT("id")) {
@@ -366,6 +370,7 @@ if (empty($reshook)) {
 		// Delete
 		$object = new Account($db);
 		$object->fetch(GETPOSTINT("id"));
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 
 		if ($result > 0) {

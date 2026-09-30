@@ -103,7 +103,13 @@ ConfirmCloneContract=Шумо мутмаин ҳастед, ки шартнома
 LowerDateEndPlannedShort=Санаи ба охир расидани анҷоми хидматҳои фаъол
 SendContractRef=Маълумот дар бораи шартнома __REF__
 OtherContracts=Шартномаҳои дигар
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Намояндаи фурӯш шартнома имзо мекунад
 TypeContact_contrat_internal_SALESREPFOLL=Намояндаи фурӯш пас аз бастани шартнома
 TypeContact_contrat_external_BILLING=Тамос бо мизоҷон

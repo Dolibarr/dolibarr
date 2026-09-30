@@ -639,6 +639,16 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 		}
+		if (!$error && !($rowid > 0)) {
+			// A new line can only be attached to a price line of the product being edited
+			$sql = "SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp";
+			$sql .= " WHERE pp.rowid = ".((int) $priceid)." AND pp.fk_product = ".((int) $object->id);
+			$resql = $db->query($sql);
+			if (!$resql || !$db->num_rows($resql)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+			}
+		}
 		if (!$error) {
 			// Calcul du prix HT et du prix unitaire
 			if ($object->price_base_type == 'TTC') {
@@ -657,6 +667,7 @@ if (empty($reshook)) {
 				$sql .= " remise_percent=".((float) $remise_percent).",";
 				$sql .= " remise=".((float) $remise);
 				$sql .= " WHERE rowid = ".((int) $rowid);
+				$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $object->id).")";
 
 				$result = $db->query($sql);
 				if (!$result) {
@@ -683,6 +694,7 @@ if (empty($reshook)) {
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE rowid = ".((int) $rowid);
+			$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $object->id).")";
 
 			$result = $db->query($sql);
 		} else {
@@ -695,6 +707,7 @@ if (empty($reshook)) {
 		if (!empty($priceid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE fk_product_price = ".((int) $priceid);
+			$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $object->id).")";
 
 			$result = $db->query($sql);
 		} else {
@@ -842,10 +855,21 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_customer_price' && $prodcustprice !== null && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
+	// A customer price line can only be removed or updated from the page of its own product
+	if (in_array($action, ['confirm_remove_customer_price', 'update_customer_price_confirm']) && $prodcustprice !== null) {
+		$prodcustprice->fetch(GETPOSTINT('lineid'));
+		if ((int) $prodcustprice->fk_product !== (int) $object->id) {
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+			$action = '';
+		}
+	}
+
+	if ($action == 'confirm_remove_customer_price' && $prodcustprice !== null && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
 		// Delete price by customer
-		$prodcustprice->id = GETPOSTINT('lineid');
-		$result = $prodcustprice->delete($user);
+		$update_child_soc = GETPOSTINT('updatechildprice');
+
+		$prodcustprice->fetch(GETPOSTINT('lineid'));
+		$result = $prodcustprice->delete($user, 0, $update_child_soc);
 
 		if ($result > 0) {
 			$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_customer_price_extrafields WHERE fk_object = ".((int) $prodcustprice->id));
@@ -1016,6 +1040,14 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 }
 
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs mod-product page-price');
+
+if ($action == 'ask_remove_customer_price' && ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer'))) {
+	$formquestion = array(
+		array('type' => 'checkbox', 'name' => 'updatechildprice', 'label' => $langs->trans('ForceDeleteChildPriceSoc'), 'value' => 0),
+	);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.GETPOSTINT('lineid'), $langs->trans('DeleteCustomerPrice'), $langs->trans('ConfirmDeleteCustomerPrice'), 'confirm_remove_customer_price', $formquestion, 0, 1);
+	print $formconfirm;
+}
 
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct".$object->type);
@@ -1284,7 +1316,20 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				}
 				foreach ($extralabels as $key => $value) {
 					if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
-						print '<td align="right">'.$extrafields->showOutputField($key, $genericObject->array_options['options_' . $key], '', 'product_price')."</td>";
+						$extravalue = $genericObject->array_options['options_' . $key];
+						// If field is a computed field, we make computation to get value
+						if (!empty($extrafields->attributes["product_price"]['computed'][$key])) {
+							$genericObject->price = $object->multiprices[$i];
+							$genericObject->price_ttc = $object->multiprices_ttc[$i];
+							$genericObject->price_base_type = $object->multiprices_base_type[$i];
+							$genericObject->price_min = $object->multiprices_min[$i];
+							$genericObject->price_min_ttc = $object->multiprices_min_ttc[$i];
+							$genericObject->tva_tx = $object->multiprices_tva_tx[$i];
+
+							$objectoffield = $genericObject; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+							$extravalue = dol_eval((string) $extrafields->attributes["product_price"]['computed'][$key], 1, 1, '2');
+						}
+						print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_price')."</td>";
 					}
 				}
 				$db->free($resql1);
@@ -2191,7 +2236,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		if (!empty($extralabels)) {
 			if (empty($object->id)) {
 				foreach ($extralabels as $key => $value) {
-					if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
+					if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_customer_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
 						if (!empty($extrafields->attributes["product_customer_price"]['langfile'][$key])) {
 							$langs->load($extrafields->attributes["product_customer_price"]['langfile'][$key]);
 						}
@@ -2217,7 +2262,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
 					foreach ($extralabels as $key => $value) {
-						if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
+						if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_customer_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
 							if (!empty($extrafields->attributes["product_customer_price"]['langfile'][$key])) {
 								$langs->load($extrafields->attributes["product_customer_price"]['langfile'][$key]);
 							}
@@ -2645,17 +2690,19 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					$sql .= " WHERE fk_object = ".((int) $line->id);
 					$resql = $db->query($sql);
 					if ($resql) {
-						if ($db->num_rows($resql) != 1) {
-							foreach ($extralabels as $key => $value) {
-								if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
-									print "<td></td>";
-								}
-							}
-						} else {
-							$obj = $db->fetch_object($resql);
-							foreach ($extralabels as $key => $value) {
-								if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+						// Row may not exist yet (e.g. if the only extrafield configured is a computed one, no row is ever inserted)
+						$obj = ($db->num_rows($resql) == 1) ? $db->fetch_object($resql) : null;
+						foreach ($extralabels as $key => $value) {
+							if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
+								// If field is a computed field, we make computation to get value, whether or not a stored row exists
+								if (!empty($extrafields->attributes["product_customer_price"]['computed'][$key])) {
+									$objectoffield = $line; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+									$extravalue = dol_eval((string) $extrafields->attributes["product_customer_price"]['computed'][$key], 1, 1, '2');
+									print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_customer_price')."</td>";
+								} elseif ($obj) {
 									print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_customer_price')."</td>";
+								} else {
+									print "<td></td>";
 								}
 							}
 						}
@@ -2687,7 +2734,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					print ' ';
 				}
 				if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
-					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
+					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=ask_remove_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 				}

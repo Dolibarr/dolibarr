@@ -74,7 +74,6 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
-	$amount = '';
 
 	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
@@ -173,7 +172,7 @@ if ($conf->use_javascript_ajax) {
 }
 
 
-print '<div class="info">'.$langs->trans("BlankSubscriptionFormDesc").'</div><br>';
+print '<div class="info">'.$langs->trans("BlankSubscriptionFormDesc").'</div>';
 
 $param = '';
 

@@ -173,3 +173,5 @@ ErrorObjectMustNotBeFinishedToModifyDateEnd = 終了日を変更するには、�
 ErrorObjectMustNotBeFinishedToModifyDateStart = 開始日を変更するには、オブジェクト %s が終了していない必要がある。
 BOM_SUB_BOM=サブボムを使用する
 UseSearchToSelectBom=Boms コンボ リストの内容を読み込む前に、キーが押されるまで待機する。<br> これにより、多数の プロジェクト がある場合にパフォーマンスが向上する可能性があるが、あまり便利ではあらない。
+ReInitialize=再初期化
+ReInitializeHelp=消費ラインと生産ラインを再初期化します（BOMが変更され、生産が開始されていない場合）。

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,11 +97,11 @@ trait CommonSocialNetworks
 
 			if (cookieState) {
 				items.hide();
-				lnk.text("'.dol_escape_js($langs->transnoentitiesnoconv("ShowSocialNetworks")).'...");
+				lnk.text(\''.dol_escape_js($langs->transnoentitiesnoconv("ShowSocialNetworks")).'...\');
 				if (chgCookieState) { document.cookie = "DOLUSER_SOCIALNETWORKS_SHOW=false; SameSite=Strict"};
 			} else {
 				items.show();
-				lnk.text("'.dol_escape_js($langs->transnoentitiesnoconv("HideSocialNetworks")).'...");
+				lnk.text(\''.dol_escape_js($langs->transnoentitiesnoconv("HideSocialNetworks")).'...\');
 				if (chgCookieState) { document.cookie = "DOLUSER_SOCIALNETWORKS_SHOW=true; SameSite=Strict";}
 			}
 		}

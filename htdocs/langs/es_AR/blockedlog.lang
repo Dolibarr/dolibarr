@@ -1,13 +1,12 @@
 # Dolibarr language file - Source file is en_US - blockedlog
 Fingerprints=Eventos archivados y huellas digitales
 CompanyInitialKey=Clave inicial de la empresa (hash del bloque génesis)
-OkCheckFingerprintValidity=El registro archivado es válido. Los datos de esta línea no se modificaron y la entrada es correlativa a la anterior.
-OkCheckFingerprintValidityButChainIsKo=El registro archivado parece válido en comparación con el anterior, pero la cadena estaba previamente dañada.
 AddedByAuthority=Almacenado con autoridad remota
 NotAddedByAuthorityYet=Aún no almacenado con autoridad remota
 ListOfTrackedEvents=Lista de eventos rastreados
 TooManyRecordToScanRestrictFilters=Demasiados registros para escanear/analizar. Por favor reduzca la lista con filtros más restrictivos.
 BLOCKEDLOG_REGISTRATION_NAME=Nombre de la compañía
+StatusValid=Valida
 logBILL_DELETE=Borrado lógico de una factura de cliente
 logBILL_PAYED=Factura de cliente marcada como paga
 logBILL_SENTBYMAIL=Factura de cliente enviada por corre

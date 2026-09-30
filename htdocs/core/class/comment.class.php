@@ -114,9 +114,9 @@ class Comment extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->description)."'";
 		$sql .= ", ".($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null');
-		$sql .= ", '".(isset($this->fk_element) ? ((int) $this->fk_element) : "null")."'";
+		$sql .= ", ".(isset($this->fk_element) ? ((int) $this->fk_element) : "null");
 		$sql .= ", '".$this->db->escape($this->element_type)."'";
-		$sql .= ", '".(isset($this->fk_user_author) ? ((int) $this->fk_user_author) : "null")."'";
+		$sql .= ", ".(isset($this->fk_user_author) ? ((int) $this->fk_user_author) : "null");
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(!empty($this->entity) ? ((int) $this->entity) : '1');
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");

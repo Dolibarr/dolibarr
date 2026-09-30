@@ -28,14 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-
-// Cron job libraries
-require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
+// Cron job libraries
+require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron', 'members', 'bills'));
@@ -56,8 +55,9 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $securitykey = GETPOST('securitykey', 'alpha');
 
-$permissiontoadd = $user->hasRight('cron', 'create');
-$permissiontoexecute = $user->hasRight('cron', 'execute');
+// TODO Because the cron is run by an admin user, to allow write/run of con tasks without begin admin, we must first manage a field runner_user_id with ID of user to set who run the cron.
+$permissiontoadd = $user->hasRight('cron', 'write') && $user->admin;
+$permissiontoexecute = $user->hasRight('cron', 'write') && $user->admin;
 $permissiontodelete = $user->hasRight('cron', 'delete');
 
 if (!$permissiontoadd) {
@@ -92,6 +92,7 @@ if (!empty($cancel)) {
 
 // Delete jobs
 if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 
 	if ($result < 0) {
@@ -804,7 +805,7 @@ if (($action == "create") || ($action == "edit")) {
 	print "\n\n".'<div class="tabsAction">'."\n";
 	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
 
-	if ((!$user->hasRight('cron', 'execute'))) {
+	if (!$permissiontoexecute) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronExecute").'</a>';
 	} elseif (empty($object->status)) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("JobDisabled")).'">'.$langs->trans("CronExecute").'</a>';
@@ -813,7 +814,7 @@ if (($action == "create") || ($action == "edit")) {
 	}
 
 
-	print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+	print dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id, '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 
 	if (empty($object->status)) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
@@ -822,7 +823,7 @@ if (($action == "create") || ($action == "edit")) {
 	}
 
 
-	if (!$user->hasRight('cron', 'delete')) {
+	if (!$permissiontodelete) {
 		print '<a class="butActionDeleteRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</a>';
 	} else {
 		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017-2022  OpenDSI                     <support@open-dsi.fr>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2024-2026  MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Janniaux          <alexandre.janniaux@gmail.com>
@@ -747,7 +748,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getDiscountCustomer(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -773,6 +774,11 @@ class AccountingJournal extends CommonObject
 		} else {
 			$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
 		}
+		// Add SQL restrictions from hooks (context accountingjournaldao), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('accountingjournaldao'));
+		$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " AND f.close_code = 'discount_vat'";
 		if ($date_start && $date_end) {
 			$sql .= " AND f.date_closing >= '".$this->db->idate($date_start)."' AND f.date_closing <= '".$this->db->idate($date_end)."'";
@@ -1056,7 +1062,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getDiscountSupplier(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -1082,6 +1088,11 @@ class AccountingJournal extends CommonObject
 		} else {
 			$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".FactureFournisseur::TYPE_DEPOSIT.",".FactureFournisseur::TYPE_SITUATION.")";
 		}
+		// Add SQL restrictions from hooks (context accountingjournaldao), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('accountingjournaldao'));
+		$parameters = array('invoicealias' => 'ff', 'issupplier' => 1, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " AND ff.close_code = 'discount_vat'";
 		if ($date_start && $date_end) {
 			$sql .= " AND ff.date_closing >= '".$this->db->idate($date_start)."' AND ff.date_closing <= '".$this->db->idate($date_end)."'";

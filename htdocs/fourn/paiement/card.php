@@ -103,6 +103,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 
 	$object->fetch($id);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -174,7 +175,9 @@ $formfile = new FormFile($db);
 
 $head = payment_supplier_prepare_head($object);
 
-print dol_get_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment');
+// The tabs are printed before the result of the fetch is checked below, so we must not offer a drop area
+// when the object was not loaded: the upload could only fail.
+print dol_get_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment', 0, '', '', 0, '', ($result > 0 ? 1 : 0));
 
 if ($result > 0) {
 	/*
@@ -218,6 +221,12 @@ if ($result > 0) {
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td>';
 	print '<td>'.$labeltype;
 	print $object->num_payment ? ' - '.$object->num_payment : '';
+	print '</td></tr>';
+
+	// Payment number
+	print '<tr><td>'.$form->editfieldkey("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
+	print '<td>';
+	print $form->editfieldval("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer"), 'string', '', null, $langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment numero

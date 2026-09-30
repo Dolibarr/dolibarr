@@ -16,6 +16,8 @@ AddThisArticle=Ajouter cet article
 RestartSelling=Reprendre la vente
 SellFinished=Vente complète
 PrintTicket=Imprimer ticket
+CloneTicket=Cloner le ticket
+ErrorFailedToCloneTicket=Échec du clonage du ticket
 PrintReport=Imprimer rapport
 PrintReportNoDetail=Imprimer rapport (sans détail)
 SendTicket=Envoyer le ticket
@@ -198,3 +200,6 @@ CashLifetime=Perpétuel Espèce
 ChequeLifetime=Perpétuel Chèque
 CardLifetime=Perpétuel Carte
 DefaultCashPOSLabel=Compte Espèce pour point de vente
+
+TakeposValidateCreditNoteOnCreation=Valider l'avoir dès sa création
+TakeposValidateCreditNoteOnCreationDesc=Si activé, les avoirs créés dans TakePOS seront immédiatement validés. Si désactivé, ils resteront à l'état de brouillon pour permettre la modification des quantités avant paiement.

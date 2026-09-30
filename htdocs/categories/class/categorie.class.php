@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2018	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016-2025	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2016-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
@@ -562,14 +562,14 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::create', LOG_DEBUG);
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->color = trim($this->color);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->color = trim((string) $this->color);
 		$this->position = (int) $this->position;
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
-		$this->ref_ext = trim($this->ref_ext);
+		$this->ref_ext = trim((string) $this->ref_ext);
 		if (empty($this->visible)) {
 			$this->visible = 0;
 		}
@@ -676,9 +676,9 @@ class Categorie extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->ref_ext = trim($this->ref_ext);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->ref_ext = trim((string) $this->ref_ext);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
@@ -853,10 +853,11 @@ class Categorie extends CommonObject
 	 *
 	 * @param   CommonObject 	$obj  	Object to link to category
 	 * @param   string     		$type 	Type of category ('product', ...). Use '' to take $obj->element.
+	 * @param	int				$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 * @see del_type()
 	 */
-	public function add_type($obj, $type = '')
+	public function add_type($obj, $type = '', $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -914,10 +915,12 @@ class Categorie extends CommonObject
 			}
 
 			// Call trigger
-			$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
+			if (empty($notrigger)) {
+				$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
+				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 			// End call triggers
 
@@ -946,10 +949,11 @@ class Categorie extends CommonObject
 	 *
 	 * @param   CommonObject $obj  Object
 	 * @param   string       $type Type of category ('customer', 'supplier', 'contact', 'product', 'member')
+	 * @param	int			 $notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return  int          1 if OK, -1 if KO
 	 * @see add_type()
 	 */
-	public function del_type($obj, $type)
+	public function del_type($obj, $type, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -974,10 +978,12 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// Call trigger
-			$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
+			if (empty($notrigger)) {
+				$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
+				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 			// End call triggers
 
@@ -1049,6 +1055,15 @@ class Categorie extends CommonObject
 			// Protection for external users
 			if (($type == 'customer' || $type == 'supplier') && $user->socid > 0) {
 				$sql .= " AND o.rowid = ".((int) $user->socid);
+			}
+
+			// Add where from hooks (for example to restrict to objects an external module shares
+			// with the current entity by a granularity finer than this category's own)
+			global $hookmanager;
+			if (is_object($hookmanager)) {
+				$parameters = array('type' => $type, 'alias' => 'o');
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this);
+				$sql .= $hookmanager->resPrint;
 			}
 
 			$errormessage = '';
@@ -1349,7 +1364,7 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		// Note: The DISTINCT reduces pb with old tables with duplicates but should not be used
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible";
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible, c.entity";
 		if (getDolGlobalInt('MAIN_MULTILANGS') && $current_lang !== 'none') {
 			$sql .= ", t.label as label_trans, t.description as description_trans";
 		}
@@ -1379,6 +1394,7 @@ class Categorie extends CommonObject
 						'position' => (string) $obj->position,
 						'visible' => (int) $obj->visible,
 						'ref_ext' => (string) $obj->ref_ext,
+						'entity' => (int) $obj->entity,
 						'picto' => 'category',
 						// fields are filled with buildPathFromId later
 						'fullpath' => '',
@@ -1390,6 +1406,17 @@ class Categorie extends CommonObject
 		} else {
 			dol_print_error($this->db);
 			return -1;
+		}
+
+		// Let external modules complete or filter the tree (for example to restrict categories
+		// coming from other entities according to a sharing granularity they manage)
+		global $hookmanager;
+		if (is_object($hookmanager)) {
+			$parameters = array('cats' => &$this->cats, 'motherof' => &$this->motherof, 'type' => $type);
+			$reshook = $hookmanager->executeHooks('completeCategoryFullTree', $parameters, $this);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
 		}
 
 		// We add the fullpath property to each elements of first level (no parent exists)

@@ -258,7 +258,7 @@ OtherFilteredTasks=Teised filtreeritud ülesanded
 NoAssignedTasks=Määratud ülesandeid ei leitud (määra projekti/ülesandeid praegusele kasutajale ülemisest valikukastist, et sellele aega sisestada)
 ThirdPartyRequiredToGenerateIntervention=Sekkumise loomiseks tuleb projektis defineerida kolmas osapool.
 ThirdPartyRequiredToGenerateInvoice=Arve esitamiseks tuleb projektis määratleda kolmas osapool.
-ChooseANotYetAssignedTask=Valige ülesanne, mis pole teile veel määratud
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Luba kasutajate kommentaarid ülesannetele
 AllowCommentOnProject=Luba kasutajatel projekte kommenteerida

@@ -33,7 +33,16 @@ To get a token you can:
 * Edit the user card to set the value of token. Each user can have a different token.
 * or Call the *login* API with login and password. This will return the value of token for the user used to login.
 
-Then call other services with
+Then call other services with the token in the HTTP header:
+
+curl -H "DOLAPIKEY: **api_key**" https://**yourdolibarr.tld**/mydolibarr/api/index.php/otherservice
+
+The token can also be passed among the URL parameters, but this form is discouraged:
+a key sent that way is recorded in the web server access log, in the log of any proxy
+on the way, in the browser history and in the Referer header of any link followed from
+a page loaded with it. A key exposed like this has to be revoked, it cannot be removed
+from the logs afterwards. Setting the constant **API_DISABLE_KEY_IN_URL** makes the API
+refuse that form instead of accepting it.
 
 https://**yourdolibarr.tld**/mydolibarr/api/index.php/otherservice?DOLAPIKEY=**api_key**
 

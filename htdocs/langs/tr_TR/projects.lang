@@ -258,7 +258,7 @@ OtherFilteredTasks=Diğer filtrelenmiş görevler
 NoAssignedTasks=Atanan görev bulunamadı (zamanı girmek için üstteki seçim kutusundan mevcut kullanıcıya proje/görev atayın)
 ThirdPartyRequiredToGenerateIntervention=Müdahale oluşturulabilmesi için proje üzerinde üçüncü bir tarafın tanımlanması gerekir.
 ThirdPartyRequiredToGenerateInvoice=Fatura kesebilmek için proje üzerinde üçüncü bir tarafın tanımlanması gerekir.
-ChooseANotYetAssignedTask=Henüz size atanmamış bir görevi seçin
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Görevlere kullanıcı yorumlarına izin ver
 AllowCommentOnProject=Projelerde kullanıcı yorumlarına izin ver

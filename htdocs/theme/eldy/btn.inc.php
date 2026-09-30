@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var User $user
  *
  * @var string $butactionbg
- * @var string $colorbackhmenu1
  * @var string $colortextlink
  * @var int $dol_optimize_smallscreen
  * @var string $fontlist
@@ -35,7 +34,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 '
 @phan-var-force string $butactionbg
-@phan-var-force string $colorbackhmenu1
 @phan-var-force string $colortextlink
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
@@ -49,14 +47,14 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 /* IDE Hack <style type="text/css"> */
 
 :root {
-			--btncolortext: rgb(<?php print $colortextlink; ?>);
-			--btncolorbg: #fbfbfb;
-			--btncolorborderhover: none;
-			--btncolorborder: #FFF;
-			--butactiondeletebg: rgb(234,228,225);
-			--butactioncancelbg: #e3e3e3;
-			--butactionbg: rgb(<?php print $butactionbg; ?>);
-			--textbutaction: rgb(<?php print $textbutaction; ?>);
+	--btncolortext: rgb(<?php print $colortextlink; ?>);
+	--btncolorbg: #fbfbfb;
+	--btncolorborderhover: none;
+	--btncolorborder: #FFF;
+	--butactiondeletebg: rgb(234,228,225);
+	--butactioncancelbg: #e3e3e3;
+	--butactionbg: rgb(<?php print $butactionbg; ?>);
+	--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
 
 <?php
@@ -217,6 +215,19 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
+/* Button Clone */
+#action-clone .textbutton, .butAction.butActionClone .textbutton {
+  font-size: 0;
+  display: inline-block;
+}
+#action-clone .textbutton::before, .butAction.butActionClone .textbutton::before {
+  content: "\f24d";            /* fa-clone */
+  font-family: "Font Awesome 5 Free";  /* ou "Font Awesome 5 Free" selon votre version */
+  font-weight: 900;            /* obligatoire pour la version "solid" */
+  font-size: 14px;				/* using 1em does not work */
+  /* vertical-align: middle; */
+}
+
 
 /*
 .butActionDelete#action-delete::before {
@@ -278,7 +289,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionLogin, .butActionLogin:link, .butActionLogin:visited, .butActionLogin:hover, .butActionLogin:active {
-	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
+	background-color: var(--butactionbg);
 	padding: 1em 1em;
 }
 

@@ -43,8 +43,8 @@ ConfirmCloseContract=Spowoduje to zamknięcie wszystkich usług (wygasłych lub 
 ConfirmCloseService=Czy na pewno chcesz zamknąć tę usługę z datą <b> %s </b>?
 ValidateAContract=Potwierdź kontrakt
 UnsignContract=Anuluj podpisanie umowy
-ContractSign=Zestaw podpisany
-ContractUnsign=Ustaw Niepodpisany
+ContractSign=Ustaw jako podpisany
+ContractUnsign=Ustaw jako niepodpisany
 ContractSignedInDolibarr=Umowa podpisana
 ContractSignedOnline=Umowa podpisana online
 ContractUnsignedInDolibarr=Umowa niepodpisana
@@ -103,7 +103,13 @@ ConfirmCloneContract=Czy na pewno chcesz sklonować kontrakt <b> %s </b>?
 LowerDateEndPlannedShort=Niższy planowany termin zakończenia aktywnych usług
 SendContractRef=Informacje o umowie __REF__
 OtherContracts=Inne umowy
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Podpisanie umowy sprzedaży
 TypeContact_contrat_internal_SALESREPFOLL=Przedstawiciel handlowy w ślad za umowy
 TypeContact_contrat_external_BILLING=Billing kontakt z klientem

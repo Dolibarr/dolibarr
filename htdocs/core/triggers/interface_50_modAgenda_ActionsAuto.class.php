@@ -9,7 +9,7 @@
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2023       Christian Foellmann	<christian@foellmann.de>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,18 +186,24 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = array($object->id => $object->id);
 			// $object->socid = $object->socid;
 		} elseif ($action == 'CONTACT_MODIFY' && $object instanceof Contact) {
+			'@phan-var-force Contact $object';
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "companies"));
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
-					$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", (string) $object->name);
+					$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->getFullName($langs));
 				} else {
 					$object->actionmsg2 = $object->context['actionmsg2'];
 				}
 			}
 			if (empty($object->actionmsg)) {
-				$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", (string) $object->name);
+				$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->getFullName($langs));
+			}
+
+			// For merge event, we add a mention
+			if (!empty($object->context['mergefromname'])) {
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $langs->transnoentities("DataFromWasMerged", $object->context['mergefromname'].' (id='.$object->context['mergefromid'].')'));
 			}
 
 			$object->sendtoid = array($object->id => $object->id);
@@ -1312,7 +1318,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			//$object->actionmsg .= "\n".$langs->transnoentities("Task").': ???';
-			if (!empty($object->usage_opportunity) && is_object($object->oldcopy) && $object->opp_status != $object->oldcopy->opp_status) {
+			if (!empty($object->usage_opportunity) && isset($object->oldcopy->opp_status) && $object->opp_status != $object->oldcopy->opp_status) {
 				$object->actionmsg .= "\n".$langs->transnoentitiesnoconv("OpportunityStatus").': '.$object->oldcopy->opp_status.' -> '.$object->opp_status;
 			}
 
@@ -1433,7 +1439,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg = $langs->transnoentities("TICKET_ASSIGNEDInDolibarr", (string) $object->ref);
 			}
 
-			if ($object->oldcopy->fk_user_assign > 0) {
+			if (isset($object->oldcopy->fk_user_assign) && $object->oldcopy->fk_user_assign > 0) {
 				$tmpuser = new User($this->db);
 				$tmpuser->fetch($object->oldcopy->fk_user_assign);
 				$object->actionmsg .= "\n".$langs->transnoentities("OldUser").': '.$tmpuser->getFullName($langs);
@@ -1677,17 +1683,26 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			if (property_exists($object, 'attachedfiles') && is_array($object->attachedfiles) && array_key_exists('paths', $object->attachedfiles) && count($object->attachedfiles['paths']) > 0) {
 				// Note: None of the dolibarr classes seem to have an attachedfiles property
 				// Get directory of object
-				$tmpelems = getElementProperties($object->element.($object->module ? '@'.$object->module : ''));
-				$destdir = $tmpelems['dir_output'].'/'.$ret;
+				$destdir = getMultidirOutput($object, '', 1);
 
 				// @phan-suppress-next-line PhanUndeclaredProperty
 				foreach ($object->attachedfiles['paths'] as $key => $filespath) {
 					$srcfile = $filespath;
 					// @phan-suppress-next-line PhanUndeclaredProperty
-					$destfile = $destdir.'/'.$object->attachedfiles['names'][$key];
-					if (dol_mkdir($destdir) >= 0) {
-						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-						dol_copy($srcfile, $destfile);
+					$destfile = $destdir.$object->attachedfiles['names'][$key];
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					// We must not overwrite main file
+					if (!dol_is_file($destfile)) {
+						if (dol_mkdir($destdir, DOL_DATA_ROOT) >= 0) {
+							$moreinfo = array(
+								'gen_or_uploaded' => 1,
+								'src_object_type' => $object->element,
+								'src_object_id' => $object->id,
+								'agenda_id' => $ret
+							);
+							// No need to test virus, should be already done when uploading the file.
+							dol_move($srcfile, $destfile, '0', 0, 0, 1, $moreinfo);
+						}
 					}
 				}
 			}

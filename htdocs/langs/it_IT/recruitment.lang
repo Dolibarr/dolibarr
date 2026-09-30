@@ -68,3 +68,4 @@ ApplyJobCandidature=Candidati per questo lavoro
 ErrorRecruitmmentCandidatureAlreadyExists= La candidatura Selezione esiste già con email %s
 RecruitmentCandidatureSaved=Candidatura di reclutamento salvata con successo
 NoOpenJobOffer=Nessuna offerta di lavoro aperto al momento
+ShowPositionToBeFilled=Show Position to be filled

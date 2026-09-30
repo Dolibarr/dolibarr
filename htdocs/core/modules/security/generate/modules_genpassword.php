@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,8 @@
  *		\ingroup    core
  *		\brief      File with parent class for password generating classes
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php'; // For isPasswordGenerationNoneForbidden()
 
 
 /**
@@ -146,5 +147,51 @@ abstract class ModeleGenPassword
 	public function validatePassword($password)
 	{
 		return 1;
+	}
+
+	/**
+	 * Locate, load and instantiate a password generator/validator model by its id (the value
+	 * stored in USER_PASSWORD_GENERATED, e.g. 'standard', 'PasswordGuard'). Scans
+	 * core/modules/security/generate/ plus, for each enabled module declaring
+	 * module_parts['models'], its own core/modules/security/generate/ subdirectory — the same
+	 * multi-root convention used by every numbering-module scan in Dolibarr (see e.g.
+	 * Facture::getNextNumRef()). This lets a module contribute its own modGeneratePassXxx class
+	 * from its own directory without any further core patch.
+	 *
+	 * @param	string		$id		Generator id (value of USER_PASSWORD_GENERATED), e.g. 'standard', 'PasswordGuard'
+	 * @param	DoliDB		$db		Database handler
+	 * @param	Conf		$conf	Handler de conf
+	 * @param	Translate	$langs	Handler de langue
+	 * @param	User		$user	Handler du user connected
+	 * @return	?ModeleGenPassword	The instantiated generator, or null if no matching class was found
+	 */
+	public static function loadAndInstantiate($id, $db, $conf, $langs, $user)
+	{
+		if (empty($id)) {
+			return null;
+		}
+
+		// The 'none' model applies no rule at all. When it is forbidden (conf.php lock),
+		// transparently fall back to the always-available 'standard' model so an installation still
+		// configured with 'none' enforces a real rule at generation and validation time, without
+		// having to rewrite the stored USER_PASSWORD_GENERATED value.
+		if (strtolower($id) === 'none' && isPasswordGenerationNoneForbidden()) {
+			$id = 'standard';
+		}
+
+		$classname = 'modGeneratePass'.ucfirst($id);
+
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$file = dol_buildpath($reldir.'core/modules/security/generate/').$classname.'.class.php';
+			if (is_file($file)) {
+				require_once $file;
+				if (class_exists($classname)) {
+					return new $classname($db, $conf, $langs, $user);
+				}
+			}
+		}
+
+		return null;
 	}
 }

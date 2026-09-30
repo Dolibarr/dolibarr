@@ -151,6 +151,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user, 0, (bool) $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
 			header("Location: " . $backurlforlist);
@@ -778,7 +779,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 
-	if (!in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+	if (!in_array($action, array('consumeorproduce', 'consumeandproduceall', 'editline'))) {
 		print '<div class="tabsAction">';
 
 		$parameters = array();
@@ -1106,7 +1107,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 							}
 
-							if ($qtyhourservice && $qtyhourforline) {
+							// Add the workstation cost for the manufacturing order cost when a workstation is set
+							if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
+								$workstation = new Workstation($db);
+								$workstation->fetch($line->fk_default_workstation);
+								$linecost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated) / $object->qty, 'MT'); //if global const MRP_SHOW_COST_FOR_CONSUMPTION is used to show price for each line
+								$bomcostupdated += price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated) / $object->qty, 'MU');
+							} elseif ($qtyhourservice && $qtyhourforline) {
 								$linecost = price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MT');	// price for line for all quantities
 								$bomcostupdated += price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MU');	// same but with full accuracy
 							} else {
@@ -1538,13 +1545,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Split
 						$type = 'batch';
 						print '<td align="right" class="split">';
-						print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
+						print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\', 1)"');
 						print '</td>';
 
 						// Split All
 						print '<td align="right" class="splitall">';
 						if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) {
-							print img_picto($langs->trans('SplitAllQuantity'), 'split', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
+							print img_picto($langs->trans('SplitAllQuantity'), 'split', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\', 1)"');
 						}
 						print '</td>';
 
@@ -2038,7 +2045,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print "</form>\n";
 	} ?>
 
-		<script  type="text/javascript" language="javascript">
+		<script type="text/javascript">
 
 			$(document).ready(function() {
 				//Consumption : When a warehouse is selected, only the lot/serial numbers that are available in it are offered

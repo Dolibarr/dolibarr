@@ -414,7 +414,7 @@ function product_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = isset($extrafields->attributes['product']['count']) ? $extrafields->attributes['product']['count'] : 0;
 	if ($nbExtrafields > 0) {
@@ -425,7 +425,7 @@ function product_admin_prepare_head()
 
 	// Multilangs Extrafields
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_lang_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_lang'));
 		$head[$h][1] = $langs->trans("TranslationsExtrafields");
 		$nbExtrafields = isset($extrafields->attributes['product_lang']['count']) ? $extrafields->attributes['product_lang']['count'] : 0;
 		if ($nbExtrafields > 0) {
@@ -437,7 +437,7 @@ function product_admin_prepare_head()
 
 	// Extrafields for price levels
 	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_price_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_price'));
 		$head[$h][1] = $langs->trans("ProductLevelExtraFields");
 		$nbExtrafields = isset($extrafields->attributes['product_price']['count']) ? $extrafields->attributes['product_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
@@ -449,7 +449,7 @@ function product_admin_prepare_head()
 
 	// Extrafields for price per customer
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php');
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_customer_price'));
 		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
 		$nbExtrafields = isset($extrafields->attributes['product_customer_price']['count']) ? $extrafields->attributes['product_customer_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
@@ -460,7 +460,7 @@ function product_admin_prepare_head()
 	}
 
 	// Supplier prices
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_fournisseur_price'));
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
 	$nbExtrafields = isset($extrafields->attributes['product_fournisseur_price']['count']) ? $extrafields->attributes['product_fournisseur_price']['count'] : 0;
 	if ($nbExtrafields > 0) {
@@ -501,7 +501,7 @@ function product_lot_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_lot_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'product_lot'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['product_lot']['count'];
 	if ($nbExtrafields > 0) {

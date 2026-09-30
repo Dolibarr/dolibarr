@@ -43,7 +43,7 @@ function workstationAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/workstation_extrafields.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'workstation_workstation'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['workstation_workstation']['count'];
 	if ($nbExtrafields > 0) {

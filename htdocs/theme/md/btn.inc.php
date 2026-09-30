@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,7 +97,8 @@ div.tabsAction > div.divButAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butActionRefused,
 div.tabsAction > div.divButAction > a.butAction,
 div.tabsAction > div.divButAction > a.butActionDelete,
-div.tabsAction > div.divButAction > a.butActionRefused {
+div.tabsAction > div.divButAction > a.butActionRefused,
+div.tabsAction > .dropdown > .dropdown-toggle {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
 }
@@ -315,7 +316,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionLogin {
-	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
+	background-color: var(--butactionbg);
 }
 
 

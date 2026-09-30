@@ -92,7 +92,6 @@ ComputedField=campo calculado
 SelectFilterFields=Si desea filtrar algunos valores, simplemente ingrese los valores aquí.
 FilteredFieldsValues=Valor por filtro
 FormatControlRule=Regla de control de formato
-KeysToUseForUpdates=Clave (columna) a usar para <b> actualizando </b> datos existentes
 NbInsert=Número de líneas insertadas: %s
 MultipleRecordFoundWithTheseFilters=Se han encontrado múltiples registros con estos filtros: %s
 StocksWithBatch=Stocks y ubicación (almacén) de productos con número de lote/serie

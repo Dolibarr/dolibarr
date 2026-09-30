@@ -92,11 +92,11 @@ WarningCronDelayed=Attention, à des fins de performance, quelle que soit la pro
 DATAPOLICYJob=Nettoyeur de données et anonymiseur
 JobXMustBeEnabled=La tâche planifiée %s doit être activée
 EmailIfError=E-mail d'avertissement en cas d'erreur
-JobNotFound=Travail %s introuvable dans la liste des travaux (essayez de désactiver/activer le module)
+JobNotFound=Travail %s introuvable dans la liste des tâches (essayez de désactiver/activer le module)
 ErrorInBatch=Erreur lors de l'exécution du travail %s
 
 # Cron Boxes
-LastExecutedScheduledJob=Dernier travail planifié exécuté
-NextScheduledJobExecute=Prochain travail planifié à exécuter
-NumberScheduledJobError=Nombre de travaux planifiés en erreur
+LastExecutedScheduledJob=Dernier tâche planifiée exécutée
+NextScheduledJobExecute=Prochaine tâche planifiée à exécuter
+NumberScheduledJobError=Nombre de tâches planifiées en erreur
 NumberScheduledJobNeverFinished=Nombre de tâches planifiées jamais terminées

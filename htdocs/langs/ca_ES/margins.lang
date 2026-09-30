@@ -31,9 +31,9 @@ UseDiscountOnTotal=Sobre el total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica si un descompte global es pren en compte com un producte, servei o només en el total a l'hora de calcular els marges.
 MARGIN_TYPE=Preu de cost suggerit per defecte pel càlcul de marge
 MargeType1=Marge en el millor preu de proveïdor
-MargeType2=Marge sobre el Preu Mitjà Ponderat (PMP)
+MargeType2=Marge sobre el cost mitjà ponderat (WAC)
 MargeType3=Marge en preu de cost
-MarginTypeDesc=* Marge del millor preu de compra = Preu de venda - Millor preu de proveïdor definit a la fitxa del producte<br>* Marge del Preu Mitjà Ponderat (PMP) = Preu de venda - Preu Mitjà Ponderat del producte (PMP) o el millor preu de proveïdor si encara no s'ha definit el PMP<br>* Marge a Preu de cost = Preu de venda - Preu de cost definit a la fitxa del producte o PMP si el preu de cost no està definit, o el millor preu de proveïdor si encara no s'ha definit el PMP
+MarginTypeDesc=* Marge sobre el millor preu de compra = Preu de venda - Millor preu de proveïdor definit a la targeta del producte<br>* Marge sobre el cost mitjà ponderat (WAC) = Preu de venda - Preu mitjà ponderat del producte (WAP) o millor preu de proveïdor si el WAP encara no està definit<br>* Marge sobre el preu de cost = Preu de venda - Preu de cost definit a la targeta del producte o WAC si el preu de cost no està definit, o millor preu de proveïdor si el WAC encara no està definit
 CostPrice=Preu de cost
 UnitCharges=Càrrega unitària
 Charges=Càrrecs

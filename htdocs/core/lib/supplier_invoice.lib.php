@@ -197,7 +197,7 @@ function supplier_invoice_admin_prepare_head()
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'supplierinvoice_admin');
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_invoice/admin/supplierinvoice_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_fourn'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
 	$nbExtrafields = $extrafields->attributes['facture_fourn']['count'];
 	if ($nbExtrafields > 0) {
@@ -206,7 +206,7 @@ function supplier_invoice_admin_prepare_head()
 	$head[$h][2] = 'supplierinvoice';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_invoice/admin/supplierinvoicedet_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_fourn_det'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLines");
 	$nbExtrafields = $extrafields->attributes['facture_fourn_det']['count'];
 	if ($nbExtrafields > 0) {
@@ -215,7 +215,7 @@ function supplier_invoice_admin_prepare_head()
 	$head[$h][2] = 'supplierinvoicedet';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_invoice/admin/supplierinvoice_rec_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_fourn_rec'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesRec");
 	$nbExtrafields = $extrafields->attributes['facture_fourn_rec']['count'];
 	if ($nbExtrafields > 0) {
@@ -224,7 +224,7 @@ function supplier_invoice_admin_prepare_head()
 	$head[$h][2] = 'attributesrec';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/supplier_invoice/admin/supplierinvoicedet_rec_extrafields.php');
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'facture_fourn_det_rec'));
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLinesRec");
 	$nbExtrafields = $extrafields->attributes['facture_fourn_det_rec']['count'];
 	if ($nbExtrafields > 0) {

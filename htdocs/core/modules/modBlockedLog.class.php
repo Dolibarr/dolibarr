@@ -199,7 +199,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Check the context of running company is defined
 		if (empty($mysoc->country_code)) {
-			$errmsg = 'Error: The context of the running company is not defined';
+			$errmsg = 'Error: The context of the running company (country code) is not defined';
 			dol_syslog($errmsg, LOG_ERR);
 			$this->error = $errmsg;
 			return 0;
@@ -231,7 +231,7 @@ class modBlockedLog extends DolibarrModules
 			$obfuscationkey = '';
 			if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
 				try {
-					$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory or remote server. If not found, we retrieve it.
+					$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory or remote server. If not found in memory, we retrieve it from remote.
 					//$obfuscationkey = '';		// Uncomment this to test if obfuscation key can't be retrieved.
 				} catch (Exception $e) {
 					$error++;

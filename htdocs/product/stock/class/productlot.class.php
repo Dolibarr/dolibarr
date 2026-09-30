@@ -1062,7 +1062,7 @@ class Productlot extends CommonObject
 	/**
 	 *  Load the array of shipment stats for the lot/serial number
 	 *
-	 * @param  int $socid Id societe
+	 * @param  int $socid 	Id thirdparty
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
 	 */
 	public function loadStatsMo($socid = 0)
@@ -1079,9 +1079,9 @@ class Productlot extends CommonObject
 			$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
 			$sql .= " SUM(mp.qty) as qty";
 			$sql .= " FROM ".$this->db->prefix()."mrp_mo as c";
-			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo=c.rowid";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
-				$sql .= "INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo = c.rowid";
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE ";
 			$sql .= " c.entity IN (".getEntity('mo').")";

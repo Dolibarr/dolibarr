@@ -694,7 +694,10 @@ class FactureRec extends CommonInvoice
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
 				$this->subtype				  = $obj->subtype;
+
+				$this->status	              = $obj->suspended;
 				$this->suspended              = $obj->suspended;
+
 				$this->total_ht               = $obj->total_ht;
 				$this->total_tva              = $obj->total_tva;
 				$this->total_localtax1        = $obj->localtax1;
@@ -981,9 +984,10 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int|string|null	$fk_fournprice		Supplier price id (to calculate margin) or string
 	 * 	@param		float			$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		int				$fk_parent_line		Id of parent line
+	 *  @param		array<string,mixed>	$array_options		Extrafields array
 	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0, $array_options = array())
 	{
 		global $mysoc;
 
@@ -1152,6 +1156,18 @@ class FactureRec extends CommonInvoice
 			$lineId = $this->db->last_insert_id(MAIN_DB_PREFIX."facturedet_rec");
 			$this->id = $facid;
 			$this->update_price(1);
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				$factureRecLine = new FactureLigneRec($this->db);
+				$factureRecLine->id = $lineId;
+				$factureRecLine->array_options = $array_options;
+				$result = $factureRecLine->insertExtraFields();
+				if ($result < 0) {
+					$this->errors[] = $factureRecLine->error;
+					return -2;
+				}
+			}
+
 			return $lineId;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -1192,6 +1208,11 @@ class FactureRec extends CommonInvoice
 	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0)
 	{
 		global $mysoc;
+
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
 
 		$facid = $this->id;
 
@@ -1467,6 +1488,9 @@ class FactureRec extends CommonInvoice
 			$sql .= ' AND rowid = '.((int) $restrictioninvoiceid);
 		}
 		$sql .= $this->db->order('entity', 'ASC');
+		if (getDolGlobalInt('NB_REC_FACT_CUSTOMER_GEN_BY_CALL')) {
+			$sql .= $this->db->plimit(getDolGlobalInt('NB_REC_FACT_CUSTOMER_GEN_BY_CALL'));
+		}
 		//print $sql;exit;
 		$parameters = array(
 			'restrictioninvoiceid' => $restrictioninvoiceid,
@@ -1777,8 +1801,9 @@ class FactureRec extends CommonInvoice
 					dol_syslog("createRecurringInvoices Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity);
 				}
 
-				// Commit or rollback
-				if (!$error && $invoiceidgenerated >= 0) {
+				// Commit or rollback. Only the result of the current template must be tested (not the cumulative $error), so that a failure on one template does not cancel the templates processed after it.
+				// $invoiceidgenerated must be > 0 (not >= 0): it is still 0 when $facturerec->fetch() failed above, in which case $facture is still null.
+				if (!$errorforinvoice && $invoiceidgenerated > 0) {
 					$this->db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
@@ -1794,7 +1819,8 @@ class FactureRec extends CommonInvoice
 						$this->output .= $langs->trans("InvoiceSentFromTemplate", $facture->ref, $facturerec->ref)."\n";
 					}
 				} else {
-					$this->output .= $langs->trans("InvoiceGeneratedFromTemplateError", $facture->ref, $facturerec->ref, $this->error)."\n";
+					// $facture is still null when $facturerec->fetch() failed above
+					$this->output .= $langs->trans("InvoiceGeneratedFromTemplateError", (is_object($facture) ? $facture->ref : ''), $facturerec->ref, $this->error)."\n";
 					$this->db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
@@ -2629,6 +2655,10 @@ class FactureLigneRec extends CommonInvoiceLine
 	 */
 	public $fk_contract_line;
 
+	/**
+	 * @var int Skip update price total for special lines
+	 */
+	public $skip_update_total;
 
 	/**
 	 * 	Delete line in database
@@ -2778,8 +2808,6 @@ class FactureLigneRec extends CommonInvoiceLine
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		// Clean parameters

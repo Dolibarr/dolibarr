@@ -21,11 +21,15 @@
  *  \brief      File included by main files of the Unalterable Log module
  */
 
-// The version of the POS system (Immutable Log system)
-// Can be 3.0.0-beta when not yet certified
-// 3.0.0 once certified
-define('DOLCERT_VERSION', '3.0.0');
+// The name of the module to manage the Unalterable Log.
+// If you develop a different application, your can change this name.
+define('DOLCERT_NAME', 'BlockedLog');	// Blockedlog = "Log inalterables" in french.
 
+// The version of the POS system (Immutable Log system)
+// Can be: 3.0.0-beta (beta can't be certified)
+// Or for stable: 3.0.0 (certification mechanism or french attestation mechanism).
+// This is the constant used to build answer of function getBlockedLogVersionToShow().
+define('DOLCERT_VERSION', '3.0.0');
 
 // 1 was used for beta version candidate for certification, or for stable version that has been certified.
 // 2 to force LNE features for debug purposes (integrity of files will be broken). It just has one difference with 1: https is not required in this mode helping to work in development environment.
@@ -34,7 +38,6 @@ define('DOLCERT_VERSION', '3.0.0');
 if (!defined('CERTIF_LNE')) {
 	define('CERTIF_LNE', '0');
 }
-
 
 // Array of dir/files to include in the signature of the scope of the certification files.
 // This array will be used by the script: dev/buikd/generate_filelist_xml.php release=auto
