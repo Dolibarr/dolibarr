@@ -187,8 +187,8 @@ require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
 
-// Load traductions files requiredby by page
-$langs->loadLangs(array("companies", "other", "exports", "sendings"));
+// Load traductions files requiredby by page (stocks is for labels of linked warehouses in tables of fields)
+$langs->loadLangs(array("companies", "other", "exports", "sendings", "stocks"));
 
 $extrafields = new ExtraFields($db);
 

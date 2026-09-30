@@ -641,7 +641,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 /* this cases always use an input with only a background border */
-span.massactionselect, input.inputsearch_dropdownselectedfields {
+span.massactionselect, input.inputsearch_dropdownselectedfields, div.liinputsearch input {
 	border-radius: 0 !important;
 	border-top: 0 !important;
 	border-left: 0 !important;
@@ -1725,7 +1725,8 @@ div.divsearchfield {
 }
 .divadvancedsearchfieldcompinput {
 	background: #fff;
-	border-bottom: solid 1px var(--inputbordercolor);
+	border: solid 1px var(--inputbordercolor);
+	border-radius: 5px;
 }
 
 .search_component_params {
@@ -5687,6 +5688,89 @@ img.boxhandle, img.boxclose {
 .add-filter-btn {
 	margin: 0 !important;
 }
+/* Component fieldcombo: 2 levels combo to select first the element (the table) then the field */
+.fieldcombo {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+}
+.fieldcombo-toggle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 250px;
+	padding: 4px 8px;
+	background: #fff;
+	border: 1px solid var(--inputbordercolor);
+	border-radius: 3px;
+	text-align: left;
+	cursor: pointer;
+	height: 28px;
+}
+.fieldcombo-label {
+	flex: 1 1 auto;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.fieldcombo-panel {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 450px;
+	margin-top: 2px;
+	background: var(--colorbackbody);
+	border: 1px solid var(--inputbordercolor);
+	border-radius: 3px;
+	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	z-index: 1001;
+}
+.fieldcombo-search {
+	width: 95%;
+	margin: 0;
+	padding: 4px 8px;
+	border: 0;
+	border-bottom: 1px solid var(--inputbordercolor);
+}
+.fieldcombo-list {
+	max-height: 300px;
+	overflow-y: auto;
+}
+.fieldcombo-elementheader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 8px;
+	cursor: pointer;
+	font-weight: bold;
+}
+.fieldcombo-elementheader:hover, .fieldcombo-elementheader:focus {
+	background: var(--colorbacklinepairhover);
+}
+.fieldcombo-elementcaret {
+	flex: 0 0 auto;
+}
+.fieldcombo-element.open .fieldcombo-elementcaret {
+	transform: rotate(90deg);
+}
+.fieldcombo-children {
+	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
+	padding-left: 25px;
+}
+.fieldcombo-fields {
+	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
+	padding-left: 25px;
+}
+.fieldcombo-field {
+	padding: 3px 8px;
+	cursor: pointer;
+}
+.fieldcombo-field:hover, .fieldcombo-field:focus {
+	background: var(--colorbacklinepairhover);
+}
+.fieldcombo-field.selected {
+	font-weight: bold;
+}
 .search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
 	display: inline-block;
 }
@@ -8061,7 +8145,7 @@ dl.dropdown {
 .dropdown dd ul.selectedfieldsleft {
 	<?php echo $right; ?>: auto;
 }
-.dropdown dd ul li {
+.dropdown dd ul li, div.liinputsearch {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 7px 8px 7px 8px;
