@@ -875,6 +875,17 @@ class ExpenseReport extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
+	/**
+	 * Return a short summary of the public note.
+	 *
+	 * @return string Summary
+	 */
+	public function getSummary()
+	{
+		$note = preg_replace('/(?:<br\s*\/?>|<\/(?:p|div|li)>)/i', "\n", (string) $this->note_public);
+		return dolGetFirstLineOfText($note);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Returns the label of a status
