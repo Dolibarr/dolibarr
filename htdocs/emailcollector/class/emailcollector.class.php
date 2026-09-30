@@ -2395,7 +2395,7 @@ class EmailCollector extends CommonObject
 								$contactid = $projectstatic->fk_contact;
 							}
 							if (empty($thirdpartyid)) {
-								$thirdpartyid = $projectstatic->fk_soc;
+								$thirdpartyid = $projectstatic->socid;
 							}
 						}
 					}
