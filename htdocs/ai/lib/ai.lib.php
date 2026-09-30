@@ -168,13 +168,13 @@ function getListOfAIServices()
 			'label' => 'Anthropic (Claude)',
 			'url' => 'https://api.anthropic.com/v1/',
 			'setup' => 'https://console.anthropic.com/',
-			'textgeneration' => array('default' => 'claude-opus-4-6'),    // Released Feb 2026; features a 1M context window
+			'textgeneration' => array('default' => 'claude-opus-5'),    // Current Anthropic flagship; 1M context window
 			'imagegeneration' => array('default' => 'na'),              // Anthropic remains focused on text/code logic
 			'audiogeneration' => array('default' => 'na'),
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'claude-opus-4-6'),      // Leading model for "Computer Use" and PDF analysis
+			'docparsing' => array('default' => 'claude-opus-5'),      // Leading model for "Computer Use" and PDF analysis
 			'adapter_type' => 'anthropic'
 		),
 		'google' => array(
