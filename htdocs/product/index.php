@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2025  Charlene BENKE           <charlene@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -73,18 +73,8 @@ if ($type == '0') {
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "4");
 
-if (GETPOST('addbox')) {
-	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOSTINT('areacode');
-	$userid = GETPOSTINT('userid');
-	$boxorder = GETPOST('boxorder', 'aZ09');
-	$boxorder .= GETPOST('boxcombo', 'aZ09');
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) {
-		setEventMessages($langs->trans("BoxAdded"), null);
-	}
-}
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 
 $max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
