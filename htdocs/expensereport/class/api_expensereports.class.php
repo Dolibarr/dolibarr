@@ -152,6 +152,13 @@ class ExpenseReports extends DolibarrApi
 		if ($user_ids) {
 			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize($user_ids).")";
 		}
+		// $user_ids is provided by the caller, so it can not be the only owner filter. Narrow the result
+		// set on the hierarchy of the caller, with the same condition as expensereport/list.php.
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'readall')
+			&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !DolibarrApiAccess::$user->hasRight('expensereport', 'writeall_advance'))) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize(implode(',', $childids)).")";
+		}
 
 		// Add sql filters
 		if ($sqlfilters) {
