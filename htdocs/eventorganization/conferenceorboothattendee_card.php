@@ -181,7 +181,7 @@ if (empty($reshook)) {
 	}
 
 	$triggermodname = 'EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_MODIFY'; // Name of trigger action code to execute when we modify record
-	if ($action == 'add' && isModEnabled('member') && GETPOSTINT('fk_member') > 0) {
+	if ($action == 'add' && $permissiontoadd && isModEnabled('member') && GETPOSTINT('fk_member') > 0) {
 		$object->email = GETPOST('email', 'email');
 		$object->firstname = GETPOST('firstname', 'alphanohtml');
 		$object->lastname = GETPOST('lastname', 'alphanohtml');
