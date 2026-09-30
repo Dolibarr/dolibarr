@@ -324,7 +324,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
@@ -378,7 +379,8 @@ if ($format == 'rss') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
