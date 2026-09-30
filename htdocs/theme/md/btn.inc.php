@@ -118,13 +118,15 @@ span.butAction, span.butActionDelete {
 	color: var(--textbutaction) !important;
 	/* background: rgb(230, 232, 239); */
 }
-.butActionRefused, .butAction, .butActionDelete {
+.butAction, .butActionRefused, .butActionDelete {
 	border-radius: 3px;
 }
 :not(.center) > .butActionRefused:last-child, :not(.center) > .butAction:last-child, :not(.center) > .butActionDelete:last-child {
 	margin-<?php echo $right; ?>: 0px !important;
 }
-.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active,
+.butActionRefused,
+.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;
 	text-transform: uppercase;
 	font-weight: bold;
@@ -136,6 +138,7 @@ span.butAction, span.butActionDelete {
 	text-align: center;
 	cursor: pointer;
 	color: #444;
+	min-width: 40px;
 }
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;

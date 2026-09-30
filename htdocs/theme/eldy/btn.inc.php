@@ -120,13 +120,15 @@ span.butAction, span.butActionDelete {
 	color: var(--textbutaction) !important;
 	/* background: rgb(230, 232, 239); */
 }
-.butActionRefused, .butAction, .butActionDelete {
+.butAction, .butActionRefused, .butActionDelete {
 	border-radius: 3px;
 }
 :not(.center) > .butActionRefused:last-child, :not(.center) > .butAction:last-child, :not(.center) > .butActionDelete:last-child {
 	margin-<?php echo $right; ?>: 0px !important;
 }
-.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active,
+.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active,
+.butActionRefused,
+.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active,
 .divButAction
  {
 	text-decoration: none;
@@ -140,6 +142,7 @@ span.butAction, span.butActionDelete {
 	cursor: pointer;
 	color: #444;
 	border: 1px solid transparent;	/* So for buttonRefused with a border, it will not have any flash effect */
+	min-width: 40px;
 
 	/* border: 1px solid #aaa; */
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
