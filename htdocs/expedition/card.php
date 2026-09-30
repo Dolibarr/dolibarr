@@ -3872,13 +3872,13 @@ if ($action == 'create' && $usercancreate) {
 			// Cancel
 			if ($object->status == Expedition::STATUS_VALIDATED) {
 				if ($user->hasRight('expedition', 'creer')) {
-					print dolGetButtonAction('', $langs->trans('Cancel'), 'danger', $_SERVER["PHP_SELF"] . '?action=cancel&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
+					print dolGetButtonAction('', $langs->trans('Cancel'), 'default', $_SERVER["PHP_SELF"] . '?action=cancel&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 				}
 			}
 
 			// Delete
 			if ($user->hasRight('expedition', 'supprimer')) {
-				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '');
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 

@@ -7269,7 +7269,7 @@ if ($action == 'create') {
 					$enableDelete = true;
 				}
 				unset($params['attr']['title']);
-				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', $deleteHref, '', $enableDelete, $params);
+				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', $deleteHref, '', $enableDelete, array('attr' => array('class' => 'reposition')));
 			} else {
 				unset($params['attr']['title']);
 				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', '#', '', false);

@@ -3578,7 +3578,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 				}
 
-				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete);
+				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 
 				$deleteUrl = $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken();
 				$buttonId = 'action-delete-no-ajax';
@@ -3586,7 +3586,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$deleteUrl = '';
 					$buttonId = 'action-delete';
 				}
-				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			print '</div>'."\n";
