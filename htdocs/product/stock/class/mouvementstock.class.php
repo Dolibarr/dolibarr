@@ -1445,7 +1445,7 @@ class MouvementStock extends CommonObject
 
 		$this->db->begin();
 
-		$result = $this->_create($user, $this->product_id, $this->warehouse_id, $newqty, $newtype, 0, $newlabel, $formattedDate, '', 0, 0, $this->batch);
+		$result = $this->_create($user, $this->product_id, $this->warehouse_id, $newqty, $newtype, 0, $newlabel, $formattedDate, $this->datem, 0, 0, $this->batch);
 
 		if ($result > 0) {
 			$this->db->commit();
