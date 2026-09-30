@@ -1489,7 +1489,7 @@ if ($resql) {
 		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
-				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1937,7 +1937,7 @@ if ($resql) {
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
-				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
