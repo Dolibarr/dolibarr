@@ -489,9 +489,9 @@ ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref
 -- puts them). Those keys never worked: copy them where they are read.
 UPDATE llx_oauth_token SET tokenstring = token WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
 
--- MCP OAuth: the module tables are only created when a module is enabled, so an install that
--- already had the ai module on would never get them and every OAuth call would fail on a
--- missing table. Created here for those, with the same definition as the table files.
+-- MCP OAuth: the client table is a module table, only created when the module is enabled, so an
+-- install that already had the ai module on would never get it. Created here for those, with the
+-- same definition as the table file.
 create table llx_ai_oauth_client
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
@@ -510,26 +510,15 @@ ALTER TABLE llx_ai_oauth_client ADD UNIQUE INDEX uk_ai_oauth_client_client_id (e
 ALTER TABLE llx_ai_oauth_client ADD INDEX idx_ai_oauth_client_entity (entity);
 ALTER TABLE llx_ai_oauth_client ADD INDEX idx_ai_oauth_client_registered_from (registered_from, datec);
 
-create table llx_ai_oauth_token
-(
-  rowid						integer AUTO_INCREMENT PRIMARY KEY,
-  entity					integer DEFAULT 1 NOT NULL,
-  token_type				varchar(8) NOT NULL,
-  token_hash				varchar(64) NOT NULL,
-  fk_client					integer NOT NULL,
-  fk_user					integer NOT NULL,
-  scope						varchar(255),
-  resource					varchar(255),
-  code_challenge			varchar(128),
-  redirect_uri				text,
-  expires_at				datetime NOT NULL,
-  revoked					smallint DEFAULT 0 NOT NULL,
-  datec						datetime NOT NULL,
-  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-)ENGINE=innodb;
-
-ALTER TABLE llx_ai_oauth_token ADD UNIQUE INDEX uk_ai_oauth_token_hash (token_type, token_hash);
-ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_entity (entity);
-ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_fk_user (fk_user);
-ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_fk_client (fk_client);
-ALTER TABLE llx_ai_oauth_token ADD INDEX idx_ai_oauth_token_expires_at (expires_at);
+-- MCP OAuth tokens live in the shared llx_oauth_token, extended for credentials
+-- Dolibarr issues as an OAuth server: only a hash is stored, bound to a client
+-- and an audience. The service column (mcp_code, mcp_access, mcp_refresh) keeps
+-- these rows apart from the ones the table already held.
+ALTER TABLE llx_oauth_token ADD COLUMN token_hash varchar(64) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN fk_oauth_client integer NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN resource varchar(255) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN code_challenge varchar(128) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN redirect_uri text NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN revoked smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_service_hash (service, token_hash);
+ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_oauth_client (fk_oauth_client);
