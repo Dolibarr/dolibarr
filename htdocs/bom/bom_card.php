@@ -780,7 +780,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone', 'object' => 'bom'], true), 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone', 'object' => 'bom'], true), 'clone', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 
 			// Close / Cancel

@@ -835,6 +835,8 @@ function getAiChatAssistantConfig()
 		'FetchingData',
 		'GeneratingLink',
 		'Found',
+		'File',
+		'Preview',
 		'TypeResponse',
 		'OpenVerb',
 

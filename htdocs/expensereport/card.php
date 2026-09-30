@@ -2932,7 +2932,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 
 	// Clone
 	if ($user->hasRight('expensereport', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */

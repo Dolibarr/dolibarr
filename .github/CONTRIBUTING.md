@@ -49,6 +49,8 @@ If a CI error is thrown, the developer must fix it (The maintener will not proce
 
 If a conflict is reported (so PR is not mergeable, status "Mergeable" appear on the PR itself), the developer must fix it too, also if the conflict is not the fault of yourself. Again the principle of solidarity rules.
 
+Note also that, to fight against excessive AI reports, there is a quota of PR per day and per user (defined into the CI).
+
 
 As the PR Maintainer:
 
@@ -69,14 +71,13 @@ Note: Mainteners of a branch can directly commit to the project (in their branch
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 
-If you're fixing a bug, it is preferred that you make a pull request against the oldest version affected.
+If you're fixing a simple bug, it is preferred that you make a Pull Request against the stable version.
 
-We recommend to push it into N - 2 where N is the latest version available, if not possible into version N - 1, and finally into develop.
+If you're fixing a critical bug, it is preferred that you make a Pull request against the oldest version affected
+or detected. First check that the bug is not already fixed in a more recent version and if yes, backport it by 
+doing a cherry-pick instead of rewriting it.
 
-The rule N - 2 is just a tip if you don't know which version to choose to get the best compromise between ease of correction and number of potential beneficiaries of the correction.
-
-If you push a bug fix on a very old version it is still going to be merged and propagated into newer versions(choose wisely because old versions depend on old deprecated/unsupported versions of PHP and external libraries). 
-
+Pull Requests on old branches are still going to be merged and propagated into newer versions (so please make a Pull Request on a very old version only for very critical bugs of official features, like security or data integrity). If it is not a visible bug, if it is not enough critical, of it is related to a hidden feature, PR may be refused.
 
 
 ### General rules

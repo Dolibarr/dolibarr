@@ -3774,7 +3774,7 @@ if ($action == 'create') {
 						'enabled' => ($object->status == Propal::STATUS_SIGNED && isModEnabled("supplier_order")),
 						'perm' => $usercancreatepurchaseorder,
 						'label' => 'AddPurchaseOrder',
-						'url' => '/fourn/commande/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id) . '&socid=' . ((int) $object->socid)
+						'url' => '/fourn/commande/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id)
 					);
 					/*if ($object->status == Propal::STATUS_SIGNED && isModEnabled("supplier_order")) {
 						if ($usercancreatepurchaseorder) {
@@ -3876,7 +3876,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<a class="butAction butActionClone" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&socid=' . $object->socid . '&action=clone&token=' . newToken() . '&object=' . $object->element . '">' . $langs->trans("ToClone") . '</a>';
+					print dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&socid=' . $object->socid . '&action=clone&token=' . newToken() . '&object=' . $object->element, '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Delete

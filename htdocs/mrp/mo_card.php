@@ -946,7 +946,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&token='.newToken().'&object=mo', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&token='.newToken().'&object=mo', 'clone', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 
 			// Cancel - Reopen

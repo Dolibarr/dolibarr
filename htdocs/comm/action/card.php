@@ -2934,7 +2934,7 @@ if ($id > 0 && $action != 'create') {
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', 'card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}

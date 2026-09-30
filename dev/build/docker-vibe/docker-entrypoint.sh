@@ -93,14 +93,29 @@ su -s /bin/sh "$USER_NAME" -c \
 chmod 644 "/home/$USER_NAME/.ssh/known_hosts"
 
 
-if [ "$1" = "--yolo" ]; then
-    VIBE_OPTIONS="--yolo"
-else
-    VIBE_OPTIONS=""
-fi
+# --yolo is the default mode. Use --no-yolo to disable it.
+VIBE_OPTIONS="--yolo"
+KEEP_CONTAINER=0
+
+for arg in "$@"; do
+    case "$arg" in
+        --yolo)
+            VIBE_OPTIONS="--yolo"
+            ;;
+        --no-yolo)
+            VIBE_OPTIONS=""
+            ;;
+        --no-exit)
+            KEEP_CONTAINER=1
+            ;;
+    esac
+done
 
 echo "VIBE_OPTIONS=$VIBE_OPTIONS"
 
-# Execute order
-exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"'; exec bash'
-#exec "$@"
+# Execute order. Once vibe has ended, stay into the container only when --no-exit was provided.
+if [ "$KEEP_CONTAINER" = "1" ]; then
+    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"'; exec bash'
+else
+    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"
+fi

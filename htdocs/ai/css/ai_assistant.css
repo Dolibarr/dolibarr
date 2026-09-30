@@ -1093,6 +1093,11 @@ body.ai-fullpage {
 .file-chip.chip-error { border-color: #d9534f; color: #d9534f; }
 .file-chip.chip-inline { margin-bottom: 4px; }
 
+/* Object picto in front of a card link, and the preview magnifier of a file */
+.chat-link .chat-picto { margin-right: 4px; opacity: .75; font-size: .95em; }
+.chat-link.chat-preview { margin-left: 4px; opacity: .6; }
+.chat-link.chat-preview:hover { opacity: 1; }
+
 /* --- Context pins: opt-in selection of past exchanges resent to the model --- */
 /* Context pin on each bubble, two glyphs. Planted blue pin + ring around the bubble =
    it goes back to the AI with the next question; grey pin leaning over = it does not. */
