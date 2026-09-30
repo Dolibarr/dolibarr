@@ -1201,7 +1201,10 @@ textarea.centpercent {
 }
 .liste_titre.sticky {
 	position: sticky;
-	top:0;
+	/* The top menu is itself sticky at top 0 with a z-index of 1005 (see .side-nav-vert below),
+	   so a table header stuck at 0 is painted underneath it and stays invisible. Offset it by the
+	   height of the top menu, the same value .side-nav is offset by when it is made sticky. */
+	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? '50px' : '0'); ?>;
 	z-index: 2;
 }
 
