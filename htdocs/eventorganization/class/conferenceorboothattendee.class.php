@@ -98,6 +98,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125', 'showoncombobox' => 1),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'email_company' => array('type' => 'mail', 'label' => 'EmailCompany', 'enabled' => 1, 'position' => 41, 'notnull' => 0, 'visible' => -2, 'searchall' => 1),
+		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php:1', 'label' => 'Member', 'enabled' => 'isModEnabled("member")', 'position' => 42, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'foreignkey' => 'adherent.rowid', 'picto' => 'member', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'date_subscription' => array('type' => 'datetime', 'label' => 'DateOfRegistration', 'enabled' => 1, 'position' => 56, 'notnull' => 1, 'visible' => 1, 'showoncombobox' => 1,),
 		'fk_invoice' => array('type' => 'integer:Facture:compta/facture/class/facture.class.php', 'label' => 'Invoice', 'enabled' => 'isModEnabled("invoice")', 'position' => 57, 'notnull' => 0, 'visible' => 1, 'index' => 0, 'picto' => 'bill', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'amount' => array('type' => 'price', 'label' => 'AmountPaid', 'enabled' => 1, 'position' => 57, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => "AmountOfRegistrationPaid",),
@@ -145,6 +146,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var int
 	 */
 	public $fk_soc;
+	/**
+	 * @var ?int Existing member represented by this attendee
+	 */
+	public $fk_member;
 	/**
 	 * @var string
 	 */
@@ -290,6 +295,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function create(User $user, $notrigger = 0)
 	{
 		global $langs;
+		if (!empty($this->fk_member) && $this->loadMemberData((int) $this->fk_member) < 0) {
+			return -1;
+		}
 
 		if (!isValidEmail($this->email)) {
 			$langs->load("errors");
@@ -306,6 +314,43 @@ class ConferenceOrBoothAttendee extends CommonObject
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Link an existing member and use its identity as defaults for the attendee snapshot.
+	 * Values already supplied by the caller are preserved.
+	 *
+	 * @param int $memberId Member id
+	 * @return int 1 on success, -1 on error
+	 */
+	public function loadMemberData($memberId)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$member = new Adherent($this->db);
+		$allowedEntities = array_map('intval', explode(',', getEntity('adherent')));
+		if ($member->fetch($memberId) <= 0 || !in_array((int) $member->entity, $allowedEntities, true)) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$this->fk_member = (int) $member->id;
+		if (empty($this->email)) {
+			$this->email = $member->email;
+		}
+		if (empty($this->firstname)) {
+			$this->firstname = $member->firstname;
+		}
+		if (empty($this->lastname)) {
+			$this->lastname = $member->lastname;
+		}
+		if (empty($this->fk_soc) && !empty($member->socid)) {
+			$this->fk_soc = (int) $member->socid;
+		}
+
+		return 1;
 	}
 
 	/**

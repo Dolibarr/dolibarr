@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_confere
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
+$langs->loadLangs(array("eventorganization", "other", "projects", "companies", "members"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
@@ -181,6 +181,23 @@ if (empty($reshook)) {
 	}
 
 	$triggermodname = 'EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_MODIFY'; // Name of trigger action code to execute when we modify record
+	if ($action == 'add' && isModEnabled('member') && GETPOSTINT('fk_member') > 0) {
+		$object->email = GETPOST('email', 'email');
+		$object->firstname = GETPOST('firstname', 'alphanohtml');
+		$object->lastname = GETPOST('lastname', 'alphanohtml');
+		$object->fk_soc = GETPOSTINT('fk_soc');
+		if ($object->loadMemberData(GETPOSTINT('fk_member')) < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create';
+		} else {
+			$_POST['email'] = $object->email;
+			$_POST['firstname'] = $object->firstname;
+			$_POST['lastname'] = $object->lastname;
+			if (!empty($object->fk_soc)) {
+				$_POST['fk_soc'] = (string) $object->fk_soc;
+			}
+		}
+	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
