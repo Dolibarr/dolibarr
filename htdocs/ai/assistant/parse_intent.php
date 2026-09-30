@@ -1141,24 +1141,6 @@ try {
 
 
 /**
- * Recursively unmask values in a dataset.
- *
- * This helper walks through an array structure and applies the appropriate
- * unmasking method on all string values. It ensures that any masked or
- * placeholder data is restored before being used in actual tool execution.
- *
- * Supported guard methods:
- * - unmask(string $value): string
- * - unmaskAiResponse(string $value): string
- *
- * If both methods exist, `unmask()` takes precedence.
- *
- * @param mixed $data  The input data (array, string, or scalar) to process.
- * @param PrivacyGuard|null $guard An object providing unmasking methods.
- *
- * @return mixed The data with all string values unmasked.
- */
-/**
  * Does the user's message ask for a write (create / update / delete / ...)?
  * Translated keys of the current language plus the short verbs users type in
  * French and English whatever the UI language; whole words only.
@@ -1181,8 +1163,11 @@ function aiQueryAsksForWrite($query, $langs)
 		'crée', 'cree', 'créer', 'creer', 'ajoute', 'ajouter', 'modifie', 'modifier', 'mets', 'met', 'mettre', 'change', 'changer', 'passe', 'passer',
 		'supprime', 'supprimer', 'efface', 'effacer', 'retire', 'retirer', 'valide', 'valider', 'envoie', 'envoyer', 'enregistre', 'enregistrer', 'renomme', 'renommer', 'clôture', 'cloture', 'annule', 'annuler'
 	));
-	$verbs = array_unique(array_filter($verbs));
-	$pattern = '/(^|[^\p{L}])('.implode('|', array_map(function ($v) { return preg_quote($v, '/'); }, $verbs)).')([^\p{L}]|$)/iu';
+	$escaped = array();
+	foreach (array_unique(array_filter($verbs)) as $verb) {
+		$escaped[] = preg_quote($verb, '/');
+	}
+	$pattern = '/(^|[^\p{L}])('.implode('|', $escaped).')([^\p{L}]|$)/iu';
 	return (bool) preg_match($pattern, dol_strtolower((string) $query));
 }
 
@@ -1228,6 +1213,24 @@ function aiLabelOfResolvedObject(array $readResult, array $writeArgs)
 	return '';
 }
 
+/**
+ * Recursively unmask values in a dataset.
+ *
+ * This helper walks through an array structure and applies the appropriate
+ * unmasking method on all string values. It ensures that any masked or
+ * placeholder data is restored before being used in actual tool execution.
+ *
+ * Supported guard methods:
+ * - unmask(string $value): string
+ * - unmaskAiResponse(string $value): string
+ *
+ * If both methods exist, `unmask()` takes precedence.
+ *
+ * @param mixed $data  The input data (array, string, or scalar) to process.
+ * @param PrivacyGuard|null $guard An object providing unmasking methods.
+ *
+ * @return mixed The data with all string values unmasked.
+ */
 function recursiveUnmaskValues($data, ?PrivacyGuard $guard)
 {
 	if ($guard === null) {
