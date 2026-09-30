@@ -130,6 +130,11 @@ class Adherent extends CommonObject
 	public $fk_soc;
 
 	/**
+	 * @var ?int Contact ID
+	 */
+	public $fk_socpeople;
+
+	/**
 	 * @var int socid
 	 */
 	public $socid;
@@ -370,6 +375,7 @@ class Adherent extends CommonObject
 		'fk_adherent_type' => array('type' => 'integer', 'label' => 'MemberType', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 60),
 		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => 1, 'position' => 65, 'showoncombobox' => 2),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'LinkedToDolibarrThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 70),
+		'fk_socpeople' => array('type' => 'integer:Contact:contact/class/contact.class.php', 'label' => 'LinkedToDolibarrContact', 'enabled' => 1, 'visible' => 1, 'position' => 71),
 		'address' => array('type' => 'text', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 75),
 		'zip' => array('type' => 'varchar(10)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 85),
@@ -1514,6 +1520,9 @@ class Adherent extends CommonObject
 
 		// Add link to third party for current member
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid > 0 ? (int) $thirdpartyid : 'null');
+		if ($thirdpartyid > 0) {
+			$sql .= ", fk_socpeople = null";
+		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
@@ -1526,6 +1535,57 @@ class Adherent extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Set the contact representing this member.
+	 *
+	 * @param	int	$contactid	Contact ID, 0 to remove the link
+	 * @return	int				1=OK, -1=KO
+	 */
+	public function setContactId($contactid)
+	{
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_socpeople = ".($contactid > 0 ? (int) $contactid : 'null');
+		if ($contactid > 0) {
+			$sql .= ", fk_soc = null";
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::setContactId", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->fk_socpeople = $contactid;
+			if ($contactid > 0) {
+				$this->fk_soc = 0;
+				$this->socid = 0;
+			}
+			return 1;
+		}
+
+		$this->error = $this->db->lasterror();
+		return -1;
+	}
+
+	/**
+	 * Return the third party used to invoice this member.
+	 *
+	 * @return	int	Third party ID, 0 if none
+	 */
+	public function getBillingThirdPartyId()
+	{
+		if ($this->fk_soc > 0) {
+			return (int) $this->fk_soc;
+		}
+
+		if ($this->fk_socpeople > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+			$contact = new Contact($this->db);
+			if ($contact->fetch($this->fk_socpeople) > 0 && $contact->socid > 0) {
+				return (int) $contact->socid;
+			}
+		}
+
+		return 0;
 	}
 
 
@@ -1594,14 +1654,15 @@ class Adherent extends CommonObject
 	 * 	@param	string	$ref_ext				External reference
 	 *  @param	bool	$fetch_optionals		To load optionals (extrafields)
 	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
+	 *  @param	int		$socpeopleid			To load member from its link to contact
 	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($rowid, $ref = '', $socid = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
+	public function fetch($rowid, $ref = '', $socid = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true, $socpeopleid = 0)
 	{
 		global $langs;
 
 		$sql = "SELECT d.rowid, d.ref, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname,";
-		$sql .= " d.societe as company, d.fk_soc as socid, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
+		$sql .= " d.societe as company, d.fk_soc as socid, d.fk_socpeople, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql .= " d.note_public,";
 		$sql .= " d.email, d.url, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
@@ -1625,12 +1686,14 @@ class Adherent extends CommonObject
 		$sql .= " WHERE d.fk_adherent_type = t.rowid";
 		if ($rowid) {
 			$sql .= " AND d.rowid=".((int) $rowid);
-		} elseif ($ref || $socid) {
+		} elseif ($ref || $socid || $socpeopleid) {
 			$sql .= " AND d.entity IN (".getEntity('adherent').")";
 			if ($ref) {
 				$sql .= " AND d.ref='".$this->db->escape($ref)."'";
 			} elseif ($socid > 0) {
 				$sql .= " AND d.fk_soc=".((int) $socid);
+			} elseif ($socpeopleid > 0) {
+				$sql .= " AND d.fk_socpeople=".((int) $socpeopleid);
 			}
 		} elseif ($ref_ext) {
 			$sql .= " AND d.ref_ext='".$this->db->escape($ref_ext)."'";
@@ -1659,6 +1722,7 @@ class Adherent extends CommonObject
 				$this->company = $obj->company;
 				$this->socid = $obj->socid;
 				$this->fk_soc = $obj->socid; // For backward compatibility
+				$this->fk_socpeople = $obj->fk_socpeople;
 				$this->address = $obj->address;
 				$this->zip = $obj->zip;
 				$this->town = $obj->town;
@@ -1977,8 +2041,9 @@ class Adherent extends CommonObject
 			$invoice = new Facture($this->db);
 			$customer = new Societe($this->db);
 
+			$billingthirdpartyid = $this->getBillingThirdPartyId();
 			if (!$error) {
-				if (!($this->socid > 0)) { // If not yet linked to a company
+				if (!($billingthirdpartyid > 0)) { // If not yet linked to a company
 					if ($autocreatethirdparty) {
 						// Create a linked thirdparty to member
 						$companyalias = '';
@@ -2004,6 +2069,7 @@ class Adherent extends CommonObject
 						} else {
 							$this->fk_soc = $result;
 							$this->socid = $result;
+							$billingthirdpartyid = $result;
 						}
 					} else {
 						$langs->load("errors");
@@ -2014,7 +2080,7 @@ class Adherent extends CommonObject
 				}
 			}
 			if (!$error) {
-				$result = $customer->fetch($this->socid);
+				$result = $customer->fetch($billingthirdpartyid);
 				if ($result <= 0) {
 					$this->error = $customer->error;
 					$this->errors = $customer->errors;
@@ -2035,7 +2101,7 @@ class Adherent extends CommonObject
 						$this->errors[] = $this->error;
 					}
 				}
-				$invoice->socid = $this->socid;
+				$invoice->socid = $billingthirdpartyid;
 				// set customer's payment bank account on the invoice
 				if (!empty($customer->fk_account)) {
 					$invoice->fk_account = $customer->fk_account;

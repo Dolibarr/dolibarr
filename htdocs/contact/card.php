@@ -57,9 +57,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
+if (isModEnabled('member')) {
+	$langs->load('members');
+}
 
 $error = 0;
 $errors = array();
@@ -604,6 +610,14 @@ $formcompany = new FormCompany($db);
 $objsoc = new Societe($db);
 if ($socid > 0) {
 	$objsoc->fetch($socid);
+}
+
+$memberlinkedwithcontact = null;
+if (isModEnabled('member') && $user->hasRight('adherent', 'lire') && $object->id > 0) {
+	$memberstatic = new Adherent($db);
+	if ($memberstatic->fetch(0, '', 0, '', false, false, $object->id) > 0) {
+		$memberlinkedwithcontact = $memberstatic;
+	}
 }
 
 $title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
@@ -1431,6 +1445,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Job / position
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
+
+		// Member represented by this contact
+		if ($memberlinkedwithcontact instanceof Adherent) {
+			print '<tr><td>'.$form->textwithpicto($langs->trans('Member'), $langs->trans('ContactLinkedMemberHelp')).'</td><td>';
+			print $memberlinkedwithcontact->getNomUrl(1);
+			print '</td></tr>';
+		}
 
 		// Email
 		if (isModEnabled('mailing')) {

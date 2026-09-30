@@ -3490,9 +3490,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
 			// Module Adherent
-			if (isModEnabled('member')) {
+			if (isModEnabled('member') && $user->hasRight('adherent', 'lire')) {
 				$langs->load("members");
-				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
+				print '<tr><td>'.$langs->trans("DirectMember").'</td>';
 				print '<td>';
 				$adh = new Adherent($db);
 				$result = $adh->fetch(0, '', $object->id);
@@ -3502,6 +3502,47 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print ' &mdash; '.$adh->getLibStatut(0);
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
+				}
+				print "</td></tr>\n";
+
+				print '<tr><td>'.$langs->trans("MembersLinkedThroughContacts").'</td>';
+				print '<td>';
+				$sql = "SELECT a.rowid, a.ref, a.firstname, a.lastname, a.statut, a.fk_socpeople,";
+				$sql .= " sp.firstname as contact_firstname, sp.lastname as contact_lastname";
+				$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.rowid = a.fk_socpeople";
+				$sql .= " WHERE sp.fk_soc = ".((int) $object->id);
+				$sql .= " AND a.entity IN (".getEntity('adherent').")";
+				$sql .= " AND sp.entity IN (".getEntity('contact').")";
+				$sql .= " ORDER BY a.lastname, a.firstname, a.rowid";
+				$resql = $db->query($sql);
+				$contactmembersshown = 0;
+				if ($resql) {
+					while ($membercontactrecord = $db->fetch_object($resql)) {
+						$contactmember = new Adherent($db);
+						$contactmember->id = $membercontactrecord->rowid;
+						$contactmember->ref = $membercontactrecord->ref;
+						$contactmember->firstname = $membercontactrecord->firstname;
+						$contactmember->lastname = $membercontactrecord->lastname;
+						$contactmember->statut = $membercontactrecord->statut;
+						$contactmember->status = $membercontactrecord->statut;
+
+						$linkedcontact = new Contact($db);
+						$linkedcontact->id = $membercontactrecord->fk_socpeople;
+						$linkedcontact->firstname = $membercontactrecord->contact_firstname;
+						$linkedcontact->lastname = $membercontactrecord->contact_lastname;
+
+						if ($contactmembersshown) {
+							print '<br>';
+						}
+						print $contactmember->getNomUrl(1, 0, 'card', '', '', -1, 1).' &mdash; '.$linkedcontact->getNomUrl(1, '', 1);
+						$contactmembersshown++;
+					}
+				} else {
+					dol_print_error($db);
+				}
+				if (!$contactmembersshown) {
+					print '<span class="opacitymedium">'.$langs->trans("NoContactLinkedToMember").'</span>';
 				}
 				print "</td></tr>\n";
 			}

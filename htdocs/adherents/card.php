@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
@@ -226,6 +227,34 @@ if (empty($reshook)) {
 					if ($result < 0) {
 						dol_print_error($object->db, $object->error);
 					}
+					$action = '';
+				}
+			}
+		}
+	}
+
+	if ($action == 'setsocpeopleid' && $caneditfieldmember) {
+		$error = 0;
+		$socpeopleid = GETPOSTINT('socpeopleid');
+		if ($socpeopleid != $object->fk_socpeople) {
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
+			$sql .= " WHERE fk_socpeople = ".((int) $socpeopleid);
+			$sql .= " AND rowid <> ".((int) $object->id);
+			$sql .= " AND entity = ".((int) $conf->entity);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj && $obj->rowid > 0) {
+					$error++;
+					setEventMessages($langs->trans("ErrorContactAlreadyLinkedToMember"), null, 'errors');
+				}
+			}
+
+			if (!$error) {
+				$result = $object->setContactId($socpeopleid);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
 					$action = '';
 				}
 			}
@@ -1575,6 +1604,36 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 			print '</td></tr>';
 		}
+
+		// Contact representing the member
+		print '<tr><td>';
+		$editenable = $user->hasRight('adherent', 'creer');
+		print $form->editfieldkey('LinkedToDolibarrContact', 'contact', '', $object, $editenable);
+		print '</td><td colspan="2" class="valeur">';
+		if ($action == 'editcontact') {
+			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="formsocpeopleid">';
+			print '<input type="hidden" name="rowid" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="setsocpeopleid">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<table class="nobordernopadding"><tr><td>';
+			print $form->select_contact(0, $object->fk_socpeople, 'socpeopleid', 1, '', '', 0, 'minwidth300');
+			print '</td><td class="left"><input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>';
+		} elseif ($object->fk_socpeople > 0) {
+			$membercontact = new Contact($db);
+			if ($membercontact->fetch($object->fk_socpeople) > 0) {
+				print $membercontact->getNomUrl(1);
+				if ($membercontact->socid > 0) {
+					$contactthirdparty = new Societe($db);
+					if ($contactthirdparty->fetch($membercontact->socid) > 0) {
+						print ' &mdash; '.$contactthirdparty->getNomUrl(1);
+					}
+				}
+			}
+		} else {
+			print '<span class="opacitymedium">'.$langs->trans("NoContactAssociatedToMember").'</span>';
+		}
+		print '</td></tr>';
 
 		// Login Dolibarr
 		print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td colspan="2" class="valeur">';
