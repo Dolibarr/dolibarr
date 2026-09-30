@@ -44,6 +44,7 @@ create table llx_adherent
   morphy           varchar(3) NOT NULL,         -- EN: legal entity / natural person  FR: personne morale / personne physique
   societe          varchar(128),			          -- company name (should be same length than societe.name). No more used.
   fk_soc           integer NULL,		            -- Link to third party linked to member
+  fk_socpeople     integer NULL,		            -- Link to contact linked to member
   address          text,
   zip              varchar(30),
   town             varchar(50),

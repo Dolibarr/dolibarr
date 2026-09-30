@@ -423,3 +423,8 @@ UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approv
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1);
+
+-- Add optional link between a member and the contact representing the physical person
+ALTER TABLE llx_adherent ADD COLUMN fk_socpeople integer NULL AFTER fk_soc;
+ALTER TABLE llx_adherent ADD UNIQUE INDEX uk_adherent_fk_socpeople (fk_socpeople);
+ALTER TABLE llx_adherent ADD CONSTRAINT adherent_fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
