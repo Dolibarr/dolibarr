@@ -2284,7 +2284,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load array this->multilangs
+	 * Load array this->multilangs
 	 *
 	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
@@ -2292,7 +2292,10 @@ class Product extends CommonObject
 	{
 		global $langs;
 
-		$current_lang = $langs->getDefaultLang();
+		$current_lang = '';
+		if ($langs instanceOf Translate) {
+			$current_lang = $langs->getDefaultLang();
+		}
 
 		$sql = "SELECT lang, label, description, note as other";
 		$sql .= " FROM ".$this->db->prefix()."product_lang";
@@ -2396,7 +2399,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Delete a price line
+	 *  Delete a price line of this product
 	 *
 	 * @param  User	$user	Object user
 	 * @param  int	$rowid	Line id to delete
@@ -2407,6 +2410,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price_by_qty";
 		$sql .= " WHERE fk_product_price = ".((int) $rowid);
+		$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".$this->db->prefix()."product_price as pp WHERE pp.fk_product = ".((int) $this->id).")";
 		$resql = $this->db->query($sql);
 
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price_extrafields";
@@ -2415,6 +2419,7 @@ class Product extends CommonObject
 
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price";
 		$sql .= " WHERE rowid = ".((int) $rowid);
+		$sql .= " AND fk_product = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;

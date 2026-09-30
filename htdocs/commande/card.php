@@ -3746,13 +3746,13 @@ if ($action == 'create' && $usercancreate) {
 				}
 				if ($object->status > Commande::STATUS_DRAFT && $object->billed) {
 					if ($usercancreate && $object->status >= Commande::STATUS_VALIDATED && !getDolGlobalString('ORDER_DISABLE_CLASSIFY_BILLED_FROM_ORDER') && !getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')) {
-						print dolGetButtonAction('', $langs->trans('ClassifyUnBilled'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'classifyunbilled', 'id' => $object->id], true), '');
+						print dolGetButtonAction('', $langs->trans('ClassifyUnBilled'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'classifyunbilled', 'id' => $object->id], true), '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 					}
 				}
 
 				// Clone
 				if ($usercancreate) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone', 'id' => $object->id, 'socid' => $object->socid], true), '');
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone', 'id' => $object->id, 'socid' => $object->socid], true), '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Cancel order
@@ -3764,7 +3764,7 @@ if ($action == 'create' && $usercancreate) {
 				if ($usercandelete) {
 					$stocksent = getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $object->status > Commande::STATUS_DRAFT;
 					if ($numshipping == 0 && !$stocksent) {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '');
+						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 					} else {
 						print dolGetButtonAction($langs->trans('ShippingExist'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF'] . '#', '', false);
 					}

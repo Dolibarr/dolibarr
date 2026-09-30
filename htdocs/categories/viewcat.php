@@ -401,7 +401,7 @@ if (empty($reshook)) {
 	}
 
 	if ($user->hasRight('categorie', 'supprimer')) {
-		print '<a class="butActionDelete" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id, 'type' => $type, 'backtolist' => $backtolist], true).'">'.$langs->trans("Delete").'</a>';
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id, 'type' => $type, 'backtolist' => $backtolist], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 	}
 }
 

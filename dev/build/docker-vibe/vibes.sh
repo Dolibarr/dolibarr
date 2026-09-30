@@ -1,6 +1,7 @@
 #!/bin/bash
 # Launch a vibe container with the current directory mounted as a volume
-# Syntax:  vibes.sh [--no-cache] [--yolo] [--no-exit]
+# Syntax:  vibes.sh [--no-cache] [--no-yolo] [--no-exit]
+# --no-yolo: run vibe without the --yolo option (--yolo is the default)
 # --no-exit: stay into the container with a bash shell after vibe has ended
 #            (by default, when vibe is terminated, the container is terminated too)
 
@@ -16,7 +17,15 @@ for arg in "$@"; do
 done
 
 # Build image
-sudo docker build dev/build/docker-vibe -t docker-vibe "${BUILD_ARGS[@]}"
+# The build context is created on the fly: it contains the docker-vibe directory,
+# and the .pre-commit-config.yaml of the repository when it exists (it is used by
+# the Dockerfile to preload the pre-commit hooks environments into the image).
+CONTEXT_TAR_ARGS=(.)
+if [ -f .pre-commit-config.yaml ]; then
+  CONTEXT_TAR_ARGS+=(-C "$PWD" .pre-commit-config.yaml)
+fi
+
+tar -cf - -C dev/build/docker-vibe "${CONTEXT_TAR_ARGS[@]}" | sudo docker build -t docker-vibe "${BUILD_ARGS[@]}" -
 
 # Run image
 GIT_DIR=$(basename "$PWD")

@@ -475,7 +475,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 				$deleteUrl = '';
 				$buttonId = 'action-delete';
 			}
-			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 	}
 	print '</div>';
