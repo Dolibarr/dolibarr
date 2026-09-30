@@ -2452,7 +2452,7 @@ if ($action == 'create') {
 
 				// Delete
 				unset($params['attr']['title']);
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete, $params);
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			print "</div>";

@@ -1773,7 +1773,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Clone
 			if ($user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.((int) $object->id), '', true, array('attr' => array('class' => 'reposition')));
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.((int) $object->id), '', true, array('attr' => array('class' => 'reposition')));
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF']. '#', '', false, array('attr' => array('class' => 'reposition')));
 				}
@@ -1782,7 +1782,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			// Delete
 			if ($user->hasRight('projet', 'supprimer') || ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
 				if ($userDelete > 0 || ($object->status == Project::STATUS_DRAFT && $user->hasRight('projet', 'creer'))) {
-					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
+					print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF']. '#', '', false);
 				}

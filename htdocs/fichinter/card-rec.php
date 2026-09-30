@@ -794,7 +794,7 @@ if ($action == 'create') {
 			}
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $user->hasRight('ficheinter', 'supprimer'));
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $user->hasRight('ficheinter', 'supprimer'), array('attr' => array('class' => 'reposition')))."\n";
 
 			print '</div>';
 		} else {
