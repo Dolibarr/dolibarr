@@ -93,13 +93,17 @@ su -s /bin/sh "$USER_NAME" -c \
 chmod 644 "/home/$USER_NAME/.ssh/known_hosts"
 
 
-VIBE_OPTIONS=""
+# --yolo is the default mode. Use --no-yolo to disable it.
+VIBE_OPTIONS="--yolo"
 KEEP_CONTAINER=0
 
 for arg in "$@"; do
     case "$arg" in
         --yolo)
             VIBE_OPTIONS="--yolo"
+            ;;
+        --no-yolo)
+            VIBE_OPTIONS=""
             ;;
         --no-exit)
             KEEP_CONTAINER=1

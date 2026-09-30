@@ -1,6 +1,7 @@
 #!/bin/bash
 # Launch a vibe container with the current directory mounted as a volume
-# Syntax:  vibes.sh [--no-cache] [--yolo] [--no-exit]
+# Syntax:  vibes.sh [--no-cache] [--no-yolo] [--no-exit]
+# --no-yolo: run vibe without the --yolo option (--yolo is the default)
 # --no-exit: stay into the container with a bash shell after vibe has ended
 #            (by default, when vibe is terminated, the container is terminated too)
 
