@@ -224,7 +224,9 @@ $arrayfields = array(
 	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 999),
 	'c.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
 );
-
+if ($user->socid) {
+	unset($arrayfields['c.note_private']);
+}
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook > 0) {
