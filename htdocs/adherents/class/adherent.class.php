@@ -1287,6 +1287,17 @@ class Adherent extends CommonObject
 				}
 			}
 
+			// Keep organized event registrations linked to the surviving member.
+			if (!$error && isModEnabled('eventorganization')) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+				$sql .= " SET fk_member = ".((int) $this->id);
+				$sql .= " WHERE fk_member = ".((int) $member_origin->id);
+				if (!$this->db->query($sql)) {
+					$this->error = $this->db->lasterror();
+					$error++;
+				}
+			}
+
 			// External modules should update their ones too
 			if (!$error) {
 				$parameters = array('member_origin' => $member_origin->id, 'member_dest' => $this->id);

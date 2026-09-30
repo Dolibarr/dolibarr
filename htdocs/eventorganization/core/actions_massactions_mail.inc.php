@@ -97,22 +97,27 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 	$listofselectedid = array();
 	$listofselectedref = array();
+	$listofselectedrecipient = array();
 	require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
 	$objecttmp = new $objectclass($db);
 	'@phan-var-force CommonObject $objecttmp';
 
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
-		if ($result > 0 && $objecttmp instanceof ConferenceOrBoothAttendee && !empty($objecttmp->email)) {
+		if ($result > 0 && $objecttmp instanceof ConferenceOrBoothAttendee) {
 			$attendee = clone $objecttmp;
-			$attendee->fetch_thirdparty();
-			$listofselectedid[$attendee->email] = $attendee;
-			$listofselectedref[$attendee->email] = $attendee;
+			$recipient = $attendee->getCommunicationTarget('email');
+			if ($recipient['value'] !== '') {
+				$listofselectedid[$recipient['value']] = $attendee;
+				$listofselectedref[$recipient['value']] = $attendee;
+				$listofselectedrecipient[$recipient['value']] = $recipient;
+			}
 		}
 	}
 	'@phan-var-force CommonObject $objecttmp';
 	'@phan-var-force array<string,ConferenceOrBoothAttendee> $listofselectedid';
 	'@phan-var-force array<string,ConferenceOrBoothAttendee> $listofselectedref';
+	'@phan-var-force array<string,array{value:string,name:string,source:string,source_id:int}> $listofselectedrecipient';
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email)) {
@@ -142,7 +147,6 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	}
 
 	if (!$error && !empty($listofselectedid)) {
-		$objecttmp->fetch_thirdparty();
 		foreach ($listofselectedid as $email => $attendees) {
 			$sendto = '';
 			$sendtocc = '';
@@ -150,7 +154,9 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			$sendtoid = array();
 
 			// Define $sendto
-			$sendto = $attendees->thirdparty->name . '<' . trim($attendees->email) . '>';
+			$recipient = $listofselectedrecipient[$email];
+			$recipientName = dol_string_nospecial($recipient['name'], ' ', array(','));
+			$sendto = ($recipientName !== '' ? $recipientName.' ' : '').'<'.trim($recipient['value']).'>';
 
 			// Define $sendtocc
 			$receivercc = GETPOST('receivercc', 'alphawithlgt');

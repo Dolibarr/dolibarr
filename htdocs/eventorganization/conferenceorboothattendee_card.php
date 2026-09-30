@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_confere
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
+$langs->loadLangs(array("eventorganization", "other", "projects", "companies", "members"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
@@ -181,6 +181,27 @@ if (empty($reshook)) {
 	}
 
 	$triggermodname = 'EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_MODIFY'; // Name of trigger action code to execute when we modify record
+	if ($action == 'add' && $permissiontoadd && (GETPOSTINT('fk_contact') > 0 || GETPOSTINT('fk_member') > 0)) {
+		$object->email = GETPOST('email', 'email');
+		$object->firstname = GETPOST('firstname', 'alphanohtml');
+		$object->lastname = GETPOST('lastname', 'alphanohtml');
+		$contactId = GETPOSTINT('fk_contact');
+		$memberId = GETPOSTINT('fk_member');
+		if ($contactId > 0 && $memberId > 0) {
+			setEventMessages($langs->trans('ErrorAttendeeContactOrMember'), null, 'errors');
+			$action = 'create';
+		} elseif ($contactId > 0 && $object->loadContactData($contactId) < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create';
+		} elseif ($memberId > 0 && $object->loadMemberData($memberId) < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create';
+		} else {
+			$_POST['email'] = $object->email;
+			$_POST['firstname'] = $object->firstname;
+			$_POST['lastname'] = $object->lastname;
+		}
+	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';

@@ -96,6 +96,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'email' => array('type' => 'mail', 'label' => 'EmailAttendee', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'autofocusoncreate' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'csslist' => 'tdoverflowmax150'),
 		'firstname' => array('type' => 'varchar(100)', 'label' => 'Firstname', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125', 'showoncombobox' => 1),
 		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125', 'showoncombobox' => 1),
+		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php:1', 'label' => 'Member', 'enabled' => 'isModEnabled("member")', 'position' => 25, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'foreignkey' => 'adherent.rowid', 'picto' => 'member', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_contact' => array('type' => 'integer:Contact:contact/class/contact.class.php:1', 'label' => 'Contact', 'enabled' => 'isModEnabled("societe")', 'position' => 26, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'foreignkey' => 'socpeople.rowid', 'picto' => 'contact', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'email_company' => array('type' => 'mail', 'label' => 'EmailCompany', 'enabled' => 1, 'position' => 41, 'notnull' => 0, 'visible' => -2, 'searchall' => 1),
 		'date_subscription' => array('type' => 'datetime', 'label' => 'DateOfRegistration', 'enabled' => 1, 'position' => 56, 'notnull' => 1, 'visible' => 1, 'showoncombobox' => 1,),
@@ -145,6 +147,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 * @var int
 	 */
 	public $fk_soc;
+	/**
+	 * @var ?int Existing member represented by this attendee
+	 */
+	public $fk_member;
+	/**
+	 * @var ?int Existing contact represented by this attendee
+	 */
+	public $fk_contact;
 	/**
 	 * @var string
 	 */
@@ -291,6 +301,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	{
 		global $langs;
 
+		if ($this->loadLinkedIdentityData() < 0) {
+			return -1;
+		}
+
 		if (!isValidEmail($this->email)) {
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorBadEMail", $this->email);
@@ -306,6 +320,138 @@ class ConferenceOrBoothAttendee extends CommonObject
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Validate and load the optional identity linked to the attendee.
+	 * Contacts and members are independent alternatives and are never inferred through a third party.
+	 *
+	 * @return int 1 on success, -1 on error
+	 */
+	public function loadLinkedIdentityData()
+	{
+		global $langs;
+
+		if (!empty($this->fk_contact) && !empty($this->fk_member)) {
+			$this->error = $langs->trans('ErrorAttendeeContactOrMember');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		if (!empty($this->fk_contact)) {
+			return $this->loadContactData((int) $this->fk_contact);
+		}
+		if (!empty($this->fk_member)) {
+			return $this->loadMemberData((int) $this->fk_member);
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Link an existing member and use its identity as defaults for the attendee snapshot.
+	 * Values already supplied by the caller are preserved.
+	 *
+	 * @param int $memberId Member id
+	 * @return int 1 on success, -1 on error
+	 */
+	public function loadMemberData($memberId)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$member = new Adherent($this->db);
+		$allowedEntities = array_map('intval', explode(',', getEntity('adherent')));
+		if ($member->fetch($memberId) <= 0 || !in_array((int) $member->entity, $allowedEntities, true)) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$this->fk_member = (int) $member->id;
+		if (empty($this->email)) {
+			$this->email = $member->email;
+		}
+		if (empty($this->firstname)) {
+			$this->firstname = $member->firstname;
+		}
+		if (empty($this->lastname)) {
+			$this->lastname = $member->lastname;
+		}
+		return 1;
+	}
+
+	/**
+	 * Link an existing contact and use its identity as defaults for the attendee snapshot.
+	 * Values already supplied by the caller are preserved.
+	 *
+	 * @param int $contactId Contact id
+	 * @return int 1 on success, -1 on error
+	 */
+	public function loadContactData($contactId)
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		$contact = new Contact($this->db);
+		$allowedEntities = array_map('intval', explode(',', getEntity('contact')));
+		if ($contact->fetch($contactId) <= 0 || !in_array((int) $contact->entity, $allowedEntities, true)) {
+			$this->error = $langs->trans('ErrorRecordNotFound');
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$this->fk_contact = (int) $contact->id;
+		if (empty($this->email)) {
+			$this->email = $contact->email;
+		}
+		if (empty($this->firstname)) {
+			$this->firstname = $contact->firstname;
+		}
+		if (empty($this->lastname)) {
+			$this->lastname = $contact->lastname;
+		}
+
+		return 1;
+	}
+
+	/**
+	 * Return the current communication target linked to the attendee.
+	 * The attendee fields remain a historical snapshot and are used as fallback.
+	 *
+	 * @param 'email'|'mobile' $mode Communication channel
+	 * @return array{value:string,name:string,source:'contact'|'member'|'attendee',source_id:int}
+	 */
+	public function getCommunicationTarget($mode = 'email')
+	{
+		global $langs;
+
+		$fallbackValue = $mode === 'mobile' ? '' : (string) $this->email;
+		$fallbackName = dolGetFirstLastname((string) $this->firstname, (string) $this->lastname);
+		$target = array('value' => $fallbackValue, 'name' => $fallbackName, 'source' => 'attendee', 'source_id' => (int) $this->id);
+
+		if (!empty($this->fk_contact)) {
+			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+			$contact = new Contact($this->db);
+			if ($contact->fetch((int) $this->fk_contact) > 0) {
+				$value = $mode === 'mobile' ? (string) $contact->phone_mobile : (string) $contact->email;
+				if ($value !== '') {
+					return array('value' => $value, 'name' => $contact->getFullName($langs), 'source' => 'contact', 'source_id' => (int) $contact->id);
+				}
+			}
+		}
+
+		if (!empty($this->fk_member)) {
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			$member = new Adherent($this->db);
+			if ($member->fetch((int) $this->fk_member) > 0) {
+				$value = $mode === 'mobile' ? (string) $member->phone_mobile : (string) $member->email;
+				if ($value !== '') {
+					return array('value' => $value, 'name' => $member->getFullName($langs), 'source' => 'member', 'source_id' => (int) $member->id);
+				}
+			}
+		}
+
+		return $target;
 	}
 
 	/**
@@ -532,6 +678,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
+		if ($this->loadLinkedIdentityData() < 0) {
+			return -1;
+		}
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -1124,6 +1274,19 @@ class ConferenceOrBoothAttendee extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Replace a contact id with another one when merging contacts.
+	 *
+	 * @param 	DoliDB 	$dbs 		Database handler
+	 * @param 	int 	$origin_id 	Old contact id
+	 * @param 	int 	$dest_id 	New contact id
+	 * @return 	bool
+	 */
+	public static function replaceContact(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		return CommonObject::commonReplaceContact($dbs, $origin_id, $dest_id, array('eventorganization_conferenceorboothattendee'), 'fk_contact');
 	}
 
 	/**

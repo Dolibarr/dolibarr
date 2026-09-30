@@ -165,3 +165,4 @@ Confirmed=Confirmed
 NotSelected=Not selected
 TheLinkIsAvailableOnTheProjectEventCard=The links to suggest or vote for a conference or apply for a booth is provided into the page of the project/event
 ShowedUp=Showed up
+ErrorAttendeeContactOrMember=Select either a contact or a member for the attendee, not both
