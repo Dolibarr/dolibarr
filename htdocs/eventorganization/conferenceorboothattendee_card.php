@@ -186,6 +186,7 @@ if (empty($reshook)) {
 		$object->firstname = GETPOST('firstname', 'alphanohtml');
 		$object->lastname = GETPOST('lastname', 'alphanohtml');
 		$object->fk_soc = GETPOSTINT('fk_soc');
+		$object->email_company = GETPOST('email_company', 'email');
 		if ($object->loadMemberData(GETPOSTINT('fk_member')) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
@@ -195,6 +196,9 @@ if (empty($reshook)) {
 			$_POST['lastname'] = $object->lastname;
 			if (!empty($object->fk_soc)) {
 				$_POST['fk_soc'] = (string) $object->fk_soc;
+			}
+			if (!empty($object->email_company)) {
+				$_POST['email_company'] = $object->email_company;
 			}
 		}
 	}

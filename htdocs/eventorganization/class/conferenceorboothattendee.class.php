@@ -98,7 +98,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125', 'showoncombobox' => 1),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'email_company' => array('type' => 'mail', 'label' => 'EmailCompany', 'enabled' => 1, 'position' => 41, 'notnull' => 0, 'visible' => -2, 'searchall' => 1),
-		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php:1', 'label' => 'Member', 'enabled' => 'isModEnabled("member")', 'position' => 42, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'foreignkey' => 'adherent.rowid', 'picto' => 'member', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php:1', 'label' => 'Member', 'enabled' => 'isModEnabled("member")', 'position' => 25, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'foreignkey' => 'adherent.rowid', 'picto' => 'member', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'date_subscription' => array('type' => 'datetime', 'label' => 'DateOfRegistration', 'enabled' => 1, 'position' => 56, 'notnull' => 1, 'visible' => 1, 'showoncombobox' => 1,),
 		'fk_invoice' => array('type' => 'integer:Facture:compta/facture/class/facture.class.php', 'label' => 'Invoice', 'enabled' => 'isModEnabled("invoice")', 'position' => 57, 'notnull' => 0, 'visible' => 1, 'index' => 0, 'picto' => 'bill', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
 		'amount' => array('type' => 'price', 'label' => 'AmountPaid', 'enabled' => 1, 'position' => 57, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => "AmountOfRegistrationPaid",),
@@ -348,6 +348,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 		if (empty($this->fk_soc) && !empty($member->socid)) {
 			$this->fk_soc = (int) $member->socid;
+		}
+		if (empty($this->email_company) && !empty($this->fk_soc)) {
+			$result = $member->fetch_thirdparty();
+			if ($result > 0 && !empty($member->thirdparty->email)) {
+				$this->email_company = $member->thirdparty->email;
+			}
 		}
 
 		return 1;
