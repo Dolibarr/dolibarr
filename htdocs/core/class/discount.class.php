@@ -401,6 +401,14 @@ class DiscountAbsolute extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id($this->db->prefix()."societe_remise_except");
+
+			// Call trigger
+			$result = $this->call_trigger('DISCOUNTABSOLUTE_CREATE', $user);
+			if ($result < 0) {
+				return -1;
+			}
+			// End call triggers
+
 			return $this->id;
 		} else {
 			$this->error = $this->db->lasterror().' - sql='.$sql;

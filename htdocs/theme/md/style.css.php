@@ -6066,6 +6066,14 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
 }
+.ui-dialog {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	min-width: 300px;
+	max-width: 70%;
+}
 
 div#dialogforpopup {
 	background-color: #f8f8f8 !important;

@@ -106,6 +106,24 @@ UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='C
 UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
 
+-- Switch all aurore templates into zenith
+UPDATE llx_supplier_proposal SET model_pdf = 'zenith' WHERE model_pdf = 'aurore';
+UPDATE llx_const SET value = 'zenith' WHERE value = 'aurore' AND name ='SUPPLIER_PROPOSAL_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'zenith' WHERE nom = 'aurore' AND type = 'supplier_proposal' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'zenith' AND type = 'supplier_proposal') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'aurore' AND type = 'supplier_proposal';
+
+-- Switch all muscadet templates into cornas
+UPDATE llx_commande_fournisseur SET model_pdf = 'cornas' WHERE model_pdf = 'muscadet';
+UPDATE llx_const SET value = 'cornas' WHERE value = 'muscadet' AND name ='COMMANDE_SUPPLIER_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'cornas' WHERE nom = 'muscadet' AND type = 'order_supplier' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'cornas' AND type = 'order_supplier') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'muscadet' AND type = 'order_supplier';
+
+-- Switch all rouget templates into espadon
+UPDATE llx_expedition SET model_pdf = 'espadon' WHERE model_pdf = 'rouget';
+UPDATE llx_const SET value = 'espadon' WHERE value = 'rouget' AND name ='EXPEDITION_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'espadon' WHERE nom = 'rouget' AND type = 'shipping' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'espadon' AND type = 'shipping') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'rouget' AND type = 'shipping';
+
 -- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
 ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
 

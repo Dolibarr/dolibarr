@@ -2321,7 +2321,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						$cloneUserUrl = '';
 						$cloneButtonId = 'action-clone';
 					}
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'));
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'), array('attr' => array('class' => 'reposition')));
 				}
 
 				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {

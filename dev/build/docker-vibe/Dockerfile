@@ -74,7 +74,32 @@ RUN mkdir -p /opt/php-tools \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
 	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan \
 	&& ln -s /opt/php-tools/vendor/bin/phpcs /usr/local/bin/phpcs \
-	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpc
+	&& ln -s /opt/php-tools/vendor/bin/phpcbf /usr/local/bin/phpcbf
+
+
+# Install pre-commit - tool to manage git hooks (see https://pre-commit.com and dev/setup/pre-commit/README.md)
+# Hooks configuration for Dolibarr is the file .pre-commit-config.yaml at repository root.
+RUN uv venv /opt/pre-commit \
+    && uv pip install --python /opt/pre-commit/bin/python pre-commit \
+    && ln -s /opt/pre-commit/bin/pre-commit /usr/local/bin/pre-commit \
+    && pre-commit --version
+
+
+# Preload the pre-commit hooks environments of the repository into the image,
+# so the first run into the container does not have to download them.
+# PRE_COMMIT_HOME must be a stable path: the environments contain absolute paths and are not relocatable.
+# The .pre-commit-config.yaml is added into the build context by vibes.sh (COPY is skipped if absent).
+ENV PRE_COMMIT_HOME=/var/cache/pre-commit
+
+COPY .pre-commit-config.yaml* /tmp/pre-commit-warmup/
+RUN if [ -f /tmp/pre-commit-warmup/.pre-commit-config.yaml ]; then \
+        git init -q /tmp/pre-commit-warmup \
+        && cd /tmp/pre-commit-warmup \
+        && pre-commit install-hooks \
+        && cd / \
+        && rm -rf /tmp/pre-commit-warmup \
+        && chmod -R a+rwX /var/cache/pre-commit; \
+    fi
 
 
 # Prompt

@@ -825,7 +825,7 @@ if ($id > 0) {
 
 		// Clone
 		if ($user->hasRight('tax', 'charges', 'creer')) {
-			print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=clone">'.$langs->trans("ToClone")."</a></div>";
+			print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=clone', '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 		}
 
 		if ($user->hasRight('tax', 'charges', 'supprimer') && empty($totalpaid)) {

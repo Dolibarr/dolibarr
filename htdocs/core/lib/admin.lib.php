@@ -753,7 +753,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 			// To list all sensitive constant, you can make a
 			// SELECT * from llx_const WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' ...
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-			$newvalue = dolEncrypt($value);
+			$newvalue = dolEncrypt($value);		// Encode using dolcrypt() function
 		} else {
 			$newvalue = $value;
 		}
@@ -2328,6 +2328,8 @@ function printNumberingModuleList($moduledir, $prefix, $constname, $title, $spec
 
 	clearstatcache();
 
+	$arrayofmodules = array();
+
 	foreach ($dirmodels as $reldir) {
 		$dir = dol_buildpath($reldir."core/modules/".$moduledir);
 
@@ -2344,69 +2346,79 @@ function printNumberingModuleList($moduledir, $prefix, $constname, $title, $spec
 						'@phan-var-force CommonNumRefGenerator $module';
 						/** @var CommonNumRefGenerator $module */
 
-						if ($module->isEnabled()) {
-							// Show modules according to features level
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								continue;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								continue;
-							}
-
-							print '<tr class="oddeven"><td>'.$module->getName($langs)."</td>\n";
-							print '<td>';
-							print $module->info($langs);
-							print '</td>';
-
-							// Show example of numbering module
-							print '<td class="nowrap">';
-							$tmp = $module->getExample();  // @phan-suppress-current-line PhanUndeclaredMethod
-							if (preg_match('/^Error/', $tmp)) {
-								$langs->load("errors");
-								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-							} else {
-								print $tmp;
-							}
-							print '</td>'."\n";
-
-							print '<td class="center">';
-							if (getDolGlobalString($constname) == $file) {
-								print img_picto($langs->trans("Activated"), 'switch_on');
-							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$actionname.'&token='.newToken().'&value='.urlencode($file).'">';
-								print img_picto($langs->trans("Disabled"), 'switch_off');
-								print '</a>';
-							}
-							print '</td>';
-
-							// Info
-							$htmltooltip = '';
-							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-							$nextval = $module->getNextValue($mysoc, $specimenobject);  // @phan-suppress-current-line PhanUndeclaredMethod
-							if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= ''.$langs->trans("NextValue").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
-									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 'info');
-							print '</td>';
-
-							print '</tr>';
-						}
+						$arrayofmodules[] = $module;
 					}
 				}
 				closedir($handle);
 			}
+		}
+	}
+
+	$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+	/** @var CommonNumRefGenerator[] $arrayofmodules */
+	'@phan-var-force CommonNumRefGenerator[] $arrayofmodules';
+
+	foreach ($arrayofmodules as $module) {
+		$file = get_class($module);
+
+		if ($module->isEnabled()) {
+			// Show modules according to features level
+			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+				continue;
+			}
+			if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+				continue;
+			}
+
+			print '<tr class="oddeven"><td>'.$module->getName($langs)."</td>\n";
+			print '<td>';
+			print $module->info($langs);
+			print '</td>';
+
+			// Show example of numbering module
+			print '<td class="nowrap">';
+			$tmp = $module->getExample();  // @phan-suppress-current-line PhanUndeclaredMethod
+			if (preg_match('/^Error/', $tmp)) {
+				$langs->load("errors");
+				print '<div class="error">'.$langs->trans($tmp).'</div>';
+			} elseif ($tmp == 'NotConfigured') {
+				print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+			} else {
+				print $tmp;
+			}
+			print '</td>'."\n";
+
+			print '<td class="center">';
+			if (getDolGlobalString($constname) == $file) {
+				print img_picto($langs->trans("Activated"), 'switch_on');
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$actionname.'&token='.newToken().'&value='.urlencode($file).'">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			}
+			print '</td>';
+
+			// Info
+			$htmltooltip = '';
+			$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+			$nextval = $module->getNextValue($mysoc, $specimenobject);  // @phan-suppress-current-line PhanUndeclaredMethod
+			if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
+				$htmltooltip .= ''.$langs->trans("NextValue").': ';
+				if ($nextval) {
+					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+						$nextval = $langs->trans($nextval);
+					}
+					$htmltooltip .= $nextval.'<br>';
+				} else {
+					$htmltooltip .= $langs->trans($module->error).'<br>';
+				}
+			}
+
+			print '<td class="center">';
+			print $form->textwithpicto('', $htmltooltip, 1, 'info');
+			print '</td>';
+
+			print '</tr>';
 		}
 	}
 

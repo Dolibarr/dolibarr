@@ -62,6 +62,12 @@ if ($id > 0) {
 if (!$user->hasRight('loan', 'read')) {
 	accessforbidden();
 }
+// PaymentLoan::fetch() is a low-level by-id primitive (returns a record regardless of entity), so the
+// access restriction is enforced here in the caller, on the parent loan: restrictedArea() checks the
+// loan read right and that the loan belongs to an allowed entity.
+if ($payment->id > 0) {
+	restrictedArea($user, 'loan', $payment->fk_loan, '', '');
+}
 
 
 /*
@@ -71,9 +77,6 @@ if (!$user->hasRight('loan', 'read')) {
 // Delete payment
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'delete')) {
 	$db->begin();
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".((int) $payment->fk_bank);
-	$db->query($sql);
 
 	$fk_loan = $payment->fk_loan;
 

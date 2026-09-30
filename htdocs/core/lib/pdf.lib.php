@@ -194,6 +194,8 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	} else {
 		$pdf = new TCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	}
+	// Allow "file://..." image src values (used to embed local server paths translated from a public URL)
+	$pdf->setAllowLocalFiles(true);
 
 	// Protection and encryption of pdf
 	if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {

@@ -3568,7 +3568,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$cloneSocietetUrl = '';
 					$cloneButtonId = '';
 				}
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'), array('attr' => array('class' => 'reposition')));
 
 				if (isModEnabled('member')) {
 					$adh = new Adherent($db);

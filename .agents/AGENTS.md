@@ -105,7 +105,7 @@ Before writing any code, the agent **must**:
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
 - Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is used into HTML escaped functions
-- Language files must be placed in `mymodule/langs/en_US/` (never change, update or translate other locales files, this is managed into an external tool)
+- Language files must be placed in `htdocs/langs/en_US/` (Never change, update or translate other locales files, this is managed into an external tool)
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
 - All code comments and variables or functions names must be in English
@@ -165,6 +165,7 @@ Before writing any code, the agent **must**:
   - Ajax calls: use `currentToken()` instead of `newToken()`, and set `NOTOKENRENEWAL` on the called ajax endpoint
 - Public endpoints called without a session (e.g. webhooks) are exempt via `NOCSRFCHECK` (page-level constant) or, exceptionally, `$dolibarr_nocsrfcheck` (global conf.php override)
 - Use the Dolibarr filesystem wrappers (`dol_mkdir()`, `dol_delete_file()`, `dol_copy()`, `dol_is_file()`, `dol_is_dir()`) and sanitize any user-provided name with `dol_sanitizeFileName()` / `dol_sanitizePathName()`, never raw PHP `mkdir()` / `unlink()` / `file_exists()`
+- For method fetch, update and delete, if database action is done usign a criteria based on a rowid, the rowid must be the only criteria. Any additionnal securty check must be done by the caller.  
 
 ---
 

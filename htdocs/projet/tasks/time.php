@@ -601,6 +601,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -709,6 +711,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 								$error++;
 								$langs->load("errors");
 								setEventMessages(null, $tmpproduct->errors, 'errors');
+								// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+								continue;
 							}
 
 							$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -787,6 +791,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
