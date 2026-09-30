@@ -5849,11 +5849,11 @@ img.boxhandle, img.boxclose {
 }
 .fieldcombo-children {
 	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
-	padding-left: 25px;
+	padding-left: 26px;
 }
 .fieldcombo-fields {
 	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
-	padding-left: 25px;
+	padding-left: 26px;
 }
 .fieldcombo-field {
 	padding: 3px 8px;
@@ -5871,6 +5871,9 @@ img.boxhandle, img.boxclose {
 .search-component-assistance .btn-div{
 	margin-top: 10px;
 	text-align: right;
+}
+.divadvancedsearchfieldusf {
+	/* width: calc(100% - 40px); */
 }
 @media only screen and (max-width: 620px) {
 	.search-component-assistance .operand, .operator, .value {
@@ -8165,12 +8168,12 @@ select.multiselectononeline {
 @media only screen and (min-width: 768px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem, .combolargelist):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 300px !important;
 		padding: 8px;
 	}
-	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem, .combolargelist):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem, .combolargelist):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 300px !important;
 		padding: 8px;
 	}
@@ -8180,6 +8183,14 @@ select.multiselectononeline {
 	}
 	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
 		min-width: 320px !important;
+	}
+	/* CSS to have the dropdown list of the combo larger than the visible component when closed (min-width 450px) */
+	.combolargelist.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 450px !important;
+	}
+	.combolargelist.select2-container.select2-container--open .select2-dropdown--below,
+	.combolargelist.select2-container.select2-container--open .select2-dropdown--above {
+		min-width: 450px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {

@@ -13088,7 +13088,7 @@ class Form
 		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
 		$ret .= '</a>';
 
-		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
+		$ret .= '<div class="divadvancedsearchfieldcompinput centpercentminusx inline-block minwidth500 maxwidth300onsmartphone">';
 
 		// Show select fields as tags.
 		$ret .= '<div id="divsearch_component_params" name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
@@ -13402,9 +13402,8 @@ class Form
 
 		$ret .= '<script>
 			$(document).ready(function() {
-				// Clear the operator selector and reset and hide all the value input fields
-				function resetOperatorAndValueInputs() {
-					$(".operator-selector").empty();
+				// Reset and hide all the value input fields (this does not clear the operator selector)
+				function resetValueInputs() {
 					$(".value-input, .dateone, .datemonth, .dateyear").val("").hide();
 					$("#datemonth, #dateyear").val(null).trigger("change.select2");
 					$("#dateone").datepicker("setDate", null);
@@ -13414,13 +13413,19 @@ class Form
 					$("#value-selector").val(null).trigger("change.select2");
 				}
 
+				// Clear the operator selector and reset and hide all the value input fields
+				function resetOperatorAndValueInputs() {
+					$(".operator-selector").empty();
+					resetValueInputs();
+				}
+
 				// JS code of the 2 levels combo to select first the element (the table) then the field
 				// Click on the toggle button: show/hide the panel of the combo
 				$(".fieldcombo-toggle").on("click", function(e) {
 					e.stopPropagation();
 					$(this).closest(".fieldcombo").find(".fieldcombo-panel").toggle();
-					// Reset the search input and the filter, so the panel always opens with the list of elements only
-					// (the fields are shown only after a search or a click on an element)
+					// Reset the search input and the filter, so the panel always opens with the first level open
+					// (the fields and the sub-tables of the main object are shown, the deeper levels stay closed)
 					$(this).closest(".fieldcombo").find(".fieldcombo-search").val("").trigger("keyup");
 				});
 
@@ -13455,11 +13460,13 @@ class Form
 				// Type something into the search input to filter the list of elements and fields
 				$(".fieldcombo-search").on("keyup change", function() {
 					const term = $(this).val().toLowerCase();
-					// Without search term, we show the root elements only, all closed (fields and sub-elements are hidden)
+					// Without search term, we show the first level (the main object) open, so its fields and
+					// its sub-tables are shown, but the deeper levels stay closed
 					if (term === "") {
 						$(".fieldcombo-element").removeClass("open").show();
 						$(".fieldcombo-fields, .fieldcombo-children").hide();
 						$(".fieldcombo-field").show();
+						$(".fieldcombo-list > .fieldcombo-element").addClass("open").children(".fieldcombo-fields, .fieldcombo-children").show();
 						return;
 					}
 					// With a search term, we show the elements matching by their label or their fields, and we also
@@ -13543,8 +13550,8 @@ class Form
 
 					operatorSelector.trigger("change.select2");
 
-					// Clear and hide all input elements initially
-					resetOperatorAndValueInputs();
+					// Clear and hide all the value input elements initially (the operator selector has just been populated, we do not clear it)
+					resetValueInputs();
 
 					if (fieldType === "date" || fieldType === "datetime" || fieldType === "timestamp") {
 						$(".date-one").show();
