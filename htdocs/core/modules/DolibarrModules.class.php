@@ -2202,11 +2202,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$sql = "SELECT module FROM ".MAIN_DB_PREFIX."rights_def";
 						$sql .= " WHERE entity = ".((int) $entity);
 						$sql .= " AND id = ".((int) $r_id);
+						$sql .= " AND module <> '".$this->db->escape($r_module)."'";
 
 						$resqlowner = $this->db->query($sql);
 						if ($resqlowner) {
 							$objowner = $this->db->fetch_object($resqlowner);
-							if ($objowner && $objowner->module != $r_module) {
+							if ($objowner) {
 								$skippedperms[$r_id] = $r_perms.($r_subperms ? "->".$r_subperms : "");
 								dol_syslog(get_class($this)."::insert_permissions permission id ".$r_id." of module ".$r_module." already used by module ".$objowner->module.", permission not added", LOG_WARNING);
 							}
