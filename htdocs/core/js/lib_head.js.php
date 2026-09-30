@@ -1950,6 +1950,15 @@ $(function() {
 			}
 		}
 	});
+
+	/**
+	 * Highlight a row's background while its checkbox is checked, reusing
+	 * the existing .highlight / $colorbacklinepairchecked theme colour.
+	 */
+	$(document).on("change", ".row-with-select input.checkforselect", function () {
+		$(this).closest(".row-with-select").toggleClass("highlight", this.checked);
+	});
+	$(".row-with-select input.checkforselect:checked").closest(".row-with-select").addClass("highlight");
 });
 
 }
