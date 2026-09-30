@@ -361,11 +361,11 @@ if ($resql) {
 
 		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
 			$labeltoshow = '';
-			if ($invoicetmp instanceof Facture) {
+			if ($invoicetmp instanceof FactureFournisseur) {
 				$labeltoshow = $invoicetmp->ref_supplier;
 			}
 			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($labeltoshow).'">';
-			if ($invoicetmp instanceof Facture) {
+			if ($invoicetmp instanceof FactureFournisseur) {
 				print dol_escape_htmltag($invoicetmp->ref_supplier);
 			}
 			print "</td>\n";
