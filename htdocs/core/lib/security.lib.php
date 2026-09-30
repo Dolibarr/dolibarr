@@ -871,7 +871,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		// Array to define rules of checks to do
 		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
-		$checkparentsoc = array('agenda', 'contact', 'contrat', 'ticket'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
+		$checkparentsoc = array('agenda', 'contact', 'contrat', 'ticket', 'stocktransfer'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
 		$checktask = array('projet_task', 'project_task'); // Test for task object
 		$checkhierarchy = array('expensereport', 'holiday', 'hrm');	// check permission among the hierarchy of user
