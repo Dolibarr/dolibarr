@@ -568,6 +568,31 @@ class SupplierProposal extends CommonObject
 						return -1;
 					}
 				}
+
+				// Predefine quantity according to packaging (same rule as for supplier orders)
+				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
+					$prod = new Product($this->db);
+					// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+					$prod->get_buyprice(($fk_fournprice > 0 ? (int) $fk_fournprice : 0), (float) $qty, $fk_product, 'none', $this->socid);
+
+					$newqty = $this->roundQtyToPackaging($qty, $prod->packaging);
+					if ($newqty != $qty) {
+						$qty = $newqty;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+					}
+
+					// Enforce the supplier minimum purchase quantity on top of packaging rounding: if the line is below
+					// the supplier minimum, round the minimum itself up to the next packaging multiple.
+					if (!empty($prod->fourn_qty) && (float) $qty > 0 && (float) $qty < (float) $prod->fourn_qty) {	// A negative quantity (return) is not concerned by the minimum purchase quantity
+						if (!empty($prod->packaging) && (float) price2num(fmod((float) $prod->fourn_qty, (float) $prod->packaging), 'MS')) {
+							$coeff = intval((float) $prod->fourn_qty / (float) $prod->packaging) + 1;
+							$qty = (float) price2num((float) $prod->packaging * $coeff, 'MS');
+						} else {
+							$qty = (float) $prod->fourn_qty;
+						}
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					}
+				}
 			} else {
 				$product_type = $type;
 			}
@@ -755,7 +780,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $array_options = [], $ref_supplier = '', $fk_unit = 0, $pu_ht_devise = 0)
 	{
-		global $mysoc;
+		global $mysoc, $langs;
 
 		if (!$this->isLineOfObject($rowid)) {
 			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
@@ -801,6 +826,23 @@ class SupplierProposal extends CommonObject
 
 			if (isModEnabled("multicurrency") && $pu_ht_devise > 0) {
 				$pu = 0;
+			}
+
+			// Round the quantity to the packaging before computing the amounts of the line,
+			// else the line is saved with the rounded quantity but with the amounts of the quantity before rounding
+			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
+				$tmpline = new SupplierProposalLine($this->db);
+				if ($tmpline->fetch($rowid) > 0 && $tmpline->fk_product > 0) {
+					$prod = new Product($this->db);
+					// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+					$prod->get_buyprice(($fk_fournprice > 0 ? (int) $fk_fournprice : (int) $tmpline->fk_fournprice), (float) $qty, $tmpline->fk_product, 'none', $this->socid);
+
+					$newqty = $this->roundQtyToPackaging($qty, $prod->packaging);
+					if ($newqty != $qty) {
+						$qty = $newqty;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+					}
+				}
 			}
 
 			$tabprice = calcul_price_total(

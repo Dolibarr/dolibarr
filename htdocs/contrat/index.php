@@ -31,6 +31,7 @@
 require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
 
 /**
  * @var Conf $conf
@@ -100,7 +101,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $nb = array();
 $total = 0;
 $totalinprocess = 0;
-$dataseries = array();
 $vals = array();
 
 // Search by status (except expired)
@@ -180,89 +180,43 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-$colorseries = array();
+$colors = getThemeBadgeStatusColors();
 
-$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
-if ($theme_vars_file) {
-	include $theme_vars_file;
-}
-/**
- * @var string $badgeStatus0
- * @var string $badgeStatus1
- * @var string $badgeStatus4
- * @var string $badgeStatus6
- */
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder nohover centpercent">';
-print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
 $listofstatus = array(0, 4, 4);	// Note: status 5=closed is useless as it increase all the time. We are interesting with 0, 4 expired and 4 non expired only.
 if (!getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_IN_GRAPH')) {
 	$listofstatus[] = 5;	// We add this status too (even if useless
 }
+$series = array();
 $bool = false;
 foreach ($listofstatus as $status) {
 	$bool_str = (string) $bool;
-	$dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool_str]) ? (int) $nb[$status.$bool_str] : 0));
+	$color = '';
 	if ($status == ContratLigne::STATUS_INITIAL) {
-		$colorseries[$status.$bool_str] = '-'.$badgeStatus0;
+		$color = '-'.$colors[0];
 	}
 	if ($status == ContratLigne::STATUS_OPEN && !$bool) {
-		$colorseries[$status.$bool_str] = $badgeStatus4;
+		$color = $colors[4];
 	}
 	if ($status == ContratLigne::STATUS_OPEN && $bool) {
-		$colorseries[$status.$bool_str] = $badgeStatus1;
+		$color = $colors[1];
 	}
 	if ($status == ContratLigne::STATUS_CLOSED) {
-		$colorseries[$status.$bool_str] = $badgeStatus6;
+		$color = $colors[6];
 	}
-
-	if (empty($conf->use_javascript_ajax)) {
-		print '<tr class="oddeven">';
-		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool_str] ? $nb[$status.$bool_str] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
-		print "</tr>\n";
-	}
+	$series[] = array(
+		'label' => $staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)),
+		'labelnojs' => $staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)),
+		'nb' => (isset($nb[$status.$bool_str]) ? (int) $nb[$status.$bool_str] : 0),
+		'color' => $color,
+		'url' => 'services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : ''),
+	);
 	if ($status == 4 && !$bool) {
 		$bool = true;
 	} else {
 		$bool = false;
 	}
 }
-if (!empty($conf->use_javascript_ajax)) {
-	print '<tr class="impair"><td class="center" colspan="2">';
-
-	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-	$dolgraph = new DolGraph();
-	$dolgraph->SetData($dataseries);
-	$dolgraph->SetDataColor(array_values($colorseries));
-	$dolgraph->setShowLegend(2);
-	$dolgraph->setShowPercent(1);
-	$dolgraph->SetType(array('pie'));
-	$dolgraph->setHeight('200');
-	$dolgraph->draw('idgraphstatus');
-	print $dolgraph->show($total ? 0 : 1);
-
-	print '</td></tr>';
-}
-$listofstatus = array(0, 4, 4, 5);
-$bool = false;
-foreach ($listofstatus as $status) {
-	$bool_str = (string) $bool;
-	if (empty($conf->use_javascript_ajax)) {
-		print '<tr class="oddeven">';
-		print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool ? 1 : 0)).'</td>';
-		print '<td class="right"><a href="services_list.php?search_status='.((int) $status).($bool ? '&filter=expired' : '').'">'.($nb[$status.$bool_str] ? $nb[$status.$bool_str] : 0).' '.$staticcontratligne->LibStatut($status, 3, ($bool ? 1 : 0)).'</a></td>';
-		if ($status == 4 && !$bool) {
-			$bool = true;
-		} else {
-			$bool = false;
-		}
-		print "</tr>\n";
-	}
-}
-print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-print "</table></div><br>";
+print getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("Services"), $series, array('total' => $total));
 
 
 // Draft contracts
