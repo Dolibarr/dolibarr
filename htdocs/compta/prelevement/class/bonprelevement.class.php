@@ -220,11 +220,11 @@ class BonPrelevement extends CommonObject
 		'note' => array('type' => 'text', 'label' => 'Note', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1,),
 		'date_trans' => array('type' => 'datetime', 'label' => 'TransData', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1,),
 		'method_trans' => array('type' => 'smallint(6)', 'label' => 'Methodtrans', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1,),
-		'fk_user_trans' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusertrans', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_trans' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserTransfer', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'date_credit' => array('type' => 'datetime', 'label' => 'CreditDate', 'enabled' => 1, 'position' => 65, 'notnull' => 0, 'visible' => -1,),
-		'fk_user_credit' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusercredit', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_credit' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserCredit', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'type' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => -1,),
-		'fk_bank_account' => array('type' => 'integer', 'label' => 'Fkbankaccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
+		'fk_bank_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
 	);
 	/**
 	 * @var int
