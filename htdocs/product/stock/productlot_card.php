@@ -38,6 +38,7 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -125,6 +126,11 @@ $permissiontoadd = $usercancreate;
 $permissiontodelete = $usercandelete;
 $permissionnote = $user->hasRight('produit', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('produit', 'creer'); // Used by the include of actions_setnotes.inc.php
+
+$createbarcode = (isModEnabled('barcode') && getDolGlobalInt('BARCODE_USE_ON_PRODUCTLOT'));
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'creer_advance')) {
+	$createbarcode = 0;
+}
 
 // Security check
 if (!isModEnabled('productbatch')) {
@@ -251,7 +257,7 @@ if (empty($reshook)) {
 	} */
 
 	if ($action == 'setqc_frequency' && $permissiontoadd && ! GETPOST('cancel', 'alpha')) {
-		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'int', '', $user, 'PRODUCT_MODIFY');
+		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'int', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) { // To provide a duration format test
 			setEventMessages($object->error, null, 'errors');
 			$action = 'editqc_frequency';
@@ -260,7 +266,47 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'PRODUCT_LOT_MODIFY'; // Name of trigger action code to execute when we modify record
+	// Barcode type
+	if ($action == 'setfk_barcode_type' && $permissiontoadd && $createbarcode && ! GETPOST('cancel', 'alpha')) {
+		$result = $object->setValueFrom('fk_barcode_type', GETPOSTINT('fk_barcode_type'), '', null, 'int', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'editfk_barcode_type';
+		} else {
+			$action = 'view';
+		}
+	}
+
+	// Barcode value
+	if ($action == 'setbarcode' && $permissiontoadd && $createbarcode && ! GETPOST('cancel', 'alpha')) {
+		// checkBarcode() normalises the value by reference, store that one so the uniqueness check
+		// and the stored value cannot diverge on an alphanumeric mask
+		$barcodetosave = GETPOST('barcode', 'alpha');
+		$result = $object->checkBarcode($barcodetosave, GETPOST('barcode_type_code', 'alpha'));
+
+		if ($result < 0) {
+			$langs->load("errors");
+			if ($result == -1) {
+				$barcodeerrors = array($langs->trans('ErrorBadBarCodeSyntax'));
+			} elseif ($result == -3) {
+				$barcodeerrors = array($langs->trans('ErrorBarCodeAlreadyUsed'));
+			} else {
+				$barcodeerrors = array($langs->trans('FailedToValidateBarCode'));
+			}
+			setEventMessages('', $barcodeerrors, 'errors');
+			$action = 'editbarcode';
+		} else {
+			$result = $object->setValueFrom('barcode', $barcodetosave, '', null, 'text', '', $user, 'PRODUCTLOT_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = 'editbarcode';
+			} else {
+				$action = 'view';
+			}
+		}
+	}
+
+	$triggermodname = 'PRODUCTLOT_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -433,6 +479,56 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr><td>'.$form->editfieldkey($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $user->hasRight('stock', 'creer')).'</td>';
 		print '<td>'.$form->editfieldval($langs->trans('Lifetime'), 'lifetime', $object->lifetime, $object, $user->hasRight('stock', 'creer'), 'string').'</td>';
 		print '</tr>';
+	}
+
+	// Barcode
+	$showbarcode = (isModEnabled('barcode') && getDolGlobalInt('BARCODE_USE_ON_PRODUCTLOT'));
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'lire_advance')) {
+		$showbarcode = 0;
+	}
+
+	if ($showbarcode) {
+		// Barcode type
+		print '<tr><td class="nowrap">';
+		print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans("BarcodeType");
+		print '</td>';
+		if ($action != 'editfk_barcode_type' && $permissiontoadd && $createbarcode) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editfk_barcode_type&id='.$object->id.'&token='.newToken().'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editfk_barcode_type') {
+			$formbarcode = new FormBarCode($db);
+			print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
+		} else {
+			$object->fetchBarCode();
+			print $object->barcode_type_label ? dol_escape_htmltag($object->barcode_type_label) : ($object->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'</div>' : '');
+		}
+		print '</td></tr>'."\n";
+
+		// Barcode value
+		print '<tr><td class="nowrap">';
+		print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans("BarcodeValue");
+		print '</td>';
+		if ($action != 'editbarcode' && $permissiontoadd && $createbarcode) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&id='.$object->id.'&token='.newToken().'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td class="wordbreak">';
+		if ($action == 'editbarcode') {
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="setbarcode">';
+			print '<input type="hidden" name="barcode_type_code" value="'.dol_escape_htmltag($object->barcode_type_code).'">';
+			print '<input class="width300 maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag(GETPOSTISSET('barcode') ? GETPOST('barcode', 'alpha') : $object->barcode).'">';
+			print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
+			print '</form>';
+		} else {
+			print showValueWithClipboardCPButton($object->barcode);	// The helper escapes the value itself
+		}
+		print '</td></tr>'."\n";
 	}
 
 	// Other attributes

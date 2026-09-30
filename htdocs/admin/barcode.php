@@ -40,7 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
  */
 
 // Load translation files required by the page
-$langs->load("admin");
+// products.lang holds UseBarCodeFor* and the lot barcode setup keys, stocks.lang holds LotSerial
+$langs->loadLangs(array("admin", "products", "stocks"));
 
 // Security Check Access
 if (!$user->admin) {
@@ -78,6 +79,18 @@ if ($action == 'setbarcodethirdpartyon') {
 	$res = dolibarr_del_const($db, "BARCODE_THIRDPARTY_ADDON_NUM", $conf->entity);
 }
 
+if ($action == 'setbarcodeproductloton') {
+	$barcodenumberingmodule = GETPOST('value', 'alpha');
+	$res = dolibarr_set_const($db, "BARCODE_PRODUCTLOT_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
+	if ($barcodenumberingmodule == 'mod_barcode_productlot_standard' && !getDolGlobalString('BARCODE_STANDARD_PRODUCTLOT_MASK')) {
+		// Prefix differs from products and third parties on purpose: counters are computed per table,
+		// identical masks would produce identical codes on different objects
+		$res = dolibarr_set_const($db, "BARCODE_STANDARD_PRODUCTLOT_MASK", '05{0000000000}?', 'chaine', 0, '', $conf->entity);
+	}
+} elseif ($action == 'setbarcodeproductlotoff') {
+	$res = dolibarr_del_const($db, "BARCODE_PRODUCTLOT_ADDON_NUM", $conf->entity);
+}
+
 if ($action == 'setcoder') {
 	$coder = GETPOST('coder', 'alpha');
 	$code_id = GETPOSTINT('code_id');
@@ -97,6 +110,8 @@ if ($action == 'setcoder') {
 	$res = dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $coder_id, 'chaine', 0, '', $conf->entity);
 	$coder_id = GETPOST('GENBARCODE_BARCODETYPE_THIRDPARTY', 'alpha');
 	$res = dolibarr_set_const($db, "GENBARCODE_BARCODETYPE_THIRDPARTY", $coder_id, 'chaine', 0, '', $conf->entity);
+	$coder_id = GETPOST('PRODUCTLOT_DEFAULT_BARCODE_TYPE', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUCTLOT_DEFAULT_BARCODE_TYPE", $coder_id, 'chaine', 0, '', $conf->entity);
 
 	if ($res > 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -187,6 +202,17 @@ if (isModEnabled('societe')) {
 	print '<td>'.img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("UseBarCodeForThirdParties").'</td>';
 	print '<td width="60" class="right">';
 	print ajax_constantonoff('BARCODE_USE_ON_THIRDPARTY', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td>&nbsp;</td>';
+	print '</tr>';
+}
+
+// Module lots/serial numbers
+if (isModEnabled('productbatch')) {
+	print '<tr class="oddeven">';
+	print '<td>'.img_picto('', 'lot', 'class="pictofixedwidth"').$langs->trans("UseBarCodeForProductLots").'</td>';
+	print '<td width="60" class="right">';
+	print ajax_constantonoff('BARCODE_USE_ON_PRODUCTLOT', array(), null, 0, 0, 1);
 	print '</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
@@ -390,10 +416,77 @@ if (getDolGlobalString('BARCODE_USE_ON_THIRDPARTY') && isModEnabled('societe')) 
 	print '</div>';
 }
 
+// Select barcode numbering module
+if (getDolGlobalString('BARCODE_USE_ON_PRODUCTLOT') && isModEnabled('productbatch')) {
+	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("LotSerial").")", '', 'lot');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td width="140">'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td>'.$langs->trans("Example").'</td>';
+	print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+	print "</tr>\n";
+
+	$dirbarcodenum = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
+
+	foreach ($dirbarcodenum as $dirroot) {
+		$dir = dol_buildpath($dirroot, 0);
+
+		$handle = @opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (preg_match('/^mod_barcode_productlot_.*php$/', $file)) {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
+
+					try {
+						dol_include_once($dirroot.$file.'.php');
+					} catch (Exception $e) {
+						dol_syslog($e->getMessage(), LOG_ERR);
+						continue;
+					}
+
+					$modBarCode = new $file();
+
+					'@phan-var-force ModeleNumRefBarCode $modBarCode';
+
+					print '<tr class="oddeven">';
+					print '<td>'.(isset($modBarCode->name) ? $modBarCode->name : $modBarCode->nom)."</td><td>\n";
+					print $modBarCode->info($langs);
+					print '</td>';
+					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
+
+					if (getDolGlobalString('BARCODE_PRODUCTLOT_ADDON_NUM') && getDolGlobalString('BARCODE_PRODUCTLOT_ADDON_NUM') == "$file") {
+						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductlotoff&token='.newToken().'&amp;value='.urlencode($file).'">';
+						print img_picto($langs->trans("Activated"), 'switch_on');
+						print '</a></td>';
+					} else {
+						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductloton&token='.newToken().'&amp;value='.urlencode($file).'">';
+						print img_picto($langs->trans("Disabled"), 'switch_off');
+						print '</a></td>';
+					}
+					print '<td class="center">';
+					$s = $modBarCode->getToolTip($langs, null, -1);
+					print $form->textwithpicto('', $s, 1);
+					print '</td>';
+					print "</tr>\n";
+				}
+			}
+			closedir($handle);
+		}
+	}
+	print "</table>\n";
+	print '<br><br><br>';
+
+	print '</div>';
+}
+
 /*
  *  CHOOSE ENCODING
  */
-if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
+if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_USE_ON_THIRDPARTY') || getDolGlobalString('BARCODE_USE_ON_PRODUCTLOT')) {
 	print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
 
 	if (empty($conf->use_javascript_ajax)) {
@@ -499,7 +592,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 /*
  * Other options
  */
-if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_USE_ON_THIRDPARTY')) {
+if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_USE_ON_THIRDPARTY') || getDolGlobalString('BARCODE_USE_ON_PRODUCTLOT')) {
 	print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
@@ -546,6 +639,17 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 		print '<td>'.img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 		print '<td width="60" class="right">';
 		print $formbarcode->selectBarcodeType(getDolGlobalInt('GENBARCODE_BARCODETYPE_THIRDPARTY'), "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
+		print '</td>';
+		print '<td>&nbsp;</td>';
+		print '</tr>';
+	}
+
+	// Module lots/serial numbers
+	if (getDolGlobalString('BARCODE_USE_ON_PRODUCTLOT') && isModEnabled('productbatch')) {
+		print '<tr class="oddeven">';
+		print '<td>'.img_picto('', 'lot', 'class="pictofixedwidth"').$langs->trans("SetDefaultBarcodeTypeProductLots").'</td>';
+		print '<td width="60" class="right">';
+		print $formbarcode->selectBarcodeType(getDolGlobalInt('PRODUCTLOT_DEFAULT_BARCODE_TYPE'), "PRODUCTLOT_DEFAULT_BARCODE_TYPE", 1);
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';

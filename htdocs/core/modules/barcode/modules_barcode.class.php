@@ -213,7 +213,7 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 	 *
 	 *	@param	DoliDB		$db					Database handler
 	 *	@param	string		$code				Code to check/correct
-	 *	@param	Product|Societe	$object		Object product or ThirdParty
+	 *	@param	Product|Societe|Productlot	$object		Object product, ThirdParty or lot/serial number
 	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
 	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
 	 *  @return int<-7,0>						0 if OK
@@ -224,4 +224,23 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 	 * 											-7 ErrorBadClass
 	 */
 	abstract public function verif($db, &$code, $object, $thirdparty_type, $type);
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * 	Return if a code is still available (not already used by another object)
+	 *
+	 *	All shipped numbering modules implement this, so a caller may rely on it being present.
+	 *	The default accepts everything: a module that does not enforce uniqueness must not block.
+	 *
+	 *	@param	DoliDB						$db		Database handler
+	 *	@param	string						$code	Code to check
+	 *	@param	Product|Societe|Productlot	$object	Object the code is being assigned to
+	 *	@return	int									0 if available, <0 if already used or on error
+	 */
+	public function verif_dispo($db, $code, $object)
+	{
+		// phpcs:enable
+		return 0;
+	}
 }
