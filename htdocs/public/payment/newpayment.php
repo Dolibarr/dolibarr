@@ -516,6 +516,9 @@ if ($action == 'charge' && isModEnabled('stripe')) {
 
 	$error = 0;
 	$errormessage = '';
+	$customer = null;
+	$charge = null;
+	$paymentintent = null;
 
 	// When using the old Charge API architecture
 	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
