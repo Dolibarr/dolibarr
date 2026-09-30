@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members"));
@@ -100,66 +101,28 @@ if ($conf->use_javascript_ajax) {
 	$year = idate('Y');
 	$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
 
-	$boxgraph .= '<div class="div-table-responsive-no-min">';
-	$boxgraph .= '<table class="noborder nohover centpercent">';
-	$boxgraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Status").' '.($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : '').'</th></tr>';
-	$boxgraph .= '<tr><td class="center" colspan="2">';
-
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 	$stats = new AdherentStats($db, 0, $userid);
 
 	// Show array
 	$sumMembers = $stats->countMembersByTypeAndStatus($numberyears);
-	if (is_array($sumMembers) && !empty($sumMembers)) {
-		$total = $sumMembers['total']['members_draft'] + $sumMembers['total']['members_pending'] + $sumMembers['total']['members_uptodate'] + $sumMembers['total']['members_expired'] + $sumMembers['total']['members_excluded'] + $sumMembers['total']['members_resiliated'];
-	} else {
-		$total = 0;
-	}
 	foreach (array('members_draft', 'members_pending', 'members_uptodate', 'members_expired', 'members_excluded', 'members_resiliated') as $val) {
 		if (empty($sumMembers['total'][$val])) {
 			$sumMembers['total'][$val] = 0;
 		}
 	}
 
-	$dataseries = [
-		[$langs->transnoentitiesnoconv("MembersStatusToValid"), $sumMembers['total']['members_draft']], // Draft, not yet validated
-		[$langs->transnoentitiesnoconv("WaitingSubscription"), $sumMembers['total']['members_pending']],
-		[$langs->transnoentitiesnoconv("UpToDate"), $sumMembers['total']['members_uptodate']],
-		[$langs->transnoentitiesnoconv("OutOfDate"), $sumMembers['total']['members_expired']],
-		[$langs->transnoentitiesnoconv("MembersStatusExcluded"), $sumMembers['total']['members_excluded']],
-		[$langs->transnoentitiesnoconv("MembersStatusResiliated"), $sumMembers['total']['members_resiliated']],
-	];
+	$colors = getThemeBadgeStatusColors();
+	$series = array(
+		array('label' => $langs->transnoentitiesnoconv("MembersStatusToValid"), 'nb' => $sumMembers['total']['members_draft'], 'color' => '-'.$colors[0]), // Draft, not yet validated
+		array('label' => $langs->transnoentitiesnoconv("WaitingSubscription"), 'nb' => $sumMembers['total']['members_pending'], 'color' => $colors[1]),
+		array('label' => $langs->transnoentitiesnoconv("UpToDate"), 'nb' => $sumMembers['total']['members_uptodate'], 'color' => $colors[4]),
+		array('label' => $langs->transnoentitiesnoconv("OutOfDate"), 'nb' => $sumMembers['total']['members_expired'], 'color' => $colors[8]),
+		array('label' => $langs->transnoentitiesnoconv("MembersStatusExcluded"), 'nb' => $sumMembers['total']['members_excluded'], 'color' => '-'.$colors[8]),
+		array('label' => $langs->transnoentitiesnoconv("MembersStatusResiliated"), 'nb' => $sumMembers['total']['members_resiliated'], 'color' => $colors[6]),
+	);
 
-	/**
-	 * @var string $badgeStatus0
-	 * @var string $badgeStatus1
-	 * @var string $badgeStatus4
-	 * @var string $badgeStatus6
-	 * @var string $badgeStatus8
-	 */
-	$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
-	if ($theme_vars_file) {
-		include $theme_vars_file;
-	}
-
-	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-	$dolgraph = new DolGraph();
-	$dolgraph->SetData($dataseries);
-	$dolgraph->SetDataColor(array('-'.$badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus8, '-'.$badgeStatus8, $badgeStatus6));
-	$dolgraph->setShowLegend(2);
-	$dolgraph->setShowPercent(1);
-	$dolgraph->SetType(array('pie'));
-	$dolgraph->setHeight('200');
-	$dolgraph->draw('idgraphstatus');
-	$boxgraph .= $dolgraph->show($total ? 0 : 1);
-
-	$boxgraph .= '</td></tr>';
-	$boxgraph .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	$boxgraph .= $total;
-	$boxgraph .= '</td></tr>';
-	$boxgraph .= '</table>';
-	$boxgraph .= '</div>';
-	$boxgraph .= '<br>';
+	$boxgraph .= getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("Status").' '.($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''), $series);
 }
 
 // boxes
