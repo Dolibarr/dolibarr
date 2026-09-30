@@ -263,7 +263,7 @@ $arrayfields = array(
 );
 
 if ($user->socid) {
-	unset($arrayfields[p'.note_private'];
+	unset($arrayfields['p.note_private'];
 }
 
 // List of fields to search into when doing a "search in all"
