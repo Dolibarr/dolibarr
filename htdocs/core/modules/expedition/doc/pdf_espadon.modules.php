@@ -1379,7 +1379,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank = 0; // do not use negative rank
 		$this->cols['position'] = array(
 			'rank' => $rank,
-			'width' => 10,
+			'width' => 10.0,
 			'status' => getDolGlobalInt('PDF_ESPADON_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
 			'title' => array(
 				'textkey' => '#', // use lang key is useful in some case with module
@@ -1390,7 +1390,7 @@ class pdf_espadon extends ModelePdfExpedition
 			),
 			'content' => array(
 				'align' => 'C',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -1408,7 +1408,7 @@ class pdf_espadon extends ModelePdfExpedition
 			),
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -1416,14 +1416,14 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
+			'width' => (float) getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
 				'label' => ' '
 			),
 			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.0, 0.0, 0.0, 0.0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => false, // remove left line separator
 		);
@@ -1435,7 +1435,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['weight'] = array(
 			'rank' => $rank,
-			'width' => 30, // in mm
+			'width' => 30.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'WeightVolShort'
@@ -1447,7 +1447,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
-			'width' => 19, // in mm
+			'width' => 19.0, // in mm
 			'status' => getDolGlobalString('SHIPPING_PDF_DISPLAY_AMOUNT_HT') ? 1 : 0,
 			'title' => array(
 				'textkey' => 'PriceUHT'
@@ -1458,7 +1458,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
-			'width' => 26, // in mm
+			'width' => 26.0, // in mm
 			'status' => getDolGlobalString('SHIPPING_PDF_DISPLAY_AMOUNT_HT') ? 1 : 0,
 			'title' => array(
 				'textkey' => 'TotalHT'
@@ -1469,7 +1469,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['qty_asked'] = array(
 			'rank' => $rank,
-			'width' => 30, // in mm
+			'width' => 30.0, // in mm
 			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') ? 1 : 0,
 			'title' => array(
 				'textkey' => 'QtyOrdered'
@@ -1483,7 +1483,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['unit_order'] = array(
 			'rank' => $rank,
-			'width' => 15, // in mm
+			'width' => 15.0, // in mm
 			'status' => !getDolGlobalString('PRODUCT_USE_UNITS') ? 0 : 1,
 			'title' => array(
 				'textkey' => 'Unit'
@@ -1497,7 +1497,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
-			'width' => 30, // in mm
+			'width' => 30.0, // in mm
 			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP'),
 			'title' => array(
 				'textkey' => 'QtyToShip'

@@ -186,7 +186,6 @@ $sumpaid = 0.0;
 // Payment creation form
 if ($action == 'create') {
 	$salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
-	$salary->fk_typepayment = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript">';

@@ -69,7 +69,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
 		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_start, 'day'); ?></td>
-		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_stop, 'day'); ?></td>
+		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_end, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
 		$total += $objectlink->budget_amount;
 		echo price($objectlink->budget_amount);

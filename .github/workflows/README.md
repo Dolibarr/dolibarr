@@ -12,6 +12,7 @@ This run the actions:
 - translations.yml
 - phan.yml
 - phpstan.yml
+- travis-emulated.yml (the build of the .travis.yml emulated on a github runner, started when the pre-commit CI passed)
 
 See https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#running-a-workflow-based-on-the-conclusion-of-another-workflow
 
