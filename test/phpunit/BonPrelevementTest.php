@@ -309,7 +309,7 @@ class BonPrelevementTest extends CommonClassTest
 		$conf->global->PRELEVEMENT_SEPA_SCHEMA_VERSION = '8';
 
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'FRST', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 						   array($demAId), self::$fkBankAccount);
 		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
 
