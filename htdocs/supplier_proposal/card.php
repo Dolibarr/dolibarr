@@ -211,6 +211,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete askprice
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header('Location: '.DOL_URL_ROOT.'/supplier_proposal/list.php');
@@ -2471,7 +2472,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $object->socid).'&action=clone&object='.urlencode($object->element).'&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+					print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $object->socid).'&action=clone&object='.urlencode($object->element).'&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 				}
 
 				// Delete

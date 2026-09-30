@@ -858,7 +858,8 @@ class User extends CommonObject
 			//$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
 
 			if (!is_array($result) && $result < 0) {
-				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
+				$this->error = $defaultValues->error;
+				$this->errors = $defaultValues->errors;
 				dol_print_error($this->db);
 				return -1;
 			} elseif (count($result) > 0) {
@@ -2404,8 +2405,12 @@ class User extends CommonObject
 			$sql .= ", salaryextra= ".($this->salaryextra != '' ? "'".$this->db->escape($this->salaryextra)."'" : "null");
 		}
 		$sql .= ", weeklyhours= ".($this->weeklyhours != '' ? "'".$this->db->escape($this->weeklyhours)."'" : "null");
-		if (!empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
-			$sql .= ", entity = ".((int) $this->entity); // entity flag can be set/unset only by an another superadmin user
+		if (isModEnabled('multicompany') && !empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
+			// entity flag can be set/unset only by another superadmin user, and only when multicompany is enabled.
+			// Without multicompany, entity must never be written here: fetch() forces an admin's entity to 0 in memory
+			// (an admin is a global admin without multicompany), and persisting that would wrongly turn the user into
+			// a "whole database" (entity 0) admin.
+			$sql .= ", entity = ".((int) $this->entity);
 		}
 
 		$sql .= ", default_range = ".($this->default_range > 0 ? ((int) $this->default_range) : 'null');

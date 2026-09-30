@@ -212,10 +212,10 @@ if (empty($reshook)) {
 					$action = 'create';
 				}
 			} else {
-				if (!$user->hasRight('holiday', 'write') && !$user->hasRight('holiday', 'writeall_advance')) {
+				if (!$user->hasRight('holiday', 'write') && !$user->hasRight('holiday', 'writeall')) {
 					$error++;
 					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
-				} elseif (!$user->hasRight('holiday', 'writeall_advance') && !in_array($fuserid, $childids)) {
+				} elseif (!$user->hasRight('holiday', 'writeall') && !in_array($fuserid, $childids)) {
 					$error++;
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 					$action = 'create';
@@ -460,7 +460,13 @@ if (empty($reshook)) {
 
 		// If this is a rough draft, approved, canceled or refused
 		if ($object->status == Holiday::STATUS_DRAFT || $object->status == Holiday::STATUS_CANCELED || $object->status == Holiday::STATUS_REFUSED) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
+			}
 		} else {
 			$error++;
 			setEventMessages($langs->trans('BadStatusOfObject'), null, 'errors');
@@ -1025,7 +1031,7 @@ $edit = false;
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'write')) || (!in_array($fuserid, $childids) && ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('holiday', 'writeall_advance') || !$user->hasRight('holiday', 'writeall'))))) {
+	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'write')) || (!in_array($fuserid, $childids) && ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('holiday', 'writeall') || !$user->hasRight('holiday', 'writeall'))))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request
@@ -1712,7 +1718,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				$filedir = $conf->holiday->dir_output.'/'.$object->element.'/'.$objref;
 				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 				$genallowed = ($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall'); // If you can read, you can build the PDF to read content
-				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall_advance'); // If you can create/edit, you can remove a file on card
+				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall'); // If you can create/edit, you can remove a file on card
 				print $formfile->showdocuments('holiday:Holiday', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 			} */
 

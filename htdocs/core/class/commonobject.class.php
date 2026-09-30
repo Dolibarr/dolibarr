@@ -1528,6 +1528,18 @@ abstract class CommonObject
 
 		$error = 0;
 
+		// When called on a loaded object, the link must be one of its own contacts (same filter as liste_contact())
+		if ($this->id > 0) {
+			$sql = "SELECT ec.rowid FROM ".$this->db->prefix()."element_contact as ec, ".$this->db->prefix()."c_type_contact as tc";
+			$sql .= " WHERE ec.rowid = ".((int) $rowid)." AND ec.element_id = ".((int) $this->id);
+			$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element = '".$this->db->escape($this->element)."'";
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorRecordNotFound';
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		if (!$error && empty($notrigger)) {
@@ -3742,6 +3754,10 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$this->db->sanitize($fieldposition)." = ".((int) $rang);
 		$sql .= ' WHERE rowid = '.((int) $rowid);
+		if ($this->id > 0 && !empty($this->fk_element)) {
+			// The line must belong to the object we reorder lines of
+			$sql .= " AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		}
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -3893,6 +3909,32 @@ abstract class CommonObject
 
 		$row = $this->db->fetch_row($resql);
 		return $row[0];
+	}
+
+	/**
+	 * Round a quantity up to the next multiple of a packaging quantity (options PRODUCT_USE_CUSTOMER_PACKAGING
+	 * and PRODUCT_USE_SUPPLIER_PACKAGING). The rounding is done on the absolute value, so a negative quantity
+	 * stays negative.
+	 *
+	 * @param	float|string		$qty		Quantity
+	 * @param	float|string|null	$packaging	Packaging quantity. Nothing is done if it is empty or not > 0.
+	 * @return	float|string					Quantity rounded to the packaging, or $qty if no rounding is needed
+	 */
+	public function roundQtyToPackaging($qty, $packaging)
+	{
+		if (empty($packaging) || !is_numeric($packaging) || (float) $packaging <= 0) {
+			return $qty;
+		}
+		$sign = ((float) $qty < 0 ? -1 : 1);
+		$absqty = abs((float) $qty);
+		if ($absqty < (float) $packaging) {
+			return $sign * (float) $packaging;
+		}
+		if ((float) price2num(fmod($absqty, (float) $packaging), 'MS')) {
+			$coeff = intval($absqty / (float) $packaging) + 1;
+			return $sign * (float) price2num((float) $packaging * $coeff, 'MS');
+		}
+		return $qty;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -11677,6 +11719,26 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Check that a line belongs to this object, using $this->table_element_line and $this->fk_element.
+	 * Returns true when the object is not loaded or does not define them.
+	 *
+	 * @param	int		$lineid		Id of the line
+	 * @return	bool				True if the line is a line of this object
+	 */
+	public function isLineOfObject($lineid)
+	{
+		if (!($this->id > 0) || empty($this->table_element_line) || empty($this->fk_element)) {
+			return true;
+		}
+
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE rowid = ".((int) $lineid)." AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+
+		return ($resql && $this->db->num_rows($resql) > 0);
+	}
+
+	/**
 	 *  Delete a line of object in database
 	 *
 	 *	@param  User	$user       User that delete
@@ -11690,6 +11752,17 @@ abstract class CommonObject
 
 		$tmpforobjectclass = get_class($this);
 		$tmpforobjectlineclass = ucfirst($tmpforobjectclass).'Line';
+
+		if ($this->id > 0 && !empty($this->fk_element)) {
+			// The line must belong to this object
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+			$sql .= " WHERE rowid = ".((int) $idline)." AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 

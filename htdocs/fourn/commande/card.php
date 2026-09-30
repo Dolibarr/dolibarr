@@ -396,7 +396,9 @@ if (empty($reshook)) {
 							$l->total_tva = 0;
 							$l->total_ttc = 0;
 							$l->ref_supplier = '';
-							$l->update();
+							if ($l->update() < 0) {
+								setEventMessages($l->error, $l->errors, 'errors');
+							}
 						} else {
 							// No need for loop to keep best supplier price
 							$obj = $db->fetch_object($resql);
@@ -406,7 +408,9 @@ if (empty($reshook)) {
 							$l->total_tva = $l->total_ht * ($obj->tva_tx / 100);
 							$l->total_ttc = $l->total_ht + $l->total_tva;
 							$l->ref_supplier = $obj->ref_fourn;
-							$l->update();
+							if ($l->update() < 0) {
+								setEventMessages($l->error, $l->errors, 'errors');
+							}
 						}
 					} else {
 						dol_print_error($db);
@@ -1505,6 +1509,7 @@ if (empty($reshook)) {
 
 		// @phpstan-ignore-next-line
 		if (empty($errOnDelete)) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
 			if ($result > 0) {
 				$db->commit();
@@ -3241,7 +3246,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object=order">'.$langs->trans("ToClone").'</a>';
+					print dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=order', '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Cancel

@@ -393,47 +393,52 @@ try {
 	$count = count($words);
 	$candidates = array();
 
-	// Helper function to validate a phrase without a dictionary
-	$isValidPhrase = function (string $phrase) use ($dynamicStopWords): bool {
+	// Helper function to validate a phrase without a dictionary.
+	// Returns 0 (not a candidate), 1 (candidate) or 2 (strict candidate, see RULE 2).
+	$isValidPhrase = function (string $phrase) use ($dynamicStopWords): int {
 		$phrase = trim($phrase);
 
 		// RULE 1: Minimum Length
 		// Filter out extremely short words (1-2 chars).
 		// This catches "a", "le", "la", "de", "y", "to", "in", "von", "zu" in almost all languages.
 		if (mb_strlen($phrase) < 3) {
-			return false;
+			return 0;
 		}
 
 		// RULE 2: First Word Check
-		// If the phrase starts with a translated keyword (e.g. "Invoice Acme"), skip it.
+		// A phrase starting with a translated keyword ("Invoice Acme") is most
+		// often a verb or an object name read as a company. A single such word
+		// is never a candidate. A longer phrase is kept as a STRICT candidate:
+		// it only resolves when a company carries that whole phrase as its name
+		// (a third party legitimately named "Test Corp" was collateral damage of
+		// the plain rejection - review sonikf on #38356).
 		$parts = explode(' ', $phrase);
 		$firstWord = dol_strtolower($parts[0]);
 
 		if (in_array($firstWord, $dynamicStopWords)) {
-			return false;
+			return count($parts) > 1 ? 2 : 0;
 		}
 
-		return true;
+		return 1;
 	};
 
 	// Fill array $candidates of thirdparty name we may want to work with
+	$strictCandidates = array();	// phrases that must match a whole company name
 	for ($i = 0; $i < $count; $i++) {
-		// Single Word
-		if ($isValidPhrase($words[$i])) {
-			$candidates[] = $words[$i];
-		}
-
+		$phrases = array($words[$i]);
 		if ($i + 1 < $count) {
-			$phrase = $words[$i] . ' ' . $words[$i + 1];
-			if ($isValidPhrase($phrase)) {
-				$candidates[] = $phrase;
-			}
+			$phrases[] = $words[$i] . ' ' . $words[$i + 1];
 		}
-
 		if ($i + 2 < $count) {
-			$phrase = $words[$i] . ' ' . $words[$i + 1] . ' ' . $words[$i + 2];
-			if ($isValidPhrase($phrase)) {
+			$phrases[] = $words[$i] . ' ' . $words[$i + 1] . ' ' . $words[$i + 2];
+		}
+		foreach ($phrases as $phrase) {
+			$valid = $isValidPhrase($phrase);
+			if ($valid > 0) {
 				$candidates[] = $phrase;
+				if ($valid === 2) {
+					$strictCandidates[$phrase] = true;
+				}
 			}
 		}
 	}
@@ -446,8 +451,15 @@ try {
 
 	if (!empty($candidates)) {
 		foreach ($candidates as $phrase) {
-			// We use LIKE '...' to match the start of the company name.
-			$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '" . $db->escape($phrase) . "%' LIMIT 1";
+			if (isset($strictCandidates[$phrase])) {
+				// Strict: the whole phrase must be the company name, or the name
+				// must continue with a space ("Test Corp" for "Test Corp SAS"),
+				// the shortest (closest) name first.
+				$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom = '" . $db->escape($phrase) . "' OR nom LIKE '" . $db->escape($phrase) . " %' ORDER BY LENGTH(nom) LIMIT 1";
+			} else {
+				// We use LIKE '...' to match the start of the company name.
+				$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '" . $db->escape($phrase) . "%' LIMIT 1";
+			}
 
 			$res = $db->query($sql);
 
@@ -675,7 +687,46 @@ try {
 				$query .= "\n\n(Context: ".$aiPageContextShort.")";
 			}
 
-			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments);
+			// Pinned context turns: past exchanges the user EXPLICITLY selected in
+			// the chat (nothing is carried over by default - context is opt-in, so
+			// its token cost is a visible, deliberate choice). Hard-sanitized here:
+			// roles constrained, embedded attachment payloads stripped (attachments
+			// stay one-shot), per-turn and global caps, privacy redaction applied.
+			$history = array();
+			if (!empty($data['history']) && is_array($data['history'])) {
+				$histBudget = 6000;
+				foreach (array_slice($data['history'], 0, 12) as $turn) {
+					if (!is_array($turn) || empty($turn['text']) || !is_string($turn['text'])) {
+						continue;
+					}
+					$htext = preg_replace('/__FILE_ATTACHMENT__\[[^\]]*\]::[^\s]+/', '[attachment removed]', $turn['text']);
+					$htext = trim((string) $htext);
+					if ($htext === '') {
+						continue;
+					}
+					if (dol_strlen($htext) > 1500) {
+						$htext = dol_substr($htext, 0, 1500).' ...';
+					}
+					if ($guard) {
+						$htext = $guard->mask($htext);
+					}
+					$histBudget -= dol_strlen($htext);
+					if ($histBudget < 0) {
+						break;
+					}
+					$history[] = array('role' => ((($turn['role'] ?? '') === 'assistant') ? 'assistant' : 'user'), 'text' => $htext);
+				}
+			}
+
+			// With past turns in the payload, the model must know what they are
+			// for. Two consecutive user turns (a request whose action the user
+			// cancelled, then a new one) read as "two things to do", and with a
+			// single tool call per answer the model picks the older one - field
+			// case: "set the phone of X" answered by creating "X bis".
+			if (!empty($history)) {
+				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references like \"this one\" or \"the second\". The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
+			}
+			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
 			dol_syslog('rawResponse='.$rawResponse, LOG_DEBUG);
@@ -860,6 +911,24 @@ try {
 		}
 	}
 
+	// ask_for_confirmation is ours, built below around a real tool call; a model
+	// that emits it by itself (it does, on a follow-up question: "do you really
+	// want to update the phone of X?") sends the client a confirmation with
+	// nothing to confirm, which it rejects as malformed. Hand the question to
+	// the user as a plain answer instead: he replies, and the next turn acts.
+	if ($toolName === 'ask_for_confirmation' && empty($intentJSON['arguments']['original_intent'])) {
+		$question = '';
+		foreach (array('message', 'action', 'question', 'text') as $altkey) {
+			if (!empty($intentJSON['arguments'][$altkey]) && is_string($intentJSON['arguments'][$altkey])) {
+				$question = $intentJSON['arguments'][$altkey];
+				break;
+			}
+		}
+		dol_syslog("parse_intent.php model emitted ask_for_confirmation without an action, downgraded to respond_to_user", LOG_WARNING);
+		$toolName = 'respond_to_user';
+		$intentJSON = array('tool' => 'respond_to_user', 'arguments' => array('message' => ($question !== '' ? $question : $langs->transnoentitiesnoconv('AICannotUnderstandRequest'))));
+	}
+
 	if ($askForConfirmation > 0) {
 		$isModifyOperation = preg_match('/(create|update|delete|add|remove|modify|edit)/i', $toolName);
 
@@ -880,6 +949,17 @@ try {
 
 		$details = formatArgumentsForDisplay($arguments);
 		$action = extractActionFromTool($toolName);
+
+		// A write tool describes its own effect in a sentence, which is what the
+		// user has to act on: prefer it over the raw argument dump, and keep the
+		// dump underneath for the detail.
+		$toolInstance = $mcp->toolsByName[$toolName] ?? null;
+		if (is_object($toolInstance) && method_exists($toolInstance, 'writeConfirmationPreview')) {
+			$preview = (string) $toolInstance->writeConfirmationPreview($toolName, $arguments);
+			if ($preview !== McpTool::NO_WRITE) {
+				$action = $preview;
+			}
+		}
 
 		$confirmationResponse = [
 			"tool" => "ask_for_confirmation",

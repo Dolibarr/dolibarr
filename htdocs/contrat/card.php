@@ -921,6 +921,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: list.php?restore_lastsearch_values=1");
@@ -2456,7 +2457,7 @@ if ($action == 'create') {
 				// Clone
 				if ($user->hasRight('contrat', 'creer')) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Delete

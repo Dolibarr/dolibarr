@@ -45,7 +45,7 @@ $langs->load("admin");
 
 $mode = GETPOST('mode', 'aZ09');
 
-if (!$user->admin && !$user->hasRight('bockedlog', 'read')) {
+if (!$user->admin && !$user->hasRight('blockedlog', 'read')) {
 	accessforbidden();
 }
 

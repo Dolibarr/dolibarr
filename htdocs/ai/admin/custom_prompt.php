@@ -2,8 +2,9 @@
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
  * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -451,6 +452,12 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 // actually fixed, suggesting the closest model currently offered. Warn only —
 // nothing is changed automatically.
 $runfail = json_decode(getDolGlobalString('AI_MODEL_RUNTIME_FAILURE'), true);
+// Only warn about the provider and model in use now: a record left by another
+// provider describes a setup the administrator has already moved away from.
+$runfailservice = is_array($runfail) ? (string) ($runfail['service'] ?? '') : '';
+if ($runfailservice !== '' && $runfailservice !== getDolGlobalString('AI_API_SERVICE')) {
+	$runfail = null;
+}
 if (is_array($runfail) && !empty($runfail['model'])) {
 	$msg = $langs->trans(
 		"AIModelRuntimeFailureBanner",

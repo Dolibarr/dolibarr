@@ -85,8 +85,19 @@ if ($user->socid) {
 $hookmanager->initHooks(array('variouscard', 'globalcard'));
 
 $result = restrictedArea($user, 'banque', '', '', '');
+// PaymentVarious::fetch() returns a record regardless of entity (low-level primitive), so the entity
+// restriction is enforced here in the caller: the various payment must belong to the current entity.
+if ($id > 0) {
+	$resqlent = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."payment_various WHERE rowid = ".((int) $id)." AND entity IN (".getEntity('payment_various').")");
+	if (!$resqlent || !$db->num_rows($resqlent)) {
+		accessforbidden();
+	}
+}
 
 $object = new PaymentVarious($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -111,15 +122,11 @@ if (empty($reshook)) {
 			header("Location: ".$urltogo);
 			exit;
 		}
-		if ($id > 0) {
-			$ret = $object->fetch($id);
-		}
 		$action = '';
 	}
 
 	// Link to a project
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->fetch($id);
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
@@ -230,11 +237,10 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
-		$result = $object->fetch($id);
-
 		if ($object->rappro == 0) {
 			$db->begin();
 
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$ret = $object->delete($user);
 			if ($ret > 0) {
 				$accountline = null;
@@ -267,8 +273,6 @@ if (empty($reshook)) {
 	if ($action == 'setaccountancy_code' && $permissiontodelete) {
 		$db->begin();
 
-		$result = $object->fetch($id);
-
 		$object->accountancy_code = GETPOST('accountancy_code', 'alphanohtml');
 
 		$res = $object->update($user);
@@ -282,8 +286,6 @@ if (empty($reshook)) {
 
 	if ($action == 'setsubledger_account' && $permissiontodelete) {
 		$db->begin();
-
-		$result = $object->fetch($id);
 
 		$object->subledger_account = $subledger_account;
 
@@ -306,8 +308,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	$db->begin();
 
 	$originalId = $id;
-
-	$object->fetch($id);
 
 	if ($object->id > 0) {
 		unset($object->id);
@@ -388,12 +388,8 @@ if (isModEnabled('project')) {
 	$formproject = null;
 }
 
-if ($id) {
-	$object = new PaymentVarious($db);
-	$result = $object->fetch($id);
-	if ($result <= 0) {
-		recordNotFound();
-	}
+if ($action != 'create' && ! $object->id) {
+	recordNotFound();
 }
 
 $title = $object->ref." - ".$langs->trans('Card');
@@ -616,7 +612,7 @@ if ($action == 'create') {
 }
 
 // View in read or edit mode
-if ($id) {
+if ($object->id > 0) {
 	$alreadyaccounted = $object->getVentilExportCompta();
 
 	$head = various_payment_prepare_head($object);
@@ -803,7 +799,7 @@ if ($id) {
 
 	// Clone
 	if ($permissiontoadd) {
-		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="' . dolBuildUrl(DOL_URL_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone'], true).'">'.$langs->trans("ToClone") . "</a></div>";
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', dolBuildUrl(DOL_URL_ROOT."/compta/bank/various_payment/card.php", ['id' => $object->id, 'action' => 'clone'], true), '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 	}
 
 	// Delete

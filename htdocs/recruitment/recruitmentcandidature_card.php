@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -253,7 +253,11 @@ if (empty($reshook)) {
 		} else {
 			$object->fk_user = $result;
 
-			$object->update($user);
+			$resultupdate = $object->update($user);
+			if ($resultupdate < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 
 		if (!$error) {
@@ -601,7 +605,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&object=recruitmentcandidature', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&object=recruitmentcandidature', 'clone', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 
 			// Button to convert into a user

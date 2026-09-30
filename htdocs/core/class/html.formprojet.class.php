@@ -740,6 +740,7 @@ class FormProjets extends Form
 					} else {
 						$finallabel = ($langs->transnoentitiesnoconv("OppStatus" . $obj->code) != "OppStatus" . $obj->code ? $langs->transnoentitiesnoconv("OppStatus" . $obj->code) : $obj->label);
 						if ($showpercent) {
+							//$finallabel .= ' <span class="opacitymedium">(' . $obj->percent . '%)</span>';
 							$finallabel .= ' (' . $obj->percent . '%)';
 						}
 					}

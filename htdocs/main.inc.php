@@ -2797,8 +2797,11 @@ function top_menu_ai()
 	$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
 
 	// Chat CSS is needed on every page showing the icon (link-in-body is valid HTML5,
-	// the standalone page ai/assistant/index.php uses the same pattern).
-	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css">';
+	// the standalone page ai/assistant/index.php uses the same pattern). Same
+	// filemtime cache-busting as the JS module below: a stylesheet cached for
+	// 15 minutes otherwise hides every CSS change of the chat behind a reload.
+	$aicssver = @filemtime(DOL_DOCUMENT_ROOT.'/ai/css/ai_assistant.css');
+	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css?v='.urlencode((string) ($aicssver ? $aicssver : DOL_VERSION)).'">';
 
 	// Toggle icon. The accesskey "a" keeps the Alt+A shortcut: its browser
 	// activation fires the click handler below, so it toggles the popover.

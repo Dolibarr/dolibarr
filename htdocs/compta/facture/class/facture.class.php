@@ -2131,9 +2131,11 @@ class Facture extends CommonInvoice
 		$result = '';
 
 		if ($option == 'withdraw') {
-			$url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/facture/prelevement.php';
+			$query = ['facid' => $this->id];
 		} else {
-			$url = DOL_URL_ROOT.'/compta/facture/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/facture/card.php';
+			$query = ['id' => $this->id];
 		}
 
 		if (!$user->hasRight("facture", "read")) {
@@ -2147,9 +2149,10 @@ class Facture extends CommonInvoice
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		if ($short) {
 			return $url;
@@ -2931,6 +2934,11 @@ class Facture extends CommonInvoice
 		$result = $remise->fetch($idremise);
 
 		if ($result > 0) {
+			if ($this->socid > 0 && $remise->fk_soc != $this->socid) {	// The discount must belong to the thirdparty of the invoice
+				$this->error = $langs->trans("ErrorDiscountNotSameCompany");
+				$this->db->rollback();
+				return -6;
+			}
 			if ($remise->fk_facture) {	// Protection against multiple submission
 				$this->error = $langs->trans("ErrorDiscountAlreadyUsed");
 				$this->db->rollback();
@@ -4397,15 +4405,10 @@ class Facture extends CommonInvoice
 				if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 					$tmpproduct = new Product($this->db);
 					$result = $tmpproduct->fetch($fk_product);
-					if (abs((float) $qty) < $tmpproduct->packaging) {
-						$qty = (float) $tmpproduct->packaging;
+					$newqty = $this->roundQtyToPackaging($qty, $tmpproduct->packaging);
+					if ($newqty != $qty) {
+						$qty = $newqty;
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
-					} else {
-						if (!empty($tmpproduct->packaging) && (float) price2num(fmod((float) $qty, (float) $tmpproduct->packaging), 'MS')) {
-							$coeff = intval(abs((float) $qty) / $tmpproduct->packaging) + 1;
-							$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
-							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
-						}
 					}
 				}
 			}
@@ -4604,6 +4607,11 @@ class Facture extends CommonInvoice
 	{
 		global $user;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__.": using line label is deprecated", LOG_WARNING);
@@ -4688,6 +4696,19 @@ class Facture extends CommonInvoice
 			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
 				$vat_src_code = $reg[1];
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
+			}
+
+			// Round the quantity to the packaging before computing the amounts of the line (and checking the stock),
+			// else the line is saved with the rounded quantity but with the amounts of the quantity before rounding
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$tmpline = new FactureLigne($this->db);
+				if ($tmpline->fetch($rowid) > 0) {
+					$newqty = $this->roundQtyToPackaging($qty, $tmpline->packaging);
+					if ($newqty != $qty) {
+						$qty = $newqty;
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
+					}
+				}
 			}
 
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise);
@@ -4777,21 +4798,6 @@ class Facture extends CommonInvoice
 			}
 
 
-			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
-					$qty = $this->line->packaging;
-					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
-				} else {
-					if (!empty($this->line->packaging)
-						&& is_numeric($this->line->packaging)
-						&& (float) $this->line->packaging > 0
-						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
-					}
-				}
-			}
 
 			$this->line->id = $rowid;
 			$this->line->rowid = $rowid;
@@ -4971,7 +4977,10 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 
-		if ($id > 0 && $line->fk_facture != $id) {
+		if ($id <= 0) {
+			$id = $this->id;
+		}
+		if ($id > 0 && (int) $line->fk_facture !== (int) $id) {
 			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 			return -1;
 		}
@@ -6247,6 +6256,9 @@ class Facture extends CommonInvoice
 
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
+		// Label of the agenda event recorded for each reminder sent. It also allows to know that a reminder was already sent for an invoice.
+		$labelreminderok = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+
 		// Select all action comm reminder
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
@@ -6263,13 +6275,19 @@ class Facture extends CommonInvoice
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
 		}
-		// TODO Add a filter to check there is no payment started yet
+		// A credit note is not an amount that the customer has to pay, and an invoice without an amount to pay has nothing to remind
+		$sql .= " AND f.type <> ".self::TYPE_CREDIT_NOTE;
+		$sql .= " AND f.total_ttc > 0";
+		// Do not send the same reminder twice if the batch is run again the same day (an event is recorded when a reminder is sent)
+		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.elementtype = 'invoice' AND a.fk_element = f.rowid AND a.code = 'AC_EMAIL'";
+		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
 		if ($datetouse == 'invoicedate') {
 			$sql .= $this->db->order("datef", "ASC");
 		} else {
 			$sql .= $this->db->order("date_lim_reglement", "ASC");
 		}
-		// TODO Add a date date_last_remind_email in select. We can update date after the result of sendfile() later. To avoid to send it twiceif we rerun the batch.
 
 		$resql = $this->db->query($sql);
 
@@ -6293,6 +6311,10 @@ class Facture extends CommonInvoice
 				$res = $tmpinvoice->fetch($obj->id);
 				if ($res > 0) {
 					$tmpinvoice->fetch_thirdparty();
+					// Load paid amounts so that __AMOUNT_REMAIN__ is the real remaining amount
+					$tmpinvoice->getSommePaiement();
+					$tmpinvoice->getSumCreditNotesUsed();
+					$tmpinvoice->getSumDepositsUsed();
 
 					$outputlangs = new Translate('', $conf);
 					if ($tmpinvoice->thirdparty->default_lang) {
@@ -6314,6 +6336,9 @@ class Facture extends CommonInvoice
 					$errormesg = '';
 
 					// Make substitution in email content
+					$tmpinvoice->totalpaid = $tmpinvoice->getSommePaiement();
+					$tmpinvoice->totalcreditnotes = $tmpinvoice->getSumCreditNotesUsed();
+					$tmpinvoice->totaldeposits = $tmpinvoice->getSumDepositsUsed();
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $tmpinvoice);
 
 					complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
@@ -6419,7 +6444,7 @@ class Facture extends CommonInvoice
 							$actioncomm->contact_id = 0;
 
 							$actioncomm->code = 'AC_EMAIL';
-							$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
+							$actioncomm->label = $labelreminderok;
 							$actioncomm->note_private = $sendContent;
 							$actioncomm->fk_project = $tmpinvoice->fk_project;
 							$actioncomm->datep = dol_now();

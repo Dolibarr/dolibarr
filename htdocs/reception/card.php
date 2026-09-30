@@ -13,7 +13,7 @@
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Nick Fragoulis
  * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
@@ -610,6 +610,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: ".DOL_URL_ROOT.'/reception/index.php');

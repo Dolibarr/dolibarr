@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -151,10 +151,11 @@ class LoanSchedule extends CommonObject
 	 *  Create payment of loan into database.
 	 *  Use this->amounts to have list of lines for the payment
 	 *
-	 *  @param      User		$user   User making payment
+	 *  @param      User		$user   	User making payment
+	 *  @param      int<0,1>	$notrigger	1=Disable triggers
 	 *  @return     int     			Return integer <0 if KO, id of payment if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -226,6 +227,15 @@ class LoanSchedule extends CommonObject
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
+		}
+
+		if ($totalamount != 0 && !$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LOANSCHEDULE_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if ($totalamount != 0 && !$error) {
@@ -384,6 +394,15 @@ class LoanSchedule extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		if (!$error && $user && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LOANSCHEDULE_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
@@ -419,6 +438,15 @@ class LoanSchedule extends CommonObject
 				$error++;
 				$this->errors[] = "Error ".$this->db->lasterror();
 			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LOANSCHEDULE_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		// Commit or rollback

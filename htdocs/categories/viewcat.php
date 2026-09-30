@@ -205,6 +205,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 }
 
 if ($user->hasRight('categorie', 'supprimer') && $action == 'confirm_delete' && $confirm == 'yes') {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	if ($object->delete($user) >= 0) {
 		if ($backtopage) {
 			header("Location: ".$backtopage);

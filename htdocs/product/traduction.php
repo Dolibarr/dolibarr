@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2012  Destailleur Laurent 	<eldy@users.sourceforge.net>
  * Copyright (C) 2014 	    Henry Florian 			<florian.henry@open-concept.pro>
  * Copyright (C) 2023 	    Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -113,7 +113,10 @@ if (empty($reshook)) {
 			$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
 			$object->other = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 
-			$object->update($object->id, $user, 1); // trigger will be called by setMultiLangs
+			$result = $object->update($object->id, $user, 1); // trigger will be called by setMultiLangs
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
 			$object->multilangs[GETPOST("forcelangprod")]["label"] = GETPOST("libelle");
 			$object->multilangs[GETPOST("forcelangprod")]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
@@ -147,7 +150,10 @@ if (empty($reshook)) {
 				$object->description = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
 				$object->other = dol_htmlcleanlastbr(GETPOST("other-" . $key, 'restricthtml'));
 
-				$object->update($object->id, $user);
+				$result = $object->update($object->id, $user);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			} else {
 				$object->multilangs[$key]["label"] = GETPOST("libelle-" . $key);
 				$object->multilangs[$key]["description"] = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));

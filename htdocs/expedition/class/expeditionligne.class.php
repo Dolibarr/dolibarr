@@ -575,7 +575,8 @@ class ExpeditionLigne extends CommonObjectLine
 		$this->db->begin();
 
 		// virtual products : delete all children and batch
-		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !($this->fk_parent > 0)) {
+		// Standalone dispatch allocations also belong to their source line.
+		if ((getDolGlobalInt('PRODUIT_SOUSPRODUITS') || $this->element_type == 'shipping') && !($this->fk_parent > 0)) {
 			// find all children
 			$line_id_list = array();
 			$result = $this->findAllChild($this->id, $line_id_list);

@@ -262,6 +262,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $candelete) {
 		$object = new ExpenseReport($db);
 		$result = $object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: index.php");
@@ -2931,7 +2932,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 
 	// Clone
 	if ($user->hasRight('expensereport', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */

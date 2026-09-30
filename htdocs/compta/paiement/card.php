@@ -133,6 +133,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
 		$db->begin();
 
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			$db->commit();
@@ -323,6 +324,12 @@ print '</td></tr>';
 $labeltype = $langs->trans("PaymentType".$object->type_code) != "PaymentType".$object->type_code ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
 print $object->num_payment ? ' - '.$object->num_payment : '';
+print '</td></tr>';
+
+// Payment number
+$titlefield=$langs->trans('Numero').' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+print '<tr><td>'.$form->editfieldkey($titlefield, 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("facture", "creer")).'</td><td>';
+print $form->editfieldval($titlefield, 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("facture", "creer"), 'string', '', null, $langs->trans('PaymentNumberUpdateSucceeded'));
 print '</td></tr>';
 
 // Amount

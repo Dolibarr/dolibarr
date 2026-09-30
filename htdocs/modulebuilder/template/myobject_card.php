@@ -245,6 +245,10 @@ if (empty($reshook)) {
  * View
  */
 
+if ($action != 'create' && ! $object->id) {
+	recordNotFound();
+}
+
 $form = new Form($db);
 $formfile = new FormFile($db);
 
@@ -316,7 +320,7 @@ if ($action == 'create') {
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit') {
+if ($object->id > 0 && $action == 'edit') {
 	print load_fiche_titre($langs->trans("MyObject"), '', $object->picto);
 
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
@@ -578,7 +582,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// BEGIN MODULEBUILDER ACTION CLONE
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 			// END MODULEBUILDER ACTION CLONE
 

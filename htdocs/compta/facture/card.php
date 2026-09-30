@@ -309,6 +309,7 @@ if (empty($reshook)) {
 		$isErasable = $object->is_erasable();
 
 		if (($isErasable > 0) || ($usercancreate && $isErasable == 1)) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user, 0, (int) $idwarehouse);
 			if ($result > 0) {
 				header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1');
@@ -392,10 +393,15 @@ if (empty($reshook)) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOSTINT("discountid"));
-		$discount->unlink_invoice();
-		$object->fetch($id);
-		if ($object->paye == 1 && (float) $object->getRemainToPay() > 0) {
-			$object->setUnpaid($user);
+
+		if ($result > 0 && $discount->fk_facture == $object->id) {	// The credit note must be linked to this invoice
+			$discount->unlink_invoice();
+			$object->fetch($id);
+			if ($object->paye == 1 && (float) $object->getRemainToPay() > 0) {
+				$object->setUnpaid($user);
+			}
+		} else {
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 		}
 	} elseif ($action == 'valid' && $usercancreate) {
 		// Validation
@@ -713,7 +719,15 @@ if (empty($reshook)) {
 							$depositdev = (float) $discount->multicurrency_amount_ttc;
 							if ($usemccompare && $depositdev != 0) {
 								$applydev = $maxtoabsorb;
-								$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+								// Convert the applied part with the rate the credit carries, when it has one. Deriving it from the
+								// rounded company-currency total of the credit shifts the part by a cent, which then shows up as a
+								// phantom exchange difference on an invoice that uses the very same rate.
+								$creditrate = !empty($discount->multicurrency_tx) ? (float) $discount->multicurrency_tx : 0;
+								if ($creditrate > 0) {
+									$applyeur = (float) price2num($applydev / $creditrate, 'MT');
+								} else {
+									$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+								}
 							} else {
 								$applyeur = $maxtoabsorb;
 								$applydev = ($depositeur != 0 ? (float) price2num($applyeur / $depositeur * $depositdev, 'MT') : 0);
@@ -834,7 +848,15 @@ if (empty($reshook)) {
 					$depositdev = (float) $discount->multicurrency_amount_ttc;
 					if ($usemccompare && $depositdev != 0) {
 						$applydev = (float) $remaintopay;
-						$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+						// Convert the applied part with the rate the credit carries, when it has one. Deriving it from the
+						// rounded company-currency total of the credit shifts the part by a cent, which then shows up as a
+						// phantom exchange difference on an invoice that uses the very same rate.
+						$creditrate = !empty($discount->multicurrency_tx) ? (float) $discount->multicurrency_tx : 0;
+						if ($creditrate > 0) {
+							$applyeur = (float) price2num($applydev / $creditrate, 'MT');
+						} else {
+							$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+						}
 					} else {
 						$applyeur = (float) $remaintopay;
 						$applydev = ($depositeur != 0 ? (float) price2num($applyeur / $depositeur * $depositdev, 'MT') : 0);
@@ -1424,15 +1446,18 @@ if (empty($reshook)) {
 		if ($object->status == Facture::STATUS_VALIDATED && $object->paye == 0) {
 			$paiement = new Paiement($db);
 			$result = $paiement->fetch(GETPOSTINT('paiement_id'));
-			if ($result > 0) {
+			$paymentbills = ($result > 0) ? $paiement->getBillsArray() : array();
+			if ($result > 0 && is_array($paymentbills) && in_array($object->id, $paymentbills)) {	// The payment must be linked to this invoice
 				$result = $paiement->delete($user); // If fetch ok and found
 				if ($result >= 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 					exit;
 				}
-			}
-			if ($result < 0) {
-				setEventMessages($paiement->error, $paiement->errors, 'errors');
+				if ($result < 0) {
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
+				}
+			} else {
+				setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 			}
 		}
 	} elseif ($action == 'add' && $usercancreate) {
@@ -7196,7 +7221,7 @@ if ($action == 'create') {
 			// Clone
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $usercancreate) {
 				unset($params['attr']['title']);
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=clone&object=invoice&token='.newToken(), '', true, $params);
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=clone&object=invoice&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')));
 			}
 
 			// Remove situation from cycle

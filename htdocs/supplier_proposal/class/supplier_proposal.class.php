@@ -19,7 +19,8 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
- * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -756,6 +757,11 @@ class SupplierProposal extends CommonObject
 	{
 		global $mysoc;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		dol_syslog(get_class($this)."::updateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -941,6 +947,11 @@ class SupplierProposal extends CommonObject
 			// For triggers
 			$line->fetch($lineid);
 
+			if ($this->id > 0 && (int) $line->fk_supplier_proposal !== (int) $this->id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+
 			if ($line->delete($user) > 0) {
 				$this->update_price(1);
 
@@ -1093,6 +1104,16 @@ class SupplierProposal extends CommonObject
 					$num = count($this->lines);
 
 					for ($i = 0; $i < $num; $i++) {
+						if (!is_object($this->lines[$i])) {	// Lines coming from the REST API are plain arrays
+							// Build a real line object: the code below calls methods on it
+							// (getPriceBaseType), which an array cannot answer.
+							$lineobj = new SupplierProposalLine($this->db);
+							foreach ($this->lines[$i] as $key => $val) {
+								$lineobj->$key = $val;
+							}
+							$this->lines[$i] = $lineobj;
+						}
+
 						// Reset fk_parent_line for no child products and special product
 						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
 							$fk_parent_line = 0;

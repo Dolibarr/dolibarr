@@ -37,7 +37,7 @@
  * @param	string	  					$url 			    URL to call.
  * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
  * @param	string|array<mixed,mixed>	$param			    Parameters of URL (x=value1&y=value2 urlencoded even with POST) or may be a formatted content with $postorget='POSTALREADYFORMATED/PUTALREADYFORMATED'
- * @param	int<0,1>  					$followlocation		0=Do not follow, 1=Follow location.
+ * @param	int<0,1>  					$followlocation		0=Do not follow, 1=Follow location (301, 302, 303, 307, 308; 5 hops max). Credential headers are not sent to another host and a POST becomes a GET on 301/302/303, as libcurl does.
  * @param	string[]  					$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @param	string[]  					$allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
  * @param	int<0,2>  					$localurl			0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
@@ -83,7 +83,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	 print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
 	 print $nvpStr;
 	 exit;*/
-	curl_setopt($ch, CURLOPT_VERBOSE, true);
+	// The verbose output goes to the stderr of the process (Apache error log, output of a cron job...) and includes the request
+	// headers with their credentials, so it is only enabled together with the curl debug log.
+	curl_setopt($ch, CURLOPT_VERBOSE, getDolGlobalInt('MAIN_CURL_DEBUG') ? true : false);
 	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');	// set the Dolibarr user agent name
 
 	// We use @ here because this may return warning if safe mode is on or open_basedir is on (following location is forbidden when safe mode is on).
@@ -172,6 +174,31 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // We want response
+
+	// Accept a compressed response (gzip, deflate, br... whatever this libcurl supports): libcurl decodes it, so 'content' is the
+	// plain body. Note that the response headers (HEAD, MAIN_CURL_GET_RESPONSE_HEADER) still show the Content-Encoding.
+	curl_setopt($ch, CURLOPT_ENCODING, '');
+
+	$responsebuffer = '';
+	$responsetoolarge = false;
+	if ($maxsize) {
+		// CURLOPT_MAXFILESIZE counts the bytes received on the wire, so a compressed response can decode into much more than the
+		// limit: the decoded bytes are counted too, and the transfer is aborted as soon as they exceed the limit.
+		/**
+		 * @param	CurlHandle|resource	$curl	The curl handle (a resource before PHP 8)
+		 * @param	string				$data	Chunk of decoded body (and of header when CURLOPT_HEADER is set)
+		 * @return	int							Number of bytes handled, less than strlen($data) aborts the transfer
+		 */
+		$writefunction = function ($curl, $data) use (&$responsebuffer, &$responsetoolarge, $maxsize) {
+			if (strlen($responsebuffer) + strlen($data) > $maxsize * 1024) {
+				$responsetoolarge = true;
+				return 0;	// Less than strlen($data): libcurl aborts the transfer with CURLE_WRITE_ERROR (23)
+			}
+			$responsebuffer .= $data;
+			return strlen($data);
+		};
+		curl_setopt($ch, CURLOPT_WRITEFUNCTION, $writefunction);
+	}
 	if ($postorget == 'POST') {
 		curl_setopt($ch, CURLOPT_POST, true); // POST
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // Setting param x=a&y=z as POST fields
@@ -225,7 +252,19 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 
 	if (is_array($otherCurlOptions)) {
+		// Options that would bypass the anti SSRF check done below on each hop (redirections are followed by hand so that every hop
+		// is checked, and the connection is pinned to the IP that was checked): they are ignored whatever the caller asks.
+		$forbiddencurloptions = [CURLOPT_FOLLOWLOCATION, CURLOPT_URL, CURLOPT_RESOLVE, CURLOPT_PROXY, CURLOPT_PROTOCOLS, CURLOPT_REDIR_PROTOCOLS];
+		foreach (['CURLOPT_CONNECT_TO', 'CURLOPT_UNIX_SOCKET_PATH', 'CURLOPT_ABSTRACT_UNIX_SOCKET', 'CURLOPT_PRE_PROXY'] as $constname) {
+			if (defined($constname)) {
+				$forbiddencurloptions[] = constant($constname);
+			}
+		}
 		foreach ($otherCurlOptions as $option => $value) {
+			if (in_array($option, $forbiddencurloptions, true)) {
+				dol_syslog("getURLContent curl option ".$option." can not be set with otherCurlOptions, ignored", LOG_WARNING);
+				continue;
+			}
 			curl_setopt($ch, $option, $value);
 		}
 	}
@@ -255,7 +294,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names
-		if (in_array($hosttocheck, array('metadata.google.internal'))) {
+		if (in_array(strtolower($hosttocheck), array('metadata.google.internal'))) {
 			$info['http_code'] = 400;
 			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
 			if (getDolGlobalInt('MAIN_CURL_DEBUG')) {
@@ -324,15 +363,37 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		*/
 
 		// Getting response from server
+		$responsebuffer = '';
+		$responsetoolarge = false;
 		$response = curl_exec($ch);		// return false on error, result on success
+		if ($maxsize) {
+			// With a write function, curl_exec() returns true instead of the response: the response is what the function collected
+			$response = ($response === false || $responsetoolarge) ? false : $responsebuffer;
+		}
 
 		$info = curl_getinfo($ch); // Reading of request must be done after sending request
 		$http_code = $info['http_code'];
 
-		if ($followlocation && ($http_code == 301 || $http_code == 302 || $http_code == 303 || $http_code == 307)) {
+		if ($followlocation && in_array($http_code, [301, 302, 303, 307, 308]) && !empty($info['redirect_url'])) {
 			$newUrl = $info['redirect_url'];
 			$maxRedirection--;
-			// TODO Use $info['local_ip'] and $info['primary_ip'] ?
+
+			// Redirections are followed by hand, so that every hop goes through the anti SSRF check above, which means the options set
+			// before this loop are still there for the next hop. When libcurl follows a redirection itself, it does not send the
+			// Authorization header to another host and it turns a POST into a GET on 301/302/303: do the same here.
+			$currenthost = (is_array($newUrlArray) && !empty($newUrlArray['host'])) ? $newUrlArray['host'] : '';
+			$nexthost = (string) parse_url($newUrl, PHP_URL_HOST);
+			if (strtolower($nexthost) != strtolower($currenthost)) {
+				// The credentials were meant for the host that was called, not for the one it redirects to.
+				$addheaders = removeCredentialHeaders($addheaders);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
+			}
+			if (in_array($http_code, [301, 302, 303]) && !in_array($postorget, ['GET', 'HEAD'])) {
+				// Same as libcurl and browsers: the redirected request is a GET without the body of the POST/PUT/PATCH.
+				$postorget = 'GET';
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, null);
+				curl_setopt($ch, CURLOPT_HTTPGET, true);
+			}
 			continue;
 		}
 
@@ -367,6 +428,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$rep['http_code'] = 0;
 		$rep['curl_error_no'] = curl_errno($ch);
 		$rep['curl_error_msg'] = curl_error($ch);
+		if ($responsetoolarge) {
+			// The transfer was aborted by our write function (error 23): report it like libcurl does for its own size check
+			$rep['curl_error_no'] = 63;	// CURLE_FILESIZE_EXCEEDED
+			$rep['curl_error_msg'] = 'Maximum file size exceeded';
+		}
 
 		dol_syslog("getURLContent response array is ".implode(',', $rep));
 
@@ -408,6 +474,34 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// We must exclude phpstant wwarning, because all fields found in result of curl_getinfo may not be all defined into description of this method.
 	// @phpstan-ignore-next-line
 	return $rep;
+}
+
+/**
+ * Remove, from a list of HTTP request headers, the ones that carry a credential (Authorization, Cookie, API key headers...).
+ * Used by getURLContent() when a redirection leads to another host: the credentials were meant for the host that was called,
+ * not for the one it redirects to.
+ *
+ * @param	string[]	$headers	Array of header lines, like array('Accept: application/json', 'Authorization: Bearer xxx')
+ * @return	string[]				Same array without the credential headers
+ */
+function removeCredentialHeaders($headers)
+{
+	if (!is_array($headers)) {
+		return [];
+	}
+
+	$credentialheaders = ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey'];
+
+	$ret = [];
+	foreach ($headers as $header) {
+		$name = strtolower(trim((string) strstr((string) $header, ':', true)));
+		if (in_array($name, $credentialheaders)) {
+			continue;
+		}
+		$ret[] = $header;
+	}
+
+	return $ret;
 }
 
 
@@ -488,7 +582,13 @@ function isIPAllowed($iptocheck, $localurl)
 	// Common check on ip (local and external)
 	// See list on https://tagmerge.com/gist/a7b9d57ff8ec11d63642f8778609a0b8
 	// Not evasive url that ar enot IP are excluded by test on IP v4/v6 validity.
+	// The link-local ones are already refused above when only external URLs are allowed, but not when local URLs are ($localurl = 1
+	// or 2), and 168.63.129.16 is in the public address space anyway.
 	$arrayofmetadataserver = array(
+		'169.254.169.254' => 'AWS, GCP, Azure, OpenStack, DigitalOcean...',
+		'fd00:ec2::254' => 'AWS (IPv6)',
+		'169.254.170.2' => 'AWS ECS',
+		'168.63.129.16' => 'Azure',
 		'100.100.100.200' => 'Alibaba',
 		'192.0.0.192' => 'Oracle',
 		'192.80.8.124' => 'Packet',

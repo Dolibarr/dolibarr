@@ -282,10 +282,14 @@ if (empty($reshook)) {
 
 	// Delete
 	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $permissiontodelete) {
-		$object->delete($user);
-
-		header('Location: ' . DOL_URL_ROOT . '/fourn/facture/list-rec.php');
-		exit;
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		$result = $object->delete($user);
+		if ($result > 0) {
+			header('Location: ' . DOL_URL_ROOT . '/fourn/facture/list-rec.php');
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Update field
@@ -1012,7 +1016,7 @@ if ($action == 'create') {
 			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
-			$numprojet = $formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->thirdparty->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, '');
+			$numprojet = $formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->thirdparty->id : -1), $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $object->thirdparty->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $object->thirdparty->id . (!empty($id) ? '&id=' . $id : '')) . '">' . $langs->trans("AddProject") . '</a>';
 			print '</td></tr>';
 		}

@@ -2,6 +2,7 @@
 /* Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
@@ -531,20 +532,50 @@ class ExpeditionTest extends CommonClassTest
 	}
 
 	/**
-	 * testStandaloneShipmentRequiresWarehouse
+	 * testStandaloneShipmentAcceptsMissingWarehouse
 	 *
 	 * @return	void
 	 */
-	public function testStandaloneShipmentRequiresWarehouse()
+	public function testStandaloneShipmentAcceptsMissingWarehouse()
 	{
 		$this->configureStandaloneShipmentStock(true, false);
 
 		$productId = $this->createShipmentStockProduct(__FUNCTION__);
 		$shipment = $this->createStandaloneShipment();
 
+		// A line with no origin order line may deliberately carry no warehouse:
+		// a sample, goods sent out for servicing, or a delivery note issued for
+		// e-reporting with no stock effect. Empty warehouse = no stock movement.
 		$result = $shipment->addlinefree(1, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), 0);
-		$this->assertLessThan(0, $result);
-		$this->assertNotEmpty($shipment->error);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+	}
+
+	/**
+	 * testStandaloneShipmentWithoutWarehouseMovesNoStock
+	 *
+	 * @return	void
+	 */
+	public function testStandaloneShipmentWithoutWarehouseMovesNoStock()
+	{
+		global $user;
+
+		$this->configureStandaloneShipmentStock(true, true);
+
+		$productId = $this->createShipmentStockProduct(__FUNCTION__);
+		$warehouseId = $this->createShipmentStockWarehouse(__FUNCTION__);
+		$this->addStockForShipmentProduct($productId, $warehouseId, 10);
+
+		$shipment = $this->createStandaloneShipment();
+		$lineId = $shipment->addlinefree(3, 'shipping', $productId, 0, -1, 'Standalone product', 0, array(), 0);
+		$this->assertGreaterThan(0, $lineId, $shipment->errorsToString());
+
+		$result = $shipment->valid($user);
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(10, $this->getWarehouseRealStock($productId, $warehouseId));
+
+		$result = $shipment->setClosed();
+		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
+		$this->assertEquals(10, $this->getWarehouseRealStock($productId, $warehouseId));
 	}
 
 	/**

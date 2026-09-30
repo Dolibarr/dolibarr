@@ -2396,7 +2396,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Delete a price line
+	 *  Delete a price line of this product
 	 *
 	 * @param  User	$user	Object user
 	 * @param  int	$rowid	Line id to delete
@@ -2407,6 +2407,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price_by_qty";
 		$sql .= " WHERE fk_product_price = ".((int) $rowid);
+		$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".$this->db->prefix()."product_price as pp WHERE pp.fk_product = ".((int) $this->id).")";
 		$resql = $this->db->query($sql);
 
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price_extrafields";
@@ -2415,6 +2416,7 @@ class Product extends CommonObject
 
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price";
 		$sql .= " WHERE rowid = ".((int) $rowid);
+		$sql .= " AND fk_product = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
@@ -6142,14 +6144,15 @@ class Product extends CommonObject
 		}
 
 		if ($option == 'supplier' || $option == 'category') {
-			$url = DOL_URL_ROOT.'/product/price_suppliers.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/product/price_suppliers.php';
 		} elseif ($option == 'stock') {
-			$url = DOL_URL_ROOT.'/product/stock/product.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/product/stock/product.php';
 		} elseif ($option == 'composition') {
-			$url = DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/product/composition/card.php';
 		} else {
-			$url = DOL_URL_ROOT.'/product/card.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/product/card.php';
 		}
+		$query = ['id' => $this->id];
 
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -6158,9 +6161,10 @@ class Product extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -7497,7 +7501,10 @@ class Product extends CommonObject
 		} elseif ($this->duration_unit == 'y') {
 			$prodDurationHours = 24. * 365;
 		} else {
-			$prodDurationHours = 0.0;
+			// Unknown unit: the duration cannot be converted. Returning 0 silently made callers
+			// compute a zero duration, and time.php divides by this value (#40805).
+			$this->errors[] = 'ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice';
+			return -1;
 		}
 		$prodDurationHours *= $this->duration_value;
 

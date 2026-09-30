@@ -1201,7 +1201,10 @@ textarea.centpercent {
 }
 .liste_titre.sticky {
 	position: sticky;
-	top:0;
+	/* The top menu is itself sticky at top 0 with a z-index of 1005 (see .side-nav-vert below),
+	   so a table header stuck at 0 is painted underneath it and stays invisible. Offset it by the
+	   height of the top menu, the same value .side-nav is offset by when it is made sticky. */
+	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? '50px' : '0'); ?>;
 	z-index: 2;
 }
 
@@ -6168,6 +6171,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	border: 1px solid #e0e0e0;
 	border-radius: 6px;
 	box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 15px;
+	font-size: 0.95em;
 }
 .ui-dialog {
 	padding-left: 5px;
@@ -9570,7 +9574,8 @@ table.jPicker {
 
 	.ui-dialog {
 		min-width: 280px;
-		max-width: 95%;
+		max-width: 90%;
+		max-height: 90%;
 	}
 
 	.pictofixedwidth {

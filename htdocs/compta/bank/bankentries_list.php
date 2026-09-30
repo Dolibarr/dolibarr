@@ -713,15 +713,6 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$nbtotalofpages = ceil($nbtotalofrecords / $limit);
 }
 
-if (($id > 0 || !empty($ref)) && ((string) $page == '')) {
-	// We open a list of transaction of a dedicated account and no page was set by default
-	// We force on last page.
-	$page = ($nbtotalofpages - 1);
-	$offset = $limit * $page;
-	if ($page < 0) {
-		$page = 0;
-	}
-}
 if ($page >= $nbtotalofpages) {
 	// If we made a search and result has low page than the page number we were on
 	$page = ($nbtotalofpages - 1);
@@ -1481,6 +1472,7 @@ if ($resql) {
 
 		$banklinestatic->id = $objp->rowid;
 		$banklinestatic->ref = (string) $objp->rowid;
+		$banklinestatic->amount = $objp->amount;
 
 		print '<tr class="oddeven" '.$backgroundcolor.'>';
 
@@ -1488,7 +1480,7 @@ if ($resql) {
 		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
-				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1697,9 +1689,11 @@ if ($resql) {
 
 		// Cheque
 		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-			$bordereaustatic->fetch($objp->fk_bordereau);
 			print '<td class="nowraponall center">';
-			print $bordereaustatic->getNomUrl();
+			if ($objp->fk_bordereau > 0) {
+				$bordereaustatic->fetch($objp->fk_bordereau);
+				print $bordereaustatic->getNomUrl();
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1883,9 +1877,11 @@ if ($resql) {
 		}
 
 		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-			$bordereaustatic->fetch($objp->fk_bordereau);
 			print '<td class="nowraponall center">';
-			print $bordereaustatic->getNomUrl();
+			if ($objp->fk_bordereau > 0) {
+				$bordereaustatic->fetch($objp->fk_bordereau);
+				print $bordereaustatic->getNomUrl();
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1940,7 +1936,7 @@ if ($resql) {
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
-				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(!empty($tmparray[$objp->rowid]) ? ' checked' : '').'>';
+				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
 			if (!$i) {

@@ -1102,6 +1102,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 
 		if ($result > 0) {
@@ -3143,7 +3144,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 			$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_otherboms', 'label' => $langs->trans("CloneOtherBomsProduct"), 'value' => 0);
 		}
 	}
-	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
+	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 0, 600);
 }
 
 // Call Hook formConfirm
@@ -3183,7 +3184,7 @@ if ($action != 'create' && $action != 'edit') {
 					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
 				}
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $cloneProductUrl, $cloneButtonId, $usercancreate);
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneProductUrl, $cloneButtonId, $usercancreate, array('attr' => array('class' => 'reposition')));
 			}
 		}
 		$object_is_used = $object->isObjectUsed($object->id);

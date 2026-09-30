@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
@@ -112,6 +112,7 @@ if ($action == 'delete' && $permissiontodelete) {
 	if ($object->rappro == 0) {
 		$db->begin();
 
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$ret = $object->delete($user);
 		if ($ret > 0) {
 			if ($object->fk_bank) {
