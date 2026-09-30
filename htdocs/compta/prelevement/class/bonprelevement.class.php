@@ -1902,6 +1902,8 @@ class BonPrelevement extends CommonObject
 	{
 		global $conf, $langs, $mysoc;
 
+		$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
+
 		if ($type !== 'bank-transfer') {
 			$format = strtoupper($format);
 			if (!in_array($format, array('FRST', 'RCUR', 'OOFF', 'FNAL'), true)) {
@@ -2062,7 +2064,6 @@ class BonPrelevement extends CommonObject
 				 */
 				// SEPA File Header
 				fwrite($this->file, '<' . '?xml version="1.0" encoding="UTF-8" standalone="yes"?' . '>' . $CrLf);
-				$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
 				$sepaSchemaVersion = $this->sepa_schema_version;
 				$sepaNamespace = 'urn:iso:std:iso:20022:tech:xsd:pain.008.001.0' . $sepaSchemaVersion;
 				fwrite($this->file, '<Document xmlns="' . $sepaNamespace . '" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
