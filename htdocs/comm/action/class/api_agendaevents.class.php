@@ -304,6 +304,12 @@ class AgendaEvents extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+		// The test above on userownerid looks at the owner posted in the request, not at the owner of the
+		// event being updated, and actioncomm is not in the $checkhierarchy list of checkUserAccessToObject().
+		// So the event of another user must be refused here, the same way get() does it.
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read') && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
+			throw new RestException(403, 'Insufficient rights to update event of this owner id. Your id is '.DolibarrApiAccess::$user->id);
+		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
