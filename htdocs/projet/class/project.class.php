@@ -569,7 +569,8 @@ class Project extends CommonObject
 			$this->opp_percent = '';
 		}
 		if ($this->date_end && $this->date_end < $this->date_start) {
-			$this->error = $langs->trans("ErrorDateEndLowerThanDateStart");
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorStartDateGreaterEnd");
 			$this->errors[] = $this->error;
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::update error -3 ".$this->error, LOG_ERR);
