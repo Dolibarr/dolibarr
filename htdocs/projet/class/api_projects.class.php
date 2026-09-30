@@ -1001,7 +1001,6 @@ class Projects extends DolibarrApi
 		unset($object->country_code);
 
 		unset($object->weekWorkLoad);
-		unset($object->weekWorkLoad);
 
 		//unset($object->lines);            // for task we use timespent_lines, but for project we use lines
 

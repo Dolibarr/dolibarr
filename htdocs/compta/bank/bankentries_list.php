@@ -1474,12 +1474,15 @@ if ($resql) {
 		$banklinestatic->ref = (string) $objp->rowid;
 		$banklinestatic->amount = $objp->amount;
 
-		print '<tr class="oddeven" '.$backgroundcolor.'>';
+		// Lines that can be reconciled use the intuitive row selection (Ctrl/Shift+click, and single click if MAIN_ROW_SINGLECLICK_TOSELECT)
+		$lineselectable = (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile'));
+
+		print '<tr class="oddeven'.($lineselectable ? ' row-with-select' : '').'" '.$backgroundcolor.'>';
 
 		// Action column
 		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
-			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
+			if ($lineselectable) {
 				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" name="toselect[]" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
@@ -1935,7 +1938,7 @@ if ($resql) {
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
-			if (!$objp->conciliated && ($action == 'reconcile' || $action == 'confirm_deleteonreconcile')) {
+			if ($lineselectable) {
 				print '<input class="flat checkforselect" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(in_array($objp->rowid, $rowids) ? ' checked' : '').'>';
 			}
 			print '</td>';
