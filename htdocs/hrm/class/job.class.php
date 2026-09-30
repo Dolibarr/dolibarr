@@ -576,10 +576,10 @@ class Job extends CommonObject
 	}
 
 	/**
-	 * Get the last occupied position for a user
+	 * Get the last job occupied by a user
 	 *
-	 * @param 	int 				$fk_user 	Id of user we need to get last job
-	 * @return	Position|string					Last occupied position
+	 * @param int		$fk_user	Id of user we need to get last job
+	 * @return string						Label of the last occupied job, '' if none
 	 */
 	public function getLastJobForUser($fk_user)
 	{
@@ -595,10 +595,10 @@ class Job extends CommonObject
 	}
 
 	/**
-	 * 	Get array of occupied positions for a user
+	 * Get array of jobs occupied by a user
 	 *
-	 * @param 	int 		$userid 	Id of user we need to get job list
-	 * @return 	Position[] 				Array of occupied positions
+	 * @param int		$userid		Id of user we need to get job list
+	 * @return array<int,string>		Array of job labels indexed by job id
 	 */
 	public function getForUser($userid)
 	{

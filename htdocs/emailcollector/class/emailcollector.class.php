@@ -2379,11 +2379,11 @@ class EmailCollector extends CommonObject
 								if ($trackid) {
 									$projectfoundby = 'trackid ('.$trackid.')';
 								}
-								if (empty($contactid)) {
+								/*if (empty($contactid)) {
 									$contactid = $projectstatic->fk_contact;
-								}
+								}*/
 								if (empty($thirdpartyid)) {
-									$thirdpartyid = $projectstatic->fk_soc;
+									$thirdpartyid = $projectstatic->socid;
 								}
 							}
 						}
