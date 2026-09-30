@@ -1131,7 +1131,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			if (getDolGlobalString('FACTURE_CHQ_NUMBER')) {
 				if (getDolGlobalInt('FACTURE_CHQ_NUMBER') > 0) {
 					$account = new Account($this->db);
-					$account->fetch(getDolGlobalString('FACTURE_CHQ_NUMBER'));
+					$account->fetch(getDolGlobalInt('FACTURE_CHQ_NUMBER'));
 
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
