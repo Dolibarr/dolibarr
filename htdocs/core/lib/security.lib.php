@@ -286,6 +286,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} elseif ($features == 'payment_vat') {
 		$tableandshare = 'payment_vat';
 		$parentfortableentity = 'fk_tva@tva';
+	} elseif ($features == 'payment_donation') {
+		$tableandshare = 'payment_donation';
+		$parentfortableentity = 'fk_donation@don';	// A donation payment has no entity, the entity is the one of its donation
 	}
 
 	// if commonObjectLine : Using many2one related commonObject
@@ -464,6 +467,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			}
 		} elseif ($feature == 'payment_vat') {
 			if (!$user->hasRight('tax', 'charges', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_donation') {
+			if (!$user->hasRight('don', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -869,7 +877,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentityready = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'payment_vat', 'payment_donation', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat', 'ticket'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object

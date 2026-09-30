@@ -61,7 +61,7 @@ if ($id > 0) {
 	}
 }
 
-restrictedArea($user, 'don', $object->id, 'payment_donation', '', '', 'rowid');
+restrictedArea($user, 'payment_donation', $object, '');
 
 $permissiontoread = $user->hasRight('don', 'lire');
 $permissiontoadd = $user->hasRight('don', 'creer');
