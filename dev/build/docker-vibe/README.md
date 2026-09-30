@@ -28,6 +28,11 @@ dev/build/docker-vibe/vibes.sh
 
 This script will build the docker image, and then run it with the current directory mounted into the container and launch vibe.
 
+Vibe is launched with the option `--yolo` by default. If you want to run vibe without this option, you can run
+````
+vibes --no-yolo
+````
+
 When you exit vibe (for example with CTRL+C), the container is stopped too, so you return immediately to your host.
 If you want to stay into the container with a bash shell after vibe has ended, you can run
 ````
