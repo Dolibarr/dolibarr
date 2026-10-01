@@ -44,6 +44,7 @@
  * @var ?string	$autocopy (used to know the automatic BCC to add)
  * @var ?string	$actiontypecode
  * @var ?string $paramname
+ * @var ?array<string,string> $substitutionarrayextra Substitutions prepared by the caller
  */
 '
 @phan-var-force Societe      $mysoc
@@ -438,6 +439,9 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
+			if (!empty($substitutionarrayextra)) {
+				$substitutionarray = array_replace($substitutionarray, $substitutionarrayextra);
+			}
 
 			$substitutionarray['__SENDEREMAIL_SIGNATURE__'] = (empty($emailsendersignature) ? $user->signature : $emailsendersignature);
 			$substitutionarray['__EMAIL__'] = $sendto;
