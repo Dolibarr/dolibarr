@@ -169,10 +169,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (!function_exists('getDolGlobalString') || !getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_NOT_GMT')) {	// Add function_exists to allow usage of this function with minimal context
-		$date->setTimezone(new DateTimeZone('UTC'));
-	}
-
+	$date->setTimezone(new DateTimeZone('UTC'));
 
 	$date->setTimestamp((int) $time);
 	$interval = new DateInterval($deltastring);
