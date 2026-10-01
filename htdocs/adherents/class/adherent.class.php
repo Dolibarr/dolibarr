@@ -3142,13 +3142,15 @@ class Adherent extends CommonObject
 				$num_rows = $this->db->num_rows($resql);
 
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$adherent = new Adherent($this->db);
 				$formmail = new FormMail($this->db);
 
 				$i = 0;
 				while ($i < $num_rows) {
 					$obj = $this->db->fetch_object($resql);
 
+					// A new object for each member: fetch() does not reset the properties loaded for the previous member,
+					// like ->thirdparty that would be reused for a member that has no third party.
+					$adherent = new Adherent($this->db);
 					$adherent->fetch($obj->rowid, '', 0, '', true, true);
 
 					if (empty($adherent->email)) {
@@ -3160,7 +3162,7 @@ class Adherent extends CommonObject
 							$languagecodeformember = $mysoc->default_lang;
 						} else {
 							// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
-							$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
+							$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : (is_object($adherent->thirdparty) ? $adherent->thirdparty->country_code : ''));
 							$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
 						}
 
@@ -3239,7 +3241,7 @@ class Adherent extends CommonObject
 								$actioncomm->datep = $now;
 								$actioncomm->datef = $now;
 								$actioncomm->percentage = -1; // Not applicable
-								$actioncomm->socid = $adherent->thirdparty->id;
+								$actioncomm->socid = (is_object($adherent->thirdparty) ? $adherent->thirdparty->id : 0);
 								$actioncomm->contact_id = 0;
 								$actioncomm->authorid = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
