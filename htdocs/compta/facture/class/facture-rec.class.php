@@ -1403,8 +1403,9 @@ class FactureRec extends CommonInvoice
 			return dol_mktime($originalHour, $originalMin, $originalSec, $targetMonth, $targetDay, $targetYear);
 		}
 
-		// For yearly frequency or days < 28, use standard calculation
-		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
+		// For yearly frequency or days < 28, use standard calculation.
+		// date_when is read from database in the timezone of the server (jdate), so the delay must be added in this timezone
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency, 0, 'tzserver');
 	}
 
 	/**
