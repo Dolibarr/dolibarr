@@ -6,6 +6,7 @@ NoCategoryYet=Aucune balise/catégorie de ce type n'a été créée
 CatListAll=Liste des tags/catégories (tous types)
 CreateThisCat=Créer ce(tte) tag/catégorie
 ImpossibleAddCat=Impossible d'ajouter le tag / catégorie %s
+ErrorCategoryCannotBeItsOwnParent=Une étiquette/catégorie ne peut pas être son propre parent.
 ProductIsInCategories=Produit/service appartient aux tags/catégories suivant(e)s
 CompanyIsInCustomersCategories=Ce tiers appartient aux tags/catégories de clients/prospects suivant(e)s
 CompanyIsInSuppliersCategories=Ce tiers est lié aux balises/catégories des fournisseurs suivants

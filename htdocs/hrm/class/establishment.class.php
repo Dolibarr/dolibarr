@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,14 +127,14 @@ class Establishment extends CommonObject
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 25),
 		'zip' => array('type' => 'varchar(25)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 35),
-		'fk_state' => array('type' => 'integer', 'label' => 'Fkstate', 'enabled' => 1, 'visible' => -1, 'position' => 40),
-		'fk_country' => array('type' => 'integer', 'label' => 'Fkcountry', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'fk_state' => array('type' => 'integer', 'label' => 'State', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'fk_country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'profid1' => array('type' => 'varchar(20)', 'label' => 'Profid1', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 		'profid2' => array('type' => 'varchar(20)', 'label' => 'Profid2', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'profid3' => array('type' => 'varchar(20)', 'label' => 'Profid3', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 		'phone' => array('type' => 'varchar(20)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 65),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkuserauthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 70),
-		'fk_user_mod' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusermod', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 70),
+		'fk_user_mod' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 75),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 80),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 85),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'position' => 500),
@@ -226,6 +226,14 @@ class Establishment extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$this->db->query($sql);
 
+			// Call trigger
+			$triggerres = $this->call_trigger('ESTABLISHMENT_CREATE', $user);
+			if ($triggerres < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
 			$this->db->commit();
 			return $this->id;
 		}
@@ -255,7 +263,7 @@ class Establishment extends CommonObject
 		$sql .= ", address = '".$this->db->escape($this->address)."'";
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
-		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
+		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : 'null');
 		$sql .= ", status = ".((int) $this->status);
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", entity = ".((int) $this->entity);
@@ -264,6 +272,14 @@ class Establishment extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
+			// Call trigger
+			$triggerres = $this->call_trigger('ESTABLISHMENT_MODIFY', $user);
+			if ($triggerres < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
 			$this->db->commit();
 			return 1;
 		} else {
@@ -331,6 +347,14 @@ class Establishment extends CommonObject
 
 		$result = $this->db->query($sql);
 		if ($result) {
+			// Call trigger
+			$triggerres = $this->call_trigger('ESTABLISHMENT_DELETE', $user);
+			if ($triggerres < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
 			$this->db->commit();
 			return 1;
 		} else {

@@ -77,6 +77,7 @@ CronType=任务类型
 CronType_method=调用PHP类的方法
 CronType_command=Shell命令
 CronCannotLoadClass=无法加载类文件 %s（使用类 %s）
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=类文件 %s 已加载，但未在其中找到对象 %s
 UseMenuModuleToolsToAddCronJobs=进入菜单“<a href="%s">主页 - 管理工具 - 计划任务</a>”查看和编辑计划任务。
 JobDisabled=任务已禁用

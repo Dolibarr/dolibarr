@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Vincent de Grandpré     <vincent@de-grandpre.quebec>
@@ -96,6 +96,13 @@ dolibarr_install_syslog("--- repair: entering upgrade.php page");
 if (!is_object($conf)) {
 	dolibarr_install_syslog("repair: conf file not initialized", LOG_ERR);
 }
+
+
+// This page runs on the install bootstrap, which never sets $user.
+// dol_delete_file() -> EcmFiles::delete(User $user) requires a User,
+// so we force an empty one here, before any action that may need it.
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+$user = new User($db);
 
 
 /*
@@ -352,7 +359,9 @@ if ($ok && $oneoptionset) {
 
 	// Flush (some browser need a certain amount of data)
 	print str_repeat(' ', 1024);
-	ob_flush();
+	if (ob_get_level() > 0) {
+		ob_flush();
+	}
 	flush();
 }
 
@@ -391,7 +400,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		print '<tr><td class="nowrap">*** ';
 		print $langs->trans("Script").'</td><td class="right">'.$file.'</td></tr>';
 
-		$name = substr($file, 0, dol_strlen($file) - 4);
+		$name = dol_substr($file, 0, dol_strlen($file) - 4);
 
 		// Run sql script
 		$ok = run_sql($dir.$file, 0, 0, 1);
@@ -558,13 +567,13 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				$obj = $db->fetch_object($resql);
 
 				$reg = array();
-				if (preg_match('/MAIN_MODULE_([^_]+)_(.+)/i', $obj->name, $reg)) {
+				if (preg_match('/MAIN_MODULE_([^_\W]+)_(\w+)/i', $obj->name, $reg)) {
 					$name = $reg[1];
 					$type = $reg[2];
 
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
-					$sql2 .= " WHERE name = 'MAIN_MODULE_".$name."'";
+					$sql2 .= " WHERE name = 'MAIN_MODULE_".$db->sanitize($name)."'";
 					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$resql2 = $db->query($sql2);
 					if ($resql2) {
@@ -616,13 +625,13 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				$obj = $db->fetch_object($resql);
 
 				$reg = array();
-				if (preg_match('/^(.+)@(.+)$/i', $obj->file, $reg)) {
+				if (preg_match('/^(\w+)@(\w+)$/i', $obj->file, $reg)) {
 					$name = $reg[1];
 					$module = $reg[2];
 
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
-					$sql2 .= " WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
+					$sql2 .= " WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";  // @phan-suppress-current-line SqlInjection
 					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$sql2 .= " AND value <> 0";
 					$resql2 = $db->query($sql2);
@@ -1055,7 +1064,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 				// To show ref or specific information according to view to show (defined by $module)
 				if ($modulepart == 'invoice') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'invoice_supplier') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
@@ -1063,23 +1072,23 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 				}
 				if ($modulepart == 'propal') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'order') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'order_supplier') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'contract') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'tax') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
-					$id = $reg[1];
+					$id = empty($reg[1]) ? '' : $reg[1];
 				}
 
 				if (($id || $ref) && $object_instance !== null) {
@@ -1260,7 +1269,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 
 				if (GETPOST('set_empty_time_spent_amount') == 'confirmed') {
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."element_time";
-					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".((int) $obj->user_id);
+					$sql2 .= " SET thm = ".((float) $obj->user_thm)." WHERE thm IS NULL AND fk_user = ".((int) $obj->user_id);
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {
 						$error++;
@@ -1358,13 +1367,13 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 							if (!$result) {
 								print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
 								if (GETPOST('force_disable_of_modules_not_found') == 'confirmed') {
-									$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
+									$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";  // @phan-suppress-current-line SqlInjection
 									$resql2 = $db->query($sql2);
 									if (!$resql2) {
 										$error++;
 										dol_print_error($db);
 									}
-									$sql3 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+									$sql3 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";  // @phan-suppress-current-line SqlInjection
 									$resql3 = $db->query($sql3);
 									if (!$resql3) {
 										$error++;
@@ -1589,7 +1598,9 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 			}
 			print '</td></tr>';
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Restore dropped foreign keys
@@ -1614,7 +1625,9 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 				fclose($handle);
 			}
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Enable foreign key checking
@@ -1719,7 +1732,9 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 			}
 			print '</td></tr>';
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Restore dropped foreign keys
@@ -1744,7 +1759,9 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 				fclose($handle);
 			}
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Enable foreign key checking
@@ -1786,8 +1803,8 @@ if ($ok && GETPOST('force_collation_from_conf_on_tables', 'alpha')) {
 
 			print '<tr><td colspan="2">';
 			print $table[0];
-			$sql1 = "ALTER TABLE ".$table[0]." ROW_FORMAT=dynamic";
-			$sql2 = "ALTER TABLE ".$table[0]." CONVERT TO CHARACTER SET ".$conf->db->character_set." COLLATE ".$conf->db->dolibarr_main_db_collation;
+			$sql1 = "ALTER TABLE ".$table[0]." ROW_FORMAT=dynamic"; // @phan-suppress-current-line SqlInjection
+			$sql2 = "ALTER TABLE ".$table[0]." CONVERT TO CHARACTER SET ".$conf->db->character_set." COLLATE ".$conf->db->dolibarr_main_db_collation; // @phan-suppress-current-line SqlInjection
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_collation_from_conf_on_tables == 'confirmed') {
@@ -1950,7 +1967,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 			if (!($n_processed_rows & 0xff)) {
 				echo '<tr><td>Processed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
 				flush();
-				ob_flush();
+				if (ob_get_level() > 0) {
+					ob_flush();
+				}
 			}
 		}
 	} else {
@@ -2058,11 +2077,11 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 					FROM
 						".MAIN_DB_PREFIX."facturedet fd
 					WHERE
-						fd.fk_facture = $obj->rowid";
+						fd.fk_facture = ".((int) $obj->rowid);
 				$ressql_calculs = $db->query($sql_calculs);
 				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
 					// Calculate the sum of received payments
-					$sql_paiements = "SELECT SUM(amount) as somme from ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = $obj->rowid";
+					$sql_paiements = "SELECT SUM(amount) as somme from ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = ".((int) $obj->rowid);
 					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
 					$totHt = ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
 					$totTva = ($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0);
@@ -2072,15 +2091,15 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 					$sql_maj = "
 						UPDATE ".MAIN_DB_PREFIX."facture
 						SET
-							total_ht = $totHt,
-							total_tva = $totTva,
-							localtax1 = $totLocal1,
-							localtax2 = $totLocal2,
-							total_ttc = $totTtc,
+							total_ht = ".((float) $totHt).",
+							total_tva = ".((float) $totTva).",
+							localtax1 = ".((float) $totLocal1).",
+							localtax2 = ".((float) $totLocal2).",
+							total_ttc = ".((float) $totTtc).",
 							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1).",
 							paid = ".($totTtc == price2num($montantPaiements, 'MT') ? 1 : 0)."
 						WHERE
-							rowid = $obj->rowid";
+							rowid = ".((int) $obj->rowid);
 					$db->query($sql_maj);
 				}
 				$i++;

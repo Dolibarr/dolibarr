@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014-2016  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
@@ -240,6 +241,11 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3,5)";
 		}
+		// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('turnoverreport'));
+		$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
@@ -350,6 +356,11 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";
 		}
+		// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('turnoverreport'));
+		$parameters = array('invoicealias' => 'f', 'issupplier' => 1, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		}
@@ -418,6 +429,11 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3,5)";
 		}
+		// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('turnoverreport'));
+		$parameters = array('invoicealias' => 'f', 'issupplier' => 0, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -458,6 +474,11 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";
 		}
+		// Add SQL restrictions from hooks (context turnoverreport), e.g. a deposit pivot date restricting deposits by their date
+		$hookmanager->initHooks(array('turnoverreport'));
+		$parameters = array('invoicealias' => 'f', 'issupplier' => 1, 'datefield' => 'datef');
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+		$sql .= $hookmanager->resPrint;
 		$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -925,10 +946,14 @@ if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN') && isModEnabled('loan'
  */
 
 if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
+	// Some shipped charts of accounts (e.g. US-BASE) split income and expense
+	// accounts across more than one pcg_type value (COGS, OTHER_REVENUE,
+	// OTHER_EXPENSES), unlike FR/GB-style charts which only use INCOME/EXPENSE.
+	// Include those here so this report does not silently omit them.
 	$sanitizedpredefinedgroupwhere = "(";
-	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type = 'EXPENSE')";
+	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type IN ('EXPENSE', 'COGS', 'OTHER_EXPENSES'))";
 	$sanitizedpredefinedgroupwhere .= " OR ";
-	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type = 'INCOME')";
+	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type IN ('INCOME', 'OTHER_REVENUE'))";
 	$sanitizedpredefinedgroupwhere .= ")";
 
 	$charofaccountstring = getDolGlobalInt('CHARTOFACCOUNTS');
@@ -936,8 +961,8 @@ if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 
 	$sql = "SELECT b.doc_ref, b.numero_compte, b.subledger_account, b.subledger_label, aa.pcg_type, date_format(b.doc_date,'%Y-%m') as dm, sum(b.debit) as debit, sum(b.credit) as credit, sum(b.montant) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_account as aa";
-	$sql .= " WHERE b.entity = ".$conf->entity;
-	$sql .= " AND aa.entity = ".$conf->entity;
+	$sql .= " WHERE b.entity = ".((int) $conf->entity);
+	$sql .= " AND aa.entity = ".((int) $conf->entity);
 	$sql .= " AND b.numero_compte = aa.account_number";
 	$sql .= " AND ".$sanitizedpredefinedgroupwhere;
 	$sql .= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
@@ -959,14 +984,14 @@ if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
-				if ($obj->pcg_type == 'INCOME') {
+				if (in_array($obj->pcg_type, array('INCOME', 'OTHER_REVENUE'))) {
 					if (!isset($encaiss[$obj->dm])) {
 						$encaiss[$obj->dm] = 0;	// To avoid warning of var not defined
 					}
 					$encaiss[$obj->dm] += $obj->credit;
 					$encaiss[$obj->dm] -= $obj->debit;
 				}
-				if ($obj->pcg_type == 'EXPENSE') {
+				if (in_array($obj->pcg_type, array('EXPENSE', 'COGS', 'OTHER_EXPENSES'))) {
 					if (!isset($decaiss[$obj->dm])) {
 						$decaiss[$obj->dm] = 0;	// To avoid warning of var not defined
 					}

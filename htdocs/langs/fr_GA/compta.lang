@@ -27,6 +27,4 @@ VATReportByCustomersInInputOutputMode=Rapport par client des TPS collectées et 
 VATReportByQuartersInInputOutputMode=Rapport par taux des TPS collectées et payées
 VATDue=TPS réclamée
 ByVatRate=Par taux de TPS
-TurnoverbyVatrate=Chiffre d'affaire facturé par taux de TPS
-TurnoverCollectedbyVatrate=Chiffre d'affaires encaissé par taux de TPS
 PurchasebyVatrate=Achat par taux de TPS

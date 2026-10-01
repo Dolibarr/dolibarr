@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Fizetésre váró fizetések átutalással
 RefSalary=Fizetés
 NoSalaryInvoiceToWithdraw=Nincs fizetés a „%s”-ra. Lépjen a „%s” lapra a fizetési kártyán, és kérjen.
 SalaryInvoiceWaitingWithdraw=Átutalással fizetésre váró fizetések
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

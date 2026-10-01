@@ -189,7 +189,7 @@ foreach ($arrayofai as $key => $airecord) {
 		print ', ';
 	}
 	$i++;
-	print dol_escape_js($key).': \''.dol_escape_js($airecord['url']).'\'';
+	print dol_sanitizeKeyCode($key).': \''.dol_escape_js($airecord['url']).'\'';
 }
 print '};
 				const arrayofextlink = {';
@@ -202,7 +202,7 @@ foreach ($arrayofai as $key => $airecord) {
 		print ', ';
 	}
 	$i++;
-	print dol_escape_js($key).': \''.dol_escape_js($airecord['setup']).'\'';
+	print dol_sanitizeKeyCode($key).': \''.dol_escape_js($airecord['setup']).'\'';
 }
 print '};
 				console.log("Check URL for .iaurl."+aiservice+" .input"+aiservice);

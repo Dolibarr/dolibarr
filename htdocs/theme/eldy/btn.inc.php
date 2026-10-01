@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var User $user
  *
  * @var string $butactionbg
- * @var string $colorbackhmenu1
  * @var string $colortextlink
  * @var int $dol_optimize_smallscreen
  * @var string $fontlist
@@ -35,7 +34,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 '
 @phan-var-force string $butactionbg
-@phan-var-force string $colorbackhmenu1
 @phan-var-force string $colortextlink
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
@@ -49,14 +47,14 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 /* IDE Hack <style type="text/css"> */
 
 :root {
-			--btncolortext: rgb(<?php print $colortextlink; ?>);
-			--btncolorbg: #fbfbfb;
-			--btncolorborderhover: none;
-			--btncolorborder: #FFF;
-			--butactiondeletebg: rgb(234,228,225);
-			--butactioncancelbg: #e3e3e3;
-			--butactionbg: rgb(<?php print $butactionbg; ?>);
-			--textbutaction: rgb(<?php print $textbutaction; ?>);
+	--btncolortext: rgb(<?php print $colortextlink; ?>);
+	--btncolorbg: #fbfbfb;
+	--btncolorborderhover: none;
+	--btncolorborder: #FFF;
+	--butactiondeletebg: rgb(234,228,225);
+	--butactioncancelbg: #e3e3e3;
+	--butactionbg: rgb(<?php print $butactionbg; ?>);
+	--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
 
 <?php
@@ -122,13 +120,15 @@ span.butAction, span.butActionDelete {
 	color: var(--textbutaction) !important;
 	/* background: rgb(230, 232, 239); */
 }
-.butActionRefused, .butAction, .butActionDelete {
+.butAction, .butActionRefused, .butActionDelete {
 	border-radius: 3px;
 }
 :not(.center) > .butActionRefused:last-child, :not(.center) > .butAction:last-child, :not(.center) > .butActionDelete:last-child {
 	margin-<?php echo $right; ?>: 0px !important;
 }
-.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active,
+.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active,
+.butActionRefused,
+.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active,
 .divButAction
  {
 	text-decoration: none;
@@ -142,6 +142,7 @@ span.butAction, span.butActionDelete {
 	cursor: pointer;
 	color: #444;
 	border: 1px solid transparent;	/* So for buttonRefused with a border, it will not have any flash effect */
+	min-width: 40px;
 
 	/* border: 1px solid #aaa; */
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
@@ -199,6 +200,12 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	box-shadow: unset !important;
 }
 
+.butActionDanger, .butActionDanger:link, .butActionDanger:visited, .butActionDanger:hover, .butActionDanger:active, .buttonDanger {
+	background: var(--butactiondeletebg) !important;
+	/* border: 1px solid #633; */
+	color: #633 !important;
+}
+
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
 	background: var(--butactiondeletebg) !important;
 	/* border: 1px solid #633; */
@@ -217,19 +224,31 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
+/* Button Clone */
+#action-clone .textbutton, .butAction.butActionClone .textbutton {
+  font-size: 0;
+  display: inline-block;
+}
+#action-clone .textbutton::before, .butAction.butActionClone .textbutton::before {
+  content: "\f24d";            /* fa-clone */
+  font-family: "Font Awesome 5 Free";  /* ou "Font Awesome 5 Free" selon votre version */
+  font-weight: 900;            /* obligatoire pour la version "solid" */
+  font-size: 14px;				/* using 1em does not work */
+  /* vertical-align: middle; */
+}
 
-/*
-.butActionDelete#action-delete::before {
-	content: "\f1f8";
-	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
-	font-weight: 600;
-	width: 20px;
-	visibility: visible;
+
+/* Button Delete */
+#action-delete .textbutton, .butAction.butActionDelete .textbutton {
+  font-size: 0;
+  display: inline-block;
 }
-.butActionDelete#action-delete span.textbutton {
-	display: none;
+#action-delete .textbutton::before, .butAction.butActionDelete .textbutton::before {
+  content: "\f1f8";            /* fa-trash */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;            /* required for the "solid" version */
+  font-size: 14px;				/* using 1em does not work */
 }
-*/
 
 .butActionRefused {
 	/* pointer-events: none; Removed as this break the use of title */
@@ -278,7 +297,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionLogin, .butActionLogin:link, .butActionLogin:visited, .butActionLogin:hover, .butActionLogin:active {
-	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
+	background-color: var(--butactionbg);
 	padding: 1em 1em;
 }
 

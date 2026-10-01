@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=ARH
-Holidays=Licencia
+Holiday=Licencia
 CPTitreMenu=Licencia
 MenuAddCP=Nueva solicitud de licencia
 NotActiveModCP=Debe habilitar el módulo de Licencias para ver esta página.
@@ -39,3 +39,4 @@ DeleteCP=Borrar
 ActionCancelCP=Cancelar
 TitleDeleteCP=Eliminar esta solicitud de licencia
 ConfirmDeleteCP=¿Confirmas la eliminación de esta solicitud de licencia?
+groups=Los grupos

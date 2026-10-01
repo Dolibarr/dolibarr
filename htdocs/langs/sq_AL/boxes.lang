@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Dërgesat e fundit të klientëve
 BoxTitleLastCustomerShipments=Dërgesat e modifikuara të klientëve më të fundit %s
 BoxTitleLastLeaveRequests=Kërkesat e fundit të modifikuara për pushim %s
 NoRecordedShipments=Asnjë dërgesë e regjistruar e klientit
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Klientët me limit të papaguar është arritur
 BoxTitleLastFediverseInfos=Postimet e fundit %s nga %s
 BoxLastFediverseInfos=Përditësimet më të fundit të Fediverse: Lajme dhe Trende

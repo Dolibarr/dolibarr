@@ -626,7 +626,7 @@ if ($resql) {
 				} else {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=cs.rowid";
 				}
-				$sql .= " WHERE cs.entity = ".$conf->entity; // We don't share object for accountancy, we use source object sharing
+				$sql .= " WHERE cs.entity = ".((int) $conf->entity); // We don't share object for accountancy, we use source object sharing
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
@@ -694,7 +694,7 @@ if ($resql) {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=t.rowid";
 				}
 				$sql .= " WHERE bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				// $sql .= " AND t.entity = " . $conf->entity; // TODO when entity is managed in tva
+				// $sql .= " AND t.entity = " . ((int) $conf->entity); // TODO when entity is managed in tva
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
@@ -827,7 +827,7 @@ if ($resql) {
 				} else {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=l.rowid";
 				}
-				$sql .= " WHERE l.entity = ".$conf->entity; // We don't share object for accountancy, we use source object sharing
+				$sql .= " WHERE l.entity = ".((int) $conf->entity); // We don't share object for accountancy, we use source object sharing
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";

@@ -5,7 +5,7 @@
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2026  	   Pierre Ardoin     	<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -193,7 +193,7 @@ print $langs->trans("NotificationsDescGlobal").' - '.$langs->trans("YouAreHere")
 print '</span>';
 print '<br>';
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -269,7 +269,7 @@ print '<br><br>';
 
 // Emails templates for notification
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="settemplates">';
 
@@ -328,7 +328,15 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	} elseif ($notifiedevent['elementtype'] == 'member') {
 		$model = 'member';
 	} elseif ($notifiedevent['elementtype'] == 'contrat') {
-		$model = 'contract_send';
+		$model = 'contract';
+	} elseif ($notifiedevent['elementtype'] == 'stocktransfer') {
+		$model = 'stocktransfer_send';
+	} elseif ($notifiedevent['elementtype'] == 'agenda') {
+		$model = 'actioncomm_send';
+	}
+	// The events of leaves can be recorded with the elementtype 'expensereport' in a database migrated from an old version
+	if (strpos($notifiedevent['code'], 'HOLIDAY_') === 0) {
+		$model = 'holiday';
 	}
 
 	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
@@ -397,7 +405,7 @@ print '</form>';
 print '<br><br>';
 
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setfixednotif">';
 print '<input type="hidden" name="page_y" value="">';

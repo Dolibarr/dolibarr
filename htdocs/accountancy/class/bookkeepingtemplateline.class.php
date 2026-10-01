@@ -247,10 +247,10 @@ class BookkeepingTemplateLine extends CommonObject
 	 * @param  int                         $limit      limit
 	 * @param  int                         $offset     Offset
 	 * @param  array<string,mixed>         $filter     Filter array. Example array('mystringfield'=>'value', 'myintfield'=>4, 'customsql'=>...)
-	 * @param  string                      $filtermode Filter mode (AND or OR)
+	 * @param  'AND'|'OR'                  $sqlfiltermode Filter mode (AND or OR)
 	 * @return BookkeepingTemplateLine[]|int           Array of BookkeepingTemplateLine objects if OK, <0 if KO
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $sqlfiltermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -313,7 +313,7 @@ class BookkeepingTemplateLine extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+			$sql .= " AND (".implode(" ".$sqlfiltermode." ", $sqlwhere).")";
 		}
 
 		if (!empty($sortfield)) {

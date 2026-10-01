@@ -43,7 +43,7 @@ function fillArrayOfMeasures($object, $tablealias, $labelofobject, &$arrayofmesu
 	if (empty($object)) {	// Protection against bad use of method
 		return array();
 	}
-	if ($level > 10) {	// Protection against infinite loop
+	if ($level >= 3) {	// Limit scan on 2 levels max
 		return $arrayofmesures;
 	}
 

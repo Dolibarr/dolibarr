@@ -364,7 +364,7 @@ class dolReceiptPrinter extends Printer
 
 		$sql = "SELECT rowid, name, template";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 
@@ -523,7 +523,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = "INSERT INTO ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " (name, template, entity) VALUES ('".$this->db->escape($name)."'";
-		$sql .= ", '".$this->db->escape($template)."', ".$conf->entity.")";
+		$sql .= ", '".$this->db->escape($template)."', ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -544,7 +544,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = 'DELETE FROM '.$this->db->prefix().'printer_receipt_template';
 		$sql .= " WHERE rowid = ".((int) $templateid);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -1091,6 +1091,15 @@ class dolReceiptPrinter extends Printer
 	 */
 	public function initPrinter($printerid)
 	{
+		// The escpos-php library requires the PHP intl extension (IntlBreakIterator). Without it, the first
+		// call to Printer::text() raises a fatal "Class IntlBreakIterator not found" error that the catch
+		// blocks below cannot handle. Report a clear error (return > 0 so callers skip the print) instead of
+		// letting the print crash.
+		if (!extension_loaded('intl')) {
+			$this->errors[] = 'The receipt printer requires the PHP intl extension, which is not loaded on this server.';
+			return 1;
+		}
+
 		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 			$this->connector = new DummyPrintConnector();
 			$this->printer = new Printer($this->connector, $this->profile);

@@ -19,7 +19,8 @@ Module4100Desc = מודול לניהול פרטיות נתונים (תאימות
 datapolicySetup = הגדרת מדיניות פרטיות של נתוני מודול
 DataDeletion=Deletion of data
 DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Depending on the laws of your country (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s חודשים
 ONE_YEAR = 1 שנה
 NB_YEARS = %s שנים
@@ -34,7 +35,8 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = פרוספקט/לקוח
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = גם לא לקוח פוטנציאלי/לא לקוח
 DATAPOLICY_CONTACT_FOURNISSEUR = ספק
 DATAPOLICY_ADHERENT = חבר
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
 SendAgreementText = אתה יכול לשלוח דוא"ל GDPR לכל אנשי הקשר הרלוונטיים שלך (שעדיין לא קיבלו דוא"ל ועבורם לא רשמת שום דבר על הסכם ה-GDPR שלהם). לשם כך, השתמש בכפתור הבא.
 SendAgreement = לשלוח מיילים
 AllAgreementSend = כל המיילים נשלחו
@@ -52,3 +54,6 @@ DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
 MailSent = דוא"ל נשלח
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:
+QualifiedNumber=Qualified record count

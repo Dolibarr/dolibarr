@@ -6,7 +6,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Vincent de Grandpré  	<vincent@de-grandpre.quebec>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -146,10 +146,6 @@ $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
-if (!empty($objp->stock_physique) && $objp->stock_physique < 0) {
-	print '<span class="warning">';
-}
-
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.tms as datem,';
 $sql .= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
@@ -300,7 +296,7 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 		} else {
 			$sql_having .= " HAVING";
 		}
-		$sql_having .= $natural_search_physique;
+		$sql_having .= $natural_search_physique;  // natural_search gives save sql @phan-suppress-current-line SqlInjection
 	}
 }
 
@@ -347,14 +343,10 @@ if ($resql) {
 		exit;
 	}
 
-	if (isset($type)) {
-		if ($type == 1) {
-			$texte = $langs->trans("Services");
-		} else {
-			$texte = $langs->trans("Products");
-		}
+	if ($type == 1) {
+		$texte = $langs->trans("Services");
 	} else {
-		$texte = $langs->trans("ProductsAndServices");
+		$texte = $langs->trans("Products");
 	}
 	$texte .= ' ('.$langs->trans("MenuStocks").')';
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2015  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2013	    Florian Henry               <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,8 @@ if (isModEnabled('multicompany')) {
 	$sql .= " JOIN ".$db->prefix()."entity as e ON oat.entity = e.rowid";
 }
 $sql .= " WHERE oat.rowid = ".((int) $tokenid);
+$sql .= " AND oat.fk_user = ".((int) $id);
+$sql .= " AND oat.service = 'dolibarr_rest_api'";
 
 $resql = $db->query($sql);
 
@@ -88,6 +90,9 @@ if (empty($object->api_key)) {
 
 $form = new Form($db);
 $token = $db->fetch_object($resql);
+if (!empty($tokenid) && empty($token)) {
+	accessforbidden();
+}
 
 $entity = $conf->entity;
 
@@ -128,7 +133,8 @@ if (empty($reshook)) {
 	if ($action == 'add' && $canedittoken) {
 		$tokenstring = GETPOST('api_key', 'alphanohtml');
 		$userid = GETPOSTINT('user');
-		$useridtoadd = !empty($userid) && $userid > 0 ? $userid : $id;
+		// Only an admin can create a token for another user
+		$useridtoadd = ($user->admin && $userid > 0) ? $userid : $id;
 
 		if (empty($tokenstring)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Token")), null, 'errors');
@@ -193,6 +199,8 @@ if (empty($reshook)) {
 		// Remove token
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE rowid = ".((int) $tokenid);
+		$sql .= " AND fk_user = ".((int) $object->id);
+		$sql .= " AND service = 'dolibarr_rest_api'";
 
 		$resql = $db->query($sql);
 
@@ -335,7 +343,7 @@ if ($action == 'create') {
 
 	print '</table>';
 	print '<div class="tabsAction">';
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&tokenid='.$token->token_id.'&action=delete&token='.newToken(), '', $canedittoken);
+	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'tokenid' => $token->token_id, 'action' => 'delete'], true), '', $canedittoken, array('attr' => array('class' => 'reposition')))."\n";
 	print '</div>';
 	print '</div>';
 

@@ -123,10 +123,10 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->commande->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->order->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = commande_prepare_head($object);
-		print dol_get_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, $object->picto);
+		print dol_get_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, $object->picto, 0, '', '', 0, '', 1);
 
 		// Build file list
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);

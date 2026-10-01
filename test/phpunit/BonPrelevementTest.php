@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Thomas Negre            <tnegre@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -67,6 +67,7 @@ class BonPrelevementTest extends CommonClassTest
 	const IBAN_B_SPECIFIC = 'FR7630001007941234567890476'; // specific bank account of COMPANY_B
 	const BIC             = 'BNPAFRPPXXX';
 	const XSD_PAIN_008    = __DIR__.'/../assets/xsd/pain.008.001.02.xsd';
+	const XSD_PAIN_008_V8 = __DIR__.'/../assets/xsd/pain.008.001.08.xsd';
 
 	// ---------------------------------------------------------------------------
 	// Shared fixtures created once in setUpBeforeClass(),
@@ -88,8 +89,18 @@ class BonPrelevementTest extends CommonClassTest
 	protected static $fkBankAccount = 0;
 	/** @var string Error message collected in setUpBeforeClass() if a fixture failed to be created */
 	protected static $setUpError = '';
-	/** @var ?Societe Global $mysoc as it was before this test class forced it into a SEPA country */
-	protected static $savmysoc;
+	/**
+	 * @var ?string Global $mysoc->country_code as it was before this test class forced it into a SEPA
+	 *              country. Only the two scalar fields are saved (not a clone of $mysoc itself): $mysoc
+	 *              carries the live, shared DB connection in $mysoc->db, and PHPUnit's backupStaticAttributes
+	 *              round-trips every static property through serialize()/unserialize() between tests - which
+	 *              silently rebuilds a mysqli object as an empty, unusable shell (serialize() on a live
+	 *              mysqli does not throw, so PHPUnit has no way to know it must skip this value).
+	 *              Storing the object here previously corrupted $mysoc->db for the rest of the test suite.
+	 */
+	protected static $savmysoccountrycode;
+	/** @var ?int Global $mysoc->country_id as it was before this test class forced it into a SEPA country */
+	protected static $savmysoccountryid;
 
 	/**
 	 * setUpBeforeClass
@@ -113,7 +124,8 @@ class BonPrelevementTest extends CommonClassTest
 		// not restored between test classes by CommonClassTest). Some other test class run
 		// earlier in the same PHPUnit process (e.g. PricesTest) may have left it on a
 		// non-SEPA country, so force it here and restore it in tearDownAfterClass().
-		self::$savmysoc = clone $mysoc;
+		self::$savmysoccountrycode = $mysoc->country_code;
+		self::$savmysoccountryid = $mysoc->country_id;
 		$mysoc->country_code = 'FR';
 		$mysoc->country_id = 1;
 
@@ -229,7 +241,8 @@ class BonPrelevementTest extends CommonClassTest
 	public static function tearDownAfterClass(): void
 	{
 		global $mysoc;
-		$mysoc = self::$savmysoc;
+		$mysoc->country_code = self::$savmysoccountrycode;
+		$mysoc->country_id = self::$savmysoccountryid;
 
 		parent::tearDownAfterClass(); // Rolls back the parent transaction ($db->rollback())
 	}
@@ -275,6 +288,97 @@ class BonPrelevementTest extends CommonClassTest
 	}
 
 	/**
+	 * Test SEPA pain.008.001.08 generation when PRELEVEMENT_SEPA_SCHEMA_VERSION is set to '8'.
+	 *
+	 * @return void
+	 */
+	public function testGenerateWithSepaSchemaVersion8()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
+
+		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
+		$demAId = $this->createPaymentRequest($facA, 100.0, self::$ribASpecificId);
+
+		$conf->global->PRELEVEMENT_SEPA_SCHEMA_VERSION = '8';
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
+						   array($demAId), self::$fkBankAccount);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
+
+		// The generated file must declare the pain.008.001.08 namespace
+		$content = file_get_contents($bon->filename);
+		$this->assertStringContainsString('urn:iso:std:iso:20022:tech:xsd:pain.008.001.08', $content,
+			'SEPA XML must declare the pain.008.001.08 namespace when PRELEVEMENT_SEPA_SCHEMA_VERSION=8');
+		$this->assertStringContainsString('<BICFI>', $content,
+			'SEPA XML must use BICFI elements when PRELEVEMENT_SEPA_SCHEMA_VERSION=8');
+		$this->assertStringNotContainsString('<BIC>', $content,
+			'SEPA XML must not use BIC elements when PRELEVEMENT_SEPA_SCHEMA_VERSION=8');
+
+		// The generated file must validate against the official pain.008.001.08 XSD
+		$this->assertFileExists($bon->filename, 'SEPA XML file does not exist: '.$bon->filename);
+		$this->assertFileExists(self::XSD_PAIN_008_V8, 'XSD schema file not found: '.self::XSD_PAIN_008_V8);
+		$dom = new DOMDocument();
+		$loaded = $dom->load($bon->filename);
+		$this->assertTrue($loaded, 'DOMDocument failed to load SEPA XML: '.$bon->filename);
+		libxml_use_internal_errors(true);
+		$valid = $dom->schemaValidate(self::XSD_PAIN_008_V8);
+		$errors = libxml_get_errors();
+		libxml_clear_errors();
+		libxml_use_internal_errors(false);
+		$messages = array();
+		foreach ($errors as $error) {
+			$messages[] = trim($error->message).' (line '.$error->line.')';
+		}
+		$this->assertTrue($valid, 'SEPA XML does not validate against pain.008.001.08 XSD: '.implode('; ', $messages));
+
+		unset($conf->global->PRELEVEMENT_SEPA_SCHEMA_VERSION);
+	}
+
+	/**
+	 * A real SEPA direct debit file must not use the internal ALL filter as SeqTp.
+	 *
+	 * @return void
+	 */
+	public function testGenerateRejectsInvalidSepaSequenceType()
+	{
+		global $db;
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->generate('ALL', 0, 'direct-debit', self::$fkBankAccount);
+
+		$this->assertSame(-1, $result);
+		$this->assertSame('ErrorBadParametersForDirectDebitFileCreate', $bon->error);
+	}
+
+	/**
+	 * create() must reject ALL before creating a real direct debit order.
+	 *
+	 * @return void
+	 */
+	public function testCreateRejectsInvalidSepaSequenceType()
+	{
+		global $db, $user;
+
+		$fac = $this->createValidatedInvoice(self::$socidA, 100.0);
+		$requestId = $this->createPaymentRequest($fac, 100.0, self::$ribADefaultId);
+
+		$bon = new BonPrelevement($db);
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'direct-debit', array($requestId), self::$fkBankAccount);
+
+		$this->assertSame(-1, $result);
+		$this->assertSame('ErrorBadParametersForDirectDebitFileCreate', $bon->error);
+		$this->assertSame(0, (int) $bon->id);
+	}
+
+	/**
 	 * testTwoCompaniesSimpleRib
 	 *
 	 * Verifies that when two different companies each have one invoice with a
@@ -302,6 +406,8 @@ class BonPrelevementTest extends CommonClassTest
 		// Create one invoice for COMPANY_A (100) and one for COMPANY_B (300)
 		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
 		$facB = $this->createValidatedInvoice(self::$socidB, 300.0);
+
+		// $facA is a Societe object. But $facA->thidparty is not loaded
 
 		// Link each invoice to its specific bank account (not the default)
 		$demAId = $this->createPaymentRequest($facA, 100.0, self::$ribASpecificId);
@@ -738,5 +844,75 @@ class BonPrelevementTest extends CommonClassTest
 		}
 
 		return $result;
+	}
+
+	/**
+	 * testLoadBoardLateOrders
+	 *
+	 * load_board() counts as late the pending orders older than the warning delay: transmitted more than the delay ago, or,
+	 * when not transmitted yet, created more than the delay ago. The delay is in seconds; the board once compared the dates
+	 * with the delay converted in days, so every pending order was late. Synthetic orders inserted in a transaction that is
+	 * rolled back; the counts are compared to the ones got before the insertion, so existing orders do not matter.
+	 *
+	 * @return void
+	 */
+	public function testLoadBoardLateOrders()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
+
+		if (empty($conf->warning_delays['bank_direct_debit'])) {
+			$conf->warning_delays['bank_direct_debit'] = 7 * 86400;
+		}
+		if (empty($conf->warning_delays['bank_credit_transfer'])) {
+			$conf->warning_delays['bank_credit_transfer'] = 7 * 86400;
+		}
+
+		$now = dol_now();
+		$object = new BonPrelevement($db);
+
+		$db->begin();
+
+		foreach (['direct-debit' => 'bank_direct_debit', 'credit-transfer' => 'bank_credit_transfer'] as $mode => $delaykey) {
+			$before = $object->load_board($user, $mode);
+			$this->assertInstanceOf('WorkboardResponse', $before);
+
+			$old = $db->idate($now - $conf->warning_delays[$delaykey] - 2 * 86400);	// Older than the delay
+			$recent = $db->idate($now - 3600);		// Within the delay
+			// [status, datec, date_trans, expected late]
+			$orders = [
+				[BonPrelevement::STATUS_DRAFT, $old, 'NULL', 1],
+				[BonPrelevement::STATUS_DRAFT, $recent, 'NULL', 0],
+				[BonPrelevement::STATUS_TRANSFERED, $old, "'".$old."'", 1],
+				[BonPrelevement::STATUS_TRANSFERED, $old, "'".$recent."'", 0],	// Created long ago but transmitted recently: waiting since the transmission
+				[BonPrelevement::STATUS_DEBITED, $old, "'".$old."'", 0],		// Done, not pending: not counted at all
+			];
+			$expectedtodo = 0;
+			$expectedlate = 0;
+			foreach ($orders as $k => [$status, $datec, $datetrans, $late]) {
+				$sql = "INSERT INTO ".$db->prefix()."prelevement_bons (ref, entity, type, statut, datec, date_trans, amount)";
+				$sql .= " VALUES ('TESTB".substr($mode, 0, 1).$k."', ".((int) $conf->entity).", '".$mode."', ".$status.", '".$datec."', ".$datetrans.", 10)";	// ref is unique per entity
+				$this->assertTrue((bool) $db->query($sql), $db->lasterror());
+				if ($status < BonPrelevement::STATUS_DEBITED) {
+					$expectedtodo++;
+					$expectedlate += $late;
+				}
+			}
+
+			$after = $object->load_board($user, $mode);
+
+			print __METHOD__." mode=".$mode." nbtodo ".$before->nbtodo." -> ".$after->nbtodo.", nbtodolate ".$before->nbtodolate." -> ".$after->nbtodolate."\n";
+
+			$this->assertSame($expectedtodo, $after->nbtodo - $before->nbtodo, $mode.' pending orders added');
+			$this->assertSame($expectedlate, $after->nbtodolate - $before->nbtodolate, $mode.' late orders added');
+			$this->assertEqualsWithDelta($conf->warning_delays[$delaykey] / 86400, $after->warning_delay, 0.0001, $mode.' the delay of the response is in days');
+		}
+
+		$db->rollback();
 	}
 }

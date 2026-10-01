@@ -205,6 +205,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 }
 
 if ($user->hasRight('categorie', 'supprimer') && $action == 'confirm_delete' && $confirm == 'yes') {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	if ($object->delete($user) >= 0) {
 		if ($backtopage) {
 			header("Location: ".$backtopage);
@@ -400,7 +401,7 @@ if (empty($reshook)) {
 	}
 
 	if ($user->hasRight('categorie', 'supprimer')) {
-		print '<a class="butActionDelete" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id, 'type' => $type, 'backtolist' => $backtolist], true).'">'.$langs->trans("Delete").'</a>';
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id, 'type' => $type, 'backtolist' => $backtolist], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 	}
 }
 

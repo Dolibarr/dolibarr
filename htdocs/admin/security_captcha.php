@@ -89,8 +89,7 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', '
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("CaptchaDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("CaptchaDesc")."</div>\n";
 
 $dirModCaptcha = array_merge(array('/core/modules/security/captcha/'), (isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha'])) ? $conf->modules_parts['captcha'] : array());
 
@@ -124,7 +123,7 @@ foreach ($dirModCaptcha as $dirroot) {
 $arrayhandler = dol_sort_array($arrayhandler, 'position');
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 

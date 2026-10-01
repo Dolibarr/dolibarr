@@ -230,6 +230,8 @@ if (preg_match("/define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncConten
 	$PROJVERSION = $matches[1];
 }
 if (empty($PROJVERSION)) {
+	$DOL_MAJOR_VERSION = 'notfound';
+	$DOL_MINOR_VERSION = 'notfound';
 	if (preg_match("/define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncContent, $matches)) {
 		$DOL_MAJOR_VERSION = $matches[1];
 	}
@@ -269,7 +271,7 @@ if (strpos($newbuild, '-') === false) {
 	$newbuild .= '-0.4';  // finale (fedora)
 }
 $REL1 = preg_replace('/-.*$/', '', $newbuild);
-if ($RPMSUBVERSION === 'auto') {
+if ($RPMSUBVERSION === 'auto') {	// @phpstan-ignore-line
 	$RPMSUBVERSION = preg_replace('/^.*-/', '', $newbuild);
 }
 $FILENAMETGZ2    = "$PROJECT-$MAJOR.$MINOR.$REL1";
@@ -314,10 +316,10 @@ for ($i = 1; $i < $argc; $i++) {
 }
 
 // Force output dir if env vars are defined
-if ($ENVDESTIBETARC && preg_match('/[a-z]/i', $BUILD)) {
+if ($ENVDESTIBETARC && preg_match('/[a-z]/i', $BUILD)) {	// @phpstan-ignore-line
 	$DESTI = $ENVDESTIBETARC;
 }
-if ($ENVDESTISTABLE && preg_match('/^[0-9]+$/', $BUILD)) {
+if ($ENVDESTISTABLE && preg_match('/^[0-9]+$/', $BUILD)) {	// @phpstan-ignore-line
 	$DESTI = $ENVDESTISTABLE;
 }
 
@@ -349,12 +351,12 @@ if ($target) {
 	$targetUpper = strtoupper($target);
 	if ($targetUpper === 'ALL') {
 		foreach ($LISTETARGET as $key) {
-			if ($key !== 'SNAPSHOT' && $key !== 'SF' && $key !== 'ASSO') {
+			if ($key !== 'SNAPSHOT' && $key !== 'SF' && $key !== 'ASSO') {				// @phpstan-ignore-line
 				$CHOOSEDTARGET[$key] = 1;
 			}
 		}
 	}
-	if ($targetUpper !== 'ALL' && $targetUpper !== 'SF' && $targetUpper !== 'ASSO') {
+	if ($targetUpper !== 'ALL' && $targetUpper !== 'SF' && $targetUpper !== 'ASSO') {	// @phpstan-ignore-line
 		$CHOOSEDTARGET[$targetUpper] = 1;
 	}
 	if ($targetUpper === 'SF') {
@@ -399,7 +401,7 @@ if ($target) {
 	} elseif ($NUM_SCRIPT === '0') {
 		$CHOOSEDTARGET['-CHKSUM'] = 1;
 		foreach ($LISTETARGET as $key) {
-			if ($key !== 'SNAPSHOT' && $key !== 'ASSO' && $key !== 'SF') {
+			if ($key !== 'SNAPSHOT' && $key !== 'ASSO' && $key !== 'SF') {				// @phpstan-ignore-line
 				$CHOOSEDTARGET[$key] = 1;
 			}
 		}
@@ -487,7 +489,11 @@ ksort($CHOOSEDTARGET);
 foreach ($CHOOSEDTARGET as $tgt => $val) {
 	if ($tgt === '-CHKSUM') { $nbofpublishneedchangelog++; }
 	if ($val < 0) { continue; }
-	if ($tgt !== 'EXE' && $tgt !== 'EXEDOLIWAMP' && $tgt !== '-CHKSUM') {
+	if ($tgt !== 'EXE' && $tgt !== 'EXEDOLIWAMP') {
+		// -CHKSUM also needs the buildroot: the checksum file must be generated on the
+		// cleaned buildroot (after custom/, third-party modules, install/mssql, etc. are
+		// removed), not on the raw SOURCE tree, or the released filelist.xml references
+		// files that were never shipped and are reported as "missing" at install time.
 		$nboftargetneedbuildroot++;
 	}
 	$nboftargetok++;
@@ -495,7 +501,7 @@ foreach ($CHOOSEDTARGET as $tgt => $val) {
 
 ksort($CHOOSEDPUBLISH);
 foreach ($CHOOSEDPUBLISH as $tgt => $val) {
-	if ($val < 0) { continue; }
+	if ($val < 0) { continue; }					// @phpstan-ignore-line
 	if ($tgt === 'ASSO') { $nbofpublishneedchangelog++; }
 	if ($tgt === 'SF') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
 	$nboftargetok++;
@@ -545,7 +551,8 @@ if ($nboftargetok) {
 
 
 	// ========================================================================
-	// Build xml check file
+	// Check xml check file can be built (the actual generation is done later,
+	// once the buildroot has been cleaned up, see "Build xml check file" below)
 	// ========================================================================
 
 	if (isset($CHOOSEDTARGET['-CHKSUM']) && $CHOOSEDTARGET['-CHKSUM'] > 0) {
@@ -563,27 +570,6 @@ if ($nboftargetok) {
 			echo "\nCanceled.\n";
 			exit(0);
 		}
-
-		echo "Create xml check file with hash checksum with command php ".$SOURCE."/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD\n";
-		$outputLines = [];
-		$retcode = 0;
-		exec("php $SOURCE/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD", $outputLines, $retcode);
-		$ret = implode("\n", $outputLines);
-		if ($retcode !== 0) {
-			echo "Error running generate_filelist_xml.php please check\n";
-			echo $ret;
-			echo "\nCanceled.\n";
-			exit(0);
-		}
-		echo $ret . "\n";
-
-		// Copy to final dir
-		$NEWDESTI = $DESTI;
-		if (!is_dir("$NEWDESTI/signatures")) {
-			mkdir("$NEWDESTI/signatures", 0777, true);
-		}
-		echo "Copy \"$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml\" to $NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml\n";
-		copy("$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml", "$NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml");
 	}
 
 
@@ -621,7 +607,7 @@ if ($nboftargetok) {
 	// ========================================================================
 
 	if ($nboftargetneedbuildroot) {
-		if (!$copyalreadydone) {
+		if (!$copyalreadydone) {	// @phpstan-ignore-line
 			echo "Creation of a buildroot used for all packages\n";
 
 			echo "Delete directory $BUILDROOT\n";
@@ -634,22 +620,26 @@ if ($nboftargetok) {
 		}
 
 		echo "Clean $BUILDROOT\n";
+		run("rm -fr $BUILDROOT/$PROJECT/.agents");
+		run("rm -f  $BUILDROOT/$PROJECT/.agentsignore");
 		run("rm -f  $BUILDROOT/$PROJECT/.buildpath");
 		run("rm -fr $BUILDROOT/$PROJECT/.cache");
-		run("rm -fr $BUILDROOT/$PROJECT/.codeclimate");
+		run("rm -fr $BUILDROOT/$PROJECT/.codeclimate.yml");
+		run("rm -fr $BUILDROOT/$PROJECT/.editorconfig");
 		run("rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders");
 		run("rm -fr $BUILDROOT/$PROJECT/.git*");
+		run("rm -fr $BUILDROOT/$PROJECT/.idea");
 		run("rm -fr $BUILDROOT/$PROJECT/.mailmap");
 		run("rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache");
 		run("rm -fr $BUILDROOT/$PROJECT/.project");
 		run("rm -fr $BUILDROOT/$PROJECT/.pydevproject");
-		run("rm -fr $BUILDROOT/$PROJECT/.pyproject.toml");
 		run("rm -fr $BUILDROOT/$PROJECT/.settings");
 		run("rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.stickler.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.travis.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.tx");
 		run("rm -f  $BUILDROOT/$PROJECT/build.xml");
+		run("rm -fr $BUILDROOT/$PROJECT/pyproject.toml");
 
 		run("rm -f  $BUILDROOT/$PROJECT/.pre-commit-config.yaml");
 		run("rm -fr $BUILDROOT/$PROJECT/.phan");
@@ -676,19 +666,17 @@ if ($nboftargetok) {
 		run("rm -f  $BUILDROOT/$PROJECT/dev/build/doxygen/doxygen_warnings.log");
 		run("rm -fr $BUILDROOT/$PROJECT/dev/build/phpstan/phpstan");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/cache.manifest");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.nova*");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.pgsql");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*");
+		// Note: htdocs/conf/conf.* are NOT removed here on purpose. They are excluded from the
+		// checksum scan anyway (see $regextoexclude in generate_filelist_xml.php), but conf.php
+		// must still exist on disk for master.inc.php to bootstrap the PHP CLI process that
+		// generates the checksum file below. They are removed right after that step instead.
+		run("rm -fr $BUILDROOT/$PROJECT/dev/build/*/.github");
 
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/mssql/README");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/mysql/README");
-		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/pgsql/README");
+		run("rm -fr $BUILDROOT/$PROJECT/htdocs/includes/*/*/.github");
 
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/mssql");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/sqlite3");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/install/*/README");
 
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/install.forced.php");
 
@@ -818,6 +806,49 @@ if ($nboftargetok) {
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/*/bin");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/*/*/bin");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/*/*/*/bin");
+
+
+		// ========================================================================
+		// Build xml check file
+		// ========================================================================
+		// This must run now, once the buildroot has been through the same cleanup as the
+		// files that will actually be shipped in the package, and before conf.php is removed
+		// below. Generating it earlier (directly on SOURCE, before this cleanup) produces a
+		// filelist.xml that references files (custom/, third-party htdocs modules,
+		// install/mssql, install/sqlite3, langs/*/README.md, ckeditor/_source, ...) that are
+		// never shipped, so the release's file integrity check reports them as "missing".
+		if (isset($CHOOSEDTARGET['-CHKSUM']) && $CHOOSEDTARGET['-CHKSUM'] > 0) {
+			echo "Create xml check file with hash checksum with command php ".$BUILDROOT."/".$PROJECT."/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD\n";
+			$outputLines = [];
+			$retcode = 0;
+			exec("php $BUILDROOT/$PROJECT/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD", $outputLines, $retcode);
+			$ret = implode("\n", $outputLines);
+			if ($retcode !== 0) {
+				echo "Error running generate_filelist_xml.php please check\n";
+				echo $ret;
+				echo "\nCanceled.\n";
+				exit(0);
+			}
+			echo $ret . "\n";
+
+			// Copy to final dir
+			$NEWDESTI = $DESTI;
+			if (!is_dir("$NEWDESTI/signatures")) {
+				mkdir("$NEWDESTI/signatures", 0777, true);
+			}
+			echo "Copy \"$BUILDROOT/$PROJECT/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml\" to $NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml\n";
+			copy("$BUILDROOT/$PROJECT/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml", "$NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml");
+		}
+
+		// Now that the checksum file has been generated, conf.php can be removed from the
+		// buildroot. It is excluded from the checksum scan itself, but master.inc.php needs
+		// it to be present on disk for the CLI script above to bootstrap.
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.nova*");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.pgsql");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*");
 	}
 
 
@@ -1297,7 +1328,7 @@ if ($nboftargetok) {
 
 	ksort($CHOOSEDPUBLISH);
 	foreach ($CHOOSEDPUBLISH as $tgt => $val) {
-		if ($val < 0) { continue; }
+		if ($val < 0) { continue; }								// @phpstan-ignore-line
 
 		echo "\nList of files to publish (BUILD=$BUILD)\n";
 

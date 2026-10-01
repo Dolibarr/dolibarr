@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2025       Yannis Hoareau
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 /**
  * @var CommonObject $object
- * @var CommonObject $this
  * @var CommonObjectLine $line
+ * @var int[] $selectedLines
  */
 
 $line_color = $object->getSubtotalColors($line->qty);
@@ -30,12 +30,12 @@ print '<tr style="background:#' . $line_color . '" id="row-'.$line->id.'">'."\n"
 
 
 $selected = 1;
-if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) {
+if (!empty($selectedLines) && !in_array($line->id, $selectedLines)) {
 	$selected = 0;
 }
 print "<td colspan='5'>";
 print '<input id="cb'.$line->rowid.'" class="flat checkforselect" type="checkbox" name="subtotal_toselect[]" value="'.$line->rowid.'" ' . ($selected ? ' checked="checked"' : '') . ' >';
-print $line->desc . "</td>\n";
+print dolPrintHTML($line->desc) . "</td>\n";
 
 
 print '</tr>';

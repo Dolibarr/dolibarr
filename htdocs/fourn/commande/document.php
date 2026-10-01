@@ -123,7 +123,7 @@ if ($object->id > 0) {
 
 	$head = ordersupplier_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order', 0, '', '', 0, '', 1);
 
 
 	// Build file list
