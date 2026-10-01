@@ -6,6 +6,21 @@ GROUP_ID="${HOST_GID:-1000}"
 USER_NAME="${HOST_USER:-developer}"
 GROUP_NAME="${HOST_GROUP:-developer}"
 
+# Block the outbound SMTP ports (25, 465, 587) of the machine running the container (the VM).
+# The container uses --network=host, so the block is installed once on the network stack shared
+# with the VM (it requires the capability NET_ADMIN, added by vibes.sh).
+# It guarantees that no email can be sent from the container (see dev/build/docker-vibe/README.md).
+# Set the environment variable VIBE_ALLOW_SMTP=1 to start a container without this protection.
+if [ "${VIBE_ALLOW_SMTP}" != "1" ]; then
+    if ! /usr/local/bin/smtpblock.sh; then
+        echo "ERROR: Failed to block the outbound SMTP ports 25, 465 and 587."
+        echo "The container is stopped to guarantee that no email can be sent from it."
+        echo "Run the container with the capability NET_ADMIN (--cap-add=NET_ADMIN),"
+        echo "or set VIBE_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
+        exit 1
+    fi
+fi
+
 # Create group
 EXISTING_GROUP=$(getent group "$GROUP_ID" | cut -d: -f1)
 
@@ -53,6 +68,12 @@ else
         --shell /bin/bash \
         "$USER_NAME"
 fi
+
+
+# Allow the user to become root inside the container with a passwordless sudo
+# (the account is created without a password, so a sudo asking for one would never work).
+#echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/$USER_NAME"
+#chmod 440 "/etc/sudoers.d/$USER_NAME"
 
 
 echo "Running as $USER_NAME ($USER_ID:$GROUP_ID)"
