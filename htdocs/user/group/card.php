@@ -190,10 +190,10 @@ if (empty($reshook)) {
 			$edituser = new User($db);
 			$edituser->fetch($userid);
 			if ($action == 'adduser') {		// Test on permission already done
-				$result = $edituser->SetInGroup($object->id, $object->entity);
+				$result = $edituser->setInGroup($object->id, $object->entity);
 			}
 			if ($action == 'removeuser') {	// Test on permission already done
-				$result = $edituser->RemoveFromGroup($object->id, $object->entity);
+				$result = $edituser->removeFromGroup($object->id, $object->entity);
 			}
 
 			if ($result > 0) {

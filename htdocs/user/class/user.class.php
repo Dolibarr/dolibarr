@@ -2990,7 +2990,6 @@ class User extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Add user into a group
 	 *
@@ -2999,9 +2998,8 @@ class User extends CommonObject
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				Return integer <0 if KO, >0 if OK
 	 */
-	public function SetInGroup($group, $entity, $notrigger = 0)
+	public function setInGroup($group, $entity, $notrigger = 0)
 	{
-		// phpcs:enable
 		global $langs, $user;
 
 		$error = 0;
@@ -3035,7 +3033,7 @@ class User extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				dol_syslog(get_class($this)."::SetInGroup ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::setInGroup ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -3046,7 +3044,6 @@ class User extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Remove a user from a group
 	 *
@@ -3055,9 +3052,8 @@ class User extends CommonObject
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     Return integer <0 if KO, >0 if OK
 	 */
-	public function RemoveFromGroup($group, $entity, $notrigger = 0)
+	public function removeFromGroup($group, $entity, $notrigger = 0)
 	{
-		// phpcs:enable
 		global $langs, $user;
 
 		$error = 0;
@@ -3090,7 +3086,7 @@ class User extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				dol_syslog(get_class($this)."::RemoveFromGroup ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::removeFromGroup ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}

@@ -682,7 +682,7 @@ class Users extends DolibarrApi
 			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
 		}
 
-		$result = $this->useraccount->SetInGroup($group, $entity);
+		$result = $this->useraccount->setInGroup($group, $entity);
 		if (!($result > 0)) {
 			throw new RestException(500, $this->useraccount->errorsToString());
 		}

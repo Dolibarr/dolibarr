@@ -456,10 +456,10 @@ if (empty($reshook)) {
 			$object->fetch($id);
 
 			if ($action == 'addgroup') {	// Test on permission already done
-				$result = $object->SetInGroup($group, $editgroup->entity);
+				$result = $object->setInGroup($group, $editgroup->entity);
 			}
 			if ($action == 'removegroup') {	// Test on permission already done
-				$result = $object->RemoveFromGroup($group, $editgroup->entity);
+				$result = $object->removeFromGroup($group, $editgroup->entity);
 			}
 
 			if ($result > 0) {
