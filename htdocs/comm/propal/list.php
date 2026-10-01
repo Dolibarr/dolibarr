@@ -272,6 +272,10 @@ $arrayfields = array(
 	'p.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
 );
 
+if ($user->socid) {
+	unset($arrayfields['p.note_private']);
+}
+
 // List of fields to search into when doing a "search in all"
 /*$fieldstosearchall = array();
  foreach ($object->fields as $key => $val) {
