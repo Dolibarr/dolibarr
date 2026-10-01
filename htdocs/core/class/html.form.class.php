@@ -13281,7 +13281,10 @@ class Form
 		// and the list of its fields. A direct sub-element is an element whose key starts with the key of its parent
 		// element followed by '__', without any other '__' after (so 't__fk_soc' is a sub-element of 't',
 		// 't__fk_soc__fk_pays' is a sub-element of 't__fk_soc' and not a direct sub-element of 't')
-		$renderElementCombo = null;
+		/**
+		 * @param int|string $tmpelementkey
+		 * @return string
+		 */
 		$renderElementCombo = function ($tmpelementkey) use ($arrayoffilterelements, &$renderElementCombo) {
 			$tmpelementval = $arrayoffilterelements[$tmpelementkey];
 			$arrayofchildelementkeys = array();
