@@ -734,7 +734,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		}
 
 		// $("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
-		$("input[name='price_ht']:first").val(pricejs(price));
+		$("input[name='price_ht']:first").val(pricejs(price, 'MU'));
 
 		return true;
 	}
