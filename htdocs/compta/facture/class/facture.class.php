@@ -2870,6 +2870,11 @@ class Facture extends CommonInvoice
 		$result = $remise->fetch($idremise);
 
 		if ($result > 0) {
+			if ($this->socid > 0 && $remise->fk_soc != $this->socid) {	// The discount must belong to the thirdparty of the invoice
+				$this->error = $langs->trans("ErrorDiscountNotSameCompany");
+				$this->db->rollback();
+				return -6;
+			}
 			if ($remise->fk_facture) {	// Protection against multiple submission
 				$this->error = $langs->trans("ErrorDiscountAlreadyUsed");
 				$this->db->rollback();
@@ -4883,7 +4888,10 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 
-		if ($id > 0 && $line->fk_facture != $id) {
+		if ($id <= 0) {
+			$id = $this->id;
+		}
+		if ($id > 0 && (int) $line->fk_facture !== (int) $id) {
 			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 			return -1;
 		}

@@ -2545,7 +2545,10 @@ class Product extends CommonObject
 			}
 		}
 
-		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_min_ttc' => $price_min_ttc, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr);
+		$localtax1 = get_localtax((string) $tva_tx, 1, $thirdparty_buyer, $thirdparty_seller, $tva_npr);
+		$localtax2 = get_localtax((string) $tva_tx, 2, $thirdparty_buyer, $thirdparty_seller, $tva_npr);
+
+		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_min_ttc' => $price_min_ttc, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr, 'localtax1' => $localtax1, 'localtax2' => $localtax2);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
