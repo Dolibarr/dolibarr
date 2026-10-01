@@ -372,7 +372,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members"));
 
@@ -1164,7 +1164,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		$formmail = new FormMail($db);
 		// Set output language
 		$outputlangs = new Translate('', $conf);
-		$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+		$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "members"));
 		// Get email content from template
