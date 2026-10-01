@@ -845,7 +845,6 @@ if (!empty($object->thirdparty)) {
 	/** @type {JsConf} */
 	const jsConf = <?php print json_encode($jsConf); ?>;
 	if(jsConf.conf.usemargins && jsConf.userRight.margins.creer){
-
 		/* Some js test when we click on button "Add" */
 		$(function() {
 			if (jsConf.conf.DISPLAY_MARGIN_RATES) {

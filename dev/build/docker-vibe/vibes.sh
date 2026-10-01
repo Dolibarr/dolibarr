@@ -38,6 +38,7 @@ sudo docker run --rm -it \
   -e HOST_GROUP="$(id -un)" \
   -e GH_TOKEN="$(gh auth token)" \
   --network=host \
+  --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \
   --mount "type=bind,src=$HOME/git/$GIT_DIR,dst=$HOME/git/$GIT_DIR" \
   --mount "type=bind,src=$HOME/.vibe,dst=/home/$(id -un)/.vibe" \
