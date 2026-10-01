@@ -23,9 +23,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -33,6 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(['bankindex']);
@@ -143,7 +142,9 @@ if ($resql) {
 			print '<td>'.dol_escape_htmltag($obj->number).'</td>';
 			print '<td class="nowraponall right amount">';
 			print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.((int) $obj->rowid).'">';
+			print '<span class="amount">';
 			print price($solde, 0, $langs, 1, -1, -1, $currency_code);
+			print '</span>';
 			print '</a>';
 			print '</td>';
 			print '</tr>';
