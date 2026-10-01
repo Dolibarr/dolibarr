@@ -2311,7 +2311,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						print '<td class="nowrap right linecolwarning">';
-						print !empty($line->rule_warning_message) ? img_warning(html_entity_decode($line->rule_warning_message)) : '&nbsp;';
+						print !empty($line->rule_warning_message) ? img_warning(str_replace('\n', ' - ', html_entity_decode($line->rule_warning_message))) : '&nbsp;';
 						print '</td>';
 
 						// Ajout des boutons de modification/suppression
