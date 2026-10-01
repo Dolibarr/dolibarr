@@ -2,10 +2,10 @@
 /**
  * Temporary script to apply the PHPStan fix on htdocs/compta/accounting-files.php.
  *
- * The '@phan-var-force' declaration line was placed between the /** @var */ PHPDoc
- * block and the $filesarray assignment, so phpstan did not apply the @var type
- * annotation and the template type of dol_sort_array() could not be resolved.
- * Move the '@phan-var-force' line before the PHPDoc block to fix it.
+ * The phan-var-force declaration line was placed between the PHPDoc at-var block
+ * and the $filesarray assignment, so phpstan did not apply the type annotation
+ * and the template type of dol_sort_array() could not be resolved.
+ * Move the phan declaration line before the PHPDoc block to fix it.
  */
 
 $filepath = __DIR__ . '/htdocs/compta/accounting-files.php';
@@ -26,7 +26,7 @@ for ($i = 0; $i < count($lines) - 2; $i++) {
 		&& $lines[$i + 2] === '$filesarray = array();'
 	) {
 		// Swap the phan declaration line and the PHPDoc block, so that the
-		// @var annotation is applied by phpstan to the next statement.
+		// annotation is applied by phpstan to the next statement.
 		$tmp = $lines[$i + 1];
 		$lines[$i + 1] = $lines[$i];
 		$lines[$i] = $tmp;
