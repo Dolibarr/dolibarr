@@ -17,6 +17,7 @@ RUN apt-get update \
         graphviz \
         gzip \
 		hurl \
+		iptables \
 		jq \
         memcached \
 		mysql-client \
@@ -39,6 +40,7 @@ RUN apt-get update \
 		python3-pip \
 		shellcheck \
 		sshpass \
+		sudo \
 		time \
 		unzip \
 		w3m \
@@ -175,5 +177,8 @@ WORKDIR /workspace
 
 # Add the launcher
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Add the tool used by the launcher to block the outbound SMTP ports on the network stack
+# shared with the VM (see docker-entrypoint.sh and README.md)
+COPY smtpblock.sh /usr/local/bin/smtpblock.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/smtpblock.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
