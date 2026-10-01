@@ -1,0 +1,32 @@
+name: Probe PHPStan CTI
+
+on:
+  pull_request:
+    branches: [develop]
+
+jobs:
+  phpstan-probe:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: phpstan:2.2.14
+      - name: Run PHPStan with CTI config
+        run: |
+          phpstan --level=9 -v analyse --no-progress --memory-limit=5G --error-format=github -a dev/build/phpstan/bootstrap.php -c phpstan_apstats.neon > phpstan-cti.txt 2>&1 || true
+          head -40 phpstan-cti.txt | sed -E 's/^::error file=([^,]+),line=([0-9]+),col=[0-9]+::(.*)$/::warning file=\1,line=\2::\3/' || true
+      - name: Commit phpstan output
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          head -100 phpstan-cti.txt > phpstan-cti-head.txt
+          git add phpstan-cti-head.txt
+          git commit -m "[skip ci] Add phpstan output" || echo "nothing to commit"
+          git push
