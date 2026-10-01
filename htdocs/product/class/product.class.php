@@ -2727,7 +2727,27 @@ class Product extends CommonObject
 			}
 		} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 			// If price per quantity and customer
-			if (!empty($this->prices_by_qty[$thirdparty_buyer->price_level])) {
+			if (!empty($thirdparty_buyer->price_level)) {
+				// The price of the level of the customer is the price to use when no price per quantity is selected
+				$pu_ht = isset($this->multiprices[$thirdparty_buyer->price_level]) ? $this->multiprices[$thirdparty_buyer->price_level] : 0;
+				$pu_ttc = isset($this->multiprices_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_ttc[$thirdparty_buyer->price_level] : 0;
+				$price_min = isset($this->multiprices_min[$thirdparty_buyer->price_level]) ? $this->multiprices_min[$thirdparty_buyer->price_level] : 0;
+				$price_min_ttc = isset($this->multiprices_min_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_min_ttc[$thirdparty_buyer->price_level] : 0;
+				$price_base_type = empty($this->multiprices_base_type[$thirdparty_buyer->price_level]) ? 'HT' : $this->multiprices_base_type[$thirdparty_buyer->price_level];
+				if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
+					// using this option is a bug. kept for backward compatibility
+					if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
+						$tva_tx = $this->multiprices_tva_tx[$thirdparty_buyer->price_level];
+					}
+					if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) {
+						$tva_npr = $this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
+					}
+					if (empty($tva_tx)) {
+						$tva_npr = 0;
+					}
+				}
+			}
+			if (!empty($thirdparty_buyer->price_level) && !empty($this->prices_by_qty[$thirdparty_buyer->price_level])) {
 				// yes, this product has some prices per quantity
 				// Search price into product_price_by_qty from $this->id
 				foreach ($this->prices_by_qty_list[$thirdparty_buyer->price_level] as $priceforthequantityarray) {
