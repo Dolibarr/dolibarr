@@ -3111,7 +3111,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode. deprecated.
- *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'Europe/Paris' or '+0200' to force timezone.
+ *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'tzserver', 'Europe/Paris' or '+0200' to force timezone.
  *	@return	array{}|array{seconds:int<0,59>,minutes:int<0,59>,hours:int<0,23>,mday:int<1,31>,wday:int<0,6>,mon:int<1,12>,year:int<0,9999>,yday:int<0,366>,0:int}						Array of information
  *										'seconds' => $secs,
  *										'minutes' => $min,
@@ -3132,7 +3132,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
-	if ($forcetimezone) {
+	if ($forcetimezone && $forcetimezone != 'tzserver') {
 		$datetimeobj->setTimezone(new DateTimeZone($forcetimezone == 'gmt' ? 'UTC' : $forcetimezone)); //  (add timezone relative to the date entered)
 	}
 	$arrayinfo = array(
