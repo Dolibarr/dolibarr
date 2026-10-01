@@ -2707,10 +2707,14 @@ if ($action == 'create' && $usercancreate) {
 		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
 			$formquestion = array(
 				array(
+					'type' => 'onecolumn',
+					'value' => img_warning().' <strong>'.$langs->trans('WarningShipmentDeleteStockMovement').'</strong>',
+				),
+				array(
 					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
 					'name' => 'alsoUpdateStock',
 					'type' => 'checkbox',
-					'value' => 0
+					'value' => 0	/* Default must be "No stock change". Deletion is rarely used to cancel a shipment (not the correct business event for that). Re-open + Cancel is better for this. Deletion is usually used to clean db and should not impact the stock */
 				),
 			);
 		}
@@ -2721,7 +2725,8 @@ if ($action == 'create' && $usercancreate) {
 			'confirm_delete',
 			$formquestion,
 			0,
-			1
+			1,
+			'auto'
 		);
 	}
 
@@ -3867,13 +3872,13 @@ if ($action == 'create' && $usercancreate) {
 			// Cancel
 			if ($object->status == Expedition::STATUS_VALIDATED) {
 				if ($user->hasRight('expedition', 'creer')) {
-					print dolGetButtonAction('', $langs->trans('Cancel'), 'danger', $_SERVER["PHP_SELF"] . '?action=cancel&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '');
+					print dolGetButtonAction('', $langs->trans('Cancel'), 'default', $_SERVER["PHP_SELF"] . '?action=cancel&token=' . newToken() . '&id=' . $object->id . '&mode=init#formmailbeforetitle', '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 				}
 			}
 
 			// Delete
 			if ($user->hasRight('expedition', 'supprimer')) {
-				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '');
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?action=delete&token=' . newToken() . '&id=' . $object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 

@@ -464,6 +464,15 @@ print '<td>';
 print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 1, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", "https://www.dolistore.com"));
 print '</td></tr>';
 
+// Refuse the online signature once the validity date of the proposal is over
+if (getDolGlobalString('PROPOSAL_ALLOW_ONLINESIGN')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans("RefuseOnlineSignAfterValidityDate"), $langs->trans("RefuseOnlineSignAfterValidityDateHelp")).'</td>';
+	print '<td>';
+	print ajax_constantonoff('PROPOSAL_ONLINESIGN_REFUSE_IF_VALIDITY_DATE_PASSED');
+	print '</td></tr>';
+}
+
 /*
 if (getDolGlobalString('PROPOSAL_ALLOW_ONLINESIGN')) {
 	print '<tr class="oddeven"><td>';

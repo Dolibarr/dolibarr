@@ -150,6 +150,12 @@ class AgendaEvents extends DolibarrApi
 		if ($user_ids) {
 			$sql .= " AND t.fk_user_action IN (".$this->db->sanitize($user_ids).")";
 		}
+		// $user_ids is provided by the caller, so it can not be the only owner filter. A user without the
+		// "read all actions" right must never see the events of somebody else, whatever it asks for.
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user_action IN (".$this->db->sanitize(implode(',', $childids)).")";
+		}
 		if ($socid > 0) {
 			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}

@@ -152,6 +152,13 @@ class ExpenseReports extends DolibarrApi
 		if ($user_ids) {
 			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize($user_ids).")";
 		}
+		// $user_ids is provided by the caller, so it can not be the only owner filter. Narrow the result
+		// set on the hierarchy of the caller, with the same condition as expensereport/list.php.
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'readall')
+			&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !DolibarrApiAccess::$user->hasRight('expensereport', 'writeall_advance'))) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize(implode(',', $childids)).")";
+		}
 
 		// Add sql filters
 		if ($sqlfilters) {
@@ -933,7 +940,7 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getPayments($pid)
+	public function getPayment($pid)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
 			throw new RestException(403);
@@ -1038,25 +1045,31 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @since	20.0.0	Initial implementation
 	 *
-	 * @param	int		$id				ID of paymentExpenseReport
+	 * @param	int		$id				ID of ExpenseReport
+	 * @param	int		$idp			ID of paymentExpenseReport
 	 * @param	array	$request_data	data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	object
 	 *
-	 * @url     PUT {id}/payments
+	 * @url     PUT {id}/payments/{idp}
 	 * @throws RestException
 	 */
-	public function updatePayment($id, $request_data = null)
+	public function updatePayment($id, $idp, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
 			throw new RestException(403);
 		}
 
 		$paymentExpenseReport = new PaymentExpenseReport($this->db);
-		$result = $paymentExpenseReport->fetch($id);
+		$result = $paymentExpenseReport->fetch($idp);
 		if (!$result) {
-			throw new RestException(404, 'payment of expense report not found');
+			throw new RestException(404, 'Payment of expense report not found');
+		}
+
+		// Check ids
+		if ($id != $paymentExpenseReport->fk_expensereport) {
+			throw new RestException(404, 'Payment id does not belongs to the Expense id');
 		}
 
 		// Check access to the parent expense report
@@ -1077,7 +1090,7 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		if ($paymentExpenseReport->update(DolibarrApiAccess::$user) > 0) {
-			return $this->get($id);
+			return $this->getPayment($idp);
 		} else {
 			throw new RestException(500, $paymentExpenseReport->errorsToString());
 		}
@@ -1089,29 +1102,29 @@ class ExpenseReports extends DolibarrApi
 	 * @param 	int    $id    ID of payment ExpenseReport
 	 * @return 	array
 	 *
-	 * @url     DELETE {id}/payments
+	 * @url     DELETE {id}/payments/{idp}
 	 */
-	/*public function delete($id)
+	/*public function delete($id, $idp)
 	 {
-	 if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer') {
-	 throw new RestException(403);
-	 }
-	 $paymentExpenseReport = new PaymentExpenseReport($this->db);
-	 $result = $paymentExpenseReport->fetch($id);
-	 if (!$result) {
-	 throw new RestException(404, 'paymentExpenseReport not found');
-	 }
+		 if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer') {
+		 throw new RestException(403);
+		 }
+		 $paymentExpenseReport = new PaymentExpenseReport($this->db);
+		 $result = $paymentExpenseReport->fetch($idp);
+		 if (!$result) {
+			 throw new RestException(404, 'paymentExpenseReport not found');
+		 }
 
-	 if ($paymentExpenseReport->delete(DolibarrApiAccess::$user) < 0) {
-	 throw new RestException(403, 'error when deleting paymentExpenseReport');
-	 }
+		 if ($paymentExpenseReport->delete(DolibarrApiAccess::$user) < 0) {
+			 throw new RestException(403, 'error when deleting paymentExpenseReport');
+		 }
 
-	 return array(
-	 'success' => array(
-	 'code' => 200,
-	 'message' => 'paymentExpenseReport deleted'
-	 )
-	 );
+		 return array(
+			 'success' => array(
+				 'code' => 200,
+				 'message' => 'paymentExpenseReport deleted'
+			 )
+		 );
 	 }*/
 
 

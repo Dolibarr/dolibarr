@@ -1144,13 +1144,6 @@ function TakeposPrintingOrder(){
 	});
 }
 
-function TakeposPrintingTemp(){
-	console.log("TakeposPrintingTemp");
-	$("#poslines").load("invoice.php?action=temp&token=<?php echo currentToken();?>&place="+place, function() {
-		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-	});
-}
-
 function OpenDrawer(){
 	console.log("OpenDrawer call ajax url http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print");
 	$.ajax({

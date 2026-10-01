@@ -343,7 +343,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	// Remove
 	if ($permissiontodelete && $action != 'edit') {
-		print '<a class="butActionDelete" href="list.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'list.php?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."\n";
 	}
 
 	print '</div>';
