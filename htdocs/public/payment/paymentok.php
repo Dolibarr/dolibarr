@@ -683,7 +683,7 @@ if ($ispaymentok) {
 
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(!empty($object->default_lang) ? (string) $object->default_lang : (empty($object->thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $object->thirdparty->default_lang));
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
 				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
