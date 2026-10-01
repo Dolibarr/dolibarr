@@ -114,9 +114,9 @@ if ($action=="split") {
 		$db->query($sql);
 	}
 	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
-	$invoice->update_price();
+	$invoice->update_price(0, 'none', 0, $mysoc);
 	$invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
-	$invoice->update_price();
+	$invoice->update_price(0, 'none', 0, $mysoc);
 }
 
 
