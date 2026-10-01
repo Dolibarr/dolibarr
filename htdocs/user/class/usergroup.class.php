@@ -92,6 +92,11 @@ class UserGroup extends CommonObject
 	public $note;
 
 	/**
+	 * @var ?string Description as loaded by fetch()
+	 */
+	private $note_fetched;
+
+	/**
 	 * @var string Color
 	 */
 	public $color;
@@ -186,6 +191,7 @@ class UserGroup extends CommonObject
 
 		$this->name = $this->nom; // For compatibility with field name
 		$this->note_private = $this->note; // For compatibility with old field note
+		$this->note_fetched = $this->note; // To know in update() which of note and note_private was changed
 
 		if ($result) {
 			if ($load_members) {
@@ -733,11 +739,19 @@ class UserGroup extends CommonObject
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
 
-		if (!empty($this->note_private)) {
-			$this->note = $this->note_private; // Field for 'note_private' is called 'note' in database
+		// Field for 'note_private' is called 'note' in database. After a fetch, both properties hold the same value, so we must
+		// not overwrite a new 'note' with the 'note_private' that was loaded: note_private is used only if it was changed.
+		if ((string) $this->note_private !== (string) $this->note_fetched) {
+			$this->note = $this->note_private;
 		}
 
-		return $this->updateCommon($user, $notrigger);
+		$result = $this->updateCommon($user, $notrigger);
+		if ($result >= 0) {
+			$this->note_private = $this->note;
+			$this->note_fetched = $this->note;
+		}
+
+		return $result;
 	}
 
 
