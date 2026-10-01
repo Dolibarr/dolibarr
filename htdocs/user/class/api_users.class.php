@@ -822,7 +822,7 @@ class Users extends DolibarrApi
 			$entity = (((int) DolibarrApiAccess::$user->entity) > 0 ? (int) DolibarrApiAccess::$user->entity : $conf->entity);
 		}
 
-		$result = $this->useraccount->removeFromGroup($group, $entity);
+		$result = $this->useraccount->RemoveFromGroup($group, $entity);
 		if (!($result > 0)) {
 			throw new RestException(500, $this->useraccount->error);
 		}
