@@ -1060,6 +1060,8 @@ class Adherent extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
+		global $conf;
+
 		$result = 0;
 		$error = 0;
 		$errorflag = 0;
@@ -1100,6 +1102,66 @@ class Adherent extends CommonObject
 			}
 		}
 
+		// Remove the partnerships of the member
+		if (!$error && isModEnabled('partnership')) {
+			require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."partnership WHERE fk_member = ".((int) $rowid);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$partnership = new Partnership($this->db);
+					if ($partnership->fetch($obj->rowid) > 0 && $partnership->delete($user) <= 0) {
+						$error++;
+						$this->error .= $partnership->error;
+						$errorflag = -9;
+						break;
+					}
+				}
+			} else {
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag = -9;
+			}
+		}
+
+		// Remove the links of the bank transactions to this member (the bank transactions themselves are kept)
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE type = 'member' AND url_id = ".((int) $rowid);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag = -6;
+			}
+		}
+
+		// Remove the links with other objects
+		if (!$error) {
+			$ret = $this->deleteObjectLinked();
+			if ($ret < 0) {
+				$error++;
+				$errorflag = -7;
+			}
+		}
+
+		// Remove the index of the documents of the member (the files are removed after the commit)
+		$dirofdocuments = '';
+		$subdirofdocuments = get_exdir(0, 0, 0, 1, $this, 'member');
+		if (!empty($conf->adherent->dir_output) && $subdirofdocuments !== '') {	// Never the root directory of the module
+			$dirofdocuments = $conf->adherent->dir_output.'/'.$subdirofdocuments;
+		}
+		if (!$error && $dirofdocuments) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (deleteFilesIntoDatabaseIndex($dirofdocuments, '', '') < 0 || !$this->deleteEcmFiles(1)) {
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag = -8;
+			}
+		}
+
 		// Remove linked user
 		if (!$error) {
 			$ret = $this->setUserId(0);
@@ -1134,6 +1196,15 @@ class Adherent extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+
+			// Delete the directory of the documents of the member
+			if ($dirofdocuments) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				if (dol_is_dir($dirofdocuments)) {
+					dol_delete_dir_recursive($dirofdocuments);
+				}
+			}
+
 			return 1;
 		} else {
 			$this->db->rollback();
