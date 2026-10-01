@@ -59,3 +59,13 @@ pre-commit install
 The hooks environments are preloaded into the image when it is built (they are the downloads you see at the first use of pre-commit elsewhere).
 They are stored into the directory `/var/cache/pre-commit`, declared with `PRE_COMMIT_HOME` in the Dockerfile, and are already present at the first run into the container.
 If the `.pre-commit-config.yaml` of the repository changes after the image was built (new revision of a hook), only the changed hooks are downloaded at the first run.
+
+## No email can be delivered
+
+No MTA is installed into the image (no postfix, no exim, no sendmail daemon, ...). The binary `/usr/sbin/sendmail` is a stub that stores the emails it receives into the directory `/var/mail/outbox/` instead of delivering them:
+- Emails sent with the PHP function `mail()` (the Dolibarr send mode "PHP mail function") succeed from the point of view of the code, but are only stored: inspect them with `ls /var/mail/outbox/`.
+- The build fails if a package installs a real MTA (it checks that `/usr/sbin/sendmail` is still the stub).
+
+Known limits (this is a protection against accidental emails, not a security sandbox):
+- Only the sendmail path is intercepted. The Dolibarr send modes "SMTP socket" and "SwiftMailer" (see `htdocs/core/class/smtps.class.php`) are not blocked: with `--network=host`, they can reach the MTA of the host (port 25) or an external SMTP server if one is configured.
+- For a total guarantee, also block the outbound SMTP ports (25, 465, 587) at the network level. As the container uses `--network=host`, this must be done on the host, for example with an iptables OUTPUT rule.

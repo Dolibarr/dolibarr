@@ -102,6 +102,51 @@ RUN if [ -f /tmp/pre-commit-warmup/.pre-commit-config.yaml ]; then \
     fi
 
 
+# Guarantee that no email can be delivered from inside the container (see README.md):
+# no MTA (sendmail/postfix/exim/...) is installed. The binary /usr/sbin/sendmail is a stub
+# that stores the emails it receives into /var/mail/outbox instead of delivering them, so
+# the code and the tests that send emails (the Dolibarr send mode "PHP mail function") run
+# without error but no email ever leaves the container.
+RUN cat > /usr/sbin/sendmail <<'EOF'
+#!/bin/sh
+# Sendmail stub installed by the docker-vibe image (see dev/build/docker-vibe/README.md).
+# No MTA is installed in this image: emails received here are stored into /var/mail/outbox
+# and are never delivered anywhere.
+
+umask 000
+
+outbox=/var/mail/outbox
+mkdir -p "$outbox" 2>/dev/null || exit 0
+
+file="$outbox/$(date +%Y%m%d_%H%M%S%N)_$$.eml"
+{
+    echo "X-SendmailStub-Args: $*"
+    echo
+    cat
+} > "$file" 2>/dev/null
+
+exit 0
+EOF
+
+RUN chmod 755 /usr/sbin/sendmail \
+    && mkdir -p /var/mail/outbox \
+    && chmod 1777 /var/mail/outbox \
+    && for dir in /etc/php/*/cli/conf.d /etc/php/*/apache2/conf.d /etc/php/*/fpm/conf.d; do \
+        if [ -d "$dir" ]; then \
+            printf '%s\n' \
+                '; Emails sent with mail() are stored by the sendmail stub into /var/mail/outbox, never delivered (see dev/build/docker-vibe/README.md)' \
+                'sendmail_path = /usr/sbin/sendmail -t -i' \
+                > "$dir/99-sendmail-stub.ini"; \
+        fi; \
+    done \
+    && test ! -e /usr/lib/sendmail \
+    && grep -q "X-SendmailStub-Args" /usr/sbin/sendmail \
+    && echo "Subject: build test of the docker-vibe image" | /usr/sbin/sendmail -t \
+    && php -r 'if (!mail("buildtest@localhost", "Build test", "Body of the build test")) { fwrite(STDERR, "mail() failed.\n"); exit(1); }' \
+    && test "$(ls -1 /var/mail/outbox | wc -l)" -eq 2 \
+    && rm -f /var/mail/outbox/*.eml
+
+
 # Prompt
 RUN cat >> /etc/bash.bashrc <<'EOF'
 
