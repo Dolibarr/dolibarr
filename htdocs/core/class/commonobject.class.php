@@ -3569,6 +3569,10 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 		$sql .= ' WHERE rowid = '.((int) $rowid);
+		if ($this->id > 0 && !empty($this->fk_element)) {
+			// The line must belong to the object we reorder lines of
+			$sql .= " AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		}
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -11168,6 +11172,17 @@ abstract class CommonObject
 
 		$tmpforobjectclass = get_class($this);
 		$tmpforobjectlineclass = ucfirst($tmpforobjectclass).'Line';
+
+		if ($this->id > 0 && !empty($this->fk_element)) {
+			// The line must belong to this object
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+			$sql .= " WHERE rowid = ".((int) $idline)." AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
