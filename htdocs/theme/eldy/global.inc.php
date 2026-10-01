@@ -5829,12 +5829,13 @@ img.boxhandle, img.boxclose {
 .fieldcombo-list {
 	max-height: 300px;
 	overflow-y: auto;
+	padding-bottom: 10px
 }
 .fieldcombo-elementheader {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 4px 8px;
+	padding: 4px 15px 4px 8px;
 	cursor: pointer;
 	font-weight: bold;
 }
@@ -5856,7 +5857,7 @@ img.boxhandle, img.boxclose {
 	padding-left: 26px;
 }
 .fieldcombo-field {
-	padding: 3px 8px;
+	padding: 4px 8px;
 	cursor: pointer;
 }
 .fieldcombo-field:hover, .fieldcombo-field:focus {

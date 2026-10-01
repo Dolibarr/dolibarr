@@ -378,7 +378,7 @@ AccountingJournalType8=Inventaire
 AccountingJournalType9=Reports à nouveaux
 GenerationOfAccountingEntries=Génération des écritures comptables
 ErrorAccountingJournalIsAlreadyUse=Le journal est déjà utilisé
-AccountingAccountForSalesTaxAreDefinedInto=Remarque : Le compte Comptabilité pour les ventes taxe est défini dans le menu <b>, %s et </b>. class='notranslate'></b>
+AccountingAccountForSalesTaxAreDefinedInto=Remarque : Le compte Comptabilité pour les taxes de ventes est défini dans le menu <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=Nombre d'entrées
 NumberOfAccountancyMovements=Nombre de mouvements
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Désactiver la liaison et le transfert en comptabilité des factures de ventes (les factures clients ne seront pas prises en compte en comptabilité).

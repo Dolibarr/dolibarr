@@ -87,7 +87,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe")); // File with generic data
 
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
@@ -119,14 +119,17 @@ $ws = GETPOST("ws", "aZ09"); // Website reference where the newpayment page is e
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - amount or source";
 		exit;
 	}
 	if (is_numeric($amount) && !GETPOST("tag", 'alpha') && !$source) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - tag or source";
 		exit;
 	}
 	if ($source && !GETPOST("ref", 'alpha')) {
+		$langs->load('errors');
 		print $langs->trans('ErrorBadParameters')." - ref";
 		exit;
 	}
@@ -2372,6 +2375,7 @@ if ($source == 'boothlocation') {
 }
 
 if (!$found && !$mesg) {
+	$langs->load('errors');
 	$mesg = $langs->trans("ErrorBadParameters");
 }
 

@@ -309,7 +309,6 @@ WarningProjectDraft=Le projet est encore en mode brouillon. N'oubliez pas de le 
 WarningSomeBankTransactionByChequeWereRemovedAfter=Certaines transactions bancaires ont été supprimées après la génération du reçu les incluant. Le nombre de chèques et le total du reçu peuvent donc différer du nombre et du total figurant dans la liste.
 WarningFailedToAddFileIntoDatabaseIndex=Avertissement, échec de l'ajout d'une entrée de fichier dans la table d'index de la base de données ECM
 WarningTheHiddenOptionIsOn=Attention, l'option cachée <b>%s</b> est activée.
-WarningCreateSubAccounts=Attention, vous ne pouvez pas créer directement un sous compte, vous devez créer un tiers ou un utilisateur et lui attribuer un code comptable pour le retrouver dans cette liste
 WarningAvailableOnlyForHTTPSServers=Disponible uniquement si vous utilisez une connexion sécurisée HTTPS.
 WarningModuleXDisabledSoYouMayMissEventHere=Le module %s n'a pas été activé. Vous risquez donc de manquer de nombreux événements ici.
 WarningPaypalPaymentNotCompatibleWithStrict=La valeur « Strict » empêche les fonctionnalités de paiement en ligne de fonctionner correctement. Utilisez plutôt « Lax ».

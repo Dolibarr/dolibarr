@@ -214,9 +214,12 @@ if (empty($reshook)) {
 		$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$object->name = GETPOST("nom", 'alphanohtml');
+
 		$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+		$object->note_private = $object->note;
+
 		$object->color = GETPOST("color", 'alphanohtml');
-		$object->tms = dol_now();
+		$object->date_modification = dol_now();
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
