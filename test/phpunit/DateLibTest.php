@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -442,6 +442,27 @@ class DateLibTest extends CommonClassTest
 		$result = dol_print_date(dol_time_plus_duree(dol_mktime(0, 0, 0, 10, 24, 2025, 'gmt'), 4, 'd'), 'dayhour', 'gmt', $outputlangs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('28/10/2025 00:00', $result);
+
+		// Imagine we are in a server with TZ Europe/Paris (UTC+1 +daylight)
+		// A) If user want to store a "date_when" (of a recurring invoices) for "2025-10-01" (every 1st of month), we store it in db with idate() so with string value '2025-10-01 00:00:00'
+		//     (because we want "date_when" as a day only field, so with no mention of TZ)
+		// B) So after a read with jdate(), we retrieve in UTC the date in memory that is '30 September 22:00 UTC.'
+		// C) If we add 1 month, we got '30 October 22:00 UTC.'
+		// D) When we want to store it into db, we use idate() to convert it into server timezone and we got '2025-10-30 23:00:00' because the daylight is not the same, offset is 1h instead of 2h.
+		// E) So next day processed will be the 30th instead of the 1st (because we take car of day only).
+		/*
+		$date_when = dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt');
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt'), 1, 'm'), 'standard', 'gmt', $outputlangs);
+		$result2 = $db->idate(dol_time_plus_duree(dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt'), 1, 'm'));
+		print "result A: ".$result."\n";
+		$dateInfo = dol_getdate($date_when);
+		var_dump($dateInfo);
+		print "db->idate last day ".$db->idate(dol_mktime(23, 59, 59, 10, 31, 2025))."\n";
+		print "doldprintdate ".dol_print_date(dol_mktime(23, 59, 59, 10, 31, 2025), 'standard', 'gmt')."\n";
+		print "result B: ".$result2."\n";
+		$this->assertEquals('2025-10-30 22:00:00', $result);
+		$this->assertEquals('2025-10-30 23:00:00', $result2);
+		*/
 
 		return $result;
 	}

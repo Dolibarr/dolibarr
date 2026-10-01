@@ -1455,8 +1455,9 @@ class FactureRec extends CommonInvoice
 		$langs->loadLangs(array("main", "bills"));
 
 		$now = dol_now();
-		$tmparray = dol_getdate($now, false, 'tzserver');	// This is date of server timezone. Creation can be done from UI or from cron, so we must share a common hour, so server timezone.
-		$endofdaytzserver = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], 'tzserver'); // Today is last second of current day, we need the date for server timezone.
+		// Creation can be done from UI or from cron, so we must share a common hour, so we use server timezone to get the day, month and year.
+		$tmparray = dol_getdate($now, false, 'tzserver');
+		$endofdaytzserver = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], 'tzserver'); // If we print date UTC in string, we got: 'year-mon-mday 22:59:59' if TZ+1
 
 		$this->output = '';
 
@@ -1464,7 +1465,7 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql .= ' WHERE frequency > 0'; // A recurring invoice is an invoice with a frequency
-		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($endofdaytzserver)."')";
+		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($endofdaytzserver)."')";	// we got 'year-mon-mday 23:59:59' because idate convert into TZ server
 		$sql .= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql .= ' AND suspended = 0';
 		$sql .= ' AND entity = '.((int) $conf->entity); // MUST STAY = $conf->entity here
