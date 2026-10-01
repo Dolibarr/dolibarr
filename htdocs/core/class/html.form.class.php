@@ -13074,9 +13074,6 @@ class Form
 		// TODO: Use $arrayoffiltercriterias param instead of $arrayofcriterias to include linked object fields in search
 		global $langs, $form;
 
-		//require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
-		//$formother = new FormOther($this->db);
-
 		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
 		}
@@ -13133,7 +13130,7 @@ class Form
 		// $ret .= "<!-- sql= ".forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage)." -->";
 
 		// TODO : Use $arrayoffiltercriterias instead of $arrayofcriterias
-		// For compatibility with forms that show themself the search criteria in addition of this component, we output these fields
+		// For compatibility with forms that show themselves the search criteria in addition of this component, we output these fields
 		foreach ($arrayofcriterias as $criteria) {
 			foreach ($criteria as $criteriafamilykey => $criteriafamilyval) {
 				if (in_array('search_' . $criteriafamilykey, $arrayofinputfieldsalreadyoutput)) {
@@ -13221,6 +13218,7 @@ class Form
 		// so we can show a single 2 levels combo: select first the element (the table), then the field appears
 		// into the same combo, in a second level shown under the element
 		$arrayoffilterelements = array();
+
 		foreach ($arrayoffiltercriterias as $key => $val) {
 			// The element (table) is the part of the field key before the last dot ('t.ref' -> 't', 't__fk_project.ref' -> 't__fk_project')
 			$tmpelementkey = preg_replace('/\.[^.]*$/', '', $key);
@@ -13233,6 +13231,7 @@ class Form
 			if (!empty($val['labelnohtml'])) {
 				$tmpfieldlabel = $val['labelnohtml'];
 				// The labelnohtml is 'LabelOfElement: LabelOfField', so we extract the label of the element and the label of the field
+				$tmpmatch = array();
 				if (preg_match('/^(.+?): /', $val['labelnohtml'], $tmpmatch)) {
 					$tmpelementlabel = $tmpmatch[1];
 					$tmpfieldlabel = trim(substr($val['labelnohtml'], strlen($tmpelementlabel) + 1));
