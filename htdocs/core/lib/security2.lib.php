@@ -468,6 +468,38 @@ function encodedecode_dbpassconf($level = 0)
 }
 
 /**
+ * Return if the 'none' password generation model (the one that applies no rule at all) is
+ * forbidden on this installation. It is locked by the conf.php variable
+ * $dolibarr_main_restrict_password_generation_none (exposed as
+ * $conf->file->restrict_password_generation_none), which can only be changed by editing the
+ * config file on the server.
+ * When forbidden, the model is hidden from the admin screen, cannot be selected, and any value
+ * already set to 'none' falls back to the 'standard' model at generation/validation time.
+ *
+ * @return	int		1 if the 'none' model must not be used, 0 otherwise
+ */
+function isPasswordGenerationNoneForbidden()
+{
+	global $conf;
+
+	return empty($conf->file->restrict_password_generation_none) ? 0 : 1;
+}
+
+/**
+ * Return the lowest value allowed for the minimum length (first field of USER_PASSWORD_PATTERN) of
+ * the 'Perso' password generation model. When the 'none' model is forbidden on this installation
+ * (see isPasswordGenerationNoneForbidden()), the Perso model must not be tuned down to a weak
+ * value either, so a floor of 10 characters is enforced in the admin screen, when saving the
+ * pattern, and at generation/validation time.
+ *
+ * @return	int		Minimum allowed value for the Perso model minimum length
+ */
+function getPasswordPatternMinLength()
+{
+	return isPasswordGenerationNoneForbidden() ? 10 : 1;
+}
+
+/**
  * Return a generated password using default module
  *
  * @param		bool			$generic				true=Create a generic key (32 chars/numbers), false=Create a password using the configured password generation module.

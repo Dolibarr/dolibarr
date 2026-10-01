@@ -788,9 +788,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		if ($search_price) {
 			$param .= '&search_price='.urlencode($search_price);
 		}
-		if ($search_price) {
-			$param .= '&search_price='.urlencode($search_price);
-		}
 		if ($search_price_ttc) {
 			$param .= '&search_price_ttc='.urlencode($search_price_ttc);
 		}

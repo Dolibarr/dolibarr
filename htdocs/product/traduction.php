@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2012  Destailleur Laurent 	<eldy@users.sourceforge.net>
  * Copyright (C) 2014 	    Henry Florian 			<florian.henry@open-concept.pro>
  * Copyright (C) 2023 	    Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,10 +30,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/productlang.class.php';
 
 /**
  * @var Conf $conf
@@ -61,6 +70,13 @@ if ($user->socid) {
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
+}
+
+// Extrafields of the translations (element product_lang)
+$extrafields->fetch_name_optionals_label('product_lang');
+$productlanghasextrafields = !empty($extrafields->attributes['product_lang']['count']);
+if ($object->id > 0 && $productlanghasextrafields) {
+	$object->getMultiLangs(1);
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -113,11 +129,18 @@ if (empty($reshook)) {
 			$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
 			$object->other = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 
-			$object->update($object->id, $user, 1); // trigger will be called by setMultiLangs
+			$result = $object->update($object->id, $user, 1); // trigger will be called by setMultiLangs
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
 			$object->multilangs[GETPOST("forcelangprod")]["label"] = GETPOST("libelle");
 			$object->multilangs[GETPOST("forcelangprod")]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
 			$object->multilangs[GETPOST("forcelangprod")]["other"] = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
+		}
+
+		if ($productlanghasextrafields && GETPOST("forcelangprod")) {
+			$object->multilangs[GETPOST("forcelangprod")]["array_options"] = $extrafields->getOptionalsFromPost('product_lang');
 		}
 
 		// save in database
@@ -147,11 +170,17 @@ if (empty($reshook)) {
 				$object->description = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
 				$object->other = dol_htmlcleanlastbr(GETPOST("other-" . $key, 'restricthtml'));
 
-				$object->update($object->id, $user);
+				$result = $object->update($object->id, $user);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			} else {
 				$object->multilangs[$key]["label"] = GETPOST("libelle-" . $key);
 				$object->multilangs[$key]["description"] = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
 				$object->multilangs[$key]["other"] = dol_htmlcleanlastbr(GETPOST("other-" . $key, 'restricthtml'));
+			}
+			if ($productlanghasextrafields) {
+				$object->multilangs[$key]["array_options"] = $extrafields->getOptionalsFromPost('product_lang', '-'.$key);
 			}
 		}
 
@@ -283,6 +312,13 @@ if ($action == 'edit') {
 				$doleditor->Create();
 			}
 			print '</td></tr>';
+			// Extrafields of the translation
+			if ($productlanghasextrafields) {
+				$productlang = new ProductLang($db);
+				$productlang->id = $object->multilangs[$key]["rowid"];
+				$productlang->array_options = (empty($object->multilangs[$key]["array_options"]) ? array() : $object->multilangs[$key]["array_options"]);
+				print $productlang->showOptionals($extrafields, 'edit', array(), '-'.$key);
+			}
 			print '</table>';
 		}
 	}
@@ -311,6 +347,13 @@ if ($action == 'edit') {
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
+			}
+			// Extrafields of the translation
+			if ($productlanghasextrafields) {
+				$productlang = new ProductLang($db);
+				$productlang->id = $object->multilangs[$key]["rowid"];
+				$productlang->array_options = (empty($object->multilangs[$key]["array_options"]) ? array() : $object->multilangs[$key]["array_options"]);
+				print $productlang->showOptionals($extrafields, 'view');
 			}
 			print '</table>';
 			print '</div>';
@@ -354,6 +397,11 @@ if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight(
 		$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
+	}
+	// Extrafields of the translation
+	if ($productlanghasextrafields) {
+		$productlang = new ProductLang($db);
+		print $productlang->showOptionals($extrafields, 'create');
 	}
 	print '</table>';
 

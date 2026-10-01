@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL		    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -335,15 +335,37 @@ class ChargeSociales extends CommonObject
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return if a social contribution can be deleted: not once a payment exists, as for invoices
+	 *
+	 *  @return    int         Return integer <=0 if no, >0 if yes
+	 */
+	public function is_erasable()
+	{
+		// phpcs:enable
+		$totalpaid = $this->getSommePaiement();
+		if ($totalpaid < 0) {
+			return -1;
+		}
+		return (empty($totalpaid) ? 1 : 0);
+	}
+
 	/**
 	 *      Delete a social contribution
 	 *
-	 *      @param		User    $user   Object user making delete
-	 *      @return     		int 	Return integer <0 if KO, >0 if OK
+	 *      @param		User		$user		Object user making delete
+	 *      @param		int<0,1>	$notrigger	1=Disable triggers
+	 *      @return     			int 		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
+
+		if ($this->is_erasable() <= 0) {
+			$this->error = 'ErrorRecordHasChildren';
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -383,6 +405,15 @@ class ChargeSociales extends CommonObject
 				$error++;
 				$this->error = $this->db->lasterror();
 			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('SOCIALCONTRIBUTION_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if (!$error) {
@@ -862,7 +893,7 @@ class ChargeSociales extends CommonObject
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->totalpaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

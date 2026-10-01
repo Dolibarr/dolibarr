@@ -1931,13 +1931,13 @@ class Form
 
 	/**
 	 * Output html form to select a contact
-	 * This call select_contacts() or ajax depending on setup. This component is not able to support multiple select.
+	 * This call select_contacts() or ajax depending on setup.
 	 *
 	 * Return HTML code of the SELECT of list of all contacts (for a third party or all).
 	 * This also set the number of contacts found into $this->num if not using ajax mode.
 	 *
 	 * @param 	int 			$socid 				Id of third party or 0 for all or -1 for empty list
-	 * @param 	int|string 		$selected 			ID of preselected contact id
+	 * @param 	int|string|int[] 	$selected 		ID of preselected contact id, or array of ids if $multiple is used
 	 * @param 	string 			$htmlname 			Name of HTML field ('none' for a not editable field)
 	 * @param 	int<0,3>|string	$showempty			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 * @param 	string 			$exclude 			List of contacts id to exclude
@@ -1950,11 +1950,12 @@ class Form
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param 	string 			$moreparam 			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 * @param 	string 			$htmlid 			Html id to use instead of htmlname
-	 * @param 	string 			$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param 	string 			$selected_input_value 	Not used anymore (kept for backward compatibility of the signature)
 	 * @param 	string 			$filter 			Optional filter criteria. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
+	 * @param 	bool 			$multiple 			add [] in the name of element and add 'multiple' attribute
 	 * @return  int|string      					Return integer <0 if KO, HTML with select string if OK.
 	 */
-	public function select_contact($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $nokeyifsocid = true, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $selected_input_value = '', $filter = '')
+	public function select_contact($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $nokeyifsocid = true, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $selected_input_value = '', $filter = '', $multiple = false)
 	{
 		// phpcs:enable
 
@@ -1962,42 +1963,101 @@ class Form
 
 		$out = '';
 
+		if (empty($htmlid)) {
+			$htmlid = $htmlname;
+		}
+
 		$sav = getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT');
 		if ($nokeyifsocid && $socid > 0) {
 			$conf->global->CONTACT_USE_SEARCH_TO_SELECT = 0;
 		}
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT') && !$forcecombo) {
-			$ajaxoptions = array();
-
+			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 
-			// No immediate load of all database
-			$placeholder = '';
-			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+			// select2 combo pre-filled with only the currently selected contact(s) as <option selected>.
+			// select2 keeps those and fetches the rest on demand from contact/ajax/contact.php instead of
+			// loading the whole contact list into the page.
+			$selectedids = array();
+			foreach (($multiple ? (is_array($selected) ? $selected : array()) : ($selected !== '' && $selected !== 0 ? array($selected) : array())) as $tmpid) {
+				if (is_numeric($tmpid) && (int) $tmpid > 0) {
+					$selectedids[] = (int) $tmpid;
+				}
+			}
+
+			// A non-numeric $showempty ('&nbsp;', a label, ...) is used as a select2 placeholder instead of
+			// an <option> value; select2 needs an empty first <option> in single mode to be able to show it.
+			$placeholder = is_numeric($showempty) ? '' : (string) $showempty;
+
+			$out .= '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" id="' . $htmlid . '" name="' . $htmlname . ($multiple ? '[]' : '') . '"' . ($multiple ? ' multiple' : '') . ($moreparam ? ' ' . $moreparam : '') . '>';
+			if (!$multiple) {
+				$out .= '<option></option>';
+			}
+			if (count($selectedids)) {
 				$contacttmp = new Contact($this->db);
-				$contacttmp->fetch($selected);
-				$selected_input_value = $contacttmp->getFullName($langs);
+				foreach ($selectedids as $tmpid) {
+					if ($contacttmp->fetch($tmpid) > 0) {
+						$out .= '<option value="' . $tmpid . '" selected>' . dol_escape_htmltag($contacttmp->getFullName($langs)) . '</option>';
+					}
+				}
 				unset($contacttmp);
 			}
-			if (!is_numeric($showempty)) {
-				$placeholder = $showempty;
-			}
-
-			// mode 1
-			$urloption = 'htmlname=' . urlencode((string) (str_replace('.', '_', $htmlname))) . '&outjson=1&filter=' . urlencode((string) ($filter)) . (empty($exclude) ? '' : '&exclude=' . urlencode($exclude)) . ($showsoc ? '&showsoc=' . urlencode((string) ($showsoc)) : '');
-
-			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
-
-			$out .= '<input type="text" class="' . $morecss . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' ' . (getDolGlobalString('CONTACT_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' spellcheck="false" />';
+			$out .= '</select>';
 
 			$out .= ajax_event($htmlname, $events);
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/contact/ajax/contact.php', $urloption, getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+			// Same as the value of 'htmlname=' below: the endpoint reads the typed term from a GET param
+			// named after this transformed htmlname (see contact/ajax/contact.php).
+			$htmlnamefortermparam = str_replace('.', '_', $htmlname);
+			$urloption = 'htmlname=' . urlencode((string) $htmlnamefortermparam) . '&outjson=1&filter=' . urlencode((string) $filter)
+				. (empty($exclude) ? '' : '&exclude=' . urlencode($exclude))
+				. ($showsoc ? '&showsoc=' . urlencode((string) $showsoc) : '')
+				. ($socid > 0 ? '&socid=' . ((int) $socid) : '');
+
+			// A non-numeric value ('infinite') means "infinite list": no minimum number of chars, the list
+			// opens as soon as the field gets the focus (select2 queries the endpoint with an empty term).
+			$minlengthforajax = getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT');
+			if ($minlengthforajax < 1) {
+				$minlengthforajax = 0;
+			}
+			// Page size of the ajax endpoint (CONTACT_LIMIT_SIZE): select2 keeps asking for the next page
+			// while the endpoint returns a full page, so the whole list stays browsable by scrolling.
+			$ajaxpagesize = getDolGlobalInt('CONTACT_LIMIT_SIZE', 20);
+
+			$htmlidjs = str_replace('.', '\\\\.', $htmlid);
+			$out .= '<script nonce="' . getNonce() . '">jQuery(function() {
+				jQuery("#' . $htmlidjs . '").select2({
+					theme: "default",
+					language: (typeof select2arrayoflanguage === "undefined") ? "en" : select2arrayoflanguage,
+					containerCssClass: ":all:",
+					placeholder: ' . json_encode($placeholder) . ',
+					minimumInputLength: ' . ((int) $minlengthforajax) . ',
+					ajax: {
+						url: "' . DOL_URL_ROOT . '/contact/ajax/contact.php?' . $urloption . '",
+						dataType: "json",
+						delay: 250,
+						data: function(params) {
+							var d = {};
+							d[' . json_encode($htmlnamefortermparam) . '] = params.term;
+							d.page = params.page || 1;
+							return d;
+						},
+						processResults: function(data) {
+							var result = [];
+							jQuery.each(data, function(i, val) {
+								result.push({ id: val.key, text: val.value });
+							});
+							return { results: result, pagination: { more: data.length >= ' . ((int) $ajaxpagesize) . ' } };
+						},
+						cache: true
+					}
+				});' . (getDolGlobalString('CONTACT_SEARCH_AUTOFOCUS') ? '
+				jQuery("#' . $htmlidjs . '").select2("open");' : '') . '
+			});</script>';
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.select2-container { z-index: 1010; }</style>';
 		} else {
 			// Immediate load of all database
-			$multiple = false;
 			$disableifempty = 0;
 			$options_only = 0;
 			$limitto = '';
@@ -2283,9 +2343,11 @@ class Form
 	 * @param 	integer 			$disableifempty 	Set tag 'disabled' on select if there is no choice
 	 * @param 	string 				$filter 			Optional filter criteria. You must use the USF (Universal Search Filter) syntax, example: '(s.client:in:1,3)'
 	 * 													Do not use a filter coming from input of users.
+	 * @param 	int 				$limit 				Maximum number of rows to return (0 = no limit). Used by the contact/ajax/contact.php autocomplete endpoint.
+	 * @param 	int 				$limitoffset 		Offset of the first returned row (only applied when $limit > 0). Used by the contact/ajax/contact.php endpoint to page through the list.
 	 * @return  int|string|array<int,array{key:int,value:string,label:string,labelhtml:string}>		Return integer <0 if KO, HTML with select string if OK.
 	 */
-	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $filter = '')
+	public function selectcontacts($socid, $selected = array(), $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $filter = '', $limit = 0, $limitoffset = 0)
 	{
 		global $conf, $user, $langs, $hookmanager, $action;
 
@@ -2372,6 +2434,7 @@ class Form
 		$reshook = $hookmanager->executeHooks('selectContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY sp.lastname ASC";
+		$sql .= $this->db->plimit($limit, ((int) $limitoffset > 0 ? (int) $limitoffset : 0));
 
 		dol_syslog(get_class($this) . "::selectcontacts", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -12537,12 +12600,11 @@ class Form
 			$out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "' . $massactionname . '", "' . $cssclass . '"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		}
 		$out .= '         });
-/*
         	        $(".' . $cssclass . '").change(function() {
 						console.log("We check and change the tr class highlight after a change on .'.$cssclass.'");
 						var $row = $(this).closest("tr");
 						if ($row.length) {
-	    					var anyChecked = $row.find(\'input[type="checkbox"].checkforselect:checked\').length > 0;
+	    					var anyChecked = $row.find(\'input[type="checkbox"].' . $cssclass . ':checked\').length > 0;
 							console.log("anychecked="+anyChecked);
 							if (!anyChecked) {
 								$row.removeClass("highlight");
@@ -12551,7 +12613,6 @@ class Form
 							}
 						}
 					});
-*/
 		 	});
     	</script>';
 
@@ -13027,7 +13088,7 @@ class Form
 		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth" title="' . dol_escape_htmltag($langs->trans("Filters")) . '" id="idsubimgproductdistribution"></span>';
 		$ret .= '</a>';
 
-		$ret .= '<div class="divadvancedsearchfieldcompinput inline-block minwidth500 maxwidth300onsmartphone">';
+		$ret .= '<div class="divadvancedsearchfieldcompinput centpercentminusx inline-block minwidth500 maxwidth300onsmartphone">';
 
 		// Show select fields as tags.
 		$ret .= '<div id="divsearch_component_params" name="divsearch_component_params" class="noborderbottom search_component_params inline-block valignmiddle">';
@@ -13155,16 +13216,42 @@ class Form
 
 		// Convert $arrayoffiltercriterias into a json object that can be used in jquery to build the search component dynamically
 		$arrayoffiltercriterias_json = json_encode($arrayoffiltercriterias);
+
+		// Build $arrayoffilterelements that is an array of elements (tables) with the list of their fields,
+		// so we can show a single 2 levels combo: select first the element (the table), then the field appears
+		// into the same combo, in a second level shown under the element
+		$arrayoffilterelements = array();
+		foreach ($arrayoffiltercriterias as $key => $val) {
+			// The element (table) is the part of the field key before the last dot ('t.ref' -> 't', 't__fk_project.ref' -> 't__fk_project')
+			$tmpelementkey = preg_replace('/\.[^.]*$/', '', $key);
+			// Extrafields of an element are stored with the alias 'te', 'te__...', so we map them onto the same element than their parent table 't', 't__...'
+			$tmpelementkey = preg_replace('/^te(__|$)/', 't$1', $tmpelementkey);
+
+			$tmpelementlabel = $tmpelementkey;
+			$tmpelementpicto = '';
+			$tmpfieldlabel = $key;
+			if (!empty($val['labelnohtml'])) {
+				$tmpfieldlabel = $val['labelnohtml'];
+				// The labelnohtml is 'LabelOfElement: LabelOfField', so we extract the label of the element and the label of the field
+				if (preg_match('/^(.+?): /', $val['labelnohtml'], $tmpmatch)) {
+					$tmpelementlabel = $tmpmatch[1];
+					$tmpfieldlabel = trim(substr($val['labelnohtml'], strlen($tmpelementlabel) + 1));
+				}
+				if (!empty($val['label'])) {
+					// The label is the picto of the element followed by the labelnohtml, so we extract the picto of the element
+					$tmpelementpicto = trim(str_replace($val['labelnohtml'], '', $val['label']));
+				}
+			}
+
+			if (!isset($arrayoffilterelements[$tmpelementkey])) {
+				$arrayoffilterelements[$tmpelementkey] = array('picto' => $tmpelementpicto, 'label' => $tmpelementlabel, 'fields' => array());
+			}
+			$arrayoffilterelements[$tmpelementkey]['fields'][$key] = array('label' => $tmpfieldlabel, 'type' => $val['type']);
+		}
 		$ret .= '<script>
 			var arrayoffiltercriterias = ' . $arrayoffiltercriterias_json . ';
 		</script>';
 
-
-		$arrayoffilterfieldslabel = array();
-		foreach ($arrayoffiltercriterias as $key => $val) {
-			$arrayoffilterfieldslabel[$key]['label'] = $val['label'];
-			$arrayoffilterfieldslabel[$key]['data-type'] = $val['type'];
-		}
 
 		// Adding the div for search assistance
 		$ret .= '<div class="search-component-assistance">';
@@ -13174,14 +13261,83 @@ class Form
 
 		$ret .= '<p class="assistance-errors error" style="display:none">' . $langs->trans('AllFieldsRequired') . ' </p>';
 
-		$ret .= '<div class="operand">';
-		$ret .= $form->selectarray('search_filter_field', $arrayoffilterfieldslabel, '', $langs->trans("Fields"), 0, 0, '', 0, 0, 0, '', 'width200 combolargeelem', 1);
+		// Combo with 2 levels to select the field: select first the element (the table), the list of fields of the element
+		// appears then under the element into the same combo, then select the field
+		// (this is a pure JS combo, we do not use select2 for this component)
+		$ret .= '<div class="operand valigntop">';
+		$ret .= '<div class="fieldcombo">';
+		// Hidden input to store the selected field ('' or a field key like 't.ref' or 't__fk_project.ref')
+		$ret .= '<input type="hidden" id="search_filter_field" name="search_filter_field" value="">';
+		// Button of the combo (show the placeholder "Fields" or the selected "element: field")
+		$ret .= '<button type="button" class="fieldcombo-toggle"><span class="fieldcombo-label opacitymedium">' . dol_escape_htmltag($langs->trans('Fields')) . '</span><span class="fas fa-caret-down fieldcombo-caret"></span></button>';
+		// Panel of the combo, with the list of elements (the root tables), and into each element, the list of
+		// its fields then the list of its sub-elements (sub-tables, indented, after the fields). The fields and
+		// the sub-elements are hidden by default and shown only after a search or a click on the element.
+		$ret .= '<div class="fieldcombo-panel" style="display:none">';
+		$ret .= '<div class="liinputsearch"><input type="text" class="fieldcombo-search noborderfocus" placeholder="' . dol_escape_htmltag($langs->trans('Search')) . '"></div>';
+		$ret .= '<div class="fieldcombo-list">';
+
+		// Recursive rendering of an element of the combo, with the list of its sub-elements (indented into it)
+		// and the list of its fields. A direct sub-element is an element whose key starts with the key of its parent
+		// element followed by '__', without any other '__' after (so 't__fk_soc' is a sub-element of 't',
+		// 't__fk_soc__fk_pays' is a sub-element of 't__fk_soc' and not a direct sub-element of 't')
+		/**
+		 * @param int|string $tmpelementkey
+		 * @return string
+		 */
+		$renderElementCombo = function ($tmpelementkey) use ($arrayoffilterelements, &$renderElementCombo) {
+			$tmpelementval = $arrayoffilterelements[$tmpelementkey];
+			$arrayofchildelementkeys = array();
+			foreach ($arrayoffilterelements as $tmpchildelementkey => $tmpchildelementval) {
+				if (strpos($tmpchildelementkey, $tmpelementkey.'__') === 0 && strpos(substr($tmpchildelementkey, strlen($tmpelementkey) + 2), '__') === false) {
+					$arrayofchildelementkeys[] = $tmpchildelementkey;
+				}
+			}
+			$out = '';
+			$out .= '<div class="fieldcombo-element" data-element="' . dolPrintHTMLForAttribute($tmpelementkey) . '">';
+			$out .= '<div class="fieldcombo-elementheader" tabindex="0"><span class="fieldcombo-elementlabel">' . $tmpelementval['picto'] . ' ' . dol_escape_htmltag($tmpelementval['label']) . '</span><span class="fas fa-caret-right fieldcombo-elementcaret"></span></div>';
+			// The list of fields is hidden by default, it is shown only after a search or a click on the element
+			$out .= '<div class="fieldcombo-fields" style="display:none">';
+			foreach ($tmpelementval['fields'] as $tmpfieldkey => $tmpfieldval) {
+				$out .= '<div class="fieldcombo-field" tabindex="0" data-field="' . dolPrintHTMLForAttribute($tmpfieldkey) . '" data-type="' . dolPrintHTMLForAttribute($tmpfieldval['type']) . '">' . dol_escape_htmltag($tmpfieldval['label']) . '</div>';
+			}
+			$out .= '</div>';
+			if (!empty($arrayofchildelementkeys)) {
+				// The list of sub-elements is shown after the fields, it is hidden by default and it is shown
+				// (indented) only after a search or a click on the element
+				$out .= '<div class="fieldcombo-children" style="display:none">';
+				foreach ($arrayofchildelementkeys as $tmpchildelementkey) {
+					$out .= $renderElementCombo($tmpchildelementkey);
+				}
+				$out .= '</div>';
+			}
+			$out .= '</div>';
+			return $out;
+		};
+
+		foreach ($arrayoffilterelements as $tmpelementkey => $tmpelementval) {
+			// The parent element is the part of the key before the last '__' ('t__fk_soc' -> 't', 't__fk_soc__fk_pays' -> 't__fk_soc')
+			$tmpparentkey = '';
+			if (strpos($tmpelementkey, '__') !== false) {
+				$tmparrayofkey = explode('__', $tmpelementkey);
+				array_pop($tmparrayofkey);
+				$tmpparentkey = implode('__', $tmparrayofkey);
+			}
+			// At root level, we render only the elements without parent element (or with a parent not found into
+			// the list), the sub-elements are rendered recursively into their parent element
+			if ($tmpparentkey == '' || !isset($arrayoffilterelements[$tmpparentkey])) {
+				$ret .= $renderElementCombo($tmpelementkey);
+			}
+		}
+		$ret .= '</div>';
+		$ret .= '</div>';
+		$ret .= '</div>';
 		$ret .= '</div>';
 
 		$ret .= '<span class="separator"></span>';
 
 		// Operator selector (will be populated dynamically)
-		$ret .= '<div class="operator">';
+		$ret .= '<div class="operator valigntop">';
 		$ret .= '<select class="operator-selector width150" id="operator-selector"">';
 		$ret .= '</select>';
 		$ret .= '<script>$(document).ready(function() {';
@@ -13193,7 +13349,7 @@ class Form
 
 		$ret .= '<span class="separator"></span>';
 
-		$ret .= '<div class="value">';
+		$ret .= '<div class="value valigntop">';
 		// Input field for entering values
 		$ret .= '<input type="text" class="flat width100 value-input" placeholder="' . dolPrintHTML($langs->trans('Value')) . '">';
 
@@ -13249,13 +13405,131 @@ class Form
 
 		$ret .= '<script>
 			$(document).ready(function() {
-				$(".search_filter_field").on("change", function() {
+				// Reset and hide all the value input fields (this does not clear the operator selector)
+				function resetValueInputs() {
+					$(".value-input, .dateone, .datemonth, .dateyear").val("").hide();
+					$("#datemonth, #dateyear").val(null).trigger("change.select2");
+					$("#dateone").datepicker("setDate", null);
+					$(".date-one, .date-month, .date-year").hide();
+					$("#value-selector").val("").hide();
+					$("#value-selector").next(".select2-container").hide();
+					$("#value-selector").val(null).trigger("change.select2");
+				}
+
+				// Clear the operator selector and reset and hide all the value input fields
+				function resetOperatorAndValueInputs() {
+					$(".operator-selector").empty();
+					resetValueInputs();
+				}
+
+				// JS code of the 2 levels combo to select first the element (the table) then the field
+				// Click on the toggle button: show/hide the panel of the combo
+				$(".fieldcombo-toggle").on("click", function(e) {
+					e.stopPropagation();
+					$(this).closest(".fieldcombo").find(".fieldcombo-panel").toggle();
+					// Reset the search input and the filter, so the panel always opens with the first level open
+					// (the fields and the sub-tables of the main object are shown, the deeper levels stay closed)
+					$(this).closest(".fieldcombo").find(".fieldcombo-search").val("").trigger("keyup");
+				});
+
+				// Click on an element (a table): show the list of its sub-elements (indented) and the list of its fields.
+				// We close all the other elements before, except the parent elements of the clicked element (else it would be hidden)
+				$(".fieldcombo-elementheader").on("click", function(e) {
+					e.stopPropagation();
+					const elementdiv = $(this).closest(".fieldcombo-element");
+					const wasopen = elementdiv.hasClass("open");
+					$(".fieldcombo-element").removeClass("open");
+					$(".fieldcombo-fields, .fieldcombo-children").hide();
+					$(".fieldcombo-field").show();
+					elementdiv.parents(".fieldcombo-element").addClass("open").show().children(".fieldcombo-fields, .fieldcombo-children").show();
+					if (!wasopen) {
+						elementdiv.addClass("open").show().children(".fieldcombo-fields, .fieldcombo-children").show();
+					}
+				});
+
+				// Click on a field (second level of the combo): select the field and close the combo
+				$(".fieldcombo-field").on("click", function(e) {
+					e.stopPropagation();
+					const fieldlabel = $(this).text();
+					const elementlabelhtml = $(this).closest(".fieldcombo-element").find(".fieldcombo-elementlabel").html();
+					$(".fieldcombo-field").removeClass("selected");
+					$(this).addClass("selected");
+					$(".fieldcombo-label").html(elementlabelhtml).removeClass("opacitymedium").append(document.createTextNode(": " + fieldlabel));
+					$("#search_filter_field").attr("data-type", $(this).attr("data-type")).val($(this).attr("data-field"));
+					$(".fieldcombo-panel").hide();
+					$("#search_filter_field").trigger("change");
+				});
+
+				// Type something into the search input to filter the list of elements and fields
+				$(".fieldcombo-search").on("keyup change", function() {
+					const term = $(this).val().toLowerCase();
+					// Without search term, we show the first level (the main object) open, so its fields and
+					// its sub-tables are shown, but the deeper levels stay closed
+					if (term === "") {
+						$(".fieldcombo-element").removeClass("open").show();
+						$(".fieldcombo-fields, .fieldcombo-children").hide();
+						$(".fieldcombo-field").show();
+						$(".fieldcombo-list > .fieldcombo-element").addClass("open").children(".fieldcombo-fields, .fieldcombo-children").show();
+						return;
+					}
+					// With a search term, we show the elements matching by their label or their fields, and we also
+					// show the matching sub-elements into their parent element, so we open the parents of the matches
+					$(".fieldcombo-element").each(function() {
+						const elementmatch = $(this).children(".fieldcombo-elementheader").find(".fieldcombo-elementlabel").text().toLowerCase().indexOf(term) > -1;
+						let hasfieldmatch = false;
+						$(this).children(".fieldcombo-fields").children(".fieldcombo-field").each(function() {
+							const fieldmatch = elementmatch || $(this).text().toLowerCase().indexOf(term) > -1;
+							$(this).toggle(fieldmatch);
+							if (fieldmatch) {
+								hasfieldmatch = true;
+							}
+						});
+						$(this).toggleClass("open", elementmatch || hasfieldmatch);
+						$(this).children(".fieldcombo-fields").toggle(elementmatch || hasfieldmatch);
+					});
+					$(".fieldcombo-element").each(function() {
+						if ($(this).hasClass("open")) {
+							// The element matches, so we show it and we open its parent elements to make it visible into them
+							$(this).show();
+							$(this).parents(".fieldcombo-element").addClass("open").show().children(".fieldcombo-children").show();
+						} else {
+							$(this).hide();
+						}
+					});
+				});
+
+				// Press Escape to close the combo, press Enter on a row to activate it
+				$(document).on("keydown", function(e) {
+					if (e.which === 27) {
+						$(".fieldcombo-panel").hide();
+					}
+				});
+				$(".fieldcombo-elementheader, .fieldcombo-field").on("keydown", function(e) {
+					if (e.which === 13) {
+						e.preventDefault();
+						$(this).trigger("click");
+					}
+				});
+
+				// Close the combo when we click outside of it
+				$(document).on("click", function(e) {
+					if (!$(e.target).closest(".fieldcombo").length) {
+						$(".fieldcombo-panel").hide();
+					}
+				});
+
+				$("#search_filter_field").on("change", function() {
 					console.log("We change search_filter_field");
 
 					let maybenull = 0;
-					const selectedField = $(this).find(":selected");
-					let fieldType = selectedField.data("type");
-					const selectedFieldValue = selectedField.val();
+					let fieldType = $(this).attr("data-type");
+					const selectedFieldValue = $(this).val();
+
+					// If the selected option is the placeholder (no field selected), then we reset the operator and value fields
+					if (arrayoffiltercriterias[selectedFieldValue] === undefined) {
+						resetOperatorAndValueInputs();
+						return;
+					}
 
 					// If the selected field has an array of values then ask toshow the value selector instead of the value input
 					if (arrayoffiltercriterias[selectedFieldValue]["arrayofkeyval"] !== undefined) {
@@ -13279,14 +13553,8 @@ class Form
 
 					operatorSelector.trigger("change.select2");
 
-					// Clear and hide all input elements initially
-					$(".value-input, .dateone, .datemonth, .dateyear").val("").hide();
-					$("#datemonth, #dateyear").val(null).trigger("change.select2");
-					$("#dateone").datepicker("setDate", null);
-					$(".date-one, .date-month, .date-year").hide();
-					$("#value-selector").val("").hide();
-					$("#value-selector").next(".select2-container").hide();
-					$("#value-selector").val(null).trigger("change.select2");
+					// Clear and hide all the value input elements initially (the operator selector has just been populated, we do not clear it)
+					resetValueInputs();
 
 					if (fieldType === "date" || fieldType === "datetime" || fieldType === "timestamp") {
 						$(".date-one").show();
@@ -13332,10 +13600,10 @@ class Form
 
 					event.preventDefault();
 
-					const field = $(".search_filter_field").val();
+					const field = $("#search_filter_field").val();
 					const operator = $(".operator-selector").val();
 					let value = $(".value-input").val();
-					const fieldType = $(".search_filter_field").find(":selected").data("type");
+					const fieldType = $("#search_filter_field").attr("data-type");
 
 					if (["date", "datetime", "timestamp"].includes(fieldType)) {
 						const year = $("#dateoneyear").val().toString().padStart(4, "0");;
@@ -13346,7 +13614,7 @@ class Form
 					}
 
 					// If the selected field has an array of values then take the selected value
-					if (arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
+					if (arrayoffiltercriterias[field] !== undefined && arrayoffiltercriterias[field]["arrayofkeyval"] !== undefined) {
 						value = $("#value-selector").val();
 					}
 
@@ -13358,7 +13626,7 @@ class Form
 					const filterString = generateFilterString(field, operator, value, fieldType);
 
 					// Submit the form
-					if (filterString !== "" && field !== "" && operator !== "" && value !== "") {
+					if (filterString !== "" && field !== "" && field !== "-1" && field !== null && operator !== "" && operator !== null && value !== "" && value !== null) {
 						$("#search_component_params_input").val($("#search_component_params_input").val() + " " + filterString);
 						$("#search_component_params_input").closest("form").submit();
 					} else {
@@ -13474,7 +13742,9 @@ class Form
 
 		foreach ($buttons as $button) {
 			$addclass = empty($button['addclass']) ? '' : $button['addclass'];
-			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '">';
+			// Add onclick to disable submit buttons (except cancel) after first click to prevent duplicate form submissions on slow connections
+			$onclick = ($button['name'] !== 'cancel') ? ' onclick="if(this.form && this.form.checkValidity && !this.form.checkValidity()) { return true; } this.disabled=true; this.form.submit();"' : '';
+			$retstring .= '<input type="submit" class="button marginleftonly marginrightonly button-' . $button['name'] . ($morecss ? ' ' . $morecss : '') . ' ' . $addclass . '" name="' . $button['name'] . '" value="' . dol_escape_htmltag($langs->transnoentities($button['label_key'])) . '"' . $onclick . '>';
 		}
 		$retstring .= $withoutdiv ? '' : '</div>';
 

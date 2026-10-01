@@ -2539,7 +2539,11 @@ class Holiday extends CommonObject
 
 		$now = dol_now();
 
-		$sql = "SELECT h.rowid, h.date_debut";
+		// The count and the number of late requests are computed by the database instead of reading every request. A request is
+		// late when its start date is before now minus the warning delay (a request without start date was counted as late,
+		// this is kept).
+		$sql = "SELECT COUNT(h.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN h.date_debut IS NULL OR h.date_debut < '".$this->db->idate($now - $conf->holiday->approve->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut = 2";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
@@ -2560,12 +2564,10 @@ class Holiday extends CommonObject
 			$response->url = DOL_URL_ROOT.'/holiday/list.php?search_status=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
 			$response->img = img_object('', "holiday");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if ($this->db->jdate($obj->date_debut) < ($now - $conf->holiday->approve->warning_delay)) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
@@ -2669,7 +2671,7 @@ class Holiday extends CommonObject
 		$datenow = dol_getdate(dol_now());
 		$prev_month = dol_get_prev_month($datenow["mon"], $datenow["year"]);
 		$year_month = sprintf("%04d", $prev_month["year"]).'-'.sprintf("%02d", $prev_month["month"]);
-		$arrayleaves = array();
+		$arrayleaves = array(); // Array of leaves of previous month, grouped by user id
 
 		$sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
@@ -2731,7 +2733,7 @@ class Holiday extends CommonObject
 						$halfdayinmonth = 0;
 					}
 				}
-				$arrayleaves[] = array(
+				$arrayleaves[$obj->fk_user][] = array(
 					"user" => $tmpuser->getNomUrl(0, 'nolink', 0, 0, 24, 1),
 					"type" => $arraytypeleaves[$obj->fk_type],
 					"date_start" => dol_print_date($date_start_inmonth, 'day') . ' <span class="opacitymedium">('.$outputlangs->trans($listhalfday[$starthalfdayinmonth]).')</span>',
@@ -2740,6 +2742,36 @@ class Holiday extends CommonObject
 				);
 			}
 		}
+
+		// Get list of active employees, so all of them appear even if they did not take any leave
+		$arrayemployees = $this->fetchUsers(false, true);
+		if (!is_array($arrayemployees)) {
+			return 1; // $this->errors was already filled by fetchUsers
+		}
+
+		// Reorder the array of leaves to show all active employees, and add a line with type = "None" for those without leave
+		$arrayleavesfinal = array();
+		$usertmp = new User($this->db);
+		foreach ($arrayemployees as $employee) {
+			if (!empty($arrayleaves[$employee['rowid']])) {
+				$arrayleavesfinal = array_merge($arrayleavesfinal, $arrayleaves[$employee['rowid']]);
+				unset($arrayleaves[$employee['rowid']]);
+			} else {
+				$usertmp->fetch($employee['rowid']);
+				$arrayleavesfinal[] = array(
+					"user" => $usertmp->getNomUrl(0, 'nolink', 0, 0, 24, 1),
+					"type" => $outputlangs->trans("None"),
+					"date_start" => '',
+					"date_end" => '',
+					"used_days" => 0
+				);
+			}
+		}
+		// Add leaves of users that are no longer active employees
+		foreach ($arrayleaves as $leavesofuser) {
+			$arrayleavesfinal = array_merge($arrayleavesfinal, $leavesofuser);
+		}
+		$arrayleaves = $arrayleavesfinal;
 
 		$outputarrayleaves = '<br><table style="width: 100%;border-collapse: separate !important;border-spacing: 0px;border-top: 1px solid #b6b6b6;border-left: 1px solid #b6b6b6;border-right: 1px solid #b6b6b6;margin: 0px 0px 20px 0px;">';
 		$outputarrayleaves .= '<tr>';

@@ -92,9 +92,9 @@ print '<h3><img class="valignmiddle inline-block paddingright" src="../public/th
 print '<span class="inline-block valignmiddle">'.$langs->trans("MiscellaneousChecks")."</span></h3>\n";
 
 // Check browser
-$useragent = $_SERVER['HTTP_USER_AGENT'];
+$useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 if (!empty($useragent)) {
-	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
+	$tmp = getBrowserInfo($useragent);
 	$browserversion = $tmp['browserversion'];
 	$browsername = $tmp['browsername'];
 	if ($browsername == 'ie' && $browserversion < 7) {

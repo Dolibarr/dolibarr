@@ -28,8 +28,34 @@ dev/build/docker-vibe/vibes.sh
 
 This script will build the docker image, and then run it with the current directory mounted into the container and launch vibe.
 
-### Build (or rebuild) image of the container. 
-sudo docker build -dev/build/docker-vibe -t dockervibe --no-cache
+Vibe is launched with the option `--yolo` by default. If you want to run vibe without this option, you can run
+````
+vibes --no-yolo
+````
+
+When you exit vibe (for example with CTRL+C), the container is stopped too, so you return immediately to your host.
+If you want to stay into the container with a bash shell after vibe has ended, you can run
+````
+vibes --no-exit
+````
+
+### Build (or rebuild) image of the container.
+The build context is created on the fly to include the `.pre-commit-config.yaml` of the repository (see the pre-commit section), so build with the same command as `vibes.sh`:
+````
+tar -cf - -C dev/build/docker-vibe . -C "$PWD" .pre-commit-config.yaml | sudo docker build -t docker-vibe --no-cache -
+````
 
 ### Run image
 GIT_DIR=`basename $PWD` sudo docker run --rm -it -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e HOST_USER="$(id -un)" --network=host -v "$HOME/git/test:/test" -v "$HOME/.vibe:/home/$(id -un)/.vibe" --mount type=bind,src="$HOME/git/$GIT_DIR",dst=/$GIT_DIR -w /$GIT_DIR dockervibe bash
+
+## pre-commit
+The tool `pre-commit` is installed into the image (see https://pre-commit.com).
+Hooks for the Dolibarr repository are defined into the file `.pre-commit-config.yaml` at the repository root.
+To activate the hooks on your commits, run into the container, once:
+````
+pre-commit install
+````
+
+The hooks environments are preloaded into the image when it is built (they are the downloads you see at the first use of pre-commit elsewhere).
+They are stored into the directory `/var/cache/pre-commit`, declared with `PRE_COMMIT_HOME` in the Dockerfile, and are already present at the first run into the container.
+If the `.pre-commit-config.yaml` of the repository changes after the image was built (new revision of a hook), only the changed hooks are downloaded at the first run.

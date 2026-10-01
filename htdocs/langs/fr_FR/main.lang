@@ -5,7 +5,7 @@ DIRECTION=ltr
 # msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
 # stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
-# cid0jp is for Japanish
+# cid0jp is for Japanese
 # cid0kr is for Korean
 # DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
 # freemono is for ru_RU or uk_UA, uz_UZ
@@ -51,6 +51,7 @@ CustomMandatoryFieldRule=Règle « Champ obligatoire » personnalisée
 ErrorFieldFormat=Le champ '%s' a une valeur incorrecte
 ErrorFileDoesNotExists=Le fichier %s n'existe pas
 ErrorFailedToOpenFile=Impossible d'ouvrir le fichier %s
+ErrorFailedToUpdateRecord=Failed to update record
 ErrorCanNotCreateDir=Impossible de créer le répertoire %s
 ErrorCanNotReadDir=Impossible de lire le répertoire %s
 ErrorConstantNotDefined=Paramètre %s non défini
@@ -76,7 +77,7 @@ ErrorCantLoadUserFromDolibarrDatabase=Impossible de trouver l'utilisateur <b>%s<
 ErrorNoVATRateDefinedForSellerCountry=Erreur, aucun taux tva défini pour le pays '%s'.
 ErrorNoSocialContributionForSellerCountry=Erreur, pas de types de charges sociales/fiscales définies pour le pays '%s'.
 ErrorFailedToSaveFile=Erreur, l'enregistrement du fichier a échoué.
-ErrorCannotAddThisParentWarehouse=Vous essayez d'ajouter un entrepôt parent qui est déjà un enfant de l'entrepôt courant
+ErrorCannotAddThisParentWarehouse=Vous essayez d'ajouter un parent entrepôt qui est déjà un enfant d'un entrepôt existant.
 ErrorInvalidSubtype=Le sous-type sélectionné n'est pas autorisé
 ErrorDirIsNotWritable=Le répertoire %s n'est pas accessible en écriture
 FieldCannotBeNegative=Le champ "%s" ne peut pas être négatif
@@ -138,7 +139,7 @@ TechnicalID=ID technique
 LineID=Id de ligne
 NotePublic=Note (publique)
 NotePrivate=Note (interne)
-PrecisionUnitIsLimitedToXDecimals=Dolibarr a été configuré pour limiter la précision des prix unitaires à <b>%s</b> décimales.
+PrecisionUnitIsLimitedToXDecimals=Dolibarr a été mis en place pour limiter la précision des prix unitaires à <b>%s</b> décimales.
 DoTest=Tester
 ToFilter=Filtrer
 NoFilter=Pas de filtre
@@ -436,6 +437,7 @@ AmountOrPercent=Montant ou pourcentage
 Percentage=Pourcentage
 Total=Total
 SubTotal=Sous-total
+SubTotals=Sous-totaux
 TotalHTShort=Total HT
 TotalHT100Short=Total 100%% HT
 TotalHTShortCurrency=Total (hors devises)
@@ -1242,7 +1244,7 @@ ProjectRole=Rôle affecté à chaque projet/opportunité
 TasksRole=Rôle affecté à chaque tâche (si utilisés)
 ConfirmSetSupervisor=Ensemble de superviseur en vrac
 ConfirmForcePasswordChange=Forcer le changement de mot de passe
-ConfirmUpdatePrice=Choisissez un taux de prix d'augmentation/diminution
+ConfirmUpdatePrice=Choisissez une augmentation/un prix réduire taux
 ConfirmAffectTagQuestion=Voulez-vous vraiment attribuer des tags/catégories aux %s enregistrements sélectionnés ?
 ConfirmAffectUserQuestion=Voulez-vous vraiment affecter des utilisateurs aux %s enregistrements sélectionnés  ?
 ConfirmSetSupervisorQuestion=Êtes-vous sûr de vouloir définir le superviseur sur le ou les enregistrements sélectionnés %s ?
@@ -1349,7 +1351,7 @@ FillPageWithALayout=Remplir la page avec un patron
 FillPageWithAIContent=Remplir la page avec du contenu IA
 EnterYourAIPromptHere=Entrez votre instruction pour l'IA ici
 UseOrOperatorShort=ou
-GoOnList=Aller sur la liste
+GoOnList=Aller à la liste
 ShowSearchFields=Faire une recherche
 MyUserCard=Mon fichier utilisateur
 PublicFile=Fichier public
@@ -1432,6 +1434,7 @@ Why=Pourquoi
 since=depuis
 SignatureID=Signature
 except=sauf
+Included=Compris
 DUPLICATA=DUPLICATA
 ErrorFailedTriggerCall=Échec de l'appel du déclencheur
 History=Historique

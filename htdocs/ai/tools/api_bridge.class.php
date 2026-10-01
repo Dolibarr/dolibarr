@@ -47,10 +47,15 @@
  *     only as a complement, never a full rewrite.
  *
  * Remaining WIP limitations (POC scope):
- *   - Schemas come from a light docblock parser; TODO reuse Restler's
- *     CommentParser/Routes metadata (what generates swagger.json).
- *   - Tool definitions are rebuilt on every request; TODO cache them,
- *     invalidated on module (de)activation.
+ *   - Schemas come from a light docblock parser; reusing Restler's
+ *     CommentParser/Routes metadata was measured and rejected (see the
+ *     discussion in #38356).
+ *
+ * Tool definitions are cached across requests in the module temp directory
+ * (see defsCacheFile(): keyed on the enabled-modules list, so a module
+ * (de)activation switches to a fresh cache file; editing this file - where
+ * the enrichments live - invalidates it too). AI_MCP_BRIDGE_DEFS_CACHE_TTL
+ * tunes the lifetime in seconds (default 86400, 0 disables the cache).
  *
  * Disabled unless the constant AI_MCP_API_BRIDGE is set to 1.
  */
@@ -89,7 +94,9 @@ class ToolApiBridge extends McpTool
 		'members' => array('thirdparty', 'billing'),
 		'subscriptions' => array('thirdparty', 'billing'),
 		'expensereports' => array('billing'),
-		'tickets' => array('thirdparty', 'project')
+		'tickets' => array('thirdparty', 'project'),
+		'shipments' => array('stock', 'commercial', 'thirdparty'),
+		'receptions' => array('stock', 'thirdparty')
 	);
 
 	/**
@@ -447,6 +454,71 @@ class ToolApiBridge extends McpTool
 				]
 			]
 		],
+		'orders' => [
+			'label' => 'customer orders (commandes)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,date_commande,delivery_date,total_ht,total_ttc,statut',
+					'description' => "Statuses (t.fk_statut): -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed). Dates are unix timestamps: date_commande (order date), delivery_date (planned delivery). Useful sqlfilters fields: t.ref, t.date_commande, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many orders match."
+					]
+				],
+				'get' => [
+					'description' => "One order with its lines (product, qty, unit price, discount, line totals), status and dates.",
+					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One order by its exact reference (e.g. 'CO2401-0001').",
+					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				]
+			]
+		],
+		'shipments' => [
+			'label' => 'customer shipments (expéditions, goods sent)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_customer,date_delivery,date_shipping,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods left), 2=closed (billed / processed). Dates are unix timestamps: date_shipping (sent), date_delivery (planned delivery). Useful sqlfilters fields: t.ref, t.ref_customer, t.fk_soc, t.fk_statut, t.date_delivery.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many shipments match."
+					]
+				],
+				'get' => [
+					'description' => "One shipment: customer, source order, dates, status, tracking number; the lines are in api_shipments_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a shipment: product, quantity shipped, batch/lot when the product is tracked.",
+					'params' => ['id' => "Rowid of the shipment."]
+				]
+			]
+		],
+		'receptions' => [
+			'label' => 'supplier receptions (réceptions, goods received)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_supplier,date_reception,date_delivery,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods received into stock), 2=closed / processed. Dates are unix timestamps: date_reception (received), date_delivery (planned). Useful sqlfilters fields: t.ref, t.ref_supplier, t.fk_soc, t.fk_statut, t.date_delivery. A draft created by the chat keeps its '(PROVnn)' reference: search it by id or with sqlfilters on t.ref_supplier.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated supplier rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many receptions match."
+					]
+				],
+				'get' => [
+					'description' => "One reception: supplier, supplier reference, dates, status; the lines are in api_receptions_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a reception: product, quantity received, batch/lot and warehouse when tracked.",
+					'params' => ['id' => "Rowid of the reception."]
+				]
+			]
+		],
 		'expensereports' => [
 			'label' => 'employee expense reports (notes de frais)',
 			'methods' => [
@@ -754,6 +826,27 @@ class ToolApiBridge extends McpTool
 		if ($this->defs !== null) {
 			return $this->defs;
 		}
+
+		// Cross-request cache of the generated definitions: the directory scans
+		// and the per-method reflection/docblock work below produce the same
+		// result for a given set of enabled modules, so it is generated once
+		// and reread from a JSON file until something relevant changes. The
+		// routes and the endpoint map ride along because execute() needs them
+		// (the endpoint class itself is still required lazily at call time).
+		$cachettl = getDolGlobalInt('AI_MCP_BRIDGE_DEFS_CACHE_TTL', 86400);
+		$cachefile = ($cachettl > 0) ? $this->defsCacheFile() : '';
+		if ($cachefile !== '' && is_readable($cachefile) && (dol_now() - (int) filemtime($cachefile)) < $cachettl) {
+			$payload = json_decode((string) file_get_contents($cachefile), true);
+			if (is_array($payload) && isset($payload['defs'], $payload['routes'], $payload['endpoints'])
+				&& is_array($payload['defs']) && is_array($payload['routes']) && is_array($payload['endpoints'])) {
+				$this->defs = $payload['defs'];
+				$this->routes = $payload['routes'];
+				$this->endpoints = $payload['endpoints'];
+
+				return $this->defs;
+			}
+		}
+
 		$this->loadApiRuntime();
 
 		$this->defs = [];
@@ -801,7 +894,77 @@ class ToolApiBridge extends McpTool
 			}
 		}
 
+		if ($cachefile !== '') {
+			$this->writeDefsCache($cachefile);
+		}
+
 		return $this->defs;
+	}
+
+	/**
+	 * Path of the definitions cache file for the CURRENT state, or '' when no
+	 * writable temp directory exists. The state signature is part of the file
+	 * name, so any relevant change - a module (de)activated, a Dolibarr
+	 * upgrade, another entity, an edit of this file (which holds the
+	 * enrichments), or a change of the DB-driven restrictions
+	 * (AI_MCP_API_BRIDGE, AI_MCP_API_BRIDGE_METHODS) - simply points to a
+	 * different file: no explicit invalidation hook to maintain, and an
+	 * administrator RESTRICTING what the AI may reach takes effect on the
+	 * very next request (review sonikf). External-module API updates that
+	 * change none of these are covered by the TTL.
+	 *
+	 * @return string Absolute cache file path, or '' to skip caching
+	 */
+	private function defsCacheFile()
+	{
+		global $conf;
+
+		$dir = '';
+		if (!empty($conf->ai->multidir_temp[$conf->entity])) {
+			$dir = $conf->ai->multidir_temp[$conf->entity];
+		} elseif (!empty($conf->ai->dir_temp)) {
+			$dir = $conf->ai->dir_temp;
+		}
+		if (empty($dir) || dol_mkdir($dir) < 0) {
+			return '';
+		}
+
+		$modules = array_map('strval', array_values((array) $conf->modules));
+		sort($modules);
+		$signature = implode(',', $modules).'|'.DOL_VERSION.'|'.((int) $conf->entity).'|'.((int) @filemtime(__FILE__)).'|'.DOL_DOCUMENT_ROOT;
+		// Security-relevant runtime restrictions live in the DATABASE, not in
+		// this file: they must be part of the signature too, or restricting
+		// them would silently keep serving the wider cached toolset for up to
+		// a full TTL (review sonikf on the initial version).
+		$signature .= '|'.getDolGlobalInt('AI_MCP_API_BRIDGE').'|'.getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
+
+		return rtrim($dir, '/').'/bridge_tooldefs_'.md5($signature).'.json';
+	}
+
+	/**
+	 * Persist the generated definitions/routes/endpoints, pruning cache files
+	 * of previous states so stale signatures do not pile up. Written to a
+	 * temporary name then renamed, so a concurrent reader never sees a
+	 * truncated file.
+	 *
+	 * @param string $cachefile Target file from defsCacheFile()
+	 * @return void
+	 */
+	private function writeDefsCache(string $cachefile)
+	{
+		$payload = json_encode(array('defs' => $this->defs, 'routes' => $this->routes, 'endpoints' => $this->endpoints));
+		if (!is_string($payload)) {
+			return;
+		}
+		foreach ((array) glob(dirname($cachefile).'/bridge_tooldefs_*.json') as $old) {
+			if (is_string($old) && $old !== $cachefile) {
+				@unlink($old);
+			}
+		}
+		$tmpfile = $cachefile.'.tmp.'.getmypid();
+		if (file_put_contents($tmpfile, $payload) !== false) {
+			@rename($tmpfile, $cachefile);
+		}
 	}
 
 	/**

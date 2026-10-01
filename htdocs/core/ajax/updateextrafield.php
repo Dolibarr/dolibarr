@@ -19,7 +19,8 @@
 /**
  *      \file       htdocs/core/ajax/updateextrafield.php
  *      \ingroup    core
- *      \brief      File to update an extrafield (for example for stars or AI update)
+ *      \brief      File to update an extrafield (for example for stars or AI update).
+ *      			See htdocs/core/ajax/ajaxextrafield.php for aja component to read extrafield value.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -63,6 +64,7 @@ if (is_numeric($objectId)) {
 	$objectId = 0;
 }
 $object = fetchObjectByElement($objectId, $objectType, $element_ref);
+/** @var CommonObject $object */
 if (empty($object->element)) {
 	httponly_accessforbidden('Failed to get object with fetchObjectByElement(id=' . $objectId . ', objecttype=' . $objectType . ')');
 }
@@ -77,9 +79,27 @@ if ($usesublevelpermission && !$user->hasRight($module, $element, 'write') && !$
 }
 // print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
-restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
+// Security check with mode 'write', so restrictedArea() tests the write permission and not only the read
+// permission, because this page makes a write operation on the object (update of an extrafield value).
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1, 'write');	// Call with nodie return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
 
-
+// Add blacklist of some forbidden field name.
+/* Removed, this is useful only for main fields not for extrafields
+$blacklistedfields = array('pass', 'pass_crypted', 'pass_temp', 'api_key', 'openid', 'admin', 'status', 'statut');
+$canreadsalary = ((isModEnabled('salaries') && $user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+if (!$canreadsalary) {
+	$blacklistedfields[] = 'salary';
+	$blacklistedfields[] = 'salaryextra';
+	$blacklistedfields[] = 'thm';
+	$blacklistedfields[] = 'tjm';
+}
+if (in_array($field, $blacklistedfields)) {
+	access_forbidden("Can't edit a field blacklisted with name ".$field);
+}
+*/
 
 
 /*

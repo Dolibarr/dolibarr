@@ -1624,7 +1624,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print $langs->trans('DefaultBankAccount');
 				print '</td>';
 				print '<td>';
-				$form->select_comptes(GETPOST('fk_account'), 'fk_account', 0, '', 1);
+				$form->select_comptes(GETPOSTISSET('fk_account') ? GETPOSTINT('fk_account') : $object->fk_account, 'fk_account', 0, '', 1);
 				print "</td>";
 				print '</tr>';
 			}
@@ -2191,6 +2191,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$object->typent_id = GETPOSTINT('typent_id');
 				$object->effectif_id = GETPOSTINT('effectif_id');
 				$object->barcode				= GETPOST('barcode', 'alphanohtml');
+				$object->fk_account				= GETPOSTINT('fk_account') > 0 ? GETPOSTINT('fk_account') : 0;
 				$object->forme_juridique_code = GETPOSTINT('forme_juridique_code');
 				$object->default_lang = GETPOST('default_lang', 'alpha');
 
@@ -2512,6 +2513,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<td colspan="3">';
 					print img_picto('', 'barcode', 'class="pictofixedwidth"');
 					print '<input type="text" class="minwidth100 maxwidth200 widthcentpercentminusx" name="barcode" id="barcode" value="'.dolPrintHTMLForAttribute($object->barcode).'" spellcheck="false">';
+					print '</td></tr>';
+				}
+
+				// Default bank account
+				if (isModEnabled('bank') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_BANK_ACCOUNT')) {
+					print '<tr><td>'.$form->editfieldkey('DefaultBankAccount', 'fk_account', '', $object, 0).'</td>';
+					print '<td colspan="3">';
+					$form->select_comptes(GETPOSTISSET('fk_account') ? GETPOSTINT('fk_account') : $object->fk_account, 'fk_account', 0, '', 1);
 					print '</td></tr>';
 				}
 
@@ -3559,7 +3568,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$cloneSocietetUrl = '';
 					$cloneButtonId = '';
 				}
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'));
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneSocietetUrl, $cloneButtonId, $user->hasRight('societe', 'creer'), array('attr' => array('class' => 'reposition')));
 
 				if (isModEnabled('member')) {
 					$adh = new Adherent($db);
@@ -3569,7 +3578,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 				}
 
-				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete);
+				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 
 				$deleteUrl = $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken();
 				$buttonId = 'action-delete-no-ajax';
@@ -3577,7 +3586,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$deleteUrl = '';
 					$buttonId = 'action-delete';
 				}
-				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			print '</div>'."\n";

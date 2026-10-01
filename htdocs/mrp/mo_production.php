@@ -151,6 +151,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
 		$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user, 0, (bool) $also_cancel_consumed_and_produced_lines);
 		if ($result > 0) {
 			header("Location: " . $backurlforlist);
@@ -1106,7 +1107,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 							}
 
-							if ($qtyhourservice && $qtyhourforline) {
+							// Add the workstation cost for the manufacturing order cost when a workstation is set
+							if (isModEnabled('workstation') && $line->fk_default_workstation > 0) {
+								$workstation = new Workstation($db);
+								$workstation->fetch($line->fk_default_workstation);
+								$linecost = price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated) / $object->qty, 'MT'); //if global const MRP_SHOW_COST_FOR_CONSUMPTION is used to show price for each line
+								$bomcostupdated += price2num($qtyhourforline * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated) / $object->qty, 'MU');
+							} elseif ($qtyhourservice && $qtyhourforline) {
 								$linecost = price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MT');	// price for line for all quantities
 								$bomcostupdated += price2num(($qtyhourforline / $qtyhourservice * $costprice) / $object->qty, 'MU');	// same but with full accuracy
 							} else {

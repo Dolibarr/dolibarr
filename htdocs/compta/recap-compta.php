@@ -189,7 +189,7 @@ if ($id > 0) {
 				$userstatic->login = $objf->login;
 
 				$values = array(
-					'fk_facture' => $objf->facid,
+					'fk_facture' => (int) $objf->facid,
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
@@ -232,7 +232,7 @@ if ($id > 0) {
 						$userstatic->login = $objp->login;
 
 						$values = array(
-							'fk_paiement' => $objp->rowid,
+							'fk_paiement' => (int) $objp->rowid,
 							'date' => $db->jdate($objp->dp),
 							'datefieldforsort' => $db->jdate($objp->dp).'-'.$fac->ref,
 							'link' => $langs->trans("Payment").' '.$paymentstatic->getNomUrl(1),

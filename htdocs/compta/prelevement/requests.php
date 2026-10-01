@@ -116,7 +116,10 @@ if (empty($reshook)) {
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$object->fk_bank_account = GETPOSTINT('fk_bank_account');
 
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// date of upload
@@ -193,6 +196,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete' && $permissiontodelete) {
 		$savtype = $object->type;
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$res = $object->delete($user);
 		if ($res > 0) {
 			if ($savtype == 'bank-transfer') {
@@ -201,6 +205,8 @@ if (empty($reshook)) {
 				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
 			}
 			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -466,16 +472,16 @@ if ($id > 0 || $ref) {
 			// Cancel
 			if ($object->status == BonPrelevement::STATUS_TRANSFERED) {
 				if ($object->type == 'bank-transfer') {
-					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'requests.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'));
+					print dolGetButtonAction($langs->trans("Cancel"), '', 'default', 'requests.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'debit'), array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 				} else {
-					print dolGetButtonAction($langs->trans("Cancel"), '', 'cancel', 'requests.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'));
+					print dolGetButtonAction($langs->trans("Cancel"), '', 'default', 'requests.php?action=setcancel&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'credit'), array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 				}
 			}
 
 			if ($object->type == 'bank-transfer') {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'));
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('paymentbybanktransfer', 'create'), array('attr' => array('class' => 'reposition')))."\n";
 			} else {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'));
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'requests.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->hasRight('prelevement', 'bons', 'creer'), array('attr' => array('class' => 'reposition')))."\n";
 			}
 		}
 		print '</div>';

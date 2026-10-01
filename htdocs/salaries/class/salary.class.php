@@ -234,7 +234,8 @@ class Salary extends CommonObject
 		global $conf, $langs;
 
 		if (!dol_strlen($model)) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model")), null, 'errors');
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Model"));
+			$this->errors[] = $this->error;
 			return 0;
 		}
 
@@ -255,15 +256,18 @@ class Salary extends CommonObject
 				if ($result > 0) {
 					return 1;
 				} else {
-					setEventMessages($module->error, $module->errors, 'errors');
+					$this->error = $module->error;
+					$this->errors = $module->errors;
 					return 0;
 				}
 			} else {
-				setEventMessages('Failed to load class '.$classname, null, 'errors');
+				$this->error = 'Failed to load class '.$classname;
+				$this->errors[] = $this->error;
 				return 0;
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorModuleNotFound", $model), null, 'errors');
+			$this->error = $langs->trans("ErrorModuleNotFound", $model);
+			$this->errors[] = $this->error;
 			return 0;
 		}
 	}
@@ -613,16 +617,16 @@ class Salary extends CommonObject
 		$langs->loadLangs(['salaries']);
 
 		// Complete datas
-		if (!empty($params['fromajaxtooltip']) && !isset($this->alreadypaid)) {
-			// Load the alreadypaid field
-			$this->alreadypaid = $this->getSommePaiement(0);
+		if (!empty($params['fromajaxtooltip']) && !isset($this->totalpaid)) {
+			// Load the totalpaid field
+			$this->totalpaid = $this->getSommePaiement(0);
 		}
 
 		$datas = [];
 
 		$datas['picto'] = '<u>'.$langs->trans("Salary").'</u>';
-		if (isset($this->status) && isset($this->alreadypaid)) {
-			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+		if (isset($this->status) && isset($this->totalpaid)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5, $this->totalpaid);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
@@ -953,7 +957,7 @@ class Salary extends CommonObject
 			}
 			$return .= '</span>';
 		}
-		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->totalpaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

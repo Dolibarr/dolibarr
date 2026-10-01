@@ -18,11 +18,11 @@
 /**
  *      \file       test/phpunit/ModuleBuilderLibTest.php
  *      \ingroup    test
- *      \brief      PHPUnit test for modulebuilder.lib.php tab selection helpers
+ *      \brief      PHPUnit test for modulebuilder.lib.php tab and card action selection helpers
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/modulebuilder.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
@@ -75,5 +75,74 @@ class ModuleBuilderLibTest extends CommonClassTest
 
 		// Duplicates collapsed
 		$this->assertSame(array('note'), filterEnabledTabs(array('note', 'note'), $map));
+
+		// Wrapper must stay strictly equivalent to the generic filter it delegates to
+		$this->assertSame(filterEnabledKeys(array('agenda', 'contact'), $map), filterEnabledTabs(array('agenda', 'contact'), $map));
+	}
+
+	/**
+	 * testGetModuleBuilderObjectCardActions
+	 *
+	 * @return void
+	 */
+	public function testGetModuleBuilderObjectCardActions()
+	{
+		$map = getModuleBuilderObjectCardActions();
+		$this->assertSame(array('sendmail', 'clone', 'validate', 'setdraft', 'statuschange', 'delete'), array_keys($map));
+
+		$markers = array();
+		foreach ($map as $actionkey => $meta) {
+			foreach (array('marker', 'label', 'default', 'mode') as $index) {
+				$this->assertArrayHasKey($index, $meta, 'Missing index '.$index.' for card action '.$actionkey);
+			}
+			// The marker is injected into a regular expression built in modulebuilder/index.php
+			$this->assertMatchesRegularExpression('/^[A-Z]+$/', $meta['marker'], 'Invalid marker for card action '.$actionkey);
+			$this->assertContains($meta['mode'], array('remove', 'activate'), 'Invalid mode for card action '.$actionkey);
+			$markers[] = $meta['marker'];
+		}
+
+		// Two actions sharing a marker would purge each other blocks
+		$this->assertSame($markers, array_unique($markers));
+
+		// Cancel / Re-Open ships commented out in the template: it must stay off by default
+		$this->assertSame(0, $map['statuschange']['default']);
+		$this->assertSame('activate', $map['statuschange']['mode']);
+	}
+
+	/**
+	 * testGetModuleBuilderDefaultEnabledKeys
+	 *
+	 * @return void
+	 */
+	public function testGetModuleBuilderDefaultEnabledKeys()
+	{
+		// Default selection must reproduce the card page generated before this option existed
+		$this->assertSame(array('sendmail', 'clone', 'validate', 'setdraft', 'delete'), getModuleBuilderDefaultEnabledKeys(getModuleBuilderObjectCardActions()));
+
+		// All tabs are enabled by default
+		$this->assertSame(array_keys(getModuleBuilderObjectTabs()), getModuleBuilderDefaultEnabledKeys(getModuleBuilderObjectTabs()));
+	}
+
+	/**
+	 * testFilterEnabledKeys
+	 *
+	 * @return void
+	 */
+	public function testFilterEnabledKeys()
+	{
+		$map = getModuleBuilderObjectCardActions();
+
+		// Nominal: returns requested keys in map order
+		$this->assertSame(array('clone', 'delete'), filterEnabledKeys(array('delete', 'clone'), $map));
+
+		// Unknown key is rejected
+		$this->assertSame(array('delete'), filterEnabledKeys(array('delete', 'evil'), $map));
+
+		// Empty / non-array returns empty
+		$this->assertSame(array(), filterEnabledKeys(array(), $map));
+		$this->assertSame(array(), filterEnabledKeys('', $map));
+
+		// Duplicates collapsed
+		$this->assertSame(array('validate'), filterEnabledKeys(array('validate', 'validate'), $map));
 	}
 }
