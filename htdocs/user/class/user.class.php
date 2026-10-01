@@ -2899,7 +2899,7 @@ class User extends CommonObject
 		if ($mailfile->sendfile()) {
 			return 1;
 		} else {
-			$langs->trans("errors");
+			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFailedToSendPassword").' '.$mailfile->error;
 			return -1;
 		}
