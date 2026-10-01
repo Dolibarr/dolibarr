@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 $langs->loadLangs(array('products', 'contracts', 'companies'));
 
 // Get parameters
+$action ='';
 $massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
