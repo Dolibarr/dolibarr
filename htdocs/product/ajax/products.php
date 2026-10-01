@@ -139,6 +139,8 @@ if ($action == 'fetch' && !empty($id)) {
 			$sql = "SELECT price, unitprice, quantity, remise_percent";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE rowid = ".((int) $price_by_qty_rowid);
+			// The price by quantity must be a price of the product asked, not the one of another product
+			$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $id).")";
 
 			$result = $db->query($sql);
 			if ($result) {
