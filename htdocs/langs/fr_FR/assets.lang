@@ -29,13 +29,18 @@ ModuleAssetsDesc=Module de suivi des immobilisations
 # Admin page
 AssetSetup=Configuration du module immobilisations
 AssetSetupPage=Page de configuration des immobilisations
-ExtraFieldsAssetModel=Attributs complémentaires (modèle d'immobilisation)
+ExtraFieldsAssetModel=Champs supplémentaires (modèle de immobilisation)
 AssetsType=Modèle d'immobilisation
 AssetsTypeId=ID du modèle d'immobilisation
 AssetsTypeLabel=Libellé du modèle d'immobilisation
 AssetsTypes=Modèles d'immobilisation
 ASSET_ACCOUNTANCY_CATEGORY=Groupe de comptabilité des immobilisations
 ASSET_DEPRECIATION_DURATION_PER_YEAR=Période proportionnelle en jours pour le calcul de l'amortissement sur un an
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTION=Convention de décompte des jours du prorata temporis
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTIONTooltip=Comment est calculé l'amortissement d'une période <b>partielle</b>, c'est-à-dire la première et la dernière année d'une immobilisation. Une annuité pleine vaut toujours la valeur divisée par la durée et n'est jamais affectée par ce réglage.<br><br>Une convention définit <b>à la fois</b> la façon de compter les jours de la période <b>et</b> le nombre de jours d'une année pleine. Les deux doivent toujours correspondre : compter les jours calendaires réels puis les diviser par 360 surévalue chaque période partielle d'environ 1,39 pour cent.<br><br><b>30/360</b> : tout mois compte 30 jours et toute année 360 jours. La convention appliquée par la plupart des cabinets comptables en France.<br><b>Jours réels / 365</b> : jours calendaires réels de la période, divisés par 365.<br><b>Jours réels / année réelle</b> : jours calendaires réels, chaque année divisée par sa propre longueur réelle, 365 ou 366. La plus exacte sur une période couvrant un jour bissextile.<br><br>Exemple sur une immobilisation de 13000 amortie sur 5 ans, mise en service le 10 mars et cédée le 23 février de la quatrième année, exercices allant d'août à juillet. Amortissement cumulé à la cession : 7684,44 en 30/360, 7700,27 en jours réels / 365, 7697,29 en jours réels / année réelle.<br><br><b>Attention</b> : changer ce réglage ne recalcule pas les plans déjà générés. Réenregistrer les options d'amortissement d'un bien pour régénérer son plan.
+AssetDayCountConventionThirty360=30/360 - tout mois compte 30 jours, toute année 360 jours (usage courant en France)
+AssetDayCountConventionAct365=Jours réels / 365 - jours calendaires réels divisés par 365
+AssetDayCountConventionActAct=Jours réels / année réelle - jours calendaires réels, chaque année divisée par sa propre longueur (365 ou 366)
 # Menu
 MenuAssets=Immobilisations
 MenuNewAsset=Nouvelle immobilisation
