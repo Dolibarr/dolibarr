@@ -443,6 +443,7 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('28/10/2025 00:00', $result);
 
+
 		// Imagine we are in a server with TZ Europe/Paris (UTC+1 +daylight)
 		// A) If user want to store a "date_when" (of a recurring invoices) for "2025-10-01" (every 1st of month), we store it in db with idate() so with string value '2025-10-01 00:00:00'
 		//     (because we want "date_when" as a day only field, so with no mention of TZ)
@@ -463,6 +464,41 @@ class DateLibTest extends CommonClassTest
 		$this->assertEquals('2025-10-30 22:00:00', $result);
 		$this->assertEquals('2025-10-30 23:00:00', $result2);
 		*/
+		$date_when_utc = dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt');
+		//$tz = new DateTimeZone('Europe/Paris');
+		//$date_when_utc = (new DateTime('2025-10-01 00:00:00', $tz))->getTimestamp();
+		$date_when_next_utc = dol_time_plus_duree($date_when_utc, 1, 'm', 0, 'Europe/Paris');
+		$result1 = dol_print_date($date_when_utc, 'standard', 'gmt', $outputlangs);
+		$result2 = dol_print_date($date_when_next_utc, 'standard', 'gmt', $outputlangs);
+		print "XXX date_when_utc      = ".$result1."\n";
+		print "XXX date_when_next_utc = ".$result2."\n";
+		$this->assertEquals('2025-09-30 22:00:00', $result1);
+		$this->assertEquals('2025-10-31 23:00:00', $result2);
+
+		// With param for end of month
+		$date_when_utc = dol_mktime(22, 0, 0, 9, 30, 2025, 'gmt');
+		$date_when_next_utc = dol_time_plus_duree($date_when_utc, 1, 'm', 1, 'Europe/Paris');
+		$result1 = dol_print_date($date_when_utc, 'standard', 'gmt', $outputlangs);
+		$result2 = dol_print_date($date_when_next_utc, 'standard', 'gmt', $outputlangs);
+		print "XXX date_when_utc      = ".$result1."\n";
+		print "XXX date_when_next_utc = ".$result2."\n";
+		$this->assertEquals('2025-09-30 22:00:00', $result1);
+		$this->assertEquals('2025-10-31 23:00:00', $result2);
+
+		// Rule for end of month applied in the timezone
+		$date_when_utc = dol_mktime(22, 0, 0, 1, 30, 2025, 'gmt');
+		$date_when_next_utc = dol_time_plus_duree($date_when_utc, 1, 'm', 1, 'Europe/Paris');
+		$result1 = dol_print_date($date_when_utc, 'standard', 'gmt', $outputlangs);
+		$result2 = dol_print_date($date_when_next_utc, 'standard', 'gmt', $outputlangs);
+		print "XXX date_when_utc      = ".$result1."\n";
+		print "XXX date_when_next_utc = ".$result2."\n";
+		$this->assertEquals('2025-01-30 22:00:00', $result1);
+		$this->assertEquals('2025-02-28 22:00:00', $result2);
+
+		// Rule for end of month in GMT
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(0, 0, 0, 1, 31, 2028, 'gmt'), 1, 'm', 1, 'gmt'), 'standard', 'gmt', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('2028-02-29 00:00:00', $result);
 
 		return $result;
 	}
