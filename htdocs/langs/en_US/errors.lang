@@ -251,6 +251,7 @@ ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked
 ErrorSearchCriteriaTooSmall=Search criteria too short.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
+ErrorObjectMustHaveStatusValidToBeCanceled=Object %s must have status 'Validated' to be canceled.
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
 ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 AlreadyTooMuchPostOnThisIPAdress=You have already posted too much on this IP address.
