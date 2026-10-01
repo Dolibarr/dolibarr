@@ -85,7 +85,7 @@ Pull Requests on old branches are still going to be merged and propagated into n
 
 - As the Developer: Do not submit changes into files xx_XX/afile.lang. They are language files and are updated/synced automatically from Transifex. If you need to add a new language file, just add it for the en_US language.
 
-- As the Developor: For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
+- As the Developer: For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once.
 
 - As the Release Maintainer: The Release Maintainer will decide to make a new release as soon as the planning of the release is reached and the code in the branch to release reach the status of "No more known serious bugs". 
 
@@ -102,11 +102,11 @@ Use clear commit messages with the following structure:
 LONGDESC
 ```
 
-We provide a [.gitmessage](/.gitmessage) file to help you fit the template.
+We provide a [gitmessage](/dev/setup/git/gitmessage) file to help you fit the template.
 
 You can add it to your git configuration using:
 ```
-git config --local commit.template .gitmessage
+git config --local commit.template dev/setup/git/gitmessage
 ```
 
 with
