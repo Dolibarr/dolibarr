@@ -2013,6 +2013,41 @@ if ($resql) {
 	print "</table>";
 	print "</div>";
 
+	// Remember the lines ticked for reconciliation in the browser tab (per bank account), so that
+	// adding or deleting a line, changing page or reloading the page does not lose them.
+	if (($action == 'reconcile' || $action == 'confirm_deleteonreconcile') && !empty($conf->use_javascript_ajax)) {
+		print '<script nonce="'.getNonce().'">
+		$(document).ready(function() {
+			var key = "dol_bankreconcile_checked_'.((int) $object->id).'";
+			var checked = {};
+			try { checked = JSON.parse(sessionStorage.getItem(key) || "{}") || {}; } catch (e) { checked = {}; }
+			function saveChecked() { try { sessionStorage.setItem(key, JSON.stringify(checked)); } catch (e) {} }
+			$("input.checkforselect").each(function() {
+				if (this.checked) {
+					checked[this.value] = 1;	// Line already ticked by the server (kept after an error)
+				} else if (checked[this.value]) {
+					console.log("Restore tick of bank line "+this.value);
+					$(this).prop("checked", true).trigger("change");
+				}
+			});
+			saveChecked();
+			$(document).on("change", "input.checkforselect", function() {
+				if (this.checked) {
+					checked[this.value] = 1;
+				} else {
+					delete checked[this.value];
+				}
+				saveChecked();
+			});
+			$("input[name=confirm_reconcile]").on("click", function() {
+				// Lines being reconciled will no longer be listed, so forget them
+				$("input.checkforselect:checked").each(function() { delete checked[this.value]; });
+				saveChecked();
+			});
+		});
+		</script>';
+	}
+
 	print '</form>';
 	$db->free($resql);
 } else {
