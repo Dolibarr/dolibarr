@@ -3444,7 +3444,8 @@ class Adherent extends CommonObject
 							$nbko++;
 							$listofmembersko[$adherent->id] = $adherent->id;
 
-							break;
+							// Do not break here: a template issue for one member (ex: not found for its language) must not prevent
+							// the reminder from being sent to the other members due the same day.
 						}
 					}
 
