@@ -2405,6 +2405,16 @@ if ($action == 'create') {
 						'enabled' => true,
 					);
 				}
+				if (isModEnabled('intervention') && $object->status > 0) {
+					$langs->load("interventions");
+					$arrayofcreatebutton[] = array(
+						'url' => '/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('AddIntervention'),
+						'lang' => 'interventions',
+						'perm' => $user->hasRight('ficheinter', 'creer') ? true : false,
+						'enabled' => true,
+					);
+				}
 				if (count($arrayofcreatebutton)) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
