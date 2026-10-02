@@ -1,0 +1,77 @@
+name: Fetch CTI phpstan technical debt (temporary)
+
+on:
+  push:
+    branches: [fetch-cti-phpstan-debt]
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract technical debt sections from cti.dolibarr.org
+        run: |
+          python3 - <<'PYEOF'
+          import urllib.request, re
+
+          url = 'https://cti.dolibarr.org/'
+          req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (apstats debt extractor)'})
+          data = urllib.request.urlopen(req, timeout=180).read().decode('utf-8', 'replace')
+          print('Downloaded %d bytes' % len(data))
+
+          # List all h2 headings with their byte position
+          heads = [(m.start(), re.sub(r'<[^>]+>', '', m.group(0)).strip()) for m in re.finditer(r'<h2.*?</h2>', data, re.S)]
+          with open('cti-00-headings.txt', 'w') as f:
+              f.write('page bytes: %d
+' % len(data))
+              for p, t in heads:
+                  f.write('%d	%s
+' % (p, t))
+
+          # Locate the first 'Technical debt' heading and take everything until the end of file
+          start = None
+          for p, t in heads:
+              if 'technical debt' in t.lower():
+                  start = p
+                  break
+          print('Technical debt starts at %s' % start)
+
+          if start is not None:
+              # Cut at the footer if present
+              end = len(data)
+              m = re.search(r'<footer', data[start:])
+              if m:
+                  end = start + m.start()
+              section = data[start:end]
+              # Strip tags, keep text readable
+              text = re.sub(r'<(script|style).*?</\1>', '', section, flags=re.S)
+              text = re.sub(r'</t[dh]>', ' | ', text)
+              text = re.sub(r'</tr>', chr(10), text)
+              text = re.sub(r'<[^>]+>', ' ', text)
+              text = re.sub(r'&#39;', chr(39), text)
+              text = re.sub(r'&quot;', '"', text)
+              text = re.sub(r'&amp;', '&', text)
+              text = re.sub(r'[ \t]+', ' ', text)
+              # Write in chunks of 25000 chars
+              i = 0
+              n = 1
+              while i < len(text) and n <= 40:
+                  chunk = text[i:i+25000]
+                  with open('cti-%02d-debt.txt' % n, 'w') as f:
+                      f.write(chunk)
+                  i += 25000
+                  n += 1
+              print('Debt text length %d, chunks %d' % (len(text), n - 1))
+          PYEOF
+
+      - name: Commit extracted data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add cti-*.txt
+          git commit -m "chore: extract CTI phpstan debt [skip ci]" || echo "nothing to commit"
+          git push
