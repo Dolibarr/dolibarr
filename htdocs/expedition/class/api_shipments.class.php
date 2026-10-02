@@ -240,7 +240,7 @@ class Shipments extends DolibarrApi
 		// A standalone shipment has no source order line to point to: its lines are free
 		// lines, recorded with addlinefree() exactly as the shipment card records them.
 		if (getDolGlobalString('SHIPMENT_STANDALONE') && !isset($request_data['origin_id']) && !isset($request_data['origin_type'])) {
-			return $this->createStandalone(isset($request_data['lines']) ? $request_data['lines'] : array());
+			return $this->createStandalone($request_data['lines'] ?? array());
 		}
 
 		if (isset($request_data["lines"])) {
@@ -279,7 +279,7 @@ class Shipments extends DolibarrApi
 	/**
 	 * Create a standalone shipment (no source order) and its free lines
 	 *
-	 * @param   array<int,array<string,mixed>>   $lines   Lines of the request: fk_product, description, qty, fk_unit, rang, array_options
+	 * @param   mixed   $lines   Lines of the request: fk_product, description, qty, fk_unit, rang, array_options
 	 * @return  int                                       ID of shipment created
 	 * @throws  RestException
 	 */
@@ -287,6 +287,9 @@ class Shipments extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+		if (!is_array($lines)) {
+			throw new RestException(400, 'Field lines must be an array');
+		}
 		$this->shipment->lines = array();
 
 		$this->db->begin();
@@ -297,6 +300,10 @@ class Shipments extends DolibarrApi
 		}
 
 		foreach ($lines as $line) {
+			if (!is_array($line)) {
+				$this->db->rollback();
+				throw new RestException(400, 'Each line must be an object');
+			}
 			$fk_product = (int) ($line['fk_product'] ?? 0);
 			$description = sanitizeVal((string) ($line['description'] ?? ($line['desc'] ?? '')), 'restricthtml');
 			$qty = (float) price2num($line['qty'] ?? '', 'MS');
