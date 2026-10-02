@@ -2959,7 +2959,7 @@ class Product extends CommonObject
 	 * @param	float|int		$newminprice		New price min
 	 * @param	int				$level				0=standard, >0 = level if multilevel prices
 	 * @param	int<0,1>		$newnpr				0=Standard vat rate, 1=Special vat rate for French NPR VAT
-	 * @param	int<0,1>		$newpbq				1 if it has price by quantity
+	 * @param	int<-1,1>		$newpbq				1=Enable the prices by quantity, -1=Disable them, 0=Keep the current state (used with option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)
 	 * @param	int<0,1>		$ignore_autogen		Used to avoid infinite loops
 	 * @param	array{}|array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
 	 * @param	string 			$newdefaultvatcode	Default vat code
@@ -3136,12 +3136,54 @@ class Product extends CommonObject
 				$this->localtax2_type = $localtaxtype2;
 
 				// Price by quantity
+				// Each change of price adds a new line into product_price and the prices by quantity are attached to one line.
+				// So when they stay enabled, we must find the current line to move its prices by quantity to the new one.
+				$oldpriceid = 0;
+				if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+					// Same selection of the current price line as in fetch()
+					$sqlpbq = "SELECT rowid, price_by_qty FROM ".$this->db->prefix()."product_price";
+					$sqlpbq .= " WHERE fk_product = ".((int) $id);
+					if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+						$sqlpbq .= " AND entity IN (".getEntity('productprice').")";
+						$sqlpbq .= " AND price_level = ".((int) ($level ? $level : 1));
+					}
+					$sqlpbq .= " ORDER BY date_price DESC, rowid DESC";
+					$sqlpbq .= " LIMIT 1";
+					$resqlpbq = $this->db->query($sqlpbq);
+					if ($resqlpbq) {
+						$objpbq = $this->db->fetch_object($resqlpbq);
+						if ($objpbq) {
+							$oldpriceid = (int) $objpbq->rowid;
+							if (empty($newpbq)) {
+								$newpbq = (int) $objpbq->price_by_qty; // Keep the current state
+							}
+						}
+					}
+				}
+				if ($newpbq < 0) {
+					$newpbq = 0;
+				}
 				$this->price_by_qty = $newpbq;
 
 				// check if price have really change before log
 				$newPriceData = $this->getArrayForPriceCompare($level);
 				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 					$this->_log_price($user, $level); // Save price for level into table product_price
+
+					// Move the prices by quantity of the previous price line to the new one, else they are lost
+					if ($newpbq == 1 && $oldpriceid > 0) {
+						$newpriceid = (int) $this->db->last_insert_id($this->db->prefix()."product_price");
+						if ($newpriceid > 0 && $newpriceid != $oldpriceid) {
+							$sqlpbq = "UPDATE ".$this->db->prefix()."product_price_by_qty";
+							$sqlpbq .= " SET fk_product_price = ".((int) $newpriceid);
+							$sqlpbq .= " WHERE fk_product_price = ".((int) $oldpriceid);
+							if (!$this->db->query($sqlpbq)) {
+								$this->error = $this->db->lasterror();
+								$this->db->rollback();
+								return -1;
+							}
+						}
+					}
 				}
 
 				if (!$updatedefaultprice) {

@@ -623,7 +623,7 @@ if (empty($reshook)) {
 			$basePrice = ($basePriceType == 'HT') ? $object->multiprices[$level] : $object->multiprices_ttc[$level];
 			$basePriceMin = ($basePriceType == 'HT') ? $object->multiprices_min[$level] : $object->multiprices_min_ttc[$level];
 		}
-		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, -1, 0, array(), $object->default_vat_code);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
