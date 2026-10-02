@@ -108,6 +108,12 @@ if (($action == 'add' || $action == 'addproduct' || $action == 'update') && $per
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("UrlOrLink")), null, 'errors');
 	}
 
+	if (dol_strlen($title) > 64) {	// Size of the field title in database
+		$error++;
+		$langs->load("errors");
+		setEventMessages($langs->transnoentities("ErrorFieldTooLong", $langs->transnoentitiesnoconv("BookmarkTitle")), null, 'errors');
+	}
+
 	if (!$error) {
 		$object->favicon = 'none';
 
