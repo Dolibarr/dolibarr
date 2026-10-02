@@ -1,0 +1,48 @@
+name: Probe CTI PHPStan report (TEMP)
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: temp-probe-cti-phpstan
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: phpstan:2.2.14
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml, mcrypt
+
+      - name: Build apstats neon config (phpstan.neon.dist without baseline)
+        run: |
+          sed -e '/^includes:/d' -e '/phpstan-baseline\.neon/d' phpstan.neon.dist > phpstan_apstats.neon
+          mkdir -p .github/tmp
+          cat phpstan_apstats.neon | head -20
+
+      - name: Run PHPStan level 9 (reproduce CTI report)
+        run: |
+          phpstan --level=9 -v analyze -a dev/build/phpstan/bootstrap.php --memory-limit 5G --error-format=github -c phpstan_apstats.neon > cti-phpstan-report.txt 2> cti-phpstan-stderr.txt || true
+          echo "--- stderr head ---"
+          head -c 1000 cti-phpstan-stderr.txt || true
+          echo "--- report line count ---"
+          wc -l cti-phpstan-report.txt
+
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add cti-phpstan-report.txt cti-phpstan-stderr.txt
+          git commit -m "[TEMP] Save CTI PHPStan probe report" || echo "nothing to commit"
+          git push
