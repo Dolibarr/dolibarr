@@ -376,6 +376,8 @@ class AllTests
 			$suite->addTestSuite('RestAPIDocumentTest');
 			require_once dirname(__FILE__).'/RestAPIMoTest.php';
 			$suite->addTestSuite('RestAPIMoTest');
+			require_once dirname(__FILE__).'/RestAPIInvoiceTest.php';
+			$suite->addTestSuite('RestAPIInvoiceTest');
 			require_once dirname(__FILE__).'/RestAPICronJobTest.php';
 			$suite->addTestSuite('RestAPICronJobTest');
 			require_once dirname(__FILE__).'/RestAPIBankAccountsTest.php';

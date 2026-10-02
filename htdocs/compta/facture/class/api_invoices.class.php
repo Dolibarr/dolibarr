@@ -157,6 +157,22 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
+		return $this->_renderInvoice($contact_list);
+	}
+
+	/**
+	 * Build the API representation of the invoice loaded into $this->invoice
+	 *
+	 * The invoice must have been fetched (or just created) before the call, so that its lines are loaded.
+	 *
+	 * Warning: the 'lire' permission is NOT checked here. Callers must check it themselves so a create
+	 * request is never answered with a 403 once the invoice is already committed.
+	 *
+	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/addresses
+	 * @return	Object						Object with cleaned properties
+	 */
+	private function _renderInvoice($contact_list = 1)
+	{
 		// Get payment details
 		$this->invoice->totalpaid = $this->invoice->getSommePaiement();
 		$this->invoice->totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
@@ -357,7 +373,7 @@ class Invoices extends DolibarrApi
 	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return int                  ID of invoice
+	 * @return	Object					Object with cleaned properties
 	 */
 	public function post($request_data = null)
 	{
@@ -414,7 +430,10 @@ class Invoices extends DolibarrApi
 		if ($this->invoice->create(DolibarrApiAccess::$user, 0, (empty($request_data["date_lim_reglement"]) ? 0 : $request_data["date_lim_reglement"])) < 0) {
 			throw new RestException(500, "Error creating invoice", array_merge(array($this->invoice->error), $this->invoice->errors));
 		}
-		return ((int) $this->invoice->id);
+		// Reload the invoice so the lines are loaded (they are needed to compute the payment totals)
+		$this->invoice->fetch($this->invoice->id);
+
+		return $this->_renderInvoice(1);
 	}
 
 	/**
