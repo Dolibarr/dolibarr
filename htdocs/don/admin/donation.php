@@ -167,6 +167,40 @@ if ($action == 'set_DONATION_MESSAGE') {
 	}
 }
 
+if ($action == 'set_DONATION_CERFA') {
+	// Options of the French tax receipt (Cerfa 11580)
+	$values = array(
+		'DONATION_ORGANISM_RNA' => strtoupper(trim(GETPOST('DONATION_ORGANISM_RNA', 'alphanohtml'))),
+		'DONATION_CERFA_ORGANISM_TYPE' => GETPOST('DONATION_CERFA_ORGANISM_TYPE', 'aZ09'),
+		'DONATION_CERFA_ORGANISM_OTHER' => trim(GETPOST('DONATION_CERFA_ORGANISM_OTHER', 'alphanohtml')),
+		'DONATION_CERFA_FORM' => GETPOST('DONATION_CERFA_FORM', 'aZ09'),
+		'DONATION_CERFA_NATURE' => GETPOST('DONATION_CERFA_NATURE', 'aZ09'),
+	);
+	foreach (array('DONATION_CERFA_RUP_DECREE_DATE', 'DONATION_CERFA_RUP_JO_DATE', 'DONATION_CERFA_RUP_ORDER_DATE', 'DONATION_CERFA_APPROVAL_DATE') as $datecode) {
+		// Dates are stored as YYYY-MM-DD, the format of the input of type date
+		$date = GETPOST($datecode, 'alphanohtml');
+		$values[$datecode] = preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) ? $date : '';
+	}
+
+	foreach ($values as $code => $val) {
+		if ($val === '') {
+			$res = dolibarr_del_const($db, $code, $conf->entity);
+		} else {
+			$res = dolibarr_set_const($db, $code, $val, 'chaine', 0, '', $conf->entity);
+		}
+		if ($res < 0) {
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+	$action = '';	// To avoid to execute next actions
+}
+
 // Other cases
 $reg = array();
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
@@ -449,6 +483,63 @@ if (preg_match('/fr/i', $mysoc->country_code)) {
 	}
 	print '</td></tr>';
 	print "</table>\n";
+
+	// Options of the tax receipt for private individuals (Cerfa 11580)
+	require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/pdf_cerfafr_11580.modules.php';
+
+	print '<br>';
+	print load_fiche_titre($langs->trans("DonationCerfaOptions"), '', '');
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="set_DONATION_CERFA">';
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameters").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
+	print "</tr>\n";
+
+	// RNA number
+	print '<tr class="oddeven"><td><label for="DONATION_ORGANISM_RNA">'.$langs->trans("DonationOrganismRNA").'</label></td><td>';
+	print '<input type="text" class="flat minwidth150" maxlength="10" id="DONATION_ORGANISM_RNA" name="DONATION_ORGANISM_RNA" value="'.dol_escape_htmltag(getDolGlobalString('DONATION_ORGANISM_RNA')).'" placeholder="W123456789">';
+	print '</td></tr>';
+
+	// Category of the organization. The form allows to print only the category of the organization.
+	$organismtypes = array();
+	foreach (pdf_cerfafr_11580::getOrganismTypes() as $code => $organismtype) {
+		$organismtypes[$code] = dol_trunc(str_replace('%s', '…', $organismtype['label']), 110);
+	}
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("DonationCerfaOrganismType"), $langs->trans("DonationCerfaOrganismTypeHelp")).'</td><td>';
+	print $form->selectarray('DONATION_CERFA_ORGANISM_TYPE', $organismtypes, getDolGlobalString('DONATION_CERFA_ORGANISM_TYPE'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300 maxwidth500 widthcentpercentminusx');
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td><label for="DONATION_CERFA_ORGANISM_OTHER">'.$langs->trans("DonationCerfaOrganismOther").'</label></td><td>';
+	print '<input type="text" class="flat minwidth300" id="DONATION_CERFA_ORGANISM_OTHER" name="DONATION_CERFA_ORGANISM_OTHER" value="'.dol_escape_htmltag(getDolGlobalString('DONATION_CERFA_ORGANISM_OTHER')).'">';
+	print '</td></tr>';
+
+	// Dates of the recognition of public utility and of the approval
+	foreach (array('DONATION_CERFA_RUP_DECREE_DATE' => 'DonationCerfaRupDecreeDate', 'DONATION_CERFA_RUP_JO_DATE' => 'DonationCerfaRupJoDate', 'DONATION_CERFA_RUP_ORDER_DATE' => 'DonationCerfaRupOrderDate', 'DONATION_CERFA_APPROVAL_DATE' => 'DonationCerfaApprovalDate') as $datecode => $datelabel) {
+		print '<tr class="oddeven"><td><label for="'.$datecode.'">'.$langs->trans($datelabel).'</label></td><td>';
+		print '<input type="date" class="flat" id="'.$datecode.'" name="'.$datecode.'" value="'.dol_escape_htmltag(getDolGlobalString($datecode)).'">';
+		print '</td></tr>';
+	}
+
+	// Form and nature of the donations
+	$donationforms = array('authentic' => $langs->trans("DonationFormAuthenticDeed"), 'private' => $langs->trans("DonationFormPrivateDeed"), 'manual' => $langs->trans("DonationFormManualGift"), 'other' => $langs->trans("Other"));
+	print '<tr class="oddeven"><td>'.$langs->trans("DonationCerfaForm").'</td><td>';
+	print $form->selectarray('DONATION_CERFA_FORM', $donationforms, getDolGlobalString('DONATION_CERFA_FORM'), 1);
+	print '</td></tr>';
+
+	$donationnatures = array('cash' => $langs->trans("DonationNatureCash"), 'shares' => $langs->trans("DonationNatureListedShares"), 'income' => $langs->trans("DonationNatureIncome"), 'expenses' => $langs->trans("DonationNatureVolunteerExpenses"), 'other' => $langs->trans("Other"));
+	print '<tr class="oddeven"><td>'.$langs->trans("DonationCerfaNature").'</td><td>';
+	print $form->selectarray('DONATION_CERFA_NATURE', $donationnatures, getDolGlobalString('DONATION_CERFA_NATURE', 'cash'));
+	print '</td></tr>';
+
+	print "</table>\n";
+
+	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print '</form>';
 }
 
 llxFooter();
