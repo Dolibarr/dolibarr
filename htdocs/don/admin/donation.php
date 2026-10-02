@@ -330,7 +330,12 @@ if (count($filelist)) {
 
 				// Preview
 				print '<td class="center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"), 'generic').'</a>';
+				if ($module->type == 'pdf') {
+					// The PDF is sent as a download, a new window would stay empty
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+				} else {
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'" target="specimen">'.img_object($langs->trans("Preview"), 'generic').'</a>';
+				}
 				print '</td>';
 
 				print "</tr>\n";
