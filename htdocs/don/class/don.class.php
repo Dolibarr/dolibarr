@@ -1114,7 +1114,6 @@ class Don extends CommonObject
 		// The model name stored in llx_document_model already holds its prefix (html_cerfafr, pdf_xxx...),
 		// but a model name without prefix is also accepted.
 		$file = '';
-		$classname = '';
 		$filefound = 0;
 		$modelebasename = preg_replace('/^(html|doc|pdf)_/', '', $modele);
 		$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
@@ -1129,7 +1128,7 @@ class Don extends CommonObject
 				$file = dol_buildpath($reldir."core/modules/dons/".$file, 0);
 				if (file_exists($file)) {
 					$filefound = 1;
-					$classname = $prefix.'_'.$modelebasename;
+					$modele = $prefix.'_'.$modelebasename;	// Name of the class of the template
 					break;
 				}
 			}
@@ -1144,6 +1143,7 @@ class Don extends CommonObject
 
 			$object = $this;
 
+			$classname = $modele;
 			$obj = new $classname($this->db);
 			/** @var ModeleDon $obj */
 			'@phan-var-force ModeleDon $obj';

@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/dons/pdf_standard.modules.php
+ *	\file       htdocs/core/modules/dons/pdf_standard_donation.modules.php
  *	\ingroup    don
  *	\brief      File of class to generate a PDF donation receipt with the standard model (any country)
  */
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
  *	Class to generate a PDF donation receipt with the standard model.
  *	This receipt is not linked to a national tax form, so it can be used in any country.
  */
-class pdf_standard extends ModeleDon
+class pdf_standard_donation extends ModeleDon
 {
 	/**
 	 * Dolibarr version of the loaded document
@@ -188,6 +188,7 @@ class pdf_standard extends ModeleDon
 			$pdf->SetCompression(false);
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 		$pdf->AddPage();
