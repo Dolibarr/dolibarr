@@ -694,7 +694,7 @@ class Contact extends CommonObject
 					$tmpobj->zip = $this->zip;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->zip != $this->zip) {
+				if ($tmpobj->state_id != $this->state_id) {
 					$tmpobj->state_id = $this->state_id;
 					$usermustbemodified++;
 				}
@@ -706,7 +706,10 @@ class Contact extends CommonObject
 					$tmpobj->email = $this->email;
 					$usermustbemodified++;
 				}
-				if (!empty(array_diff($tmpobj->socialnetworks, $this->socialnetworks))) {
+				$usersocialnetworks = (is_array($tmpobj->socialnetworks) ? $tmpobj->socialnetworks : array());
+				$contactsocialnetworks = (is_array($this->socialnetworks) ? $this->socialnetworks : array());
+				// Compare in both directions, so a network added on the contact is also seen as a difference
+				if (!empty(array_diff_assoc($usersocialnetworks, $contactsocialnetworks)) || !empty(array_diff_assoc($contactsocialnetworks, $usersocialnetworks))) {
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
