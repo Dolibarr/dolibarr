@@ -5405,16 +5405,16 @@ if ($action == 'create') {
 		}
 
 		// Retained warranty : usualy use on construction industry
-		if (!empty($object->situation_final) && !empty($object->retained_warranty) && $displayWarranty) {
-			// Billed - retained warranty
-			if ($object->type == Facture::TYPE_SITUATION) {
-				$retainedWarranty = $total_global_ttc * $object->retained_warranty / 100;
-			} else {
-				// Because one day retained warranty could be used on standard invoices
-				$retainedWarranty = $object->total_ttc * $object->retained_warranty / 100;
-			}
+		// Use the same rules as PDF generation and accountancy journal (model methods) so screen, PDF and journal stay consistent
+		// and so retained warranty is shown on every situation invoice unless INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION is set.
+		if (!empty($object->retained_warranty) && $object->displayRetainedWarranty()) {
+			// Retained warranty shown on the dedicated line is the global amount held back over all situations (paid later).
+			$retainedWarranty = $object->getRetainedWarrantyAmount();
 
-			$billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
+			// The amount held back on THIS invoice is the retained warranty of this invoice only (#38849),
+			// not the global one, so the "To pay" line must deduct total_ttc * rate, like the accountancy sells journal.
+			$retainedWarrantyThisInvoice = $object->total_ttc * $object->retained_warranty / 100;
+			$billedWithRetainedWarranty = $object->total_ttc - $retainedWarrantyThisInvoice;
 
 			print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')).' :</td><td align="right">'.price($billedWithRetainedWarranty).'</td><td>&nbsp;</td></tr>';
 
