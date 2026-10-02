@@ -1,0 +1,2 @@
+Error: Dolibarr config file content seems to be not correctly defined (dolibarr_main_document_root can't be unknown).<br>
+Please run dolibarr setup by calling page <b>/install</b>.<br>
