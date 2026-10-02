@@ -18,21 +18,19 @@ jobs:
           python3 - <<'PYEOF'
           import urllib.request, re
 
+          NL = chr(10)
+          TAB = chr(9)
           url = 'https://cti.dolibarr.org/'
           req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (apstats debt extractor)'})
           data = urllib.request.urlopen(req, timeout=180).read().decode('utf-8', 'replace')
           print('Downloaded %d bytes' % len(data))
 
-          # List all h2 headings with their byte position
           heads = [(m.start(), re.sub(r'<[^>]+>', '', m.group(0)).strip()) for m in re.finditer(r'<h2.*?</h2>', data, re.S)]
           with open('cti-00-headings.txt', 'w') as f:
-              f.write('page bytes: %d
-' % len(data))
+              f.write('page bytes: %d' % len(data) + NL)
               for p, t in heads:
-                  f.write('%d	%s
-' % (p, t))
+                  f.write('%d' % p + TAB + t + NL)
 
-          # Locate the first 'Technical debt' heading and take everything until the end of file
           start = None
           for p, t in heads:
               if 'technical debt' in t.lower():
@@ -41,22 +39,19 @@ jobs:
           print('Technical debt starts at %s' % start)
 
           if start is not None:
-              # Cut at the footer if present
               end = len(data)
               m = re.search(r'<footer', data[start:])
               if m:
                   end = start + m.start()
               section = data[start:end]
-              # Strip tags, keep text readable
-              text = re.sub(r'<(script|style).*?</\1>', '', section, flags=re.S)
+              text = re.sub(r'<(script|style).*?</' + chr(92) + '1>', '', section, flags=re.S)
               text = re.sub(r'</t[dh]>', ' | ', text)
-              text = re.sub(r'</tr>', chr(10), text)
+              text = re.sub(r'</tr>', NL, text)
               text = re.sub(r'<[^>]+>', ' ', text)
-              text = re.sub(r'&#39;', chr(39), text)
-              text = re.sub(r'&quot;', '"', text)
-              text = re.sub(r'&amp;', '&', text)
-              text = re.sub(r'[ \t]+', ' ', text)
-              # Write in chunks of 25000 chars
+              text = text.replace('&#39;', chr(39))
+              text = text.replace('&quot;', '"')
+              text = text.replace('&amp;', '&')
+              text = re.sub(r'[ ' + chr(9) + ']+', ' ', text)
               i = 0
               n = 1
               while i < len(text) and n <= 40:
