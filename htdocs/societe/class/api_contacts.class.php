@@ -473,6 +473,10 @@ class Contacts extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('contact', $id, 'socpeople&societe')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'contact', $sortfield, $sortorder, $limit, $page);
@@ -513,7 +517,7 @@ class Contacts extends DolibarrApi
 			throw new RestException(404, 'category not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
@@ -553,7 +557,7 @@ class Contacts extends DolibarrApi
 			throw new RestException(404, 'category not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
