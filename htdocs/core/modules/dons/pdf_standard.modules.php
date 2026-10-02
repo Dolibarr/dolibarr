@@ -199,7 +199,7 @@ class pdf_standard extends ModeleDon
 
 		$posy = $this->_pagehead($pdf, $don, $donor, $outputlangs);
 
-		$posy = $this->_tableau_don($pdf, $don, $posy + 8, $outputlangs, $currency);
+		$posy = $this->tableauDon($pdf, $don, $posy + 8, $outputlangs, $currency);
 
 		// Public note
 		$notetoshow = empty($don->note_public) ? '' : (string) $don->note_public;
@@ -214,7 +214,7 @@ class pdf_standard extends ModeleDon
 			$posy = $pdf->GetY();
 		}
 
-		$this->_signature_area($pdf, $don, $posy + 10, $outputlangs);
+		$this->signatureArea($pdf, $don, $posy + 10, $outputlangs);
 
 		// Pagefoot on each page (a long public note may need several pages)
 		$nbpages = $pdf->getNumPages();
@@ -262,9 +262,8 @@ class pdf_standard extends ModeleDon
 	 *  @param	string		$currency		Currency code
 	 *  @return	float						Y position after the block
 	 */
-	protected function _tableau_don(&$pdf, $don, $posy, $outputlangs, $currency)
+	protected function tableauDon(&$pdf, $don, $posy, $outputlangs, $currency)
 	{
-		// phpcs:enable
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
 		$widthlabel = 60;
@@ -323,7 +322,7 @@ class pdf_standard extends ModeleDon
 	 *  @param	Translate	$outputlangs	Object lang for output
 	 *  @return	float						Y position after the block
 	 */
-	protected function _signature_area(&$pdf, $don, $posy, $outputlangs)
+	protected function signatureArea(&$pdf, $don, $posy, $outputlangs)
 	{
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$widthbox = 80;
