@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015  Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2017  Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2026  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART		<support@ptibogxiv.net>
@@ -38,6 +38,7 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (isModEnabled('accounting')) {
@@ -58,6 +59,8 @@ $scandir = GETPOST('scan_dir', 'alpha');
 
 $type = 'donation';
 
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
 
 /*
  * Action
@@ -71,10 +74,18 @@ if ($action == 'specimen') {
 	$don->initAsSpecimen();
 
 	// Search template files
-	$dir = DOL_DOCUMENT_ROOT."/core/modules/dons/";
-	$file = $modele.".modules.php";
-	if ($modele !== '' && file_exists($dir.$file)) {
-		require_once $dir.$file;
+	$file = '';
+	if ($modele !== '') {
+		foreach ($dirmodels as $reldir) {
+			$file = dol_buildpath($reldir."core/modules/dons/".dol_sanitizeFileName($modele.".modules.php"), 0);
+			if (file_exists($file)) {
+				break;
+			}
+			$file = '';
+		}
+	}
+	if ($file !== '') {
+		require_once $file;
 
 		$classname = (string) $modele;
 		$obj = new $classname($db);
@@ -82,7 +93,9 @@ if ($action == 'specimen') {
 		/** @var ModeleDon $obj */
 
 		if ($obj->write_file($don, $langs) > 0) {
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
+			// The specimen file is SPECIMEN.html or SPECIMEN.pdf according to the type of template
+			$specimenfile = empty($obj->result['fullpath']) ? 'SPECIMEN.html' : basename($obj->result['fullpath']);
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=".urlencode($specimenfile));
 			return;
 		} else {
 			setEventMessages($obj->error, $obj->errors, 'errors');
@@ -180,7 +193,6 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
  * View
  */
 
-$dir = "../../core/modules/dons/";
 $form = new Form($db);
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
@@ -235,15 +247,26 @@ print "</tr>\n";
 
 clearstatcache();
 
-$handle = opendir($dir);
+// Templates can be provided by Dolibarr or by external modules (dir core/modules/dons/ of the module)
+$filelist = array();
+foreach ($dirmodels as $reldir) {
+	$dir = dol_buildpath($reldir."core/modules/dons/");
+	if (is_dir($dir)) {
+		foreach (dol_dir_list($dir, 'files', 0, '\.modules\.php$', '', 'name', SORT_ASC, 0, 1) as $tmpfile) {
+			if (!isset($filelist[$tmpfile['name']])) {
+				$filelist[$tmpfile['name']] = $tmpfile['fullname'];
+			}
+		}
+	}
+}
 
-if (is_resource($handle)) {
-	while (($file = readdir($handle)) !== false) {
+if (count($filelist)) {
+	foreach ($filelist as $file => $fullpath) {
 		if (preg_match('/\.modules\.php$/i', $file)) {
 			$name = dol_substr($file, 0, dol_strlen($file) - 12);
 			$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 
-			require_once $dir.'/'.$file;
+			require_once $fullpath;
 			$module = new $classname($db);
 			'@phan-var-force ModeleDon $module';
 			/** @var ModeleDon $module */
@@ -314,7 +337,6 @@ if (is_resource($handle)) {
 			}
 		}
 	}
-	closedir($handle);
 }
 
 print '</table><br>';
