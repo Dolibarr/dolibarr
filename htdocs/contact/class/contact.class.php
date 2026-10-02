@@ -733,7 +733,7 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (!$error && $this->user_id > 0) {
+			if (!$error && $this->user_id > 0 && !$nosyncuser) {
 				// If contact is linked to a user
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);
