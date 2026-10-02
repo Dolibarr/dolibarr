@@ -602,8 +602,10 @@ class Productbatch extends CommonObject
 		$sql .= ", pb.qty";
 		$sql .= " FROM ".$this->db->prefix()."product_lot as pl";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = pl.fk_product";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch AS pb ON pl.batch = pb.batch";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock AS ps ON ps.rowid = pb.fk_product_stock AND ps.fk_product = ".((int) $fk_product);
+		// The stock lines of the lot must be the ones of the product: the batch number alone is not unique, another
+		// product may have a lot with the same batch number (a serial number "001" for example).
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock AS ps ON ps.fk_product = pl.fk_product";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch AS pb ON pb.fk_product_stock = ps.rowid AND pb.batch = pl.batch";
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 		$sql .= " AND pl.fk_product = ".((int) $fk_product);
 		if ($fk_warehouse > 0) {

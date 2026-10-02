@@ -323,7 +323,9 @@ $arrayfields = array(
 	'f.dispute_status' => array('label' => "DisputeStatus", 'checked' => '-1', 'position' => 999),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
-
+if ($user->socid) {
+	unset($arrayfields['f.note_private']);
+}
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => '0', 'position' => 86);
 }
@@ -985,8 +987,17 @@ if ($search_dispute_status != '-1' && $search_dispute_status != '') {
 	}
 }
 if (is_array($search_status) && count($search_status) > 0) {
-	$search_statusArray = $search_status;
-	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', array_map('intval', $search_statusArray))) . ")";
+	// 99 is not a real status but a filter for partially paid invoices
+	$search_statusArray = array_diff($search_status, ['99']);
+	$sqlstatus = [];
+	if (count($search_statusArray) > 0) {
+		$sqlstatus[] = "f.fk_statut IN (" . $db->sanitize(implode(',', array_map('intval', $search_statusArray))) . ")";
+	}
+	if (in_array('99', $search_status)) {
+		// Partially paid: validated invoice with at least one payment recorded
+		$sqlstatus[] = "(f.fk_statut = ".Facture::STATUS_VALIDATED." AND EXISTS (SELECT pf.rowid FROM ".MAIN_DB_PREFIX."paiement_facture as pf WHERE pf.fk_facture = f.rowid))";
+	}
+	$sql .= " AND (".implode(" OR ", $sqlstatus).")";
 }
 
 if ($search_paymentmode > 0) {
@@ -1997,6 +2008,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	$liststatus = array(
 		'0' => $langs->trans("BillShortStatusDraft"),
 		'1' => $langs->trans("BillShortStatusNotPaid"),
+		'99' => $langs->trans("BillStatusStarted"),
 		'2' => $langs->trans("BillShortStatusPaid"),
 		'3' => $langs->trans("BillShortStatusCanceled")
 	);
@@ -2281,7 +2293,7 @@ if ($num > 0) {
 	$totalarray['val']['f.total_ht'] = 0;
 	$totalarray['val']['f.total_tva'] = 0;
 	$totalarray['val']['f.total_localtax1'] = 0;
-	$totalarray['val']['f.total_localtax1'] = 0;
+	$totalarray['val']['f.total_localtax2'] = 0;
 	$totalarray['val']['f.total_ttc'] = 0;
 	$totalarray['val']['dynamount_payed'] = 0;
 	$totalarray['val']['rtp'] = 0;
@@ -2340,8 +2352,7 @@ if ($num > 0) {
 		if (getDolGlobalString('INVOICE_USE_SITUATION') && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$facturestatic->retained_warranty = $obj->retained_warranty;
 			$facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
-			$facturestatic->situation_final = $obj->retained_warranty_date_limit;
-			$facturestatic->situation_final = $obj->retained_warranty_date_limit;
+			$facturestatic->situation_final = $obj->situation_final;
 			$facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 			$facturestatic->situation_counter = $obj->situation_counter;
 		}

@@ -228,10 +228,11 @@ class Loan extends CommonObject
 	/**
 	 *  Create a loan into database
 	 *
-	 *  @param	User	$user	User making creation
+	 *  @param	User		$user		User making creation
+	 *  @param	int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int				Return integer <0 if KO, id if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -320,6 +321,20 @@ class Loan extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."loan");
 
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('LOAN_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if ($error) {
+				$this->db->rollback();
+				return -1;
+			}
+
 			//dol_syslog("Loans::create this->id=".$this->id);
 			$this->db->commit();
 			return $this->id;
@@ -334,10 +349,11 @@ class Loan extends CommonObject
 	/**
 	 *  Delete a loan
 	 *
-	 *  @param	User	$user	Object user making delete
-	 *  @return int 			Return integer <0 if KO, >0 if OK
+	 *  @param	User		$user		Object user making delete
+	 *  @param	int<0,1>	$notrigger	1=Disable triggers
+	 *  @return int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -382,6 +398,15 @@ class Loan extends CommonObject
 			}
 		}
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LOAN_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -395,10 +420,11 @@ class Loan extends CommonObject
 	/**
 	 *  Update loan
 	 *
-	 *  @param	User	$user	User who modified
+	 *  @param	User		$user		User who modified
+	 *  @param	int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int				Return integer <0 if error, >0 if ok
 	 */
-	public function update($user)
+	public function update($user, $notrigger = 0)
 	{
 		$this->db->begin();
 
@@ -425,6 +451,16 @@ class Loan extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('LOAN_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+			}
+
 			$this->db->commit();
 			return 1;
 		} else {

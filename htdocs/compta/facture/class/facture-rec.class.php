@@ -266,9 +266,9 @@ class FactureRec extends CommonInvoice
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'Total', 'enabled' => 1, 'visible' => -1, 'position' => 70, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'Total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 75, 'isameasure' => 1),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 80),
-		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk projet', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 85),
-		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'Fk cond reglement', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'Fk mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 85),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'date_lim_reglement' => array('type' => 'date', 'label' => 'Date lim reglement', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 105),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 110),
@@ -285,8 +285,8 @@ class FactureRec extends CommonInvoice
 		'auto_validate' => array('type' => 'integer', 'label' => 'Auto validate', 'enabled' => 1, 'visible' => -1, 'position' => 165),
 		'fk_email_template' => array('type' => 'integer:CEmailTemplate:core/class/cemailtemplate.class.php', 'label' => "Modèle d'e-mail pour l'envoi automatique", 'enabled' => 1, 'visible' => -1, 'position' => 167),
 		'generate_pdf' => array('type' => 'integer', 'label' => 'Generate pdf', 'enabled' => 1, 'visible' => -1, 'position' => 170),
-		'fk_account' => array('type' => 'integer', 'label' => 'Fk account', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
-		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 180),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrency code', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'Multicurrency tx', 'enabled' => 1, 'visible' => -1, 'position' => 190, 'isameasure' => 1),
 		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ht', 'enabled' => 1, 'visible' => -1, 'position' => 195, 'isameasure' => 1),
@@ -295,7 +295,7 @@ class FactureRec extends CommonInvoice
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 210),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 215),
 		'suspended' => array('type' => 'integer', 'label' => 'Suspended', 'enabled' => 1, 'visible' => -1, 'position' => 225),
-		'fk_societe_rib' => array('type' => 'integer', 'label' => 'Fk Societe RIB', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
+		'fk_societe_rib' => array('type' => 'integer', 'label' => 'RIB', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -694,7 +694,10 @@ class FactureRec extends CommonInvoice
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
 				$this->subtype				  = $obj->subtype;
+
+				$this->status	              = $obj->suspended;
 				$this->suspended              = $obj->suspended;
+
 				$this->total_ht               = $obj->total_ht;
 				$this->total_tva              = $obj->total_tva;
 				$this->total_localtax1        = $obj->localtax1;
@@ -1206,6 +1209,11 @@ class FactureRec extends CommonInvoice
 	{
 		global $mysoc;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$facid = $this->id;
 
 		dol_syslog(get_class($this)."::updateline facid=".$facid." rowid=$rowid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
@@ -1411,8 +1419,9 @@ class FactureRec extends CommonInvoice
 			return dol_mktime($originalHour, $originalMin, $originalSec, $targetMonth, $targetDay, $targetYear);
 		}
 
-		// For yearly frequency or days < 28, use standard calculation
-		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
+		// For yearly frequency or days < 28, use standard calculation.
+		// date_when is read from database in the timezone of the server (jdate), so the delay must be added in this timezone
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency, 0, 'tzserver');
 	}
 
 	/**
@@ -1463,8 +1472,9 @@ class FactureRec extends CommonInvoice
 		$langs->loadLangs(array("main", "bills"));
 
 		$now = dol_now();
-		$tmparray = dol_getdate($now);
-		$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
+		// Creation can be done from UI or from cron, so we must share a common hour, so we use server timezone to get the day, month and year.
+		$tmparray = dol_getdate($now, false, 'tzserver');
+		$endofdaytzserver = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], 'tzserver'); // If we print date UTC in string, we got: 'year-mon-mday 22:59:59' if TZ+1
 
 		$this->output = '';
 
@@ -1472,7 +1482,7 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql .= ' WHERE frequency > 0'; // A recurring invoice is an invoice with a frequency
-		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($today)."')";
+		$sql .= " AND (date_when IS NULL OR date_when <= '".$this->db->idate($endofdaytzserver)."')";	// we got 'year-mon-mday 23:59:59' because idate convert into TZ server
 		$sql .= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql .= ' AND suspended = 0';
 		$sql .= ' AND entity = '.((int) $conf->entity); // MUST STAY = $conf->entity here
@@ -1794,7 +1804,8 @@ class FactureRec extends CommonInvoice
 				}
 
 				// Commit or rollback. Only the result of the current template must be tested (not the cumulative $error), so that a failure on one template does not cancel the templates processed after it.
-				if (!$errorforinvoice && $invoiceidgenerated >= 0) {
+				// $invoiceidgenerated must be > 0 (not >= 0): it is still 0 when $facturerec->fetch() failed above, in which case $facture is still null.
+				if (!$errorforinvoice && $invoiceidgenerated > 0) {
 					$this->db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
@@ -1810,7 +1821,8 @@ class FactureRec extends CommonInvoice
 						$this->output .= $langs->trans("InvoiceSentFromTemplate", $facture->ref, $facturerec->ref)."\n";
 					}
 				} else {
-					$this->output .= $langs->trans("InvoiceGeneratedFromTemplateError", $facture->ref, $facturerec->ref, $this->error)."\n";
+					// $facture is still null when $facturerec->fetch() failed above
+					$this->output .= $langs->trans("InvoiceGeneratedFromTemplateError", (is_object($facture) ? $facture->ref : ''), $facturerec->ref, $this->error)."\n";
 					$this->db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
@@ -2798,8 +2810,6 @@ class FactureLigneRec extends CommonInvoiceLine
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		// Clean parameters

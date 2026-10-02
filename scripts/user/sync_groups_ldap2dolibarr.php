@@ -55,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
 require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
-$langs->loadLangs(array("main", "errors"));
+$langs->loadLangs(array("main"));
 
 // Global variables
 $version = DOL_VERSION;
@@ -151,7 +151,13 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$group = new UserGroup($db);
+
 			$group->fetch(0, $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')], true); // Fetch LDAP groups AND members
+			// fetch() searches by group name, but LDAP_KEY_GROUPS may not be the name (ex: 'member' on Active Directory).
+			// If the group was not found, try again with the name so that existing groups are updated, not created twice.
+			if (empty($group->id) && !empty($ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')])) {
+				$group->fetch(0, $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')]);
+			}
 			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] ?? '';
 			$group->nom = $group->name; // For backward compatibility
 			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] ?? '';
@@ -222,6 +228,11 @@ if ($result >= 0) {
 					$fuser = &$userList[$userdn];
 				}
 
+				if (empty($fuser->id)) {
+					// Member of the LDAP group but not a Dolibarr user: nothing to link
+					continue;
+				}
+
 				$userIdList[$userdn] = $fuser->id;
 
 				// Add the user in the group
@@ -241,6 +252,7 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
+			$langs->load('errors');
 			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
 			} else {

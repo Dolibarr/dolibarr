@@ -1834,17 +1834,6 @@ if ($action == "search" || $action == "valid") {
 }
 
 
-if ($action == "temp" && !empty($ticket_printer1)) {
-	?>
-	$.ajax({
-		type: "POST",
-		url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
-		data: '<?php
-		print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
-	});
-	<?php
-}
-
 if ($action == "search") {
 	?>
 	$('#search').focus();
@@ -2565,6 +2554,7 @@ if ($placeid > 0) {
 								if ($obj) {
 									$stock_real = price2num($obj->reel, 'MS');
 								}
+								$htmlforlines .= $line->qty;
 								$htmlforlines .= '&nbsp; ';
 								$htmlforlines .= '<span class="opacitylow" title="'.$langs->trans("Stock").' '.price($stock_real, 1, '', 1, 0).'">';
 								$htmlforlines .= '(';

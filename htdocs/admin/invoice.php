@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
+$langs->loadLangs(array('admin', 'other', 'bills'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -136,6 +136,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -422,10 +423,12 @@ foreach ($arrayofmodules as $module) {
 			$htmltooltip .= $langs->trans("NextValueForInvoices").': ';
 			if ($nextval) {
 				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$langs->load('errors');
 					$nextval = $langs->trans($nextval);
 				}
 				$htmltooltip .= $nextval.'<br>';
 			} else {
+				$langs->load('errors');
 				$htmltooltip .= $langs->trans($module->error).'<br>';
 			}
 		}
@@ -437,10 +440,12 @@ foreach ($arrayofmodules as $module) {
 				$htmltooltip .= $langs->trans("NextValueForReplacements").': ';
 				if ($nextval) {
 					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+						$langs->load('errors');
 						$nextval = $langs->trans($nextval);
 					}
 					$htmltooltip .= $nextval.'<br>';
 				} else {
+					$langs->load('errors');
 					$htmltooltip .= $langs->trans($module->error).'<br>';
 				}
 			}
@@ -452,10 +457,12 @@ foreach ($arrayofmodules as $module) {
 			$htmltooltip .= $langs->trans("NextValueForCreditNotes").': ';
 			if ($nextval) {
 				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$langs->load('errors');
 					$nextval = $langs->trans($nextval);
 				}
 				$htmltooltip .= $nextval.'<br>';
 			} else {
+				$langs->load('errors');
 				$htmltooltip .= $langs->trans($module->error).'<br>';
 			}
 		}
@@ -466,10 +473,12 @@ foreach ($arrayofmodules as $module) {
 			$htmltooltip .= $langs->trans("NextValueForDeposit").': ';
 			if ($nextval) {
 				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$langs->load('errors');
 					$nextval = $langs->trans($nextval);
 				}
 				$htmltooltip .= $nextval;
 			} else {
+				$langs->load('errors');
 				$htmltooltip .= $langs->trans($module->error);
 			}
 		}

@@ -518,7 +518,7 @@ class ActionComm extends CommonObject
 		}
 
 		// Clean parameters
-		$this->label = dol_trunc(trim($this->label), 128);
+		$this->label = dol_trunc(sanitizeVal($this->label, 'alphawithlgt'), 128);
 		$this->location = (!empty($this->location) ? dol_trunc(trim($this->location), 128) : "");
 		$this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage)) {
@@ -1229,7 +1229,7 @@ class ActionComm extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->label = trim($this->label);
+		$this->label = dol_trunc(sanitizeVal($this->label, 'alphawithlgt'), 128);
 		$this->note_private = dol_htmlcleanlastbr(trim(!isset($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage)) {
 			$this->percentage = 0;
@@ -2948,13 +2948,20 @@ class ActionComm extends CommonObject
 			$to = null;  // Ensure 'to' is defined for static analysis
 
 			while ($obj = $this->db->fetch_object($resql)) {
+				// Error status for the reminder being processed in this iteration. $error (the cumulative counter for
+				// the whole run) must not be used to gate this per-reminder processing: once any single reminder fails
+				// (ex: a user with no email on file), it would otherwise stay non-zero for the rest of the loop and
+				// silently defer every other due reminder to the next cron run.
+				$errorforreminder = 0;
+
 				$res = $actionCommReminder->fetch($obj->id);
 				if ($res < 0) {
 					$error++;
+					$errorforreminder++;
 					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
 				}
 
-				if (!$error) {
+				if (!$errorforreminder) {
 					//Select email template
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
@@ -2986,10 +2993,12 @@ class ActionComm extends CommonObject
 							} else {
 								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
 								$error++;
+								$errorforreminder++;
 							}
 						} else {
 							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
 							$error++;
+							$errorforreminder++;
 						}
 
 						// Sender
@@ -2997,9 +3006,10 @@ class ActionComm extends CommonObject
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
+							$errorforreminder++;
 						}
 
-						if (!$error) {
+						if (!$errorforreminder) {
 							// Errors Recipient
 							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
@@ -3012,10 +3022,11 @@ class ActionComm extends CommonObject
 							} else {
 								$errormesg = 'Failed to send email to: ' . $to . ' ' . $cMailFile->error . implode(',', $cMailFile->errors);
 								$error++;
+								$errorforreminder++;
 							}
 						}
 
-						if (!$error) {
+						if (!$errorforreminder) {
 							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
 
 							$res = $actionCommReminder->update($user);
@@ -3040,6 +3051,7 @@ class ActionComm extends CommonObject
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
 						$error++;
+						$errorforreminder++;
 					}
 				}
 			}

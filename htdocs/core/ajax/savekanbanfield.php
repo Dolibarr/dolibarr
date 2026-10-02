@@ -56,10 +56,8 @@ if (!is_object($object) || $object->id <= 0) {
 	httponly_accessforbidden('Not allowed, bad combination of parameters for fetchObjectByElement');
 }
 
-// Security check. Set the action to 'update' so restrictedArea() tests the write permission
-// and not only the read permission.
-$_POST['action'] = 'update';
-$result = restrictedArea($user, empty($object->module) ? $element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+// Security check with mode 'write', so restrictedArea() tests the write permission and not only the read permission.
+$result = restrictedArea($user, empty($object->module) ? $element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1, 'write');	// Call with nodie return
 if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea');
 }

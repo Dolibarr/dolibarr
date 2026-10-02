@@ -845,7 +845,6 @@ if (!empty($object->thirdparty)) {
 	/** @type {JsConf} */
 	const jsConf = <?php print json_encode($jsConf); ?>;
 	if(jsConf.conf.usemargins && jsConf.userRight.margins.creer){
-
 		/* Some js test when we click on button "Add" */
 		$(function() {
 			if (jsConf.conf.DISPLAY_MARGIN_RATES) {
@@ -909,7 +908,7 @@ if (!empty($object->thirdparty)) {
 				}
 			}
 
-			$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
+			$("input[name='price_ht']:first").val(pricejs(price, 'MU'));
 
 			return true;
 		}
@@ -1244,7 +1243,7 @@ if (!empty($object->thirdparty)) {
 										}
 									}
 								} else {
-									jQuery('#dp_desc').text(proddesc);
+									jQuery('#dp_desc').val(proddesc);
 								}
 							}
 
@@ -1540,7 +1539,7 @@ if (!empty($object->thirdparty)) {
 							}
 						}
 					} else {
-						jQuery('#dp_desc').text(description);
+						jQuery('#dp_desc').val(description);
 					}
 				}
 			} else if (jQuery('#idprodfournprice').length > 0) {
@@ -1583,7 +1582,7 @@ if (!empty($object->thirdparty)) {
 							}
 						}
 					} else {
-						jQuery('#dp_desc').text('');
+						jQuery('#dp_desc').val('');
 					}
 				}
 			}

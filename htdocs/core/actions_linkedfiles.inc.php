@@ -252,8 +252,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			$link->share = '';
 		}
 		$res = $link->update($user);
-		if (!$res) {
-			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');
+		if ($res <= 0) {
+			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), $link->errors, 'errors');
 		}
 	} else {
 		//error fetching

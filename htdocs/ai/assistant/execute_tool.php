@@ -81,6 +81,18 @@ try {
 	$tStart = microtime(true);
 	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
 
+	// A write answers with a confirmation request instead of running. This
+	// endpoint is only reached after the user pressed the confirmation button of
+	// the chat, on a CSRF-checked request, so the round trip is completed here
+	// rather than asking the same human twice. The state is still issued, bound
+	// to these arguments and consumed once, so the write leaves its trace in
+	// llx_ai_write_confirmation like any other.
+	if (is_array($result) && ($result['resultType'] ?? '') === 'input_required' && !empty($result['requestState'])) {
+		$confirmedargs = $input['arguments'] ?? [];
+		$confirmedargs['requestState'] = $result['requestState'];
+		$result = $mcp->executeTool($input['tool'], $confirmedargs);
+	}
+
 	// This endpoint runs the executions the user confirmed - the calls that actually
 	// create, update or delete data - so they must land in the audit table just like
 	// the parse rounds (parse_intent.php) and the MCP server calls already do.

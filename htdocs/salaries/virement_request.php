@@ -153,7 +153,10 @@ if ($action == 'classin' && $user->hasRight('banque', 'modifier')) {
 if ($action == 'setlabel' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$object->label = $label;
-	$object->update($user);
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 $parameters = array('socid' => $socid);
@@ -250,7 +253,7 @@ if ($action != 'editlabel') {
 	$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 	$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-	$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+	$morehtmlref .= '<input type="text" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"/>';
 	$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	$morehtmlref .= '</form>';
 }

@@ -138,3 +138,8 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 
 -- Thirdparty
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('societe', 'external', 'SALESREPTHIRD',  'Sales Representative', 1);
+
+-- Stock transfer
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('stocktransfer', 'internal', 'STRESP',  'Responsible for stock transfers', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('stocktransfer', 'external', 'STFROM',  'Contact sending the stock transfer', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('stocktransfer', 'external', 'STDEST',  'Contact receiving the stock transfer', 1);

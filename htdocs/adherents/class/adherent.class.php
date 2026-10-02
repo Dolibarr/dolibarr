@@ -1085,13 +1085,29 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = $this->db->fetch_object($resql);
-			$dateop = $this->db->jdate($obj->dateop);
-			$datedeb = $this->db->jdate($obj->datedeb);
-			$datefin = $this->db->jdate($obj->datefin);
+			// The last subscription is the one with the latest start date (first record), but the end date of the member is
+			// the latest end date of all its subscriptions: a short subscription that starts after a longer one must not
+			// shorten the membership. There is no record at all when the last subscription of the member was deleted.
+			$dateop = '';
+			$datedeb = '';
+			$datefin = '';
+			$dateendmember = '';
+			$i = 0;
+			while ($obj = $this->db->fetch_object($resql)) {
+				$dateendsubscription = $this->db->jdate($obj->datefin);
+				if ($i == 0) {
+					$dateop = $this->db->jdate($obj->dateop);
+					$datedeb = $this->db->jdate($obj->datedeb);
+					$datefin = $dateendsubscription;
+				}
+				if ($dateendsubscription != '' && ($dateendmember == '' || $dateendsubscription > $dateendmember)) {
+					$dateendmember = $dateendsubscription;
+				}
+				$i++;
+			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-			$sql .= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
+			$sql .= " datefin=".($dateendmember != '' ? "'".$this->db->idate($dateendmember)."'" : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
@@ -1100,7 +1116,7 @@ class Adherent extends CommonObject
 				$this->last_subscription_date = $dateop;
 				$this->last_subscription_date_start = $datedeb;
 				$this->last_subscription_date_end = $datefin;
-				$this->datefin = $datefin;
+				$this->datefin = $dateendmember;
 				$this->db->commit();
 				return 1;
 			} else {
@@ -3294,13 +3310,15 @@ class Adherent extends CommonObject
 				$num_rows = $this->db->num_rows($resql);
 
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$adherent = new Adherent($this->db);
 				$formmail = new FormMail($this->db);
 
 				$i = 0;
 				while ($i < $num_rows) {
 					$obj = $this->db->fetch_object($resql);
 
+					// A new object for each member: fetch() does not reset the properties loaded for the previous member,
+					// like ->thirdparty that would be reused for a member that has no third party.
+					$adherent = new Adherent($this->db);
 					$adherent->fetch($obj->rowid, '', 0, '', true, true);
 
 					if (empty($adherent->email)) {
@@ -3312,8 +3330,12 @@ class Adherent extends CommonObject
 							$languagecodeformember = $mysoc->default_lang;
 						} else {
 							// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
-							$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
+							$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : (is_object($adherent->thirdparty) ? $adherent->thirdparty->country_code : ''));
 							$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
+						}
+						if (!empty($adherent->default_lang)) {
+							// The language set on the member itself has priority
+							$languagecodeformember = $adherent->default_lang;
 						}
 
 						// Send reminder email
@@ -3391,7 +3413,7 @@ class Adherent extends CommonObject
 								$actioncomm->datep = $now;
 								$actioncomm->datef = $now;
 								$actioncomm->percentage = -1; // Not applicable
-								$actioncomm->socid = $adherent->thirdparty->id;
+								$actioncomm->socid = (is_object($adherent->thirdparty) ? $adherent->thirdparty->id : 0);
 								$actioncomm->contact_id = 0;
 								$actioncomm->authorid = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action

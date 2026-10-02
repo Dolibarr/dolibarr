@@ -180,4 +180,51 @@ class FormMailTest extends CommonClassTest
 			$conf->global->MAIL_ENABLE_FREETAG_RECIPIENT_INPUT = $savedvalue;
 		}
 	}
+
+	/**
+	 * testGetEMailTemplateFindsTemplatesForNotificationObjectTypes
+	 *
+	 * Notifications look for the email template of an event with the object type of the event. For an event of the
+	 * agenda that type is 'action' but the templates are of type 'actioncomm_send'; for a shipping it is 'shipping'
+	 * and the templates are of type 'shipping_send'.
+	 *
+	 * @return void
+	 */
+	public function testGetEMailTemplateFindsTemplatesForNotificationObjectTypes()
+	{
+		global $db, $user, $langs, $conf;
+		$db = $this->savdb;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$conf = $this->savconf;
+
+		$labelactioncomm = 'phpunit_notif_actioncomm_'.dol_print_date(dol_now(), 'dayhourlog');
+		$labelshipping = 'phpunit_notif_shipping_'.dol_print_date(dol_now(), 'dayhourlog');
+
+		$db->begin();
+		try {
+			foreach (array('actioncomm_send' => $labelactioncomm, 'shipping_send' => $labelshipping) as $type => $label) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_email_templates (entity, type_template, lang, private, label, position, enabled, active, topic, content)";
+				$sql .= " VALUES (".((int) $conf->entity).", '".$db->escape($type)."', '', 0, '".$db->escape($label)."', 0, '1', 1, 'phpunit topic', 'phpunit content')";
+				$this->assertNotFalse($db->query($sql), 'testGetEMailTemplateFindsTemplatesForNotificationObjectTypes insert of '.$type.': '.$db->lasterror());
+			}
+
+			$fm = new FormMail($db);
+
+			$tpl = $fm->getEMailTemplate($db, 'action', $user, $langs, 0, 1, $labelactioncomm);
+			$this->assertIsObject($tpl, 'testGetEMailTemplateFindsTemplatesForNotificationObjectTypes1');
+			$this->assertGreaterThan(0, $tpl->id, 'The object type "action" of notifications must find a template of type actioncomm_send');
+
+			$tpl = $fm->getEMailTemplate($db, 'shipping', $user, $langs, 0, 1, $labelshipping);
+			$this->assertIsObject($tpl, 'testGetEMailTemplateFindsTemplatesForNotificationObjectTypes2');
+			$this->assertGreaterThan(0, $tpl->id, 'The object type "shipping" must find a template of type shipping_send');
+
+			// The template of another type must not be found (a wrong object type gives the default message, with no id)
+			$tpl = $fm->getEMailTemplate($db, 'order_supplier', $user, $langs, 0, 1, $labelshipping);
+			$this->assertIsObject($tpl, 'testGetEMailTemplateFindsTemplatesForNotificationObjectTypes3');
+			$this->assertEmpty($tpl->id, 'A template of type shipping_send must not be found with the object type order_supplier');
+		} finally {
+			$db->rollback();
+		}
+	}
 }

@@ -391,6 +391,57 @@ class GetUrlLibTest extends CommonClassTest
 		print __METHOD__." url=".$url."\n";
 		$this->assertEquals("Host is a numeric address that is not allowed", (empty($tmp['curl_error_msg']) ? "" : $tmp['curl_error_msg']), 'Should GET error Not a valid ip address');	// Test we receive an error because 169.254.0.1 is not an external URL
 
+		// Cloud metadata servers must be refused even when local URLs are allowed (the reserved range check does not apply then)
+		$url = 'http://169.254.169.254/latest/meta-data/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);		// Local and external URL allowed
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to the AWS/GCP/Azure metadata IP should be refused when local URLs are allowed');
+		$this->assertStringContainsString('metadata server', $tmp['curl_error_msg']);
+
+		// 168.63.129.16 (Azure) is in the public address space, so only the metadata list can catch it
+		$url = 'http://168.63.129.16/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to the Azure metadata IP should be refused');
+		$this->assertStringContainsString('metadata server', $tmp['curl_error_msg']);
+
+		// The reserved host name check must not depend on the case
+		$url = 'http://METADATA.GOOGLE.INTERNAL/computeMetadata/v1/';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 2);
+		print __METHOD__." url=".$url." curl_error_msg=".$tmp['curl_error_msg']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access to metadata.google.internal should be refused whatever the case of the host name');
+		$this->assertStringContainsString('Google metadata', $tmp['curl_error_msg']);
+
 		return 0;
+	}
+
+	/**
+	 * testRemoveCredentialHeaders
+	 *
+	 * @return	void
+	 */
+	public function testRemoveCredentialHeaders()
+	{
+		$headers = [
+			'Accept: application/json',
+			'Authorization: Bearer secret',
+			'authorization: Basic c2VjcmV0',
+			'Proxy-Authorization: Basic c2VjcmV0',
+			'Cookie: DOLSESSID_xxx=secret',
+			'X-Api-Key: secret',
+			'api-key: secret',
+			'DOLAPIKEY: secret',
+			'x-goog-api-key: secret',
+			'X-Custom: kept',
+			'Content-Type: application/json',
+			'malformed header without colon',
+		];
+
+		$result = removeCredentialHeaders($headers);
+
+		$this->assertSame(['Accept: application/json', 'X-Custom: kept', 'Content-Type: application/json', 'malformed header without colon'], $result, 'Every credential header must be removed, whatever its case, and the other ones kept in order');
+
+		$this->assertSame([], removeCredentialHeaders([]));
+		$this->assertSame([], removeCredentialHeaders('not an array'));	// @phpstan-ignore-line
 	}
 }

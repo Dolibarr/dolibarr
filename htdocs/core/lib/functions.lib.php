@@ -2086,7 +2086,8 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 0, $allowdash = 0
 }
 
 /**
- *  Clean a string to use it as an URL (into a href or src attribute)
+ *  Clean a string to use it as an URL (into a href or src attribute, or into a js string that is a location).
+ *  Raw '<' and '>' are url encoded (a browser always sends them encoded, so a real URL never holds them).
  *
  *  @param      string		$stringtoclean		String to clean
  *  @param		int			$type				0=Accept all Url, 1=Clean external Url (keep only relative Url)
@@ -2118,6 +2119,9 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 		// removing '//' should disable links to external url like //aaa or http//)
 		$stringtoclean = preg_replace(array('/^[a-z]*\/\/+/i'), '', $stringtoclean);
 	}
+
+	// A raw < or > can not be part of a valid URL. We encode them, so the result can not open an html tag or close an inline script block (</script does not need a >).
+	$stringtoclean = str_replace(array('<', '>'), array('%3C', '%3E'), $stringtoclean);
 
 	return $stringtoclean;
 }
@@ -3107,7 +3111,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode. deprecated.
- *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'Europe/Paris' or '+0200' to force timezone.
+ *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'tzserver', 'Europe/Paris' or '+0200' to force timezone.
  *	@return	array{}|array{seconds:int<0,59>,minutes:int<0,59>,hours:int<0,23>,mday:int<1,31>,wday:int<0,6>,mon:int<1,12>,year:int<0,9999>,yday:int<0,366>,0:int}						Array of information
  *										'seconds' => $secs,
  *										'minutes' => $min,
@@ -3128,7 +3132,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
-	if ($forcetimezone) {
+	if ($forcetimezone && $forcetimezone != 'tzserver') {
 		$datetimeobj->setTimezone(new DateTimeZone($forcetimezone == 'gmt' ? 'UTC' : $forcetimezone)); //  (add timezone relative to the date entered)
 	}
 	$arrayinfo = array(
@@ -4035,7 +4039,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
  * 	@param	string	$ip			IP
  * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
  *  @param	int		$showname	1=Show reverse domain name instead of IP
- * 	@return string 				Formatted IP, with country if GeoIP module is enabled
+ * 	@return string 				Formatted IP, with country (and city, if the GeoIP datafile is a City database) if GeoIP module is enabled
  */
 function dol_print_ip($ip, $mode = 0, $showname = 0)
 {
@@ -4057,6 +4061,11 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
 			$ret .= '&nbsp;';
 		} else {
 			// Nothing
+		}
+
+		$cityname = dolGetCityFromIp($ip);
+		if ($cityname) {	// Only set if the GeoIP datafile in use is a City database
+			$ret .= dol_escape_htmltag($cityname) . '&nbsp;';
 		}
 	}
 
@@ -4150,6 +4159,38 @@ function dolGetCountryCodeFromIp($ip)
 	}
 
 	return $countrycode;
+}
+
+/**
+ * 	Return a city name from IP. Empty string if not found or if the configured GeoIP
+ *  datafile is a Country-only database (no city record available in that case).
+ *
+ * 	@param	string	$ip			IP
+ * 	@return string 				City name, or ''
+ */
+function dolGetCityFromIp($ip)
+{
+	$cityname = '';
+
+	if (isModEnabled('geoipmaxmind')) {
+		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
+			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+		} else {
+			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
+			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
+		}
+		if ($datafile) {
+			try {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
+				$geoip = new DolGeoIP('country', $datafile);
+				$cityname = $geoip->getCityNameFromIP($ip);
+			} catch (Exception $e) {
+				//print 'Error with GeoIP database: '.$e->getMessage();
+			}
+		}
+	}
+
+	return $cityname;
 }
 
 
@@ -7147,6 +7188,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_MESSAGE__'] = '__TICKET_MESSAGE__';
 				$substitutionarray['__TICKET_PROGRESSION__'] = '__TICKET_PROGRESSION__';
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
+				$substitutionarray['__TICKET_TYPE_LABEL__'] = '__TICKET_TYPE_LABEL__';
+				$substitutionarray['__TICKET_SEVERITY_LABEL__'] = '__TICKET_SEVERITY_LABEL__';
+				$substitutionarray['__TICKET_CATEGORY_LABEL__'] = '__TICKET_CATEGORY_LABEL__';
+				$substitutionarray['__TICKET_PUBLIC_URL__'] = '__TICKET_PUBLIC_URL__';
+				$substitutionarray['__TICKET_MANAGEMENT_URL__'] = '__TICKET_MANAGEMENT_URL__';
 			}
 			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature') && (empty($exclude) || !in_array('recruitment', $exclude)) && (empty($include) || in_array('recruitment', $include))) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
@@ -7441,6 +7487,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_ANALYTIC_CODE__'] = $object->category_code;
 				$substitutionarray['__TICKET_MESSAGE__'] = $object->message;
 				$substitutionarray['__TICKET_PROGRESSION__'] = $object->progress;
+				// __TICKET_TYPE__, __TICKET_SEVERITY__ and __TICKET_CATEGORY__ hold the raw codes.
+				// An email usually needs the human readable labels instead.
+				$substitutionarray['__TICKET_TYPE_LABEL__'] = empty($object->type_code) ? '' : $outputlangs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
+				$substitutionarray['__TICKET_SEVERITY_LABEL__'] = empty($object->severity_code) ? '' : $outputlangs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
+				$substitutionarray['__TICKET_CATEGORY_LABEL__'] = empty($object->category_code) ? '' : $outputlangs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+				$substitutionarray['__TICKET_PUBLIC_URL__'] = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.urlencode((string) $object->track_id);
+				$substitutionarray['__TICKET_MANAGEMENT_URL__'] = dol_buildpath('/ticket/card.php', 2).'?track_id='.urlencode((string) $object->track_id);
 				$userstat = new User($db);
 				if ($object->fk_user_assign > 0) {
 					$userstat->fetch($object->fk_user_assign);
@@ -8461,6 +8514,93 @@ function isStringVarMatching($var, $regextext, $matchrule = 1)
 
 
 /**
+ * Evaluate a condition made of simple terms, without eval(). Recognized terms, optionally preceded by '!', separated by '&&' or by '||'
+ * (but not both, so there is no precedence to handle), with no other parenthesis than the ones of the calls:
+ * isModEnabled('xxx'), $user->hasRight('xxx', 'yyy'[, 'zzz']), $user->rights->xxx->yyy[->zzz], $user->admin, $conf->xxx->enabled,
+ * getDolGlobalString('XXX'), getDolGlobalInt('XXX'), $leftmenu == 'xxx', $mainmenu != 'xxx', and the literals 1, 0, true, false.
+ * The result is the one eval() would give (a property that is not set is false, no warning is raised), so verifCond() can use
+ * this function first and keep dol_eval() for the other conditions.
+ *
+ * @param	string		$s		Condition to evaluate
+ * @return	bool|null			Result of the condition, or null if the condition is not made of the known terms only
+ * @see verifCond(), dol_eval()
+ */
+function dolEvalSimpleCondition($s)
+{
+	global $conf, $user, $leftmenu, $mainmenu;
+
+	$s = trim((string) $s);
+	if ($s === '1' || $s === 'true') {
+		return true;
+	}
+	if ($s === '0' || $s === 'false') {
+		return false;
+	}
+	// Only the characters of the known terms, and parentheses only around the quoted arguments of a call
+	if (!preg_match('/^[a-zA-Z0-9_$>=!&|\s\'",()-]+$/', $s)) {
+		return null;
+	}
+	if (strpbrk($s, '()') !== false && !preg_match('/^(?:[^()]*\((?:\s*[\'"][a-zA-Z0-9_]+[\'"]\s*)(?:,\s*[\'"][a-zA-Z0-9_]+[\'"]\s*)*\))*[^()]*$/', $s)) {
+		return null;
+	}
+	$hasand = (strpos($s, '&&') !== false);
+	$hasor = (strpos($s, '||') !== false);
+	if ($hasand && $hasor) {
+		return null;
+	}
+	$terms = ($hasor ? explode('||', $s) : ($hasand ? explode('&&', $s) : array($s)));
+
+	$result = null;
+	foreach ($terms as $term) {
+		$term = trim($term);
+		$negation = false;
+		if (substr($term, 0, 1) === '!') {
+			$negation = true;
+			$term = ltrim(substr($term, 1));
+		}
+		$reg = array();
+		if (preg_match('/^isModEnabled\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			$value = isModEnabled($reg[1]);
+		} elseif (preg_match('/^\$user->hasRight\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*,\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*(?:,\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*)?\)$/', $term, $reg)) {
+			$value = (bool) (!empty($reg[3]) ? $user->hasRight($reg[1], $reg[2], $reg[3]) : $user->hasRight($reg[1], $reg[2]));
+		} elseif (preg_match('/^\$user->rights->([a-zA-Z0-9_]+)->([a-zA-Z0-9_]+)(?:->([a-zA-Z0-9_]+))?$/', $term, $reg)) {
+			if (!empty($reg[3])) {
+				$value = !empty($user->rights->{$reg[1]}->{$reg[2]}->{$reg[3]});
+			} else {
+				$value = !empty($user->rights->{$reg[1]}->{$reg[2]});
+			}
+		} elseif ($term === '$user->admin') {
+			$value = !empty($user->admin);
+		} elseif (preg_match('/^\$conf->([a-zA-Z0-9_]+)->enabled$/', $term, $reg)) {
+			$value = !empty($conf->{$reg[1]}->enabled);
+		} elseif (preg_match('/^getDolGlobal(String|Int)\(\s*[\'"]([a-zA-Z0-9_]+)[\'"]\s*\)$/', $term, $reg)) {
+			$value = ($reg[1] == 'Int' ? (bool) getDolGlobalInt($reg[2]) : (bool) getDolGlobalString($reg[2]));
+		} elseif (preg_match('/^\$(leftmenu|mainmenu)\s*(==|!=)\s*[\'"]([a-zA-Z0-9_]*)[\'"]$/', $term, $reg)) {
+			$current = ($reg[1] == 'leftmenu' ? $leftmenu : $mainmenu);
+			$value = ($reg[2] == '==' ? ($current == $reg[3]) : ($current != $reg[3]));
+		} elseif ($term === '1' || $term === 'true') {
+			$value = true;
+		} elseif ($term === '0' || $term === 'false') {
+			$value = false;
+		} else {
+			return null;	// Not a known term, the caller will use eval()
+		}
+		if ($negation) {
+			$value = !$value;
+		}
+		if ($result === null) {
+			$result = $value;
+		} elseif ($hasor) {
+			$result = ($result || $value);
+		} else {
+			$result = ($result && $value);
+		}
+	}
+
+	return $result;
+}
+
+/**
  * Verify if condition in string is ok or not
  *
  * @param 	string	$strToEvaluate		String with condition to check
@@ -8474,6 +8614,12 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
+		// Most of the conditions are simple (isModEnabled('xxx'), $user->hasRight('xxx', 'yyy'), $conf->xxx->enabled...): they are
+		// evaluated directly, without eval() and its checks, when they match one of the known shapes.
+		$rights = dolEvalSimpleCondition($strToEvaluate);
+		if ($rights !== null) {
+			return $rights;
+		}
 		//var_dump($strToEvaluate);
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
 		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
@@ -11662,7 +11808,6 @@ function dolForgeSQLCriteriaCallback($matches)
 			$reg = array();
 			$tmpelem = trim($tmpelem);
 			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
-				$tmpelemarray[$tmpkey] = "'" . $db->escape($db->sanitize($reg[1], 2, 1, 1, 1)) . "'";
 				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 2, 1, 1, 1))."'";
 			} elseif (preg_match('/^[0-9]+$/', (string) $tmpelem)) {	// if only 0-9 chars, no .
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;
