@@ -1,4 +1,4 @@
-name: Fetch PHPStan technical debt
+name: Extract code context
 on:
   push:
     branches: [tmp-fetch-phpstan-debt]
@@ -13,14 +13,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Download page
-        run: curl -sL --max-time 120 https://cti.dolibarr.org/ -o page.html
-      - name: Extract text and chunks
-        run: python3 dev/tmp_extract_cti.py
+      - name: Run extraction
+        run: python3 dev/tmp_extract_context.py
       - name: Commit result
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add cti_part*.txt page.txt
-          git commit -m "Save cti page chunks" || echo "nothing to commit"
+          git add cti_extract2.txt
+          git commit -m "Save code context" || echo "nothing to commit"
           git push
