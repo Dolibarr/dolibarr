@@ -1,0 +1,42 @@
+2349				$this->error = $this->db->lasterror();
+2350				$this->db->rollback();
+2351				return -1;
+2352			}
+2353		}
+2354	
+2355		/**
+2356		 * Load array this->multilangs
+2357		 *
+2358		 * @param	int		$loadextrafields	1=Load also the extrafields of each translation into $this->multilangs[lang]['array_options']
+2359		 * @return	int							Return integer <0 if KO, >0 if OK
+2360		 */
+2361		public function getMultiLangs($loadextrafields = 0)
+2362		{
+2363			global $langs;
+2364	
+2365			$current_lang = '';
+2366			if ($langs instanceOf Translate) {
+2367				$current_lang = $langs->getDefaultLang();
+2368			}
+2369	
+2370			$sql = "SELECT rowid, lang, label, description, note as other";
+2371			$sql .= " FROM ".$this->db->prefix()."product_lang";
+2372			$sql .= " WHERE fk_product = ".((int) $this->id);
+2373	
+2374			$result = $this->db->query($sql);
+2375			if ($result) {
+2376				while ($obj = $this->db->fetch_object($result)) {
+2377					//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
+2378					if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
+2379						$this->label       = $obj->label;
+2380						$this->description = $obj->description;
+2381						$this->other       = $obj->other;
+2382					}
+2383					$this->multilangs[(string) $obj->lang]["rowid"]       = (int) $obj->rowid;
+2384					$this->multilangs[(string) $obj->lang]["label"]       = $obj->label;
+2385					$this->multilangs[(string) $obj->lang]["description"] = $obj->description;
+2386					$this->multilangs[(string) $obj->lang]["other"]       = $obj->other;
+2387				}
+2388	
+2389				// Load the extrafields of each translation, only when asked, because this method is called by fetch()
+2390				if ($loadextrafields && !empty($this->multilangs)) {

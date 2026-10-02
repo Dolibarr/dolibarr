@@ -1,0 +1,42 @@
+133		public $surface_units;	// scale -3, 0, 3, 6
+134		/**
+135		 * @var float|string|null
+136		 */
+137		public $volume;
+138		/**
+139		 * @var int|string|null
+140		 */
+141		public $volume_units;	// scale -3, 0, 3, 6
+142		/**
+143		 * @var ?array<string,array<string,string>>
+144		 */
+145		public $multilangs;
+146	
+147		/**
+148		 * @var int type in line
+149		 */
+150		public $product_type;
+151	
+152		/**
+153		 * @var int product id in line (when line is linked to a product or service)
+154		 */
+155		public $fk_product;
+156	
+157		/**
+158		 * Description of the line
+159		 * @var string
+160		 */
+161		public $desc;
+162	
+163		/**
+164		 * Description of the line
+165		 * @var string
+166		 * @deprecated
+167		 * @see $desc
+168		 */
+169		public $description;
+170	
+171		/**
+172		 * @var Product Object product to store full product object after a fetch_product() on a line
+173		 */
+174		public $product;

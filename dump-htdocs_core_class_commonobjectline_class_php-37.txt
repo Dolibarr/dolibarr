@@ -1,0 +1,42 @@
+25	 *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, proposal, orders, etc. ...)
+26	 */
+27	
+28	require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+29	
+30	
+31	/**
+32	 *  Parent class for class inheritance lines of business objects
+33	 *  This class is useless for the moment so no inherit are done on it
+34	 *
+35	 *  TODO For the moment we use the extends on CommonObject until PHP min is 5.4 so we can use Traits.
+36	 */
+37	abstract class CommonObjectLine extends CommonObject
+38	{
+39		/**
+40		 * @var string ID to identify parent CommonObject type (element name)
+41		 */
+42		public $parent_element = '';
+43	
+44		/**
+45		 * @var string Attribute related to parent CommonObject rowid (many2one)
+46		 */
+47		public $fk_parent_attribute = '';
+48	
+49		/**
+50		 * Id of the line
+51		 * @var int
+52		 */
+53		public $id;
+54	
+55		/**
+56		 * Id of the line
+57		 * @var int
+58		 * @deprecated Try to use id property as possible (even if field into database is still rowid)
+59		 * @see $id
+60		 */
+61		public $rowid;
+62	
+63		/**
+64		 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+65		 */
+66		public $picto = 'line';
