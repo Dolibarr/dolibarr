@@ -11398,6 +11398,7 @@ class Form
 
 			$nboftypesoutput = 0;
 
+			print '<!-- foreach linkedObjects -->';
 			foreach ($object->linkedObjects as $objecttype => $objects) {
 				$tplpath = $element = $subelement = $objecttype;
 
