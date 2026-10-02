@@ -460,7 +460,7 @@ class Members extends DolibarrApi
 			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {
 				// Resiliating or excluding a member requires the permission to delete members, like on the member card
-				if (in_array((string) $value, array('0', '-2'), true) && (string) $member->status !== (string) $value && !DolibarrApiAccess::$user->hasRight('adherent', 'supprimer')) {
+				if (in_array((string) $value, array('0', '-2'), true) && (string) $member->status !== (string) $value && !DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 					throw new RestException(403, 'Resiliating or excluding a member requires the permission to delete members');
 				}
 				if ($value == '0') {

@@ -307,7 +307,7 @@ if (empty($reshook)) {
 	}
 
 	// Close
-	if ($massaction == 'close' && $user->hasRight('adherent', 'supprimer')) {	// Same permission as the action "Resiliate" of the member card
+	if ($massaction == 'close' && $permissiontoadd) {
 		$tmpmember = new Adherent($db);
 		$nbclose = 0;
 
@@ -821,7 +821,7 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-if ($user->hasRight('adherent', 'supprimer')) {
+if ($user->hasRight('adherent', 'creer')) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Resiliate");
 }
 if ($user->hasRight('adherent', 'supprimer')) {
