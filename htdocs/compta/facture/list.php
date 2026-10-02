@@ -1629,7 +1629,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
 }
 // alert on due date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<label for="search_option">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_option" id="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option" class="opacitymedium valignmiddle">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_option" id="search_option" class="opacitymedium valignmiddle" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();
