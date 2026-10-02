@@ -46,6 +46,21 @@ class pdf_cerfafr_11580 extends ModeleDon
 	public $heightforfooter;
 
 	/**
+	 * @var string	Number of the form for the tax administration
+	 */
+	protected $formNumber = '2041-RD';
+
+	/**
+	 * @var string	Cerfa number of the form, with its version
+	 */
+	protected $cerfaNumber = '11580*05';
+
+	/**
+	 * @var string	Title of the form
+	 */
+	protected $formTitle = "Reçu des dons et versements effectués par les particuliers au titre des articles 200 et 978 du code général des impôts";
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param	DoliDB	$db		Database handler
@@ -188,10 +203,9 @@ class pdf_cerfafr_11580 extends ModeleDon
 
 		$donor = $this->getDonorInfos($don, $outputlangs);
 
-		// The form 11580*05 is only for private individuals, companies must receive the form 16216*01
 		$this->warnings = array();
-		if (empty($don->specimen) && $this->isCompanyDonor($donor)) {
-			$this->warnings[] = $langs->trans("DonationCerfa11580ForPrivateIndividualsOnly");
+		if (empty($don->specimen)) {
+			$this->warnings = $this->checkDonor($donor);
 		}
 		if ($conf->currency != 'EUR') {
 			dol_syslog(get_class($this)."::write_file The form expects amounts in euros, but the main currency is ".$conf->currency, LOG_WARNING);
@@ -220,11 +234,11 @@ class pdf_cerfafr_11580 extends ModeleDon
 		$pdf->Open();
 		$pdf->SetDrawColor(0, 0, 0);
 
-		$pdf->SetTitle($outputlangs->convToOutputCharset("Reçu fiscal 2041-RD ".$don->ref));
-		$pdf->SetSubject($outputlangs->convToOutputCharset("Reçu des dons et versements effectués par les particuliers"));
+		$pdf->SetTitle($outputlangs->convToOutputCharset("Reçu fiscal ".$this->formNumber." ".$don->ref));
+		$pdf->SetSubject($outputlangs->convToOutputCharset($this->formTitle));
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-		$pdf->SetKeyWords($outputlangs->convToOutputCharset($don->ref)." 2041-RD Cerfa 11580*05");
+		$pdf->SetKeyWords($outputlangs->convToOutputCharset($don->ref." ".$this->formNumber." Cerfa ".$this->cerfaNumber));
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
@@ -297,6 +311,26 @@ class pdf_cerfafr_11580 extends ModeleDon
 
 
 	/**
+	 *  Return the warnings to show when the form does not fit the kind of donor
+	 *
+	 *  @param	array{company:string,lastname:string,firstname:string,name:string,address:string,zip:string,town:string,country_code:string,country:string,idprof1:string,thirdparty:?Societe}	$donor	Identity of the donor
+	 *  @return	string[]
+	 */
+	protected function checkDonor($donor)
+	{
+		global $langs;
+
+		$warnings = array();
+		// The form 11580 is only for private individuals, companies must receive the form 16216
+		if ($this->isCompanyDonor($donor)) {
+			$warnings[] = $langs->trans("DonationCerfa11580ForPrivateIndividualsOnly");
+		}
+
+		return $warnings;
+	}
+
+
+	/**
 	 *  Return a date stored as YYYY-MM-DD by the setup page in the format of the form
 	 *
 	 *  @param	string	$value		Date stored in setup
@@ -319,7 +353,7 @@ class pdf_cerfafr_11580 extends ModeleDon
 	 */
 	protected function getOrganismTypeLabel($code)
 	{
-		$types = self::getOrganismTypes();
+		$types = static::getOrganismTypes();
 		if (empty($types[$code])) {
 			return '';
 		}
@@ -329,7 +363,8 @@ class pdf_cerfafr_11580 extends ModeleDon
 			$label = sprintf($label, $this->formatSetupDate(getDolGlobalString('DONATION_CERFA_RUP_DECREE_DATE')), $this->formatSetupDate(getDolGlobalString('DONATION_CERFA_RUP_JO_DATE')), $this->formatSetupDate(getDolGlobalString('DONATION_CERFA_RUP_ORDER_DATE')));
 		} elseif ($code == 'oig_other') {
 			$label = sprintf($label, getDolGlobalString('DONATION_CERFA_ORGANISM_OTHER', '....................'));
-		} elseif ($code == 'heritage_foundation' || $code == 'eu_organism') {
+		} elseif (strpos($label, '%s') !== false) {
+			// Date of the approval by the minister in charge of the budget
 			$label = sprintf($label, $this->formatSetupDate(getDolGlobalString('DONATION_CERFA_APPROVAL_DATE')));
 		}
 
@@ -489,17 +524,17 @@ class pdf_cerfafr_11580 extends ModeleDon
 		$pdf->SetTextColor(0, 0, 100);
 		$pdf->SetFont('', 'B', $default_font_size + 2);
 		$pdf->SetXY($this->marge_gauche + 45, $posy);
-		$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite - 90, 5, $outputlangs->convToOutputCharset("Reçu des dons et versements effectués par les particuliers au titre des articles 200 et 978 du code général des impôts"), 0, 'C');
+		$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite - 90, 5, $outputlangs->convToOutputCharset($this->formTitle), 0, 'C');
 		$posyafter = $pdf->GetY();
 
 		// Number of the form
 		$posx = $this->page_largeur - $this->marge_droite - 40;
 		$pdf->SetFont('', 'B', $default_font_size);
 		$pdf->SetXY($posx, $posy);
-		$pdf->MultiCell(40, 4, '2041-RD', 0, 'R');
+		$pdf->MultiCell(40, 4, $this->formNumber, 0, 'R');
 		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->SetXY($posx, $posy + 4);
-		$pdf->MultiCell(40, 4, $outputlangs->convToOutputCharset('N° 11580*05'), 0, 'R');
+		$pdf->MultiCell(40, 4, $outputlangs->convToOutputCharset('N° '.$this->cerfaNumber), 0, 'R');
 
 		// Number of the receipt
 		$pdf->SetTextColor(0, 0, 0);
@@ -525,11 +560,28 @@ class pdf_cerfafr_11580 extends ModeleDon
 	 */
 	protected function showBeneficiary(&$pdf, $posy, $outputlangs)
 	{
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$posy = $this->sectionTitle($pdf, $posy, "Organisme bénéficiaire des dons et versements", $outputlangs);
+		$posy = $this->showBeneficiaryIdentity($pdf, $posy, "Nom ou dénomination :", $outputlangs);
+
+		$generalinterest = "Œuvre ou organisme d'intérêt général ayant un caractère philanthropique, éducatif, scientifique, social, humanitaire, sportif, familial, culturel ou concourant à la mise en valeur du patrimoine artistique, à la défense de l'environnement naturel ou à la diffusion de la culture, de la langue et des connaissances scientifiques françaises :";
+
+		return $this->showOrganismTypes($pdf, $posy, $generalinterest, "Cochez la case concernée :", $outputlangs);
+	}
+
+
+	/**
+	 *  Show the identity of the beneficiary organization: name, identifiers, address and purpose
+	 *
+	 *  @param	TCPDF		$pdf			Object PDF
+	 *  @param	float		$posy			Y position
+	 *  @param	string		$namelabel		Label of the name field, as worded on the form
+	 *  @param	Translate	$outputlangs	Object lang for output
+	 *  @return	float						Y position after the fields
+	 */
+	protected function showBeneficiaryIdentity(&$pdf, $posy, $namelabel, $outputlangs)
+	{
 		$width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
 		$posx = $this->marge_gauche;
-
-		$posy = $this->sectionTitle($pdf, $posy, "Organisme bénéficiaire des dons et versements", $outputlangs);
 
 		$ids = array();
 		if (!empty($this->emetteur->idprof1)) {
@@ -543,7 +595,7 @@ class pdf_cerfafr_11580 extends ModeleDon
 			$country = $outputlangs->transnoentitiesnoconv("Country".$this->emetteur->country_code);
 		}
 
-		$posy = $this->showField($pdf, $posx, $posy, $width, "Nom ou dénomination :", (string) $this->emetteur->name, $outputlangs);
+		$posy = $this->showField($pdf, $posx, $posy, $width, $namelabel, (string) $this->emetteur->name, $outputlangs);
 		$posy = $this->showField($pdf, $posx, $posy, $width, "Numéro SIREN ou RNA :", implode(' - ', $ids), $outputlangs);
 		$posy = $this->showField($pdf, $posx, $posy, $width, "Adresse :", str_replace(array("\r\n", "\n"), ', ', (string) $this->emetteur->address), $outputlangs);
 		$posy = $this->showField($pdf, $posx, $posy, $width / 3, "Code postal :", (string) $this->emetteur->zip, $outputlangs) - 5;
@@ -551,10 +603,29 @@ class pdf_cerfafr_11580 extends ModeleDon
 		$posy = $this->showField($pdf, $posx, $posy, $width, "Pays :", $country, $outputlangs);
 		$posy = $this->showField($pdf, $posx, $posy, $width, "Objet :", (string) $this->emetteur->socialobject, $outputlangs);
 
-		// Category of the organization
-		$types = self::getOrganismTypes();
+		return $posy;
+	}
+
+
+	/**
+	 *  Show the category of the beneficiary organization: only the category selected in setup,
+	 *  or the whole list of the form with boxes to tick by hand
+	 *
+	 *  @param	TCPDF		$pdf				Object PDF
+	 *  @param	float		$posy				Y position
+	 *  @param	string		$generalinterest	Label of the box "general interest work or organization", as worded on the form
+	 *  @param	string		$instruction		Instruction printed above the whole list, as worded on the form
+	 *  @param	Translate	$outputlangs		Object lang for output
+	 *  @return	float							Y position after the categories
+	 */
+	protected function showOrganismTypes(&$pdf, $posy, $generalinterest, $instruction, $outputlangs)
+	{
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
+		$posx = $this->marge_gauche;
+
+		$types = static::getOrganismTypes();
 		$selectedtype = getDolGlobalString('DONATION_CERFA_ORGANISM_TYPE');
-		$generalinterest = "Œuvre ou organisme d'intérêt général ayant un caractère philanthropique, éducatif, scientifique, social, humanitaire, sportif, familial, culturel ou concourant à la mise en valeur du patrimoine artistique, à la défense de l'environnement naturel ou à la diffusion de la culture, de la langue et des connaissances scientifiques françaises :";
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 		if (!empty($types[$selectedtype])) {
@@ -567,7 +638,7 @@ class pdf_cerfafr_11580 extends ModeleDon
 		} else {
 			// No category in setup: the full list is printed, to tick by hand
 			$pdf->SetXY($posx, $posy);
-			$pdf->MultiCell($width, 4, $outputlangs->convToOutputCharset("Cochez la case concernée :"), 0, 'L');
+			$pdf->MultiCell($width, 4, $outputlangs->convToOutputCharset($instruction), 0, 'L');
 			$posy = $this->checkbox($pdf, $posx, $pdf->GetY() + 0.5, $width, false, $generalinterest, $outputlangs) + 0.5;
 			foreach ($types as $code => $type) {
 				if ($type['group'] == 'oig') {
@@ -715,7 +786,23 @@ class pdf_cerfafr_11580 extends ModeleDon
 		$paymentmodes = array('cash' => "Remise d'espèces", 'cheque' => "Chèque", 'transfer' => "Virement, prélèvement, carte bancaire");
 		$posy = $this->checkboxRow($pdf, $posy, $paymentmodes, $paymentmode, $outputlangs, 3) + 3;
 
-		// Date and signature
+		return $this->showSignature($pdf, $posy, $outputlangs);
+	}
+
+
+	/**
+	 *  Show the box for the date and the signature of the beneficiary organization
+	 *
+	 *  @param	TCPDF		$pdf			Object PDF
+	 *  @param	float		$posy			Y position
+	 *  @param	Translate	$outputlangs	Object lang for output
+	 *  @param	float		$heightbox		Height of the box
+	 *  @return	float						Y position after the box
+	 */
+	protected function showSignature(&$pdf, $posy, $outputlangs, $heightbox = 25)
+	{
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
 		$widthbox = 70;
 		$posxbox = $this->page_largeur - $this->marge_droite - $widthbox;
 		$pdf->SetFont('', 'B', $default_font_size - 1);
@@ -723,12 +810,12 @@ class pdf_cerfafr_11580 extends ModeleDon
 		$pdf->SetXY($posxbox, $posy);
 		$pdf->MultiCell($widthbox, 4, "Date et signature", 0, 'C');
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->Rect($posxbox, $posy + 5, $widthbox, 25);
+		$pdf->Rect($posxbox, $posy + 5, $widthbox, $heightbox);
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetXY($posxbox + 2, $posy + 6);
 		$pdf->MultiCell($widthbox - 4, 4, dol_print_date(dol_now(), 'day', false, $outputlangs, true), 0, 'L');
 
-		return $posy + 30;
+		return $posy + 5 + $heightbox;
 	}
 
 
@@ -742,8 +829,6 @@ class pdf_cerfafr_11580 extends ModeleDon
 	 */
 	protected function showFootnotes(&$pdf, $posy, $outputlangs)
 	{
-		$width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
-
 		$notes = "(1) Pour les dons de titres de sociétés cotées et les dons en nature, mentionnez la valeur du don.\n";
 		$notes .= "(2) L'organisme bénéficiaire peut cocher une ou plusieurs cases, étant entendu que la fraction du montant donné qui ouvre droit pour son auteur à la réduction d'IFI prévue à l'article 978 du CGI ne peut ouvrir droit à la réduction d'IR prévue à l'article 200 du CGI et inversement. ";
 		$notes .= "En application de l'article L. 80 C du livre des procédures fiscales, il peut demander à l'administration s'il relève de l'une des catégories d'organismes mentionnées à l'article 200 du code général des impôts. ";
@@ -751,6 +836,23 @@ class pdf_cerfafr_11580 extends ModeleDon
 		$notes .= "(3) La réduction d'IFI ne s'applique qu'aux dons en numéraire et aux dons en pleine propriété de titres de sociétés cotées.
 ";
 		$notes .= "(4) Exemple : dons en nature.";
+
+		return $this->showNotes($pdf, $posy, $notes, $outputlangs);
+	}
+
+
+	/**
+	 *  Show notes at the bottom of the last page
+	 *
+	 *  @param	TCPDF		$pdf			Object PDF
+	 *  @param	float		$posy			Y position
+	 *  @param	string		$notes			Text of the notes
+	 *  @param	Translate	$outputlangs	Object lang for output
+	 *  @return	float						Y position after the notes
+	 */
+	protected function showNotes(&$pdf, $posy, $notes, $outputlangs)
+	{
+		$width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
 
 		$pdf->SetFont('', '', 6.5);
 		$pdf->SetTextColor(60, 60, 60);

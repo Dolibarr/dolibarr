@@ -168,7 +168,7 @@ if ($action == 'set_DONATION_MESSAGE') {
 }
 
 if ($action == 'set_DONATION_CERFA') {
-	// Options of the French tax receipt (Cerfa 11580)
+	// Options of the French tax receipts (Cerfa 11580 and 16216)
 	$values = array(
 		'DONATION_ORGANISM_RNA' => strtoupper(trim(GETPOST('DONATION_ORGANISM_RNA', 'alphanohtml'))),
 		'DONATION_CERFA_ORGANISM_TYPE' => GETPOST('DONATION_CERFA_ORGANISM_TYPE', 'aZ09'),
@@ -484,8 +484,9 @@ if (preg_match('/fr/i', $mysoc->country_code)) {
 	print '</td></tr>';
 	print "</table>\n";
 
-	// Options of the tax receipt for private individuals (Cerfa 11580)
+	// Options of the tax receipts for private individuals (Cerfa 11580) and for companies (Cerfa 16216)
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/pdf_cerfafr_11580.modules.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/pdf_cerfafr_16216.modules.php';
 
 	print '<br>';
 	print load_fiche_titre($langs->trans("DonationCerfaOptions"), '', '');
@@ -505,10 +506,19 @@ if (preg_match('/fr/i', $mysoc->country_code)) {
 	print '<input type="text" class="flat minwidth150" maxlength="10" id="DONATION_ORGANISM_RNA" name="DONATION_ORGANISM_RNA" value="'.dol_escape_htmltag(getDolGlobalString('DONATION_ORGANISM_RNA')).'" placeholder="W123456789">';
 	print '</td></tr>';
 
-	// Category of the organization. The form allows to print only the category of the organization.
+	// Category of the organization. The forms allow to print only the category of the organization.
+	// The list merges the categories of both forms, a category that exists on one form only is suffixed with its number.
+	$organismtypes11580 = pdf_cerfafr_11580::getOrganismTypes();
+	$organismtypes16216 = pdf_cerfafr_16216::getOrganismTypes();
 	$organismtypes = array();
-	foreach (pdf_cerfafr_11580::getOrganismTypes() as $code => $organismtype) {
-		$organismtypes[$code] = dol_trunc(str_replace('%s', '…', $organismtype['label']), 110);
+	foreach (array_merge($organismtypes11580, $organismtypes16216) as $code => $organismtype) {
+		$label = dol_trunc(str_replace('%s', '…', $organismtype['label']), 110);
+		if (empty($organismtypes16216[$code])) {
+			$label .= ' (Cerfa 11580)';
+		} elseif (empty($organismtypes11580[$code])) {
+			$label .= ' (Cerfa 16216)';
+		}
+		$organismtypes[$code] = $label;
 	}
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("DonationCerfaOrganismType"), $langs->trans("DonationCerfaOrganismTypeHelp")).'</td><td>';
 	print $form->selectarray('DONATION_CERFA_ORGANISM_TYPE', $organismtypes, getDolGlobalString('DONATION_CERFA_ORGANISM_TYPE'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300 maxwidth500 widthcentpercentminusx');
@@ -532,7 +542,7 @@ if (preg_match('/fr/i', $mysoc->country_code)) {
 	print '</td></tr>';
 
 	$donationnatures = array('cash' => $langs->trans("DonationNatureCash"), 'shares' => $langs->trans("DonationNatureListedShares"), 'income' => $langs->trans("DonationNatureIncome"), 'expenses' => $langs->trans("DonationNatureVolunteerExpenses"), 'other' => $langs->trans("Other"));
-	print '<tr class="oddeven"><td>'.$langs->trans("DonationCerfaNature").'</td><td>';
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("DonationCerfaNature"), $langs->trans("DonationCerfaNatureHelp")).'</td><td>';
 	print $form->selectarray('DONATION_CERFA_NATURE', $donationnatures, getDolGlobalString('DONATION_CERFA_NATURE', 'cash'));
 	print '</td></tr>';
 
