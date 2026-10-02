@@ -75,6 +75,11 @@ class Subscriptions extends DolibarrApi
 			throw new RestException(404, 'Subscription not found');
 		}
 
+		// A subscription has no entity, the entity is the one of its member
+		if (!DolibarrApi::_checkAccessToResource('adherent', $this->subscription->fk_adherent)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$this->subscription->fetchObjectLinked();
 
 		return $this->_cleanObjectDatas($this->subscription);
@@ -191,6 +196,11 @@ class Subscriptions extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
+		// The member of the new subscription must be a member of an entity the user can access
+		if (!empty($request_data['fk_adherent']) && !DolibarrApi::_checkAccessToResource('adherent', (int) $request_data['fk_adherent'])) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$subscription = new Subscription($this->db);
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -230,6 +240,11 @@ class Subscriptions extends DolibarrApi
 		$result = $subscription->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Subscription not found');
+		}
+
+		// A subscription has no entity, the entity is the one of its member
+		if (!DolibarrApi::_checkAccessToResource('adherent', $subscription->fk_adherent)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -281,6 +296,11 @@ class Subscriptions extends DolibarrApi
 		$result = $subscription->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Subscription not found');
+		}
+
+		// A subscription has no entity, the entity is the one of its member
+		if (!DolibarrApi::_checkAccessToResource('adherent', $subscription->fk_adherent)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$res = $subscription->delete(DolibarrApiAccess::$user);
