@@ -456,7 +456,7 @@ class Facture extends CommonInvoice
 	 *
 	 * 	@param	DoliDB		$db			Database handler
 	 */
-	public function __construct(DoliDB $db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -4129,7 +4129,7 @@ class Facture extends CommonInvoice
 						}
 					}
 				}
-
+			}
 			if ($error == 0) {
 				$old_statut = $this->status;
 				$this->statut = self::STATUS_DRAFT;	// deprecated
