@@ -141,7 +141,7 @@ if ($action == 'set_default') {
 		}
 	}
 	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0 || $res8 < 0 || $res9 < 0) {
-		setEventMessages('ErrorFailedToSaveData', null, 'errors');
+		setEventMessages('SetupNotSaved', null, 'errors');
 		$db->rollback();
 	} else {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
@@ -149,15 +149,15 @@ if ($action == 'set_default') {
 	}
 } elseif ($action == 'updatememberscards') {
 	$db->begin();
-	$res1 = $res2 = $res3 = $res4 = 0;
+	$res1 = $res2 = $res3 = $res4 = $res5 = 0;
 	$res1 = dolibarr_set_const($db, 'ADHERENT_CARD_TYPE', GETPOST('ADHERENT_CARD_TYPE'), 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'ADHERENT_CARD_HEADER_TEXT', GETPOST('ADHERENT_CARD_HEADER_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT', GETPOST('ADHERENT_CARD_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res3 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT_RIGHT', GETPOST('ADHERENT_CARD_TEXT_RIGHT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res5 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT_RIGHT', GETPOST('ADHERENT_CARD_TEXT_RIGHT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_CARD_FOOTER_TEXT', GETPOST('ADHERENT_CARD_FOOTER_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0) {
-		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0) {
+		setEventMessages('SetupNotSaved', null, 'errors');
 		$db->rollback();
 	} else {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
@@ -170,7 +170,7 @@ if ($action == 'set_default') {
 	$res2 = dolibarr_set_const($db, 'ADHERENT_ETIQUETTE_TEXT', GETPOST('ADHERENT_ETIQUETTE_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	if ($res1 < 0 || $res2 < 0) {
-		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		setEventMessages('SetupNotSaved', null, 'errors');
 		$db->rollback();
 	} else {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
