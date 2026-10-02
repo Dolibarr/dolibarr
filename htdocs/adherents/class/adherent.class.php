@@ -2655,7 +2655,7 @@ class Adherent extends CommonObject
 	 *  Renvoi le libelle d'un statut donne
 	 *
 	 *  @param	int			$status      			Id status
-	 *	@param	int			$need_subscription		1 if member type need subscription, 0 otherwise
+	 *	@param	int|string|null	$need_subscription	1 if member type need subscription, 0 otherwise (may be a string when read from database)
 	 *	@param	int     	$date_end_subscription	Date fin adhesion
 	 *  @param  int		    $mode                   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string      						Label
@@ -2675,9 +2675,9 @@ class Adherent extends CommonObject
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		} elseif ($status >= self::STATUS_VALIDATED) {
-			if ($need_subscription === 0) {
+			if (is_numeric($need_subscription) && (int) $need_subscription === 0) {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusNoSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("SubscriptionNotNeeded");
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
