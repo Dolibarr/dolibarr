@@ -728,7 +728,7 @@ if (empty($reshook)) {
 				$formmail = new FormMail($db);
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 				// Load traductions files required by page
 				$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 				// Get email content from template
@@ -796,7 +796,7 @@ if (empty($reshook)) {
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
@@ -863,7 +863,7 @@ if (empty($reshook)) {
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
@@ -1694,7 +1694,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 			// Get email content from template
@@ -1758,7 +1758,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
@@ -1819,7 +1819,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
