@@ -3165,6 +3165,10 @@ class Adherent extends CommonObject
 							$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : (is_object($adherent->thirdparty) ? $adherent->thirdparty->country_code : ''));
 							$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
 						}
+						if (!empty($adherent->default_lang)) {
+							// The language set on the member itself has priority
+							$languagecodeformember = $adherent->default_lang;
+						}
 
 						// Send reminder email
 						$outputlangs = new Translate('', $conf);
