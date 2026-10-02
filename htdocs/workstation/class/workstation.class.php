@@ -236,39 +236,67 @@ class Workstation extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $db;
-
-		$id = $this->createCommon($user, $notrigger);
+		$error = 0;
 
 		// Usergroups
 		$groups = GETPOST('groups', 'array:int');	// FIXME We should not GETPOST but receive array as parameter
 		if (empty($groups)) {
 			$groups = $this->usergroups; // createFromClone
 		}
-		if (!empty($groups)) {
-			foreach ($groups as $id_group) {
-				$ws_usergroup = new WorkstationUserGroup($db);
-				$ws_usergroup->fk_workstation = $id;
-				$ws_usergroup->fk_usergroup = $id_group;
-				$ws_usergroup->createCommon($user);
-				$this->usergroups[] = $id_group;
-			}
-		}
+		$groups = is_array($groups) ? array_unique(array_map('intval', $groups)) : array();
 
 		// Resources
 		$resources = GETPOST('resources', 'array:int');	// FIXME We should not GETPOST but receive array as parameter
 		if (empty($resources)) {
 			$resources = $this->resources; // createFromClone
 		}
-		if (!empty($resources)) {
+		$resources = is_array($resources) ? array_unique(array_map('intval', $resources)) : array();
+
+		$this->db->begin();
+
+		$id = $this->createCommon($user, $notrigger);
+		if ($id <= 0) {
+			// Nothing to link to a workstation that was not created
+			$this->db->rollback();
+			return $id;
+		}
+
+		$this->usergroups = array();
+		foreach ($groups as $id_group) {
+			$ws_usergroup = new WorkstationUserGroup($this->db);
+			$ws_usergroup->fk_workstation = $id;
+			$ws_usergroup->fk_usergroup = $id_group;
+			if ($ws_usergroup->createCommon($user) <= 0) {
+				$error++;
+				$this->error = $ws_usergroup->error;
+				$this->errors = array_merge($this->errors, $ws_usergroup->errors);
+				break;
+			}
+			$this->usergroups[] = $id_group;
+		}
+
+		$this->resources = array();
+		if (!$error) {
 			foreach ($resources as $id_resource) {
-				$ws_resource = new WorkstationResource($db);
+				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $id;
 				$ws_resource->fk_resource = $id_resource;
-				$ws_resource->createCommon($user);
+				if ($ws_resource->createCommon($user) <= 0) {
+					$error++;
+					$this->error = $ws_resource->error;
+					$this->errors = array_merge($this->errors, $ws_resource->errors);
+					break;
+				}
 				$this->resources[] = $id_resource;
 			}
 		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
 
 		return $id;
 	}
