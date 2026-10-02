@@ -1303,6 +1303,9 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	print $formfile->showdocuments('massfilesarea_ticket', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
+if ($projectid > 0) {
+	print showDirectPublicCreateLink($projectid);
+}
 // End of page
 llxFooter();
 $db->close();
