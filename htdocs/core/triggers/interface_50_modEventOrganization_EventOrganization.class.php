@@ -3,6 +3,7 @@
  * Copyright (C) 2021		Florian Henry		<florian.henry@scopen.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,6 +127,86 @@ class InterfaceEventOrganization extends DolibarrTriggers
 				}
 			}
 		}
+
+		// Switch to handle specific triggers
+		$langs->loadLangs(array("agenda", "other", "eventorganization"));
+		switch ($action) {
+			case 'CONFERENCEORBOOTHATTENDEE_REPLACED_SRC':
+				$transKey = "AttendeeReplacedBy";
+				// Get replacement name from context (passed from replaceMeWithAttendee)
+				$replacementName = $object->context['replacement_name'] ?? $langs->trans("Unknown");
+				if (empty($object->actionmsg2)) {
+					$object->actionmsg2 = $langs->transnoentities($transKey, $object->getFullName($langs), $replacementName);
+				}
+				if (empty($object->actionmsg)) {
+					$object->actionmsg = $langs->transnoentities($transKey, $object->getFullName($langs), $replacementName);
+				}
+				break;
+
+			case 'CONFERENCEORBOOTHATTENDEE_REPLACED_TGT':
+				$transKey = "AttendeeBecameReplacementFor";
+				// Get the name of the person being replaced (Source)
+				$sourceName = $object->context['source_name'] ?? $langs->trans("Unknown");
+				if (empty($object->actionmsg2)) {
+					$object->actionmsg2 = $langs->transnoentities($transKey, $object->getFullName($langs), $sourceName);
+				}
+				if (empty($object->actionmsg)) {
+					$object->actionmsg = $langs->transnoentities($transKey, $object->getFullName($langs), $sourceName);
+				}
+				break;
+
+			case 'CONFERENCEORBOOTHATTENDEE_REPLACED_SRC_RESET':
+				$transKey = "AttendeeReplacementSourceReset";
+				if (empty($object->actionmsg2)) {
+					$object->actionmsg2 = $langs->transnoentities($transKey, $object->getFullName($langs));
+				}
+				if (empty($object->actionmsg)) {
+					$object->actionmsg = $langs->transnoentities($transKey, $object->getFullName($langs));
+				}
+				break;
+
+			case 'CONFERENCEORBOOTHATTENDEE_REPLACED_TGT_RESET':
+				$transKey = "AttendeeReplacementTargetReset";
+				if (empty($object->actionmsg2)) {
+					$object->actionmsg2 = $langs->transnoentities($transKey, $object->getFullName($langs));
+				}
+				if (empty($object->actionmsg)) {
+					$object->actionmsg = $langs->transnoentities($transKey, $object->getFullName($langs));
+				}
+				break;
+
+			default:
+				// If the action is not one of ours, do nothing
+				return 0;
+		}
+
+		if (!empty($object->actionmsg2)) {
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+			$actioncomm = new ActionComm($this->db);
+			$actioncomm->type_code   = 'AC_OTH_AUTO';
+			$actioncomm->code        = 'AC_'.$action;
+			$actioncomm->label       = $object->actionmsg2;
+			$actioncomm->note_private = $object->actionmsg;
+			$actioncomm->fk_project  = (property_exists($object, 'fk_project') ? $object->fk_project : 0);
+			$actioncomm->datep       = dol_now();
+			$actioncomm->datef       = dol_now();
+			$actioncomm->durationp   = 0;
+			$actioncomm->percentage  = -1;
+			$actioncomm->socid       = (property_exists($object, 'fk_soc') ? $object->fk_soc : 0); // @phan-suppress-current-line PhanUndeclaredProperty
+			$actioncomm->contact_id  = 0;
+			$actioncomm->authorid    = $user->id;
+			$actioncomm->userownerid = $user->id;
+			$actioncomm->fk_element  = $object->id;
+			$actioncomm->elementtype = $object->element . '@' . $object->module;
+
+			$ret = $actioncomm->create($user);
+			if ($ret < 0) {
+				$this->error = "Failed to create agenda event: " . $actioncomm->error;
+				$this->errors = $actioncomm->errors;
+				return -1;
+			}
+		}
+
 		return 0;
 	}
 }
