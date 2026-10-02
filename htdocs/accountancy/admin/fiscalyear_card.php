@@ -285,7 +285,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input name="label" class="flat" size="32" value="'.$object->label.'">';
+	print '<input name="label" class="flat" size="32" value="'.dolPrintHTMLForAttribute($object->label).'">';
 	print '</td></tr>';
 
 	// Date start
