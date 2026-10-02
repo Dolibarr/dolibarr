@@ -360,11 +360,14 @@ class pdf_cerfafr_11580 extends ModeleDon
 
 		$label = $types[$code]['label'];
 		if ($code == 'oig_rup') {
+			// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 			$label = sprintf($label, $this->formatSetupDate(getDolGlobalString('DONATION_CERFA_RUP_DECREE_DATE')), $this->formatSetupDate(getDolGlobalString('DONATION_CERFA_RUP_JO_DATE')), $this->formatSetupDate(getDolGlobalString('DONATION_CERFA_RUP_ORDER_DATE')));
 		} elseif ($code == 'oig_other') {
+			// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 			$label = sprintf($label, getDolGlobalString('DONATION_CERFA_ORGANISM_OTHER', '....................'));
 		} elseif (strpos($label, '%s') !== false) {
 			// Date of the approval by the minister in charge of the budget
+			// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 			$label = sprintf($label, $this->formatSetupDate(getDolGlobalString('DONATION_CERFA_APPROVAL_DATE')));
 		}
 
@@ -451,7 +454,7 @@ class pdf_cerfafr_11580 extends ModeleDon
 		$pdf->SetTextColor(0, 0, 100);
 		$pdf->SetFont('', 'B', $default_font_size + 1);
 		$pdf->SetXY($this->marge_gauche, $posy);
-		$pdf->MultiCell($width, 7, $outputlangs->convToOutputCharset($title), 1, 'C', true, 1, '', '', true, 0, false, true, 7, 'M');
+		$pdf->MultiCell($width, 7, $outputlangs->convToOutputCharset($title), 1, 'C', true, 1, null, null, true, 0, false, true, 7, 'M');
 		$pdf->SetTextColor(0, 0, 0);
 
 		return $posy + 8;
