@@ -185,6 +185,16 @@ class Workstation extends CommonObject
 	public $usergroups;
 
 	/**
+	 * @var string Name of the field, in the child tables, that holds the id of the workstation
+	 */
+	public $fk_element = 'fk_workstation';
+
+	/**
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade = array('workstation_workstation_usergroup', 'workstation_workstation_resource');
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
