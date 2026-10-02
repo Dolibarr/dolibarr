@@ -4089,12 +4089,21 @@ function printCommonFooter($zone = 'private')
  * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
  *
  * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
- * @return	void
+ * @param	string	$nooutput	Use 1 to return with no output
+ * @return	string				Empty string or HTML output
  */
-function dol_set_focus($selector)
+function dol_set_focus($selector, $nooutput = 0)
 {
-	print "\n" . '<!-- Set focus onto a specific field -->' . "\n";
-	print '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery(\'' . dol_escape_js($selector) . '\').focus(); });</script>' . "\n";
+	$out = "\n" . '<!-- Set focus onto a specific field -->' . "\n";
+	$out .= '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery(\'' . dol_escape_js($selector) . '\').focus(); });</script>' . "\n";
+
+	if ($nooutput) {
+		return $out;
+	} else {
+		print $out;
+	}
+
+	return '';
 }
 
 
