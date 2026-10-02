@@ -1,0 +1,6 @@
+2076					// multilangs
+2077					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
+2080						$tmpproduct->getMultiLangs();
+2082						$line->multilangs = $tmpproduct->multilangs;
+2741					if (getDolGlobalInt('MAIN_MULTILANGS')) {
+2839					if (getDolGlobalInt('MAIN_MULTILANGS')) {

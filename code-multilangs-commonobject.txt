@@ -1,0 +1,2 @@
+5784					if (getDolGlobalInt('MAIN_MULTILANGS')) {
+5807						$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $line->product_label;

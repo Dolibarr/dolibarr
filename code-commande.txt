@@ -1,0 +1,121 @@
+2290					$line->total_tva        = $objp->total_tva;
+2291					$line->total_localtax1  = $objp->total_localtax1;
+2292					$line->total_localtax2  = $objp->total_localtax2;
+2293					$line->subprice         = (float) $objp->subprice;
+2294					$line->subprice_ttc     = (float) $objp->subprice_ttc;
+2295					$line->fk_remise_except = $objp->fk_remise_except;
+2296					$line->remise_percent   = $objp->remise_percent;
+2297					$line->price            = $objp->price;
+2298					$line->fk_product       = $objp->fk_product;
+2299					$line->fk_fournprice = $objp->fk_fournprice;
+2300					$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
+2301					$line->pa_ht = $marginInfos[0];
+2302					$line->marge_tx			= $marginInfos[1];
+2303					$line->marque_tx		= $marginInfos[2];
+2304					$line->rang             = $objp->rang;
+2305					$line->info_bits        = $objp->info_bits;
+2306					$line->special_code = $objp->special_code;
+2307					$line->fk_parent_line = $objp->fk_parent_line;
+2308	
+2309					$line->ref = $objp->product_ref;
+2310					$line->libelle = $objp->product_label;
+2311	
+2312					$line->product_ref = $objp->product_ref;
+2313					$line->product_label = $objp->product_label;
+2314					$line->product_tosell   = $objp->product_tosell;
+2315					$line->product_tobuy    = $objp->product_tobuy;
+2316					$line->product_desc     = $objp->product_desc;
+2317					$line->product_tobatch  = $objp->product_tobatch;
+2318					$line->product_barcode = $objp->product_barcode;
+2319					$line->product_custom_code = $objp->customcode;
+2320					$line->product_custom_country_id = $objp->country_id;
+2321					$line->product_custom_country_code = $objp->country_code;
+2322	
+2323					$line->fk_product_type  = $objp->fk_product_type; // Product or service
+2324					$line->fk_unit          = $objp->fk_unit;
+2325	
+2326					$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
+2327	
+2328					$line->weight           = $objp->weight;
+2329					$line->weight_units     = $objp->weight_units;
+2330					$line->volume           = $objp->volume;
+2331					$line->volume_units     = $objp->volume_units;
+2332					$line->packaging 		= $objp->packaging;
+2333	
+2334					$line->date_start       = $this->db->jdate($objp->date_start);
+2335					$line->date_end         = $this->db->jdate($objp->date_end);
+2336	
+2337					// Multicurrency
+2338					$line->fk_multicurrency = $objp->fk_multicurrency;
+2339					$line->multicurrency_code = $objp->multicurrency_code;
+2340					$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+2341					$line->multicurrency_subprice_ttc 	= $objp->multicurrency_subprice_ttc;
+2342					$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
+2343					$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
+2344					$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+2345	
+2346					$line->fetch_optionals();
+2347	
+2348					// multilangs
+2349					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
+2350						$tmpproduct = new Product($this->db);
+2351						$tmpproduct->fetch($objp->fk_product);
+2352						$tmpproduct->getMultiLangs();
+2353	
+2354						$line->multilangs = $tmpproduct->multilangs;
+2355					}
+2356	
+2357					$this->lines[$i] = $line;
+2358	
+2359					$i++;
+2360				}
+2361	
+2362				$this->db->free($result);
+2363	
+2364				return 1;
+2365			} else {
+2366				$this->error = $this->db->error();
+2367				return -3;
+2368			}
+2369		}
+2370	
+2371	
+2372		/**
+2373		 *	Return number of line with type product.
+2374		 *
+2375		 *	@return		int		Return integer <0 if KO, Nbr of product lines if OK
+2376		 */
+2377		public function getNbOfProductsLines()
+2378		{
+2379			$nb = 0;
+2380			foreach ($this->lines as $line) {
+2381				if ($line->product_type == 0) {
+2382					$nb++;
+2383				}
+2384			}
+2385			return $nb;
+2386		}
+2387	
+2388		/**
+2389		 *	Return number of line with type service.
+2390		 *
+2391		 *	@return		int		Return integer <0 if KO, Nbr of service lines if OK
+2392		 */
+2393		public function getNbOfServicesLines()
+2394		{
+2395			$nb = 0;
+2396			foreach ($this->lines as $line) {
+2397				if ($line->product_type == 1) {
+2398					$nb++;
+2399				}
+2400			}
+2401			return $nb;
+2402		}
+2403	
+2404		/**
+2405		 *	Count number of shipments for this order
+2406		 *
+2407		 * 	@return     int                			Return integer <0 if KO, Nb of shipment found if OK
+2408		 */
+2409		public function getNbOfShipments()
+2410		{
