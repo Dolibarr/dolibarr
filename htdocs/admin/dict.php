@@ -103,7 +103,7 @@ const DICT_PRODUCTBATCH_QCSTATUS = 43;
 const DICT_ASSET_DISPOSAL_TYPE = 44;
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "main", "companies", "compta", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
+$langs->loadLangs(array("admin", "main", "companies", "compta", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
 
 $action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -997,14 +997,17 @@ if (empty($reshook)) {
 		}
 		if (($id == DICT_REGIONS || $id == DICT_PRODUCT_NATURE) && !is_numeric(GETPOST("code")) && GETPOST('actionadd')) {
 			$ok = 0;
+			$langs->load('errors');
 			setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
 		}
 		if ($id == DICT_COUNTRY && strlen(GETPOST("code")) != 2) {  // 2 char on code for country code
 			$ok = 0;
+			$langs->load('errors');
 			setEventMessages($langs->transnoentities("ErrorCountryCodeMustBe2Char", $langs->transnoentities("Code")), null, 'errors');
 		}
 		if ($id == DICT_PAIEMENT && strlen(GETPOST("code")) >= 6) {  // 6 char max on code for payment mode codes
 			$ok = 0;
+			$langs->load('errors');
 			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '6'), null, 'errors');
 		}
 
@@ -1116,6 +1119,7 @@ if (empty($reshook)) {
 				$_POST = array('id' => $id);
 			} else {
 				if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$langs->load('errors');
 					setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 				} else {
 					dol_print_error($db);

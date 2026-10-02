@@ -85,7 +85,7 @@ $num = 0;
 $error = 0;
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other"));
 
 if (isModEnabled('multicompany')) {
 	force_switch_entity($entity);
@@ -472,6 +472,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 			$error++;
+			$langs->load('errors');
 			$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
 			array_push($adh->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 		}

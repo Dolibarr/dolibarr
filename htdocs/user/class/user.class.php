@@ -474,16 +474,14 @@ class User extends CommonObject
 	public $label_establishment;
 
 	/**
-	 * @var array<int>		Entity in table llx_user_group
-	 * @deprecated			Seems not used.
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $usergroup_entity;
-
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 20, 'searchall' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
-		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'enabled' => "isModEnabled('stock')", 'visible' => 1, 'notnull' => 0, 'showoncombobox' => 1, 'index' => 1, 'position' => 50, 'searchall' => 1),
+		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'enabled' => "isModEnabled('stock')", 'visible' => 1, 'notnull' => 0, 'showoncombobox' => 1, 'index' => 1, 'position' => 50, 'searchall' => 1, 'bi' => 0),
 		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
 		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
@@ -2899,7 +2897,7 @@ class User extends CommonObject
 		if ($mailfile->sendfile()) {
 			return 1;
 		} else {
-			$langs->trans("errors");
+			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFailedToSendPassword").' '.$mailfile->error;
 			return -1;
 		}

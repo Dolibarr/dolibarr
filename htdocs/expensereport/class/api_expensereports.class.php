@@ -1082,6 +1082,16 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Check access to the parent expense report
+		$result = $this->expensereport->fetch($paymentExpenseReport->fk_expensereport);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;

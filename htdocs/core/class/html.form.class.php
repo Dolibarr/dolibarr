@@ -159,7 +159,7 @@ class Form
 	 *
 	 * @param 	string				$text 			Text of label or key to translate
 	 * @param 	string				$htmlname 		Name of select field ('edit' prefix will be added)
-	 * @param 	string				$preselected 	Value to show/edit (not used in this function)
+	 * @param 	?string				$preselected 	Value to show/edit (not used in this function)
 	 * @param 	?object				$object 		Object (on the page we show)
 	 * @param 	int<0,1>|boolean	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
 	 * @param 	string	 			$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
@@ -13066,16 +13066,13 @@ class Form
 	 * @param 	array<int,string> 						$search_component_params 			Array of selected search criteria
 	 * @param 	string[] 								$arrayofinputfieldsalreadyoutput 	Array of input fields already inform. The component will not generate a hidden input field if it is in this list.
 	 * @param 	string 									$search_component_params_hidden 	String with $search_component_params criteria
-	 * @param 	array<string,array{type:string}> 		$arrayoffiltercriterias 			Array of available filter criteria for an object and linked objects
+	 * @param 	array<string,array{type:string,bi?:int<0,1>}> 	$arrayoffiltercriterias 			Array of available filter criteria for an object and linked objects. Fields with attribute 'bi' set to 0 are not shown.
 	 * @return	string                                    									HTML component for advanced search
 	 */
 	public function searchComponent($arrayofcriterias, $search_component_params, $arrayofinputfieldsalreadyoutput = array(), $search_component_params_hidden = '', $arrayoffiltercriterias = array())
 	{
 		// TODO: Use $arrayoffiltercriterias param instead of $arrayofcriterias to include linked object fields in search
 		global $langs, $form;
-
-		//require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
-		//$formother = new FormOther($this->db);
 
 		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
@@ -13133,7 +13130,7 @@ class Form
 		// $ret .= "<!-- sql= ".forgeSQLFromUniversalSearchCriteria($search_component_params_hidden, $errormessage)." -->";
 
 		// TODO : Use $arrayoffiltercriterias instead of $arrayofcriterias
-		// For compatibility with forms that show themself the search criteria in addition of this component, we output these fields
+		// For compatibility with forms that show themselves the search criteria in addition of this component, we output these fields
 		foreach ($arrayofcriterias as $criteria) {
 			foreach ($criteria as $criteriafamilykey => $criteriafamilyval) {
 				if (in_array('search_' . $criteriafamilykey, $arrayofinputfieldsalreadyoutput)) {
@@ -13221,7 +13218,13 @@ class Form
 		// so we can show a single 2 levels combo: select first the element (the table), then the field appears
 		// into the same combo, in a second level shown under the element
 		$arrayoffilterelements = array();
+
 		foreach ($arrayoffiltercriterias as $key => $val) {
+			// Discard the fields declared with attribute 'bi' set to 0 (field hidden on BI tool).
+			// The array is flat, so this also discards the fields of the sub-elements (the sub-tables).
+			if (isset($val['bi']) && (int) $val['bi'] == 0) {
+				continue;
+			}
 			// The element (table) is the part of the field key before the last dot ('t.ref' -> 't', 't__fk_project.ref' -> 't__fk_project')
 			$tmpelementkey = preg_replace('/\.[^.]*$/', '', $key);
 			// Extrafields of an element are stored with the alias 'te', 'te__...', so we map them onto the same element than their parent table 't', 't__...'
@@ -13233,6 +13236,7 @@ class Form
 			if (!empty($val['labelnohtml'])) {
 				$tmpfieldlabel = $val['labelnohtml'];
 				// The labelnohtml is 'LabelOfElement: LabelOfField', so we extract the label of the element and the label of the field
+				$tmpmatch = array();
 				if (preg_match('/^(.+?): /', $val['labelnohtml'], $tmpmatch)) {
 					$tmpelementlabel = $tmpmatch[1];
 					$tmpfieldlabel = trim(substr($val['labelnohtml'], strlen($tmpelementlabel) + 1));
@@ -13277,6 +13281,7 @@ class Form
 		$ret .= '<div class="liinputsearch"><input type="text" class="fieldcombo-search noborderfocus" placeholder="' . dol_escape_htmltag($langs->trans('Search')) . '"></div>';
 		$ret .= '<div class="fieldcombo-list">';
 
+
 		// Recursive rendering of an element of the combo, with the list of its sub-elements (indented into it)
 		// and the list of its fields. A direct sub-element is an element whose key starts with the key of its parent
 		// element followed by '__', without any other '__' after (so 't__fk_soc' is a sub-element of 't',
@@ -13315,6 +13320,8 @@ class Form
 			return $out;
 		};
 
+
+		// Render the list of fields we can use as filter
 		foreach ($arrayoffilterelements as $tmpelementkey => $tmpelementval) {
 			// The parent element is the part of the key before the last '__' ('t__fk_soc' -> 't', 't__fk_soc__fk_pays' -> 't__fk_soc')
 			$tmpparentkey = '';

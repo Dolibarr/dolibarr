@@ -54,12 +54,11 @@ Note also that, to fight against excessive AI reports, there is a quota of PR pe
 
 As the PR Maintainer:
 
-7. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you 
-to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
+8. The PR Maintainer will check and decide if he approves or not the commits. During this step, the PR Maintainer can modify your own code to make it valid for approbation or ask you to make the change yourself. For this the PR Maintainer may add commits to a PR. Depending on the tools used (can be done from github directly or from an IDE), such commits may be done directly after validating your PR (for example to complete it).
 
 As the Release Maintainer:
 
-8. A tag will be added to take a snapshot of the code with all the changes approved by PR Maintainers, when ready to do a release.
+9. A tag will be added to take a snapshot of the code with all the changes approved by PR Maintainers, when ready to do a release.
 
 
 Note: Mainteners of a branch can directly commit to the project (in their branch) without a PR. Of course anyone can check commit history and comment!
