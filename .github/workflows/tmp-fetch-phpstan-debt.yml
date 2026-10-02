@@ -1,0 +1,52 @@
+name: Fetch PHPStan technical debt
+on:
+  push:
+    branches: [tmp-fetch-phpstan-debt]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download page
+        run: curl -sL --max-time 120 https://cti.dolibarr.org/ -o page.html
+      - name: Extract text and chunks
+        run: |
+          python3 - <<'EOF'
+          import re, html
+          raw = open('page.html', encoding='utf-8', errors='replace').read()
+          # Strip scripts/styles
+          raw = re.sub(r'(?is)<(script|style)[^>]*>.*?</\1>', '', raw)
+          # Convert table cells/rows to a readable layout
+          raw = re.sub(r'(?i)</t[dh]>', ' | ', raw)
+          raw = re.sub(r'(?i)</tr>', '\n', raw)
+          raw = re.sub(r'(?i)</(p|div|li|h[1-6]|table)>', '\n', raw)
+          # Strip all remaining tags
+          txt = re.sub(r'(?s)<[^>]+>', '', raw)
+          txt = html.unescape(txt)
+          txt = re.sub(r'[ \t]+', ' ', txt)
+          txt = re.sub(r'\n{3,}', '\n\n', txt)
+          open('page.txt', 'w', encoding='utf-8').write(txt)
+          n = len(txt)
+          print('text length', n)
+          # Write chunks of 25000 chars
+          i = 0
+          part = 0
+          while i < n:
+              open('cti_part%02d.txt' % part, 'w', encoding='utf-8').write(txt[i:i+25000])
+              i += 25000
+              part += 1
+          print('parts', part)
+          EOF
+      - name: Commit result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add cti_part*.txt page.txt
+          git commit -m "Save cti page chunks" || echo "nothing to commit"
+          git push
