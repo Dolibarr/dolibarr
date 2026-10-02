@@ -10,6 +10,7 @@
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +149,12 @@ print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 
 //ShippableStatus
 if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
-	print '<th class="linecolstock center" style="width: 30px;">'.$langs->trans("ShippableStatus").'</th>';
+	if (getDolGlobalString('ORDER_SHIPPABLE_SHOW_STOCK_QTY')) {
+		$langs->load("stocks");
+		print '<th class="linecolstock center nowraponall" title="'.dol_escape_htmltag($langs->trans("Stock").' / '.$langs->trans("VirtualStock")).'">'.$langs->trans("ShippableStatus").'</th>';
+	} else {
+		print '<th class="linecolstock center" style="width: 30px;">'.$langs->trans("ShippableStatus").'</th>';
+	}
 }
 
 // Unit
