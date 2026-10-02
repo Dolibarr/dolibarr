@@ -1323,6 +1323,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 		$picto = 'generic';
 	}
 
+	if ($titlealt) {
+		$titlealt = str_replace(array('\n', "\n"), ' - ', $titlealt);
+	}
+
 	// Define fullpathpicto to use into src
 	if ($pictoisfullpath) {
 		// Clean parameters
@@ -1395,7 +1399,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			$moreatt = trim($moreatt);
 
 			$enabledisablehtml = '<span class="' . $faprefix . ' ' . $fakey;
-			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
+			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dolPrintHTMLForAttribute($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			$enabledisablehtml .= '</span>';
 
 			return $enabledisablehtml;
@@ -1668,7 +1672,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			$moreatt = trim($moreatt);
 
 			$enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
-			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
+			$enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dolPrintHTMLForAttribute($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			$enabledisablehtml .= '</span>';
 
 			return $enabledisablehtml;
@@ -1948,11 +1952,7 @@ function getImgPictoConv($mode = 'fa')
  */
 function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $allowothertags = array())
 {
-	if (strpos($picto, '^') === 0) {
-		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
-	} else {
-		return img_picto($titlealt, 'object_' . $picto, $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
-	}
+	return img_picto($titlealt, $picto, $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
 }
 
 /**
@@ -4088,13 +4088,22 @@ function printCommonFooter($zone = 'private')
 /**
  * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
  *
- * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
- * @return	void
+ * @param 	string		$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
+ * @param	int<0,1>	$nooutput	Use 1 to return with no output
+ * @return	string					Empty string or HTML output
  */
-function dol_set_focus($selector)
+function dol_set_focus($selector, $nooutput = 0)
 {
-	print "\n" . '<!-- Set focus onto a specific field -->' . "\n";
-	print '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery(\'' . dol_escape_js($selector) . '\').focus(); });</script>' . "\n";
+	$out = "\n" . '<!-- Set focus onto a specific field -->' . "\n";
+	$out .= '<script nonce="' . getNonce() . '">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery(\'' . dol_escape_js($selector) . '\').focus(); });</script>' . "\n";
+
+	if ($nooutput) {
+		return $out;
+	} else {
+		print $out;
+	}
+
+	return '';
 }
 
 

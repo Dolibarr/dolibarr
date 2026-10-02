@@ -124,7 +124,7 @@ if (empty($reshook)) {
 	}
 
 	// Action remove group
-	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoedit) {
+	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodisable) {
 		$object->fetch($id);
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
