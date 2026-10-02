@@ -1,4 +1,4 @@
-name: Extract code sections (temporary)
+name: Extract code sections 2 (temporary)
 
 on:
   push:
@@ -27,31 +27,25 @@ jobs:
               with open(out, 'w') as f:
                   f.write(''.join(res))
 
-          dump('htdocs/comm/propal/class/propal.class.php', 2020, 2140, 'code-propal.txt')
-          dump('htdocs/commande/class/commande.class.php', 2290, 2410, 'code-commande.txt')
-
-          # Dump every line mentioning multilangs in CommonObjectLine and propal/commande classes, with context info
-          for src, out in [('htdocs/core/class/commonobject.class.php', 'code-multilangs-commonobject.txt'),
-                           ('htdocs/comm/propal/class/propal.class.php', 'code-multilangs-propal.txt'),
-                           ('htdocs/commande/class/commande.class.php', 'code-multilangs-commande.txt'),
-                           ('htdocs/core/class/commonobjectline.class.php', 'code-multilangs-line.txt')]:
+          import re
+          for src in ['htdocs/core/class/commonobject.class.php', 'htdocs/product/class/product.class.php', 'htdocs/core/class/commonobjectline.class.php']:
               try:
                   with open(src, 'r', encoding='utf-8', errors='replace') as f:
                       lines = f.readlines()
               except FileNotFoundError:
                   continue
-              res = []
               for i, l in enumerate(lines):
-                  if 'multilangs' in l.lower():
-                      res.append('%d' % (i + 1) + chr(9) + l.rstrip(chr(10)) + NL)
-              with open(out, 'w') as f:
-                  f.write(''.join(res))
+                  if re.search(r'(class\s+CommonObjectLine|public\s+\$multilangs|function\s+getMultiLangs)', l):
+                      a = max(0, i - 12)
+                      b = min(len(lines), i + 30)
+                      name = 'dump-%s-%d.txt' % (src.replace('/', '_').replace('.', '_'), i + 1)
+                      dump(src, a + 1, b, name)
           PYEOF
 
       - name: Commit extracted data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add code-*.txt
-          git commit -m "chore: extract code sections [skip ci]" || echo "nothing to commit"
+          git add dump-*.txt
+          git commit -m "chore: extract class sections [skip ci]" || echo "nothing to commit"
           git push
