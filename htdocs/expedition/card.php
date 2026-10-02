@@ -664,8 +664,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('expedition', 'creer')) {
-		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
-		$result = $object->cancel($user, 0, (bool) $also_update_stock);
+		$result = $object->cancel($user, 0);
 		if ($result > 0) {
 			$result = $object->setStatut(Expedition::STATUS_CANCELED);
 		} else {
@@ -2704,7 +2703,7 @@ if ($action == 'create' && $usercancreate) {
 	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
+		if ($object->status == Expedition::STATUS_CLOSED) {
 			$formquestion = array(
 				array(
 					'type' => 'onecolumn',
@@ -2714,7 +2713,7 @@ if ($action == 'create' && $usercancreate) {
 					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
 					'name' => 'alsoUpdateStock',
 					'type' => 'checkbox',
-					'value' => 0	/* Default must be "No stock change". Deletion is rarely used to cancel a shipment (not the correct business event for that). Re-open + Cancel is better for this. Deletion is usually used to clean db and should not impact the stock */
+					'value' => getDolGlobalString('AUTO_RESTOCK_ON_SHIPMENT_DELETE')
 				),
 			);
 		}
