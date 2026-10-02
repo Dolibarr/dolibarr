@@ -1,0 +1,8 @@
+page bytes: 335874
+3839	Lines of code
+21518	Contributions
+23220	Contributors
+24462	Project value
+24933	Last security issues (last 6 months)
+70688	Technical debt (PHPStan - PHP Static Analysis Tool 2.2.14 - level 9 -> 111 warnings)
+122999	Technical debt (Phan 5.5.2 -> 388 warnings)

@@ -1,0 +1,339 @@
+ Technical debt (PHPStan - PHP Static Analysis Tool 2.2.14 - level 9 -> 111 warnings) 
+ 
+ 
+ 
+ File | Line | Type | 
+ 
+ htdocs/admin/clicktodial.php | 172 | Property Societe::$phone (string) on left side of ?? is not nullable. | 
+
+ htdocs/admin/dict.php | 2385 | Strict comparison using !== between mixed and null will always evaluate to true. | 
+
+ htdocs/comm/propal/class/propal.class.php | 2082 | Property CommonObjectLine::$multilangs (array|null) does not accept array|null. | 
+
+ htdocs/commande/class/commande.class.php | 2354 | Property CommonObjectLine::$multilangs (array|null) does not accept array|null. | 
+
+ htdocs/compta/facture/class/facture.class.php | 703 | Parameter #1 $substitutionarray of function complete_substitutions_array expects array, array given. | 
+
+ htdocs/compta/facture/class/facture.class.php | 2714 | Property CommonObjectLine::$multilangs (array|null) does not accept array|null. | 
+
+ htdocs/compta/sociales/payments.php | 184 | Strict comparison using !== between mixed and null will always evaluate to true. | 
+
+ htdocs/compta/tva/index.php | 275 | Strict comparison using === between true and true will always evaluate to true. | 
+
+ htdocs/contrat/class/contrat.class.php | 978 | Property CommonObjectLine::$multilangs (array|null) does not accept array|null. | 
+
+ htdocs/core/actions_massactions.inc.php | 1282 | Parameter #1 $array of function sort contains unresolvable type. | 
+
+ htdocs/core/actions_massactions.inc.php | 1296 | Expression " | 
+
+ htdocs/core/ajax/savekanbanfield.php | 60 | Function restrictedArea invoked with 10 parameters, 2-9 required. | 
+
+ htdocs/core/ajax/updateextrafield.php | 84 | Function restrictedArea invoked with 10 parameters, 2-9 required. | 
+
+ htdocs/core/class/commonobject.class.php | 3033 | PHPDoc tag `@var` with type Propal is not subtype of native type $this(CommonObject). | 
+
+ htdocs/core/class/commonobject.class.php | 3063 | PHPDoc tag `@var` with type Commande is not subtype of native type $this(CommonObject). | 
+
+ htdocs/core/class/commonobject.class.php | 3093 | PHPDoc tag `@var` with type Facture is not subtype of native type $this(CommonObject). | 
+
+ htdocs/core/class/commonobject.class.php | 3124 | PHPDoc tag `@var` with type FactureRec is not subtype of native type $this(CommonObject). | 
+
+ htdocs/core/class/commonobject.class.php | 3157 | PHPDoc tag `@var` with type SupplierProposal is not subtype of native type $this(CommonObject). | 
+
+ htdocs/core/class/commonobject.class.php | 3186 | PHPDoc tag `@var` with type CommandeFournisseur is not subtype of native type $this(CommonObject). | 
+
+ htdocs/core/class/commonobject.class.php | 3212 | PHPDoc tag `@var` with type FactureFournisseur is not subtype of native type $this(CommonObject). | 
+
+ htdocs/core/class/fileupload.class.php | 84 | Strict comparison using !== between array|string and null will always evaluate to true. | 
+
+ htdocs/core/class/html.form.class.php | 7156 | Offset 'datenow' on array{name?: string, value?: bool|float|string, values?: array, default?: string, label?: string, type: 'date'|'datetime', size?: int|string, morecss?: string, ...} in empty() does not exist. | 
+
+ htdocs/core/class/html.form.class.php | 7159 | Offset 'hours' on array{name?: string, value?: bool|float|string, values?: array, default?: string, label?: string, type: 'date'|'datetime', size?: int|string, morecss?: string, ...} in isset() does not exist. | 
+
+ htdocs/core/class/html.form.class.php | 7160 | Offset 'minutes' on array{name?: string, value?: bool|float|string, values?: array, default?: string, label?: string, type: 'date'|'datetime', size?: int|string, morecss?: string, ...} in isset() does not exist. | 
+
+ htdocs/core/class/html.form.class.php | 9718 | Parameter #3 $optJson of method Form::constructProjectListOption() expects array{key: string, value: string, type: string}, array{} given. | 
+
+ htdocs/core/class/html.form.class.php | 13803 | Parameter #1 $array of function dol_sort_array contains unresolvable type. | 
+
+ htdocs/core/class/html.form.class.php | 13803 | Return type of call to function dol_sort_array contains unresolvable type. | 
+
+ htdocs/core/lib/files.lib.php | 2703 | PHPDoc tag `@var` with type array is not subtype of native type RecursiveIteratorIterator. | 
+
+ htdocs/core/lib/files.lib.php | 2976 | PHPDoc tag `@var` with type array is not subtype of native type RecursiveIteratorIterator. | 
+
+ htdocs/core/lib/files.lib.php | 4294 | Strict comparison using !== between array{file: string, timestamp: int|false} and null will always evaluate to true. | 
+
+ htdocs/core/lib/functions.lib.php | 2334 | Function dol_escape_js() has no return type specified. | 
+
+ htdocs/core/lib/functions.lib.php | 2334 | Function dol_escape_js() has parameter $noescapebackslashn with no type specified. | 
+
+ htdocs/core/lib/functions.lib.php | 6132 | Instanceof between DOMDocument and DOMDocument will always evaluate to true. | 
+
+ htdocs/core/lib/functions.lib.php | 6166 | Variable $valuetoclean might not be defined. | 
+
+ htdocs/core/lib/functions.lib.php | 7064 | Instanceof between User and User will always evaluate to true. | 
+
+ htdocs/core/lib/functions.lib.php | 7338 | Property Societe::$id (int) on left side of ?? is not nullable. | 
+
+ htdocs/core/lib/functions.lib.php | 7339 | Property Societe::$name (string) on left side of ?? is not nullable. | 
+
+ htdocs/core/lib/functions.lib.php | 7340 | Property Societe::$name_alias (string) on left side of ?? is not nullable. | 
+
+ htdocs/core/lib/functions.lib.php | 7347 | Property Societe::$phone (string) on left side of ?? is not nullable. | 
+
+ htdocs/core/lib/functions.lib.php | 7348 | Property Societe::$fax (string) on left side of ?? is not nullable. | 
+
+ htdocs/core/lib/functions.lib.php | 7354 | Property Societe::$country_code (string) on left side of ?? is not nullable. | 
+
+ htdocs/core/lib/modulebuilder.lib.php | 730 | Strict comparison using !== between string and false will always evaluate to true. | 
+
+ htdocs/core/lib/phone.lib.php | 87 | Strict comparison using !== between mixed and null will always evaluate to true. | 
+
+ htdocs/core/lib/phone.lib.php | 125 | Strict comparison using !== between mixed and null will always evaluate to true. | 
+
+ htdocs/core/lib/propal.lib.php | 314 | Parameter #1 $array (array{non-falsy-string, mixed, mixed, mixed, mixed}) of array_values is already a list, call has no effect. | 
+
+ htdocs/core/lib/tax.lib.php | 118 | Function tax_by_thirdparty() never returns array so it can be removed from the return type. | 
+
+ htdocs/core/lib/tax.lib.php | 671 | Function tax_by_thirdparty() should return array|int but returns array. | 
+
+ htdocs/core/lib/tax.lib.php | 691 | Function tax_by_rate() never returns array so it can be removed from the return type. | 
+
+ htdocs/core/lib/tax.lib.php | 1210 | Function tax_by_rate() should return array|int but returns array. | 
+
+ htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php | 338 | Variable $array_propal_object in isset() always exists and is not nullable. | 
+
+ htdocs/core/modules/facture/doc/pdf_octopus.modules.php | 879 | Parameter #2 $current_line of method pdf_octopus::getInfosLineLastSituation() expects FactureLigne, CommonInvoiceLine given. | 
+
+ htdocs/core/modules/facture/modules_facture.php | 193 | Call to static method create() on an unknown class Sprain\SwissQrBill\QrBill. | 
+
+ htdocs/core/modules/facture/modules_facture.php | 196 | Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\CombinedAddress. | 
+
+ htdocs/core/modules/facture/modules_facture.php | 211 | Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\CreditorInformation. | 
+
+ htdocs/core/modules/facture/modules_facture.php | 227 | Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\PaymentReference. | 
+
+ htdocs/core/modules/facture/modules_facture.php | 228 | Access to constant TYPE_NON on an unknown class Sprain\SwissQrBill\DataGroup\Element\PaymentReference. | 
+
+ htdocs/core/modules/facture/modules_facture.php | 235 | Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\PaymentAmountInformation. | 
+
+ htdocs/core/modules/facture/modules_facture.php | 244 | Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\AdditionalInformation. | 
+
+ htdocs/core/modules/facture/modules_facture.php | 251 | Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\CombinedAddress. | 
+
+ htdocs/core/modules/facture/modules_facture.php | 314 | Instantiated class Sprain\SwissQrBill\PaymentPart\Output\TcPdfOutput\TcPdfOutput not found. | 
+
+ htdocs/core/modules/import/import_csv.modules.php | 260 | Method ImportCsv::import_read_record() return type has no value type specified in iterable type array. | 
+
+ htdocs/core/modules/import/import_xlsx.modules.php | 338 | Method ImportXlsx::import_read_record() return type has no value type specified in iterable type array. | 
+
+ htdocs/core/modules/modUser.class.php | 281 | Property DolibarrModules::$export_permission (array) does not accept non-empty-array. | 
+
+ htdocs/core/modules/oauth/stripelive_oauthcallback.php | 147 | Strict comparison using === between null and null will always evaluate to true. | 
+
+ htdocs/core/modules/oauth/stripelive_oauthcallback.php | 178 | Strict comparison using === between null and null will always evaluate to true. | 
+
+ htdocs/dav/fileserver.php | 229 | Variable $baseUri in isset() always exists and is not nullable. | 
+
+ htdocs/debugbar/class/DataCollector/DolPhpCollector.php | 60 | Parameter #1 $callback of function set_error_handler expects (callable(int, string, string, int): bool)|null, array{$this(PhpCollector), 'errorHandler'} given. | 
+
+ htdocs/debugbar/class/autoloader.php | 15 | Parameter #1 $callback of function spl_autoload_register expects (callable(string): void)|null, Closure(mixed): bool given. | 
+
+ htdocs/ecm/class/ecmdirectory.class.php | 736 | Parameter #1 $array of function dol_sort_array contains unresolvable type. | 
+
+ htdocs/ecm/class/ecmdirectory.class.php | 736 | Return type of call to function dol_sort_array contains unresolvable type. | 
+
+ htdocs/emailcollector/class/emailcollector.class.php | 1874 | Strict comparison using !== between IMAP\Connection|true and false will always evaluate to true. | 
+
+ htdocs/expedition/card.php | 3637 | Property ExpeditionLigne::$detail_children (array) on left side of ?? is not nullable. | 
+
+ htdocs/fourn/class/fournisseur.facture-rec.class.php | 351 | Property FactureFournisseurRec::$label (string) on left side of ?? is not nullable. | 
+
+ htdocs/fourn/class/fournisseur.facture.class.php | 550 | Parameter #1 $substitutionarray of function complete_substitutions_array expects array, array given. | 
+
+ htdocs/holiday/class/holiday.class.php | 175 | Property Holiday::$events has no type specified. | 
+
+ htdocs/imports/import.php | 873 | Parameter #3 $insertArray of function arrayInsert expects array{label?: string, example1?: string, required?: bool, imported?: bool|int, position?: int}, non-empty-array given. | 
+
+ htdocs/main.inc.php | 2372 | Variable $_POST in isset() always exists and is not nullable. | 
+
+ htdocs/modulebuilder/index.php | 5078 | Variable $proparrayofkeyval in isset() always exists and is not nullable. | 
+
+ htdocs/opensurvey/class/opensurveysondage.class.php | 73 | PHPDoc type array of property Opensurveysondage::$lines is not covariant with PHPDoc type array of overridden property CommonObject::$lines. | 
+
+ htdocs/opensurvey/results.php | 259 | Variable $erreur_ajout_date in isset() always exists and is not nullable. | 
+
+ htdocs/product/canvas/product/actions_card_product.class.php | 339 | Property ActionsCardProduct::$field_list (array) does not accept non-empty-list. | 
+
+ htdocs/product/class/html.formproduct.class.php | 280 | Strict comparison using === between 2 and 2 will always evaluate to true. | 
+
+ htdocs/projet/element.php | 1932 | Variable $total_time in isset() always exists and is not nullable. | 
+
+ htdocs/public/payment/newpayment.php | 2208 | Variable $attendee might not be defined. | 
+
+ htdocs/public/payment/newpayment.php | 2225 | Variable $attendee might not be defined. | 
+
+ htdocs/public/payment/newpayment.php | 2230 | Variable $attendee might not be defined. | 
+
+ htdocs/public/payment/newpayment.php | 2233 | Variable $attendee might not be defined. | 
+
+ htdocs/public/payment/newpayment.php | 2240 | Variable $invoice might not be defined. | 
+
+ htdocs/public/payment/newpayment.php | 2326 | Variable $invoice might not be defined. | 
+
+ htdocs/public/payment/paymentko.php | 143 | PHPDoc tag `@var` with type CommonObject is not subtype of native type stdClass. | 
+
+ htdocs/public/test/test_arrays.php | 198 | Variable $param might not be defined. | 
+
+ htdocs/public/test/test_arrays.php | 199 | Variable $actioncode might not be defined. | 
+
+ htdocs/public/test/test_arrays.php | 200 | Variable $actioncode might not be defined. | 
+
+ htdocs/public/test/test_arrays.php | 202 | Variable $status might not be defined. | 
+
+ htdocs/public/test/test_arrays.php | 203 | Variable $status might not be defined. | 
+
+ htdocs/public/test/test_arrays.php | 205 | Variable $filter might not be defined. | 
+
+ htdocs/public/test/test_arrays.php | 208 | Variable $filtert might not be defined. | 
+
+ htdocs/public/test/test_arrays.php | 211 | Variable $socid might not be defined. | 
+
+ htdocs/public/test/test_arrays.php | 220 | Variable $type might not be defined. | 
+
+ htdocs/public/test/test_arrays.php | 223 | Variable $usergroup might not be defined. | 
+
+ htdocs/takepos/pay.php | 163 | Variable $keyforstripeterminalbank in isset() always exists and is not nullable. | 
+
+ htdocs/takepos/pay.php | 641 | Variable $keyforstripeterminalbank in isset() always exists and is not nullable. | 
+
+ htdocs/takepos/pay.php | 752 | Variable $keyforstripeterminalbank in isset() always exists and is not nullable. | 
+
+ htdocs/user/list.php | 1364 | Offset 'val' on array{val: array{'u.salary': (float|int)}, nbfield: int, pos?: non-empty-array} in isset() always exists and is not nullable. | 
+
+ htdocs/user/list.php | 1367 | Offset 'u.salary' on array{'u.salary': (float|int)} in isset() always exists and is not nullable. | 
+
+ htdocs/user/perms.php | 761 | Variable $permsgroupbyentitypluszero in isset() always exists and is not nullable. | 
+
+ htdocs/user/perms.php | 834 | Variable $permsgroupbyentitypluszero in isset() always exists and is not nullable. | 
+
+ htdocs/user/perms.php | 842 | Variable $permsgroupbyentitypluszero in isset() always exists and is not nullable. | 
+
+ htdocs/webportal/class/webportalmember.class.php | 315 | Strict comparison using === between 'nolink' and 'nolink' will always evaluate to true. | 
+
+ htdocs/webportal/class/webportalorder.class.php | 236 | Strict comparison using === between 'nolink' and 'nolink' will always evaluate to true. | 
+
+ htdocs/webportal/class/webportalpropal.class.php | 230 | Strict comparison using === between 'nolink' and 'nolink' will always evaluate to true. | 
+
+ 
+ 
+ Technical debt (Phan 5.5.2 -> 388 warnings) 
+ 
+ 
+ 
+ File | Line | Detail | 
+ 
+ htdocs/core/actions_addupdatedelete.inc.php | 153 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject-&gt;param_list | 
+
+ htdocs/core/actions_addupdatedelete.inc.php | 323 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject-&gt;param_list | 
+
+ htdocs/core/actions_massactions.inc.php | 200 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject-&gt;socid | 
+
+ htdocs/core/actions_sendmails.inc.php | 168 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpenseReport-&gt;socid | 
+
+ htdocs/core/actions_sendmails.inc.php | 169 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpenseReport-&gt;socid | 
+
+ htdocs/core/ajax/ajaxdirtree.php | 435 | TypeError PhanTypeMismatchArgument Argument 1 ($fulltree) is $sqltree of type array but \tree_showpad() takes array defined at htdocs/core/lib/treeview.lib.php:37 | 
+
+ htdocs/core/class/canvas.class.php | 255 | UndefError PhanUndeclaredMethod Call to undeclared method \ActionsContactCardCommon::doActions | 
+
+ htdocs/core/class/cgenericdic.class.php | 460 | UndefError PhanUndeclaredProperty Reference to undeclared property \CGenericDic-&gt;context | 
+
+ htdocs/core/class/cgenericdic.class.php | 470 | UndefError PhanUndeclaredProperty Reference to undeclared property \CGenericDic-&gt;context | 
+
+ htdocs/core/class/commonpeople.class.php | 115 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonPeople-&gt;societe | 
+
+ htdocs/core/class/commonpeople.class.php | 158 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonPeople-&gt;civilite | 
+
+ htdocs/core/class/commonpeople.class.php | 158 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonPeople-&gt;civility | 
+
+ htdocs/core/class/commonpeople.class.php | 158 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonPeople-&gt;civility_id | 
+
+ htdocs/core/class/commonpeople.class.php | 382 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonPeople-&gt;typent_code | 
+
+ htdocs/core/class/conf.class.php | 602 | TypeError PhanTypeMismatchProperty Assigning ($this-&gt;modules_parts as a field) of type array to property but \Conf-&gt;modules_parts is array | 
+
+ htdocs/core/class/ctyperesource.class.php | 417 | UndefError PhanUndeclaredProperty Reference to undeclared property \Ctyperesource-&gt;context | 
+
+ htdocs/core/class/ctyperesource.class.php | 427 | UndefError PhanUndeclaredProperty Reference to undeclared property \Ctyperesource-&gt;context | 
+
+ htdocs/core/class/dolgraph.class.php | 960 | UndefError PhanUndeclaredProperty Reference to undeclared property \DolGraph-&gt;shownographyet | 
+
+ htdocs/core/class/dolgraph.class.php | 1272 | UndefError PhanUndeclaredProperty Reference to undeclared property \DolGraph-&gt;shownographyet | 
+
+ htdocs/core/class/emailsenderprofile.class.php | 204 | UndefError PhanUndeclaredProperty Reference to undeclared property \EmailSenderProfile-&gt;title | 
+
+ htdocs/core/class/html.form.class.php | 1348 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(\$htmlname) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/class/html.form.class.php | 11035 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(' '.\$morecss) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/class/html.form.class.php | 11101 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(\$morecss) output (not standalone PHP code) must be wrapped in single quotes | 
+
+ htdocs/core/class/html.form.class.php | 14330 | ParamError PhanParamTooMany Call with 8 arg(s) to \Categorie::getNomUrl(int $withpicto = 0, string $option = '', int $maxlength = 0, string $moreparam = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = 0) which only takes 7 arg(s) defined at htdocs/categories/class/categorie.class.php:1943 | 
+
+ htdocs/core/class/html.form.class.php | 14330 | Plugin PhanPluginSuspiciousParamPosition Suspicious order for argument save_lastsearch_value - This is getting passed to parameter #7 (int $save_lastsearch_value) of \Categorie::getNomUrl(int $withpicto = 0, string $option = '', int $maxlength = 0, string $moreparam = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = 0) defined at htdocs/categories/class/categorie.class.php:1943 | 
+
+ htdocs/core/class/html.form.class.php | 14330 | TypeError PhanTypeMismatchArgument Argument 4 ($moreparam) is $save_lastsearch_value of type int but \Categorie::getNomUrl() takes string defined at htdocs/categories/class/categorie.class.php:1943 | 
+
+ htdocs/core/class/html.formaccounting.class.php | 636 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(\$labelhtmlname) output (not standalone PHP code) must be wrapped in single quotes | 
+
+ htdocs/core/class/html.formai.class.php | 232 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(\$format) output (not standalone PHP code) must be wrapped in single quotes | 
+
+ htdocs/core/class/html.formai.class.php | 232 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(\$function) output (not standalone PHP code) must be wrapped in single quotes | 
+
+ htdocs/core/class/html.formcompany.class.php | 1011 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormCompany-&gt;idprof1 | 
+
+ htdocs/core/class/html.formcompany.class.php | 1012 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormCompany-&gt;idprof1 | 
+
+ htdocs/core/class/html.formcompany.class.php | 1013 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormCompany-&gt;idprof2 | 
+
+ htdocs/core/class/html.formcompany.class.php | 1014 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormCompany-&gt;idprof2 | 
+
+ htdocs/core/class/html.formcompany.class.php | 1015 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormCompany-&gt;idprof3 | 
+
+ htdocs/core/class/html.formcompany.class.php | 1016 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormCompany-&gt;idprof3 | 
+
+ htdocs/core/class/html.formcompany.class.php | 1017 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormCompany-&gt;idprof4 | 
+
+ htdocs/core/class/html.formcompany.class.php | 1018 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormCompany-&gt;idprof4 | 
+
+ htdocs/core/class/html.formmail.class.php | 1692 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormMail-&gt;errorstomail | 
+
+ htdocs/core/class/html.formother.class.php | 115 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(\$jstoexecuteonadd) output (not standalone PHP code) must be wrapped in single quotes | 
+
+ htdocs/core/class/html.formother.class.php | 130 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(\$jstoexecuteonadd) output (not standalone PHP code) must be wrapped in single quotes | 
+
+ htdocs/core/class/ldap.class.php | 248 | UndefError PhanUndeclaredTypeProperty Property \Ldap-&gt;connection has undeclared type \ldap\connection | 
+
+ htdocs/core/class/timespent.class.php | 860 | UndefError PhanUndeclaredProperty Reference to undeclared property \TimeSpent-&gt;label | 
+
+ htdocs/core/class/timespent.class.php | 1015 | UndefError PhanUndeclaredMethod Call to undeclared method \CommonNumRefGenerator::getNextValue | 
+
+ htdocs/core/js/lib_head.js.php | 75 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;transnoentitiesnoconv('Month01')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/js/lib_head.js.php | 76 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;transnoentitiesnoconv('Month02')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/js/lib_head.js.php | 77 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;transnoentitiesnoconv('Month03')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/js/lib_head.js.php | 78 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;transnoentitiesnoconv('Month04')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/js/lib_head.js.php | 79 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;transnoentitiesnoconv('Month05')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/js/lib_head.js.php | 80 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;transnoentitiesnoconv('Month06')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/js/lib_head.js.php | 81 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;transnoentitiesnoconv('Month07')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/js/lib_head.js.php | 82 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;transnoentitiesnoconv('Month08')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/core/j

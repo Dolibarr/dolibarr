@@ -1,0 +1,148 @@
+taforprice of array type array{pu_ht:float|int|non-empty-string|non-zero-int|string,pu_ttc:float|int|string,price_min:float|int|string,price_base_type:string,tva_tx:float|int|null|string,tva_npr:float|int} | 
+
+ htdocs/projet/tasks/time.php | 803 | TypeError PhanTypeInvalidDimOffset Invalid offset "localtax2" of $dataforprice of array type array{pu_ht:float|int|non-empty-string|non-zero-int|string,pu_ttc:float|int|string,price_min:float|int|string,price_base_type:string,tva_tx:float|int|null|string,tva_npr:float|int} | 
+
+ htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php | 71 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject-&gt;date_start | 
+
+ htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php | 72 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject-&gt;date_end | 
+
+ htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php | 74 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject-&gt;budget_amount | 
+
+ htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php | 75 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject-&gt;budget_amount | 
+
+ htdocs/public/project/new.php | 337 | UndefError PhanUndeclaredProperty Reference to undeclared property \Project-&gt;email | 
+
+ htdocs/public/project/suggestbooth.php | 587 | UndefError PhanUndeclaredProperty Reference to undeclared property \Project-&gt;label | 
+
+ htdocs/public/project/suggestconference.php | 532 | UndefError PhanUndeclaredProperty Reference to undeclared property \Project-&gt;label | 
+
+ htdocs/public/webportal/tpl/footer.tpl.php | 240 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;trans('OriginalSize'), 1) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/public/webportal/tpl/menu.tpl.php | 266 | UndefError PhanUndeclaredProperty Reference to undeclared property \Context-&gt;doNotDisplayMenu | 
+
+ htdocs/public/webportal/tpl/menu.tpl.php | 275 | UndefError PhanUndeclaredProperty Reference to undeclared property \Context-&gt;doNotDisplayMenu | 
+
+ htdocs/reception/card.php | 1318 | UndefError PhanUndeclaredProperty Reference to undeclared property \Reception-&gt;delivery_date | 
+
+ htdocs/reception/card.php | 2726 | UndefError PhanUndeclaredProperty Reference to undeclared property \Product-&gt;product_label | 
+
+ htdocs/reception/class/reception.class.php | 1117 | UndefError PhanUndeclaredProperty Reference to undeclared property \Reception-&gt;rang | 
+
+ htdocs/reception/class/reception.class.php | 1119 | UndefError PhanUndeclaredProperty Reference to undeclared property \Reception-&gt;fk_reception | 
+
+ htdocs/reception/class/reception.class.php | 1149 | UndefError PhanUndeclaredProperty Reference to undeclared property \Reception-&gt;fk_reception | 
+
+ htdocs/reception/class/reception.class.php | 1376 | UndefError PhanUndeclaredProperty Reference to undeclared property \Reception-&gt;fk_user_author | 
+
+ htdocs/reception/class/reception.class.php | 1377 | UndefError PhanUndeclaredProperty Reference to undeclared property \Reception-&gt;fk_user_author | 
+
+ htdocs/reception/class/reception.class.php | 1379 | UndefError PhanUndeclaredProperty Reference to undeclared property \Reception-&gt;fk_user_valid | 
+
+ htdocs/reception/class/reception.class.php | 1380 | UndefError PhanUndeclaredProperty Reference to undeclared property \Reception-&gt;fk_user_valid | 
+
+ htdocs/recruitment/class/recruitmentcandidature.class.php | 347 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentCandidature-&gt;socid | 
+
+ htdocs/recruitment/class/recruitmentcandidature.class.php | 732 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentCandidature-&gt;societe | 
+
+ htdocs/recruitment/class/recruitmentjobposition.class.php | 368 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php | 803 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;ref_client | 
+
+ htdocs/recruitment/core/modules/recruitment/doc/pdf_standard_recruitmentjobposition.modules.php | 807 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;ref_client | 
+
+ htdocs/recruitment/core/modules/recruitment/mod_recruitmentcandidature_advanced.php | 136 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentCandidature-&gt;date | 
+
+ htdocs/recruitment/core/modules/recruitment/mod_recruitmentjobposition_advanced.php | 136 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;date | 
+
+ htdocs/recruitment/recruitmentcandidature_card.php | 434 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentCandidature-&gt;login | 
+
+ htdocs/recruitment/recruitmentcandidature_card.php | 608 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentCandidature-&gt;socid | 
+
+ htdocs/recruitment/recruitmentcandidature_list.php | 451 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_agenda.php | 178 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_applications.php | 233 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_applications.php | 237 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_card.php | 348 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_card.php | 352 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_card.php | 443 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_document.php | 159 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_document.php | 163 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_note.php | 135 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/recruitment/recruitmentjobposition_note.php | 139 | UndefError PhanUndeclaredProperty Reference to undeclared property \RecruitmentJobPosition-&gt;socid | 
+
+ htdocs/salaries/virement_request.php | 274 | UndefError PhanUndeclaredProperty Reference to undeclared property \Salary-&gt;socid | 
+
+ htdocs/salaries/virement_request.php | 763 | UndefError PhanUndeclaredProperty Reference to undeclared property \Salary-&gt;type | 
+
+ htdocs/societe/ajax/company.php | 96 | UndefError PhanUndeclaredProperty Reference to undeclared property \Societe-&gt;type | 
+
+ htdocs/supplier_proposal/card.php | 468 | UndefError PhanUndeclaredProperty Reference to undeclared property \OrderLine-&gt;ref_supplier | 
+
+ htdocs/supplier_proposal/class/api_supplier_proposals.class.php | 212 | UndefError PhanUndeclaredProperty Reference to undeclared property \SupplierProposal-&gt;duree_validite | 
+
+ htdocs/supplier_proposal/class/supplier_proposal.class.php | 1905 | UndefError PhanUndeclaredProperty Reference to undeclared property \Product-&gt;qty | 
+
+ htdocs/supplier_proposal/class/supplier_proposal.class.php | 1905 | UndefError PhanUndeclaredProperty Reference to undeclared property \Product-&gt;subprice | 
+
+ htdocs/supplier_proposal/class/supplier_proposal.class.php | 1906 | UndefError PhanUndeclaredProperty Reference to undeclared property \Product-&gt;subprice | 
+
+ htdocs/supplier_proposal/class/supplier_proposal.class.php | 1928 | UndefError PhanUndeclaredProperty Reference to undeclared property \ProductFournisseur-&gt;qty | 
+
+ htdocs/supplier_proposal/class/supplier_proposal.class.php | 1928 | UndefError PhanUndeclaredProperty Reference to undeclared property \ProductFournisseur-&gt;subprice | 
+
+ htdocs/supplier_proposal/class/supplier_proposal.class.php | 1929 | UndefError PhanUndeclaredProperty Reference to undeclared property \ProductFournisseur-&gt;qty | 
+
+ htdocs/supplier_proposal/class/supplier_proposal.class.php | 1930 | UndefError PhanUndeclaredProperty Reference to undeclared property \ProductFournisseur-&gt;subprice | 
+
+ htdocs/supplier_proposal/class/supplier_proposal.class.php | 1953 | UndefError PhanUndeclaredProperty Reference to undeclared property \ProductFournisseur-&gt;multicurrency_subprice | 
+
+ htdocs/takepos/invoice.php | 1973 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js((string)\$s) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/takepos/invoice.php | 1973 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(dol_escape_htmltag((string)\$s)) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/takepos/invoice.php | 1975 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js((string)\$s) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/takepos/invoice.php | 1975 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(dol_escape_htmltag((string)\$s)) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+ htdocs/takepos/invoice.php | 1996 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs-&gt;trans('SaleStartedAt', dol_print_date($db-&gt;jdate(\$obj-&gt;datec), '%H:%M', 'tzuser')).' - '.\$obj-&gt;ref) output (not standalone PHP code) must be wrapped in single quotes | 
+
+ htdocs/takepos/split.php | 156 | Plugin PhanPluginUndeclaredVariableIsset undeclared variable $invoiceid in isset() | 
+
+ htdocs/ticket/card.php | 1598 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormTicket-&gt;ref | 
+
+ htdocs/ticket/card.php | 1599 | UndefError PhanUndeclaredProperty Reference to undeclared property \FormTicket-&gt;id | 
+
+ htdocs/ticket/class/actions_ticket.class.php | 165 | UndefError PhanUndeclaredProperty Reference to undeclared property \Ticket-&gt;label | 
+
+ htdocs/ticket/class/actions_ticket.class.php | 166 | UndefError PhanUndeclaredProperty Reference to undeclared property \Ticket-&gt;description | 
+
+ htdocs/ticket/class/cticketcategory.class.php | 293 | UndefError PhanUndeclaredProperty Reference to undeclared property \CTicketCategory-&gt;fk_soc | 
+
+ htdocs/ticket/class/cticketcategory.class.php | 293 | UndefError PhanUndeclaredProperty Reference to undeclared property \CTicketCategory-&gt;socid | 
+
+ htdocs/user/class/user.class.php | 3538 | UndefError PhanUndeclaredProperty Reference to undeclared property \User-&gt;label | 
+
+ htdocs/user/class/usergroup.class.php | 766 | UndefError PhanUndeclaredProperty Reference to undeclared property \UserGroup-&gt;company | 
+
+ htdocs/user/class/usergroup.class.php | 766 | UndefError PhanUndeclaredProperty Reference to undeclared property \UserGroup-&gt;societe | 
+
+ htdocs/variants/tpl/productattributevalueline_edit.tpl.php | 89 | UndefError PhanUndeclaredProperty Reference to undeclared property \ReceptionLineBatch-&gt;value | 
+
+ htdocs/variants/tpl/productattributevalueline_view.tpl.php | 73 | UndefError PhanUndeclaredProperty Reference to undeclared property \ReceptionLineBatch-&gt;value | 
+
+ htdocs/webhook/class/target.class.php | 999 | UndefError PhanUndeclaredMethod Call to undeclared method \CommonNumRefGenerator::getNextValue | 
+
+ 
+
+
+ 
