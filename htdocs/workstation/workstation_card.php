@@ -130,6 +130,12 @@ if (empty($reshook)) {
 
 	$triggermodname = 'WORKSTATION_WORKSTATION_MODIFY';    // Name of trigger action code to execute when we modify record
 
+	if ($action == 'update' && $permissiontoadd) {
+		// The edit form gives the user groups and the resources to save (an empty selection posts nothing and means none)
+		$object->usergroups = is_array($groups) ? array_map('intval', $groups) : array();
+		$object->resources = is_array($resources) ? array_map('intval', $resources) : array();
+	}
+
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 

@@ -453,25 +453,30 @@ class Workstation extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
+		// The user groups and the resources to save are the ones of the object (loaded by fetch() and changed by the
+		// caller if needed), not the ones of a form: an update done from anywhere else than the card must keep them.
 
 		// Usergroups
-		$groups = GETPOST('groups', 'array:int');
-		WorkstationUserGroup::deleteAllGroupsOfWorkstation($this->id);
-		$this->usergroups = array();
+		if (is_array($this->usergroups)) {
+			$groups = array_unique(array_map('intval', $this->usergroups));
+			WorkstationUserGroup::deleteAllGroupsOfWorkstation($this->id);
+			$this->usergroups = array();
 
-		foreach ($groups as $id_group) {
-			$ws_usergroup = new WorkstationUserGroup($this->db);
-			$ws_usergroup->fk_workstation = $this->id;
-			$ws_usergroup->fk_usergroup = (int) $id_group;
-			$ws_usergroup->createCommon($user);
-			$this->usergroups[] = $id_group;
+			foreach ($groups as $id_group) {
+				$ws_usergroup = new WorkstationUserGroup($this->db);
+				$ws_usergroup->fk_workstation = $this->id;
+				$ws_usergroup->fk_usergroup = (int) $id_group;
+				$ws_usergroup->createCommon($user);
+				$this->usergroups[] = $id_group;
+			}
 		}
 
 		// Resources
-		$resources = GETPOST('resources', 'array:int');
-		WorkstationResource::deleteAllResourcesOfWorkstation($this->id);
-		$this->resources = array();
-		if (!empty($resources)) {
+		if (is_array($this->resources)) {
+			$resources = array_unique(array_map('intval', $this->resources));
+			WorkstationResource::deleteAllResourcesOfWorkstation($this->id);
+			$this->resources = array();
+
 			foreach ($resources as $id_resource) {
 				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $this->id;
