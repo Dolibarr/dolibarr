@@ -516,6 +516,9 @@ class MouvementStock extends CommonObject
 				$origin_id = 0;
 			}
 
+			// llx_stock_mouvement.label is VARCHAR(255)
+			$label = dol_trunc((string) $label, 255, 'right', 'UTF-8', 1);
+
 			$sql = "INSERT INTO ".$this->db->prefix()."stock_mouvement(";
 			$sql .= " datem, fk_product, batch, eatby, sellby,";
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
