@@ -1,4 +1,4 @@
-name: Extract code context
+name: Verify and push phpstan fix
 on:
   push:
     branches: [tmp-fetch-phpstan-debt]
@@ -8,17 +8,74 @@ permissions:
   contents: write
 
 jobs:
-  fetch:
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 150
     steps:
-      - name: Checkout
+      - name: Checkout develop
         uses: actions/checkout@v4
-      - name: Run extraction
-        run: python3 dev/tmp_extract_context.py
-      - name: Commit result
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml
+      - name: Install PHPStan 2.2.14
+        run: |
+          curl -sL https://github.com/phpstan/phpstan/releases/download/2.2.14/phpstan.phar -o phpstan.phar
+          php phpstan.phar --version
+      - name: Write helper scripts
+        run: |
+          echo 'c3JjID0gb3BlbigncGhwc3Rhbi5uZW9uLmRpc3QnLCBlbmNvZGluZz0ndXRmLTgnKS5yZWFkKCkKbGluZXMgPSBbbCBmb3IgbCBpbiBzcmMuc3BsaXQoJ1xuJykgaWYgJ3BocHN0YW4tYmFzZWxpbmUubmVvbicgbm90IGluIGxdCm91dCA9ICdcbicuam9pbihsaW5lcykKb3V0ID0gb3V0LnJlcGxhY2UoJ2xldmVsOiAxMCcsICdsZXZlbDogOScpCm91dCA9IG91dC5yZXBsYWNlKCd0bXBEaXI6IC4vLmdpdGh1Yi90bXAnLCAndG1wRGlyOiAvdG1wL3BocHN0YW4tdG1wJykKb3BlbigncGhwc3Rhbl9hcHN0YXRzX2NpLm5lb24nLCAndycsIGVuY29kaW5nPSd1dGYtOCcpLndyaXRlKG91dCkKcHJpbnQoJ2NvbmZpZyB3cml0dGVuJykK' | base64 -d > make_config.py
+          echo 'aW1wb3J0IHN5cwoKcGF0aCA9ICdodGRvY3MvY29yZS9jbGFzcy9jb21tb25vYmplY3RsaW5lLmNsYXNzLnBocCcKZGF0YSA9IG9wZW4ocGF0aCwgJ3JiJykucmVhZCgpCmlmIGInXHInIGluIGRhdGE6CiAgICBwcmludCgnQUJPUlQ6IENSIGZvdW5kIGluIHNvdXJjZSBmaWxlJykKICAgIHN5cy5leGl0KDEpCm9sZCA9IGInXHQgKiBAdmFyID9hcnJheTxzdHJpbmcsYXJyYXk8c3RyaW5nLHN0cmluZz4+JwpuZXcgPSBiJ1x0ICogQHZhciA/YXJyYXk8c3RyaW5nLGFycmF5e3Jvd2lkPzppbnQsbGFiZWw6c3RyaW5nLGRlc2NyaXB0aW9uOnN0cmluZyxub3RlPzpzdHJpbmcsb3RoZXI/OnN0cmluZyxhcnJheV9vcHRpb25zPzphcnJheTxzdHJpbmcsbWl4ZWQ+fT4nCmNudCA9IGRhdGEuY291bnQob2xkKQppZiBjbnQgIT0gMToKICAgIHByaW50KCdBQk9SVDogZXhwZWN0ZWQgMSBvY2N1cnJlbmNlIG9mIG9sZCBwaHBkb2MgbGluZSwgZm91bmQgJWQnICUgY250KQogICAgc3lzLmV4aXQoMSkKZGF0YSA9IGRhdGEucmVwbGFjZShvbGQsIG5ldykKb3BlbihwYXRoLCAnd2InKS53cml0ZShkYXRhKQpvcGVuKHBhdGgsIGVuY29kaW5nPSd1dGYtOCcpLnJlYWQoKQpwcmludCgncGF0Y2hlZCBvaywgdXRmLTggdmFsaWQnKQo=' | base64 -d > patch_file.py
+          echo 'YmFzZSA9IG9wZW4oJy90bXAvcGhwc3Rhbl9iYXNlLnR4dCcsIGVuY29kaW5nPSd1dGYtOCcsIGVycm9ycz0ncmVwbGFjZScpLnJlYWQoKQpwYXRjaGVkID0gb3BlbignL3RtcC9waHBzdGFuX3BhdGNoZWQudHh0JywgZW5jb2Rpbmc9J3V0Zi04JywgZXJyb3JzPSdyZXBsYWNlJykucmVhZCgpCgpkZWYgbXNncyh0KToKICAgIHJlcyA9IFtdCiAgICBmb3IgbCBpbiB0LnNwbGl0KCdcbicpOgogICAgICAgIHMgPSBsLnN0cmlwKCkKICAgICAgICBpZiBub3QgczoKICAgICAgICAgICAgY29udGludWUKICAgICAgICBpZiBzLnN0YXJ0c3dpdGgoJ05vdGU6Jykgb3Igcy5zdGFydHN3aXRoKCdSZXN1bHQ6Jykgb3IgJ1BIUFN0YW4nIGluIHMgb3Igcy5zdGFydHN3aXRoKCdTaGVsbCcpOgogICAgICAgICAgICBjb250aW51ZQogICAgICAgIHJlcy5hcHBlbmQocykKICAgIHJldHVybiByZXMKCmIgPSBtc2dzKGJhc2UpCnAgPSBtc2dzKHBhdGNoZWQpCmJzZXQgPSBzZXQoYikKcHNldCA9IHNldChwKQpyZW1vdmVkID0gW3ggZm9yIHggaW4gYiBpZiB4IG5vdCBpbiBwc2V0XQphZGRlZCA9IFt4IGZvciB4IGluIHAgaWYgeCBub3QgaW4gYnNldF0KcmVwb3J0ID0gW10KcmVwb3J0LmFwcGVuZCgnPT09IFJFTU9WRUQgKCVkKScgJSBsZW4ocmVtb3ZlZCkpCnJlcG9ydC5leHRlbmQocmVtb3ZlZCkKcmVwb3J0LmFwcGVuZCgnPT09IEFEREVEICglZCknICUgbGVuKGFkZGVkKSkKcmVwb3J0LmV4dGVuZChhZGRlZCkKb3BlbignL3RtcC9waHBzdGFuX2RpZmYudHh0JywgJ3cnLCBlbmNvZGluZz0ndXRmLTgnKS53cml0ZSgnXG4nLmpvaW4ocmVwb3J0KSkKcHJpbnQoJ2Jhc2UgbGluZXM6ICVkLCBwYXRjaGVkIGxpbmVzOiAlZCcgJSAobGVuKGIpLCBsZW4ocCkpKQpwcmludCgncmVtb3ZlZDogJWQsIGFkZGVkOiAlZCcgJSAobGVuKHJlbW92ZWQpLCBsZW4oYWRkZWQpKSkKaWYgYWRkZWQ6CiAgICBwcmludCgnTkVXIFdBUk5JTkdTIElOVFJPRFVDRUQ6JykKICAgIGZvciB4IGluIGFkZGVkOgogICAgICAgIHByaW50KHgpCg==' | base64 -d > compare.py
+      - name: Make phpstan config (level 9, no baseline)
+        run: python3 make_config.py
+      - name: Run PHPStan on develop (baseline)
+        run: |
+          php phpstan.phar analyse --no-progress -v --memory-limit 5G -a dev/build/phpstan/bootstrap.php -c phpstan_apstats_ci.neon > /tmp/phpstan_base.txt 2>&1 || true
+          tail -n 5 /tmp/phpstan_base.txt
+      - name: Apply patch
+        run: python3 patch_file.py
+      - name: Run PHPStan with patch
+        run: |
+          php phpstan.phar analyse --no-progress -v --memory-limit 5G -a dev/build/phpstan/bootstrap.php -c phpstan_apstats_ci.neon > /tmp/phpstan_patched.txt 2>&1 || true
+          tail -n 5 /tmp/phpstan_patched.txt
+      - name: Compare results
+        run: python3 compare.py
+      - name: Gate check
+        run: |
+          if grep -q "multilangs" /tmp/phpstan_patched.txt; then
+            echo "multilangs warning still present in patched run"
+            exit 1
+          fi
+          if python3 compare.py | grep -q "NEW WARNINGS INTRODUCED"; then
+            echo "new warnings introduced"
+            python3 compare.py
+            exit 1
+          fi
+          echo "Gate check passed"
+      - name: Push fix branch
+        run: |
+          git config user.name "eldy"
+          git config user.email "eldy@destailleur.fr"
+          git checkout -b fix-phpstan-multilangs
+          git add htdocs/core/class/commonobjectline.class.php
+          git commit -m "QUAL: Fix PHPStan warnings on property CommonObjectLine::$multilangs" -m "The PHPDoc of CommonObjectLine::$multilangs was declared as ?array<string,array<string,string>> but the property is only filled from Product::$multilangs, whose values also contain an int rowid and an array array_options. Align the PHPDoc shape with Product::$multilangs so the assignments into propal/commande/facture/contrat fetch_lines() are valid and the level 9 warnings reported on https://cti.dolibarr.org/ disappear.
+
+Generated by Vibe"
+          git push origin fix-phpstan-multilangs
+      - name: Save outputs on tmp branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add cti_extract2.txt
-          git commit -m "Save code context" || echo "nothing to commit"
-          git push
+          git fetch origin tmp-fetch-phpstan-debt
+          git checkout tmp-fetch-phpstan-debt
+          mkdir -p tmp-verify
+          cp /tmp/phpstan_base.txt /tmp/phpstan_patched.txt /tmp/phpstan_diff.txt tmp-verify/ || true
+          git add tmp-verify
+          git commit -m "Save phpstan verification outputs" || echo "nothing to commit"
+          git push origin tmp-fetch-phpstan-debt
