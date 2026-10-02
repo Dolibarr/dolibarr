@@ -1,0 +1,23 @@
+    0/2438 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0% < 1 sec
+   20/2438 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%  1 min
+  120/2438 [▓░░░░░░░░░░░░░░░░░░░░░░░░░░░]   4%  1 min
+  220/2438 [▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░]   9% 2 mins
+  380/2438 [▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░]  15% 2 mins
+  500/2438 [▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░]  20% 3 mins
+  660/2438 [▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░]  27% 3 mins
+  840/2438 [▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░]  34% 4 mins
+  980/2438 [▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░]  40% 4 mins
+ 1200/2438 [▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░]  49% 5 mins
+ 1420/2438 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░]  58% 5 mins
+ 1700/2438 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░]  69% 6 mins
+ 1960/2438 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░]  80% 6 mins
+ 2200/2438 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░]  90% 7 mins
+ 2438/2438 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100% 7 mins
+
+Tip: This CI run was slow because it analysed your whole project from scratch - there was no result cache.
+Persist PHPStan's result cache directory between CI runs to make your pipeline dramatically faster.
+Only changed files and their dependencies are re-analysed, so most runs finish in a fraction of the time.
+Learn how to set it up: https://phpstan.org/user-guide/result-cache
+
+Elapsed time: 7 minutes 51 seconds
+Peak memory: 441.6 MB (main process), 1.16 GB (largest of 4 spawned workers)
