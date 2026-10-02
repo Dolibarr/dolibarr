@@ -95,7 +95,7 @@ if ($action == 'updateall') {
 	}
 
 	if ($error > 0) {
-		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		setEventMessages('SetupNotSaved', null, 'errors');
 		$db->rollback();
 	} else {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
