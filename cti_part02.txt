@@ -1,0 +1,281 @@
+($objprod) is $mysoc of type \CommonIncoterm|\CommonObject|\CommonPeople|\CommonSocialNetworks|\CommonTrigger|\DolDeprecationHandler|\Societe but \mod_bom_advanced::getNextValue() takes \Product defined at htdocs/core/modules/bom/mod_bom_advanced.php:132 | 
+
+htdocs/core/modules/bom/mod_bom_advanced.php | 146 | UndefError PhanUndeclaredProperty Reference to undeclared property \BOM->date | 
+
+htdocs/core/modules/bom/mod_bom_advanced.php | 146 | UndefError PhanUndeclaredProperty Reference to undeclared property \BOM->date_bom | 
+
+htdocs/core/modules/cheque/modules_chequereceipts.php | 173 | TypeError PhanTypeMismatchArgument Argument 1 ($object) is $id of type int but \ModeleChequeReceipts::write_file() takes \RemiseCheque defined at htdocs/core/modules/cheque/modules_chequereceipts.php:126 | 
+
+htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php | 809 | TypeError PhanTypeMismatchDimFetch When fetching an array index from a value of type array, found an array index of type non-empty-string, but expected the index to be of type int | 
+
+htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php | 810 | TypeError PhanTypeMismatchProperty Assigning ($localtax1ligne as a field) of type array|array to property but \pdf_eratosthene->localtax1 is array | 
+
+htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php | 816 | TypeError PhanTypeMismatchDimFetch When fetching an array index from a value of type array, found an array index of type non-empty-string, but expected the index to be of type int | 
+
+htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php | 817 | TypeError PhanTypeMismatchProperty Assigning ($localtax2ligne as a field) of type array|array to property but \pdf_eratosthene->localtax2 is array | 
+
+htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php | 1046 | UndefError PhanUndeclaredProperty Reference to undeclared property \Commande->cond_reglement_label | 
+
+htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php | 1278 | UndefError PhanUndeclaredProperty Reference to undeclared property \Commande->remise | 
+
+htdocs/core/modules/delivery/mod_delivery_saphir.php | 155 | UndefError PhanUndeclaredProperty Reference to undeclared property \Delivery->delivery_date | 
+
+htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php | 427 | TypeError PhanTypeMismatchArgument Argument 1 ($object) is $socobject of type ?\CommonIncoterm|?\CommonObject|?\CommonPeople|?\CommonSocialNetworks|?\CommonTrigger|?\DolDeprecationHandler|?\Societe|\CommonIncoterm|\CommonObject|\CommonPeople|\CommonSocialNetworks|\CommonTrigger|\DolDeprecationHandler|\Societe but \doc_generic_shipment_odt::get_substitutionarray_contact() takes \Contact defined at htdocs/core/class/commondocgenerator.class.php:560 | 
+
+htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php | 758 | UndefError PhanUndeclaredProperty Reference to undeclared property \Societe->tel | 
+
+htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php | 887 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpenseReport->fk_user_paid | 
+
+htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php | 889 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpenseReport->fk_user_paid | 
+
+htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php | 895 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpenseReport->date_paiement | 
+
+htdocs/core/modules/facture/doc/pdf_octopus.modules.php | 2641 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->date | 
+
+htdocs/core/modules/facture/doc/pdf_octopus.modules.php | 2641 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->situation_counter | 
+
+htdocs/core/modules/facture/doc/pdf_octopus.modules.php | 3475 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->remise | 
+
+htdocs/core/modules/facture/doc/pdf_octopus.modules.php | 3564 | UndefError PhanUndeclaredProperty Reference to undeclared property \Facture->remise | 
+
+htdocs/core/modules/facture/doc/pdf_octopus.modules.php | 3749 | TypeError PhanTypeMismatchArgument Argument 1 ($string) is $payment['date'] of type int but \DoliDB::jdate() takes ?string defined at htdocs/core/db/DoliDB.class.php:399 | 
+
+htdocs/core/modules/facture/doc/pdf_octopus.modules.php | 3790 | UndefError PhanUndeclaredProperty Reference to undeclared property \Facture->remise | 
+
+htdocs/core/modules/holiday/mod_holiday_immaculate.php | 111 | TypeError PhanTypeMismatchArgument Argument 1 ($objsoc) is $user of type \CommonObject|\CommonPeople|\CommonTrigger|\DolDeprecationHandler|\User but \mod_holiday_immaculate::getNextValue() takes ?\Societe defined at htdocs/core/modules/holiday/mod_holiday_immaculate.php:128 | 
+
+htdocs/core/modules/hrm/mod_evaluation_advanced.php | 150 | UndefError PhanUndeclaredProperty Reference to undeclared property \SkillRank->date | 
+
+htdocs/core/modules/member/modules_cards.php | 152 | TypeError PhanTypeMismatchArgument Argument 1 ($object) is $arrayofmembers of type array{textleft:string,textheader:string,textfooter:string,textright:string,id:int,ref:string,photo:string}[] but \ModelePDFMember::write_file() takes \Adherent defined at htdocs/core/modules/member/modules_member.class.php:73 | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 676 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->cond_reglement | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 684 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->cond_reglement_code | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 684 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->cond_reglement_doc | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 684 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->cond_reglement_label | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 700 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->mode_reglement | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 700 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->mode_reglement_code | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 751 | UndefError PhanUndeclaredProperty Reference to undeclared property \Facture->remise | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 1057 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->ref_supplier | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 1062 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->ref_supplier | 
+
+htdocs/core/modules/mrp/doc/pdf_vinci.modules.php | 1148 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->delivery_date | 
+
+htdocs/core/modules/mrp/mod_mo_advanced.php | 149 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->date | 
+
+htdocs/core/modules/mrp/mod_mo_advanced.php | 149 | UndefError PhanUndeclaredProperty Reference to undeclared property \Mo->date_mo | 
+
+htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php | 623 | UndefError PhanUndeclaredProperty Reference to undeclared property \Project->fk_soc | 
+
+htdocs/core/modules/propale/doc/pdf_cyan.modules.php | 1180 | UndefError PhanUndeclaredProperty Reference to undeclared property \Propal->cond_reglement_label | 
+
+htdocs/core/modules/propale/doc/pdf_cyan.modules.php | 1359 | UndefError PhanUndeclaredProperty Reference to undeclared property \Propal->remise | 
+
+htdocs/core/modules/security/captcha/modCaptchaStandard.class.php | 159 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(\$idofbutton) output (not standalone PHP code) must be wrapped in single quotes | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 397 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->tracking_number | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 406 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->tracking_number | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 406 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->tracking_url | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 411 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->tracking_number | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 411 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->tracking_url | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 837 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->trueDepth | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 837 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->trueHeight | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 837 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->trueWidth | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 838 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->trueDepth | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 838 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->trueHeight | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 838 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->trueWidth | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 839 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->size_units | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 849 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->trueWeight | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 849 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransfer->weight_units | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 1147 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->ref_client | 
+
+htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php | 1154 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->date | 
+
+htdocs/core/modules/stocktransfer/mod_stocktransfer_advanced.php | 156 | UndefError PhanUndeclaredProperty Reference to undeclared property \StockTransferLine->date | 
+
+htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php | 536 | TypeError PhanTypeMismatchProperty Assigning (0 as a field) of type array to property but \pdf_canelle->localtax1 is array | 
+
+htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php | 539 | TypeError PhanTypeMismatchProperty Assigning (0 as a field) of type array to property but \pdf_canelle->localtax2 is array | 
+
+htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php | 542 | TypeError PhanTypeMismatchProperty Assigning ($this->localtax1 as a field) of type array|array to property but \pdf_canelle->localtax1 is array | 
+
+htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php | 543 | TypeError PhanTypeMismatchProperty Assigning ($this->localtax2 as a field) of type array|array to property but \pdf_canelle->localtax2 is array | 
+
+htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php | 742 | TypeError PhanTypeMismatchDimFetch When fetching an array index from a value of type array, found an array index of type non-empty-string, but expected the index to be of type int | 
+
+htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php | 743 | TypeError PhanTypeMismatchProperty Assigning ($localtax1ligne as a field) of type array|array to property but \pdf_cornas->localtax1 is array | 
+
+htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php | 749 | TypeError PhanTypeMismatchDimFetch When fetching an array index from a value of type array, found an array index of type non-empty-string, but expected the index to be of type int | 
+
+htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php | 750 | TypeError PhanTypeMismatchProperty Assigning ($localtax2ligne as a field) of type array|array to property but \pdf_cornas->localtax2 is array | 
+
+htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php | 927 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommandeFournisseur->cond_reglement | 
+
+htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php | 1005 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommandeFournisseur->remise | 
+
+htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php | 721 | TypeError PhanTypeMismatchDimFetch When fetching an array index from a value of type array, found an array index of type non-empty-string, but expected the index to be of type int | 
+
+htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php | 722 | TypeError PhanTypeMismatchProperty Assigning ($localtax1ligne as a field) of type array|array to property but \pdf_zenith->localtax1 is array | 
+
+htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php | 728 | TypeError PhanTypeMismatchDimFetch When fetching an array index from a value of type array, found an array index of type non-empty-string, but expected the index to be of type int | 
+
+htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php | 729 | TypeError PhanTypeMismatchProperty Assigning ((float)($localtax2ligne) as a field) of type array to property but \pdf_zenith->localtax2 is array | 
+
+htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php | 915 | UndefError PhanUndeclaredProperty Reference to undeclared property \SupplierProposal->cond_reglement_label | 
+
+htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php | 985 | UndefError PhanUndeclaredProperty Reference to undeclared property \SupplierProposal->remise | 
+
+htdocs/core/modules/workstation/mod_workstation_advanced.php | 151 | UndefError PhanUndeclaredProperty Reference to undeclared property \Workstation->date | 
+
+htdocs/core/multicompany_page.php | 122 | TypeError PhanTypeMismatchArgument Argument 1 ($login) is true of type true but \ActionsMulticompany::getEntitiesList() takes string defined at /home/dolibarr/doxygen.dolibarr.org/dolibarr_dev/dev/tools/phan/stubs/multicompany.php:29 | 
+
+htdocs/core/tpl/ajaxrow.tpl.php | 57 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(\$_SERVER['QUERY_STRING']) output (not standalone PHP code) must be wrapped in single quotes | 
+
+htdocs/core/tpl/massactions_pre.tpl.php | 249 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->fk_user_author | 
+
+htdocs/core/tpl/massactions_pre.tpl.php | 291 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->fk_member | 
+
+htdocs/core/tpl/massactions_pre.tpl.php | 405 | TypeError PhanTypeMismatchArgumentNullable Argument 7 ($object) is $objecttmp of type ?\CommonObject|?\CommonTrigger|?\DolDeprecationHandler but \ExtraFields::showInputField() takes \CommonObject|int defined at htdocs/core/class/extrafields.class.php:1207 (expected type to be non-nullable) | 
+
+htdocs/core/tpl/objectline_create.tpl.php | 770 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs->trans('rateMustBeNumeric')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+htdocs/core/tpl/objectline_create.tpl.php | 771 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs->trans('markRateShouldBeLesserThan100')) output (standalone PHP code) must be wrapped in single quotes (may be false positive if quote is in javascript world) | 
+
+htdocs/core/tpl/objectline_view.tpl.php | 581 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->situation_cycle_ref | 
+
+htdocs/core/tpl/objectline_view.tpl.php | 591 | UndefError PhanUndeclaredProperty Reference to undeclared property \SupplierProposalLine->tva | 
+
+htdocs/core/tpl/objectline_view.tpl.php | 592 | UndefError PhanUndeclaredProperty Reference to undeclared property \SupplierProposalLine->pu | 
+
+htdocs/core/tpl/objectline_view.tpl.php | 592 | UndefError PhanUndeclaredProperty Reference to undeclared property \SupplierProposalLine->txtva | 
+
+htdocs/core/tpl/objectline_view.tpl.php | 597 | UndefError PhanUndeclaredProperty Reference to undeclared property \SupplierProposalLine->tva | 
+
+htdocs/core/tpl/objectline_view.tpl.php | 598 | UndefError PhanUndeclaredProperty Reference to undeclared property \SupplierProposalLine->pu | 
+
+htdocs/core/tpl/objectline_view.tpl.php | 598 | UndefError PhanUndeclaredProperty Reference to undeclared property \SupplierProposalLine->txtva | 
+
+htdocs/core/tpl/objectline_view.tpl.php | 714 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->situation_counter | 
+
+htdocs/core/tpl/objectline_view.tpl.php | 714 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->situation_cycle_ref | 
+
+htdocs/core/tpl/passwordreset.tpl.php | 230 | UndefError PhanUndeclaredGlobalVariable Global variable $newpass1 is undeclared | 
+
+htdocs/core/tpl/passwordreset.tpl.php | 237 | UndefError PhanUndeclaredGlobalVariable Global variable $newpass2 is undeclared | 
+
+htdocs/core/tpl/resource_view.tpl.php | 78 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->type_label | 
+
+htdocs/core/tpl/resource_view.tpl.php | 96 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->type_label | 
+
+htdocs/delivery/class/delivery.class.php | 595 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpeditionLigne->label | 
+
+htdocs/ecm/tpl/enablefiletreeajax.tpl.php | 131 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js(dolBuildUrl(dol_buildpath('/core/ajax/ajaxdirpreview.php', 1), ...)) output (not standalone PHP code) must be wrapped in single quotes | 
+
+htdocs/emailcollector/class/emailcollector.class.php | 2551 | UndefError PhanUndeclaredProperty Reference to undeclared property \Societe->fk_socpeople | 
+
+htdocs/eventorganization/class/conferenceorboothattendee.class.php | 382 | UndefError PhanUndeclaredProperty Reference to undeclared property \ConferenceOrBoothAttendee->socid | 
+
+htdocs/eventorganization/class/conferenceorboothattendee.class.php | 1055 | UndefError PhanUndeclaredMethod Call to undeclared method \CommonNumRefGenerator::getNextValue | 
+
+htdocs/eventorganization/class/conferenceorboothattendee.class.php | 1143 | UndefError PhanUndeclaredProperty Reference to undeclared property \ConferenceOrBoothAttendee->company | 
+
+htdocs/eventorganization/class/conferenceorboothattendee.class.php | 1143 | UndefError PhanUndeclaredProperty Reference to undeclared property \ConferenceOrBoothAttendee->nom | 
+
+htdocs/eventorganization/class/conferenceorboothattendee.class.php | 1143 | UndefError PhanUndeclaredProperty Reference to undeclared property \ConferenceOrBoothAttendee->societe | 
+
+htdocs/expedition/card.php | 435 | UndefError PhanUndeclaredProperty Reference to undeclared property \FactureLigne->product_tobatch | 
+
+htdocs/expedition/card.php | 1560 | UndefError PhanUndeclaredProperty Reference to undeclared property \Expedition->delivery_date | 
+
+htdocs/expedition/class/expedition.class.php | 1683 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObjectLine->rang | 
+
+htdocs/expedition/dispatch.php | 1621 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs->trans('ErrorWrongBarcodemode')) output (not standalone PHP code) must be wrapped in single quotes | 
+
+htdocs/expedition/dispatch.php | 1622 | Plugin FunctionMissingSingleQuoteWrapping Function dol_escape_js($langs->trans('ErrorWrongBarcodemode')) output (not standalone PHP code) must be wrapped in single quotes | 
+
+htdocs/expensereport/card.php | 2282 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpenseReportLine->value_unit_ht | 
+
+htdocs/expensereport/card.php | 2497 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpenseReportLine->value_unit_ht | 
+
+htdocs/expensereport/class/expensereport.class.php | 2051 | TypeError PhanTypeMismatchArgument Argument 2 ($seller) is $seller of type \CommonIncoterm|\CommonObject|\CommonPeople|\CommonSocialNetworks|\CommonTrigger|\DolDeprecationHandler|\Societe but \ExpenseReport::checkRules() takes string defined at htdocs/expensereport/class/expensereport.class.php:2083 | 
+
+htdocs/fichinter/class/api_interventions.class.php | 433 | UndefError PhanUndeclaredProperty Reference to undeclared property \Fichinter->date | 
+
+htdocs/fichinter/class/fichinterrec.class.php | 262 | UndefError PhanUndeclaredProperty Reference to undeclared property \FichinterLigne->label | 
+
+htdocs/fourn/class/fournisseur.commande.class.php | 2147 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommandeFournisseur->fk_soc | 
+
+htdocs/fourn/class/fournisseur.commande.class.php | 2191 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommandeFournisseur->fk_soc | 
+
+htdocs/fourn/class/fournisseur.commande.class.php | 3971 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommandeFournisseur->fk_product | 
+
+htdocs/fourn/class/fournisseur.commande.class.php | 3972 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommandeFournisseur->fk_product | 
+
+htdocs/fourn/commande/card.php | 2031 | UndefError PhanUndeclaredProperty Reference to undeclared property \Societe->availability_id | 
+
+htdocs/fourn/facture/card-rec.php | 984 | UndefError PhanUndeclaredProperty Reference to undeclared property \FactureFournisseur->date_when | 
+
+htdocs/fourn/facture/card-rec.php | 985 | UndefError PhanUndeclaredProperty Reference to undeclared property \FactureFournisseur->date_when | 
+
+htdocs/fourn/facture/card-rec.php | 985 | UndefError PhanUndeclaredProperty Reference to undeclared property \FactureFournisseur->frequency | 
+
+htdocs/fourn/facture/card-rec.php | 985 | UndefError PhanUndeclaredProperty Reference to undeclared property \FactureFournisseur->unit_frequency | 
+
+htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php | 55 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->ref_supplier | 
+
+htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php | 71 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->ref_supplier | 
+
+htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php | 72 | UndefError PhanUndeclaredProperty Reference to undeclared property \CommonObject->date | 
+
+htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php | 76 | UndefError PhanUndeclaredProperty Reference to undeclared property \PaymentExpenseReport->type | 
+
+htdocs/hrm/class/evaluation.class.php | 353 | UndefError PhanUndeclaredProperty Reference to undeclared property \Evaluation->fk_soc | 
+
+htdocs/hrm/class/evaluation.class.php | 353 | UndefError PhanUndeclaredProperty Reference to undeclared property \Evaluation->socid | 
+
+htdocs/hrm/class/job.class.php | 287 | UndefError PhanUndeclaredProperty Reference to undeclared property \Job->fk_soc | 
+
+htdocs/hrm/class/job.class.php | 287 | UndefError PhanUndeclaredProperty Reference to undeclared property \Job->socid | 
+
+htdocs/hrm/class/position.class.php | 342 | UndefError PhanUndeclaredProperty Reference to undeclared property \Position->fk_soc | 
+
+htdocs/hrm/class/position.class.php | 342 | UndefError PhanUndeclaredProperty Reference to undeclared property \Position->socid | 
+
+htdocs/hrm/class/skill.class.php | 397 | UndefError PhanUndeclaredProperty Reference to undeclared property \Skill->fk_soc | 
+
+htdocs/hrm/class/skill.class.php | 397 | UndefError PhanUndeclaredProperty Reference to undeclared property \Skill->socid | 
+
+htdocs/hrm/class/skilldet.class.php | 309 | UndefError PhanUndeclaredProperty Reference to undeclared property \Skilldet->fk_soc | 
+
+htdocs/hrm/class/skilldet.class.php | 309 | UndefError PhanUndeclaredProperty Reference to undeclared property \Skilldet->socid | 
+
+htdocs/hrm/class/skillrank.class.php | 300 | UndefError PhanUndeclaredProperty Reference to undeclared property \SkillRank->fk_soc | 
+
+htdocs/hrm/class/skillrank.class.php | 300 | UndefError PhanUndeclaredProperty Reference to undeclared property \SkillRank->socid | 
+
+htdocs/hrm/core/tpl/objectline_view.tpl.php | 76 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpeditionLigne->fk_skill | 
+
+htdocs/hrm/core/tpl/objectline_view.tpl.php | 78 | UndefError PhanUndeclaredProperty Reference to undeclared property \ExpeditionLigne->fk_skill | 
+
+htdocs/hrm/core/tpl/objectline_view.tpl.php | 87
