@@ -1173,6 +1173,22 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 		}
 
+		// A private contact (field priv) can only be accessed by the user that created it
+		if ($feature == 'contact' && in_array($dbtablename, array('socpeople', 'contact')) && !empty($objectid)) {
+			$sqlpriv = "SELECT COUNT(dbt.rowid) as nb";
+			$sqlpriv .= " FROM ".MAIN_DB_PREFIX."socpeople as dbt";
+			$sqlpriv .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
+			$sqlpriv .= " AND dbt.priv = 1 AND (dbt.fk_user_creat IS NULL OR dbt.fk_user_creat <> ".((int) $user->id).")";
+			$resqlpriv = $db->query($sqlpriv);
+			if (!$resqlpriv) {
+				return false;
+			}
+			$objpriv = $db->fetch_object($resqlpriv);
+			if ($objpriv && $objpriv->nb > 0) {
+				return false;
+			}
+		}
+
 		if ($sql) {
 			$resql = $db->query($sql);
 			if ($resql) {
