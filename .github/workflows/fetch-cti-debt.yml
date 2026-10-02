@@ -1,4 +1,4 @@
-name: Fetch CTI phpstan technical debt (temporary)
+name: Extract code sections (temporary)
 
 on:
   push:
@@ -8,65 +8,50 @@ permissions:
   contents: write
 
 jobs:
-  fetch:
+  extract:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract technical debt sections from cti.dolibarr.org
+      - name: Extract code sections
         run: |
           python3 - <<'PYEOF'
-          import urllib.request, re
-
           NL = chr(10)
-          TAB = chr(9)
-          url = 'https://cti.dolibarr.org/'
-          req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (apstats debt extractor)'})
-          data = urllib.request.urlopen(req, timeout=180).read().decode('utf-8', 'replace')
-          print('Downloaded %d bytes' % len(data))
 
-          heads = [(m.start(), re.sub(r'<[^>]+>', '', m.group(0)).strip()) for m in re.finditer(r'<h2.*?</h2>', data, re.S)]
-          with open('cti-00-headings.txt', 'w') as f:
-              f.write('page bytes: %d' % len(data) + NL)
-              for p, t in heads:
-                  f.write('%d' % p + TAB + t + NL)
+          def dump(path, a, b, out):
+              with open(path, 'r', encoding='utf-8', errors='replace') as f:
+                  lines = f.readlines()
+              res = []
+              for i in range(a - 1, min(b, len(lines))):
+                  res.append('%d' % (i + 1) + chr(9) + lines[i].rstrip(chr(10)) + NL)
+              with open(out, 'w') as f:
+                  f.write(''.join(res))
 
-          start = None
-          for p, t in heads:
-              if 'technical debt' in t.lower():
-                  start = p
-                  break
-          print('Technical debt starts at %s' % start)
+          dump('htdocs/comm/propal/class/propal.class.php', 2020, 2140, 'code-propal.txt')
+          dump('htdocs/commande/class/commande.class.php', 2290, 2410, 'code-commande.txt')
 
-          if start is not None:
-              end = len(data)
-              m = re.search(r'<footer', data[start:])
-              if m:
-                  end = start + m.start()
-              section = data[start:end]
-              text = re.sub(r'<(script|style).*?</' + chr(92) + '1>', '', section, flags=re.S)
-              text = re.sub(r'</t[dh]>', ' | ', text)
-              text = re.sub(r'</tr>', NL, text)
-              text = re.sub(r'<[^>]+>', ' ', text)
-              text = text.replace('&#39;', chr(39))
-              text = text.replace('&quot;', '"')
-              text = text.replace('&amp;', '&')
-              text = re.sub(r'[ ' + chr(9) + ']+', ' ', text)
-              i = 0
-              n = 1
-              while i < len(text) and n <= 40:
-                  chunk = text[i:i+25000]
-                  with open('cti-%02d-debt.txt' % n, 'w') as f:
-                      f.write(chunk)
-                  i += 25000
-                  n += 1
-              print('Debt text length %d, chunks %d' % (len(text), n - 1))
+          # Dump every line mentioning multilangs in CommonObjectLine and propal/commande classes, with context info
+          for src, out in [('htdocs/core/class/commonobject.class.php', 'code-multilangs-commonobject.txt'),
+                           ('htdocs/comm/propal/class/propal.class.php', 'code-multilangs-propal.txt'),
+                           ('htdocs/commande/class/commande.class.php', 'code-multilangs-commande.txt'),
+                           ('htdocs/core/class/commonobjectline.class.php', 'code-multilangs-line.txt')]:
+              try:
+                  with open(src, 'r', encoding='utf-8', errors='replace') as f:
+                      lines = f.readlines()
+              except FileNotFoundError:
+                  continue
+              res = []
+              for i, l in enumerate(lines):
+                  if 'multilangs' in l.lower():
+                      res.append('%d' % (i + 1) + chr(9) + l.rstrip(chr(10)) + NL)
+              with open(out, 'w') as f:
+                  f.write(''.join(res))
           PYEOF
 
       - name: Commit extracted data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add cti-*.txt
-          git commit -m "chore: extract CTI phpstan debt [skip ci]" || echo "nothing to commit"
+          git add code-*.txt
+          git commit -m "chore: extract code sections [skip ci]" || echo "nothing to commit"
           git push
