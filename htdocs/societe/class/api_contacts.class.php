@@ -201,6 +201,8 @@ class Contacts extends DolibarrApi
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object = t.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('contact').')';
+		// A private contact is only visible by the user that created it
+		$sql .= " AND (t.priv = 0 OR t.fk_user_creat = ".((int) DolibarrApiAccess::$user->id).")";
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
