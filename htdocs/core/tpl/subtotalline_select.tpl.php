@@ -24,9 +24,10 @@
  */
 
 $line_color = $object->getSubtotalColors($line->qty);
+$line_text_color = $object->getSubtotalCssTextColor($line->qty);
 
 print '<!-- line for order line '.$line->id.' -->'."\n";
-print '<tr style="background:#' . $line_color . '" id="row-'.$line->id.'">'."\n";
+print '<tr style="background:#' . $line_color . '; color: ' . $line_text_color . '" id="row-'.$line->id.'">'."\n";
 
 
 $selected = 1;
