@@ -389,7 +389,7 @@ class Thirdparties extends DolibarrApi
 		if ($this->company->update($id, DolibarrApiAccess::$user, 1, 1, 1, 'update', 1) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->company->error);
+			throw new RestException(500, $this->company->errorsToString());
 		}
 	}
 
@@ -661,7 +661,7 @@ class Thirdparties extends DolibarrApi
 		$arrayofcateg = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
 
 		if (is_numeric($arrayofcateg) && $arrayofcateg < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
 		if (is_numeric($arrayofcateg) && $arrayofcateg >= 0) {	// To fix a return of 0 instead of empty array of method getListForItem
@@ -794,7 +794,7 @@ class Thirdparties extends DolibarrApi
 		$result = $categories->getListForItem($id, 'supplier', $sortfield, $sortorder, $limit, $page);
 
 		if (is_numeric($result) && $result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
 		if (is_numeric($result) && $result == 0) {	// To fix a return of 0 instead of empty array of method getListForItem
@@ -1183,7 +1183,7 @@ class Thirdparties extends DolibarrApi
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_replacable_invoices($id);
 		if ($result < 0) {
-			throw new RestException(405, $invoice->error);
+			throw new RestException(405, $invoice->errorsToString());
 		}
 
 		return $result;
@@ -1232,7 +1232,7 @@ class Thirdparties extends DolibarrApi
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_qualified_avoir_invoices($id);
 		if (!is_array($result) && $result < 0) {
-			throw new RestException(405, $invoice->error);
+			throw new RestException(405, $invoice->errorsToString());
 		}
 
 		return $result;
@@ -1855,7 +1855,7 @@ class Thirdparties extends DolibarrApi
 		if ($result > 0) {
 			return array("success" => $result);
 		} else {
-			throw new RestException(500, 'Error generating the document '.$this->company->error);
+			throw new RestException(500, 'Error generating the document '.$this->company->errorsToString());
 		}
 	}
 

@@ -463,7 +463,7 @@ class Shipments extends DolibarrApi
 			)
 			);
 		} else {
-			throw new RestException(405, $this->shipment->error);
+			throw new RestException(405, $this->shipment->errorsToString());
 		}
 	}
 
@@ -512,7 +512,7 @@ class Shipments extends DolibarrApi
 		if ($this->shipment->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->shipment->error);
+			throw new RestException(500, $this->shipment->errorsToString());
 		}
 	}
 
@@ -540,7 +540,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if (!$this->shipment->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->error);
+			throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->errorsToString());
 		}
 
 		return array(
@@ -589,7 +589,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
+			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->errorsToString());
 		}
 
 		// Reload shipment
@@ -631,7 +631,7 @@ class Shipments extends DolibarrApi
 
 	$result = $this->shipment->classifyBilled(DolibarrApiAccess::$user);
 	if( $result < 0) {
-			throw new RestException(400, $this->shipment->error);
+			throw new RestException(400, $this->shipment->errorsToString());
 	}
 	return $result;
 	}
@@ -675,7 +675,7 @@ class Shipments extends DolibarrApi
 
 	$result = $this->shipment->createFromOrder($order, DolibarrApiAccess::$user);
 	if( $result < 0) {
-			throw new RestException(405, $this->shipment->error);
+			throw new RestException(405, $this->shipment->errorsToString());
 	}
 	$this->shipment->fetchObjectLinked();
 	return $this->_cleanObjectDatas($this->shipment);
@@ -712,7 +712,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Order: '.$this->shipment->error);
+			throw new RestException(500, 'Error when closing Order: '.$this->shipment->errorsToString());
 		}
 
 		// Reload shipment

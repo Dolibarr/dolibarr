@@ -456,7 +456,7 @@ class Receptions extends DolibarrApi
 
 		$updateRes = $this->reception->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes < 0) {
-			throw new RestException(405, $this->reception->error);
+			throw new RestException(405, $this->reception->errorsToString());
 		}
 
 		return array(
@@ -513,7 +513,7 @@ class Receptions extends DolibarrApi
 		if ($this->reception->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->reception->error);
+			throw new RestException(500, $this->reception->errorsToString());
 		}
 	}
 
@@ -540,7 +540,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!$this->reception->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting reception : '.$this->reception->error);
+			throw new RestException(500, 'Error when deleting reception : '.$this->reception->errorsToString());
 		}
 
 		return array(
@@ -589,7 +589,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Reception: '.$this->reception->error);
+			throw new RestException(500, 'Error when validating Reception: '.$this->reception->errorsToString());
 		}
 
 		// Reload reception
@@ -631,7 +631,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->classifyBilled(DolibarrApiAccess::$user);
 		if ($result < 0) {
-				throw new RestException(400, $this->reception->error);
+				throw new RestException(400, $this->reception->errorsToString());
 		}
 		return $result;
 	}
@@ -675,7 +675,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->createFromOrder($order, DolibarrApiAccess::$user);
 		if( $result < 0) {
-				throw new RestException(405, $this->reception->error);
+				throw new RestException(405, $this->reception->errorsToString());
 		}
 		$this->reception->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->reception);
@@ -712,7 +712,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Reception: '.$this->reception->error);
+			throw new RestException(500, 'Error when closing Reception: '.$this->reception->errorsToString());
 		}
 
 		// Reload reception

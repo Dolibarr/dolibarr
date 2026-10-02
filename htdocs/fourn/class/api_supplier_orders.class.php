@@ -562,7 +562,7 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Order: '.$this->order->error);
+			throw new RestException(500, 'Error when validating Order: '.$this->order->errorsToString());
 		}
 
 		return array(
@@ -613,7 +613,7 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approve Order: '.$this->order->error);
+			throw new RestException(500, 'Error when approve Order: '.$this->order->errorsToString());
 		}
 
 		return array(
@@ -667,7 +667,7 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already sent');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when sending Order: '.$this->order->error);
+			throw new RestException(500, 'Error when sending Order: '.$this->order->errorsToString());
 		}
 
 		return array(
@@ -747,7 +747,7 @@ class SupplierOrders extends DolibarrApi
 			);
 
 			if ($result < 0) {
-				throw new RestException(500, 'Error dispatch order line '.$lineObj->id.': '.$this->order->error);
+				throw new RestException(500, 'Error dispatch order line '.$lineObj->id.': '.$this->order->errorsToString());
 			}
 		}
 
@@ -757,7 +757,7 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already dispatched');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when receivce order: '.$this->order->error);
+			throw new RestException(500, 'Error when receivce order: '.$this->order->errorsToString());
 		}
 
 		return array(

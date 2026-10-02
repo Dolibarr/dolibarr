@@ -208,7 +208,7 @@ class DolibarrApiAccess implements iAuthenticate
 					throw new RestException(503, 'Error when fetching user api_key : More than 1 user with this apikey');
 				}
 			} else {
-				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error);
+				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->lasterror());
 			}
 
 			if ($login && $stored_key != $api_key) {		// This should not happen since we did a search on api_key

@@ -166,7 +166,7 @@ class ObjectLinks extends DolibarrApi
 		$result = $this->objectlink->create(DolibarrApiAccess::$user, $this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype, $this->notrigger);
 
 		if ($result < 0) {
-			throw new RestException(500, 'when create objectlink : '.$this->objectlink->error);
+			throw new RestException(500, 'when create objectlink : '.$this->objectlink->errorsToString());
 		}
 
 		if ($result == 0) {
@@ -219,7 +219,7 @@ class ObjectLinks extends DolibarrApi
 		}
 
 		if (!$this->objectlink->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->error);
+			throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->errorsToString());
 		}
 
 		return array(
@@ -284,7 +284,7 @@ class ObjectLinks extends DolibarrApi
 		$findresult = $this->objectlink->fetchByValues($this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype);
 
 		if ($findresult < 0) {
-			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
+			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->errorsToString());
 		} elseif ($findresult > 0) {
 			return $this->_cleanObjectDatas($this->objectlink);
 		} else {
@@ -348,12 +348,12 @@ class ObjectLinks extends DolibarrApi
 		$findresult = $this->objectlink->fetchByValues($this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype);
 
 		if ($findresult < 0) {
-			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
+			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->errorsToString());
 		} elseif ($findresult > 0) {
 			$result = $this->objectlink->delete(DolibarrApiAccess::$user, $notrigger);
 
 			if ($result < 0) {
-				throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->error);
+				throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->errorsToString());
 			}
 
 			return array(
