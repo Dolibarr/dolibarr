@@ -29,11 +29,11 @@ jobs:
         run: |
           sed -e '/^includes:/d' -e '/phpstan-baseline\.neon/d' phpstan.neon.dist > phpstan_apstats.neon
           mkdir -p .github/tmp
-          cat phpstan_apstats.neon | head -20
+          head -5 phpstan_apstats.neon
 
       - name: Run PHPStan level 9 (reproduce CTI report)
         run: |
-          phpstan --level=9 -v analyze -a dev/build/phpstan/bootstrap.php --memory-limit 5G --error-format=github -c phpstan_apstats.neon > cti-phpstan-report.txt 2> cti-phpstan-stderr.txt || true
+          phpstan --level=9 -v analyze -a dev/build/phpstan/bootstrap_action.php --memory-limit 5G --error-format=github -c phpstan_apstats.neon > cti-phpstan-report.txt 2> cti-phpstan-stderr.txt || true
           echo "--- stderr head ---"
           head -c 1000 cti-phpstan-stderr.txt || true
           echo "--- report line count ---"
