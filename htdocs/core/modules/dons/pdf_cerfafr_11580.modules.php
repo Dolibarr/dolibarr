@@ -229,6 +229,7 @@ class pdf_cerfafr_11580 extends ModeleDon
 			$pdf->SetCompression(false);
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 		$pdf->AddPage();
