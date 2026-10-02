@@ -108,6 +108,49 @@ rm -fr ./htdocs/includes/sabre/sabre/*/*/*/*/bin;
 
 
 
+PHP FPDM:
+---------
+Embedded version: 2.9.2 (tmw/fpdm fork of Olivier Plathey's original FPDM
+script 93, as hosted on https://github.com/codeshell/fpdm). Fills fields of
+an existing PDF AcroForm in pure PHP (no pdftk/Ghostscript binary needed).
+
+Upstream's own (non-default, opt-in via $pdf->useCheckboxParser = true)
+checkbox/radio button support had two bugs that made it fail on real-world
+AcroForms (reproduced against the official French Cerfa 16216*03/2041-MEC-SD
+PDF form, which is a plain AcroForm, not a flattened one):
+
+* In src/fpdm.php, the "down appearance" (/D) line detector used a 2-char
+  prefix match that also matched /DA (Default Appearance), present on
+  nearly every field, so it locked onto the wrong line and the checkbox's
+  "on"/"off" state names were silently never extracted.
+
+  Replace
+	} elseif (!$ap_d_line && '/D' == substr($CurLine, 0, 2)) {
+  With
+	} elseif (!$ap_d_line && '/D' == rtrim($CurLine)) {
+
+* In src/fpdm.php, any field declared using the standard PDF "field root +
+  /Kids widgets" structure (radio groups, or a single field whose widgets
+  are shared across several pages) was not recognized at all ("field ...
+  not found"), because the parser only registered a field when /T and
+  /Subtype /Widget were found on the very same PDF object. Added capture of
+  /Parent references, a pending-widget queue for parentless checkbox
+  widgets, and a resolution pass (once every object has been seen, since a
+  widget can appear before or after its parent field object in the file)
+  that attaches each widget's state to its field - see the "@CHANGE DOL"
+  blocks spread across parsePDFEntries(), set_field_value() and the new
+  set_field_checkbox() "checkbox_variants" branch for the full patch.
+
+* In src/filters/FilterASCIIHex.php, replaced the removed-in-PHP-8
+  "$str{$i}" curly-brace offset syntax with "$str[$i]".
+
+* In fpdm.php (the non-composer entry point), require_once() paths were
+  made absolute (__DIR__-based) instead of relative to the include_path/CWD.
+
+All changes are marked inline with "// @CHANGE DOL".
+
+
+
 PHP NUSOAP:
 -----------
 * Line 1257 of file nusoap.php. Add:
