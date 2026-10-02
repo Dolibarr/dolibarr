@@ -172,6 +172,15 @@ class Workstation extends CommonObject
 	 */
 	public $thm_machine_estimated;
 
+	/**
+	 * @var array<string,array{name:string,fk_element:string,enabled?:string}>	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array(
+		'product' => array('name' => 'Product', 'fk_element' => 'fk_default_workstation'),
+		'bom_bomline' => array('name' => 'BOM', 'fk_element' => 'fk_default_workstation', 'enabled' => 'isModEnabled("bom")'),
+		'mrp_production' => array('name' => 'ManufacturingOrder', 'fk_element' => 'fk_default_workstation', 'enabled' => 'isModEnabled("mrp")'),
+	);
+
 	// END MODULEBUILDER PROPERTIES
 
 	/**
@@ -524,6 +533,11 @@ class Workstation extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		global $langs;
+
+		// Labels of the objects that can prevent the deletion (see $childtables)
+		$langs->loadLangs(array('products', 'mrp'));
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
