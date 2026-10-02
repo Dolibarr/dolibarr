@@ -5664,6 +5664,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 		$picto = 'generic';
 	}
 
+	if ($titlealt) {
+		$titlealt = str_replace(array('\n', "\n"), ' - ', $titlealt);
+	}
+
 	// Define fullpathpicto to use into src
 	if ($pictoisfullpath) {
 		// Clean parameters

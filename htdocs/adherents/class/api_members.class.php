@@ -678,6 +678,10 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$obj_ret = array();
 		foreach ($member->subscriptions as $subscription) {
 			$obj_ret[] = $this->_cleanObjectDatas($subscription);
@@ -720,6 +724,10 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result =  $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
 		if ($result < 1) {
 			throw new RestException(500, $member->error);
@@ -755,6 +763,10 @@ class Members extends DolibarrApi
 		$result = $member->fetch($id);
 		if (0 === $result) {
 			throw new RestException(404, 'Member not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$categories = new Categorie($this->db);
