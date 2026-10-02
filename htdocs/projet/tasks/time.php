@@ -466,6 +466,25 @@ if ($id <= 0 && $projectidforalltimes == 0) {
 	$allprojectforuser = $user->id;
 }
 
+// element_time.rowid is shared by every elementtype: keep only task time. Filtered on the type
+// only, this screen spans several tasks and projects.
+if (!empty($toselect)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/timespent.class.php';
+
+	$tmptimespentfilter = new TimeSpent($db);
+	$toselectoftask = $tmptimespentfilter->filterAttachedIds($toselect, 'task', 0);
+	if (count($toselectoftask) != count($toselect)) {
+		// Refused, not reduced: an empty selection would still create an empty invoice
+		dol_syslog('projet/tasks/time.php refused a selection holding records that are not task time', LOG_WARNING);
+		$langs->load('errors');
+		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+		$toselect = array();
+		$action = '';
+	} else {
+		$toselect = $toselectoftask;
+	}
+}
+
 if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer')) {
 	if (!empty($projectstatic->socid)) {
 		$projectstatic->fetch_thirdparty();
