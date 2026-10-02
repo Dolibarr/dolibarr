@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
 /**
  *	Class to generate the French tax receipt for donations of private individuals,
- *	articles 200 and 978 of the "code général des impôts" (form 2041-RD, Cerfa 11580*05).
+ *	articles 200 and 978 of the French general tax code (form 2041-RD, Cerfa 11580*05).
  *	The receipt is a legal document that exists only in French, so it is always generated in French.
  */
 class pdf_cerfafr_11580 extends ModeleDon
@@ -98,7 +98,7 @@ class pdf_cerfafr_11580 extends ModeleDon
 
 	/**
 	 *  Return the categories of beneficiary organizations listed on the form, with their legal label.
-	 *  Categories of group 'oig' are the sub-cases of "Œuvre ou organisme d'intérêt général".
+	 *  Categories of group 'oig' are the sub-cases of "general interest work or organisation".
 	 *
 	 *  @return	array<string,array{label:string,group:string}>		Categories, by code
 	 */

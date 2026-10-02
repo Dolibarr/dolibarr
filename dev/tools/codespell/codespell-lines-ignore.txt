@@ -188,3 +188,13 @@ select#date_startday, select#date_startmonth, select#date_endday, select#date_en
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
 		if (empty($user->rights->accounting->mouvements)) {
 			$user->rights->accounting->mouvements = new stdClass();
+			'oig_rup' => array('group' => 'oig', 'label' => "Association ou fondation reconnue d'utilité publique par décret en date du %s publié au Journal officiel du %s ou association située dans le département de la Moselle, du Bas-Rhin ou du Haut-Rhin dont la mission a été reconnue d'utilité publique par arrêté en date du %s"),
+			'press_pluralism' => array('group' => '', 'label' => "Association d'intérêt général exerçant des actions concrètes en faveur du pluralisme de la presse, par la prise de participations minoritaires, l'octroi de subventions ou encore de prêts bonifiés à des entreprises de presse"),
+			'performing_arts' => array('group' => '', 'label' => "Organisme public ou privé dont la gestion est désintéressée et qui a pour activité principale la présentation au public d'oeuvres dramatiques, lyriques, musicales, chorégraphiques, cinématographiques, audiovisuelles et de cirque ou l'organisation d'expositions d'art contemporain"),
+			'cultural_property' => array('group' => '', 'label' => "Organisme ayant pour objet la sauvegarde, contre les effets d'un conflit armé, des biens culturels mentionnés à l'article 1er de la Convention du 14 mai 1954 pour la protection des biens culturels en cas de conflit armé"),
+		$posy = $this->showField($pdf, $posx, $posy, $width, "Adresse :", str_replace(array("\r\n", "\n"), ', ', (string) $this->emetteur->address), $outputlangs);
+		$posy = $this->showField($pdf, $posx, $posy, $width, "Objet :", (string) $this->emetteur->socialobject, $outputlangs);
+		$posy = $this->showField($pdf, $posx, $posy, $width, "Adresse :", str_replace(array("\r\n", "\n"), ', ', $donor['address']), $outputlangs);
+		$forms = array('authentic' => "Acte authentique", 'private' => "Acte sous seing privé", 'manual' => "Déclaration de don manuel", 'other' => "Autres");
+			'expenses' => "Frais engagés par les bénévoles, dont ils renoncent expressément au remboursement",
+		$notes .= "(4) Exemple : dons en nature.";
