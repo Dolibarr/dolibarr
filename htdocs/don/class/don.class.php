@@ -9,6 +9,7 @@
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1110,19 +1111,24 @@ class Don extends CommonObject
 		}
 
 		// Search template files
+		// The model name stored in llx_document_model already holds its prefix (html_cerfafr, pdf_xxx...),
+		// but a model name without prefix is also accepted.
 		$file = '';
-		$classname = '';
 		$filefound = 0;
+		$modelebasename = preg_replace('/^(html|doc|pdf)_/', '', $modele);
 		$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			foreach (array('html', 'doc', 'pdf') as $prefix) {
-				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
+				if ($modelebasename != $modele && strpos($modele, $prefix.'_') !== 0) {
+					continue;	// The prefix is part of the model name, so do not load a template of another type
+				}
+				$file = dol_sanitizeFileName($prefix."_".$modelebasename.".modules.php");
 
 				// Verify the path for the module
 				$file = dol_buildpath($reldir."core/modules/dons/".$file, 0);
 				if (file_exists($file)) {
 					$filefound = 1;
-					$classname = $prefix.'_'.$modele;
+					$modele = $prefix.'_'.$modelebasename;	// Name of the class of the template
 					break;
 				}
 			}
@@ -1145,7 +1151,9 @@ class Don extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output = $outputlangs->charset_output;
-			if ($obj->write_file($object, $outputlangs /*, $currency */) > 0) {
+			$result = $obj->write_file($object, $outputlangs /*, $currency */);
+			$this->warnings = $obj->warnings;
+			if ($result > 0) {
 				$outputlangs->charset_output = $sav_charset_output;
 
 				// we delete preview files
