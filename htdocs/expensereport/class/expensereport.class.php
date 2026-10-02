@@ -2439,6 +2439,7 @@ class ExpenseReport extends CommonObject
 		$outputlangs->load("trips");
 
 		if (!dol_strlen($modele)) {
+			$modele = 'standard';
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (!empty($this->modelpdf)) {	// deprecated
