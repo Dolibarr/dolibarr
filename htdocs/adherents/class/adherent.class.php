@@ -1083,13 +1083,29 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = $this->db->fetch_object($resql);
-			$dateop = $this->db->jdate($obj->dateop);
-			$datedeb = $this->db->jdate($obj->datedeb);
-			$datefin = $this->db->jdate($obj->datefin);
+			// The last subscription is the one with the latest start date (first record), but the end date of the member is
+			// the latest end date of all its subscriptions: a short subscription that starts after a longer one must not
+			// shorten the membership. There is no record at all when the last subscription of the member was deleted.
+			$dateop = '';
+			$datedeb = '';
+			$datefin = '';
+			$dateendmember = '';
+			$i = 0;
+			while ($obj = $this->db->fetch_object($resql)) {
+				$dateendsubscription = $this->db->jdate($obj->datefin);
+				if ($i == 0) {
+					$dateop = $this->db->jdate($obj->dateop);
+					$datedeb = $this->db->jdate($obj->datedeb);
+					$datefin = $dateendsubscription;
+				}
+				if ($dateendsubscription != '' && ($dateendmember == '' || $dateendsubscription > $dateendmember)) {
+					$dateendmember = $dateendsubscription;
+				}
+				$i++;
+			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-			$sql .= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
+			$sql .= " datefin=".($dateendmember != '' ? "'".$this->db->idate($dateendmember)."'" : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
@@ -1098,7 +1114,7 @@ class Adherent extends CommonObject
 				$this->last_subscription_date = $dateop;
 				$this->last_subscription_date_start = $datedeb;
 				$this->last_subscription_date_end = $datefin;
-				$this->datefin = $datefin;
+				$this->datefin = $dateendmember;
 				$this->db->commit();
 				return 1;
 			} else {
