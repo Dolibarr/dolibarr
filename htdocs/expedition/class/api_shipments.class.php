@@ -236,6 +236,13 @@ class Shipments extends DolibarrApi
 
 			$this->shipment->$field = $this->_checkValForAPI($field, $value, $this->shipment);
 		}
+
+		// A standalone shipment has no source order line to point to: its lines are free
+		// lines, recorded with addlinefree() exactly as the shipment card records them.
+		if (getDolGlobalString('SHIPMENT_STANDALONE') && !isset($request_data['origin_id']) && !isset($request_data['origin_type'])) {
+			return $this->createStandalone(isset($request_data['lines']) ? $request_data['lines'] : array());
+		}
+
 		if (isset($request_data["lines"])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
@@ -265,6 +272,68 @@ class Shipments extends DolibarrApi
 		if ($this->shipment->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating shipment", array_merge(array($this->shipment->error), $this->shipment->errors));
 		}
+
+		return $this->shipment->id;
+	}
+
+	/**
+	 * Create a standalone shipment (no source order) and its free lines
+	 *
+	 * @param   array<int,array<string,mixed>>   $lines   Lines of the request: fk_product, description, qty, fk_unit, rang, array_options
+	 * @return  int                                       ID of shipment created
+	 * @throws  RestException
+	 */
+	private function createStandalone($lines)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+		$this->shipment->lines = array();
+
+		$this->db->begin();
+
+		if ($this->shipment->create(DolibarrApiAccess::$user) < 0) {
+			$this->db->rollback();
+			throw new RestException(500, "Error creating shipment", array_merge(array($this->shipment->error), $this->shipment->errors));
+		}
+
+		foreach ($lines as $line) {
+			$fk_product = (int) ($line['fk_product'] ?? 0);
+			$description = sanitizeVal((string) ($line['description'] ?? ($line['desc'] ?? '')), 'restricthtml');
+			$qty = (float) price2num($line['qty'] ?? '', 'MS');
+			$fk_unit = isset($line['fk_unit']) ? (int) $line['fk_unit'] : null;
+
+			$error = '';
+			if (!isset($line['qty']) || $line['qty'] === '') {
+				$error = 'Field qty is mandatory';
+			} elseif ($qty < 0) {
+				$error = 'Field qty cannot be negative';
+			} elseif ($fk_product <= 0 && getDolGlobalString('MAIN_DISABLE_FREE_LINES')) {
+				$error = 'Field fk_product is mandatory (MAIN_DISABLE_FREE_LINES is on)';
+			} elseif ($fk_product <= 0 && $description === '') {
+				$error = 'A line needs a fk_product or a description';
+			} elseif ($fk_product > 0) {
+				$product = new Product($this->db);
+				if ($product->fetch($fk_product) <= 0) {
+					$error = 'Product '.$fk_product.' not found';
+				} elseif ($fk_unit === null) {
+					$fk_unit = $product->fk_unit;
+				}
+			}
+			if ($error !== '') {
+				$this->db->rollback();
+				throw new RestException(400, $error);
+			}
+
+			$array_options = (isset($line['array_options']) && is_array($line['array_options'])) ? $line['array_options'] : array();
+			$rang = (int) ($line['rang'] ?? 0);
+
+			if ($this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, $rang > 0 ? $rang : -1, $description, 0, $array_options) <= 0) {
+				$this->db->rollback();
+				throw new RestException(500, "Error creating shipment line", array_merge(array($this->shipment->error), $this->shipment->errors));
+			}
+		}
+
+		$this->db->commit();
 
 		return $this->shipment->id;
 	}
