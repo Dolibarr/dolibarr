@@ -2088,9 +2088,10 @@ class FactureFournisseur extends CommonInvoice
 							$this->setErrorsFromObject($mouvP);
 							dol_syslog(__METHOD__." stock movement failed for line ".$i.": ".$mouvP->error, LOG_ERR);
 							break;
- 						}
+						}
 					}
 				}
+			}
 			// Triggers call
 			if (!$error && empty($notrigger)) {
 				// Call trigger
