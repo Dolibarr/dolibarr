@@ -414,7 +414,7 @@ class Inventory extends CommonObject
 	 */
 	public function countLines()
 	{
-		$sql = 'SELECT COUNT(*) as nb FROM '.$this->db->prefix().'inventorydet WHERE fk_inventory = '.((int) $this->id);
+		$sql = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."inventorydet WHERE fk_inventory = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
