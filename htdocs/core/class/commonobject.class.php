@@ -238,13 +238,13 @@ abstract class CommonObject
 	public $contact_id;
 
 	/**
-	 * @var Societe 	A related thirdparty object
+	 * @var ?Societe 	A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
 
 	/**
-	 * @var User 		A related user
+	 * @var ?User A related user
 	 * @see fetch_user()
 	 */
 	public $user;
@@ -1277,6 +1277,18 @@ abstract class CommonObject
 		global $user;
 
 		$error = 0;
+
+		// When called on a loaded object, the link must be one of its own contacts (same filter as liste_contact())
+		if ($this->id > 0) {
+			$sql = "SELECT ec.rowid FROM ".$this->db->prefix()."element_contact as ec, ".$this->db->prefix()."c_type_contact as tc";
+			$sql .= " WHERE ec.rowid = ".((int) $rowid)." AND ec.element_id = ".((int) $this->id);
+			$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element = '".$this->db->escape($this->element)."'";
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorRecordNotFound';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
