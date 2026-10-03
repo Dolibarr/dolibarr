@@ -18,3 +18,4 @@
 
 
 ALTER TABLE llx_product_extrafields ADD UNIQUE INDEX uk_product_extrafields (fk_object);
+ALTER TABLE llx_product_extrafields ADD INDEX idx_product_extrafields_tms (tms);

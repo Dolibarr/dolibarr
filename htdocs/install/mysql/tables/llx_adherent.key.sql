@@ -26,3 +26,4 @@ ALTER TABLE llx_adherent ADD INDEX idx_adherent_fk_adherent_type (fk_adherent_ty
 
 ALTER TABLE llx_adherent ADD CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 ALTER TABLE llx_adherent ADD CONSTRAINT fk_adherent_adherent_type FOREIGN KEY (fk_adherent_type)    REFERENCES llx_adherent_type (rowid);
+ALTER TABLE llx_adherent ADD INDEX idx_adherent_tms (tms);

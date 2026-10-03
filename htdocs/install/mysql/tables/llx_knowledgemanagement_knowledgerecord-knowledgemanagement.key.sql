@@ -24,3 +24,4 @@ ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD INDEX idx_knowledgemanag
 --ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD UNIQUE INDEX uk_knowledgemanagement_knowledgerecord_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD CONSTRAINT llx_knowledgemanagement_knowledgerecord_fk_field FOREIGN KEY (fk_field) REFERENCES llx_knowledgemanagement_myotherobject(rowid);
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD INDEX idx_knowledgemanagement_knowledgerecord_tms (tms);

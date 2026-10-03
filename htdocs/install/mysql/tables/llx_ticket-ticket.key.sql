@@ -29,3 +29,4 @@ ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN
 -- ALTER TABLE llx_ticket ADD COLUMN calculated_numrefonly INTEGER AS (CASE SUBSTRING(ref FROM 1 FOR 2) WHEN 'TS' THEN CAST(SUBSTRING(ref FROM 8) AS SIGNED) ELSE 0 END) PERSISTENT;
 -- ALTER TABLE llx_ticket ADD INDEX idx_calculated_numrefonly (calculated_numrefonly);
 -- Then, the numering module can use the column calculated_numrefonly to get the max with SELECT MAX(calculated_numrefonly) FROM llx_ticket
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_tms (tms);

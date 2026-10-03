@@ -17,3 +17,4 @@
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_knowledgemanagement_knowledgerecord_extrafields ADD UNIQUE INDEX uk_knowledgerecord_fk_object (fk_object);
 -- END MODULEBUILDER INDEXES
+ALTER TABLE llx_knowledgemanagement_knowledgerecord_extrafields ADD INDEX idx_knowledgemanagement_knowledgerecord_extrafields_tms (tms);

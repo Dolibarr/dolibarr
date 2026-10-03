@@ -445,3 +445,16 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES 
 
 -- Top menu "Banks | Cash" now opens the new bank dashboard page instead of the list of accounts
 UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' WHERE type = 'top' AND mainmenu = 'bank' AND url LIKE '/compta/bank/list.php?search_status=opened%';
+
+-- Indexes on the modification date, used by the "latest modified" lists of the home pages and of the dashboard boxes
+ALTER TABLE llx_societe ADD INDEX idx_societe_tms (tms);
+ALTER TABLE llx_societe_extrafields ADD INDEX idx_societe_extrafields_tms (tms);
+ALTER TABLE llx_socpeople ADD INDEX idx_socpeople_tms (tms);
+ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields_tms (tms);
+ALTER TABLE llx_product_extrafields ADD INDEX idx_product_extrafields_tms (tms);
+ALTER TABLE llx_adherent ADD INDEX idx_adherent_tms (tms);
+ALTER TABLE llx_adherent_extrafields ADD INDEX idx_adherent_extrafields_tms (tms);
+ALTER TABLE llx_ticket ADD INDEX idx_ticket_tms (tms);
+ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields_tms (tms);
+ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD INDEX idx_knowledgemanagement_knowledgerecord_tms (tms);
+ALTER TABLE llx_knowledgemanagement_knowledgerecord_extrafields ADD INDEX idx_knowledgemanagement_knowledgerecord_extrafields_tms (tms);
