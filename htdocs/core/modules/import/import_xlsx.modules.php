@@ -737,7 +737,7 @@ class ImportXlsx extends ModeleImports
 									}
 
 									// Load content of field@table into cache array
-									if (!is_array($this->cachefieldtable[$cachekey])) { // If content of field@table not already loaded into cache
+									if (!isset($this->cachefieldtable[$cachekey]) || !is_array($this->cachefieldtable[$cachekey])) { // If content of field@table not already loaded into cache
 										$sql = "SELECT " . $field . " as aliasfield FROM " . $table;
 										if (!empty($filter)) {
 											$sql .= ' WHERE ' . $filter;
@@ -760,7 +760,7 @@ class ImportXlsx extends ModeleImports
 									}
 
 									// Now we check cache is not empty (should not) and key is into cache
-									if (!is_array($this->cachefieldtable[$cachekey]) || !in_array($newval, $this->cachefieldtable[$cachekey])) {
+									if (!isset($this->cachefieldtable[$cachekey]) || !is_array($this->cachefieldtable[$cachekey]) || !in_array($newval, $this->cachefieldtable[$cachekey])) {
 										$tableforerror = $table;
 										if (!empty($filter)) {
 											$tableforerror .= ':' . $filter;
