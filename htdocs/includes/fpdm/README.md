@@ -14,11 +14,11 @@ reconstructed as a document model (ODT/HTML/TCPDF) instead.
 
 ## Dolibarr-specific patches
 
-The upstream library had two bugs that made its (already non-default,
-opt-in) checkbox/radio support silently fail on real-world AcroForms. Both
-are fixed in this vendored copy; every change is marked inline with
-`// @CHANGE DOL` and also documented in `dev/dolibarr_changes.txt` at the
-repository root:
+The upstream library had several bugs that made its (already non-default,
+opt-in) checkbox/radio support, and its field name matching, silently fail
+on real-world AcroForms. All are fixed in this vendored copy; every change
+is marked inline with `// @CHANGE DOL` and also documented in
+`dev/dolibarr_changes.txt` at the repository root:
 
 1. The `/D` (down-appearance) detector used a 2-character prefix match that
    also matched `/DA` (Default Appearance), present on nearly every field -
@@ -26,6 +26,13 @@ repository root:
 2. Fields declared with the standard PDF "field root + `/Kids` widgets"
    structure (radio groups, or a checkbox/field shared across several pages)
    were not recognized at all (`field ... not found`).
+3. A field name containing an accented character stored as plain 8-bit
+   Latin-1/WinAnsi (common in Word-produced PDFs) was corrupted into `?`
+   by upstream's own "convert to utf-8" fix and could never be matched.
+4. A checkbox/radio widget that only defines `/N` (no optional `/D`) had
+   its "on"/"off" state names never extracted at all; and the "on"/"off"
+   keys were told apart by position (first vs. second) rather than by
+   name, which does not hold for every PDF producer.
 
 ## Usage
 
@@ -62,3 +69,12 @@ Notes:
   whatever name the PDF itself defines (commonly `1`/`Off`, `Oui`/`Off`,
   `A`/`Off`...) - inspect the target PDF once (e.g.
   `pdftk file.pdf dump_data_fields_utf8`) to know which value to pass.
+- **Known limitation**: a checkbox/radio "on" token containing a space or
+  an accented character is stored in the PDF as a hex-escaped name (e.g.
+  `/Accident#20vie#20priv#e9e`); FPDM does not decode that escaping, so it
+  only captures the token up to the first escape (e.g. `Accident`). Two
+  different widgets on the same field can truncate to the same value, in
+  which case passing it ticks both. If this matters, read the real,
+  un-truncated token straight from `$pdf->value_entries[$name]['infos']`
+  after a first `Merge()` call, or avoid relying on tokens that contain
+  spaces/accents for that specific field.

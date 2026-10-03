@@ -1914,23 +1914,32 @@ if (!call_user_func_array('class_exists', $__tmp)) {
                                                 echo("<br>Found AP Line '<i>$Counter</i>'");
                                             }
                                             $ap_line = $Counter;
-                                        } elseif (!$ap_d_line && '/D' == rtrim($CurLine)) { // @CHANGE DOL was substr($CurLine,0,2)=='/D', wrongly matched '/DA' (Default Appearance) on nearly every field
+                                        } elseif (!$ap_d_line && ('/D' == rtrim($CurLine) || '/N' == rtrim($CurLine))) { // @CHANGE DOL was only '/D' (also was substr($CurLine,0,2), wrongly matching '/DA'): /D (the "down"/pressed appearance) is optional per the PDF spec and some producers (e.g. Word) only emit /N (the mandatory "normal" appearance) - whichever of /D or /N comes right after /AP sits in the exact same structural position, so either can anchor the yes/no extraction below
                                             if ($verbose_parsing) {
                                                 echo("<br>Found D Line '<i>$Counter</i>'");
                                             }
                                             $ap_d_line = $Counter;
-                                        } elseif (($ap_line==$Counter-4)&&($ap_d_line==$Counter-2)&&($ap_d_yes=='')&&$this->extract_pdf_definition_value("name", $CurLine, $match)) {
-                                            $ap_d_yes=$match[1];
-                                            if ($verbose_parsing) {
-                                                echo("<br>Object's checkbox_yes is '<i>$ap_d_yes</i>'");
+                                        } elseif ((($ap_line==$Counter-4&&$ap_d_line==$Counter-2)||($ap_line==$Counter-5&&$ap_d_line==$Counter-3))&&$this->extract_pdf_definition_value("name", $CurLine, $match)) {
+                                            // @CHANGE DOL classify by the literal name instead of assuming the "on" state always comes
+                                            // before "Off": a /D or /N appearance dict can list its two keys in either order (observed
+                                            // both ways within the very same PDF), so position alone does not tell yes from no
+                                            if ($match[1] === 'Off') {
+                                                if ($ap_d_no === '') {
+                                                    $ap_d_no=$match[1];
+                                                    if ($verbose_parsing) {
+                                                        echo("<br>Object's checkbox_no is '<i>$ap_d_no</i>'");
+                                                    }
+                                                    $object["infos"]["checkbox_no"]=$ap_d_no;
+                                                }
+                                            } else {
+                                                if ($ap_d_yes === '') {
+                                                    $ap_d_yes=$match[1];
+                                                    if ($verbose_parsing) {
+                                                        echo("<br>Object's checkbox_yes is '<i>$ap_d_yes</i>'");
+                                                    }
+                                                    $object["infos"]["checkbox_yes"]=$ap_d_yes;
+                                                }
                                             }
-                                            $object["infos"]["checkbox_yes"]=$ap_d_yes;
-                                        } elseif (($ap_line==$Counter-5)&&($ap_d_line==$Counter-3)&&($ap_d_no=='')&&$this->extract_pdf_definition_value("name", $CurLine, $match)) {
-                                            $ap_d_no=$match[1];
-                                            if ($verbose_parsing) {
-                                                echo("<br>Object's checkbox_no is '<i>$ap_d_no</i>'");
-                                            }
-                                            $object["infos"]["checkbox_no"]=$ap_d_no;
                                         } elseif (($as=='')&&$this->extract_pdf_definition_value("/AS", $CurLine, $match)) {
                                             $as=$match[1];
                                             if ($verbose_parsing) {
@@ -1962,7 +1971,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 											$name=$this->_unprotectContentValues($match[1]);
 											//FIX: convert ASCII object names to utf-8
 											// don't use utf8_encode($name) yet, it's core function since php 7.2
-											$name = mb_convert_encoding($name, 'UTF-8', 'ASCII');
+											$name = mb_convert_encoding($name, 'UTF-8', 'ISO-8859-1');	// @CHANGE DOL was 'ASCII': any accented byte (e.g. an actual field name like "Numéro de dossier", stored as plain 8-bit Latin-1/WinAnsi in the PDF, not as a </FEFF...> UTF-16BE hex string) is not valid ASCII, so mb_convert_encoding silently replaced it with '?', making the field permanently unmatchable by name
 											//ENDFIX
 											if($verbose_parsing) echo ("Object's name is '<i>$name</i>'");
 
