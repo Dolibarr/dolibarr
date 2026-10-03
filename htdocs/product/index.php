@@ -277,24 +277,33 @@ $lastmodified = "";
 if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
-	$sql .= " GREATEST(p.tms, pef.tms) as datem";
-	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as pef ON pef.fk_object=p.rowid";
-	$sql .= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
+	// COALESCE: GREATEST() returns NULL on MySQL when the product has no extrafields row
+	$sql .= " GREATEST(p.tms, COALESCE(pef.tms, p.tms)) as datem";
+	// The filters are shared by the final query and by the queries selecting the candidates
+	$sqlwhere = " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
 	/*if ($type != '') {
-		$sql .= " AND p.fk_product_type = ".((int) $type);
+		$sqlwhere .= " AND p.fk_product_type = ".((int) $type);
 	}*/
 	if (!$user->hasRight("produit", "lire")) {
-		$sql .= " AND p.fk_product_type <> ".((int) Product::TYPE_PRODUCT);
+		$sqlwhere .= " AND p.fk_product_type <> ".((int) Product::TYPE_PRODUCT);
 	}
 	if (!$user->hasRight("service", "lire")) {
-		$sql .= " AND p.fk_product_type <> ".((int) Product::TYPE_SERVICE);
+		$sqlwhere .= " AND p.fk_product_type <> ".((int) Product::TYPE_SERVICE);
 	}
 
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
+	$sqlwhere .= $hookmanager->resPrint;
+	// A sort on GREATEST() can not use an index and would sort all the products on each display: the $max most recently
+	// modified products and the $max products with the most recently modified extrafields are selected first (sorts on a
+	// single column, each can use an index on tms), and the final sort on GREATEST() runs on these candidates only.
+	$sqlcandidates = "(SELECT p.rowid FROM ".MAIN_DB_PREFIX."product as p".$sqlwhere.$db->order("p.tms", "DESC").$db->plimit($max, 0).")";
+	$sqlcandidates .= " UNION (SELECT p.rowid FROM ".MAIN_DB_PREFIX."product as p INNER JOIN ".MAIN_DB_PREFIX."product_extrafields as pef ON pef.fk_object = p.rowid".$sqlwhere.$db->order("pef.tms", "DESC").$db->plimit($max, 0).")";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql .= " INNER JOIN (".$sqlcandidates.") as cand ON cand.rowid = p.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as pef ON pef.fk_object=p.rowid";
+	$sql .= $sqlwhere;
 	$sql .= $db->order("datem", "DESC");
 	$sql .= $db->plimit($max, 0);
 
