@@ -1097,7 +1097,7 @@ if ($object->id > 0) {
 				if ($contrat->fk_project > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 					$project = new Project($db);
-					$project->fetch($contrat->fk_project);
+					$project->fetch((int) $contrat->fk_project);
 					print $project->getNomUrl(1);
 				}
 				print "</td>\n";
