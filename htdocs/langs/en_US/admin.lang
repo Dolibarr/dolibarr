@@ -2951,3 +2951,4 @@ ReInstall=Re-install
 YouAlsoNeedToBeAdminForThisPermission=You also need to have the status flag "admin"to be allowed to use this permission
 AIEmailCleanerOperation=AI cleaner (no business decision)
 AutomaticSetup=Automatic setup
+OpenIDSetupConfOk=The file <b>%s</b> contains the entry <b>%s</b> with value

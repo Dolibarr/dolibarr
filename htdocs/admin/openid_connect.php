@@ -209,7 +209,7 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 		$langs->load("errors");
 		print info_admin($langs->trans("ErrorOpenIDSetupConfNotComplete") . ':  ' . $urlforwikidoc, 0, 0, 1, 'warning');
 	} else {
-		print info_admin('In conf.php file: dolibarr_main_authentication is ' . $dolibarr_main_authentication);
+		print info_admin($langs->trans("OpenIDSetupConfOk", 'conf.php', 'dolibarr_main_authentication').' : <b>' . $dolibarr_main_authentication).'</b>';
 	}
 
 	print '<br>';
