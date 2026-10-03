@@ -102,7 +102,7 @@ if (empty($min)) {
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 //$modetax = $conf->global->TAX_MODE;
-$calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
+$calc = getDolGlobalInt('MAIN_INFO_LOCALTAX_CALC'.$local);
 $modetax = getDolGlobalInt('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOST("modetax", 'int');
