@@ -252,23 +252,6 @@ class Bookmark extends CommonObject
 	}
 
 	/**
-	 * Function used to replace a thirdparty id with another one.
-	 *
-	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
-	 * @param 	int 	$origin_id 	Old thirdparty id
-	 * @param 	int 	$dest_id 	New thirdparty id
-	 * @return 	bool
-	 */
-	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'bookmark'
-		);
-
-		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
-	}
-
-	/**
 	 *  Return the label of the status
 	 *
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
