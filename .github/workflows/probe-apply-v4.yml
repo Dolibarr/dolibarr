@@ -1,0 +1,65 @@
+name: Probe apply patch v4
+
+on:
+  push:
+    branches: [probe-phpstan-cti-report]
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    continue-on-error: true
+    steps:
+      - name: Checkout probe branch
+        uses: actions/checkout@v4
+        with:
+          ref: probe-phpstan-cti-report
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: phpstan:2.2.14
+      - name: PHPStan before
+        continue-on-error: true
+        run: |
+          git config user.name "github-actions[bot]" || true
+          git config user.email "github-actions[bot]@users.noreply.github.com" || true
+          git fetch origin fix-phpstan-journals-list || true
+          git checkout -b fixwork origin/fix-phpstan-journals-list || true
+          echo "=== PHPSTAN BEFORE ===" | tee result.txt || true
+          phpstan analyse --level=9 --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit=3G htdocs/accountancy/admin/journals_list.php > before.txt 2>&1 || true
+          cat before.txt | tee -a result.txt || true
+      - name: Apply patch
+        continue-on-error: true
+        run: |
+          echo "cGF0aCA9ICdodGRvY3MvYWNjb3VudGFuY3kvYWRtaW4vam91cm5hbHNfbGlzdC5waHAnCmRhdGEgPSBvcGVuKHBhdGgsICdyYicpLnJlYWQoKQpsaW5lcyA9IGRhdGEuc3BsaXQoYidcbicpCmFzc2VydCBsZW4obGluZXMpID4gNjIwLCAnZmlsZSB0b28gc2hvcnQnCmFzc2VydCBsaW5lc1s1MzFdID09IGInXHRcdCRzb3J0YWJsZSA9IDE7JywgcmVwcihsaW5lc1s1MzFdKQphc3NlcnQgbGluZXNbNTUyXSA9PSBiJ1x0XHRwcmludCBnZXRUaXRsZUZpZWxkT2ZMaXN0KCR2YWx1ZXRvc2hvdywgMCwgJF9TRVJWRVJbIlBIUF9TRUxGIl0sICgkc29ydGFibGUgPyAkZmllbGRsaXN0WyRmaWVsZF0gOiBcJ1wnKSwgKCRwYWdlID8gXCdwYWdlPVwnLiRwYWdlLlwnJlwnIDogXCdcJyksICRwYXJhbSwgIiIsICRzb3J0ZmllbGQsICRzb3J0b3JkZXIsICRjbGFzcy5cJyBcJyk7JywgcmVwcihsaW5lc1s1NTJdKQphc3NlcnQgbGluZXNbNjE4XSA9PSBiJ1x0XHRcdFx0aWYgKGlzc2V0KCRvYmotPmNvZGUpICYmICRpZCAhPSAxMCkgeycsIHJlcHIobGluZXNbNjE4XSkKbGluZXNbNTUyXSA9IGInXHRcdHByaW50IGdldFRpdGxlRmllbGRPZkxpc3QoJHZhbHVldG9zaG93LCAwLCAkX1NFUlZFUlsiUEhQX1NFTEYiXSwgJGZpZWxkbGlzdFskZmllbGRdLCAoJHBhZ2UgPyBcJ3BhZ2U9XCcuJHBhZ2UuXCcmXCcgOiBcJ1wnKSwgJHBhcmFtLCAiIiwgJHNvcnRmaWVsZCwgJHNvcnRvcmRlciwgJGNsYXNzLlwnIFwnKTsnCmxpbmVzWzYxOF0gPSBiJ1x0XHRcdFx0aWYgKGlzc2V0KCRvYmotPmNvZGUpKSB7JwpkZWwgbGluZXNbNTMxXQpvcGVuKHBhdGgsICd3YicpLndyaXRlKGInXG4nLmpvaW4obGluZXMpKQpwcmludCgncGF0Y2ggYXBwbGllZCcp" | base64 -d > patch.py
+          python3 patch.py > patchout.txt 2>&1 || true
+          cat patchout.txt | tee -a result.txt || true
+      - name: Lint and PHPStan after
+        continue-on-error: true
+        run: |
+          php -l htdocs/accountancy/admin/journals_list.php > lint.txt 2>&1 || true
+          cat lint.txt | tee -a result.txt || true
+          echo "=== PHPSTAN AFTER ===" | tee -a result.txt || true
+          phpstan analyse --level=9 --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit=3G htdocs/accountancy/admin/journals_list.php > after.txt 2>&1 || true
+          cat after.txt | tee -a result.txt || true
+      - name: Push fix if verified
+        continue-on-error: true
+        run: |
+          if grep -q "patch applied" patchout.txt && grep -q "No errors" after.txt; then
+            git add htdocs/accountancy/admin/journals_list.php
+            git commit -m "QUAL Fix 2 PHPStan warnings in journals list page" || true
+            git push origin fixwork:fix-phpstan-journals-list || true
+            echo "FIX_PUSHED=yes" | tee -a result.txt || true
+          else
+            echo "FIX_PUSHED=no" | tee -a result.txt || true
+          fi
+      - name: Commit result to probe branch
+        continue-on-error: true
+        run: |
+          git checkout probe-phpstan-cti-report || true
+          git add result.txt || true
+          git commit -m "[skip ci] Add patch result" || echo "nothing to commit"
+          git pull --rebase || true
+          git push || true
