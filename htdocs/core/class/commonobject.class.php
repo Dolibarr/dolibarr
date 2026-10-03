@@ -362,7 +362,7 @@ abstract class CommonObject
 	public $contact_id;
 
 	/**
-	 * @var ?Societe 	A related thirdparty object
+	 * @var ?Societe 		A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
@@ -374,25 +374,25 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var ?Product 	Populated by fetch_product()
+	 * @var ?Product 		Populated by fetch_product()
 	 * @see fetch_product()
 	 */
 	public $product;
 
 	/**
-	 * @var ?Entrepot 	A related warehouse object
+	 * @var ?Entrepot 		A related warehouse object
 	 * @see fetch_warehouse()
 	 */
 	public $warehouse;
 
 	/**
-	 * @var string 		The type of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
+	 * @var string 			The type of originating object. Combined with `$origin_id`, it allows to reload `$origin_object`
 	 * @see fetch_origin()
 	 */
 	public $origin_type;
 
 	/**
-	 * @var int 		The id of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
+	 * @var int 			The id of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
 	 * @see fetch_origin()
 	 */
 	public $origin_id;
