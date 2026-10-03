@@ -13801,9 +13801,9 @@ class Form
 
 				// If translation exists, we use it, otherwise we take the default wording
 				$label = ($langs->trans("InvoiceSubtype" . $obj->rowid) != "InvoiceSubtype" . $obj->rowid) ? $langs->trans("InvoiceSubtype" . $obj->rowid) : (($obj->label != '-') ? $obj->label : '');
-				$this->cache_invoice_subtype[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cache_invoice_subtype[$obj->rowid]['code'] = $obj->code;
-				$this->cache_invoice_subtype[$obj->rowid]['label'] = $label;
+				$this->cache_invoice_subtype[(int) $obj->rowid]['rowid'] = (int) $obj->rowid;
+				$this->cache_invoice_subtype[(int) $obj->rowid]['code'] = (string) $obj->code;
+				$this->cache_invoice_subtype[(int) $obj->rowid]['label'] = (string) $label;
 				$i++;
 			}
 
