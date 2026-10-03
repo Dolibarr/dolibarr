@@ -1614,10 +1614,10 @@ class FormMail extends Form
 			$tmparray = getCommonSubstitutionArray($langs, 2, null, $object); // Note: On email templated edition, this is null because it is related to all type of objects
 			complete_substitutions_array($tmparray, $langs, null, $parameters);
 
-			if ($mode == 'formwithlines') {
+			if ($mode == 'formemailwithlines') {
 				$tmparray['__LINES__'] = '__LINES__'; // Will be set by the get_form function
 			}
-			if ($mode == 'formforlines') {
+			if ($mode == 'formemailforlines') {
 				$tmparray['__QUANTITY__'] = '__QUANTITY__'; // Will be set by the get_form function
 			}
 		}
