@@ -187,6 +187,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 						'text' => price(price2num($value / $Number[$key], 'MT')),
 					);
 					$line++;
+					$i++;
 				}
 
 				if ($num == 0) {
