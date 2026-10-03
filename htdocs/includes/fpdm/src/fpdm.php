@@ -38,7 +38,7 @@ $FPDM_FILTERS=array(); //holds all supported filters
 $FPDM_REGEXPS= array(
 	//FIX: parse checkbox definition
 	"/AS"=>"/\/AS\s+\/(\w+)$/",
-	"name"=>"/\/(\w+)/",
+	"name"=>"/\/((?:#[0-9A-Fa-f]{2}|[^\s()<>\[\]{}\/%])+)/",	// @CHANGE DOL was "/\/(\w+)/": a PDF name can hex-escape any byte as #XX (mandatory for spaces/accents/delimiters), which \w+ silently truncated at - see decode_pdf_name() where this is consumed
 	// "/AP_D_SingleLine"=>"/\/D\s+\/(\w+)\s+\d+\s+\d+\s+R\s+\/(\w+)$/",
 	//ENDFIX
 	"/Type"=>"/\/Type\s+\/(\w+)$/",
@@ -1018,7 +1018,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
                         }
                         $CurLine = $this->pdf_entries[$variant["state_line"]];
                         $OldLen = strlen($CurLine);
-                        $CurLine = '/AS /'.$variant["yes"];
+                        $CurLine = '/AS /'.$variant["yes_raw"]; // @CHANGE DOL write the raw (still #XX-escaped) token, not the decoded one used for matching above - decoded bytes are not valid PDF name syntax
                         $NewLen = strlen($CurLine);
                         $Shift = $NewLen - $OldLen;
                         $this->shift = $this->shift + $Shift;
@@ -1041,9 +1041,13 @@ if (!call_user_func_array('class_exists', $__tmp)) {
                         if ($verbose_set) {
                             echo "<br>Change checkbox of the field $name at line $field_checkbox_line to value [$value]";
                         }
-                        $state = $this->value_entries["$name"]["infos"]["checkbox_no"];
+                        // @CHANGE DOL write the raw (still #XX-escaped) token when available, not the decoded
+                        // one used for matching/display - decoded bytes are not valid PDF name syntax. Falls
+                        // back to the plain key for a PDF parsed before this field existed (none currently).
+                        $infos=$this->value_entries["$name"]["infos"];
+                        $state = isset($infos["checkbox_no_raw"]) ? $infos["checkbox_no_raw"] : $infos["checkbox_no"];
                         if ($value) {
-                            $state = $this->value_entries["$name"]["infos"]["checkbox_yes"];
+                            $state = isset($infos["checkbox_yes_raw"]) ? $infos["checkbox_yes_raw"] : $infos["checkbox_yes"];
                         }
                         $CurLine =$this->pdf_entries[$field_checkbox_line];
                         $OldLen=strlen($CurLine);
@@ -1700,6 +1704,24 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 				return $value;
 		}
 
+		//FIX: decode a raw PDF name token captured via the "name" regexp above (reverses its // @CHANGE DOL
+		//#XX hex-escaping, then aligns it with the UTF-8 convention used for field names elsewhere)
+		/**
+		*Decodes a PDF name object's #XX hex-escaping into its literal bytes.
+		*
+		*@access private
+		*@param string $name a raw name token, as captured by the "name" entry of $FPDM_REGEXPS
+		*@return string the decoded name, converted to UTF-8
+		**/
+		function decode_pdf_name($name) {
+		//-----------------------------------------------------------
+			$decoded=preg_replace_callback('/#([0-9A-Fa-f]{2})/', function ($m) {
+				return chr(hexdec($m[1]));
+			}, $name);
+			return mb_convert_encoding($decoded, 'UTF-8', 'ISO-8859-1');
+		//ENDFIX
+		}
+
 
 		/**
          * Parses the lines entries of a PDF
@@ -1798,6 +1820,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 											"parent"=>$object["infos"]["parent"],
 											"state_line"=>$object["infos"]["checkbox_state_line"],
 											"yes"=>isset($object["infos"]["checkbox_yes"]) ? $object["infos"]["checkbox_yes"] : '',
+											"yes_raw"=>isset($object["infos"]["checkbox_yes_raw"]) ? $object["infos"]["checkbox_yes_raw"] : '',
 											"no"=>isset($object["infos"]["checkbox_no"]) ? $object["infos"]["checkbox_no"] : '',
 										);
 										if($verbose_parsing) $this->dumpContent("$type $subtype (obj id=$obj) is a parentless checkbox widget, queued for resolution against parent {$object['infos']['parent']}.");
@@ -1984,22 +2007,29 @@ if (!call_user_func_array('class_exists', $__tmp)) {
                                         } elseif ((($ap_line==$Counter-4&&$ap_d_line==$Counter-2)||($ap_line==$Counter-5&&$ap_d_line==$Counter-3))&&$this->extract_pdf_definition_value("name", $CurLine, $match)) {
                                             // @CHANGE DOL classify by the literal name instead of assuming the "on" state always comes
                                             // before "Off": a /D or /N appearance dict can list its two keys in either order (observed
-                                            // both ways within the very same PDF), so position alone does not tell yes from no
-                                            if ($match[1] === 'Off') {
+                                            // both ways within the very same PDF), so position alone does not tell yes from no.
+                                            // Keep the raw (still #XX-escaped) token for writing back into /AS - it is already valid
+                                            // PDF name syntax as captured - and a separately decoded copy for matching/display only;
+                                            // writing the decoded copy would put arbitrary raw bytes where the PDF expects a name token.
+                                            $raw=$match[1];
+                                            $decoded=$this->decode_pdf_name($raw);
+                                            if ($decoded === 'Off') {
                                                 if ($ap_d_no === '') {
-                                                    $ap_d_no=$match[1];
+                                                    $ap_d_no=$decoded;
                                                     if ($verbose_parsing) {
                                                         echo("<br>Object's checkbox_no is '<i>$ap_d_no</i>'");
                                                     }
-                                                    $object["infos"]["checkbox_no"]=$ap_d_no;
+                                                    $object["infos"]["checkbox_no"]=$decoded;
+                                                    $object["infos"]["checkbox_no_raw"]=$raw;
                                                 }
                                             } else {
                                                 if ($ap_d_yes === '') {
-                                                    $ap_d_yes=$match[1];
+                                                    $ap_d_yes=$decoded;
                                                     if ($verbose_parsing) {
                                                         echo("<br>Object's checkbox_yes is '<i>$ap_d_yes</i>'");
                                                     }
-                                                    $object["infos"]["checkbox_yes"]=$ap_d_yes;
+                                                    $object["infos"]["checkbox_yes"]=$decoded;
+                                                    $object["infos"]["checkbox_yes_raw"]=$raw;
                                                 }
                                             }
                                         } elseif (($as=='')&&$this->extract_pdf_definition_value("/AS", $CurLine, $match)) {
@@ -2260,6 +2290,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 							"object"=>$kid["object"],
 							"state_line"=>$kid["state_line"],
 							"yes"=>$kid["yes"],
+							"yes_raw"=>$kid["yes_raw"],
 							"no"=>$kid["no"],
 						);
 						if($this->verbose) $this->dumpContent("Resolved a checkbox widget onto field '$field_name' (parent object {$kid['parent']})");

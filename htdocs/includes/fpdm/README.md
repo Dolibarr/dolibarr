@@ -33,6 +33,10 @@ is marked inline with `// @CHANGE DOL` and also documented in
    its "on"/"off" state names never extracted at all; and the "on"/"off"
    keys were told apart by position (first vs. second) rather than by
    name, which does not hold for every PDF producer.
+5. A checkbox/radio "on" token containing a space or an accented character
+   is hex-escaped in the PDF (e.g. `/Accident#20vie#20priv#8ee`); this was
+   truncated at the first escape, so two different widgets on the same
+   field could silently report the same truncated "on" token.
 
 Also added, not present upstream: a public `ListFields()` method (see
 [Usage](#usage) below) and the `/FT` capture it relies on to tell an actual
@@ -80,11 +84,8 @@ Notes:
   copy as the template asset; this is a one-time step on the template file,
   not a runtime dependency - `ListFields()` cannot work around it either,
   since it shares the same underlying line-based parser.
-- **Known limitation**: a checkbox/radio "on" token containing a space or
-  an accented character is stored in the PDF as a hex-escaped name (e.g.
-  `/Accident#20vie#20priv#e9e`); FPDM does not decode that escaping, so
-  both `ListFields()` and the internal matching only see the token up to
-  the first escape (e.g. `Accident`). Two different widgets on the same
-  field can truncate to the same value, in which case passing it ticks
-  both. If this matters, avoid relying on tokens that contain spaces or
-  accents for that specific field.
+- A checkbox/radio "on" token from `ListFields()` may contain a character
+  that doesn't print cleanly (e.g. a byte the source PDF escaped using a
+  charset other than Latin-1/WinAnsi) - this is cosmetic only: the value
+  is still the correct, unique token to pass back to `Load()` to tick that
+  specific widget.

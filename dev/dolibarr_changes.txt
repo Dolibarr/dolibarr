@@ -188,6 +188,27 @@ LibreOffice, which exposed different edge cases):
   requiring /FT (the one marker exclusive to actual field objects), now
   captured alongside /Type and /Subtype.
 
+* In src/fpdm.php, a checkbox/radio "on" token containing a space or an
+  accented character is stored in the PDF as a hex-escaped name (e.g.
+  /Accident#20vie#20priv#8ee - mandatory per the PDF spec for anything
+  that isn't a "regular" character), which the "name" regexp truncated at
+  the first escape, silently turning several distinct tokens on the same
+  field into the same truncated value (ListFields() showed this directly:
+  two widgets both reporting "Accident" as their "on" token). Decoding it
+  properly is a two-part fix:
+
+  - The "name" regexp now captures the whole escaped token (previously
+    \w+, which also stopped at the first escape).
+  - A new decode_pdf_name() unescapes #XX sequences and converts the
+    result from ISO-8859-1 to UTF-8 (same convention as fix 3 above), used
+    for comparison in set_field_checkbox() and for what ListFields()
+    reports - but NOT for what gets written back into /AS: that still
+    uses the original, still-escaped token (now also kept, as
+    checkbox_yes_raw/checkbox_no_raw/variant["yes_raw"]), since writing
+    the decoded bytes in its place is not valid PDF name syntax and
+    corrupts the file (reproduced: poppler then throws "Dictionary key
+    must be a name object" and the checkbox never renders).
+
 All changes are marked inline with "// @CHANGE DOL".
 
 
