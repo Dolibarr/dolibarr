@@ -729,6 +729,18 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
+// Filter also on the ids of the warehouses, read first: with only the condition on e.entity, the database starts
+// from the warehouse table and reads and sorts all the stock movements to return the last ones, instead of
+// reading them from the index on m.datem (several seconds with millions of movements).
+$warehouseids = array();
+$resqlw = $db->query("SELECT e.rowid FROM ".MAIN_DB_PREFIX."entrepot as e WHERE e.entity IN (".getEntity('stock').")");
+if ($resqlw) {
+	while ($objw = $db->fetch_object($resqlw)) {
+		$warehouseids[] = (int) $objw->rowid;
+	}
+	$db->free($resqlw);
+}
+
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql .= " ".MAIN_DB_PREFIX."product as p,";
 $sql .= " ".MAIN_DB_PREFIX."stock_mouvement as m";
@@ -749,6 +761,9 @@ if ($msid > 0) {
 }
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
+if ($resqlw) {
+	$sql .= " AND m.fk_entrepot IN (".$db->sanitize(implode(',', $warehouseids ?: array(0))).")";
+}
 if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
@@ -836,7 +851,12 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 }
 
 // Complete request and execute it with limit
-$sql .= $db->order($sortfield, $sortorder);
+// Movements often share the same date: add the id so the order, and so the pages, are always the same
+if ($sortfield == 'm.datem') {
+	$sql .= $db->order("m.datem,m.rowid", $sortorder.",".$sortorder);
+} else {
+	$sql .= $db->order($sortfield, $sortorder);
+}
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }

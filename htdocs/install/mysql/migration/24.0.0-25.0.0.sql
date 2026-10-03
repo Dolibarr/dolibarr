@@ -426,3 +426,6 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES 
 
 -- Top menu "Banks | Cash" now opens the new bank dashboard page instead of the list of accounts
 UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' WHERE type = 'top' AND mainmenu = 'bank' AND url LIKE '/compta/bank/list.php?search_status=opened%';
+
+-- Index on the date of the stock movements: lists and widgets of latest movements are sorted on it
+ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_datem (datem);
