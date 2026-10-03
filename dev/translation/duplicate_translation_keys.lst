@@ -5,8 +5,6 @@ AccountancyCode
 AffectedTo
 AvailableFormats
 BankTransferAmount
-Buy
-ByDefaultInList
 ByYear
 ChooseFileToImport
 ConfirmCloneAsk
@@ -17,18 +15,15 @@ CreatedBy
 Customer
 CustomerInvoicePayment
 DatabaseName
-DatabaseServer
 DeleteFromCat
 DeleteType
 DriverType
 ExportableDatas
 ExportsArea
 History
-IdModule
 InterventionSentByEMail
 InvoiceRef
 InvoiceSubtype
-LanguageFile
 LineId
 ListOfStockMovements
 Location
@@ -39,7 +34,6 @@ NewUser
 NoSupplierOrder
 NoticePeriod
 OrderWaiting
-PriceFormatInCurrentLanguage
 Prospect
 Prospect
 ReOpen
