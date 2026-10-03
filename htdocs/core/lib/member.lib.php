@@ -105,7 +105,7 @@ function member_prepare_head(Adherent $object)
 	if (!empty($object->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/note.php', ['id' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/core/note.php', ['element' => 'adherents', 'id' => $object->id]);
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
 	if ($nbNote > 0) {
