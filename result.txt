@@ -1,0 +1,13 @@
+=== PHPSTAN BEFORE ===
+Note: Using configuration file /home/runner/work/dolibarr/dolibarr/phpstan.neon.dist.
+
+ [OK] No errors                                                                 
+
+patch applied
+No syntax errors detected in htdocs/accountancy/admin/journals_list.php
+=== PHPSTAN AFTER ===
+Note: Using configuration file /home/runner/work/dolibarr/dolibarr/phpstan.neon.dist.
+
+ [OK] No errors                                                                 
+
+FIX_PUSHED=yes
