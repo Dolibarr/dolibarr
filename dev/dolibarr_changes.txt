@@ -174,6 +174,20 @@ LibreOffice, which exposed different edge cases):
 * In fpdm.php (the non-composer entry point), require_once() paths were
   made absolute (__DIR__-based) instead of relative to the include_path/CWD.
 
+* Added a public ListFields() method (not present upstream) that returns
+  every AcroForm field's name/type/maxlen/checkbox-or-radio "on" tokens
+  without merging any data - so a caller can discover what to pass to
+  Load() without shelling out to `pdftk dump_data_fields_utf8` just to
+  inspect a PDF. While adding it, caught a bug in the "field root with no
+  widget of its own" branch added for the /Parent+/Kids fix above: it
+  registered ANY named object with no /Subtype as a field, but /T is also
+  used by entirely unrelated PDF objects (e.g. a tagged-PDF structure
+  element's title, or a markup annotation's author) - on the 828-field
+  MDPH form this pulled in 274 phantom "fields" that ListFields() surfaced
+  immediately, pdftk's own dump obviously didn't have them. Fixed by also
+  requiring /FT (the one marker exclusive to actual field objects), now
+  captured alongside /Type and /Subtype.
+
 All changes are marked inline with "// @CHANGE DOL".
 
 

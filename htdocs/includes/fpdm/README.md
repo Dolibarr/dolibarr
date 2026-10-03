@@ -34,6 +34,13 @@ is marked inline with `// @CHANGE DOL` and also documented in
    keys were told apart by position (first vs. second) rather than by
    name, which does not hold for every PDF producer.
 
+Also added, not present upstream: a public `ListFields()` method (see
+[Usage](#usage) below) and the `/FT` capture it relies on to tell an actual
+field root apart from any other named PDF object (adding it surfaced a bug
+of its own: the field-root branch from fix 2 above registered 274 phantom
+"fields" on the 828-field MDPH form below, from tagged-PDF structure
+elements that also carry a `/T`; now gated on `/FT` being present too).
+
 ## Usage
 
 ```php
@@ -45,10 +52,17 @@ $pdf = new FPDM($pathToSourcePdf);
 // upstream; the Dolibarr patches above are what make this reliable):
 $pdf->useCheckboxParser = true;
 
+// Discover what's actually in the PDF instead of shelling out to
+// `pdftk file.pdf dump_data_fields_utf8` - no data is changed.
+foreach ($pdf->ListFields() as $name => $info) {
+	// $info = ['type' => 'Text'|'Button'|'Signature'|'Choice', 'maxlen' => int, 'options' => string[]]
+	// 'options' is only meaningful for 'Button' (its "on"/"off" tokens, "Off" always included).
+}
+
 // $isUTF8 = true lets you pass UTF-8 field values (accents, etc).
 $pdf->Load(array(
 	'TextFieldName'     => 'Some value',
-	'CheckboxFieldName' => 'OnStateName',   // the field's own "on" token, not just "1"/true
+	'CheckboxFieldName' => 'OnStateName',   // the field's own "on" token (from ListFields() above), not just "1"/true
 ), true);
 
 $pdf->Merge();
@@ -64,17 +78,13 @@ Notes:
   is optimized/linearized, decompress it once when adding it to your module
   (e.g. `pdftk in.pdf output out.pdf uncompress`) and ship the decompressed
   copy as the template asset; this is a one-time step on the template file,
-  not a runtime dependency.
-- A text field's "on"/"off" tokens for a checkbox or radio button are
-  whatever name the PDF itself defines (commonly `1`/`Off`, `Oui`/`Off`,
-  `A`/`Off`...) - inspect the target PDF once (e.g.
-  `pdftk file.pdf dump_data_fields_utf8`) to know which value to pass.
+  not a runtime dependency - `ListFields()` cannot work around it either,
+  since it shares the same underlying line-based parser.
 - **Known limitation**: a checkbox/radio "on" token containing a space or
   an accented character is stored in the PDF as a hex-escaped name (e.g.
-  `/Accident#20vie#20priv#e9e`); FPDM does not decode that escaping, so it
-  only captures the token up to the first escape (e.g. `Accident`). Two
-  different widgets on the same field can truncate to the same value, in
-  which case passing it ticks both. If this matters, read the real,
-  un-truncated token straight from `$pdf->value_entries[$name]['infos']`
-  after a first `Merge()` call, or avoid relying on tokens that contain
-  spaces/accents for that specific field.
+  `/Accident#20vie#20priv#e9e`); FPDM does not decode that escaping, so
+  both `ListFields()` and the internal matching only see the token up to
+  the first escape (e.g. `Accident`). Two different widgets on the same
+  field can truncate to the same value, in which case passing it ticks
+  both. If this matters, avoid relying on tokens that contain spaces or
+  accents for that specific field.

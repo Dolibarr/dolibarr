@@ -42,7 +42,8 @@ $FPDM_REGEXPS= array(
 	// "/AP_D_SingleLine"=>"/\/D\s+\/(\w+)\s+\d+\s+\d+\s+R\s+\/(\w+)$/",
 	//ENDFIX
 	"/Type"=>"/\/Type\s+\/(\w+)$/",
-	"/Subtype" =>"/^\/Subtype\s+\/(\w+)$/"
+	"/Subtype" =>"/^\/Subtype\s+\/(\w+)$/",
+	"/FT" =>"/^\/FT\s+\/(\w+)$/"	// @CHANGE DOL tells an actual AcroForm field root apart from any other named PDF object (e.g. a tagged-PDF structure element, which also uses /T)
 );
 
 //Major stream filters come from FPDI's stuff but I've added some :)
@@ -465,6 +466,62 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 		}
 
 		//#############################
+
+		//FIX: new method, not present upstream - lists the source PDF's AcroForm fields without
+		//merging any data, so callers can discover field names/types/checkbox "on" tokens without
+		//shelling out to `pdftk dump_data_fields_utf8` just to inspect a PDF.
+		/**
+		*Lists the AcroForm fields found in the source PDF (read-only, no value is changed).
+		*
+		*@access public
+		*@note useCheckboxParser should be set to true beforehand to get checkbox/radio "on" tokens;
+		*      otherwise every button field is still listed, but its "options" stays empty.
+		*@return array<string,array{type:string,maxlen:int,options:string[]}> keyed by field name
+		**/
+		function ListFields() {
+		//-----------------------
+			$lines=array();
+			$this->parsePDFEntries($lines);
+
+			$result=array();
+			foreach($lines as $name=>$field) {
+				if($name==='$_XREF_$') continue; //internal bookkeeping entry, not a real field
+
+				$infos=isset($field["infos"]) ? $field["infos"] : array();
+				$isButton=isset($infos["checkbox_state"]) || !empty($infos["checkbox_variants"]);
+
+				$options=array();
+				if($isButton) {
+					$options[]='Off';
+					if(!empty($infos["checkbox_yes"])) $options[]=$infos["checkbox_yes"];
+					if(!empty($infos["checkbox_variants"])) {
+						foreach($infos["checkbox_variants"] as $variant) {
+							if($variant["yes"]!=='' && !in_array($variant["yes"], $options, true)) {
+								$options[]=$variant["yes"];
+							}
+						}
+					}
+				}
+
+				///FT (Btn/Tx/Ch/Sig) is the authoritative PDF type when available; fall back to the
+				//checkbox markers above for a widget whose /FT lives only on an unresolved /Parent.
+				switch(isset($infos["ft"]) ? $infos["ft"] : '') {
+					case 'Btn': $type='Button'; break;
+					case 'Sig': $type='Signature'; break;
+					case 'Ch': $type='Choice'; break;
+					case 'Tx': $type='Text'; break;
+					default: $type=$isButton ? 'Button' : 'Text';
+				}
+
+				$result[$name]=array(
+					"type"=>$type,
+					"maxlen"=>isset($field["constraints"]["maxlen"]) ? (int) $field["constraints"]["maxlen"] : 0,
+					"options"=>$options,
+				);
+			}
+			return $result;
+		}
+		//ENDFIX
 
 		/**
 		*Merge FDF file with a PDF file
@@ -1674,6 +1731,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
             $type='';
 			$subtype='';
 			$name='';
+			$ft='';	// @CHANGE DOL tracks /FT, used to tell an actual field root apart from any other named PDF object (see below)
 			$value='';
 			$default_maxLen=0; //No limit
 			$default_tooltip_line=0; //Tooltip is optional as it may not be defined
@@ -1757,7 +1815,10 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 								//own - e.g. radio groups or a field whose single widget lives on another
 								//object) - register it so a text value can still be attached to it, and so
 								//the checkbox resolution pass below has a field to attach kids' states to.
-								}elseif($name != '') {
+								//Requires /FT: plenty of other named PDF objects use /T for something else
+								//entirely (e.g. a tagged-PDF structure element's title, or a comment
+								//annotation's author) and must not be mistaken for a form field.
+								}elseif($name != '' && $ft != '') {
 									$lines["$name"]=$object;
 									if($verbose_parsing) $this->dumpContent("$type (obj id=$obj) is a field root of name '$name' with no widget of its own, saves it.");
 								//ENDFIX
@@ -1777,6 +1838,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 								$type='';
 								$subtype='';
 								$name='';
+								$ft='';	// @CHANGE DOL
 								$value='';
 								$maxLen=0;
 
@@ -1950,7 +2012,7 @@ if (!call_user_func_array('class_exists', $__tmp)) {
                                         }
 									}
 									//ENDFIX
-									if(($type=='')||($subtype=='')||($name=="")) {
+									if(($type=='')||($subtype=='')||($name=="")||($ft=='')) {
 
 										if(($type=='')&&$this->extract_pdf_definition_value("/Type",$CurLine,$match)) {
 
@@ -1966,6 +2028,15 @@ if (!call_user_func_array('class_exists', $__tmp)) {
 											if($verbose_parsing) echo("<br>Object's subType is '<i>$subtype</i>'");
 
 										}
+										//FIX: capture /FT, see declaration of $ft above // @CHANGE DOL
+										if(($ft=='')&&$this->extract_pdf_definition_value("/FT",$CurLine,$match)) {
+
+											$ft=$match[1];
+											$object["infos"]["ft"]=$ft;
+											if($verbose_parsing) echo("<br>Object's FT is '<i>$ft</i>'");
+
+										}
+										//ENDFIX
 										if(($name=="")&&preg_match("/^\/T\s?\((.+)\)\s*$/",$this->_protectContentValues($CurLine),$match)) {
 
 											$name=$this->_unprotectContentValues($match[1]);
