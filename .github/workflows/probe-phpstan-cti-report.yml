@@ -22,12 +22,12 @@ jobs:
           tools: phpstan:2.2.14
       - name: Run PHPStan with CTI config
         run: |
-          phpstan --level=9 -v analyse --no-progress --memory-limit=5G --error-format=github -a dev/build/phpstan/bootstrap.php -c phpstan_apstats.neon > phpstan-cti.txt 2>&1 || true
+          phpstan --level=9 -v analyse --no-progress --memory-limit=5G --error-format=github -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon > phpstan-cti.txt 2>&1 || true
       - name: Commit phpstan output
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           head -100 phpstan-cti.txt > phpstan-cti-head.txt
           git add phpstan-cti-head.txt
-          git commit -m "[skip ci] Add phpstan output" || echo "nothing to commit"
+          git commit -m "[skip ci] Add phpstan output"
           git push
