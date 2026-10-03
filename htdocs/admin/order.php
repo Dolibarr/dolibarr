@@ -11,6 +11,7 @@
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
  * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -574,6 +575,15 @@ if (isModEnabled('invoice')) {
 	print $form->textwithpicto('', $langs->trans("InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp"), 1, 'help') . '</td>';
 	print '<td class="left" colspan="2">';
 	print ajax_constantonoff('ORDER_DISABLE_CLASSIFY_BILLED_FROM_ORDER');
+	print '</td></tr>';
+}
+
+// Show the stock quantities next to the shippable icon on the order lines
+if (isModEnabled('stock') && isModEnabled('shipping')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("ShowStockQtyWithShippableIcon");
+	print ' '.$form->textwithpicto('', $langs->trans("ShowStockQtyWithShippableIconHelp"), 1, 'help').'</td>';
+	print '<td class="left" colspan="2">';
+	print ajax_constantonoff('ORDER_SHIPPABLE_SHOW_STOCK_QTY');
 	print '</td></tr>';
 }
 
