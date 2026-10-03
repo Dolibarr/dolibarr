@@ -1,0 +1,126 @@
+lines 530-650 of htdocs/accountancy/admin/journals_list.php
+     1			// in the data dictionaries.
+     2			$class = "left";
+     3			$sortable = 1;
+     4			$valuetoshow = '';
+     5			/*
+     6			$tmparray=getLabelOfField($fieldlist[$field]);
+     7			$valuetoshow=$tmp['valuetoshow'];
+     8			$align=$tmp['align'];
+     9			$sortable=$tmp['sortable'];
+    10			*/
+    11			$valuetoshow = ucfirst($fieldlist[$field]); // By default
+    12			$valuetoshow = $langs->trans($valuetoshow); // try to translate
+    13			if ($fieldlist[$field] == 'code') {
+    14				$valuetoshow = $langs->trans("Code");
+    15			}
+    16			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
+    17				$valuetoshow = $langs->trans("Label");
+    18			}
+    19			if ($fieldlist[$field] == 'nature') {
+    20				$valuetoshow = $langs->trans("NatureOfJournal");
+    21			}
+    22	
+    23			// Affiche nom du champ
+    24			print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
+    25		}
+    26		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
+    27		print getTitleFieldOfList('');
+    28		print getTitleFieldOfList('');
+    29		print getTitleFieldOfList('');
+    30		print '</tr>';
+    31	
+    32		if ($num) {
+    33			// Lines with values
+    34			while ($i < $num) {
+    35				$obj = $db->fetch_object($resql);
+    36				//print_r($obj);
+    37				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+    38				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
+    39					$tmpaction = 'edit';
+    40					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
+    41					$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+    42					$error = $hookmanager->error;
+    43					$errors = $hookmanager->errors;
+    44	
+    45					// Show fields
+    46					if (empty($reshook)) {
+    47						fieldListJournal($fieldlist, $obj, $tabname[$id], 'edit');
+    48					}
+    49	
+    50					print '<td class="center" colspan="4">';
+    51					print '<input type="hidden" name="page" value="'.$page.'">';
+    52					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+    53					print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
+    54					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+    55					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
+    56					print '</td>';
+    57				} else {
+    58					$tmpaction = 'view';
+    59					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
+    60					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+    61	
+    62					$error = $hookmanager->error;
+    63					$errors = $hookmanager->errors;
+    64	
+    65					if (empty($reshook)) {
+    66						$langs->load("accountancy");
+    67						foreach ($fieldlist as $field => $value) {
+    68							$class = "left";
+    69							$tmpvar = $fieldlist[$field];
+    70							$valuetoshow = $obj->$tmpvar;
+    71							if ($valuetoshow == 'all') {
+    72								$valuetoshow = $langs->trans('All');
+    73							} elseif ($fieldlist[$field] == 'nature' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
+    74								$key = $langs->trans("AccountingJournalType".strtoupper($obj->nature));
+    75								$valuetoshow = ($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature)) ? $key : $obj->{$fieldlist[$field]});
+    76							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
+    77								$valuetoshow = $langs->trans($obj->label);
+    78							}
+    79	
+    80							$class = 'tddict';
+    81							// Show value for field
+    82							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dol_escape_htmltag($valuetoshow).'</td>';
+    83						}
+    84					}
+    85	
+    86					// Can an entry be erased or disabled ?
+    87					$iserasable = 1;
+    88					$canbedisabled = 1;
+    89					$canbemodified = 1; // true by default
+    90					if (isset($obj->code) && $id != 10) {
+    91						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
+    92							$iserasable = 0;
+    93							$canbedisabled = 0;
+    94						}
+    95					}
+    96	
+    97					$canbemodified = $iserasable;
+    98	
+    99					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
+   100					$url .= '&'.$param;
+   101					$url .= '&';
+   102	
+   103					// Active
+   104					print '<td class="nowrap center">';
+   105					if ($canbedisabled) {
+   106						print '<a href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
+   107					} else {
+   108						print $langs->trans("AlwaysActive");
+   109					}
+   110					print "</td>";
+   111	
+   112					// Modify link
+   113					if ($canbemodified) {
+   114						print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
+   115					} else {
+   116						print '<td>&nbsp;</td>';
+   117					}
+   118	
+   119					// Delete link
+   120					if ($iserasable) {
+   121						print '<td class="center">';
+
+=== file checks ===
+htdocs/accountancy/admin/journals_list.php: PHP script, Unicode text, UTF-8 text
+CR count: 0
