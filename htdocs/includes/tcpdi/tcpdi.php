@@ -282,7 +282,7 @@ class TCPDI extends FPDF_TPL {
         $annots = $parser->getPageAnnotations();
 
         if (is_array($annots) && $annots[0] == PDF_TYPE_ARRAY // It's an array
-                && is_array($annots[1]) && count($annots[1]) > 1) // It's not empty - there are annotations for this page
+                && is_array($annots[1]) && count($annots[1]) > 0) // It's not empty - there are annotations for this page // @CHANGE DOL was > 1: a page with only one annotation lost it
         {
         	if (!isset($this->_obj_stack[$fn])) {
                 $this->_obj_stack[$fn] = array();
@@ -296,7 +296,7 @@ class TCPDI extends FPDF_TPL {
 
         if (is_array($annots) && $annots[0] == PDF_TYPE_OBJECT // We got an object
                 && is_array($annots[1]) && $annots[1][0] == PDF_TYPE_ARRAY // It's an array
-                && is_array($annots[1][1]) && count($annots[1][1]) > 1) // It's not empty - there are annotations for this page
+                && is_array($annots[1][1]) && count($annots[1][1]) > 0) // It's not empty - there are annotations for this page // @CHANGE DOL was > 1
         {
         	if (!isset($this->_obj_stack[$fn])) {
                 $this->_obj_stack[$fn] = array();
@@ -418,8 +418,12 @@ class TCPDI extends FPDF_TPL {
 
                         if ($nObj[0] == PDF_TYPE_STREAM) {
 							$this->pdf_write_value($nObj);
-                        } else {
+                        } elseif ($nObj[0] == PDF_TYPE_OBJECT && isset($nObj[1]) && is_array($nObj[1])) {
                             $this->pdf_write_value($nObj[1]);
+                        } else {
+                            // @CHANGE DOL The object was not found in the source document: write the null object
+                            // (what a reference to a missing object stands for) instead of an object with no content.
+                            $this->_straightOut('null ');
                         }
 
                         $this->_out('endobj');
@@ -505,7 +509,7 @@ class TCPDI extends FPDF_TPL {
 
             $this->_out('/Resources ');
 
-            if (isset($tpl['resources'])) {
+            if (!empty($tpl['resources'])) { // @CHANGE DOL was isset(): false (page without resources) wrote nothing after /Resources
                 $this->current_parser =& $tpl['parser'];
                 $this->pdf_write_value($tpl['resources']); // "n" will be changed
             } else {
@@ -675,6 +679,9 @@ class TCPDI extends FPDF_TPL {
                 // A stream. First, output the
                 // stream dictionary, then the
                 // stream data itself.
+                // @CHANGE DOL Write the length of the data really copied: the one of the source may be wrong, or be
+                // an indirect object that is not found.
+                $value[1][1]['/Length'] = array(PDF_TYPE_NUMERIC, strlen($value[2][1]));
                 $this->pdf_write_value($value[1]);
                 $this->_out('stream');
                 $this->_out($value[2][1]);
