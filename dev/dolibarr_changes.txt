@@ -330,6 +330,30 @@ NOTES   :
         -   protected $default_monospaced_font = 'courier';
         +   protected $default_monospaced_font = 'freemono';
 
+==> FILE   : include/tcpdf_filters.php, function decodeFilterLZWDecode()
+    REASON : Used by TCPDI to import the pages of old documents. The previous code was not updated when the
+             code read is not yet in the dictionary, so everything decoded after such a code was wrong, and the
+             bits read were removed from the start of the string for each code (the whole remaining string was
+             copied each time: several minutes for a stream of 100 KB).
+    DIFF   :
+        -   while (($data_length > 0) AND (($index = bindec(substr($bitstring, 0, $bitlen))) != 257)) {
+        -       // remove read bits from string
+        -       $bitstring = substr($bitstring, $bitlen);
+        +   $bitpos = 0;
+        +   while (($data_length > 0) AND (($index = bindec(substr($bitstring, $bitpos, $bitlen))) != 257)) {
+        +       // move after the read bits
+        +       $bitpos += $bitlen;
+            and, after
+                $dic_val = $dictionary[$prev_index].$dictionary[$prev_index][0];
+                $decoded .= $dic_val;
+        +       $prev_index = $index;
+
+==> FILE   : include/tcpdf_filters.php, function decodeFilterASCII85Decode()
+    REASON : Deprecation of PHP 8.5 (chr() of a value over 255).
+    DIFF   :
+        -   chr($tuple >> NN)
+        +   chr(($tuple >> NN) & 0xff)
+
 
 
 ####################################################################################################
@@ -375,6 +399,59 @@ NOTES   :
         +       // Default: exit program and print error
                 die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
             }
+
+==> FILES  : tcpdi_parser.php, tcpdi.php
+    REASON : Import of PDF documents that are valid (or that any PDF reader opens) but are not written the way
+             TCPDI expected. All the changes are tagged "@CHANGE DOL". Each case was found on real documents (the
+             producer is given) and is covered by PdfDocTest::testPdfImportPageWithTcpdi().
+    CHANGE : In tcpdi_parser.php:
+             - getDictValue() rewritten, hexadecimal strings read up to their closing ">" in getRawObject(): a
+               hexadecimal string closed just before the end of a dictionary ("/Panose <0105>>>" written by FPDI
+               or xdvipdfmx), an empty one ("<>") or one written on several lines started an endless loop that
+               logged about 200000 PHP warnings per second.
+             - getRawObject(): returns the offset too after a comment (a comment inside an object ended in a
+               TypeError), tells when the end of the data is reached and steps over what it does not know (the
+               callers were reading the same bytes again until the memory was exhausted).
+             - decodeXrefStream(): reads the xref streams that do not use a PNG predictor (cairo, PDFlib, pdfTeX),
+               uses the filter of each row when there is one, all the subsections of /Index, and gives a number to
+               the entries of the compressed objects too (the following entries were shifted).
+             - findObjectOffsets() no more reads the object streams while it looks for the objects, the
+               constructor does it once the objects and the xref are known: the /Length of an object stream may be
+               an indirect object declared after it (cairo, PDFlib). The end of a stream is now an offset in the
+               file (the lengths were added together).
+             - getRawStream(): the length is the declared one only if "endstream" follows it, else the end of the
+               stream is searched (the number of the object holding the length was used as length when this object
+               was not found), and only one end of line is skipped after the keyword "stream" (data starting with
+               CR or LF lost its first bytes).
+             - getIndirectObject(): a dictionary is the one of a stream when the keyword "stream" follows it, not
+               when it has a /Length entry.
+             - matchObjectHeader() added, used by findObjectOffset() and getIndirectObject(): the object number,
+               the generation number and "obj" may be separated by any white space ("12         0 obj" written by
+               HP Exstream: the fonts of the page were not found and written as empty objects, so the text was
+               missing, without any error). It also checks that the offset is inside the file (ValueError of
+               strpos() with PHP 8 on a wrong xref table).
+             - getXrefData(): a startxref that is wrong falls back on the last xref table of the file.
+             - extractObjectStream(): the numbers of the header may be separated by several white spaces
+               (TypeError with the CRLF written by Amyuni).
+             - decodeStream(): the filters were only looked for in a test that is true for a name only, so a
+               stream with its filter in an array ("/Filter [/FlateDecode]") was not decoded.
+             - decodeFilter() added: a FlateDecode stream without its end (Adobe PDF Library 15, PDFsharp) is
+               decoded with inflate_add() when gzuncompress() refuses it, like the PDF readers do.
+             - readPages()/readPage(): /Kids may be an indirect reference, a page tree that loops is not followed,
+               the list of pages is always initialized.
+             - An encrypted document stops with "This PDF document is encrypted and cannot be imported." instead
+               of "decodeFilterFlateDecode: invalid code", or instead of importing unreadable content when its
+               streams are not compressed. /Encrypt is now read from the trailer of a xref stream too.
+             - _getPageResources() and _getPageAnnotations(): no PHP warning when there is no resources or no
+               annotation.
+             In tcpdi.php:
+             - importAnnotations(): "count(...) > 1" replaced with "count(...) > 0" (a page with only one
+               annotation lost it).
+             - _putformxobjects(): "isset($tpl['resources'])" replaced with "!empty($tpl['resources'])" (nothing
+               was written after /Resources for a page that has no resources).
+             - _putimportedobjects(): an object not found in the source document is written as the null object,
+               not as an object with no content.
+             - pdf_write_value(): the /Length written for a stream is the length of the data copied.
 
 
 
