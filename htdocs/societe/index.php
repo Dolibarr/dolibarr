@@ -286,32 +286,40 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 }
 $sql .= ", s.logo";
 $sql .= ", s.entity";
-$sql .= ", s.canvas, GREATEST(s.tms, sef.tms) as date_modification, s.status as status";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
-if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
-}
-// TODO Replace this
+// COALESCE: GREATEST() returns NULL on MySQL when the third party has no extrafields row
+$sql .= ", s.canvas, GREATEST(s.tms, COALESCE(sef.tms, s.tms)) as date_modification, s.status as status";
+// The filters are shared by the final query and by the queries selecting the candidates
+// TODO Replace the join on societe_commerciaux
+$sqlfrom = (!$user->hasRight('societe', 'client', 'voir') ? ", ".MAIN_DB_PREFIX."societe_commerciaux as sc" : "");
+$sqlwhere = ' WHERE s.entity IN ('.getEntity('societe').')';
 if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
-$sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	$sqlwhere .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if (!$user->hasRight('fournisseur', 'lire')) {
-	$sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
+	$sqlwhere .= " AND (s.fournisseur != 1 OR s.client != 0)";
 }
 // Add where from hooks
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid > 0) {
-		$sql .= " AND s.rowid = ".((int) $socid);
+		$sqlwhere .= " AND s.rowid = ".((int) $socid);
 	}
 }
-$sql .= $hookmanager->resPrint;
+$sqlwhere .= $hookmanager->resPrint;
+// A sort on GREATEST() can not use an index and would sort all the third parties on each display: the $max most recently
+// modified third parties and the $max third parties with the most recently modified extrafields are selected first (sorts
+// on a single column, each can use an index on tms), and the final sort on GREATEST() runs on these candidates only.
+$sqlcandidates = "(SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s".$sqlfrom.$sqlwhere.$db->order("s.tms", "DESC").$db->plimit($max, 0).")";
+$sqlcandidates .= " UNION (SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s INNER JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object = s.rowid".$sqlfrom.$sqlwhere.$db->order("sef.tms", "DESC").$db->plimit($max, 0).")";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " INNER JOIN (".$sqlcandidates.") as cand ON cand.rowid = s.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
+$sql .= $sqlfrom;
+$sql .= $sqlwhere;
 $sql .= $db->order("date_modification", "DESC");
 $sql .= $db->plimit($max, 0);
 
@@ -409,35 +417,42 @@ $sql .= ", s.logo";
 $sql .= ", s.entity";
 $sql .= ", s.canvas";
 $sql .= ", s.status as status";
-$sql .= ", GREATEST(sp.tms, spef.tms) as date_modification, sp.statut as cstatus";
+// COALESCE: GREATEST() returns NULL on MySQL when the contact has no extrafields row
+$sql .= ", GREATEST(sp.tms, COALESCE(spef.tms, sp.tms)) as date_modification, sp.statut as cstatus";
 $sql .= ", sp.rowid as cid, sp.canvas as ccanvas, sp.email as cemail, sp.firstname, sp.lastname";
 $sql .= ", sp.address as caddress, sp.phone as cphone";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= " INNER JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople_extrafields as spef ON spef.fk_object = sp.rowid";
-if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
-}
-// TODO Replace this
+// The filters are shared by the final query and by the queries selecting the candidates
+$sqljoinsp = " INNER JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)";
+// TODO Replace the join on societe_commerciaux
+$sqlfrom = (!$user->hasRight('societe', 'client', 'voir') ? ", ".MAIN_DB_PREFIX."societe_commerciaux as sc" : "");
+$sqlwhere = " WHERE s.entity IN (".getEntity('societe').") ";
 if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
-$sql .= " WHERE s.entity IN (".getEntity('societe').") ";
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	$sqlwhere .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if (!$user->hasRight('fournisseur', 'lire')) {
-	$sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
+	$sqlwhere .= " AND (s.fournisseur != 1 OR s.client != 0)";
 }
 // Add where from hooks
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid > 0) {
-		$sql .= " AND s.rowid = ".((int) $socid);
+		$sqlwhere .= " AND s.rowid = ".((int) $socid);
 	}
 }
-$sql .= $hookmanager->resPrint;
+$sqlwhere .= $hookmanager->resPrint;
+// Same technique as for the third parties above: the final sort on GREATEST() runs on the candidates only
+$sqlcandidates = "(SELECT sp.rowid FROM ".MAIN_DB_PREFIX."societe as s".$sqljoinsp.$sqlfrom.$sqlwhere.$db->order("sp.tms", "DESC").$db->plimit($max, 0).")";
+$sqlcandidates .= " UNION (SELECT sp.rowid FROM ".MAIN_DB_PREFIX."societe as s".$sqljoinsp." INNER JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as spef ON spef.fk_object = sp.rowid".$sqlfrom.$sqlwhere.$db->order("spef.tms", "DESC").$db->plimit($max, 0).")";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= $sqljoinsp;
+$sql .= " INNER JOIN (".$sqlcandidates.") as cand ON cand.rowid = sp.rowid";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople_extrafields as spef ON spef.fk_object = sp.rowid";
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
+$sql .= $sqlfrom;
+$sql .= $sqlwhere;
 $sql .= $db->order("date_modification", "DESC");
 $sql .= $db->plimit($max, 0);
 
