@@ -2605,7 +2605,6 @@ ShowStock
 ShowSubscription
 ShowSupplierPreview
 ShowTempMassFilesArea
-ShowTypeCard
 ShowUnpaidAll
 ShowUnpaidLateOnly
 ShowWithdraw
@@ -2730,6 +2729,7 @@ SubjectNotIn
 SubmitTranslation
 SubmitTranslationENUS
 SubscriptionId
+SubscriptionPayment
 SubscriptionRecorded
 SubscriptionReminderEmail
 SuggestedForTicketsInGroup

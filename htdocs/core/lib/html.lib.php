@@ -4119,6 +4119,8 @@ function showSimpleHTMLTable($outputlangs, $object)
 {
 	global $conf;
 
+	$outputlangs->loadLangs(array("products"));
+
 	$discountIsAvailable = false;
 	$orderPositionHasNoPrice = false;
 

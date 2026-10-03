@@ -308,7 +308,6 @@ ContactByDefaultFor=Default contact/address for
 AddThirdParty=Create third party
 DeleteACompany=Delete a company
 PersonalInformations=Personal data
-AccountancyCode=Accounting account
 CustomerCode=Customer Code
 SupplierCode=Vendor Code
 CustomerCodeShort=Customer Code
