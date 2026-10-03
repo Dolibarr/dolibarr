@@ -133,6 +133,8 @@ DELETE FROM llx_document_model WHERE nom = 'html_generic' AND type = 'donation';
 -- The label of a model is what the user sees in the list of generation templates, so it must
 -- show the name of the new template, not the name of the old "generic" one it was migrated from.
 UPDATE llx_document_model SET libelle = 'Standard' WHERE nom = 'pdf_standard_donation' AND type = 'donation' AND (libelle IS NULL OR libelle = '' OR libelle = 'generic' OR libelle = 'standard');
+-- Same for the "cerfafr" template, so the label shows its display name everywhere.
+UPDATE llx_document_model SET libelle = 'Cerfa HTML FR' WHERE nom = 'html_cerfafr' AND type = 'donation' AND (libelle IS NULL OR libelle = '' OR libelle = 'cerfafr');
 
 -- The delivery receipt template "typhon" has been removed and replaced by "storm".
 -- Switch all typhon templates into storm.
