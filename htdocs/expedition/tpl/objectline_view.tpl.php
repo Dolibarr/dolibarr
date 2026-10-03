@@ -140,7 +140,25 @@ if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only 
 	print '</td>';
 }
 
-if ($this->status == 0 && $user->hasRight('expedition', 'write') && $action != 'selectlines') {
+if (isModEnabled('stock')) {
+	$coldisplay++;
+	print '<td class="linecolwarehouse">';
+	if ($line->entrepot_id > 0) {
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		if (!isset($conf->cache['warehouse'][$line->entrepot_id])) {
+			$warehouse = new Entrepot($object->db);
+			if ($warehouse->fetch($line->entrepot_id) > 0) {
+				$conf->cache['warehouse'][$line->entrepot_id] = $warehouse;
+			}
+		}
+		if (isset($conf->cache['warehouse'][$line->entrepot_id])) {
+			print $conf->cache['warehouse'][$line->entrepot_id]->getNomUrl(1);
+		}
+	}
+	print '</td>';
+}
+
+if ($this->status == 0 && $user->hasRight('expedition', 'creer') && $action != 'selectlines') {
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (((int) $line->info_bits & 2) == 2 || !empty($disableedit)) {
