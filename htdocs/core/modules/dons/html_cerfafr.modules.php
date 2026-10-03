@@ -7,6 +7,7 @@
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ class html_cerfafr extends ModeleDon
 
 		$this->db = $db;
 		$this->name = "cerfafr";
-		$this->description = $langs->trans('DonationsReceiptModel').' - fr_FR - Cerfa 11580*04';
+		$this->description = $langs->trans('DonationsReceiptModel').' - fr_FR - Cerfa 11580*04 ('.$langs->trans('Deprecated').')';
 
 		// Dimension page for size A4
 		$this->type = 'html';
