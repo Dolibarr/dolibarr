@@ -356,7 +356,8 @@ class PaiementFourn extends Paiement
 										}
 
 										if ($error) {
-											setEventMessages($discount->error, $discount->errors, 'errors');
+											$this->error = $discount->error;
+											$this->errors = $discount->errors;
 											$error++;
 										}
 									}
@@ -400,7 +401,8 @@ class PaiementFourn extends Paiement
 								$ret = $invoice->fetch($facid); // Reload to get new records
 								$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs);
 								if ($result < 0) {
-									setEventMessages($invoice->error, $invoice->errors, 'errors');
+									$this->error = $invoice->error;
+									$this->errors = $invoice->errors;
 									$error++;
 								}
 							}
