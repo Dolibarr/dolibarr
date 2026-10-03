@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
+$langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -747,6 +747,7 @@ if ($action == 'edit') {
 	if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM') && !getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET')) {
 		print img_warning($langs->trans("Mandatory"));
 	} elseif (getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET') && !isValidEmail(getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET'))) {
+		$langs->load('errors');
 		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_EMAIL_FROM_PASSWORDRESET')));
 	}
 	print '</td></tr>';

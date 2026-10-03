@@ -1903,8 +1903,12 @@ if ($action == 'create') {
 							print '</tr>';
 						}
 
+						$parameters = ['line' => $object->lines[$cursorline - 1], 'i' => $cursorline - 1, 'coldisplay' => &$coldisplay, 'colspan' => $colspan, 'moreparam' => $moreparam];
+						$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						print $hookmanager->resPrint;
+
 						// Display lines extrafields
-						if (is_array($extralabelslines) && count($extralabelslines) > 0) {
+						if (empty($reshook) && is_array($extralabelslines) && count($extralabelslines) > 0) {
 							$line = new ContratLigne($db);
 							$line->id = $objp->rowid;
 							$line->fetch_optionals();
@@ -2398,6 +2402,16 @@ if ($action == 'create') {
 						'label' => $langs->trans('AddSupplierInvoice'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('fournisseur', 'facture', 'creer') ? true : false,
+						'enabled' => true,
+					);
+				}
+				if (isModEnabled('intervention') && $object->status > 0) {
+					$langs->load("interventions");
+					$arrayofcreatebutton[] = array(
+						'url' => '/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'label' => $langs->trans('AddIntervention'),
+						'lang' => 'interventions',
+						'perm' => $user->hasRight('ficheinter', 'creer') ? true : false,
 						'enabled' => true,
 					);
 				}

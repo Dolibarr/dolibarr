@@ -253,7 +253,7 @@ if ($action != 'editlabel') {
 	$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 	$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-	$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+	$morehtmlref .= '<input type="text" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"/>';
 	$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	$morehtmlref .= '</form>';
 }

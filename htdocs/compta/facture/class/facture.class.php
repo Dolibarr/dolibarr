@@ -362,7 +362,7 @@ class Facture extends CommonInvoice
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'AmountTTC', 'enabled' => 1, 'visible' => 1, 'position' => 130, 'isameasure' => 1),
 		'fk_facture_source' => array('type' => 'integer', 'label' => 'SourceInvoice', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 1, 'visible' => -1, 'position' => 175),
-		'fk_account' => array('type' => 'integer', 'label' => 'Fk account', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 1, 'visible' => -1, 'position' => 180),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'CurrencyCode', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 190),
 		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 195),
@@ -586,12 +586,13 @@ class Facture extends CommonInvoice
 			$previousdaynextdatewhen = null;
 
 			if ($originaldatewhen) {
+				// date_when is read from database in the timezone of the server (jdate), so delays must be added in this timezone
 				if ($_facrec->rule_for_lines_dates == 'postpaid') {		// Bugged feature, should use different variable nameas we store something different.
-					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd');
-					$originaldatewhen = dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency);
+					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd', 0, 'tzserver');
+					$originaldatewhen = dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency, 0, 'tzserver');
 				} else {
-					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
-					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
+					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency, 0, 'tzserver');
+					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd', 0, 'tzserver');
 				}
 			}
 
@@ -837,7 +838,7 @@ class Facture extends CommonInvoice
 					$exp = new Expedition($this->db);
 					$exp->fetch($this->origin_id);
 					$exp->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
-					if (count($exp->linkedObjectsIds['commande']) > 0) {
+					if (!empty($exp->linkedObjectsIds['commande']) && is_array($exp->linkedObjectsIds['commande'])) {
 						foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 							$originforcontact = 'commande';
 							if (is_object($value)) {

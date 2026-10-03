@@ -474,16 +474,14 @@ class User extends CommonObject
 	public $label_establishment;
 
 	/**
-	 * @var array<int>		Entity in table llx_user_group
-	 * @deprecated			Seems not used.
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $usergroup_entity;
-
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 20, 'searchall' => 1),
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
-		'fk_warehouse' => array('type' => 'integer:Entrepot:product\stock\class\entrepot.class.php', 'label' => 'Warehouse', 'enabled' => "isModEnabled('stock')", 'visible' => 1, 'notnull' => 0, 'showoncombobox' => 1, 'index' => 1, 'position' => 50, 'searchall' => 1),
+		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'enabled' => "isModEnabled('stock')", 'visible' => 1, 'notnull' => 0, 'showoncombobox' => 1, 'index' => 1, 'position' => 50, 'searchall' => 1, 'bi' => 0),
 		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
 		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
@@ -2899,7 +2897,7 @@ class User extends CommonObject
 		if ($mailfile->sendfile()) {
 			return 1;
 		} else {
-			$langs->trans("errors");
+			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFailedToSendPassword").' '.$mailfile->error;
 			return -1;
 		}
@@ -2990,7 +2988,6 @@ class User extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Add user into a group
 	 *
@@ -2999,9 +2996,8 @@ class User extends CommonObject
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				Return integer <0 if KO, >0 if OK
 	 */
-	public function SetInGroup($group, $entity, $notrigger = 0)
+	public function setInGroup($group, $entity, $notrigger = 0)
 	{
-		// phpcs:enable
 		global $langs, $user;
 
 		$error = 0;
@@ -3035,7 +3031,7 @@ class User extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				dol_syslog(get_class($this)."::SetInGroup ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::setInGroup ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -3046,7 +3042,6 @@ class User extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Remove a user from a group
 	 *
@@ -3055,9 +3050,8 @@ class User extends CommonObject
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     Return integer <0 if KO, >0 if OK
 	 */
-	public function RemoveFromGroup($group, $entity, $notrigger = 0)
+	public function removeFromGroup($group, $entity, $notrigger = 0)
 	{
-		// phpcs:enable
 		global $langs, $user;
 
 		$error = 0;
@@ -3090,7 +3084,7 @@ class User extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				dol_syslog(get_class($this)."::RemoveFromGroup ".$this->error, LOG_ERR);
+				dol_syslog(get_class($this)."::removeFromGroup ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -3232,7 +3226,7 @@ class User extends CommonObject
 			$data['currentmenumanager'] = '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.dol_string_nohtmltag($menumanager->name);
 			$s = picto_from_langcode($langs->getDefaultLang());
 			$data['currentuserlang'] = '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.dol_string_nohtmltag(($s ? $s.' ' : '').$langs->getDefaultLang());
-			$data['browser'] = '<br><b>'.$langs->trans("Browser").':</b> '.dol_string_nohtmltag($conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' ('.$_SERVER['HTTP_USER_AGENT'].')');
+			$data['browser'] = '<br><b>'.$langs->trans("Browser").':</b> '.dol_string_nohtmltag($conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' ('.($_SERVER['HTTP_USER_AGENT'] ?? '').')');
 			$data['layout'] = '<br><b>'.$langs->trans("Layout").':</b> '.dol_string_nohtmltag($conf->browser->layout);
 			$data['screen'] = '<br><b>'.$langs->trans("Screen").':</b> '.dol_string_nohtmltag($_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight']);
 			if ($conf->browser->layout == 'phone') {

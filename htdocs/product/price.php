@@ -595,9 +595,16 @@ if (empty($reshook)) {
 	if ($action == 'activate_price_by_qty' && $permissiontoadd) {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOSTINT('level');
-		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
-		$basePriceMin = ($object->price_base_type == 'HT') ? $object->price_min : $object->price_min_ttc;
-		$ret = $object->updatePrice($basePrice, $object->price_base_type, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 1, 0, array(), $object->default_vat_code);
+		$basePriceType = $object->price_base_type;
+		$basePrice = ($basePriceType == 'HT') ? $object->price : $object->price_ttc;
+		$basePriceMin = ($basePriceType == 'HT') ? $object->price_min : $object->price_min_ttc;
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && $level > 0 && isset($object->multiprices[$level])) {
+			// With a price per level, the price to keep is the price of the level, not the default price of the product
+			$basePriceType = (empty($object->multiprices_base_type[$level]) ? 'HT' : $object->multiprices_base_type[$level]);
+			$basePrice = ($basePriceType == 'HT') ? $object->multiprices[$level] : $object->multiprices_ttc[$level];
+			$basePriceMin = ($basePriceType == 'HT') ? $object->multiprices_min[$level] : $object->multiprices_min_ttc[$level];
+		}
+		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 1, 0, array(), $object->default_vat_code);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -607,9 +614,16 @@ if (empty($reshook)) {
 	if ($action == 'disable_price_by_qty' && $permissiontoadd) {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
 		$level = GETPOSTINT('level');
-		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
-		$basePriceMin = ($object->price_base_type == 'HT') ? $object->price_min : $object->price_min_ttc;
-		$ret = $object->updatePrice($basePrice, $object->price_base_type, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+		$basePriceType = $object->price_base_type;
+		$basePrice = ($basePriceType == 'HT') ? $object->price : $object->price_ttc;
+		$basePriceMin = ($basePriceType == 'HT') ? $object->price_min : $object->price_min_ttc;
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && $level > 0 && isset($object->multiprices[$level])) {
+			// With a price per level, the price to keep is the price of the level, not the default price of the product
+			$basePriceType = (empty($object->multiprices_base_type[$level]) ? 'HT' : $object->multiprices_base_type[$level]);
+			$basePrice = ($basePriceType == 'HT') ? $object->multiprices[$level] : $object->multiprices_ttc[$level];
+			$basePriceMin = ($basePriceType == 'HT') ? $object->multiprices_min[$level] : $object->multiprices_min_ttc[$level];
+		}
+		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, -1, 0, array(), $object->default_vat_code);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');

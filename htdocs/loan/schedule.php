@@ -215,7 +215,7 @@ if (isModEnabled('project')) {
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
-			$proj->fetch($object->fk_project);
+			$proj->fetch((int) $object->fk_project);
 			$morehtmlref .= ' : '.$proj->getNomUrl(1);
 			if ($proj->title) {
 				$morehtmlref .= ' - '.$proj->title;
@@ -432,6 +432,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 		$int = price2num($int, 'MT');
 		$amort = price2num((float) $mens - (float) $int, 'MT');
 		$insu = ((float) $insurance + (($i == 1) ? (float) $regulInsurance : 0));
+		$cap_rest = (float) price2num((float) $capital - (float) $amort, 'MT');
 
 		// Adjust rounding difference on last term
 		if ($i == $object->nbterm && abs($cap_rest) <= 0.05 && $capital > 0) {

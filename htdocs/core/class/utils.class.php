@@ -1011,7 +1011,8 @@ class Utils
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
-				if ($result < 0 && empty($this->errors)) {
+				if ($result == 0) {
+					// Add a human readable message to the raw output of the command
 					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOC);
 					$this->errors[] = $this->error;
 				}
@@ -1025,7 +1026,8 @@ class Utils
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
-				if ($result < 0 && empty($this->errors)) {
+				if ($result == 0) {
+					// Add a human readable message to the raw output of the command
 					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOCPDF);
 					$this->errors[] = $this->error;
 				}

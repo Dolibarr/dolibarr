@@ -1006,7 +1006,7 @@ if ($object->id > 0) {
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($propal_static->fk_project > 0) {
-					$project->fetch($propal_static->fk_project);
+					$project->fetch((int) $propal_static->fk_project);
 					print $project->getNomUrl(1);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1128,7 +1128,7 @@ if ($object->id > 0) {
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($commande_static->fk_project > 0) {
-					$project->fetch($commande_static->fk_project);
+					$project->fetch((int) $commande_static->fk_project);
 					print $project->getNomUrl(1);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1234,7 +1234,7 @@ if ($object->id > 0) {
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($sendingstatic->fk_project > 0) {
-					$project->fetch($sendingstatic->fk_project);
+					$project->fetch((int) $sendingstatic->fk_project);
 					print $project->getNomUrl(1);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1355,7 +1355,7 @@ if ($object->id > 0) {
 				print $late;
 				print '</td><td class="tdoverflowmax125">';
 				if ($contrat->fk_project > 0) {
-					$project->fetch($contrat->fk_project);
+					$project->fetch((int) $contrat->fk_project);
 					print $project->getNomUrl(1);
 				}
 				print "</td>\n";
@@ -1541,7 +1541,7 @@ if ($object->id > 0) {
 				print $invoicetemplate->getNomUrl(1);
 				print '</td><td class="tdoverflowmax125">';
 				if ($invoicetemplate->fk_project > 0) {
-					$project->fetch($invoicetemplate->fk_project);
+					$project->fetch((int) $invoicetemplate->fk_project);
 					print $project->getNomUrl(1);
 				}
 				print '</td>';
@@ -1682,7 +1682,7 @@ if ($object->id > 0) {
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($facturestatic->fk_project > 0) {
-					$project->fetch($facturestatic->fk_project);
+					$project->fetch((int) $facturestatic->fk_project);
 					print $project->getNomUrl(1);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);

@@ -132,8 +132,8 @@ class Contact extends CommonObject
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'zip' => array('type' => 'varchar(25)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 65),
-		'fk_departement' => array('type' => 'integer', 'label' => 'Fk departement', 'enabled' => 1, 'visible' => 3, 'position' => 70),
-		'fk_pays' => array('type' => 'integer', 'label' => 'Fk pays', 'enabled' => 1, 'visible' => 3, 'position' => 75),
+		'fk_departement' => array('type' => 'integer', 'label' => 'State', 'enabled' => 1, 'visible' => 3, 'position' => 70),
+		'fk_pays' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'visible' => 3, 'position' => 75),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 77, 'searchall' => 1),
 		'birthday' => array('type' => 'date', 'label' => 'Birthday', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => 1, 'position' => 90, 'searchall' => 1),
@@ -439,14 +439,10 @@ class Contact extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		/*if (is_object($langs))
-		{
-			foreach($this->fields as $key => $val)
-			{
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
-				{
-					foreach($val['arrayofkeyval'] as $key2 => $val2)
-					{
+		/*if (is_object($langs)) {
+			foreach($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 					}
 				}
@@ -737,7 +733,7 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (!$error && $this->user_id > 0) {
+			if (!$error && $this->user_id > 0 && !$nosyncuser) {
 				// If contact is linked to a user
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);

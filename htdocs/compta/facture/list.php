@@ -323,7 +323,9 @@ $arrayfields = array(
 	'f.dispute_status' => array('label' => "DisputeStatus", 'checked' => '-1', 'position' => 999),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
-
+if ($user->socid) {
+	unset($arrayfields['f.note_private']);
+}
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => '0', 'position' => 86);
 }
@@ -1627,7 +1629,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
 }
 // alert on due date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<label for="search_option">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_option" id="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option" class="opacitymedium valignmiddle">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_option" id="search_option" class="opacitymedium valignmiddle" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();
@@ -2291,7 +2293,7 @@ if ($num > 0) {
 	$totalarray['val']['f.total_ht'] = 0;
 	$totalarray['val']['f.total_tva'] = 0;
 	$totalarray['val']['f.total_localtax1'] = 0;
-	$totalarray['val']['f.total_localtax1'] = 0;
+	$totalarray['val']['f.total_localtax2'] = 0;
 	$totalarray['val']['f.total_ttc'] = 0;
 	$totalarray['val']['dynamount_payed'] = 0;
 	$totalarray['val']['rtp'] = 0;
@@ -2350,8 +2352,7 @@ if ($num > 0) {
 		if (getDolGlobalString('INVOICE_USE_SITUATION') && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$facturestatic->retained_warranty = $obj->retained_warranty;
 			$facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
-			$facturestatic->situation_final = $obj->retained_warranty_date_limit;
-			$facturestatic->situation_final = $obj->retained_warranty_date_limit;
+			$facturestatic->situation_final = $obj->situation_final;
 			$facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 			$facturestatic->situation_counter = $obj->situation_counter;
 		}
