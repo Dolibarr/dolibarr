@@ -20,66 +20,53 @@ jobs:
         with:
           php-version: '8.2'
           tools: phpstan:2.2.14
-      - name: Fetch fix branch
+      - name: Run patch and verification
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin fix-phpstan-journals-list
           git checkout -b fixwork origin/fix-phpstan-journals-list
-      - name: PHPStan before
-        run: |
-          {
-            echo "=== PHPSTAN BEFORE ==="
-            phpstan analyse --level=9 --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit=3G htdocs/accountancy/admin/journals_list.php 2>&1
-            echo "exit=$?"
-          } | tee result.txt
-          grep -c "Ternary operator condition is always true" result.txt
-          grep -c "Loose comparison using != between 35 and 10" result.txt
-      - name: Apply patch
-        run: |
+          echo "=== PHPSTAN BEFORE ===" | tee result.txt
+          phpstan analyse --level=9 --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit=3G htdocs/accountancy/admin/journals_list.php 2>&1 | tee -a result.txt
+          php -r 'exit(0);'
           python3 - <<'PYEOF'
-          path = 'htdocs/accountancy/admin/journals_list.php'
-          data = open(path, 'rb').read()
-          lines = data.split(b'\n')
-          assert len(lines) > 620, 'file too short'
-          l532 = lines[531]
-          l553 = lines[552]
-          l619 = lines[618]
-          assert l532 == b'\t\t$sortable = 1;', repr(l532)
-          assert l553 == b'\t\tprint getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : \'\'), ($page ? \'page=\'.$page.\'&\' : \'\'), $param, "", $sortfield, $sortorder, $class.\' \');', repr(l553)
-          assert l619 == b'\t\t\t\tif (isset($obj->code) && $id != 10) {', repr(l619)
-          new553 = b'\t\tprint getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $fieldlist[$field], ($page ? \'page=\'.$page.\'&\' : \'\'), $param, "", $sortfield, $sortorder, $class.\' \');'
-          new619 = b'\t\t\t\tif (isset($obj->code)) {'
-          lines[552] = new553
-          lines[618] = new619
-          del lines[531]
-          open(path, 'wb').write(b'\n'.join(lines))
-          print('patch applied')
-          PYEOF
-      - name: Lint and PHPStan after
-        run: |
-          php -l htdocs/accountancy/admin/journals_list.php | tee -a result.txt
-          {
-            echo "=== PHPSTAN AFTER ==="
-            phpstan analyse --level=9 --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit=3G htdocs/accountancy/admin/journals_list.php 2>&1
-            echo "exit=$?"
-          } | tee -a result.txt
-      - name: Verify and push fix
-        run: |
-          if grep -q "Ternary operator condition is always true" result.txt && ! sed -n '/=== PHPSTAN AFTER ===/,$p' result.txt | grep -q "Ternary operator condition is always true" \
-             && ! sed -n '/=== PHPSTAN AFTER ===/,$p' result.txt | grep -q "Loose comparison using != between 35 and 10" \
-             && sed -n '/=== PHPSTAN AFTER ===/,$p' result.txt | grep -q "No errors"; then
+path = 'htdocs/accountancy/admin/journals_list.php'
+data = open(path, 'rb').read()
+lines = data.split(b'\n')
+assert len(lines) > 620, 'file too short'
+l532 = lines[531]
+l553 = lines[552]
+l619 = lines[618]
+assert l532 == b'\t\t$sortable = 1;', repr(l532)
+assert l553 == b'\t\tprint getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : \'\'), ($page ? \'page=\'.$page.\'&\' : \'\'), $param, "", $sortfield, $sortorder, $class.\' \');', repr(l553)
+assert l619 == b'\t\t\t\tif (isset($obj->code) && $id != 10) {', repr(l619)
+new553 = b'\t\tprint getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $fieldlist[$field], ($page ? \'page=\'.$page.\'&\' : \'\'), $param, "", $sortfield, $sortorder, $class.\' \');'
+new619 = b'\t\t\t\tif (isset($obj->code)) {'
+lines[552] = new553
+lines[618] = new619
+del lines[531]
+open(path, 'wb').write(b'\n'.join(lines))
+print('patch applied')
+PYEOF
+          echo "python exit: $?" | tee -a result.txt
+          php -l htdocs/accountancy/admin/journals_list.php 2>&1 | tee -a result.txt
+          echo "=== PHPSTAN AFTER ===" | tee -a result.txt
+          phpstan analyse --level=9 --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit=3G htdocs/accountancy/admin/journals_list.php 2>&1 | tee -a result.txt
+          aftersection=$(sed -n '/=== PHPSTAN AFTER ===/,$p' result.txt)
+          if echo "$aftersection" | grep -q "No errors"; then
             git add htdocs/accountancy/admin/journals_list.php
             git commit -m "QUAL Fix 2 PHPStan warnings in journals list page"
             git push origin fixwork:fix-phpstan-journals-list
-            echo "FIX_PUSHED=yes" >> result.txt
+            echo "FIX_PUSHED=yes" | tee -a result.txt
           else
-            echo "FIX_PUSHED=no (verification failed)" >> result.txt
+            echo "FIX_PUSHED=no" | tee -a result.txt
           fi
       - name: Commit result to probe branch
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout probe-phpstan-cti-report
           git add result.txt
           git commit -m "[skip ci] Add patch result" || echo "nothing to commit"
           git pull --rebase || true
-          git push
+          git push || true
