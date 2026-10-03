@@ -1,2 +1,100 @@
-Error: Dolibarr config file content seems to be not correctly defined (dolibarr_main_document_root can't be unknown).<br>
-Please run dolibarr setup by calling page <b>/install</b>.<br>
+::error file=htdocs/accountancy/admin/index.php,line=627,col=0::Loose comparison using == between 'ACCOUNTING_LABEL…' and 'ACCOUNTING_LABEL…' will always evaluate to true.
+::error file=htdocs/accountancy/admin/index.php,line=775,col=0::Expression "'@phan-var-force ModeleNumRefBookkeeping $module'" on a separate line does not do anything.
+::error file=htdocs/accountancy/admin/journals_list.php,line=553,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/admin/journals_list.php,line=619,col=0::Loose comparison using != between 35 and 10 will always evaluate to true.
+::error file=htdocs/accountancy/admin/productaccount.php,line=61,col=0::Expression "'@phan-var-force string[] $toselect'" on a separate line does not do anything.
+::error file=htdocs/accountancy/admin/productaccount.php,line=65,col=0::Expression "'@phan-var-force string[] $searchCategoryProductList'" on a separate line does not do anything.
+::error file=htdocs/accountancy/admin/productaccount.php,line=187,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/admin/productaccount.php,line=284,col=0::Expression "'@phan-var-force string[] $toselect'" on a separate line does not do anything.
+::error file=htdocs/accountancy/admin/productaccount.php,line=819,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=832,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=846,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=860,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=874,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=888,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/report_list.php,line=511,col=0::Loose comparison using == between 45 and 45 will always evaluate to true.
+::error file=htdocs/accountancy/admin/report_list.php,line=624,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/admin/subaccount.php,line=362,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/admin/subaccount.php,line=369,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/admin/subaccount.php,line=390,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/admin/template/card.php,line=99,col=0::Property BookkeepingTemplate::$entity (int) in isset() is not nullable.
+::error file=htdocs/accountancy/admin/template/list.php,line=336,col=0::Variable $contextpage in empty() always exists and is not falsy.
+::error file=htdocs/accountancy/bookkeeping/balance.php,line=228,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/bookkeeping/balance.php,line=449,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/bookkeeping/balance.php,line=565,col=0::Comparison operation ">" between 0 and 0 is always false.
+::error file=htdocs/accountancy/bookkeeping/balance.php,line=565,col=0::Result of && is always false.
+::error file=htdocs/accountancy/bookkeeping/export.php,line=684,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/bookkeeping/export.php,line=724,col=0::If condition is always true.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=465,col=0::Variable $completefilename in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=579,col=0::Loose comparison using == between 2 and 2 will always evaluate to true.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=579,col=0::Result of || is always true.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=1640,col=0::Expression "'@phan-var-force FactureFournisseur $invoice'" on a separate line does not do anything.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=1884,col=0::Expression "'@phan-var-force FactureFournisseur $invoice'" on a separate line does not do anything.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=2276,col=0::Call to function is_array() with list<string> will always evaluate to true.
+::error file=htdocs/accountancy/class/bookkeeping.class.php,line=2086,col=0::Expression "'@phan-var-force ModeleNumRefBookkeeping $obj'" on a separate line does not do anything.
+::error file=htdocs/accountancy/class/bookkeepingtemplate.class.php,line=476,col=0::Property BookkeepingTemplate::$code (string) in isset() is not nullable.
+::error file=htdocs/accountancy/class/bookkeepingtemplate.class.php,line=479,col=0::Property BookkeepingTemplate::$label (string) in isset() is not nullable.
+::error file=htdocs/accountancy/class/bookkeepingtemplateline.class.php,line=262,col=0::Property BookkeepingTemplateLine::$isextrafieldmanaged (int<0, 1>) in isset() is not nullable.
+::error file=htdocs/accountancy/class/lettering.class.php,line=283,col=0::If condition is always false.
+::error file=htdocs/accountancy/closure/index.php,line=141,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/closure/index.php,line=156,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/customer/card.php,line=66,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/customer/index.php,line=94,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/customer/index.php,line=120,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/customer/lines.php,line=171,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/customer/lines.php,line=458,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/customer/list.php,line=207,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/customer/list.php,line=534,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/expensereport/card.php,line=69,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/expensereport/index.php,line=90,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/expensereport/index.php,line=114,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/expensereport/lines.php,line=164,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/expensereport/lines.php,line=389,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/expensereport/list.php,line=198,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/expensereport/list.php,line=443,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=250,col=0::Expression "'…" on a separate line does not do anything.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=718,col=0::Negated boolean expression is always true.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=718,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=752,col=0::Call to function is_array() with non-empty-array will always evaluate to true.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=821,col=0::Call to function is_array() with non-empty-array will always evaluate to true.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=961,col=0::Loose comparison using == between 'unknown' and 'unknown' will always evaluate to true.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=1083,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=1091,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=1143,col=0::Call to function is_array() with non-empty-array will always evaluate to true.
+::error file=htdocs/accountancy/journal/bankjournal.php,line=1422,col=0::Call to function is_array() with non-empty-array will always evaluate to true.
+::error file=htdocs/accountancy/journal/expensereportsjournal.php,line=276,col=0::Negated boolean expression is always true.
+::error file=htdocs/accountancy/journal/expensereportsjournal.php,line=276,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/journal/expensereportsjournal.php,line=536,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/journal/purchasesjournal.php,line=844,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/journal/sellsjournal.php,line=1174,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/journal/variousjournal.php,line=181,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/supplier/card.php,line=69,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/supplier/index.php,line=94,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/supplier/index.php,line=119,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/supplier/lines.php,line=175,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/supplier/lines.php,line=460,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/supplier/list.php,line=210,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/supplier/list.php,line=544,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/supplier/list.php,line=914,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/tpl/export_journal.tpl.php,line=23,col=0::Expression "'…" on a separate line does not do anything.
+::error file=htdocs/adherents/admin/member.php,line=121,col=0::Expression "'@phan-var-force ModelePDFMember $module'" on a separate line does not do anything.
+::error file=htdocs/adherents/admin/member.php,line=360,col=0::Expression "'@phan-var-force array<string,ModeleNumRefMembers> $arrayofmodules'" on a separate line does not do anything.
+::error file=htdocs/adherents/admin/member.php,line=464,col=0::Expression "'@phan-var-force doc_generic_member_odt|pdf_standard_member $module'" on a separate line does not do anything.
+::error file=htdocs/adherents/card.php,line=206,col=0::Negated boolean expression is always true.
+::error file=htdocs/adherents/class/adherent.class.php,line=722,col=0::Expression "'@phan-var-force ModeleNumRefMembers $modCodeMember'" on a separate line does not do anything.
+::error file=htdocs/adherents/class/adherent.class.php,line=882,col=0::Expression "'@phan-var-force Adherent $oldcopy'" on a separate line does not do anything.
+::error file=htdocs/adherents/class/api_members.class.php,line=463,col=0::Negated boolean expression is always false.
+::error file=htdocs/adherents/class/api_members.class.php,line=463,col=0::Result of && is always false.
+::error file=htdocs/adherents/list.php,line=506,col=0::Loose comparison using == between 0 and 0 will always evaluate to true.
+::error file=htdocs/adherents/list.php,line=509,col=0::Ternary operator condition is always false.
+::error file=htdocs/adherents/list.php,line=513,col=0::If condition is always false.
+::error file=htdocs/adherents/list.php,line=516,col=0::Loose comparison using == between 0 and 1 will always evaluate to false.
+::error file=htdocs/adherents/messaging.php,line=177,col=0::Call to function is_object() with Adherent will always evaluate to true.
+::error file=htdocs/adherents/stats/geo.php,line=87,col=0::Variable $mode in empty() always exists and is not falsy.
+::error file=htdocs/adherents/stats/geo.php,line=234,col=0::Variable $mode in empty() always exists and is not falsy.
+::error file=htdocs/adherents/tpl/linkedobjectblock.tpl.php,line=37,col=0::Expression "'@phan-var-force Translate $langs'" on a separate line does not do anything.
+::error file=htdocs/adherents/tpl/linkedobjectblock.tpl.php,line=43,col=0::Expression "'@phan-var-force Subscription[] $linkedObjectBlock'" on a separate line does not do anything.
+::error file=htdocs/adherents/type.php,line=366,col=0::Ternary operator condition is always false.
+::error file=htdocs/adherents/type.php,line=945,col=0::Ternary operator condition is always false.
+::error file=htdocs/admin/agenda.php,line=165,col=0::Ternary operator condition is always true.
+::error file=htdocs/admin/agenda.php,line=165,col=0::Ternary operator condition is always true.
