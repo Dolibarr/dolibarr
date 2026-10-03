@@ -5429,7 +5429,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql2 .= ", '' as ref";
 		}
 		$sql2 .= " FROM " . MAIN_DB_PREFIX . "mailing as m, " . MAIN_DB_PREFIX . "mailing_cibles as mc, " . MAIN_DB_PREFIX . "user as u";
-		$sql2 .= " WHERE mc.email = '" . $db->escape($objcon->email) . "'"; // Search is done on email.
+		$sql2 .= " WHERE mc.email = '" . $db->escape((string) $objcon->email) . "'"; // Search is done on email.
 		$sql2 .= " AND mc.statut = 1";
 		$sql2 .= " AND u.rowid = m.fk_user_valid";
 		$sql2 .= " AND mc.fk_mailing=m.rowid";

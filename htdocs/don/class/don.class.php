@@ -441,9 +441,9 @@ class Don extends CommonObject
 		$sql .= ", '".$this->db->escape($this->firstname)."'";
 		$sql .= ", '".$this->db->escape($this->lastname)."'";
 		$sql .= ", '".$this->db->escape($this->societe)."'";
-		$sql .= ", '".$this->db->escape($this->address)."'";
-		$sql .= ", '".$this->db->escape($this->zip)."'";
-		$sql .= ", '".$this->db->escape($this->town)."'";
+		$sql .= ", '".$this->db->escape((string) $this->address)."'";
+		$sql .= ", '".$this->db->escape((string) $this->zip)."'";
+		$sql .= ", '".$this->db->escape((string) $this->town)."'";
 		$sql .= ", ".(int) ($this->country_id > 0 ? $this->country_id : 0);
 		$sql .= ", ".(int) $this->public;
 		$sql .= ", ".($this->fk_project > 0 ? (int) $this->fk_project : "null");
@@ -533,9 +533,9 @@ class Don extends CommonObject
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", societe='".$this->db->escape($this->societe)."'";
-		$sql .= ", address='".$this->db->escape($this->address)."'";
-		$sql .= ", zip='".$this->db->escape($this->zip)."'";
-		$sql .= ", town='".$this->db->escape($this->town)."'";
+		$sql .= ", address='".$this->db->escape((string) $this->address)."'";
+		$sql .= ", zip='".$this->db->escape((string) $this->zip)."'";
+		$sql .= ", town='".$this->db->escape((string) $this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
 		$sql .= ", public=".((int) $this->public);
 		$sql .= ", fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : 'null');

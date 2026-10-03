@@ -1057,11 +1057,11 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape((string) $this->source) : 'null');
-		$sql .= ", '".$this->db->escape($this->note_private)."'";
-		$sql .= ", '".$this->db->escape($this->note_public)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_private)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_public)."'";
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
-		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
+		$sql .= ", '".$this->db->escape((string) $this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
 		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
