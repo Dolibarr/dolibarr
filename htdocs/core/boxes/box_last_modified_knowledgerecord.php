@@ -91,16 +91,27 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 		);
 
 		if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-			$sql = 'SELECT k.rowid as id, k.date_creation, GREATEST(k.tms, kef.tms) as date_modification, k.ref, k.lang, k.question, k.status as status';
-			$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord_extrafields as kef ON kef.fk_object = k.rowid";
-			$sql .= " WHERE k.entity IN (".getEntity('knowledgerecord').")";
+			// The filters are shared by the final query and by the queries selecting the candidates
+			$sqlwhere = " WHERE k.entity IN (".getEntity('knowledgerecord').")";
 
 			if ($user->socid) {
-				$sql .= " AND k.fk_soc= ".((int) $user->socid);
+				$sqlwhere .= " AND k.fk_soc= ".((int) $user->socid);
 			}
 
-			$sql .= " AND k.status > 0";
+			$sqlwhere .= " AND k.status > 0";
+
+			// A sort on GREATEST() can not use an index and would sort all the records on each display of the box: the $max most
+			// recently modified records and the $max records with the most recently modified extrafields are selected first (sorts
+			// on a single column, each can use an index on tms), and the final sort on GREATEST() runs on these candidates only.
+			$sqlcandidates = "(SELECT k.rowid FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k".$sqlwhere." ORDER BY k.tms DESC, k.rowid DESC".$this->db->plimit($max, 0).")";
+			$sqlcandidates .= " UNION (SELECT k.rowid FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k INNER JOIN ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord_extrafields as kef ON kef.fk_object = k.rowid".$sqlwhere." ORDER BY kef.tms DESC, k.rowid DESC".$this->db->plimit($max, 0).")";
+
+			// COALESCE: GREATEST() returns NULL on MySQL when the record has no extrafields row
+			$sql = 'SELECT k.rowid as id, k.date_creation, GREATEST(k.tms, COALESCE(kef.tms, k.tms)) as date_modification, k.ref, k.lang, k.question, k.status as status';
+			$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k";
+			$sql .= " INNER JOIN (".$sqlcandidates.") as cand ON cand.rowid = k.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord_extrafields as kef ON kef.fk_object = k.rowid";
+			$sql .= $sqlwhere;
 
 			$sql .= " ORDER BY date_modification DESC, k.rowid DESC ";
 			$sql .= $this->db->plimit($max, 0);

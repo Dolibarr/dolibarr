@@ -80,22 +80,30 @@ class box_last_modified_ticket extends ModeleBoxes
 
 		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut as status";
-			$sql .= ", t.type_code, t.category_code, t.severity_code, t.datec, GREATEST(t.tms, tef.tms) as datem, t.date_read, t.date_close, t.origin_email ";
+			// COALESCE: GREATEST() returns NULL on MySQL when the ticket has no extrafields row
+			$sql .= ", t.type_code, t.category_code, t.severity_code, t.datec, GREATEST(t.tms, COALESCE(tef.tms, t.tms)) as datem, t.date_read, t.date_close, t.origin_email ";
 			$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
 			$sql .= ", s.nom as company_name, s.email as socemail, s.client, s.fournisseur";
+			// A sort on GREATEST() can not use an index and would sort all the tickets on each display of the box: the $max most
+			// recently modified tickets and the $max tickets with the most recently modified extrafields are selected first (sorts
+			// on a single column, each can use an index on tms), and the final sort on GREATEST() runs on these candidates only.
+			$sqlwhere = " WHERE t.entity IN (".getEntity('ticket').')';
+			if ($user->socid) {
+				$sqlwhere .= " AND t.fk_soc = ".((int) $user->socid);
+			}
+			$sqlcandidates = "(SELECT t.rowid FROM ".MAIN_DB_PREFIX."ticket as t".$sqlwhere." ORDER BY t.tms DESC, t.rowid DESC".$this->db->plimit($max, 0).")";
+			$sqlcandidates .= " UNION (SELECT t.rowid FROM ".MAIN_DB_PREFIX."ticket as t INNER JOIN ".MAIN_DB_PREFIX."ticket_extrafields as tef ON tef.fk_object = t.rowid".$sqlwhere." ORDER BY tef.tms DESC, t.rowid DESC".$this->db->plimit($max, 0).")";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+			$sql .= " INNER JOIN (".$sqlcandidates.") as cand ON cand.rowid = t.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as tef ON tef.fk_object = t.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code = t.type_code AND type.entity = t.entity";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code = t.category_code AND category.entity = t.entity";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code = t.severity_code AND severity.entity = t.entity";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
 
-			$sql .= " WHERE t.entity IN (".getEntity('ticket').')';
+			$sql .= $sqlwhere;
 			//  		$sql.= " AND e.rowid = er.fk_event";
 			//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
-			if ($user->socid) {
-				$sql .= " AND t.fk_soc = ".((int) $user->socid);
-			}
 
 			$sql .= " ORDER BY datem DESC, t.rowid DESC";
 			$sql .= $this->db->plimit($max, 0);
