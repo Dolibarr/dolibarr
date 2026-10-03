@@ -330,9 +330,13 @@ if (empty($reshook)) {
 			}
 
 			// Set entity property
-			$entity = GETPOST('entity', 'int');
+			// Only an admin may choose the entity of the user being created. The form shows the selector to
+			// admins only, but the posted value must not be trusted on its own.
+			$entity = $user->admin ? GETPOST('entity', 'int') : (empty($user->entity) ? $conf->entity : $user->entity);
 			if (isModEnabled('multicompany')) {
-				if (GETPOST('superadmin', 'int')) {
+				// entity 0 makes the user visible and able to log in on every entity, so only an admin may ask
+				// for it. The checkbox is rendered for admins only, the posted value is checked here too.
+				if ($user->admin && GETPOST('superadmin', 'int')) {
 					$object->entity = 0;
 				} else {
 					if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
