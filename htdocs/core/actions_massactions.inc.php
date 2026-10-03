@@ -1199,6 +1199,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
+	'@phan-var-force CommonObject $objecttmp';
+	/** @var CommonObject $objecttmp */
 	$nbok = 0;
 	$nbignored = 0;
 	/** @var string[] $TMsg */
