@@ -1,0 +1,30 @@
+::error file=htdocs/accountancy/admin/index.php,line=627,col=0::Loose comparison using == between 'ACCOUNTING_LABEL…' and 'ACCOUNTING_LABEL…' will always evaluate to true.
+::error file=htdocs/accountancy/admin/index.php,line=775,col=0::Expression "'@phan-var-force ModeleNumRefBookkeeping $module'" on a separate line does not do anything.
+::error file=htdocs/accountancy/admin/productaccount.php,line=61,col=0::Expression "'@phan-var-force string[] $toselect'" on a separate line does not do anything.
+::error file=htdocs/accountancy/admin/productaccount.php,line=65,col=0::Expression "'@phan-var-force string[] $searchCategoryProductList'" on a separate line does not do anything.
+::error file=htdocs/accountancy/admin/productaccount.php,line=187,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/admin/productaccount.php,line=284,col=0::Expression "'@phan-var-force string[] $toselect'" on a separate line does not do anything.
+::error file=htdocs/accountancy/admin/productaccount.php,line=819,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=832,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=846,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=860,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=874,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/productaccount.php,line=888,col=0::Variable $defaultvalue in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/admin/report_list.php,line=511,col=0::Loose comparison using == between 45 and 45 will always evaluate to true.
+::error file=htdocs/accountancy/admin/report_list.php,line=624,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/admin/subaccount.php,line=362,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/admin/subaccount.php,line=369,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/admin/subaccount.php,line=390,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/admin/template/card.php,line=99,col=0::Property BookkeepingTemplate::$entity (int) in isset() is not nullable.
+::error file=htdocs/accountancy/admin/template/list.php,line=336,col=0::Variable $contextpage in empty() always exists and is not falsy.
+::error file=htdocs/accountancy/bookkeeping/balance.php,line=228,col=0::Right side of && is always true.
+::error file=htdocs/accountancy/bookkeeping/balance.php,line=449,col=0::Ternary operator condition is always true.
+::error file=htdocs/accountancy/bookkeeping/balance.php,line=565,col=0::Comparison operation ">" between 0 and 0 is always false.
+::error file=htdocs/accountancy/bookkeeping/balance.php,line=565,col=0::Result of && is always false.
+::error file=htdocs/accountancy/bookkeeping/export.php,line=684,col=0::Ternary operator condition is always false.
+::error file=htdocs/accountancy/bookkeeping/export.php,line=724,col=0::If condition is always true.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=465,col=0::Variable $completefilename in empty() always exists and is always falsy.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=579,col=0::Loose comparison using == between 2 and 2 will always evaluate to true.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=579,col=0::Result of || is always true.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=1640,col=0::Expression "'@phan-var-force FactureFournisseur $invoice'" on a separate line does not do anything.
+::error file=htdocs/accountancy/class/accountancyexport.class.php,line=1884,col=0::Expression "'@phan-var-force FactureFournisseur $invoice'" on a separate line does not do anything.
