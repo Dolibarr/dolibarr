@@ -2950,3 +2950,4 @@ Install=Install
 ReInstall=Re-install
 YouAlsoNeedToBeAdminForThisPermission=You also need to have the status flag "admin"to be allowed to use this permission
 AIEmailCleanerOperation=AI cleaner (no business decision)
+AutomaticSetup=Automatic setup

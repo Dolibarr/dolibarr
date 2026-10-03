@@ -217,7 +217,7 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="tagtable noborder liste nobottomiftotal">';
 	print '<tr class="liste_titre">';
-	print '<th class="liste_titre" colspan="3">' . $langs->trans("Parameters") . '</th>' . "\n";
+	print '<th class="liste_titre" colspan="3">' . $langs->trans("AutomaticSetup") . '</th>' . "\n";
 	print "</tr>\n";
 
 	print '<tr class="oddeven">' . "\n";
