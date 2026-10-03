@@ -1,20 +1,21 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2020 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
- * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
- * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+/* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011		Jean Heimburger			<jean@tiaris.info>
+ * Copyright (C) 2012-2014	Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012		Cedric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2022       Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -717,7 +718,7 @@ class Commande extends CommonOrder
 						$mouvP->origin = &$this;
 						$mouvP->setOrigin($this->element, $this->id);
 						// We increment stock of product (and sub-products)
-						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr", $this->ref));
+						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->transnoentitiesnoconv("OrderBackToDraftInDolibarr", $this->ref));
 						if ($result < 0) {
 							$error++;
 							$this->setErrorsFromObject($mouvP);
