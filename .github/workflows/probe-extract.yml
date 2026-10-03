@@ -1,0 +1,33 @@
+name: Probe extract lines
+
+on:
+  push:
+    branches: [probe-phpstan-cti-report]
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: probe-phpstan-cti-report
+      - name: Extract lines with exact bytes
+        run: |
+          printf 'lines 530-650 of htdocs/accountancy/admin/journals_list.php\n' > probe-lines.txt
+          sed -n '530,650p' htdocs/accountancy/admin/journals_list.php | cat -n >> probe-lines.txt
+          printf '\n=== file checks ===\n' >> probe-lines.txt
+          file htdocs/accountancy/admin/journals_list.php >> probe-lines.txt
+          printf 'CR count: ' >> probe-lines.txt
+          grep -c $'\r' htdocs/accountancy/admin/journals_list.php >> probe-lines.txt || true
+      - name: Commit extraction
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add probe-lines.txt
+          git commit -m "[skip ci] Add extraction" || echo "nothing to commit"
+          git pull --rebase || true
+          git push
