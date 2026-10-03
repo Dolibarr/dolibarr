@@ -45,6 +45,12 @@ class pdf_standard_donation extends ModeleDon
 	public $heightforfooter;
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param	DoliDB	$db		Database handler
@@ -56,7 +62,7 @@ class pdf_standard_donation extends ModeleDon
 		$langs->loadLangs(array("main", "donations"));
 
 		$this->db = $db;
-		$this->name = "standard";
+		$this->name = "Standard";
 		$this->description = $langs->trans('DonationsReceiptModel').' - '.$langs->trans('DocumentModelStandardPDF');
 
 		$this->type = 'pdf';

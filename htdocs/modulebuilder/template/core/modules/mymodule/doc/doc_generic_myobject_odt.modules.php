@@ -60,6 +60,11 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
 
 	/**
 	 *	Constructor
