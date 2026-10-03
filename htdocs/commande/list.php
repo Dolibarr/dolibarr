@@ -954,6 +954,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE c.fk_soc = s.rowid';
 $sql .= ' AND c.entity IN ('.getEntity('commande').')';
+$sqlwithoutfilter = $sql;
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
@@ -1216,6 +1217,14 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$offset = 0;
 	}
 	$db->free($resql);
+}
+
+// On the default view (sorted on the reference, no filter), force the index on the reference: without it, the
+// database reads all thirdparties and sorts all orders to return only $limit rows. With any filter, the database
+// is left to choose, because forcing the index would then read the whole index for a few matching orders.
+if ($sortfield == 'c.ref' && $sql === $sqlwithoutfilter) {
+	$tablewithhint = MAIN_DB_PREFIX.'commande as c'.$db->hintindex('uk_commande_ref');
+	$sql = str_replace(MAIN_DB_PREFIX.'commande as c', $tablewithhint, $sql);
 }
 
 $sql .= $db->order($sortfield, $sortorder);
