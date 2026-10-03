@@ -521,6 +521,13 @@ if (!$error && $massaction == 'confirm_presend') {
 					if ($obj) {
 						$email_from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 					}
+				} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
+					$sql = "SELECT rowid, email_from FROM ".MAIN_DB_PREFIX."c_email_templates WHERE rowid = ".(int) $reg[1];
+					$resql = $db->query($sql);
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$from = $obj->email_from;
+					}
 				} else {
 					$email_from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
 				}
