@@ -173,6 +173,9 @@ ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFT
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
+-- Reduce response times with high transaction volume
+ALTER TABLE llx_facture ADD INDEX idx_facture_status_date (paye, fk_statut, datef);
+
 -- Short-lived tombstone log of deleted agenda events (see llx_deletion_log.sql).
 CREATE TABLE llx_deletion_log(
 	rowid			integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
