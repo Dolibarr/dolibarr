@@ -1,0 +1,15 @@
+dict.php getTitleFieldOfList + sortable context
+1720:						$sortable = 0;
+1729:						$sortable = 0;
+2155:			$sortable = 1;
+2164:				$sortable = 0;
+2179:				$sortable = 0;
+2207:				print getTitleFieldOfList($newvaluetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $value : ''), ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $cssprefix);
+
+dict.php id != 10 context
+
+other journals-like files with same patterns
+htdocs/accountancy/admin/categories_list.php:863:			print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
+htdocs/accountancy/admin/journals_list.php:553:		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
+htdocs/accountancy/admin/report_list.php:624:			print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
+htdocs/accountancy/admin/journals_list.php:619:				if (isset($obj->code) && $id != 10) {
