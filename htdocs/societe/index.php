@@ -95,7 +95,8 @@ $third = array(
 );
 $total = 0;
 
-$sql = "SELECT s.rowid, s.client, s.fournisseur";
+// Count the thirdparties of each nature in the database (GROUP BY) instead of reading all of them
+$sql = "SELECT s.client, s.fournisseur, COUNT(s.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -116,6 +117,7 @@ if (empty($reshook)) {
 	}
 }
 $sql .= $hookmanager->resPrint;
+$sql .= " GROUP BY s.client, s.fournisseur";
 //print $sql;
 $result = $db->query($sql);
 if ($result) {
@@ -123,22 +125,22 @@ if ($result) {
 		$found = 0;
 		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS') && ($objp->client == 2 || $objp->client == 3)) {
 			$found = 1;
-			$third['prospect']++;
+			$third['prospect'] += (int) $objp->nb;
 		}
 		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS') && ($objp->client == 1 || $objp->client == 3)) {
 			$found = 1;
-			$third['customer']++;
+			$third['customer'] += (int) $objp->nb;
 		}
 		if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS') && $objp->fournisseur) {
 			$found = 1;
-			$third['supplier']++;
+			$third['supplier'] += (int) $objp->nb;
 		}
 		if (isModEnabled('societe') && $objp->client == 0 && $objp->fournisseur == 0) {
 			$found = 1;
-			$third['other']++;
+			$third['other'] += (int) $objp->nb;
 		}
 		if ($found) {
-			$total++;
+			$total += (int) $objp->nb;
 		}
 	}
 } else {
