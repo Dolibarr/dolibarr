@@ -490,7 +490,8 @@ function removeCredentialHeaders($headers)
 		return [];
 	}
 
-	$credentialheaders = ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey'];
+	// Client-Secret: OAuth-style APIs that authenticate the application with its client id and secret headers (Bridge...)
+	$credentialheaders = ['authorization', 'proxy-authorization', 'cookie', 'x-api-key', 'api-key', 'apikey', 'x-auth-token', 'x-access-token', 'x-goog-api-key', 'dolapikey', 'client-secret'];
 
 	$ret = [];
 	foreach ($headers as $header) {
