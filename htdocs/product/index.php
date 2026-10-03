@@ -502,6 +502,17 @@ $latestmovement = '';
 if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
 	include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
+	// Filter also on the ids of the warehouses, read first: with only the condition on e.entity, the database starts
+	// from the warehouse table and reads and sorts all the stock movements to return the last ones, instead of
+	// reading them from the index on m.datem (several seconds with millions of movements).
+	$warehouseids = array();
+	$resqlw = $db->query("SELECT e.rowid FROM ".MAIN_DB_PREFIX."entrepot as e WHERE e.entity IN (".getEntity('stock').")");
+	if ($resqlw) {
+		while ($objw = $db->fetch_object($resqlw)) {
+			$warehouseids[] = (int) $objw->rowid;
+		}
+		$db->free($resqlw);
+	}
 	$sql = "SELECT p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.tobatch, p.tosell, p.tobuy,";
 	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
 	$sql .= " m.rowid as mid, m.label as mlabel, m.inventorycode as mcode, m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
@@ -511,10 +522,13 @@ if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
 	$sql .= " WHERE m.fk_product = p.rowid";
 	$sql .= " AND m.fk_entrepot = e.rowid";
 	$sql .= " AND e.entity IN (".getEntity('stock').")";
+	if ($resqlw) {
+		$sql .= " AND m.fk_entrepot IN (".$db->sanitize(implode(',', $warehouseids ?: array(0))).")";
+	}
 	if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 		$sql .= " AND p.fk_product_type = ".Product::TYPE_PRODUCT;
 	}
-	$sql .= $db->order("datem", "DESC");
+	$sql .= $db->order("m.datem,m.rowid", "DESC,DESC");
 	$sql .= $db->plimit($max, 0);
 
 	dol_syslog("Index:list stock movements", LOG_DEBUG);
