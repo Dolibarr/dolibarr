@@ -439,14 +439,10 @@ class Contact extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		/*if (is_object($langs))
-		{
-			foreach($this->fields as $key => $val)
-			{
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
-				{
-					foreach($val['arrayofkeyval'] as $key2 => $val2)
-					{
+		/*if (is_object($langs)) {
+			foreach($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 					}
 				}
@@ -573,7 +569,7 @@ class Contact extends CommonObject
 		$sql .= " ".((int) $this->status).",";
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
 		$sql .= " ".((int) $this->entity).",";
-		$sql .= "'".$this->db->escape($this->ref_ext)."',";
+		$sql .= "'".$this->db->escape((string) $this->ref_ext)."',";
 		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
 		$sql .= " ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
@@ -737,7 +733,7 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (!$error && $this->user_id > 0) {
+			if (!$error && $this->user_id > 0 && !$nosyncuser) {
 				// If contact is linked to a user
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);

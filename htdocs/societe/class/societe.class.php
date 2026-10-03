@@ -1758,7 +1758,7 @@ class Societe extends CommonObject
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? ((int) $user->id) : "null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
-			$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
+			$sql .= ", model_pdf = '".$this->db->escape((string) $this->model_pdf)."'";
 			$sql .= " WHERE rowid = ".(int) $id;
 
 			$resql = $this->db->query($sql);

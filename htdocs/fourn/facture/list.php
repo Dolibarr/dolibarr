@@ -1241,6 +1241,8 @@ if (isModEnabled('category')) {
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
+$moreforfilter .= '<div class="nowraponall inline-block valignmiddle"><input type="checkbox" class="valignmiddle opacitymedium" name="search_option" id="search_option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="search_option" class="valignmiddle opacitymedium">'.$langs->trans("Alert").'</label></div>';
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
@@ -1332,7 +1334,6 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 	 print $langs->trans('to').' ';*/
 	print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
 	//print '<br>';
-	print '<div class="nowraponall inline-block valignmiddle"><input type="checkbox" class="valignmiddle" name="search_option" id="search_option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="search_option" class="valignmiddle">'.$langs->trans("Alert").'</label></div>';
 	print '</div>';
 	print '</td>';
 }

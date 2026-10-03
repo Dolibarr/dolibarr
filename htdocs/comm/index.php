@@ -60,7 +60,7 @@ if (isModEnabled('intervention')) {
 $hookmanager->initHooks(array('commercialindex'));
 
 // Load translation files required by the page
-$langs->loadLangs(array("boxes", "commercial", "contracts", "orders", "propal", "supplier_proposal"));
+$langs->loadLangs(array("boxes", "commercial", "companies", "contracts", "orders", "propal", "supplier_proposal"));
 
 $action = GETPOST('action', 'aZ09');
 $bid = GETPOSTINT('bid');

@@ -303,11 +303,8 @@ ObjectId=Object ID
 FullData=Full data
 
 ##### Export #####
-ExportsArea=Exports area
-AvailableFormats=Available formats
 LibraryUsed=Library used
 LibraryVersion=Library version
-ExportableDatas=Exportable data
 NoExportableData=No exportable data (no modules with exportable data loaded, or missing permissions)
 ##### External sites #####
 WebsiteSetup=Setup of module website

@@ -85,7 +85,6 @@ ShowOrder=Show order
 OrdersOpened=Orders to process
 NoDraftOrders=No draft orders
 NoOrder=No order
-NoSupplierOrder=No purchase order
 LastOrders=Latest %s sales orders
 LastCustomerOrders=Latest %s sales orders
 LastSupplierOrders=Latest %s purchase orders

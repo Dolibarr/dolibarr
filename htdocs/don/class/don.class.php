@@ -9,6 +9,7 @@
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -362,7 +363,7 @@ class Don extends CommonObject
 				$err++;
 			} else {
 				if ($this->amount < $minimum && $minimum > 0) {
-					$error_string[] = $langs->trans('MinimumAmount', $minimum);
+					$error_string[] = $langs->trans('ErrorMinimumAmount', $minimum);
 					$err++;
 				}
 			}
@@ -441,9 +442,9 @@ class Don extends CommonObject
 		$sql .= ", '".$this->db->escape($this->firstname)."'";
 		$sql .= ", '".$this->db->escape($this->lastname)."'";
 		$sql .= ", '".$this->db->escape($this->societe)."'";
-		$sql .= ", '".$this->db->escape($this->address)."'";
-		$sql .= ", '".$this->db->escape($this->zip)."'";
-		$sql .= ", '".$this->db->escape($this->town)."'";
+		$sql .= ", '".$this->db->escape((string) $this->address)."'";
+		$sql .= ", '".$this->db->escape((string) $this->zip)."'";
+		$sql .= ", '".$this->db->escape((string) $this->town)."'";
 		$sql .= ", ".(int) ($this->country_id > 0 ? $this->country_id : 0);
 		$sql .= ", ".(int) $this->public;
 		$sql .= ", ".($this->fk_project > 0 ? (int) $this->fk_project : "null");
@@ -533,9 +534,9 @@ class Don extends CommonObject
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", societe='".$this->db->escape($this->societe)."'";
-		$sql .= ", address='".$this->db->escape($this->address)."'";
-		$sql .= ", zip='".$this->db->escape($this->zip)."'";
-		$sql .= ", town='".$this->db->escape($this->town)."'";
+		$sql .= ", address='".$this->db->escape((string) $this->address)."'";
+		$sql .= ", zip='".$this->db->escape((string) $this->zip)."'";
+		$sql .= ", town='".$this->db->escape((string) $this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
 		$sql .= ", public=".((int) $this->public);
 		$sql .= ", fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : 'null');
@@ -1110,19 +1111,24 @@ class Don extends CommonObject
 		}
 
 		// Search template files
+		// The model name stored in llx_document_model already holds its prefix (html_cerfafr, pdf_xxx...),
+		// but a model name without prefix is also accepted.
 		$file = '';
-		$classname = '';
 		$filefound = 0;
+		$modelebasename = preg_replace('/^(html|doc|pdf)_/', '', $modele);
 		$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			foreach (array('html', 'doc', 'pdf') as $prefix) {
-				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
+				if ($modelebasename != $modele && strpos($modele, $prefix.'_') !== 0) {
+					continue;	// The prefix is part of the model name, so do not load a template of another type
+				}
+				$file = dol_sanitizeFileName($prefix."_".$modelebasename.".modules.php");
 
 				// Verify the path for the module
 				$file = dol_buildpath($reldir."core/modules/dons/".$file, 0);
 				if (file_exists($file)) {
 					$filefound = 1;
-					$classname = $prefix.'_'.$modele;
+					$modele = $prefix.'_'.$modelebasename;	// Name of the class of the template
 					break;
 				}
 			}

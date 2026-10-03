@@ -179,32 +179,32 @@ if ($action == 'create') {
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth250" name="title" value="'.dol_escape_htmltag($title).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("SetHereATitleForLink").'</span></td></tr>';
+	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("BookmarkTitle"), $langs->trans("SetHereATitleForLink")).'</td><td><input id="titlebookmark" class="flat minwidth300" name="title" value="'.dolPrintHTMLForAttribute($title).'"></td></tr>';
 	dol_set_focus('#titlebookmark');
 
 	// URL
-	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent minwidth500" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</span></td></tr>';
+	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("UrlOrLink"), $langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink")).'</td><td><input class="flat quatrevingtpercent minwidth500" name="url" value="'.dolPrintHTMLForAttribute($url).'"></td></tr>';
 
 	// Target
-	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans("BehaviourOnClick"), $langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark")).'</td><td>';
 	$liste = array(0 => $langs->trans("ReplaceWindow"), 1 => $langs->trans("OpenANewWindow"));
 	$defaulttarget = 1;
 	if ($url && !preg_match('/^http/i', $url)) {
 		$defaulttarget = 0;
 	}
-	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOSTINT('target') : $defaulttarget, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
-	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
+	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOSTINT('target') : $defaulttarget, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300 maxwidth300');
+	print '</td></tr>';
 
 	// Visibility / Owner
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id, 'userid', 0, null, 0, ($user->admin ? '' : array($user->id)), '', '0', 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
-	print '</td><td class="hideonsmartphone"></td></tr>';
+	print '</td></tr>';
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
 	print '<input class="flat width50" name="position" value="'.(GETPOSTISSET("position") ? GETPOSTINT("position") : $object->position).'">';
-	print '</td><td class="hideonsmartphone"></td></tr>';
+	print '</td></tr>';
 
 	print '</table>';
 

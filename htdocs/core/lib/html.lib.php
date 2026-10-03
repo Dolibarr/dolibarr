@@ -4088,9 +4088,9 @@ function printCommonFooter($zone = 'private')
 /**
  * Set focus onto field with selector (similar behaviour of 'autofocus' HTML5 tag)
  *
- * @param 	string	$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
- * @param	string	$nooutput	Use 1 to return with no output
- * @return	string				Empty string or HTML output
+ * @param 	string		$selector	Selector ('#id' or 'input[name="ref"]') to use to find the HTML input field that must get the autofocus. You must use a CSS selector, so unique id preceding with the '#' char.
+ * @param	int<0,1>	$nooutput	Use 1 to return with no output
+ * @return	string					Empty string or HTML output
  */
 function dol_set_focus($selector, $nooutput = 0)
 {
@@ -4118,6 +4118,8 @@ function dol_set_focus($selector, $nooutput = 0)
 function showSimpleHTMLTable($outputlangs, $object)
 {
 	global $conf;
+
+	$outputlangs->loadLangs(array("products"));
 
 	$discountIsAvailable = false;
 	$orderPositionHasNoPrice = false;
@@ -5429,7 +5431,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql2 .= ", '' as ref";
 		}
 		$sql2 .= " FROM " . MAIN_DB_PREFIX . "mailing as m, " . MAIN_DB_PREFIX . "mailing_cibles as mc, " . MAIN_DB_PREFIX . "user as u";
-		$sql2 .= " WHERE mc.email = '" . $db->escape($objcon->email) . "'"; // Search is done on email.
+		$sql2 .= " WHERE mc.email = '" . $db->escape((string) $objcon->email) . "'"; // Search is done on email.
 		$sql2 .= " AND mc.statut = 1";
 		$sql2 .= " AND u.rowid = m.fk_user_valid";
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
