@@ -2699,7 +2699,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 				}
 
 				// Create recursive directory iterator
-				/** @var SplFileInfo[] $files */
+				/** @var RecursiveIteratorIterator<RecursiveDirectoryIterator> $files */
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($rootPath, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
@@ -2972,7 +2972,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 
 				// Create recursive directory iterator
 				// This does not return symbolic links
-				/** @var SplFileInfo[] $files */
+				/** @var RecursiveIteratorIterator<RecursiveDirectoryIterator> $files */
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($inputdir, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
