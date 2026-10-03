@@ -129,7 +129,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				langfile.removeAttr('disabled');required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
 			}
 		}
-		init_typeoffields('<?php echo GETPOST('type', 'alpha'); ?>');
+		init_typeoffields('<?php echo dol_escape_js(GETPOST('type', 'alpha')); ?>');
 		jQuery("#type").change(function() {
 			init_typeoffields($(this).val());
 		});
