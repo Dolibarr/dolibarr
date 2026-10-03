@@ -3669,7 +3669,9 @@ class Societe extends CommonObject
 				}
 				$this->db->free($resql);
 			} else {
-				setEventMessage($langs->trans('GetCompanyParentsError', $this->db->lasterror()), 'errors');
+				$this->error = $langs->trans('GetCompanyParentsError', $this->db->lasterror());
+				$this->errors[] = $this->error;
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 			}
 		}
 		// Return a default value when $company_id is not greater than 0
@@ -4348,7 +4350,6 @@ class Societe extends CommonObject
 				$result = $this->create_individual($user);
 
 				if ($result < 0) {
-					setEventMessages($this->error, $this->errors, 'errors');
 					$this->db->rollback();
 					return -1;
 				}
