@@ -2168,7 +2168,7 @@ if ($action == 'create' && $permissiontoadd) {
 			} else {
 				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($objectsrc->fk_project);
+					$proj->fetch((int) $objectsrc->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
