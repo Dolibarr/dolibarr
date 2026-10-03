@@ -233,13 +233,13 @@ abstract class CommonObject
 	public $contact_id;
 
 	/**
-	 * @var Societe 	A related thirdparty object
+	 * @var ?Societe 	A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
 
 	/**
-	 * @var User A related user
+	 * @var ?User A related user
 	 * @see fetch_user()
 	 */
 	public $user;
