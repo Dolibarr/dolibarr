@@ -153,9 +153,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$langs->loadLangs(array("agenda", "other", "companies"));
 
 			if (empty($object->actionmsg2)) {
-				$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->name);
+				$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->getFullName($langs));
 			}
-			$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->name);
+			$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->getFullName($langs));
 
 			$object->sendtoid = array($object->id => $object->id);
 			$object->socid = $object->socid;
