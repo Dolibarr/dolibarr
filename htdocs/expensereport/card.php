@@ -428,7 +428,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!$error && $result > 0 && $object->fk_user_validator > 0) {
+		if (!$error && $result > 0 && $object->fk_user_validator > 0 && !getDolGlobalString('EXPENSEREPORT_DISABLE_ALL_MAILS')) {
 			$langs->load("mails");
 
 			// TO
@@ -550,6 +550,12 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
+			if (getDolGlobalString('EXPENSEREPORT_DISABLE_ALL_MAILS')) {
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
+			}
+
 			// Send mail
 
 			// TO
@@ -664,6 +670,12 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
+			if (getDolGlobalString('EXPENSEREPORT_DISABLE_ALL_MAILS')) {
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
+			}
+
 			// Send mail
 
 			// TO
@@ -782,6 +794,12 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
+			if (getDolGlobalString('EXPENSEREPORT_DISABLE_ALL_MAILS')) {
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
+			}
+
 			// Send mail
 
 			// TO
@@ -900,6 +918,12 @@ if (empty($reshook)) {
 				}
 
 				if ($result > 0) {
+					if (getDolGlobalString('EXPENSEREPORT_DISABLE_ALL_MAILS')) {
+						setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+						exit;
+					}
+
 					// Send mail
 
 					// TO
@@ -1094,7 +1118,7 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			// TODO We must never send an email without a setup or confirm option to choose if email is
 			// sent or not. So we add a hidden constant to avoid this for the moment.
-			if (getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID')) {
+			if (getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID') && !getDolGlobalString('EXPENSEREPORT_DISABLE_ALL_MAILS')) {
 				// Send mail
 
 				// TO
