@@ -1,0 +1,322 @@
+lines 1-140 of journals_list.php
+     1	<?php
+     2	/* Copyright (C) 2017-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
+     3	 * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+     4	 * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+     5	 *
+     6	 * This program is free software; you can redistribute it and/or modify
+     7	 * it under the terms of the GNU General Public License as published by
+     8	 * the Free Software Foundation; either version 3 of the License, or
+     9	 * (at your option) any later version.
+    10	 *
+    11	 * This program is distributed in the hope that it will be useful,
+    12	 * but WITHOUT ANY WARRANTY; without even the implied warranty of
+    13	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    14	 * GNU General Public License for more details.
+    15	 *
+    16	 * You should have received a copy of the GNU General Public License
+    17	 * along with this program. If not, see <https://www.gnu.org/licenses/>.
+    18	 *
+    19	 */
+    20	
+    21	/**
+    22	 * \file		htdocs/accountancy/admin/journals_list.php
+    23	 * \ingroup		Accountancy (Double entries)
+    24	 * \brief		Setup page to configure journals
+    25	 */
+    26	
+    27	if (!defined('CSRFCHECK_WITH_TOKEN')) {
+    28		define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
+    29	}
+    30	
+    31	// Load Dolibarr environment
+    32	require '../../main.inc.php';
+    33	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+    34	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+    35	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+    36	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+    37	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    38	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+    39	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+    40	
+    41	/**
+    42	 * @var Conf $conf
+    43	 * @var DoliDB $db
+    44	 * @var HookManager $hookmanager
+    45	 * @var Translate $langs
+    46	 * @var User $user
+    47	 */
+    48	
+    49	// Load translation files required by the page
+    50	$langs->loadLangs(array("admin", "compta", "accountancy"));
+    51	
+    52	$action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
+    53	$confirm = GETPOST('confirm', 'alpha');
+    54	$id = 35;
+    55	$rowid = GETPOST('rowid', 'alpha');
+    56	$code = GETPOST('code', 'alpha');
+    57	
+    58	// Security access
+    59	if (!$user->hasRight('accounting', 'chartofaccount')) {
+    60		accessforbidden();
+    61	}
+    62	
+    63	$acts = array();
+    64	$acts[0] = "activate";
+    65	$acts[1] = "disable";
+    66	$actl = array();
+    67	$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
+    68	$actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
+    69	
+    70	$listoffset = GETPOST('listoffset', 'alpha');
+    71	$listlimit = GETPOSTINT('listlimit') > 0 ? GETPOSTINT('listlimit') : 1000;
+    72	$active = 1;
+    73	
+    74	$sortfield = GETPOST('sortfield', 'aZ09comma');
+    75	$sortorder = GETPOST('sortorder', 'aZ09comma');
+    76	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+    77	if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+    78		// If $page is not defined, or '' or -1 or if we click on clear filters
+    79		$page = 0;
+    80	}
+    81	$offset = $listlimit * $page;
+    82	$pageprev = $page - 1;
+    83	$pagenext = $page + 1;
+    84	if (empty($sortfield)) {
+    85		$sortfield = 'code';
+    86	}
+    87	if (empty($sortorder)) {
+    88		$sortorder = 'ASC';
+    89	}
+    90	
+    91	$error = 0;
+    92	
+    93	$search_country_id = GETPOST('search_country_id', 'int');
+    94	
+    95	// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+    96	$hookmanager->initHooks(array('admin'));
+    97	
+    98	// This page is a generic page to edit dictionaries
+    99	// Put here declaration of dictionaries properties
+   100	
+   101	// Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
+   102	$taborder = array(35);
+   103	
+   104	// Name of SQL tables of dictionaries
+   105	$tabname = array();
+   106	$tabname[35] = MAIN_DB_PREFIX."accounting_journal";
+   107	
+   108	// Dictionary labels
+   109	$tablib = array();
+   110	$tablib[35] = "DictionaryAccountancyJournal";
+   111	
+   112	// Requests to extract data
+   113	$tabsql = array();
+   114	$tabsql[35] = "SELECT a.rowid as rowid, a.code as code, a.label, a.nature, a.active FROM ".MAIN_DB_PREFIX."accounting_journal as a";
+   115	
+   116	// Criteria to sort dictionaries
+   117	$tabsqlsort = array();
+   118	$tabsqlsort[35] = "code ASC";
+   119	
+   120	// Name of the fields in the result of select to display the dictionary
+   121	$tabfield = array();
+   122	$tabfield[35] = "code,label,nature";
+   123	
+   124	// Name of editing fields for record modification
+   125	$tabfieldvalue = array();
+   126	$tabfieldvalue[35] = "code,label,nature";
+   127	
+   128	// Name of the fields in the table for inserting a record
+   129	$tabfieldinsert = array();
+   130	$tabfieldinsert[35] = "code,label,nature";
+   131	
+   132	// Nom du rowid si le champ n'est pas de type autoincrement
+   133	// Example: "" if id field is "rowid" and has autoincrement on
+   134	//          "nameoffield" if id field is not "rowid" or has not autoincrement on
+   135	$tabrowid = array();
+   136	$tabrowid[35] = "";
+   137	
+   138	// Condition to show dictionary in setup page
+   139	$tabcond = array();
+   140	$tabcond[35] = isModEnabled('accounting');
+
+lines 440-560
+440:			print '</td>';
+441:		}
+442:	}
+443:
+444:	print '<td>';
+445:	print '<input type="hidden" name="id" value="'.$id.'">';
+446:	print '</td>';
+447:	print '<td></td>';
+448:	print '<td></td>';
+449:	print '<td></td>';
+450:	print '</tr>';
+451:
+452:	// Line to enter new values
+453:	print '<tr class="oddeven nodrag nodrop nohover">';
+454:
+455:	$obj = new stdClass();
+456:	// If data was already input, we define them in obj to populate input fields.
+457:	if (GETPOST('actionadd', 'alpha')) {
+458:		foreach ($fieldlist as $key => $val) {
+459:			if (GETPOST($val) != '') {
+460:				$obj->$val = GETPOST($val);
+461:			}
+462:		}
+463:	}
+464:
+465:	$tmpaction = 'create';
+466:	$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
+467:	$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+468:	$error = $hookmanager->error;
+469:	$errors = $hookmanager->errors;
+470:
+471:	if (empty($reshook)) {
+472:		fieldListJournal($fieldlist, $obj, $tabname[$id], 'add');
+473:	}
+474:
+475:	print '<td colspan="4" class="right">';
+476:	print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
+477:	print '</td>';
+478:	print "</tr>";
+479:
+480:	print '<tr><td colspan="7">&nbsp;</td></tr>'; // Keep &nbsp; to have a line with enough height
+481:}
+482:
+483:
+484:
+485:// List of available record in database
+486:dol_syslog("htdocs/admin/dict", LOG_DEBUG);
+487:$resql = $db->query($sql);
+488:if ($resql) {
+489:	$num = $db->num_rows($resql);
+490:	$i = 0;
+491:
+492:	$param = '&id='.((int) $id);
+493:	if ($search_country_id > 0) {
+494:		$param .= '&search_country_id='.urlencode((string) ($search_country_id));
+495:	}
+496:	$paramwithsearch = $param;
+497:	$paramwithsearch .= '&sortorder='.$sortorder;
+498:	$paramwithsearch .= '&sortfield='.$sortfield;
+499:
+500:	if (GETPOST('from', 'alpha')) {
+501:		$paramwithsearch .= '&from='.GETPOST('from', 'alpha');
+502:	}
+503:
+504:	// There is several pages
+505:	if ($num > $listlimit) {
+506:		print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
+507:		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+508:		print '</td></tr>';
+509:	}
+510:
+511:	// Title line with search boxes
+512:	/*print '<tr class="liste_titre_filter liste_titre_add">';
+513:	print '<td class="liste_titre"></td>';
+514:	print '<td class="liste_titre"></td>';
+515:	print '<td class="liste_titre"></td>';
+516:	print '<td class="liste_titre"></td>';
+517:	print '<td class="liste_titre"></td>';
+518:	print '<td class="liste_titre"></td>';
+519:	print '<td class="liste_titre center">';
+520:	$searchpicto=$form->showFilterButtons();
+521:	print $searchpicto;
+522:	print '</td>';
+523:	print '</tr>';
+524:	*/
+525:
+526:	// Title of lines
+527:	print '<tr class="liste_titre liste_titre_add">';
+528:	foreach ($fieldlist as $field => $value) {
+529:		// Determine the field name based on the possible names
+530:		// in the data dictionaries.
+531:		$class = "left";
+532:		$sortable = 1;
+533:		$valuetoshow = '';
+534:		/*
+535:		$tmparray=getLabelOfField($fieldlist[$field]);
+536:		$valuetoshow=$tmp['valuetoshow'];
+537:		$align=$tmp['align'];
+538:		$sortable=$tmp['sortable'];
+539:		*/
+540:		$valuetoshow = ucfirst($fieldlist[$field]); // By default
+541:		$valuetoshow = $langs->trans($valuetoshow); // try to translate
+542:		if ($fieldlist[$field] == 'code') {
+543:			$valuetoshow = $langs->trans("Code");
+544:		}
+545:		if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
+546:			$valuetoshow = $langs->trans("Label");
+547:		}
+548:		if ($fieldlist[$field] == 'nature') {
+549:			$valuetoshow = $langs->trans("NatureOfJournal");
+550:		}
+551:
+552:		// Affiche nom du champ
+553:		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
+554:	}
+555:	print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
+556:	print getTitleFieldOfList('');
+557:	print getTitleFieldOfList('');
+558:	print getTitleFieldOfList('');
+559:	print '</tr>';
+560:
+
+lines 605-640
+605:						} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
+606:							$valuetoshow = $langs->trans($obj->label);
+607:						}
+608:
+609:						$class = 'tddict';
+610:						// Show value for field
+611:						print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dol_escape_htmltag($valuetoshow).'</td>';
+612:					}
+613:				}
+614:
+615:				// Can an entry be erased or disabled ?
+616:				$iserasable = 1;
+617:				$canbedisabled = 1;
+618:				$canbemodified = 1; // true by default
+619:				if (isset($obj->code) && $id != 10) {
+620:					if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
+621:						$iserasable = 0;
+622:						$canbedisabled = 0;
+623:					}
+624:				}
+625:
+626:				$canbemodified = $iserasable;
+627:
+628:				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
+629:				$url .= '&'.$param;
+630:				$url .= '&';
+631:
+632:				// Active
+633:				print '<td class="nowrap center">';
+634:				if ($canbedisabled) {
+635:					print '<a href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
+636:				} else {
+637:					print $langs->trans("AlwaysActive");
+638:				}
+639:				print "</td>";
+640:
+
+occurrences of id= sortable= page= in file
+532:		$sortable = 1;
+538:		$sortable=$tmp['sortable'];
+553:		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
+54:$id = 35;
+619:				if (isset($obj->code) && $id != 10) {
+76:$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+77:if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+78:	// If $page is not defined, or '' or -1 or if we click on clear filters
+79:	$page = 0;
+81:$offset = $listlimit * $page;
+82:$pageprev = $page - 1;
+83:$pagenext = $page + 1;
+382:	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+507:		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+553:		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
+555:	print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
+580:				print '<input type="hidden" name="page" value="'.$page.'">';
+628:				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
