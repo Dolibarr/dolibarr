@@ -134,6 +134,13 @@ DELETE FROM llx_document_model WHERE nom = 'html_generic' AND type = 'donation';
 -- show the name of the new template, not the name of the old "generic" one it was migrated from.
 UPDATE llx_document_model SET libelle = 'Standard' WHERE nom = 'pdf_standard_donation' AND type = 'donation' AND (libelle IS NULL OR libelle = '' OR libelle = 'generic' OR libelle = 'standard');
 
+-- The delivery receipt template "typhon" has been removed and replaced by "storm".
+-- Switch all typhon templates into storm.
+UPDATE llx_delivery SET model_pdf = 'storm' WHERE model_pdf = 'typhon';
+UPDATE llx_const SET value = 'storm' WHERE value = 'typhon' AND name IN ('DELIVERY_ADDON_PDF', 'LIVRAISON_ADDON_PDF');
+UPDATE llx_document_model SET nom = 'storm', libelle = NULL WHERE nom = 'typhon' AND type = 'delivery' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'storm' AND type = 'delivery') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'typhon' AND type = 'delivery';
+
 -- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
 ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
 

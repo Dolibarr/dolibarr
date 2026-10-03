@@ -192,8 +192,6 @@ if ($action == 'updatepattern') {
  * View
  */
 
-$form = new Form($db);
-
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 llxHeader('', $langs->trans("Passwords"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security');
 

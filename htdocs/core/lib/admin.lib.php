@@ -2122,7 +2122,7 @@ function delDocumentModel($name, $type)
  *	@param	bool					$excludedisabled	If true, hide modules with version == 'disabled'
  *	@param	string					$constpdfdefault	Default value to assume for $constpdf when the conf constant is not set
  *	@param	int<0,1>				$usedefault			If 1, show also the column Default.
- *	@param	string					$actionunset	If not empty, action name used on the Default pictogram to unset the default model (e.g. 'unsetdoc'), if empty the pictogram is not clickable
+ *	@param	string					$actionunset		If not empty, action name used on the Default pictogram to unset the default model (e.g. 'unsetdoc'), if empty the pictogram is not clickable
  *	@return	void
  */
 function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '', $usedefault = 1, $actionunset = '')
