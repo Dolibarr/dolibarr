@@ -450,3 +450,6 @@ UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' W
 -- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
 -- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
 ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
+
+-- Index on the date of modification of thirdparties: the thirdparty area shows the last modified ones
+ALTER TABLE llx_societe ADD INDEX idx_societe_tms(tms);
