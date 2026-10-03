@@ -10,6 +10,13 @@ And then copy the value in entry "secret" for section "MISTRAL_API_KEY" into the
 ````
 MISTRAL_API_KEY='<your_api_key>'
 ````
+and/or for Eurouter 
+
+````
+EUROUTER_API_KEY='<your_api_key>'
+````
+
+
 So now when running the container, the .vibe/.env file has your paid key that will be used to set the environment variable MISTRAL_API_KEY.
 
 ## You can add an alias into your /etc/bash.bashrc or ~/.bashrc the line
