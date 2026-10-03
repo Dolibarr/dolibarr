@@ -1,0 +1,40 @@
+name: Probe verify CTI report with fix
+
+on:
+  push:
+    branches: [probe-phpstan-cti-report]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: probe-phpstan-cti-report
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: phpstan:2.2.14
+      - name: Take the fixed file from fix branch
+        run: |
+          git fetch origin fix-phpstan-journals-list || true
+          git checkout origin/fix-phpstan-journals-list -- htdocs/accountancy/admin/journals_list.php || true
+          git diff HEAD --stat || true
+      - name: Run PHPStan CTI config with fix
+        run: |
+          phpstan --level=9 -v analyse --no-progress --memory-limit=5G --error-format=github -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon > verify.txt 2>&1 || true
+      - name: Commit verification output
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout probe-phpstan-cti-report
+          head -30 verify.txt > verify-head.txt || true
+          git add verify-head.txt
+          git commit -m "[skip ci] Add verification output" || echo "nothing to commit"
+          git pull --rebase || true
+          git push || true
