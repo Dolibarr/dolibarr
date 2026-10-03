@@ -73,6 +73,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	public $version = 'dolibarr';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+
+	/**
 	 * @var float
 	 */
 	public $posxcomm;		// For customer comment column

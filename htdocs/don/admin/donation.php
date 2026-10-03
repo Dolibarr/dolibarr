@@ -261,6 +261,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 if (count($filelist)) {
+	$arrayofmodels = array();
+
 	foreach ($filelist as $file => $fullpath) {
 		if (preg_match('/\.modules\.php$/i', $file)) {
 			$name = dol_substr($file, 0, dol_strlen($file) - 12);
@@ -280,67 +282,75 @@ if (count($filelist)) {
 			}
 
 			if ($module->isEnabled()) {
-				print '<tr class="oddeven"><td width=\"100\">';
-				echo $module->name;
-				print '</td>';
-				print '<td>';
-				print $module->description;
-				print '</td>';
-
-				// Active
-				if (in_array($name, $def)) {
-					if (getDolGlobalString('DON_ADDON_MODEL') == $name) {
-						print "<td class=\"center\">\n";
-						print img_picto($langs->trans("Enabled"), 'switch_on');
-						print '</td>';
-					} else {
-						print "<td class=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
-						print '</td>';
-					}
-				} else {
-					print "<td class=\"center\">\n";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-					print "</td>";
-				}
-
-				// Default
-				if (getDolGlobalString('DON_ADDON_MODEL') == "$name") {
-					print "<td class=\"center\">";
-					print img_picto($langs->trans("Default"), 'on');
-					print '</td>';
-				} else {
-					print "<td class=\"center\">";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-					print '</td>';
-				}
-
-				// Info
-				$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-				$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-				if ($module->type == 'pdf') {
-					$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-				}
-				$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-				$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-				$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-				print '<td class="center">';
-				print $form->textwithpicto('', $htmltooltip, -1, 'info');
-				print '</td>';
-
-				// Preview
-				print '<td class="center">';
-				if ($module->type == 'pdf') {
-					// The PDF is sent as a download, a new window would stay empty
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
-				} else {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'" target="specimen">'.img_object($langs->trans("Preview"), 'generic').'</a>';
-				}
-				print '</td>';
-
-				print "</tr>\n";
+				$arrayofmodels[$name] = $module;
 			}
 		}
+	}
+
+	// Sort models by their position
+	$arrayofmodels = dol_sort_array($arrayofmodels, 'position');
+	'@phan-var-force array<string,ModeleDon> $arrayofmodels';
+
+	foreach ($arrayofmodels as $name => $module) {
+		print '<tr class="oddeven"><td width=\"100\">';
+		echo $module->name;
+		print '</td>';
+		print '<td>';
+		print $module->description;
+		print '</td>';
+
+		// Active
+		if (in_array($name, $def)) {
+			if (getDolGlobalString('DON_ADDON_MODEL') == $name) {
+				print "<td class=\"center\">\n";
+				print img_picto($langs->trans("Enabled"), 'switch_on');
+				print '</td>';
+			} else {
+				print "<td class=\"center\">\n";
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+				print '</td>';
+			}
+		} else {
+			print "<td class=\"center\">\n";
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+			print "</td>";
+		}
+
+		// Default
+		if (getDolGlobalString('DON_ADDON_MODEL') == "$name") {
+			print "<td class=\"center\">";
+			print img_picto($langs->trans("Default"), 'on');
+			print '</td>';
+		} else {
+			print "<td class=\"center\">";
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '</td>';
+		}
+
+		// Info
+		$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+		$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+		if ($module->type == 'pdf') {
+			$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+		}
+		$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+		$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+		$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+		print '<td class="center">';
+		print $form->textwithpicto('', $htmltooltip, -1, 'info');
+		print '</td>';
+
+		// Preview
+		print '<td class="center">';
+		if ($module->type == 'pdf') {
+			// The PDF is sent as a download, a new window would stay empty
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+		} else {
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'" target="specimen">'.img_object($langs->trans("Preview"), 'generic').'</a>';
+		}
+		print '</td>';
+
+		print "</tr>\n";
 	}
 }
 
