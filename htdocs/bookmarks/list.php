@@ -112,6 +112,23 @@ if (empty($reshook)) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
+	// Without the permission to delete all bookmarks, a user can only delete his own bookmarks: the mass action must
+	// not delete other records than these, whatever the list of ids received.
+	if (!$user->hasRight('bookmark', 'supprimer') && is_array($toselect) && count($toselect) > 0) {
+		$ownbookmarks = array();
+		$sqlown = "SELECT rowid FROM ".MAIN_DB_PREFIX."bookmark";
+		$sqlown .= " WHERE rowid IN (".$db->sanitize(implode(',', array_map('intval', $toselect))).")";
+		$sqlown .= " AND fk_user = ".((int) $user->id);
+		$sqlown .= " AND entity IN (".getEntity('bookmark').")";
+		$resqlown = $db->query($sqlown);
+		if ($resqlown) {
+			while ($objown = $db->fetch_object($resqlown)) {
+				$ownbookmarks[] = (int) $objown->rowid;
+			}
+		}
+		$toselect = $ownbookmarks;
+	}
+
 	// Mass actions
 	$objectclass = 'Bookmark';
 	$objectlabel = 'Bookmark';
