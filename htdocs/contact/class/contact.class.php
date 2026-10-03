@@ -725,7 +725,7 @@ class Contact extends CommonObject
 					$tmpobj->zip = $this->zip;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->zip != $this->zip) {
+				if ($tmpobj->state_id != $this->state_id) {
 					$tmpobj->state_id = $this->state_id;
 					$usermustbemodified++;
 				}
@@ -737,7 +737,10 @@ class Contact extends CommonObject
 					$tmpobj->email = $this->email;
 					$usermustbemodified++;
 				}
-				if (!empty(array_diff($tmpobj->socialnetworks, $this->socialnetworks))) {
+				$usersocialnetworks = (is_array($tmpobj->socialnetworks) ? $tmpobj->socialnetworks : array());
+				$contactsocialnetworks = (is_array($this->socialnetworks) ? $this->socialnetworks : array());
+				// Compare in both directions, so a network added on the contact is also seen as a difference
+				if (!empty(array_diff_assoc($usersocialnetworks, $contactsocialnetworks)) || !empty(array_diff_assoc($contactsocialnetworks, $usersocialnetworks))) {
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
@@ -1300,6 +1303,8 @@ class Contact extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 
 		$this->db->begin();
@@ -1384,6 +1389,49 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
+			// Remove the birthday alerts set by users on this contact
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert WHERE fk_contact = ".((int) $this->id);
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error .= $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			// Remove the link of the user created from this contact (the user is kept)
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_socpeople = NULL WHERE fk_socpeople = ".((int) $this->id);
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error .= $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			// Remove the links with other objects
+			$result = $this->deleteObjectLinked();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		// Remove the index of the documents of the contact (the files are removed after the commit)
+		$dirofdocuments = '';
+		if ($this->id > 0 && !empty($conf->societe->multidir_output[$this->entity])) {
+			$dirofdocuments = $conf->societe->multidir_output[$this->entity].'/contact/'.dol_sanitizeFileName((string) $this->id);
+		}
+		if (!$error && $dirofdocuments) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (deleteFilesIntoDatabaseIndex($dirofdocuments, '', '') < 0 || !$this->deleteEcmFiles(1)) {
+				$error++;
+				$this->error .= $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1405,6 +1453,15 @@ class Contact extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+
+			// Delete the directory of the documents of the contact
+			if ($dirofdocuments) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				if (dol_is_dir($dirofdocuments)) {
+					dol_delete_dir_recursive($dirofdocuments);
+				}
+			}
+
 			return 1;
 		} else {
 			$this->db->rollback();
