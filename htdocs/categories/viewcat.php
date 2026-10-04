@@ -1567,6 +1567,10 @@ if ($type == Categorie::TYPE_ORDER) {
 }
 
 // List of Manufacturing Orders
+// The objects of the category are listed only to a user allowed to read them
+if ($type == Categorie::TYPE_MO && !$user->hasRight('mrp', 'read')) {
+	accessforbidden("NotEnoughPermissions", 0, 0);
+}
 if ($type == Categorie::TYPE_MO) {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
