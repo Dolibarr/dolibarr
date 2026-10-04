@@ -3191,6 +3191,9 @@ class Expedition extends CommonObject
 
 		$langs->load("agenda");
 
+		// Label is stored into llx_stock_mouvement.label, so it must not be HTML encoded
+		$labelmvt = $langs->transnoentitiesnoconv($labelmovement, $this->ref);
+
 		// Loop on each product line to add a stock movement
 		$sql = "SELECT";
 		$sql .= " ed.rowid as edid, ed.fk_product, ed.qty, ed.fk_entrepot";
@@ -3234,7 +3237,7 @@ class Expedition extends CommonObject
 					// line without batch detail
 
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $langs->trans($labelmovement, $obj->ref));
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $labelmvt);
 					if ($result < 0) {
 						$this->setErrorsFromObject($mouvS);
 						$error++;
@@ -3244,7 +3247,7 @@ class Expedition extends CommonObject
 					// line with batch detail
 
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $langs->trans($labelmovement, $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qtytouse, $obj->subprice, $labelmvt, '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 					if ($result < 0) {
 						$this->setErrorsFromObject($mouvS);
 						$error++;
@@ -3405,9 +3408,6 @@ class Expedition extends CommonObject
 
 				$langs->load("agenda");
 
-				// Label is stored into llx_stock_mouvement.label, so it must not be HTML encoded
-				$labelmvt = $langs->transnoentitiesnoconv($labelmovement, $this->ref);
-
 				// Loop on each product line to add a stock movement
 				// TODO possibility to ship from a proposal or other origin
 				$sql = "SELECT cd.fk_product, cd.subprice,";
@@ -3444,7 +3444,7 @@ class Expedition extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $labelmvt);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->transnoentitiesnoconv("ShipmentUnClassifyCloseddInDolibarr", $this->ref));
 							if ($result < 0) {
 								$this->setErrorsFromObject($mouvS);
 								$error++;
@@ -3454,7 +3454,7 @@ class Expedition extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $labelmvt, '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->transnoentitiesnoconv("ShipmentUnClassifyCloseddInDolibarr", $this->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 								$this->setErrorsFromObject($mouvS);
 								$error++;
