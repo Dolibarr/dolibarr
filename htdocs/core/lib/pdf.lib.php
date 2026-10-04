@@ -476,7 +476,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  *      @param  ?CommonObject         $object               Object we want to build document for
  * 		@return	string|int				    		        String with full address or -1 if KO
  */
-function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
+function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null, $type = 'BILLING')
 {
 	global $hookmanager;
 
@@ -497,7 +497,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	$reshook = 0;
 	$stringaddress = '';
 	if (is_object($hookmanager)) {
-		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact);
+		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact, 'type' => $type);
 		$action = '';
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -702,7 +702,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 
 			// Intra VAT
-			if (!getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
+			if ($type == 'BILLING' && !getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
 				if ($usecontact && is_object($targetcontact) && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
 					$targetcontact->fetch_thirdparty();
 					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
@@ -720,47 +720,49 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 
 			// Professional Ids
-			if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+			if ($type == 'BILLING') {
+				if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
-			}
-			if (getDolGlobalString('MAIN_PROFID2_IN_ADDRESS') && !empty($targetcompany->idprof2)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId2", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID2_IN_ADDRESS') && !empty($targetcompany->idprof2)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId2", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
-			}
-			if (getDolGlobalString('MAIN_PROFID3_IN_ADDRESS') && !empty($targetcompany->idprof3)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId3", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID3_IN_ADDRESS') && !empty($targetcompany->idprof3)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId3", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
-			}
-			if (getDolGlobalString('MAIN_PROFID4_IN_ADDRESS') && !empty($targetcompany->idprof4)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId4", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID4_IN_ADDRESS') && !empty($targetcompany->idprof4)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId4", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
-			}
-			if (getDolGlobalString('MAIN_PROFID5_IN_ADDRESS') && !empty($targetcompany->idprof5)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId5", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID5_IN_ADDRESS') && !empty($targetcompany->idprof5)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId5", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
-			}
-			if (getDolGlobalString('MAIN_PROFID6_IN_ADDRESS') && !empty($targetcompany->idprof6)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId6", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID6_IN_ADDRESS') && !empty($targetcompany->idprof6)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId6", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
 			}
 
 			// Public note
