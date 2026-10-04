@@ -203,6 +203,30 @@ if (empty($reshook)) {
 		$fk_c_type_fees = -1;
 	}
 
+	// Refuse a status change that the buttons of this page do not offer for the current status of the report
+	$allowedstatusforaction = array(
+		'confirm_validate' => array(ExpenseReport::STATUS_DRAFT),
+		'confirm_save_from_refuse' => array(ExpenseReport::STATUS_REFUSED),
+		'confirm_approve' => array(ExpenseReport::STATUS_VALIDATED),
+		'confirm_refuse' => array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED),
+		'confirm_cancel' => array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED),
+		'confirm_setdraft' => array(ExpenseReport::STATUS_VALIDATED),
+	);
+	if ($user->hasRight('expensereport', 'approve') || $user->hasRight('expensereport', 'to_paid')) {
+		$allowedstatusforaction['confirm_cancel'][] = ExpenseReport::STATUS_CLOSED;
+	}
+	if ($user->hasRight('expensereport', 'to_paid')) {
+		$allowedstatusforaction['confirm_setdraft'][] = ExpenseReport::STATUS_APPROVED;
+	}
+	if (array_key_exists($action, $allowedstatusforaction) && $object->id > 0 && !in_array($object->status, $allowedstatusforaction[$action])) {
+		$labelsofallowedstatus = array();
+		foreach ($allowedstatusforaction[$action] as $allowedstatus) {
+			$labelsofallowedstatus[] = $object->LibStatut($allowedstatus, 0);
+		}
+		setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, implode(' / ', $labelsofallowedstatus)), null, 'errors');
+		$action = '';
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 	if (!empty(GETPOST('sendit', 'alpha'))) {   // If we just submit a file
