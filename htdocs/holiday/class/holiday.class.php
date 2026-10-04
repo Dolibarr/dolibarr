@@ -780,7 +780,7 @@ class Holiday extends CommonObject
 			// long in the server timezone. It then returns a string and the subtraction fatals.
 			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
 			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
-			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1);
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday);
 
 			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -909,7 +909,7 @@ class Holiday extends CommonObject
 			// long in the server timezone. It then returns a string and the subtraction fatals.
 			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
 			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
-			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1);
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday);
 
 			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -1043,7 +1043,7 @@ class Holiday extends CommonObject
 			// long in the server timezone. It then returns a string and the subtraction fatals.
 			$datedebutforcount = !empty($this->date_debut_gmt) ? $this->date_debut_gmt : $this->date_debut;
 			$datefinforcount = !empty($this->date_fin_gmt) ? $this->date_fin_gmt : $this->date_fin;
-			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1);
+			$daysAsked = num_open_day($datedebutforcount, $datefinforcount, 0, 1, (int) $this->halfday);
 
 			if (($balance - $daysAsked) < 0) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
