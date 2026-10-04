@@ -22,7 +22,6 @@ RUN apt-get update \
         memcached \
 		mysql-client \
 		openssh-client \
-		phpunit \
 		php \
 		php-ast \
 		php-curl \
@@ -69,10 +68,12 @@ RUN curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | 
 RUN mkdir -p /opt/php-tools \
 	&& composer require \
     --working-dir=/opt/php-tools \
+	phpunit/phpunit ^9 \
     phan/phan \
     phpstan/phpstan:^2.2 \
 	squizlabs/php_codesniffer \
     --ignore-platform-reqs \
+	&& ln -s /opt/php-tools/vendor/bin/phpunit /usr/local/bin/phpunit \
 	&& ln -s /opt/php-tools/vendor/bin/phan /usr/local/bin/phan \
 	&& ln -s /opt/php-tools/vendor/bin/phpstan /usr/local/bin/phpstan \
 	&& ln -s /opt/php-tools/vendor/bin/phpcs /usr/local/bin/phpcs \
