@@ -382,6 +382,21 @@ class Categories extends DolibarrApi
 			throw new RestException(404, 'category not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// An object can only be linked to a category of its own type
+		$typeid = -1;
+		foreach ($this->category->getMapList() as $map) {
+			if ($map['code'] === $type) {
+				$typeid = (int) $map['id'];
+				break;
+			}
+		}
+		if ($typeid < 0 || $typeid !== (int) $this->category->type) {
+			throw new RestException(400, 'The category '.((int) $this->category->id).' is not a category of type '.$type);
+		}
+
 		if ($type === Categorie::TYPE_PRODUCT) {
 			if (!DolibarrApiAccess::$user->hasRight('produit', 'creer') && !DolibarrApiAccess::$user->hasRight('service', 'creer')) {
 				throw new RestException(403);
@@ -461,6 +476,21 @@ class Categories extends DolibarrApi
 		$result = $this->category->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// An object can only be linked to a category of its own type
+		$typeid = -1;
+		foreach ($this->category->getMapList() as $map) {
+			if ($map['code'] === $type) {
+				$typeid = (int) $map['id'];
+				break;
+			}
+		}
+		if ($typeid < 0 || $typeid !== (int) $this->category->type) {
+			throw new RestException(400, 'The category '.((int) $this->category->id).' is not a category of type '.$type);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
@@ -544,6 +574,10 @@ class Categories extends DolibarrApi
 			throw new RestException(404, 'category not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		if ($type === Categorie::TYPE_PRODUCT) {
 			if (!DolibarrApiAccess::$user->hasRight('produit', 'creer') && !DolibarrApiAccess::$user->hasRight('service', 'creer')) {
 				throw new RestException(403);
@@ -621,6 +655,10 @@ class Categories extends DolibarrApi
 		$result = $this->category->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if ($type === Categorie::TYPE_PRODUCT) {
