@@ -926,10 +926,10 @@ class ContactTest extends CommonClassTest
 	/**
 	 * testContactMergeMovesFiles
 	 *
-	 * The documents are moved before the merged contact is deleted, because Contact::delete()
-	 * removes the directory of the documents of the contact it deletes. Check that the tree is
-	 * preserved, that a name collision renames the moved file instead of overwriting the one of the
-	 * target contact, and that nothing is left behind.
+	 * The documents are moved once the transaction is committed, because dol_move() is not
+	 * transactional, and the merged contact is deleted with $nodelete so that its documents are
+	 * kept. Check that the tree is preserved, that a name collision renames the moved file instead
+	 * of overwriting the one of the target contact, and that nothing is left behind.
 	 *
 	 * @return	void
 	 */

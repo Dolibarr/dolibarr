@@ -1329,9 +1329,10 @@ class Contact extends CommonObject
 	 *
 	 *  @param		User	$user			User making the delete
 	 *  @param		int		$notrigger		Disable all trigger
+	 *  @param		int		$nodeletefiles	Do not delete the documents files of the contact
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0, $nodeletefiles = 0)
 	{
 		global $conf;
 
@@ -1448,7 +1449,8 @@ class Contact extends CommonObject
 			}
 		}
 
-		// Remove the index of the documents of the contact (the files are removed after the commit)
+		// Remove the index of the documents of the contact (the files are removed after the commit).
+		// Nothing is done when $nodeletefiles is set: the caller moves the documents elsewhere.
 		$dirofdocuments = '';
 		if ($this->id > 0 && !empty($conf->societe->multidir_output[$this->entity])) {
 			$dirofdocuments = $conf->societe->multidir_output[$this->entity].'/contact/'.dol_sanitizeFileName((string) $this->id);
@@ -1485,7 +1487,7 @@ class Contact extends CommonObject
 			$this->db->commit();
 
 			// Delete the directory of the documents of the contact
-			if ($dirofdocuments) {
+			if (empty($nodeletefiles) && $dirofdocuments) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				if (dol_is_dir($dirofdocuments)) {
 					dol_delete_dir_recursive($dirofdocuments);
@@ -2308,16 +2310,10 @@ class Contact extends CommonObject
 			// End call triggers
 		}
 
-		// The documents are moved before deleting the merged contact: Contact::delete() removes the
-		// directory of the documents of the contact it deletes, and dol_move() is not transactional,
-		// so moving them here is the only way to keep them on the target contact.
 		if (!$error) {
-			$this->mergeContactFiles($contact_origin->id);
-		}
-
-		if (!$error) {
-			// We finally remove the old contact
-			if ($contact_origin->delete($user) < 1) {
+			// We finally remove the old contact. Its documents are kept ($nodeletefiles): they are moved
+			// to the target contact once the transaction is committed, after this deletion.
+			if ($contact_origin->delete($user, 0, 1) <= 0) {
 				$this->error = $contact_origin->error;
 				$this->errors = $contact_origin->errors;
 				$error++;
@@ -2334,6 +2330,10 @@ class Contact extends CommonObject
 		}
 
 		$this->db->commit();
+
+		// Files are moved once the transaction is committed: dol_move() is not transactional, and
+		// the old contact was deleted with $nodeletefiles = 1 so its documents are still there.
+		$this->mergeContactFiles($contact_origin->id);
 
 		return 0;
 	}
