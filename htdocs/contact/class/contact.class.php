@@ -1463,6 +1463,15 @@ class Contact extends CommonObject
 			}
 		}
 
+		// Remove extrafields
+		if (!$error) {
+			// For avoid conflicts if trigger used
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1471,15 +1480,6 @@ class Contact extends CommonObject
 			if (!$result) {
 				$error++;
 				$this->error = $this->db->error().' sql='.$sql;
-			}
-		}
-
-		// Remove extrafields
-		if (!$error) {
-			// For avoid conflicts if trigger used
-			$result = $this->deleteExtraFields();
-			if ($result < 0) {
-				$error++;
 			}
 		}
 
@@ -2320,7 +2320,17 @@ class Contact extends CommonObject
 			}
 		}
 
-		if ($error) {
+		if (!$error) {
+			// Files are moved once the transaction is committed: dol_move() is not transactional, and
+			// the old contact was deleted with $nodeletefiles = 1 so its documents are still there.
+			$this->mergeContactFiles($contact_origin->id);
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 0;
+		} else {
+			$langs->load("errors");
 			$this->error = $langs->trans('ErrorContactsMerge').' '.$this->error;
 			$this->db->rollback();
 			// The object still holds the merged values in memory, reload it so the caller does not
@@ -2328,14 +2338,6 @@ class Contact extends CommonObject
 			$this->fetch($this->id);
 			return -1;
 		}
-
-		$this->db->commit();
-
-		// Files are moved once the transaction is committed: dol_move() is not transactional, and
-		// the old contact was deleted with $nodeletefiles = 1 so its documents are still there.
-		$this->mergeContactFiles($contact_origin->id);
-
-		return 0;
 	}
 
 	/**
@@ -2606,7 +2608,7 @@ class Contact extends CommonObject
 		if (!empty($failed)) {
 			dol_syslog(__METHOD__.' Failed to move '.count($failed).' file(s) from '.$srcdir, LOG_ERR);
 			// The merge itself is committed, so this is reported as a warning and not as a failure
-			$this->warnings[] = $langs->trans('WarningContactsMergeFilesNotMoved', implode(', ', $failed));
+			$this->warnings[] = $langs->trans('WarningMergeFilesNotMoved', implode(', ', $failed));
 		}
 	}
 
