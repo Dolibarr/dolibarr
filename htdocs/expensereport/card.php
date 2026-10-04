@@ -1300,6 +1300,12 @@ if (empty($reshook)) {
 		}
 	}
 
+	// A line can be deleted only when lines can be added or modified: report in draft or refused
+	if ($action == 'confirm_delete_line' && (empty($object->id) || ($object->status != ExpenseReport::STATUS_DRAFT && $object->status != ExpenseReport::STATUS_REFUSED))) {
+		setEventMessages($langs->trans("ErrorDeleteLineNotAllowedByObjectStatus"), null, 'errors');
+		$action = '';
+	}
+
 	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $permissiontoadd) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
