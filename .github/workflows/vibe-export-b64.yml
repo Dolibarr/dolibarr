@@ -1,6 +1,8 @@
 name: Vibe export files b64
 
 on:
+  push:
+    branches: [tmp-vibe-phpstan-report]
   workflow_dispatch:
 
 permissions:
