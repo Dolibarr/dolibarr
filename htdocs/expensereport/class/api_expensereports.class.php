@@ -626,7 +626,7 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function addPayment($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
 			throw new RestException(403);
 		}
 		// Check mandatory fields
@@ -634,6 +634,11 @@ class ExpenseReports extends DolibarrApi
 
 		if ($this->expensereport->fetch($id) <= 0) {
 			throw new RestException(404, 'Expense report not found');
+		}
+		// The 'creer' right alone says nothing about whose report this is. expensereport/payment/payment.php
+		// gets the hierarchy check from restrictedArea(); the API must ask for it explicitly, like get() does.
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		if (isModEnabled("bank") && !((int) ($request_data['accountid'] ?? 0) > 0)) {
 			throw new RestException(400, "accountid field missing");
@@ -643,6 +648,19 @@ class ExpenseReports extends DolibarrApi
 		$paymentExpenseReport->fk_expensereport = $id;
 		foreach ($request_data as $field => $value) {
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
+		}
+
+		// Same checks as expensereport/payment/payment.php: only an approved report is paid, never more than the remainder
+		if ($this->expensereport->status != ExpenseReport::STATUS_APPROVED) {
+			throw new RestException(400, 'Expense report must be approved to be paid');
+		}
+		$totalpayment = 0;
+		foreach ((array) $paymentExpenseReport->amounts as $value) {
+			$totalpayment += (float) price2num($value, 'MT');
+		}
+		$remaintopay = (float) price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments(), 'MT');
+		if ((float) price2num($totalpayment, 'MT') > $remaintopay) {
+			throw new RestException(400, 'Payment higher than remainder to pay ('.$remaintopay.')');
 		}
 
 		// Same sequence as expensereport/payment/payment.php: all or nothing
@@ -689,7 +707,7 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function updatePayment($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
 			throw new RestException(403);
 		}
 
@@ -699,11 +717,29 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(404, 'payment of expense report not found');
 		}
 
+		// Check access to the parent expense report
+		$result = $this->expensereport->fetch($paymentExpenseReport->fk_expensereport);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
+			if ($field == 'id' || $field == 'fk_expensereport') {	// A payment can't be moved to another report
 				continue;
 			}
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
+		}
+
+		// The payments of the report can't exceed its total
+		$oldpayment = new PaymentExpenseReport($this->db);
+		$oldpayment->fetch($paymentExpenseReport->id);
+		$remaintopay = (float) price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments() + (float) $oldpayment->amount, 'MT');
+		if ((float) price2num($paymentExpenseReport->amount, 'MT') > $remaintopay) {
+			throw new RestException(400, 'Payment higher than remainder to pay ('.$remaintopay.')');
 		}
 
 		if ($paymentExpenseReport->update(DolibarrApiAccess::$user) > 0) {
