@@ -474,6 +474,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  * 		@param	int			          $usecontact		    Use contact instead of company
  * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
  *      @param  ?CommonObject         $object               Object we want to build document for
+ *      @param   string               $type                 Type of address ('BILLING' or 'SHIPPING')
  * 		@return	string|int				    		        String with full address or -1 if KO
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null, $type = 'BILLING')
