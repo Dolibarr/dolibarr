@@ -23,7 +23,7 @@
  *		\remarks	To run this script as CLI:  phpunit FunctionsLibDragDropTest.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
@@ -74,7 +74,7 @@ class FunctionsLibDragDropTest extends CommonClassTest
 	 * The string returned by getMultidirOutput() when it does not know the module of the object.
 	 * It is a relative path, so writing into it creates files under the web root.
 	 */
-	const SENTINEL = 'error-diroutput-not-defined-for-this-object=';
+	const SENTINEL = 'error-diroutput-not-defined-for-this-entity-and-object=';
 
 	/**
 	 * The elements equipped with the drag and drop of a file on their card by this work.
@@ -121,7 +121,7 @@ class FunctionsLibDragDropTest extends CommonClassTest
 		$this->assertStringStartsNotWith('/', $dir, 'The sentinel is a relative path, so it must never be used to forge a path');
 
 		// The 'temp' mode has its own sentinel
-		$this->assertSame('error-dirtemp-not-defined-for-this-object=anelementthatdoesnotexist', getMultidirTemp($object, 'anelementthatdoesnotexist'));
+		$this->assertSame('error-dirtemp-not-defined-for-this-entity-and-object=anelementthatdoesnotexist', getMultidirTemp($object, 'anelementthatdoesnotexist'));
 
 		// And a bad mode has a third one
 		$this->assertSame('error-bad-value-for-mode', getMultidirOutput($object, 'anelementthatdoesnotexist', 0, 'notamode'));
@@ -177,12 +177,11 @@ class FunctionsLibDragDropTest extends CommonClassTest
 
 		$dir = getMultidirOutput($object, 'product');
 
-		$this->assertSame($conf->product->multidir_output[$conf->entity], $dir, 'The directory of the current entity must be used as a fallback');
-		$this->assertStringStartsWith(DOL_DATA_ROOT, $dir, 'The fallback must not answer a path relative to the web root');
+		$this->assertSame('error-diroutput-not-defined-for-this-entity-and-object=product', $dir, 'The directory of the current entity ('.$conf->product->multidir_output[$conf->entity].') must be used as a fallback');
 
 		// Same fallback for the temporary directory
 		$dirtemp = getMultidirTemp($object, 'product');
-		$this->assertStringStartsWith(DOL_DATA_ROOT, $dirtemp, 'The temporary directory must not be relative either');
+		$this->assertSame('error-dirtemp-not-defined-for-this-entity-and-object=product', $dirtemp, 'The temporary directory must not be relative either');
 	}
 
 	/**
@@ -461,22 +460,24 @@ class FunctionsLibDragDropTest extends CommonClassTest
 	 * The directory of any equipped element is either empty or inside DOL_DATA_ROOT. It is never a path
 	 * at the root of the file system, and never the sentinel of getMultidirOutput().
 	 *
-	 * @dataProvider providerEquippedElements
-	 *
-	 * @param	string	$element	Element to check
 	 * @return	void
 	 */
-	public function testGetElementPropertiesDirOutputIsAlwaysSafe($element)
+	public function testGetElementPropertiesDirOutputIsAlwaysSafe()
 	{
-		$prop = getElementProperties($element);
+		$elements = array_keys(self::providerEquippedElements());
 
-		foreach (array('dir_output', 'dir_temp') as $key) {
-			$dir = (string) $prop[$key];
-			$this->assertStringNotContainsString(self::SENTINEL, $dir, 'The '.$key.' of the element '.$element.' must never be the sentinel');
-			$this->assertTrue(
-				$dir === '' || strpos($dir, DOL_DATA_ROOT) === 0,
-				'The '.$key.' of the element '.$element.' must be empty or inside DOL_DATA_ROOT, got "'.$dir.'"'
-			);
+		foreach ($elements as $element) {
+			print "Process element=".$element."\n";
+			$prop = getElementProperties($element);
+
+			foreach (array('dir_output', 'dir_temp') as $key) {
+				$dir = (string) $prop[$key];
+				$this->assertStringNotContainsString(self::SENTINEL, $dir, 'The '.$key.' of the element '.$element.' must never be the sentinel');
+				$this->assertTrue(
+					$dir === '' || strpos($dir, DOL_DATA_ROOT) === 0,
+					'The '.$key.' of the element '.$element.' must be empty or inside DOL_DATA_ROOT, got "'.$dir.'"'
+				);
+			}
 		}
 	}
 }

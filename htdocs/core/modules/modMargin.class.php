@@ -2,7 +2,7 @@
 /* Copyright (C) 2012	    Christophe Battarel	    <christophe.battarel@altairis.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,24 +126,24 @@ class modMargin extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 59001; // id de la permission
-		$this->rights[$r][1] = 'Visualiser les marges'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 59001; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Visualiser les marges'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'liretous';
 
 		$r++;
-		$this->rights[$r][0] = 59002; // id de la permission
-		$this->rights[$r][1] = 'Définir les marges'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 59002; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Définir les marges'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 59003; // id de la permission
-		$this->rights[$r][1] = 'Read every user margin'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 59003; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read every user margin'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';
 		$this->rights[$r][5] = 'all';
 	}

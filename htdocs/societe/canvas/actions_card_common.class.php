@@ -247,7 +247,7 @@ abstract class ActionsCardCommon
 				$this->tpl['help_suppliercode'] = $form->textwithpicto('', $s, 1);
 
 				$this->object->LoadSupplierCateg();
-				$this->tpl['suppliercategory'] = $this->object->SupplierCategories;
+				$this->tpl['suppliercategory'] = $this->object->supplierCategories;
 			}
 
 			// Zip

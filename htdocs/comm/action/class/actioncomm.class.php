@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -216,6 +216,11 @@ class ActionComm extends CommonObject
 	 * @var string 	Location
 	 */
 	public $location;
+
+	/**
+	 * @var ?int Maximum number of participants allowed for this event
+	 */
+	public $max_participants;
 
 	/**
 	 * @var int Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
@@ -442,6 +447,7 @@ class ActionComm extends CommonObject
 		"priority" => array("type" => "smallint(6)", "label" => "Priority", "enabled" => "1", 'position' => 110, 'notnull' => 0, "visible" => "0",),
 		"fulldayevent" => array("type" => "smallint(6)", "label" => "Fulldayevent", "enabled" => "1", 'position' => 115, 'notnull' => 1, "visible" => "0",),
 		"location" => array("type" => "varchar(128)", "label" => "Location", "enabled" => "1", 'position' => 125, 'notnull' => 0, "visible" => "0",),
+		"max_participants" => array("type" => "integer", "label" => "MaxNbOfAttendees", "enabled" => "1", 'position' => 126, 'notnull' => 0, "visible" => "0",),
 		"durationp" => array("type" => "double", "label" => "Durationp", "enabled" => "1", 'position' => 130, 'notnull' => 0, "visible" => "0",),
 		"durationa" => array("type" => "double", "label" => "Durationa", "enabled" => "1", 'position' => 135, 'notnull' => 0, "visible" => "0",),
 		"fk_element" => array("type" => "integer", "label" => "LinkedObject", "enabled" => "getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')", 'position' => 145, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
@@ -512,7 +518,7 @@ class ActionComm extends CommonObject
 		}
 
 		// Clean parameters
-		$this->label = dol_trunc(trim($this->label), 128);
+		$this->label = dol_trunc(sanitizeVal($this->label, 'alphawithlgt'), 128);
 		$this->location = (!empty($this->location) ? dol_trunc(trim($this->location), 128) : "");
 		$this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage)) {
@@ -622,7 +628,7 @@ class ActionComm extends CommonObject
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_action,";
 		$sql .= "fk_task,";
-		$sql .= "label,percent,priority,fulldayevent,location,";
+		$sql .= "label,percent,priority,fulldayevent,location,max_participants,";
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
 		$sql .= "elementtype,";
@@ -666,6 +672,7 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->escape((string) $this->priority)."', ";
 		$sql .= "'".$this->db->escape((string) $this->fulldayevent)."', ";
 		$sql .= "'".$this->db->escape($this->location)."', ";
+		$sql .= (isset($this->max_participants) && $this->max_participants > 0 ? ((int) $this->max_participants) : "null").", ";
 		$sql .= "'".$this->db->escape((string) $this->transparency)."', ";
 		$sql .= (!empty($this->elementid) ? ((int) $this->elementid) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
@@ -896,7 +903,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_task,";
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
-		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
+		$sql .= " a.priority, a.fulldayevent, a.location, a.max_participants, a.transparency,";
 		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_sender, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
 		$sql .= " a.recurid, a.recurrule, a.recurdateend,";
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
@@ -969,9 +976,16 @@ class ActionComm extends CommonObject
 				$this->priority				= $obj->priority;
 				$this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
+				$this->max_participants		= $obj->max_participants;
 				$this->transparency			= $obj->transparency;
 
 				$this->socid = $obj->fk_soc; // To have fetch_thirdparty method working
+				if (!empty($obj->socname)) {
+					require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+					$this->thirdparty = new Societe($this->db);
+					$this->thirdparty->id = $obj->fk_soc;
+					$this->thirdparty->name = $obj->socname;
+				}
 				$this->contact_id = $obj->fk_contact; // To have fetch_contact method working
 				$this->fk_project = $obj->fk_project; // To have fetch_projet method working
 
@@ -1215,7 +1229,7 @@ class ActionComm extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->label = trim($this->label);
+		$this->label = dol_trunc(sanitizeVal($this->label, 'alphawithlgt'), 128);
 		$this->note_private = dol_htmlcleanlastbr(trim(!isset($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage)) {
 			$this->percentage = 0;
@@ -1282,6 +1296,7 @@ class ActionComm extends CommonObject
 		$sql .= ", priority = '".$this->db->escape((string) $this->priority)."'";
 		$sql .= ", fulldayevent = '".$this->db->escape((string) $this->fulldayevent)."'";
 		$sql .= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'" : "null");
+		$sql .= ", max_participants = ".(isset($this->max_participants) && $this->max_participants > 0 ? ((int) $this->max_participants) : "null");
 		$sql .= ", transparency = '".$this->db->escape((string) $this->transparency)."'";
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
@@ -1399,6 +1414,79 @@ class ActionComm extends CommonObject
 	}
 
 	/**
+	 *  Check if any resource attached to this event would become double-booked if the
+	 *  event's dates were changed to the given range. Only checks when the
+	 *  RESOURCE_USED_IN_EVENT_CHECK option is enabled and $this->element is 'action';
+	 *  returns no conflict otherwise.
+	 *
+	 *  @param	int		$newdatep	New start date to check (Unix timestamp)
+	 *  @param	int		$newdatef	New end date to check (Unix timestamp), 0 if none
+	 *  @return	array<int,array{r_ref:string,ac_id:int,ac_label:string}>|int<-1,-1>	Array of conflicting resource/event pairs (empty array = no conflict), -1 if a DB error occurred (check $this->error)
+	 */
+	public function checkResourceConflicts($newdatep, $newdatef)
+	{
+		if (!getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') || $this->element != 'action') {
+			return array();
+		}
+
+		$sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$this->db->escape($this->element)."'";
+		$sql .= " WHERE ac.id <> ".((int) $this->id);
+		$sql .= " AND er.resource_id IN (";
+		$sql .= " SELECT resource_id FROM ".MAIN_DB_PREFIX."element_resources";
+		$sql .= " WHERE element_id = ".((int) $this->id);
+		$sql .= " AND element_type = '".$this->db->escape($this->element)."'";
+		$sql .= " AND busy = 1";
+		$sql .= ")";
+		$sql .= " AND er.busy = 1";
+		$sql .= " AND (";
+		$sql .= " (ac.datep <= '".$this->db->idate($newdatep)."' AND (ac.datep2 IS NULL OR ac.datep2 >= '".$this->db->idate($newdatep)."'))";
+		if (!empty($newdatef)) {
+			$sql .= " OR (ac.datep <= '".$this->db->idate($newdatef)."' AND (ac.datep2 >= '".$this->db->idate($newdatef)."'))";
+		}
+		$sql .= " OR (";
+		$sql .= "ac.datep >= '".$this->db->idate($newdatep)."'";
+		if (!empty($newdatef)) {
+			$sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '".$this->db->idate($newdatef)."')";
+		}
+		$sql .= ")";
+		$sql .= ")";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$conflicts = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$conflicts[] = array('r_ref' => $obj->r_ref, 'ac_id' => (int) $obj->ac_id, 'ac_label' => $obj->ac_label);
+		}
+		$this->db->free($resql);
+
+		return $conflicts;
+	}
+
+	/**
+	 *  Format an array of resource conflicts (as returned by checkResourceConflicts()) into a
+	 *  translated, HTML-formatted error message.
+	 *
+	 *  @param	array<int,array{r_ref:string,ac_id:int,ac_label:string}>	$conflicts	Conflicts array
+	 *  @param	Translate	$langs	Translate object to use for translation
+	 *  @return	string	Translated HTML message listing the conflicts
+	 */
+	public function formatResourceConflicts($conflicts, $langs)
+	{
+		$message = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
+		foreach ($conflicts as $conflict) {
+			$message .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $conflict['r_ref'], $conflict['ac_label'].' ['.$conflict['ac_id'].']');
+		}
+		return $message;
+	}
+
+	/**
 	 *  Load all objects with filters.
 	 *  This is used by the showactions used into the main tab of objects to show the last n actions.
 	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join, like done into show_actions_done.
@@ -1508,7 +1596,10 @@ class ActionComm extends CommonObject
 		global $conf, $langs;
 
 		if (empty($load_state_board)) {
-			$sql = "SELECT a.id, a.datep as dp";
+			// The count and the number of late events are computed by the database instead of reading every event to do. An event
+			// is late when it has a date and that date is before now minus the warning delay (the rule of hasDelay()).
+			$sql = "SELECT COUNT(a.id) as nb,";
+			$sql .= " SUM(CASE WHEN a.datep IS NOT NULL AND a.datep < '".$this->db->idate(dol_now() - $conf->agenda->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		} else {
 			$this->nb = array();
 			$sql = "SELECT count(a.id) as nb";
@@ -1545,7 +1636,6 @@ class ActionComm extends CommonObject
 		if ($resql) {
 			$response = null;  // Ensure the variable is defined
 			if (empty($load_state_board)) {
-				$agenda_static = new ActionComm($this->db);
 				$response = new WorkboardResponse();
 				$response->warning_delay = $conf->agenda->warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("ActionsToDo");
@@ -1556,14 +1646,10 @@ class ActionComm extends CommonObject
 				}
 				$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
 
-				while ($obj = $this->db->fetch_object($resql)) {
-					'@phan-var-force WorkboardResponse $response
-					 @phan-var-force ActionComm $agenda_static';
-					$response->nbtodo++;
-					$agenda_static->datep = $this->db->jdate($obj->dp);
-					if ($agenda_static->hasDelay()) {
-						$response->nbtodolate++;
-					}
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$response->nbtodo = (int) $obj->nb;
+					$response->nbtodolate = (int) $obj->nblate;
 				}
 			} else {
 				$obj = $this->db->fetch_object($resql);
@@ -1721,8 +1807,9 @@ class ActionComm extends CommonObject
 		if (!empty($this->ref)) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
 		}
-		if (!empty($this->label)) {
-			$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($this->label);
+		$translatedlabel = $this->getTranslatedLabel();
+		if (!empty($translatedlabel)) {
+			$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($translatedlabel);
 		}
 		if (!empty($labeltype)) {
 			$datas['labeltype'] = '<br><b>'.$langs->trans('Type').':</b> '.dol_escape_htmltag($labeltype);
@@ -1832,7 +1919,7 @@ class ActionComm extends CommonObject
 			$option = 'nolink';
 		}
 
-		$label = $this->label;
+		$label = $this->getTranslatedLabel();
 
 		$result = '';
 
@@ -1908,13 +1995,13 @@ class ActionComm extends CommonObject
 				if (empty($this->label)) {
 					$label = $labeltype;
 				} else {
-					$label = $this->label;
+					$label = $this->getTranslatedLabel();
 				}
 			}
 			if ($maxlength < 0) {
 				$labelshort = $this->ref;
 			} else {
-				$labelshort = dol_trunc(empty($this->label) ? $labeltype : $this->label, $maxlength);
+				$labelshort = dol_trunc(empty($label) ? $labeltype : $label, $maxlength);
 			}
 		}
 
@@ -1944,6 +2031,22 @@ class ActionComm extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Return the label translated with current user language when the event was created from a known automatic trigger.
+	 *
+	 * @return string
+	 */
+	public function getTranslatedLabel()
+	{
+		global $langs;
+
+		if ($this->code == 'AC_COMPANY_CREATE' && !empty($this->thirdparty->name)) {
+			return $langs->transnoentitiesnoconv('NewCompanyToDolibarr', $this->thirdparty->name);
+		}
+
+		return $this->label;
 	}
 
 	/**
@@ -2430,7 +2533,7 @@ class ActionComm extends CommonObject
 						$assignedUserArray[$key] = $assignedUser;
 					}
 
-					if (!empty($filters['module']) && $filters['module'] != 'project@eventorganization') {
+					if (empty($filters['module']) || $filters['module'] != 'project@eventorganization') {
 						$event['assignedUsers'] = $assignedUserArray;
 					}
 
@@ -2845,13 +2948,20 @@ class ActionComm extends CommonObject
 			$to = null;  // Ensure 'to' is defined for static analysis
 
 			while ($obj = $this->db->fetch_object($resql)) {
+				// Error status for the reminder being processed in this iteration. $error (the cumulative counter for
+				// the whole run) must not be used to gate this per-reminder processing: once any single reminder fails
+				// (ex: a user with no email on file), it would otherwise stay non-zero for the rest of the loop and
+				// silently defer every other due reminder to the next cron run.
+				$errorforreminder = 0;
+
 				$res = $actionCommReminder->fetch($obj->id);
 				if ($res < 0) {
 					$error++;
+					$errorforreminder++;
 					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
 				}
 
-				if (!$error) {
+				if (!$errorforreminder) {
 					//Select email template
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
@@ -2883,10 +2993,12 @@ class ActionComm extends CommonObject
 							} else {
 								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
 								$error++;
+								$errorforreminder++;
 							}
 						} else {
 							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
 							$error++;
+							$errorforreminder++;
 						}
 
 						// Sender
@@ -2894,9 +3006,10 @@ class ActionComm extends CommonObject
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
+							$errorforreminder++;
 						}
 
-						if (!$error) {
+						if (!$errorforreminder) {
 							// Errors Recipient
 							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
@@ -2909,10 +3022,11 @@ class ActionComm extends CommonObject
 							} else {
 								$errormesg = 'Failed to send email to: ' . $to . ' ' . $cMailFile->error . implode(',', $cMailFile->errors);
 								$error++;
+								$errorforreminder++;
 							}
 						}
 
-						if (!$error) {
+						if (!$errorforreminder) {
 							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
 
 							$res = $actionCommReminder->update($user);
@@ -2937,6 +3051,7 @@ class ActionComm extends CommonObject
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
 						$error++;
+						$errorforreminder++;
 					}
 				}
 			}

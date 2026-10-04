@@ -232,7 +232,6 @@ WarningProjectDraft=El proyecto todavía está en modo borrador. No olvides vali
 WarningProjectClosed=El proyecto está cerrado. Primero debe volver a abrirlo.
 WarningSomeBankTransactionByChequeWereRemovedAfter=Algunas transacciones bancarias se eliminaron después de que se generaron los recibos que las incluían. Por lo tanto, el número de cheques y el total de recibos pueden diferir del número y total de la lista.
 WarningFailedToAddFileIntoDatabaseIndex=Advertencia, no se pudo agregar la entrada del archivo en la tabla de índice de la base de datos de ECM
-WarningCreateSubAccounts=Advertencia, no puede crear directamente una subcuenta, debe crear un tercero o un usuario y asignarles un código de contabilidad para encontrarlos en esta lista
 WarningAvailableOnlyForHTTPSServers=Disponible solo si se utiliza una conexión segura HTTPS.
 WarningModuleXDisabledSoYouMayMissEventHere=El módulo %s no se ha habilitado. Por lo tanto, es posible que se pierda muchos eventos aquí.
 RequireXStringMax =Requiere %s caracteres como máximo

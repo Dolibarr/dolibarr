@@ -30,6 +30,7 @@ create table llx_payment_vat
   note            text,
   fk_bank         integer NOT NULL,
   fk_user_creat   integer,            -- creation user
-  fk_user_modif   integer             -- last modification user
+  fk_user_modif   integer,            -- last modification user
+  import_key      varchar(14)         -- import key
 
 )ENGINE=innodb;

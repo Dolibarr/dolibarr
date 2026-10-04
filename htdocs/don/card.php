@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -293,6 +294,7 @@ if (empty($reshook)) {
 
 	// Action delete object
 	if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: index.php");
@@ -689,8 +691,7 @@ if (!empty($id) && $action != 'edit') {
 
 	$result = $object->fetch($id);
 	if ($result < 0) {
-		dol_print_error($db, $object->error);
-		exit;
+		recordNotFound('', 0);
 	}
 	$result = $object->fetch_optionals();
 	if ($result < 0) {
@@ -924,7 +925,7 @@ if (!empty($id) && $action != 'edit') {
 		// Delete
 		if ($user->hasRight('don', 'supprimer')) {
 			if ($object->status != $object::STATUS_PAID && $remaintopay == $object->amount) {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>";
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?rowid='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."</div>\n";
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DeletionNotPossibleWhenAPaymentExists").'">'.$langs->trans("Delete")."</a></div>";
 			}

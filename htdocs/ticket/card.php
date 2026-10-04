@@ -425,10 +425,13 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			// Log action in ticket logs table
-			$object->fetch_user($usertoassign);
-
-			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
+			if ($usertoassign > 0) {
+				// Log action in ticket logs table
+				$object->fetch_user($usertoassign);
+				setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('TicketUnassigned'), null, 'mesgs');
+			}
 			header("Location: card.php?track_id=" . $object->track_id);
 			exit;
 		} else {
@@ -510,6 +513,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete_ticket' && GETPOST('confirm', 'alpha') == "yes" && $permissiontodelete) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			if ($object->delete($user) > 0) {
 				setEventMessages('<div class="confirm">' . $langs->trans('TicketDeletedSuccess') . '</div>', null, 'mesgs');
 				header("Location: " . DOL_URL_ROOT . "/ticket/list.php");
@@ -1320,7 +1324,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<table class="nobordernopadding centpercent"><tr><td class="none">';
 			print $langs->trans("Categories");
 			if ($permissiontoadd && !in_array($object->status, [Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED]) && $action != 'categories' && !$user->socid) {
-				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
+				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 			print '</td>';
 			print '</table>';
@@ -1441,7 +1445,7 @@ if ($action == 'create' || $action == 'presend') {
 
 					print '<div class="tagtd center">';
 					if ($object->status >= 0) {
-						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab_i['rowid'].'">';
+						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;token='.newToken().'&amp;ligne='.$tab_i['rowid'].'">';
 					}
 
 					if ($tab_i['source'] == 'internal') {
@@ -1529,12 +1533,12 @@ if ($action == 'create' || $action == 'presend') {
 
 				// Clone
 				if ($permissiontoadd) {
-					print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Delete ticket
 				if ($permissiontodelete && !$user->socid) {
-					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&track_id='.$object->track_id, '');
+					print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&track_id='.$object->track_id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 				}
 			}
 			print '</div>'."\n";

@@ -45,7 +45,7 @@ class modFicheinter extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$this->db = $db;
 		$this->numero = 70;
@@ -219,8 +219,14 @@ class modFicheinter extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet as fd ON f.rowid = fd.fk_fichinter';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinterdet_extrafields as extradet ON fd.rowid = extradet.fk_object,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'societe as s';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('intervention').')';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' AND (f.fk_soc IS NULL OR sc.fk_user = '.((int) $user->id).')';
+		}
 		$r++;
 	}
 

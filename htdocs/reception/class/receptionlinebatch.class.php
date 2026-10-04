@@ -5,6 +5,7 @@
  * Copyright (C) 2024       Christophe Battarel	    <christophe@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,6 +175,11 @@ class ReceptionLineBatch extends CommonObjectLine
 	 * @var int|float
 	 */
 	public $cost_price = 0;
+
+	/**
+	 * @var string Supplier ref for the product on this reception line
+	 */
+	public $ref_fourn;
 	/**
 	 * @var int rang of line
 	 */
@@ -283,7 +289,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= "description,";
 		$sql .= "rang,";
 		$sql .= "fk_reception,";
-		$sql .= "cost_price";
+		$sql .= "cost_price,";
+		$sql .= "ref_fourn";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : (int) $this->fk_product).",";
 		$sql .= " ".(!isset($this->fk_element) ? 'NULL' : (int) $this->fk_element).",";
@@ -302,7 +309,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= ", '".(empty($this->description) ? '' : $this->db->escape($this->description))."'";
 		$sql .= ", ".((int) $ranktouse).",";
 		$sql .= " ".((int) $this->fk_reception).",";
-		$sql .= " ".(!isset($this->cost_price) ? '0' : (float) $this->cost_price);
+		$sql .= " ".(!isset($this->cost_price) ? '0' : (float) $this->cost_price).",";
+		$sql .= " ".(!isset($this->ref_fourn) ? 'NULL' : "'".$this->db->escape($this->ref_fourn)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -476,7 +484,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " t.comment,";
 		$sql .= " t.status,";
 		$sql .= " t.tms,";
-		$sql .= " t.batch,";
+		$sql .= " t.batch, t.cost_price, t.ref_fourn,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
 		$sql .= " t.fk_unit,";
@@ -513,6 +521,8 @@ class ReceptionLineBatch extends CommonObjectLine
 				$this->status = $obj->status;
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->batch = $obj->batch;
+				$this->cost_price = $obj->cost_price;
+				$this->ref_fourn = $obj->ref_fourn;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
 				$this->description = $obj->description;
@@ -590,6 +600,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " status=".(isset($this->status) ? ((int) $this->status) : "null").",";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
+		$sql .= " cost_price=".(isset($this->cost_price) ? ((float) $this->cost_price) : "0").",";
+		$sql .= " ref_fourn=".(isset($this->ref_fourn) ? "'".$this->db->escape($this->ref_fourn)."'" : "null").",";
 		$sql .= " eatby=".(dol_strlen((string) $this->eatby) != 0 ? "'".$this->db->idate((int) $this->eatby)."'" : 'null').",";
 		$sql .= " sellby=".(dol_strlen((string) $this->sellby) != 0 ? "'".$this->db->idate((int) $this->sellby)."'" : 'null').",";
 		$sql .= " fk_unit = ".((int) $this->fk_unit);

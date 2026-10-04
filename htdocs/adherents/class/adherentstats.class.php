@@ -262,7 +262,7 @@ class AdherentStats extends Stats
 	 *	Return count of member by status group by adh type, total and average
 	 *
 	 * @param	int		$numberYears    Number of years to scan (0 = all)
-	 * @return	array<string,array{label:string,members_draft:int,members_pending:0,members_uptodate:int,members_expired:int,members_excluded:int,members_resiliated:int,all?:float|int,total_adhtag:float|int}>		Array with total of draft, pending, uptodate, expired, resiliated for each member tag
+	 * @return	array<int|string,array{label:string,members_draft:int,members_pending:int,members_uptodate:int,members_expired:int,members_excluded:int,members_resiliated:int,all?:float|int,total_adhtag:float|int}>		Array with total of draft, pending, uptodate, expired, resiliated for each member tag
 	 */
 	public function countMembersByTagAndStatus($numberYears = 0)
 	{

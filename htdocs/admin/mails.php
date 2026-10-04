@@ -4,7 +4,7 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
  * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Berton				<anthony.berton@bb2a.fr>
 
@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
+$langs->loadLangs(array("companies", "products", "admin", "mails", "other"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -95,6 +95,7 @@ if ($action == 'update' && !$cancel) {
 	}
 	if (!$error && !isValidEmail(GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml'))) {
 		$error++;
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorBadEMail", GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')), null, 'errors');
 		$action = 'edit';
 	}
@@ -505,7 +506,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID" size="32" value="'.$mainstmpid.'">';
+			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID" size="32" value="'.$mainstmpid.'" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_ID'), $htmltext, 1, 'superadmin');
@@ -523,7 +524,7 @@ if ($action == 'edit') {
 		print '</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '" autocomplete="off">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_PW'), $htmltext, 1, 'superadmin');
@@ -914,6 +915,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
 		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
 			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
+				$langs->load('errors');
 				print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')));
 			} else {
 				print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
@@ -932,6 +934,7 @@ if ($action == 'edit') {
 	if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
 		print img_warning($langs->trans("Mandatory"));
 	} elseif (!isValidEmail(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'))) {
+		$langs->load('errors');
 		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_EMAIL_FROM')));
 	}
 	print '</td></tr>';
@@ -980,6 +983,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.(getDolGlobalString('MAIN_MAIL_ERRORS_TO'));
 	if (getDolGlobalString('MAIN_MAIL_ERRORS_TO') && !isValidEmail(getDolGlobalString('MAIN_MAIL_ERRORS_TO'))) {
+		$langs->load('errors');
 		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_ERRORS_TO')));
 	}
 	print '</td></tr>';
@@ -997,6 +1001,7 @@ if ($action == 'edit') {
 			$val = trim($val);
 			print $val;
 			if (!isValidEmail($val, 0, 1)) {
+				$langs->load('errors');
 				print img_warning($langs->trans("ErrorBadEMail", $val));
 			}
 			$i++;

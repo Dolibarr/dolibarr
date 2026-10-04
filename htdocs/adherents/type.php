@@ -9,7 +9,7 @@
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,6 +126,9 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+
+// Technical ID
+$arrayfields['d.rowid'] = array('label' => 'TechnicalID', 'checked' => -1, 'enabled' => 1, 'position' => 1);
 
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
@@ -268,6 +271,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 
 if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$res = $object->delete($user);
 
 	if ($res > 0) {
@@ -366,6 +370,11 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 			$totalarray['nbfield']++;
 		}
+		// Technical ID
+		if (!empty($arrayfields['d.rowid']['checked'])) {
+			print '<th class="center">'.$langs->trans("ID").'</th>';
+			$totalarray['nbfield']++;
+		}
 		if (!empty($arrayfields['t.rowid']['checked'])) {
 			print '<th>'.$langs->trans("Ref").'</th>';
 			$totalarray['nbfield']++;
@@ -462,6 +471,10 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
+				// Technical ID
+				if (!empty($arrayfields['d.rowid']['checked'])) {
+					print '<td class="center" data-key="id">'.dolPrintHTML($objp->rowid).'</td>';
+				}
 				if (!empty($arrayfields['t.rowid']['checked'])) {
 					print '<td class="nowraponall">';
 					print $membertype->getNomUrl(1);
@@ -469,7 +482,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.libelle']['checked'])) {
-					print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+					print '<td><span class="spantitle">'.dolPrintHTML($objp->label).'</td>';
 				}
 				if (!empty($arrayfields['t.morphy']['checked'])) {
 					print '<td class="center">';
@@ -1011,8 +1024,7 @@ if ($rowid > 0) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
-					}
-					if ($user->hasRight('adherent', 'supprimer')) {
+
 						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
@@ -1079,8 +1091,7 @@ if ($rowid > 0) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
-					}
-					if ($user->hasRight('adherent', 'supprimer')) {
+
 						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";

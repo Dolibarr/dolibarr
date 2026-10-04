@@ -41,6 +41,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders"));
@@ -95,95 +96,38 @@ $sql .= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-
-	$total = 0;
-	$dataseries = array();
-	$colorseries = array();
 	$vals = array();
 	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process running -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
 	//	-> 7=Canceled/Never received -> (reopen) 3=Process running
 	//	-> 6=Canceled -> (reopen) 2=Approved
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
-		if ($obj) {
-			$vals[($obj->status == CommandeFournisseur::STATUS_CANCELED_AFTER_ORDER ? CommandeFournisseur::STATUS_CANCELED : $obj->status)] = $obj->nb;
-
-			$total += $obj->nb;
-		}
-		$i++;
+	while ($obj = $db->fetch_object($resql)) {
+		$vals[($obj->status == CommandeFournisseur::STATUS_CANCELED_AFTER_ORDER ? CommandeFournisseur::STATUS_CANCELED : $obj->status)] = $obj->nb;
 	}
 	$db->free($resql);
 
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-	/**
-	 * @var string $badgeStatus0
-	 * @var string $badgeStatus1
-	 * @var string $badgeStatus4
-	 * @var string $badgeStatus6
-	 * @var string $badgeStatus9
-	 */
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
-	print "</tr>\n";
-	$listofstatus = array(0, 1, 2, 3, 4, 5, 6, 9);
-	foreach ($listofstatus as $status) {
-		$dataseries[] = array($commandestatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-		if ($status == CommandeFournisseur::STATUS_DRAFT) {
-			$colorseries[$status] = '-'.$badgeStatus0;
-		}
-		if ($status == CommandeFournisseur::STATUS_VALIDATED) {
-			$colorseries[$status] = '-'.$badgeStatus1;
-		}
-		if ($status == CommandeFournisseur::STATUS_ACCEPTED) {
-			$colorseries[$status] = $badgeStatus1;
-		}
-		if ($status == CommandeFournisseur::STATUS_REFUSED) {
-			$colorseries[$status] = $badgeStatus9;
-		}
-		if ($status == CommandeFournisseur::STATUS_ORDERSENT) {
-			$colorseries[$status] = $badgeStatus4;
-		}
-		if ($status == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY) {
-			$colorseries[$status] = '-'.$badgeStatus4;
-		}
-		if ($status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
-			$colorseries[$status] = $badgeStatus6;
-		}
-		if ($status == CommandeFournisseur::STATUS_CANCELED || $status == CommandeFournisseur::STATUS_CANCELED_AFTER_ORDER) {
-			$colorseries[$status] = $badgeStatus9;
-		}
-
-		if (!$conf->use_javascript_ajax) {
-			print '<tr class="oddeven">';
-			print '<td>'.$commandestatic->LibStatut($status, 0).'</td>';
-			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-			print "</tr>\n";
-		}
+	$colors = getThemeBadgeStatusColors();
+	$colorofstatus = array(
+		CommandeFournisseur::STATUS_DRAFT => '-'.$colors[0],
+		CommandeFournisseur::STATUS_VALIDATED => '-'.$colors[1],
+		CommandeFournisseur::STATUS_ACCEPTED => $colors[1],
+		CommandeFournisseur::STATUS_REFUSED => $colors[9],
+		CommandeFournisseur::STATUS_ORDERSENT => $colors[4],
+		CommandeFournisseur::STATUS_RECEIVED_PARTIALLY => '-'.$colors[4],
+		CommandeFournisseur::STATUS_RECEIVED_COMPLETELY => $colors[6],
+		CommandeFournisseur::STATUS_CANCELED => $colors[9],
+		CommandeFournisseur::STATUS_CANCELED_AFTER_ORDER => $colors[9],
+	);
+	$series = array();
+	foreach (array(0, 1, 2, 3, 4, 5, 6, 9) as $status) {
+		$series[] = array(
+			'label' => $commandestatic->LibStatut($status, 1),
+			'labelnojs' => $commandestatic->LibStatut($status, 0),
+			'nb' => (isset($vals[$status]) ? (int) $vals[$status] : 0),
+			'color' => $colorofstatus[$status],
+			'url' => 'list.php?search_status='.$status,
+		);
 	}
-	if ($conf->use_javascript_ajax) {
-		print '<tr class="impair"><td class="center" colspan="2">';
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->SetDataColor(array_values($colorseries));
-		$dolgraph->setShowLegend(2);
-		$dolgraph->setShowPercent(1);
-		$dolgraph->SetType(array('pie'));
-		$dolgraph->setHeight('200');
-		$dolgraph->draw('idgraphstatus');
-		print $dolgraph->show($total ? 0 : 1);
-
-		print '</td></tr>';
-	}
-	//if ($totalinprocess != $total)
-	//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-
-	print "</table></div><br>";
+	print getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders"), $series);
 } else {
 	dol_print_error($db);
 }

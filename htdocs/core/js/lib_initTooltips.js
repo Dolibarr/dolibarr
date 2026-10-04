@@ -65,7 +65,7 @@ function initAjaxTooltips(root, baseUrl) {
 		$el.off("mouseover.ajaxTooltip mouseout.ajaxTooltip");
 
 		$el.on("mouseover.ajaxTooltip", function (event) {
-			console.log("on mouseover.ajaxTooltip we will create timer for ajax call");
+			console.log("initAjaxTooltips on mouseover.ajaxTooltip we will create timer for ajax call");
 
 			event.stopImmediatePropagation();
 			clearTimeout($storeElem.data("openTimeoutId"));
@@ -111,7 +111,7 @@ function initAjaxTooltips(root, baseUrl) {
 	$elements.off("mouseover mouseout");
 
 	$elements.on("mouseover", function(event) {
-		console.log("we will create timer for ajax call");
+		console.log("initAjaxTooltips on mouseover we will create timer for ajax call for ajaxtooltip");
 		event.stopImmediatePropagation();
 		clearTimeout($storeElem.data("openTimeoutId"));
 

@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2019       Nicolas ZABOURI             <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                    <support@open-dsi.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,7 @@ class Contact extends CommonObject
 	 *               of the llx_mailing_unsubscribe table. photo is excluded on purpose: the file is
 	 *               moved once the transaction is committed and may be renamed on a name collision.
 	 */
-	public const MERGE_FIELDS_FILL_IF_EMPTY = array(
+	const MERGE_FIELDS_FILL_IF_EMPTY = array(
 		'civility_code', 'lastname', 'firstname', 'name_alias', 'address', 'zip', 'town',
 		'state_id', 'country_id', 'poste', 'phone_pro', 'phone_perso', 'phone_mobile', 'fax',
 		'email', 'socialnetworks', 'birthday', 'default_lang', 'ref_ext',
@@ -69,13 +69,13 @@ class Contact extends CommonObject
 	/**
 	 * @var string[] Properties concatenated when merging two contacts.
 	 */
-	public const MERGE_FIELDS_CONCAT = array('note_public', 'note_private');
+	const MERGE_FIELDS_CONCAT = array('note_public', 'note_private');
 
 	/**
 	 * @var int Maximum depth walked when looking for the ancestors of a contact, to avoid an
 	 *          infinite loop should the parent hierarchy already contain a cycle.
 	 */
-	public const MERGE_MAX_PARENT_DEPTH = 100;
+	const MERGE_MAX_PARENT_DEPTH = 100;
 
 	/**
 	 * @var string ID to identify managed object
@@ -132,8 +132,8 @@ class Contact extends CommonObject
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'zip' => array('type' => 'varchar(25)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 65),
-		'fk_departement' => array('type' => 'integer', 'label' => 'Fk departement', 'enabled' => 1, 'visible' => 3, 'position' => 70),
-		'fk_pays' => array('type' => 'integer', 'label' => 'Fk pays', 'enabled' => 1, 'visible' => 3, 'position' => 75),
+		'fk_departement' => array('type' => 'integer', 'label' => 'State', 'enabled' => 1, 'visible' => 3, 'position' => 70),
+		'fk_pays' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'visible' => 3, 'position' => 75),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 77, 'searchall' => 1),
 		'birthday' => array('type' => 'date', 'label' => 'Birthday', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => 1, 'position' => 90, 'searchall' => 1),
@@ -371,7 +371,7 @@ class Contact extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 	/**
-	 * @var null|array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles, null until fetched or set
+	 * @var null|array<int,int|string|array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles (fetched roles, or ids of contact types to set), null until fetched or set
 	 */
 	public $roles;
 
@@ -439,14 +439,10 @@ class Contact extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		/*if (is_object($langs))
-		{
-			foreach($this->fields as $key => $val)
-			{
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
-				{
-					foreach($val['arrayofkeyval'] as $key2 => $val2)
-					{
+		/*if (is_object($langs)) {
+			foreach($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 					}
 				}
@@ -521,9 +517,9 @@ class Contact extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->name_alias = trim($this->name_alias);
-		$this->lastname = $this->lastname ? trim($this->lastname) : trim($this->name);
-		$this->firstname = trim($this->firstname);
+		$this->name_alias = trim((string) $this->name_alias);
+		$this->lastname = $this->lastname ? trim((string) $this->lastname) : trim((string) $this->name);
+		$this->firstname = trim((string) $this->firstname);
 		$this->setUpperOrLowerCase();
 		if (empty($this->socid)) {
 			$this->socid = 0;
@@ -573,7 +569,7 @@ class Contact extends CommonObject
 		$sql .= " ".((int) $this->status).",";
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
 		$sql .= " ".((int) $this->entity).",";
-		$sql .= "'".$this->db->escape($this->ref_ext)."',";
+		$sql .= "'".$this->db->escape((string) $this->ref_ext)."',";
 		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
 		$sql .= " ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
@@ -649,18 +645,18 @@ class Contact extends CommonObject
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 		// Clean parameters
-		$this->ref_ext = (empty($this->ref_ext) ? '' : trim($this->ref_ext));
-		$this->name_alias = trim($this->name_alias);
-		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
-		$this->firstname = trim($this->firstname);
+		$this->ref_ext = (empty($this->ref_ext) ? '' : trim((string) $this->ref_ext));
+		$this->name_alias = trim((string) $this->name_alias);
+		$this->lastname = $this->lastname ? trim((string) $this->lastname) : trim((string) $this->name);
+		$this->firstname = trim((string) $this->firstname);
 		$this->email = trim($this->email ?? '');
-		$this->phone_pro = trim($this->phone_pro);
-		$this->phone_perso = trim($this->phone_perso);
-		$this->phone_mobile = trim($this->phone_mobile);
-		$this->photo = trim($this->photo);
-		$this->fax = trim($this->fax);
-		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
-		$this->town = (empty($this->town) ? '' : trim($this->town));
+		$this->phone_pro = trim((string) $this->phone_pro);
+		$this->phone_perso = trim((string) $this->phone_perso);
+		$this->phone_mobile = trim((string) $this->phone_mobile);
+		$this->photo = trim((string) $this->photo);
+		$this->fax = trim((string) $this->fax);
+		$this->zip = (empty($this->zip) ? '' : trim((string) $this->zip));
+		$this->town = (empty($this->town) ? '' : trim((string) $this->town));
 		$this->country_id = (empty($this->country_id) || $this->country_id < 0) ? 0 : $this->country_id;
 		if (!empty($this->statut) && empty($this->status)) {
 			$this->status = 1;
@@ -737,7 +733,7 @@ class Contact extends CommonObject
 				}
 			}
 
-			if (!$error && $this->user_id > 0) {
+			if (!$error && $this->user_id > 0 && !$nosyncuser) {
 				// If contact is linked to a user
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);
@@ -762,7 +758,7 @@ class Contact extends CommonObject
 					$tmpobj->zip = $this->zip;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->zip != $this->zip) {
+				if ($tmpobj->state_id != $this->state_id) {
 					$tmpobj->state_id = $this->state_id;
 					$usermustbemodified++;
 				}
@@ -774,7 +770,10 @@ class Contact extends CommonObject
 					$tmpobj->email = $this->email;
 					$usermustbemodified++;
 				}
-				if (!empty(array_diff($tmpobj->socialnetworks, $this->socialnetworks))) {
+				$usersocialnetworks = (is_array($tmpobj->socialnetworks) ? $tmpobj->socialnetworks : array());
+				$contactsocialnetworks = (is_array($this->socialnetworks) ? $this->socialnetworks : array());
+				// Compare in both directions, so a network added on the contact is also seen as a difference
+				if (!empty(array_diff_assoc($usersocialnetworks, $contactsocialnetworks)) || !empty(array_diff_assoc($contactsocialnetworks, $usersocialnetworks))) {
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
@@ -1137,15 +1136,15 @@ class Contact extends CommonObject
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
 				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
-				$libelle = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
+				$label_sale_status = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcommcontact; // id statut commercial
-				$this->statut_commercial = $libelle; // libelle statut commercial
+				$this->statut_commercial = $label_sale_status; // libelle statut commercial
 				$this->stcomm_picto = $obj->stcomm_picto; // Picto statut commercial
 
-				$this->phone_pro = trim($obj->phone);
-				$this->fax = trim($obj->fax);
-				$this->phone_perso = trim($obj->phone_perso);
-				$this->phone_mobile = trim($obj->phone_mobile);
+				$this->phone_pro = trim((string) $obj->phone);
+				$this->fax = trim((string) $obj->fax);
+				$this->phone_perso = trim((string) $obj->phone_perso);
+				$this->phone_mobile = trim((string) $obj->phone_mobile);
 
 				$this->email			= $obj->email;
 				$this->socialnetworks	= ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
@@ -1330,10 +1329,13 @@ class Contact extends CommonObject
 	 *
 	 *  @param		User	$user			User making the delete
 	 *  @param		int		$notrigger		Disable all trigger
+	 *  @param		int		$nodeletefiles	Do not delete the documents files of the contact
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0, $nodeletefiles = 0)
 	{
+		global $conf;
+
 		$error = 0;
 
 		$this->db->begin();
@@ -1418,13 +1420,46 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-			$sql .= " WHERE rowid = ".((int) $this->id);
+			// Remove the birthday alerts set by users on this contact
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert WHERE fk_contact = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if (!$result) {
+			$resql = $this->db->query($sql);
+			if (!$resql) {
 				$error++;
-				$this->error = $this->db->error().' sql='.$sql;
+				$this->error .= $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			// Remove the link of the user created from this contact (the user is kept)
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_socpeople = NULL WHERE fk_socpeople = ".((int) $this->id);
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error .= $this->db->lasterror();
+			}
+		}
+
+		if (!$error) {
+			// Remove the links with other objects
+			$result = $this->deleteObjectLinked();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		// Remove the index of the documents of the contact (the files are removed after the commit).
+		// Nothing is done when $nodeletefiles is set: the caller moves the documents elsewhere.
+		$dirofdocuments = '';
+		if ($this->id > 0 && !empty($conf->societe->multidir_output[$this->entity])) {
+			$dirofdocuments = $conf->societe->multidir_output[$this->entity].'/contact/'.dol_sanitizeFileName((string) $this->id);
+		}
+		if (!$error && $dirofdocuments) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (deleteFilesIntoDatabaseIndex($dirofdocuments, '', '') < 0 || !$this->deleteEcmFiles(1)) {
+				$error++;
+				$this->error .= $this->db->lasterror();
 			}
 		}
 
@@ -1438,7 +1473,27 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = $this->db->error().' sql='.$sql;
+			}
+		}
+
+		if (!$error) {
 			$this->db->commit();
+
+			// Delete the directory of the documents of the contact
+			if (empty($nodeletefiles) && $dirofdocuments) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				if (dol_is_dir($dirofdocuments)) {
+					dol_delete_dir_recursive($dirofdocuments);
+				}
+			}
+
 			return 1;
 		} else {
 			$this->db->rollback();
@@ -2256,15 +2311,26 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
-			// We finally remove the old contact
-			if ($contact_origin->delete($user) < 1) {
+			// We finally remove the old contact. Its documents are kept ($nodeletefiles): they are moved
+			// to the target contact once the transaction is committed, after this deletion.
+			if ($contact_origin->delete($user, 0, 1) <= 0) {
 				$this->error = $contact_origin->error;
 				$this->errors = $contact_origin->errors;
 				$error++;
 			}
 		}
 
-		if ($error) {
+		if (!$error) {
+			// Files are moved once the transaction is committed: dol_move() is not transactional, and
+			// the old contact was deleted with $nodeletefiles = 1 so its documents are still there.
+			$this->mergeContactFiles($contact_origin->id);
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 0;
+		} else {
+			$langs->load("errors");
 			$this->error = $langs->trans('ErrorContactsMerge').' '.$this->error;
 			$this->db->rollback();
 			// The object still holds the merged values in memory, reload it so the caller does not
@@ -2272,14 +2338,6 @@ class Contact extends CommonObject
 			$this->fetch($this->id);
 			return -1;
 		}
-
-		$this->db->commit();
-
-		// Files are moved once the transaction is committed: dol_move() is not transactional, and
-		// Contact::delete() does not remove the directory of the contact, so the files are still there.
-		$this->mergeContactFiles($contact_origin->id);
-
-		return 0;
 	}
 
 	/**
@@ -2550,7 +2608,7 @@ class Contact extends CommonObject
 		if (!empty($failed)) {
 			dol_syslog(__METHOD__.' Failed to move '.count($failed).' file(s) from '.$srcdir, LOG_ERR);
 			// The merge itself is committed, so this is reported as a warning and not as a failure
-			$this->warnings[] = $langs->trans('WarningContactsMergeFilesNotMoved', implode(', ', $failed));
+			$this->warnings[] = $langs->trans('WarningMergeFilesNotMoved', implode(', ', $failed));
 		}
 	}
 
@@ -2582,8 +2640,8 @@ class Contact extends CommonObject
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
-					$this->roles[$obj->contactroleid] = array('id' => $obj->rowid, 'socid' => $obj->socid, 'element' => $obj->element, 'source' => $obj->source, 'code' => $obj->code, 'label' => $libelle_element.' - '.($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->label));
+					$label_element = $langs->trans('ContactDefault_'.$obj->element);
+					$this->roles[$obj->contactroleid] = array('id' => $obj->rowid, 'socid' => $obj->socid, 'element' => $obj->element, 'source' => $obj->source, 'code' => $obj->code, 'label' => $label_element.' - '.($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->label));
 				}
 			}
 		} else {

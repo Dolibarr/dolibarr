@@ -170,13 +170,14 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Create a receipt to send cheques
 	 *
-	 *	@param	User	$user 			User making creation
-	 *	@param  int		$account_id 	Bank account for cheque receipt
-	 *  @param  int		$limit          Limit ref of cheque to this
-	 *  @param	int[]	$toRemise		array with cheques to remise
+	 *	@param	User		$user 			User making creation
+	 *	@param  int			$account_id 	Bank account for cheque receipt
+	 *  @param  int			$limit          Limit ref of cheque to this
+	 *  @param	int[]		$toRemise		array with cheques to remise
+	 *  @param	int<0,1>	$notrigger		1=Disable triggers
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function create($user, $account_id, $limit, $toRemise)
+	public function create($user, $account_id, $limit, $toRemise, $notrigger = 0)
 	{
 		global $conf;
 
@@ -306,6 +307,15 @@ class RemiseCheque extends CommonObject
 			//if ($res < 0) $error++;
 		}
 
+		if (!$this->errno && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('REMISECHEQUE_CREATE', $user);
+			if ($result < 0) {
+				$this->errno = -1029;
+			}
+			// End call triggers
+		}
+
 		if (!$this->errno) {
 			$this->db->commit();
 			dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
@@ -320,10 +330,11 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Delete deposit from database
 	 *
-	 *	@param  User	$user 		User that delete
+	 *	@param  User		$user 		User that delete
+	 *	@param	int<0,1>	$notrigger	1=Disable triggers
 	 *	@return	int
 	 */
-	public function delete($user)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -355,6 +366,15 @@ class RemiseCheque extends CommonObject
 					dol_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
 				}
 			}
+		}
+
+		if ($this->errno === 0 && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('REMISECHEQUE_DELETE', $user);
+			if ($result < 0) {
+				$this->errno = -1029;
+			}
+			// End call triggers
 		}
 
 		if ($this->errno === 0) {
@@ -522,7 +542,12 @@ class RemiseCheque extends CommonObject
 			return -1; // Protection to prevent calls by external users
 		}
 
-		$sql = "SELECT b.rowid, b.datev as datefin";
+		$now = dol_now();
+
+		// The count and the number of late cheques are computed by the database instead of reading every cheque. A cheque is late
+		// when its value date is before now minus the warning delay (a cheque without value date was counted as late, this is kept).
+		$sql = "SELECT COUNT(b.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN b.datev IS NULL OR b.datev < '".$this->db->idate($now - $conf->bank->cheque->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
@@ -534,7 +559,6 @@ class RemiseCheque extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
-			$now = dol_now();
 
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->bank->cheque->warning_delay / 60 / 60 / 24;
@@ -543,12 +567,10 @@ class RemiseCheque extends CommonObject
 			$response->url = DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank';
 			$response->img = img_object('', "payment");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->cheque->warning_delay)) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
@@ -985,6 +1007,16 @@ class RemiseCheque extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}

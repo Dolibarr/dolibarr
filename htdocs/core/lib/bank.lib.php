@@ -461,7 +461,7 @@ function checkBanForAccount($account)
 			$code = substr($rib, 7 * $i, 7);
 			$s += ((int) $code) * $coef[$i];
 		}
-		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
+		// Subtract modulo 97 of $s from 97 to get the key
 		$cle_rib = 97 - ($s % 97);
 		if ($cle_rib == $account->cle) {
 			return true;

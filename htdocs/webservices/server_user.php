@@ -393,7 +393,6 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),
 						'datepreviouslogin' => dol_print_date($user->datepreviouslogin, 'dayhourrfc'),
-						'statut' => (int) $user->statut,
 						'status' => (int) $user->status,
 						'photo' => $user->photo,
 						'lang' => $user->lang,
@@ -641,7 +640,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 								$edituser->setPassword($fuser, trim($thirdpartywithuser['password']));
 
 								if ($thirdpartywithuser['group_id'] > 0) {
-									$edituser->SetInGroup((int) $thirdpartywithuser['group_id'], $conf->entity);
+									$edituser->setInGroup((int) $thirdpartywithuser['group_id'], $conf->entity);
 								}
 							} else {
 								$error++;
@@ -710,10 +709,6 @@ function setUserPassword($authentication, $shortuser)
 	$error = 0;
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
-
-	if ($fuser->socid) {
-		$socid = $fuser->socid;
-	}
 
 	if (!$error && !$shortuser) {
 		$error++;

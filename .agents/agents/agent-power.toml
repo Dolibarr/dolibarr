@@ -1,0 +1,138 @@
+agent_type = "agent"
+display_name = "Agent Power"
+description = "Auto-approves bash and write files, asks for everything else."
+safety = "neutral"
+
+bypass_tool_permissions = false   # skip all permission prompts, including the shell-syntax gate
+
+instructions = """
+When running bash commands, keep them plain so they can be auto-approved:
+- Use literal paths, never shell variables ($VAR, ${VAR}) or $(...) substitutions.
+- Never use output redirection (> or >>). Write files with the write_file tool,
+  or pipe the output to tee instead.
+"""
+
+# Note: 
+# The scratchpad (tmp dir) is always allowed.
+# The allowlist and denylist will allow or deny dir not scratchpad and not workdir
+# The workdir is covered by default rule "permission"
+
+[tools.bash]
+permission = "always"
+deny = ["rm -rf *", "sudo *"]
+allowlist = [
+    "awk",
+    "actionlint",
+    "base64",
+    "basename",
+    "bash",
+    "cd",
+    "cat",
+    "command",
+    "cp",
+    "cut",
+    "date",
+    "diff",
+    "dirname",
+    "dot",
+    "du",
+    "echo",
+    "file",
+    "find",
+    "fmt",
+    "fold",
+    "for",
+    "git",
+    "grep",
+    "head",
+    "if",
+    "join",
+    "less",
+    "ls",
+    "md5sum",
+    "more",
+    "nl",
+    "od",
+    "paste",
+    "phan",
+    "php",
+    "phpunit",
+    "phpstan",
+    "pre-commit",
+    "printenv",
+    "printf",
+    "pwd",
+    "python3",
+    "read",
+    "readlink",
+    "rtk",
+    "scrot",
+    "sed",
+    "sha1sum",
+    "sha256sum",
+    "shasum",
+    "sort",
+    "stat",
+    "sum",
+    "tac",
+    "tail",
+    "tee",
+    "test_map",
+    "timeout",
+    "tr",
+    "tree",
+    "true",
+    "type",
+    "uname",
+    "uniq",
+    "wc",
+    "which",
+    "while",
+    "whoami",
+    "xargs",
+    "xxd",
+]
+denylist = [
+    "gdb",
+    "pdb",
+    "passwd",
+    "nano",
+    "vim",
+    "vi",
+    "emacs",
+    "bash -i",
+    "sh -i",
+    "zsh -i",
+    "fish -i",
+    "dash -i",
+    "screen",
+    "tmux"
+]
+
+[tools.grep]
+permission = "always"
+allowlist = ["/tmp/**"]
+
+[tools.read_file]
+permission = "always"
+allowlist = ["/tmp/**"]
+
+[tools.write_file]
+permission = "always"
+allowlist = ["/tmp/**"]
+
+[tools.edit]
+permission = "always"
+allowlist = ["/tmp/**"]
+
+[tools.search_replace]
+permission = "always"
+
+[tools.web_fetch]
+permission = "always"
+
+[tools.web_search]
+permission = "always"
+
+[tools.connector_github_app_pull_request_read]
+permission = "always"

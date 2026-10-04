@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -733,6 +734,9 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Return a suggested account (from chart of accounts) to bind
 	 *
+	 * Two hooks are available: 'accountancyBindingCalculation' replaces the whole calculation,
+	 * 'afterAccountancyBindingCalculation' adjusts the result it returns.
+	 *
 	 * @param 	Societe 							$buyer 				Object buyer
 	 * @param 	Societe 							$seller 			Object seller
 	 * @param 	Product 							$product 			Product object sell or buy
@@ -937,7 +941,7 @@ class AccountingAccount extends CommonObject
 					$suggestedid = $this->accountingaccount_codetotid_cache[$code_l];
 				}
 			}
-			return array(
+			$return = array(
 				'suggestedaccountingaccountbydefaultfor' => $suggestedaccountingaccountbydefaultfor,
 				'suggestedaccountingaccountfor' => $suggestedaccountingaccountfor,
 				'suggestedid' => $suggestedid,
@@ -945,6 +949,38 @@ class AccountingAccount extends CommonObject
 				'code_p' => $code_p,
 				'code_t' => $code_t,
 			);
+
+			// Execute hook afterAccountancyBindingCalculation
+			// Allows a module to adjust the result computed above, instead of having to replace the whole
+			// calculation with the accountancyBindingCalculation hook. A key returned by the hook overwrites
+			// the computed one, a key left out keeps its computed value.
+			$parameters['return'] = $return;
+			$reshookafter = $hookmanager->executeHooks('afterAccountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
+			if ($reshookafter < 0) {
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
+				return -1;
+			}
+			if (array_key_exists('suggestedaccountingaccountbydefaultfor', $hookmanager->resArray)) {
+				$return['suggestedaccountingaccountbydefaultfor'] = $hookmanager->resArray['suggestedaccountingaccountbydefaultfor'];
+			}
+			if (array_key_exists('suggestedaccountingaccountfor', $hookmanager->resArray)) {
+				$return['suggestedaccountingaccountfor'] = $hookmanager->resArray['suggestedaccountingaccountfor'];
+			}
+			if (array_key_exists('suggestedid', $hookmanager->resArray)) {
+				$return['suggestedid'] = $hookmanager->resArray['suggestedid'];
+			}
+			if (array_key_exists('code_l', $hookmanager->resArray)) {
+				$return['code_l'] = $hookmanager->resArray['code_l'];
+			}
+			if (array_key_exists('code_p', $hookmanager->resArray)) {
+				$return['code_p'] = $hookmanager->resArray['code_p'];
+			}
+			if (array_key_exists('code_t', $hookmanager->resArray)) {
+				$return['code_t'] = $hookmanager->resArray['code_t'];
+			}
+
+			return $return;
 		} else {
 			if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 				return $hookmanager->resArray;

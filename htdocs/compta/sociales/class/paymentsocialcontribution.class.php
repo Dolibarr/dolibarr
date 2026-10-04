@@ -235,7 +235,7 @@ class PaymentSocialContribution extends CommonObject
 			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
 			$sql .= " ".((float) $totalamount).",";
-			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape((string) $this->note)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
@@ -424,6 +424,15 @@ class PaymentSocialContribution extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		if (!$error && $user && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -474,6 +483,15 @@ class PaymentSocialContribution extends CommonObject
 				$error++;
 				$this->errors[] = "Error ".$this->db->lasterror();
 			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -812,6 +830,16 @@ class PaymentSocialContribution extends CommonObject
 			if ($withpicto != 2) {
 				$result .= $link.($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
+		}
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 
 		return $result;

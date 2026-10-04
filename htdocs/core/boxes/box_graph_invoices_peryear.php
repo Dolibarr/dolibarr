@@ -176,7 +176,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript" language="javascript">
+				$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();

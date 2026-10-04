@@ -67,18 +67,8 @@ if (!isset($form) || !is_object($form)) {
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "3");
 
-if (GETPOST('addbox')) {
-	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOSTINT('areacode');
-	$userid = GETPOSTINT('userid');
-	$boxorder = GETPOST('boxorder', 'aZ09');
-	$boxorder .= GETPOST('boxcombo', 'aZ09');
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) {
-		setEventMessages($langs->trans("BoxAdded"), null);
-	}
-}
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 
 $max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
@@ -296,7 +286,7 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 }
 $sql .= ", s.logo";
 $sql .= ", s.entity";
-$sql .= ", s.canvas, GREATEST(s.tms, sef.tms) as date_modification, s.status as status";
+$sql .= ", s.canvas, GREATEST(s.tms, COALESCE(sef.tms, s.tms)) as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
@@ -419,7 +409,7 @@ $sql .= ", s.logo";
 $sql .= ", s.entity";
 $sql .= ", s.canvas";
 $sql .= ", s.status as status";
-$sql .= ", GREATEST(sp.tms, spef.tms) as date_modification, sp.statut as cstatus";
+$sql .= ", GREATEST(sp.tms, COALESCE(spef.tms, sp.tms)) as date_modification, sp.statut as cstatus";
 $sql .= ", sp.rowid as cid, sp.canvas as ccanvas, sp.email as cemail, sp.firstname, sp.lastname";
 $sql .= ", sp.address as caddress, sp.phone as cphone";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

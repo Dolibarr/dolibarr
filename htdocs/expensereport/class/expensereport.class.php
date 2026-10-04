@@ -317,19 +317,19 @@ class ExpenseReport extends CommonObject
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 100),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 105),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 110),
-		'fk_user_validator' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user validator', 'enabled' => 1, 'visible' => -1, 'position' => 115),
-		'fk_user_approve' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user approve', 'enabled' => 1, 'visible' => -1, 'position' => 120),
-		'fk_user_refuse' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user refuse', 'enabled' => 1, 'visible' => -1, 'position' => 125),
-		'fk_user_cancel' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user cancel', 'enabled' => 1, 'visible' => -1, 'position' => 130),
-		'fk_c_paiement' => array('type' => 'integer', 'label' => 'Fk c paiement', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'fk_user_validator' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 115),
+		'fk_user_approve' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'ApprovedBy', 'enabled' => 1, 'visible' => -1, 'position' => 120),
+		'fk_user_refuse' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'REFUSEUR', 'enabled' => 1, 'visible' => -1, 'position' => 125),
+		'fk_user_cancel' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'CANCEL_USER', 'enabled' => 1, 'visible' => -1, 'position' => 130),
+		'fk_c_paiement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 140),
 		'paid' => array('type' => 'integer', 'label' => 'Paid', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 145),
 		'note_public' => array('type' => 'html', 'label' => 'Note public', 'enabled' => 1, 'visible' => 0, 'position' => 150),
 		'note_private' => array('type' => 'html', 'label' => 'Note private', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'detail_refuse' => array('type' => 'varchar(255)', 'label' => 'Detail refuse', 'enabled' => 1, 'visible' => -1, 'position' => 160),
 		'detail_cancel' => array('type' => 'varchar(255)', 'label' => 'Detail cancel', 'enabled' => 1, 'visible' => -1, 'position' => 165),
 		'integration_compta' => array('type' => 'integer', 'label' => 'Integration compta', 'enabled' => 1, 'visible' => -1, 'position' => 170),
-		'fk_bank_account' => array('type' => 'integer', 'label' => 'Fk bank account', 'enabled' => 1, 'visible' => -1, 'position' => 175),
-		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
+		'fk_bank_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 1, 'visible' => -1, 'position' => 175),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrency code', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'Multicurrency tx', 'enabled' => 1, 'visible' => -1, 'position' => 195),
 		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ht', 'enabled' => 1, 'visible' => -1, 'position' => 200),
@@ -873,6 +873,17 @@ class ExpenseReport extends CommonObject
 	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
+	}
+
+	/**
+	 * Return a short summary of the public note.
+	 *
+	 * @return string Summary
+	 */
+	public function getSummary()
+	{
+		$note = preg_replace('/(?:<br\s*\/?>|<\/(?:p|div|li)>)/i', "\n", (string) $this->note_public);
+		return dolGetFirstLineOfText($note);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2250,6 +2261,11 @@ class ExpenseReport extends CommonObject
 	{
 		global $user, $mysoc;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_REFUSED) {
 			$this->db->begin();
 
@@ -2309,7 +2325,7 @@ class ExpenseReport extends CommonObject
 
 			$this->line->id = ((int) $rowid);
 
-			// Select des infos sur le type fees
+			// Select info about the fee type
 			$sql = "SELECT c.code as code_type_fees, c.label as label_type_fees";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 			$sql .= " WHERE c.id = ".((int) $type_fees_id);
@@ -2322,7 +2338,7 @@ class ExpenseReport extends CommonObject
 			}
 
 			if ($projet_id > 0) {
-				// Select des information du projet
+				// Select information about the project
 				$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
 				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 				$sql .= " WHERE p.rowid = ".((int) $projet_id);
@@ -2369,6 +2385,17 @@ class ExpenseReport extends CommonObject
 	public function deleteLine($rowid, $fuser = null, $notrigger = 0)
 	{
 		$error = 0;
+
+		if ($this->id > 0) {
+			// The line must belong to this expense report
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+			$sql .= " WHERE rowid = ".((int) $rowid)." AND fk_expensereport = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
@@ -2584,8 +2611,13 @@ class ExpenseReport extends CommonObject
 		}
 
 		$now = dol_now();
+		$warning_delay = ($option == 'toapprove' ? $conf->expensereport->approve->warning_delay : $conf->expensereport->payment->warning_delay);
 
-		$sql = "SELECT ex.rowid, ex.date_valid";
+		// The count and the number of late expense reports are computed by the database instead of reading every report. A
+		// report is late when its validation date is before now minus the warning delay (a report without validation date was
+		// counted as late, this is kept).
+		$sql = "SELECT COUNT(ex.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN ex.date_valid IS NULL OR ex.date_valid < '".$this->db->idate($now - $warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
 		if ($option == 'toapprove') {
 			$sql .= " WHERE ex.fk_statut = ".self::STATUS_VALIDATED;
@@ -2617,18 +2649,10 @@ class ExpenseReport extends CommonObject
 			}
 			$response->img = img_object('', "trip");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if ($option == 'toapprove') {
-					if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->approve->warning_delay)) {
-						$response->nbtodolate++;
-					}
-				} else {
-					if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->payment->warning_delay)) {
-						$response->nbtodolate++;
-					}
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;

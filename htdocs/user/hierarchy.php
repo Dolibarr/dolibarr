@@ -142,7 +142,6 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 } else {
 	// Define fulltree array
 	$fulltree = $user_arbo;
-	//var_dump($fulltree);
 	// Define data (format for treeview)
 	$data = array();
 	$data[0] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
@@ -255,7 +254,6 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 					} else {
 						$parentfound = 1;
 					}
-					//var_dump($data[$idparent]);
 				} else {
 					// We should not be here. If a record has a parent id, parent id should be into $user_arbo_all
 					$data[$key]['fk_menu'] = -2;
@@ -276,7 +274,6 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 			}
 		}
 	}
-	//var_dump($data);exit;
 
 	$param = "&search_status=".urlencode($search_status);
 	$param = "&contextpage=".urlencode($contextpage);

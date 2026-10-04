@@ -125,7 +125,6 @@ if ($id > 0 || !empty($ref)) {
 
 	if ($result > 0) {
 		$head = productlot_prepare_head($object);
-		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = 'lot';
 		$morehtmlref = '';
 		print dol_get_fiche_head($head, 'referers', $langs->trans("Batch"), -1, $object->picto);
@@ -189,7 +188,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= ", ".MAIN_DB_PREFIX."mrp_production as cd";
 		$sql .= " WHERE c.rowid = cd.fk_mo";
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
-		$sql .= " AND cd.batch = '".($db->escape($object->batch))."'";
+		$sql .= " AND cd.batch = '".($db->escape((string) $object->batch))."'";
 		if (!empty($search_month)) {
 			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize((string) $search_month).')';
 		}
