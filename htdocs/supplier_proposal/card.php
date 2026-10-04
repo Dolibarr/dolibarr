@@ -1610,6 +1610,9 @@ if ($action == 'create') {
 		print '<input type="hidden" name="originid" value="'.$originid.'">';
 	}
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
 	print dol_get_fiche_head();
 

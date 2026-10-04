@@ -542,7 +542,7 @@ if (!$error && $massaction == 'confirm_presend') {
 						$from = $obj->email_from;
 					}
 				} else {
-					$email_from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
+					$email_from = GETPOST('fromname').' <'.GETPOST('frommail', 'email').'>';
 				}
 
 				$replyto = $email_from;
