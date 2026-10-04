@@ -510,7 +510,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					$resql = $db->query($sql);
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
-						$from = $obj->email_from;
+						$email_from = $obj->email_from;
 					}
 				} else {
 					$from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
