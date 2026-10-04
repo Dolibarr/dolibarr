@@ -2308,6 +2308,13 @@ class Contact extends CommonObject
 			// End call triggers
 		}
 
+		// The documents are moved before deleting the merged contact: Contact::delete() removes the
+		// directory of the documents of the contact it deletes, and dol_move() is not transactional,
+		// so moving them here is the only way to keep them on the target contact.
+		if (!$error) {
+			$this->mergeContactFiles($contact_origin->id);
+		}
+
 		if (!$error) {
 			// We finally remove the old contact
 			if ($contact_origin->delete($user) < 1) {
@@ -2327,10 +2334,6 @@ class Contact extends CommonObject
 		}
 
 		$this->db->commit();
-
-		// Files are moved once the transaction is committed: dol_move() is not transactional, and
-		// Contact::delete() does not remove the directory of the contact, so the files are still there.
-		$this->mergeContactFiles($contact_origin->id);
 
 		return 0;
 	}
