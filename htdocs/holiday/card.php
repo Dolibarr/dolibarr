@@ -815,6 +815,12 @@ if (empty($reshook)) {
 		}
 	}
 
+	// An approved leave request that is already over can be canceled only by an approver (same rule as the Cancel button)
+	if ($action == 'confirm_cancel' && $object->status == Holiday::STATUS_APPROVED && $object->date_fin <= dol_now() && empty($user->admin) && $user->id != $object->fk_user_approve && !$user->hasRight('holiday', 'approve')) {
+		setEventMessages($langs->trans("HolidayStarted").' - '.$langs->trans("NotAllowed"), null, 'errors');
+		$action = '';
+	}
+
 	// If confirmation of cancellation
 	if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes') {
 		$error = 0;
