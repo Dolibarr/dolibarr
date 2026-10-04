@@ -78,6 +78,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
+	if ($object->id > 0) {
+		$fuserid = $object->fk_user;	// On an existing leave request, permissions are checked on its owner, never on the fuserid parameter
+	}
 
 	// Check current user can read this leave request
 	$canread = 0;
