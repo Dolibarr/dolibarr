@@ -798,14 +798,25 @@ if (empty($reshook)) {
 
 		$object->fetch($id);
 
-		$oldstatus = $object->status;
-		$object->statut = Holiday::STATUS_DRAFT;
-		$object->status = Holiday::STATUS_DRAFT;
-
-		$result = $object->update($user);
-		if ($result < 0) {
+		// Same rules as the SetToDraft button: user allowed to edit the leave request of its owner, and canceled leave request only
+		if (!$user->hasRight('holiday', 'writeall') && !($user->hasRight('holiday', 'write') && in_array($object->fk_user, $childids))) {
+			accessforbidden();
+		}
+		if ($object->status != Holiday::STATUS_CANCELED) {
 			$error++;
-			setEventMessages($langs->trans('ErrorBackToDraft').' '.$object->error, $object->errors, 'errors');
+			setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('Canceled')), null, 'errors');
+		}
+
+		if (!$error) {
+			$oldstatus = $object->status;
+			$object->statut = Holiday::STATUS_DRAFT;
+			$object->status = Holiday::STATUS_DRAFT;
+
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($langs->trans('ErrorBackToDraft').' '.$object->error, $object->errors, 'errors');
+			}
 		}
 
 		if (!$error) {
