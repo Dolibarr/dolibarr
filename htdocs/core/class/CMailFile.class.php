@@ -2018,7 +2018,7 @@ class CMailFile
 
 		// Parse $host
 		$newUrlArray = parse_url((string) $host);
-		$hosttocheck = $newUrlArray['host'] ?: ($newUrlArray['path'] ?: '');
+		$hosttocheck = $newUrlArray['host'] ?? ($newUrlArray['path'] ?? '');
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		if (empty($hosttocheck)) {
