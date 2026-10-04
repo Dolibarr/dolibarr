@@ -1,0 +1,44 @@
+name: Vibe PHPStan report
+
+on:
+  push:
+    branches: [tmp-vibe-phpstan-report]
+    paths: ['.github/workflows/vibe-phpstan-report.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: phpstan:2.2.14
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml
+
+      - name: Prepare config
+        run: |
+          mkdir -p .github/tmp
+          grep -v 'phpstan-baseline.neon' phpstan.neon.dist | sed 's/level: 10/level: 9/' > phpstan_apstats.neon
+          cat phpstan_apstats.neon
+
+      - name: Run PHPStan
+        run: |
+          phpstan analyse --no-progress --error-format=github --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon > report.txt || true
+          grep '^::error' report.txt | head -60 > vibe-phpstan-report.txt || true
+          echo "Number of error lines kept:"
+          wc -l vibe-phpstan-report.txt
+
+      - name: Commit report
+        run: |
+          git config user.name "dolibarr-bot"
+          git config user.email "dolibarr-bot@users.noreply.github.com"
+          git add vibe-phpstan-report.txt
+          git commit -m "Add phpstan report" || echo "nothing to commit"
+          git push
