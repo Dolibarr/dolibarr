@@ -1,0 +1,60 @@
+::error file=htdocs/admin/clicktodial.php,line=172,col=0::Property Societe::$phone (string) on left side of ?? is not nullable.
+::error file=htdocs/admin/dict.php,line=2385,col=0::Strict comparison using !== between mixed and null will always evaluate to true.
+::error file=htdocs/compta/facture/class/facture.class.php,line=703,col=0::Parameter #1 $substitutionarray of function complete_substitutions_array expects array<string, float|string|null>, array<string, int|string> given.
+::error file=htdocs/compta/sociales/payments.php,line=184,col=0::Strict comparison using !== between mixed and null will always evaluate to true.
+::error file=htdocs/core/actions_massactions.inc.php,line=1305,col=0::Expression "<<<'EOPHAN'…" on a separate line does not do anything.
+::error file=htdocs/core/class/commonobject.class.php,line=3035,col=0::PHPDoc tag `@var` with type Propal is not subtype of native type $this(CommonObject).
+::error file=htdocs/core/class/commonobject.class.php,line=3065,col=0::PHPDoc tag `@var` with type Commande is not subtype of native type $this(CommonObject).
+::error file=htdocs/core/class/commonobject.class.php,line=3095,col=0::PHPDoc tag `@var` with type Facture is not subtype of native type $this(CommonObject).
+::error file=htdocs/core/class/commonobject.class.php,line=3126,col=0::PHPDoc tag `@var` with type FactureRec is not subtype of native type $this(CommonObject).
+::error file=htdocs/core/class/commonobject.class.php,line=3159,col=0::PHPDoc tag `@var` with type SupplierProposal is not subtype of native type $this(CommonObject).
+::error file=htdocs/core/class/commonobject.class.php,line=3188,col=0::PHPDoc tag `@var` with type CommandeFournisseur is not subtype of native type $this(CommonObject).
+::error file=htdocs/core/class/commonobject.class.php,line=3214,col=0::PHPDoc tag `@var` with type FactureFournisseur is not subtype of native type $this(CommonObject).
+::error file=htdocs/core/class/fileupload.class.php,line=84,col=0::Strict comparison using !== between array|string and null will always evaluate to true.
+::error file=htdocs/core/class/html.form.class.php,line=7161,col=0::Offset 'datenow' on array{name?: string, value?: bool|float|string, values?: array<string>, default?: string, label?: string, type: 'date'|'datetime', size?: int|string, morecss?: string, ...} in empty() does not exist.
+::error file=htdocs/core/class/html.form.class.php,line=7164,col=0::Offset 'hours' on array{name?: string, value?: bool|float|string, values?: array<string>, default?: string, label?: string, type: 'date'|'datetime', size?: int|string, morecss?: string, ...} in isset() does not exist.
+::error file=htdocs/core/class/html.form.class.php,line=7165,col=0::Offset 'minutes' on array{name?: string, value?: bool|float|string, values?: array<string>, default?: string, label?: string, type: 'date'|'datetime', size?: int|string, morecss?: string, ...} in isset() does not exist.
+::error file=htdocs/core/class/html.form.class.php,line=9723,col=0::Parameter #3 $optJson of method Form::constructProjectListOption() expects array{key: string, value: string, type: string}, array{} given.
+::error file=htdocs/core/lib/files.lib.php,line=4294,col=0::Strict comparison using !== between array{file: string, timestamp: int|false} and null will always evaluate to true.
+::error file=htdocs/core/lib/functions.lib.php,line=2334,col=0::Function dol_escape_js() has no return type specified.
+::error file=htdocs/core/lib/functions.lib.php,line=2334,col=0::Function dol_escape_js() has parameter $noescapebackslashn with no type specified.
+::error file=htdocs/core/lib/functions.lib.php,line=6132,col=0::Instanceof between DOMDocument and DOMDocument will always evaluate to true.
+::error file=htdocs/core/lib/functions.lib.php,line=6166,col=0::Variable $valuetoclean might not be defined.
+::error file=htdocs/core/lib/functions.lib.php,line=7064,col=0::Instanceof between User and User will always evaluate to true.
+::error file=htdocs/core/lib/functions.lib.php,line=7338,col=0::Property Societe::$id (int) on left side of ?? is not nullable.
+::error file=htdocs/core/lib/functions.lib.php,line=7339,col=0::Property Societe::$name (string) on left side of ?? is not nullable.
+::error file=htdocs/core/lib/functions.lib.php,line=7340,col=0::Property Societe::$name_alias (string) on left side of ?? is not nullable.
+::error file=htdocs/core/lib/functions.lib.php,line=7347,col=0::Property Societe::$phone (string) on left side of ?? is not nullable.
+::error file=htdocs/core/lib/functions.lib.php,line=7348,col=0::Property Societe::$fax (string) on left side of ?? is not nullable.
+::error file=htdocs/core/lib/functions.lib.php,line=7354,col=0::Property Societe::$country_code (string) on left side of ?? is not nullable.
+::error file=htdocs/core/lib/html.lib.php,line=4525,col=0::Variable $subbutton might not be defined.
+::error file=htdocs/core/lib/modulebuilder.lib.php,line=730,col=0::Strict comparison using !== between string and false will always evaluate to true.
+::error file=htdocs/core/lib/phone.lib.php,line=87,col=0::Strict comparison using !== between mixed and null will always evaluate to true.
+::error file=htdocs/core/lib/phone.lib.php,line=125,col=0::Strict comparison using !== between mixed and null will always evaluate to true.
+::error file=htdocs/core/lib/propal.lib.php,line=314,col=0::Parameter #1 $array (array{non-falsy-string, mixed, mixed, mixed, mixed}) of array_values is already a list, call has no effect.
+::error file=htdocs/core/lib/tax.lib.php,line=118,col=0::Function tax_by_thirdparty() never returns array<int|string, array{totalht: float, vat: float, localtax1: float, localtax2: float, dtotal_ttc: array<float>, dtype: array<int>, datef: array<int>, datep: array<int>, ...}> so it can be removed from the return type.
+::error file=htdocs/core/lib/tax.lib.php,line=671,col=0::Function tax_by_thirdparty() should return array<int|string, array{totalht: float, vat: float, localtax1: float, localtax2: float, dtotal_ttc: array<float>, dtype: array<int>, datef: array<int>, datep: array<int>, ...}>|int<-3, -1> but returns array<array{totalht: 0|float, vat: 0|float, localtax1: 0|float, localtax2: 0|float, dtotal_ttc: non-empty-list<float>, dtype: non-empty-list<mixed>, datef: non-empty-list<''|int>, company_name: non-empty-list<string>, ...}>.
+::error file=htdocs/core/lib/tax.lib.php,line=691,col=0::Function tax_by_rate() never returns array<int|string, array{totalht: float, vat: float, localtax1: float, localtax2: float, dtotal_ttc: array<float>, dtype: array<int>, datef: array<int>, datep: array<int>, ...}> so it can be removed from the return type.
+::error file=htdocs/core/lib/tax.lib.php,line=1210,col=0::Function tax_by_rate() should return array<int|string, array{totalht: float, vat: float, localtax1: float, localtax2: float, dtotal_ttc: array<float>, dtype: array<int>, datef: array<int>, datep: array<int>, ...}>|int<-3, -1> but returns array<array{totalht: 0|float, vat: 0|float, localtax1: 0|float, localtax2: 0|float, dtotal_ttc: non-empty-list<float>, dtype: non-empty-list<'ExpenseReportPayment'|int>, datef: non-empty-list<''|int>, company_name: non-empty-list<string>, ...}>.
+::error file=htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php,line=343,col=0::Variable $array_propal_object in isset() always exists and is not nullable.
+::error file=htdocs/core/modules/facture/doc/pdf_octopus.modules.php,line=885,col=0::Parameter #2 $current_line of method pdf_octopus::getInfosLineLastSituation() expects FactureLigne, CommonInvoiceLine given.
+::error file=htdocs/core/modules/facture/modules_facture.php,line=193,col=0::Call to static method create() on an unknown class Sprain\SwissQrBill\QrBill.
+::error file=htdocs/core/modules/facture/modules_facture.php,line=196,col=0::Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\CombinedAddress.
+::error file=htdocs/core/modules/facture/modules_facture.php,line=211,col=0::Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\CreditorInformation.
+::error file=htdocs/core/modules/facture/modules_facture.php,line=227,col=0::Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\PaymentReference.
+::error file=htdocs/core/modules/facture/modules_facture.php,line=228,col=0::Access to constant TYPE_NON on an unknown class Sprain\SwissQrBill\DataGroup\Element\PaymentReference.
+::error file=htdocs/core/modules/facture/modules_facture.php,line=235,col=0::Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\PaymentAmountInformation.
+::error file=htdocs/core/modules/facture/modules_facture.php,line=244,col=0::Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\AdditionalInformation.
+::error file=htdocs/core/modules/facture/modules_facture.php,line=251,col=0::Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\CombinedAddress.
+::error file=htdocs/core/modules/facture/modules_facture.php,line=314,col=0::Instantiated class Sprain\SwissQrBill\PaymentPart\Output\TcPdfOutput\TcPdfOutput not found.
+::error file=htdocs/core/modules/import/import_csv.modules.php,line=260,col=0::Method ImportCsv::import_read_record() return type has no value type specified in iterable type array.
+::error file=htdocs/core/modules/import/import_xlsx.modules.php,line=338,col=0::Method ImportXlsx::import_read_record() return type has no value type specified in iterable type array.
+::error file=htdocs/core/modules/modUser.class.php,line=281,col=0::Property DolibarrModules::$export_permission (array<array<array{string, string}>>) does not accept non-empty-array<array<array{0: string, 1?: string}>>.
+::error file=htdocs/core/modules/oauth/stripelive_oauthcallback.php,line=147,col=0::Strict comparison using === between null and null will always evaluate to true.
+::error file=htdocs/core/modules/oauth/stripelive_oauthcallback.php,line=178,col=0::Strict comparison using === between null and null will always evaluate to true.
+::error file=htdocs/dav/fileserver.php,line=229,col=0::Variable $baseUri in isset() always exists and is not nullable.
+::error file=htdocs/debugbar/class/DataCollector/DolPhpCollector.php,line=60,col=0::Parameter #1 $callback of function set_error_handler expects (callable(int, string, string, int): bool)|null, array{$this(PhpCollector), 'errorHandler'} given.
+::error file=htdocs/debugbar/class/autoloader.php,line=15,col=0::Parameter #1 $callback of function spl_autoload_register expects (callable(string): void)|null, Closure(mixed): bool given.
+::error file=htdocs/ecm/class/ecmdirectory.class.php,line=736,col=0::Parameter #1 $array of function dol_sort_array contains unresolvable type.
+::error file=htdocs/ecm/class/ecmdirectory.class.php,line=736,col=0::Return type of call to function dol_sort_array contains unresolvable type.
+::error file=htdocs/emailcollector/class/emailcollector.class.php,line=1876,col=0::Strict comparison using !== between IMAP\Connection|true and false will always evaluate to true.
