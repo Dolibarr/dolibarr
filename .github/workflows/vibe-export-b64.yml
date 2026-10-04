@@ -1,0 +1,35 @@
+name: Vibe export files b64
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: tmp-vibe-phpstan-report
+
+      - name: Get files from develop
+        run: |
+          git fetch origin develop
+          git show origin/develop:htdocs/compta/sociales/payments.php > payments.php.work
+          git show origin/develop:htdocs/compta/facture/class/facture.class.php > facture.class.php.work
+          git hash-object payments.php.work facture.class.php.work
+
+      - name: Encode
+        run: |
+          base64 -w 76 payments.php.work > vibe-payments.php.b64
+          base64 -w 76 facture.class.php.work > vibe-facture.class.php.b64
+
+      - name: Commit b64 files
+        run: |
+          git config user.name "dolibarr-bot"
+          git config user.email "dolibarr-bot@users.noreply.github.com"
+          git add vibe-payments.php.b64 vibe-facture.class.php.b64
+          git commit -m "Export target files as base64" || echo "nothing to commit"
+          git push
