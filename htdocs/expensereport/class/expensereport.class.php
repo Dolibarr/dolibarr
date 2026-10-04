@@ -548,9 +548,11 @@ class ExpenseReport extends CommonObject
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		$this->fk_user_valid = 0;
+		$this->fk_user_approve = 0;
 		$this->date_create = '';
 		$this->date_creation = '';
 		$this->date_validation = '';
+		$this->date_approve = '';
 
 		// Remove link on lines to a joined file
 		if (is_array($this->lines) && count($this->lines) > 0) {
