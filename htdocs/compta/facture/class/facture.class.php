@@ -569,12 +569,13 @@ class Facture extends CommonInvoice
 			$previousdaynextdatewhen = null;
 
 			if ($originaldatewhen) {
+				// date_when is read from database in the timezone of the server (jdate), so delays must be added in this timezone
 				if ($_facrec->rule_for_lines_dates == 'postpaid') {		// Bugged feature, should use different variable nameas we store something different.
-					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd');
-					$originaldatewhen = dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency);
+					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd', 0, 'tzserver');
+					$originaldatewhen = dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency, 0, 'tzserver');
 				} else {
-					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
-					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
+					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency, 0, 'tzserver');
+					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd', 0, 'tzserver');
 				}
 			}
 

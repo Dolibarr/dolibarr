@@ -443,6 +443,39 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('28/10/2025 00:00', $result);
 
+		// Add months to a date at midnight in a timezone ahead of UTC (like date_when of a recurring invoice read with jdate()
+		// on a server in Europe/Paris): delay must be added in this timezone, in UTC the date is the day before (30 September 22:00)
+		$tz = new DateTimeZone('Europe/Paris');
+		$time = (new DateTime('2026-10-01 00:00:00', $tz))->getTimestamp();
+		$result = (new DateTime('@'.dol_time_plus_duree($time, 3, 'm', 0, 'Europe/Paris')))->setTimezone($tz)->format('Y-m-d H:i:s');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('2027-01-01 00:00:00', $result);
+
+		// Same with the rule for end of month
+		$result = (new DateTime('@'.dol_time_plus_duree($time, 3, 'm', 1, 'Europe/Paris')))->setTimezone($tz)->format('Y-m-d H:i:s');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('2027-01-01 00:00:00', $result);
+
+		// Rule for end of month applied in the timezone
+		$time = (new DateTime('2026-01-31 00:00:00', $tz))->getTimestamp();
+		$result = (new DateTime('@'.dol_time_plus_duree($time, 1, 'm', 1, 'Europe/Paris')))->setTimezone($tz)->format('Y-m-d H:i:s');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('2026-02-28 00:00:00', $result);
+
+		// Next date of a monthly recurring invoice on the 1st after a month of 30 days (or February): in UTC, the rule for
+		// end of month moved it to the day before the original date, so the same invoice was generated twice
+		foreach (array('2026-10-01', '2026-03-01', '2026-12-01') as $day) {
+			$time = (new DateTime($day.' 00:00:00', $tz))->getTimestamp();
+			$result = (new DateTime('@'.dol_time_plus_duree($time, 1, 'm', 1, 'Europe/Paris')))->setTimezone($tz)->format('Y-m-d H:i:s');
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals((new DateTime($day.' 00:00:00', $tz))->modify('+1 month')->format('Y-m-d H:i:s'), $result);
+		}
+
+		// Rule for end of month in GMT
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(0, 0, 0, 1, 31, 2028, 'gmt'), 1, 'm', 1, 'gmt'), 'dayhour', 'gmt', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('29/02/2028 00:00', $result);
+
 		return $result;
 	}
 
