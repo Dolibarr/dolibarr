@@ -3,6 +3,7 @@ name: Vibe export files b64
 on:
   push:
     branches: [tmp-vibe-phpstan-report]
+    paths: ['.github/workflows/vibe-export-b64.yml']
   workflow_dispatch:
 
 permissions:
@@ -16,22 +17,20 @@ jobs:
         with:
           ref: tmp-vibe-phpstan-report
 
-      - name: Get files from develop
+      - name: Download and encode
         run: |
-          git fetch origin develop
-          git show origin/develop:htdocs/compta/sociales/payments.php > payments.php.work
-          git show origin/develop:htdocs/compta/facture/class/facture.class.php > facture.class.php.work
-          git hash-object payments.php.work facture.class.php.work
-
-      - name: Encode
-        run: |
+          curl -sL https://raw.githubusercontent.com/Dolibarr/dolibarr/develop/htdocs/compta/sociales/payments.php -o payments.php.work
+          curl -sL https://raw.githubusercontent.com/Dolibarr/dolibarr/develop/htdocs/compta/facture/class/facture.class.php -o facture.class.php.work
+          curl -sL https://raw.githubusercontent.com/Dolibarr/dolibarr/develop/htdocs/core/lib/functions.lib.php -o functions.lib.php.work
+          git hash-object payments.php.work facture.class.php.work functions.lib.php.work
           base64 -w 76 payments.php.work > vibe-payments.php.b64
           base64 -w 76 facture.class.php.work > vibe-facture.class.php.b64
+          base64 -w 76 functions.lib.php.work > vibe-functions.lib.php.b64
 
       - name: Commit b64 files
         run: |
           git config user.name "dolibarr-bot"
           git config user.email "dolibarr-bot@users.noreply.github.com"
-          git add vibe-payments.php.b64 vibe-facture.class.php.b64
+          git add vibe-payments.php.b64 vibe-facture.class.php.b64 vibe-functions.lib.php.b64
           git commit -m "Export target files as base64" || echo "nothing to commit"
           git push
