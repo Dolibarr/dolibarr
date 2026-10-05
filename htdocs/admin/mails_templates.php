@@ -483,7 +483,7 @@ if (empty($reshook)) {
 					$sql .= "'".$db->idate($now)."'";
 				} elseif (GETPOST($keycode) == '' && $keycode != 'langcode') {
 					$sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
-				} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
+				} elseif ($keycode == 'langcode' && (GETPOST($keycode) == '0' || GETPOST($keycode) == '-1')) {
 					$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
 				} elseif ($keycode == 'fk_user') {
 					if (!$user->admin) {	// A non admin user can only edit its own template
@@ -699,9 +699,6 @@ if (!$user->admin) {
 	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $user->id)."))"; // Show only public and private to me
 	$sql .= " AND (active = 1 OR fk_user = ".((int) $user->id).")"; // Show only active or owned by me
 }
-if (!getDolGlobalInt('MAIN_MULTILANGS')) {
-	$sql .= " AND (lang = '".$db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
-}
 if ($search_label) {
 	$sql .= natural_search('label', $search_label);
 }
@@ -894,7 +891,7 @@ if ($action == 'create') {
 			$valuetoshow = $langs->trans("Owner");
 		}
 		if ($fieldlist[$field] == 'lang') {
-			$valuetoshow = (!getDolGlobalInt('MAIN_MULTILANGS') ? '&nbsp;' : $langs->trans("Language"));
+			$valuetoshow = $langs->trans("Language");
 		}
 		if ($fieldlist[$field] == 'type') {
 			$valuetoshow = $langs->trans("Type");
@@ -1657,9 +1654,9 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			$nboffieldsprinted++;
 		} elseif ($value == 'lang') {
 			print '<td>';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && $context != 'preview') {
+			if ($context != 'preview') {
 				$selectedlang = GETPOSTISSET('langcode') ? GETPOST('langcode', 'aZ09') : $langs->defaultlang;
-				if ($context == 'edit') {
+				if ($context == 'edit' && !GETPOSTISSET('langcode')) {
 					$selectedlang = $obj->lang;
 				}
 				print $formadmin->select_language($selectedlang, 'langcode', 0, array(), $langs->trans("Language"), 0, 0, 'maxwidth100');
