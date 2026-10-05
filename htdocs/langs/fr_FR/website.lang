@@ -509,7 +509,3 @@ ThisDirectoryIsEmpty=Ce répertoire est vide.
 WrittenBy=Écrit par %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=L'importation de modèles de sites Web utilisant du contenu dynamique en PHP n'est autorisée que si la variable $dolibarr_website_allow_custom_php est définie sur 2 dans conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=L'importation de modèles de sites web utilisant du contenu dynamique en PHP nécessite que la variable $dolibarr_website_allow_custom_php soit définie sur 1 ou 2 dans le fichier conf.php pour être autorisée.
-
-WebPortalContractListMenu=Contrats
-WebPortalContractListTitle=Contrats clients
-WebPortalContractListDesc=Liste de mes contrats clients
