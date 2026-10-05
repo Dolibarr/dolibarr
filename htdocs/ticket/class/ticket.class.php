@@ -259,6 +259,15 @@ class Ticket extends CommonObject
 	const STATUS_CLOSED = 8;			// Closed - Solved
 	const STATUS_CANCELED = 9;			// Closed - Not solved
 
+	/**
+	 * Maximum length accepted for the message field. The llx_ticket.message column is
+	 * a MEDIUMTEXT (about 16 MB). The previous 65000 cap was a leftover from when the
+	 * column was a plain TEXT and wrongly rejected long HTML emails collected by the
+	 * email collector. The value is kept a bit under the 16,777,215 byte capacity to
+	 * leave room for multibyte characters (dol_strlen counts characters, not bytes).
+	 */
+	const MAX_MESSAGE_LENGTH = 16000000;
+
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -413,7 +422,7 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			if (dol_strlen($this->message) > 65000) {
+			if (dol_strlen($this->message) > self::MAX_MESSAGE_LENGTH) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
@@ -1050,7 +1059,7 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			if (dol_strlen($this->message) > 65000) {
+			if (dol_strlen($this->message) > self::MAX_MESSAGE_LENGTH) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
