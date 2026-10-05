@@ -2625,7 +2625,8 @@ class Setup extends DolibarrApi
 		$list = array();
 		global $mysoc;
 
-		$sql = "SELECT rowid, code, type_vat, active, fk_pays, taux, localtax1, localtax2,  localtax1_type, localtax2_type, note";
+		$sql = "SELECT rowid, entity, code, type_vat, active, fk_pays, fk_department_buyer, taux, localtax1, localtax2,  localtax1_type, localtax2_type,";
+		$sql .= " use_default, recuperableonly, note, accountancy_code_sell, accountancy_code_buy";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 		$sql .= " WHERE 1=1";
 
