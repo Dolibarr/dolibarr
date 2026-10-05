@@ -1994,7 +1994,7 @@ class CMailFile
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($host);
-		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
+		$hosttocheck = $newUrlArray['host'] ?? ($newUrlArray['path'] ?? '');
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names
