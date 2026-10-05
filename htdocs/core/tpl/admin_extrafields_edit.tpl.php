@@ -56,6 +56,12 @@ if (empty($conf) || !is_object($conf)) {
 $langs->load("modulebuilder");
 $langs->load("admin");
 
+// Definition of a locked attribute (for example an attribute required by a module) can't be modified
+if (!empty($extrafields->attributes[$elementtype]['locked'][$attrname])) {
+	print info_admin($langs->trans("ExtrafieldLocked"), 0, 0, 'warning');
+	return;
+}
+
 $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:contact/class/contact.class.php<br>Product:product/class/product.class.php<br>Project:projet/class/project.class.php<br>...';
 
 ?>
