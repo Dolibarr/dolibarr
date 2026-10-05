@@ -130,6 +130,16 @@ if (getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID') &&
 }
 $item->fieldInputOverride = $form->getSelectConditionsPaiements($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID, 'INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID', -1, 1);
 
+// decimals for situation invoice progress
+$item = $formSetup->newItem('INVOICE_SITUATION_PROGRESS_DECIMALS');
+$item->nameText = $langs->trans('SituationProgressDecimals');
+$item->fieldAttr = array(
+	'type' => 'number',
+	'step' => '1',
+	'min' => 0,
+	'max' => 5
+);
+$item->defaultFieldValue = 2;
 
 /*
  * Actions
