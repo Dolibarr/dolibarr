@@ -1,4 +1,4 @@
-name: tmp-cti-inspect  # v1
+name: tmp-cti-inspect  # v2
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout develop
         uses: actions/checkout@v4
         with:
           ref: develop
@@ -38,16 +38,15 @@ jobs:
           sed -n '184p' htdocs/compta/sociales/payments.php >> cti-inspect.txt
           echo '=== line counts ===' >> cti-inspect.txt
           wc -l htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php >> cti-inspect.txt
+          cp cti-inspect.txt /tmp/cti-inspect.txt
 
-      - name: Commit
+      - name: Commit to scratch branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout tmp-cti-vibe-debt-20261005
-          cp /dev/null .git/keep 2>/dev/null || true
-          mv cti-inspect.txt /tmp/cti-inspect.txt
-          git checkout tmp-cti-vibe-debt-20261005 2>/dev/null || true
+          git fetch origin tmp-cti-vibe-debt-20261005
+          git checkout -B tmp-cti-vibe-debt-20261005 origin/tmp-cti-vibe-debt-20261005
           cp /tmp/cti-inspect.txt cti-inspect.txt
           git add cti-inspect.txt
           git commit -m "[skip ci] Add code inspection dump"
-          git push
+          git push origin HEAD:tmp-cti-vibe-debt-20261005
