@@ -102,9 +102,12 @@ function loan_prepare_head($object)
  * @param   string  $source				Source of modification ('mens', 'amort' or 'interet')
  * @param   int     $grace_period		Number of terms with grace period (amortization = 0)
  * @param   null|float|string $int		Interest amount for this term (optional)
+ * @param	int		$frequency				Number of payments per year (52, 26, 12, 4, 2 or 1)
+ * @param	int		$interest_basis			0 = rate / number of payments per year, 1 = daily (rate x days in the period / 365)
+ * @param	int		$datestart				Date of the first payment (needed for the daily basis)
  * @return array<array{cap_rest:float,cap_rest_str:string,interet:float,interet_str:string,amort:string,amort_num:float,mens:string,mens_num:float}>		Array with remaining capital, interest, amortization and mensuality for each remaining terms
  */
-function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbterm, $amort = null, $source = 'mens', $grace_period = 0, $int = null)
+function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbterm, $amort = null, $source = 'mens', $grace_period = 0, $int = null, $frequency = 12, $interest_basis = 0, $datestart = 0)
 {
 	global $conf, $db;
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
@@ -120,19 +123,26 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 	$grace_period = ((int) $grace_period);
 	$amort = ($amort !== null && $amort !== '') ? (float) price2num($amort) : null;
 	$int = ($int !== null && $int !== '') ? (float) price2num($int) : null;
+	$frequency = ((int) $frequency > 0 ? (int) $frequency : 12);
+	$interest_basis = (int) $interest_basis;
+	$datestart = (int) $datestart;
+	// Rate of the period that ends with a given term (rate / 12 for a monthly loan with interest per period)
+	$periodrate = function ($term) use ($rate, $frequency, $interest_basis, $datestart) {
+		return loanPeriodRate((float) $rate, $frequency, $interest_basis, ($interest_basis && $datestart ? loanPeriodDays($datestart, $term, $frequency) : 0));
+	};
 
 	if ($grace_period > 0 && $numactualloadterm <= $grace_period) {
 		$amort = 0.0;
-		$int = ($int !== null && $int > 0) ? $int : round((float) $capital * ((float) $rate / 12), 2, PHP_ROUND_HALF_UP);
+		$int = ($int !== null && $int > 0) ? $int : round((float) $capital * $periodrate($numactualloadterm), 2, PHP_ROUND_HALF_UP);
 		$mens = $int;
 		$cap_rest = $capital;
 	} elseif ($source === 'amort') {
 		$amort = ($amort !== null) ? $amort : 0.0;
-		$int = ($int !== null && $int > 0) ? $int : round((float) $capital * ((float) $rate / 12), 2, PHP_ROUND_HALF_UP);
+		$int = ($int !== null && $int > 0) ? $int : round((float) $capital * $periodrate($numactualloadterm), 2, PHP_ROUND_HALF_UP);
 		$mens = round((float) $amort + (float) $int, 2, PHP_ROUND_HALF_UP);
 		$cap_rest = round((float) $capital - (float) $amort, 2, PHP_ROUND_HALF_UP);
 	} elseif ($source === 'interet') {
-		$int = ($int !== null) ? $int : round((float) $capital * ((float) $rate / 12), 2, PHP_ROUND_HALF_UP);
+		$int = ($int !== null) ? $int : round((float) $capital * $periodrate($numactualloadterm), 2, PHP_ROUND_HALF_UP);
 		$amort = ($amort !== null) ? $amort : 0.0;
 		$mens = round((float) $amort + (float) $int, 2, PHP_ROUND_HALF_UP);
 		$cap_rest = round((float) $capital - (float) $amort, 2, PHP_ROUND_HALF_UP);
@@ -144,7 +154,7 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 			$int = $mens;
 			$cap_rest = $capital;
 		} else {
-			$int = ($int !== null && $int > 0) ? $int : round((float) $capital * ((float) $rate / 12), 2, PHP_ROUND_HALF_UP);
+			$int = ($int !== null && $int > 0) ? $int : round((float) $capital * $periodrate($numactualloadterm), 2, PHP_ROUND_HALF_UP);
 			$amort = round((float) $mens - (float) $int, 2, PHP_ROUND_HALF_UP);
 			if ($amort < 0) {
 				$amort = 0.0;
@@ -172,20 +182,21 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 	while ($numactualloadterm <= $nbterm) {
 		if ($grace_period > 0 && $numactualloadterm <= $grace_period) {
 			$amort = 0.0;
-			$int = ((float) $capital * ((float) $rate / 12));
+			$int = ((float) $capital * $periodrate($numactualloadterm));
 			$int = round($int, 2, PHP_ROUND_HALF_UP);
 			$mens = $int;
 			$cap_rest = $capital;
 		} else {
-			$mens = round($object->calcMonthlyPayments($capital, (float) $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
+			$mens = round($object->calcMonthlyPayments($capital, (float) $rate, $nbterm - $numactualloadterm + 1, $frequency, $interest_basis), 2, PHP_ROUND_HALF_UP);
 
-			$int = ($capital * ((float) $rate / 12));
+			$int = ($capital * $periodrate($numactualloadterm));
 			$int = round($int, 2, PHP_ROUND_HALF_UP);
 			$amort = round($mens - $int, 2, PHP_ROUND_HALF_UP);
 			$cap_rest = round($capital - $amort, 2, PHP_ROUND_HALF_UP);
 
-			// Adjust rounding difference on the last installment if small remainder
-			if ($numactualloadterm == $nbterm && abs($cap_rest) <= 0.05 && $capital > 0) {
+			// Adjust rounding difference on the last installment if small remainder (with daily interest,
+			// periods are not all the same length, so the last installment always settles what is left)
+			if ($numactualloadterm == $nbterm && ($interest_basis || abs($cap_rest) <= 0.05) && $capital > 0) {
 				$amort = $capital;
 				$cap_rest = 0.0;
 				$mens = round($amort + $int, 2, PHP_ROUND_HALF_UP);
@@ -207,4 +218,85 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 	}
 
 	return $output;
+}
+
+
+/**
+ * Payment frequencies of a loan.
+ *
+ * @return array<int,string>	Number of payments per year => translation key
+ */
+function loanFrequencies()
+{
+	return array(
+		52 => 'LoanFrequencyWeekly',
+		26 => 'LoanFrequencyFortnightly',
+		12 => 'LoanFrequencyMonthly',
+		4 => 'LoanFrequencyQuarterly',
+		2 => 'LoanFrequencyHalfYearly',
+		1 => 'LoanFrequencyYearly',
+	);
+}
+
+/**
+ * Date of a payment of a loan.
+ *
+ * @param	int		$datestart	Date of the first payment
+ * @param	int		$index		0 for the first payment, 1 for the second, ...
+ * @param	int		$frequency	Number of payments per year (52, 26, 12, 4, 2 or 1)
+ * @return	int					Date of the payment
+ */
+function loanTermDate($datestart, $index, $frequency = 12)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+	$frequency = (int) $frequency;
+	if ($frequency == 52) {
+		return dol_time_plus_duree($datestart, 7 * $index, 'd');
+	}
+	if ($frequency == 26) {
+		return dol_time_plus_duree($datestart, 14 * $index, 'd');
+	}
+	$months = (($frequency == 4 || $frequency == 2 || $frequency == 1) ? (int) (12 / $frequency) : 1) * $index;
+	$date = dol_time_plus_duree($datestart, $months, 'm');
+	// A start on the 29th to 31st must not run into the next month (31 January + 1 month = 28 February)
+	$day = (int) dol_print_date($datestart, '%d');
+	if ((int) dol_print_date($date, '%d') != $day) {
+		$date = dol_time_plus_duree($date, -(int) dol_print_date($date, '%d'), 'd');
+	}
+	return $date;
+}
+
+/**
+ * Number of days of the period that ends with a payment (used by the daily interest basis).
+ *
+ * @param	int		$datestart	Date of the first payment
+ * @param	int		$term		Payment number, 1 for the first payment
+ * @param	int		$frequency	Number of payments per year
+ * @return	int					Number of days
+ */
+function loanPeriodDays($datestart, $term, $frequency = 12)
+{
+	return (int) round((loanTermDate($datestart, $term - 1, $frequency) - loanTermDate($datestart, $term - 2, $frequency)) / 86400);
+}
+
+/**
+ * Interest rate of one period of a loan.
+ *
+ * @param	float	$rate			Annual rate (as a fraction, or in percent: the result is in the same unit)
+ * @param	int		$frequency		Number of payments per year
+ * @param	int		$interest_basis	0 = rate / number of payments per year, 1 = daily (rate x days in the period / 365)
+ * @param	int		$days			Days in the period, for the daily basis (0 = the average period: 7 days weekly, 14 days fortnightly, else 365 / number of payments)
+ * @return	float					Rate of the period
+ */
+function loanPeriodRate($rate, $frequency = 12, $interest_basis = 0, $days = 0)
+{
+	$frequency = ((int) $frequency > 0 ? (int) $frequency : 12);
+	if ($interest_basis) {
+		if ($days <= 0) {
+			$days = ($frequency == 52 ? 7 : ($frequency == 26 ? 14 : 365 / $frequency));
+		}
+		return $rate * $days / 365;
+	}
+	return $rate / $frequency;
 }
