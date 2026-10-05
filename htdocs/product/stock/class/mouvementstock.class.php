@@ -176,7 +176,7 @@ class MouvementStock extends CommonObject
 		'type_mouvement' => array('type' => 'smallint(6)', 'label' => 'Type mouvement', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'position' => 55),
-		'fk_origin' => array('type' => 'integer', 'label' => 'Fk origin', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'fk_origin' => array('type' => 'integer', 'label' => 'Origin', 'enabled' => 1, 'visible' => -1, 'position' => 60),
 		'origintype' => array('type' => 'varchar(32)', 'label' => 'Origintype', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 70),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'notnull' => 1, 'position' => 75),
@@ -184,7 +184,7 @@ class MouvementStock extends CommonObject
 		'batch' => array('type' => 'varchar(30)', 'label' => 'Batch', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'eatby' => array('type' => 'date', 'label' => 'Eatby', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'sellby' => array('type' => 'date', 'label' => 'Sellby', 'enabled' => 1, 'visible' => -1, 'position' => 95),
-		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk project', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 	);
 
 
@@ -668,7 +668,16 @@ class MouvementStock extends CommonObject
 				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
 				$sql = "DELETE FROM ".$this->db->prefix()."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
 				$resql = $this->db->query($sql);
-				// We do not test error, it can fails if there is child in batch details
+				// The NOT IN clause already excludes rows still referenced by product_batch (the only child FK on
+				// product_stock), so this DELETE cannot fail on a child constraint. Any failure is therefore a real
+				// error, in particular a deadlock (1213) that rolls back the whole transaction including the movement
+				// just inserted; if we swallowed it, _create() would commit an empty transaction and return the
+				// movement id as a success, so the caller (and the REST API) would think the movement was saved while
+				// it was lost.
+				if (!$resql) {
+					$this->errors[] = $this->db->lasterror();
+					$error++;
+				}
 			}
 		}
 
@@ -904,7 +913,7 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param 	int			$productidselected		Id of product to count
 	 * @param 	integer 	$datebefore				Date limit
-	 * @return	int			Number
+	 * @return	float		Number
 	 */
 	public function calculateBalanceForProductBefore($productidselected, $datebefore)
 	{
@@ -919,7 +928,7 @@ class MouvementStock extends CommonObject
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$nb = (int) $obj->nb;
+				$nb = (float) $obj->nb;
 			}
 			return (empty($nb) ? 0 : $nb);
 		} else {
@@ -1136,25 +1145,25 @@ class MouvementStock extends CommonObject
 		$s = '';
 		switch ($this->type) {
 			case "0":
-				$s = '<span class="fa fa-level-down-alt stockmovemententry stockmovementtransfer" title="'.$langs->trans('StockIncreaseAfterCorrectTransfer').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-level-down-alt stockmovemententry stockmovementtransfer" title="'.$langs->trans('StockIncreaseAfterCorrectTransfer').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockIncreaseAfterCorrectTransfer');
 				}
 				break;
 			case "1":
-				$s = '<span class="fa fa-level-up-alt stockmovementexit stockmovementtransfer" title="'.$langs->trans('StockDecreaseAfterCorrectTransfer').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-level-up-alt stockmovementexit stockmovementtransfer" title="'.$langs->trans('StockDecreaseAfterCorrectTransfer').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockDecreaseAfterCorrectTransfer');
 				}
 				break;
 			case "2":
-				$s = '<span class="fa fa-long-arrow-alt-up stockmovementexit stockmovement" title="'.$langs->trans('StockDecrease').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-long-arrow-alt-up stockmovementexit stockmovement" title="'.$langs->trans('StockDecrease').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockDecrease');
 				}
 				break;
 			case "3":
-				$s = '<span class="fa fa-long-arrow-alt-down stockmovemententry stockmovement" title="'.$langs->trans('StockIncrease').'"></span>';
+				$s = '<span class="invertforbadge"><span class="fa fa-long-arrow-alt-down stockmovemententry stockmovement" title="'.$langs->trans('StockIncrease').'"></span></span>';
 				if ($withlabel) {
 					$s .= $langs->trans('StockIncrease');
 				}
@@ -1217,6 +1226,17 @@ class MouvementStock extends CommonObject
 			}
 		}
 		$result .= $link.$this->id.$linkend;
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -1337,34 +1357,94 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 * Reverse movement for object by updating infos
+	 * Return the type of the movement that reverses a movement of a given type.
 	 *
-	 * @return int    1 if OK,-1 if KO
+	 * @param	int		$type	Type of movement: 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase)
+	 * @return	int				Type of the reverse movement, or -1 if the type is unknown
+	 */
+	private static function getReverseType($type)
+	{
+		$reversetypes = array(0 => 1, 1 => 0, 2 => 3, 3 => 2);
+
+		return (isset($reversetypes[(int) $type]) ? $reversetypes[(int) $type] : -1);
+	}
+
+	/**
+	 * Count the movements that have the same product, warehouse, batch, quantity, type and code as the movement given.
+	 * Used to know if a movement has already been reversed: a reverse movement carries the code of the movement
+	 * that it reverses, prefixed by 'REVERT-', with the opposite quantity and the opposite type.
+	 *
+	 * @param	string	$code		Code of the movements to count (value of column inventorycode)
+	 * @param	float	$qty		Quantity of the movements to count
+	 * @param	int		$type		Type of the movements to count
+	 * @param	int		$datem		Date of the movement. Used only when the code is empty, to distinguish the movements.
+	 * @return	int					Number of movements found, or -1 if error
+	 */
+	private function countMovementsWithSameSignature($code, $qty, $type, $datem = 0)
+	{
+		$sql = "SELECT COUNT(rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement";
+		$sql .= " WHERE fk_product = ".((int) $this->product_id);
+		$sql .= " AND fk_entrepot = ".((int) $this->warehouse_id);
+		$sql .= " AND COALESCE(batch, '') = '".$this->db->escape((string) $this->batch)."'";
+		$sql .= " AND value = ".((float) $qty);
+		$sql .= " AND type_mouvement = ".((int) $type);
+		$sql .= " AND COALESCE(inventorycode, '') = '".$this->db->escape($code)."'";
+		if ($datem) {
+			$sql .= " AND datem = '".$this->db->idate($datem)."'";
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		return ($obj ? (int) $obj->nb : 0);
+	}
+
+	/**
+	 * Reverse movement for object by updating infos.
+	 * A movement can be reversed only once, and a reverse movement can not be reversed.
+	 *
+	 * @return int    1 if OK,-1 if KO (the reason is then set into $this->error)
 	 */
 	public function reverseMovement()
 	{
-		global $user;
+		global $user, $langs;
+
+		$langs->load("stocks");
 
 		$formattedDate = "REVERT-" .($this->inventorycode ? $this->inventorycode : dol_print_date($this->datem, '%Y%m%d%His'));
-		if ($this->inventorycode == $formattedDate) {
+
+		// A reverse movement can not be reversed
+		if (strpos((string) $this->inventorycode, 'REVERT-') === 0) {
+			$this->error = $langs->trans("ErrorStockMovementIsAlreadyAReverse", $this->id);
 			return -1;
 		}
 
-		$newlabel = 'Revert '.$this->label;
-		// type is 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase)
-		// Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
-		if ($this->type == 0) {
-			$newtype = 1;
-		} elseif ($this->type == 1) {
-			$newtype = 0;
-		} elseif ($this->type == 2) {
-			$newtype = 3;
-		} elseif ($this->type == 3) {
-			$newtype = 2;
-		} else {
+		$newtype = self::getReverseType($this->type);
+		if ($newtype < 0) {
+			$this->error = $langs->trans("ErrorStockMovementBadType", $this->id);
 			return -1;
 		}
+		$newlabel = 'Revert '.$this->label;
+		// Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
 		$newqty = - $this->qty;
+
+		// A movement can be reversed only once. Several movements can be the same (same code, product, warehouse, batch, quantity and type),
+		// so we compare the number of such movements with the number of reverse movements already done.
+		$nbmovements = $this->countMovementsWithSameSignature((string) $this->inventorycode, $this->qty, $this->type, ($this->inventorycode ? 0 : $this->datem));
+		$nbreverses = $this->countMovementsWithSameSignature($formattedDate, $newqty, $newtype);
+		if ($nbmovements < 0 || $nbreverses < 0) {
+			return -1;
+		}
+		if ($nbreverses >= $nbmovements) {
+			$this->error = $langs->trans("ErrorStockMovementAlreadyReversed", $this->id);
+			return -1;
+		}
 
 		$this->db->begin();
 

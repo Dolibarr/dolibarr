@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2024  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,42 +30,50 @@ require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 
 
 /**
- * Class for AI
+ * Class for AI feature
  */
 class Ai
 {
 	/**
-	 * @var DoliDB $db Database object
+	 * @var DoliDB Database object
 	 */
 	protected $db;
 
 	/**
-	 * @var string $apiService
+	 * @var string
 	 */
 	private $apiService;
 
 	/**
-	 * @var string $apiKey
+	 * @var string
 	 */
 	private $apiKey;
 
 	/**
-	 * @var string $apiEndpoint
+	 * @var string
 	 */
 	private $apiEndpoint;
 
-	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return all HTML content inside a section tag. Do not add explanation.';
+	/**
+	 * @var array<string,string>|null $tokenUsage
+	 */
+	public $tokenUsage;
+
+
+	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return only the content of the message. Do not add explanation.';	// Note: This instruction will also be completed by generateContent() to manage text versus HTML content.
 	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, answer with one and only one translation with no comment and explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
-	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without changing it or adding one, just fix spelling and grammar errors in text content. Answer with the corrected text and the original HTML formatting if there was, with no additional comment and explanation even to highlight the fixed errors.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, write your response in the same language as the original text to rephrase. Give only one answer with no comment and explanation. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without adding one.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
+	const AI_DEFAULT_PROMPT_FOR_DOC_PARSING = 'You are an assistant to analyze documents. Return your answer with a JSON string and only a JSON string, do not add any other comment.';
+
 
 	/**
 	 * Constructor
 	 *
 	 * @param	DoliDB	$db		 Database handler
-	 *
 	 */
 	public function __construct($db)
 	{
@@ -77,15 +85,27 @@ class Ai
 	}
 
 	/**
-	 * Generate response of instructions
+	 * get API Service
 	 *
-	 * @param   string  		$instructions   Instruction to generate content
-	 * @param   string  		$model          Model name ('gpt-4.1-turbo', 'gpt-4.1', 'dall-e-3', ...)
-	 * @param   string  		$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation')
-	 * @param	string			$format			Format for output ('', 'html', ...)
+	 * @return	string		API service
+	 */
+	public function getApiService()
+	{
+		return $this->apiService;
+	}
+
+	/**
+	 * Generate the response of an AI prompt.
+	 *
+	 * @param   string|array<mixed,mixed>	$instructions   String instruction to generate content (or file path) or array of payload or ID of file with function threads
+	 * @param   string  					$model          Model name ('gpt-4.1-turbo', 'gpt-4.1', 'dall-e-3', ...)
+	 * @param   string  					$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation', 'docparsing')
+	 * @param	string						$format			Format for output ('', 'html', ...)
+	 * @param	array<string,string>		$moreheaders	More headers
+	 * @param	string						$moreendpoint	Add a part to endpoint url
 	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,function?:string}	$response		Text or array if error
 	 */
-	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '')
+	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '', $moreheaders = array(), $moreendpoint = '')
 	{
 		global $dolibarr_main_data_root;
 
@@ -114,31 +134,73 @@ class Ai
 			} elseif ($function == 'transcription') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'transcriptions';
-			} else {
+			} elseif ($function == 'file') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
-				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'files';
+			} elseif ($function == 'assistant') {
+				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'assistans';
+			} elseif ($function == 'thread') {
+				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
+			} else {	// if $function == 'docparsing', 'text...', ...
+				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
+				if ($this->apiService == 'google') {
+					// Google Gemini native API: the /models/<model>:generateContent suffix is
+					// appended later (once $model has been resolved). The OpenAI-style
+					// /chat/completions does not exist on the native Gemini endpoint.
+					$this->apiEndpoint = rtrim($this->apiEndpoint, '/');
+				} else {
+					$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'chat/completions';
+				}
 			}
 		}
+		if ($moreendpoint) {
+			$this->apiEndpoint .= '/'.$moreendpoint;
+		}
+
 
 		// $model may be undefined or 'auto'.
 		// If this is the case, we must get it from $function and $this->apiService
 		if (empty($model) || $model == 'auto') {
 			// Return the model from $this->apiService.
-			if ($function == 'imagegeneration') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]);
+			if (in_array($function, array('file', 'assistant', 'thread'))) {
+				$model = '';
+			} elseif ($function == 'imagegeneration') {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'audiogeneration') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_AUDIO', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_AUDIO', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'transcription') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]['default']);
 			} elseif ($function == 'translation') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]);
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]['default']);
+			} elseif ($function == 'docparsing') {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService][$function]['default']);
 			} else {
-				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']);
+				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize', 'textrephraser', 'textspellchecker', ...
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']['default']);
 			}
 		}
 
-		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
+		// Google Gemini: append /models/<model>:generateContent now that $model is resolved.
+		if ($this->apiService == 'google' && !in_array($function, array('file', 'assistant', 'thread'))
+			&& strpos($this->apiEndpoint, ':generateContent') === false) {
+			$this->apiEndpoint .= '/models/'.rawurlencode($model).':generateContent';
+		}
+
+		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model.", format=".$format);
+		if (getDolGlobalString("AI_DEBUG")) {
+			if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
+				$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
+				$fp = fopen($outputfile, "w");	// overwrite
+
+				if ($fp) {
+					fwrite($fp, "Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model.", format=".$format."\n");
+					fclose($fp);
+					dolChmod($outputfile);
+				}
+			}
+		}
 
 		$response = null;
 
@@ -162,10 +224,16 @@ class Ai
 					$postPrompt = $configurations[$function]['postPrompt'];
 				}
 			}
+			//var_dump($prePrompt);
 
 			// Get the default value of prePrompt if not defined
 			if (empty($prePrompt) && $function == 'textgenerationemail') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EMAIL;
+				if ($format === 'html') {
+					$prePrompt .= ' Return all HTML content inside a section tag';
+				} else {
+					$prePrompt .= ' Return content in UTF8 text. Use Linux carriage return if you need to split a line. Do not include any HTML tag neither HTML entities.';
+				}
 			}
 			if (empty($prePrompt) && $function == 'textgenerationwebpage') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_WEBPAGE;
@@ -182,45 +250,71 @@ class Ai
 			if (empty($prePrompt) && $function == 'textrephraser') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER;
 			}
-
-			$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
-
-			// Set payload string
-			/*{
-				"messages": [
-				{
-					"content": "You are a helpful assistant.",
-					"role": "system"
-				},
-				{
-					"content": "Hello!",
-					"role": "user"
-				}
-				],
-				"model": "tinyllama-1.1b",
-				"stream": true,
-				"max_tokens": 2048,
-				"stop": [
-					"hello"
-				],
-				"frequency_penalty": 0,
-				"presence_penalty": 0,
-				"temperature": 0.7,
-				"top_p": 0.95
-			}*/
-
-			$arrayforpayload = array(
-				'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
-				'model' => $model,
-			);
-
-			// Add a system message
-			$addDateTimeContext = false;
-			if ($addDateTimeContext) {		// @phpstan-ignore-line
-				$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
+			if (empty($prePrompt) && $function == 'textspellchecker') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER;
 			}
-			if ($prePrompt) {
-				$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
+			if (empty($prePrompt) && $function == 'docparsing') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_DOC_PARSING;
+			}
+
+			if (is_array($instructions)) {
+				$arrayforpayload = $instructions;
+				$fullInstructions = '';
+			} else {
+				$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
+
+				// Set payload string
+				/*{
+					"messages": [
+					{
+						"content": "You are a helpful assistant.",
+						"role": "system"
+					},
+					{
+						"content": "Hello!",
+						"role": "user"
+					}
+					],
+					"model": "tinyllama-1.1b",
+					"stream": true,
+					"max_tokens": 2048,
+					"stop": [
+						"hello"
+					],
+					"frequency_penalty": 0,
+					"presence_penalty": 0,
+					"temperature": 0.7,
+					"top_p": 0.95
+				}*/
+
+				// Add a system message
+				$addDateTimeContext = false;
+				if ($addDateTimeContext) {		// @phpstan-ignore-line
+					$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
+				}
+
+				if ($this->apiService == 'google') {
+					// Google Gemini native payload format (different from OpenAI's "messages").
+					$arrayforpayload = array(
+						'contents' => array(
+							array('role' => 'user', 'parts' => array(array('text' => $fullInstructions)))
+						)
+					);
+					if ($prePrompt) {
+						$arrayforpayload['system_instruction'] = array(
+							'parts' => array(array('text' => $prePrompt))
+						);
+					}
+				} else {
+					// OpenAI-compatible payload format (chatgpt, mistral, groq, anthropic-compat, custom, ...)
+					$arrayforpayload = array(
+						'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
+						'model' => $model,
+					);
+					if ($prePrompt) {
+						$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
+					}
+				}
 			}
 
 			/*
@@ -229,21 +323,49 @@ class Ai
 			$arrayforpayload['stream'] = false;
 			*/
 
-			$payload = json_encode($arrayforpayload);
+			if ($function == 'thread') {
+				$payload = $instructions;
+			} else {
+				$payload = json_encode($arrayforpayload);
+			}
 
-			$headers = array(
-				'Authorization: Bearer ' . $this->apiKey,
-				'Content-Type: application/json'
-			);
+			if ($this->apiService == 'google') {
+				// Google Gemini uses the x-goog-api-key header (Bearer is not accepted by the native API).
+				$headers = array(
+					'x-goog-api-key: ' . $this->apiKey,
+				);
+			} else {
+				$headers = array(
+					'Authorization: Bearer ' . $this->apiKey,
+				);
+			}
+			if ($function != 'file') {
+				$headers[] = 'Content-Type: application/json';
+			}
+			if (!empty($moreheaders)) {
+				foreach ($moreheaders as $morekey => $moreval) {
+					$headers[] = $morekey.': '.$moreval;
+				}
+			}
 
 			if (getDolGlobalString("AI_DEBUG")) {
 				if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 					$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
-					$fp = fopen($outputfile, "w");	// overwrite
+					$fp = fopen($outputfile, "a");
 
 					if ($fp) {
-						fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following HTTP headers and Payload:\n");
+						if ($function == 'docparsing') {
+							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following file to upload:\n");
+							fwrite($fp, $instructions."\n");
+						} else {
+							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following message:\n");
+							fwrite($fp, $fullInstructions."\n");
+							fwrite($fp, "And prepompt:\n");
+							fwrite($fp, $prePrompt."\n");
+						}
+						fwrite($fp, "HTTP Header\n");
 						fwrite($fp, var_export($headers, true)."\n");
+						fwrite($fp, "Payload\n");
 						fwrite($fp, var_export($payload, true)."\n");
 
 						fclose($fp);
@@ -286,6 +408,7 @@ class Ai
 					$fp = fopen($outputfile, "a");
 
 					if ($fp) {
+						fwrite($fp, "Answer\n");
 						fwrite($fp, var_export((empty($response['content']) ? 'No content result' : $response['content']), true)."\n");
 
 						fclose($fp);
@@ -305,10 +428,24 @@ class Ai
 				} else {
 					$generatedContent = var_export($decodedResponse['error'], true);
 				}
+			} elseif ($this->apiService == 'google') {
+				// Google Gemini response shape: candidates[0].content.parts[*].text
+				// (parts is an array because Gemini can return mixed-modality output;
+				// we concatenate the textual parts.)
+				$generatedContent = '';
+				if (!empty($decodedResponse['candidates'][0]['content']['parts'])) {
+					foreach ($decodedResponse['candidates'][0]['content']['parts'] as $part) {
+						if (isset($part['text'])) {
+							$generatedContent .= $part['text'];
+						}
+					}
+				}
 			} else {
 				$generatedContent = $decodedResponse['choices'][0]['message']['content'];
 			}
 			dol_syslog("ai->generatedContent returned: ".dol_trunc($generatedContent, 50));
+
+			$this->tokenUsage = $decodedResponse['usage'] ?? null;
 
 			// If content is not HTML, we convert it into HTML
 			if ($format == 'html') {
@@ -364,5 +501,154 @@ class Ai
 				'function' => $function
 			);
 		}
+	}
+
+	/**
+	 * Decode JSON into array
+	 *
+	 * @param array<string,mixed>		$json 		JSON (The structure of this var can't be guess, it change at each call, depending on AI, so we must se a strict type for it)
+	 * @param string					$type		Type of document to get ('supplier_invoice', 'thirdparty', ...)
+	 * @return array<string,string|float>	Array of values
+	 */
+	public function decodeJsonIntoArray($json, $type)
+	{
+		$tmparray = array();
+
+		//var_dump($json['items']);
+		if ($type == 'supplier_invoice') {
+			// Invoice info
+			if (!empty($json['document_info']['reference'])) {
+				$tmparray['supplierref'] = $json['document_info']['reference'];
+			} elseif (!empty($json['document_info']['invoice_number'])) {
+				$tmparray['supplierref'] = $json['document_info']['invoice_number'];
+			}
+
+			if (!empty($json['document_info']['title'])) {
+				$tmparray['title'] = $json['document_info']['title'];
+			}
+
+			// Issue date
+			if (!empty($json['document_info']['issue_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['issue_date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['issue_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['submission_date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['submission_date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['submission_date'], 'tzuserrel');
+			} elseif (!empty($json['document_info']['date']) && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}((\s|T)[0-9]{2}:[0-9]{2}:[0-9]{2}Z?)?$/', $json['document_info']['date'])) {
+				$tmparray['issue_date'] = dol_stringtotime($json['document_info']['date'], 'tzuserrel');
+			}
+
+			// Due date
+			if (!empty($json['document_info']['due_date']) && preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/', $json['document_info']['due_date'])) {
+				$tmparray['due_date'] = dol_stringtotime($json['document_info']['due_date'], 'tzuserrel');
+			}
+
+			// Currency
+			if ($json['summary']['currency'] == '€') {
+				$tmparray['currency_code'] = 'EUR';
+			} elseif (strlen($json['summary']['currency']) == 3) {
+				$tmparray['currency_code'] = $json['summary']['currency'];
+			} elseif (strlen($json['document_info']['currency_code']) == 3) {
+				$tmparray['currency_code'] = $json['document_info']['currency_code'];
+			}
+
+			// Note
+			if (!empty($json['notes'])) {
+				if (is_scalar($json['notes'])) {
+					$tmparray['note_public'] = $json['notes'];
+				} elseif (is_array($json['notes'])) {
+					// Loop on each note
+					$tmparray['note_public'] = '';
+					foreach ($json['notes'] as $val) {
+						if (is_scalar($val)) {
+							$tmparray['note_public'] = dol_concat($tmparray['note_public'], $val);
+						} elseif (is_array($val)) {
+							foreach ($val as $val2) {
+								if (is_scalar($val2)) {
+									$tmparray['note_public'] = dol_concat($tmparray['note_public'], $val2);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// Vendor
+			if (!empty($json['document_info']['vendor'])) {
+				$arrayforthirdparty = $json['document_info']['vendor'];
+			} elseif (!empty($json['vendor'])) {
+				$arrayforthirdparty = $json['vendor'];
+			} elseif (!empty($json['issuer'])) {
+				$arrayforthirdparty = $json['issuer'];
+			}
+			if (!empty($arrayforthirdparty)) {
+				if (!empty($arrayforthirdparty['name'])) {
+					$tmparray['vendor_name'] = $arrayforthirdparty['name'];
+				}
+				if (!empty($arrayforthirdparty['siren'])) {
+					$tmparray['vendor_profid1'] = $arrayforthirdparty['siren'];
+				}
+				if (!empty($arrayforthirdparty['siret'])) {
+					$tmparray['vendor_profid2'] = $arrayforthirdparty['siret'];
+				}
+				if (!empty($arrayforthirdparty['email'])) {
+					$tmparray['vendor_email'] = $arrayforthirdparty['email'];
+				}
+				if (!empty($arrayforthirdparty['professional_id'])) {
+					$tmparray['vendor_profid1'] = $arrayforthirdparty['professional_id']['siren'];
+				}
+				if (!empty($arrayforthirdparty['vat_number'])) {
+					$tmparray['vendor_vat_number'] = $arrayforthirdparty['vat_number'];
+				} elseif (!empty($arrayforthirdparty['tva_num'])) {
+					$tmparray['vendor_vat_number'] = $arrayforthirdparty['tva_num'];
+				}
+			}
+
+			// Invoice
+			if (!empty($json['recipient']['description'])) {
+				$tmparray['invoice_label'] = $json['recipient']['description'];
+			}
+
+			// Items
+			if (empty($json['items'])) {
+				if (!empty($json['summary']['subtotal_excluding_tax'])) {
+					$tmparray['description'] = 'Undefined';
+					$tmparray['total_ht'] = (float) $json['summary']['subtotal_excluding_tax'];
+					$tmparray['vat_rate'] =  (float) $json['summary']['tax']['rate'];
+				}
+			} else {
+				$i = 0;
+				foreach ($json['items'] as $item) {
+					$i++;
+					$tmparray['lines'][$i] = array();
+
+					if (!empty($item['description'])) {
+						$tmparray['lines'][$i]['desc'] = $item['description'];
+					} elseif (!empty($item['service'] && is_string($item['service']))) {
+						$tmparray['lines'][$i]['desc'] = $item['service'];
+					}
+
+					$tmparray['lines'][$i]['qty'] = $item['quantity'] ?? 1;
+					$tmparray['lines'][$i]['vat_rate'] = $item['tax']['vat_rate'] ?? null;
+					$tmparray['lines'][$i]['total_vat'] = $item['tax']['amount'] ?? null;
+					$tmparray['lines'][$i]['subprice'] = $item['unit_price'] ?? null;
+					$tmparray['lines'][$i]['total_ht'] = $item['total_excluding_tax'] ?? null;
+					$tmparray['lines'][$i]['total_ttc'] = $item['total_including_tax'] ?? null;
+
+					if (!empty($item['period_start'])) {
+						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period_start'], 'tzuserrel');
+					}
+					if (!empty($item['period_end'])) {
+						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period_end'], 'tzuserrel');
+					}
+					if (!empty($item['period']) && !empty($item['period']['start_date'])) {
+						$tmparray['lines'][$i]['date_start'] = dol_stringtotime($item['period']['start_date'], 'tzuserrel');
+					}
+					if (!empty($item['period']) && !empty($item['period']['end_date'])) {
+						$tmparray['lines'][$i]['date_end'] = dol_stringtotime($item['period']['end_date'], 'tzuserrel');
+					}
+				}
+			}
+		}
+
+		return $tmparray;
 	}
 }

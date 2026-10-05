@@ -166,6 +166,7 @@ PDFEdisonDescription=A simple order model
 PDFProformaDescription=A complete Proforma invoice template
 CreateInvoiceForThisCustomer=Bill orders
 CreateInvoiceForThisSupplier=Bill orders
+WarningOrderNotEligibleForInvoicing=Order %s has been skipped: its status does not allow creating an invoice
 CreateInvoiceForThisReceptions=Bill receptions
 NoOrdersToInvoice=No orders billable
 CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.

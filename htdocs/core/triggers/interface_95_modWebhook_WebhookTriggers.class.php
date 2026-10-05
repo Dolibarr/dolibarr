@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022	SuperAdmin		<test@dolibarr.com>
  * Copyright (C) 2023	William Mead	<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,29 +162,35 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 					}*/
 				}
 
-				if (empty($dbhistory)) {
-					$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, $conf->db->name, (int) $conf->db->port);
-				}
+				// Save the trace of the webhook call into the history table only if the option to log webhook calls is on
+				if (getDolGlobalString('WEBHOOK_ENABLE_CALL_LOGS')) {
+					if (empty($dbhistory)) {
+						// Force a genuinely new connection (not one silently reused/shared with the main $db, as pg_connect() would otherwise do for
+						// an identical connection string): $dbhistory is closed independently below, and closing a connection shared with $this->db
+						// would break any later query on $this->db (e.g. the caller's pending commit) with "PostgreSQL connection has already been closed".
+						$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, (string) $conf->db->name, (int) $conf->db->port, true);
+					}
 
-				$dbhistory->begin();
+					$dbhistory->begin();
 
-				$triggerhistory = new TriggerHistory($dbhistory);
-				$triggerhistory->trigger_code = $action;
-				$triggerhistory->trigger_data = $jsonstr;
-				$triggerhistory->fk_target = $tmpobject->id;
-				$triggerhistory->url = $tmpobject->url;
-				$triggerhistory->error_message = $errormsg;
-				$triggerhistory->status = ($errorforhistory == 0 ? 1 : -1);
+					$triggerhistory = new TriggerHistory($dbhistory);
+					$triggerhistory->trigger_code = $action;
+					$triggerhistory->trigger_data = $jsonstr;
+					$triggerhistory->fk_target = $tmpobject->id;
+					$triggerhistory->url = $tmpobject->url;
+					$triggerhistory->error_message = $errormsg;
+					$triggerhistory->status = ($errorforhistory == 0 ? 1 : -1);
 
-				$resql = $triggerhistory->create($user);
+					$resql = $triggerhistory->create($user);
 
-				if (!$resql) {
-					$errors++;
-					$this->errors = array_merge($this->errors, $triggerhistory->errors);
-					$this->warnings = array_merge($this->warnings, $triggerhistory->warnings);
-					$dbhistory->rollback();
-				} else {
-					$dbhistory->commit();
+					if (!$resql) {
+						$errors++;
+						$this->errors = array_merge($this->errors, $triggerhistory->errors);
+						$this->warnings = array_merge($this->warnings, $triggerhistory->warnings);
+						$dbhistory->rollback();
+					} else {
+						$dbhistory->commit();
+					}
 				}
 			}
 		}

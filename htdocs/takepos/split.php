@@ -90,6 +90,7 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 				if ($placeid < 0) {
 					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 				}
+
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-SPLIT)'";
 				$sql .= " WHERE rowid = ".((int) $placeid);
 				$db->query($sql);
@@ -155,7 +156,7 @@ $invoice = new Facture($db);
 if (isset($invoiceid) && $invoiceid > 0) {
 	$invoice->fetch($invoiceid);
 } else {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref = '".$db->escape("(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")")."'";
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
 	if ($obj) {

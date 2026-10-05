@@ -4,7 +4,7 @@
  * Copyright (C) 2020       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
@@ -26,6 +26,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -216,9 +217,9 @@ class Proposals extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		$parameters = array();
@@ -344,15 +345,8 @@ class Proposals extends DolibarrApi
 
 			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
-		/*if (isset($request_data["lines"])) {
-		  $lines = array();
-		  foreach ($request_data["lines"] as $line) {
-			array_push($lines, (object) $line);
-		  }
-		  $this->propal->lines = $lines;
-		}*/
 		if ($this->propal->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->propal->error), $this->propal->errors));
+			throw new RestException(500, "Error creating proposal", array_merge(array($this->propal->error), $this->propal->errors));
 		}
 
 		return ((int) $this->propal->id);
@@ -474,7 +468,7 @@ class Proposals extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->propal->error);
+			throw new RestException(400, $this->propal->errorsToString());
 		}
 	}
 
@@ -681,7 +675,7 @@ class Proposals extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(405, $this->propal->error);
+			throw new RestException(405, $this->propal->errorsToString());
 		}
 	}
 	/**
@@ -935,7 +929,7 @@ class Proposals extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->propal->array_options[$index] = $this->_checkValForAPI($field, $val, $this->propal);
+					$this->propal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->propal);
 				}
 				continue;
 			}
@@ -945,18 +939,18 @@ class Proposals extends DolibarrApi
 
 		// update end of validity date
 		if (empty($this->propal->fin_validite) && !empty($this->propal->duree_validite) && !empty($this->propal->date_creation)) {
-			$this->propal->fin_validite = $this->propal->date_creation + ($this->propal->duree_validite * 24 * 3600);
+			$this->propal->fin_validite = $this->propal->date_creation + (int) ($this->propal->duree_validite * 24 * 3600);
 		}
 		if (!empty($this->propal->fin_validite)) {
 			if ($this->propal->set_echeance(DolibarrApiAccess::$user, $this->propal->fin_validite) < 0) {
-				throw new RestException(500, $this->propal->error);
+				throw new RestException(500, $this->propal->errorsToString());
 			}
 		}
 
 		if ($this->propal->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->propal->error);
+			throw new RestException(500, $this->propal->errorsToString());
 		}
 	}
 
@@ -991,7 +985,7 @@ class Proposals extends DolibarrApi
 		}
 
 		if (!$this->propal->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->error);
+			throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->errorsToString());
 		}
 
 		return array(
@@ -1033,7 +1027,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->propal->error);
+			throw new RestException(500, 'Error : '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1092,7 +1086,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->error);
+			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1145,7 +1139,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->error);
+			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);
@@ -1191,7 +1185,7 @@ class Proposals extends DolibarrApi
 
 		$result = $this->propal->classifyBilled(DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->propal->error);
+			throw new RestException(500, 'Error : '.$this->propal->errorsToString());
 		}
 
 		$result = $this->propal->fetch($id);

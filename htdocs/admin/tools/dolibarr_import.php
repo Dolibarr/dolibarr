@@ -34,6 +34,7 @@ require '../../main.inc.php';
  * @var string $dolibarr_main_db_host
  * @var string $dolibarr_main_db_name
  * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_db_pass
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager

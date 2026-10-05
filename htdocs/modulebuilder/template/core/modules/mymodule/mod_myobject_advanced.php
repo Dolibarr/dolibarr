@@ -52,6 +52,11 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	 */
 	public $name = 'advanced';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
 
 	/**
 	 *	Returns the description of the numbering model

@@ -6,8 +6,8 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015	    Claudio Aschieri		<c.aschieri@19.coop>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
@@ -50,14 +57,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'orders', 'sendings'));
@@ -76,7 +75,6 @@ $id = GETPOSTINT('id');
 $hookmanager->initHooks(array('deliverycard', 'globalcard'));
 
 $object = new Delivery($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -190,6 +188,7 @@ if ($action == 'add' && $permissiontoadd) {
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 
 	if ($result > 0) {
@@ -202,6 +201,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		exit;
 	} else {
 		$db->rollback();
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -299,6 +299,7 @@ llxHeader('', $title, 'Livraison', '', 0, 0, '', '', '', 'mod-delivery page-card
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$objectsrc = null;
 
 if ($action == 'create') {
 	// Create. Seems to no be used
@@ -371,7 +372,7 @@ if ($action == 'create') {
 			// Thirdparty
 			$morehtmlref .= '<br>'.$expedition->thirdparty->getNomUrl(1);
 			// Project
-			if (isModEnabled('project')) {
+			if (isModEnabled('project') && $objectsrc !== null) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>';
 				if (0) {	// @phpstan-ignore-line  Do not change on shipment
@@ -383,7 +384,7 @@ if ($action == 'create') {
 				} else {
 					if (!empty($objectsrc->fk_project)) {
 						$proj = new Project($db);
-						$proj->fetch($objectsrc->fk_project);
+						$proj->fetch((int) $objectsrc->fk_project);
 						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
 							$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -599,7 +600,7 @@ if ($action == 'create') {
 
 						print '<td>';
 
-						// Affiche ligne produit
+						// Show product line
 						$text = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$object->lines[$i]->fk_product.'">';
 						if ($object->lines[$i]->fk_product_type == 1) {
 							$text .= img_object($langs->trans('ShowService'), 'service');
@@ -693,9 +694,9 @@ if ($action == 'create') {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 					}
 					if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&expid='.$object->origin_id.'&action=delete&token='.newToken().'&backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
+						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&expid='.$object->origin_id.'&action=delete&token='.newToken().'&backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '', true, array('attr' => array('class' => 'reposition')))."\n";
 					} else {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
+						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 					}
 				}
 
@@ -709,7 +710,7 @@ if ($action == 'create') {
 			  * Documents generated
 			 */
 			if ($action != 'presend') {
-				$objectref = dol_sanitizeFileName($object->ref);
+				$objectref = dol_sanitizeFileName((string) $object->ref);
 				$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
 				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
@@ -722,14 +723,14 @@ if ($action == 'create') {
 				  * Linked object block (of linked shipment)
 				  */
 
-					// Show links to link elements
-					print '</div><div class="fichehalfright">';
+				// Show links to link elements
+				print '</div><div class="fichehalfright">';
 
-					// List of actions on element
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+				// List of actions on element
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
-					//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
-					$somethingshown = $form->showLinkedObjectBlock($object, '');
+				//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
+				$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 
 

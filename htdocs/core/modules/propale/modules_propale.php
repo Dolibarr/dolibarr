@@ -102,6 +102,17 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	 */
 	public $atleastoneratenotnull = 0;
 
+	/**
+	 * @var int<0,1>
+	 */
+	public $showAmountBeforeDiscount = 1;
+
+	/**
+	 * @var int<0,1>
+	 */
+	public $showDiscountAmount = 1;
+
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

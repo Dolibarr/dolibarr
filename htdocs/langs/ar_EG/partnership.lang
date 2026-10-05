@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - partnership
-PartnershipDraft=مسودة
+DatePartnershipStart=تاريخ البدء
+DatePartnershipEnd=تاريخ الانتهاء
 PartnershipAccepted=مقبول
 PartnershipRefused=مرفوض
 PartnershipCanceled=تم الإلغاء

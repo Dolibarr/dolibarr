@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
@@ -86,6 +86,10 @@ class Productlots extends DolibarrApi
 			throw new RestException(404, 'Product lots not found');
 		}
 
+		if ($id > 0 && !DolibarrApi::_checkAccessToResource('produit', $this->productlot->id, 'product_lot')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		return $this->_cleanObjectDatas($this->productlot);
 	}
 
@@ -131,7 +135,7 @@ class Productlots extends DolibarrApi
 		// caller may see, as productlot_list.php does. Without it the API returns the lots of every entity.
 		$sql .= " WHERE pl.entity IN (".getEntity('productlot').")";
 
-		// Filtres universels
+		// Global filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
@@ -140,7 +144,7 @@ class Productlots extends DolibarrApi
 			}
 		}
 
-		// Clone pour total (avant ORDER/LIMIT)
+		// Clone for total (before ORDER/LIMIT)
 		$sqlTotals = preg_replace('/^\s*SELECT\s+pl\.rowid/i', 'SELECT COUNT(pl.rowid) AS total', $sql);
 
 		// ORDER BY
@@ -182,7 +186,7 @@ class Productlots extends DolibarrApi
 				if ($row && isset($row->total)) $total = (int) $row->total;
 			}
 
-			// Evite division par zéro
+			// Avoid division by zero
 			$safeLimit  = ($limit > 0) ? (int) $limit : max(1, count($obj_ret));
 			$pageCount  = (int) ceil($total / $safeLimit);
 
@@ -277,7 +281,7 @@ class Productlots extends DolibarrApi
 			throw new RestException(404, 'productlot not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('productlot', $this->productlot->id, 'product_lot', '', 'fk_soc', 'rowid')) {
+		if (!DolibarrApi::_checkAccessToResource('produit', $this->productlot->id, 'product_lot')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
@@ -292,7 +296,7 @@ class Productlots extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->productlot->array_options[$index] = $this->_checkValForAPI($field, $val, $this->productlot);
+					$this->productlot->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->productlot);
 				}
 				continue;
 			}
@@ -335,7 +339,7 @@ class Productlots extends DolibarrApi
 			throw new RestException(404, 'Product lot not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('productlot', $this->productlot->id, 'product_lot', '', 'fk_soc', 'rowid')) {
+		if (!DolibarrApi::_checkAccessToResource('produit', $this->productlot->id, 'product_lot')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

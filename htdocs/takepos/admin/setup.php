@@ -3,8 +3,9 @@
  * Copyright (C) 2011-2017  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2021       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026       Charlene Benke      <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,12 +73,12 @@ if ($resql) {
 
 $action = GETPOST('action', 'aZ09');
 
+$error = 0;
+
 
 /*
  * Actions
  */
-
-$error = 0;
 
 if ($action == 'set') {
 	$db->begin();
@@ -99,7 +100,7 @@ if ($action == 'set') {
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!($res > 0)) {
+	if ($res <= 0) {
 		$error++;
 	}
 
@@ -111,10 +112,11 @@ if ($action == 'set') {
 } elseif ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
+	$res = 1;
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
-	if (!($res > 0)) {
+	if ($res <= 0) {
 		$error++;
 	}
 } elseif ($action == 'setrefmod') {
@@ -181,8 +183,8 @@ foreach ($dirmodels as $reldir) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 16) == 'mod_takepos_ref_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+				if (dol_substr($file, 0, 16) == 'mod_takepos_ref_' && dol_substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
 
@@ -310,7 +312,7 @@ print "</td></tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("SortProductField");
 print '<td>';
-$array = array('rowid' => 'ID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
+$array = array('rowid' => 'TechnicalID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
 print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD', 'rowid'), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
@@ -380,7 +382,8 @@ if (is_array($formmail->lines_model)) {
 }
 //var_dump($arraydefaultmessage);
 //var_dump($arrayofmessagename);
-print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE'), 'None', 1, 0, '', 0, 0, 0, '', 'maxwidth500 widthcentpercentminusx', 1);
+print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE'), $langs->transnoentitiesnoconv('NoneOrChooseAnEmailTemplateForInvoice'), 1, 0, '', 0, 0, 0, '', 'maxwidth500 widthcentpercentminusx', 1);
+// TODO Add link to go to email templates
 print "</td></tr>\n";
 
 // Control cash box at opening pos
@@ -411,6 +414,20 @@ print '</td><td>';
 print ajax_constantonoff("TAKEPOS_CHANGE_PRICE_HT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
+// disable freezone product
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans('NoFreeZoneProduct'), $langs->trans('NoFreeZoneProductDesc'));
+print '</td><td>';
+print ajax_constantonoff("TAKEPOS_NO_FREE_ZONE_PRODUCT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Validate credit note on creation
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans('TakeposValidateCreditNoteOnCreation'), $langs->trans('TakeposValidateCreditNoteOnCreationDesc'));
+print '</td><td>';
+print ajax_constantonoff("TAKEPOS_VALIDATE_CREDIT_NOTE_ON_CREATION", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Barcode rule to insert product
 if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';
@@ -436,7 +453,7 @@ if (isModEnabled('barcode')) {
 //        {
 //            while (($file = readdir($handle)) !== false)
 //            {
-//                if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
+//                if (!is_dir($dir.$file) || (dol_substr($file, 0, 1) <> '.' && dol_substr($file, 0, 3) <> 'CVS'))
 //                {
 //                    $filebis = $file;
 //                    $classname = preg_replace('/\.php$/', '', $file);
@@ -451,7 +468,7 @@ if (isModEnabled('barcode')) {
 //                    if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
 //
 //                    $classname = preg_replace('/\-.*$/', '', $classname);
-//                    if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
+//                    if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && dol_substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
 //                    {
 //                        // Charging the numbering class
 //                        require_once $dir.$filebis;

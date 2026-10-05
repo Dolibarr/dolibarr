@@ -107,17 +107,18 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		global $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid";
+		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as t";
-		$sql .= ' WHERE 1 = 1';
+		// llx_subscription carries no entity column, the entity of a subscription is the one of its member,
+		// so the restriction goes through llx_adherent, as adherents/subscription/list.php does.
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."adherent as d ON d.rowid = t.fk_adherent";
+		$sql .= ' WHERE d.entity IN ('.getEntity('adherent').')';
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -128,7 +129,7 @@ class Subscriptions extends DolibarrApi
 		}
 
 		//this query will return total orders with the filters given
-		$sqlTotals = str_replace('SELECT rowid', 'SELECT count(rowid) as total', $sql);
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -232,7 +233,7 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -259,7 +260,7 @@ class Subscriptions extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$subscription->array_options[$index] = $this->_checkValForAPI($field, $val, $subscription);
+					$subscription->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $subscription);
 				}
 				continue;
 			}
@@ -269,7 +270,7 @@ class Subscriptions extends DolibarrApi
 		if ($subscription->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating contribution: '.$subscription->error);
+			throw new RestException(500, 'Error when updating contribution: '.$subscription->errorsToString());
 		}
 	}
 

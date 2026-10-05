@@ -7,10 +7,11 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,12 +53,16 @@
  * @var ?Product $product_static
  * @var string $action
  * @var int $i
- * @var int $forceall
+ * @var int<0,1> $forceall
  * @var int $num
  * @var int $senderissupplier
  * @var string $text
  * @var string $description
+ * @var Object $objp
  * @var int	$dateSelector
+ * @var int	$inputalsopricewithtax
+ * @var int	$outputalsopricetotalwithtax
+ * @var int $disableremove
  */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -75,6 +80,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force string $text
 @phan-var-force string $description
 @phan-var-force Object $objp
+@phan-var-force int $i
 ';
 
 // Handle subtotals line view
@@ -82,7 +88,7 @@ if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIA
 	return require DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_view.tpl.php';
 }
 
-global $mysoc;
+global $mysoc, $db;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins = 0;
@@ -105,6 +111,34 @@ if (empty($inputalsopricewithtax)) {
 if (empty($outputalsopricetotalwithtax)) {
 	$outputalsopricetotalwithtax = 0;
 }
+
+$situationinvoicelinewithparent = 0;
+$situationinvoicelinewithchild = 0;
+
+if (getDolGlobalInt('INVOICE_USE_SITUATION') && in_array($object->element, array('facture', 'facturedet'))) {
+	/** @var CommonInvoice $object */
+	// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+
+	// Set if invoice line has a parent
+	if (isset($line->fk_prev_id)) {
+		if ($object->isSituationInvoice()) {	// Method isSituationInvoice() exists only on invoices
+			// Set constant to disallow editing during a situation cycle
+			$situationinvoicelinewithparent = 1;
+		}
+	}
+	// Set if invoice line has a child
+	$sqlcheckchild = "SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_prev_id = ".((int) $line->id);
+	$resqlcheckchild = $db->query($sqlcheckchild);
+	if ($resqlcheckchild) {
+		$objcheckchild = $db->fetch_object($resqlcheckchild);
+		if ($objcheckchild->count > 0) {
+			$situationinvoicelinewithchild = 1;
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
+
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
@@ -332,10 +366,10 @@ $tooltiponpricemultiprice = '';
 $tooltiponpriceend = '';
 $tooltiponpriceendmultiprice = '';
 if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-	$tooltiponprice .= $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht, 0, '', 0, 0);
-	$tooltiponpricemultiprice .= $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->multicurrency_total_ht, 0, '', 0, 0);
-	$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva, 0, '', 0, 0);
-	$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->multicurrency_total_tva, 0, '', 0, 0);
+	$tooltiponprice .= $langs->transcountry("TotalHT", $mysoc->country_code).' = '.price($line->total_ht, 0, '', 0, 0);
+	$tooltiponpricemultiprice .= $langs->transcountry("TotalHT", $mysoc->country_code).' = '.price($line->multicurrency_total_ht, 0, '', 0, 0);
+	$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).' = '.price($line->total_tva, 0, '', 0, 0);
+	$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).' = '.price($line->multicurrency_total_tva, 0, '', 0, 0);
 	if (is_object($object->thirdparty)) {
 		if ($senderissupplier) {
 			$seller = $object->thirdparty;
@@ -347,25 +381,25 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 
 		if ($mysoc->useLocalTax(1, 1, $mysoc)) {
 			if (($seller->country_code == $buyer->country_code) || $line->total_localtax1 || $seller->useLocalTax(1)) {
-				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'='.price($line->total_localtax1, 0, '', 0, 0);
-				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'='.price($line->multicurrency_total_localtax1, 0, '', 0, 0);
+				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).' = '.price($line->total_localtax1, 0, '', 0, 0);
+				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).' = '.price($line->multicurrency_total_localtax1, 0, '', 0, 0);
 			} else {
-				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
-				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
+				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).' = <span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
+				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).' = <span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
 			}
 		}
 		if ($mysoc->useLocalTax(2, 1, $mysoc)) {
 			if ((isset($seller->country_code) && isset($buyer->thirdparty->country_code) && $seller->country_code == $buyer->thirdparty->country_code) || $line->total_localtax2 || $seller->useLocalTax(2)) {
-				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->total_localtax2, 0, '', 0, 0);
-				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->multicurrency_total_localtax2, 0, '', 0, 0);
+				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).' = '.price($line->total_localtax2, 0, '', 0, 0);
+				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).' = '.price($line->multicurrency_total_localtax2, 0, '', 0, 0);
 			} else {
-				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
-				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
+				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).' = <span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
+				$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).' = <span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
 			}
 		}
 	}
-	$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc, 0, '', 0, 0);
-	$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->multicurrency_total_ttc, 0, '', 0, 0);
+	$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).' = '.price($line->total_ttc, 0, '', 0, 0);
+	$tooltiponpricemultiprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).' = '.price($line->multicurrency_total_ttc, 0, '', 0, 0);
 
 	if (!empty($line->special_code) || $line->product_type == 9) {
 		$tooltiponprice .= '<br>';
@@ -406,29 +440,62 @@ if (empty($positiverates)) {
 print $tooltiponprice;
 print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true, $line->info_bits);
 print $tooltiponpriceend;
-?></td>
+print '</td>';
+?>
 
-	<td class="linecoluht nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->subprice); ?></td>
+<td class="linecoluht nowraponall right">
+	<?php
+	$coldisplay++;
+	if (empty($line->fk_remise_except)) {
+		print price($sign * $line->subprice);
+	} else {
+		print '<!-- '.price($sign * $line->subprice).' -->';
+	}
+	?>
+</td>
 
-<?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
-	<td class="linecoluht_currency nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->multicurrency_subprice); ?></td>
+<?php
+// Multicurrency unit price excluding tax - HT
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
+	<td class="linecoluht_currency nowraponall right">
+	<?php $coldisplay++;
+	if (empty($line->fk_remise_except)) {
+		print price($sign * $line->multicurrency_subprice);
+	} else {
+		// Credit line (deposit, credit note, discount): show its value in the invoice currency. Its company-currency unit
+		// price stays hidden like for any credit line, so the rate it was paid at - which may differ from the invoice
+		// rate - is shown in a tooltip, to keep the column as narrow as it is today.
+		print '<span class="opacitymedium">'.price($sign * $line->multicurrency_subprice).'</span>';
+		if (!empty($line->subprice) && !empty($line->multicurrency_subprice)) {
+			// The tooltip carries what the cells cannot show for a credit line: its unit price in the company currency,
+			// hidden by design, and the rate it was paid at.
+			$creditlinetooltip = $langs->trans("PriceUHT").': '.price($sign * $line->subprice, 0, $langs, 1, -1, -1, $conf->currency);
+			$creditlinetooltip .= '<br>'.$langs->trans("Rate").': '.price2num(abs((float) $line->multicurrency_subprice / (float) $line->subprice), 'CR').' '.$this->multicurrency_code.'/'.$conf->currency;
+			print ' '.$form->textwithpicto('', $creditlinetooltip, 1, 'help', '', 1);
+		}
+	}
+	?>
+	</td>
 <?php }
 
-// Multicurrency HT
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
-	if (!$upinctax && $line->total_ttc && $line->qty) {
-		$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
+	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
+		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
+		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / (float) $line->qty, 'MU');
 	}
 	if (!$upinctax) {
 		$upinctax = price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU'); // one tax
 	}
-	print (isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));	// if upinctax can't be known, we show subprice excl ta
-	?></td>
+	if (empty($line->fk_remise_except)) {
+		print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
+	}	// if upinctax can't be known, we show subprice excl ta
+	?>
+	</td>
 <?php }
 
-// Multicurrency TTC
+// Multicurrency unit price including tax - TTC
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
 	$multicurrency_upinctax = isset($line->multicurrency_subprice_ttc) ? $line->multicurrency_subprice_ttc : null;
@@ -438,7 +505,12 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 	if (!$multicurrency_upinctax) {
 		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
 	}
-	print (isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));		// if upinctax can't be known, we show subprice excl ta
+	if (empty($line->fk_remise_except)) {
+		print(isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));		// if upinctax can't be known, we show subprice excl ta
+	} else {
+		// Credit line: its value in the invoice currency, tax included (see the excl. tax cell for the rate it was paid at)
+		print '<span class="opacitymedium">'.(isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice)).'</span>';
+	}
 	?></td>
 <?php } ?>
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
@@ -451,9 +523,43 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	print price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 } else {
 	print '&nbsp;';
+	print '<!-- '.price($line->qty, 0, '', 0, 0).' -->';	// discount may be aggregation of several lines, so showing qty may lead to misunderstanding, but we put it in comment for information
 }
 print '</td>';
+//Shippable Status
+if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+	$coldisplay++;
+	print '<td class="linecolstock center">';
 
+
+	if ($line->fk_product > 0 && $line->product_type == 0) {
+		static $productstatcache = array();
+
+		if (empty($productstatcache[$line->fk_product])) {
+			$prod = new Product($this->db);
+			$prod->fetch($line->fk_product);
+			$prod->load_stock('nobatch,warehouseopen');
+			$productstatcache[$line->fk_product]['stockreel'] = $prod->stock_reel;
+		}
+		$stock = $productstatcache[$line->fk_product]['stockreel'];
+		$reliquat = $line->qty;
+		if (!empty($object->expeditions[$line->id])) {
+			$reliquat -= $object->expeditions[$line->id];
+		}
+		if ($reliquat > 0) {
+			if ($stock >= $reliquat) {
+				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'green');
+			} else {
+				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'error');
+			}
+		} else {
+			print img_picto($langs->trans("Shipped"), 'statut5');
+		}
+	} else {
+		print '&nbsp;';
+	}
+	print '</td>';
+}
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left">';
 	$label = $line->getLabelOfUnit('short', $langs);
@@ -478,19 +584,19 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + (float) $line->situation_percent;
-		print '<td class="linecolcycleref nowrap right">'.$current_progress.'%</td>';
+		print '<td class="linecolcycleref nowraponall right">'.$current_progress.'%</td>';
 		$coldisplay++;
 		print '<td  class="nowrap right">'.$line->situation_percent.'%</td>';
 		$coldisplay++;
 		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
-		print '<td class="linecolcycleref2 right nowrap">'.price($sign * (float) $tmp[0]).'</td>';
+		print '<td class="linecolcycleref2 right nowraponall">'.price($sign * (float) $tmp[0]).'</td>';
 	} else {
-		print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';
+		print '<td class="linecolcycleref nowraponall right">'.$line->situation_percent.'%</td>';
 		$coldisplay++;
 		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
-		print '<td class="linecolcycleref2 right nowrap">'.price($sign * (float) $tmp[0]).'</td>';
+		print '<td class="linecolcycleref2 right nowraponall">'.price($sign * (float) $tmp[0]).'</td>';
 	}
 }
 
@@ -543,16 +649,6 @@ $objectRights = $this->getRights();
 $tmppermtoedit = $objectRights->creer;
 
 if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
-	$situationinvoicelinewithparent = 0;
-	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
-		/** @var CommonInvoice $object */
-		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
-			// Set constant to disallow editing during a situation cycle
-			$situationinvoicelinewithparent = 1;
-		}
-	}
-
 	// Asset info
 	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
@@ -567,20 +663,20 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 			)
 		) {
 			$accountancy_category_asset = getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY');
-			$filters = array();
+			$sanitized_filters = array();
 			if (!empty($product_static->accountancy_code_buy)) {
-				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
+				$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
 			}
 			if (!empty($product_static->accountancy_code_buy_intra)) {
-				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
+				$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
 			}
 			if (!empty($product_static->accountancy_code_buy_export)) {
-				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+				$sanitized_filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
 			}
 			$sql = "SELECT COUNT(*) AS found";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account";
 			$sql .= " WHERE pcg_type = '" . $this->db->escape($conf->global->ASSET_ACCOUNTANCY_CATEGORY) . "'";
-			$sql .= " AND (" . implode(' OR ', $filters). ")";
+			$sql .= " AND (" . implode(' OR ', $sanitized_filters). ")";
 			$resql_asset = $this->db->query($sql);
 			if (!$resql_asset) {
 				print 'Error SQL: ' . $this->db->lasterror();
@@ -607,7 +703,7 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	// Delete picto
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
-	if (!$situationinvoicelinewithparent && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
+	if (!$situationinvoicelinewithchild && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a child line.
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';

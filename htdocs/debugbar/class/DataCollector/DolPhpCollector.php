@@ -187,7 +187,7 @@ class PhpCollector extends DataCollector implements Renderable
 			E_DEPRECATED => 'DEPRECATED',
 			E_USER_DEPRECATED => 'USER_DEPRECATED',
 		];
-		if (defined('E_STRICT')) {
+		if (version_compare(phpversion(), '8.4', '<')) {
 			$errors[E_STRICT] = 'STRICT';
 		}
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ require '../../main.inc.php'; // Load $user and permissions
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var string $dolibarr_main_url_root
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';

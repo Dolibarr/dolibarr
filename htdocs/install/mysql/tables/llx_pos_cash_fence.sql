@@ -46,6 +46,6 @@ CREATE TABLE llx_pos_cash_fence(
 	posnumber VARCHAR(30),
 	fk_user_creat integer,
 	fk_user_valid integer,
-	tms TIMESTAMP,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	import_key VARCHAR(14)
 ) ENGINE=innodb;

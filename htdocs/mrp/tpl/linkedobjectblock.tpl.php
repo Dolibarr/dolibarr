@@ -111,6 +111,13 @@ if ($object->element == 'mo') {
 	$ilink = 0;
 	foreach ($linkedObjectBlock as $key => $objectlink) {
 		$ilink++;
+		$refWithThirdparty = $objectlink->ref_client ? dolPrintHTML($objectlink->ref_client).'<br>' : '';
+
+		$objectlink->fetch_thirdparty();
+
+		$refWithThirdparty = '<span class="small">'.$refWithThirdparty;
+		$refWithThirdparty .= !empty($objectlink->thirdparty) ? $objectlink->thirdparty->getNomUrl(1) : '';
+		$refWithThirdparty .= '</span>';
 
 		$trclass = 'oddeven';
 		if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -125,7 +132,7 @@ if ($object->element == 'mo') {
 		print '</td>';
 
 		print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-		print '<td class="linkedcol-ref tdoverflowmax150" >'.$objectlink->ref_client.'</td>';
+		print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dolPrintHTMLForAttribute($objectlink->ref_client).'">'.$refWithThirdparty.'</td>';
 		print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_start_planned, 'day').'</td>';
 		print '<td class="linkedcol-amount right">-</td>';
 		print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';

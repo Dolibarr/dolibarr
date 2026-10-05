@@ -5,7 +5,6 @@ SupplierInvoices=Satıcı fakturaları
 ShowSupplierInvoice=Satıcı fakturasını göstərin
 NewSupplier=Yeni satıcı
 NewSupplierInvoice = Yeni satıcı fakturası
-History=Tarix
 ListOfSuppliers=Satıcıların siyahısı
 ShowSupplier=Satıcı göstərin
 BuyingPriceMin=Ən yaxşı alış qiyməti

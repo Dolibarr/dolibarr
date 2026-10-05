@@ -2,9 +2,9 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
- * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025-2026  Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ class Holidays extends DolibarrApi
 	 * @param	int			$limit				List limit
 	 * @param	int			$page				Page number
 	 * @param	string		$user_ids   		User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array<string,mixed>				Array of order objects
@@ -133,9 +133,7 @@ class Holidays extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		// TODO Check on permission holiday->read only if all ID are inside the childids of user
-
-		if (!DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'read') && !DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
 			throw new RestException(403);
 		}
 
@@ -145,10 +143,15 @@ class Holidays extends DolibarrApi
 		//$socid = DolibarrApiAccess::$user->socid ?: $societe;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday AS t LEFT JOIN ".MAIN_DB_PREFIX."holiday_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Link to extrafields is to allow to search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON t.fk_user = u.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('holiday').')';
 		if ($user_ids) {
 			$sql .= " AND t.fk_user IN (".$this->db->sanitize($user_ids).")";
+		}
+		if (!DolibarrApiAccess::$user->hasRight('holiday', 'readall')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user IN (".$this->db->sanitize(implode(',', $childids)).")";
 		}
 
 		// Add sql filters
@@ -265,20 +268,20 @@ class Holidays extends DolibarrApi
 
 
 	/**
-	 * Update expense report general fields
+	 * Update holiday general fields
 	 *
-	 * Does not touch lines of the expense report
+	 * Does not touch lines of the holiday
 	 *
 	 * @since	23.0.0	Initial implementation
 	 *
 	 * @param	int		$id					Leave ID to update
-	 * @param	array	$request_data		Expense report data
+	 * @param	array	$request_data		holiday report data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
-	 * @throws  RestException	404		Expense report not found
+	 * @throws  RestException	404		Holiday not found
 	 * @throws	RestException	500		System error
 	 */
 	public function put($id, $request_data = null)
@@ -323,7 +326,7 @@ class Holidays extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->holiday->array_options[$index] = $this->_checkValForAPI($field, $val, $this->holiday);
+					$this->holiday->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->holiday);
 				}
 				continue;
 			}
@@ -334,7 +337,7 @@ class Holidays extends DolibarrApi
 		if ($this->holiday->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->holiday->error);
+			throw new RestException(500, $this->holiday->errorsToString());
 		}
 	}
 
@@ -371,7 +374,7 @@ class Holidays extends DolibarrApi
 		}
 
 		if (!$this->holiday->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting Leave : '.$this->holiday->error);
+			throw new RestException(500, 'Error when deleting Leave : '.$this->holiday->errorsToString());
 		}
 
 		return array(
@@ -429,7 +432,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating leave: '.$this->holiday->error);
+			throw new RestException(500, 'Error when validating leave: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -511,7 +514,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already approved');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving expense report: '.$this->holiday->error);
+			throw new RestException(500, 'Error when approving holiday: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -614,7 +617,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already canceled');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->error);
+			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -672,7 +675,7 @@ class Holidays extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already refused');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when refusing holiday: '.$this->holiday->error);
+			throw new RestException(500, 'Error when refusing holiday: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -716,13 +719,13 @@ class Holidays extends DolibarrApi
 		}
 
 		// Check if the holiday is actually canceled
-		if ($this->holiday->statut != Holiday::STATUS_CANCELED) {
+		if ($this->holiday->status != Holiday::STATUS_CANCELED) {
 			throw new RestException(400, 'Holiday is not canceled. Only canceled holidays can be reopened.');
 		}
 		$this->holiday->status = Holiday::STATUS_VALIDATED;
 		$result = $this->holiday->validate(DolibarrApiAccess::$user, $notrigger);
 		if ($result < 0) {
-			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->error);
+			throw new RestException(500, 'Error when canceling holiday: '.$this->holiday->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->holiday);
@@ -801,13 +804,13 @@ class Holidays extends DolibarrApi
 		if ($data === null) {
 			$data = array();
 		}
-		$expensereport = array();
+		$holiday = array();
 		foreach (self::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-			$expensereport[$field] = $data[$field];
+			$holiday[$field] = $data[$field];
 		}
-		return $expensereport;
+		return $holiday;
 	}
 }

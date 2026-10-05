@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -160,7 +160,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 	$sql .= " AND box_id = ".((int) $key);
 	$resql1 = $db->query($sql);
 
@@ -193,7 +193,8 @@ if ($action == 'updatesocialnetwork') {
 	$paramsKey = GETPOST('paramsKey', 'array');
 	$paramsVal = GETPOST('paramsVal', 'array');
 
-	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf->entity);
+	$result = getDolGlobalString("SOCIAL_NETWORKS_DATA_".$name);
+
 	$socialNetworkData = json_decode($result, true);
 
 	foreach ($paramsKey as $index => $key) {
@@ -244,7 +245,9 @@ if ($action == 'editsocialnetwork' && GETPOST('confirm') == 'yes') {
 	$paramKey = GETPOST('paramkey', 'alpha');
 	$key = GETPOST('key', 'alpha');
 	$name = GETPOST('name');
-	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf->entity);
+
+	$result = getDolGlobalString("SOCIAL_NETWORKS_DATA_".$name);
+
 	$socialNetworkData = json_decode($result, true);
 
 	unset($socialNetworkData[$paramKey]);
@@ -282,7 +285,7 @@ $title = $langs->trans("ConfigImportSocialNetwork");
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', -1, '', 'tools', 0, '', '', -1, 0, 0, 0, '');
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="div-table-responsive-no-min">';
@@ -349,7 +352,7 @@ foreach ($oauthservices as $key => $value) {
 
 /** @phan-var-force array<string, array{label:string, data-html:string, disable?:int, css?:string}> $oauthservices */
 if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) $conf->global->OAUTH_SERVICE_SOCIAL_NETWORK);
+	print $form->selectarray('OAUTH_SERVICE_SOCIAL_NETWORK', $oauthservicesStringKeys, (string) getDolGlobalString("OAUTH_SERVICE_SOCIAL_NETWORK"));
 } else {
 	$selectedKey = (string) getDolGlobalString('OAUTH_SERVICE_SOCIAL_NETWORK');
 	$text = isset($oauthservicesStringKeys[$selectedKey]) ? $oauthservicesStringKeys[$selectedKey]['label'] : '';
@@ -387,17 +390,17 @@ print '<script type="text/javascript">
     $(document).ready(function() {
         function toggleOAuthServiceDisplay() {
             if ($("#radio_oauth").is(":checked")) {
-                $("#oauth_service_div").show();  // Afficher le sélecteur OAuth
+                $("#oauth_service_div").show();  // Show the OAuth selector
             } else {
-                $("#oauth_service_div").hide();  // Cacher le sélecteur OAuth
+                $("#oauth_service_div").hide();  // Hide the OAuth selector
             }
         }
 
         function toggleAddParamRow() {
             if ($("#radio_oauth").is(":checked")) {
-                $("#add_param_row").hide();  // Cacher toute la ligne
+                $("#add_param_row").hide();  // Hide the entire line
             } else {
-                $("#add_param_row").show();  // Afficher toute la ligne
+                $("#add_param_row").show();  // Show the entire line
             }
         }
 
@@ -489,7 +492,7 @@ if ($resql) {
 		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 300, $path_fediverse, $authParams);
 
 		print "<br>";
-		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 		print '<table class="noborder centpercent">'."\n";

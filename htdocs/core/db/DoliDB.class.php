@@ -2,8 +2,8 @@
 /*
  * Copyright (C) 2013-2015 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ abstract class DoliDB implements Database
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      Date TMS to convert
+	 *   @param	    int|''	$param      Date TMS to convert
 	 *	 @param		'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
@@ -384,7 +384,7 @@ abstract class DoliDB implements Database
 	 */
 	public function lasterror()
 	{
-		return $this->lasterror;
+		return (string) $this->lasterror;
 	}
 
 	/**
@@ -392,19 +392,22 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 3600 with server TZ = +1 and $gm='tzserver'
 	 * 	19700101020000 -> 7200 whatever is server TZ if $gm='gmt'
 	 *
-	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
+	 * 	@param	?string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@param	bool|int|string		$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *	@return	int|''							Date TMS or ''
 	 */
 	public function jdate($string, $gm = 'tzserver')
 	{
 		// TODO $string should be converted into a GMT timestamp, so param gm should be set to true by default instead of false
-		if ($string == 0 || $string == "0000-00-00 00:00:00") {
+
+		$string = (string) $string;
+		if ($string == '' || $string == '0' || $string == "0000-00-00 00:00:00") {
 			return '';
 		}
 		$string = preg_replace('/([^0-9])/i', '', $string);
 		$tmp = $string.'000000';
 		$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
+
 		return $date;
 	}
 
@@ -489,14 +492,36 @@ abstract class DoliDB implements Database
 	/**
 	 * Prepare a SQL statement for execution
 	 *
+	 * Use '?' as the placeholder for every bound value, whatever the driver.
 	 * This method must be implemented by subclasses.
 	 *
-	 * @param string $sql SQL query to prepare
-	 * @return mixed Driver-specific prepared statement object or false on failure
+	 * @param string $sql SQL query to prepare (values replaced by '?' placeholders)
+	 * @return mixed Driver-specific prepared statement handle, or false on failure
+	 * @see execute()
 	 */
 	public function prepare($sql)
 	{
 		$this->lasterror = 'prepare() not implemented for this driver. Failed to prepare '.$sql;
+
+		return false;
+	}
+
+	/**
+	 * Execute a statement previously created with prepare().
+	 *
+	 * This method must be implemented by subclasses.
+	 *
+	 * @param mixed            $stmt   Statement handle returned by prepare()
+	 * @param array<int,mixed> $params Ordered list of values for the '?' placeholders
+	 * @return mixed                   For a SELECT: a resultset usable with fetch_object(),
+	 *                                 fetch_array(), num_rows(), free(). For any other
+	 *                                 successful statement: true. On failure: false.
+	 * @see prepare()
+	 */
+	public function execute($stmt, $params = array())
+	{
+		$this->lasterror = 'execute() not implemented for this driver. Failed to execute statement '
+			.(is_scalar($stmt) ? $stmt : gettype($stmt)).' with '.(is_array($params) ? count($params) : 0).' param(s)';
 
 		return false;
 	}

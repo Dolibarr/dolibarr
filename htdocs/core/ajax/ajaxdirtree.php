@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2026  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,19 @@ if (!defined('NOREQUIREAJAX')) {
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $action
+ * @var int $section
+ * @var string $module
+ * @var ?string $mode
+ * @var string $dolibarr_main_data_root
  */
+
+'
+@phan-var-force int $section
+@phan-var-force string $module
+@phan-var-force ?string $mode
+';
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$res = @include '../../main.inc.php';
@@ -84,6 +96,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 
 $websitekey = GETPOST('websitekey', 'alpha');
 $pageid = GETPOSTINT('pageid');
+$original_file = GETPOST("file");
 
 // Load translation files required by the page
 $langs->load("ecm");
@@ -101,11 +114,11 @@ if ($modulepart == 'ecm') {
 
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+// We forbid directory traversal as well as pipes in file names.
 if (preg_match('/\.\./', $fullpathselecteddir) || preg_match('/[<>|]/', $fullpathselecteddir)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	// Do no show plain path in shown error message
-	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
+	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", $original_file));
 	exit;
 }
 
@@ -490,8 +503,12 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						// Edit link
 						print '<!-- edit link -->';
 						print '<td class="right" width="18"><a class="editfielda" href="';
-						print DOL_URL_ROOT.'/ecm/dir_card.php?module='.urlencode($modulepart).'&section='.$val['id'].'&relativedir='.urlencode($val['fullrelativename']);
-						print '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
+						print dolBuildUrl(DOL_URL_ROOT.'/ecm/dir_card.php', array(
+							'module' => $modulepart,
+							'section' => $val['id'],
+							'relativedir' => $val['fullrelativename'],
+							'backtopage' => $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid,
+						));
 						print '">'.img_edit($langs->trans("Edit").' - '.$langs->trans("View"), 0, 'class="valignmiddle opacitymedium"').'</a></td>';
 
 						// Add link

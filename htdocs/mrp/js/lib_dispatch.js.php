@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  */
 // Copyright (C) 2014 Cedric GROSS		<c.gross@kreiz-it.fr>
 // Copyright (C) 2017 Francis Appels	<francis.appels@z-application.com>
@@ -63,11 +64,7 @@ $langs->loadLangs(array("mrp"));
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 ?>
 /**
@@ -171,11 +168,11 @@ function addDispatchLine(index, type, mode)
  */
 function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
 	if (qtyOrdered <= 0) {
-		let errormsg = '<?php echo dol_escape_js($langs->trans('QtyCantBeSplit')); ?>';
+		let errormsg = <?php echo "'".dol_escape_js($langs->trans('QtyCantBeSplit'))."'" ; ?>;
 		$.jnotify(errormsg, 'error', true);
 		return -1;
 	} else if (qtyDispatched >= qtyOrdered) {
-		let errormsg = '<?php echo dol_escape_js($langs->trans('NoRemainQtyToDispatch')); ?>';
+		let errormsg = <?php echo "'".dol_escape_js($langs->trans('NoRemainQtyToDispatch'))."'" ; ?>;
 		$.jnotify(errormsg, 'error', true);
 		return -1;
 	} else if (qtyDispatched < qtyOrdered) {

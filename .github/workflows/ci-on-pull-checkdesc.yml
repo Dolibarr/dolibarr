@@ -37,7 +37,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-          if [ "$PR_TARGET_BRANCH" = "develop" ]; then
+          if [ "$PR_TARGET_BRANCH" = "develop" ] || [ "$PR_TARGET_BRANCH" = "main" ] || [ "$PR_TARGET_BRANCH" = "master" ]; then
             echo "The PR targets the branch develop, so any type of PR is allowed."
             exit 0
           fi

@@ -11,11 +11,12 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2017	Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Ari Elbaz (elarifr)			<github@accedinfo.com>
- * Copyright (C) 2015-2018	Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2015-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -55,7 +57,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/emailsignature.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -86,6 +88,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usercard'; // To manage different context of search
 $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
+$forcepasswordchange = GETPOSTINT('forcepasswordchange');
 
 if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
@@ -100,7 +103,6 @@ $dateofbirth = dol_mktime(0, 0, 0, GETPOSTINT('dateofbirthmonth'), GETPOSTINT('d
 $childids = $user->getAllChildIds(1);	// For test on hrm fields (like salary visibility)
 
 $object = new User($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -261,6 +263,10 @@ if (empty($reshook)) {
 				// If user to delete is an admin user and if logged user is not admin, we deny the operation.
 				$error++;
 				setEventMessages($langs->trans("OnlyAdminUsersCanDeleteAdminUsers"), null, 'errors');
+			} elseif ($object->admin && empty($object->entity) && !empty($user->entity)) {
+				// If user to delete is a superadmin user (admin + entity = 0) and logged user is not a superadmin, we deny the operation.
+				$error++;
+				setEventMessages($langs->trans("OnlySuperAdminUsersCanDeleteSuperAdminUsers"), null, 'errors');
 			} else {
 				$object->oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
 
@@ -371,6 +377,7 @@ if (empty($reshook)) {
 			$object->datestartvalidity = $datestartvalidity;
 			$object->dateendvalidity = $dateendvalidity;
 			$object->birth = $dateofbirth;
+			$object->force_pass_change = $forcepasswordchange;
 
 			$object->fk_warehouse = GETPOSTINT('fk_warehouse');
 
@@ -449,10 +456,10 @@ if (empty($reshook)) {
 			$object->fetch($id);
 
 			if ($action == 'addgroup') {	// Test on permission already done
-				$result = $object->SetInGroup($group, $editgroup->entity);
+				$result = $object->setInGroup($group, $editgroup->entity);
 			}
 			if ($action == 'removegroup') {	// Test on permission already done
-				$result = $object->RemoveFromGroup($group, $editgroup->entity);
+				$result = $object->removeFromGroup($group, $editgroup->entity);
 			}
 
 			if ($result > 0) {
@@ -502,7 +509,7 @@ if (empty($reshook)) {
 				if ($permissiontoeditpasswordandsee) {
 					$object->pass = GETPOST("password", 'password');
 				}
-				if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
+				if ($permissiontoeditpasswordandsee) {
 					$object->api_key = (GETPOSTISSET("api_key") ? GETPOST("api_key", 'alphanohtml') : $object->api_key);
 				}
 				if (!empty($user->admin) && $user->id != $id) {
@@ -571,6 +578,7 @@ if (empty($reshook)) {
 				$object->datestartvalidity = $datestartvalidity;
 				$object->dateendvalidity = $dateendvalidity;
 				$object->birth = $dateofbirth;
+				$object->force_pass_change = $forcepasswordchange;
 
 				if (isModEnabled('stock')) {
 					$object->fk_warehouse = GETPOSTINT('fk_warehouse');
@@ -1127,7 +1135,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (!empty($conf->use_javascript_ajax)) {
 		// Add code to generate the login when creating a new user.
 		// Best rule to generate would be to use the same rule than dol_buildlogin() but currently it is a PHP function not available in js.
-		// TODO Implement a dol_buildlogin in javascript.
+		// TODO Implement a function dol_buildlogin in javascript like the version in PHP.
 		$charforseparator = getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", '.');
 		if ($charforseparator == 'none') {
 			$charforseparator = '';
@@ -1139,7 +1147,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 					lastname = $("#lastname").val().toLowerCase();
 			';
-		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
+		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'flastname') {
+			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
+			$charforseparator = '';
+		} elseif (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
 			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
 		} else {
 			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim();';
@@ -1294,7 +1305,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 		}
 	}
-
 	// Other form for user password
 	$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password, 'caneditpasswordandsee' => $permissiontoeditpasswordandsee, 'caneditpasswordandsend' => $permissiontoeditpasswordandsend);
 	$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1306,6 +1316,23 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	print $valuetoshow;
 	print '</td></tr>';
+
+	// Force update on next login -- only on dolibarr auth context
+	if ($_SESSION["dol_authmode"] == 'dolibarr') {
+		print '<tr><td class="titlefieldcreate"></td>';
+		print '<td>';
+		//$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+		$permissiontoselfeditpassword = 1;	// In creation, we suppose it to true
+		if ($permissiontoselfeditpassword) { // @phpstan-ignore-line because value is forced
+			print '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+			print '<label class="opacitymedium" for="forcepasswordchange">'.$langs->trans("ForcePasswordChange").'</label>';
+		} else {
+			print '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey valignmiddle" disabled>';
+			print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("ForcePasswordChange").'</span>', $langs->trans("UserDoesNotHaveRightsToChangeHisPassword"));
+		}
+		print '</td>';
+		print "</tr>\n";
+	}
 
 	if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
 		if (isModEnabled('api')) {
@@ -1364,36 +1391,36 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Tel
 	print '<tr><td>'.$langs->trans("PhonePro").'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
 	if (!empty($ldap_phone)) {
+		print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
 		print '<input type="hidden" name="office_phone" value="'.dol_escape_htmltag($ldap_phone).'">';
 		print $ldap_phone;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="office_phone" value="'.dol_escape_htmltag(GETPOST('office_phone', 'alphanohtml')).'">';
+		print $form->showPhoneInput($object->office_phone, 'office_phone', $object->country_id, 'object_phoning', 'maxwidth200 widthcentpercentminusx');
 	}
 	print '</td></tr>';
 
 	// Tel portable
 	print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
 	if (!empty($ldap_mobile)) {
+		print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
 		print '<input type="hidden" name="user_mobile" value="'.dol_escape_htmltag($ldap_mobile).'">';
 		print $ldap_mobile;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'" spellcheck="false">';
+		print $form->showPhoneInput($object->user_mobile, 'user_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth200 widthcentpercentminusx');
 	}
 	print '</td></tr>';
 
 	// Fax
 	print '<tr><td>'.$langs->trans("Fax").'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
 	if (!empty($ldap_fax)) {
+		print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
 		print '<input type="hidden" name="office_fax" value="'.dol_escape_htmltag($ldap_fax).'">';
 		print $ldap_fax;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="office_fax" value="'.dol_escape_htmltag(GETPOST('office_fax', 'alphanohtml')).'">';
+		print $form->showPhoneInput($object->office_fax, 'office_fax', $object->country_id, 'object_phoning_fax', 'maxwidth200 widthcentpercentminusx');
 	}
 	print '</td></tr>';
 
@@ -1469,7 +1496,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Multicompany
-	if (isModEnabled('multicompany') && is_object($mc)) {
+	if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 		// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 		if (!method_exists($mc, 'formObjectOptions')) {
 			if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {	// condition must be same for create and edit mode
@@ -1599,8 +1626,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if ($id > 0) {
 		$res = $object->fetch($id, '', '', 1);
 		if ($res < 0) {
-			dol_print_error($db, $object->error);
-			exit;
+			recordNotFound('', 0);
 		}
 		$res = $object->fetch_optionals();
 
@@ -1953,7 +1979,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Multicompany
-			if (isModEnabled('multicompany') && is_object($mc)) {
+			if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (!method_exists($mc, 'formObjectOptions')) {
 					if (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
@@ -2023,6 +2049,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Signature
 			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td class="wordbreak">';
 			print dol_htmlentitiesbr($object->signature);
+			if (!empty($object->signature)) {
+				print dolGetSignatureQualityBadge($object->signature, $langs);
+			}
 			print "</td></tr>\n";
 
 			print "</table>\n";
@@ -2061,6 +2090,28 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td>';
 			print "</tr>\n";
+
+			// Force update on next login only on dolibarr auth mode
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("PasswordToChange"), $langs->trans("ForcePasswordChange")).'</td>';
+				print '<td>';
+				$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+				if ($permissiontoselfeditpassword) {
+					if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+						print '<input type="checkbox" class="colorgrey" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						//print $langs->trans("AtNextLogin");
+						print '<span class="opacitymedium">'.yn($object->force_pass_change).'</span>';
+					} else {
+						print yn($object->force_pass_change);
+						print '<span class="opacitymedium">'.yn($object->force_pass_change).'</span>';
+					}
+				} else {
+					print '<input type="checkbox" name="forcepasswordchange" value="1" disabled class="valignmiddle">';
+					print '<span class="opacitymedium" title="'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'">'.$langs->trans("No").'</span>';
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
 
 			// Password for LDAP or HTTP Basic
 			$valuetoshow = '';
@@ -2146,12 +2197,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Token for API
-			if (isModEnabled('api') && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
+			if (isModEnabled('api') && ($user->id == $id || $user->admin)) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (getDolGlobalString('API_IN_TOKEN_TABLE')) {
 					print '<div class="centpercent display-flex">';
-					print '<span class="badge badge-info">999</span>';
+					print '<span class="badge badge-info marginleftonly marginrightonly">0</span>';
 					/*print '<a href="'.DOL_URL_ROOT.'/user/api_token/list.php?id='.$object->id.'">';
 					print $langs->trans("APIKeys");
 					print '</a>';*/
@@ -2162,12 +2213,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print '</div>';
 				} else {
 					if (!empty($object->api_key)) {
-						print '<span class="opacitymedium">';
+						print '<span class="opacitymedium marginrightonly">';
 						print showValueWithClipboardCPButton($object->api_key, 1, $langs->transnoentities("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
 						print '</span>';
 					}
 					if ($object->api_key && (getDolGlobalString('API_ENABLE_COUNT_CALLS') || !empty($dolibarr_api_count_always_enabled))) {
-						print ' &nbsp; <span class="badge badge-info" title="'.$langs->trans("TotalAPICall").'">';
+						print '<span class="badge badge-info marginleftonly marginrightonly" title="'.$langs->trans("TotalAPICall").'">';
 						print getDolUserInt('API_COUNT_CALL');
 						print '</span>';
 					}
@@ -2180,10 +2231,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
 				print '<td>';
 				if ($object->datepreviouslogin) {
-					print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+					print $form->textwithpicto(dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel"), $langs->trans("Previous"));
 				}
 				if ($object->datelastlogin) {
-					print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+					if ($object->datepreviouslogin) {
+						print ' &nbsp; &nbsp; ';
+					}
+					print $form->textwithpicto(dol_print_date($object->datelastlogin, "dayhour", "tzuserrel"), $langs->trans("Currently"));
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2267,7 +2321,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						$cloneUserUrl = '';
 						$cloneButtonId = 'action-clone';
 					}
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'));
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneUserUrl, $cloneButtonId, $user->hasRight('user', 'user', 'write'), array('attr' => array('class' => 'reposition')));
 				}
 
 				if (getDolGlobalString('USER_PASSWORD_GENERATED') != 'none') {
@@ -2277,7 +2331,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					} elseif (($user->id != $id && $permissiontoeditpasswordandsee) && $object->login && !$object->ldap_sid &&
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=password&token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('ReinitPassword'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'password'], true), '', true, $params);
 					}
 
 					if ($object->status == $object::STATUS_DISABLED) {
@@ -2287,7 +2341,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 						if ($object->email) {
 							unset($params['attr']['title']);
-							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=passwordsend&token='.newToken(), '', true, $params);
+							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'passwordsend'], true), '', true, $params);
 						} else {
 							$params['attr']['title'] = $langs->trans('NoEMail');
 							print dolGetButtonAction($langs->trans('SendNewPassword'), '', 'default', $_SERVER['PHP_SELF'].'#', '', false, $params);
@@ -2298,13 +2352,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($user->id != $id && $permissiontodisable && $object->status == User::STATUS_DISABLED &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=enable&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('Reactivate'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'enable'], true), '', true, $params);
 				}
 				// Disable user
 				if ($user->id != $id && $permissiontodisable && $object->status == User::STATUS_ENABLED &&
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					unset($params['attr']['title']);
-					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable&token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('DisableUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'disable'], true), '', true, $params);
 				} else {
 					if ($user->id == $id) {
 						$params['attr']['title'] = $langs->trans('CantDisableYourself');
@@ -2316,10 +2370,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 				((!isModEnabled('multicompany') && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $object->entity == 1))) {
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
 						unset($params['attr']['title']);
-						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', true, $params);
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')));
 					} else {
 						$params['attr']['title'] = $langs->trans('MustBeAdminToDeleteOtherAdmin');
-						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', false, $params);
+						print dolGetButtonAction($langs->trans('DeleteUser'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'delete', 'id' => $object->id], true), '', false, array('attr' => array('class' => 'reposition')));
 					}
 				}
 			}
@@ -2378,8 +2432,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 						print '<!-- List of groups of the user -->'."\n";
 						print '<table class="noborder centpercent">'."\n";
-						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
-						print '<th class="liste_titre right">';
+						print '<tr class="liste_titre">';
+						//print '<th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
+						print '<th class="liste_titre right" colspan="2">';
 						if ($permissiontoeditgroup) {
 							print $form->select_dolgroups(0, 'group', 1, $exclude, 0, '', array(), (string) $object->entity, false, 'maxwidth150');
 							print ' &nbsp; ';
@@ -2554,8 +2609,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<td>';
 				$nbAdmin = $user->getNbOfUsers('active', '', 1);
 				$nbSuperAdmin = $user->getNbOfUsers('active', 'superadmin', 1);
-				//var_dump($nbAdmin);
-				//var_dump($nbSuperAdmin);
 				if ($user->admin								// Need to be admin to allow downgrade of an admin
 				&& ($user->id != $object->id)                   // Don't downgrade ourself
 				&& (
@@ -2714,12 +2767,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print '</table>';
 
+
 			print '<hr>';
+
 
 			print '<table class="border centpercent">';
 
 			// Date access validity
-			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($permissiontoedit) {
 				print $form->selectDate($datestartvalidity ? $datestartvalidity : $object->datestartvalidity, 'datestartvalidity', 0, 0, 1, 'formdatestartvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("from"));
@@ -2736,6 +2791,22 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
+			// Set checkbxo to update on next login (only on dolibarr auth mode)
+			$sforcepass = '';
+			$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+			if ($permissiontoselfeditpassword) {
+				if ($permissiontoedit) {
+					$sforcepass .= '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					$sforcepass .= '<label class="opacitylow small" for="forcepasswordchange">'.$langs->trans("ForcePasswordChange").'</label>';
+				} else {
+					$sforcepass .= '<input type="checkbox" name="forcepasswordchange" class="colorgrey" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+					$sforcepass .= '<span class="small">'.$langs->trans("ForcePasswordChange").'</small>';
+				}
+			} else {
+				$sforcepass .= '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey" disabled>';
+				$sforcepass .= '<span class="opacitymedium small" title="'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'">'.$langs->trans("ForcePasswordChange").'</span>';
+			}
+
 			// Pass
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Password").'</td>';
 			print '<td>';
@@ -2750,7 +2821,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($permissiontoeditpasswordandsee) {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="minwidth300 maxwidth400 widthcentpercentminusx" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password" spellcheck="false">';
 					if (!empty($conf->use_javascript_ajax)) {
-						$valuetoshow .= img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->transnoentities('NoPasswordGenerationRuleConfigured') : $langs->transnoentities('Generate')), 'refresh', 'id="generate_password" class="paddingleft'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' opacitymedium' : ' linkobject').'"');
+						$valuetoshow .= img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->transnoentities('NoPasswordGenerationRuleConfigured') : $langs->transnoentities('Generate')), 'refresh', 'id="generate_password" class="paddingleft'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' ' : ' linkobject').'"');
 					}
 				} else {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').preg_replace('/./i', '*', $object->pass);
@@ -2766,14 +2837,31 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			print $valuetoshow;
+			/*
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<div class="inline-block marginleftonly paddingtop paddingbottom">'.$sforcepass.'</div>';
+			}*/
 			print "</td></tr>\n";
+
+			// Force update on next login only on dolibarr auth mode
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<tr class="valigntop">';
+				if ($conf->dol_optimize_smallscreen) {
+					print '<td colspan="2">';
+				} else {
+					print '<td></td>';
+					print '<td>';
+				}
+				print $sforcepass;
+				print '</td></tr>';
+			}
 
 			// API key
 			if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
 				if (isModEnabled('api')) {
 					print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 					print '<td>';
-					if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
+					if ($permissiontoeditpasswordandsee) {
 						print '<input class="minwidth300 maxwidth400 widthcentpercentminusx" minlength="12" maxlength="128" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off" spellcheck="false">';
 						if (!empty($conf->use_javascript_ajax)) {
 							print img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_api_key" class="linkobject paddingleft"');
@@ -2796,8 +2884,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>';
 			}
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
+
+			print '<hr>';
+
+
+			print '<table class="border centpercent">';
 
 			// Address
 			print '<tr><td class="tdtop titlefieldcreate">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -2858,10 +2951,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Tel pro
 			print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
 			print '<td>';
-			print img_picto('', 'phoning', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_phone" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_phone.'">';
+				print $form->showPhoneInput($object->office_phone, 'office_phone', $object->country_id, 'phoning', 'maxwidth200 widthcentpercentminusx');
 			} else {
+				print img_picto('', 'phoning', 'class="pictofixedwidth"');
 				print '<input type="hidden" name="office_phone" value="'.$object->office_phone.'">';
 				print $object->office_phone;
 			}
@@ -2870,10 +2963,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Tel mobile
 			print "<tr>".'<td>'.$langs->trans("PhoneMobile").'</td>';
 			print '<td>';
-			print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				   print '<input type="text" name="user_mobile" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->user_mobile.'" spellcheck="false">';
+				print $form->showPhoneInput($object->user_mobile, 'user_mobile', $object->country_id, 'phoning_mobile', 'maxwidth200 widthcentpercentminusx');
 			} else {
+				print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 				print '<input type="hidden" name="user_mobile" value="'.$object->user_mobile.'">';
 				print $object->user_mobile;
 			}
@@ -2882,10 +2975,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Fax
 			print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
 			print '<td>';
-			print img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_fax" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_fax.'">';
+				print $form->showPhoneInput($object->office_fax, 'office_fax', $object->country_id, 'phoning_fax', 'maxwidth200 widthcentpercentminusx');
 			} else {
+				print img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
 				print $object->office_fax;
 			}
@@ -2925,12 +3018,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
+
+			print '<hr>';
+
+
+			print '<table class="border centpercent">';
 			// Default warehouse
 			if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
-				print '<tr><td class="titlefield">'.$langs->trans("DefaultWarehouse").'</td><td>';
-				print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print $formproduct->selectWarehouses($object->warehouse_id, 'fk_warehouse', 'warehouseopen', 1);
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken()).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 			}
@@ -3038,7 +3136,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Multicompany
 			// TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
-			if (isModEnabled('multicompany') && is_object($mc)) {
+			if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (!method_exists($mc, 'formObjectOptions')) {
 					if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && !$user->entity) {
@@ -3074,11 +3172,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print $doleditor->Create(1);
 			} else {
 				print dol_htmlentitiesbr($object->signature);
+				if (!empty($object->signature)) {
+					print dolGetSignatureQualityBadge($object->signature, $langs);
+				}
 			}
 			print '</td></tr>';
 
-
 			print '</table>';
+
 
 			print '<hr>';
 
@@ -3218,14 +3319,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', !is_object($societe) || empty($societe->default_lang) ? '' : $societe->default_lang);
 			$somethingshown = $formfile->numoffiles;
-
-			// Show links to link elements
-			$tmparray = $form->showLinkToObjectBlock($object, array(), array(), 1);
-			$linktoelem = $tmparray['linktoelem'];
-			$htmltoenteralink = $tmparray['htmltoenteralink'];
-			print $htmltoenteralink;
-
-			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			$MAXEVENT = 10;
 

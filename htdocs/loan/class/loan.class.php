@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,10 +228,11 @@ class Loan extends CommonObject
 	/**
 	 *  Create a loan into database
 	 *
-	 *  @param	User	$user	User making creation
+	 *  @param	User		$user		User making creation
+	 *  @param	int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int				Return integer <0 if KO, id if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -310,7 +311,7 @@ class Loan extends CommonObject
 		$sql .= " '".$this->db->escape($this->account_interest)."',";
 		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
-		$sql .= " ".(empty($this->fk_project) ? 'NULL' : $this->fk_project).",";
+		$sql .= " ".(empty($this->fk_project) ? 'NULL' : ((int) $this->fk_project)).",";
 		$sql .= " ".((int) $user->id).",";
 		$sql .= " '".price2num($newinsuranceamount)."'";
 		$sql .= ")";
@@ -319,6 +320,20 @@ class Loan extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."loan");
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('LOAN_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if ($error) {
+				$this->db->rollback();
+				return -1;
+			}
 
 			//dol_syslog("Loans::create this->id=".$this->id);
 			$this->db->commit();
@@ -334,10 +349,11 @@ class Loan extends CommonObject
 	/**
 	 *  Delete a loan
 	 *
-	 *  @param	User	$user	Object user making delete
-	 *  @return int 			Return integer <0 if KO, >0 if OK
+	 *  @param	User		$user		Object user making delete
+	 *  @param	int<0,1>	$notrigger	1=Disable triggers
+	 *  @return int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -382,6 +398,15 @@ class Loan extends CommonObject
 			}
 		}
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('LOAN_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -395,10 +420,11 @@ class Loan extends CommonObject
 	/**
 	 *  Update loan
 	 *
-	 *  @param	User	$user	User who modified
+	 *  @param	User		$user		User who modified
+	 *  @param	int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int				Return integer <0 if error, >0 if ok
 	 */
-	public function update($user)
+	public function update($user, $notrigger = 0)
 	{
 		$this->db->begin();
 
@@ -425,6 +451,16 @@ class Loan extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('LOAN_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+			}
+
 			$this->db->commit();
 			return 1;
 		} else {
@@ -588,7 +624,7 @@ class Loan extends CommonObject
 	 *  @param  int     $notooltip                  1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return	string								Chaine with URL
+	 *  @return	string								Text with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -697,14 +733,12 @@ class Loan extends CommonObject
 	 */
 	public function getSumPayment()
 	{
-		$table = 'payment_loan';
-		$field = 'fk_loan';
-
-		$sql = 'SELECT sum(amount_capital) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql = "SELECT sum(amount_capital) as amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan";
+		$sql .= " WHERE fk_loan = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayment", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$amount = 0;
@@ -793,7 +827,7 @@ class Loan extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->dateend, 'day').'</span>';
 		}
 
-		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->totalpaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

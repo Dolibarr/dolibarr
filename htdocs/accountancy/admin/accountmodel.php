@@ -11,8 +11,8 @@
  * Copyright (C) 2011-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026 MDW <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ if (isModEnabled('accounting')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'errors', 'holiday', 'hrm', 'resource'));
+$langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'holiday', 'hrm', 'resource'));
 
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -122,15 +122,15 @@ $tabsql[31] = "SELECT s.rowid as rowid, pcg_version, s.label, s.fk_country as co
 $tabsqlsort = array();
 $tabsqlsort[31] = "pcg_version ASC";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Fields names from select for dictionary display
 $tabfield = array();
 $tabfield[31] = "pcg_version,label,country_id,country";
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Field names for editing a record
 $tabfieldvalue = array();
 $tabfieldvalue[31] = "pcg_version,label,country";
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Field names in the table for record insertion
 $tabfieldinsert = array();
 $tabfieldinsert[31] = "pcg_version,label,fk_country";
 
@@ -196,7 +196,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
 	}
 
-	// Si verif ok et action add, on ajoute la ligne
+	// In case of 'actionadd' and with valid parameters, add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		$newid = 0;
 
@@ -234,6 +234,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$_POST = array('id' => $id); // Clean $_POST array, we keep only
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load('errors');
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 			} else {
 				dol_print_error($db);
@@ -241,11 +242,11 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// Si verif ok et action modify, on modifie la ligne
+	// In case of 'actionmodify' and with valid parameters, modify the line
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
-		// Modifie valeur des champs
+		// Change field's value
 
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
@@ -268,7 +269,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
-		//print $sql;
 		$resql = $db->query($sql);
 		if (!$resql) {
 			setEventMessages($db->error(), null, 'errors');
@@ -327,13 +327,13 @@ $linkback = '';
 print load_fiche_titre($titre, $linkback, 'title_accountancy');
 
 
-// Confirmation de la suppression de la ligne
+// Confirmation of line deletion
 if ($action == 'delete') {
 	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['page'=> $page, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'rowid' => $rowid, 'code' => $code, 'id' => $id]), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 
-// Complete requete recherche valeurs avec critere de tri
+// Complete the values search query with the sort order
 $sql = $tabsql[$id];
 
 if ($search_country_id > 0) {
@@ -351,7 +351,6 @@ if ($sortfield == 'country') {
 }
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($listlimit + 1, $offset);
-//print $sql;
 
 $fieldlist = explode(',', $tabfield[$id]);
 
@@ -368,8 +367,8 @@ $fieldlist = explode(',', $tabfield[$id]);
 // Line for title
 print '<tr class="liste_titre">';
 foreach ($fieldlist as $field => $value) {
-	// Determine le nom du champ par rapport aux noms possibles
-	// dans les dictionnaires de donnees
+	// Determine the field name based on the possible names
+	// in the data dictionaries
 	$valuetoshow = ucfirst($fieldlist[$field]); // By default
 	$valuetoshow = $langs->trans($valuetoshow); // try to translate
 	$class = "left";
@@ -384,7 +383,7 @@ foreach ($fieldlist as $field => $value) {
 		if (in_array('region_id', $fieldlist)) {
 			print '<td>&nbsp;</td>';
 			continue;
-		}		// For region page, we do not show the country input
+		} // For region page, we do not show the country input
 		$valuetoshow = $langs->trans("Country");
 	}
 	if ($fieldlist[$field] == 'country_id') {
@@ -393,7 +392,6 @@ foreach ($fieldlist as $field => $value) {
 	if ($fieldlist[$field] == 'pcg_version' || $fieldlist[$field] == 'fk_pcg_version') {
 		$valuetoshow = $langs->trans("Pcg_version");
 	}
-	//var_dump($value);
 
 	if ($valuetoshow != '') {
 		print '<td class="'.$class.'">';
@@ -572,7 +570,7 @@ if ($resql) {
 						}
 						// Show value for field
 						if ($showfield) {
-							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
+							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dolPrintHTML($valuetoshow).'</td>';
 						}
 					}
 				}
@@ -654,7 +652,7 @@ function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context 
 				//print join(',',$fieldlist);
 				print '</td>';
 				continue;
-			}	// For state page, we do not show the country input (we link to region, not country)
+			} // For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
 			$fieldname = 'country';
 			print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : '')), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');

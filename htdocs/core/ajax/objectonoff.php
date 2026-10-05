@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,9 @@ if (!defined('NOREQUIREAJAX')) {
 }
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
+}
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1'); // Token is required even in GET mode
 }
 
 // Load Dolibarr environment
@@ -81,7 +84,7 @@ if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	if (!empty($object->socid) && $socid != $object->socid) {
+	if (!empty($object->socid) && $socid != $object->socid) {  // @phan-suppress-current-line PhanUndeclaredProperty
 		httponly_accessforbidden("Access on object not allowed for this external user.");	// This includes the exit.
 	}
 }
@@ -128,7 +131,7 @@ if (($action == 'set') && !empty($id)) {	// Test on permission already done in h
 	if ($result < 0) {
 		print $object->error."\n";
 		foreach ($object->errors as $msg) {
-			print $msg."\n";;
+			print $msg."\n";
 		}
 
 		$db->close();

@@ -3,52 +3,52 @@
 #
 # Global
 #
-Subtotal=Subtotals
-SubTotalModuleDesc=Subtotal and title lines for certain documents
+Subtotal=ຜົນລວມຍ່ອຍ
+SubTotalModuleDesc=ແຖວຜົນລວມຍ່ອຍ ແລະ ແຖວຫົວຂໍ້ ສຳລັບບາງເອກະສານ
 #
 # Admin
 #
-SubtotalSetup=Subtotals module setup
-MaxSubtotalLevel=Maximum level
-SubtotalLineBackColor=Level %s lines background color
-NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
+SubtotalSetup=ການຕັ້ງຄ່າໂມດູນຜົນລວມຍ່ອຍ
+MaxSubtotalLevel=ລະດັບສູງສຸດ
+SubtotalLineBackColor=ສີພື້ນຫຼັງຂອງແຖວລະດັບ %s
+NotSupportedByAllPDF=ຈະໃຊ້ໄດ້ກັບ PDF ເວີຊັນໃໝ່ ແຕ່ບໍ່ຮອງຮັບເວີຊັນເກົ່າ %s
 
 #
 # Card
 #
-AddTitleLine=Add title line
-AddSubtotalLine=Add subtotal line
-TitleNeedDesc=You must enter a valid description to create a title.
-TitleAddedLevelTooHigh=Added title level too high (added with level %s instead).
-TitleEditedLevelTooHigh=Edited title level too high (edited with level %s instead).
-DeleteSubtotalLine=Delete subtotal line
-ConfirmDeleteSubtotalLine=Are you sure you want to delete this subtotal line?
-DeleteTitleLine=Delete title line
-ConfirmDeleteTitleLine=Are you sure you want to delete this title line?
-DeleteCorrespondingSubtotalLine=Delete the corresponding subtotal line ?
-SubtotalLevel=Level %s
-SubtotalLineDesc=Line description
-SubtotalLineLevel=Line level
-ShowUPOnPDF=Show unit price on PDF
-ShowTotalExludingVATOnPDF=Show the total excluding VAT on the PDF
-ForcePageBreak=Force page break before title
-NoTitleError=You have no title line or they already all have a corresponding subtotal line
-CorrespondingTitleLine=Corresponding title line
-SelectVATRate=Select VAT rate
-EnterRemisePercent=Enter discount percent
-ApplyVATForBlock=Apply VAT for this block
-ApplyDiscountForBlock=Apply discount for this block
-TitleUnderSameLevelSTLine=Title of the same level must be under the previous title's subtotal line.
-TitleUnderSameLevelOrGreater=Title must be under a title of the same level or greater.
-TitleAfterStLineOfSameLevelTitle=Title must be after the subtotal line of the previous title.
-PreviousTitleLevelTooHigh=Previous title is two level or more greater than moved line.
-STLineUnderCorrespondingTitleDesc=Subtotal line must be under a title with the same level that has the same description.
-STLineUnderCorrespondingTitle=Subtotal line must be under a title of the same level and the same description.
-STLineUnderTitle=Subtotal line must be under its title
-UnsupportedModuleError=You can't add a subtotals line in unsupported module
-CorrespondingTitleNotFound=The corresponding title was not found
+AddTitleLine=ເພີ່ມແຖວຫົວຂໍ້
+AddSubtotalLine=ເພີ່ມແຖວຜົນລວມຍ່ອຍ
+TitleNeedDesc=ທ່ານຕ້ອງປ້ອນຄຳອະທິບາຍທີ່ຖືກຕ້ອງເພື່ອສ້າງຫົວຂໍ້.
+TitleAddedLevelTooHigh=ລະດັບຫົວຂໍ້ທີ່ເພີ່ມສູງເກີນໄປ (ເພີ່ມດ້ວຍລະດັບ %s ແທນ).
+TitleEditedLevelTooHigh=ລະດັບຫົວຂໍ້ທີ່ແກ້ໄຂສູງເກີນໄປ (ແກ້ໄຂດ້ວຍລະດັບ %s ແທນ).
+DeleteSubtotalLine=ລຶບແຖວຜົນລວມຍ່ອຍ
+ConfirmDeleteSubtotalLine=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບແຖວຜົນລວມຍ່ອຍນີ້?
+DeleteTitleLine=ລຶບແຖວຫົວຂໍ້
+ConfirmDeleteTitleLine=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບແຖວຫົວຂໍ້ນີ້?
+DeleteCorrespondingSubtotalLine=ລຶບແຖວຜົນລວມຍ່ອຍທີ່ກ່ຽວຂ້ອງນຳບໍ່?
+SubtotalLevel=ລະດັບ %s
+SubtotalLineDesc=ຄຳອະທິບາຍແຖວ
+SubtotalLineLevel=ລະດັບຂອງແຖວ
+ShowUPOnPDF=ສະແດງລາຄາຕໍ່ໜ່ວຍໃນ PDF
+ShowTotalExludingVATOnPDF=ສະແດງຍອດລວມບໍ່ລວມອາກອນໃນ PDF
+ForcePageBreak=ບັງຄັບຂຶ້ນໜ້າໃໝ່ກ່ອນຫົວຂໍ້
+NoTitleError=ທ່ານບໍ່ມີແຖວຫົວຂໍ້ ຫຼື ທຸກຫົວຂໍ້ມີແຖວຜົນລວມຍ່ອຍຄົບຖ້ວນແລ້ວ
+CorrespondingTitleLine=ແຖວຫົວຂໍ້ທີ່ກ່ຽວຂ້ອງ
+SelectVATRate=ເລືອກອັດຕາອາກອນມູນຄ່າເພີ່ມ
+EnterRemisePercent=ປ້ອນເປີເຊັນສ່ວນຫຼຸດ
+ApplyVATForBlock=ນຳໃຊ້ອາກອນມູນຄ່າເພີ່ມສຳລັບບລັອກນີ້
+ApplyDiscountForBlock=ນຳໃຊ້ສ່ວນຫຼຸດສຳລັບບລັອກນີ້
+TitleUnderSameLevelSTLine=ຫົວຂໍ້ໃນລະດັບດຽວກັນຕ້ອງຢູ່ຖັດຈາກແຖວຜົນລວມຍ່ອຍຂອງຫົວຂໍ້ກ່ອນໜ້າ.
+TitleUnderSameLevelOrGreater=ຫົວຂໍ້ຕ້ອງຢູ່ຖັດຈາກຫົວຂໍ້ທີ່ມີລະດັບດຽວກັນ ຫຼື ສູງກວ່າ.
+TitleAfterStLineOfSameLevelTitle=ຫົວຂໍ້ຕ້ອງຢູ່ຫຼັງແຖວຜົນລວມຍ່ອຍຂອງຫົວຂໍ້ກ່ອນໜ້າ.
+PreviousTitleLevelTooHigh=ຫົວຂໍ້ກ່ອນໜ້າມີລະດັບສູງກວ່າແຖວທີ່ຍ້າຍຕັ້ງແຕ່ສອງລະດັບຂຶ້ນໄປ.
+STLineUnderCorrespondingTitleDesc=ແຖວຜົນລວມຍ່ອຍຕ້ອງຢູ່ຖັດຈາກຫົວຂໍ້ທີ່ມີລະດັບ ແລະ ຄຳອະທິບາຍດຽວກັນ.
+STLineUnderCorrespondingTitle=ແຖວຜົນລວມຍ່ອຍຕ້ອງຢູ່ຖັດຈາກຫົວຂໍ້ທີ່ມີລະດັບ ແລະ ຄຳອະທິບາຍດຽວກັນ.
+STLineUnderTitle=ແຖວຜົນລວມຍ່ອຍຕ້ອງຢູ່ຖັດຈາກຫົວຂໍ້ຂອງມັນເອງ
+UnsupportedModuleError=ທ່ານບໍ່ສາມາດເພີ່ມແຖວຜົນລວມຍ່ອຍໃນໂມດູນທີ່ບໍ່ຮອງຮັບໄດ້
+CorrespondingTitleNotFound=ບໍ່ພົບຫົວຂໍ້ທີ່ກ່ຽວຂ້ອງ
 
 #
 # PDF
 #
-SubtotalOf=Subtotal of %s:
+SubtotalOf=ຜົນລວມຍ່ອຍຂອງ %s:

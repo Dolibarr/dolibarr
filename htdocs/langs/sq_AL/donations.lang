@@ -57,3 +57,7 @@ donAnonymous=Donacion anonim
 AnonymousDonationTooltip=Shënoni këtë kuti nëse dëshironi që donacioni juaj të mbetet anonim. Të dhënat tuaja personale nuk do të kërkohen.
 publicDonationFieldHelp=%s mund ta publikojë donacionin tim në regjistrin publik
 listOfPublicDonations=Lista e donacioneve publike
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

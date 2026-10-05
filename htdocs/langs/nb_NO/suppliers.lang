@@ -5,7 +5,6 @@ SupplierInvoices=Leverandørfakturaer
 ShowSupplierInvoice=Vis leverandørfaktura
 NewSupplier=Ny leverandør
 NewSupplierInvoice = Ny leverandørfaktura
-History=Historikk
 ListOfSuppliers=Liste over leverandører
 ShowSupplier=Vis leverandør
 BuyingPriceMin=Beste innkjøpspris

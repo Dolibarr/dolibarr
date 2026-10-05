@@ -22,6 +22,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -97,7 +98,7 @@ class Boms extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 * @phan-return BOM[]
@@ -139,9 +140,9 @@ class Boms extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		if ($sqlfilters) {
@@ -261,7 +262,7 @@ class Boms extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->bom->array_options[$index] = $this->_checkValForAPI($field, $val, $this->bom);
+					$this->bom->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->bom);
 				}
 				continue;
 			}
@@ -273,7 +274,7 @@ class Boms extends DolibarrApi
 		if ($this->bom->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->bom->error);
+			throw new RestException(500, $this->bom->errorsToString());
 		}
 	}
 
@@ -306,7 +307,7 @@ class Boms extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating BOM: '.$this->bom->error);
+			throw new RestException(500, 'Error when validating BOM: '.$this->bom->errorsToString());
 		}
 		$result = $this->bom->fetch($id);
 
@@ -340,7 +341,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!$this->bom->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting BOM : '.$this->bom->error);
+			throw new RestException(500, 'Error when deleting BOM : '.$this->bom->errorsToString());
 		}
 
 		return array(
@@ -437,7 +438,7 @@ class Boms extends DolibarrApi
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(500, $this->bom->error);
+			throw new RestException(500, $this->bom->errorsToString());
 		}
 	}
 
@@ -558,7 +559,7 @@ class Boms extends DolibarrApi
 				)
 			);
 		} else {
-			throw new RestException(500, $this->bom->error);
+			throw new RestException(500, $this->bom->errorsToString());
 		}
 	}
 
@@ -586,6 +587,7 @@ class Boms extends DolibarrApi
 		unset($object->civility_id);
 		unset($object->statut);
 		unset($object->state);
+		unset($object->region_id);
 		unset($object->state_id);
 		unset($object->state_code);
 		unset($object->region);
@@ -597,11 +599,26 @@ class Boms extends DolibarrApi
 		unset($object->barcode_type_code);
 		unset($object->barcode_type_label);
 		unset($object->barcode_type_coder);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method);
+		unset($object->civility_code);
+		unset($object->actiontypecode);
+		unset($object->product);
+
 		unset($object->total_ht);
 		unset($object->total_tva);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
+
+		unset($object->user);
+
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->deposit_percent);
+		unset($object->cond_reglement_supplier_id);
+
 		unset($object->fk_account);
 		unset($object->comments);
 		unset($object->note);

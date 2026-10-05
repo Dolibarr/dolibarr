@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2017 ATM Consulting       	<contact@atm-consulting.fr>
- * Copyright (C) 2024 Frédéric France		<frederic.france@free.fr>
+/* Copyright (C) 2017-2026 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2017      ATM Consulting           <contact@atm-consulting.fr>
+ * Copyright (C) 2024      Frédéric France		    <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $id = GETPOSTINT('id');
 $element = GETPOST('element', 'alpha');
@@ -62,31 +64,30 @@ if ($element === 'facture') {
 
 
 /*
+ * Actions
+ */
+
+$facture = new Facture($db);
+if ($facture->fetch($id) > 0) {
+	//print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is currently ".$facture->pos_print_counter;
+
+	// Increase of counter is managed by the file that generate the ticket, so "receipt.php"
+
+	// Call trigger to log the $action 'DOC_PREVIEW' or 'DOC_DOWNLOAD'
+	$facture->call_trigger($action, $user);
+}
+
+
+/*
  * View
  */
 
 top_httphead();
 
-if ($element === 'facture') {	// Test on permission done in top of page
-	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-	$facture = new Facture($db);
-	if ($facture->fetch($id) > 0) {
-		//print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is currently ".$facture->pos_print_counter;
-
-		if ($facture->status > Facture::STATUS_DRAFT) {
-			// Increase counter by 1
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
-			$sql .= " WHERE rowid = ".((int) $facture->id);
-			$db->query($sql);
-
-			$facture->pos_print_counter += 1;
-			// $facture->update($user, 1);	// disabled update, we did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
-		}
-
-		$facture->call_trigger($action, $user);
-	}
-
+if ($facture->errors) {
+	http_response_code(500);
+	print implode("\n", $facture->errors);
+} else {
 	print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is now ".$facture->pos_print_counter;
 }

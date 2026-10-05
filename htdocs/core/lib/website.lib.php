@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
-	$str = str_replace('<?=', '<?php echo', $str);	// replace a bad practive
+	$str = str_replace('<?=', '<?php echo', $str);	// replace a bad practice
 
 	$newstr = '';
 
@@ -1289,17 +1289,17 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$sql .= " AND wp.type_container IN (".$db->sanitize($typestring, 1).")";
 		}
 		$sql .= " AND (";
-		$searchalgo = '';
+		$sqlsearchalgo = '';
 		if (preg_match('/meta/', $algo)) {
 			// TODO Use a better way to scan keywords
-			$searchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
 		if (preg_match('/content/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= ($sqlsearchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
-		$sql .= $searchalgo;
+		$sql .= $sqlsearchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
 		}
@@ -1422,7 +1422,7 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 
 	// Check if nb of image is valid
 	if ($imageNumber > 0 && $imageNumber <= $images->length) {
-		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
+		// Get the corresponding image (index - 1 because $imageNumber is 1-based)
 		$img = $images->item($imageNumber - 1);
 		if ($img instanceof DOMElement) {
 			return $img->getAttribute('src');
@@ -1612,19 +1612,43 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
  */
 function getNewsDetailsById($postId)
 {
-	global $db;
+	global $db, $user, $langs;
 
 	if (empty($postId)) {
 		return -1;
 	}
 
-	$sql = "SELECT p.title, p.description, p.date_creation, p.image
-            FROM ".MAIN_DB_PREFIX."website_page as p
-            WHERE p.rowid = ".(intval($postId));
+	// Security: Filter by entity and published status
+	// Join with website table to get entity, and filter by entity and status
+	$sql = "SELECT p.title, p.description, p.date_creation, p.image, p.fk_user_creat, w.entity as website_entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as p";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."website as w ON p.fk_website = w.rowid";
+	$sql .= " WHERE p.rowid = ".((int) $postId);
+
+	// Add entity filter
+	$sql .= " AND w.entity IN (".getEntity('website').")";
+
+	// Only show published pages (status = 1) unless user has write permission
+	if (!$user->hasRight('website', 'write')) {
+		$sql .= " AND p.status = 1";
+	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		return $db->fetch_array($resql);
+		$row = $db->fetch_array($resql);
+		if ($row) {
+			// Load user fullname for the creator
+			if (!empty($row['fk_user_creat'])) {
+				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+				$user_creat = new User($db);
+				$user_creat->fetch($row['fk_user_creat']);
+				$row['user_fullname'] = $user_creat->getFullName($langs, 0, 1);
+			} else {
+				$row['user_fullname'] = '';
+			}
+			return $row;
+		}
+		return -1;
 	} else {
 		return -1;
 	}

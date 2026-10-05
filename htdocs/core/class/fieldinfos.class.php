@@ -70,7 +70,7 @@ class FieldInfos
 	 *    			'date', 'datetime', 'timestamp', 'duration',
 	 *    			'boolean', 'checkbox', 'radio', 'array',
 	 *    			'email', 'phone', 'url', 'password', 'ip'
-	 *    			Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *    			Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 */
 	public $originType = '';
 
@@ -228,6 +228,11 @@ class FieldInfos
 	 * @var bool	If displayed in documents
 	 */
 	public $printable = false;
+
+	/**
+	 * @var bool	If displayed in getNomUrl
+	 */
+	public $showintooltip = false;
 
 	/**
 	 * @var bool	If field set to null on clone

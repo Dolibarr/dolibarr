@@ -97,10 +97,9 @@ override_dh_install:
 #	rm -fr htdocs/includes/nusoap
 #	rm -fr htdocs/includes/odtphp/zip/pclzip
 	# clean from all JS-CSS embedded libraries (we use package dependencies instead)
-#	rm -fr htdocs/includes/ckeditor
-#	rm -fr htdocs/includes/jquery/js
-#	rm -fr htdocs/includes/jquery/css
-#	rm -fr htdocs/includes/jquery/plugins/flot
+#	rm -fr htdocs/public/includes/ckeditor
+#	rm -fr htdocs/public/includes/jquery/js
+#	rm -fr htdocs/public/includes/jquery/css
 	# clean from all embedded fonts (we use package dependencies instead)
 #	rm -fr htdocs/includes/fonts
 

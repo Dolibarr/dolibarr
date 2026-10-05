@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Rafael San José     <rsanjose@alxarafe.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 		if ($action == 'CATEGORY_MODIFY' && $object instanceof Categorie) {
+			'@phan-var-force Categorie $object';
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 1;
@@ -140,6 +141,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 
 			return $return;
 		} elseif (($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE') && $object instanceof Adherent) {
+			'@phan-var-force Adherent $object';
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 0;

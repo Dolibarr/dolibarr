@@ -265,7 +265,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				}
 			}
 
-			$objectref = dol_sanitizeFileName($object->ref);
+			$objectref = dol_sanitizeFileName((string) $object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}

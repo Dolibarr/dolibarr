@@ -905,7 +905,17 @@ IMG;
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			// By default LibreOffice exports a plain PDF. If MAIN_ODT_AS_PDFA is set to
+			// 1, 2 or 3, ask LibreOffice for a PDF/A archival format through the
+			// SelectPdfVersion export filter (1 = PDF/A-1b, 2 = PDF/A-2b, 3 = PDF/A-3b).
+			// PDF/A is suited for long term archival and is the required base format for
+			// electronic invoicing (for example Factur-X needs a PDF/A-3 file).
+			$converttarget = 'pdf';
+			$pdfaversion = getDolGlobalInt('MAIN_ODT_AS_PDFA');
+			if ($pdfaversion >= 1 && $pdfaversion <= 3) {
+				$converttarget = 'pdf:writer_pdf_Export:{"SelectPdfVersion":{"type":"long","value":"'.$pdfaversion.'"}}';
+			}
+			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to '.escapeshellarg($converttarget).' --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// This feature is now disabled by default. Must set var in conf.php to allow it.
 			global $dolibarr_main_allow_unoconv;
@@ -1023,7 +1033,7 @@ IMG;
 			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
-			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.formatLogObject($output_arr), LOG_DEBUG);
 
 			if ($retval == 126) {
 				throw new OdfException('Permission execute convert script : ' . $command);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021  Open-Dsi       	<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024  Jose   			<jose.martinez@pichinov.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
@@ -38,7 +38,7 @@ class AssetDepreciationOptions extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -67,7 +67,7 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -145,6 +145,22 @@ class AssetDepreciationOptions extends CommonObject
 	 * @var int<0,1>
 	 */
 	public $accelerated_depreciation_option;
+	/**
+	 * @var float	Depreciation rate, computed by getRate() and not stored in database
+	 */
+	public $rate;
+	/**
+	 * @var float
+	 */
+	public $amount_base_depreciation_ht;
+	/**
+	 * @var float
+	 */
+	public $amount_base_deductible_ht;
+	/**
+	 * @var float
+	 */
+	public $total_amount_last_depreciation_ht;
 
 	/**
 	 * Constructor
@@ -197,7 +213,8 @@ class AssetDepreciationOptions extends CommonObject
 				// Unset required option (notnull) if field disabled
 				if (!empty($field_info['enabled_field'])) {
 					$info = explode(':', $field_info['enabled_field']);
-					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
+					// Use isset() + strict string compare, not empty(), because the gating value can legitimately be '0' (e.g. depreciation_type=0 for Linear)
+					if (isset($this->deprecation_options[$info[0]][$info[1]]) && (string) $this->deprecation_options[$info[0]][$info[1]] !== (string) $info[2] && isset($this->fields[$field_key]['notnull'])) {
 						unset($this->fields[$field_key]['notnull']);
 					}
 				}
@@ -219,6 +236,33 @@ class AssetDepreciationOptions extends CommonObject
 	}
 
 	/**
+	 * Return whether an 'enabled_field' condition ("mode_key:field_key:value") is satisfied by the
+	 * data of the submitted form.
+	 *
+	 * @param	string	$enabledfield	Condition, as "mode_key:field_key:value"
+	 * @return	bool					True when the driving field was submitted with the expected value
+	 */
+	protected function isEnabledFieldSatisfiedFromPost($enabledfield)
+	{
+		$info = explode(':', $enabledfield);
+		if (count($info) < 3) {
+			return true;
+		}
+
+		$htmlname = $info[0] . '_' . $info[1];
+		if (!GETPOSTISSET($htmlname)) {
+			return false;	// An unchecked checkbox is not submitted at all
+		}
+
+		$value = GETPOST($htmlname, 'alphanohtml');
+		if ($value === 'on') {
+			$value = '1';	// A checked checkbox may be submitted as 'on'
+		}
+
+		return ((string) $value === (string) $info[2]);
+	}
+
+	/**
 	 *  Fill deprecation_options property of object (using for data sent by forms)
 	 *
 	 * @param	int<0,1>			$class_type	Type (0:asset, 1:asset model)
@@ -232,10 +276,23 @@ class AssetDepreciationOptions extends CommonObject
 
 		$deprecation_options = array();
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
+			// A mode disabled by its enabled_field must not be validated at all. The form submits the
+			// fields of the hidden block anyway, empty, so a required field of that block (the
+			// degressive coefficient) makes the whole page fail. The block is dropped further below,
+			// but only after its fields have been validated, which is too late.
+			if (!empty($mode_info['enabled_field']) && !$this->isEnabledFieldSatisfiedFromPost($mode_info['enabled_field'])) {
+				continue;
+			}
+
 			$this->setInfosForMode($mode_key, $class_type);
 
 			foreach ($mode_info['fields'] as $field_key => $field_info) {
 				if (!empty($field_info['computed'])) {
+					continue;
+				}
+				// Same thing for a single field hidden by its own enabled_field: the degressive
+				// coefficient is required but hidden as soon as the depreciation type is not degressive
+				if (!empty($field_info['enabled_field']) && !$this->isEnabledFieldSatisfiedFromPost($field_info['enabled_field'])) {
 					continue;
 				}
 
@@ -290,6 +347,7 @@ class AssetDepreciationOptions extends CommonObject
 
 				//var_dump($field_key.' '.$value.' '.$field_info['type']);
 				$field_value = $value;
+
 				if ($field_info['notnull'] > 0 && $field_value == '' && !is_null($field_info['default']) && $field_info['default'] == '(PROV)') {
 					$field_value = '(PROV)';
 				} elseif ((!empty($field_info['required']) || $field_info['notnull'] > 0) && $field_value == '' && !empty($field_info['default'])) {
@@ -388,7 +446,8 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if (!empty($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
+				// Use isset() + strict string compare, not empty(), because the gating value can legitimately be '0' (e.g. accelerated_depreciation_option=0)
+				if (isset($deprecation_options[$info[0]][$info[1]]) && (string) $deprecation_options[$info[0]][$info[1]] !== (string) $info[2]) {
 					unset($deprecation_options[$mode_key]);
 				}
 			}
@@ -494,7 +553,7 @@ class AssetDepreciationOptions extends CommonObject
 
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			// Delete old accountancy codes
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $mode_info['table'];
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $mode_info['table'];  // From safe table @phan-suppress-current-line SqlInjection
 			$sql .= " WHERE " . ($asset_id > 0 ? " fk_asset = " . (int) $asset_id : " fk_asset_model = " . (int) $asset_model_id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {

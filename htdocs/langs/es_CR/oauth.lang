@@ -7,12 +7,27 @@ IsTokenGenerated=¿Se generó el token?
 NoAccessToken=Ningún token de acceso guardado en la base de datos local
 HasAccessToken=Se generó un token y se guardó en la base de datos local.
 ToCheckDeleteTokenOnProvider=Haga clic aquí para verificar / eliminar la autorización guardada por el proveedor de OAuth %s
+GetAccess=Obtener nuevo token
+RedirectURL=URL de redireccionamiento
+UseTheFollowingUrlAsRedirectURI=Use la siguiente URL como URL de redirección al crear sus credenciales con su proveedor OAuth.
 SeePreviousTab=Ver pestaña anterior
 OAuthIDSecret=OAuth ID y secreto
 TOKEN_EXPIRED=Token caducado
 TOKEN_EXPIRE_AT=El token expiró en
 OAUTH_GOOGLE_ID=ID de Google OAuth
+OAUTH_GOOGLE_SECRET=Secreto OAuth de Google
 OAUTH_GITHUB_ID=Id OAuth GitHub
+OAUTH_GITHUB_SECRET=Secreto OAuth de GitHub
 OAUTH_URL_FOR_CREDENTIAL=Vaya a <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">esta página<span class="fas fa-external-link-alt paddingleft"></span></a> para crear u obtener su ID y secreto de OAuth
+OAUTH_STRIPE_TEST_NAME=Stripe Prueba
+OAUTH_STRIPE_LIVE_NAME=Stripe En Vivo
+OAUTH_SECRET=Secreto OAuth
+OAUTH_TENANT=Tenant OAuth
+URLOfOAuthServiceEndpoints=URL base para los endpoints del servicio OAuth
+URLOfOAuthServiceEndpointsExample=https://mastodon.ejemplo.com
 TokenExpired=Expirado
 ExpirationDate=Fecha de vencimiento
+RefreshTokenHelp=Use el Token de actualización para obtener un nuevo Token de acceso
+OldTokenWasExpiredItHasBeenRefresh=El token antiguo había expirado, ha sido actualizado
+OldTokenWasNotExpiredButItHasBeenRefresh=El token antiguo no había expirado pero ha sido actualizado de todas formas
+OAuthErrorStateDiffers=El valor de state=%s difiere del valor en la sesión. El código es rechazado.

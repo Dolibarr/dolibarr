@@ -13,7 +13,7 @@
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,12 +108,12 @@ class Paiement extends CommonObject
 	public $multicurrency_currency;
 
 	/**
-	 * @var array<float|string> array: invoice ID => amount for that invoice (in the main currency)
+	 * @var array<int,float|string|null> array: invoice ID => amount for that invoice (in the main currency)
 	 */
 	public $amounts = array();
 
 	/**
-	 * @var float[] array: invoice ID => amount for that invoice (in the invoice's currency)
+	 * @var array<int,float|null> array: invoice ID => amount for that invoice (in the invoice's currency)
 	 */
 	public $multicurrency_amounts = array();
 
@@ -207,8 +207,8 @@ class Paiement extends CommonObject
 	 */
 	public $bank_line;
 
-	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
-	// fk_paiement dans llx_paiement_facture est le rowid du paiement
+	// fk_paiement in llx_paiement is the id of the payment type (7 for CHQ, ...)
+	// fk_paiement in llx_paiement_facture is rowid of payment
 	/**
 	 * @var int payment id
 	 */
@@ -303,7 +303,7 @@ class Paiement extends CommonObject
 	 *
 	 *  @param	User	  $user                	Object user
 	 *  @param  int		  $closepaidinvoices   	1=Also close paid invoices to paid, 0=Do nothing more
-	 *  @param  Societe   $thirdparty           Thirdparty
+	 *  @param  Societe|null   $thirdparty           Thirdparty
 	 *  @return int                 			id of created payment, < 0 if error
 	 */
 	public function create($user, $closepaidinvoices = 0, $thirdparty = null)
@@ -518,6 +518,8 @@ class Paiement extends CommonObject
 								}
 								// } else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
 							} else {
+								// Here $remaintopay is 0.
+
 								// If invoice is a down payment, we also convert down payment to discount
 								if ($invoice->type == Facture::TYPE_DEPOSIT) {
 									$amount_ht = $amount_tva = $amount_ttc = array();
@@ -564,22 +566,22 @@ class Paiement extends CommonObject
 											}
 										}
 
-										foreach ($amount_ht as $key => $xxx) {
-											$parts = explode('|', (string) $key, 2);
+										foreach ($amount_ht as $keyfordiscount => $xxx) {
+											$parts = explode('|', (string) $keyfordiscount, 2);
 											$tva_tx = $parts[0];
 											$vat_src_code = isset($parts[1]) ? $parts[1] : '';
-											$discount->amount_ht = abs($amount_ht[$key]);
-											$discount->total_ht = abs($amount_ht[$key]);
-											$discount->amount_tva = abs($amount_tva[$key]);
-											$discount->total_tva = abs($amount_tva[$key]);
-											$discount->amount_ttc = abs($amount_ttc[$key]);
-											$discount->total_ttc = abs($amount_ttc[$key]);
-											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$key]);
-											$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$key]);
-											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$key]);
-											$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$key]);
-											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$key]);
-											$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$key]);
+											$discount->amount_ht = abs($amount_ht[$keyfordiscount]);
+											$discount->total_ht = abs($amount_ht[$keyfordiscount]);
+											$discount->amount_tva = abs($amount_tva[$keyfordiscount]);
+											$discount->total_tva = abs($amount_tva[$keyfordiscount]);
+											$discount->amount_ttc = abs($amount_ttc[$keyfordiscount]);
+											$discount->total_ttc = abs($amount_ttc[$keyfordiscount]);
+											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$keyfordiscount]);
+											$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$keyfordiscount]);
+											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$keyfordiscount]);
+											$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$keyfordiscount]);
+											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$keyfordiscount]);
+											$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$keyfordiscount]);
 											$discount->tva_tx = abs((float) $tva_tx);
 											$discount->vat_src_code = $vat_src_code;
 
@@ -657,7 +659,7 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::create Now we call the triggers if no error (error = '.$error.')', LOG_DEBUG);
 
 			if (!$error) {    // All payments into $this->amounts were recorded without errors
-				// Appel des triggers
+				// Call triggers
 				$result = $this->call_trigger('PAYMENT_CUSTOMER_CREATE', $user);
 				if ($result < 0) {
 					$error++;
@@ -700,9 +702,9 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		// Verifier si paiement porte pas sur une facture classee
-		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('f.fk_statut > 1');
+		// Check if payment is completely paid, if payments are shared, we refuse deletion.
+		// TODO Check also if partially paid
+		$billsarray = $this->getBillsArray('f.fk_statut:>:1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible";
@@ -873,8 +875,8 @@ class Paiement extends CommonObject
 				(float) $totalamount_main_currency
 			);
 
-			// Mise a jour fk_bank dans llx_paiement
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// Update fk_bank in llx_paiement
+			// This way we know the payment that generated the bank entry
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -973,7 +975,7 @@ class Paiement extends CommonObject
 				}
 
 				if (!$error && !$notrigger) {
-					// Appel des triggers
+					// Call triggers
 					$result = $this->call_trigger('PAYMENT_ADD_TO_BANK', $user);
 					if ($result < 0) {
 						$error++;
@@ -1098,6 +1100,17 @@ class Paiement extends CommonObject
 			$result = $this->db->query($sql);
 			if ($result) {
 				$this->num_payment = $this->db->escape($num_payment);
+
+				// Update Num in bank
+				$type = $this->element;
+				$sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
+				$sql .= " SET num_chq = '".$this->db->escape($num_payment)."'";
+				$sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".((int) $this->id).")";
+				$sql .= " AND rappro = 0";
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$this->error = 'Error -1 '.$this->db->error();
+				}
 				return 0;
 			} else {
 				$this->error = 'Error -1 '.$this->db->error();
@@ -1196,7 +1209,7 @@ class Paiement extends CommonObject
 	/**
 	 *  Return list of invoices the payment is related to.
 	 *
-	 *  @param	string		$filter         Filter
+	 *  @param	string		$filter         Filter. Use USF syntax.
 	 *  @return int|int[]					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
@@ -1206,7 +1219,7 @@ class Paiement extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f'; // We keep link on invoice to allow use of some filters on invoice
 		$sql .= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.((int) $this->id);
 		if ($filter) {
-			$sql .= ' AND '.$filter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 		}
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1390,6 +1403,36 @@ class Paiement extends CommonObject
 
 
 	/**
+	 * Return array with content of the tooltip, so the getNomUrl() tooltip becomes hookable
+	 * (a module can toggle, reorder or add entries through the getTooltipContent hook).
+	 *
+	 * @param  array<string,mixed>  $params  Params to construct tooltip data
+	 * @return array<string,string>          Data to show in tooltip
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs;
+
+		$datas = array();
+		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u>';
+		$datas['ref'] = '<br><strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
+		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+		if ($dateofpayment) {
+			$tmparray = dol_getdate($dateofpayment);
+			if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
+				$datas['date'] = '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'day');
+			} else {	// Hours was set to real date of payment (special case for POS for example)
+				$datas['date'] = '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+			}
+		}
+		if ($this->amount) {
+			$datas['amount'] = '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		}
+
+		return $datas;
+	}
+
+	/**
 	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
@@ -1397,7 +1440,7 @@ class Paiement extends CommonObject
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param	int  	$notooltip		1=Disable tooltip
 	 *  @param	string	$morecss		Add more CSS
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
@@ -1409,21 +1452,8 @@ class Paiement extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
-		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
-		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
-		if ($dateofpayment) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> ';
-			$tmparray = dol_getdate($dateofpayment);
-			if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
-				$label .= dol_print_date($dateofpayment, 'day');
-			} else {	// Hours was set to real date of payment (special case for POS for example)
-				$label .= dol_print_date($dateofpayment, 'dayhour', 'tzuser');
-			}
-		}
-		if ($this->amount) {
-			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
-		}
+		$params = array();
+		$label = $this->getTooltipContent($params);
 		if ($mode == 'withlistofinvoices') {
 			$arraybill = $this->getBillsArray();
 			if (is_array($arraybill) && count($arraybill) > 0) {

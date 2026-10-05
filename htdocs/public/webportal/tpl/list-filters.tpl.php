@@ -42,7 +42,7 @@ $formList = &$this->formList;
 
 	// Fields from hook
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $context);
+	$reshook = $hookmanager->executeHooks('webPortalPrintFieldListOption', $parameters, $context);
 	print $hookmanager->resPrint;
 
 	// Remain to pay
@@ -62,4 +62,12 @@ $formList = &$this->formList;
 		<td data-label="<?php print dolPrintHTMLForAttribute((string) $formList->arrayfields['signature_link']['label']) ?>">
 		</td>
 	<?php } ?>
+
+	<?php
+	// Consultation link
+	if (array_key_exists('consultation_link', $formList->arrayfields) && !empty($formList->arrayfields['consultation_link']['checked'])) { ?>
+		<td data-label="<?php print dolPrintHTMLForAttribute((string) $formList->arrayfields['consultation_link']['label']) ?>">
+		</td>
+	<?php } ?>
+
 </tr>

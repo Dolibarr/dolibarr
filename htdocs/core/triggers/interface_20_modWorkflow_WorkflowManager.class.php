@@ -75,7 +75,17 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// Proposals to order
 		if ($action == 'PROPAL_CLOSE_SIGNED' && $object instanceof Propal) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			// If workflow to create order is on.
 			if (isModEnabled('order') && getDolGlobalString('WORKFLOW_PROPAL_AUTOCREATE_ORDER')) {
+				if (!empty($object->context['closedfromonlinesignature'])) {
+					// If signature was done from the online signature page,
+					// we must force permission to create order so the workflow action will work.
+					// The technical user of that page has no rights loaded, so initialise the object first.
+					if (empty($user->rights->commande)) {
+						$user->rights->commande = new stdClass();
+					}
+					$user->rights->commande->creer = 1;
+				}
 				$object->fetchObjectLinked();
 				if (!empty($object->linkedObjectsIds['commande'])) {
 					if (empty($object->context['closedfromonlinesignature'])) {
@@ -120,7 +130,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->setErrorsFromObject($newobject);
 				} else {
 					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
-						$ret = $newobject->setBankAccount($object->thirdparty->fk_account, 1, $user);
+						$ret = $newobject->setBankAccount((int) $object->thirdparty->fk_account, 1, $user);
 						if ($ret < 0) {
 							$this->setErrorsFromObject($newobject);
 						}
@@ -147,7 +157,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of order = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['propal'] as $element) {
 							/** @var Propal $element */
 							$ret = $element->classifyBilled($user);
@@ -316,8 +326,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)
-						|| ($samemulticurrencycode && !empty($object->multicurrency_total_ht) && $this->shouldClassify($conf, $totalonlinkedelements_multicurrency, $object->multicurrency_total_ht))) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)
+						|| ($samemulticurrencycode && !empty($object->multicurrency_total_ht) && $this->shouldClassify($conf, $totalonlinkedelements_multicurrency, (float) $object->multicurrency_total_ht))) {
 						foreach ($object->linkedObjects['order_supplier'] as $element) {
 							/** @var CommandeFournisseur $element */
 							$ret = $element->classifyBilled($user);
@@ -341,7 +351,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['supplier_proposal'] as $element) {
 							/** @var SupplierProposal $element */
 							$ret = $element->classifyBilled($user);
@@ -420,7 +430,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['commande'] as $element) {
 							/** @var Commande $element */
 							$ret = $element->classifyBilled($user);

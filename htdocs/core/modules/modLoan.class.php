@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,26 +65,32 @@ class modLoan extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("loan");
 
 		// Constants
-		$this->const = array();
-		$this->const[0] = array(
+		$this->const = [
+			[
 				"LOAN_ACCOUNTING_ACCOUNT_CAPITAL",
 				"chaine",
-				"164"
-		);
-		$this->const[1] = array(
+				"164",
+				"",
+				0,
+			],
+			[
 				"LOAN_ACCOUNTING_ACCOUNT_INTEREST",
 				"chaine",
-				"6611"
-		);
-		$this->const[2] = array(
+				"6611",
+				"",
+				0,
+			],
+			[
 				"LOAN_ACCOUNTING_ACCOUNT_INSURANCE",
 				"chaine",
-				"6162"
-		);
+				"6162",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array();

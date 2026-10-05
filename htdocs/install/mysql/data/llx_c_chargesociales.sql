@@ -60,6 +60,22 @@ insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (2, 230, 'Precompte immobilier',      1,1,'TAXBEPREIMMO');
 
 --
+-- Switzerland
+--
+
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 600, 'AVS / AI / APG (Basic social contributions grouped)',              1, 1, 'TAXCHBASE');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 601, 'Old-age insurance (AVS)',                                          1, 1, 'TAXCHAVS');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 602, 'Disability insurance (AI)',                                        1, 1, 'TAXCHAI');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 603, 'Income compensation allowance (APG)',                              1, 1, 'TAXCHAPG');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 604, 'Family allowances (CAF)',                                          1, 1, 'TAXCHAC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 605, 'Unemployment insurance (AC)',                                      1, 1, 'TAXCHACHO');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 606, 'Occupational pension plan (LPP / 2nd pillar)',                     1, 1, 'TAXCHLPP');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 607, 'Occupational accident insurance (LAA - employer share)',           1, 1, 'TAXCHAA');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 608, 'Non-occupational accident insurance (LAA - employer share)',       1, 1, 'TAXCHAA-NP');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 609, 'Health insurance (LAMal - optional employer contribution)',        1, 1, 'TAXCHLAMAL');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (6, 610, 'Withholding tax (employees taxed at source)',                      1, 1, 'TAXCHIS');
+
+--
 -- Austria
 --
 insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (41, 4101, 'Krankenversicherung',				1,1,'TAXATKV');

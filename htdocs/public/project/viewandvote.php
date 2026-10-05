@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('newpayment'));
 global $dolibarr_main_url_root;
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -177,7 +177,10 @@ while ($i < $db->num_rows($result)) {
 
 // Get vote result
 $idvote = GETPOSTINT("vote");
-$hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'vote'.$idvote);
+// A simple hashed value saved into session (in $_SESSION["savevotes"]) to know if current user has already voted for this conference or booth.
+// This var is used for both reading votes already saved and to flag in session a new vote done.
+$hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'vote'.$idvote, 'md5');
+
 
 if ($idvote > 0) {
 	$votestatus = 'err';

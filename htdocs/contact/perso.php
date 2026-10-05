@@ -28,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,9 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other'));
+$langs->loadLangs(array('companies', 'other', 'users'));
 
 $id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
@@ -67,11 +66,15 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 	$object->birthday = dol_mktime(0, 0, 0, GETPOSTINT("birthdaymonth"), GETPOSTINT("birthdayday"), GETPOSTINT("birthdayyear"));
 	$object->birthday_alert = GETPOSTINT("birthday_alert");
 
+	$oldphoto = $object->photo;
+
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';
 	} elseif (!empty($_FILES['photo']['name']) && empty($_FILES['photo']['error'])) {	// A refused upload keeps the current photo
 		$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 	}
+
+	$db->begin();
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
@@ -84,9 +87,10 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 		if ($file_OK) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-			if (GETPOST('deletephoto')) {
-				$fileimg = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/'.$object->photo;
-				$dirthumbs = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos/thumbs';
+
+			if (GETPOST('deletephoto') || ($oldphoto != $object->photo)) {
+				$fileimg = $dir.'/'.$oldphoto;
+				$dirthumbs = $dir.'/thumbs';
 				dol_delete_file($fileimg);
 				dol_delete_dir_recursive($dirthumbs);
 			}
@@ -121,8 +125,10 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 					break;
 			}
 		}
+
+		$db->commit();
 	} else {
-		$error = $object->error;
+		$db->rollback();
 	}
 }
 
@@ -162,11 +168,6 @@ if ($action == 'edit') {
 
 	print '<table class="border centpercent">';
 
-	// Ref
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>';
-	print $object->id;
-	print '</td>';
-
 	// Name
 	print '<tr><td>'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td>'.$object->lastname.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td>'.$object->firstname.'</td>';
@@ -186,10 +187,12 @@ if ($action == 'edit') {
 	}
 
 	// Civility
-	print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
-	print $object->getCivilityLabel();
-	//print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code');
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+		print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
+		print $object->getCivilityLabel();
+		//print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'alpha') : $object->civility_code, 'civility_code');
+		print '</td></tr>';
+	}
 
 	// Photo
 	print '<tr class="hideonsmartphone">';
@@ -296,9 +299,11 @@ if ($action == 'edit') {
 	}*/
 
 	// Civility
-	print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-	print $object->getCivilityLabel();
-	print '</td></tr>';
+	if (getDolGlobalString('MAIN_USE_TITLE_FOR_CONTACT')) {
+		print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+		print $object->getCivilityLabel();
+		print '</td></tr>';
+	}
 
 	// Date To Birth
 	print '<tr>';
@@ -309,6 +314,7 @@ if ($action == 'edit') {
 
 		print ' &nbsp; ';
 		//var_dump($birthdatearray);
+		print '<span class="opacitymedium">';
 		$ageyear = (int) convertSecondToTime($now - $object->birthday, 'year') - 1970;
 		$agemonth = (int) convertSecondToTime($now - $object->birthday, 'month') - 1;
 		if ($ageyear >= 2) {
@@ -318,14 +324,15 @@ if ($action == 'edit') {
 		} else {
 			print '('.$agemonth.' '.$langs->trans("DurationMonth").')';
 		}
+		print '</span>';
 
-
-		print ' &nbsp; - &nbsp; ';
+		print ' &nbsp; <span class="opacitymedium">- &nbsp; ';
 		if ($object->birthday_alert) {
-			print $langs->trans("BirthdayAlertOn");
+			print img_picto('', 'birthday-cake', 'class="pictofixedwidth"').$langs->trans("BirthdayAlertOn");
 		} else {
 			print $langs->trans("BirthdayAlertOff");
 		}
+		print '</span>';
 		print '</td>';
 	} else {
 		print '<td>'.$langs->trans("DateOfBirth").'</td><td colspan="3"></td>';

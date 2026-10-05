@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Lenin Rivas					<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,19 +81,23 @@ $response = "";
 
 $type = $mode;
 
+global $dolibarr_main_instance_unique_id;
+$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
+
 // Security check
 $securekeyseed = '';
 if ($type == 'proposal') {
-	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($type == 'contract') {
-	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($type == 'fichinter') {
-	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } else {
-	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 }
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
+	// Link may have expired because of a change into the keys used to forge the signature.
 	httponly_accessforbidden('Bad value for securitykey. Value provided ' . dol_escape_htmltag($SECUREKEY) . ' does not match expected value for ref=' . dol_escape_htmltag($ref), 403);
 }
 
@@ -122,8 +127,24 @@ if ($action == "importSignature") {
 		if ($mode == "propale" || $mode == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			$object = new Propal($db);
 			$object->fetch(0, $ref);
+
+			if (getDolGlobalInt('PROPOSAL_ONLINESIGN_REFUSE_IF_VALIDITY_DATE_PASSED') && !empty($object->fin_validite)
+				&& dol_get_first_hour($object->fin_validite) < dol_get_first_hour(dol_now())) {
+				// The proposal is no more valid. Tested before anything is written, and on
+				// calendar days: validity runs until the end of the due day.
+				$langs->load("errors");
+				print $langs->transnoentitiesnoconv("ErrorProposalValidityDatePassed", dol_print_date($object->fin_validite, 'day'));	// Must be a print that is shown by a javascript alert().
+				$error++;
+			} elseif ($object->status != $object::STATUS_VALIDATED) {
+				// Protection so we can't sign a proposal that is no more with status validated.
+				// The same test exists on the UPDATE request below, but it runs after the signed PDF has been generated.
+				$langs->load("errors");
+				print $langs->transnoentitiesnoconv("ErrorCantSignDocument");	// Must be a print that is shown by a javascript alert().
+				$error++;
+			}
 
 			$upload_dir = !empty($conf->propal->multidir_output[$object->entity ?? $conf->entity]) ? $conf->propal->multidir_output[$object->entity ?? $conf->entity] : $conf->propal->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
@@ -134,7 +155,7 @@ if ($action == "importSignature") {
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
 			$filename = "signatures/" . $date . "_signature.png";
-			if (!is_dir($upload_dir . "signatures/")) {
+			if (!$error && !is_dir($upload_dir . "signatures/")) {
 				if (!dol_mkdir($upload_dir . "signatures/")) {
 					$response = "Error mkdir. Failed to create dir " . $upload_dir . "signatures/";
 					$error++;
@@ -172,7 +193,12 @@ if ($action == "importSignature") {
 
 						if (empty($reshook)) {
 							// We build the new PDF
-							$pdf = pdf_getInstance();
+							$formatarray = pdf_getFormat();
+							$page_largeur = $formatarray['width'];
+							$page_hauteur = $formatarray['height'];
+							$format = array($page_largeur, $page_hauteur);
+
+							$pdf = pdf_getInstance($format);
 							if (class_exists('TCPDF')) {
 								$pdf->setPrintHeader(false);
 								$pdf->setPrintFooter(false);
@@ -197,8 +223,10 @@ if ($action == "importSignature") {
 								try {
 									$tppl = $pdf->importPage($i);
 									$s = $pdf->getTemplatesize($tppl);
-									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$format = array($s['w'], $s['h']);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L', $format);
 									$pdf->useTemplate($tppl);
+
 									if ($propalsignonspecificpage < 0) {
 										$propalsignonspecificpage = $pagecount - abs($propalsignonspecificpage);
 									}
@@ -293,21 +321,27 @@ if ($action == "importSignature") {
 					$sql .= ", online_sign_name = '" . $db->escape($online_sign_name) . "'";
 				}
 				$sql .= " WHERE rowid = " . ((int) $object->id);
+				$sql .= " AND fk_statut = ".((int) $object::STATUS_VALIDATED);		// Protection so we can't sign a document that is no more with status validated.
 
 				dol_syslog(__FILE__, LOG_DEBUG);
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
+					$response = "error sql";
 				} else {
 					$num = $db->affected_rows($resql);
+					if ($num <= 0) {
+						$error++;
+						$langs->load("errors");
+						//setEventMessages($langs->trans("ErrorCantSignDocument"), null, 'errors');
+						print $langs->transnoentitiesnoconv("ErrorCantSignDocument");	// Must be a print that is shown by ajavascript alert().
+					}
 				}
 
 				if (!$error) {
 					if (method_exists($object, 'call_trigger')) {
-						//customer is not a user !?! so could we use same user as validation ?
-						$user = new User($db);
-						$user->fetch($object->user_validation_id);
 						$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+
 						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED', $user);
 						if ($result < 0) {
 							$error++;
@@ -326,15 +360,12 @@ if ($action == "importSignature") {
 					} else {
 						$response = "success";
 					}
-				} else {
-					$error++;
-					$response = "error sql";
 				}
 
 				if (!$error) {
 					$db->commit();
 					$response = "success";
-					setEventMessages("PropalSigned", null, 'warnings');
+					setEventMessages("PropalSigned", null, 'mesgs');
 				} else {
 					$db->rollback();
 				}
@@ -345,7 +376,7 @@ if ($action == "importSignature") {
 			$object = new Contrat($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contrat->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
+			$upload_dir = !empty($conf->contract->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contract->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
@@ -472,6 +503,197 @@ if ($action == "importSignature") {
 				}
 				$user = new User($db);
 				$object->setSignedStatus($user, Contrat::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'CONTRACT_MODIFY');
+			}
+		} elseif ($mode == 'order') {
+			require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
+			$object = new Commande($db);
+			$object->fetch(0, $ref);
+
+			$upload_dir = !empty($conf->commande->multidir_output[$object->entity ?? $conf->entity]) ? $conf->commande->multidir_output[$object->entity ?? $conf->entity] : $conf->commande->dir_output;
+			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
+
+			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$filename = "signatures/" . $date . "_signature.png";
+			if (!is_dir($upload_dir . "signatures/")) {
+				if (!dol_mkdir($upload_dir . "signatures/")) {
+					$response = "Error mkdir. Failed to create dir " . $upload_dir . "signatures/";
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$return = file_put_contents($upload_dir . $filename, $data);
+				if ($return === false) {
+					$error++;
+					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
+				}
+			}
+
+			if (!$error) {
+				// Defined modele of doc
+				$last_main_doc_file = $object->last_main_doc;
+				$directdownloadlink = $object->getLastMainDocLink('order');    // url to download the $object->last_main_doc
+
+				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+					$ref_pdf = preg_replace('/_signed-(\d+)/', '', $ref_pdf);
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
+
+					if (dol_is_file($sourcefile)) {
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
+						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						}
+
+						if (empty($reshook)) {
+							// We build the new PDF
+							$pdf = pdf_getInstance();
+							if (class_exists('TCPDF')) {
+								$pdf->setPrintHeader(false);
+								$pdf->setPrintFooter(false);
+							}
+							$pdf->SetFont(pdf_getPDFFont($langs));
+
+							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+								$pdf->SetCompression(false);
+							}
+
+							//$pdf->Open();
+							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+
+							$param = array();
+							$param['online_sign_name'] = $online_sign_name;
+							$param['pathtoimage'] = $upload_dir . $filename;
+
+							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
+							for ($i = 1; $i < ($pagecount + 1); $i++) {
+								try {
+									$tppl = $pdf->importPage($i);
+									$s = $pdf->getTemplatesize($tppl);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$pdf->useTemplate($tppl);
+
+									if (getDolGlobalString("ORDER_SIGNATURE_ON_ALL_PAGES")) {
+										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+										// TODO Get position of box from PDF template
+
+										if (getDolGlobalString("ORDER_SIGNATURE_XFORIMGSTART")) {
+											$param['xforimgstart'] = getDolGlobalString("ORDER_SIGNATURE_XFORIMGSTART");
+										} else {
+											$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+										}
+										if (getDolGlobalString("ORDER_SIGNATURE_YFORIMGSTART")) {
+											$param['yforimgstart'] = getDolGlobalString("ORDER_SIGNATURE_YFORIMGSTART");
+										} else {
+											$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+										}
+										if (getDolGlobalString("ORDER_SIGNATURE_WFORIMG")) {
+											$param['wforimg'] = getDolGlobalString("ORDER_SIGNATURE_WFORIMG");
+										} else {
+											$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+										}
+
+										dolPrintSignatureImage($pdf, $langs, $param);
+									}
+								} catch (Exception $e) {
+									dol_syslog("Error when manipulating some PDF by onlineSign: " . $e->getMessage(), LOG_ERR);
+									$response = $e->getMessage();
+									$error++;
+								}
+							}
+
+							if (!getDolGlobalString("ORDER_SIGNATURE_ON_ALL_PAGES")) {
+								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+								// TODO Get position of box from PDF template
+
+								if (getDolGlobalString("ORDER_SIGNATURE_XFORIMGSTART")) {
+									$param['xforimgstart'] = getDolGlobalString("ORDER_SIGNATURE_XFORIMGSTART");
+								} else {
+									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+								}
+								if (getDolGlobalString("ORDER_SIGNATURE_YFORIMGSTART")) {
+									$param['yforimgstart'] = getDolGlobalString("ORDER_SIGNATURE_YFORIMGSTART");
+								} else {
+									$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+								}
+								if (getDolGlobalString("ORDER_SIGNATURE_WFORIMG")) {
+									$param['wforimg'] = getDolGlobalString("ORDER_SIGNATURE_WFORIMG");
+								} else {
+									$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+								}
+
+								dolPrintSignatureImage($pdf, $langs, $param);
+							}
+
+							//$pdf->Close();
+							$pdf->Output($newpdffilename, "F");
+
+							// Index the new file and update the last_main_doc property of object.
+							$object->indexFile($newpdffilename, 1);
+						}
+					}
+					if (!$error) {
+						$response = "success";
+					}
+				} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
+					// Adding signature on .ODT not yet supported
+					// TODO
+				} else {
+					// Document format not supported to insert online signature.
+					// We should just create an image file with the signature.
+				}
+				if (!$error) {
+					$db->begin();
+
+					$online_sign_ip = getUserRemoteIP();
+
+					$sql = "UPDATE " . MAIN_DB_PREFIX . "commande";
+					$sql .= " SET fk_statut = " . ((int) $object::STATUS_VALIDATED) . ", note_private = '" . $db->escape($object->note_private) . "',";
+					$sql .= " date_signature = '" . $db->idate(dol_now()) . "',";
+					$sql .= " online_sign_ip = '" . $db->escape($online_sign_ip) . "'";
+					if ($online_sign_name) {
+						$sql .= ", online_sign_name = '" . $db->escape($online_sign_name) . "'";
+					}
+					$sql .= " WHERE rowid = " . ((int) $object->id);
+
+					dol_syslog(__FILE__, LOG_DEBUG);
+					$resql = $db->query($sql);
+					if (!$resql) {
+						$error++;
+					} else {
+						$num = $db->affected_rows($resql);
+					}
+
+					if (!$error) {
+						$user = new User($db);
+						$user->fetch($object->user_author_id);
+						$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+						$result = $object->call_trigger('ORDER_CLOSE_SIGNED', $user);
+						if ($result < 0) {
+							$error++;
+							$response = "error in trigger " . $object->error;
+						} else {
+							$response = "success";
+						}
+					} else {
+						$error++;
+						$response = "error sql";
+					}
+
+					if (!$error) {
+						$db->commit();
+						$response = "success";
+						setEventMessages("OrderSigned", null, 'warnings');
+					} else {
+						$db->rollback();
+					}
+				}
 			}
 		} elseif ($mode == 'fichinter') {
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
@@ -723,7 +945,7 @@ if ($action == "importSignature") {
 								}
 								foreach ($dirmodels as $reldir) {
 									$file = "pdf_" . $last_modelpdf . ".modules.php";
-									// On vérifie l'emplacement du modele
+									// Check the template location
 									$file = dol_buildpath($reldir . $modelpath . $file, 0);
 									if (file_exists($file)) {
 										$filefound = $file;
@@ -793,7 +1015,7 @@ if ($action == "importSignature") {
 
 				$online_sign_ip = getUserRemoteIP();
 
-				$sql = "UPDATE " . MAIN_DB_PREFIX . $object->table_element;
+				$sql = "UPDATE " . MAIN_DB_PREFIX . $db->sanitize($object->table_element);
 				$sql .= " SET ";
 				$sql .= " date_signature = '" . $db->idate(dol_now()) . "',";
 				$sql .= " online_sign_ip = '" . $db->escape($online_sign_ip) . "'";

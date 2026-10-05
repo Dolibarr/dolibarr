@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,7 +221,7 @@ class Localtax extends CommonObject
 		$sql .= " tms='".$this->db->idate($this->tms)."',";
 		$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";
-		$sql .= " amount=".price2num($this->amount).",";
+		$sql .= " amount='".$this->db->escape($this->amount)."',";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " entity=".((int) $this->entity).",";
@@ -396,7 +396,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Total de la localtax des factures emises par la societe.
+	 *	Total of invoices localtax emitted by the company
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -534,8 +534,8 @@ class Localtax extends CommonObject
 			$this->entity = $conf->entity;
 		}
 
-		// Insertion dans table des paiement localtax
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax (localtaxtype, datep, datev, amount";
+		// Insert into localtax payment table
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax(localtaxtype, datep, datev, amount";
 		if ($this->note) {
 			$sql .= ", note";
 		}
@@ -544,8 +544,8 @@ class Localtax extends CommonObject
 		}
 		$sql .= ", entity, fk_user_creat, fk_bank";
 		$sql .= ") ";
-		$sql .= " VALUES (".$this->ltt.", '".$this->db->idate($this->datep)."',";
-		$sql .= "'".$this->db->idate($this->datev)."',".$this->amount;
+		$sql .= " VALUES(".((int) $this->ltt).", '".$this->db->idate($this->datep)."', ";
+		$sql .= "'".$this->db->idate($this->datev)."', ".((float) $this->amount);
 		if ($this->note) {
 			$sql .= ", '".$this->db->escape($this->note)."'";
 		}
@@ -562,7 +562,7 @@ class Localtax extends CommonObject
 			if ($this->id > 0) {
 				$ok = 1;
 				if (isModEnabled("bank")) {
-					// Insertion dans llx_bank
+					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 					$acc = new Account($this->db);
@@ -635,7 +635,7 @@ class Localtax extends CommonObject
 	 *
 	 *	@param		int		$withpicto		0=Link, 1=Picto into link, 2=Picto
 	 *	@param		string	$option			What the link points to
-	 *	@return		string					Chaine avec URL
+	 *	@return		string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '')
 	{
@@ -658,6 +658,17 @@ class Localtax extends CommonObject
 		if ($withpicto != 2) {
 			$result .= $link.$this->ref.$linkend;
 		}
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
 		return $result;
 	}
 
@@ -669,7 +680,7 @@ class Localtax extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -1,8 +1,8 @@
 #!/usr/bin/env php
 <?php
 /**
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
@@ -23,7 +23,7 @@
 /**
  * \file scripts/members/sync_members_ldap2dolibarr.php
  * \ingroup ldap member
- * \brief Script de mise a jour des adherents dans Dolibarr depuis LDAP
+ * \brief Script to update Dolibarr members from LDAP
  */
 
 if (!defined('NOSESSION')) {
@@ -63,7 +63,7 @@ require_once DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php";
  * @var Translate $langs
  */
 
-$langs->loadLangs(array("main", "errors"));
+$langs->loadLangs(array("main"));
 
 // Global variables
 $version = constant('DOL_VERSION');
@@ -315,6 +315,7 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
+			$langs->load('errors');
 			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
 			} else {

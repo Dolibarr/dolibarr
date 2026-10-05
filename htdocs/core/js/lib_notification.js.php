@@ -3,6 +3,7 @@
  * Copyright (C) 2017	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020-2023 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,11 +61,7 @@ require_once '../../main.inc.php';
 
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 
 print "jQuery(document).ready(function () {\n";
@@ -172,7 +169,7 @@ function check_events() {
 						if (value.type == 'agenda')
 						{
 							url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
-							title = '<?php print dol_escape_js($langs->transnoentities('EventReminder')) ?>';
+							title = <?php print "'".dol_escape_js($langs->transnoentities('EventReminder'))."'"; ?>;
 						}
 
 						if (methodfornotification == "jsnotification") {
@@ -192,7 +189,7 @@ function check_events() {
 							if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
 								body += ' '+value.event_date_start_formated;
 							}
-							body += ' - <a href="'+url+'"><?php echo img_picto("", "url", 'class="pictofixedwidth"').dol_escape_js($langs->trans("ShowDetails")); ?></a>';
+							body += ' - <a href="'+url+'"><?php echo img_picto("", "url", 'class="pictofixedwidth"').dol_escape_js($langs->trans("ShowDetails")); ?></a>';  // Suppress - dol_escape_js is in '' @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
 							body += '<br>'+value.label;
 							if (value.type == 'agenda' && value.location != null && value.location != '') {
 								body += '<br>' + value.location;
@@ -207,7 +204,7 @@ function check_events() {
 							var extra = {
 								icon: icon,
 								body: body,
-								lang: '<?php print dol_escape_js($langs->getDefaultLang(1)); ?>',
+								lang: <?php print "'".dol_escape_js($langs->getDefaultLang(1))."'"; ?>,
 								tag: value.id_agenda,
 								requireInteraction: true	/* wait that the user click or close the notification */
 								/* "actions:" parameter is only supported for persistent notification shown using ServiceWorkerRegistration.showNotification() so disabled */

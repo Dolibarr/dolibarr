@@ -240,14 +240,14 @@ class DatetimegmtField extends CommonField
 				$hasStart = !is_null($value['start']) && $value['start'] !== '';
 				$hasEnd = !is_null($value['start']) && $value['start'] !== '';
 				if ($hasStart && $hasEnd) {
-					$sql = " AND (" . $field . " BETWEEN '" . $this->db->idate($value['start']) . "' AND '" . $this->db->idate($value['end']) . "')";
+					$sql = " AND (" . $this->db->sanitize($field) . " BETWEEN '" . $this->db->idate($value['start']) . "' AND '" . $this->db->idate($value['end']) . "')";
 				} elseif ($hasStart) {
-					$sql = " AND " . $field . " >= '" . $this->db->idate($value['start']) . "'";
+					$sql = " AND " . $this->db->sanitize($field) . " >= '" . $this->db->idate($value['start']) . "'";
 				} elseif ($hasEnd) {
-					$sql = " AND " . $field . " <= '" . $this->db->idate($value['end']) . "'";
+					$sql = " AND " . $this->db->sanitize($field) . " <= '" . $this->db->idate($value['end']) . "'";
 				}
 			} elseif (is_numeric($value)) {
-				$sql = " AND " . $field . " = '" . $this->db->idate($value) . "'";
+				$sql = " AND " . $this->db->sanitize($field) . " = '" . $this->db->idate($value) . "'";
 			}
 
 			return $sql;

@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +152,23 @@ class FormProduct
 				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
-		$sql .= " ORDER BY ".$orderBy;
+		$reorderBy = explode(',', $orderBy);
+		$arraysortfield = array();
+		$arraysortorder = array();
+		foreach ($reorderBy as $element) {
+			$elementKey = explode(' ', $element)[0];
+			if ($elementKey) {
+				$arraysortfield[] = $elementKey;
+				if (isset($element[1])) {
+					$arraysortorder[] = $element[1];
+				} else {
+					$arraysortorder[] = 'ASC';
+				}
+			}
+		}
+		$sortfield = implode(',', $arraysortfield);
+		$sortorder_unsanitized = implode(',', $arraysortorder); // $db->order sanitizes  @phan-suppress-current-line SqlInjection
+		$sql .= $this->db->order($sortfield, $sortorder_unsanitized);
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -196,8 +212,6 @@ class FormProduct
 	 */
 	public function loadWorkstations($fk_product = 0, $exclude = array(), $orderBy = 'w.ref')
 	{
-		global $conf, $langs;
-
 		if (empty($fk_product) && count($this->cache_workstations)) {
 			return 0; // Cache already loaded and we do not want a list with information specific to a product
 		}
@@ -214,7 +228,7 @@ class FormProduct
 			$sql .= ' AND w.rowid NOT IN('.$this->db->sanitize(implode(',', $exclude)).')';
 		}
 
-		$sql .= " ORDER BY ".$orderBy;
+		$sql .= $this->db->order($orderBy);
 
 		dol_syslog(get_class($this).'::loadWorkstations', LOG_DEBUG);
 		$resql = $this->db->query($sql);

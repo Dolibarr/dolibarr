@@ -5,8 +5,9 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +107,8 @@ class modFacture extends DolibarrModules
 				0 => array('file' => 'box_factures_imp.php', 'enabledbydefaulton' => 'Home'),
 				1 => array('file' => 'box_factures.php', 'enabledbydefaulton' => 'Home'),
 				2 => array('file' => 'box_graph_invoices_permonth.php', 'enabledbydefaulton' => 'Home'),
-				3 => array('file' => 'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton' => 'Home')
+				3 => array('file' => 'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton' => 'Home'),
+				4 => array('file' => 'box_invoices_dispute.php', 'enabledbydefaulton' => 'Home')
 		);
 
 		// Cronjobs
@@ -274,17 +276,10 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture' AND entity IN (0, ".$conf->entity.")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.'.$obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture';
+			$keyforelement = 'bill';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facture');
 			$this->import_regex_array[$r] = array('f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
 			$import_sample = array(
@@ -402,17 +397,10 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_det' AND entity IN (0, ".$conf->entity.")";
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$fieldname = 'extra.'.$obj->name;
-					$fieldlabel = ucfirst($obj->label);
-					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-					$import_extrafield_sample[$fieldname] = $fieldlabel;
-				}
-			}
-			// End add extra fields
+			$keyforselect = 'facture_det';
+			$keyforelement = 'bill';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facturedet');
 			$this->import_regex_array[$r] = array(
 				'fd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
@@ -466,7 +454,7 @@ class modFacture extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array(
 				'fd.rowid' => 'Row Id',
 				'fd.fk_facture' => 'Invoice Id',
-				'fd.fk_product'=> 'ProductRef'
+				'fd.fk_product' => 'ProductRef'
 			);
 			$this->import_convertvalue_array[$r] = array(
 				'fd.fk_facture' => array(
@@ -477,16 +465,117 @@ class modFacture extends DolibarrModules
 					'element' => 'facture'
 				),
 				'fd.fk_product' => array(
-					'rule'=>'fetchidfromref',
-					'classfile'=>'/product/class/product.class.php',
-					'class'=>'Product',
-					'method'=>'fetch',
-					'element'=>'Product'
+					'rule' => 'fetchidfromref',
+					'classfile' => '/product/class/product.class.php',
+					'class' => 'Product',
+					'method' => 'fetch',
+					'element' => 'Product'
 				),
 				'fd.fk_projet' => array(
 					'rule' => 'fetchidfromref',
 					'file' => '/projet/class/project.class.php',
 					'class' => 'Project',
+					'method' => 'fetch',
+					'element' => 'facture'
+				),
+			);
+
+			// Import Payments
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_'.$r;
+			$this->import_label[$r] = "Payments"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('p' => MAIN_DB_PREFIX.'paiement', 'extra' => MAIN_DB_PREFIX.'paiement_extrafields');
+			$this->import_tables_creator_array[$r] = array('p' => 'fk_user_creat'); // Fields to store import user id
+			$this->import_fields_array[$r] = array(
+				'p.ref' => 'PaymentRef*',
+				'p.ref_ext' => 'ExternalRef',
+				'p.datec' => 'DateCreation',
+				'p.datep' => 'DatePayment*',
+				'p.amount' => 'PaymentAmount*',
+				'p.fk_paiement' => 'PaymentMode*',
+				'p.num_paiement' => 'PaymentNumber',
+				'p.note' => 'Note',
+				'p.statut' => 'Status'
+			);
+			if (isModEnabled("multicurrency")) {
+				$this->import_fields_array[$r]['p.multicurrency_amount'] = 'MulticurrencyAmountTTC';
+			}
+			// Add extra fields
+			$import_extrafield_sample = array();
+			$keyforselect = 'paiement';
+			$keyforelement = 'payment';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
+			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'paiement');
+			$this->import_regex_array[$r] = array('p.fk_paiement' => 'id@'.MAIN_DB_PREFIX.'c_paiement');
+			$import_sample = array(
+				'p.ref' => '(PROV0001)',
+				'p.ref_ext' => '',
+				'p.datec' => '2021-11-24',
+				'p.datep' => '2021-11-24',
+				'p.amount' => '121',
+				'p.fk_paiement' => '1/2/3...matches field "id" in table "'.MAIN_DB_PREFIX.'c_paiement"',
+				'p.num_paiement' => '',
+				'p.note' => '',
+				'p.statut' => '1'
+			);
+			if (isModEnabled("multicurrency")) {
+				$import_sample['p.multicurrency_amount'] = '121';
+			}
+			$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+			$this->import_updatekeys_array[$r] = array('p.ref' => 'Ref');
+
+			// Import Payments - linked invoices
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_'.$r;
+			$this->import_label[$r] = "PaymentsLinkedInvoices"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('pf' => MAIN_DB_PREFIX.'paiement_facture');
+			$this->import_fields_array[$r] = array(
+				'pf.fk_paiement' => 'PaymentRef*',
+				'pf.fk_facture' => 'InvoiceRef*',
+				'pf.amount' => 'PaymentAmount*'
+			);
+			if (isModEnabled("multicurrency")) {
+				$this->import_fields_array[$r]['pf.multicurrency_code'] = 'Currency';
+				$this->import_fields_array[$r]['pf.multicurrency_tx'] = 'CurrencyRate';
+				$this->import_fields_array[$r]['pf.multicurrency_amount'] = 'MulticurrencyAmountTTC';
+			}
+			$this->import_regex_array[$r] = array();
+			if (isModEnabled("multicurrency")) {
+				$this->import_regex_array[$r]['pf.multicurrency_code'] = 'code@'.MAIN_DB_PREFIX.'multicurrency';
+			}
+			$import_sample = array(
+				'pf.fk_paiement' => '(PROV0001)',
+				'pf.fk_facture' => '(PROV0001)',
+				'pf.amount' => '121'
+			);
+			if (isModEnabled("multicurrency")) {
+				$import_sample['pf.multicurrency_code'] = 'EUR';
+				$import_sample['pf.multicurrency_tx'] = '1';
+				$import_sample['pf.multicurrency_amount'] = '121';
+			}
+			$this->import_examplevalues_array[$r] = $import_sample;
+			$this->import_updatekeys_array[$r] = array(
+				'pf.rowid' => 'Row Id',
+				'pf.fk_paiement' => 'PaymentRef',
+				'pf.fk_facture' => 'InvoiceRef'
+			);
+			$this->import_convertvalue_array[$r] = array(
+				'pf.fk_paiement' => array(
+					'rule' => 'fetchidfromref',
+					'file' => '/compta/paiement/class/paiement.class.php',
+					'class' => 'Paiement',
+					'method' => 'fetch',
+					'element' => 'payment'
+				),
+				'pf.fk_facture' => array(
+					'rule' => 'fetchidfromref',
+					'file' => '/compta/facture/class/facture.class.php',
+					'class' => 'Facture',
 					'method' => 'fetch',
 					'element' => 'facture'
 				),
@@ -666,7 +755,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$r++;
 
@@ -758,7 +847,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$r++;
 	}

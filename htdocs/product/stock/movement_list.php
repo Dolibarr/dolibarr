@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -45,16 +53,8 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks', 'orders'));
+$langs->loadLangs(array('products', 'stocks', 'orders', 'bills', 'sendings', 'receptions', 'mrp'));
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
@@ -96,6 +96,7 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement');
+$search_origintype = GETPOST('search_origintype', 'aZ09');
 $search_fk_project = GETPOST("search_fk_project");
 
 $type = GETPOSTINT("type");
@@ -157,6 +158,9 @@ $arrayfields = array(
 );
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	unset($arrayfields['pl.sellby']);
@@ -250,6 +254,7 @@ if (empty($reshook)) {
 		$search_ref = '';
 		$search_movement = "";
 		$search_type_mouvement = "";
+		$search_origintype = "";
 		$search_inventorycode = "";
 		$search_product_ref = "";
 		$search_product = "";
@@ -795,6 +800,13 @@ if ($search_qty != '') {
 if ($search_type_mouvement != '' && $search_type_mouvement != '-1') {
 	$sql .= natural_search('m.type_mouvement', $search_type_mouvement, 2);
 }
+if ($search_origintype != '' && $search_origintype != '-1') {
+	if ($search_origintype == 'none') {
+		$sql .= " AND (m.origintype IS NULL OR m.origintype = '')";
+	} else {
+		$sql .= " AND m.origintype = '".$db->escape($search_origintype)."'";
+	}
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -1091,6 +1103,9 @@ if ($search_inventorycode) {
 if ($search_type_mouvement) {
 	$param .= '&search_type_mouvement='.urlencode($search_type_mouvement);
 }
+if ($search_origintype) {
+	$param .= '&search_origintype='.urlencode($search_origintype);
+}
 if ($search_product_ref) {
 	$param .= '&search_product_ref='.urlencode($search_product_ref);
 }
@@ -1137,7 +1152,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -1202,7 +1217,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1213,7 +1228,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1286,9 +1301,30 @@ if (!empty($arrayfields['m.label']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['origin']['checked'])) {
-	// Origin of movement
+	// Origin of movement. The origin is a polymorphic couple (origintype, fk_origin) resolved in PHP,
+	// so it cannot be joined in SQL: we filter on the origin type, using the types get_origin() handles.
+	// Note: 'project' is not offered because _create() moves it to fk_projet and clears origintype,
+	// so no movement can ever carry origintype='project'.
 	print '<td class="liste_titre left">';
-	print '&nbsp; ';
+	$arrayoforigintypes = array(
+		'commande' => $langs->trans('Order'),
+		'shipping' => $langs->trans('Shipment'),
+		'facture' => $langs->trans('Invoice'),
+		'order_supplier' => $langs->trans('SupplierOrder'),
+		'invoice_supplier' => $langs->trans('SupplierInvoice'),
+		'reception' => $langs->trans('Reception'),
+		'inventory' => $langs->trans('Inventory'),
+		'mo' => $langs->trans('ManufacturingOrder'),
+		'user' => $langs->trans('User'),
+		'none' => $langs->trans('None'),
+	);
+	print '<select id="search_origintype" name="search_origintype" class="maxwidth150">';
+	print '<option value=""'.(($search_origintype == '') ? ' selected="selected"' : '').'>&nbsp;</option>';
+	foreach ($arrayoforigintypes as $keyorigintype => $valorigintype) {
+		print '<option value="'.$keyorigintype.'"'.(($search_origintype == $keyorigintype) ? ' selected="selected"' : '').'>'.dol_escape_htmltag($valorigintype).'</option>';
+	}
+	print '</select>';
+	print ajax_combobox('search_origintype');
 	print '</td>';
 }
 if (!empty($arrayfields['m.fk_projet']['checked'])) {
@@ -1344,7 +1380,7 @@ if (!empty($arrayfields['m.tms']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1359,7 +1395,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1427,7 +1463,7 @@ if (!empty($arrayfields['m.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['m.tms']['label'], $_SERVER["PHP_SELF"], "m.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1534,7 +1570,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$warehouse->id.'" class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1560,8 +1596,9 @@ while ($i < $imaxinloop) {
 		}
 		// Product ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="nowraponall tdoverflowmax150 cell2linesheight">';
 			print $productstatic->getNomUrl(1, 'stock', 16);
+			print '<br><span class="opacitymedium">'.$productstatic->label.'</span>';
 			print "</td>\n";
 		}
 		// Product label
@@ -1602,20 +1639,20 @@ while ($i < $imaxinloop) {
 		}
 		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTML($obj->inventorycode).'">';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->inventorycode).'">';
 			if ($obj->inventorycode) {
 				print img_picto('', 'movement', 'class="pictofixedwidth"');
-				print '<a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dol_escape_htmltag($obj->inventorycode).'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?search_inventorycode='.urlencode('^'.$obj->inventorycode.'$').'">'.dolPrintHTML($obj->inventorycode).'</a>';
 			}
 			print '</td>';
 		}
 		// Label of movement
 		if (!empty($arrayfields['m.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttributeUrl($obj->label).'">'.dolPrintHTML($obj->label).'</td>';
 		}
 		// Origin of movement
 		if (!empty($arrayfields['origin']['checked'])) {
-			print '<td class="nowraponall">'.$origin.'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML($origin).'</td>';
 		}
 		// Project
 		if (!empty($arrayfields['m.fk_projet']['checked'])) {
@@ -1637,11 +1674,11 @@ while ($i < $imaxinloop) {
 			if ($obj->qty > 0) {
 				print '<span class="stockmovemententry">';
 				print '+';
-				print $obj->qty;
+				print dolPrintHTML($obj->qty);
 				print '</span>';
 			} else {
 				print '<span class="stockmovementexit">';
-				print $obj->qty;
+				print dolPrintHTML($obj->qty);
 				print '</span>';
 			}
 			print '</td>';
@@ -1668,7 +1705,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1716,12 +1753,13 @@ if (count($arrayofuniqueproduct) == 1 && !empty($search_date_startyear) && is_nu
 	print "<br>";
 
 	$productidselected = 0;
+	$productlabelselected = '';
 	foreach ($arrayofuniqueproduct as $key => $val) {
 		$productidselected = $key;
 		$productlabelselected = $val;
 	}
-	$datebefore = dol_get_first_day($search_date_startyear ? $search_date_startyear : dol_print_date(time(), "%Y"), $search_date_startmonth ? $search_date_startmonth : 1, true);
-	$dateafter = dol_get_last_day($search_date_endyear ? $search_date_endyear : dol_print_date(time(), "%Y"), $search_date_endmonth ? $search_date_endmonth : 12, true);
+	$datebefore = dol_get_first_day($search_date_startyear ? $search_date_startyear : dol_print_date(dol_now(), "%Y"), $search_date_startmonth ? $search_date_startmonth : 1, true);
+	$dateafter = dol_get_last_day($search_date_endyear ? $search_date_endyear : dol_print_date(dol_now(), "%Y"), $search_date_endmonth ? $search_date_endmonth : 12, true);
 	$balancebefore = $object->calculateBalanceForProductBefore($productidselected, $datebefore);
 	$balanceafter = $object->calculateBalanceForProductBefore($productidselected, $dateafter);
 

@@ -24,9 +24,6 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -34,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'products', 'productbatch'));
@@ -57,8 +56,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->productbatch->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissiontoread = $user->hasRight('produit', 'lire');
-$permissionnote = $user->hasRight('produit', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiontoread = $user->hasRight('product', 'read');
+$permissionnote = $user->hasRight('product', 'write'); // Used by the include of actions_setnotes.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

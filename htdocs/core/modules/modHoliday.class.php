@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,8 +86,6 @@ class modHoliday extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("holiday");
 
 		// Constants
@@ -148,6 +147,21 @@ class modHoliday extends DolibarrModules
 				'priority' => 50,
 				'status' => 1,
 				'test' => '$conf->holiday->enabled',
+				'datestart' => $datestart
+			),
+			1 => array(
+				'label' => 'SendPreviousMonthHRInformations:holiday',
+				'jobtype' => 'method',
+				'class' => 'holiday/class/holiday.class.php',
+				'objectname' => 'Holiday',
+				'method' => 'sendPreviousMonthHRInformations',
+				'parameters' => 'emailaddress, HolidayHrInformationsPreviousMonth',
+				'comment' => 'Send HR information to the defined email address in first parameter. Second parameter must be the email template code (can be id or label of emailtemplate to send)',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24 * 31,
+				'priority' => 50,
+				'status' => 0,
+				'test' => 'isModEnabled("holiday")',
 				'datestart' => $datestart
 			)
 		);
@@ -305,6 +319,16 @@ class modHoliday extends DolibarrModules
 			'd.ref' => 'Ref*', 'd.fk_user' => 'UserID*', 'd.fk_type' => 'TypeOfLeaveId*','d.fk_validator' => 'ApprovedBy*',
 			'd.date_debut' => 'DateStart*', 'd.date_fin' => 'DateEnd*', 'd.halfday' => 'HalfDay', 'd.description' => 'Description*',
 			'd.date_create' => 'DateCreation*'
+		);
+
+		// Import of leave balance
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ListeLB"; // Translation key
+		$this->import_icon[$r] = 'holiday';
+		$this->import_tables_array[$r] = array('d' => MAIN_DB_PREFIX.'holiday_users');
+		$this->import_fields_array[$r] = array(
+			'd.fk_user' => "Employee*", 'd.nb_holiday' => "LeaveBalance*", 'd.fk_type' => "LeaveType*"
 		);
 
 		$keyforselect = 'holiday';

@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +64,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  */
 
 // Load translation files required by the page
@@ -193,6 +195,10 @@ if (in_array($action, array("view_ticket", "presend", "close", "confirm_public_c
 
 	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message')) {	// Test on permission already done
 		$ret = $object->dao->newMessage($user, $action, 0, 1);
+		if ($ret < 0) {
+			$error++;
+			setEventMessages($object->dao->error, $object->dao->errors, 'errors');
+		}
 
 		if (!$error) {
 			$action = 'view_ticket';
@@ -217,6 +223,7 @@ if (in_array($action, array("view_ticket", "presend", "close", "confirm_public_c
 		}
 	}
 }
+
 
 // Actions to send emails (for ticket, we need to manage the addfile and removefile only)
 $triggersendname = 'TICKET_SENTBYMAIL';
@@ -253,7 +260,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
 	if ($display_ticket) {
-		print '<!-- public view ticket -->';
+		print '<!-- public view ticket if if -->';
 		print '<div class="ticketpublicarea ticketlargemargin">';
 
 		// Confirmation close
@@ -338,14 +345,14 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		// User assigned
-		print '<tr><td>'.$langs->trans("AssignedTo").'</td><td>';
 		if ($object->dao->fk_user_assign > 0) {
+			print '<tr><td>'.$langs->trans("AssignedTo").'aaaa</td><td>';
 			$fuser = new User($db);
 			$fuser->fetch($object->dao->fk_user_assign);
 			print img_picto('', 'user', 'class="pictofixedwidth"');
 			print $fuser->getFullName($langs, 0);
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 
 		// External contributors
 		if (getDolGlobalInt('TICKET_PUBLIC_DISPLAY_EXTERNAL_CONTRIBUTORS')) {
@@ -406,8 +413,9 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
+			$formticket->withtitletopic = 1;
 
-			$formticket->showMessageForm('100%');
+			$formticket->showMessageForm('100%', 1);
 		}
 
 		if ($action != 'presend') {
@@ -426,12 +434,12 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			// List ticket
 			print '<div class="inline-block divButAction"><a class="left" style="padding-right: 50px" href="javascript:$(\'#form_view_ticket_list\').submit();">'.$langs->trans('ViewMyTicketList').'</a></div>';
 
-			if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
+			if ($object->dao->status < Ticket::STATUS_CLOSED) {
 				// New message
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('TicketAddMessage').'</a></div>';
 
 				// Close ticket
-				if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
+				if ($object->dao->status >= Ticket::STATUS_NOT_READ && $object->dao->status < Ticket::STATUS_CLOSED) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '&entity='.$entity : '').'&token='.newToken().'">'.$langs->trans('CloseTicket').'</a></div>';
 				}
 			}
@@ -443,14 +451,16 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Message list
 		print '<div class="ticketpublicarea ticketlargemargin">';
+		print '<h3>';
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
+		print '</h3>';
 		print '</div>';
 
 		$object->viewTicketMessages(false, true, $object->dao);
 
 		print '<br>';
 	} else {
-		print '<!-- public view ticket -->';
+		print '<!-- public view ticket if else -->';
 		print '<div class="ticketpublicarea ticketlargemargin">';
 
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" rel="nofollow noopener">'.$langs->trans("GoBack").'</a></div>';
@@ -458,7 +468,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</div>';
 	}
 } else {
-	print '<!-- public view ticket -->';
+	print '<!-- public view ticket else -->';
 	print '<div class="ticketpublicarea ticketlargemargin">';
 
 	print '<div class="center opacitymedium margintoponly marginbottomonly ticketlargemargin">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';

@@ -3,8 +3,8 @@
  * Copyright (C) 2016       	Christophe Battarel 	<christophe@altairis.fr>
  * Copyright (C) 2022-2023  	Udo Tamm            	<dev@dolibit.de>
  * Copyright (C) 2023       	Alexandre Spangaro  	<aspangaro@easya.solutions>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -231,6 +231,17 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
+	$notification_email_template = GETPOST('TICKET_NOTIFICATION_EMAIL_TEMPLATE', 'alpha');
+	$notification_email_template_description = 'Template email for ticket create notification';
+	if (!empty($notification_email_template)) {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', $notification_email_template, 'chaine', 0, $notification_email_template_description, $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', '', 'chaine', 0, $notification_email_template_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
 	$mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'restricthtml');
 	$mail_intro_description = "Introduction text of ticket replies sent from Dolibarr";
 	if (!empty($mail_intro)) {
@@ -293,105 +304,10 @@ print dol_get_fiche_end();
  * Tickets numbering model
  */
 
-print load_fiche_titre($langs->trans("TicketNumberingModules"), '', '');
+$ticket = new Ticket($db);
+$ticket->initAsSpecimen();
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/ticket");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
-					$file = $reg[1];
-					$classname = substr($file, 4);
-
-					include_once $dir.'/'.$file.'.php';
-
-					$module = new $file();
-					'@phan-var-force ModeleNumRefTicket $module';
-					/** @var ModeleNumRefTicket $module */
-
-					// Show modules according to features level
-					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-						continue;
-					}
-
-					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-						continue;
-					}
-
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info($langs);
-						print '</td>';
-
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors");
-							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') {
-							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-						} else {
-							print $tmp;
-						}
-
-						print '</td>'."\n";
-
-						print '<td class="center">';
-						if (getDolGlobalString('TICKET_ADDON') == 'mod_'.$classname) {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-						}
-						print '</td>';
-
-						$ticket = new Ticket($db);
-						$ticket->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $ticket);
-						if ("$nextval" != $langs->trans("NotAvailable")) { // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								$htmltooltip .= $nextval.'<br>';
-							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
-							}
-						}
-
-						print '<td class="center">';
-						print $formcategory->textwithpicto('', $htmltooltip, 1, '0');
-						print '</td>';
-
-						print '</tr>';
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-
-print '</table>';
-print '</div>';
-print '<br>';
+printNumberingModuleList('ticket', 'mod_ticket_', 'TICKET_ADDON', $langs->trans("TicketNumberingModules"), $ticket);
 
 
 
@@ -399,153 +315,14 @@ print '<br>';
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("TicketsModelModule"), '', '');
-
-// Load array def with activated templates
-$def = array();
-$sql = "SELECT nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".((int) $conf->entity);
-$resql = $db->query($sql);
-if ($resql) {
-	$i = 0;
-	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		if (is_array($array)) {
-			array_push($def, $array[0]);
-		}
-		$i++;
-	}
-} else {
-	dol_print_error($db);
-}
+printDocumentModelList($type, 'ticket', 'TICKET_ADDON_PDF', $langs->trans("TicketsModelModule"), array(
+	'Logo' => 'option_logo',
+	'MultiLanguage' => 'option_multilang',
+));
+print '<br>';
 
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder cenpercent">'."\n";
-print '<tr class="liste_titre">'."\n";
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
-print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td class="center" width="50">'.$langs->trans("Preview").'</td>';
-print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
-
-clearstatcache();
-
-foreach ($dirmodels as $reldir) {
-	foreach (array('', '/doc') as $valdir) {
-		$realpath = $reldir."core/modules/ticket".$valdir;
-		$dir = dol_buildpath($realpath);
-
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				$filelist = array();
-				while (($file = readdir($handle)) !== false) {
-					$filelist[] = $file;
-				}
-				closedir($handle);
-				arsort($filelist);
-
-				foreach ($filelist as $file) {
-					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
-
-							require_once $dir.'/'.$file;
-							$module = new $classname($db);
-							'@phan-var-force ModelePDFTicket $module';
-
-							$modulequalified = 1;
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								$modulequalified = 0;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								$modulequalified = 0;
-							}
-
-							if ($modulequalified) {
-								print '<tr class="oddeven"><td width="100">';
-								print(empty($module->name) ? $name : $module->name);
-								print "</td><td>\n";
-								if (method_exists($module, 'info')) {
-									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
-								} else {
-									print $module->description;
-								}
-								print '</td>';
-
-								// Active / Status
-								if (in_array($name, $def)) {
-									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
-									print img_picto($langs->trans("Enabled"), 'switch_on');
-									print '</a>';
-									print '</td>';
-								} else {
-									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-									print "</td>";
-								}
-
-								// Default Template
-								print '<td class="center">';
-								if (getDolGlobalString("TICKET_ADDON_PDF") == $name) {
-									print img_picto($langs->trans("Default"), 'on');
-								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-								}
-								print '</td>';
-
-								// Preview
-								print '<td class="center">';
-								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
-								} else {
-									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
-								}
-								print '</td>';
-
-								// Info
-								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf') {
-									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-								}
-								$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
-
-								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-								//$htmltooltip .= '<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
-								//$htmltooltip .= '<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-								//$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
-
-
-								print '<td class="center">';
-								print $formcategory->textwithpicto('', $htmltooltip, 1, '0');
-								print '</td>';
-
-								print "</tr>\n";
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-print '</table>';
-print '</div><br>';
-
-
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data"  spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvarworkflow">';
 print '<input type="hidden" name="page_y" value="">';
@@ -578,6 +355,22 @@ print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
+
+// Auto mark ticket as read when assign someone
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoReadTicketWhenAssign").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_AUTO_READ_WHEN_ASSIGN');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_AUTO_READ_WHEN_ASSIGN", $arrval, getDolGlobalString('TICKET_AUTO_READ_WHEN_ASSIGN'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketWhenAssignHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
 
 // Auto assign ticket to user who created it
 print '<tr class="oddeven">';
@@ -639,7 +432,7 @@ print load_fiche_titre($langs->trans("Notifications"), '', '');
 
 print '<table class="noborder centpercent">';
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data"  spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvar">';
 print '<input type="hidden" name="page_y" value="">';
@@ -696,6 +489,32 @@ print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_TO" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+$formmail = new FormMail($db);
+
+$formmail->fetchAllEMailTemplate('ticket_send', $user, null, -1); // We set lang=null to get in priority record with no lang
+$arrayofmessagename = array();
+if (is_array($formmail->lines_model)) {
+	foreach ($formmail->lines_model as $modelmail) {
+		//var_dump($modelmail);
+		$moreonlabel = '';
+		if (!empty($arrayofmessagename[$modelmail->label])) {
+			$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+		}
+		// The 'label' is the key that is unique if we exclude the language
+		$arrayofmessagename[$modelmail->label.':ticket_send'] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	}
+}
+
+// Email template for notification of TICKET_CREATE
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TEMPLATE" class="block">'.$langs->trans('TicketEmailNotificationTemplate').'</label></td>';
+print '<td class="left">';
+print $form->selectarray('TICKET_NOTIFICATION_EMAIL_TEMPLATE', $arrayofmessagename, getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TEMPLATE'), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans('TicketEmailNotificationTemplateHelp'), 1, 'help');
 print '</td>';
 print '</tr>';
 

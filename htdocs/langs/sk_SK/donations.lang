@@ -57,3 +57,7 @@ donAnonymous=Anonymný dar
 AnonymousDonationTooltip=Zaškrtnite toto políčko, ak chcete, aby váš dar zostal anonymný. Vaše osobné údaje sa nebudú vyžadovať.
 publicDonationFieldHelp=%s môže zverejniť môj dar vo verejnom registri
 listOfPublicDonations=Zoznam verejných darov
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

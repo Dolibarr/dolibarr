@@ -6,9 +6,9 @@
  * Copyright (C) 2012		Christophe Battarel	    <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023	Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 /**
  * 	\file       htdocs/fourn/class/fournisseur.product.class.php
- * 	\ingroup    produit
+ * 	\ingroup    product
  * 	\brief      File of class to manage predefined suppliers products
  */
 
@@ -57,7 +57,7 @@ class ProductFournisseur extends Product
 	public $error = '';
 
 	/**
-	 * @var int			ID of ligne product-supplier
+	 * @var int			ID of line product-supplier
 	 */
 	public $product_fourn_price_id;
 
@@ -572,7 +572,7 @@ class ProductFournisseur extends Product
 			$sql .= " barcode = ".(empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
 			$sql .= " fk_barcode_type = ".(empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape((string) $fk_barcode_type)."'");
 			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
-				$sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
+				$sql .= ", packaging = ".(empty($packaging) ? 1 : ((float) $packaging));
 			}
 			$sql .= " WHERE rowid = ".((int) $this->product_fourn_price_id);
 
@@ -659,7 +659,7 @@ class ProductFournisseur extends Product
 				$sql .= " ".((int) $availability).",";
 				$sql .= " ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
 				$sql .= " ".((int) $newnpr).",";
-				$sql .= $conf->entity.",";
+				$sql .= ((int) $conf->entity).",";
 				$sql .= ($delivery_time_days != '' ? ((int) $delivery_time_days) : 'null').",";
 				$sql .= (empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
 				$sql .= (empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
@@ -843,7 +843,7 @@ class ProductFournisseur extends Product
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
 	{
 		// phpcs:enable
-		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, p.fk_unit as product_fk_unit, ";
+		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, p.tobatch as status_batch, p.fk_unit as product_fk_unit,";
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
@@ -874,6 +874,7 @@ class ProductFournisseur extends Product
 				$prodfourn->product_fourn_price_id = $record["product_fourn_pri_id"];
 				$prodfourn->status = $record["status"];
 				$prodfourn->status_buy = $record["status_buy"];
+				$prodfourn->status_batch = $record["status_batch"];
 				$prodfourn->product_fourn_id = $record["product_fourn_id"];
 				$prodfourn->product_fourn_entity = $record["entity"];
 				$prodfourn->ref_supplier = $record["ref_fourn"];
@@ -1184,6 +1185,39 @@ class ProductFournisseur extends Product
 	 */
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
+		// llx_product_fournisseur_price has a UNIQUE INDEX uk_product_fournisseur_price_ref
+		// on (ref_fourn, fk_soc, quantity, entity). A blind UPDATE fk_soc = dest on every
+		// origin row fails on rows where dest already has the same (ref_fourn, quantity, entity),
+		// blocking the whole merge with a 1062 Duplicate entry error (see #38456).
+		// Drop the colliding origin rows first - they would become exact duplicates of dest
+		// rows so the merge has nothing to lose by keeping the dest version.
+		$sqlselect = "SELECT pfp_origin.rowid";
+		$sqlselect .= " FROM ".$dbs->prefix()."product_fournisseur_price AS pfp_origin";
+		$sqlselect .= " INNER JOIN ".$dbs->prefix()."product_fournisseur_price AS pfp_dest";
+		$sqlselect .= " ON pfp_dest.fk_soc = ".((int) $dest_id);
+		$sqlselect .= " AND pfp_dest.ref_fourn = pfp_origin.ref_fourn";
+		$sqlselect .= " AND pfp_dest.quantity = pfp_origin.quantity";
+		$sqlselect .= " AND pfp_dest.entity = pfp_origin.entity";
+		$sqlselect .= " WHERE pfp_origin.fk_soc = ".((int) $origin_id);
+
+		$resql = $dbs->query($sqlselect);
+		if (!$resql) {
+			return false;
+		}
+		$colliding = array();
+		while ($obj = $dbs->fetch_object($resql)) {
+			$colliding[] = (int) $obj->rowid;
+		}
+		$dbs->free($resql);
+
+		foreach ($colliding as $rowid) {
+			$sqldel = "DELETE FROM ".$dbs->prefix()."product_fournisseur_price";
+			$sqldel .= " WHERE rowid = ".((int) $rowid);
+			if (!$dbs->query($sqldel)) {
+				return false;
+			}
+		}
+
 		$tables = array(
 			'product_fournisseur_price'
 		);
@@ -1316,11 +1350,12 @@ class ProductFournisseur extends Product
 	 *  @param  string  $morecss            		''=Add more css on link
 	 *  @param	int		$add_label					0=Default, 1=Add label into string, >1=Add first chars into string
 	 *  @param	string	$sep						' - '=Separator between ref and label if option 'add_label' is set
+	 *  @param	int		$addlinktonotes				1=Add link to notes
 	 *	@return	string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ', $addlinktonotes = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager, $user;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1463,6 +1498,18 @@ class ProductFournisseur extends Product
 			$result .= (($add_label && $this->label) ? $sep.dol_trunc($this->label, ($add_label > 1 ? $add_label : 0)) : '');
 		}
 
+		if ($addlinktonotes) {
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/product/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
+		}
+
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
@@ -1482,11 +1529,11 @@ class ProductFournisseur extends Product
 	 *  @param	int		$type			Type of product
 	 *  @return	string 			       	Label of status
 	 */
-	public function getLibStatut($mode = 0, $type = 0)		// must be compatible with getLibStatut of inherited Product
+	/*  public function getLibStatut($mode = 0, $type = 0)      // must be compatible with getLibStatut of inherited Product
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
-
+	*/
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
@@ -1496,6 +1543,7 @@ class ProductFournisseur extends Product
 	 *  @param	int		$type			Type of product
 	 *  @return string 			       	Label of status
 	 */
+	/*
 	public function LibStatut($status, $mode = 0, $type = 0)
 	{
 		// phpcs:enable
@@ -1516,6 +1564,7 @@ class ProductFournisseur extends Product
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
+	*/
 
 	/**
 	 * Private function to log price history

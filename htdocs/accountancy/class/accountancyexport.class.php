@@ -9,12 +9,12 @@
  * Copyright (C) 2022		Lionel Vessiller			<lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2017		Elarifr. Ari Elbaz			<github@accedinfo.com>
- * Copyright (C) 2017-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2017-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2017		André Schild				<a.schild@aarboard.ch>
  * Copyright (C) 2020		Guillaume Alexandre			<guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter				<jkueter@gmx.de>
  * Copyright (C) 2022		Progiseize					<a.bisotti@progiseize.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@
  * \brief 		Class accountancy export
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -126,7 +125,7 @@ class AccountancyExport
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$this->db = $db;
 		$this->separator = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
@@ -400,6 +399,7 @@ class AccountancyExport
 		$downloadFilePath = '';
 		$archiveFullName = '';
 		$archivePath = '';
+		/** @var array<string,array{name:string,path:string}> $archiveFileList */
 		$archiveFileList = array();
 		if ($withAttachment == 1) {
 			if ($downloadMode == 0) {
@@ -478,7 +478,7 @@ class AccountancyExport
 				}
 
 				if ($withAttachment == 1) {
-					$archiveFileList[0] = array(
+					$archiveFileList['0'] = array(
 						'path' => $exportFilePath,
 						'name' => $exportFileFullName,
 					);
@@ -901,7 +901,7 @@ class AccountancyExport
 	 *
 	 * Information on format: https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
 	 * Help to import in Quadra: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Import_vers_CEGID_Quadra
-	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
+	 * In QuadraCompta | Use menu: "Tools" > "Folder monitoring" > "ASCII Import (Accounting)"
 	 *
 	 * @param 	BookKeepingLine[]	$objectLines 	data
 	 * @param 	?resource			$exportFile		[=null] File resource to export or print if null
@@ -911,7 +911,7 @@ class AccountancyExport
 	 */
 	public function exportQuadratus($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
-		global $conf, $db;
+		global $conf;
 
 		$end_line = "\r\n";
 
@@ -962,7 +962,15 @@ class AccountancyExport
 				}
 
 				$tab['filler2'] = str_repeat(' ', 110);
-				$tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
+
+				// Field "Maj" (static position 1 char):
+				// blank = no update if account already exists
+				// 2 = partial update (alpha key, label, address, collectif, RIB)
+				if (getDolGlobalString('ACCOUNTING_EXPORT_QUADRATUS_DISABLE_THIRDPARTY_UPDATE')) {
+					$tab['Maj'] = ' ';
+				} else {
+					$tab['Maj'] = 2;
+				}
 
 				if ($line->doc_type == 'customer_invoice') {
 					$tab['type_compte'] = 'C';
@@ -1408,7 +1416,7 @@ class AccountancyExport
 		$separator = ';';
 		$end_line = "\n";
 
-		// parcours du tableau pour recuperation des numero de compte des tiers pour pouvoir les fournir dans la bonne ligne pour istea
+		// Extract the Third party account numbers from the table to provide the correct line for ISTEA
 		$tiers = [];
 		foreach ($objectLines as $line) {
 			if ($line->subledger_account && substr($line->subledger_account, 0, 1) == '4') {
@@ -1419,28 +1427,28 @@ class AccountancyExport
 		foreach ($objectLines as $line) {
 			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
 
-			/*** preparation du champ label operation pour istea ***/
-			// retrecissement du champs car ISTEA n'affiche pas bcp de caract�re.
+			/*** prepare label operation field for ISTEA ***/
+			// truncate the field because ISTEA does not display many characters.
 			$search = array('Paiement fournisseur ', 'Virement ', 'Paiement ');
 			$replace = array('Paiemt fourn ','Virt ','Paiemt ');
 			$label_operation = str_replace($search, $replace, $line->label_operation);
-			// encadrement par des ' si le champs contient le separateur
+			// frame with quotes if field contains the separator
 			$label_operation = preg_match('/'.$separator.'/', $label_operation) ? "'".$label_operation."'" : $label_operation;
 
 			$tab = array();
 			// export configurable
-			$tab[] = $line->piece_num;	// colonne 1 : numero de piece	ISTEA
-			$tab[] = $date_document;	// colonne 2 : date				ISTEA
-			$tab[] = $line->doc_ref;	// colonne 3 : reference piece 	ISTEA
-			$tab[] = array_key_exists($line->piece_num, $tiers) ? $tiers[$line->piece_num] : '';	// colonne 4 : nom tiers	ISTEA
-			$tab[] = length_accountg(($line->subledger_account && (substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2))) ? $line->subledger_account : $line->numero_compte);	// colonne 5 : numero de compte	ISTEA
-			$tab[] = length_accountg($line->subledger_account ? $line->subledger_account : $line->numero_compte);	// colonne 6 : numero de compte
-			$tab[] = length_accountg($line->subledger_account ? $line->numero_compte : '');	// G					// colonne 7 : numero de compte principal (divers paiement ou 40100000 ou 41100000)
-			$tab[] = ($line->doc_type == 'bank') ? $label_operation : ($line->subledger_account ? $line->subledger_label : $line->label_compte);	// colonne 8 : label de l'operation		ISTEA
-			$tab[] = $label_operation;	// colonne 9 : label de l'operation (semble non prise en compte par ISTEA)
-			$tab[] = price2num($line->debit);	// colonne 10 : debit		ISTEA
-			$tab[] = price2num($line->credit);	// colonne 11 : credit		ISTEA
-			$tab[] = $line->code_journal;		// colonne 12 : journal		ISTEA
+			$tab[] = $line->piece_num;	// column 1: piece number	ISTEA
+			$tab[] = $date_document;	// column 2: date				ISTEA
+			$tab[] = $line->doc_ref;	// column 3: piece reference 	ISTEA
+			$tab[] = array_key_exists($line->piece_num, $tiers) ? $tiers[$line->piece_num] : '';	// column 4: third party name	ISTEA
+			$tab[] = length_accountg(($line->subledger_account && (substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2))) ? $line->subledger_account : $line->numero_compte);	// column 5: account number	ISTEA
+			$tab[] = length_accountg($line->subledger_account ? $line->subledger_account : $line->numero_compte);	// column 6: account number
+			$tab[] = length_accountg($line->subledger_account ? $line->numero_compte : '');	// G					// column 7: main account number (various payments or 40100000 or 41100000)
+			$tab[] = ($line->doc_type == 'bank') ? $label_operation : ($line->subledger_account ? $line->subledger_label : $line->label_compte);	// column 8: operation label		ISTEA
+			$tab[] = $label_operation;	// column 9: operation label (seems not taken into account by ISTEA)
+			$tab[] = price2num($line->debit);	// column 10: debit		ISTEA
+			$tab[] = price2num($line->credit);	// column 11: credit		ISTEA
+			$tab[] = $line->code_journal;		// column 12: journal		ISTEA
 
 			$output = mb_convert_encoding('"'.implode('"'.$separator.'"', $tab).'"'.$this->end_line, 'ISO-8859-1');
 			if ($exportFile) {
@@ -2254,7 +2262,7 @@ class AccountancyExport
 		foreach ($objectLines as $line) {
 			// TYPE C
 			if ($last_codeinvoice != $line->doc_ref) {
-				//recherche societe en fonction de son code client
+				//search company by customer code
 				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe";
 				$sql .= " WHERE code_client = '".$this->db->escape($line->thirdparty_code)."'";
 				$resql = $this->db->query($sql);
@@ -2674,22 +2682,22 @@ class AccountancyExport
 				} else {
 					$tab[] = substr(length_accountg($line->numero_compte), 0, 15);
 				}
-				//Libellé Auto
+				//Auto label
 				$tab[] = "";
 				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"';
-				//Libellé manual
+				//Manual label
 				$tab[] = dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1);
-				//Numéro de pièce
+				//Document number
 				$tab[] = dol_trunc(str_replace('"', '', (string) $line->piece_num), 10, 'right', 'UTF-8', 1);
-				//Devise
+				//Currency
 				$tab[] = 'EUR';
 				//Amount
 				$tab[] = price2num(abs($line->debit - $line->credit));
-				//Sens
+				//Direction
 				$tab[] = $line->sens;
-				//Code lettrage
+				//Matching code
 				$tab[] = "";
-				//Date Echéance
+				//Due date
 				$tab[] = $date_echeance;
 
 				$output = implode($separator, $tab).$end_line;
@@ -2777,13 +2785,13 @@ class AccountancyExport
 			$tab[] = substr($date, 3, 2);
 			$tab[] = substr($date, 0, 2);
 			$tab[] = $line->doc_ref;
-			//Conversion de chaine UTF8 en Latin9
+			// Convert the UTF-8 string in latin9
 			$tab[] = mb_convert_encoding(str_replace(' - Compte auxiliaire', '', $line->label_operation), "Windows-1252", 'UTF-8');
 
-			//Calcul de la longueur des numéros de comptes
+			//Calculate account number length
 			$taille_numero = strlen(length_accountg($line->numero_compte));
 
-			//Création du numéro de client et fournisseur générique
+			//Build generic customer and supplier account number
 			$numero_cpt_client = '411';
 			$numero_cpt_fourn = '401';
 			for ($i = 1; $i <= ($taille_numero - 3); $i++) {
@@ -2791,7 +2799,7 @@ class AccountancyExport
 				$numero_cpt_fourn .= '0';
 			}
 
-			//Création des comptes auxiliaire des clients et fournisseur
+			//Build auxiliary accounts for customers and suppliers
 			if (length_accountg($line->numero_compte) == $numero_cpt_client || length_accountg($line->numero_compte) == $numero_cpt_fourn) {
 				$tab[] = rtrim(length_accounta($line->subledger_account), "0");
 			} else {

@@ -39,7 +39,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/receiptprinter.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "receiptprinter"));
@@ -330,7 +330,7 @@ $line = -1;
 
 // mode = config
 if ($mode == 'config') {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($action != 'editprinter') {
 		print '<input type="hidden" name="action" value="addprinter">';
@@ -468,7 +468,7 @@ if ($mode == 'template') {
 
 	print '<br>';
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($action != 'edittemplate') {
 		print '<input type="hidden" name="action" value="addtemplate">';
@@ -498,7 +498,7 @@ if ($mode == 'template') {
 				print '<input type="hidden" name="templateid" value="'.($printer->listprinterstemplates[$line]['rowid'] ?? '').'">';
 				print '<td><input type="text" class="minwidth200" name="templatename" value="'.($printer->listprinterstemplates[$line]['name'] ?? '').'"></td>';
 				print '<td class="wordbreak">';
-				print '<textarea name="template" wrap="soft" cols="120" rows="12">'.($printer->listprinterstemplates[$line]['template'] ?? '').'</textarea>';
+				print '<textarea name="template" wrap="soft" cols="90" rows="12">'.($printer->listprinterstemplates[$line]['template'] ?? '').'</textarea>';
 				print '</td>';
 				print '<td>';
 				print $form->buttonsSaveCancel("Save", '');
@@ -527,7 +527,7 @@ if ($mode == 'template') {
 		print '<tr>';
 		print '<td><input type="text" class="minwidth200" name="templatename" value="'.($printer->listprinterstemplates[$line]['name'] ?? '').'"></td>';
 		print '<td class="wordbreak">';
-		print '<textarea name="template" wrap="soft" cols="120" rows="12">';
+		print '<textarea name="template" wrap="soft" cols="90" rows="12">';
 		print '</textarea>';
 		print '</td>';
 		print '<td>';

@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Conferenza o stand
 AmountPaid = Importo pagato
 DateOfRegistration = Data di registrazione
 ConferenceOrBoothAttendee = Partecipante alla conferenza o allo stand
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Richiedente o visitatore
 Speaker=Altoparlante
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Elenco di partecipanti a progetti di eventi
 ListOfConfOrBoothOfEvent=Elenco di conferenze o stand di progetti di eventi
 DownloadICSLink=Scarica ICS file
 EVENTORGANIZATION_SECUREKEY=Seme per proteggere la chiave per la pagina di registrazione pubblica per suggerire una conferenza
-SERVICE_BOOTH_LOCATION=Servizio utilizzato per la riga della fattura relativa all'ubicazione di uno stand
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Servizio utilizzato per la riga della fattura relativa all'iscrizione di un partecipante a un evento
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Numero di voti
 # Status
 EvntOrgDraft = Assegno circolare
@@ -122,7 +123,7 @@ NewSubscription=Registrazione
 OrganizationEventConfRequestWasReceived=Il tuo suggerimento per una conferenza è stato ricevuto
 OrganizationEventBoothRequestWasReceived=La tua richiesta per uno stand è stata ricevuta
 OrganizationEventPaymentOfBoothWasReceived=Il tuo pagamento per il tuo stand è stato registrato
-OrganizationEventPaymentOfRegistrationWasReceived=Il tuo pagamento per la registrazione all'evento è stato registrato
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=Questo è un promemoria della tua partecipazione all'evento come partecipante
 OrganizationEventBulkMailToSpeakers=Questo è un promemoria sulla tua partecipazione all'evento come relatore
 OrganizationEventLinkToThirdParty=Collegamento a terzi (cliente, fornitore o partner)

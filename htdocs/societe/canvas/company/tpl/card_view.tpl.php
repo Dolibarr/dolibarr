@@ -20,6 +20,7 @@
  * @var Conf $conf
  * @var CommonObject $this
  * @var DoliDB $db
+ * @var FormFile $formfile
  * @var Translate $langs
  * @var User $user
  *
@@ -34,6 +35,7 @@ if (empty($conf) || !is_object($conf)) {
 
 
 $soc = $GLOBALS['objcanvas']->control->object;
+$socid = $soc->id;
 
 
 print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP COMPANY -->\n";
@@ -270,9 +272,9 @@ for ($i = 1; $i <= 4; $i++) {
 
 <?php if ($user->hasRight('societe', 'supprimer')) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
-		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
+		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '', 'action-delete', true, array('attr' => array('class' => 'reposition')))."\n"; ?>
 	<?php } else { ?>
-		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans('Delete'); ?></a>
+		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas), '', true, array('attr' => array('class' => 'reposition')))."\n"; ?>
 	<?php } ?>
 <?php } ?>
 </div>
@@ -291,7 +293,7 @@ $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
 $genallowed = $user->hasRight('societe', 'lire');
 $delallowed = $user->hasRight('societe', 'creer');
 
-print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
+print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 ?>
 
 </td>

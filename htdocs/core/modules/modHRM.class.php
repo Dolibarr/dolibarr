@@ -183,7 +183,7 @@ class modHRM extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->hrm->enabled',
+			//      'test' => 'isModEnabled('hrm')',
 			//      'priority' => 50,
 			//  ),
 		);

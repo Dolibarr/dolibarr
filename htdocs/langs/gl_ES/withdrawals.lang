@@ -173,3 +173,5 @@ RefSalary=Salario
 NoSalaryInvoiceToWithdraw=Sen salario agardando dun '%s'. Vaia á lapela '%s' da tarxeta de salario para facer unha solicitude.
 SalaryInvoiceWaitingWithdraw=Salarios pendentes de pagamento mediante transferencia bancaria
 ErrorBankTransferNoPaymentRequestSelected=Non se seleccionou ningunha solicitude de pagamento.
+AmountRequestedAlreadyReachesTotal=O importe total da factura xa foi solicitado para o seu pagamento
+AmountExceedsRemainingToRequest=A cantidade solicitada supera a cantidade restante dispoñible para as solicitudes de pagamento
