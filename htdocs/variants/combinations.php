@@ -215,13 +215,25 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 
 		$db->rollback();
 	}
-} elseif (!empty($massaction)) {
+} elseif (!empty($massaction) && ($massaction == 'delete' ? $usercandelete : $usercancreate)) {
 	$bulkaction = $massaction;
 	$error = 0;
+
+	// The mass action can only target the variants of this product
+	$childids = array();
+	$tmpcombinations = $prodcomb->fetchAllByFkProductParent($object->id);
+	if (is_array($tmpcombinations)) {
+		foreach ($tmpcombinations as $tmpcombination) {
+			$childids[] = (int) $tmpcombination->fk_product_child;
+		}
+	}
 
 	$db->begin();
 
 	foreach ($toselect as $prodid) {
+		if (!in_array((int) $prodid, $childids)) {
+			continue;
+		}
 		// need create new of Product to prevent rename dir behavior
 		$prodstatic = new Product($db);
 		if ($prodstatic->fetch($prodid) < 0) {
@@ -282,7 +294,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	}
 } elseif ($action === 'update' && $combination_id > 0 && $usercancreate) {
-	if ($prodcomb->fetch($combination_id) < 0) {
+	if ($prodcomb->fetch($combination_id) <= 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}
@@ -368,7 +380,7 @@ if ($action === 'confirm_deletecombination' && $usercancreate) {
 		$action = '';
 	}
 } elseif ($action === 'edit' && $usercancreate) {
-	if ($prodcomb->fetch($combination_id) < 0) {
+	if ($prodcomb->fetch($combination_id) <= 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
 	}

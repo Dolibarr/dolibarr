@@ -52,7 +52,7 @@ $object = new Paiement($db);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
-$result = restrictedArea($user, $object->element, $object->id, 'paiement', '');
+restrictedArea($user, $object->element, $object->id, 'paiement', '');
 
 // Security check
 if ($user->socid) {

@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Mzdy čakajúce na platbu prevodom
 RefSalary=Mzda
 NoSalaryInvoiceToWithdraw=Žiadne čakanie na plat na '%s'. Prejdite na kartu '%s' na platovej karte a požiadajte.
 SalaryInvoiceWaitingWithdraw=Mzdy čakajúce na platbu prevodom
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

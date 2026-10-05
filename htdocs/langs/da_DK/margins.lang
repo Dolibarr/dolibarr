@@ -31,14 +31,14 @@ UseDiscountOnTotal=På subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definerer, om en global rabat behandles som et produkt, en tjeneste eller kun på subtotal til margenberegning.
 MARGIN_TYPE=Køb / Omkostningspris foreslået som standard for margenberegning
 MargeType1=Margin på bedste sælgerpris
-MargeType2=Margin på vejet gennemsnitspris (WAP)
+MargeType2=Margin på vægtet gennemsnitlig omkostning (WAC)
 MargeType3=Margin på omkostningspris
-MarginTypeDesc=* Margen på bedste købspris = Salgspris - Bedste sælgerpris defineret på produktkort<br> * Marginal på vægtet gennemsnitspris (WAP) = Salgspris - Produktvægtet gennemsnitspris (WAP) eller bedste sælgerpris, hvis WAP endnu ikke er defineret <br>* Margin on Cost pris = Salgspris - Omkostningspris defineret på produktkort eller WAP, hvis kostpris ikke er defineret, eller bedste leverandørpris, hvis WAP endnu ikke er defineret
+MarginTypeDesc=* Margin på bedste købspris = Salgspris - Bedste leverandørpris defineret på produktkortet<br>* Margin på vægtet gennemsnitlig omkostning (WAC) = Salgspris - Produktvægtet gennemsnitspris (WAP) eller bedste leverandørpris, hvis WAP endnu ikke er defineret<br>* Margin på kostpris = Salgspris - Kostpris defineret på produktkortet eller WAC, hvis kostpris ikke er defineret, eller bedste leverandørpris, hvis WAC endnu ikke er defineret
 CostPrice=Omkostning
 UnitCharges=Enhedsafgifter
 Charges=Afgifter
 AgentContactType=Kommerciel agentkontaktype
-AgentContactTypeDetails=Definer hvilken kontakttype (der er knyttet til fakturaer), der skal bruges til marginrapport pr. Kontakt / adresse. Bemærk, at læsning af statistik om en kontakt ikke er pålidelig, da kontakten i de fleste tilfælde muligvis ikke er defineret eksplicit på fakturaerne.
+AgentContactTypeDetails=Definer hvilken kontakttype (linket på fakturaer) der skal bruges til marginrapport pr. kontakt/adresse. Bemærk, at læsning af statistik på en kontakt ikke er pålidelig, da kontakten i de fleste tilfælde ikke er defineret eksplicit på fakturaerne.
 rateMustBeNumeric=Satsen skal være en numerisk værdi
 markRateShouldBeLesserThan100=Markrate bør være lavere end 100
 ShowMarginInfos=Vis marginoplysninger

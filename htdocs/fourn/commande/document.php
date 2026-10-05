@@ -123,7 +123,7 @@ if ($object->id > 0) {
 
 	$head = ordersupplier_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order', 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -156,7 +156,7 @@ if ($object->id > 0) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			$description   = dol_string_nohtmltag(preg_replace("/<br[\s\/]?>/i", "\n", $event["desc"]), 0);
 			$created       = $event["created"];
 			$modified      = $event["modified"];
-			$assignedUsers = $event["assignedUsers"];
+			$assignedUsers = $event["assignedUsers"] ?? array();
 			//print $fulldayevent.' '.dol_print_date($startdate, 'dayhour', 'gmt');
 
 			// Format
@@ -123,7 +123,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			LOCATION:
 			SEQUENCE:0
 			STATUS:CONFIRMED
-			SUMMARY:Tâche 1 heure
+			SUMMARY:Task 1 hour
 			TRANSP:OPAQUE
 			END:VEVENT
 
@@ -139,7 +139,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			LOCATION:
 			SEQUENCE:0
 			STATUS:CONFIRMED
-			SUMMARY:Tâche 1 jour
+			SUMMARY:Task 1 day
 			TRANSP:TRANSPARENT
 			END:VEVENT
 			*/
@@ -342,7 +342,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		// Print header
 		fwrite($fichier, '<?xml version="1.0" encoding="'.$langs->charset_output.'"?>'."\n");
 
-		fwrite($fichier, '<rss version="2.0">'."\n");
+		//fwrite($fichier, '<rss version="2.0">'."\n");
+		fwrite($fichier, '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n");		// xmlns:atom is required to be valid by parser (Publer RSS reader) for example.
 
 		fwrite($fichier, "<channel>\n");
 		fwrite($fichier, "<title>".dol_escape_xml($title)."</title>\n");
@@ -374,7 +375,10 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		}
 
 		// Add a tag for some readers (Google / Feed readers) to detect that this is a RSS feed and not a generic XML file
-		fwrite($fichier, '<atom:link href="'.$url.'" rel="self" type="application/rss+xml"/>'."\n");
+		// For Atom link, the & must be &amp; instead of &.
+		$urlforatomlink = $url;
+		$urlforatomlink = preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;)/', '&amp;', $urlforatomlink);
+		fwrite($fichier, '<atom:link href="'.$urlforatomlink.'" rel="self" type="application/rss+xml"/>'."\n");
 
 		foreach ($events_array as $key => $event) {
 			$eventqualified = true;

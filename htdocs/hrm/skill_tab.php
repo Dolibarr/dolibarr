@@ -4,7 +4,7 @@
  * Copyright (C) 2021       Greg Rastklan       <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021       Jean-Pascal BOUDET  <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021       Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -168,8 +168,8 @@ if (empty($reshook)) {
 					$error++;
 					setEventMessages($skillAdded->error, null, 'errors');
 					break;
-				} else {
-					// Create new EvaluationLine for each Skill to add in draft evaluation
+				} elseif ($objecttype == 'job') {
+					// Create new EvaluationLine for each Skill to add in draft evaluation (the id is the one of a job only in this case)
 					$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 					$sql_eval .= " WHERE e.status = 0 ";
 					$sql_eval .= " AND e.entity = ".(int) getEntity($object->element);
@@ -206,8 +206,17 @@ if (empty($reshook)) {
 		if (!empty($TNote)) {
 			$db->begin();
 			$error = 0;
+			$maxrank = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
 			foreach ($TNote as $skillId => $rank) {
-				$rank = ($rank == "NA" ? -1 : $rank);
+				$newrank = ($rank == "NA" ? -1 : (int) $rank);
+				if ($newrank < -1 || $newrank > $maxrank) {
+					// A rank can only be "not applicable" (-1) or a level between 0 and the maximum number of levels
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorBadValueForParameter", $rank, 'TNote['.((int) $skillId).']'), null, 'errors');
+					$error++;
+					break;
+				}
+				$rank = $newrank;
 				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $id).") AND (objecttype:=:'".$db->escape($objecttype)."') AND (fk_skill:=:".((int) $skillId).')');
 				'@phan-var-force SkillRank[] $tSkills';
 				if (is_array($TSkills) && !empty($TSkills)) {
@@ -219,8 +228,8 @@ if (empty($reshook)) {
 							setEventMessages($tmpObj->error, null, 'errors');
 							break;
 						}
-						if (!$error) {
-							// Update draft Evaluations using this Skill
+						if (!$error && $objecttype == 'job') {
+							// Update draft Evaluations using this Skill (the id is the one of a job only in this case)
 							$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 							$sql_eval .= " WHERE e.status = 0 ";
 							$sql_eval .= " AND e.entity = ".getEntity($object->element);
@@ -266,7 +275,7 @@ if (empty($reshook)) {
 			} else {
 				$db->rollback();
 			}
-			header("Location: " . DOL_URL_ROOT.'/hrm/skill_tab.php?id=' . $id. '&objecttype=job');
+			header("Location: " . DOL_URL_ROOT.'/hrm/skill_tab.php?id=' . $id. '&objecttype='.urlencode($objecttype));
 			exit;
 		}
 	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes' && $permissiontoadd) {
@@ -606,7 +615,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 
-	// liste des evaluation liées
+	// list of linked evaluations
 	if ($objecttype == 'user' && $permissiontoadd) {
 		$evaltmp = new Evaluation($db);
 		$job = new Job($db);

@@ -10,7 +10,6 @@ ActionsOnFicheInter=Työmääräimen tehtävät
 LastInterventions=Viimeisimmät %s työmääräimet
 AllInterventions=Kaikki työmääräimet
 CreateDraftIntervention=Luo luonnos
-InterventionContact=Työmääräimen yhteystiedot
 DeleteIntervention=Poista työmääräin
 ValidateIntervention=Vahvista työmääräin
 SignIntervention=Sign interventio

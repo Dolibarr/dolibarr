@@ -121,7 +121,6 @@ ValideTrip=የወጪ ሪፖርትን ማጽደቅ
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=ቁርስ
@@ -159,3 +158,4 @@ TF_TRAIN=ባቡር
 TF_TRIP=መጓጓዣ
 FailedToSetPaid=Failed to set as paid
 FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

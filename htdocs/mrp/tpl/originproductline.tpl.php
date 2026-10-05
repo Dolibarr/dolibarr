@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ if ($resql) {
 		$sub_bom_line = new BOMLine($db);
 		$sub_bom_line->fetch($obj->rowid);
 
-		//If hidden conf is set, we show directly all the sub-BOM lines
+		// If hidden conf is set, we show directly all the sub-BOM lines
 		if (!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')) {
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
@@ -170,14 +170,14 @@ if ($resql) {
 		// Unit
 		print '<td class="linecolunit nowrap right" id="sub_bom_unit_'.$sub_bom_line->id.'">'.measuringUnitString($sub_bom_line->fk_unit, '', null, 1).'</td>';
 
-		// Stock réel
+		// Physical Stock
 		if ($sub_bom_product->stock_reel > 0) {
 			print '<td class="linecolstockreel nowrap center" id="sub_bom_stock_reel_'.$sub_bom_product->stock_reel.'">'.$sub_bom_product->stock_reel.'</td>';
 		} else {
 			print '<td class="linecolstockreel nowrap center" id="sub_bom_stock_reel_'.$sub_bom_product->stock_reel.'">&nbsp;</td>';
 		}
 
-		// Stock virtuel
+		// Virtual stock
 		if ($sub_bom_product->stock_theorique > 0) {
 			print '<td class="linecolstocktheorique nowrap center" id="sub_bom_stock_theorique_'.$sub_bom_product->stock_theorique.'">'.$sub_bom_product->stock_theorique.'</td>';
 		} else {

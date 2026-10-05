@@ -216,7 +216,7 @@ class CLeadStatus extends CommonDict
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= " AND ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';

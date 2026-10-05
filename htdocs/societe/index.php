@@ -67,20 +67,10 @@ if (!isset($form) || !is_object($form)) {
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "3");
 
-if (GETPOST('addbox')) {
-	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOSTINT('areacode');
-	$userid = GETPOSTINT('userid');
-	$boxorder = GETPOST('boxorder', 'aZ09');
-	$boxorder .= GETPOST('boxcombo', 'aZ09');
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) {
-		setEventMessages($langs->trans("BoxAdded"), null);
-	}
-}
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*
@@ -105,7 +95,8 @@ $third = array(
 );
 $total = 0;
 
-$sql = "SELECT s.rowid, s.client, s.fournisseur";
+// Counted by the database: the page must not fetch one row per third party
+$sql = "SELECT s.client, s.fournisseur, COUNT(s.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -126,6 +117,7 @@ if (empty($reshook)) {
 	}
 }
 $sql .= $hookmanager->resPrint;
+$sql .= " GROUP BY s.client, s.fournisseur";
 //print $sql;
 $result = $db->query($sql);
 if ($result) {
@@ -133,22 +125,22 @@ if ($result) {
 		$found = 0;
 		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS') && ($objp->client == 2 || $objp->client == 3)) {
 			$found = 1;
-			$third['prospect']++;
+			$third['prospect'] += $objp->nb;
 		}
 		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS') && ($objp->client == 1 || $objp->client == 3)) {
 			$found = 1;
-			$third['customer']++;
+			$third['customer'] += $objp->nb;
 		}
 		if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS') && $objp->fournisseur) {
 			$found = 1;
-			$third['supplier']++;
+			$third['supplier'] += $objp->nb;
 		}
 		if (isModEnabled('societe') && $objp->client == 0 && $objp->fournisseur == 0) {
 			$found = 1;
-			$third['other']++;
+			$third['other'] += $objp->nb;
 		}
 		if ($found) {
-			$total++;
+			$total += $objp->nb;
 		}
 	}
 } else {
@@ -296,7 +288,7 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 }
 $sql .= ", s.logo";
 $sql .= ", s.entity";
-$sql .= ", s.canvas, GREATEST(s.tms, sef.tms) as date_modification, s.status as status";
+$sql .= ", s.canvas, GREATEST(s.tms, COALESCE(sef.tms, s.tms)) as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
@@ -419,7 +411,7 @@ $sql .= ", s.logo";
 $sql .= ", s.entity";
 $sql .= ", s.canvas";
 $sql .= ", s.status as status";
-$sql .= ", GREATEST(sp.tms, spef.tms) as date_modification, sp.statut as cstatus";
+$sql .= ", GREATEST(sp.tms, COALESCE(spef.tms, sp.tms)) as date_modification, sp.statut as cstatus";
 $sql .= ", sp.rowid as cid, sp.canvas as ccanvas, sp.email as cemail, sp.firstname, sp.lastname";
 $sql .= ", sp.address as caddress, sp.phone as cphone";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

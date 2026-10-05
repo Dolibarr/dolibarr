@@ -1,11 +1,12 @@
 <?php
 /* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2025  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -142,6 +143,11 @@ if ($date_start && $date_end) {
 	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
 
+// Add SQL restrictions from hooks (context selljournallist / purchasejournallist), e.g. a deposit pivot date
+$parameters = array('date_start' => $date_start, 'date_end' => $date_end);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by some hooks
+$sql .= $hookmanager->resPrint;
+
 // TODO Find a better trick to avoid problem with some mysql installations
 if (in_array($db->type, array('mysql', 'mysqli'))) {
 	$db->query('SET SQL_BIG_SELECTS=1');
@@ -158,7 +164,7 @@ $tablocaltax2 = array();
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	// les variables
+	// the variables
 	$cptfour = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER', $langs->trans("CodeNotDef"));
 	$cpttva = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', $langs->trans("CodeNotDef"));
 
@@ -166,7 +172,7 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		// contrôles
+		// checks
 		$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour);
 		$compta_prod = $obj->accountancy_code_buy;
 		if (empty($compta_prod)) {

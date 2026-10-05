@@ -107,11 +107,11 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		// Le name de l'utilisateur
+		// The name of the user
 		$nombase = str_replace("°", "'", $obj->name);
 		$input .= $nombase.';';
 
-		//affichage des resultats
+		// Display results
 		$ensemblereponses = $obj->reponses;
 		for ($k = 0; $k < $nbcolonnes; $k++) {
 			if (empty($somme[$k])) {

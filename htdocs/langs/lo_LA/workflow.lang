@@ -1,39 +1,39 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=ຕັ້ງຄ່າໂມດູນຂັ້ນຕອນການເຮັດວຽກ
-WorkflowDesc=ໂມດູນນີ້ໃຫ້ການກະ ທຳ ອັດຕະໂນມັດບາງອັນ. ໂດຍຄ່າເລີ່ມຕົ້ນ, ຂະບວນການເຮັດວຽກແມ່ນເປີດຢູ່ (ເຈົ້າສາມາດເຮັດສິ່ງຕ່າງ the ຕາມ ລຳ ດັບທີ່ເຈົ້າຕ້ອງການ) ແຕ່ຢູ່ທີ່ນີ້ເຈົ້າສາມາດເປີດໃຊ້ການກະ ທຳ ອັດຕະໂນມັດບາງອັນ.
-ThereIsNoWorkflowToModify=ບໍ່ມີການແກ້ໄຂຂັ້ນຕອນການເຮັດວຽກທີ່ສາມາດໃຊ້ໄດ້ກັບໂມດູນທີ່ເປີດໃຊ້ງານ.
+WorkflowSetup=ຕັ້ງຄ່າໂມດູນ Workflow
+WorkflowDesc=ໂມດູນນີ້ສະໜອງບາງການດຳເນີນການແບບອັດຕະໂນມັດ. ໂດຍພື້ນຖານ, Workflow ແມ່ນເປີດ (ທ່ານສາມາດເຮັດສິ່ງຕ່າງໆຕາມລຳດັບທີ່ຕ້ອງການ) ແຕ່ຢູ່ບ່ອນນີ້ທ່ານສາມາດເປີດໃຊ້ບາງການດຳເນີນການແບບອັດຕະໂນມັດໄດ້.
+ThereIsNoWorkflowToModify=ບໍ່ມີການປ່ຽນແປງ Workflow ທີ່ສາມາດໃຊ້ໄດ້ກັບໂມດູນທີ່ເປີດໃຊ້ງານ.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=ສ້າງຄໍາສັ່ງຂາຍອັດຕະໂນມັດຫຼັງຈາກມີການເຊັນບົດສະ ເໜີ ທາງການຄ້າ (ຄໍາສັ່ງໃwill່ຈະມີຈໍານວນເທົ່າກັນກັບຂໍ້ສະ ເໜີ)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=ສ້າງໃບແຈ້ງ ໜີ້ ລູກຄ້າໂດຍອັດຕະໂນມັດຫຼັງຈາກມີການເຊັນບົດສະ ເໜີ ທາງການຄ້າ (ໃບຮຽກເກັບເງິນໃwill່ຈະມີຈໍານວນເທົ່າກັນກັບຂໍ້ສະ ເໜີ)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=ສ້າງໃບແຈ້ງ ໜີ້ ລູກຄ້າໂດຍອັດຕະໂນມັດຫຼັງຈາກສັນຍາໄດ້ຮັບການກວດສອບ
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=ສ້າງໃບແຈ້ງ ໜີ້ ລູກຄ້າໂດຍອັດຕະໂນມັດຫຼັງຈາກປິດການສັ່ງຊື້ (ໃບຮຽກເກັບເງິນໃwill່ຈະມີຈໍານວນເທົ່າກັບຄໍາສັ່ງ)
-descWORKFLOW_TICKET_CREATE_INTERVENTION=ໃນການສ້າງປີ້, ສ້າງການແຊກແຊງໂດຍອັດຕະໂນມັດ.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=ສ້າງໃບສັ່ງຊື້ແບບອັດຕະໂນມັດ ຫຼັງຈາກໃບສະເໜີລາຄາຖືກເຊັນ (ໃບສັ່ງຊື້ໃໝ່ຈະມີມູນຄ່າເທົ່າກັບໃບສະເໜີລາຄາ)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=ສ້າງໃບເກັບເງິນລູກຄ້າແບບອັດຕະໂນມັດ ຫຼັງຈາກໃບສະເໜີລາຄາຖືກເຊັນ (ໃບເກັບເງິນໃໝ່ຈະມີມູນຄ່າເທົ່າກັບໃບສະເໜີລາຄາ)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=ສ້າງໃບເກັບເງິນລູກຄ້າແບບອັດຕະໂນມັດ ຫຼັງຈາກສັນຍາຖືກຢືນຢັນ
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=ສ້າງໃບເກັບເງິນລູກຄ້າແບບອັດຕະໂນມັດ ຫຼັງຈາກໃບສັ່ງຊື້ຖືກປິດ (ໃບເກັບເງິນໃໝ່ຈະມີມູນຄ່າເທົ່າກັບໃບສັ່ງຊື້)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=ເມື່ອມີການສ້າງປີ້ (Ticket), ໃຫ້ສ້າງການດຳເນີນການແກ້ໄຂ (Intervention) ແບບອັດຕະໂນມັດ.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
-descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=ເມື່ອໃບສັ່ງຊື້ຖືກກຳນົດເປັນອອກໃບເກັບເງິນແລ້ວ, ໃຫ້ຈັດປະເພດໃບສະເໜີລາຄາຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນອອກໃບເກັບເງິນແລ້ວ (ຖ້າມູນຄ່າຂອງໃບສັ່ງຊື້ເທົ່າກັບມູນຄ່າລວມຂອງໃບສະເໜີລາຄາທີ່ເຊັນແລ້ວ)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=ເມື່ອໃບເກັບເງິນລູກຄ້າຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດໃບສະເໜີລາຄາຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນອອກໃບເກັບເງິນແລ້ວ (ຖ້າມູນຄ່າຂອງໃບເກັບເງິນເທົ່າກັບມູນຄ່າລວມຂອງໃບສະເໜີລາຄາທີ່ເຊັນແລ້ວ)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=ເມື່ອໃບເກັບເງິນລູກຄ້າຖືກກຳນົດເປັນຊຳລະແລ້ວ, ໃຫ້ຈັດປະເພດໃບສັ່ງຊື້ຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນອອກໃບເກັບເງິນແລ້ວ (ຖ້າມູນຄ່າຂອງໃບເກັບເງິນເທົ່າກັບມູນຄ່າລວມຂອງໃບສັ່ງຊື້ທີ່ກ່ຽວຂ້ອງ). ຖ້າທ່ານອອກ 1 ໃບເກັບເງິນສຳລັບຫຼາຍໃບສັ່ງຊື້, ນີ້ອາດຈະເຮັດໃຫ້ທຸກໃບສັ່ງຊື້ຖືກກຳນົດເປັນອອກໃບເກັບເງິນແລ້ວຄືກັນ.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=ເມື່ອໃບເກັບເງິນລູກຄ້າຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດໃບສັ່ງຊື້ຕົ້ນທາງທັງໝົດທີ່ກ່ຽວຂ້ອງເປັນອອກໃບເກັບເງິນແລ້ວ (ຖ້າມູນຄ່າຂອງໃບເກັບເງິນເທົ່າກັບມູນຄ່າລວມຂອງໃບສັ່ງຊື້ຕົ້ນທາງທີ່ກ່ຽວຂ້ອງ). ຖ້າທ່ານອອກ 1 ໃບເກັບເງິນລວມສຳລັບຫຼາຍໃບສັ່ງຊື້, ນີ້ອາດຈະເຮັດໃຫ້ໃບສັ່ງຊື້ຕົ້ນທາງທັງໝົດຖືກກຳນົດເປັນອອກໃບເກັບເງິນແລ້ວ.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=ເມື່ອໃບເກັບເງິນລູກຄ້າຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດໃບສັ່ງຊື້ທີ່ກ່ຽວຂ້ອງ (ຖ້າມີພຽງໃບດຽວ) ເປັນອອກໃບເກັບເງິນແລ້ວ, ຖ້າມູນຄ່າລວມຂອງໃບສັ່ງຊື້ເທົ່າກັບມູນຄ່າລວມຂອງໃບເກັບເງິນທັງໝົດທີ່ອອກຈາກມັນ. ຖ້າທ່ານອອກຫຼາຍໃບເກັບເງິນສຳລັບ 1 ໃບສັ່ງຊື້, ນີ້ຈະຊ່ວຍໃຫ້ກຳນົດໃບສັ່ງຊື້ເປັນອອກໃບເກັບເງິນແລ້ວທັນທີທີ່ທຸກໃບເກັບເງິນຖືກຢືນຢັນ.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=ເມື່ອການຈັດສົ່ງສິນຄ້າຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດໃບສັ່ງຊື້ຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນສົ່ງສິນຄ້າແລ້ວ (ຖ້າຈຳນວນທີ່ສົ່ງໂດຍທຸກການຈັດສົ່ງເທົ່າກັບຈຳນວນໃນໃບສັ່ງຊື້ທີ່ຈະອັບເດດ)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=ເມື່ອການຈັດສົ່ງສິນຄ້າຖືກປິດ, ໃຫ້ຈັດປະເພດໃບສັ່ງຊື້ຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນສົ່ງສິນຄ້າແລ້ວ (ຖ້າຈຳນວນທີ່ສົ່ງໂດຍທຸກການຈັດສົ່ງເທົ່າກັບຈຳນວນໃນໃບສັ່ງຊື້ທີ່ຈະອັບເດດ)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=ເມື່ອໃບເກັບເງິນຜູ້ສະໜອງຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດໃບສະເໜີລາຄາຜູ້ສະໜອງຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນອອກໃບເກັບເງິນແລ້ວ (ຖ້າມູນຄ່າຂອງໃບເກັບເງິນເທົ່າກັບມູນຄ່າລວມຂອງໃບສະເໜີລາຄາທີ່ກ່ຽວຂ້ອງ)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=ເມື່ອໃບເກັບເງິນຜູ້ສະໜອງຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດໃບສັ່ງຊື້ຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນອອກໃບເກັບເງິນແລ້ວ (ຖ້າມູນຄ່າຂອງໃບເກັບເງິນເທົ່າກັບມູນຄ່າລວມຂອງໃບສັ່ງຊື້ທີ່ກ່ຽວຂ້ອງ)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=ເມື່ອການຮັບສິນຄ້າຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດໃບສັ່ງຊື້ຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນໄດ້ຮັບແລ້ວ (ຖ້າຈຳນວນທີ່ໄດ້ຮັບໂດຍທຸກການຮັບສິນຄ້າເທົ່າກັບຈຳນວນໃນໃບສັ່ງຊື້ທີ່ຈະອັບເດດ)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=ເມື່ອການຮັບສິນຄ້າຖືກປິດ, ໃຫ້ຈັດປະເພດໃບສັ່ງຊື້ຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນໄດ້ຮັບແລ້ວ (ຖ້າຈຳນວນທີ່ໄດ້ຮັບໂດຍທຸກການຮັບສິນຄ້າທີ່ອອກຈາກໃບສັ່ງຊື້ເທົ່າກັບຈຳນວນໃນໃບສັ່ງຊື້ທີ່ຈະອັບເດດ)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=ເມື່ອໃບເກັບເງິນລູກຄ້າຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດການຈັດສົ່ງຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນປິດແລ້ວ (ຖ້າມູນຄ່າຂອງໃບເກັບເງິນເທົ່າກັບມູນຄ່າລວມຂອງການຈັດສົ່ງທີ່ກ່ຽວຂ້ອງ)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=ເມື່ອໃບເກັບເງິນລູກຄ້າຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດການຈັດສົ່ງຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນອອກໃບເກັບເງິນແລ້ວ (ຖ້າມູນຄ່າຂອງໃບເກັບເງິນເທົ່າກັບມູນຄ່າລວມຂອງການຈັດສົ່ງທີ່ກ່ຽວຂ້ອງ)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=ເມື່ອໃບເກັບເງິນຊື້ຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດການຮັບສິນຄ້າຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນປິດແລ້ວ (ຖ້າມູນຄ່າຂອງໃບເກັບເງິນເທົ່າກັບມູນຄ່າລວມຂອງການຮັບສິນຄ້າທີ່ກ່ຽວຂ້ອງ)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=ເມື່ອໃບເກັບເງິນຊື້ຖືກຢືນຢັນ, ໃຫ້ຈັດປະເພດການຮັບສິນຄ້າຕົ້ນທາງທີ່ກ່ຽວຂ້ອງເປັນອອກໃບເກັບເງິນແລ້ວ (ຖ້າມູນຄ່າຂອງໃບເກັບເງິນເທົ່າກັບມູນຄ່າລວມຂອງການຮັບສິນຄ້າທີ່ກ່ຽວຂ້ອງ)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
+descWORKFLOW_TICKET_LINK_CONTRACT=ເມື່ອມີການສ້າງປີ້ (Ticket), ໃຫ້ເຊື່ອມຕໍ່ກັບສັນຍາທີ່ມີຢູ່ ໂດຍຈັບຄູ່ກັບບຸກຄົນທີສາມດຽວກັນກັບປີ້
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=ເມື່ອເຊື່ອມຕໍ່ປີ້ກັບສັນຍາແບບອັດຕະໂນມັດ, ໃຫ້ຄົ້ນຫາສັນຍາຈາກບັນດາບໍລິສັດແມ່
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=ປິດການແຊກແຊງທັງlinkedົດທີ່ເຊື່ອມໂຍງກັບປີ້ເມື່ອປີ້ປິດ
-AutomaticCreation=ການສ້າງອັດຕະໂນມັດ
-AutomaticClassification=ການຈັດປະເພດອັດຕະໂນມັດ
-AutomaticClosing=ປິດອັດຕະໂນມັດ
-AutomaticLinking=ການເຊື່ອມໂຍງອັດຕະໂນມັດ
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=ປິດທຸກການດຳເນີນການແກ້ໄຂທີ່ເຊື່ອມຕໍ່ກັບປີ້ ເມື່ອປີ້ຖືກປິດ
+AutomaticCreation=ການສ້າງແບບອັດຕະໂນມັດ
+AutomaticClassification=ການຈັດປະເພດແບບອັດຕະໂນມັດ
+AutomaticClosing=ການປິດແບບອັດຕະໂນມັດ
+AutomaticLinking=ການເຊື່ອມຕໍ່ແບບອັດຕະໂນມັດ

@@ -103,7 +103,13 @@ ConfirmCloneContract=क्या आप वाकई अनुबंध को 
 LowerDateEndPlannedShort=सक्रिय सेवाओं की कम नियोजित समाप्ति तिथि
 SendContractRef=अनुबंध जानकारी __REF__
 OtherContracts=अन्य अनुबंध
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=बिक्री प्रतिनिधि अनुबंध पर हस्ताक्षर करते हुए
 TypeContact_contrat_internal_SALESREPFOLL=बिक्री प्रतिनिधि अनुबंध का पालन कर रहे हैं
 TypeContact_contrat_external_BILLING=बिलिंग ग्राहक संपर्क

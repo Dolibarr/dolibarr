@@ -57,3 +57,7 @@ donAnonymous=Хайрияи беном
 AnonymousDonationTooltip=Агар шумо хоҳед, ки хайрияатон беном боқӣ монад, ин қуттиро қайд кунед. Маълумоти шахсии шумо талаб карда намешавад.
 publicDonationFieldHelp=%s метавонад хайрияи маро дар феҳристи ҷамъиятӣ нашр кунад
 listOfPublicDonations=Рӯйхати хайрияҳои ҷамъиятӣ
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

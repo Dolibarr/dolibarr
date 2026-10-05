@@ -64,7 +64,12 @@ if (!$user->hasRight('takepos', 'run')) {
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
 $invoice = new Facture($db);
-$invoice->fetch($facid);
+$result = $invoice->fetch($facid);
+// Only an invoice of the POS, in an entity of the user, can be sent from the POS
+if ($result <= 0 || $invoice->module_source != 'takepos' || !in_array($invoice->entity, explode(',', getEntity('invoice')))) {
+	accessforbidden();
+}
+
 $customer = new Societe($db);
 $customer->fetch($invoice->socid);
 
@@ -114,7 +119,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 
 	// From / To
 	$sendto = $email;
-	$from = $mysoc->email;
+	$email_from = $mysoc->email;
 
 	// Content
 	$msg = "<html>";
@@ -126,7 +131,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 	$msg .= "</html>";
 
 	// Send email
-	$mail = new CMailFile($subject, $sendto, $from, $msg, $joinFile, $joinFileMime, $joinFileName, '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
+	$mail = new CMailFile($subject, $sendto, $email_from, $msg, $joinFile, $joinFileMime, $joinFileName, '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
 
 	if ($mail->error || !empty($mail->errors)) {
 		setEventMessages($mail->error, $mail->errors, 'errors');
@@ -139,7 +144,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 		if ($result) {
 			$triggersendname = 'BILL_SENTBYMAIL';
 			$object = $invoice;
-			$object->context['email_from'] = $from;
+			$object->context['email_from'] = $email_from;
 			$object->context['email_to'] = $sendto;
 			$object->context['email_msgid'] = $mail->msgid;
 

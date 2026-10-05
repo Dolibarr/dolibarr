@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,16 +41,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-$rowid = GETPOSTINT('rowid');
 $entity = GETPOSTINT('entity');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'aZ09');
+$toselect = GETPOST('toselect', 'array:int');
+$confirm = GETPOST('confirm', 'alpha');
 
 $debug = GETPOSTINT('debug');
 $consts = GETPOST('const', 'array');
-$constname = GETPOST('constname', 'alphanohtml');
+$constname = GETPOST('constname', 'aZ09');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
-$constnote = GETPOST('constnote', 'alpha');
+$constnote = GETPOST('constnote', 'alphanohtml');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -72,15 +74,6 @@ if (empty($sortorder)) {
 if ($action == 'add' && GETPOST('update')) {	// Click on button update must be used in priority before param $action
 	$action = 'update';
 }
-if ($action == 'add' && GETPOST('delete')) {	// Click on button update must be used in priority before param $action
-	$action = 'delete';
-}
-/*if ($action == 'update' && GETPOST('add')) {	// 'add' button is always clicked as it is the first in form.
-	$action = 'add';
-}*/
-if ($action == 'delete' && GETPOST('add')) {	// Click on button add must be used in priority before param $action
-	$action = 'add';
-}
 
 if (!$user->admin) {
 	accessforbidden();
@@ -91,8 +84,13 @@ if (!$user->admin) {
  * Actions
  */
 
-// Add a new record
-if ($action == 'add') {
+// Mass action
+if (!GETPOST('confirmmassaction', 'alpha')) {
+	$massaction = '';
+}
+
+// Add a new record (only when the zone to add a new record was submitted and no mass action is in progress)
+if ($action == 'add' && empty($massaction) && GETPOSTISSET('constname')) {
 	$error = 0;
 
 	if (empty($constname)) {
@@ -121,7 +119,7 @@ if ($action == 'add') {
 if (!empty($consts) && $action == 'update') {
 	$nbmodified = 0;
 	foreach ($consts as $const) {
-		if (!empty($const["check"])) {
+		if (!empty($const["rowid"]) && in_array((int) $const["rowid"], $toselect)) {	// Only records checked
 			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0) {
 				$nbmodified++;
 			} else {
@@ -135,31 +133,25 @@ if (!empty($consts) && $action == 'update') {
 	$action = '';
 }
 
-// Mass delete
-if (!empty($consts) && $action == 'delete') {
+// Mass delete (massaction = 'delete', or action = 'delete' after confirmation of massaction = 'predelete')
+if ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) {
 	$nbdeleted = 0;
-	foreach ($consts as $const) {
-		if (!empty($const["check"])) {	// Is checkbox checked
-			if (dolibarr_del_const($db, $const["rowid"], -1) >= 0) {
-				$nbdeleted++;
-			} else {
-				dol_print_error($db);
-			}
+	foreach ($toselect as $constrowid) {
+		if (dolibarr_del_const($db, $constrowid, -1) >= 0) {
+			$nbdeleted++;
+		} else {
+			dol_print_error($db);
 		}
 	}
-	if ($nbdeleted > 0) {
-		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-	}
-	$action = '';
-}
-
-// Delete line from delete picto
-if ($action == 'delete') {
-	if (dolibarr_del_const($db, $rowid, $entity) >= 0) {
+	if ($nbdeleted > 1) {
+		setEventMessages($langs->trans("RecordsDeleted", $nbdeleted), null, 'mesgs');
+	} elseif ($nbdeleted > 0) {
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	} else {
-		dol_print_error($db);
+		setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
 	}
+	$action = '';
+	$massaction = '';
 }
 
 
@@ -178,37 +170,120 @@ if ($conf->use_javascript_ajax) {
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#updateconst").hide();
-	jQuery("#delconst").hide();
-	jQuery(".checkboxfordelete").click(function() {
-		jQuery("#delconst").show();
+	jQuery(".checkforselect").change(function() {
+		jQuery("#updateconst").show();
 	});
 	jQuery(".inputforupdate").keyup(function() {	// keypress does not support back
-		var field_id = jQuery(this).attr("id");
-		var row_num = field_id.split("_");
 		jQuery("#updateconst").show();
 		jQuery("#action").val('update');			// so default action if we type enter will be update, but correct action is also detected correctly without that when clicking on "Update" button.
-		jQuery("#check_" + row_num[1]).prop("checked",true);
+		jQuery(this).closest("tr").find(".checkforselect").prop("checked", true);
+	});
+	jQuery("#add").click(function() {
+		jQuery("#action").val('add');		// so the add is forced even if we typed before into a field of a record
 	});
 });
 </script>
 	<?php
 }
 
-print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
+// List of mass actions available
+$arrayofmassactions = array(
+	'predelete' => img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete"),
+);
+if (GETPOSTINT('nomassaction') || $massaction == 'predelete') {
+	$arrayofmassactions = array();
+}
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<div class="info">'.$langs->trans("ConstDesc")."</div><br>\n";
+// Button to check all into the action column of title of list
+$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
+// Button + to show/hide the zone to add a new record
+$addformvisible = (($action == 'create' || $action == 'add') && empty($massaction));	// $action == 'add' keeps the zone visible if a field is missing
+$urlbuttonplus = $_SERVER['PHP_SELF'].($addformvisible ? '' : '?action=create');
+if (empty($user->entity) && $debug) {
+	$urlbuttonplus .= $addformvisible ? '?debug=1' : '&debug=1';
+}
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $urlbuttonplus, '', ($addformvisible ? 2 : 1));
 
 $param = '';
 
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
+// Unique form, so the combo of mass actions into the line of title can submit the selection of records
+print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" id="action" name="action" value="add">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+print load_fiche_titre($langs->trans("OtherSetup"), $newcardbutton, 'title_setup', 0, '', '', $massactionbutton);
+
+print '<div class="info">'.$langs->trans("ConstDesc")."</div><br>\n";
+
+// Zone to add a new record (visible only when we click on the button +)
+if ($addformvisible) {
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+
+	// Line of title
+	print '<tr class="liste_titre">';
+	print '<th>'.$langs->trans("Name").'</th>';
+	print '<th>'.$langs->trans("Value").'</th>';
+	print '<th>'.$langs->trans("Comment").'</th>';
+	print '<th class="center">'.$langs->trans("DateModificationShort").'</th>';
+	if (isModEnabled('multicompany') && !$user->entity) {
+		print '<th class="center">'.$langs->trans("Entity").'</th>';
+	}
+	print '<th class="center"></th>';
+	print '</tr>'."\n";
+
+	// Line to add new record
+	print "\n";
+
+	print '<tr class="oddeven nohover"><td>';
+	print '<input type="text" class="flat minwidth300" name="constname" value="'.dolPrintHTMLForAttribute($constname).'" spellcheck="false">';
+	print '</td>'."\n";
+	print '<td>';
+	print '<input type="text" class="flat minwidth100" name="constvalue" value="'.dolPrintHTMLForAttribute($constvalue, 1).'" spellcheck="false">';
+	print '</td>';
+	print '<td>';
+	print '<input type="text" class="flat minwidth100" name="constnote" value="'.dolPrintHTMLForAttribute($constnote).'">';
+	print '</td>';
+	print '<td>';
+	print '</td>';
+	// Limit to superadmin
+	if (isModEnabled('multicompany') && !$user->entity) {
+		print '<td class="center">';
+		print '<input type="text" class="width50" name="entity" value="' . $conf->entity . '">';
+		print '</td>';
+		print '<td class="center">';
+	} else {
+		print '<td class="center">';
+		print '<input type="hidden" name="entity" value="' . $conf->entity . '">';
+	}
+	print '<input type="submit" class="button button-add small" id="add" name="add" value="'.$langs->trans("Add").'">';
+	print "</td>\n";
+	print '</tr>';
+
+	print '</table>';
+	print '</div>';
+	print '<br>';
+}
+
+// Code for pre mass action (confirmation of mass deletion)
+if ($massaction == 'predelete') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
+}
+
+// List of records
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
+// Action column
+if ($conf->main_checkbox_left_column) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '') . "\n";
 print getTitleFieldOfList("Value", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 print getTitleFieldOfList("Comment", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
@@ -216,37 +291,11 @@ print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms
 if (isModEnabled('multicompany') && !$user->entity) {
 	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ') . "\n";
 }
-print getTitleFieldOfList("", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
-print "</tr>\n";
-
-
-// Line to add new record
-print "\n";
-
-print '<tr class="oddeven nohover"><td>';
-print '<input type="text" class="flat minwidth300" name="constname" value="'.$constname.'" spellcheck="false">';
-print '</td>'."\n";
-print '<td>';
-print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'" spellcheck="false">';
-print '</td>';
-print '<td>';
-print '<input type="text" class="flat minwidth100" name="constnote" value="'.$constnote.'">';
-print '</td>';
-print '<td>';
-print '</td>';
-// Limit to superadmin
-if (isModEnabled('multicompany') && !$user->entity) {
-	print '<td>';
-	print '<input type="text" class="flat" size="1" name="entity" value="' . $conf->entity . '">';
-	print '</td>';
-	print '<td class="center">';
-} else {
-	print '<td class="center">';
-	print '<input type="hidden" name="entity" value="' . $conf->entity . '">';
+// Action column
+if (!$conf->main_checkbox_left_column) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
-print '<input type="submit" class="button button-add small" id="add" name="add" value="'.$langs->trans("Add").'">';
-print "</td>\n";
-print '</tr>';
+print "</tr>\n";
 
 
 // Show constants
@@ -259,7 +308,7 @@ $sql .= ", note";
 $sql .= ", tms";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
+$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".((int) $conf->entity)).")";
 if ((empty($user->entity)/*  || $user->admin */) && $debug) {
 	// empty
 } elseif (!GETPOST('visible') || GETPOST('visible') != 'all') {
@@ -282,15 +331,32 @@ if ($result) {
 
 		$value = dolDecrypt($obj->value);
 
+		// Content of the action column (checkbox to select record for mass actions)
+		$selected = 0;
+		if (in_array((int) $obj->rowid, $arrayofselected)) {
+			$selected = 1;
+		}
+		$actioncolumncontent = '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+
 		print "\n";
 
-		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.dol_escape_htmltag($obj->name).'</td>'."\n";
+		print '<tr class="oddeven">';
+
+		// Action column
+		if ($conf->main_checkbox_left_column) {
+			print '<td class="center">'.$actioncolumncontent.'</td>';
+		}
+
+		print '<td>'.dol_escape_htmltag($obj->name).'</td>'."\n";
 
 		// Value
 		print '<td>';
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
+		if (!isModEnabled('multicompany') || !empty($user->entity)) {	// If there is no input for entity, we save it into a hidden input
+			print '<input type="hidden" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
+		}
 		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.(isset($value) ? htmlspecialchars($value) : '').'">';
 		print '</td>';
 
@@ -306,22 +372,17 @@ if ($result) {
 
 		// Entity limit to superadmin
 		if (isModEnabled('multicompany') && empty($user->entity)) {
-			print '<td>';
+			print '<td class="center">';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 			print '</td>';
-			print '<td class="center">';
-		} else {
-			print '<td class="center">';
-			print '<input type="hidden" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 		}
 
-		if (!empty($conf->use_javascript_ajax)) {
-			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
-		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
+		// Action column
+		if (!$conf->main_checkbox_left_column) {
+			print '<td class="center">'.$actioncolumncontent.'</td>';
 		}
 
-		print "</td></tr>\n";
+		print "</tr>\n";
 
 		print "\n";
 		$i++;
@@ -336,9 +397,6 @@ if ($conf->use_javascript_ajax) {
 	print '<br>';
 	print '<div id="updateconst" class="right">';
 	print '<input type="submit" class="button button-edit marginbottomonly" name="update" value="'.$langs->trans("Modify").'">';
-	print '</div>';
-	print '<div id="delconst" class="right">';
-	print '<input type="submit" class="button button-cancel marginbottomonly" name="delete" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }
 

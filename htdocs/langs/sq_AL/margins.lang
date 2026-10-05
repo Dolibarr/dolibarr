@@ -31,9 +31,9 @@ UseDiscountOnTotal=Në nëntotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Përcakton nëse një zbritje globale trajtohet si produkt, shërbim ose vetëm në nëntotalin për llogaritjen e marzhit.
 MARGIN_TYPE=Blerja/Çmimi i kostos sugjerohet si parazgjedhje për llogaritjen e marzhit
 MargeType1=Marzhi në çmimin më të mirë të shitësit
-MargeType2=Marzhi në çmimin mesatar të ponderuar (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Marzhi në çmimin e kostos
-MarginTypeDesc=* Marzhi në çmimin më të mirë të blerjes = Çmimi i shitjes - Çmimi më i mirë i shitësit i përcaktuar në kartën e produktit<br>* Marzhi në çmimin mesatar të ponderuar (WAP) = Çmimi i shitjes - Çmimi mesatar i ponderuar i produktit (WAP) ose çmimi më i mirë i shitësit nëse WAP nuk është përcaktuar ende<br>* Marzhi në çmimin e kostos = çmimi i shitjes - Çmimi i kostos i përcaktuar në kartën e produktit ose WAP nëse çmimi i kostos nuk është përcaktuar, ose çmimi më i mirë i shitësit nëse WAP ende nuk është përcaktuar
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Çmimi i kostos
 UnitCharges=Tarifat për njësi
 Charges=Akuzat

@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Последни пратки към клиенти
 BoxTitleLastCustomerShipments=Последни пратки с модифицирани %s
 BoxTitleLastLeaveRequests=Молби за отпуск: %s последно променени
 NoRecordedShipments=Няма регистрирани пратки към клиенти
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Клиенти с достигнат неизплатен лимит
 BoxTitleLastFediverseInfos=Последни публикации от %s
 BoxLastFediverseInfos=Последни актуализации на Fediverse: Новини и тенденции

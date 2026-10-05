@@ -14,6 +14,7 @@ DeleteProp=Eliminar pressupost
 ValidateProp=Validar pressupost
 CancelPropal=Anul·la
 AddProp=Crear pressupost
+AddRenewalProp=Crea una proposta de renovació
 ConfirmDeleteProp=Estàs segur que vols eliminar aquesta proposta comercial?
 ConfirmValidateProp=Estàs segur que vols validar aquesta proposta comercial sota el nom <b>%s</b>?
 ConfirmCancelPropal=Confirmes que vols anul·lar la proposta comercial <b>%s</b>?

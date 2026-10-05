@@ -25,7 +25,7 @@ $formconfirm = '';
 
 // Call Hook formConfirm
 $parameters = array('formConfirm' => $formconfirm);
-$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $context);
+$reshook = $hookmanager->executeHooks('webPortalFormConfirm', $parameters, $context);
 if (empty($reshook)) {
 	$formconfirm .= $hookmanager->resPrint;
 } elseif ($reshook > 0) {

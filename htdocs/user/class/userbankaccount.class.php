@@ -5,8 +5,8 @@
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,13 +96,27 @@ class UserBankAccount extends Account
 		$now = dol_now();
 
 		$sql = "INSERT INTO ".$this->db->prefix()."user_rib (fk_user, datec)";
-		$sql .= " VALUES (".$this->userid.", '".$this->db->idate($now)."')";
+		$sql .= " VALUES (".((int) $this->userid).", '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
 				$this->id = $this->db->last_insert_id($this->db->prefix()."user_rib");
 
-				return $this->update($user);
+				$result = $this->update($user, 1);
+				if ($result < 0) {
+					return $result;
+				}
+
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
+					if ($result < 0) {
+						return -1;
+					}
+					// End call triggers
+				}
+
+				return $this->id;
 			} else {
 				return 0;
 			}
@@ -302,6 +316,16 @@ class UserBankAccount extends Account
 				$error++;
 				$this->error = "Error ".$this->db->lasterror();
 			}
+		}
+
+		// Triggers
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			} //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
 		}
 
 		if (!$error) {

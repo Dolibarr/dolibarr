@@ -42,7 +42,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -50,6 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+
 
 restrictedArea($user, 'salaries');
 
@@ -64,6 +65,24 @@ $fk_user = GETPOSTINT('fk_user');
 $return_arr = array();
 
 if (!empty(GETPOSTINT('fk_user'))) {
+	// Check that the caller is allowed to read the salary of the requested user:
+	// salaries/readall = any user, salaries/readchild = self and subordinates,
+	// salaries/read = self only.
+	if (!$user->hasRight('salaries', 'readall')) {
+		if ($user->hasRight('salaries', 'readchild')) {
+			$childids = $user->getAllChildIds(1); // Includes the current user
+			if (!in_array($fk_user, $childids)) {
+				echo json_encode(array('nom' => 'NotAuthorized', 'label' => 'NotAuthorized', 'key' => 'NotAuthorized', 'value' => 'NotAuthorized'));
+				exit;
+			}
+		} else {
+			if ($fk_user != $user->id) {
+				echo json_encode(array('nom' => 'NotAuthorized', 'label' => 'NotAuthorized', 'key' => 'NotAuthorized', 'value' => 'NotAuthorized'));
+				exit;
+			}
+		}
+	}
+
 	$sql = "SELECT s.amount, s.rowid FROM ".MAIN_DB_PREFIX."salary as s";
 	$sql .= " WHERE s.fk_user = ".((int) $fk_user);
 	$sql .= " AND s.paye = 1";

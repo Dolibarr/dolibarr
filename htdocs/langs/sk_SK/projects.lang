@@ -258,7 +258,7 @@ OtherFilteredTasks=Ďalšie filtrované úlohy
 NoAssignedTasks=Nenašli sa žiadne priradené úlohy (priraďte projekt/úlohy aktuálnemu používateľovi z horného výberového poľa a zadajte čas)
 ThirdPartyRequiredToGenerateIntervention=Tretia strana musí byť definovaná v projekte, aby mohla vytvoriť zásah.
 ThirdPartyRequiredToGenerateInvoice=V projekte musí byť definovaná tretia strana, aby ho mohla fakturovať.
-ChooseANotYetAssignedTask=Vyberte si úlohu, ktorá vám ešte nebola pridelená
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Povoliť používateľom komentáre k úlohám
 AllowCommentOnProject=Povoliť komentáre používateľov k projektom

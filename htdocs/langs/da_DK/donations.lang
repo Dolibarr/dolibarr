@@ -57,3 +57,7 @@ donAnonymous=Anonym donation
 AnonymousDonationTooltip=Markér denne boks, hvis du ønsker, at din donation skal forblive anonym. Dine personlige oplysninger vil ikke blive bedt om.
 publicDonationFieldHelp=%s kan offentliggøre min donation i det offentlige register
 listOfPublicDonations=Liste over offentlige donationer
+donationErrorMessageContactEmail=Der er opstået en fejl. For at fuldføre din donation, bedes du kontakte os på %s
+descDonationLineInInvoice=Donation og bidrag
+companyBusinessNumber=Virksomhedsregistreringsnummer
+companyTIN=Skatteidentifikationsnummer

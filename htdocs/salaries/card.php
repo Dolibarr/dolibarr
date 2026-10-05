@@ -3,12 +3,13 @@
  * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
  * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +172,10 @@ if ($action == 'classin' && $permissiontoadd) {
 if ($action == 'setlabel' && $permissiontoadd) {
 	$object->fetch($id);
 	$object->label = $label;
-	$object->update($user);
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 // Classify paid
@@ -184,7 +188,10 @@ if ($action == 'setfk_user' && $permissiontoadd) {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$object->fk_user = $fk_user;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} else {
 		dol_print_error($db);
 		exit;
@@ -296,7 +303,7 @@ if ($action == 'add' && empty($cancel) && $permissiontoadd) {
 			$paiement->chid         = $object->id;	// deprecated
 			$paiement->datep        = $datep;
 			$paiement->datev		= $datev;
-			$paiement->amounts      = array($object->id => $amount); // Tableau de montant
+			$paiement->amounts      = array($object->id => $amount); // Amount array
 			$paiement->fk_typepayment = $type_payment;
 			$paiement->num_payment = GETPOST("num_payment", 'alphanohtml');
 			$paiement->note_private = GETPOST("note", 'restricthtml');
@@ -354,6 +361,7 @@ if ($action == 'confirm_delete' && $permissiontodelete) {
 	if (empty($totalpaid)) {
 		$db->begin();
 
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$ret = $object->delete($user);
 		if ($ret > 0) {
 			$db->commit();
@@ -495,8 +503,7 @@ llxHeader('', $title, $help_url);
 if ($id > 0) {
 	$result = $object->fetch($id);
 	if ($result <= 0) {
-		dol_print_error($db);
-		exit;
+		recordNotFound('', 0);
 	}
 }
 
@@ -764,7 +771,7 @@ if ($action == 'create' && $permissiontoadd) {
 						);
 
 					} else {
-						alert("'.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'");
+						alert(\''.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'\');
 					}
 		});
 
@@ -792,7 +799,7 @@ if ($id > 0) {
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 0);
 
 		// Add buttons to fill start and end dates
 		$formconfirm .= "<script>
@@ -896,7 +903,7 @@ if ($id > 0) {
 	print $formconfirm;
 
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 
 	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/salaries/list.php', ['restore_lastsearch_values' => 1]).(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -911,7 +918,7 @@ if ($id > 0) {
 		$morehtmlref .= '<form method="post" action="'.$pageurl.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+		$morehtmlref .= '<input type="text" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"/>';
 		$morehtmlref .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
@@ -1230,11 +1237,11 @@ if ($id > 0) {
 
 		// Clone
 		if ($permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone', 'id' => $object->id], true), '');
+			print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')));
 		}
 
 		if ($permissiontodelete && empty($totalpaid)) {
-			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '');
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 		} else {
 			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'), 'default', dolBuildUrl($_SERVER['PHP_SELF']).'#', '', false);
 		}
@@ -1261,7 +1268,7 @@ if ($id > 0) {
 			if (empty($object->ref)) $object->ref = (string) $object->id;
 
 			$objref = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->salaries->dir_output.'/'.$object->element.'/'.$objref;
+			$filedir = $conf->salaries->dir_output.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
 			$genallowed = 1;
@@ -1270,7 +1277,7 @@ if ($id > 0) {
 
 			print $formfile->showdocuments(
 				'salaries:Salary',
-				$object->element.'/'.$objref,
+				$objref,
 				$filedir,
 				$urlsource,
 				(int) $genallowed,
