@@ -1,4 +1,4 @@
-name: tmp-cti-fix  # v4
+name: tmp-cti-fix  # v5
 
 on:
   push:
@@ -154,73 +154,49 @@ jobs:
           echo "phpstan before exit: $?" >> $LOG
           tail -3 phpstan-before.txt >> $LOG
           echo '=== apply fix ===' >> $LOG
-          python3 - <<'PYEOF' >> $LOG 2>&1
-          import pathlib
-          
-          LOG = open('/tmp/fixlog.txt', 'a')
-          
-          def log(msg):
-              print(msg)
-              LOG.write(str(msg) + chr(10))
-              LOG.flush()
-          
-          p1 = pathlib.Path('htdocs/core/lib/functions.lib.php')
-          data1 = p1.read_bytes()
-          old1 = b' *  @param  array<string,string|float|null>' + bytes([9]) + b'$substitutionarray'
-          new1 = b' *  @param  array<string,string|int|float|null>' + bytes([9]) + b'$substitutionarray'
-          log('pattern1 count in functions.lib.php: %d' % data1.count(old1))
-          if data1.count(old1) == 1:
-              p1.write_bytes(data1.replace(old1, new1, 1))
-              log('edited functions.lib.php')
-          else:
-              i = data1.find(old1[:40])
-              log('context near pattern1: %r' % data1[max(0, i-80):i+160])
-          
-          p2 = pathlib.Path('htdocs/compta/sociales/payments.php')
-          data2 = p2.read_bytes()
-          old2 = b'if ($sortfield !== null' + bytes([10, 9])
-          old2 = old2 + b"&& preg_match('/^(cs|c|pc|pct|u|ba)" + bytes([92, 46]) + b"', $sortfield)" + bytes([10]) + b') {'
-          new2 = b"if (preg_match('/^(cs|c|pc|pct|u|ba)" + bytes([92, 46]) + b"', $sortfield)) {'
-          log('pattern2 count in payments.php: %d' % data2.count(old2))
-          if data2.count(old2) == 1:
-              p2.write_bytes(data2.replace(old2, new2, 1))
-              log('edited payments.php')
-          else:
-              i = data2.find(b'sortfield !== null')
-              log('context near pattern2: %r' % data2[max(0, i-60):i+160])
-          
-          for path in ('htdocs/core/lib/functions.lib.php', 'htdocs/compta/sociales/payments.php'):
-              d = pathlib.Path(path).read_bytes()
-              d.decode('utf-8')
-              log('%s CR count: %d bytes: %d' % (path, d.count(bytes([13])), len(d)))
-          PYEOF
+          echo 'aW1wb3J0IHBhdGhsaWIKTE9HID0gb3BlbignL3RtcC9maXhsb2cudHh0JywgJ2EnKQpkZWYgbG9nKG1zZyk6CiAgICBwcmludChtc2cpCiAgICBMT0cud3JpdGUoc3RyKG1zZykgKyBjaHIoMTApKQogICAgTE9HLmZsdXNoKCkKVEFCID0gYnl0ZXMoWzldKQpMRiA9IGJ5dGVzKFsxMF0pCkJTID0gYnl0ZXMoWzkyXSkKb2sgPSBUcnVlCnAxID0gcGF0aGxpYi5QYXRoKCdodGRvY3MvY29yZS9saWIvZnVuY3Rpb25zLmxpYi5waHAnKQpkMSA9IHAxLnJlYWRfYnl0ZXMoKQpvbGQxID0gYicgKiAgQHBhcmFtICBhcnJheTxzdHJpbmcsc3RyaW5nfGZsb2F0fG51bGw+JyArIFRBQiArIGInJHN1YnN0aXR1dGlvbmFycmF5JwpuZXcxID0gYicgKiAgQHBhcmFtICBhcnJheTxzdHJpbmcsc3RyaW5nfGludHxmbG9hdHxudWxsPicgKyBUQUIgKyBiJyRzdWJzdGl0dXRpb25hcnJheScKYzEgPSBkMS5jb3VudChvbGQxKQpsb2coJ3BhdHRlcm4xIGNvdW50IGluIGZ1bmN0aW9ucy5saWIucGhwOiAlZCcgJSBjMSkKaWYgYzEgPT0gMToKICAgIHAxLndyaXRlX2J5dGVzKGQxLnJlcGxhY2Uob2xkMSwgbmV3MSwgMSkpCiAgICBsb2coJ2Z1bmN0aW9ucy5saWIucGhwIGVkaXRlZCcpCmVsc2U6CiAgICBvayA9IEZhbHNlCiAgICBpID0gZDEuZmluZChiJyRzdWJzdGl0dXRpb25hcnJheScpCiAgICBsb2coJ2NvbnRleHQxOiAlcicgJSBkMVttYXgoMCwgaS0xNjApOmkrODBdKQpwMiA9IHBhdGhsaWIuUGF0aCgnaHRkb2NzL2NvbXB0YS9zb2NpYWxlcy9wYXltZW50cy5waHAnKQpkMiA9IHAyLnJlYWRfYnl0ZXMoKQpvbGQyID0gYidpZiAoJHNvcnRmaWVsZCAhPT0gbnVsbCcgKyBMRiArIFRBQiArIGIiJiYgcHJlZ19tYXRjaCgnL14oY3N8Y3xwY3xwY3R8dXxiYSkiICsgQlMgKyBiIi4vJywgJHNvcnRmaWVsZCkiICsgTEYgKyBiJykgeycKbmV3MiA9IGIiaWYgKHByZWdfbWF0Y2goJy9eKGNzfGN8cGN8cGN0fHV8YmEpIiArIEJTICsgYiIuLycsICRzb3J0ZmllbGQpKSB7IgpjMiA9IGQyLmNvdW50KG9sZDIpCmxvZygncGF0dGVybjIgY291bnQgaW4gcGF5bWVudHMucGhwOiAlZCcgJSBjMikKaWYgYzIgPT0gMToKICAgIHAyLndyaXRlX2J5dGVzKGQyLnJlcGxhY2Uob2xkMiwgbmV3MiwgMSkpCiAgICBsb2coJ3BheW1lbnRzLnBocCBlZGl0ZWQnKQplbHNlOgogICAgb2sgPSBGYWxzZQogICAgaSA9IGQyLmZpbmQoYidzb3J0ZmllbGQgIT09IG51bGwnKQogICAgbG9nKCdjb250ZXh0MjogJXInICUgZDJbbWF4KDAsIGktODApOmkrMjAwXSkKZm9yIHBhdGggaW4gKCdodGRvY3MvY29yZS9saWIvZnVuY3Rpb25zLmxpYi5waHAnLCAnaHRkb2NzL2NvbXB0YS9zb2NpYWxlcy9wYXltZW50cy5waHAnKToKICAgIGQgPSBwYXRobGliLlBhdGgocGF0aCkucmVhZF9ieXRlcygpCiAgICBkLmRlY29kZSgndXRmLTgnKQogICAgbG9nKCclcyB1dGY4IG9rIENSPSVkIExGPSVkIGJ5dGVzPSVkJyAlIChwYXRoLCBkLmNvdW50KGJ5dGVzKFsxM10pKSwgZC5jb3VudChMRiksIGxlbihkKSkpCmlmIG9rOgogICAgcGF0aGxpYi5QYXRoKCcvdG1wL2ZpeG9rJykud3JpdGVfdGV4dCgnb2snKQogICAgbG9nKCdmaXggYXBwbGllZCBzdWNjZXNzZnVsbHknKQplbHNlOgogICAgbG9nKCdmaXggTk9UIGZ1bGx5IGFwcGxpZWQnKQogICAgcmFpc2UgU3lzdGVtRXhpdCgxKQo=' | base64 -d > /tmp/fix.py
+          python3 /tmp/fix.py >> $LOG 2>&1
           echo "python exit: $?" >> $LOG
+          php -l htdocs/core/lib/functions.lib.php >> $LOG 2>&1
+          php -l htdocs/compta/sociales/payments.php >> $LOG 2>&1
           git --no-pager diff --stat >> $LOG
           git --no-pager diff > /tmp/fix.diff
           echo '=== phpstan after ===' >> $LOG
           php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-after.txt 2>&1
           echo "phpstan after exit: $?" >> $LOG
           tail -3 phpstan-after.txt >> $LOG
+          cp phpstan-before.txt phpstan-after.txt /tmp/ 2>/dev/null || true
           echo '=== done ===' >> $LOG
 
       - name: Push fix branch
         run: |
-          git config user.name "eldy"
-          git config user.email "eldy@destailleur.fr"
-          git add htdocs/core/lib/functions.lib.php htdocs/compta/sociales/payments.php
-          git commit -m "QUAL: Fix 2 PHPStan warnings of CTI technical debt (substitutionarray type, sortfield null check)"
-          git push origin HEAD:refs/heads/fix-phpstan-substitution-sortfield || echo 'push fix branch failed'
+          if [ -f /tmp/fixok ]; then
+            git config user.name "eldy"
+            git config user.email "eldy@destailleur.fr"
+            git add htdocs/core/lib/functions.lib.php htdocs/compta/sociales/payments.php
+            git diff --cached --quiet || git commit -m "QUAL: Fix 2 PHPStan warnings of CTI technical debt (substitutionarray type, sortfield null check)"
+            if git ls-remote --exit-code --heads origin fix-phpstan-substitution-sortfield >/dev/null 2>&1; then
+              echo 'fix branch already exists, skip push'
+            else
+              git push origin HEAD:refs/heads/fix-phpstan-substitution-sortfield
+            fi
+          else
+            echo 'fix NOT applied, skipping push of fix branch'
+          fi
 
       - name: Publish verification logs on the scratch branch
         if: always()
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
           git fetch origin tmp-cti-vibe-debt-20261005
           git checkout -B tmp-cti-vibe-debt-20261005 origin/tmp-cti-vibe-debt-20261005
-          cp /tmp/fixlog.txt /tmp/fix.diff .
-          cp phpstan-before.txt phpstan-after.txt . 2>/dev/null || true
-          git add fixlog.txt fix.diff phpstan-before.txt phpstan-after.txt || true
-          git commit -m "[skip ci] Add fix verification logs" || echo 'nothing to commit'
-          git pull --rebase origin tmp-cti-vibe-debt-20261005 || true
-          git push origin HEAD:tmp-cti-vibe-debt-20261005
+          cp /tmp/fixlog.txt /tmp/fix.diff . 2>/dev/null || true
+          cp /tmp/phpstan-before.txt /tmp/phpstan-after.txt . 2>/dev/null || true
+          git add fixlog.txt fix.diff phpstan-before.txt phpstan-after.txt 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "[skip ci] Add fix verification logs v5"
+          for i in 1 2 3 4 5; do
+            if git push origin HEAD:tmp-cti-vibe-debt-20261005; then break; fi
+            git pull --rebase origin tmp-cti-vibe-debt-20261005 || git rebase --abort || true
+            sleep 10
+          done
