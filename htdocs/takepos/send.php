@@ -112,6 +112,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();
 $head = '';
+
 top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 
 ?>
