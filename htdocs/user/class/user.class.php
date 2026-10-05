@@ -548,7 +548,7 @@ class User extends CommonObject
 		$sql .= " fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
 		$sql .= " u.statut as status, u.lang, u.entity,";
 		$sql .= " u.datec as datec,";
-		$sql .= " GREATEST(u.tms, uef.tms) as datem,";
+		$sql .= " GREATEST(u.tms, COALESCE(uef.tms, u.tms)) as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
 		$sql .= " u.flagdelsessionsbefore,";
@@ -3678,7 +3678,7 @@ class User extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT u.rowid, u.login as ref, u.datec, fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
-		$sql .= " GREATEST(u.tms, uef.tms) as date_modification, u.entity";
+		$sql .= " GREATEST(u.tms, COALESCE(uef.tms, u.tms)) as date_modification, u.entity";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."user_extrafields as uef ON uef.fk_object = u.rowid";
 		$sql .= " WHERE u.rowid = ".((int) $id);
