@@ -637,19 +637,16 @@ class Task extends CommonObjectLine
 			return array();
 		}
 
-		$projectstatic = new Project($this->db);
-		$projectlistfilter = '';
-		if (!$user->hasRight('projet', 'all', 'lire')) {
-			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
-			$projectlistfilter = " AND p.rowid IN (".$this->db->sanitize($projectsListId ? $projectsListId : '0').")";
-		}
-
 		$sql = "SELECT t.rowid, t.ref, t.label, t.dateo, t.datee, t.progress, t.fk_statut, t.fk_projet";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task AS t";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet AS p ON p.rowid = t.fk_projet";
 		$sql .= " WHERE t.rowid IN (".$this->db->sanitize(implode(',', $toselect)).")";
 		$sql .= " AND p.entity IN (".getEntity('project').")";
-		$sql .= $projectlistfilter;
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			$projectstatic = new Project($this->db);
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId ? $projectsListId : '0').")";
+		}
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
