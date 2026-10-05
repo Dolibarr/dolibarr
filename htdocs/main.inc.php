@@ -1540,7 +1540,9 @@ if (!function_exists("llxHeader")) {
 			$tmpcsstouse .= ' dol_openinpopup';
 		}
 
-		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
+		// The spell checker of the browser is disabled for the whole page (the attribute is inherited by all the
+		// fields of all the forms). It is enabled back only on the fields where it is useful (free text, see DolEditor).
+		print '<body id="mainbody" class="'.$tmpcsstouse.'" spellcheck="false">'."\n";
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOSTINT('dol_invisible_topmenu')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -2252,7 +2254,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	if (empty($conf->headerdone)) {
 		$disablenofollow = 0;
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
-		print '<body id="mainbody">';
+		print '<body id="mainbody" spellcheck="false">';
 	}
 
 	/*
