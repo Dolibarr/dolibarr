@@ -1452,7 +1452,18 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingIntent)
             });
-            const result = await aiJson(toolRes);
+            let result = await aiJson(toolRes);
+            // After the user confirms the preview send the state back to complete the write.
+            if (result && result.resultType === 'input_required' && result.requestState) {
+                const confirmed = Object.assign({}, pendingIntent, {
+                    arguments: Object.assign({}, pendingIntent.arguments || {}, { requestState: result.requestState })
+                });
+                const secondRes = await fetch(epUrl('execute_tool.php'), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(confirmed)
+                });
+                result = await aiJson(secondRes);
+            }
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
             appendMsg('bot', formatResult(result, false, pendingIntent.tool), null, contextSnippetOf(result, pendingIntent.tool));
