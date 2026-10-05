@@ -1149,7 +1149,7 @@ function show_day_events_pertype($typeofeventcode, $day, $month, $year, $monthsh
 							if ($event->fk_project > 0) {
 								if (empty($cacheprojects[$event->fk_project])) {
 									$tmpproj = new Project($db);
-									$tmpproj->fetch($event->fk_project);
+									$tmpproj->fetch((int) $event->fk_project);
 									$cacheprojects[$event->fk_project] = $tmpproj;
 								}
 								$cases1[$h][$event->id]['string'] .= ', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;
@@ -1192,7 +1192,7 @@ function show_day_events_pertype($typeofeventcode, $day, $month, $year, $monthsh
 							if ($event->fk_project > 0) {
 								if (empty($cacheprojects[$event->fk_project])) {
 									$tmpproj = new Project($db);
-									$tmpproj->fetch($event->fk_project);
+									$tmpproj->fetch((int) $event->fk_project);
 									$cacheprojects[$event->fk_project] = $tmpproj;
 								}
 								$cases2[$h][$event->id]['string'] .= ', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;

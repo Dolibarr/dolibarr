@@ -264,7 +264,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
 									"description" => ["type" => "string", "description" => "Product name or description"],
 									"quantity" => ["type" => "number", "default" => 1, "description" => "Quantity ordered"],
-									"unit_price" => ["type" => "number", "description" => "Selling price per unit (optional)"],
+									"unit_price" => ["type" => "number", "description" => "Unit selling price. OMIT this field to take the price from the product catalog; send 0 only for a deliberately free line."],
 									"vat_rate" => ["type" => "number", "description" => "VAT rate (optional, auto-calculated if not provided)"]
 								],
 								"required" => ["quantity"]
@@ -308,7 +308,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
 									"description" => ["type" => "string"],
 									"quantity" => ["type" => "number", "default" => 1],
-									"unit_price" => ["type" => "number"],
+									"unit_price" => ["type" => "number", "description" => "Unit selling price. OMIT this field to take the price from the product catalog; send 0 only for a deliberately free line."],
 									"vat_rate" => ["type" => "number"],
 									"fk_unit" => ["type" => "integer"]
 								],
@@ -357,7 +357,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
 									"description" => ["type" => "string"],
 									"quantity" => ["type" => "number", "default" => 1],
-									"unit_price" => ["type" => "number"],
+									"unit_price" => ["type" => "number", "description" => "Unit selling price. OMIT this field to take the price from the product catalog; send 0 only for a deliberately free line."],
 									"vat_rate" => ["type" => "number"],
 									"fk_unit" => ["type" => "integer"]
 								],
@@ -381,7 +381,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 									"barcode" => ["type" => "string", "description" => "Product barcode (EAN13/UPC) as written on the source document; used to enrich a product created on the fly"],
 						"description" => ["type" => "string"],
 						"quantity" => ["type" => "number", "default" => 1],
-						"unit_price" => ["type" => "number"],
+						"unit_price" => ["type" => "number", "description" => "Unit selling price. OMIT this field to take the price from the product catalog; send 0 only for a deliberately free line."],
 						"vat_rate" => ["type" => "number"]
 					],
 					"required" => ["object_type", "parent_id", "quantity"]
@@ -412,6 +412,76 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	public function getRequiredRights(string $toolName)
 	{
 		return self::RIGHTS_ENFORCED_DOWNSTREAM;
+	}
+
+	/**
+	 * Preview of the record this call would write.
+	 *
+	 * @param string $toolName Tool that would run.
+	 * @param array<string,mixed> $args Arguments it would run with.
+	 * @return string Preview text, or McpTool::NO_WRITE for a read.
+	 */
+	public function writeConfirmationPreview(string $toolName, array $args)
+	{
+		global $langs;
+
+		$langs->load("other");
+
+		$header = isset($args['header']) && is_array($args['header']) ? $args['header'] : array();
+		$lines = isset($args['lines']) && is_array($args['lines']) ? $args['lines'] : array();
+		$socid = (int) ($header['socid'] ?? ($args['socid'] ?? 0));
+
+		$who = '';
+		if ($socid > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$soc = new Societe($this->db);
+			if ($soc->fetch($socid) > 0) {
+				$who = ' '.$langs->trans("AIPreviewForThirdparty", $soc->name);
+			}
+		}
+
+		// A line may carry no price, in which case the tool takes it from the
+		// catalogue at execution: say so rather than showing nothing, so the
+		// preview never hides the part of the amount the user cannot see.
+		// A line with no unit_price at all is priced from the catalogue at
+		// execution; a line with an explicit 0 is written as zero. Both must be
+		// visible: a hidden zero is the one a user would never have approved.
+		$total = 0.0;
+		$derived = false;
+		$priced = false;
+		foreach ($lines as $line) {
+			if (!isset($line['unit_price']) || $line['unit_price'] === '') {
+				$derived = true;
+				continue;
+			}
+			$priced = true;
+			$total += ((float) ($line['quantity'] ?? 1)) * ((float) $line['unit_price']);
+		}
+
+		$what = $langs->trans(count($lines) === 1 ? "AIPreviewLine" : "AIPreviewLines", (string) count($lines));
+		if ($priced) {
+			$what .= ', '.price($total);
+			if ($derived) {
+				$what = $langs->trans("AIPreviewPlusCatalogue", $what);
+			}
+		} elseif ($derived) {
+			$what .= ', '.$langs->trans("AIPreviewFromCatalogue");
+		}
+
+		switch ($toolName) {
+			case 'create_customer_invoice':
+				return $langs->trans("AIPreviewCreateInvoice", $who, $what);
+			case 'create_sales_order':
+				return $langs->trans("AIPreviewCreateOrder", $who, $what);
+			case 'create_other_document':
+				return $langs->trans("AIPreviewCreateDocument", (string) ($args['object_type'] ?? 'document'), $who, $what);
+			case 'add_line_item':
+				return $langs->trans("AIPreviewAddLine", (string) ($args['object_type'] ?? 'document'), (string) ((int) ($args['parent_id'] ?? 0)));
+			case 'delete_object':
+				return $langs->trans("AIPreviewDelete", (string) ($args['object_type'] ?? 'record'), (string) ((int) ($args['id'] ?? 0)));
+			default:
+				return McpTool::NO_WRITE;
+		}
 	}
 
 	/**
@@ -807,7 +877,20 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		}
 
 		// Normalize Inputs
-		$productIdentifier = isset($args['product']) ? (string) $args['product'] : (isset($args['product_ref']) ? (string) $args['product_ref'] : (isset($args['description']) ? (string) $args['description'] : ''));
+		// product_id is advertised by the schema and is what a model sends when it
+		// already resolved the product, so it must be honoured first: taking only
+		// the ref left $prod null and the line was written at price 0.
+		if (!empty($args['product_id'])) {
+			$productIdentifier = (string) ((int) $args['product_id']);
+		} elseif (isset($args['product'])) {
+			$productIdentifier = (string) $args['product'];
+		} elseif (isset($args['product_ref'])) {
+			$productIdentifier = (string) $args['product_ref'];
+		} elseif (isset($args['description'])) {
+			$productIdentifier = (string) $args['description'];
+		} else {
+			$productIdentifier = '';
+		}
 
 		$qtyInput = $args['qty'] ?? $args['quantity'] ?? 1;
 		$qty = (float) $qtyInput;

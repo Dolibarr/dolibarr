@@ -254,14 +254,14 @@ class Societe extends CommonObject
 		'price_level' => array('type' => 'integer', 'label' => 'Price level', 'enabled' => 'getDolGlobalString("PRODUIT_MULTIPRICES") || getDolGlobalString("PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES") || getDolGlobalString("PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES")', 'visible' => -1, 'position' => 365),
 		'default_lang' => array('type' => 'varchar(6)', 'label' => 'Default lang', 'enabled' => 1, 'visible' => -1, 'position' => 370),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => -1, 'position' => 375),
-		'fk_barcode_type' => array('type' => 'integer', 'label' => 'Fk barcode type', 'enabled' => 1, 'visible' => -1, 'position' => 405),
+		'fk_barcode_type' => array('type' => 'integer', 'label' => 'BarcodeType', 'enabled' => 1, 'visible' => -1, 'position' => 405),
 		'webservices_url' => array('type' => 'varchar(255)', 'label' => 'Webservices url', 'enabled' => 1, 'visible' => -1, 'position' => 410),
 		'webservices_key' => array('type' => 'varchar(128)', 'label' => 'Webservices key', 'enabled' => 1, 'visible' => -1, 'position' => 415),
-		'fk_incoterms' => array('type' => 'integer', 'label' => 'Fk incoterms', 'enabled' => 1, 'visible' => -1, 'position' => 425),
+		'fk_incoterms' => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => 1, 'visible' => -1, 'position' => 425),
 		'location_incoterms' => array('type' => 'varchar(255)', 'label' => 'Location incoterms', 'enabled' => 1, 'visible' => -1, 'position' => 430),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 435),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -1, 'position' => 270),
-		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 440),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 440),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrency code', 'enabled' => 1, 'visible' => -1, 'position' => 445),
 		'fk_account' => array('type' => 'integer', 'label' => 'PaymentBankAccount', 'enabled' => 1, 'visible' => -1, 'position' => 450),
 		'fk_warehouse' => array('type' => 'integer', 'label' => 'Warehouse', 'enabled' => 1, 'visible' => -1, 'position' => 455),
@@ -1010,7 +1010,7 @@ class Societe extends CommonObject
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
-		$this->name = $this->name ? trim($this->name) : trim((string) $this->nom);
+		$this->name = $this->name ? trim((string) $this->name) : trim((string) $this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
 
@@ -1471,7 +1471,7 @@ class Societe extends CommonObject
 		// Clean parameters
 		$this->id 			= $id;
 		$this->entity 		= ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-		$this->name 		= $this->name ? trim($this->name) : trim((string) $this->nom);
+		$this->name 		= $this->name ? trim((string) $this->name) : trim((string) $this->nom);
 		$this->nom 			= $this->name; // For backward compatibility
 		$this->name_alias 	= trim((string) $this->name_alias);
 		$this->ref_ext		= (empty($this->ref_ext) ? '' : trim($this->ref_ext));
@@ -1758,7 +1758,7 @@ class Societe extends CommonObject
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? ((int) $user->id) : "null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
-			$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
+			$sql .= ", model_pdf = '".$this->db->escape((string) $this->model_pdf)."'";
 			$sql .= " WHERE rowid = ".(int) $id;
 
 			$resql = $this->db->query($sql);
@@ -2583,9 +2583,10 @@ class Societe extends CommonObject
 	 *    @param	int			$id             Id of third party to delete
 	 *    @param    ?User		$fuser          User who ask to delete thirdparty
 	 *    @param    int<0,1>	$call_trigger   0=No, 1=yes
+	 *    @param	int			$nodeletefiles	Do not delete the documents files of the contact
 	 *    @return	int							Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function delete($id, $fuser = null, $call_trigger = 1)
+	public function delete($id, $fuser = null, $call_trigger = 1, $nodeletefiles = 0)
 	{
 		global $conf, $user;
 
@@ -2708,8 +2709,9 @@ class Societe extends CommonObject
 				$this->db->commit();
 
 				// Delete directory
-				if (!empty($conf->societe->multidir_output[$entity])) {
+				if (empty($nodeletefiles) && !empty($conf->societe->multidir_output[$entity])) {
 					$docdir = $conf->societe->multidir_output[$entity]."/".$id;
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					if (dol_is_dir($docdir)) {
 						dol_delete_dir_recursive($docdir);
 					}
@@ -3481,40 +3483,42 @@ class Societe extends CommonObject
 		$linkstart = '';
 		$linkend = '';
 
+		$query = ['socid' => $this->id];
 		if ($option == 'customer' || $option == 'compta' || $option == 'category') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/comm/card.php';
 		} elseif ($option == 'prospect' && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/comm/card.php';
 		} elseif ($option == 'supplier' || $option == 'category_supplier') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/fourn/card.php';
 		} elseif ($option == 'agenda') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/societe/agenda.php';
 		} elseif ($option == 'project') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/societe/project.php';
 		} elseif ($option == 'margin') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
+			$baseurl = DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php';
+			$query['type'] = 1;
 		} elseif ($option == 'contact') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/societe/contact.php';
 		} elseif ($option == 'ban') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
-		}
-
-		// By default
-		if (empty($linkstart)) {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/societe/paymentmodes.php';
+		} else {
+			// By default
+			$baseurl = DOL_URL_ROOT.'/societe/card.php';
 		}
 
 		// Add type of canvas
-		$linkstart .= (!empty($this->canvas) ? '&canvas='.$this->canvas : '');
+		if (!empty($this->canvas)) {
+			$query['canvas'] = $this->canvas;
+		}
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
-			$linkstart .= '&save_lastsearch_values=1';
+			$query['save_lastsearch_values'] = 1;
 		}
-		$linkstart .= '"';
+		$linkstart = '<a href="'.dolBuildUrl($baseurl, $query).'"';
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -4361,7 +4365,9 @@ class Societe extends CommonObject
 				}
 				$this->db->free($resql);
 			} else {
-				setEventMessage($langs->trans('GetCompanyParentsError', $this->db->lasterror()), 'errors');
+				$this->error = $langs->trans('GetCompanyParentsError', $this->db->lasterror());
+				$this->errors[] = $this->error;
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 			}
 		}
 		// Return a default value when $company_id is not greater than 0
@@ -4391,7 +4397,9 @@ class Societe extends CommonObject
 				}
 				$this->db->free($resql);
 			} else {
-				setEventMessage($this->db->lasterror(), 'errors');
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 			}
 		}
 		// Return a default value when $company_id is not greater than 0
@@ -4917,7 +4925,6 @@ class Societe extends CommonObject
 				$result = $this->create_individual($user);
 
 				if ($result < 0) {
-					setEventMessages($this->error, $this->errors, 'errors');
 					$this->db->rollback();
 					return -1;
 				}
@@ -6239,7 +6246,7 @@ class Societe extends CommonObject
 
 			if (!$error) {
 				// We finally remove the old thirdparty
-				if ($soc_origin->delete($soc_origin->id, $user) < 1) {
+				if ($soc_origin->delete($soc_origin->id, $user, 1, 1) <= 0) {
 					$this->error = $soc_origin->error;
 					$this->errors = $soc_origin->errors;
 					$error++;
@@ -6248,19 +6255,31 @@ class Societe extends CommonObject
 
 
 			if (!$error) {
+				// TODO Move this into this->mergeCompanyFiles() like done by mergeContactFiles() for contact.class.php
+
 				// Move files from the dir of the third party to delete into the dir of the third party to keep
 				if (!empty($conf->societe->multidir_output[$this->entity])) {
 					$srcdir = $conf->societe->multidir_output[$this->entity]."/".$soc_origin->id;
 					$destdir = $conf->societe->multidir_output[$this->entity]."/".$this->id;
 
 					if (dol_is_dir($srcdir)) {
+						$failed = array();
 						$dirlist = dol_dir_list($srcdir, 'files', 1);
 						foreach ($dirlist as $filetomove) {
 							$destfile = $destdir.'/'.$filetomove['relativename'];
-							//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
-							dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
+							// dol_move() does not create the target directory, and the target contact usually has
+							// none yet, so it has to be created for every level of the source tree
+							dol_mkdir(dirname($destfile));
+							if (!dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1)) {
+								$failed[] = $filetomove['relativename'];
+							}
 						}
-						//exit;
+
+						if (!empty($failed)) {
+							dol_syslog(__METHOD__.' Failed to move '.count($failed).' file(s) from '.$srcdir, LOG_ERR);
+							// The merge itself is committed, so this is reported as a warning and not as a failure
+							$this->warnings[] = $langs->trans('WarningMergeFilesNotMoved', implode(', ', $failed));
+						}
 					}
 				}
 			}
@@ -6270,7 +6289,7 @@ class Societe extends CommonObject
 				return 0;
 			} else {
 				$langs->load("errors");
-				$this->error = $langs->trans('ErrorsThirdpartyMerge');
+				$this->error = $langs->trans('ErrorsThirdpartyMerge').' '.$this->error;
 				$this->db->rollback();
 				return -1;
 			}

@@ -94,7 +94,9 @@ class ToolApiBridge extends McpTool
 		'members' => array('thirdparty', 'billing'),
 		'subscriptions' => array('thirdparty', 'billing'),
 		'expensereports' => array('billing'),
-		'tickets' => array('thirdparty', 'project')
+		'tickets' => array('thirdparty', 'project'),
+		'shipments' => array('stock', 'commercial', 'thirdparty'),
+		'receptions' => array('stock', 'thirdparty')
 	);
 
 	/**
@@ -449,6 +451,71 @@ class ToolApiBridge extends McpTool
 				],
 				'get' => [
 					'description' => "One warehouse with its address, status and description."
+				]
+			]
+		],
+		'orders' => [
+			'label' => 'customer orders (commandes)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,date_commande,delivery_date,total_ht,total_ttc,statut',
+					'description' => "Statuses (t.fk_statut): -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed). Dates are unix timestamps: date_commande (order date), delivery_date (planned delivery). Useful sqlfilters fields: t.ref, t.date_commande, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many orders match."
+					]
+				],
+				'get' => [
+					'description' => "One order with its lines (product, qty, unit price, discount, line totals), status and dates.",
+					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One order by its exact reference (e.g. 'CO2401-0001').",
+					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				]
+			]
+		],
+		'shipments' => [
+			'label' => 'customer shipments (expéditions, goods sent)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_customer,date_delivery,date_shipping,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods left), 2=closed (billed / processed). Dates are unix timestamps: date_shipping (sent), date_delivery (planned delivery). Useful sqlfilters fields: t.ref, t.ref_customer, t.fk_soc, t.fk_statut, t.date_delivery.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many shipments match."
+					]
+				],
+				'get' => [
+					'description' => "One shipment: customer, source order, dates, status, tracking number; the lines are in api_shipments_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a shipment: product, quantity shipped, batch/lot when the product is tracked.",
+					'params' => ['id' => "Rowid of the shipment."]
+				]
+			]
+		],
+		'receptions' => [
+			'label' => 'supplier receptions (réceptions, goods received)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_supplier,date_reception,date_delivery,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods received into stock), 2=closed / processed. Dates are unix timestamps: date_reception (received), date_delivery (planned). Useful sqlfilters fields: t.ref, t.ref_supplier, t.fk_soc, t.fk_statut, t.date_delivery. A draft created by the chat keeps its '(PROVnn)' reference: search it by id or with sqlfilters on t.ref_supplier.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated supplier rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many receptions match."
+					]
+				],
+				'get' => [
+					'description' => "One reception: supplier, supplier reference, dates, status; the lines are in api_receptions_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a reception: product, quantity received, batch/lot and warehouse when tracked.",
+					'params' => ['id' => "Rowid of the reception."]
 				]
 			]
 		],

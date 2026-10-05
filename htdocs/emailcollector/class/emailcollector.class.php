@@ -325,10 +325,12 @@ class EmailCollector extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach ($this->fields as $key => $val) {
-			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-				foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
 				}
 			}
 		}
@@ -1893,10 +1895,6 @@ class EmailCollector extends CommonObject
 			$richarrayofemail = array();
 
 			foreach ($arrayofemail as $imapemail) {
-				if ($nbemailprocessed > 1000) {
-					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
-				}
-
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
@@ -1924,6 +1922,10 @@ class EmailCollector extends CommonObject
 
 			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
+				if ($nbemailprocessed > 1000) {
+					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
+				}
+
 				$iforemailloop++;
 
 				$imapemail = $tmpval['imapemail'];
@@ -2595,11 +2597,11 @@ class EmailCollector extends CommonObject
 							if ($trackid) {
 								$projectfoundby = 'trackid ('.$trackid.')';
 							}
-							if (empty($contactid)) {
+							/* if (empty($contactid)) {
 								$contactid = $projectstatic->fk_contact;
-							}
+							} */
 							if (empty($thirdpartyid)) {
-								$thirdpartyid = $projectstatic->fk_soc;
+								$thirdpartyid = $projectstatic->socid;
 							}
 						}
 					}
@@ -3538,7 +3540,8 @@ class EmailCollector extends CommonObject
 										if ($savesocid > 0) {
 											if ($savesocid != $projecttocreate->socid) {
 												$errorforactions++;
-												setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+												$this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value';
+												$this->errors[] = $this->error;
 											}
 										} else {
 											if ($projecttocreate->socid > 0) {
@@ -3693,7 +3696,8 @@ class EmailCollector extends CommonObject
 										if ($savesocid > 0) {
 											if ($savesocid != $tickettocreate->socid) {
 												$errorforactions++;
-												setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+												$this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value';
+												$this->errors[] = $this->error;
 											}
 										} else {
 											if ($tickettocreate->socid > 0) {
@@ -3832,7 +3836,8 @@ class EmailCollector extends CommonObject
 								 if ($savesocid > 0) {
 								 if ($savesocid != $candidaturetocreate->socid) {
 								 $errorforactions++;
-								 setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+								 $this->error = 'You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value';
+								 $this->errors[] = $this->error;
 								 }
 								 } else {
 								 if ($candidaturetocreate->socid > 0)

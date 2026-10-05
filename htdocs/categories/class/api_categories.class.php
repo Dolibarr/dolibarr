@@ -285,7 +285,7 @@ class Categories extends DolibarrApi
 		if ($this->category->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->category->error);
+			throw new RestException(500, $this->category->errorsToString());
 		}
 	}
 
@@ -313,7 +313,7 @@ class Categories extends DolibarrApi
 		}
 
 		if ($this->category->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when delete category : ' . $this->category->error);
+			throw new RestException(500, 'Error when delete category : ' . $this->category->errorsToString());
 		}
 
 		return array(
@@ -759,7 +759,6 @@ class Categories extends DolibarrApi
 		unset($object->country_id);
 		unset($object->country_code);
 		unset($object->total_ht);
-		unset($object->total_ht);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
@@ -870,10 +869,25 @@ class Categories extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// The objects are returned only to a user who can read them: the permission of their module, and for each
+		// object the same restrictions as on its own API (sales representative, external user, entity).
+		$readaccess = array(
+			'member' => array(DolibarrApiAccess::$user->hasRight('adherent', 'lire'), 'adherent', ''),
+			'customer' => array(DolibarrApiAccess::$user->hasRight('societe', 'lire'), 'societe', ''),
+			'supplier' => array(DolibarrApiAccess::$user->hasRight('societe', 'lire'), 'societe', ''),
+			'product' => array(DolibarrApiAccess::$user->hasRight('produit', 'lire') || DolibarrApiAccess::$user->hasRight('service', 'lire'), 'product', ''),
+			'contact' => array(DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire'), 'contact', 'socpeople&societe'),
+			'project' => array(DolibarrApiAccess::$user->hasRight('projet', 'lire'), 'project', ''),
+			'ticket' => array(DolibarrApiAccess::$user->hasRight('ticket', 'read'), 'ticket', ''),
+		);
+		if (isset($readaccess[$type]) && !$readaccess[$type][0]) {
+			throw new RestException(403, 'Access to the objects of type '.$type.' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->category->getObjectsInCateg($type, $onlyids);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
+			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->errorsToString());
 		}
 
 		$objects = $result;
@@ -895,6 +909,10 @@ class Categories extends DolibarrApi
 
 		if (is_object($objects_api)) {
 			foreach ($objects as $obj) {
+				$objid = is_object($obj) ? (int) $obj->id : (int) $obj;
+				if (isset($readaccess[$type]) && !DolibarrApi::_checkAccessToResource($readaccess[$type][1], $objid, $readaccess[$type][2])) {
+					continue;
+				}
 				$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
 			}
 		}

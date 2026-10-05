@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -927,8 +927,9 @@ class ContactTest extends CommonClassTest
 	 * testContactMergeMovesFiles
 	 *
 	 * The documents are moved once the transaction is committed, because dol_move() is not
-	 * transactional. Check that the tree is preserved, that a name collision renames the moved file
-	 * instead of overwriting the one of the target contact, and that nothing is left behind.
+	 * transactional, and the merged contact is deleted with $nodelete so that its documents are
+	 * kept. Check that the tree is preserved, that a name collision renames the moved file instead
+	 * of overwriting the one of the target contact, and that nothing is left behind.
 	 *
 	 * @return	void
 	 */

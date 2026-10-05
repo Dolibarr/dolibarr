@@ -227,12 +227,6 @@ class Project extends CommonObject
 	public $fk_opp_status; // opportunity status, into table llx_c_lead_status
 
 	/**
-	 * @var string[] Fields that can be saved by core/ajax/savekanbanfield.php when a card is
-	 *               dragged into another column of a kanban group by view (mode=kanbangroupby)
-	 */
-	public $kanbangroupbyfields = array('fk_opp_status');
-
-	/**
 	 * @var float|'' opportunity amount
 	 */
 	public $opp_amount; // opportunity amount
@@ -619,7 +613,8 @@ class Project extends CommonObject
 			$this->opp_percent = '';
 		}
 		if ($this->date_end && $this->date_end < $this->date_start) {
-			$this->error = $langs->trans("ErrorDateEndLowerThanDateStart");
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorStartDateGreaterEnd");
 			$this->errors[] = $this->error;
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::update error -3 ".$this->error, LOG_ERR);
@@ -1461,18 +1456,21 @@ class Project extends CommonObject
 
 		$url = '';
 		if ($option != 'nolink') {
+			$query = ['id' => $this->id];
 			if (preg_match('/\.php$/', $option)) {
-				$url = dol_buildpath($option, 1).'?id='.$this->id;
+				$baseurl = dol_buildpath($option, 1);
 			} elseif ($option == 'task') {
-				$url = DOL_URL_ROOT.'/projet/tasks.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/tasks.php';
 			} elseif ($option == 'preview') {
-				$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/element.php';
 			} elseif ($option == 'eventorganization') {
-				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?projectid='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php';
+				$query = ['projectid' => $this->id];
 			} elseif ($option == 'mailing') {
-				$url = DOL_URL_ROOT.'/comm/mailing/list.php?projectid='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/comm/mailing/list.php';
+				$query = ['projectid' => $this->id];
 			} else {
-				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/card.php';
 			}
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -1480,12 +1478,12 @@ class Project extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query['save_lastsearch_values'] = 1;
 			}
-			$add_save_backpagefor = ($save_pageforbacktolist ? 1 : 0);
-			if ($add_save_backpagefor) {
-				$url .= "&save_pageforbacktolist=".urlencode($save_pageforbacktolist);
+			if ($save_pageforbacktolist) {
+				$query['save_pageforbacktolist'] = $save_pageforbacktolist;
 			}
+			$url = dolBuildUrl($baseurl, $query);
 		}
 
 		$linkclose = '';
@@ -2108,9 +2106,11 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project = NULL";
 			$sql .= " WHERE id = ".((int) $elementSelectId);
+			$sql .= " AND fk_project = ".((int) $this->id);
 		} else {
 			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
 			$sql .= " WHERE rowid = ".((int) $elementSelectId);
+			$sql .= " AND ".$this->db->sanitize($projectfield)." = ".((int) $this->id);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
@@ -2313,7 +2313,10 @@ class Project extends CommonObject
 		$response->nbtodo = 0;
 		$response->nbtodolate = 0;
 
-		$sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
+		// The count and the number of late projects are computed by the database instead of reading every project. An open project
+		// is late when it has an end date and that date is before now minus the warning delay (the rule of hasDelay()).
+		$sql = "SELECT COUNT(p.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN p.datee IS NOT NULL AND p.datee < '".$this->db->idate(dol_now() - $conf->project->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
 		$sql .= ")";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
@@ -2342,21 +2345,10 @@ class Project extends CommonObject
 		//print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$project_static = new Project($this->db);
-
-
-			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				$project_static->statut = $obj->status;
-				$project_static->status = $obj->status;
-				$project_static->opp_status = $obj->fk_opp_status;
-				$project_static->date_end = $this->db->jdate($obj->datee);
-
-				if ($project_static->hasDelay()) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;

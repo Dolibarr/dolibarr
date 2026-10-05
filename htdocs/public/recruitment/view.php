@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,9 +40,7 @@ if (!defined('NOBROWSERNOTIF')) {
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
-	define("DOLENTITY", $entity);
-}
+define("DOLENTITY", $entity);
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -111,9 +109,23 @@ if (!isModEnabled("recruitment")) {
 	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
+// Done before the actions, so no application can be recorded when the public interface is disabled
+if (!getDolGlobalInt('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
+	$langs->load("errors");
+	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
+	$db->close();
+	exit();
+}
+
 $object->fetch(0, $ref);
 if (!is_object($user)) {
 	$user = new User($db);
+}
+
+// A draft job position is not published, it must not be shown nor receive applications
+if ($object->id <= 0 || $object->status == RecruitmentJobPosition::STATUS_DRAFT) {
+	$langs->load("errors");
+	httponly_accessforbidden($langs->trans('ErrorRecordNotFound'), 404);
 }
 $user->loadDefaultValues();
 $errmsg = "";
@@ -171,6 +183,12 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 	if (!strlen($ref)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")));
+		$action = 'view';
+	}
+	// Only a job position still open can receive an application
+	if ($object->status != RecruitmentJobPosition::STATUS_VALIDATED) {
+		$error++;
+		array_push($object->errors, $langs->trans($object->status == RecruitmentJobPosition::STATUS_RECRUITED ? "JobClosedTextCandidateFound" : "JobClosedTextCanceled"));
 		$action = 'view';
 	}
 	if (!strlen($email)) {
@@ -287,7 +305,6 @@ $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_CANDIDATURE_TO'; // used to know the automatic BCC to add
 $trackid = 'recruitmentcandidature'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
 
 
 /*

@@ -221,19 +221,18 @@ if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['
 	$debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
 }
 
-// Detection browser
-if (isset($_SERVER["HTTP_USER_AGENT"])) {
-	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
-	$conf->browser->name = $tmp['browsername'];
-	$conf->browser->os = $tmp['browseros'];
-	$conf->browser->version = $tmp['browserversion'];
-	$conf->browser->ua = $tmp['browserua'];
-	$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
-	//var_dump($conf->browser);
+// Detection browser. A request without User-Agent header (script, monitoring tool...) gets the
+// default values ('unknown' browser, 'classic' layout), so $conf->browser is always complete.
+$tmp = getBrowserInfo((string) ($_SERVER["HTTP_USER_AGENT"] ?? ''));
+$conf->browser->name = $tmp['browsername'];
+$conf->browser->os = $tmp['browseros'];
+$conf->browser->version = $tmp['browserversion'];
+$conf->browser->ua = $tmp['browserua'];
+$conf->browser->layout = $tmp['layout']; // 'classic', 'phone', 'tablet'
+//var_dump($conf->browser);
 
-	if ($conf->browser->layout == 'phone') {
-		$conf->dol_no_mouse_hover = 1;
-	}
+if ($conf->browser->layout == 'phone') {
+	$conf->dol_no_mouse_hover = 1;
 }
 
 // If theme is forced
@@ -2617,7 +2616,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	//else $dropdownBody .= yn(0);
 
 	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.ucfirst($conf->browser->name).($conf->browser->version ? ' '.$conf->browser->version : '');
-	$dropdownBody .= $form->textwithpicto('', dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']), 1, 'help', 'valignmiddle', 0, 3, 'useragent');
+	$dropdownBody .= $form->textwithpicto('', dol_escape_htmltag($_SERVER['HTTP_USER_AGENT'] ?? ''), 1, 'help', 'valignmiddle', 0, 3, 'useragent');
 	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
 	$dropdownBody .= ' <span class="opacitymedium">('.$conf->browser->layout.')</span>';
 	if (!empty($_SESSION["disablemodules"])) {
@@ -2797,8 +2796,11 @@ function top_menu_ai()
 	$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
 
 	// Chat CSS is needed on every page showing the icon (link-in-body is valid HTML5,
-	// the standalone page ai/assistant/index.php uses the same pattern).
-	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css">';
+	// the standalone page ai/assistant/index.php uses the same pattern). Same
+	// filemtime cache-busting as the JS module below: a stylesheet cached for
+	// 15 minutes otherwise hides every CSS change of the chat behind a reload.
+	$aicssver = @filemtime(DOL_DOCUMENT_ROOT.'/ai/css/ai_assistant.css');
+	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css?v='.urlencode((string) ($aicssver ? $aicssver : DOL_VERSION)).'">';
 
 	// Toggle icon. The accesskey "a" keeps the Alt+A shortcut: its browser
 	// activation fires the click handler below, so it toggles the popover.

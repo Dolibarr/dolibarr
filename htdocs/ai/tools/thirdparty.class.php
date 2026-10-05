@@ -190,6 +190,31 @@ class ToolThirdParty extends McpTool
 	}
 
 	/**
+	 * Preview of the third-party record this call would write.
+	 *
+	 * @param string $toolName Tool that would run.
+	 * @param array<string,mixed> $args Arguments it would run with.
+	 * @return string Preview text, or McpTool::NO_WRITE for a read.
+	 */
+	public function writeConfirmationPreview(string $toolName, array $args)
+	{
+		global $langs;
+
+		$langs->load("other");
+
+		switch ($toolName) {
+			case 'create_thirdparty':
+				return $langs->trans("AIPreviewCreateThirdparty", (string) ($args['name'] ?? ''));
+			case 'update_thirdparty':
+				return $langs->trans("AIPreviewUpdateThirdparty", (string) ((int) ($args['id'] ?? 0)), implode(', ', array_keys(array_diff_key($args, array('id' => 1)))));
+			case 'add_thirdparty_contact':
+				return $langs->trans("AIPreviewAddContact", trim(((string) ($args['firstname'] ?? '')).' '.((string) ($args['lastname'] ?? ''))), (string) ((int) ($args['socid'] ?? 0)));
+			default:
+				return McpTool::NO_WRITE;
+		}
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *

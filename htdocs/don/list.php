@@ -130,10 +130,8 @@ $fieldstosearchall = array(
 	'd.lastname' => 'Lastname',
 	'd.firstname' => 'Firstname',
 );
+
 $arrayfields = array();
-// $arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
-$object->fields = dol_sort_array($object->fields, 'position');
-$arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -141,6 +139,13 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
+// Complete arrayfields with special fields
+/*$arrayfields = array_merge($arrayfields, array(
+	'anotherfield' => array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>'1', 'enabled'=>'1', 'position'=>'90', 'csslist'=>'right'),
+));*/
+
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 // Security check

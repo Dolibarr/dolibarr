@@ -40,7 +40,7 @@
 function product_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	$langs->load("products");
+	$langs->loadLangs(array("products", "stocks"));
 
 	$label = $langs->trans('Product');
 	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');

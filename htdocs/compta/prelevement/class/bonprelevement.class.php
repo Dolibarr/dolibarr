@@ -110,6 +110,11 @@ class BonPrelevement extends CommonObject
 	public $emetteur_ics;
 
 	/**
+	 * @var string		SEPA schema version for direct debit files ('2' = pain.008.001.02, '8' = pain.008.001.08)
+	 */
+	public $sepa_schema_version = '2';
+
+	/**
 	 * @var int
 	 */
 	public $user_trans;
@@ -220,11 +225,11 @@ class BonPrelevement extends CommonObject
 		'note' => array('type' => 'text', 'label' => 'Note', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1,),
 		'date_trans' => array('type' => 'datetime', 'label' => 'TransData', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1,),
 		'method_trans' => array('type' => 'smallint(6)', 'label' => 'Methodtrans', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1,),
-		'fk_user_trans' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusertrans', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_trans' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserTransfer', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'date_credit' => array('type' => 'datetime', 'label' => 'CreditDate', 'enabled' => 1, 'position' => 65, 'notnull' => 0, 'visible' => -1,),
-		'fk_user_credit' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusercredit', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'fk_user_credit' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserCredit', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'type' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => -1,),
-		'fk_bank_account' => array('type' => 'integer', 'label' => 'Fkbankaccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
+		'fk_bank_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
 	);
 	/**
 	 * @var int
@@ -321,6 +326,7 @@ class BonPrelevement extends CommonObject
 		$this->emetteur_numero_compte = "";
 		$this->emetteur_code_banque = "";
 		$this->emetteur_number_key = "";
+		$this->sepa_schema_version = '2';
 		$this->sepa_xml_pti_in_ctti = false;
 
 		$this->emetteur_iban = "";
@@ -1896,6 +1902,8 @@ class BonPrelevement extends CommonObject
 	{
 		global $conf, $langs, $mysoc;
 
+		$this->sepa_schema_version = (getDolGlobalString('PRELEVEMENT_SEPA_SCHEMA_VERSION') == '8' ? '8' : '2');
+
 		if ($type !== 'bank-transfer') {
 			$format = strtoupper($format);
 			if (!in_array($format, array('FRST', 'RCUR', 'OOFF', 'FNAL'), true)) {
@@ -2056,7 +2064,9 @@ class BonPrelevement extends CommonObject
 				 */
 				// SEPA File Header
 				fwrite($this->file, '<' . '?xml version="1.0" encoding="UTF-8" standalone="yes"?' . '>' . $CrLf);
-				fwrite($this->file, '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
+				$sepaSchemaVersion = $this->sepa_schema_version;
+				$sepaNamespace = 'urn:iso:std:iso:20022:tech:xsd:pain.008.001.0' . $sepaSchemaVersion;
+				fwrite($this->file, '<Document xmlns="' . $sepaNamespace . '" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . $CrLf);
 				fwrite($this->file, '	<CstmrDrctDbtInitn>' . $CrLf);
 				// SEPA Group header
 				fwrite($this->file, '		<GrpHdr>' . $CrLf);
@@ -2573,7 +2583,7 @@ class BonPrelevement extends CommonObject
 				$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
 				$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
 				if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) {
-					$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+					$XML_DEBITOR .= '						' . ($this->sepa_schema_version == '8' ? '<BICFI>' : '<BIC>') . $row_bic . ($this->sepa_schema_version == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
 				}
 				$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
 				$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
@@ -2846,7 +2856,7 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</CdtrAcct>' . $CrLf;
 				$XML_SEPA_INFO .= '			<CdtrAgt>' . $CrLf;
 				$XML_SEPA_INFO .= '				<FinInstnId>' . $CrLf;
-				$XML_SEPA_INFO .= '					<BIC>' . $this->emetteur_bic . '</BIC>' . $CrLf;
+				$XML_SEPA_INFO .= '				' . ($this->sepa_schema_version == '8' ? '<BICFI>' : '<BIC>') . $this->emetteur_bic . ($this->sepa_schema_version == '8' ? '</BICFI>' : '</BIC>') . $CrLf;
 				$XML_SEPA_INFO .= '				</FinInstnId>' . $CrLf;
 				$XML_SEPA_INFO .= '			</CdtrAgt>' . $CrLf;
 				/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
@@ -3073,13 +3083,13 @@ class BonPrelevement extends CommonObject
 		}
 
 		if ($mode == 'direct-debit') {
-			$sql = "SELECT p.rowid, p.date_trans as date_trans, p.date_credit as date_credit";
+			$sql = "SELECT p.rowid, p.datec, p.date_trans as date_trans, p.date_credit as date_credit";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons as p";
 			$sql .= " WHERE p.entity IN (" . getEntity('prelevement_bons') . ")";
 			$sql .= " AND (p.type = 'debit-order' OR p.type = 'direct-debit')";			// direct debit
 			$sql .= " AND p.statut < ".((int) BonPrelevement::STATUS_DEBITED);
 		} else {
-			$sql = "SELECT p.rowid, p.date_trans as date_trans, p.date_credit as date_credit";
+			$sql = "SELECT p.rowid, p.datec, p.date_trans as date_trans, p.date_credit as date_credit";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "prelevement_bons as p";
 			$sql .= " WHERE p.entity IN (" . getEntity('prelevement_bons') . ")";
 			$sql .= " AND (p.type = 'bank-transfer' OR p.type = 'credit-transfer')";	// credit transfer
@@ -3093,13 +3103,15 @@ class BonPrelevement extends CommonObject
 
 			$response = new WorkboardResponse();
 			if ($mode == 'direct-debit') {
-				$response->warning_delay = $conf->warning_delays['bank_direct_debit'] / 60 / 60 / 24;
+				$warning_delay = (int) $conf->warning_delays['bank_direct_debit'];	// In seconds. The one of the response is in days.
+				$response->warning_delay = $warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("PendingDirectDebitToComplete");
 				$response->labelShort = $langs->trans("PendingDirectDebitToCompleteShort");
 				$response->url = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&search_status=0,1';
 				$response->url_late = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&search_status=0,1';
 			} else {
-				$response->warning_delay = $conf->warning_delays['bank_credit_transfer'] / 60 / 60 / 24;
+				$warning_delay = (int) $conf->warning_delays['bank_credit_transfer'];	// In seconds. The one of the response is in days.
+				$response->warning_delay = $warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("PendingCreditTransferToComplete");
 				$response->labelShort = $langs->trans("PendingCreditTransferToCompleteShort");
 				$response->url = DOL_URL_ROOT . '/compta/prelevement/orders_list.php?leftmenu=checks&mainmenu=bank&type=bank-transfer&search_status=0,1';
@@ -3113,7 +3125,9 @@ class BonPrelevement extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
 
-				if ($this->db->jdate($obj->date_trans) < ($now - $response->warning_delay)) {
+				// An order is waiting since it was transmitted to the bank, or since its creation when it was not transmitted yet
+				$datetotest = $this->db->jdate(!empty($obj->date_trans) ? $obj->date_trans : $obj->datec);
+				if ($datetotest && $datetotest < ($now - $warning_delay)) {
 					$response->nbtodolate++;
 				}
 			}

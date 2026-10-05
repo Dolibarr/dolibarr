@@ -225,8 +225,9 @@ $arrayfields = array(
 	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => '0', 'enabled' => (string) (int) ($mysoc->localtax1_assuj == "1"), 'position' => 95),
 	'f.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => '0', 'enabled' => (string) (int) ($mysoc->localtax2_assuj == "1"), 'position' => 100),
 	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => '1', 'position' => 115),
-	'dynamount_payed' => array('label' => "Paid", 'checked' => '0', 'position' => 116),
-	'rtp' => array('label' => "Rest", 'checked' => '0', 'position' => 117),
+	'supplier_available_discount' => array('label' => 'DiscountStillRemaining', 'checked' => '0', 'position' => 116, 'help' => 'SupplierAbsoluteDiscountAllUsers'),
+	'dynamount_payed' => array('label' => "Paid", 'checked' => '0', 'position' => 117),
+	'rtp' => array('label' => "Rest", 'checked' => '0', 'position' => 118),
 	'f.multicurrency_code' => array('label' => 'Currency', 'checked' => '0', 'position' => 205, 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'f.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => '0', 'position' => 206, 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'f.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'position' => 207, 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
@@ -1240,6 +1241,8 @@ if (isModEnabled('category')) {
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
+$moreforfilter .= '<div class="nowraponall inline-block valignmiddle"><input type="checkbox" class="valignmiddle opacitymedium" name="search_option" id="search_option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="search_option" class="valignmiddle opacitymedium">'.$langs->trans("Alert").'</label></div>';
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
@@ -1331,7 +1334,6 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 	 print $langs->trans('to').' ';*/
 	print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
 	//print '<br>';
-	print '<div class="nowraponall inline-block valignmiddle"><input type="checkbox" class="valignmiddle" name="search_option" id="search_option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="search_option" class="valignmiddle">'.$langs->trans("Alert").'</label></div>';
 	print '</div>';
 	print '</td>';
 }
@@ -1426,6 +1428,9 @@ if (!empty($arrayfields['f.total_ttc']['checked'])) {
 	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 	print '</td>';
+}
+if (!empty($arrayfields['supplier_available_discount']['checked'])) {
+	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['f.nb_docs']['checked'])) {
 	// Nb of attached documents
@@ -1642,6 +1647,10 @@ if (!empty($arrayfields['f.total_ttc']['checked'])) {
 	print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], 'f.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['supplier_available_discount']['checked'])) {
+	print_liste_field_titre($arrayfields['supplier_available_discount']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['f.nb_docs']['checked'])) {
 	print_liste_field_titre($arrayfields['f.nb_docs']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -1739,6 +1748,7 @@ $totalarray['val']['f.total_localtax2'] = 0;
 $totalarray['val']['f.total_ttc'] = 0;
 $totalarray['val']['totalam'] = 0;
 $totalarray['val']['rtp'] = 0;
+$supplierDiscountCache = array();
 
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
@@ -2140,6 +2150,27 @@ while ($i < $imaxinloop) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
 			}
 			$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
+		}
+		// Available absolute discounts for the supplier. Cache by supplier to avoid one query per invoice.
+		if (!empty($arrayfields['supplier_available_discount']['checked'])) {
+			if (!array_key_exists($obj->socid, $supplierDiscountCache)) {
+				$supplierDiscountCache[$obj->socid] = $thirdparty->getAvailableDiscounts(null, '', 0, 1);
+			}
+			print '<td class="right nowrap"><span class="amount">';
+			if ($supplierDiscountCache[$obj->socid] >= 0) {
+				$discountAmount = price($supplierDiscountCache[$obj->socid]);
+				if ($supplierDiscountCache[$obj->socid] > 0) {
+					print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.((int) $obj->socid).'&backtopage='.urlencode($_SERVER['REQUEST_URI']).'">'.$discountAmount.'</a>';
+				} else {
+					print $discountAmount;
+				}
+			} else {
+				print $langs->trans('Error');
+			}
+			print "</span></td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Number of attached documents (may slow your application on large lists)
