@@ -626,7 +626,12 @@ class McpOauth
 	public function exchangeAuthorizationCode($client, $code, $redirecturi, $codeverifier)
 	{
 		$row = $this->getValidToken('code', $code);
-		if (!$row || (int) $row->fk_client !== (int) $client->rowid) {
+		if (!$row) {
+			$this->revokeReplayedFamily('code', $code, (int) $client->rowid);
+			$this->error = 'invalid_grant';
+			return null;
+		}
+		if ((int) $row->fk_client !== (int) $client->rowid) {
 			$this->error = 'invalid_grant';
 			return null;
 		}
@@ -677,7 +682,7 @@ class McpOauth
 			// the real client. OAuth 2.1 section 4.3.1 has the whole chain
 			// revoked at that point: whoever ends up holding the fresh pair,
 			// both of them have to start again from a consent.
-			$this->revokeReplayedFamily($refresh, (int) $client->rowid);
+			$this->revokeReplayedFamily('refresh', $refresh, (int) $client->rowid);
 
 			$this->error = 'invalid_grant';
 			return null;
@@ -692,28 +697,32 @@ class McpOauth
 	}
 
 	/**
-	 * Revoke everything issued to a client for a user whose refresh token was
-	 * replayed.
+	 * Revoke everything issued to a client for a user whose code or refresh
+	 * token was replayed.
 	 *
-	 * Called when a refresh token did not validate: if the value is known but
-	 * spent or revoked, the grant it belonged to is compromised, so nothing
-	 * issued under it may survive.
+	 * Called when one of them did not validate. If the value is known and
+	 * already spent, someone else holds a copy, so the grant it belonged to is
+	 * compromised and nothing issued under it may survive (OAuth 2.1 section
+	 * 4.3.1 for refresh tokens, RFC 6749 section 4.1.2 for codes). A value that
+	 * merely expired unused is not a replay and revokes nothing.
 	 *
-	 * @param  string $refresh     Refresh token presented
+	 * @param  string $type        code or refresh
+	 * @param  string $value       Value presented
 	 * @param  int    $clientrowid Client that presented it
 	 * @return void
 	 */
-	private function revokeReplayedFamily($refresh, $clientrowid)
+	private function revokeReplayedFamily($type, $value, $clientrowid)
 	{
 		global $conf;
 
-		if (empty($refresh)) {
+		if (empty($value)) {
 			return;
 		}
 
 		$sql = "SELECT fk_user FROM ".$this->db->prefix()."oauth_token";
-		$sql .= " WHERE service = '".$this->db->escape(self::serviceFor('refresh'))."'";
-		$sql .= " AND token_hash = '".$this->db->escape(hash('sha256', $refresh))."'";
+		$sql .= " WHERE service = '".$this->db->escape(self::serviceFor($type))."'";
+		$sql .= " AND token_hash = '".$this->db->escape(hash('sha256', $value))."'";
+		$sql .= " AND revoked = 1";
 		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " AND fk_oauth_client = ".((int) $clientrowid);
 
@@ -732,7 +741,7 @@ class McpOauth
 		$sql .= " AND revoked = 0";
 
 		if ($this->db->query($sql)) {
-			dol_syslog('[MCP OAuth] Replayed refresh token: revoked every grant of client '.$clientrowid.' for user '.$obj->fk_user, LOG_WARNING);
+			dol_syslog('[MCP OAuth] Replayed '.$type.': revoked every grant of client '.$clientrowid.' for user '.$obj->fk_user, LOG_WARNING);
 		}
 	}
 

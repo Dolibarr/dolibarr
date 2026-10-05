@@ -659,4 +659,27 @@ class AiMcpOauthTest extends CommonClassTest
 		$this->assertSame(2, (int) $obj->apicount_month);
 		$this->assertNotEmpty($obj->lastaccess);
 	}
+
+	/**
+	 * A spent code presented again means someone else holds a copy: the tokens
+	 * already issued from that grant must stop working (RFC 6749 4.1.2).
+	 *
+	 * @return void
+	 */
+	public function testReplayedCodeRevokesTheTokensItIssued()
+	{
+		global $user;
+
+		$this->requireSchema();
+
+		$server = $this->getServer();
+		$client = $this->makeClient();
+		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
+		$tokens = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
+		$this->assertNotNull($server->validateAccessToken($tokens['access_token']));
+
+		$this->assertNull($server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier), 'The replay itself is refused');
+		$this->assertNull($server->validateAccessToken($tokens['access_token']), 'Tokens issued from a replayed code must be revoked');
+		$this->assertNull($server->refreshTokens($client, $tokens['refresh_token']), 'Their refresh token too');
+	}
 }

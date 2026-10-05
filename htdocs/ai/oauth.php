@@ -232,10 +232,11 @@ switch ($mcp_route) {
 			$clientid = $_SERVER['PHP_AUTH_USER'];
 			$clientsecret = isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '';
 		} else {
-			// PHP_AUTH_* is never filled under PHP-FPM or CGI, which is where
-			// the .htaccess next to this file republishes the header. Without
+			// PHP_AUTH_* is never filled under PHP-FPM or CGI. Where the web
+			// server passes the header on (CGIPassAuth, or the rewrite rule the
+			// MCP admin page checks for), it arrives here instead. Without
 			// reading it, client_secret_basic is advertised and dead on
-			// exactly the setups that rule exists for.
+			// exactly those setups.
 			$authheader = '';
 			if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
 				$authheader = (string) $_SERVER['HTTP_AUTHORIZATION'];
@@ -313,9 +314,11 @@ $responsetype = GETPOST('response_type', 'alphanohtml');
 $clientid = GETPOST('client_id', 'alphanohtml');
 $redirecturi = GETPOST('redirect_uri', 'alphanohtml');
 // RFC 6749 section 4.1.2 returns state to the client byte for byte, so it is
-// read raw: alphanohtml drops quotes and angle brackets, which mangles the
-// JSON or signed blob a client may legitimately put there. It is never
-// interpreted here, only echoed, and every echo escapes it.
+// read raw: alphanohtml would strip characters an opaque value may contain.
+// It is never interpreted here, only echoed, and every echo escapes it.
+// main.inc.php's injection filter still refuses some values (a state holding
+// JSON, for instance) before this line is reached; real clients send an
+// opaque base64url string, which passes.
 $state = isset($_GET['state']) ? (string) $_GET['state'] : (isset($_POST['state']) ? (string) $_POST['state'] : '');
 $codechallenge = dol_trunc((string) GETPOST('code_challenge', 'alphanohtml'), 128, 'right', 'UTF-8', 1);
 $codechallengemethod = GETPOST('code_challenge_method', 'alphanohtml');
