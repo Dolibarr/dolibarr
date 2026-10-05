@@ -1,0 +1,53 @@
+name: tmp-cti-inspect  # v1
+
+on:
+  push:
+    branches:
+      - tmp-cti-vibe-debt-20261005
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Dump code regions
+        run: |
+          {
+            echo '=== facture.class.php 660-720 ===';
+            sed -n '660,720p' htdocs/compta/facture/class/facture.class.php;
+            echo '=== payments.php sortfield occurrences ===';
+            grep -n 'sortfield' htdocs/compta/sociales/payments.php;
+            echo '=== payments.php 100-200 ===';
+            sed -n '100,200p' htdocs/compta/sociales/payments.php;
+            echo '=== complete_substitutions_array def ===';
+            grep -n 'function complete_substitutions_array' htdocs/core/lib/functions.lib.php;
+          } > cti-inspect.txt 2>&1
+          L=$(grep -n 'function complete_substitutions_array' htdocs/core/lib/functions.lib.php | head -1 | cut -d: -f1)
+          sed -n "$(($L-45)),$(($L+15))p" htdocs/core/lib/functions.lib.php >> cti-inspect.txt
+          echo '=== facture 703 exact ===' >> cti-inspect.txt
+          sed -n '703p' htdocs/compta/facture/class/facture.class.php >> cti-inspect.txt
+          echo '=== payments 184 exact ===' >> cti-inspect.txt
+          sed -n '184p' htdocs/compta/sociales/payments.php >> cti-inspect.txt
+          echo '=== line counts ===' >> cti-inspect.txt
+          wc -l htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php >> cti-inspect.txt
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout tmp-cti-vibe-debt-20261005
+          cp /dev/null .git/keep 2>/dev/null || true
+          mv cti-inspect.txt /tmp/cti-inspect.txt
+          git checkout tmp-cti-vibe-debt-20261005 2>/dev/null || true
+          cp /tmp/cti-inspect.txt cti-inspect.txt
+          git add cti-inspect.txt
+          git commit -m "[skip ci] Add code inspection dump"
+          git push
