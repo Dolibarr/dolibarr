@@ -458,3 +458,8 @@ ALTER TABLE llx_ticket ADD INDEX idx_ticket_tms (tms);
 ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields_tms (tms);
 ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD INDEX idx_knowledgemanagement_knowledgerecord_tms (tms);
 ALTER TABLE llx_knowledgemanagement_knowledgerecord_extrafields ADD INDEX idx_knowledgemanagement_knowledgerecord_extrafields_tms (tms);
+
+-- The ref of a variant attribute is unique per entity, like the ref of a product, not for the whole database
+-- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
+-- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
+ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
