@@ -246,6 +246,7 @@ SituationInvoiceModeProgressive=Progressive mode (recommended)
 SituationInvoiceModeHelp=Cumulative mode (value 1) is the legacy implementation, flagged as unstable in the code. Progressive mode (value 2) is the recommended one.
 SituationInvoiceModeWarning=Do not change this mode once situation invoices exist: amounts already stored would be interpreted differently.
 SituationInvoiceProgressDecimals=Max. decimals for progress
+INVOICE_SITUATION_PROGRESS_DECIMALS=INVOICE_SITUATION_PROGRESS_DECIMALS
 RetainedWarranty=Retained warranty
 RetainedWarrantyShort=Ret. warranty
 AllowedInvoiceForRetainedWarranty=Retained warranty usable on the following types of invoices
