@@ -79,6 +79,13 @@ $rowid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid'));
 $search_label = GETPOST('search_label', 'alphanohtml'); // Must allow value like 'Abc Def' or '(MyTemplateName)'
 $search_type_template = GETPOST('search_type_template', 'alpha');
 $search_lang = GETPOST('search_lang', 'alpha');
+$defaulttemplatelang = $langs->defaultlang;
+if (!getDolGlobalInt('MAIN_MULTILANGS')) {
+	$search_lang = '';
+	$templatelangs = new Translate('', $conf);
+	$templatelangs->setDefaultLang(getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+	$defaulttemplatelang = $templatelangs->defaultlang;
+}
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_topic = GETPOST('search_topic', 'alpha');
 $search_module = GETPOST('search_module', 'alpha');
@@ -128,6 +135,11 @@ foreach ($object->fields as $key => $val) {
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
+}
+
+$arrayfields['t.lang']['enabled'] = (string) getDolGlobalInt('MAIN_MULTILANGS');
+if (!getDolGlobalInt('MAIN_MULTILANGS')) {
+	$arrayfields['t.lang']['checked'] = '0';
 }
 
 // Security
@@ -479,7 +491,9 @@ if (empty($reshook)) {
 				if ($i) {
 					$sql .= ", ";
 				}
-				if ($keycode == 'datec') {
+				if ($keycode == 'langcode' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+					$sql .= "'".$db->escape($defaulttemplatelang)."'";
+				} elseif ($keycode == 'datec') {
 					$sql .= "'".$db->idate($now)."'";
 				} elseif (GETPOST($keycode) == '' && $keycode != 'langcode') {
 					$sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
@@ -584,7 +598,9 @@ if (empty($reshook)) {
 					}
 					$sql .= $field." = ";
 
-					if ((GETPOST($keycode) == '' && in_array($keycode, array('langcode'))) || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
+					if ($keycode == 'langcode' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+						$sql .= "'".$db->escape($defaulttemplatelang)."'";
+					} elseif ((GETPOST($keycode) == '' && in_array($keycode, array('langcode'))) || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
 						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 					} elseif ($keycode == 'langcode' && (GETPOST($keycode) == '0' || GETPOST($keycode) == '-1')) {
 						$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
@@ -879,6 +895,9 @@ if ($action == 'create') {
 	// Line to enter new values (title)
 	print '<tr class="liste_titre">';
 	foreach ($fieldlist as $field => $value) {
+		if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+			continue;
+		}
 		// Determine the field name based on the possible names
 		// in the data dictionaries.
 		$valuetoshow = ucfirst($fieldlist[$field]); // Par default
@@ -1097,6 +1116,9 @@ if ($action != 'create') {
 		print '</td>';
 	}
 	foreach ($fieldlist as $field => $value) {
+		if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+			continue;
+		}
 		if ($value == 'module') {
 			print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'" spellcheck="false"></td>';
 		} elseif ($value == 'label') {
@@ -1150,6 +1172,9 @@ if ($action != 'create') {
 	}
 	array_push($fieldlist, "tms", "datec");
 	foreach ($fieldlist as $field => $value) {
+		if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+			continue;
+		}
 		$showfield = 1; // By default
 		$css = "left";
 		$sortable = 1;
@@ -1467,6 +1492,9 @@ if ($action != 'create') {
 
 					if (empty($reshook)) {
 						foreach ($fieldlist as $field => $value) {
+							if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+								continue;
+							}
 							if (in_array($fieldlist[$field], array('content', 'content_lines'))) {
 								continue;
 							}
@@ -1625,6 +1653,9 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 	$nboffieldsprinted = 0;
 
 	foreach ($fieldlist as $value) {
+		if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+			continue;
+		}
 		//print $value;
 		if ($value == 'module') {
 			print '<td></td>';
