@@ -9,15 +9,24 @@ if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+global $hookmanager, $langs;
+
 '@phan-var-force Context $context';
 /**
  * @var Context $context
  * @var Translate $langs
  */
 
-global $hookmanager, $langs;
-
-$navMenu = $navGroupMenu = $navUserMenu = array();
+$navMenu = $navUserMenu = array();
+$navGroupMenu = array(
+	'administrative' => array(
+		'id' => 'administrative',
+		'rank' => -1,
+		'url' => '',
+		'name' => $langs->trans('WebPortalGroupMenuAdmin'),
+		'children' => array()
+	),
+);
 $maxTopMenu = 0;
 
 if ($context->userIsLog()) {
