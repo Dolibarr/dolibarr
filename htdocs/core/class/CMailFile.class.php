@@ -1992,11 +1992,11 @@ class CMailFile
 		return $out;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Check that the SMTP target (host and port) is allowed.
 	 * Only standard SMTP ports are allowed and private or reserved IPs are refused, unless the
-	 * option MAIN_MAIL_ALLOW_UNRESTRICTED_SMTP_TARGET is set (for example to use an internal SMTP relay).
+	 * variable $dolibarr_mail_allow_unrestricted_smtp_target is defined into the conf.php file
+	 * (for example to use an internal SMTP relay).
 	 * This is used to prevent the email setup to be used to scan the internal network.
 	 *
 	 * @param	string		$host		Host name or IP. Can contain a protocol prefix like ssl:// and a port is not expected here.
@@ -2007,13 +2007,15 @@ class CMailFile
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		if (getDolGlobalString('MAIN_MAIL_ALLOW_UNRESTRICTED_SMTP_TARGET')) {
+		global $dolibarr_mail_allow_unrestricted_smtp_target;
+
+		if (!empty($dolibarr_mail_allow_unrestricted_smtp_target)) {
 			return '';
 		}
 
 		$listofallowedports = array('25', '465', '587', '2525');
 		if ($host && !in_array((string) $port, $listofallowedports)) {
-			return 'Error bad SMTP port. Only ports '.implode(', ', $listofallowedports).' are allowed. You can define the constant MAIN_MAIL_ALLOW_UNRESTRICTED_SMTP_TARGET to remove this restriction.';
+			return 'Error bad SMTP port. Only ports '.implode(', ', $listofallowedports).' are allowed. You can set the parameter dolibarr_mail_allow_unrestricted_smtp_target into the conf.php file to remove this restriction.';
 		}
 
 		// Parse $host
@@ -2057,6 +2059,7 @@ class CMailFile
 		return '';
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Try to create a socket connection
 	 *
