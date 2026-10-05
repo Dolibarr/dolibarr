@@ -1937,7 +1937,7 @@ class Expedition extends CommonObject
 							// no lot/serial
 							// We increment stock of product (and sub-products)
 							// We use warehouse selected for each line
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), '', '', '', $this->date_shipping, 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), '', '', '', (getDolGlobalInt('STOCK_MOVEMENT_USE_ORIGINAL_DATE') ? $this->date_shipping : ''), 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
 								$error++;
 								$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -1947,7 +1947,7 @@ class Expedition extends CommonObject
 							// We increment stock of batches
 							// We use warehouse selected for each line
 							foreach ($lotArray as $lot) {
-								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, $this->date_shipping, 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
+								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, (getDolGlobalInt('STOCK_MOVEMENT_USE_ORIGINAL_DATE') ? $this->date_shipping : ''), 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 								if ($result < 0) {
 									$error++;
 									$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -2127,7 +2127,7 @@ class Expedition extends CommonObject
 							// no lot/serial
 							// We increment stock of product (disable for sub-products : already in shipment lines)
 							// We use warehouse selected for each line
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), '', '', '', $this->date_shipping, 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), '', '', '', (getDolGlobalInt('STOCK_MOVEMENT_USE_ORIGINAL_DATE') ? $this->date_shipping : ''), 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
 								$error++;
 								$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -2140,7 +2140,7 @@ class Expedition extends CommonObject
 								if (empty($lot->qty)) {
 									continue;
 								}
-								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, $this->date_shipping, 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
+								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, (getDolGlobalInt('STOCK_MOVEMENT_USE_ORIGINAL_DATE') ? $this->date_shipping : ''), 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 								if ($result < 0) {
 									$error++;
 									$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -3444,7 +3444,7 @@ class Expedition extends CommonObject
 							// line without batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref), $this->date_shipping);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref), (getDolGlobalInt('STOCK_MOVEMENT_USE_ORIGINAL_DATE') ? $this->date_shipping : ''));
 							if ($result < 0) {
 								$this->setErrorsFromObject($mouvS);
 								$error++;
@@ -3454,7 +3454,7 @@ class Expedition extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref), $this->date_shipping, $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref), (getDolGlobalInt('STOCK_MOVEMENT_USE_ORIGINAL_DATE') ? $this->date_shipping : ''), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 								$this->setErrorsFromObject($mouvS);
 								$error++;
