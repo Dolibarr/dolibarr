@@ -2602,6 +2602,7 @@ ExtrafieldsDeleted=Extrafields %s has been deleted
 LargeModern=Large - Modern
 SpecialCharActivation=Enable the button to open a virtual keyboard to enter special characters
 DeleteExtrafield=Delete extrafield
+ExtrafieldLocked=The attribute <b>%s</b> is locked .It is required by a module.
 ConfirmDeleteExtrafield=Do you confirm deletion of the field %s ? All data saved into this field will be definitely deleted
 ConfirmDeleteSetup=Are you sure you want to delete the setup for %s ?
 ExtraFieldsSupplierInvoicesRec=Complementary attributes (templates invoices)
