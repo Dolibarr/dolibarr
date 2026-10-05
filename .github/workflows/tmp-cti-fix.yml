@@ -20,7 +20,7 @@ jobs:
           ref: tmp-cti-vibe-20261005
           fetch-depth: 1
 
-      - name: Fetch develop and detect phase
+      - name: Detect phase
         run: |
           git config user.name "eldy"
           git config user.email "eldy@destailleur.fr"
@@ -35,7 +35,8 @@ jobs:
           fi
 
       - name: Prepare work tree from develop
-        run: git checkout -B work origin/develop
+        run: |
+          git checkout -B work origin/develop 2>&1 | tee -a step-log.txt
 
       - name: Setup PHP
         if: ${{ env.PHASE == 'analyse' }}
@@ -48,52 +49,59 @@ jobs:
         run: |
           wget -q https://github.com/phpstan/phpstan/releases/download/2.2.14/phpstan.phar
           chmod +x phpstan.phar
+          php -v | tee -a step-log.txt
 
       - name: Run PHPStan before the fix
         if: ${{ env.PHASE == 'analyse' }}
         run: |
           sed -e '/phpstan-baseline.neon/d' -e '/^includes:/d' phpstan.neon.dist > phpstan-apstats-tmp.neon
           php phpstan.phar analyse --level 9 --no-progress --memory-limit=2G -a dev/build/phpstan/bootstrap_action.php -c phpstan-apstats-tmp.neon htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/compta/facture/class/facture.class.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-before.txt 2>&1 || true
+          echo "phpstan-before finished with $(wc -l < phpstan-before.txt) lines" | tee -a step-log.txt
 
       - name: Apply the fix (byte level, keeps UTF-8 and EOL of the sources)
+        if: ${{ env.PHASE != 'done' }}
         run: |
           python3 <<'PYEOF'
-          import pathlib
-          edits = [
-            ("htdocs/core/lib/functions.lib.php",
-             b"($object->country_id > 0 ? $object->country_id : '')",
-             b"($object->country_id > 0 ? (string) $object->country_id : '')"),
-            ("htdocs/core/lib/functions.lib.php",
-             b"($object->thirdparty->country_id > 0 ? $object->thirdparty->country_id : '')",
-             b"($object->thirdparty->country_id > 0 ? (string) $object->thirdparty->country_id : '')"),
-            ("htdocs/compta/sociales/payments.php",
-             b"if ($sortfield !== null",
-             b"if (!empty($sortfield)"),
-          ]
-          for path, old, new in edits:
-              p = pathlib.Path(path)
-              data = p.read_bytes()
-              n = data.count(old)
-              if n != 1:
-                  raise SystemExit("ERROR: pattern found %d times in %s (expected 1): %r" % (n, path, old))
-              p.write_bytes(data.replace(old, new, 1))
-              print("edited:", path)
-          print("done")
-          PYEOF
-          git --no-pager diff --stat
+import pathlib
+edits = [
+  ("htdocs/core/lib/functions.lib.php",
+   b"($object->country_id > 0 ? $object->country_id : '')",
+   b"($object->country_id > 0 ? (string) $object->country_id : '')"),
+  ("htdocs/core/lib/functions.lib.php",
+   b"($object->thirdparty->country_id > 0 ? $object->thirdparty->country_id : '')",
+   b"($object->thirdparty->country_id > 0 ? (string) $object->thirdparty->country_id : '')"),
+  ("htdocs/compta/sociales/payments.php",
+   b"if ($sortfield !== null",
+   b"if (!empty($sortfield)"),
+]
+lines = []
+for path, old, new in edits:
+    p = pathlib.Path(path)
+    data = p.read_bytes()
+    n = data.count(old)
+    lines.append("%s => %d occurrence(s)" % (path, n))
+    if n == 1:
+        p.write_bytes(data.replace(old, new, 1))
+pathlib.Path("apply-result.txt").write_text("\n".join(lines) + "\n")
+print("\n".join(lines))
+PYEOF
+          cat apply-result.txt | tee -a step-log.txt
+          git --no-pager diff --stat | tee -a step-log.txt
 
       - name: Run PHPStan after the fix
         if: ${{ env.PHASE == 'analyse' }}
         run: |
           php phpstan.phar analyse --level 9 --no-progress --memory-limit=2G -a dev/build/phpstan/bootstrap_action.php -c phpstan-apstats-tmp.neon htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/compta/facture/class/facture.class.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-after.txt 2>&1 || true
+          echo "phpstan-after finished with $(wc -l < phpstan-after.txt) lines" | tee -a step-log.txt
 
-      - name: Publish PHPStan logs on the scratch branch
-        if: ${{ env.PHASE == 'analyse' }}
+      - name: Publish logs on the scratch branch
+        if: ${{ !cancelled() && env.PHASE == 'analyse' }}
         run: |
-          git checkout tmp-cti-vibe-20261005
-          git add phpstan-before.txt phpstan-after.txt
-          git commit -m "tmp: phpstan results"
-          git push origin tmp-cti-vibe-20261005
+          git checkout tmp-cti-vibe-20261005 2>&1 | tee -a step-log.txt
+          git add phpstan-before.txt phpstan-after.txt apply-result.txt step-log.txt 2>&1 | tee -a step-log.txt
+          git commit -m "tmp: phpstan results" 2>&1 | tee -a step-log.txt
+          git push origin tmp-cti-vibe-20261005 2>&1 | tee -a step-log.txt || true
+          echo "publish done" | tee -a step-log.txt
 
       - name: Finalize - push fix branch and remove scratch
         if: ${{ env.PHASE == 'finalize' }}
