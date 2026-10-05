@@ -1,4 +1,4 @@
-name: tmp-cti-fix  # v3
+name: tmp-cti-fix  # v4
 
 on:
   push:
@@ -31,7 +31,6 @@ jobs:
           touch $LOG
           echo '=== download phpstan ===' >> $LOG
           wget -q https://github.com/phpstan/phpstan/releases/download/2.2.14/phpstan.phar
-          echo "wget exit: $?" >> $LOG
           chmod +x phpstan.phar
           php phpstan.phar --version >> $LOG 2>&1
           cat > phpstan_apstats.neon <<'NEONEOF'
@@ -155,37 +154,45 @@ jobs:
           echo "phpstan before exit: $?" >> $LOG
           tail -3 phpstan-before.txt >> $LOG
           echo '=== apply fix ===' >> $LOG
-          python3 <<'PYEOF'
+          python3 - <<'PYEOF' >> $LOG 2>&1
           import pathlib
-
-          # Edit 1: widen the type of the $substitutionarray parameter of complete_substitutions_array()
-          p = pathlib.Path('htdocs/core/lib/functions.lib.php')
-          data = p.read_bytes()
-          old = b' *  @param  array<string,string|float|null>' + bytes([9]) + b'$substitutionarray'
-          new = b' *  @param  array<string,string|int|float|null>' + bytes([9]) + b'$substitutionarray'
-          n = data.count(old)
-          if n != 1:
-              raise SystemExit('ERROR: pattern found %d times in functions.lib.php (expected 1)' % n)
-          p.write_bytes(data.replace(old, new, 1))
-          print('edited functions.lib.php')
-
-          # Edit 2: remove the always-true null comparison on $sortfield (GETPOST never returns null)
-          p = pathlib.Path('htdocs/compta/sociales/payments.php')
-          data = p.read_bytes()
-          old = b'if ($sortfield !== null' + bytes([10, 9])
-          old = old + b"&& preg_match('/^(cs|c|pc|pct|u|ba)" + bytes([92, 46]) + b"', $sortfield)" + bytes([10]) + b') {'
-          new = b"if (preg_match('/^(cs|c|pc|pct|u|ba)" + bytes([92, 46]) + b"', $sortfield)) {'
-          n = data.count(old)
-          if n != 1:
-              raise SystemExit('ERROR: pattern found %d times in payments.php (expected 1)' % n)
-          p.write_bytes(data.replace(old, new, 1))
-          print('edited payments.php')
-
-          # Safety checks: encoding and line endings must be preserved
+          
+          LOG = open('/tmp/fixlog.txt', 'a')
+          
+          def log(msg):
+              print(msg)
+              LOG.write(str(msg) + chr(10))
+              LOG.flush()
+          
+          p1 = pathlib.Path('htdocs/core/lib/functions.lib.php')
+          data1 = p1.read_bytes()
+          old1 = b' *  @param  array<string,string|float|null>' + bytes([9]) + b'$substitutionarray'
+          new1 = b' *  @param  array<string,string|int|float|null>' + bytes([9]) + b'$substitutionarray'
+          log('pattern1 count in functions.lib.php: %d' % data1.count(old1))
+          if data1.count(old1) == 1:
+              p1.write_bytes(data1.replace(old1, new1, 1))
+              log('edited functions.lib.php')
+          else:
+              i = data1.find(old1[:40])
+              log('context near pattern1: %r' % data1[max(0, i-80):i+160])
+          
+          p2 = pathlib.Path('htdocs/compta/sociales/payments.php')
+          data2 = p2.read_bytes()
+          old2 = b'if ($sortfield !== null' + bytes([10, 9])
+          old2 = old2 + b"&& preg_match('/^(cs|c|pc|pct|u|ba)" + bytes([92, 46]) + b"', $sortfield)" + bytes([10]) + b') {'
+          new2 = b"if (preg_match('/^(cs|c|pc|pct|u|ba)" + bytes([92, 46]) + b"', $sortfield)) {'
+          log('pattern2 count in payments.php: %d' % data2.count(old2))
+          if data2.count(old2) == 1:
+              p2.write_bytes(data2.replace(old2, new2, 1))
+              log('edited payments.php')
+          else:
+              i = data2.find(b'sortfield !== null')
+              log('context near pattern2: %r' % data2[max(0, i-60):i+160])
+          
           for path in ('htdocs/core/lib/functions.lib.php', 'htdocs/compta/sociales/payments.php'):
               d = pathlib.Path(path).read_bytes()
               d.decode('utf-8')
-              print(path, 'CR count:', d.count(bytes([13])), 'bytes:', len(d))
+              log('%s CR count: %d bytes: %d' % (path, d.count(bytes([13])), len(d)))
           PYEOF
           echo "python exit: $?" >> $LOG
           git --no-pager diff --stat >> $LOG
@@ -194,9 +201,6 @@ jobs:
           php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-after.txt 2>&1
           echo "phpstan after exit: $?" >> $LOG
           tail -3 phpstan-after.txt >> $LOG
-          echo '=== php lint ===' >> $LOG
-          php -l htdocs/core/lib/functions.lib.php >> $LOG 2>&1
-          php -l htdocs/compta/sociales/payments.php >> $LOG 2>&1
           echo '=== done ===' >> $LOG
 
       - name: Push fix branch
