@@ -2609,7 +2609,9 @@ abstract class CommonObject
 			$aliastablesociete = 'te'; // te as table_element
 		}
 		$restrictiononfksoc = empty($this->restrictiononfksoc) ? 0 : $this->restrictiononfksoc;
-		$sql = "SELECT MAX(te.".$this->db->sanitize($fieldid).")";
+		// ORDER BY ... LIMIT 1 and not MAX()/MIN(): with the other conditions (entity...), MAX()/MIN() read the whole range
+		// of the index, while ORDER BY ... LIMIT 1 stops at the first row found.
+		$sql = "SELECT te.".$this->db->sanitize($fieldid);
 		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
@@ -2683,15 +2685,18 @@ abstract class CommonObject
 		}
 		//print 'socid='.$socid.' restrictiononfksoc='.$restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 
+		$sql .= " ORDER BY te.".$this->db->sanitize($fieldid)." DESC";
+		$sql .= $this->db->plimit(1);
+
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
 		$row = $this->db->fetch_row($result);
-		$this->ref_previous = $row[0];
+		$this->ref_previous = ($row ? $row[0] : null);
 
-		$sql = "SELECT MIN(te.".$this->db->sanitize($fieldid).")";
+		$sql = "SELECT te.".$this->db->sanitize($fieldid);
 		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
@@ -2773,13 +2778,16 @@ abstract class CommonObject
 		//print 'socid='.$socid.' restrictiononfksoc='.$restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
+		$sql .= " ORDER BY te.".$this->db->sanitize($fieldid)." ASC";
+		$sql .= $this->db->plimit(1);
+
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error = $this->db->lasterror();
 			return -2;
 		}
 		$row = $this->db->fetch_row($result);
-		$this->ref_next = $row[0];
+		$this->ref_next = ($row ? $row[0] : null);
 
 		return 1;
 	}
