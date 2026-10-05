@@ -172,6 +172,7 @@ AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has n
 AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
 AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
 AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'
+AssetErrorAccountancyCodeNotFound=The accounting account %s does not exist in the active chart of accounts: create it in the chart of accounts, then try again
 AssetErrorFetchDepreciationOptionsForMode=Error when retrieving options for the '%s' depreciation mode
 AssetErrorDeleteDepreciationOptionsForMode=Error when deleting the '%s' depreciation mode options
 AssetErrorInsertDepreciationOptionsForMode=Error when inserting the '%s' depreciation mode options
