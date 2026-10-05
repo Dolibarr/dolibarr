@@ -1,0 +1,18 @@
+=== occurrences of string|float|null in functions.lib.php ===
+8074: *  @param  array<string,string|float|null>	$substitutionarray		Array substitution old value => new value value
+=== hexdump of the complete_substitutions_array docblock param line ===
+7875: *  @param  array<string,null|string|float|int>	$substitutionarray	Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
+8074: *  @param  array<string,string|float|null>	$substitutionarray		Array substitution old value => new value value
+8078: *  @param  string     		$callfunc               What is the name of the custom function that will be called? (default: completesubstitutionarray)
+=== payments.php 182-192 with visible tabs ===
+^I$sql .= ")";$
+}$
+if ($sortfield !== null$
+^I&& preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)$
+) {$
+^I$sql .= $db->order($sortfield, (string) $sortorder);$
+}$
+$
+// Count total nb of records$
+$nbtotalofrecords = '';$
+$resql = null;$
