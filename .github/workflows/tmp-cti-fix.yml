@@ -1,4 +1,4 @@
-name: tmp-cti-fix  # v2
+name: tmp-cti-fix  # v3
 
 on:
   push:
@@ -24,13 +24,16 @@ jobs:
         with:
           php-version: '8.2'
 
-      - name: Download PHPStan 2.2.14
+      - name: Run pipeline with full logging
         run: |
+          set +e
+          LOG=/tmp/fixlog.txt
+          touch $LOG
+          echo '=== download phpstan ===' >> $LOG
           wget -q https://github.com/phpstan/phpstan/releases/download/2.2.14/phpstan.phar
+          echo "wget exit: $?" >> $LOG
           chmod +x phpstan.phar
-
-      - name: Write CTI phpstan config
-        run: |
+          php phpstan.phar --version >> $LOG 2>&1
           cat > phpstan_apstats.neon <<'NEONEOF'
           # PHPStan config for CTI apstats (level 9, no baseline, no ignoreErrors)
           
@@ -147,13 +150,11 @@ jobs:
           		- PHP_FD_SETSIZE
           
           NEONEOF
-          head -20 phpstan_apstats.neon
-
-      - name: Run PHPStan before the fix
-        run: php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-before.txt 2>&1 || true
-
-      - name: Apply the fix (byte level, keeps UTF-8 and EOL of the sources)
-        run: |
+          echo '=== phpstan before ===' >> $LOG
+          php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-before.txt 2>&1
+          echo "phpstan before exit: $?" >> $LOG
+          tail -3 phpstan-before.txt >> $LOG
+          echo '=== apply fix ===' >> $LOG
           python3 <<'PYEOF'
           import pathlib
 
@@ -186,15 +187,17 @@ jobs:
               d.decode('utf-8')
               print(path, 'CR count:', d.count(bytes([13])), 'bytes:', len(d))
           PYEOF
-          git --no-pager diff --stat
-
-      - name: Run PHPStan after the fix
-        run: php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-after.txt 2>&1 || true
-
-      - name: Save diff and logs
-        run: |
+          echo "python exit: $?" >> $LOG
+          git --no-pager diff --stat >> $LOG
           git --no-pager diff > /tmp/fix.diff
-          cp phpstan-before.txt phpstan-after.txt /tmp/
+          echo '=== phpstan after ===' >> $LOG
+          php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-after.txt 2>&1
+          echo "phpstan after exit: $?" >> $LOG
+          tail -3 phpstan-after.txt >> $LOG
+          echo '=== php lint ===' >> $LOG
+          php -l htdocs/core/lib/functions.lib.php >> $LOG 2>&1
+          php -l htdocs/compta/sociales/payments.php >> $LOG 2>&1
+          echo '=== done ===' >> $LOG
 
       - name: Push fix branch
         run: |
@@ -202,15 +205,18 @@ jobs:
           git config user.email "eldy@destailleur.fr"
           git add htdocs/core/lib/functions.lib.php htdocs/compta/sociales/payments.php
           git commit -m "QUAL: Fix 2 PHPStan warnings of CTI technical debt (substitutionarray type, sortfield null check)"
-          git push origin HEAD:refs/heads/fix-phpstan-substitution-sortfield
+          git push origin HEAD:refs/heads/fix-phpstan-substitution-sortfield || echo 'push fix branch failed'
 
       - name: Publish verification logs on the scratch branch
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin tmp-cti-vibe-debt-20261005
           git checkout -B tmp-cti-vibe-debt-20261005 origin/tmp-cti-vibe-debt-20261005
-          cp /tmp/phpstan-before.txt /tmp/phpstan-after.txt /tmp/fix.diff .
-          git add phpstan-before.txt phpstan-after.txt fix.diff
-          git commit -m "[skip ci] Add fix verification logs"
+          cp /tmp/fixlog.txt /tmp/fix.diff .
+          cp phpstan-before.txt phpstan-after.txt . 2>/dev/null || true
+          git add fixlog.txt fix.diff phpstan-before.txt phpstan-after.txt || true
+          git commit -m "[skip ci] Add fix verification logs" || echo 'nothing to commit'
+          git pull --rebase origin tmp-cti-vibe-debt-20261005 || true
           git push origin HEAD:tmp-cti-vibe-debt-20261005
