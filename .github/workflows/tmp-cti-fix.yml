@@ -1,4 +1,4 @@
-name: tmp-cti-fix  # v5
+name: tmp-cti-fix  # v6 verify
 
 on:
   push:
@@ -10,21 +10,21 @@ permissions:
   contents: write
 
 jobs:
-  fix:
+  verify:
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
-      - name: Checkout develop
+      - name: Checkout fix branch
         uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: fix-phpstan-substitution-sortfield
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
 
-      - name: Run pipeline with full logging
+      - name: Run phpstan verification with logging
         run: |
           set +e
           LOG=/tmp/fixlog.txt
@@ -43,7 +43,7 @@ jobs:
           	tmpDir: ./.github/tmp
           	parallel:
           		processTimeout: 600.0
-          		maximumNumberOfProcesses: 4		# default is 32
+          		maximumNumberOfProcesses: 4
           	customRulesetUsed: true
           	level: 9
           	fileExtensions:
@@ -55,7 +55,7 @@ jobs:
           		analyseAndScan:
           			- htdocs/custom/*
           			- htdocs/documents/*
-          			- htdocs/install/*		# We must exclude this dir to avoid to have DOL_DOCUMENT_ROOT defined to .. by inc.php before the bootstrap*.php file can load it.
+          			- htdocs/install/*
           			- htdocs/install/doctemplates/*
           			- htdocs/langs/*
           			- htdocs/modulebuilder/template/test/*
@@ -149,52 +149,32 @@ jobs:
           		- PHP_FD_SETSIZE
           
           NEONEOF
-          echo '=== phpstan before ===' >> $LOG
-          php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-before.txt 2>&1
-          echo "phpstan before exit: $?" >> $LOG
-          tail -3 phpstan-before.txt >> $LOG
-          echo '=== apply fix ===' >> $LOG
-          echo 'aW1wb3J0IHBhdGhsaWIKTE9HID0gb3BlbignL3RtcC9maXhsb2cudHh0JywgJ2EnKQpkZWYgbG9nKG1zZyk6CiAgICBwcmludChtc2cpCiAgICBMT0cud3JpdGUoc3RyKG1zZykgKyBjaHIoMTApKQogICAgTE9HLmZsdXNoKCkKVEFCID0gYnl0ZXMoWzldKQpMRiA9IGJ5dGVzKFsxMF0pCkJTID0gYnl0ZXMoWzkyXSkKb2sgPSBUcnVlCnAxID0gcGF0aGxpYi5QYXRoKCdodGRvY3MvY29yZS9saWIvZnVuY3Rpb25zLmxpYi5waHAnKQpkMSA9IHAxLnJlYWRfYnl0ZXMoKQpvbGQxID0gYicgKiAgQHBhcmFtICBhcnJheTxzdHJpbmcsc3RyaW5nfGZsb2F0fG51bGw+JyArIFRBQiArIGInJHN1YnN0aXR1dGlvbmFycmF5JwpuZXcxID0gYicgKiAgQHBhcmFtICBhcnJheTxzdHJpbmcsc3RyaW5nfGludHxmbG9hdHxudWxsPicgKyBUQUIgKyBiJyRzdWJzdGl0dXRpb25hcnJheScKYzEgPSBkMS5jb3VudChvbGQxKQpsb2coJ3BhdHRlcm4xIGNvdW50IGluIGZ1bmN0aW9ucy5saWIucGhwOiAlZCcgJSBjMSkKaWYgYzEgPT0gMToKICAgIHAxLndyaXRlX2J5dGVzKGQxLnJlcGxhY2Uob2xkMSwgbmV3MSwgMSkpCiAgICBsb2coJ2Z1bmN0aW9ucy5saWIucGhwIGVkaXRlZCcpCmVsc2U6CiAgICBvayA9IEZhbHNlCiAgICBpID0gZDEuZmluZChiJyRzdWJzdGl0dXRpb25hcnJheScpCiAgICBsb2coJ2NvbnRleHQxOiAlcicgJSBkMVttYXgoMCwgaS0xNjApOmkrODBdKQpwMiA9IHBhdGhsaWIuUGF0aCgnaHRkb2NzL2NvbXB0YS9zb2NpYWxlcy9wYXltZW50cy5waHAnKQpkMiA9IHAyLnJlYWRfYnl0ZXMoKQpvbGQyID0gYidpZiAoJHNvcnRmaWVsZCAhPT0gbnVsbCcgKyBMRiArIFRBQiArIGIiJiYgcHJlZ19tYXRjaCgnL14oY3N8Y3xwY3xwY3R8dXxiYSkiICsgQlMgKyBiIi4vJywgJHNvcnRmaWVsZCkiICsgTEYgKyBiJykgeycKbmV3MiA9IGIiaWYgKHByZWdfbWF0Y2goJy9eKGNzfGN8cGN8cGN0fHV8YmEpIiArIEJTICsgYiIuLycsICRzb3J0ZmllbGQpKSB7IgpjMiA9IGQyLmNvdW50KG9sZDIpCmxvZygncGF0dGVybjIgY291bnQgaW4gcGF5bWVudHMucGhwOiAlZCcgJSBjMikKaWYgYzIgPT0gMToKICAgIHAyLndyaXRlX2J5dGVzKGQyLnJlcGxhY2Uob2xkMiwgbmV3MiwgMSkpCiAgICBsb2coJ3BheW1lbnRzLnBocCBlZGl0ZWQnKQplbHNlOgogICAgb2sgPSBGYWxzZQogICAgaSA9IGQyLmZpbmQoYidzb3J0ZmllbGQgIT09IG51bGwnKQogICAgbG9nKCdjb250ZXh0MjogJXInICUgZDJbbWF4KDAsIGktODApOmkrMjAwXSkKZm9yIHBhdGggaW4gKCdodGRvY3MvY29yZS9saWIvZnVuY3Rpb25zLmxpYi5waHAnLCAnaHRkb2NzL2NvbXB0YS9zb2NpYWxlcy9wYXltZW50cy5waHAnKToKICAgIGQgPSBwYXRobGliLlBhdGgocGF0aCkucmVhZF9ieXRlcygpCiAgICBkLmRlY29kZSgndXRmLTgnKQogICAgbG9nKCclcyB1dGY4IG9rIENSPSVkIExGPSVkIGJ5dGVzPSVkJyAlIChwYXRoLCBkLmNvdW50KGJ5dGVzKFsxM10pKSwgZC5jb3VudChMRiksIGxlbihkKSkpCmlmIG9rOgogICAgcGF0aGxpYi5QYXRoKCcvdG1wL2ZpeG9rJykud3JpdGVfdGV4dCgnb2snKQogICAgbG9nKCdmaXggYXBwbGllZCBzdWNjZXNzZnVsbHknKQplbHNlOgogICAgbG9nKCdmaXggTk9UIGZ1bGx5IGFwcGxpZWQnKQogICAgcmFpc2UgU3lzdGVtRXhpdCgxKQo=' | base64 -d > /tmp/fix.py
-          python3 /tmp/fix.py >> $LOG 2>&1
-          echo "python exit: $?" >> $LOG
-          php -l htdocs/core/lib/functions.lib.php >> $LOG 2>&1
-          php -l htdocs/compta/sociales/payments.php >> $LOG 2>&1
-          git --no-pager diff --stat >> $LOG
-          git --no-pager diff > /tmp/fix.diff
-          echo '=== phpstan after ===' >> $LOG
+          echo '=== phpstan on fix branch ===' >> $LOG
           php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-after.txt 2>&1
-          echo "phpstan after exit: $?" >> $LOG
+          echo "phpstan exit: $?" >> $LOG
           tail -3 phpstan-after.txt >> $LOG
-          cp phpstan-before.txt phpstan-after.txt /tmp/ 2>/dev/null || true
+          echo '=== target error 1 (facture.class.php 703) ===' >> $LOG
+          grep -c 'facture.class.php,line=703' phpstan-after.txt >> $LOG 2>&1
+          echo '=== target error 2 (payments.php 184) ===' >> $LOG
+          grep -c 'payments.php,line=184' phpstan-after.txt >> $LOG 2>&1
+          echo '=== new errors on functions.lib.php near 8074 ===' >> $LOG
+          grep 'functions.lib.php,line=80' phpstan-after.txt >> $LOG 2>&1 || true
+          echo '=== total error count ===' >> $LOG
+          grep -c '::error' phpstan-after.txt >> $LOG 2>&1
+          cp phpstan-after.txt /tmp/ 2>/dev/null || true
           echo '=== done ===' >> $LOG
-
-      - name: Push fix branch
-        run: |
-          if [ -f /tmp/fixok ]; then
-            git config user.name "eldy"
-            git config user.email "eldy@destailleur.fr"
-            git add htdocs/core/lib/functions.lib.php htdocs/compta/sociales/payments.php
-            git diff --cached --quiet || git commit -m "QUAL: Fix 2 PHPStan warnings of CTI technical debt (substitutionarray type, sortfield null check)"
-            if git ls-remote --exit-code --heads origin fix-phpstan-substitution-sortfield >/dev/null 2>&1; then
-              echo 'fix branch already exists, skip push'
-            else
-              git push origin HEAD:refs/heads/fix-phpstan-substitution-sortfield
-            fi
-          else
-            echo 'fix NOT applied, skipping push of fix branch'
-          fi
 
       - name: Publish verification logs on the scratch branch
         if: always()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
+          rm -f phpstan-after.txt phpstan_apstats.neon
           git fetch origin tmp-cti-vibe-debt-20261005
-          git checkout -B tmp-cti-vibe-debt-20261005 origin/tmp-cti-vibe-debt-20261005
-          cp /tmp/fixlog.txt /tmp/fix.diff . 2>/dev/null || true
-          cp /tmp/phpstan-before.txt /tmp/phpstan-after.txt . 2>/dev/null || true
-          git add fixlog.txt fix.diff phpstan-before.txt phpstan-after.txt 2>/dev/null || true
-          git diff --cached --quiet || git commit -m "[skip ci] Add fix verification logs v5"
+          git checkout -f -B tmp-cti-vibe-debt-20261005 origin/tmp-cti-vibe-debt-20261005
+          cp /tmp/fixlog.txt /tmp/phpstan-after.txt . 2>/dev/null || true
+          git add fixlog.txt phpstan-after.txt 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "[skip ci] Add fix verification logs v6"
           for i in 1 2 3 4 5; do
             if git push origin HEAD:tmp-cti-vibe-debt-20261005; then break; fi
             git pull --rebase origin tmp-cti-vibe-debt-20261005 || git rebase --abort || true
