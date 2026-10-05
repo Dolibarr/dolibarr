@@ -1,4 +1,4 @@
-name: tmp-cti-fetch
+name: tmp-cti-fetch  # trigger v1
 
 on:
   push:
@@ -64,7 +64,8 @@ jobs:
               tab = tm.group(0)
               for rm in re.finditer(r'<tr.*?</tr>', tab, re.S | re.I):
                   cells = []
-                  for cm in re.finditer(r'<t[hd].*?</t[hd]>', rm.group(0), re.S | re.I):
+               
+   for cm in re.finditer(r'<t[hd].*?</t[hd]>', rm.group(0), re.S | re.I):
                       txt = re.sub(r'<[^>]+>', ' ', cm.group(0))
                       txt = html.unescape(txt)
                       txt = re.sub(r'\s+', ' ', txt).strip()
