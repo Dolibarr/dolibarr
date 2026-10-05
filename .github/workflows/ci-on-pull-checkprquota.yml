@@ -36,7 +36,7 @@ jobs:
     name: Check PR quota per user
     runs-on: ubuntu-latest
     env:
-      MAX_PR_PER_USER_PER_DAY: 20
+      MAX_PR_PER_USER_PER_DAY: 10
       EXCLUDED_MAINTAINERS: '^(eldy|rycks|lvessiller-opendsi)$'
     steps:
       - name: Check the number of PR created by the author of the PR and by the authors of its commits during the last 24 hours
