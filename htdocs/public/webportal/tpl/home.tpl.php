@@ -15,6 +15,11 @@ if (empty($context) || !is_object($context)) {
  * @var Translate $langs
  */
 
+global $hookmanager, $langs;
+
+$navMenu = $navGroupMenu = $navUserMenu = array();
+$maxTopMenu = 0;
+
 if ($context->userIsLog()) {
 	// menu propal
 	if (isModEnabled('propal') && getDolGlobalInt('WEBPORTAL_PROPAL_LIST_ACCESS')) {
