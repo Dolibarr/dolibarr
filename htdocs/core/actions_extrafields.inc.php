@@ -81,6 +81,16 @@ $listofreservedwords = array(
 	'WHEN', 'WHERE', 'WHILE', 'WRITE', 'XOR', 'YEAR_MONTH', 'ZEROFILL'
 );
 
+// Definition of a locked attribute (for example an attribute required by a module) can't be modified or deleted
+if (in_array($action, array('edit', 'update', 'delete', 'confirm_delete')) && GETPOST('attrname', 'aZ09')) {
+	$extrafields->fetch_name_optionals_label($elementtype);
+	if (!empty($extrafields->attributes[$elementtype]['locked'][GETPOST('attrname', 'aZ09')])) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorExtrafieldIsLocked", GETPOST('attrname', 'aZ09')), null, 'errors');
+		$action = '';
+	}
+}
+
 // Add attribute
 if ($action == 'add') {
 	if (GETPOST("button") != $langs->trans("Cancel")) {
