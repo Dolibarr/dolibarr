@@ -132,7 +132,7 @@ $item->fieldInputOverride = $form->getSelectConditionsPaiements($conf->global->I
 
 // decimals for situation invoice progress
 $item = $formSetup->newItem('INVOICE_SITUATION_PROGRESS_DECIMALS');
-$item->nameText = $langs->trans('SituationProgressDecimals');
+$item->nameText = $langs->trans('SituationInvoiceProgressDecimals');
 $item->fieldAttr = array(
 	'type' => 'number',
 	'step' => '1',
