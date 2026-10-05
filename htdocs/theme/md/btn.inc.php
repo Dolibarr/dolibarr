@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,6 +55,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 			--btncolorborderhover: none;
 			--btncolorborder: #FFF;
 			--butactiondeletebg: rgb(234,228,225);
+			--butactioncancelbg: #bbb;
 			--butactionbg: rgb(<?php print $butactionbg; ?>);
 			--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
@@ -75,6 +76,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
             --btncolorborderhover: #ffffff;
             --btncolorborder: #2b2c2e;
             --butactiondeletebg: rgb(252,84,91);
+			--butactioncancelbg: #888;
 			--butactionbg: rgb(173,140,79);
 			--textbutaction: rgb(255,255,255);
 
@@ -95,7 +97,8 @@ div.tabsAction > div.divButAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butActionRefused,
 div.tabsAction > div.divButAction > a.butAction,
 div.tabsAction > div.divButAction > a.butActionDelete,
-div.tabsAction > div.divButAction > a.butActionRefused {
+div.tabsAction > div.divButAction > a.butActionRefused,
+div.tabsAction > .dropdown > .dropdown-toggle {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
 }
@@ -115,17 +118,19 @@ span.butAction, span.butActionDelete {
 	color: var(--textbutaction) !important;
 	/* background: rgb(230, 232, 239); */
 }
-.butActionRefused, .butAction, .butActionDelete {
+.butAction, .butActionRefused, .butActionDelete {
 	border-radius: 3px;
 }
 :not(.center) > .butActionRefused:last-child, :not(.center) > .butAction:last-child, :not(.center) > .butActionDelete:last-child {
 	margin-<?php echo $right; ?>: 0px !important;
 }
-.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active,
+.butActionRefused,
+.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;
 	text-transform: uppercase;
 	font-weight: bold;
-	line-height: 1.8em;
+	/* line-height: 1.8em; */
 
 	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
 	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
@@ -133,6 +138,7 @@ span.butAction, span.butActionDelete {
 	text-align: center;
 	cursor: pointer;
 	color: #444;
+	min-width: 40px;
 }
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;
@@ -253,13 +259,50 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	box-shadow: unset !important;
 }
 
-.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
+.butActionDanger, .butActionDanger:link, .butActionDanger:visited, .butActionDanger:hover, .butActionDanger:active, .buttonDanger {
 	background: var(--butactiondeletebg);
 	color: #633 !important;
 }
 
+.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
+	background: var(--butactiondeletebg);
+	color: #633 !important;
+}
+.button.button-cancel:not(.buttongen), .button.button-cancel:link:not(.buttongen), .button.button-cancel:visited:not(.buttongen), .button.button-cancel:hover:not(.buttongen), .button.button-cancel:active:not(.buttongen), .button.button-cancel:not(.buttongen) {
+	background: var(--butactioncancelbg) !important;
+	color: #888 !important;
+}
+
 .butActionDelete:hover {
 	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+}
+.button.button-cancel:hover:not(.buttongen) {
+	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+}
+
+/* Button Clone */
+#action-clone .textbutton, .butAction.butActionClone .textbutton {
+  font-size: 0;
+  display: inline-block;
+}
+#action-clone .textbutton::before, .butAction.butActionClone .textbutton::before {
+  content: "\f24d";            /* fa-clone */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;            /* required for the "solid" version */
+  font-size: 14px;				/* using 1em does not work */
+  /* vertical-align: middle; */
+}
+
+/* Button Delete */
+#action-delete .textbutton, .butAction.butActionDelete .textbutton {
+  font-size: 0;
+  display: inline-block;
+}
+#action-delete .textbutton::before, .butAction.butActionDelete .textbutton::before {
+  content: "\f1f8";            /* fa-trash */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;            /* required for the "solid" version */
+  font-size: 14px;				/* using 1em does not work */
 }
 
 .butActionRefused {
@@ -306,7 +349,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionLogin {
-	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
+	background-color: var(--butactionbg);
 }
 
 
@@ -545,6 +588,17 @@ button.btn-low-emphasis.--btn-icon:active {
 
 input.button-save, input.button-cancel {
 	min-width: 110px;
-	margin-left: 5px !important;
-	margin-right: 5px !important;
+	margin-left: 8px !important;
+	margin-right: 8px !important;
+}
+
+/* smartphone */
+
+@media only screen and (max-width: 767px)
+{
+	input.button-save, input.button-cancel {
+		min-width: 90px;
+		margin-left: 4px !important;
+		margin-right: 4px !important;
+	}
 }

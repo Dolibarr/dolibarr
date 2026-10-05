@@ -113,7 +113,7 @@ llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-ca
 
 if ($object->id > 0 && $upload_dir !== null) {
 	$head = facturefourn_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, $object->picto);
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$totalpaid = $object->getSommePaiement();
 
@@ -126,7 +126,7 @@ if ($object->id > 0 && $upload_dir !== null) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
+		$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherBills").'</a>)</div>';
 	}
 	// Project
 	if (isModEnabled('project')) {

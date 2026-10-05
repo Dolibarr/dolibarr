@@ -3,7 +3,7 @@
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2024		Christian Humpel		<christian.humpel@gmail.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ class Workstations extends DolibarrApi
 	{
 		global $db, $conf;
 
-		if (!DolibarrApiAccess::$user->rights->workstation->workstation->read) {
+		if (!DolibarrApiAccess::$user->hasRight('workstation', 'workstation', 'read')) {
 			throw new RestException(403);
 		}
 
@@ -316,7 +316,7 @@ class Workstations extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
-		if (!DolibarrApiAccess::$user->rights->workstation->workstation->read) {
+		if (!DolibarrApiAccess::$user->hasRight('workstation', 'workstation', 'read')) {
 			throw new RestException(403);
 		}
 

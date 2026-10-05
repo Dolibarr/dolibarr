@@ -103,7 +103,13 @@ ConfirmCloneContract=¿Está seguro de querer copiar el contrato <b>%s</b>?
 LowerDateEndPlannedShort=La fecha de finalización planificada es anterior a los servicios activos
 SendContractRef=Información del contrato __REF__
 OtherContracts=Otros contratos
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Estadísticas del contrato
+NbOfContracts=Número de contratos
+NumberOfContractsByMonth=Número de contratos por mes
+AmountOfServices=Número de servicios
+AmountOfServicesByMonthHT=Número de servicios (sin impuestos) por mes
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimiento del contrato
 TypeContact_contrat_external_BILLING=Contacto cliente de facturación del contrato

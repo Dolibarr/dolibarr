@@ -9,7 +9,7 @@
  * Copyright (C) 2020-2021	Udo Tamm					<dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		Charlene Benke				<charlene@patas-monkey.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Julien Marchand				<julien.marchand@iouston.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -212,10 +212,10 @@ if (empty($reshook)) {
 					$action = 'create';
 				}
 			} else {
-				if (!$user->hasRight('holiday', 'write') && !$user->hasRight('holiday', 'writeall_advance')) {
+				if (!$user->hasRight('holiday', 'write') && !$user->hasRight('holiday', 'writeall')) {
 					$error++;
 					setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
-				} elseif (!$user->hasRight('holiday', 'writeall_advance') && !in_array($fuserid, $childids)) {
+				} elseif (!$user->hasRight('holiday', 'writeall') && !in_array($fuserid, $childids)) {
 					$error++;
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
 					$action = 'create';
@@ -460,7 +460,13 @@ if (empty($reshook)) {
 
 		// If this is a rough draft, approved, canceled or refused
 		if ($object->status == Holiday::STATUS_DRAFT || $object->status == Holiday::STATUS_CANCELED || $object->status == Holiday::STATUS_REFUSED) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
+			}
 		} else {
 			$error++;
 			setEventMessages($langs->trans('BadStatusOfObject'), null, 'errors');
@@ -1025,7 +1031,7 @@ $edit = false;
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'write')) || (!in_array($fuserid, $childids) && ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('holiday', 'writeall_advance') || !$user->hasRight('holiday', 'writeall'))))) {
+	if ((in_array($fuserid, $childids) && !$user->hasRight('holiday', 'write')) || (!in_array($fuserid, $childids) && ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('holiday', 'writeall') || !$user->hasRight('holiday', 'writeall'))))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request
@@ -1076,19 +1082,19 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		                 return true;
 		               }
 		               else {
-		                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
+		                 alert(\''.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'\');
 		                 return false;
 		               }
 		            }
 		            else
 		            {
-		              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
+		              alert(\''.dol_escape_js($langs->transnoentities('NoDateFin')).'\');
 		              return false;
 		            }
 		        }
 		        else
 		        {
-		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
+		           alert(\''.dol_escape_js($langs->transnoentities('NoDateDebut')).'\');
 		           return false;
 		        }
 			});
@@ -1096,7 +1102,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
        </script>'."\n";
 
 
-		// Formulaire de demande
+		// Leave request form
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="demandeCP">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
@@ -1334,7 +1340,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			if ($canread) {
 				$head = holiday_prepare_head($object);
 
-				if (($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
+				$editmode = (($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) || ($action == 'editvalidator'));
+
+				if ($editmode) {
 					if ($action == 'edit' && $object->status == Holiday::STATUS_DRAFT) {
 						$edit = true;
 					}
@@ -1345,7 +1353,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
 				}
 
-				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
+				// No drop area in edit mode: these tabs are printed inside the edit form, and dropping a file
+				// reloads the page, which would discard what the user is typing.
+				print dol_get_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday', 0, '', '', 0, '', ($editmode ? 0 : 1));
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -1589,18 +1599,18 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleToValidCP"), $langs->trans("ConfirmToValidCP"), "confirm_send", '', 1, 1);
 				}
 
-				// Si validation de la demande
+				// If validating the request
 				if ($action == 'valid') {
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleValidCP"), $langs->trans("ConfirmValidCP"), "confirm_valid", '', 1, 1);
 				}
 
-				// Si refus de la demande
+				// If refusing the request
 				if ($action == 'refuse') {
 					$array_input = array(array('type' => "text", 'label' => $langs->trans('DetailRefusCP'), 'name' => "detail_refuse", 'size' => "50", 'value' => ""));
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
 				}
 
-				// Si annulation de la demande
+				// If cancelling the request
 				if ($action == 'cancel') {
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("TitleCancelCP"), $langs->trans("ConfirmCancelCP"), "confirm_cancel", '', 1, 1);
 				}
@@ -1708,7 +1718,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				$filedir = $conf->holiday->dir_output.'/'.$object->element.'/'.$objref;
 				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 				$genallowed = ($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall'); // If you can read, you can build the PDF to read content
-				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall_advance'); // If you can create/edit, you can remove a file on card
+				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall'); // If you can create/edit, you can remove a file on card
 				print $formfile->showdocuments('holiday:Holiday', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 			} */
 
@@ -1721,9 +1731,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 			$MAXEVENT = 10;
 
-			// TODO Add the page holiday_agenda.php
-			//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/holiday/holiday_agenda.php?id='.$object->id);
-			$morehtmlcenter = '';
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/holiday/holiday_agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

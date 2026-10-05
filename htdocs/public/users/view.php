@@ -409,7 +409,7 @@ if ($usersection) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
+	print '<div class="nowidthimp" id="tablepublicpayment">';
 
 	print $usersection;
 
@@ -507,7 +507,7 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	print '<tr><td class="left">';
 
 	if ($companysection || $mysoc->name) {
-		print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
+		print '<div class="nowidthimp" id="tablepublicpayment">';
 
 		// Add company info
 		if ($mysoc->name) {

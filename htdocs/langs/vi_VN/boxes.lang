@@ -116,6 +116,7 @@ BoxLastCustomerShipments=Lô hàng cuối cùng của khách hàng
 BoxTitleLastCustomerShipments=Các lô hàng khách hàng đã sửa đổi %s mới nhất
 BoxTitleLastLeaveRequests=%s yêu cầu nghỉ phép mới được sửa
 NoRecordedShipments=Không ghi nhận lô hàng của khách hàng
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=Khách hàng đã đạt hạn mức dư nợ
 BoxTitleLastFediverseInfos=Bài đăng cuối cùng của %s từ %s
 BoxLastFediverseInfos=Cập nhật Fediverse mới nhất: Tin tức và xu hướng

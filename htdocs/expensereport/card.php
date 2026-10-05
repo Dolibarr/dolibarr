@@ -262,6 +262,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $candelete) {
 		$object = new ExpenseReport($db);
 		$result = $object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: index.php");
@@ -456,7 +457,12 @@ if (empty($reshook)) {
 				// CONTENT
 				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
 				$link = '<a href="'.$link.'">'.$link.'</a>';
-				$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
+				$summary = $object->getSummary();
+				$message = '';
+				if ($summary !== '') {
+					$message .= $langs->transnoentities("Summary").': '.dol_escape_htmltag($summary).'<br>';
+				}
+				$message .= $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
 
 				// Rebuild pdf
 				/*
@@ -1270,9 +1276,9 @@ if (empty($reshook)) {
 				unset($vatrate);
 				unset($comments);
 				unset($fk_c_type_fees);
-				unset($fk_project);
+				$fk_project = 0;
 
-				unset($date);
+				$date = false;
 			} else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1621,7 +1627,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip', 0, '', '', 0, '', 1);
+			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip', 0, '', '', 0, '', 0);	// No drag and drop on the edit form, dropping a file reloads the page and discards it
 
 			if ($object->status == ExpenseReport::STATUS_REFUSED) {
 				print '<input type="hidden" name="action" value="updateFromRefuse">';
@@ -1786,6 +1792,10 @@ if ($action == 'create') {
 			$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlref = '<div class="refidno">';
+			$summary = $object->getSummary();
+			if ($summary !== '') {
+				$morehtmlref .= $langs->trans('Summary').': '.dol_escape_htmltag($summary);
+			}
 			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -2354,7 +2364,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						print '<td class="nowrap right linecolwarning">';
-						print !empty($line->rule_warning_message) ? img_warning(html_entity_decode($line->rule_warning_message)) : '';
+						print !empty($line->rule_warning_message) ? img_warning($line->rule_warning_message) : '&nbsp;';
 						print '</td>';
 
 						// Ajout des boutons de modification/suppression
@@ -2698,7 +2708,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				print '</tr>';
-			} // Fin si c'est payé/validé
+			} // End if paid/validated
 
 			print '</table>';
 			print '</div>';
@@ -2739,7 +2749,7 @@ if ($action == 'create') {
                     path += "&vatrate="+tva;
                     path += "&qty="+qty;
 
-                    if (type_fee == 4) { // frais_kilométriques
+                    if (type_fee == 4) { // mileage expenses
                         if (tax_cat == "" || parseInt(tax_cat) <= 0){
                             return ;
                         }
@@ -2820,9 +2830,9 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	/* If status is "Draft"
-	 *	ET user à droit "creer/supprimer"
-	 *	ET fk_user_author == user courant
-	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
+	 *	AND user has "create/delete" right
+	 *	AND fk_user_author == current user
+	 * 	Show: "Save" / "Modify" / "Delete"
 	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_DRAFT) {
 		if (in_array($object->fk_user_author, $childids) || $user->hasRight('expensereport', 'writeall_advance')) {
@@ -2836,10 +2846,10 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	/* If status if "Refused"
-	 *	ET user à droit "creer/supprimer"
-	 *	ET fk_user_author == user courant
-	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
+	/* If status is "Refused"
+	 *	AND user has "create/delete" right
+	 *	AND fk_user_author == current user
+	 * 	Show: "Save" / "Modify" / "Delete"
 	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_REFUSED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
@@ -2857,10 +2867,10 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	/* Si l'état est "En attente d'approbation"
-	 *	ET user à droit de "approve"
-	 *	ET fk_user_validator == user courant
-	 *	Afficher : "Valider" / "Refuser" / "Supprimer"
+	/* If status is "Pending approval"
+	 *	AND user has "approve" right
+	 *	AND fk_user_validator == current user
+	 *	Show: "Validate" / "Refuse" / "Delete"
 	 */
 	if ($object->status == ExpenseReport::STATUS_VALIDATED) {
 		if (in_array($object->fk_user_author, $childids)) {
@@ -2880,7 +2890,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
 			// Cancel
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 		}
 	}
 
@@ -2931,16 +2941,16 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 
 	// Clone
 	if ($user->hasRight('expensereport', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */
 	if ($user->hasRight('expensereport', 'creer') && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED) {
 		// Delete
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 	} elseif ($candelete && $object->status != ExpenseReport::STATUS_CLOSED) {
 		// Delete
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 	}
 
 	$parameters = array();

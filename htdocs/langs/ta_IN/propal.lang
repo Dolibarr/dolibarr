@@ -14,6 +14,7 @@ DeleteProp=வணிக முன்மொழிவை நீக்கு
 ValidateProp=வணிக முன்மொழிவை சரிபார்க்கவும்
 CancelPropal=Cancel
 AddProp=முன்மொழிவை உருவாக்கவும்
+AddRenewalProp=Create renewal proposal
 ConfirmDeleteProp=இந்த வணிக முன்மொழிவை நிச்சயமாக நீக்க விரும்புகிறீர்களா?
 ConfirmValidateProp=<b> %s </b> என்ற பெயரில் இந்த வணிகத் திட்டத்தைச் சரிபார்க்க விரும்புகிறீர்களா?
 ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
@@ -23,7 +24,10 @@ AllPropals=அனைத்து முன்மொழிவுகள்
 SearchAProposal=ஒரு திட்டத்தைத் தேடுங்கள்
 NoProposal=முன்மொழிவு இல்லை
 ProposalsStatistics=வணிக முன்மொழிவின் புள்ளிவிவரங்கள்
+NumberOfProposals=Number of proposals
 NumberOfProposalsByMonth=மாதம் எண்
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=மாதத்தின்படி தொகை (வரி தவிர)
 NbOfProposals=வணிக முன்மொழிவுகளின் எண்ணிக்கை
 ShowPropal=முன்மொழிவைக் காட்டு
@@ -77,13 +81,11 @@ AvailabilityTypeAV_1W=1 வாரம்
 AvailabilityTypeAV_2W=2 வாரங்கள்
 AvailabilityTypeAV_3W=3 வாரங்கள்
 AvailabilityTypeAV_1M=1 மாதம்
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=பிரதிநிதி பின்தொடர்தல் முன்மொழிவு
 TypeContact_propal_external_BILLING=வாடிக்கையாளர் இன்வாய்ஸ் தொடர்பு
 TypeContact_propal_external_CUSTOMER=வாடிக்கையாளர் தொடர்பு பின்தொடர்தல் முன்மொழிவு
 TypeContact_propal_external_SHIPPING=டெலிவரிக்கான வாடிக்கையாளர் தொடர்பு
-
 # Document models
 CantBeNoSign=cannot be set not signed
 CaseFollowedBy=தொடர்ந்து வழக்கு
@@ -122,3 +124,7 @@ SignSociete_rib=Sign mandate
 SignPropal=முன்மொழிவை ஏற்கவும்
 Signed=signed
 SignedOnly=கையெழுத்து மட்டுமே
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)

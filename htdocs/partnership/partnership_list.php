@@ -171,6 +171,9 @@ foreach ($all_fields_list as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -415,10 +418,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -547,7 +550,7 @@ if ($managedfor == "member") {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'rowid', $linkback);
+		dol_banner_tab($adhstat, 'rowid', $linkback);
 
 		print '<div class="fichecenter">';
 
@@ -556,7 +559,7 @@ if ($managedfor == "member") {
 
 		// Login
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$adhstat->login.'&nbsp;</td></tr>';
 		}
 
 		// Type
@@ -700,7 +703,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('prevalidate', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -1078,6 +1081,33 @@ while ($i < $imaxinloop) {
 				}
 			}
 		}
+
+		// End of subscription date
+		if ($managedfor == 'member') {
+			print '<td class="nowrap center endofsubscriptiondate">';
+			$result = $adherent->fetch($object->fk_member);
+			if ($result) {
+				$datefin = $adherent->datefin;
+				if ($datefin) {
+					print dol_print_date($datefin, 'day');
+					if ($adherent->hasDelay()) {
+						$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
+						print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
+					}
+				} else {
+					if (!empty($adherent->need_subscription)) {
+						print $langs->trans("SubscriptionNotReceived");
+						if ($adherent->status > 0) {
+							print " ".img_warning();
+						}
+					} else {
+						print '&nbsp;';
+					}
+				}
+			}
+			print '</td>';
+		}
+
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook

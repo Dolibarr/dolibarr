@@ -14,6 +14,7 @@ DeleteProp=מחק הצעה מסחרית
 ValidateProp=אימות הצעה מסחרית
 CancelPropal=לְבַטֵל
 AddProp=צור הצעה
+AddRenewalProp=Create renewal proposal
 ConfirmDeleteProp=האם אתה בטוח שברצונך למחוק את ההצעה המסחרית הזו?
 ConfirmValidateProp=האם אתה בטוח שברצונך לאמת הצעה מסחרית זו תחת השם <b>%s</b>?
 ConfirmCancelPropal=האם אתה בטוח שברצונך לבטל הצעה מסחרית <b>%s</b>?
@@ -23,7 +24,10 @@ AllPropals=כל ההצעות
 SearchAProposal=חפש הצעה
 NoProposal=אין הצעה
 ProposalsStatistics=סטטיסטיקה של הצעה מסחרית
+NumberOfProposals=Number of proposals
 NumberOfProposalsByMonth=מספר לפי חודש
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=סכום לפי חודש (לא כולל מס)
 NbOfProposals=מספר הצעות מסחריות
 ShowPropal=הצג הצעה
@@ -77,13 +81,11 @@ AvailabilityTypeAV_1W=שבוע 1
 AvailabilityTypeAV_2W=2 שבועות
 AvailabilityTypeAV_3W=3 שבועות
 AvailabilityTypeAV_1M=1 חודש
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=הצעת המשך של נציג
 TypeContact_propal_external_BILLING=קשר חשבונית לקוח
 TypeContact_propal_external_CUSTOMER=הצעת המשך ליצירת קשר עם הלקוח
 TypeContact_propal_external_SHIPPING=פנייה ללקוח למשלוח
-
 # Document models
 CantBeNoSign=לא ניתן להגדיר לא חתום
 CaseFollowedBy=מקרה ואחריו
@@ -122,3 +124,7 @@ SignSociete_rib=לחתום על מנדט
 SignPropal=קבל את ההצעה
 Signed=חתם
 SignedOnly=חתום בלבד
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)

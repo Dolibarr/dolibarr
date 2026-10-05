@@ -56,9 +56,12 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
+if (isModEnabled('contract')) {
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+}
 
 // Load translation files required by page
-$langs->loadLangs(array('accountancy', 'companies', 'suppliers', 'products', 'bills', 'orders', 'commercial'));
+$langs->loadLangs(array('accountancy', 'companies', 'suppliers', 'products', 'bills', 'orders', 'commercial', 'contracts'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -215,8 +218,21 @@ if ($id > 0 && empty($object->id)) {
 	// Load data of third party
 	$res = $object->fetch($id);
 	if ($object->id <= 0) {
-		dol_print_error($db, $object->error);
-		exit(1);
+		if ($object->error) {
+			dol_print_error($db, $object->error);
+			exit(1);
+		}
+		// Fournisseur::fetch() filters on s.fournisseur > 0, so a third party that exists but is no
+		// longer a vendor returns no row and no database error. Show a readable message with a link to
+		// the generic card instead of the technical error page (#39618).
+		$langs->load("errors");
+		llxHeader('', $langs->trans("ThirdParty").' - '.$langs->trans('Supplier'));
+		print '<div class="warning">'.$langs->trans("ErrorRecordNotFound").' ('.$langs->trans("Supplier").')';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $id).'">'.$langs->trans("ThirdParty").'</a>';
+		print '</div>';
+		llxFooter();
+		$db->close();
+		exit(0);
 	}
 }
 
@@ -257,7 +273,7 @@ if ($object->id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+			print ' <span class="paddingleftimp error inline-block valignmiddle" title="'.$object->error.'">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td>';
 		print '</tr>';
@@ -324,7 +340,7 @@ if ($object->id > 0) {
 	if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
 		print '<tr>';
 		print '<td class="titlefield">';
-		print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+		print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc').'<br>'.$langs->trans('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC'));
 		print '</td><td>';
 		print '<input type="checkbox" name="vat_reverse_charge" ' . ($object->vat_reverse_charge == '1' ? ' checked' : '') . ' disabled>';
 		print '</td>';
@@ -914,8 +930,8 @@ if ($object->id > 0) {
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
-				$invoicetemplate->date_last_gen = $objp->date_last_gen;
-				$invoicetemplate->date_when = $objp->date_when;
+				$invoicetemplate->date_last_gen = $db->jdate($objp->date_last_gen);
+				$invoicetemplate->date_when = $db->jdate($objp->date_when);
 
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax250">';
@@ -1030,6 +1046,82 @@ if ($object->id > 0) {
 		}
 	}
 
+	/*
+	 * Latest supplier contracts
+	 */
+	if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.fk_projet, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
+		$sql .= " c.last_main_doc, c.model_pdf";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+		$sql .= " WHERE c.fk_soc = s.rowid";
+		$sql .= " AND s.rowid = ".((int) $object->id);
+		$sql .= " AND c.fk_contract_type = 1";
+		$sql .= " AND c.entity IN (".getEntity('contract').")";
+		$sql .= " ORDER BY c.datec DESC";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$contrat = new Contrat($db);
+
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder centpercent lastrecordtable">';
+
+				print '<tr class="liste_titre">';
+				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastSupplierContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'&search_type=1">'.$langs->trans("AllContracts").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '</tr></table></td>';
+				print '</tr>';
+			}
+
+			$i = 0;
+			while ($i < $num && $i < $MAXLIST) {
+				$objp = $db->fetch_object($resql);
+
+				$contrat->id = $objp->id;
+				$contrat->ref = $objp->ref ? $objp->ref : $objp->id;
+				$contrat->ref_customer = $objp->refcus;
+				$contrat->ref_supplier = $objp->refsup;
+				$contrat->fk_project = $objp->fk_projet;
+				$contrat->statut = $objp->contract_status;
+				$contrat->status = $objp->contract_status;
+				$contrat->last_main_doc = $objp->last_main_doc;
+				$contrat->model_pdf = $objp->model_pdf;
+
+				print '<tr class="oddeven">';
+				print '<td class="nowraponall">';
+				print $contrat->getNomUrl(1, 12);
+				print '</td>';
+				print '<td class="tdoverflowmax125">';
+				if ($contrat->fk_project > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+					$project = new Project($db);
+					$project->fetch((int) $contrat->fk_project);
+					print $project->getNomUrl(1);
+				}
+				print "</td>\n";
+				print '<td class="nowrap">';
+				print dol_trunc($objp->refsup, 12);
+				print "</td>\n";
+				print '<td class="right" width="80px"><span title="'.$langs->trans("DateContract").'">'.dol_print_date($db->jdate($objp->dcon), 'day')."</span></td>\n";
+				print '<td class="nowraponall right">';
+				print $contrat->getLibStatut(4);
+				print "</td>\n";
+				print '</tr>';
+				$i++;
+			}
+			$db->free($resql);
+
+			if ($num > 0) {
+				print "</table>";
+				print '</div>';
+			}
+		} else {
+			dol_print_error($db);
+		}
+	}
+
 	// Allow external modules to add their own shortlist of recent objects
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreRecentObjects', $parameters, $object, $action);
@@ -1054,54 +1146,103 @@ if ($object->id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
 	if (empty($reshook)) {
-		if ($object->status != 1) {
-			print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('ThirdPartyIsClosed'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
-		}
+		// Tooltip to use on buttons when the thirdparty is closed
+		$thirdpartyclosedtitle = ($object->status == 1 ? '' : $langs->trans("ThirdPartyIsClosed"));
 
-		if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "creer")) {
-			$langs->load("supplier_proposal");
-			if ($object->status == 1) {
-				print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&amp;socid='.$object->id, '');
-			} else {
-				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierProposal'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+		// Url to go back to the thirdparty card when clicking on the cancel button of the creation page
+		$backtopageforcancel = $_SERVER['PHP_SELF'].'?socid='.$object->id;
+
+		$arrayforbutaction = array();
+
+		// Create a supplier proposal
+		$arrayforbutaction[] = array(
+			'lang' => 'supplier_proposal',
+			'enabled' => isModEnabled('supplier_proposal'),
+			'perm' => ($object->status == 1 && $user->hasRight('supplier_proposal', 'creer')),
+			'label' => 'AddSupplierProposal',
+			'url' => '/supplier_proposal/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create a supplier order
+		$arrayforbutaction[] = array(
+			'lang' => 'orders',
+			'enabled' => isModEnabled('supplier_order'),
+			'perm' => ($object->status == 1 && ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'))),
+			'label' => 'AddSupplierOrderShort',
+			'url' => '/fourn/commande/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create a contract
+		$arrayforbutaction[] = array(
+			'lang' => 'contracts',
+			'enabled' => isModEnabled('contract'),
+			'perm' => ($object->status == 1 && $user->hasRight('contrat', 'creer')),
+			'label' => 'AddContract',
+			'url' => '/contrat/card.php?action=create&socid='.$object->id.'&contract_type=1&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create a supplier invoice
+		$arrayforbutaction[] = array(
+			'lang' => 'bills',
+			'enabled' => isModEnabled('supplier_invoice'),
+			'perm' => ($object->status == 1 && ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'))),
+			'label' => 'AddBill',
+			'url' => '/fourn/facture/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Check if at least one object can be created
+		$permissiontocreateatleastone = 0;
+		foreach ($arrayforbutaction as $butaction) {
+			if (!empty($butaction['perm'])) {
+				$permissiontocreateatleastone = 1;
+				break;
 			}
 		}
 
-		if ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer')) {
-			$langs->load("orders");
-			if ($object->status == 1) {
-				print dolGetButtonAction('', $langs->trans('AddSupplierOrderShort'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;token='.newToken().'&amp;socid='.$object->id, '');
-			} else {
-				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddSupplierOrderShort'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+		// Show the "Create" button with a dropdown list of objects (or flat buttons if option MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_THIRDPARTY is set)
+		if (!empty($arrayforbutaction)) {
+			$createbuttontitle = '';
+			$createbuttonright = 1;
+			if ($object->status != 1) {
+				$createbuttontitle = $langs->trans("ThirdPartyIsClosed");
+				$createbuttonright = 0;
+			} elseif (empty($permissiontocreateatleastone)) {
+				$createbuttontitle = $langs->trans("NotAllowed");
+				$createbuttonright = 0;
 			}
+
+			print dolGetButtonAction($createbuttontitle, $langs->trans("Create"), 'default', $arrayforbutaction, '', $createbuttonright, array('areDropdownButtons' => !getDolGlobalInt("MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_THIRDPARTY")));
 		}
 
 		if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')) {
 			if (!empty($orders2invoice) && $orders2invoice > 0) {
 				if ($object->status == 1) {
 					// Company is open
-					print dolGetButtonAction('', $langs->trans('CreateInvoiceForThisSupplier'), 'default', DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'&amp;search_billed=0&amp;autoselectall=1', '');
+					print dolGetButtonAction('', $langs->trans('CreateInvoiceForThisSupplier'), 'default', DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1', '');
 				} else {
 					print dolGetButtonAction('', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 				}
 			} else {
-				print dolGetButtonAction($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
-			}
-		}
-
-		if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')) {
-			$langs->load("bills");
-			if ($object->status == 1) {
-				print dolGetButtonAction('', $langs->trans('AddBill'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;socid='.$object->id, '');
-			} else {
-				print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('AddBill'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+				if ($object->status == 1) {
+					print dolGetButtonAction($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')', $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+				} else {
+					print dolGetButtonAction($langs->trans('ThirdPartyIsClosed'), $langs->trans('CreateInvoiceForThisCustomer'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
+				}
 			}
 		}
 
 		// Add action
 		if (isModEnabled('agenda') && getDolGlobalString('MAIN_REPEATTASKONEACHTAB') && $object->status == 1) {
 			if ($user->hasRight("agenda", "myactions", "create")) {
-				print dolGetButtonAction('', $langs->trans('AddAction'), 'default', DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;socid='.$object->id, '');
+				print dolGetButtonAction('', $langs->trans('AddAction'), 'default', DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id, '');
 			} else {
 				print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('AddAction'), 'default', $_SERVER['PHP_SELF'].'#', '', false);
 			}

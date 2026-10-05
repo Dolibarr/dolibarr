@@ -57,3 +57,7 @@ donAnonymous=Donasi anonim
 AnonymousDonationTooltip=Centang kotak ini jika Anda ingin donasi Anda tetap anonim. Informasi pribadi Anda tidak akan diminta.
 publicDonationFieldHelp=%s dapat menerbitkan donasi saya di daftar publik
 listOfPublicDonations=Daftar sumbangan publik
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

@@ -31,9 +31,9 @@ UseDiscountOnTotal=На СУБТОТАЛ
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=Маржа на најдобрата цена на продавачот
-MargeType2=Margin on Weighted Average Price (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Маргина на Цената на чинење
-MarginTypeDesc=* Маржа за најдобра куповна цена = Продажна цена - Најдобра цена на продавачот дефинирана на картичката на производот<br>* Маржа на пондерирана просечна цена (WAP) = Продажна цена - Просечна пондерирана цена на производот (WAP) или најдобра цена на продавачот ако WAP сè уште не е дефиниран<br>* Маржа на цена на чинење = Продажна цена - Цена на чинење дефинирана на картичката на производот или WAP ако цената на чинење не е дефинирана, или најдобра цена на продавачот ако WAP сè уште не е дефиниран
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Цена на чинење
 UnitCharges=Unit charges
 Charges=Charges

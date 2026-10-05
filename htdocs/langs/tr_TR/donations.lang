@@ -57,3 +57,7 @@ donAnonymous=Anonim bağış
 AnonymousDonationTooltip=Bağışınızın anonim kalmasını istiyorsanız çek bu kutuyu doldurun. Çalışan bilgileriniz sorulmayacaktır.
 publicDonationFieldHelp=%s bağışımı kamu sicilinde yayınlayabilir
 listOfPublicDonations=Liste kamu bağışları
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

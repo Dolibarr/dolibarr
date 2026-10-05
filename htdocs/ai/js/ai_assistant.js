@@ -1,3 +1,12 @@
+/* Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026	Nick Fragoulis
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
 /**
  * \file htdocs/ai/js/ai_assistant.js
  * \brief Frontend logic for the AI Assistant
@@ -47,9 +56,11 @@ export function initAiAssistant(container) {
     const uploadBtn = container.querySelector('#upload-btn');
     const uploadWrapper = container.querySelector('#upload-wrapper');
     const fileInput = container.querySelector('#file-upload');
+    const chipArea = container.querySelector('#file-chip-area');
 
     const clearBtn = container.querySelector('#clear-btn');
     const engineSelect = container.querySelector('#engine-select');
+    const modelSelect = container.querySelector('#model-select');
     const input = container.querySelector('#user-input');
     const chat = container.querySelector('#chat-history');
     const statusBar = container.querySelector('#status-bar');
@@ -67,6 +78,12 @@ export function initAiAssistant(container) {
     let lastResult = { data: null, tool: '', query: '' };
     let pendingIntent = null;     // Stores action waiting for confirmation
     let clarificationContext = null;
+    // Document attached via the paperclip: {name, payload}. Sent as context with
+    // the NEXT message; only a small chip (icon + name) is shown in the UI.
+    let attachedDocs = [];        // [{name, payload, error?}] — several documents can ride the next message
+    // Mirrors the server-side AI_ATTACHMENT_MAX_FILES guard (ai_validate_attachments);
+    // the per-file/total size caps live server-side too.
+    const MAX_ATTACHED_DOCS = (parseInt(config.maxAttachments, 10) > 0) ? parseInt(config.maxAttachments, 10) : 5;
 
     // Audio Hardware Context
     let audioContext, mediaStream, audioProcessor, audioChunks = [];
@@ -115,6 +132,9 @@ export function initAiAssistant(container) {
 
     // Initialize Doc Parsing UI Listeners
     initDocParsingUI();
+
+    // Initialize the model picker (presets + dynamic provider model list)
+    initModelPicker();
 
     // Listen for custom event to trigger PDF download from buttons
     // (scoped to the container: each chat instance reacts only to its own buttons)
@@ -170,13 +190,14 @@ export function initAiAssistant(container) {
     // =========================================================================
 
     /**
-     * Update UI visibility based on selected engine
-     * @param {string} mode - 'text', 'cloud', 'whisper', 'local_docs', 'cloud_docs'
+     * Update UI visibility based on selected engine.
+     * The paperclip (uploadWrapper) is ALWAYS visible: documents can be attached
+     * in any mode, like in modern chat UIs. The legacy 'local_docs'/'cloud_docs'
+     * selector modes are gone — routing local/cloud is automatic on attach.
+     * @param {string} mode - 'text', 'cloud', 'whisper'
      */
     function updateInterfaceMode(mode) {
-        // Reset all wrappers
-        micWrapper.classList.add('hidden');
-        uploadWrapper.classList.add('hidden');
+        micWrapper.classList.add('ai-hidden');
 
         if (mode === 'text') {
             input.placeholder = t('TypeYourQuestion');
@@ -184,16 +205,9 @@ export function initAiAssistant(container) {
         }
         else if (mode === 'cloud' || mode === 'whisper') {
             // Voice Modes
-            micWrapper.classList.remove('hidden');
+            micWrapper.classList.remove('ai-hidden');
             input.placeholder = 'Type or speak...';
             initEngine(mode);
-        }
-        else if (mode === 'local_docs' || mode === 'cloud_docs') {
-            // Document Modes
-            uploadWrapper.classList.remove('hidden');
-            input.placeholder = mode === 'local_docs'
-                ? t('UploadLocalDoc')
-                : t('UploadCloudDoc');
         }
     }
 
@@ -249,18 +263,91 @@ export function initAiAssistant(container) {
         uploadBtn.addEventListener('click', () => fileInput.click());
 
         fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+            const files = Array.from(e.target.files || []);
+            if (!files.length) return;
 
-            const mode = engineSelect.value;
-            statusBar.innerText = t('ProcessingFile') + ` ${file.name} (${mode})...`;
+            for (const file of files) {
+                if (attachedDocs.filter((d) => !d.error).length >= MAX_ATTACHED_DOCS) {
+                    statusBar.innerText = t('AIAttachmentTooMany').replace('%s', String(MAX_ATTACHED_DOCS));
+                    break;
+                }
+                await attachOneFile(file);
+            }
+
+            fileInput.value = '';
+        });
+    }
+
+    /** Process one selected file and add it to the attached-documents list. */
+    async function attachOneFile(file) {
+            renderChips({ name: file.name, loading: true });
+            statusBar.innerText = t('ProcessingFile') + ` ${file.name}...`;
 
             try {
-                let contentPayload = "";
+                // Automatic routing: try the in-browser extraction first, then
+                // fall back to server-side cloud parsing (multimodal) when the
+                // local result is empty or too short to be useful — typically a
+                // photographed PDF with no text layer.
+                //
+                // Two guards keep the chip from spinning for minutes:
+                // - a large image goes straight to cloud parsing (browser OCR on a
+                //   multi-MB photo downloads Tesseract + a language model and can
+                //   take minutes for a poor result);
+                // - any local extraction is capped by a hard timeout, after which
+                //   we fall back to cloud parsing (the orphan extraction result,
+                //   if it ever completes, is simply ignored).
+                const LOCAL_EXTRACT_TIMEOUT_MS = 20000;
+                const LOCAL_IMAGE_MAX_BYTES = 1500000;
+                const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|gif|bmp|webp)$/i.test(file.name);
 
-                if (mode === 'local_docs') {
-                    contentPayload = await processLocalFile(file);
-                } else if (mode === 'cloud_docs') {
+                // HEIC/HEIF (iPhone photos): no provider-agnostic path exists — the
+                // in-browser OCR cannot decode it, Anthropic/OpenAI reject the MIME
+                // and only Gemini takes it natively. Route: transcode to JPEG via
+                // canvas where the browser can decode HEIC (Safari/iOS — precisely
+                // where those photos come from); otherwise send natively when the
+                // configured provider accepts it; otherwise explain clearly.
+                if (isHeic(file)) {
+                    let heicPayload = '';
+                    try {
+                        heicPayload = await transcodeImageToJpegMarker(file);
+                    } catch (errHeic) {
+                        if (parseInt(config.providerAcceptsHeic || 0, 10)) {
+                            const b64 = String(await fileToBase64(file)).split(',').pop();
+                            heicPayload = `__FILE_ATTACHMENT__[image/heic]::${b64}`;
+                        } else {
+                            throw new Error(t('AIAttachmentHeicUnsupported'));
+                        }
+                    }
+                    attachedDocs.push({ name: file.name, payload: heicPayload });
+                    renderChips();
+                    statusBar.innerText = '';
+                    input.focus();
+                    return;
+                }
+                // Enforced privacy redaction: document contents cannot be masked,
+                // so the cloud-attachment fallback is off the table. Local
+                // extraction becomes the only route - attempt it even for large
+                // images (slow OCR beats a policy bypass), and fail with the
+                // policy message instead of silently shipping the file.
+                const redactOnly = !!parseInt(config.privacyRedaction || 0, 10);
+
+                let contentPayload = '';
+                if (redactOnly || !(isImage && file.size > LOCAL_IMAGE_MAX_BYTES)) {
+                    try {
+                        contentPayload = await Promise.race([
+                            processLocalFile(file),
+                            new Promise((resolve) => setTimeout(() => resolve(''), LOCAL_EXTRACT_TIMEOUT_MS))
+                        ]);
+                    } catch (errLocal) {
+                        contentPayload = '';
+                    }
+                }
+                const usefulChars = (contentPayload || '').replace(/\s+/g, '').length;
+                if (usefulChars < 120) {
+                    if (redactOnly) {
+                        throw new Error(t('AIAttachmentBlockedByPrivacy'));
+                    }
+                    statusBar.innerText = t('ProcessingFile') + ` ${file.name} (cloud)...`;
                     contentPayload = await processCloudFile(file);
                 }
 
@@ -268,30 +355,207 @@ export function initAiAssistant(container) {
                     throw new Error(t('UnsupportedFileType'));
                 }
 
-                const docContext = `${t('DocContextIntro')}
-
-		${contentPayload}
-
-		--- ${t('DocContextOutro')} ---
-		`;
-
-                input.value = docContext;
-                setTimeout(autoResizeInput, 0); // Trigger resize so the text is visible
-
-                // Update placeholder to guide the user
-                //input.placeholder = "Document loaded. Ask something (e.g., 'Summarize this', 'Create an invoice for line 2')...";
-
-                // Focus input so user can type immediately
+                // The content NEVER goes into the input nor the conversation:
+                // it is kept aside and sent as context with the next message.
+                attachedDocs.push({ name: file.name, payload: contentPayload });
+                renderChips();
+                statusBar.innerText = '';
                 input.focus();
-                statusBar.innerText = t('DocLoaded');
-
             } catch (err) {
                 console.error(err);
+                // Keep an error chip so the user sees WHICH file failed in a
+                // multi-selection; it is excluded from sending and removable.
+                attachedDocs.push({ name: file.name, payload: '', error: true });
+                renderChips();
                 statusBar.innerText = t('Error') + ": " + err.message;
             }
+    }
 
-            fileInput.value = '';
+    /** HEIC/HEIF detection: browsers often report an empty MIME for those. */
+    function isHeic(file) {
+        return file.type === 'image/heic' || file.type === 'image/heif' || /\.(heic|heif)$/i.test(file.name);
+    }
+
+    /**
+     * Transcode an image file to a JPEG cloud-attachment marker via canvas.
+     * Only works where the browser can decode the source format (HEIC: Safari).
+     */
+    async function transcodeImageToJpegMarker(file) {
+        const bitmap = await createImageBitmap(file);	// throws where HEIC is not decodable
+        const canvas = document.createElement('canvas');
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        canvas.getContext('2d').drawImage(bitmap, 0, 0);
+        const blob = await new Promise((resolve, reject) => {
+            canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.85);
         });
+        const base64 = String(await fileToBase64(blob)).split(',').pop();
+        return `__FILE_ATTACHMENT__[image/jpeg]::${base64}`;
+    }
+
+    /** Pick a FontAwesome icon class from a file name extension. */
+    function chipIcon(name) {
+        const ext = (String(name).split('.').pop() || '').toLowerCase();
+        if (ext === 'pdf') return 'fa-file-pdf';
+        if (['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].indexOf(ext) !== -1) return 'fa-file-image';
+        if (['xls', 'xlsx', 'ods'].indexOf(ext) !== -1) return 'fa-file-excel';
+        if (['doc', 'docx', 'odt'].indexOf(ext) !== -1) return 'fa-file-word';
+        return 'fa-file-alt';
+    }
+
+    /** Minimal HTML escaping (appendMsg uses innerHTML). */
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+    }
+
+    /**
+     * Render the attached-file chips above the input pill from attachedDocs,
+     * optionally appending a transient spinner chip for a file being processed.
+     * Each chip carries its own remove cross (by index).
+     */
+    function renderChips(processing) {
+        if (!chipArea) return;
+        if (!attachedDocs.length && !processing) {
+            chipArea.innerHTML = '';
+            chipArea.classList.add('ai-hidden');
+            return;
+        }
+        chipArea.classList.remove('ai-hidden');
+        let html = '';
+        attachedDocs.forEach((doc, idx) => {
+            html += '<span class="file-chip' + (doc.error ? ' chip-error' : '') + '">'
+                + '<i class="fa ' + chipIcon(doc.name) + ' chip-icon"></i>'
+                + '<span class="chip-name">' + escapeHtml(doc.name) + '</span>'
+                + '<button type="button" class="chip-x" data-idx="' + idx + '" title="' + escapeHtml(t('Cancel')) + '">&times;</button>'
+                + '</span>';
+        });
+        if (processing) {
+            html += '<span class="file-chip">'
+                + '<i class="fa fa-spinner fa-spin chip-icon"></i>'
+                + '<span class="chip-name">' + escapeHtml(processing.name) + '</span>'
+                + '</span>';
+        }
+        chipArea.innerHTML = html;
+        chipArea.querySelectorAll('.chip-x').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                attachedDocs.splice(parseInt(btn.getAttribute('data-idx'), 10), 1);
+                renderChips();
+            });
+        });
+    }
+
+    /** Forget every attached document and hide the chip area. */
+    function clearChip() {
+        attachedDocs = [];
+        renderChips();
+    }
+
+    /** Inline (read-only) chip markup shown inside a sent user message. */
+    function chipHtmlFor(name) {
+        return '<span class="file-chip chip-inline"><i class="fa ' + chipIcon(name) + ' chip-icon"></i>'
+            + '<span class="chip-name">' + escapeHtml(name) + '</span></span>';
+    }
+
+    /**
+     * Light markdown rendering for free-text LLM answers: the models reply with
+     * markdown (bold, lists, line breaks) that innerHTML would otherwise flatten
+     * into one unreadable block with literal asterisks. HTML is escaped FIRST,
+     * so the LLM cannot inject markup.
+     * @param {string} text Raw model answer
+     * @return {string} Safe HTML
+     */
+    function renderMarkdownLite(text) {
+        let s = escapeHtml(String(text));
+        s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
+        s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+        // Numbered/bulleted list items get their own line even when the model
+        // packed them into a single paragraph ("… 5,20 € 2. **Référence** …").
+        // Conservative: only break before "N. **Header**" items (the pattern the
+        // model actually emits); "\S" also matched prose like "version 2. is out".
+        s = s.replace(/\s(\d{1,2}\.\s)(?=<strong>)/g, '<br>$1');
+        s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
+        s = s.replace(/\n/g, '<br>');
+        return s;
+    }
+
+    // =========================================================================
+    // MODEL PICKER
+    // =========================================================================
+
+    let modelList = [];   // model ids fetched from the provider (via list_models.php)
+
+    /** Populate the model pill: Auto + presets, then the provider's model list. */
+    function initModelPicker() {
+        if (!modelSelect) return;
+        let saved = '';
+        try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
+
+        const presets = [
+            ['preset:fast', '⚡ ' + t('AIModelFast')],
+            ['preset:balanced', '⚖️ ' + t('AIModelBalanced')],
+            ['preset:deep', '🧠 ' + t('AIModelDeep')]
+        ];
+        presets.forEach(([val, label]) => {
+            const o = document.createElement('option');
+            o.value = val; o.textContent = label;
+            modelSelect.appendChild(o);
+        });
+
+        const applySaved = () => {
+            if (saved && Array.prototype.some.call(modelSelect.options, (o) => o.value === saved)) {
+                modelSelect.value = saved;
+            }
+        };
+        applySaved();
+
+        fetch(epUrl('../ajax/list_models.php'))
+            .then((r) => r.json())
+            .then((j) => {
+                modelList = (j && j.models) || [];
+                if (modelList.length) {
+                    const grp = document.createElement('optgroup');
+                    grp.label = '──';
+                    modelList.forEach((id) => {
+                        const o = document.createElement('option');
+                        o.value = id; o.textContent = id;
+                        grp.appendChild(o);
+                    });
+                    modelSelect.appendChild(grp);
+                    // Saved model no longer offered by the provider: fall back to
+                    // Auto, forget the stale choice, and tell the user ONCE (so the
+                    // picker never looks silently ignored, cf. review on #39878).
+                    if (saved && saved.indexOf('preset:') !== 0 && modelList.indexOf(saved) < 0) {
+                        appendMsg('system', escapeHtml(t('AIModelSavedGone').replace('%s', saved)));
+                        try { localStorage.removeItem('aiModelChoice'); } catch (e) { /* ignore */ }
+                        saved = '';
+                    }
+                }
+                applySaved();
+            })
+            .catch(() => { /* provider unreachable: keep Auto + presets */ });
+
+        modelSelect.addEventListener('change', () => {
+            try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
+        });
+    }
+
+    /**
+     * Resolve the picker value to a concrete model id ('' = provider default).
+     * Presets map onto the dynamic list with a heuristic regex on the id.
+     */
+    function resolveModel() {
+        if (!modelSelect) return '';
+        const v = modelSelect.value;
+        if (!v) return '';
+        if (v.indexOf('preset:') === 0) {
+            const kind = v.substring(7);
+            const re = (kind === 'fast') ? /haiku|mini|flash|lite|instant/i
+                : ((kind === 'balanced') ? /sonnet|4o|medium|small/i : /opus|o1|pro|large/i);
+            const hit = modelList.find((id) => re.test(id));
+            return hit || '';
+        }
+        return v;
     }
 
     // =========================================================================
@@ -677,7 +941,11 @@ export function initAiAssistant(container) {
     }
 
     async function processCloudFile(file) {
-        const base64 = await fileToBase64(file);
+        // fileToBase64 resolves the FULL data URL ("data:image/png;base64,AAAA…").
+        // Strip the prefix: the server-side extractor (parse_intent.php) expects
+        // pure base64 after '::' and hands it to the LLM as a native multimodal
+        // part — with the prefix left in, the marker is never recognized.
+        const base64 = String(await fileToBase64(file)).split(',').pop();
         return `__FILE_ATTACHMENT__[${file.type}]::${base64}`;
     }
 
@@ -971,9 +1239,12 @@ export function initAiAssistant(container) {
         return avatar;
     }
 
-    function appendMsg(type, html, actions = null) {
+    function appendMsg(type, html, actions = null, rawText = null, opts = {}) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
+        // A provider failure ("service overloaded, retry") is noise as context:
+        // such a bubble starts, and stays, out of the window (still pinnable).
+        if (opts && opts.error) div.dataset.aiError = '1';
 
         if (type === 'user' || type === 'bot') {
             // Row layout: avatar + bubble (CSS reverses the row for the user)
@@ -981,6 +1252,23 @@ export function initAiAssistant(container) {
             bubble.className = 'msg-bubble';
             bubble.innerHTML = html;
             if (actions) bubble.appendChild(buildActions(actions));
+            // Context pin: the last AUTO_CONTEXT exchanges follow the model by
+            // default (sliding window), the user pins older ones explicitly or
+            // excludes recent ones - the token cost stays visible in the bar.
+            if (rawText) {
+                div.dataset.aiRaw = String(rawText).slice(0, 4000);
+                div.dataset.aiRole = (type === 'bot') ? 'assistant' : 'user';
+                const pin = document.createElement('button');
+                pin.type = 'button';
+                pin.className = 'ctx-pin';
+                pin.title = t('AIContextPinOff');
+                pin.innerHTML = '<span class="fas fa-thumbtack"></span>';
+                pin.onclick = (ev) => {
+                    ev.stopPropagation();
+                    toggleContextPin(div);
+                };
+                bubble.appendChild(pin);
+            }
             div.appendChild(buildAvatar(type));
             div.appendChild(bubble);
         } else {
@@ -991,6 +1279,7 @@ export function initAiAssistant(container) {
 
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
+        if (div.dataset.aiRaw) refreshContext();
     }
 
     // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
@@ -1009,7 +1298,9 @@ export function initAiAssistant(container) {
 
     function handleClarification(question, context) {
         clarificationContext = context;
-        let html = `<div><strong>${question}</strong></div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
+        // No outer <strong>: the question may itself contain **bold**, which
+        // renderMarkdownLite turns into <strong> — nesting produces invalid HTML.
+        let html = `<div style="font-weight:600">${renderMarkdownLite(question)}</div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
         const actions = [
             {
                 text: t('Submit'), class: 'primary', icon: 'fa-check', onclick: () => {
@@ -1035,9 +1326,9 @@ export function initAiAssistant(container) {
         if (clarInput) clarInput.focus();
     }
 
-    function handleResponse(message) {
+    function handleResponse(message, isError = false) {
         if (!message) message = t('EmptyAIResponse');
-        appendMsg('bot', message);
+        appendMsg('bot', renderMarkdownLite(message), null, message, { error: isError });
     }
 
     function handleConfirmation(action, details, originalIntent) {
@@ -1051,8 +1342,16 @@ export function initAiAssistant(container) {
 		}
 		pendingIntent = originalIntent.arguments.original_intent;
 		const toolName = pendingIntent.tool || 'unknown tool';
-        let template = t('ConfirmAiAction');
-        let messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
+        // A write tool sends a full sentence describing what it would write; it
+        // is the question itself, not a verb to slot into another sentence.
+        const isSentence = typeof action === 'string' && /[.!?]\s*$/.test(action.trim());
+        let messageHtml;
+        if (isSentence) {
+            messageHtml = `<strong>${action}</strong>`;
+        } else {
+            const template = t('ConfirmAiAction');
+            messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
+        }
         let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
         const actions = [
             { text: t('YesProceed'), class: 'danger', icon: 'fa-check', onclick: () => confirmAction() },
@@ -1102,11 +1401,21 @@ export function initAiAssistant(container) {
     }
 
     function cancelAction() {
+        // The question behind a cancelled action must not travel as context:
+        // left as an unanswered request in the window, the model re-proposes
+        // it on the next question (field case: "set the phone of X" answered
+        // by creating the thirdparty a cancelled request had named). Out of
+        // the window by default, like a failed answer; still pinnable by hand.
+        // (contextBubbles, not pastContextBubbles: at this point the question
+        // is the trailing bubble, which the latter leaves out on purpose.)
+        const asked = contextBubbles().filter((m) => m.dataset.aiRole === 'user').pop();
+        if (asked) asked.dataset.aiError = '1';
         if (confirmationRecognition) try { confirmationRecognition.stop(); } catch (e) { }
         const msg = chat.lastElementChild;
         if (msg && msg.classList.contains('confirmation')) msg.remove();
         appendMsg('system', t('ActionCancelled'));
         pendingIntent = null;
+        refreshContext();
     }
 
     function showVoiceFeedback(message) {
@@ -1143,37 +1452,247 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingIntent)
             });
-            const result = await toolRes.json();
+            let result = await aiJson(toolRes);
+            // After the user confirms the preview send the state back to complete the write.
+            if (result && result.resultType === 'input_required' && result.requestState) {
+                const confirmed = Object.assign({}, pendingIntent, {
+                    arguments: Object.assign({}, pendingIntent.arguments || {}, { requestState: result.requestState })
+                });
+                const secondRes = await fetch(epUrl('execute_tool.php'), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(confirmed)
+                });
+                result = await aiJson(secondRes);
+            }
             loadingMsg.remove();
             lastResult = { data: result, tool: pendingIntent.tool, query: pendingIntent.query || '' };
-            appendMsg('bot', formatResult(result));
+            appendMsg('bot', formatResult(result, false, pendingIntent.tool), null, contextSnippetOf(result, pendingIntent.tool));
+            resolveThirdpartyNames(chat.lastElementChild);
             pendingIntent = null;
         } catch (e) { loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
     }
 
+    // Parse a fetch Response that must be JSON. When the Dolibarr session has
+    // expired, the endpoints answer with the HTML login form (HTTP 200), which
+    // used to surface as a cryptic "Unexpected token '<'" network error: detect
+    // that case and tell the user to sign back in instead.
+    // Compact, model-oriented snippet of a tool result for the pinned context:
+    // the model needs the shape and the ids, not the full rendered table.
+    function contextSnippetOf(result, toolName) {
+        let s = '';
+        try { s = JSON.stringify(result); } catch (e) { s = String(result); }
+        if (s.length > 1500) s = s.slice(0, 1500) + '…';
+        return '[' + (toolName || 'tool') + ' result] ' + s;
+    }
+
+    // Number of recent exchanges (question + answer) that follow the model by
+    // default. 0 = fully manual: nothing goes back unless the user pins it.
+    const AUTO_CONTEXT = Math.max(0, parseInt(config.autoContext, 10) || 0);
+
+    // Bubbles that can be sent back as context (they carry a plain-text form).
+    function contextBubbles() {
+        return Array.from(chat.querySelectorAll('.msg')).filter((m) => m.dataset.aiRaw);
+    }
+
+    // Same, without the question currently being answered: that one IS the
+    // query, it never travels as context.
+    function pastContextBubbles() {
+        const msgs = contextBubbles();
+        if (msgs.length && msgs[msgs.length - 1].dataset.aiRole === 'user') msgs.pop();
+        return msgs;
+    }
+
+    // Effective context = the sliding window of the last AUTO_CONTEXT exchanges
+    // (counted from the questions) + explicit pins - explicit exclusions. Each
+    // bubble holds its own decision in data-ctx: '' follows the window, 'on' is
+    // pinned for good, 'off' is excluded. Recomputed after every change, so the
+    // window slides as the conversation grows while the pins stay put.
+    function refreshContext() {
+        const all = contextBubbles();
+        const msgs = pastContextBubbles();
+        // The question being answered is the query itself, never context: it
+        // waits outside the window until its answer arrives.
+        const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
+        if (pending) { pending.classList.remove('ctx-pinned'); pending.dataset.ctxWindow = ''; }
+        let windowStart = msgs.length;
+        if (AUTO_CONTEXT > 0) {
+            let questions = 0;
+            for (let i = msgs.length - 1; i >= 0; i--) {
+                if (msgs[i].dataset.aiRole === 'user' && ++questions === AUTO_CONTEXT) { windowStart = i; break; }
+                if (i === 0) windowStart = 0;
+            }
+        }
+        msgs.forEach((m, i) => {
+            const inWindow = i >= windowStart;
+            const state = m.dataset.ctx || '';
+            const on = state === 'on' || (state === '' && inWindow && !m.dataset.aiError);
+            m.dataset.ctxWindow = inWindow ? '1' : '';
+            m.classList.toggle('ctx-pinned', on);
+            const pin = m.querySelector('.ctx-pin');
+            if (pin) {
+                // Two glyphs: a planted blue pin (travels with the next question)
+                // or a grey pin struck through (does not) - see .ctx-pin-off in CSS.
+                pin.classList.toggle('ctx-pin-off', !on);
+                pin.title = on ? t('AIContextPinOn') : t('AIContextPinOff');
+            }
+        });
+        updateContextBar();
+    }
+
+    // One click flips the bubble: inside the window it toggles between "follows
+    // the window" and "excluded"; outside it toggles the explicit pin.
+    function toggleContextPin(div) {
+        const on = div.classList.contains('ctx-pinned');
+        const inWindow = div.dataset.ctxWindow === '1';
+        if (on) div.dataset.ctx = inWindow ? 'off' : '';
+        else div.dataset.ctx = (inWindow && !div.dataset.aiError) ? '' : 'on';
+        refreshContext();
+    }
+
+    function collectPinnedContext() {
+        return contextBubbles().filter((m) => m.classList.contains('ctx-pinned'))
+            .map((m) => ({ role: m.dataset.aiRole || 'user', text: m.dataset.aiRaw || '' }))
+            .filter((p) => p.text);
+    }
+
+    // Small bar above the input: how many exchanges are pinned and their rough
+    // token weight (chars/4) - the cost of the selected context stays visible.
+    function updateContextBar() {
+        let bar = container.querySelector('#ai-ctx-bar');
+        // Past exchanges the user can act on (the pending question is not one).
+        const past = pastContextBubbles();
+        const pinned = collectPinnedContext();
+        if (!past.length) { if (bar) bar.remove(); return; }
+        const tokens = Math.round(pinned.reduce((n, p) => n + p.text.length, 0) / 4);
+        // The setting counts exchanges (question + answer), so the bar says
+        // both: exchanges, then messages - one unit on its own misleads.
+        const exchanges = pinned.filter((p) => p.role === 'user').length;
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'ai-ctx-bar';
+            const pill = input.closest('.chat-input-pill') || input.parentElement;
+            pill.insertAdjacentElement('beforebegin', bar);
+        }
+        // "Auto (3)" is lit as long as every bubble simply follows the window
+        // (no manual pin, no exclusion): one glance says which mode is on.
+        const isDefault = past.every((m) => !m.dataset.ctx);
+        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' +
+            t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens)) +
+            (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
+            ' <a href="#" id="ai-ctx-all" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double"></span> ' + t('AIContextAll') + '</a>' +
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser"></span> ' + t('AIContextClear') + '</a>';
+        const auto = bar.querySelector('#ai-ctx-auto');
+        if (auto) {
+            auto.onclick = (ev) => {
+                ev.preventDefault();
+                // Auto = back to the default: every bubble follows the window again.
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = ''; });
+                refreshContext();
+            };
+        }
+        const all = bar.querySelector('#ai-ctx-all');
+        if (all) {
+            all.onclick = (ev) => {
+                ev.preventDefault();
+                // All = every past exchange pinned for good (the bar shows the price).
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = 'on'; });
+                refreshContext();
+            };
+        }
+        const clear = bar.querySelector('#ai-ctx-clear');
+        if (clear) {
+            clear.onclick = (ev) => {
+                ev.preventDefault();
+                // Clear = nothing goes back with the NEXT question: recent bubbles
+                // are excluded, older pins dropped. New exchanges re-enter the
+                // window on their own afterwards.
+                pastContextBubbles().forEach((m) => { m.dataset.ctx = (m.dataset.ctxWindow === '1') ? 'off' : ''; });
+                refreshContext();
+            };
+        }
+    }
+
+    async function aiJson(response) {
+        const raw = await response.text();
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            if (/<\s*(!doctype|html|form|body)[\s>]/i.test(raw)) {
+                throw new Error(t('AISessionExpiredReload'));
+            }
+            throw e;
+        }
+    }
+
     async function handleQuery() {
         const query = input.value.trim();
-        if (!query) return;
+        const readyDocs = attachedDocs.filter((d) => !d.error);
+        if (!query && !readyDocs.length) return;
         if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
-        appendMsg('user', query);
+
+        // What is SENT = document context + question; what is DISPLAYED = chip + question.
+        let sentQuery = query;
+        let displayHtml = escapeHtml(query);
+        if (readyDocs.length) {
+            // One wrapped context block per document, so each keeps its own
+            // intro/outro delimiters whatever mix of text and markers is sent.
+            // The trailing space after the payload matters: the server-side marker
+            // regex consumes trailing newlines as part of the base64 run, which
+            // used to glue '[attached document]' to the outro line in the logs.
+            const docContext = readyDocs.map((d) => `${t('DocContextIntro')}\n\n${d.payload} \n\n--- ${t('DocContextOutro')} ---`).join('\n') + '\n';
+            sentQuery = docContext + (query ? '\n' + query : '');
+            displayHtml = readyDocs.map((d) => chipHtmlFor(d.name)).join(' ') + (query ? '<br>' + displayHtml : '');
+        }
+
+        appendMsg('user', displayHtml, null, query || t('AIContextAttachmentOnly'));
+        clearChip();
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
         appendTyping();
         const loadingMsg = chat.lastElementChild;
         try {
+            const chosenModel = resolveModel();
             const intentRes = await fetch(epUrl('parse_intent.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query })
+                // Page context (set by the printCommonFooter hook on card pages)
+                // lets the server resolve "this invoice" - it re-validates the
+                // ids against the user's rights before trusting them.
+                body: JSON.stringify(Object.assign(
+                    chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                    (function () {
+                        // Pinned exchanges only: context is opt-in, its cost visible in the bar.
+                        const pinned = collectPinnedContext();
+                        return pinned.length ? { history: pinned } : {};
+                    })(),
+                    (function () {
+                        const ctx = window.aiPageContext;
+                        if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
+                        // On list pages, the mass-action checkboxes carry the row
+                        // ids: checked ones are the user's live selection.
+                        if (ctx.list) {
+                            // The mass-action checkboxes carry rowids by core
+                            // convention on every list - a uniform source that
+                            // sidesteps the per-list SQL alias zoo server-side.
+                            const all = Array.from(document.querySelectorAll('.checkforselect'))
+                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
+                            if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
+                            const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
+                            if (sel.length) ctx.selected = sel;
+                        }
+                        return { context: ctx };
+                    })()
+                ))
             });
-            const intent = await intentRes.json();
+            const intent = await aiJson(intentRes);
             loadingMsg.remove();
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
-            if (intent.tool === 'ask_for_clarification') { handleClarification(intent.arguments.question, query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
+            if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
+            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'generate_navigation_url') {
                 appendMsg('system', t('GeneratingLink'));
@@ -1182,10 +1701,10 @@ export function initAiAssistant(container) {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
-                const nav = await navRes.json();
+                const nav = await aiJson(navRes);
                 loadingNav.remove();
                 if (nav.error) { appendMsg('error', nav.error); }
-                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fa fa-external-link"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
+                else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
                 input.disabled = false; input.focus(); return;
             }
 
@@ -1195,10 +1714,11 @@ export function initAiAssistant(container) {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(intent)
             });
-            const result = await toolRes.json();
+            const result = await aiJson(toolRes);
             loadingData.remove();
             lastResult = { data: result, tool: intent.tool, query: query };
-            appendMsg('bot', formatResult(result));
+            appendMsg('bot', formatResult(result, false, intent.tool), null, contextSnippetOf(result, intent.tool));
+            resolveThirdpartyNames(chat.lastElementChild);
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
@@ -1221,7 +1741,7 @@ export function initAiAssistant(container) {
         const addField = (name, val) => {
             const i = document.createElement('input'); i.type = 'hidden'; i.name = name; i.value = val; form.appendChild(i);
         };
-        addField('data', JSON.stringify(resultObj.data));
+        addField('content', JSON.stringify(resultObj.data));	// field name must stay 'content': allowlisted for GETPOST 'none' server-side
         addField('title', reportTitle);
         addField('filename', filename);
         document.body.appendChild(form);
@@ -1229,7 +1749,125 @@ export function initAiAssistant(container) {
         document.body.removeChild(form);
     }
 
-    function formatResult(data, isRecursive = false) {
+    // ---- Tool-result presentation: raw API data -> localized display ----
+
+    // API field -> translation key for table headers; fallback prettifies the raw name.
+    const FIELD_LABELS = {
+        ref: 'Ref', label: 'Label', name: 'ThirdParty', socid: 'Customer', fk_soc: 'Customer',
+        paye: 'Paid', status: 'Status', type: 'Type', email: 'Email', town: 'Town',
+        date: 'DateInvoice', datef: 'DateInvoice', date_lim_reglement: 'DateMaxPayment',
+        total_ht: 'TotalHT', total_ttc: 'TotalTTC', total_tva: 'AmountVAT',
+        remaintopay: 'RemainderToPay', price: 'Price', price_ttc: 'PriceTTC', tva_tx: 'VATRate',
+        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier'
+    };
+    const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
+        'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
+        'multicurrency_total_ht', 'multicurrency_total_ttc', 'multicurrency_total_tva']);
+    const isDateField = (k) => k === 'date' || k === 'datef' || k === 'tms' || /(^|_)date($|_)|_date$|^date_/.test(k);
+
+    function fieldLabel(k) {
+        if (FIELD_LABELS[k] && t(FIELD_LABELS[k]) !== FIELD_LABELS[k]) return t(FIELD_LABELS[k]);
+        if (FIELD_LABELS[k]) return t(FIELD_LABELS[k]);
+        return k.replace(/_/g, ' ').toUpperCase();
+    }
+    function fmtMoney(v) {
+        const n = parseFloat(v);
+        if (isNaN(n)) return v;
+        try {
+            return new Intl.NumberFormat(config.locale || undefined, { style: 'currency', currency: config.currency || 'EUR' }).format(n);
+        } catch (e) { return n.toFixed(2); }
+    }
+    function fmtDate(v) {
+        const n = parseInt(v, 10);
+        if (isNaN(n) || n < 100000000 || n > 9999999999) return v; // not a plausible unix timestamp
+        try {
+            return new Intl.DateTimeFormat(config.locale || undefined).format(new Date(n * 1000));
+        } catch (e) { return v; }
+    }
+    // Which Dolibarr card a tool's rows open; %id% replaced per row.
+    const TOOL_CARD_URLS = {
+        api_invoices: '/compta/facture/card.php?facid=%id%',
+        api_thirdparties: '/societe/card.php?socid=%id%',
+        api_products: '/product/card.php?id=%id%',
+        api_proposals: '/comm/propal/card.php?id=%id%',
+        api_orders: '/commande/card.php?id=%id%',
+        api_projects: '/projet/card.php?id=%id%',
+        api_contracts: '/contrat/card.php?id=%id%',
+        api_tickets: '/ticket/card.php?id=%id%',
+        api_supplier_invoices: '/fourn/facture/card.php?facid=%id%',
+        api_supplier_orders: '/fourn/commande/card.php?id=%id%',
+        api_supplier_proposals: '/supplier_proposal/card.php?id=%id%',
+        api_categories: '/categories/card.php?id=%id%'
+    };
+    // The picto of the object a card link points to, like getNomUrl() does in
+    // Dolibarr pages: the icons are the ones the core assigns to each object
+    // (see the picto table of img_picto()), keyed on the card's path.
+    const CARD_PICTOS = [
+        ['/societe/', 'building'], ['/compta/facture/', 'file-invoice-dollar'], ['/fourn/facture/', 'file-invoice-dollar'],
+        ['/commande/', 'file-invoice'], ['/fourn/commande/', 'file-invoice'], ['/comm/propal/', 'file-signature'],
+        ['/supplier_proposal/', 'file-signature'], ['/product/', 'cube'], ['/projet/', 'project-diagram'],
+        ['/contrat/', 'suitcase'], ['/ticket/', 'ticket-alt'], ['/fichinter/', 'ambulance'], ['/expedition/', 'dolly'],
+        ['/reception/', 'dolly'], ['/user/', 'user'], ['/contact/', 'address-book'], ['/adherents/', 'user-alt'],
+        ['/categories/', 'tag'], ['/document.php', 'file']
+    ];
+    function pictoForUrl(url) {
+        if (typeof url !== 'string') return '';
+        const hit = CARD_PICTOS.find((p) => url.indexOf(p[0]) >= 0);
+        return hit ? `<span class="fas fa-${hit[1]} chat-picto"></span>` : '';
+    }
+
+    function cardUrlFor(tool, id) {
+        if (!tool || !id) return null;
+        const prefix = Object.keys(TOOL_CARD_URLS).find(p => tool.indexOf(p) === 0);
+        return prefix ? (config.urlRoot || '') + TOOL_CARD_URLS[prefix].replace('%id%', encodeURIComponent(id)) : null;
+    }
+    // API payloads arrive with HTML entities already encoded ("Client
+    // g&eacute;n&eacute;rique..."): decode them BEFORE escaping, or accented
+    // names render as raw entities in the chat tables and answers.
+    function decodeHtmlEntities(s) {
+        if (typeof s !== 'string' || s.indexOf('&') === -1) return s;
+        const ta = document.createElement('textarea');
+        ta.innerHTML = s;
+        return ta.value;
+    }
+    function formatCell(k, v) {
+        if (v === null || v === undefined || v === '') return '-';
+        // Hand-written report tools legitimately embed a single link around a
+        // ref (server-generated, same origin): pass it through instead of
+        // escaping it into visible markup.
+        if (typeof v === 'string' && /^<a\s[^>]*href="[^"]*"[^>]*>[^<]*<\/a>$/i.test(v.trim())) return v.trim();
+        if (typeof v === 'object') return '…'; // nested structures are noise in a summary table
+        if (MONEY_FIELDS.has(k)) return fmtMoney(v);
+        if (isDateField(k)) return fmtDate(v);
+        if (k === 'paye') return (String(v) === '1' ? '✓' : '✗');
+        return escapeHtml(decodeHtmlEntities(String(v)));
+    }
+    // socid -> customer name, resolved once per render through the bridge.
+    async function resolveThirdpartyNames(container) {
+        const cells = container.querySelectorAll('td[data-socid]');
+        if (!cells.length) return;
+        const ids = [...new Set([...cells].map(c => c.getAttribute('data-socid')))].filter(x => x && x !== '0');
+        if (!ids.length) return;
+        try {
+            const filters = '(t.rowid:in:' + ids.join(',') + ')';	// UFS 'in' takes a bare list: value part may not contain parentheses
+            const res = await fetch(epUrl('execute_tool.php'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tool: 'api_thirdparties_list', arguments: { sqlfilters: filters, properties: 'id,name', limit: 100 } })
+            });
+            const rows = await res.json();
+            if (!Array.isArray(rows)) return;
+            const names = {};
+            rows.forEach(r => { names[String(r.id)] = r.name; });
+            cells.forEach(c => {
+                const id = c.getAttribute('data-socid');
+                if (names[id]) {
+                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
+                }
+            });
+        } catch (e) { /* names stay as ids */ }
+    }
+
+    function formatResult(data, isRecursive = false, toolName = '') {
         if (!data) return t('NoDataAvailable');
         if (data.error) return `<span style="color:red">${t('error')}: ${data.error}</span>`;
         let content = '';
@@ -1242,16 +1880,29 @@ export function initAiAssistant(container) {
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid');
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
-            keys.forEach(k => content += `<th>${k.replace(/_/g, ' ').toUpperCase()}</th>`);
+            // Rows that are files (their url is a document.php download): the
+            // "name" column is the file, not a third party, and the file gets a
+            // magnifier opening Dolibarr's preview (same link, attachment=0).
+            const isFileList = data.length > 0 && typeof data[0].url === 'string' && /\/document\.php\?/.test(data[0].url);
+            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : fieldLabel(k)}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
                 content += '<tr>';
                 keys.forEach(k => {
-                    let val = row[k];
-                    if (row.url && ['ref', 'name', 'nom', 'label', 'customer', 'supplier', 'subject'].includes(k)) {
-                        val = `<a href="${row.url}" target="_blank" class="chat-link">${val}</a>`;
+                    let val = formatCell(k, row[k]);
+                    const cardUrl = row.url || cardUrlFor(toolName, row.id || row.rowid);
+                    if (cardUrl && val.indexOf('<a ') !== 0 && ['ref', 'name', 'nom', 'label', 'customer', 'supplier', 'subject'].includes(k)) {
+                        val = `<a href="${cardUrl}" target="_blank" class="chat-link">${pictoForUrl(cardUrl)}${val}</a>`;
+                        if (isFileList && k === 'name') {
+                            const previewUrl = cardUrl + (cardUrl.indexOf('attachment=') >= 0 ? '' : '&attachment=0');
+                            val += ` <a href="${previewUrl}" target="_blank" class="chat-link chat-preview" title="${escapeHtml(t('Preview'))}"><span class="fas fa-search-plus"></span></a>`;
+                        }
                     }
-                    content += `<td>${val}</td>`;
+                    if ((k === 'socid' || k === 'fk_soc') && row[k]) {
+                        content += `<td data-socid="${escapeHtml(String(row[k]))}">${val}</td>`;
+                    } else {
+                        content += `<td>${val}</td>`;
+                    }
                 });
                 content += '</tr>';
             });
@@ -1259,22 +1910,32 @@ export function initAiAssistant(container) {
         }
         else if (typeof data === 'object') {
             isObject = true;
-            objectUrl = data.url || null;
+            // A create answers with its new id and no url: build the card link from
+            // the tool name, so the user can open what was just written.
+            objectUrl = data.url || cardUrlFor(toolName, data.id || data.rowid) || null;
             content += '<div class="chat-object"><ul>';
+            let nested = '';
             for (const [key, value] of Object.entries(data)) {
                 if (key === 'url') continue;
-                if (typeof value !== 'object') { content += `<li><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</li>`; }
+                if (typeof value !== 'object') { content += `<li><strong>${fieldLabel(key)}:</strong> ${formatCell(key, value)}</li>`; }
+                // A list inside the answer is the answer: a tool that wraps its rows
+                // in {count, offset, limit, results} would otherwise show only the
+                // counters, and the rows would never reach the user.
+                else if (Array.isArray(value) && value.length && typeof value[0] === 'object') {
+                    nested += formatResult(value, true, toolName);
+                }
             }
             content += '</ul></div>';
+            content += nested;
         }
         else { return String(data); }
 
         if (!isRecursive) {
             let toolbarContent = '';
             if (isArray) {
-                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
+                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fas fa-file-pdf"></span> ${t('DownloadPdf')}</button>`;
             } else if (isObject && objectUrl) {
-                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
+                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fas fa-external-link-alt"></span> ${t('OpenVerb')}</a>`;
             }
             if (toolbarContent) { content += `<div class="msg-toolbar">${toolbarContent}</div>`; }
         }

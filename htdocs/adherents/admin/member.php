@@ -8,9 +8,9 @@
  * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2020-2025  Frédéric France      		<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France      		<frederic.france@free.fr>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -191,7 +191,7 @@ if ($action == 'updateMask') {
 		}
 	}
 	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0 || $res8 < 0 || $res9 < 0) {
-		setEventMessages('ErrorFailedToSaveData', null, 'errors');
+		setEventMessages('SetupNotSaved', null, 'errors');
 		$db->rollback();
 	} else {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
@@ -199,15 +199,15 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'updatememberscards') {
 	$db->begin();
-	$res1 = $res2 = $res3 = $res4 = 0;
+	$res1 = $res2 = $res3 = $res4 = $res5 = 0;
 	$res1 = dolibarr_set_const($db, 'ADHERENT_CARD_TYPE', GETPOST('ADHERENT_CARD_TYPE'), 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'ADHERENT_CARD_HEADER_TEXT', GETPOST('ADHERENT_CARD_HEADER_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT', GETPOST('ADHERENT_CARD_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res3 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT_RIGHT', GETPOST('ADHERENT_CARD_TEXT_RIGHT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res5 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT_RIGHT', GETPOST('ADHERENT_CARD_TEXT_RIGHT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_CARD_FOOTER_TEXT', GETPOST('ADHERENT_CARD_FOOTER_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0) {
-		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0) {
+		setEventMessages('SetupNotSaved', null, 'errors');
 		$db->rollback();
 	} else {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
@@ -220,7 +220,7 @@ if ($action == 'updateMask') {
 	$res2 = dolibarr_set_const($db, 'ADHERENT_ETIQUETTE_TEXT', GETPOST('ADHERENT_ETIQUETTE_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	if ($res1 < 0 || $res2 < 0) {
-		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		setEventMessages('SetupNotSaved', null, 'errors');
 		$db->rollback();
 	} else {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
@@ -331,8 +331,8 @@ foreach ($dirModMember as $dirroot) {
 		// Loop on each module find in opened directory
 		while (($file = readdir($handle)) !== false) {
 			// module filename has to start with mod_member_
-			if (substr($file, 0, 11) == 'mod_member_' && substr($file, -3) == 'php') {
-				$file = substr($file, 0, dol_strlen($file) - 4);
+			if (dol_substr($file, 0, 11) == 'mod_member_' && dol_substr($file, -3) == 'php') {
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 				try {
 					dol_include_once($dirroot.$file.'.php');
 				} catch (Exception $e) {
@@ -456,8 +456,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.class\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 14);
-							$classname = substr($file, 0, dol_strlen($file) - 10);
+							$name = dol_substr($file, 4, dol_strlen($file) - 14);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 10);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -523,7 +523,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 								} else {
 									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}

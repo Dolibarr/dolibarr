@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Værdi for PBX-websted
 PAYBOX_PBX_RANG=Værdi for PBX-ring
 PAYBOX_PBX_IDENTIFIANT=Værdi for PBX-ID
 PAYBOX_HMAC_KEY=HMAC-nøgle
+FeatureNotUsedAccordingtoSetup=Funktionen bruges ikke i henhold til din %s opsætning.

@@ -265,4 +265,4 @@ CorrespondingMemberFound=Correspondance trouvée : adhérent
 CorrespondingMemberFoundQuestion=Un adhérent a été trouvé avec les informations fournies. Souhaitez-vous renouveler votre adhésion ? (Sinon, rien ne sera enregistré.)
 MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE=Il est suggéré d'enregistrer uniquement le cotisation (sans créer un nouvel adhérent) si un adhérent existant est trouvé.
 MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATEDesc=Une recherche est effectuée lors de la connexion, avec le nom et l'adresse e-mail (pour les personnes morales) ou le nom complet et l'adresse e-mail (pour les particuliers). Si un numéro adhérent est déjà trouvé, le formulaire propose d'enregistrer un renouvellement pour le numéro cotisation.
-DraftMembersAreExcluded=Brouillon adhérents sont exclus.
+DraftMembersAreExcluded=Les adhérents brouillons sont exclus.

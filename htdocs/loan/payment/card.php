@@ -48,7 +48,7 @@ $confirm = GETPOST('confirm');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre access paiement
+// TODO add rule to restrict payment access
 //restrictedArea($user, 'facture', $id,'');
 
 $payment = new PaymentLoan($db);
@@ -62,6 +62,12 @@ if ($id > 0) {
 if (!$user->hasRight('loan', 'read')) {
 	accessforbidden();
 }
+// PaymentLoan::fetch() is a low-level by-id primitive (returns a record regardless of entity), so the
+// access restriction is enforced here in the caller, on the parent loan: restrictedArea() checks the
+// loan read right and that the loan belongs to an allowed entity.
+if ($payment->id > 0) {
+	restrictedArea($user, 'loan', $payment->fk_loan, '', '');
+}
 
 
 /*
@@ -71,9 +77,6 @@ if (!$user->hasRight('loan', 'read')) {
 // Delete payment
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'delete')) {
 	$db->begin();
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".((int) $payment->fk_bank);
-	$db->query($sql);
 
 	$fk_loan = $payment->fk_loan;
 
@@ -240,9 +243,9 @@ print '<div class="tabsAction">';
 
 if (empty($action) && $user->hasRight('loan', 'delete')) {
 	if (!$disable_delete) {
-		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 1);
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 	} else {
-		print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
+		print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 0);
 	}
 }
 

@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s 已填滿一行。\n您可以在以下連接找到您的民
 ShowSurvey=顯示調查
 UserMustBeSameThanUserUsedToVote=您必須已投票，並使用與投票時相同的用戶名才能發表評論。
 ListOfOpenSurveys=開放調查清單
+AddTheVote=Click to add the vote

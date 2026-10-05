@@ -92,12 +92,10 @@ class DocumentListController extends AbstractDocumentController
 
 		if (!empty($thirdparty) && $thirdparty->id) {
 			// 1. Prepare data
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-			$client_dir_name = dol_sanitizeFileName($thirdparty->ref);
-			$entity = (!empty($thirdparty->entity) ? (int) $thirdparty->entity : (int) $conf->entity);
-			$dir_output_societe = (!empty($conf->societe->multidir_output[$entity]) ? $conf->societe->multidir_output[$entity] : $conf->societe->dir_output);
-			$dir_ged_tiers = $dir_output_societe . '/' . $client_dir_name;
-			$fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC);
+			$client_dir_name = $thirdparty->id;
+			$entity = (int) ($thirdparty->entity ?? $conf->entity);
+			$dir_ged_tiers = $conf->societe->multidir_output[$entity]."/".$client_dir_name;
+			$fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC, 1);
 
 			// 2. Define the link builder function
 			/**

@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Konferenca ali kabina
 AmountPaid = Plačani znesek
 DateOfRegistration = Datum registracije
 ConferenceOrBoothAttendee = Udeleženec konference ali stojnice
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Prijavitelj ali obiskovalec
 Speaker=Zvočnik
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=List of attendees of event projects
 ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink=Download ICS file
 EVENTORGANIZATION_SECUREKEY=Seed za zagotovitev ključa za javno registracijsko stran za predlaganje konference
-SERVICE_BOOTH_LOCATION=Storitev, uporabljena za vrstico računa o lokaciji stojnice
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Storitev, ki se uporablja za vrstico računa o naročnini udeleženca na dogodek
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=Število glasov
 # Status
 EvntOrgDraft = Osnutek
@@ -122,7 +123,7 @@ NewSubscription=Registracija
 OrganizationEventConfRequestWasReceived=Vaš predlog za konferenco je bil prejet
 OrganizationEventBoothRequestWasReceived=Vaša zahteva za stojnico je bila prejeta
 OrganizationEventPaymentOfBoothWasReceived=Vaše plačilo za vašo stojnico je bilo zabeleženo
-OrganizationEventPaymentOfRegistrationWasReceived=Vaše plačilo za prijavo na dogodek je bilo zabeleženo
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=To je opomnik o vaši udeležbi na dogodku kot udeleženec
 OrganizationEventBulkMailToSpeakers=To je opomnik o vaši udeležbi na dogodku kot govornik
 OrganizationEventLinkToThirdParty=Povezava do tretje osebe (stranka, dobavitelj ali partner)

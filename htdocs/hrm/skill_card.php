@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -274,7 +274,7 @@ if ($action == 'create') {
 
 
 	// SKILLDET ADD
-	//@todo je stop ici ... à continuer  (affichage des 5 skilled input pour create action
+	//@todo stopped here ... to be continued (display of the 5 skill input fields for create action
 	//print $object->showInputField($val, $key, $value, '', '['']', '', 0);
 
 	print '</table>' . "\n";
@@ -430,7 +430,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = skillPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -517,10 +517,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')));
 			}
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>' . "\n";
 	}
@@ -782,7 +782,7 @@ if ($action != "create" && $action != "edit") {
 					print $objectline->getLibStatut(5);
 				} elseif ($key == 'rowid') {
 					print $objectline->showOutputField($val, $key, (string) $objectline->id, '');
-					// ajout pencil
+					// add pencil icon
 					print '<a class="timeline-btn" href="' . DOL_MAIN_URL_ROOT . '/comm/action/skilldet_card.php?action=edit&id=' . $objectline->id . '"><i class="fa fa-pencil" title="' . $langs->trans("Modify") . '" ></i></a>';
 				} else {
 					print $objectline->showOutputField($val, $key, $objectline->$key, '');

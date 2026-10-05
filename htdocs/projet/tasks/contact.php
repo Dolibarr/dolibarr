@@ -96,7 +96,7 @@ if (empty($reshook)) {
 				$typeid = GETPOST('typecontact');
 			}
 			if ($idfortaskuser == -2) {
-				$result = $projectstatic->fetch($object->fk_project);
+				$result = $projectstatic->fetch((int) $object->fk_project);
 				if ($result <= 0) {
 					dol_print_error($db, $projectstatic->error, $projectstatic->errors);
 				} else {
@@ -166,7 +166,7 @@ $form = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
-$result = $projectstatic->fetch($object->fk_project);
+$result = $projectstatic->fetch((int) $object->fk_project);
 
 $title = $object->ref . ' - ' . $langs->trans("Contacts");
 if (!empty($withproject)) {
@@ -365,7 +365,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Project
 		if (empty($withproject)) {
-			$result = $projectstatic->fetch($object->fk_project);
+			$result = $projectstatic->fetch((int) $object->fk_project);
 			$morehtmlref .= '<div class="refidno">';
 			$morehtmlref .= $langs->trans("Project").': ';
 			$morehtmlref .= $projectstatic->getNomUrl(1);
@@ -433,7 +433,7 @@ if ($id > 0 || !empty($ref)) {
 			print '</td>';
 
 			print '<td>';
-			// On recupere les id des users deja selectionnes
+			// Retrieve ids of already selected users
 			if ($object->project->public) {
 				$contactsofproject = ''; // Everybody
 			} else {
@@ -556,7 +556,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="center">';
 				// Activation desativation du contact
 				if ($object->status >= 0) {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=swapstatut&token='.newToken().'&ligne='.((int) $tab[$i]['rowid']).($withproject ? '&withproject=1' : '').'">';
 				}
 				print $contactstatic->LibStatut($tab[$i]['status'], 3);
 				if ($object->status >= 0) {
@@ -568,7 +568,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="center nowrap">';
 				if ($user->hasRight('projet', 'creer')) {
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$tab[$i]['rowid'].($withproject ? '&withproject=1' : '').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.((int) $tab[$i]['rowid']).($withproject ? '&withproject=1' : '').'">';
 					print img_picto($langs->trans('Unlink'), 'unlink');
 					print '</a>';
 				}

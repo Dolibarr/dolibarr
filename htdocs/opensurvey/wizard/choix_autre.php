@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ if (GETPOSTISSET("confirmecreation")) {
 	$toutchoix = substr($toutchoix, 1);
 	$_SESSION["toutchoix"] = $toutchoix;
 
-	//test de remplissage des cases
+	// Check that all fields are filled in
 	$testremplissage = '';
 	for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 		if (isset($arrayofchoices[$i])) {
@@ -124,8 +124,8 @@ if (empty($_SESSION['title'])) {
 }
 
 
-//partie creation du sondage dans la base SQL
-//On prépare les données pour les inserer dans la base
+// Poll creation section in the SQL database
+// Prepare the data to insert into the database
 
 print '<form name="formulaire" id="surveyform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -139,7 +139,7 @@ print '<div>'."\n";
 
 print '<table>'."\n";
 
-//affichage des cases texte de formulaire
+// Display form text fields
 for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 	$j = $i + 1;
 	if (!isset($_SESSION["choix$i"])) {
@@ -154,7 +154,7 @@ for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 
 print '</table>'."\n";
 
-//ajout de cases supplementaires
+// Add extra fields
 print '<table><tr>'."\n";
 print '<td class="center">'.$langs->trans("5MoreChoices").'... ';
 if ($conf->use_javascript_ajax) {

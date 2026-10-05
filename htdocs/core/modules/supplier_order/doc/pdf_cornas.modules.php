@@ -8,7 +8,7 @@
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2018-2026  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2023	   William Mead		     <william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -331,8 +331,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_top = 80 + $top_shift + $this->marge_haute;
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 32 + $top_shift + $this->marge_haute : $this->marge_haute);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -638,14 +638,14 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					}
 
 					// VAT Rate
-					if ($this->getColumnStatus('vat')) {
+					if ($this->getColumnStatus('vat') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Unit price before discount
-					if ($this->getColumnStatus('subprice')) {
+					if ($this->getColumnStatus('subprice') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowuponpdf'])) {
 						$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
 						$nexY = max($pdf->GetY(), $nexY);
@@ -653,7 +653,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 					// Quantity
 					// Enough for 6 chars
-					if ($this->getColumnStatus('qty')) {
+					if ($this->getColumnStatus('qty') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'qty', $qty);
 						$nexY = max($pdf->GetY(), $nexY);
@@ -661,14 +661,14 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 
 					// Unit
-					if ($this->getColumnStatus('unit')) {
+					if ($this->getColumnStatus('unit') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Discount on line
-					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent) {
+					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
 						$nexY = max($pdf->GetY(), $nexY);
@@ -676,8 +676,17 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 					// Total HT line
 					if ($this->getColumnStatus('totalexcltax')) {
-						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
-						$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+						if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowtotalexludingvatonpdf'])) {
+							$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+						} elseif ($object->lines[$i]->qty < 0 && isset($sub_options['subtotalshowtotalexludingvatonpdf'])) {
+							if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+								$total_excl_tax = $object->getSubtotalLineMulticurrencyAmount($object->lines[$i]);
+							} else {
+								$total_excl_tax = $object->getSubtotalLineAmount($object->lines[$i]);
+							}
+							$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+						}
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -717,17 +726,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					$localtax2_rate = $object->lines[$i]->localtax2_tx;
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
-
-					// TODO remise_percent is an obsolete field for object parent
-					/*if (!empty($object->remise_percent)) {
-						$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
-					}
-					if (!empty($object->remise_percent)) {
-						$localtax1ligne -= ($localtax1ligne * $object->remise_percent) / 100;
-					}
-					if (!empty($object->remise_percent)) {
-						$localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;
-					}*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -1258,7 +1256,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		// Do not add the BACKGROUND as this is for suppliers
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
-		//Affiche le filigrane brouillon - Print Draft Watermark
+		// Print Draft Watermark
 		/*if($object->statut==0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK'))
 		{
 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
@@ -1276,31 +1274,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
-			if ($this->emetteur->logo) {
-				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
-				}
-				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
-					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				} else {
-					$logo = $logodir.'/logos/'.$this->emetteur->logo;
-				}
-				if (is_readable($logo)) {
-					$height = pdf_getHeightForLogo($logo);
-					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				} else {
-					$pdf->SetTextColor(200, 0, 0);
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
-					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
-				}
-			} else {
-				$text = $this->emetteur->name;
-				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
-			}
+		$logodir = $conf->mycompany->dir_output;
+		if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+			$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 		}
+		pdf_writeLogoOrCompanyName($pdf, $outputlangs, $this->emetteur, $logodir, $this->marge_gauche, $posy, $w, $default_font_size, $ltrdirection);
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
@@ -1330,7 +1308,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
 			}
 		}
 
@@ -1424,7 +1402,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = 42 + $top_shift;
+			$posy = 32 + $top_shift + $this->marge_haute;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -1478,7 +1456,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = 42 + $top_shift;
+			$posy = 32 + $top_shift + $this->marge_haute;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
@@ -1574,7 +1552,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$rank = 0; // do not use negative rank
 		$this->cols['position'] = array(
 			'rank' => $rank,
-			'width' => 10,
+			'width' => 10.0,
 			'status' => getDolGlobalInt('PDF_CORNAS_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
 			'title' => array(
 				'textkey' => '#', // use lang key is useful in some case with module
@@ -1585,7 +1563,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			),
 			'content' => array(
 				'align' => 'C',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -1603,21 +1581,21 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			),
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
 		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
+			'width' => (float) getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
 				'label' => ' '
 			),
 			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.0, 0.0, 0.0, 0.0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => false, // remove left line separator
 		);
@@ -1631,7 +1609,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
-			'width' => 16, // in mm
+			'width' => 16.0, // in mm
 			'title' => array(
 				'textkey' => 'VAT'
 			),
@@ -1645,7 +1623,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
-			'width' => 19, // in mm
+			'width' => 19.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'PriceUHT'
@@ -1660,7 +1638,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
-			'width' => 16, // in mm
+			'width' => 16.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'Qty'
@@ -1671,7 +1649,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
-			'width' => 11, // in mm
+			'width' => 11.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Unit'
@@ -1685,7 +1663,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
-			'width' => 13, // in mm
+			'width' => 13.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'ReductionShort'
@@ -1699,7 +1677,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$rank += 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
-			'width' => 26, // in mm
+			'width' => 26.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'TotalHT'

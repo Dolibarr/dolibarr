@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2020-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -151,7 +151,7 @@ if ($company->id) {
 		}
 	}
 
-	// Si adherent lie a un tiers non de type "particulier"
+	// If the member is linked to a third party not of type "individual"
 	if ($company->typent_code != 'TE_PRIVATE') {
 		$v->setOrg($company->name);
 	}

@@ -238,7 +238,7 @@ if ($useNewSystem) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_category_account as aca";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = aca.fk_accounting_account";
 	$sql .= " WHERE aca.fk_accounting_category = ".((int) $id);
-	$sql .= " AND aa.entity = ".$conf->entity;
+	$sql .= " AND aa.entity = ".((int) $conf->entity);
 
 	// Search filters
 	if (!empty($search_account)) {
@@ -418,8 +418,8 @@ if ($useNewSystem) {
 			print '<td>'.length_accountg($cpt->account_number).'</td>';
 			print '<td>'.$cpt->label.'</td>';
 			print '<td>';
-			print '<input type="submit" class="button smallpaddingimp" name="cpt" value="'.$cpt->rowid.'" title="'.$langs->trans("DeleteFromCat").'">';
-			print img_picto($langs->trans("DeleteFromCat"), 'unlink', 'class="paddingleft"');
+			print '<input type="submit" class="button smallpaddingimp" name="cpt" value="'.$cpt->rowid.'" title="'.$langs->trans("DeleteFromAccountingGroup").'">';
+			print img_picto($langs->trans("DeleteFromAccountingGroup"), 'unlink', 'class="paddingleft"');
 			print "</td>";
 			print "</tr>\n";
 		}
