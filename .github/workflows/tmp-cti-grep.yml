@@ -1,0 +1,43 @@
+name: tmp-cti-grep  # v1
+
+on:
+  push:
+    branches:
+      - tmp-cti-vibe-debt-20261005
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  grep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Grep patterns
+        run: |
+          {
+            echo '=== occurrences of string|float|null in functions.lib.php ===';
+            grep -n 'string|float|null' htdocs/core/lib/functions.lib.php;
+            echo '=== hexdump of the complete_substitutions_array docblock param line ===';
+            L=$(grep -n 'Function complete_substitutions_array\\|complete_substitutions_array(&' htdocs/core/lib/functions.lib.php | head -2 | tail -1 | cut -d: -f1);
+            grep -n '@param.*substitutionarray' htdocs/core/lib/functions.lib.php;
+            echo '=== payments.php 182-192 with visible tabs ===';
+            sed -n '182,192p' htdocs/compta/sociales/payments.php | cat -A;
+          } > cti-grep.txt 2>&1
+          cp cti-grep.txt /tmp/cti-grep.txt
+
+      - name: Commit to scratch branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin tmp-cti-vibe-debt-20261005
+          git checkout -B tmp-cti-vibe-debt-20261005 origin/tmp-cti-vibe-debt-20261005
+          cp /tmp/cti-grep.txt cti-grep.txt
+          git add cti-grep.txt
+          git commit -m "[skip ci] Add grep dump"
+          git push origin HEAD:tmp-cti-vibe-debt-20261005
