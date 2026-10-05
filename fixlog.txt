@@ -1,19 +1,16 @@
 === download phpstan ===
-wget exit: 0
 PHPStan - PHP Static Analysis Tool 2.2.14
-=== phpstan before ===
-phpstan before exit: 1
+=== phpstan on fix branch ===
+phpstan exit: 1
 
-Elapsed time: 49.10 seconds
+Elapsed time: 44.07 seconds
 Peak memory: 137.6 MB (main process), 521.6 MB (the spawned worker)
-=== apply fix ===
-python exit: 1
-=== phpstan after ===
-phpstan after exit: 1
-
-Elapsed time: 38.57 seconds
-Peak memory: 137.6 MB (main process), 385.6 MB (the spawned worker)
-=== php lint ===
-No syntax errors detected in htdocs/core/lib/functions.lib.php
-No syntax errors detected in htdocs/compta/sociales/payments.php
+=== target error 1 (facture.class.php 703) ===
+0
+=== target error 2 (payments.php 184) ===
+0
+=== new errors on functions.lib.php near 8074 ===
+::error file=htdocs/core/lib/functions.lib.php,line=8014,col=0::Offset 1 on array{non-falsy-string, non-falsy-string} in empty() always exists and is not falsy.
+=== total error count ===
+149
 === done ===

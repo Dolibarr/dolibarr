@@ -1,5 +1,4 @@
 ::error file=htdocs/compta/facture/class/facture.class.php,line=671,col=0::Variable $newlang in empty() always exists and is always falsy.
-::error file=htdocs/compta/facture/class/facture.class.php,line=703,col=0::Parameter #1 $substitutionarray of function complete_substitutions_array expects array<string, float|string|null>, array<string, int|string> given.
 ::error file=htdocs/compta/facture/class/facture.class.php,line=875,col=0::Expression "'@phan-var-force FactureLigne $newinvoiceline'" on a separate line does not do anything.
 ::error file=htdocs/compta/facture/class/facture.class.php,line=970,col=0::Expression "'@phan-var-force FactureLigne $line'" on a separate line does not do anything.
 ::error file=htdocs/compta/facture/class/facture.class.php,line=1370,col=0::Expression "'@phan-var-force FactureLigne $line'" on a separate line does not do anything.
@@ -39,7 +38,6 @@
 ::error file=htdocs/compta/facture/class/facture.class.php,line=6638,col=0::Call to function method_exists() with $this(Facture) and 'getLibStatut' will always evaluate to true.
 ::error file=htdocs/compta/sociales/payments.php,line=129,col=0::If condition is always true.
 ::error file=htdocs/compta/sociales/payments.php,line=132,col=0::If condition is always true.
-::error file=htdocs/compta/sociales/payments.php,line=184,col=0::Strict comparison using !== between mixed and null will always evaluate to true.
 ::error file=htdocs/core/lib/functions.lib.php,line=1161,col=0::Loose comparison using == between 1|2 and 4 will always evaluate to false.
 ::error file=htdocs/core/lib/functions.lib.php,line=1200,col=0::Expression "'@phan-var-force CommonObject $object'" on a separate line does not do anything.
 ::error file=htdocs/core/lib/functions.lib.php,line=1238,col=0::Variable $paramname in empty() always exists and is not falsy.
@@ -105,7 +103,6 @@
 ::error file=htdocs/core/lib/functions.lib.php,line=11309,col=0::Expression "'@phan-var-force CommonObject $objecttmp'" on a separate line does not do anything.
 ::error file=htdocs/core/lib/functions.lib.php,line=11774,col=0::Variable $newforbiddenfields in empty() always exists and is not falsy.
 ::error file=htdocs/fourn/class/fournisseur.facture.class.php,line=416,col=0::Property FactureFournisseur::$ref_supplier (string) in isset() is not nullable.
-::error file=htdocs/fourn/class/fournisseur.facture.class.php,line=550,col=0::Parameter #1 $substitutionarray of function complete_substitutions_array expects array<string, float|string|null>, array<string, int|string> given.
 ::error file=htdocs/fourn/class/fournisseur.facture.class.php,line=596,col=0::Property FactureFournisseur::$label (string) in isset() is not nullable.
 ::error file=htdocs/fourn/class/fournisseur.facture.class.php,line=596,col=0::Property FactureFournisseur::$libelle (string) in isset() is not nullable.
 ::error file=htdocs/fourn/class/fournisseur.facture.class.php,line=616,col=0::Property FactureFournisseur::$fk_fac_rec_source (int) in isset() is not nullable.
@@ -155,10 +152,6 @@
  ------ ----------------------------------------------------------------------- 
   671    Variable $newlang in empty() always exists and is always falsy.        
          🪪  empty.variable                                                     
-  703    Parameter #1 $substitutionarray of function                            
-         complete_substitutions_array expects array<string, float|string|null>  
-         , array<string, int|string> given.                                     
-         🪪  argument.type                                                      
   875    Expression "'@phan-var-force FactureLigne $newinvoiceline'" on a       
          separate line does not do anything.                                    
          🪪  expr.resultUnused                                                  
@@ -286,19 +279,14 @@
          ng-and-forgetting-returned-values                                      
  ------ ----------------------------------------------------------------------- 
 
- ------ ---------------------------------------------------------------------- 
-  Line   compta/sociales/payments.php                                          
- ------ ---------------------------------------------------------------------- 
-  129    If condition is always true.                                          
-         🪪  if.alwaysTrue                                                     
-  132    If condition is always true.                                          
-         🪪  if.alwaysTrue                                                     
-  184    Strict comparison using !== between mixed and null will always        
-         evaluate to true.                                                     
-         🪪  notIdentical.alwaysTrue                                           
-         💡  Type 0|0.0|''|'0'|array{}|false|null has already been eliminated  
-         from mixed.                                                           
- ------ ---------------------------------------------------------------------- 
+ ------ ------------------------------ 
+  Line   compta/sociales/payments.php  
+ ------ ------------------------------ 
+  129    If condition is always true.  
+         🪪  if.alwaysTrue             
+  132    If condition is always true.  
+         🪪  if.alwaysTrue             
+ ------ ------------------------------ 
 
  ------- ---------------------------------------------------------------------- 
   Line    core/lib/functions.lib.php                                            
@@ -478,10 +466,6 @@
   416    Property FactureFournisseur::$ref_supplier (string) in isset() is not  
          nullable.                                                              
          🪪  isset.property                                                     
-  550    Parameter #1 $substitutionarray of function                            
-         complete_substitutions_array expects array<string, float|string|null>  
-         , array<string, int|string> given.                                     
-         🪪  argument.type                                                      
   596    Property FactureFournisseur::$label (string) in isset() is not         
          nullable.                                                              
          🪪  isset.property                                                     
@@ -612,7 +596,7 @@
          🪪  isset.property                                                     
  ------ ----------------------------------------------------------------------- 
 
- [ERROR] Found 152 errors                                                       
+ [ERROR] Found 149 errors                                                       
 
-Elapsed time: 38.57 seconds
-Peak memory: 137.6 MB (main process), 385.6 MB (the spawned worker)
+Elapsed time: 44.07 seconds
+Peak memory: 137.6 MB (main process), 521.6 MB (the spawned worker)
