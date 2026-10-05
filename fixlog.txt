@@ -1,0 +1,19 @@
+=== download phpstan ===
+wget exit: 0
+PHPStan - PHP Static Analysis Tool 2.2.14
+=== phpstan before ===
+phpstan before exit: 1
+
+Elapsed time: 49.10 seconds
+Peak memory: 137.6 MB (main process), 521.6 MB (the spawned worker)
+=== apply fix ===
+python exit: 1
+=== phpstan after ===
+phpstan after exit: 1
+
+Elapsed time: 38.57 seconds
+Peak memory: 137.6 MB (main process), 385.6 MB (the spawned worker)
+=== php lint ===
+No syntax errors detected in htdocs/core/lib/functions.lib.php
+No syntax errors detected in htdocs/compta/sociales/payments.php
+=== done ===
