@@ -2562,7 +2562,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 					// new mode: we need to compute the total (sum of previous + delta)
 					$prev_progress + $object->lines[$i]->situation_percent;
 			}
-			$result = round($result, 1).'%';
+			$result = round($result, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).'%';
 		}
 	}
 	return $result;
