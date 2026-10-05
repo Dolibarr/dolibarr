@@ -589,6 +589,20 @@ class ToolApiBridge extends McpTool
 		],
 		// NB: stock inventories have no REST API class in core yet (no api_inventories) —
 		// they cannot be bridged until one exists.
+		'documents' => [
+			'label' => 'documents attached to business objects',
+			'methods' => [
+				'getDocumentsListByElement' => [
+					'suffix' => 'list',
+					'description' => "List the files attached to a business object. Answers \"what files does this invoice have\", \"show the documents of that order\", \"is there anything attached to this third party\". Returns each file name, size, date and a download link, never the content. Give the object by id or by ref; search for it first when neither is known. A draft ref is written in parentheses, like (PROV42): pass it with them.",
+					'params' => [
+						'modulepart' => "Object type: invoice, supplier_invoice, order, supplier_order, propal (proposal), supplier_proposal, shipment, societe (third party), product, contract, ficheinter (intervention), project, project_task, ticket, expensereport, holiday, member, actioncomm (event), category, user.",
+						'id' => "Rowid of the object, when known.",
+						'ref' => "Reference of the object, when the id is unknown."
+					]
+				]
+			]
+		],
 	];
 
 	/**
@@ -706,8 +720,8 @@ class ToolApiBridge extends McpTool
 				}
 
 				while (($file_searched = readdir($handle_part)) !== false) {
-					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_documents.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
-						continue;	// Framework plumbing, not business endpoints (setup/documents even require main.inc.php, fatal outside a web page).
+					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
+						continue;	// Framework plumbing, not business endpoints.
 					}
 					$regapi = [];
 					if (!is_readable($dir_part.$file_searched) || !preg_match("/^api_(.*)\\.class\\.php$/i", $file_searched, $regapi)) {
@@ -1266,6 +1280,52 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Keep what the chat shows of a file list: name, size, date and a link.
+	 *
+	 * @param	mixed	$output		Result of getDocumentsListByElement()
+	 * @param	string	$modulepart	Object type the caller asked for
+	 * @return	mixed				Projected list, or $output unchanged if it is not a list
+	 */
+	private function projectDocumentList($output, $modulepart)
+	{
+		// document.php does not know every alias the API accepts
+		$aliases = array('contrat' => 'contract', 'projet' => 'project', 'categorie' => 'category', 'adherent' => 'member');
+		$part = $aliases[$modulepart] ?? $modulepart;
+		$paginated = is_array($output) && isset($output['data']) && is_array($output['data']);
+		$files = $paginated ? $output['data'] : $output;
+		if (!is_array($files)) {
+			return $output;
+		}
+		$list = array();
+		foreach ($files as $file) {
+			$level1 = (string) ($file['level1name'] ?? '');
+			$list[] = array(
+				'name' => (string) ($file['name'] ?? ''),
+				'size' => dol_print_size((int) ($file['size'] ?? 0), 1),
+				'modified' => dol_print_date((int) ($file['date'] ?? 0), 'dayhour'),
+				'url' => DOL_URL_ROOT.'/document.php?modulepart='.urlencode($part).'&file='.urlencode(($level1 !== '' ? $level1.'/' : '').(string) ($file['relativename'] ?? $file['name'] ?? ''))
+			);
+		}
+		if ($paginated) {
+			$output['data'] = $list;
+			return $output;
+		}
+		return $list;
+	}
+
+	/**
+	 * Whether the object a file list was asked for exists.
+	 *
+	 * @param	array<string,mixed>	$args	Tool arguments (modulepart, id, ref)
+	 * @return	bool
+	 */
+	private function documentObjectExists(array $args)
+	{
+		$object = fetchObjectByElement((int) ($args['id'] ?? 0), (string) ($args['modulepart'] ?? ''), (string) ($args['ref'] ?? ''));
+		return is_object($object) && $object->id > 0;
+	}
+
+	/**
 	 * Execute a bridged tool: authenticate the acting user, call the API method
 	 * in-process with positional arguments, catch RestException.
 	 *
@@ -1337,10 +1397,16 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($output === null) {
+			// Core can print an error page while refusing access (reproducible on
+			// the REST route): keep it out of the JSON answer, in the log instead.
+			ob_start();
 			try {
 				$result = call_user_func_array([$api, $method], $callArgs);
 				// Serialize API return (cleaned objects) into plain arrays for the MCP client.
 				$output = json_decode(json_encode($result), true);
+				if ($key === 'documents') {
+					$output = $this->projectDocumentList($output, (string) ($args['modulepart'] ?? ''));
+				}
 			} catch (Throwable $e) {
 				$code = (int) $e->getCode();
 				$message = $e->getMessage();
@@ -1353,6 +1419,15 @@ class ToolApiBridge extends McpTool
 					"error" => $message,
 					"http_status" => ($code > 0 ? $code : 500)
 				];
+				// The API answers 404 for an object with no files: that is an empty
+				// list, unless the object itself does not exist.
+				if ($key === 'documents' && $code == 404 && $this->documentObjectExists($args)) {
+					$output = [];
+				}
+			}
+			$printed = ob_get_clean();
+			if ($printed !== '' && $printed !== false) {
+				dol_syslog(get_class($this).'::execute '.$name.' printed output: '.dol_trunc(strip_tags($printed), 200), LOG_WARNING);
 			}
 		}
 

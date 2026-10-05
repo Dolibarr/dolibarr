@@ -295,6 +295,9 @@ ALTER TABLE llx_paiementcharge ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_various ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_salary ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_loan ADD COLUMN import_key varchar(14);
+
+ALTER TABLE llx_loan ADD COLUMN frequency integer DEFAULT 12 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN interest_basis smallint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
@@ -455,3 +458,8 @@ ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account_amount(fk_account, amount);
 -- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
 -- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
 ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
+
+-- API keys created from the user's token tab were written to the deprecated column token, while
+-- the API authenticates against tokenstring (where the upgrade that moves user api_key values
+-- puts them). Those keys never worked: copy them where they are read.
+UPDATE llx_oauth_token SET tokenstring = token WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;

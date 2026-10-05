@@ -3291,7 +3291,7 @@ class Product extends CommonObject
 		} else {
 			$sql .= " p.pmp,";
 		}
-		$sql .= " p.datec, GREATEST(p.tms, pef.tms) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
+		$sql .= " p.datec, GREATEST(p.tms, COALESCE(pef.tms, p.tms)) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		$sql .= " p.price_label,";
 		if ($separatedStock) {
@@ -7615,7 +7615,7 @@ class Product extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, GREATEST(p.tms, pef.tms) as date_modification,";
+		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, GREATEST(p.tms, COALESCE(pef.tms, p.tms)) as date_modification,";
 		$sql .= " p.fk_user_author, p.fk_user_modif";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as p";
 		$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as pef ON pef.fk_object=p.rowid";
