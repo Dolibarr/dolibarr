@@ -396,6 +396,36 @@ if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 	}
 }
 
+// Payment of all the unpaid invoices of a customer
+$thirdpartyinvoices = [];
+if ($source == 'thirdparty') {
+	// The page lists the unpaid invoices of the customer, so it must never be usable without a secure key that can't be guessed.
+	if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN') || getDolGlobalString('PAYMENT_SECURITY_ACCEPT_ANY_TOKEN')) {
+		dol_syslog("newpayment.php source=thirdparty refused: it needs PAYMENT_SECURITY_TOKEN set and PAYMENT_SECURITY_ACCEPT_ANY_TOKEN off", LOG_WARNING, 0, '_payment');
+		print '<div class="error">'.$langs->trans("ErrorOnlinePaymentOfUnpaidInvoicesNotAvailable").'</div>';
+		exit;
+	}
+
+	$thirdparty = new Societe($db);
+	$result = $thirdparty->fetch((int) $REF);
+	if ($result <= 0 || !in_array((string) $thirdparty->entity, explode(',', getEntity('societe')))) {
+		$thirdparty = null;
+	} else {
+		$thirdpartyinvoices = getOnlinePaymentInvoicesOfThirdparty($db, $thirdparty->id);
+		if (!is_array($thirdpartyinvoices)) {
+			$thirdpartyinvoices = [];
+		}
+	}
+
+	// The amount to pay is always the sum of the remainders to pay, it can't be changed by the payer
+	$amount = 0;
+	foreach ($thirdpartyinvoices as $tmpinvoice) {
+		$amount += $tmpinvoice['remaintopay'];
+	}
+	$amount = price2num($amount, 'MT');
+	$currency = $conf->currency;
+}
+
 if (!empty($paymentmethod) && empty($validpaymentmethod[$paymentmethod])) {
 	print 'Payment module for payment method '.$paymentmethod.' is not active';
 	exit;
@@ -458,6 +488,10 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 
 	if ($paymentmethod == 'paypal') {
 		$PAYPAL_API_PRICE = price2num(GETPOST("newamount", 'alpha'), 'MT');
+		if ($source == 'thirdparty') {
+			// The amount is not changeable for this source
+			$PAYPAL_API_PRICE = price2num($amount, 'MT');
+		}
 		$PAYPAL_PAYMENT_TYPE = 'Sale';
 
 		// Vars that are used as global var later in print_paypal_redirect()
@@ -525,6 +559,12 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 
 			dol_syslog("SCRIPT_URI: ".(empty($_SERVER["SCRIPT_URI"]) ? '' : $_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment'); // If defined script uri must match domain of PAYPAL_API_OK and PAYPAL_API_KO
 
+			if ($source == 'thirdparty') {
+				// Invoices to pay and their part of the amount, read again by paymentok.php
+				$tmpallocation = allocateOnlinePaymentToInvoices($thirdpartyinvoices, $PAYPAL_API_PRICE);
+				$_SESSION['onlinepaymentinvoices'] = $tmpallocation['amounts'];
+			}
+
 			// A redirect is added if API call successful
 			$mesg = print_paypal_redirect((float) $PAYPAL_API_PRICE, $PAYPAL_API_DEVISE, $PAYPAL_PAYMENT_TYPE, $PAYPAL_API_OK, $PAYPAL_API_KO, $FULLTAG);
 
@@ -534,7 +574,13 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 	}
 
 	if ($paymentmethod == 'stripe') {
-		if (GETPOST('newamount', 'alpha')) {
+		if ($source == 'thirdparty') {
+			// The amount is not changeable for this source, it was already set to the sum of the remainders to pay
+			if (empty($amount)) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
+				$action = '';
+			}
+		} elseif (GETPOST('newamount', 'alpha')) {
 			$amount = price2num(GETPOST('newamount', 'alpha'), 'MT');
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
@@ -916,6 +962,11 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
 	$_SESSION['TRANSACTIONID'] = (($charge && is_object($charge)) ? $charge->id : (is_object($paymentintent) ? $paymentintent->id : ''));
 	$_SESSION['errormessage'] = $errormessage;
+	if ($source == 'thirdparty') {
+		// Invoices to pay and their part of the amount really paid, read again by paymentok.php
+		$tmpallocation = allocateOnlinePaymentToInvoices($thirdpartyinvoices, $amount);
+		$_SESSION['onlinepaymentinvoices'] = $tmpallocation['amounts'];
+	}
 	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
 		$_SESSION['payerID'] = is_object($customer) ? $customer->id : '';
 	} else {
@@ -980,7 +1031,7 @@ dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_
 dol_syslog("session_id=".session_id(), LOG_DEBUG, 0, '_payment');
 
 // Check link validity
-if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'donation_ref', ''))) {
+if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'donation_ref', 'thirdparty_id', ''))) {
 	$langs->load("errors");
 	dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
 	// End of page
@@ -1459,6 +1510,123 @@ if ($source == 'invoice') {
 		$labeldesc = GETPOST('desc', 'alpha');
 	}
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
+}
+
+// Payment of all the unpaid invoices of a customer
+if ($source == 'thirdparty') {
+	dol_syslog("newpayment.php source=thirdparty", LOG_DEBUG);
+
+	$found = true;
+	$langs->load("bills");
+
+	if (!is_object($thirdparty)) {
+		$langs->load("errors");
+		$mesg = $langs->trans("ErrorRecordNotFound");
+		$error++;
+	} else {
+		$object = $thirdparty;
+
+		if (GETPOST('fulltag', 'alpha')) {
+			$fulltag = GETPOST('fulltag', 'alpha');
+		} else {
+			// The list of invoices is not in the tag: it is computed again by paymentok.php
+			$fulltag = 'CUS='.$thirdparty->id.'.INVS='.count($thirdpartyinvoices);
+			if (!empty($TAG)) {
+				$tag = $TAG;
+				$fulltag .= '.TAG='.$TAG;
+			}
+		}
+		$fulltag = dol_string_unaccent($fulltag);
+
+		// Creditor (seller)
+		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
+		print '</td><td class="CTableRow2"';
+		print ' title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Country").'='.$mysoc->country_code.' - '.$langs->transnoentitiesnoconv("VATIntra").'='.$mysoc->tva_intra).'"';
+		print '>';
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print '<b>'.$creditor.'</b>';
+		print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag((string) $creditor).'">';
+		print '</td></tr>'."\n";
+
+		// Debitor (buyer)
+		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+		print '</td><td class="CTableRow2"';
+		print ' title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Country").'='.$thirdparty->country_code.' - '.$langs->transnoentitiesnoconv("VATIntra").'='.$thirdparty->tva_intra).'"';
+		print '>';
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print '<b>'.dol_escape_htmltag($thirdparty->name).'</b>';
+		print '</td></tr>'."\n";
+
+		// Object: the list of the invoices to pay
+		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
+		print '</td><td class="CTableRow2"><b>'.$langs->trans("PaymentOfUnpaidInvoices").'</b>';
+		print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
+		print '<input type="hidden" name="ref" value="'.((int) $thirdparty->id).'">';
+		print '<input type="hidden" name="dol_id" value="'.((int) $thirdparty->id).'">';
+		if (!empty($thirdpartyinvoices)) {
+			print '<table class="noborder centpercent margintoponly" id="tablepublicpaymentinvoices">';
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Invoice").'</td>';
+			print '<td class="center">'.$langs->trans("Date").'</td>';
+			print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
+			print '</tr>'."\n";
+			foreach ($thirdpartyinvoices as $tmpinvoice) {
+				print '<tr class="oddeven">';
+				print '<td>'.dol_escape_htmltag($tmpinvoice['ref']).'</td>';
+				print '<td class="center">'.dol_print_date($tmpinvoice['date'], 'day').'</td>';
+				print '<td class="right nowraponall">'.price($tmpinvoice['remaintopay'], 1, $langs, 1, -1, -1, $currency).'</td>';
+				print '</tr>'."\n";
+			}
+			print '</table>';
+		}
+		print '</td></tr>'."\n";
+
+		// Amount: always the sum of the remainders to pay, not changeable
+		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentAmount");
+		print '</td><td class="CTableRow2">';
+		print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
+		print '<input type="hidden" name="amount" value="'.$amount.'">';
+		print '<input type="hidden" name="newamount" value="'.$amount.'">';
+		print '<input type="hidden" name="currency" value="'.$currency.'">';
+		print '</td></tr>'."\n";
+
+		// Tag
+		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("PaymentCode");
+		print '</td><td class="CTableRow2"><b style="word-break: break-all;">'.dol_escape_htmltag($fulltag).'</b>';
+		print '<input type="hidden" name="tag" value="'.dol_escape_htmltag(empty($tag) ? '' : $tag).'">';
+		print '<input type="hidden" name="fulltag" value="'.dol_escape_htmltag($fulltag).'">';
+		print '</td></tr>'."\n";
+
+		// Shipping address
+		$shipToName = $thirdparty->name;
+		$shipToStreet = $thirdparty->address;
+		$shipToCity = $thirdparty->town;
+		$shipToState = $thirdparty->state_code;
+		$shipToCountryCode = $thirdparty->country_code;
+		$shipToZip = $thirdparty->zip;
+		$shipToStreet2 = '';
+		$phoneNum = $thirdparty->phone;
+		if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip) {
+			print '<input type="hidden" name="shipToName" value="'.dol_escape_htmltag($shipToName).'">'."\n";
+			print '<input type="hidden" name="shipToStreet" value="'.dol_escape_htmltag($shipToStreet).'">'."\n";
+			print '<input type="hidden" name="shipToCity" value="'.dol_escape_htmltag($shipToCity).'">'."\n";
+			print '<input type="hidden" name="shipToState" value="'.dol_escape_htmltag($shipToState).'">'."\n";
+			print '<input type="hidden" name="shipToCountryCode" value="'.dol_escape_htmltag($shipToCountryCode).'">'."\n";
+			print '<input type="hidden" name="shipToZip" value="'.dol_escape_htmltag($shipToZip).'">'."\n";
+			print '<input type="hidden" name="shipToStreet2" value="'.dol_escape_htmltag($shipToStreet2).'">'."\n";
+			print '<input type="hidden" name="phoneNum" value="'.dol_escape_htmltag($phoneNum).'">'."\n";
+		} else {
+			print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+		}
+		print '<input type="hidden" name="thirdparty_id" value="'.((int) $thirdparty->id).'">'."\n";
+		print '<input type="hidden" name="email" value="'.dol_escape_htmltag($thirdparty->email).'">'."\n";
+		print '<input type="hidden" name="vatnumber" value="'.dol_escape_htmltag($thirdparty->tva_intra).'">'."\n";
+		$labeldesc = $langs->trans("PaymentOfUnpaidInvoices");
+		if (GETPOST('desc', 'alpha')) {
+			$labeldesc = GETPOST('desc', 'alpha');
+		}
+		print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
+	}
 }
 
 // Payment on a Contract line
@@ -2448,6 +2616,8 @@ if ($action != 'dopayment') {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("Abandoned").'</div>';
 		} elseif ($source == 'donation' && $object->paid) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("DonationPaid").'</div>';
+		} elseif ($source == 'thirdparty' && empty($thirdpartyinvoices)) {
+			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("NoOpenInvoice").'</div>';
 		} else {
 			// Membership can be paid and we still allow to make renewal
 			if (($source == 'member' || $source == 'membersubscription') && $object->datefin > dol_now()) {
@@ -2577,6 +2747,11 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 	$_SESSION["FinalPaymentAmt"] = $amount;
 	$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
 	$_SESSION["paymentType"] = '';
+	if ($source == 'thirdparty') {
+		// Invoices to pay and their part of the amount, read again by paymentok.php
+		$tmpallocation = allocateOnlinePaymentToInvoices($thirdpartyinvoices, $amount);
+		$_SESSION['onlinepaymentinvoices'] = $tmpallocation['amounts'];
+	}
 
 	$stripecu = null;
 
@@ -2668,6 +2843,8 @@ if (preg_match('/^dopayment/', $action)) {			// If we choose/clicked on the paym
 			$stripeacc = $stripe->getStripeAccount($service);
 			if (is_object($object) && is_object($object->thirdparty)) {
 				$stripecu = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
+			} elseif ($source == 'thirdparty' && is_object($thirdparty)) {
+				$stripecu = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 			}
 
 			if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
