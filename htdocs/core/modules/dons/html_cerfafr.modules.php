@@ -40,6 +40,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 class html_cerfafr extends ModeleDon
 {
 	/**
+	 * Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
+	 */
+	public $version = 'dolibarr';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB      $db      Database handler
@@ -49,7 +61,7 @@ class html_cerfafr extends ModeleDon
 		global $langs;
 
 		$this->db = $db;
-		$this->name = "cerfafr";
+		$this->name = "Cerfa HTML FR";
 		$this->description = $langs->trans('DonationsReceiptModel').' - fr_FR - Cerfa 11580*04';
 
 		// Dimension page for size A4

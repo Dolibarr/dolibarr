@@ -2122,7 +2122,7 @@ function delDocumentModel($name, $type)
  *	@param	bool					$excludedisabled	If true, hide modules with version == 'disabled'
  *	@param	string					$constpdfdefault	Default value to assume for $constpdf when the conf constant is not set
  *	@param	int<0,1>				$usedefault			If 1, show also the column Default.
- *	@param	string					$actionunset	If not empty, action name used on the Default pictogram to unset the default model (e.g. 'unsetdoc'), if empty the pictogram is not clickable
+ *	@param	string					$actionunset		If not empty, action name used on the Default pictogram to unset the default model (e.g. 'unsetdoc'), if empty the pictogram is not clickable
  *	@return	void
  */
 function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '', $usedefault = 1, $actionunset = '')
@@ -2613,6 +2613,7 @@ function GetContentPolicySources()
 			"*" => array("label" => "*", "data-sourcetype" => "select"),
 			"blob" => array("label" => "blob:", "data-sourcetype" => "blob"),
 			"data" => array("label" => "data:", "data-sourcetype" => "data"),
+			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"unsafe-eval" => array("label" => "unsafe-eval", "data-sourcetype" => "quoted"),
 			"wasm-unsafe-eval" => array("label" => "wasm-unsafe-eval", "data-sourcetype" => "quoted"),
@@ -2621,21 +2622,20 @@ function GetContentPolicySources()
 			"inline-speculation-rules" => array("label" => "inline-speculation-rules", "data-sourcetype" => "quoted"),
 			"strict-dynamic" => array("label" => "strict-dynamic", "data-sourcetype" => "quoted"),
 			"report-sample" => array("label" => "report-sample", "data-sourcetype" => "quoted"),
-			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
 		),
 		// Document directives
 		"document" => array(
 			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
-			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source (*.mydomain.com)", "data-sourcetype" => "input"),
 		),
 		// Navigation directives
 		"navigation" => array(
 			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
-			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
 		),
 		// Reporting directives

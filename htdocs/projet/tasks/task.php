@@ -81,7 +81,7 @@ if ($reshook < 0) {
 if ($id > 0 || $ref) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
-		$projectstatic->fetch($object->fk_project);
+		$projectstatic->fetch((int) $object->fk_project);
 	}
 }
 
@@ -506,11 +506,11 @@ if ($id > 0 || !empty($ref)) {
 
 		// Ref
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-		print '<td><input class="minwidth100" name="taskref" value="'.$object->ref.'"></td></tr>';
+		print '<td><input class="minwidth100" name="taskref" value="'.dolPrintHTMLForAttribute($object->ref).'"></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input class="minwidth500" name="label" value="'.$object->label.'"></td></tr>';
+		print '<td><input class="minwidth500" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 		// Project
 		if (empty($withproject)) {
@@ -802,12 +802,12 @@ if ($id > 0 || !empty($ref)) {
 			$permissiontodelete = $user->hasRight('projet', 'supprimer');
 			if ($permissiontodelete) {
 				if (!$object->hasChildren() && !$object->hasTimeSpent()) {
-					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete);
+					print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 				} else {
-					print dolGetButtonAction($langs->trans("TaskHasChild"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', -1);
+					print dolGetButtonAction($langs->trans("TaskHasChild"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', -1, array('attr' => array('class' => 'reposition')));
 				}
 			} else {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete);
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			print '</div>';

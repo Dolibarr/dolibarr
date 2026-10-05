@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_s
 require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
+$langs->loadLangs(array("stocks", "other", "productbatch", "companies", "products"));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
@@ -108,10 +108,7 @@ $permissiondellink = $user->hasRight('stocktransfer', 'stocktransfer', 'write');
 $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+restrictedArea($user, 'stocktransfer', $object->id, 'stocktransfer_stocktransfer', 'stocktransfer', 'fk_soc', 'rowid');
 
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();
@@ -659,7 +656,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -1080,7 +1077,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER['PHP_SELF'], array_merge(['id' => $object->id], (!empty($object->socid) ? ['socid' => $object->socid] : []), ['action' => 'clone']), true), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER['PHP_SELF'], array_merge(['id' => $object->id], (!empty($object->socid) ? ['socid' => $object->socid] : []), ['action' => 'clone']), true), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 
 			/*
@@ -1109,7 +1106,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$buttonId = 'action-delete';
 			}
 			$params = array();
-			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, $params);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

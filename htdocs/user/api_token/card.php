@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 // Load translation files required by page
-$langs->loadLangs(array('admin', 'users', 'errors'));
+$langs->loadLangs(array('admin', 'users'));
 $error = 0;
 
 // Security check
@@ -164,6 +164,7 @@ if (empty($reshook)) {
 		}
 
 		if (isset($nbtotalofrecords) && $nbtotalofrecords > 0) {
+			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldExist", $langs->transnoentitiesnoconv("Token")), null, 'errors');
 			$action = 'create';
 			$error++;
@@ -343,7 +344,7 @@ if ($action == 'create') {
 
 	print '</table>';
 	print '<div class="tabsAction">';
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'tokenid' => $token->token_id, 'action' => 'delete'], true), '', $canedittoken);
+	print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'tokenid' => $token->token_id, 'action' => 'delete'], true), '', $canedittoken, array('attr' => array('class' => 'reposition')))."\n";
 	print '</div>';
 	print '</div>';
 

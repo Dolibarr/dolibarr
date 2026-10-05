@@ -124,6 +124,25 @@ UPDATE llx_const SET value = 'espadon' WHERE value = 'rouget' AND name ='EXPEDIT
 UPDATE llx_document_model SET nom = 'espadon' WHERE nom = 'rouget' AND type = 'shipping' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'espadon' AND type = 'shipping') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'rouget' AND type = 'shipping';
 
+-- The donation receipt template "generic" (html) has been removed and replaced by the
+-- template "standard" (pdf), available for any country. Switch all generic templates into standard.
+UPDATE llx_don SET model_pdf = 'pdf_standard_donation' WHERE model_pdf = 'html_generic';
+UPDATE llx_const SET value = 'pdf_standard_donation' WHERE value = 'html_generic' AND name ='DON_ADDON_MODEL';
+UPDATE llx_document_model SET nom = 'pdf_standard_donation' WHERE nom = 'html_generic' AND type = 'donation' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'pdf_standard_donation' AND type = 'donation') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'html_generic' AND type = 'donation';
+-- The label of a model is what the user sees in the list of generation templates, so it must
+-- show the name of the new template, not the name of the old "generic" one it was migrated from.
+UPDATE llx_document_model SET libelle = 'Standard' WHERE nom = 'pdf_standard_donation' AND type = 'donation' AND (libelle IS NULL OR libelle = '' OR libelle = 'generic' OR libelle = 'standard');
+-- Same for the "cerfafr" template, so the label shows its display name everywhere.
+UPDATE llx_document_model SET libelle = 'Cerfa HTML FR' WHERE nom = 'html_cerfafr' AND type = 'donation' AND (libelle IS NULL OR libelle = '' OR libelle = 'cerfafr');
+
+-- The delivery receipt template "typhon" has been removed and replaced by "storm".
+-- Switch all typhon templates into storm.
+UPDATE llx_delivery SET model_pdf = 'storm' WHERE model_pdf = 'typhon';
+UPDATE llx_const SET value = 'storm' WHERE value = 'typhon' AND name IN ('DELIVERY_ADDON_PDF', 'LIVRAISON_ADDON_PDF');
+UPDATE llx_document_model SET nom = 'storm', libelle = NULL WHERE nom = 'typhon' AND type = 'delivery' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'storm' AND type = 'delivery') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'typhon' AND type = 'delivery';
+
 -- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
 ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
 
@@ -423,3 +442,11 @@ UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approv
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1);
+
+-- Top menu "Banks | Cash" now opens the new bank dashboard page instead of the list of accounts
+UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' WHERE type = 'top' AND mainmenu = 'bank' AND url LIKE '/compta/bank/list.php?search_status=opened%';
+
+-- The ref of a variant attribute is unique per entity, like the ref of a product, not for the whole database
+-- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
+-- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
+ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);

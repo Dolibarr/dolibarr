@@ -1024,8 +1024,7 @@ if ($rowid > 0) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
-					}
-					if ($user->hasRight('adherent', 'supprimer')) {
+
 						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
@@ -1092,8 +1091,7 @@ if ($rowid > 0) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
-					}
-					if ($user->hasRight('adherent', 'supprimer')) {
+
 						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";

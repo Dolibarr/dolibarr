@@ -240,15 +240,15 @@ if ($action == 'create') {
 
 	// Account number
 	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("AccountNumber").'</span></td>';
-	print '<td><input name="account_number" size="30" value="'.$account_number.'"></td></tr>';
+	print '<td><input name="account_number" size="30" value="'.dolPrintHTMLForAttribute($account_number).'"></td></tr>';
 
 	// Label
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
-	print '<td><input name="label" size="70" value="'.$object->label.'"></td></tr>';
+	print '<td><input name="label" size="70" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 	// Label short
 	print '<tr><td>'.$langs->trans("ShortLabel").'</td>';
-	print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"></td></tr>';
+	print '<td><input name="labelshort" size="70" value="'.dolPrintHTMLForAttribute($object->labelshort).'"></td></tr>';
 
 	// Account parent
 	print '<tr><td>'.$langs->trans("Accountparent").'</td>';
@@ -316,15 +316,15 @@ if ($action == 'create') {
 
 			// Account number
 			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("AccountNumber").'</span></td>';
-			print '<td><input class="minwidth300" name="account_number" value="'.$object->account_number.'"></td></tr>';
+			print '<td><input class="minwidth300" name="account_number" value="'.dolPrintHTMLForAttribute($object->account_number).'"></td></tr>';
 
 			// Label
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
-			print '<td><input class="minwidth500" name="label" value="'.$object->label.'"></td></tr>';
+			print '<td><input class="minwidth500" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 			// Label short
 			print '<tr><td>'.$langs->trans("ShortLabel").'</td>';
-			print '<td><input class="minwidth300" name="labelshort" value="'.$object->labelshort.'"></td></tr>';
+			print '<td><input class="minwidth300" name="labelshort" value="'.dolPrintHTMLForAttribute($object->labelshort).'"></td></tr>';
 
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
@@ -429,7 +429,7 @@ if ($action == 'create') {
 
 			// Delete
 			$permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 
 			print '</div>';
 		}

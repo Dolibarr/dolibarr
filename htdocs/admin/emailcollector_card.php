@@ -900,7 +900,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoOperations")).'">'.$langs->trans("CollectNow").'</a></div>';
 			}
 
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.urlencode(newToken()).'">'.$langs->trans('Delete').'</a></div>';
+			print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.urlencode(newToken()), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 		}
 		print '</div>'."\n";
 	}

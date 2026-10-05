@@ -79,7 +79,7 @@ if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement'
 
 $max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
-$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
 
 
 /*

@@ -918,7 +918,7 @@ if ($id > 0) {
 		$morehtmlref .= '<form method="post" action="'.$pageurl.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+		$morehtmlref .= '<input type="text" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"/>';
 		$morehtmlref .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
@@ -1237,11 +1237,11 @@ if ($id > 0) {
 
 		// Clone
 		if ($permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')));
+			print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'clone', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')));
 		}
 
 		if ($permissiontodelete && empty($totalpaid)) {
-			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '');
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 		} else {
 			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'), 'default', dolBuildUrl($_SERVER['PHP_SELF']).'#', '', false);
 		}
@@ -1268,7 +1268,7 @@ if ($id > 0) {
 			if (empty($object->ref)) $object->ref = (string) $object->id;
 
 			$objref = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->salaries->dir_output.'/'.$object->element.'/'.$objref;
+			$filedir = $conf->salaries->dir_output.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
 			$genallowed = 1;
@@ -1277,7 +1277,7 @@ if ($id > 0) {
 
 			print $formfile->showdocuments(
 				'salaries:Salary',
-				$object->element.'/'.$objref,
+				$objref,
 				$filedir,
 				$urlsource,
 				(int) $genallowed,

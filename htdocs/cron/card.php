@@ -826,7 +826,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!$permissiontodelete) {
 		print '<a class="butActionDeleteRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</a>';
 	} else {
-		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 	}
 	print '</div>';
 

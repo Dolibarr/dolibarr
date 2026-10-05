@@ -307,7 +307,7 @@ class FactureFournisseur extends CommonInvoice
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 125),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 130),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 135),
-		'fk_facture_source' => array('type' => 'integer', 'label' => 'Fk facture source', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'fk_facture_source' => array('type' => 'integer', 'label' => 'SourceInvoice', 'enabled' => 1, 'visible' => -1, 'position' => 140),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 145),
 		'fk_account' => array('type' => 'integer', 'label' => 'Account', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 150),
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 155),
@@ -589,7 +589,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
-		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
+		$sql .= ", '".$this->db->escape((string) $this->ref_ext)."'";
 		$sql .= ", ".((int) $this->entity);
 		$sql .= ", '".$this->db->escape((string) $this->type)."'";
 		$sql .= ", ".(isset($this->subtype) ? (int) $this->subtype : "null");
@@ -2092,15 +2092,21 @@ class FactureFournisseur extends CommonInvoice
 						$mouvP->setOrigin($this->element, $this->id);
 						// We increase stock for product
 						if ($this->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr", $this->ref));
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceBackToDraftInDolibarr", $this->ref));
 						} else {
-							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr", $this->ref));
+							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->transnoentitiesnoconv("InvoiceBackToDraftInDolibarr", $this->ref));
+						}
+						if ($result < 0) {
+							$error++;
+							$this->setErrorsFromObject($mouvP);
+							dol_syslog(__METHOD__." stock movement failed for line ".$i.": ".$mouvP->error, LOG_ERR);
+							break;
 						}
 					}
 				}
 			}
 			// Triggers call
-			if (empty($notrigger)) {
+			if (!$error && empty($notrigger)) {
 				// Call trigger
 				$result = $this->call_trigger('BILL_SUPPLIER_UNVALIDATE', $user);
 				if ($result < 0) {

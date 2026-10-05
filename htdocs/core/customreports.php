@@ -187,8 +187,8 @@ require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
 
-// Load traductions files requiredby by page
-$langs->loadLangs(array("companies", "other", "exports", "sendings"));
+// Load traductions files requiredby by page (stocks is for labels of linked warehouses in tables of fields)
+$langs->loadLangs(array("companies", "other", "exports", "sendings", "stocks"));
 
 $extrafields = new ExtraFields($db);
 
@@ -687,7 +687,11 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	$viewmode .= '<div class="divadvancedsearchfield">';
 	$arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
 	$viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
-	$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100');
+	// The class onrightofpage allows to align the popup list on the right of the select component (so it can't go out of screen on the right).
+	// For this the select must also be inside a parent with class parentonrightofpage (and a fixed width to avoid the parent to be enlarged when the dropdown list is open).
+	$viewmode .= '<div class="inline-block width100 parentonrightofpage">';
+	$viewmode .= $form->selectarray('search_graph', $arrayofgraphs, $search_graph, 0, 0, 0, '', 1, 0, 0, '', 'graphtype width100 onrightofpage');
+	$viewmode .= '</div>';
 	$viewmode .= '</div>';
 
 	$num = 0;
@@ -729,7 +733,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	if (!empty($newarrayoftype)) {
 		// Filter (you can use param &show_search_component_params_hidden=1 for debug)
 		if (!empty($object)) {
-			print '<div class="divadvancedsearchfield">';
+			print '<div class="divadvancedsearchfield divadvancedsearchfieldusf">';
 			print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden, $arrayoffilterfields);
 			print '</div>';
 		}
@@ -743,7 +747,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		foreach ($arrayofmesures as $key => $val) {
 			$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
 		}
-		print $form->multiselectarray('search_measures', $simplearrayofmesures, $sanitized_search_measures, 0, 0, 'minwidth300 widthcentpercentminusx', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
+		print $form->multiselectarray('search_measures', $simplearrayofmesures, $sanitized_search_measures, 0, 0, 'minwidth200 maxwidth300 combolargelist', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
 		print '</div>';
 
 		// XAxis
@@ -751,14 +755,14 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		print '<div class="divadvancedsearchfield">';
 		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
 		//var_dump($arrayofxaxis);
-		print $formother->selectXAxisField($object, $sanitized_search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400 widthcentpercentminusx');	// Fill the array $arrayofxaxis with possible fields
+		print $formother->selectXAxisField($object, $sanitized_search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth200 maxwidth300 combolargelist');	// Fill the array $arrayofxaxis with possible fields
 		print '</div>';
 
 		// Group by
 		$count = 0;
 		print '<div class="divadvancedsearchfield">';
 		print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
-		print $formother->selectGroupByField($object, $sanitized_search_groupby, $arrayofgroupby, 'minwidth250 maxwidth300 widthcentpercentminusx', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
+		print $formother->selectGroupByField($object, $sanitized_search_groupby, $arrayofgroupby, 'minwidth200 maxwidth300 combolargelist', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
 		print '</div>';
 	}
 

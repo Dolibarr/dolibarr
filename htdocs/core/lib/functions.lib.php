@@ -1681,7 +1681,7 @@ function dol_include_once($relpath, $classname = '')
 /**
  *	Return path of url or filesystem. Can check into alternate dir or alternate dir + main dir depending on value of $returnemptyifnotfound.
  *
- * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
+ * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: '/mymoduledir/myfile'
  *  @param	int		$type						0=Used for a Filesystem path,
  *  											1=Used for an URL path (output relative),
  *  											2=Used for an URL path (output full path using same host that current url),
@@ -1754,7 +1754,7 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 			$regs = array();
 			preg_match('/^([^\?]+(\.css\.php|\.css|\.js\.php|\.js|\.png|\.jpg|\.php)?)/i', $path, $regs); // Take part before '?'
 			if (!empty($regs[1])) {
-				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
+				//print $key.' - '.$dirroot.' - '.$path.' - '.$conf->file->dol_url_root[$key].' - '.$regs[1].'<br>'."\n";
 				//if (file_exists($dirroot.'/'.$regs[1])) {
 				if (@file_exists($dirroot . '/' . $regs[1])) {	// avoid [php:warn]
 					if ($type == 1) {
@@ -3111,7 +3111,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode. deprecated.
- *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'Europe/Paris' or '+0200' to force timezone.
+ *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'tzserver', 'Europe/Paris' or '+0200' to force timezone.
  *	@return	array{}|array{seconds:int<0,59>,minutes:int<0,59>,hours:int<0,23>,mday:int<1,31>,wday:int<0,6>,mon:int<1,12>,year:int<0,9999>,yday:int<0,366>,0:int}						Array of information
  *										'seconds' => $secs,
  *										'minutes' => $min,
@@ -3132,7 +3132,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
-	if ($forcetimezone) {
+	if ($forcetimezone && $forcetimezone != 'tzserver') {
 		$datetimeobj->setTimezone(new DateTimeZone($forcetimezone == 'gmt' ? 'UTC' : $forcetimezone)); //  (add timezone relative to the date entered)
 	}
 	$arrayinfo = array(
@@ -7350,7 +7350,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->state ?? '';
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ?: '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ? $object->country_id : '');
 				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->idprof2 ?? '';
@@ -7375,7 +7375,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->thirdparty->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->thirdparty->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->thirdparty->state ?? '';
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->thirdparty->country_id > 0 ?: '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->thirdparty->country_id > 0 ? $object->thirdparty->country_id : '');
 				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->thirdparty->country_code ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->thirdparty->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->thirdparty->idprof2 ?? '';
@@ -11808,7 +11808,6 @@ function dolForgeSQLCriteriaCallback($matches)
 			$reg = array();
 			$tmpelem = trim($tmpelem);
 			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
-				$tmpelemarray[$tmpkey] = "'" . $db->escape($db->sanitize($reg[1], 2, 1, 1, 1)) . "'";
 				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 2, 1, 1, 1))."'";
 			} elseif (preg_match('/^[0-9]+$/', (string) $tmpelem)) {	// if only 0-9 chars, no .
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;

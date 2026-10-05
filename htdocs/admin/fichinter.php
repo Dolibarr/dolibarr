@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors', 'interventions', 'other'));
+$langs->loadLangs(array('admin', 'interventions', 'other'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -120,6 +120,7 @@ if ($action == 'updateMask') {
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -351,10 +352,12 @@ foreach ($dirmodels as $reldir) {
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+									$langs->load('errors');
 									$nextval = $langs->trans($nextval);
 								}
 								$htmltooltip .= $nextval.'<br>';
 							} else {
+								$langs->load('errors');
 								$htmltooltip .= $langs->trans($module->error).'<br>';
 							}
 						}

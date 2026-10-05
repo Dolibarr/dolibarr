@@ -73,6 +73,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
 
 	/**
 	 *	Constructor

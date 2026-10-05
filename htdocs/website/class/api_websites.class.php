@@ -401,12 +401,12 @@ class Websites extends DolibarrApi
 			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
 		}
 
-		// Security: check PHP content if user does not have writephp permission
+		// Security: check PHP content is allowed, with same rules than web editor
+		// (checkPHPCode checks the permission website->writephp if PHP content has changed and
+		// checks the global option dolibarr_website_allow_custom_php and the forbidden PHP functions list)
 		$phpfullcodestring = dolKeepOnlyPhpCode($this->websitepage->content);
-		if ($phpfullcodestringold != $phpfullcodestring) {
-			if (!DolibarrApiAccess::$user->hasRight('website', 'writephp')) {
-				throw new RestException(403, 'NotAllowedToAddDynamicContent');
-			}
+		if (checkPHPCode($phpfullcodestringold, $phpfullcodestring)) {	// Contains the setEventMessages
+			throw new RestException(403, 'NotAllowedToAddDynamicContent');
 		}
 
 		// Clean data: remove head section from content (same as web interface)

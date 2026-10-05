@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
+$langs->loadLangs(array('admin', 'other', 'bills'));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('situationinvoicesetup', 'globalsetup'));

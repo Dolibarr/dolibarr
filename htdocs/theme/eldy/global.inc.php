@@ -382,9 +382,12 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 		border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php } ?>
 }
+input[type="search"] {
+	padding-left: 4px !important;
+}
 
 /* this cases always use an input with only a background border */
-span.massactionselect, input.inputsearch_dropdownselectedfields {
+span.massactionselect, input.inputsearch_dropdownselectedfields, div.liinputsearch input {
 	border-radius: 0 !important;
 	border-top: 0 !important;
 	border-left: 0 !important;
@@ -399,7 +402,6 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 	border-color: var(<?php echo (getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') && getDolGlobalString('THEME_ELDY_BACKTITLE1') != '255,255,255') ? '--colorbacktitle1' : '--inputbordercolor'; ?>) !important;
 }
 
-.divadvancedsearchfieldcompinput,
 div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea:not(.cke_source), div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
@@ -412,7 +414,7 @@ div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div
 
 .divadvancedsearchfieldcompinput {
 	background: #fff;
-	border-bottom: solid 1px var(--inputbordercolor);
+	/* border-bottom: solid 1px var(--inputbordercolor); */
 	border-radius: 3px;
 }
 input[name=duration_value], input[name=durationhour]
@@ -5739,6 +5741,7 @@ img.boxhandle, img.boxclose {
 	color: var(--butactionbg);
 }
 
+/* Search component assistance */
 .search-component-assistance {
 	display: none;
 	position: absolute;
@@ -5778,12 +5781,100 @@ img.boxhandle, img.boxclose {
 .add-filter-btn {
 	margin: 0 !important;
 }
+
+/* Component fieldcombo: 2 levels combo to select first the element (the table) then the field */
+.fieldcombo {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+}
+.fieldcombo-toggle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 250px;
+	padding: 4px 8px;
+	background: #fff;
+	border: 1px solid var(--inputbordercolor);
+	border-radius: 3px;
+	text-align: left;
+	cursor: pointer;
+	height: 28px;
+}
+.fieldcombo-label {
+	flex: 1 1 auto;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.fieldcombo-panel {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 450px;
+	margin-top: 2px;
+	background: var(--colorbackbody);
+	border: 1px solid var(--inputbordercolor);
+	border-radius: 3px;
+	box-shadow: rgba(136, 136, 136, 0.267) 1px 2px 10px;
+	z-index: 1001;
+}
+.fieldcombo-search {
+	width: 100%;
+	margin: 0;
+	padding: 4px 8px;
+	border: 0;
+	border-bottom: 1px solid var(--inputbordercolor);
+}
+.fieldcombo-list {
+	max-height: 300px;
+	overflow-y: auto;
+	padding-bottom: 10px
+}
+.fieldcombo-elementheader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 15px 4px 8px;
+	cursor: pointer;
+	font-weight: bold;
+}
+.fieldcombo-elementheader:hover, .fieldcombo-elementheader:focus {
+	background: var(--colorbacklinepairhover);
+}
+.fieldcombo-elementcaret {
+	flex: 0 0 auto;
+}
+.fieldcombo-element.open .fieldcombo-elementcaret {
+	transform: rotate(90deg);
+}
+.fieldcombo-children {
+	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
+	padding-left: 26px;
+}
+.fieldcombo-fields {
+	/* Hidden by default with an inline style, shown dynamically by JS after a search or a click on the element */
+	padding-left: 26px;
+}
+.fieldcombo-field {
+	padding: 4px 8px;
+	cursor: pointer;
+}
+.fieldcombo-field:hover, .fieldcombo-field:focus {
+	background: var(--colorbacklinepairhover);
+}
+.fieldcombo-field.selected {
+	font-weight: bold;
+}
 .search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
 	display: inline-block;
 }
 .search-component-assistance .btn-div{
 	margin-top: 10px;
 	text-align: right;
+}
+.divadvancedsearchfieldusf {
+	/* width: calc(100% - 40px); */
 }
 @media only screen and (max-width: 620px) {
 	.search-component-assistance .operand, .operator, .value {
@@ -8064,6 +8155,15 @@ span.select2-dropdown--above {
 .parentonrightofpage {
   direction: rtl;
 }
+/* Fix the rendering of the list of options when the dropdown of a select2 combo is rendered into the pagination bar
+   (a select into a parent with class parentonrightofpage): cancel the rules div.pagination ul and div.pagination li */
+div.pagination ul.select2-results__options {
+	display: block;
+}
+div.pagination li.select2-results__option {
+	display: block;
+	padding: 8px;	/* Must repeat the padding of .select2-results__option because the rule div.pagination li sets it to 0 */
+}
 
 select.multiselectononeline {
 	padding: 0;
@@ -8078,12 +8178,12 @@ select.multiselectononeline {
 @media only screen and (min-width: 768px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem, .combolargelist):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 300px !important;
 		padding: 8px;
 	}
-	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem, .combolargelist):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype, .limit, .combolargeelem, .combolargelist):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 300px !important;
 		padding: 8px;
 	}
@@ -8093,6 +8193,14 @@ select.multiselectononeline {
 	}
 	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
 		min-width: 320px !important;
+	}
+	/* CSS to have the dropdown list of the combo larger than the visible component when closed (min-width 450px) */
+	.combolargelist.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 450px !important;
+	}
+	.combolargelist.select2-container.select2-container--open .select2-dropdown--below,
+	.combolargelist.select2-container.select2-container--open .select2-dropdown--above {
+		min-width: 450px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {
@@ -8290,7 +8398,7 @@ dl.dropdown {
 .dropdown dd ul.selectedfieldsleft {
 	<?php echo $right; ?>: auto;
 }
-.dropdown dd ul li {
+.dropdown dd ul li, div.liinputsearch {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 7px 8px 7px 8px;
