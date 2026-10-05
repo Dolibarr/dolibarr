@@ -3519,7 +3519,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return select list of resources. Selected resources are stored into session.
-	 * List of resources are provided into $_SESSION['assignedtoresource'].
+	 * List of resources are provided by $listofresourceid, or else into $_SESSION['assignedtoresource'].
 	 *
 	 * @param string 	$action 			Value for $action
 	 * @param string 	$htmlname			Field name in form
@@ -3547,7 +3547,12 @@ class Form
 		$resourcestatic = new Dolresource($this->db);
 
 		$out = '';
-		if (!empty($_SESSION['assignedtoresource'])) {
+		// The list of selected resources is provided by the caller through $listofresourceid.
+		// Fall back to the legacy global $_SESSION['assignedtoresource'] only when no list is provided
+		// (comm/action/card.php now scopes that session bucket per event id and no longer feeds this key).
+		if (!empty($listofresourceid)) {
+			$assignedtoresource = $listofresourceid;
+		} elseif (!empty($_SESSION['assignedtoresource'])) {
 			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
 			if (!is_array($assignedtoresource)) {
 				$assignedtoresource = array();
@@ -3577,7 +3582,7 @@ class Form
 					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;';
 					//$out .= '<span class="opacitymedium">' . $langs->trans("Availability") . ': </span>';
 					$out .= '</span>';
-					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
+					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . (!empty($listofresourceid[$value['id']]['transparency']) ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}
@@ -13801,9 +13806,9 @@ class Form
 
 				// If translation exists, we use it, otherwise we take the default wording
 				$label = ($langs->trans("InvoiceSubtype" . $obj->rowid) != "InvoiceSubtype" . $obj->rowid) ? $langs->trans("InvoiceSubtype" . $obj->rowid) : (($obj->label != '-') ? $obj->label : '');
-				$this->cache_invoice_subtype[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cache_invoice_subtype[$obj->rowid]['code'] = $obj->code;
-				$this->cache_invoice_subtype[$obj->rowid]['label'] = $label;
+				$this->cache_invoice_subtype[(int) $obj->rowid]['rowid'] = (int) $obj->rowid;
+				$this->cache_invoice_subtype[(int) $obj->rowid]['code'] = (string) $obj->code;
+				$this->cache_invoice_subtype[(int) $obj->rowid]['label'] = (string) $label;
 				$i++;
 			}
 

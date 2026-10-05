@@ -4119,6 +4119,8 @@ function showSimpleHTMLTable($outputlangs, $object)
 {
 	global $conf;
 
+	$outputlangs->loadLangs(array("products"));
+
 	$discountIsAvailable = false;
 	$orderPositionHasNoPrice = false;
 
@@ -4463,11 +4465,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$label      	Long label (or tooltip of button if param $text is provided). Also used as tooltip in title attribute. Can be escaped HTML content or full simple text. Used only if $url not defined.
  * @param string    	$text       	Optional : Short label on button. Can be escaped HTML content or full simple text.
  * @param string 		$actionType 	'default', 'edit', 'danger', 'email', 'clone', 'cancel', 'delete', ...
- * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,text?:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	Url for link or array of subbutton description
+ * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,text?:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	If string, complete relative Url for link,
+ * 																																										or if array, array of subbutton description with:
+ *                                                                                                                                                                      'url' for relative url from core module, 'urlroot' for external module relative url including DOL_URL_ROOT like when using dol_buildpath, 'urlraw' for final URL.
  *                                                                                                                                                                      Example when an array is used:
  *                                                                                                                                                                      $arrayforbutaction = array(
- *                                                                                                                                                                      10 => array('attr' => array('class'=>''), 'lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *                                                                                                                                                                      20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction', 'urlroot'=>dol_build_patch('/mymodule/mypage.php?action=create')),
+ *                                                                                                                                                                      10 => array('attr' => array('class'=>''), 'lang'=>'propal',   'enabled'=>isModEnabled("propal"),   'perm'=>$user->hasRight('propal', 'creer'),   'label' => 'AddProp',             'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                                                                                      20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction',      'urlroot'=>dol_buildpath('/mymodule/mypage.php?action=create')),
  *                                                                                                                                                                      30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
  *                                                                                                                                                                      );                                                                                                               );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
@@ -4516,7 +4520,15 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$label = $langs->trans($button['label']);
 				$text = $button['text'] ?? '';
 				$actionType = $button['actionType'] ?? '';
-				$tmpUrl = DOL_URL_ROOT . $button['url'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
+				$tmpUrl = '';
+				if (!empty($subbutton['urlraw'])) {
+					$tmpUrl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
+				} elseif (!empty($button['urlroot'])) {
+					$tmpUrl = $button['urlroot'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
+				} elseif (!empty($button['url'])) {
+					$tmpUrl = DOL_URL_ROOT . $button['url'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
+				}
+
 				$id = $button['id'] ?? '';
 				$userRight = $button['perm'] ?? 1;
 				$button['params'] = $button['params'] ?? [];  // @phan-suppress-current-line PhanPluginDuplicateExpressionAssignmentOperation
@@ -4539,7 +4551,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 					$tmpurl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} else {
 					$tmpurl = !empty($subbutton['urlroot']) ? $subbutton['urlroot'] : $subbutton['url'];
-					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));
+					$tmpurl = dolCompletUrlForDropdownButton($tmpurl, $params, empty($subbutton['urlroot']));	// For 'urlroot', no need to complete with DOL_URL_ROOT.
 				}
 
 				$subbuttonparam = array();
@@ -5429,7 +5441,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql2 .= ", '' as ref";
 		}
 		$sql2 .= " FROM " . MAIN_DB_PREFIX . "mailing as m, " . MAIN_DB_PREFIX . "mailing_cibles as mc, " . MAIN_DB_PREFIX . "user as u";
-		$sql2 .= " WHERE mc.email = '" . $db->escape($objcon->email) . "'"; // Search is done on email.
+		$sql2 .= " WHERE mc.email = '" . $db->escape((string) $objcon->email) . "'"; // Search is done on email.
 		$sql2 .= " AND mc.statut = 1";
 		$sql2 .= " AND u.rowid = m.fk_user_valid";
 		$sql2 .= " AND mc.fk_mailing=m.rowid";

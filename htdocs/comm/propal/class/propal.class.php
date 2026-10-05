@@ -1276,9 +1276,9 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
 		$sql .= ", ".($user->id > 0 ? ((int) $user->id) : "NULL");
-		$sql .= ", '".$this->db->escape($this->note_private)."'";
-		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_private)."'";
+		$sql .= ", '".$this->db->escape((string) $this->note_public)."'";
+		$sql .= ", '".$this->db->escape((string) $this->model_pdf)."'";
 		$sql .= ", ".($this->fin_validite != '' ? "'".$this->db->idate($this->fin_validite)."'" : "NULL");
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'NULL');
 		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : 'NULL');
@@ -4182,5 +4182,198 @@ class Propal extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_PROPOSAL);
+	}
+
+	/**
+	 * Send reminders by email before a validated commercial proposal expires.
+	 * CAN BE A CRON TASK
+	 *
+	 * Modeled on Contrat::sendReminderForExpiredServices(): for each requested delay, it looks for
+	 * validated proposals whose end of validity falls on that one exact day (today + delay), so a
+	 * proposal is only ever matched once per delay value. A proposal already reminded today for the
+	 * same delay is skipped, so running the job more than once the same day does not resend the
+	 * reminder. Each successful send is logged as an agenda event on the proposal, same as other
+	 * automated reminder emails in the application. A failure on one proposal (ex: no email template
+	 * found) is counted and does not prevent the other due proposals from being processed.
+	 *
+	 * @param	string		$daysbeforeendlist		Nb of days before end of validity (negative number = after end). Can be a list of delays, separated by a semicolon, for example '10;5;0;-5'
+	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForExpiringProposals($daysbeforeendlist = '10')
+	{
+		global $conf, $langs, $mysoc, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		$blockingerrormsg = '';
+
+		if (!isModEnabled('propal')) { // Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Proposals"));
+			return 0;
+		}
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$listofpropalsok = array();
+		$listofpropalsko = array();
+
+		$arraydaysbeforeend = explode(';', $daysbeforeendlist);
+		foreach ($arraydaysbeforeend as $daysbeforeend) { // Loop on each delay
+			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
+
+			if (!is_numeric($daysbeforeend)) {
+				$blockingerrormsg = "Value for delta is not a numeric value";
+				$nbko++;
+				break;
+			}
+
+			// Label of the event recorded once a reminder is sent for a given delay. Also used to not send the same reminder twice the same day.
+			$labelreminderok = 'sendReminderForExpiringProposalsOK (daysbeforeend='.$daysbeforeend.')';
+
+			$tmp = dol_getdate($now);
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+			$datetosearchforend = dol_time_plus_duree(dol_mktime(23, 59, 59, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+
+			$sql = "SELECT p.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+			$sql .= " WHERE p.entity = ".((int) $conf->entity); // Do not use getEntity('propal') here, we want the batch to be on its entity only
+			$sql .= " AND p.fk_statut = ".((int) self::STATUS_VALIDATED);
+			$sql .= " AND p.fin_validite >= '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND p.fin_validite <= '".$this->db->idate($datetosearchforend)."'";
+			$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+			$sql .= " WHERE a.elementtype = 'propal' AND a.fk_element = p.rowid AND a.code = 'AC_EMAIL'";
+			$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+			$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num_rows = $this->db->num_rows($resql);
+
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				$formmail = new FormMail($this->db);
+
+				$i = 0;
+				while ($i < $num_rows) {
+					$obj = $this->db->fetch_object($resql);
+
+					$propalstatic = new Propal($this->db);
+					$propalstatic->fetch($obj->rowid);
+					$thirdpartyres = $propalstatic->fetch_thirdparty();
+
+					if ($thirdpartyres <= 0 || empty($propalstatic->thirdparty->email)) {
+						$nbko++;
+						$listofpropalsko[$propalstatic->id] = $propalstatic->id;
+					} else {
+						$languagefromcountrycode = getLanguageCodeFromCountryCode($propalstatic->thirdparty->country_code);
+						$languagecodetouse = (empty($propalstatic->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $propalstatic->thirdparty->default_lang);
+
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang($languagecodetouse);
+						$outputlangs->loadLangs(array("main", "propal"));
+						dol_syslog("sendReminderForExpiringProposals Language for thirdparty id ".$propalstatic->thirdparty->id." set to ".$outputlangs->defaultlang." mysoc->default_lang=".$mysoc->default_lang);
+
+						$arraydefaultmessage = null;
+						$labeltouse = getDolGlobalString('PROPOSAL_EMAIL_TEMPLATE_REMIND_EXPIRATION');
+
+						if (!empty($labeltouse)) {
+							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'propal', $user, $outputlangs, 0, 1, $labeltouse);
+						}
+
+						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $propalstatic);
+							complete_substitutions_array($substitutionarray, $outputlangs, $propalstatic);
+
+							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+							$email_from = getDolGlobalString('PROPOSAL_MAIL_FROM', $conf->email_from);
+							$to = (string) $propalstatic->thirdparty->email;
+							$cc = getDolGlobalString('PROPOSAL_CC_MAIL_FROM');
+
+							$trackid = 'pro'.$propalstatic->id;
+							$moreinheader = 'X-Dolibarr-Info: sendReminderForExpiringProposals'."\r\n";
+
+							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+							$cmail = new CMailFile($subject, $to, $email_from, $msg, array(), array(), array(), $cc, '', 0, 1, '', '', $trackid, $moreinheader);
+							$result = $cmail->sendfile();
+							if (!$result) {
+								$error++;
+								$this->error .= $cmail->error.' ';
+								if (!is_null($cmail->errors)) {
+									$this->errors = array_merge($this->errors, $cmail->errors);
+								}
+								$nbko++;
+								$listofpropalsko[$propalstatic->id] = $propalstatic->id;
+							} else {
+								$nbok++;
+								$listofpropalsok[$propalstatic->id] = $propalstatic->id;
+
+								// Insert record of email sent, as an agenda event on the proposal (same convention as other automated reminder emails)
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								$actioncomm = new ActionComm($this->db);
+								$actioncomm->type_code = 'AC_OTH_AUTO';
+								$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = $labelreminderok;
+								$actioncomm->note_private = $msg;
+								$actioncomm->fk_project = $propalstatic->fk_project;
+								$actioncomm->datep = $now;
+								$actioncomm->datef = $now;
+								$actioncomm->percentage = -1; // Not applicable
+								$actioncomm->socid = $propalstatic->thirdparty->id;
+								$actioncomm->contact_id = 0;
+								$actioncomm->authorid = $user->id;
+								$actioncomm->userownerid = $user->id;
+								$actioncomm->email_msgid = $cmail->msgid;
+								$actioncomm->email_from = $email_from;
+								$actioncomm->email_sender = '';
+								$actioncomm->email_to = $to;
+								$actioncomm->email_subject = $subject;
+
+								$actioncomm->fk_element = $propalstatic->id;
+								$actioncomm->elementid = $propalstatic->id;
+								$actioncomm->elementtype = $propalstatic->element;
+
+								$actioncomm->create($user);
+							}
+						} else {
+							$error++;
+							$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
+
+							$nbko++;
+							$listofpropalsko[$propalstatic->id] = $propalstatic->id;
+
+							// Do not break here: a template issue for one proposal (ex: not found for its language) must not
+							// prevent the reminder from being sent for the other proposals due the same day.
+						}
+					}
+
+					$i++;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return 1;
+			}
+		}
+
+		if ($blockingerrormsg) {
+			$this->error = $blockingerrormsg;
+			return 1;
+		} else {
+			$this->output = 'Found '.($nbok + $nbko).' proposals to send reminder for.';
+			$this->output .= ' Sent email successfully for '.$nbok.' proposals';
+			if ($nbko) {
+				$this->output .= ' - Canceled for '.$nbko.' proposal(s) (no thirdparty email, missing template, or send error)';
+			}
+		}
+
+		if ($error) {
+			return 1;
+		}
+		return 0;
 	}
 }

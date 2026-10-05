@@ -91,6 +91,12 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	public $version = 'dolibarr';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
+
+	/**
 	 * Issuer
 	 * @var Societe Object that emits
 	 */

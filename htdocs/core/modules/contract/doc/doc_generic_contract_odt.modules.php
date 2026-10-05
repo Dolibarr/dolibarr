@@ -44,6 +44,11 @@ class doc_generic_contract_odt extends ModelePDFContract
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
+
 
 	/**
 	 *  Constructor

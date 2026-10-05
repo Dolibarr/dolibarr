@@ -83,6 +83,12 @@ class pdf_octopus extends ModelePDFFactures
 	public $version = 'disabled';	// Disabled by default. Enabled in constructor if option INVOICE_USE_SITUATION is 2.
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
+
+	/**
 	 * @var int height for info total
 	 */
 	public $heightforinfotot;
