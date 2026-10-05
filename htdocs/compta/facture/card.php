@@ -3248,7 +3248,7 @@ if (empty($reshook)) {
 		// Invoice situation
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
-			$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
+			fullprogress = GETPOSTFLOAT('progress', getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS'));
 
 			if ($fullprogress < $previousprogress) {
 				$error++;
