@@ -3518,7 +3518,7 @@ if (empty($reshook)) {
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOSTINT('lineid'));
 		$percent = $line->get_prev_progress($object->id);
-		$progress = price2num(GETPOST('progress', 'alpha'));
+		$progress = GETPOSTFLOAT('progress', getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2));
 
 		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
 			// in case of situation credit note
@@ -3633,7 +3633,7 @@ if (empty($reshook)) {
 		// Invoice situation
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
-			$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
+			$fullprogress = GETPOSTFLOAT('progress', getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2));
 
 			if ($fullprogress < $previousprogress) {
 				$error++;
