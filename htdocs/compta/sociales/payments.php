@@ -181,7 +181,7 @@ if ($year > 0) {
 	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= ")";
 }
-if (preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)) {
+if ($sortfield !== null && preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)) {
 	$sql .= $db->order($sortfield, (string) $sortorder);
 }
 
