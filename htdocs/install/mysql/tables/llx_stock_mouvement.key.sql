@@ -23,3 +23,5 @@ ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_fk_product (fk_pro
 ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_fk_entrepot (fk_entrepot);
 
 ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_batch_entrepot_type_datem (batch, fk_entrepot, type_mouvement, datem);
+
+ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_datem (datem);

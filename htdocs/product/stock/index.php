@@ -148,6 +148,20 @@ print '</div><div class="fichetwothirdright">';
 
 // Latest movements
 $max = 10;
+// Filter also on the ids of the warehouses, read first: with only the condition on e.entity, the database starts
+// from the warehouse table and reads and sorts all the stock movements to return the last ones, instead of
+// reading them from the index on m.datem (several seconds with millions of movements). The filter gives the same
+// rows. It is only added up to MAIN_STOCK_MOVEMENT_FILTER_ON_WAREHOUSES_MAX warehouses (100 by default), so
+// that the request does not grow with entities using thousands of warehouses as locations.
+$warehouseids = array();
+$maxwarehousesforfilter = getDolGlobalInt('MAIN_STOCK_MOVEMENT_FILTER_ON_WAREHOUSES_MAX', 100);
+$resqlw = $db->query("SELECT e.rowid FROM ".MAIN_DB_PREFIX."entrepot as e WHERE e.entity IN (".getEntity('stock').")".$db->plimit($maxwarehousesforfilter + 1));
+if ($resqlw) {
+	while ($objw = $db->fetch_object($resqlw)) {
+		$warehouseids[] = (int) $objw->rowid;
+	}
+	$db->free($resqlw);
+}
 $sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
 $sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
 $sql .= " m.rowid as mid, m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
@@ -157,10 +171,13 @@ $sql .= ", ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE m.fk_product = p.rowid";
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
+if ($resqlw && count($warehouseids) <= $maxwarehousesforfilter) {
+	$sql .= " AND m.fk_entrepot IN (".$db->sanitize(implode(',', $warehouseids ?: array(0))).")";
+}
 if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = ".Product::TYPE_PRODUCT;
 }
-$sql .= $db->order("datem", "DESC");
+$sql .= $db->order("m.datem,m.rowid", "DESC,DESC");
 $sql .= $db->plimit($max, 0);
 
 dol_syslog("Index:list stock movements", LOG_DEBUG);

@@ -450,3 +450,6 @@ UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' W
 -- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
 -- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
 ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
+
+-- Index on the date of the stock movements: lists and widgets of latest movements are sorted on it
+ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_datem (datem);
