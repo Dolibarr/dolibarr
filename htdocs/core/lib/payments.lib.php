@@ -221,7 +221,7 @@ function showOnlinePaymentUrl($type, $ref, $amount = 0)
 
 	$servicename = '';	// Link is a generic link for all payments services (paypal, stripe, ...)
 
-	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
+	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans($type == 'thirdparty' ? "ToOfferALinkForOnlinePaymentOfUnpaidInvoices" : "ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
 	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" spellcheck="false" class="quatrevingtpercentminusx" value="'.$url.'">';
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
@@ -251,7 +251,7 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
  * Return string with full Url
  *
  * @param   int			$mode		      0=True url, 1=Url formatted with colors
- * @param   string		$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', ...)
+ * @param   string		$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', 'thirdparty', ...)
  * @param	string		$ref		      Ref of object
  * @param	int|float	$amount		      Amount of money to request for
  * @param	string		$freetag	      Free tag (required and used for $type='free' only)
@@ -382,6 +382,26 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			}
 			$out .= ($mode ? '</span>' : '');
 		}
+	} elseif ($type == 'thirdparty') {
+		// Payment of all the unpaid invoices of a customer. $ref is the id of the third party.
+		$out = $urltouse.'/public/payment/newpayment.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
+		if ($mode == 1) {
+			$out .= 'thirdparty_id';
+		}
+		if ($mode == 0) {
+			$out .= urlencode($ref);
+		}
+		$out .= ($mode ? '</span>' : '');
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
+			if ($mode == 1) {
+				$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + thirdparty_id)";
+			}
+			if ($mode == 0) {
+				$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').$type.$ref, 'sha1md5');
+			}
+			$out .= ($mode ? '</span>' : '');
+		}
 	} elseif ($type == 'boothlocation') {
 		$out = $urltouse.'/public/payment/newpayment.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
@@ -409,4 +429,222 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 	}
 
 	return $out;
+}
+
+/**
+ * Return the customer invoices of a third party that can be paid with the online payment page of source 'thirdparty'.
+ * They are the validated and unpaid invoices that are not credit notes, of the current entity, in the main currency of the
+ * company and with a remainder to pay greater than zero. The oldest invoice comes first.
+ *
+ * @param	DoliDB		$db					Database handler
+ * @param	int			$socid				Id of the third party
+ * @param	?int[]		$filterinvoiceids	If an array is provided, keep only the invoices with these ids (an empty array returns no invoice)
+ * @return	array<int,array{id:int,ref:string,date:int|'',total_ttc:float,remaintopay:float}>|int	Payable invoices with key = invoice id, -1 if error
+ */
+function getOnlinePaymentInvoicesOfThirdparty($db, $socid, $filterinvoiceids = null)
+{
+	global $conf;
+
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+	$invoices = [];
+
+	if ((int) $socid <= 0) {
+		return $invoices;
+	}
+	if (is_array($filterinvoiceids)) {
+		$tmpids = [];
+		foreach ($filterinvoiceids as $tmpid) {
+			if ((int) $tmpid > 0) {
+				$tmpids[] = (int) $tmpid;
+			}
+		}
+		if (empty($tmpids)) {
+			return $invoices;
+		}
+		$filterinvoiceids = $tmpids;
+	}
+
+	$sql = "SELECT f.rowid, f.ref, f.datef, f.total_ttc, f.fk_statut as status, f.close_code, f.type";
+	$sql .= " FROM ".$db->prefix()."facture as f";
+	$sql .= " WHERE f.fk_soc = ".((int) $socid);
+	$sql .= " AND f.entity = ".((int) $conf->entity);
+	$sql .= " AND f.fk_statut = ".((int) Facture::STATUS_VALIDATED);
+	$sql .= " AND f.paye = 0";
+	$sql .= " AND f.type IN (".((int) Facture::TYPE_STANDARD).", ".((int) Facture::TYPE_REPLACEMENT).", ".((int) Facture::TYPE_DEPOSIT).", ".((int) Facture::TYPE_SITUATION).")";
+	$sql .= " AND (f.multicurrency_code IS NULL OR f.multicurrency_code = '' OR f.multicurrency_code = '".$db->escape($conf->currency)."')";
+	if (is_array($filterinvoiceids)) {
+		$sql .= " AND f.rowid IN (".$db->sanitize(implode(',', $filterinvoiceids)).")";
+	}
+	$sql .= " ORDER BY f.datef ASC, f.ref ASC";
+
+	dol_syslog("getOnlinePaymentInvoicesOfThirdparty socid=".((int) $socid), LOG_DEBUG);
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog("getOnlinePaymentInvoicesOfThirdparty ".$db->lasterror(), LOG_ERR);
+		return -1;
+	}
+	$rows = [];
+	while ($obj = $db->fetch_object($resql)) {
+		$rows[] = $obj;
+	}
+	$db->free($resql);
+
+	foreach ($rows as $obj) {
+		$invoice = new Facture($db);
+		$invoice->id = (int) $obj->rowid;
+		$invoice->ref = $obj->ref;
+		$invoice->type = (int) $obj->type;
+		$invoice->status = (int) $obj->status;
+		$invoice->close_code = $obj->close_code;
+		$invoice->total_ttc = (float) $obj->total_ttc;
+
+		// Same calculation of the remainder to pay as the online payment page of a single invoice
+		$alreadypaid = $invoice->getSommePaiement();
+		$creditnotesused = $invoice->getSumCreditNotesUsed();
+		$depositsused = $invoice->getSumDepositsUsed();
+		if (!is_numeric($alreadypaid) || $alreadypaid < 0 || (is_string($creditnotesused) && !is_numeric($creditnotesused)) || $depositsused < 0) {
+			dol_syslog("getOnlinePaymentInvoicesOfThirdparty failed to get the remainder to pay of invoice id=".$invoice->id." ".$invoice->error, LOG_ERR);
+			return -1;
+		}
+		$remaintopay = (float) price2num($invoice->total_ttc - ((float) $alreadypaid + (float) $creditnotesused + (float) $depositsused), 'MT');
+
+		if ($remaintopay > 0) {
+			$invoices[$invoice->id] = [
+				'id' => $invoice->id,
+				'ref' => (string) $invoice->ref,
+				'date' => $db->jdate($obj->datef),
+				'total_ttc' => $invoice->total_ttc,
+				'remaintopay' => $remaintopay,
+			];
+		}
+	}
+
+	return $invoices;
+}
+
+/**
+ * Spread an amount on a list of invoices, oldest first, each invoice receiving at most its remainder to pay.
+ *
+ * @param	array<int,array{remaintopay:float|int|string}>	$invoices	Invoices ordered oldest first, with key = invoice id (see getOnlinePaymentInvoicesOfThirdparty())
+ * @param	float|int|string								$amount		Amount to spread
+ * @return	array{amounts:array<int,float>,excess:float}				'amounts' = array(invoice id => amount), 'excess' = part of the amount that was not allocated
+ */
+function allocateOnlinePaymentToInvoices($invoices, $amount)
+{
+	$amounts = [];
+	$remain = (float) price2num($amount, 'MT');
+
+	foreach ($invoices as $invoiceid => $invoice) {
+		if ($remain <= 0) {
+			break;
+		}
+		$part = min($remain, (float) price2num($invoice['remaintopay'], 'MT'));
+		if ($part <= 0) {
+			continue;
+		}
+		$amounts[(int) $invoiceid] = $part;
+		$remain = (float) price2num($remain - $part, 'MT');
+	}
+
+	return ['amounts' => $amounts, 'excess' => max(0.0, $remain)];
+}
+
+/**
+ * Record one payment received online for several invoices of a customer (online payment page of source 'thirdparty').
+ * The invoices are loaded again from the database and the amount paid is spread again on their current remainder to pay,
+ * oldest first. If some money remains, because an invoice was paid in the meantime, it is added to the last invoice: the
+ * money was already captured by the payment service so the payment must be recorded.
+ * The payment and its bank line are recorded in one transaction.
+ *
+ * @param	DoliDB			$db					Database handler
+ * @param	User			$user				User recording the payment
+ * @param	int				$socid				Id of the third party
+ * @param	int[]			$invoiceids			Ids of the invoices that were shown on the payment page. Empty array = all the payable invoices of the third party.
+ * @param	float|string	$amount				Amount really paid, in the main currency
+ * @param	int				$paymenttypeid		Id of the payment mode (llx_c_paiement)
+ * @param	string			$ext_payment_id		Id of the payment in the external payment service
+ * @param	string			$ext_payment_site	Name of the external payment service
+ * @param	int				$bankaccountid		Id of the bank account on which to record the payment (used only if module bank is enabled)
+ * @param	string			$note_public		Public note of the payment
+ * @return	array{result:int,messages:string[],paidinvoices:array<int,string>,excess:float}	'result' = id of the payment if OK, <0 if KO (nothing recorded)
+ */
+function recordOnlinePaymentOfThirdpartyInvoices($db, $user, $socid, $invoiceids, $amount, $paymenttypeid, $ext_payment_id, $ext_payment_site, $bankaccountid, $note_public)
+{
+	require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+
+	$messages = [];
+	$paidinvoices = [];
+	$excess = 0.0;
+
+	$invoices = getOnlinePaymentInvoicesOfThirdparty($db, $socid, empty($invoiceids) ? null : $invoiceids);
+	if (!is_array($invoices)) {
+		$messages[] = 'Failed to load the invoices of third party '.((int) $socid).' to record the payment';
+		return ['result' => -1, 'messages' => $messages, 'paidinvoices' => $paidinvoices, 'excess' => $excess];
+	}
+	if (empty($invoices) || (float) price2num($amount, 'MT') <= 0) {
+		$messages[] = 'No unpaid invoice of third party '.((int) $socid).' remains to record the payment of '.price2num($amount, 'MT').'. The payment was received but it was not recorded.';
+		return ['result' => -2, 'messages' => $messages, 'paidinvoices' => $paidinvoices, 'excess' => $excess];
+	}
+
+	$allocation = allocateOnlinePaymentToInvoices($invoices, $amount);
+	$amounts = $allocation['amounts'];
+	$excess = $allocation['excess'];
+	if ($excess > 0) {
+		// The amount paid is higher than what remains to pay (an invoice was paid in the meantime): the money is already
+		// captured, so we record the excess on the last invoice instead of failing.
+		$tmpids = array_keys($invoices);
+		$lastinvoiceid = (int) end($tmpids);
+		$amounts[$lastinvoiceid] = (float) price2num((empty($amounts[$lastinvoiceid]) ? 0 : $amounts[$lastinvoiceid]) + $excess, 'MT');
+		$messages[] = 'Warning: the amount paid is higher than the remainder to pay of the invoices, the excess of '.price2num($excess, 'MT').' was added to the payment of invoice '.$invoices[$lastinvoiceid]['ref'];
+		dol_syslog("recordOnlinePaymentOfThirdpartyInvoices excess of ".$excess." added to invoice id=".$lastinvoiceid, LOG_WARNING);
+	}
+	foreach ($amounts as $invoiceid => $tmpamount) {
+		$paidinvoices[$invoiceid] = $invoices[$invoiceid]['ref'];
+	}
+
+	$error = 0;
+
+	$db->begin();
+
+	$paiement = new Paiement($db);
+	$paiement->datepaye = dol_now();
+	$paiement->amounts = $amounts;
+	$paiement->paiementid = $paymenttypeid;
+	$paiement->num_payment = '';
+	$paiement->note_public = $note_public;
+	$paiement->ext_payment_id = $ext_payment_id;
+	$paiement->ext_payment_site = $ext_payment_site;
+
+	$paymentid = $paiement->create($user, 1);	// This includes the closing of the paid invoices
+	if ($paymentid < 0) {
+		$messages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
+		$error++;
+	} else {
+		$messages[] = 'Payment created for invoices '.implode(', ', $paidinvoices);
+	}
+
+	if (!$error && isModEnabled("bank")) {
+		if ($bankaccountid > 0) {
+			$result = $paiement->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
+			if ($result < 0) {
+				$messages[] = $paiement->error.' '.implode("<br>\n", $paiement->errors);
+				$error++;
+			} else {
+				$messages[] = 'Bank transaction of payment created';
+			}
+		} else {
+			$messages[] = 'Setup of bank account to use in module '.$ext_payment_site.' was not set. Your payment was really executed but we failed to record it. Please contact us.';
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		$db->commit();
+		return ['result' => $paymentid, 'messages' => $messages, 'paidinvoices' => $paidinvoices, 'excess' => $excess];
+	}
+
+	$db->rollback();
+	return ['result' => -3, 'messages' => $messages, 'paidinvoices' => $paidinvoices, 'excess' => $excess];
 }

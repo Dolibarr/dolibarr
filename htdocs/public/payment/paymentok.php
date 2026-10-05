@@ -558,6 +558,7 @@ if ($ispaymentok && !empty($TRANSACTIONID)) {
 $ispostactionok = 0;
 $paymentTypeId = 0;
 $postactionmessages = array();
+$onlinepaymentpaidinvoices = [];	// Invoices paid by a payment of source thirdparty (id => ref)
 if ($ispaymentok) {
 	// Set permission for the anonymous user
 	if (empty($user->rights->societe)) {
@@ -1190,6 +1191,93 @@ if ($ispaymentok) {
 			}
 		} else {
 			$postactionmessages[] = 'Invoice paid '.$tmptag['INV'].' was not found';
+			$ispostactionok = -1;
+		}
+	} elseif (array_key_exists('INVS', $tmptag) && array_key_exists('CUS', $tmptag) && $tmptag['CUS'] > 0) {
+		// Record one payment for several unpaid invoices of a customer (newpayment.php with source=thirdparty)
+		$object = new Societe($db);
+		$result = $object->fetch((int) $tmptag['CUS']);
+		if ($result > 0) {
+			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
+
+			// Invoices shown on the payment page. They are fetched and checked again, and the amount is spread again on them.
+			$onlinepaymentinvoiceids = [];
+			if (!empty($_SESSION['onlinepaymentinvoices']) && is_array($_SESSION['onlinepaymentinvoices'])) {
+				$onlinepaymentinvoiceids = array_keys($_SESSION['onlinepaymentinvoices']);
+			}
+
+			$paymentTypeId = 0;
+			if ($paymentmethod === 'paybox') {
+				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
+			}
+			if ($paymentmethod === 'paypal') {
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+			}
+			if ($paymentmethod === 'stripe') {
+				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
+			}
+			if (empty($paymentTypeId)) {
+				dol_syslog("paymentType = ".$paymentType, LOG_DEBUG, 0, '_payment');
+
+				if (empty($paymentType)) {
+					$paymentType = 'CB';
+				}
+				// May return nothing when paymentType means nothing
+				// (for example when paymentType is 'Mark', 'Sole', 'Sale', for paypal)
+				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
+
+				// If previous line has returned nothing, we force to get the ID of payment of Credit Card (hard coded code 'CB').
+				if (empty($paymentTypeId) || $paymentTypeId < 0) {
+					$paymentTypeId = dol_getIdFromCode($db, 'CB', 'c_paiement', 'code', 'id', 1);
+				}
+			}
+
+			dol_syslog("FinalPaymentAmt = ".$FinalPaymentAmt." paymentTypeId = ".$paymentTypeId." invoices = ".implode(',', $onlinepaymentinvoiceids), LOG_DEBUG, 0, '_payment');
+
+			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
+			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
+				if ($currencyCodeType != $conf->currency) {
+					$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
+					$ispostactionok = -1;
+				} else {
+					$bankaccountid = 0;
+					if (isModEnabled("bank")) {
+						if ($paymentmethod == 'paybox') {
+							$bankaccountid = getDolGlobalInt('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
+						} elseif ($paymentmethod == 'paypal') {
+							$bankaccountid = getDolGlobalInt('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS');
+						} elseif ($paymentmethod == 'stripe') {
+							$bankaccountid = getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
+						}
+
+						//Get bank account for a specific paymentmedthod
+						$parameters = [
+							'paymentmethod' => $paymentmethod,
+						];
+						$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+						if ($reshook >= 0) {
+							if (isset($hookmanager->resArray['bankaccountid'])) {
+								dol_syslog('bankaccountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+								$bankaccountid = (int) $hookmanager->resArray['bankaccountid'];
+							}
+						}
+					}
+
+					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+					$ext_payment_id = ($LONGTRANSACTIONID ? $LONGTRANSACTIONID : $TRANSACTIONID);
+					$note_public = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
+
+					$resrecord = recordOnlinePaymentOfThirdpartyInvoices($db, $user, $object->id, $onlinepaymentinvoiceids, $FinalPaymentAmt, $paymentTypeId, $ext_payment_id, $service, $bankaccountid, $note_public);
+					$onlinepaymentpaidinvoices = $resrecord['paidinvoices'];
+					$postactionmessages = array_merge($postactionmessages, $resrecord['messages']);
+					$ispostactionok = ($resrecord['result'] > 0 ? 1 : -1);
+				}
+			} else {
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type id" ('.$paymentTypeId.') to record the payment of the invoices of third party '.$tmptag['CUS'].'. May be payment was already recorded.';
+				$ispostactionok = -1;
+			}
+		} else {
+			$postactionmessages[] = 'Third party '.$tmptag['CUS'].' of the invoices paid was not found';
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('ORD', $tmptag) && $tmptag['ORD'] > 0) {
@@ -2260,6 +2348,13 @@ if ($ispaymentok) {
 			$content .= $companylangs->transnoentitiesnoconv("InvoiceId").': <strong>'.$tmptag['INV']."</strong><br>\n";
 			//$content.=$companylangs->trans("ThirdPartyId").': '.$tmptag['CUS']."<br>\n";
 			$content .= $companylangs->transnoentitiesnoconv("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
+		} elseif (array_key_exists('INVS', $tmptag) && array_key_exists('CUS', $tmptag)) {
+			$url = $urlwithroot."/societe/card.php?socid=".((int) $tmptag['CUS']);
+			$content .= '<strong>'.$companylangs->transnoentitiesnoconv("PaymentOfUnpaidInvoices")."</strong><br><br>\n";
+			$companylangs->load('companies');
+			$content .= $companylangs->transnoentitiesnoconv("ThirdParty").': <strong>'.((int) $tmptag['CUS']).(is_object($object) && !empty($object->name) ? ' - '.dol_escape_htmltag($object->name) : '')."</strong><br>\n";
+			$content .= $companylangs->transnoentitiesnoconv("Invoices").': <strong>'.dol_escape_htmltag(implode(', ', $onlinepaymentpaidinvoices))."</strong><br>\n";
+			$content .= $companylangs->transnoentitiesnoconv("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 		} else {
 			$content .= $companylangs->transnoentitiesnoconv("NewOnlinePaymentReceived")."<br>\n";
 		}
@@ -2385,6 +2480,7 @@ if ($ispaymentok) {
 // Clean session variables to avoid duplicate actions if post is resent
 unset($_SESSION["FinalPaymentAmt"]);
 unset($_SESSION["TRANSACTIONID"]);
+unset($_SESSION["onlinepaymentinvoices"]);
 
 
 // Close page content id="dolpaymentdiv"

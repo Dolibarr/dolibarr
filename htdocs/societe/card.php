@@ -3620,6 +3620,36 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$result = show_subsidiaries($conf, $langs, $db, $object);
 			}
 
+			// Show online payment link for all the unpaid invoices of the customer.
+			// This link is refused by the payment page when there is no secure key, so we show it only when a key is set.
+			if (isModEnabled('invoice') && $user->hasRight('facture', 'lire') && ($object->client == 1 || $object->client == 3)
+				&& getDolGlobalString('PAYMENT_SECURITY_TOKEN') && !getDolGlobalString('PAYMENT_SECURITY_ACCEPT_ANY_TOKEN')) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+				$validpaymentmethod = getValidOnlinePaymentMethods('');
+				if (count($validpaymentmethod)) {
+					$sql = "SELECT COUNT(f.rowid) as nb";
+					$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+					$sql .= " WHERE f.fk_soc = ".((int) $object->id);
+					$sql .= " AND f.entity = ".((int) $conf->entity);
+					$sql .= " AND f.fk_statut = ".((int) Facture::STATUS_VALIDATED);
+					$sql .= " AND f.paye = 0";
+					$sql .= " AND f.type IN (".((int) Facture::TYPE_STANDARD).", ".((int) Facture::TYPE_REPLACEMENT).", ".((int) Facture::TYPE_DEPOSIT).", ".((int) Facture::TYPE_SITUATION).")";
+					$sql .= " AND (f.multicurrency_code IS NULL OR f.multicurrency_code = '' OR f.multicurrency_code = '".$db->escape($conf->currency)."')";
+					$resql = $db->query($sql);
+					$obj = null;
+					if ($resql) {
+						$obj = $db->fetch_object($resql);
+						$db->free($resql);
+					}
+					if ($obj && $obj->nb > 0) {
+						print '<br><!-- Link to pay all the unpaid invoices -->'."\n";
+						print showOnlinePaymentUrl('thirdparty', (string) $object->id).'<br>';
+					}
+				}
+			}
+
 			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
