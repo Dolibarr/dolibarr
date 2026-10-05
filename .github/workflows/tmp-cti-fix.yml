@@ -1,4 +1,4 @@
-name: tmp-cti-fix  # v1
+name: tmp-cti-fix  # v2
 
 on:
   push:
@@ -156,7 +156,7 @@ jobs:
         run: |
           python3 <<'PYEOF'
           import pathlib
-          
+
           # Edit 1: widen the type of the $substitutionarray parameter of complete_substitutions_array()
           p = pathlib.Path('htdocs/core/lib/functions.lib.php')
           data = p.read_bytes()
@@ -167,18 +167,19 @@ jobs:
               raise SystemExit('ERROR: pattern found %d times in functions.lib.php (expected 1)' % n)
           p.write_bytes(data.replace(old, new, 1))
           print('edited functions.lib.php')
-          
+
           # Edit 2: remove the always-true null comparison on $sortfield (GETPOST never returns null)
           p = pathlib.Path('htdocs/compta/sociales/payments.php')
           data = p.read_bytes()
-          old = b'if ($sortfield !== null' + bytes([10, 9]) + b"&& preg_match('/^(cs|c|pc|pct|u|ba)' + bytes([92, 46]) + b"/', $sortfield)" + bytes([10]) + b') {'
-          new = b"if (preg_match('/^(cs|c|pc|pct|u|ba)' + bytes([92, 46]) + b"/', $sortfield)) {'
+          old = b'if ($sortfield !== null' + bytes([10, 9])
+          old = old + b"&& preg_match('/^(cs|c|pc|pct|u|ba)" + bytes([92, 46]) + b"', $sortfield)" + bytes([10]) + b') {'
+          new = b"if (preg_match('/^(cs|c|pc|pct|u|ba)" + bytes([92, 46]) + b"', $sortfield)) {'
           n = data.count(old)
           if n != 1:
               raise SystemExit('ERROR: pattern found %d times in payments.php (expected 1)' % n)
           p.write_bytes(data.replace(old, new, 1))
           print('edited payments.php')
-          
+
           # Safety checks: encoding and line endings must be preserved
           for path in ('htdocs/core/lib/functions.lib.php', 'htdocs/compta/sociales/payments.php'):
               d = pathlib.Path(path).read_bytes()
