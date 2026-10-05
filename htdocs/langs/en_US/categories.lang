@@ -96,6 +96,7 @@ AddOrderIntoCategory=Assign the category to the order
 AddInvoiceIntoCategory=Assign the category to the invoice
 AddSupplierOrderIntoCategory=Assign the category to the supplier order
 AddSupplierInvoiceIntoCategory=Assign the category to the supplier invoice
+AddWarehouseIntoCategory=Assign the category to the warehouse
 AssignCategoryTo=Assign the category to
 ShowCategory=Show tag/category
 ByDefaultInList=By default in list

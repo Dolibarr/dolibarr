@@ -258,6 +258,10 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$newobject = new User($db);
 		$elementtype = 'user';
+	} elseif ($type == Categorie::TYPE_WAREHOUSE && $user->hasRight('stock', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		$newobject = new Entrepot($db);
+		$elementtype = 'warehouse';
 	} elseif ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer')) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$newobject = new Account($db);
@@ -1251,7 +1255,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
-				print $langs->trans("AddTicketIntoCategory").' &nbsp;';
+				print $langs->trans("AddWarehouseIntoCategory").' &nbsp;';
 				print $form->selectForForms('Entrepot:product/stock/class/entrepot.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 				print '<input type="submit" class="button buttongen" name="addintocategory" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';
