@@ -30,7 +30,7 @@ return [
     'file_suppressions' => [
         'htdocs/blockedlog/admin/filecheck.php' => ['FunctionMissingSingleQuoteWrapping'],
         'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/actions_massactions.inc.php' => ['PhanUndeclaredProperty', 'SqlInjection'],
+        'htdocs/core/actions_massactions.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_sendmails.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/ajax/ajaxdirtree.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/class/CMailFile.class.php' => ['PhanTypeMismatchArgument'],
