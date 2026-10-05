@@ -139,7 +139,7 @@ $item->fieldAttr = array(
 	'min' => 0,
 	'max' => 5
 );
-$item->defaultFieldValue = 2;
+$item->defaultFieldValue = '2';
 
 /*
  * Actions
