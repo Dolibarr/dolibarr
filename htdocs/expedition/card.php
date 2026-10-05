@@ -2703,7 +2703,7 @@ if ($action == 'create' && $usercancreate) {
 	// Confirm deletion
 	if ($action == 'delete') {
 		$formquestion = array();
-		if ($object->status == Expedition::STATUS_CLOSED) {
+		if ($object->status == Expedition::STATUS_CLOSED && (getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT'))) {
 			$formquestion = array(
 				array(
 					'type' => 'onecolumn',
@@ -2713,7 +2713,7 @@ if ($action == 'create' && $usercancreate) {
 					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
 					'name' => 'alsoUpdateStock',
 					'type' => 'checkbox',
-					'value' => getDolGlobalString('AUTO_RESTOCK_ON_SHIPMENT_DELETE')
+					'value' => getDolGlobalInt('SHIPMENT_AUTO_CHECK_TO_INCREASE_STOCK_ON_SHIPMENT_DELETION')
 				),
 			);
 		}

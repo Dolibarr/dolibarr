@@ -2079,8 +2079,8 @@ class Expedition extends CommonObject
 
 		// Stock control
 		$can_update_stock = isModEnabled('stock') &&
-			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED) ||
-				((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) && $this->status == self::STATUS_CLOSED && $also_update_stock));
+			((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT') && $this->status == self::STATUS_VALIDATED) ||
+				((getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') || getDolGlobalInt('STOCK_CALCULATE_ON_SHIPMENT')) && $this->status == self::STATUS_CLOSED && $also_update_stock));
 		if (!$error) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
