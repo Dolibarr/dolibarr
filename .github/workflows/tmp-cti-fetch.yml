@@ -1,0 +1,93 @@
+name: tmp-cti-fetch
+
+on:
+  push:
+    branches:
+      - tmp-cti-vibe-debt-20261005
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout scratch branch
+        uses: actions/checkout@v4
+
+      - name: Fetch CTI page
+        run: |
+          curl -sL --max-time 180 https://cti.dolibarr.org/ -o cti.html
+          wc -c cti.html
+
+      - name: Extract PHPStan technical debt section
+        run: |
+          python3 <<'PYEOF'
+          import html
+          import re
+
+          data = open('cti.html', encoding='utf-8', errors='replace').read()
+          low = data.lower()
+          markers = {}
+          for m in ['generated on', 'technical debt', 'phpstan', 'phan', 'security']:
+              idx = [mm.start() for mm in re.finditer(re.escape(m), low)]
+              markers[m] = idx
+          report = open('cti-report.txt', 'w', encoding='utf-8')
+          report.write(repr(markers) + '
+')
+
+          start = -1
+          for m in ['technical debt', 'phpstan']:
+              if markers[m]:
+                  start = markers[m][0]
+                  break
+          if start < 0:
+              start = 0
+          start = max(0, start - 3000)
+          seg = data[start:start + 320000]
+          report.write('start=%d seglen=%d
+' % (start, len(seg)))
+
+          # Dump raw HTML slice in chunks readable by a text fetcher
+          n = 0
+          for j in range(0, len(seg), 28000):
+              n += 1
+              open('cti-chunk-%02d.txt' % n, 'w', encoding='utf-8').write(seg[j:j + 28000])
+          report.write('chunks=%d
+' % n)
+
+          # Also dump all tables of the slice as plain pipe-separated rows
+          tables = open('cti-tables.txt', 'w', encoding='utf-8')
+          count = 0
+          for tm in re.finditer(r'<table.*?</table>', seg, re.S | re.I):
+              tab = tm.group(0)
+              for rm in re.finditer(r'<tr.*?</tr>', tab, re.S | re.I):
+                  cells = []
+                  for cm in re.finditer(r'<t[hd].*?</t[hd]>', rm.group(0), re.S | re.I):
+                      txt = re.sub(r'<[^>]+>', ' ', cm.group(0))
+                      txt = html.unescape(txt)
+                      txt = re.sub(r'\s+', ' ', txt).strip()
+                      cells.append(txt)
+                  row = ' | '.join(c for c in cells if c != '')
+                  if row:
+                      count += 1
+                      if count <= 4000:
+                          tables.write(row + '
+')
+              tables.write('---END-OF-TABLE---
+')
+          tables.close()
+          report.write('rows=%d
+' % count)
+          report.close()
+          print('done')
+          PYEOF
+
+      - name: Commit report files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add cti-chunk-*.txt cti-tables.txt cti-report.txt || true
+          git commit -m "[skip ci] Add CTI technical debt dump" || echo "nothing to commit"
+          git push
