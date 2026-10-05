@@ -34,6 +34,8 @@ create table llx_loan
   dateend						date,
   nbterm						real,
   rate							double  NOT NULL,
+  frequency						integer DEFAULT 12 NOT NULL,	-- number of payments per year: 52, 26, 12, 4, 2 or 1
+  interest_basis				smallint DEFAULT 0 NOT NULL,	-- 0 = rate / payments per year, 1 = daily (rate x days in the period / 365)
 
   note_private					text,
   note_public					text,
