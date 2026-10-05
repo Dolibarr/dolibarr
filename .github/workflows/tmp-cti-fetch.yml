@@ -1,4 +1,4 @@
-name: tmp-cti-fetch  # trigger v1
+name: tmp-cti-fetch  # trigger v2
 
 on:
   push:
@@ -34,8 +34,7 @@ jobs:
               idx = [mm.start() for mm in re.finditer(re.escape(m), low)]
               markers[m] = idx
           report = open('cti-report.txt', 'w', encoding='utf-8')
-          report.write(repr(markers) + '
-')
+          report.write(repr(markers) + chr(10))
 
           start = -1
           for m in ['technical debt', 'phpstan']:
@@ -46,41 +45,34 @@ jobs:
               start = 0
           start = max(0, start - 3000)
           seg = data[start:start + 320000]
-          report.write('start=%d seglen=%d
-' % (start, len(seg)))
+          report.write('start=%d seglen=%d' % (start, len(seg)) + chr(10))
 
-          # Dump raw HTML slice in chunks readable by a text fetcher
           n = 0
           for j in range(0, len(seg), 28000):
               n += 1
               open('cti-chunk-%02d.txt' % n, 'w', encoding='utf-8').write(seg[j:j + 28000])
-          report.write('chunks=%d
-' % n)
+          report.write('chunks=%d' % n + chr(10))
 
-          # Also dump all tables of the slice as plain pipe-separated rows
           tables = open('cti-tables.txt', 'w', encoding='utf-8')
           count = 0
           for tm in re.finditer(r'<table.*?</table>', seg, re.S | re.I):
               tab = tm.group(0)
               for rm in re.finditer(r'<tr.*?</tr>', tab, re.S | re.I):
                   cells = []
-               
-   for cm in re.finditer(r'<t[hd].*?</t[hd]>', rm.group(0), re.S | re.I):
+                  for cm in re.finditer(r'<t[hd].*?</t[hd]>', rm.group(0), re.S | re.I):
                       txt = re.sub(r'<[^>]+>', ' ', cm.group(0))
                       txt = html.unescape(txt)
-                      txt = re.sub(r'\s+', ' ', txt).strip()
+                      txt = re.sub(r'[ 	
+]+', ' ', txt).strip()
                       cells.append(txt)
                   row = ' | '.join(c for c in cells if c != '')
                   if row:
                       count += 1
                       if count <= 4000:
-                          tables.write(row + '
-')
-              tables.write('---END-OF-TABLE---
-')
+                          tables.write(row + chr(10))
+              tables.write('---END-OF-TABLE---' + chr(10))
           tables.close()
-          report.write('rows=%d
-' % count)
+          report.write('rows=%d' % count + chr(10))
           report.close()
           print('done')
           PYEOF
