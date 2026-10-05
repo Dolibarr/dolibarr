@@ -127,7 +127,7 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 	$interest_basis = (int) $interest_basis;
 	$datestart = (int) $datestart;
 	// Rate of the period that ends with a given term (rate / 12 for a monthly loan with interest per period)
-	$periodrate = function ($term) use ($rate, $frequency, $interest_basis, $datestart) {
+	$periodrate = function (int $term) use ($rate, $frequency, $interest_basis, $datestart): float {
 		return loanPeriodRate((float) $rate, $frequency, $interest_basis, ($interest_basis && $datestart ? loanPeriodDays($datestart, $term, $frequency) : 0));
 	};
 
