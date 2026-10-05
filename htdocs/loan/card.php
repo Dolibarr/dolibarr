@@ -152,6 +152,7 @@ if (empty($reshook)) {
 				$object->rate = $rate;
 				$object->frequency = (GETPOSTINT('frequency') > 0 ? GETPOSTINT('frequency') : 12);
 				$object->interest_basis = GETPOSTINT('interest_basis') ? 1 : 0;
+				$object->balloon_amount = GETPOSTFLOAT('balloon_amount');
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_project = GETPOSTINT('projectid');
@@ -210,6 +211,7 @@ if (empty($reshook)) {
 				$object->rate = GETPOSTFLOAT("rate");
 				$object->frequency = (GETPOSTINT('frequency') > 0 ? GETPOSTINT('frequency') : 12);
 				$object->interest_basis = GETPOSTINT('interest_basis') ? 1 : 0;
+				$object->balloon_amount = GETPOSTFLOAT('balloon_amount');
 				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
@@ -345,6 +347,9 @@ if ($action == 'create') {
 	}
 	print '<tr><td>'.$langs->trans("LoanFrequency").'</td><td>'.$form->selectarray('frequency', $frequencies, (GETPOSTINT('frequency') > 0 ? GETPOSTINT('frequency') : 12)).'</td></tr>';
 	print '<tr><td>'.$form->textwithpicto($langs->trans("LoanInterestBasis"), $langs->trans("LoanInterestBasisHelp")).'</td><td>'.$form->selectarray('interest_basis', array(0 => $langs->trans('LoanInterestBasisPeriod'), 1 => $langs->trans('LoanInterestBasisDaily')), GETPOSTINT('interest_basis')).'</td></tr>';
+
+	// Balloon / residual
+	print '<tr><td>'.$form->textwithpicto($langs->trans("LoanBalloon"), $langs->trans("LoanBalloonHelp")).'</td><td><input name="balloon_amount" size="10" value="'.dol_escape_htmltag(GETPOST("balloon_amount")).'" placeholder="'.$langs->trans('Amount').'"></td></tr>';
 
 	// Insurance amount
 	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="'.dol_escape_htmltag(GETPOST("insurance_amount")).'" placeholder="'.$langs->trans('Amount').'"></td></tr>';
@@ -589,6 +594,16 @@ if ($id > 0) {
 			print $form->selectarray('interest_basis', $bases, (int) $object->interest_basis);
 		} else {
 			print $bases[(int) $object->interest_basis];
+		}
+		print '</td></tr>';
+
+		// Balloon / residual
+		print '<tr><td>'.$form->textwithpicto($langs->trans("LoanBalloon"), $langs->trans("LoanBalloonHelp")).'</td>';
+		print '<td>';
+		if ($action == 'edit') {
+			print '<input name="balloon_amount" size="10" value="'.((float) $object->balloon_amount ? price2num($object->balloon_amount) : '').'">';
+		} else {
+			print ((float) $object->balloon_amount ? '<span class="amount">'.price($object->balloon_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span>' : '');
 		}
 		print '</td></tr>';
 

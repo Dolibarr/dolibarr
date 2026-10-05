@@ -56,11 +56,12 @@ $grace_period = GETPOSTINT('grace_period');
 $frequency = GETPOSTINT('frequency') > 0 ? GETPOSTINT('frequency') : 12;
 $interest_basis = GETPOSTINT('interest_basis');
 $datestart = GETPOSTINT('datestart');
+$balloon = (float) price2num(GETPOST('balloon'));
 
 top_httphead();
 
 $output = array();
 
-$output = loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm, $amort, $source, $grace_period, $interet, $frequency, $interest_basis, $datestart);
+$output = loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm, $amort, $source, $grace_period, $interet, $frequency, $interest_basis, $datestart, $balloon);
 
 echo json_encode($output);
