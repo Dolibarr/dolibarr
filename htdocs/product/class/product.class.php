@@ -2899,7 +2899,7 @@ class Product extends CommonObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-		global $conf;
+		global $conf, $hookmanager;
 
 		dol_syslog(get_class($this)."::fetch id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
@@ -3302,6 +3302,17 @@ class Product extends CommonObject
 				// We should not load stock during the fetch. If someone need stock of product, he must call load_stock after fetching product.
 				// Instead we just init the stock_warehouse array
 				$this->stock_warehouse = array();
+
+				// Hook to allow modules to complete or change the properties of the product just loaded
+				if (is_object($hookmanager)) {
+					$hookmanager->initHooks(array('productdao'));
+					$parameters = array('id' => $id, 'ref' => $ref, 'ref_ext' => $ref_ext, 'barcode' => $barcode);
+					$reshook = $hookmanager->executeHooks('fetchProduct', $parameters, $this); // Note that $object may have been modified by some hooks
+					if ($reshook < 0) {
+						$this->setErrorsFromObject($hookmanager);
+						return -1;
+					}
+				}
 
 				return 1;
 			} else {
