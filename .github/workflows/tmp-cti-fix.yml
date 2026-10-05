@@ -1,0 +1,215 @@
+name: tmp-cti-fix  # v1
+
+on:
+  push:
+    branches:
+      - tmp-cti-vibe-debt-20261005
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Download PHPStan 2.2.14
+        run: |
+          wget -q https://github.com/phpstan/phpstan/releases/download/2.2.14/phpstan.phar
+          chmod +x phpstan.phar
+
+      - name: Write CTI phpstan config
+        run: |
+          cat > phpstan_apstats.neon <<'NEONEOF'
+          # PHPStan config for CTI apstats (level 9, no baseline, no ignoreErrors)
+          
+          parameters:
+          	bootstrapFiles:
+          		- dev/build/phpstan/bootstrap_action.php
+          	phpVersion: 80200 # PHP 8.2
+          	tmpDir: ./.github/tmp
+          	parallel:
+          		processTimeout: 600.0
+          		maximumNumberOfProcesses: 4		# default is 32
+          	customRulesetUsed: true
+          	level: 9
+          	fileExtensions:
+          		- php
+          	paths:
+          		- htdocs
+          		- scripts
+          	excludePaths:
+          		analyseAndScan:
+          			- htdocs/custom/*
+          			- htdocs/documents/*
+          			- htdocs/install/*		# We must exclude this dir to avoid to have DOL_DOCUMENT_ROOT defined to .. by inc.php before the bootstrap*.php file can load it.
+          			- htdocs/install/doctemplates/*
+          			- htdocs/langs/*
+          			- htdocs/modulebuilder/template/test/*
+          			- test/phpunit/*
+          		analyse:
+          			- htdocs/includes/geoPHP/*
+          			- htdocs/includes/markrogoyski/*
+          			- htdocs/includes/maximebf/*
+          			- htdocs/includes/mike42/*
+          			- htdocs/includes/mobiledetect/*
+          			- htdocs/includes/nusoap/*
+          			- htdocs/includes/OAuth/*
+          			- htdocs/includes/odtphp/*
+          			- htdocs/includes/parsedown/*
+          			- htdocs/includes/php-iban/*
+          			- htdocs/includes/phpoffice/*
+          			- htdocs/includes/printipp/*
+          			- htdocs/includes/Psr/*
+          			- htdocs/includes/restler/*
+          			- htdocs/includes/sabre/*
+          			- htdocs/includes/stripe/*
+          			- htdocs/includes/swiftmailer/*
+          			- htdocs/includes/symfony/*
+          			- htdocs/includes/tcpdi/*
+          			- htdocs/includes/tecnickcom/*
+          			- htdocs/includes/webklex/*
+          			- htdocs/core/class/lessc.class.php
+          	polluteScopeWithLoopInitialAssignments: false
+          	polluteScopeWithAlwaysIterableForeach: false
+          	checkClassCaseSensitivity: true
+          	checkFunctionArgumentTypes: true
+          	checkFunctionNameCase: true
+          	checkInternalClassCaseSensitivity: true
+          	checkArgumentsPassedByReference: true
+          	checkMaybeUndefinedVariables: true
+          	checkNullables: false
+          	checkThisOnly: true
+          	checkUnionTypes: false
+          	checkExplicitMixedMissingReturn: true
+          	reportMaybes: false
+          	reportMaybesInMethodSignatures: false
+          	reportStaticMethodSignatures: false
+          	reportMagicMethods: false
+          	reportMagicProperties: false
+          	treatPhpDocTypesAsCertain: false
+          	internalErrorsCountLimit: 50
+          	cache:
+          		nodesByStringCountMax: 512
+          	reportUnmatchedIgnoredErrors: false
+          	universalObjectCratesClasses:
+          		- stdClass
+          		- SimpleXMLElement
+          	earlyTerminatingMethodCalls: []
+          	dynamicConstantNames:
+          		- ICONV_IMPL
+          		- PHP_VERSION
+          		- PHP_MAJOR_VERSION
+          		- PHP_MINOR_VERSION
+          		- PHP_RELEASE_VERSION
+          		- PHP_VERSION_ID
+          		- PHP_EXTRA_VERSION
+          		- PHP_ZTS
+          		- PHP_DEBUG
+          		- PHP_MAXPATHLEN
+          		- PHP_OS
+          		- PHP_OS_FAMILY
+          		- PHP_SAPI
+          		- PHP_EOL
+          		- PHP_INT_MAX
+          		- PHP_INT_MIN
+          		- PHP_INT_SIZE
+          		- PHP_FLOAT_DIG
+          		- PHP_FLOAT_EPSILON
+          		- PHP_FLOAT_MIN
+          		- PHP_FLOAT_MAX
+          		- DEFAULT_INCLUDE_PATH
+          		- PEAR_INSTALL_DIR
+          		- PEAR_EXTENSION_DIR
+          		- PHP_EXTENSION_DIR
+          		- PHP_PREFIX
+          		- PHP_BINDIR
+          		- PHP_BINARY
+          		- PHP_MANDIR
+          		- PHP_LIBDIR
+          		- PHP_DATADIR
+          		- PHP_SYSCONFDIR
+          		- PHP_LOCALSTATEDIR
+          		- PHP_CONFIG_FILE_PATH
+          		- PHP_CONFIG_FILE_SCAN_DIR
+          		- PHP_SHLIB_SUFFIX
+          		- PHP_FD_SETSIZE
+          
+          NEONEOF
+          head -20 phpstan_apstats.neon
+
+      - name: Run PHPStan before the fix
+        run: php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-before.txt 2>&1 || true
+
+      - name: Apply the fix (byte level, keeps UTF-8 and EOL of the sources)
+        run: |
+          python3 <<'PYEOF'
+          import pathlib
+          
+          # Edit 1: widen the type of the $substitutionarray parameter of complete_substitutions_array()
+          p = pathlib.Path('htdocs/core/lib/functions.lib.php')
+          data = p.read_bytes()
+          old = b' *  @param  array<string,string|float|null>' + bytes([9]) + b'$substitutionarray'
+          new = b' *  @param  array<string,string|int|float|null>' + bytes([9]) + b'$substitutionarray'
+          n = data.count(old)
+          if n != 1:
+              raise SystemExit('ERROR: pattern found %d times in functions.lib.php (expected 1)' % n)
+          p.write_bytes(data.replace(old, new, 1))
+          print('edited functions.lib.php')
+          
+          # Edit 2: remove the always-true null comparison on $sortfield (GETPOST never returns null)
+          p = pathlib.Path('htdocs/compta/sociales/payments.php')
+          data = p.read_bytes()
+          old = b'if ($sortfield !== null' + bytes([10, 9]) + b"&& preg_match('/^(cs|c|pc|pct|u|ba)' + bytes([92, 46]) + b"/', $sortfield)" + bytes([10]) + b') {'
+          new = b"if (preg_match('/^(cs|c|pc|pct|u|ba)' + bytes([92, 46]) + b"/', $sortfield)) {'
+          n = data.count(old)
+          if n != 1:
+              raise SystemExit('ERROR: pattern found %d times in payments.php (expected 1)' % n)
+          p.write_bytes(data.replace(old, new, 1))
+          print('edited payments.php')
+          
+          # Safety checks: encoding and line endings must be preserved
+          for path in ('htdocs/core/lib/functions.lib.php', 'htdocs/compta/sociales/payments.php'):
+              d = pathlib.Path(path).read_bytes()
+              d.decode('utf-8')
+              print(path, 'CR count:', d.count(bytes([13])), 'bytes:', len(d))
+          PYEOF
+          git --no-pager diff --stat
+
+      - name: Run PHPStan after the fix
+        run: php phpstan.phar analyse --level=9 -v --no-progress --memory-limit=4G -a dev/build/phpstan/bootstrap_action.php -c phpstan_apstats.neon htdocs/compta/facture/class/facture.class.php htdocs/compta/sociales/payments.php htdocs/core/lib/functions.lib.php htdocs/fourn/class/fournisseur.facture.class.php > phpstan-after.txt 2>&1 || true
+
+      - name: Save diff and logs
+        run: |
+          git --no-pager diff > /tmp/fix.diff
+          cp phpstan-before.txt phpstan-after.txt /tmp/
+
+      - name: Push fix branch
+        run: |
+          git config user.name "eldy"
+          git config user.email "eldy@destailleur.fr"
+          git add htdocs/core/lib/functions.lib.php htdocs/compta/sociales/payments.php
+          git commit -m "QUAL: Fix 2 PHPStan warnings of CTI technical debt (substitutionarray type, sortfield null check)"
+          git push origin HEAD:refs/heads/fix-phpstan-substitution-sortfield
+
+      - name: Publish verification logs on the scratch branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin tmp-cti-vibe-debt-20261005
+          git checkout -B tmp-cti-vibe-debt-20261005 origin/tmp-cti-vibe-debt-20261005
+          cp /tmp/phpstan-before.txt /tmp/phpstan-after.txt /tmp/fix.diff .
+          git add phpstan-before.txt phpstan-after.txt fix.diff
+          git commit -m "[skip ci] Add fix verification logs"
+          git push origin HEAD:tmp-cti-vibe-debt-20261005
