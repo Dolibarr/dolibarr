@@ -1329,9 +1329,10 @@ class Contact extends CommonObject
 	 *
 	 *  @param		User	$user			User making the delete
 	 *  @param		int		$notrigger		Disable all trigger
+	 *  @param		int		$nodeletefiles	Do not delete the documents files of the contact
 	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0, $nodeletefiles = 0)
 	{
 		global $conf;
 
@@ -1448,7 +1449,8 @@ class Contact extends CommonObject
 			}
 		}
 
-		// Remove the index of the documents of the contact (the files are removed after the commit)
+		// Remove the index of the documents of the contact (the files are removed after the commit).
+		// Nothing is done when $nodeletefiles is set: the caller moves the documents elsewhere.
 		$dirofdocuments = '';
 		if ($this->id > 0 && !empty($conf->societe->multidir_output[$this->entity])) {
 			$dirofdocuments = $conf->societe->multidir_output[$this->entity].'/contact/'.dol_sanitizeFileName((string) $this->id);
@@ -1458,6 +1460,15 @@ class Contact extends CommonObject
 			if (deleteFilesIntoDatabaseIndex($dirofdocuments, '', '') < 0 || !$this->deleteEcmFiles(1)) {
 				$error++;
 				$this->error .= $this->db->lasterror();
+			}
+		}
+
+		// Remove extrafields
+		if (!$error) {
+			// For avoid conflicts if trigger used
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
@@ -1472,20 +1483,11 @@ class Contact extends CommonObject
 			}
 		}
 
-		// Remove extrafields
-		if (!$error) {
-			// For avoid conflicts if trigger used
-			$result = $this->deleteExtraFields();
-			if ($result < 0) {
-				$error++;
-			}
-		}
-
 		if (!$error) {
 			$this->db->commit();
 
 			// Delete the directory of the documents of the contact
-			if ($dirofdocuments) {
+			if (empty($nodeletefiles) && $dirofdocuments) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				if (dol_is_dir($dirofdocuments)) {
 					dol_delete_dir_recursive($dirofdocuments);
@@ -2309,15 +2311,26 @@ class Contact extends CommonObject
 		}
 
 		if (!$error) {
-			// We finally remove the old contact
-			if ($contact_origin->delete($user) < 1) {
+			// We finally remove the old contact. Its documents are kept ($nodeletefiles): they are moved
+			// to the target contact once the transaction is committed, after this deletion.
+			if ($contact_origin->delete($user, 0, 1) <= 0) {
 				$this->error = $contact_origin->error;
 				$this->errors = $contact_origin->errors;
 				$error++;
 			}
 		}
 
-		if ($error) {
+		if (!$error) {
+			// Files are moved once the transaction is committed: dol_move() is not transactional, and
+			// the old contact was deleted with $nodeletefiles = 1 so its documents are still there.
+			$this->mergeContactFiles($contact_origin->id);
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 0;
+		} else {
+			$langs->load("errors");
 			$this->error = $langs->trans('ErrorContactsMerge').' '.$this->error;
 			$this->db->rollback();
 			// The object still holds the merged values in memory, reload it so the caller does not
@@ -2325,14 +2338,6 @@ class Contact extends CommonObject
 			$this->fetch($this->id);
 			return -1;
 		}
-
-		$this->db->commit();
-
-		// Files are moved once the transaction is committed: dol_move() is not transactional, and
-		// Contact::delete() does not remove the directory of the contact, so the files are still there.
-		$this->mergeContactFiles($contact_origin->id);
-
-		return 0;
 	}
 
 	/**
@@ -2603,7 +2608,7 @@ class Contact extends CommonObject
 		if (!empty($failed)) {
 			dol_syslog(__METHOD__.' Failed to move '.count($failed).' file(s) from '.$srcdir, LOG_ERR);
 			// The merge itself is committed, so this is reported as a warning and not as a failure
-			$this->warnings[] = $langs->trans('WarningContactsMergeFilesNotMoved', implode(', ', $failed));
+			$this->warnings[] = $langs->trans('WarningMergeFilesNotMoved', implode(', ', $failed));
 		}
 	}
 
