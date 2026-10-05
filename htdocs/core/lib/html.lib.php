@@ -5578,7 +5578,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$contactGetNomUrlCache = array();
 
 		$out .= '<div class="filters-container" >';
-		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST" spellcheck="false">';
 		$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 
 		if (

@@ -2357,7 +2357,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$contactstatic = new Contact($db);
 		$elementlinkcache = array();
 
-		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST" spellcheck="false">';
 		$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 		if (
 			$objcon && get_class($objcon) == 'Contact' &&
