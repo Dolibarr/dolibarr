@@ -62,29 +62,29 @@ jobs:
         if: ${{ env.PHASE != 'done' }}
         run: |
           python3 <<'PYEOF'
-import pathlib
-edits = [
-  ("htdocs/core/lib/functions.lib.php",
-   b"($object->country_id > 0 ? $object->country_id : '')",
-   b"($object->country_id > 0 ? (string) $object->country_id : '')"),
-  ("htdocs/core/lib/functions.lib.php",
-   b"($object->thirdparty->country_id > 0 ? $object->thirdparty->country_id : '')",
-   b"($object->thirdparty->country_id > 0 ? (string) $object->thirdparty->country_id : '')"),
-  ("htdocs/compta/sociales/payments.php",
-   b"if ($sortfield !== null",
-   b"if (!empty($sortfield)"),
-]
-lines = []
-for path, old, new in edits:
-    p = pathlib.Path(path)
-    data = p.read_bytes()
-    n = data.count(old)
-    lines.append("%s => %d occurrence(s)" % (path, n))
-    if n == 1:
-        p.write_bytes(data.replace(old, new, 1))
-pathlib.Path("apply-result.txt").write_text("\n".join(lines) + "\n")
-print("\n".join(lines))
-PYEOF
+          import pathlib
+          edits = [
+            ("htdocs/core/lib/functions.lib.php",
+             b"($object->country_id > 0 ? $object->country_id : '')",
+             b"($object->country_id > 0 ? (string) $object->country_id : '')"),
+            ("htdocs/core/lib/functions.lib.php",
+             b"($object->thirdparty->country_id > 0 ? $object->thirdparty->country_id : '')",
+             b"($object->thirdparty->country_id > 0 ? (string) $object->thirdparty->country_id : '')"),
+            ("htdocs/compta/sociales/payments.php",
+             b"if ($sortfield !== null",
+             b"if (!empty($sortfield)"),
+          ]
+          lines = []
+          for path, old, new in edits:
+              p = pathlib.Path(path)
+              data = p.read_bytes()
+              n = data.count(old)
+              lines.append("%s => %d occurrence(s)" % (path, n))
+              if n == 1:
+                  p.write_bytes(data.replace(old, new, 1))
+          pathlib.Path("apply-result.txt").write_text("\n".join(lines) + "\n")
+          print("\n".join(lines))
+          PYEOF
           cat apply-result.txt | tee -a step-log.txt
           git --no-pager diff --stat | tee -a step-log.txt
 
@@ -97,11 +97,13 @@ PYEOF
       - name: Publish logs on the scratch branch
         if: ${{ !cancelled() && env.PHASE == 'analyse' }}
         run: |
-          git checkout tmp-cti-vibe-20261005 2>&1 | tee -a step-log.txt
-          git add phpstan-before.txt phpstan-after.txt apply-result.txt step-log.txt 2>&1 | tee -a step-log.txt
-          git commit -m "tmp: phpstan results" 2>&1 | tee -a step-log.txt
+          mkdir -p /tmp/logs
+          cp phpstan-before.txt phpstan-after.txt apply-result.txt step-log.txt /tmp/logs/ || true
+          git checkout -f tmp-cti-vibe-20261005 2>&1 | tee -a step-log.txt
+          cp /tmp/logs/phpstan-before.txt /tmp/logs/phpstan-after.txt /tmp/logs/apply-result.txt /tmp/logs/step-log.txt .
+          git add phpstan-before.txt phpstan-after.txt apply-result.txt step-log.txt
+          git commit -m "tmp: phpstan results"
           git push origin tmp-cti-vibe-20261005 2>&1 | tee -a step-log.txt || true
-          echo "publish done" | tee -a step-log.txt
 
       - name: Finalize - push fix branch and remove scratch
         if: ${{ env.PHASE == 'finalize' }}
