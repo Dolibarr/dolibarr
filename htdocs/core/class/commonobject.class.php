@@ -2685,7 +2685,7 @@ abstract class CommonObject
 		}
 		//print 'socid='.$socid.' restrictiononfksoc='.$restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 
-		$sql .= " ORDER BY te.".$fieldid." DESC";
+		$sql .= " ORDER BY te.".$this->db->sanitize($fieldid)." DESC";
 		$sql .= $this->db->plimit(1);
 
 		$result = $this->db->query($sql);
@@ -2778,7 +2778,7 @@ abstract class CommonObject
 		//print 'socid='.$socid.' restrictiononfksoc='.$restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
-		$sql .= " ORDER BY te.".$fieldid." ASC";
+		$sql .= " ORDER BY te.".$this->db->sanitize($fieldid)." ASC";
 		$sql .= $this->db->plimit(1);
 
 		$result = $this->db->query($sql);
