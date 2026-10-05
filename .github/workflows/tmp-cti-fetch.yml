@@ -1,4 +1,4 @@
-name: tmp-cti-fetch  # trigger v2
+name: tmp-cti-fetch  # trigger v3
 
 on:
   push:
@@ -62,8 +62,7 @@ jobs:
                   for cm in re.finditer(r'<t[hd].*?</t[hd]>', rm.group(0), re.S | re.I):
                       txt = re.sub(r'<[^>]+>', ' ', cm.group(0))
                       txt = html.unescape(txt)
-                      txt = re.sub(r'[ 	
-]+', ' ', txt).strip()
+                      txt = re.sub(r'[ ' + chr(92) + 't' + chr(92) + 'r' + chr(92) + 'n]+', ' ', txt).strip()
                       cells.append(txt)
                   row = ' | '.join(c for c in cells if c != '')
                   if row:
