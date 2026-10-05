@@ -2393,6 +2393,9 @@ if ($action == 'create' && $usercancreate) {
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
 	print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
+	}
 	if (!empty($currency_tx)) {
 		print '<input type="hidden" name="originmulticurrency_tx" value="' . $currency_tx . '">';
 	}
