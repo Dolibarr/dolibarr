@@ -21,16 +21,25 @@ for arg in "$@"; do
   fi
 done
 
+echo "Launch the docker VM with Vibe harness for AI"
+
 # Detect if the current directory is a git clone of the Dolibarr core repository
 # (github.com/Dolibarr/dolibarr, or a fork of it: any remote pointing to a
 # repository named "dolibarr"): in that case it is already mounted as the
 # working directory and no other dolibarr directory must be mounted.
 IS_DOLIBARR_CORE=0
-if git remote -v 2>/dev/null | grep origin | awk '{print $2}' | sed -e 's/\.git$//' -e 's#.*/##' | grep -ix dolibarr; then
+if git remote -v 2>/dev/null | grep origin | awk '{print $2}' | sed -e 's/\.git$//' -e 's#.*/##' | grep -qix dolibarr; then
     IS_DOLIBARR_CORE=1
 fi
 
 echo IS_DOLIBARR_CORE="$IS_DOLIBARR_CORE"
+
+GH_TOKEN=$(gh auth token)
+if [ -z "$GH_TOKEN" ]; then
+    echo "GH_TOKEN is not set."
+else
+	echo GH_TOKEN="${GH_TOKEN:0:4}...${GH_TOKEN: -4}"
+fi
 
 set -o errexit
 set -o nounset
@@ -74,7 +83,7 @@ sudo docker run --rm -it \
   -e HOST_GID="$(id -g)" \
   -e HOST_USER="$(id -un)" \
   -e HOST_GROUP="$(id -un)" \
-  -e GH_TOKEN="$(gh auth token)" \
+  -e GH_TOKEN="$GH_TOKEN" \
   --network=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \
