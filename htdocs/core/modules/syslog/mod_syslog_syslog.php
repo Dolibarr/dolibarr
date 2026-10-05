@@ -86,7 +86,7 @@ class mod_syslog_syslog extends LogHandler
 	{
 		global $langs;
 
-		$facility = constant(getDolGlobalString('SYSLOG_FACILITY'));
+		$facility = defined(getDolGlobalString('SYSLOG_FACILITY')) ? constant(getDolGlobalString('SYSLOG_FACILITY')) : null;
 
 		if ($facility) {
 			// Only LOG_USER supported on Windows
@@ -117,8 +117,8 @@ class mod_syslog_syslog extends LogHandler
 			return; // Global option to disable output of this handler
 		}
 
-		if (getDolGlobalString('SYSLOG_FACILITY')) {  // Example LOG_USER
-			$facility = constant($conf->global->SYSLOG_FACILITY);
+		if (getDolGlobalString('SYSLOG_FACILITY') && defined(getDolGlobalString('SYSLOG_FACILITY'))) {  // Example LOG_USER
+			$facility = constant(getDolGlobalString('SYSLOG_FACILITY'));
 		} else {
 			$facility = constant('LOG_USER');
 		}

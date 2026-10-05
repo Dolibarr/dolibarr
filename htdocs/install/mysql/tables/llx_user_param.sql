@@ -26,7 +26,7 @@ create table llx_user_param
   value         text NOT NULL
 )ENGINE=innodb;
 
--- 
+--
 -- List of codes for the field entity
 --
 -- 1 : first company param

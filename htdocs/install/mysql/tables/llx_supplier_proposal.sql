@@ -32,9 +32,11 @@ CREATE TABLE llx_supplier_proposal (
   fk_user_cloture integer DEFAULT NULL,
   fk_statut	smallint DEFAULT 0 NOT NULL,	-- 0=draft, 1=validated, 2=accepted, 3=refused, 4=billed/closed
   price double DEFAULT 0,
-  remise_percent double DEFAULT 0,
-  remise_absolue double DEFAULT 0,
-  remise double DEFAULT 0,
+
+  remise_percent double DEFAULT 0,          -- deprecated, not used
+  remise_absolue double DEFAULT 0,          -- deprecated, not used
+  remise double DEFAULT 0,                  -- deprecated, not used
+
   total_ht double(24,8) DEFAULT 0,
   total_tva double(24,8) DEFAULT 0,
   localtax1 double(24,8) DEFAULT 0,
@@ -43,6 +45,7 @@ CREATE TABLE llx_supplier_proposal (
   fk_account integer DEFAULT NULL,
   fk_currency varchar(3) DEFAULT NULL,
   fk_cond_reglement integer DEFAULT NULL,
+  deposit_percent varchar(63) DEFAULT NULL, -- default deposit % if payment term needs it
   fk_mode_reglement integer DEFAULT NULL,
   note_private text,
   note_public text,
@@ -53,7 +56,7 @@ CREATE TABLE llx_supplier_proposal (
   fk_shipping_method integer DEFAULT NULL,
   import_key varchar(14) DEFAULT NULL,
   extraparams varchar(255) DEFAULT NULL,
-  
+
   fk_multicurrency        integer,
   multicurrency_code      varchar(3),
   multicurrency_tx        double(24,8) DEFAULT 1,

@@ -17,6 +17,7 @@ AccountancyCodeAsset=Codice contabilità (cespite)
 AccountancyCodeDepreciationAsset=Codice contabilità (conto ammortamento cespite)
 AccountancyCodeDepreciationExpense=Codice contabilità (conto ammortamento note spese)
 AssetsLines=Cespiti
+ConfirmValidateAsset=Sei sicuro che vuoi per convalidare questo Cespite con il riferimento <b>%s</b>?
 DeleteType=Elimina
 DeleteAnAssetType=Elimina un modello di risorsa
 ConfirmDeleteAssetType=Sei sicuro di voler eliminare questo modello di asset?
@@ -70,6 +71,7 @@ AssetDisposal=Disposizione
 AssetConfirmDisposalAsk=Sei sicuro di voler dismettere il bene <b> %s </b> ?
 AssetConfirmReOpenAsk=Sei sicuro di voler riaprire l'asset <b> %s </b> ?
 # Asset status
+AssetInDraft=Bozza
 AssetInProgress=Avviato
 AssetDisposed=Disposto
 AssetRecorded=Contabile

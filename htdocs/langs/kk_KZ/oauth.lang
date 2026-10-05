@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank"
 OAUTH_STRIPE_TEST_NAME=Stripe Test
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=OAuth клиент идентификаторы
-OAUTH_SECRET=OAuth құпиясы
-OAUTH_TENANT=OAuth жалға алушысы
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth провайдері қосылды
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Бұл провайдер мен белгі үшін OAuth жазбасы әлдеқашан бар
 URLOfOAuthServiceEndpoints=Base URL for OAuth service endpoints
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=Аутентификация үшін OAuth қызметі ұсынған URL мекенжайы
 Scopes=Рұқсаттар (ауқым)
 ScopeUndefined=Рұқсаттар (ауқым) анықталмаған (алдыңғы қойындыны қараңыз)
-ScopesDesc=Example: read,write with Mastodom
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Full Token (object)
 AccessToken=Access Token
 TokenExpired=Expired
@@ -50,3 +50,4 @@ RefreshToken=Refresh token
 RefreshTokenHelp=Use the Refresh Token to get a new Access Token
 OldTokenWasExpiredItHasBeenRefresh=Old token was expired, it has been refreshed
 OldTokenWasNotExpiredButItHasBeenRefresh=Old token was not expired but it has been refreshed
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

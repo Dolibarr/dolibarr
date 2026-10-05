@@ -26,3 +26,4 @@ ReceptionsReceiptModel=Modèles de documents pour les réceptions
 ReceptionBackToDraftInDolibarr=Réception %s retour au brouillon
 ReceptionUnClassifyCloseddInDolibarr=Réouverture de la réception %s
 ReceptionDistribution=Répartition de la réception
+AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=La validation automatique n'est pas possible lorsque le stock est diminué lors de la validation de la facture

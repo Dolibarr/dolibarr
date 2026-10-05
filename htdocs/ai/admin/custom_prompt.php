@@ -1,8 +1,10 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
- * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/ai.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,13 +35,19 @@ require_once '../lib/ai.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 
 $langs->loadLangs(array("admin", "website", "other"));
+
+$arrayofaifeatures = getListOfAIFeatures();
+$arrayofai = getListOfAIServices();
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $functioncode = GETPOST('functioncode', 'alpha');
@@ -50,6 +55,7 @@ $pre_prompt = GETPOST('prePrompt');
 $post_prompt = GETPOST('postPrompt');
 $blacklists = GETPOST('blacklists');
 $test = GETPOST('test');
+$key = (string) GETPOST('key', 'alpha');
 
 if (empty($action)) {
 	$action = 'edit';
@@ -62,7 +68,9 @@ $setupnotempty = 0;
 if (!$user->admin) {
 	accessforbidden();
 }
-
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not activated.');
+}
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -71,27 +79,33 @@ if (!class_exists('FormSetup')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
 
+$form = new Form($db);
 $formSetup = new FormSetup($db);
+$aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
-// Setup conf AI_PROMPT
-$item = $formSetup->newItem('AI_CONFIGURATIONS_PROMPT');
-$item->defaultFieldValue = '';
+// Setup conf for AI model
+$formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
+foreach ($arrayofaifeatures as $featurekey => $feature) {
+	$newfeaturekey = $featurekey;
+	if (preg_match('/^text/', $featurekey)) {
+		$newfeaturekey = 'textgeneration';
+	}
+	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$feature["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	if (!empty($arrayofai[$aiservice][$newfeaturekey]['default']) && $arrayofai[$aiservice][$newfeaturekey]['default'] != 'na') {
+		$item->nameText = '<span class="valignmiddle">'.$langs->trans("AI_API_MODEL_".$feature["function"]).' </span><span class="opacitymedium valignmiddle">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newfeaturekey]['default'].')</span>';
+		if (!empty($arrayofai[$aiservice][$newfeaturekey]['examples'])) {
+			$htmltooltip = $langs->trans("Example").': '.$arrayofai[$aiservice][$newfeaturekey]['examples'];
+			$item->nameText .= $form->textwithpicto('', $htmltooltip);
+		}
+	} else {
+		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
+	}
+	$item->cssClass = 'minwidth500 input';
+}
 
 $setupnotempty += count($formSetup->items);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
-// List of AI features
-$arrayofaifeatures = array(
-	'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'development'),
-	'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'development'),
-	'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused'),
-	'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
-	'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
-	'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused'),
-	'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
-	'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused')
-);
 
 
 /*
@@ -102,6 +116,11 @@ $arrayofaifeatures = array(
 
 $currentConfigurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 $currentConfigurations = json_decode($currentConfigurationsJson, true);
+
+if ($action == 'updatefeaturemodel' && !empty($user->admin)) {
+	$formSetup->saveConfFromPost();
+	$action = 'edit';
+}
 
 if ($action == 'update' && $cancel) {
 	$action = 'edit';
@@ -148,8 +167,6 @@ if ($action == 'update' && !$cancel && !$test) {
 
 // Update entry
 if ($action == 'updatePrompts' && !$test) {
-	$key = GETPOST('key', 'alpha');
-
 	$blacklistArray = array_filter(array_map('trim', explode(',', $blacklists)));
 
 	$currentConfigurations[$key] = [
@@ -177,8 +194,6 @@ if ($action == 'updatePrompts' && $test) {
 
 // Delete entry
 if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
-	$key = GETPOST('key', 'alpha');
-
 	if (isset($currentConfigurations[$key])) {
 		unset($currentConfigurations[$key]);
 
@@ -199,26 +214,30 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
  * View
  */
 
-$form = new Form($db);
+$formai = new FormAI($db);
 
 $help_url = '';
 $title = "AiSetup";
 
 llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-ai page-admin_custom_prompt');
 
-// Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = aiAdminPrepareHead();
-print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "fa-microchip");
+print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "ai");
 
-//$newbutton = '<a href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("New").'</a>';
-$newbutton = '';
+$newcardbutton = dolGetButtonTitle($langs->trans('NewCustomPrompt'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1);
+/*
+$newbutton = '<a href="'.$_SERVER["PHP_SELF"].'?action=create" title="'.$langs->trans("NewCustomPrompt").'">';
+$newbutton .= img_picto('', 'add');
+$newbutton .= '</a>';
+*/
 
-print load_fiche_titre($langs->trans("AIPromptForFeatures"), $newbutton, '');
+print load_fiche_titre($langs->trans("AIPromptForFeatures", $arrayofai[$aiservice]['label']), $newcardbutton, '');
+
 
 if ($action == 'deleteproperty') {
 	$formconfirm = $form->formconfirm(
@@ -233,8 +252,10 @@ if ($action == 'deleteproperty') {
 	print $formconfirm;
 }
 
-if ($action == 'edit' || $action == 'deleteproperty') {
-	$out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+if ($action == 'create') {
+	$out = '<div class="addcustomprompt">';
+
+	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$out .= '<input type="hidden" name="action" value="update">';
 
@@ -242,7 +263,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '<table class="noborder centpercent">';
 	$out .= '<thead>';
 	$out .= '<tr class="liste_titre">';
-	$out .= '<td>'.$langs->trans('Add').'</td>';
+	$out .= '<td>'.$langs->trans('NewCustomPrompt').'</td>';
 	$out .= '<td></td>';
 	$out .= '</tr>';
 	$out .= '</thead>';
@@ -256,29 +277,33 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	// Combo list of AI features
 	$out .= '<select name="functioncode" id="functioncode" class="flat minwidth500">';
 	$out .= '<option>&nbsp;</option>';
-	foreach ($arrayofaifeatures as $key => $val) {
-		$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
-		$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
-		$out .= '<option value="'.$key.'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
+	foreach ($arrayofaifeatures as $featurekey => $feature) {
+		$labelhtml = $langs->trans($arrayofaifeatures[$featurekey]['label']).($arrayofaifeatures[$featurekey]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
+		$labeltext = $langs->trans($arrayofaifeatures[$featurekey]['label']);
+		$out .= '<option value="'.dolPrintHTMLForAttribute($featurekey).'" data-html="'.dolPrintHTMLForAttribute($labelhtml).'">'.dolPrintHTML($labeltext).'</option>';
 	}
-	/*
-	$sql = "SELECT name FROM llx_const WHERE name LIKE 'MAIN_MODULE_%' AND value = '1'";
-	$resql = $db->query($sql);
-
-	if ($resql) {
-		while ($obj = $db->fetch_object($resql)) {
-			$moduleName = str_replace('MAIN_MODULE_', '', $obj->name);
-			$out .= '<option value="' . htmlspecialchars($moduleName) . '">' . htmlspecialchars($moduleName) . '</option>';
-		}
-	} else {
-		$out.= '<option disabled>Erreur :'. $db->lasterror().'</option>';
-	}
-	*/
 	$out .= '</select>';
 	$out .= ajax_combobox("functioncode");
+	$out .= '<script type="text/javascript">
+    	jQuery(document).ready(function() {
+			jQuery("#functioncode").on("change", function() {
+				console.log("We change value of ai function");
+ 				var changedValue = $(this).val();
+				console.log(changedValue);
+				var arrayplaceholder = {';
+	foreach ($arrayofaifeatures as $featurekey => $feature) {
+		$out .= dol_sanitizeKeyCode($featurekey).': \''.dol_escape_js(empty($feature['placeholder']) ? '' : $feature['placeholder']).'\',';
+	}
+	$out .= '}
+				jQuery("#prePromptInput'.dol_sanitizeKeyCode($key).'").val(arrayplaceholder[changedValue]);
+			});
+		});
+		</script>
+	';
 
 	$out .= '</td>';
 	$out .= '</tr>';
+
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
 	$out .= '<span id="prePrompt" class="spanforparamtooltip">';
@@ -286,7 +311,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput" name="prePrompt" rows="3"></textarea>';
+	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput'.$key.'" name="prePrompt" rows="2"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
@@ -296,7 +321,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput" name="postPrompt" rows="3"></textarea>';
+	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput" name="postPrompt" rows="2"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
@@ -306,7 +331,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists" rows="3"></textarea>';
+	$out .= '<input type="text" class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists">';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '</tbody>';
@@ -314,32 +339,45 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 
 	$out .= $form->buttonsSaveCancel("Add", "");
 	$out .= '</form>';
-	$out .= '<br><br><br>';
+
+	$out .= "<br>";
+	$out .= "<br>";
+
+	$out .= '</div>';
 
 	print $out;
 }
 
-
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	$out = '';
 
-	if (!empty($currentConfigurations)) {
-		foreach ($currentConfigurations as $key => $config) {
-			if (!empty($key) && !preg_match('/^[a-z]+$/i', $key)) {	// Ignore empty saved setup
+	if (empty($currentConfigurations)) {
+		if ($action != 'create') {
+			print '<!-- no custom prompt-->'."\n";
+			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			print '<br>';
+			print '<br>';
+		}
+		print '<br>';
+	} else {
+		print '<br>';
+
+		foreach ($currentConfigurations as $confkey => $config) {
+			if (!empty($confkey) && !preg_match('/^[a-z]+$/i', $confkey)) {	// Ignore empty saved setup
 				continue;
 			}
 
 			$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$out .= '<input type="hidden" name="key" value="'.$key.'" />';
+			$out .= '<input type="hidden" name="key" value="'.$confkey.'" />';
 			$out .= '<input type="hidden" name="action" value="updatePrompts">';
 			$out .= '<input type="hidden" name="page_y" value="">';
 
 			$out .= '<table class="noborder centpercent">';
 			$out .= '<thead>';
 			$out .= '<tr class="liste_titre">';
-			$out .= '<td class="titlefield">'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
-			$out .= '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
+			$out .= '<td class="titlefield">'.$arrayofaifeatures[$confkey]['picto'].' '.$langs->trans($arrayofaifeatures[$confkey]['label']);
+			$out .= '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($confkey).'">'.img_delete().'</a>';
 			$out .= '</td>';
 			$out .= '<td></td>';
 			$out .= '</tr>';
@@ -351,7 +389,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<span id="prePrompt" class="spanforparamtooltip">'.$langs->trans("Pre-Prompt").'</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput_'.$key.'" name="prePrompt" rows="2">'.$config['prePrompt'].'</textarea>';
+			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput_'.$confkey.'" name="prePrompt" rows="2">'.$config['prePrompt'].'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
 
@@ -360,28 +398,30 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<span id="postPrompt" class="spanforparamtooltip">'.$langs->trans("Post-Prompt").'</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput_'.$key.'" name="postPrompt" rows="2">'.$config['postPrompt'].'</textarea>';
+			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput_'.$confkey.'" name="postPrompt" rows="2">'.$config['postPrompt'].'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
 
-			$out .= '<tr id="fichetwothirdright-'.$key.'" class="oddeven">';
-			$out .= '<td>'.$langs->trans("BlackListWords").'</td>';
+			$out .= '<tr id="fichetwothirdright-'.$confkey.'" class="oddeven">';
+			$out .= '<td>'.$form->textwithpicto($langs->trans("BlackListWords"), $langs->trans("BlackListWordsHelp")).'</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklist_'.$key.'" name="blacklists" rows="3">'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'</textarea>';
+			$out .= '<input type="text" class="flat minwidth500 quatrevingtpercent" id="blacklist_'.$confkey.'" name="blacklists" value="'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'">';
 			$out .= '</td>';
 			$out .= '</tr>';
 
 			$out .= '<tr>';
-			$out .= '<td></td>';
+			$out .= '<td>'.$langs->trans("Test").'</td>';
 			$out .= '<td>';
-			$out .= '<input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
-			$out .= ' &nbsp; ';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
-			$showlinktoailabel = $langs->trans("ToTest");
 			$formmail = new FormMail($db);
-			$htmlname = $key;
+			$formmail->withaiprompt = 'html';		// set format
+
+			$showlinktoai = $confkey;		// 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', ...
+			$showlinktoailabel = $langs->trans("ToTest");
+			$htmlname = $confkey;
+			$onlyenhancements = $confkey;
+			$showlinktolayout = 0;
 
 			// Fill $out
 			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -394,7 +434,11 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '</tbody>';
 			$out .= '</table>';
 
+			$out .= '<center><input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$confkey.'" value="'.dol_escape_htmltag($langs->trans("Save")).'"/></center>';
+
 			$out .= '</form>';
+
+			$out .= '<br><br>';
 		}
 	}
 
@@ -403,10 +447,82 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	print '<br>';
 }
 
+// Availability alert: when the adapter recorded a runtime "model not found /
+// retired" provider error, warn on screen on the page where the models are
+// actually fixed, suggesting the closest model currently offered. Warn only —
+// nothing is changed automatically.
+$runfail = json_decode(getDolGlobalString('AI_MODEL_RUNTIME_FAILURE'), true);
+// Only warn about the provider and model in use now: a record left by another
+// provider describes a setup the administrator has already moved away from.
+$runfailservice = is_array($runfail) ? (string) ($runfail['service'] ?? '') : '';
+if ($runfailservice !== '' && $runfailservice !== getDolGlobalString('AI_API_SERVICE')) {
+	$runfail = null;
+}
+if (is_array($runfail) && !empty($runfail['model'])) {
+	$msg = $langs->trans(
+		"AIModelRuntimeFailureBanner",
+		dol_escape_htmltag((string) $runfail['model']),
+		dol_print_date((int) ($runfail['ts'] ?? 0), 'dayhour'),
+		dol_escape_htmltag((string) ($runfail['message'] ?? ''))
+	);
+	$modellist = getAiProviderModelList($db);
+	if (!empty($modellist['models'])) {
+		$suggest = aiSuggestClosestModel((string) $runfail['model'], $modellist['models']);
+		if ($suggest !== '') {
+			$msg .= ' '.dol_escape_htmltag($langs->trans("AIModelClosestAvailable", $suggest));
+		}
+	}
+	print info_admin($msg, 0, 0, 'warning');
+}
+
+// Custom models
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
+	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
+
+	print $formSetup->generateOutput(true);
+}
+
+
 if (empty($setupnotempty)) {
 	print '<br>'.$langs->trans("NothingToSetup");
 }
 
+
+// Datalist of the provider's available model ids (fed by ajax/list_models.php,
+// cached 1h server-side): every *_MODEL_* text input gets autocompletion, which
+// avoids typos in the seven free-text model fields. The fields stay plain free
+// text (a datalist only suggests, never constrains — required for local AI
+// providers with no model-listing API, where this whole block is a no-op).
+// Active check: a saved model absent from the provider's current list gets a
+// warning picto — warn only, never block, since a listing can be incomplete
+// (aliases, fine-tunes) while the value still works.
+print '<datalist id="ai-model-ids"></datalist>'."\n";
+print '<script nonce="'.getNonce().'">
+fetch("'.dol_buildpath('/ai/ajax/list_models.php', 1).'").then(function (r) { return r.json(); }).then(function (j) {
+	if (!j || !j.models || !j.models.length) return;
+	var dl = document.getElementById("ai-model-ids");
+	j.models.forEach(function (id) { var o = document.createElement("option"); o.value = id; dl.appendChild(o); });
+	document.querySelectorAll("input[name*=\'_MODEL_\']").forEach(function (i) {
+		i.setAttribute("list", "ai-model-ids");
+		if (i.value && j.models.indexOf(i.value) < 0) {
+			// Closest-match suggestion: longest shared prefix with an offered id
+			var v = i.value.toLowerCase(), best = "", bestlen = 0;
+			j.models.forEach(function (m) {
+				var b = m.toLowerCase(), n = 0;
+				while (n < v.length && n < b.length && v.charAt(n) === b.charAt(n)) n++;
+				if (n > bestlen) { bestlen = n; best = m; }
+			});
+			var w = document.createElement("span");
+			w.className = "fas fa-exclamation-triangle pictowarning paddingleft";
+			w.title = \''.dol_escape_js($langs->trans("AIModelNotInProviderList")).'\';
+			if (best && bestlen >= 4) {
+				w.title += \' \' + \''.dol_escape_js($langs->trans("AIModelClosestAvailable", '{m}')).'\'.replace("{m}", best);
+			}
+			i.insertAdjacentElement("afterend", w);
+		}
+	});
+}).catch(function () {});
+</script>'."\n";
 
 // Page end
 print dol_get_fiche_end();

@@ -2,6 +2,7 @@
 IdAgenda=şəxsiyyət hadisəsi
 Actions=Hadisələr
 Agenda=Gündəlik
+AgendaEvents=Gündəlik hadisələr
 TMenuAgenda=Gündəlik
 Agendas=Gündəliklər
 LocalAgenda=Defolt təqvim
@@ -28,11 +29,13 @@ ViewWeek=Həftə görünüşü
 ViewPerUser=İstifadəçi baxışına görə
 ViewPerType=Növə görə görünüş
 AutoActions= Avtomatik doldurma
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= Burada Dolibarr-ın Agenda-da avtomatik olaraq yaratmasını istədiyiniz hadisələri təyin edə bilərsiniz. Heç bir şey yoxlanılmazsa, yalnız əl hərəkətləri qeydlərə daxil ediləcək və Gündəlikdə göstəriləcək. Obyektlərdə görülən biznes əməliyyatlarının avtomatik izlənməsi (təsdiqləmə, statusun dəyişdirilməsi) yadda saxlanmayacaq.
 AgendaSetupOtherDesc= Bu səhifə Dolibarr hadisələrinizin xarici təqvimə (Thunderbird, Google Calendar və s...) ixracına icazə vermək üçün seçimlər təqdim edir.
 AgendaExtSitesDesc=Bu səhifə təqvimlərin xarici mənbələrini elan etməyə imkan verir ki, onların hadisələri Dolibarr gündəliyinə daxil olsun.
 ActionsEvents=Dolibarrın avtomatik olaraq gündəmdə hərəkət yaradacağı hadisələr
 EventRemindersByEmailNotEnabled=E-poçt vasitəsilə tədbir xatırlatmaları %s modul quraşdırmasında aktiv edilmədi.
+EventRemindersBySmsNotEnabled=Event reminders by sms was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Üçüncü tərəf %s yaradıldı
 COMPANY_MODIFYInDolibarr=Üçüncü tərəf %s dəyişdirildi
@@ -44,6 +47,7 @@ PropalClosedRefusedInDolibarr=%s təklifi rədd edildi
 PropalValidatedInDolibarr=Təklif %s doğrulandı
 PropalBackToDraftInDolibarr=Təklif %s qaralama statusuna qayıdın
 PropalClassifiedBilledInDolibarr=Təklif %s təsnifləşdirilib
+InvoiceCreatedInDolibarr=%s faktura yaradıldı
 InvoiceValidatedInDolibarr=%s faktura təsdiqləndi
 InvoiceValidatedInDolibarrFromPos=%s faktura POS-dan təsdiq edilib
 InvoiceBackToDraftInDolibarr=Faktura %s qaralama statusuna qayıdın
@@ -137,8 +141,8 @@ AgendaUrlOptions1=Siz həmçinin çıxışı filtrləmək üçün aşağıdakı 
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s>TXPROTECT-9a4b739END1-ə avtomatik və ya əllə TX8 hadisələrini əldə edin</span
+AgendaUrlOptionsCode=<b>actioncode=%s>TXPROTECT-9a4b739fEND1 üçün yalnız TXPROTECT-9a4b739fEND1 verilmişdir.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> bayram günlərini əhatə edəcək.
 AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
 AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
@@ -168,8 +172,10 @@ OnceOnly=Yalnız bir dəfə
 EveryDay=Hər gün
 EveryWeek=Hər həftə
 EveryMonth=Hər ay
+EveryYear=Every year
 DayOfMonth=Ayın günü
 DayOfWeek=Həftənin günü
+DayOfYear=Day of year
 DateStartPlusOne=Başlama tarixi + 1 saat
 SetAllEventsToTodo=Bütün hadisələri görüləcək işlərə təyin edin
 SetAllEventsToInProgress=Bütün hadisələri davam edənə təyin edin
@@ -202,6 +208,16 @@ AppointmentDuration = Görüş müddəti : %s
 BookingSuccessfullyBooked=Rezervasyonunuz yadda saxlanıldı
 BookingReservationHourAfter=%s tarixində görüşümüzü rezerv etməyi təsdiq edirik
 BookcalBookingTitle=Onlayn görüş
-Transparency = Transparency
-ReadMore = Read more
-ReadLess = Read less
+Transparency = Şəffaflıq
+ReadMore = Daha ətraflı oxuyun
+ReadLess = Daha az oxu
+RecurringEvent=Təkrarlanan hadisə
+EventPartOfARecurringSerie=Tədbir ID %s olan təkrarlanan seriyanın bir hissəsidir
+BookCalSystem=Onlayn rezervasiya
+BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
+PublicLinkForBooking=Public link for booking
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

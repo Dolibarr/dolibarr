@@ -1,10 +1,10 @@
 <?php
-/**
- * Copyright (C) 2018    	Andreu Bisquerra   		<jove@bisquerra.com>
+/* Copyright (C) 2018    	Andreu Bisquerra   		<jove@bisquerra.com>
  * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,8 @@ $idproduct = GETPOSTINT('idproduct');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 $mobilepage = GETPOST('mobilepage', 'alpha');
+$batch = GETPOST('batch', 'alpha');
+$sourceinvoiceid = GETPOSTINT('sourceinvoiceid');
 
 // Terminal is stored into $_SESSION["takeposterminal"];
 
@@ -78,7 +80,7 @@ if (!$user->hasRight('takepos', 'run') && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 	accessforbidden('No permission to use the TakePOS');
 }
 
-if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "") {
 		if (getDolGlobalString('TAKEPOS_NUM_TERMINALS') == "1") {
@@ -103,8 +105,8 @@ if (empty($takeposterminal)) {
 		$takeposterminal = $_SESSION["takeposterminal"];
 	} else {
 		print <<<SCRIPT
-<script language="javascript">
-	$( document ).ready(function() {
+<script type="text/javascript">
+	jQuery(function() {
 		ModalBox('ModalTerminal');
 	});
 </script>
@@ -118,7 +120,7 @@ SCRIPT;
  * Abort invoice creation with a given error message
  *
  * @param   string  $message        Message explaining the error to the user
- * @return	void
+ * @return	never
  */
 function fail($message)
 {
@@ -126,9 +128,60 @@ function fail($message)
 	die($message);
 }
 
+/**
+ * Delete an invoice line and the TakePOS supplement lines attached to it.
+ *
+ * @param	Facture	$invoice	Invoice object
+ * @param	int		$lineid		Line id to delete
+ * @return	int					Return integer <0 if KO, >0 if OK
+ */
+function takeposDeleteLineWithChildren($invoice, $lineid)
+{
+	$lineid = (int) $lineid;
+	if ($lineid <= 0) {
+		return 0;
+	}
+
+	$childrenbyparent = array();
+	if (is_array($invoice->lines)) {
+		foreach ($invoice->lines as $line) {
+			$parentid = (int) $line->fk_parent_line;
+			if ($parentid > 0) {
+				$childrenbyparent[$parentid][] = (int) $line->id;
+			}
+		}
+	}
+
+	$linestodelete = array();
+	$stack = array($lineid);
+	while (!empty($stack)) {
+		$currentlineid = array_pop($stack);
+		if (in_array($currentlineid, $linestodelete, true)) {
+			continue;
+		}
+
+		$linestodelete[] = $currentlineid;
+		if (!empty($childrenbyparent[$currentlineid])) {
+			foreach ($childrenbyparent[$currentlineid] as $childlineid) {
+				$stack[] = $childlineid;
+			}
+		}
+	}
+
+	// Delete supplements before their parent line so no orphan line remains visible on receipts.
+	foreach (array_reverse($linestodelete) as $deletelineid) {
+		$result = $invoice->deleteLine($deletelineid);
+		if ($result < 0) {
+			return $result;
+		}
+	}
+
+	return 1;
+}
 
 
-$number = GETPOST('number', 'alpha');
+
+$number = (float) GETPOST('number', 'alpha');
 $idline = GETPOSTINT('idline');
 $selectedline = GETPOSTINT('selectedline');
 $desc = GETPOST('desc', 'alphanohtml');
@@ -148,10 +201,10 @@ if ($pay == 'cheque') {
 	$paycode = 'CHQ'; // For backward compatibility
 }
 
-// Retrieve paiementid
+// Retrieve paiementid and paiementcode
 $paiementid = 0;
 if ($paycode) {
-	$sql = "SELECT id FROM ".MAIN_DB_PREFIX."c_paiement";
+	$sql = "SELECT id, code FROM ".MAIN_DB_PREFIX."c_paiement";
 	$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
 	$sql .= " AND code = '".$db->escape($paycode)."'";
 	$resql = $db->query($sql);
@@ -167,7 +220,7 @@ $invoice = new Facture($db);
 if ($invoiceid > 0) {
 	$ret = $invoice->fetch($invoiceid);
 } else {
-	$ret = $invoice->fetch('', '(PROV-POS'.$takeposterminal.'-'.$place.')');
+	$ret = $invoice->fetch(0, '(PROV-POS'.$takeposterminal.'-'.$place.')');
 }
 if ($ret > 0) {
 	$placeid = $invoice->id;
@@ -179,7 +232,7 @@ $soc = new Societe($db);
 if ($invoice->socid > 0) {
 	$soc->fetch($invoice->socid);
 } else {
-	$soc->fetch(getDolGlobalString($constforcompanyid));
+	$soc->fetch(getDolGlobalInt($constforcompanyid));
 }
 
 // Assign a default project, if relevant
@@ -207,6 +260,16 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+
+$sectionwithinvoicelink = '';
+$CUSTOMER_DISPLAY_line1 = '';
+$CUSTOMER_DISPLAY_line2 = '';
+$headerorder = '';
+$footerorder = '';
+$printer = null;
+$idoflineadded = 0;
+$clonebatch = GETPOSTINT('clonebatch');
+
 // Enforce the "edit lines" permission on every action that modifies an existing line
 // (delete, quantity, price, discount). Adding a line, a free zone or a note is gated by
 // the "run" permission elsewhere and must stay available to a plain cashier (#38949).
@@ -215,9 +278,134 @@ if (in_array($action, array('deleteline', 'updateqty', 'updateprice', 'updatered
 	$action = '';
 }
 
+
 if (empty($reshook)) {
+	if ($action == 'cloneticket' && $user->hasRight('takepos', 'run')) {
+		$cloneid = 0;
+		$cloneplace = '';
+		$clonemessage = '';
+		$sourceinvoice = new Facture($db);
+		$result = $sourceinvoice->fetch($sourceinvoiceid);
+		$targetentity = !empty($_SESSION['takeposinvoiceentity']) ? (int) $_SESSION['takeposinvoiceentity'] : (int) $conf->entity;
+
+		if ($result <= 0 || $sourceinvoice->module_source != 'takepos' || !in_array($sourceinvoice->status, array(Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED)) || $sourceinvoice->type == Facture::TYPE_CREDIT_NOTE || (int) $sourceinvoice->entity != $targetentity) {
+			$langs->load('errors');
+			$clonemessage = $langs->trans('ErrorBadValueForParameter', 'sourceinvoiceid');
+			setEventMessages($clonemessage, null, 'errors');
+		} else {
+			$cloneinvoice = dol_clone($sourceinvoice, 1);
+			'@phan-var-force Facture $cloneinvoice';
+			$cloneinvoice->date = dol_now();
+			$cloneid = $cloneinvoice->createFromClone($user, $sourceinvoiceid, $targetentity);
+
+			if ($cloneid > 0) {
+				$cloneplace = '0';
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ref = '(PROV-POS".$db->escape((string) $takeposterminal)."-0)' AND entity IN (".getEntity('invoice').")";
+				$resql = $db->query($sql);
+				if ($resql && $db->num_rows($resql) > 0) {
+					$max_sale = 0;
+					$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."facture WHERE entity IN (".getEntity('invoice').") AND ref LIKE '(PROV-POS".$db->escape((string) $takeposterminal)."-0-%'";
+					$resql2 = $db->query($sql);
+					if ($resql2) {
+						while ($obj = $db->fetch_object($resql2)) {
+							$num_sale = str_replace(")", "", str_replace("(PROV-POS".$takeposterminal."-0-", "", $obj->ref));
+							if ((int) $num_sale > $max_sale) {
+								$max_sale = (int) $num_sale;
+							}
+						}
+					}
+					$cloneplace = '0-'.($max_sale + 1);
+				}
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+				$sql .= " SET module_source = 'takepos', pos_source = '".$db->escape((string) $takeposterminal)."',";
+				$sql .= " ref = '".$db->escape("(PROV-POS".((string) $takeposterminal)."-".$cloneplace.")")."'";
+				$sql .= " WHERE rowid = ".((int) $cloneid);
+				$result = $db->query($sql);
+
+				if ($result && isModEnabled('productbatch') && isModEnabled('stock')) {
+					$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet";
+					$sql .= " SET batch = NULL, fk_warehouse = NULL";
+					$sql .= " WHERE fk_facture = ".((int) $cloneid);
+					$sql .= " AND fk_product IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE tobatch > 0)";
+					$result = $db->query($sql);
+				}
+			}
+
+			if ($cloneid > 0 && $result) {
+				$place = $cloneplace;
+				$placeid = $cloneid;
+				$invoice = new Facture($db);
+				$invoice->fetch($cloneid);
+				$clonebatch = 1;
+			} else {
+				if ($cloneid > 0) {
+					$cloneinvoice->fetch($cloneid);
+					$cloneinvoice->delete($user);
+					$cloneid = 0;
+				}
+				$langs->load('errors');
+				$clonemessage = !empty($cloneinvoice->error) ? $cloneinvoice->error : $langs->trans('ErrorFailedToCloneTicket');
+				setEventMessages($clonemessage, $cloneinvoice->errors, 'errors');
+			}
+		}
+
+		if (GETPOST('format', 'aZ09') == 'json') {
+			$batchlineid = 0;
+			$batchproductid = 0;
+			if ($cloneid > 0 && isModEnabled('productbatch') && isModEnabled('stock')) {
+				$sql = 'SELECT fd.rowid, fd.fk_product';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet AS fd, '.MAIN_DB_PREFIX.'product AS p';
+				$sql .= ' WHERE fd.fk_product = p.rowid';
+				$sql .= ' AND fd.fk_facture = '.((int) $cloneid);
+				$sql .= " AND (fd.batch IS NULL OR fd.batch = '') AND p.tobatch > 0";
+				$sql .= ' ORDER BY fd.rang, fd.rowid';
+				$sql .= $db->plimit(1);
+				$resql = $db->query($sql);
+				if ($resql && ($obj = $db->fetch_object($resql))) {
+					$batchlineid = (int) $obj->rowid;
+					$batchproductid = (int) $obj->fk_product;
+				}
+			}
+
+			top_httphead('application/json');
+			echo json_encode(array('success' => $cloneid > 0, 'invoiceid' => $cloneid, 'place' => $cloneplace, 'batchlineid' => $batchlineid, 'batchproductid' => $batchproductid, 'message' => $clonemessage));
+			exit;
+		}
+	}
+
+	// Test that period is not close
+	$tmpcurrentday = dol_getdate(dol_now());
+
+	$sql = "SELECT MIN(ref) as firstref FROM ".MAIN_DB_PREFIX."pos_cash_fence";
+	$sql .= " WHERE entity = ".((int) $conf->entity);
+	$sql .= " AND posnumber = ".((int) $takeposterminal);
+	$sql .= " AND year_close = ".((int) $tmpcurrentday['year']);
+	$sql .= " AND (";
+	$sql .= " (month_close IS NULL AND day_close IS NULL)";
+	$sql .= " OR (month_close = ".((int) $tmpcurrentday['mon'])." AND day_close IS NULL)";
+	$sql .= " OR (month_close = ".((int) $tmpcurrentday['mon'])." AND day_close = ".((int) $tmpcurrentday['mday']).")";
+	$sql .= ")";
+	$sql .= " AND status = 1";
+
+	$refcashcontrol = 0;
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$refcashcontrol = $obj->firstref;
+		}
+	}
+
+	if ($refcashcontrol) {
+		$error++;
+		$langs->load('errors');
+		dol_htmloutput_errors($langs->trans("ACashControlHasBeenclosedForCurrentDay", $refcashcontrol), [], 1);
+		$action = '';
+	}
+
 	// Action to record a payment on a TakePOS invoice
-	if ($action == 'valid' && $user->hasRight('facture', 'creer')) {
+	if ($action == 'valid' && $user->hasRight('takepos', 'run')) {
 		$bankaccount = 0;
 		$error = 0;
 
@@ -245,6 +433,8 @@ if (empty($reshook)) {
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
 
+		$invoice->oldcopy = dol_clone($invoice, 2);
+
 		$db->begin();
 
 		if ($invoice->total_ttc < 0) {
@@ -257,11 +447,12 @@ if (empty($reshook)) {
 			$sql .= " AND fk_statut >= ".$invoice::STATUS_VALIDATED;
 			$sql .= " ORDER BY rowid DESC";
 
+			$fk_source = 0;
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				$fk_source = $obj->rowid;
-				if ($fk_source == null) {
+				if ((int) $fk_source == 0) {
 					fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
 				}
 			} else {
@@ -278,7 +469,8 @@ if (empty($reshook)) {
 			dol_htmloutput_errors($errormsg, [], 1);
 		} elseif ($invoice->status != Facture::STATUS_DRAFT) {
 			//If invoice is validated but it is not fully paid is not error and make the payment
-			if ($invoice->getRemainToPay() > 0) {
+			$remaintopay = $invoice->getRemainToPay();
+			if (($remaintopay > 0 && $invoice->type != Facture::TYPE_CREDIT_NOTE) || ($remaintopay < 0 && $invoice->type == Facture::TYPE_CREDIT_NOTE)) {
 				$res = 1;
 			} else {
 				dol_syslog("Sale already validated");
@@ -289,7 +481,7 @@ if (empty($reshook)) {
 			dol_syslog('Sale without lines');
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), [], 1);
 		} elseif (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
-			// Validation of invoice with change into stock when produt/lot module is NOT enabled and stock change NOT disabled.
+			// Validation of invoice with change into stock when product/lot module is NOT enabled and stock change NOT disabled.
 			// The case for isModEnabled('productbatch') is processed few lines later.
 			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
 
@@ -307,6 +499,7 @@ if (empty($reshook)) {
 			$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 		} else {
 			// Validation of invoice with no change into stock (because param $idwarehouse is not fill)
+			dol_syslog("Call validate on invoice ".$invoice->ref, LOG_DEBUG);
 			$res = $invoice->validate($user);
 			if ($res < 0) {
 				$error++;
@@ -318,7 +511,8 @@ if (empty($reshook)) {
 		// Add the payment
 		if (!$error && $res >= 0) {
 			$remaintopay = $invoice->getRemainToPay();
-			if ($remaintopay > 0) {
+			// Credit notes have negative remaintopay; regular invoices have positive
+			if (($remaintopay > 0 && $invoice->type != Facture::TYPE_CREDIT_NOTE) || ($remaintopay < 0 && $invoice->type == Facture::TYPE_CREDIT_NOTE)) {
 				$payment = new Paiement($db);
 
 				$payment->datepaye = $now;
@@ -336,18 +530,25 @@ if (empty($reshook)) {
 				// We do not set $payments->multicurrency_amounts because we want payment to be in main currency.
 
 				$payment->paiementid = $paiementid;
-				$payment->num_payment = $invoice->ref;
+				$payment->paiementcode = $paycode;
+				$payment->num_payment = '';
 
 				if ($pay != "delayed") {
-					$res = $payment->create($user);
+					$res = $payment->create($user);		// This record payment and regenerate the PDF
 					if ($res < 0) {
 						$error++;
-						dol_htmloutput_errors($langs->trans('Error').' '.$payment->error, $payment->errors, 1);
+						//setEventMessages($payment->error, $payment->errors, 'error');
+						dol_htmloutput_mesg($payment->error, $payment->errors, 'error', 1);
 					} else {
+						//setEventMessages(null, $payment->warnings, 'warnings');
+						if (!empty($payment->warnings)) {
+							dol_htmloutput_mesg('', $payment->warnings, 'warning', 1);
+						}
+
 						$res = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 						if ($res < 0) {
 							$error++;
-							dol_htmloutput_errors($langs->trans('ErrorNoPaymentDefined').' '.$payment->error, $payment->errors, 1);
+							dol_htmloutput_mesg($langs->trans('ErrorNoPaymentDefined').' '.$payment->error, $payment->errors, 'error', 1);
 						}
 					}
 					$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
@@ -362,6 +563,7 @@ if (empty($reshook)) {
 				if ($result > 0) {
 					$invoice->paye = 1;
 					$invoice->status = $invoice::STATUS_CLOSED;
+					$invoice->close_code = '';
 				}
 				// set payment method
 				$invoice->setPaymentMethods($paiementid);
@@ -372,6 +574,8 @@ if (empty($reshook)) {
 			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 		}
 
+
+		$warehouseid = 0;
 		// Update stock for batch products
 		if (!$error && $res >= 0) {
 			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
@@ -392,12 +596,17 @@ if (empty($reshook)) {
 					// var_dump('fk_product='.$line->fk_product.' batch='.$line->batch.' warehouse='.$line->fk_warehouse.' qty='.$line->qty);
 					if ($line->batch != '' && $warehouseid > 0) {
 						$prod_batch = new Productbatch($db);
-						$prod_batch->find(0, '', '', $line->batch, $warehouseid, $line->fk_product);
+						$prod_batch->find(0, '', '', $line->batch, $warehouseid, (int) $line->fk_product);
 
 						$mouvP = new MouvementStock($db);
 						$mouvP->setOrigin($invoice->element, $invoice->id);
 
-						$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', $prod_batch->batch, $prod_batch->id, $inventorycode);
+						if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
+							$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', $line->batch, '', 0, $inventorycode);
+						} else {
+							$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', $prod_batch->batch, $prod_batch->id, $inventorycode);
+						}
+
 						if ($res < 0) {
 							dol_htmloutput_errors($mouvP->error, $mouvP->errors, 1);
 							$error++;
@@ -406,7 +615,12 @@ if (empty($reshook)) {
 						$mouvP = new MouvementStock($db);
 						$mouvP->setOrigin($invoice->element, $invoice->id);
 
-						$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
+						if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
+							$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
+						} else {
+							$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
+						}
+
 						if ($res < 0) {
 							dol_htmloutput_errors($mouvP->error, $mouvP->errors, 1);
 							$error++;
@@ -419,10 +633,17 @@ if (empty($reshook)) {
 		if (!$error && $res >= 0) {
 			$db->commit();
 		} else {
+			$invoice->ref = $invoice->oldcopy->ref;
+			$invoice->paye = $invoice->oldcopy->paye;
+			$invoice->status = $invoice->oldcopy->status;
+			$invoice->statut = $invoice->oldcopy->statut;
+
 			$db->rollback();
 		}
 	}
-	if ($action == 'creditnote' && $user->hasRight('facture', 'creer')) {
+
+	$creditnote = null;
+	if ($action == 'creditnote' && $user->hasRight('takepos', 'run')) {
 		$db->begin();
 
 		$creditnote = new Facture($db);
@@ -432,8 +653,7 @@ if (empty($reshook)) {
 		$creditnote->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 		$creditnote->type = Facture::TYPE_CREDIT_NOTE;
 		$creditnote->fk_facture_source = $placeid;
-		//$creditnote->remise_absolue = $invoice->remise_absolue;
-		//$creditnote->remise_percent = $invoice->remise_percent;
+
 		$creditnote->create($user);
 
 		$fk_parent_line = 0; // Initialise
@@ -547,71 +767,57 @@ if (empty($reshook)) {
 		}
 		$creditnote->update_price(1);
 
-		// The credit note is create here. We must now validate it.
+		// The credit note is created here.
+		// If TAKEPOS_VALIDATE_CREDIT_NOTE_ON_CREATION is set, we validate it immediately (old behavior).
+		// Otherwise, it is left as draft so it can be edited from TakePOS (e.g. to modify quantities or batches).
+		// Stock movements will be done when the credit note is validated later (via Payment / Valid action).
+		$res = 1;
+		if (getDolGlobalString('TAKEPOS_VALIDATE_CREDIT_NOTE_ON_CREATION')) {
+			$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+			$allowstockchange = getDolGlobalString($constantforkey) != "1";
 
-		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-		$allowstockchange = getDolGlobalString($constantforkey) != "1";
+			if (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
+				$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
+				$conf->global->STOCK_CALCULATE_ON_BILL = 1; // Force stock update on invoice validation
 
-		if (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
-			// If module stock is enabled and we do not setup takepo to disable stock decrease
-			// The case for isModEnabled('productbatch') is processed few lines later.
-			$savconst = getDolGlobalString('STOCK_CALCULATE_ON_BILL');
-			$conf->global->STOCK_CALCULATE_ON_BILL = 1;	// We force setup to have update of stock on invoice validation/unvalidation
+				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+				$warehouseid = getDolGlobalInt($constantforkey);
 
-			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+				dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey)." or warehouseid= ".$warehouseid." if defined.");
 
-			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalString($constantforkey)." or warehouseid= ".$warehouseid." if defined.");
+				$batch_rule = 0; // Module productbatch is disabled here, so no need for a batch_rule.
+				$res = $creditnote->validate($user, '', $warehouseid, 0, $batch_rule);
+				if ($res < 0) {
+					$error++;
+					dol_htmloutput_errors($creditnote->error, $creditnote->errors, 1);
+				}
 
-			// Validate invoice with stock change into warehouse getDolGlobalInt($constantforkey)
-			// Label of stock movement will be the same as when we validate invoice "Invoice XXXX validated"
-			$batch_rule = 0;	// Module productbatch is disabled here, so no need for a batch_rule.
-			$res = $creditnote->validate($user, '', getDolGlobalString($constantforkey), 0, $batch_rule);
-			if ($res < 0) {
-				$error++;
-				dol_htmloutput_errors($creditnote->error, $creditnote->errors, 1);
+				// Restore setup
+				$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
+			} else {
+				$res = $creditnote->validate($user);
 			}
 
-			// Restore setup
-			$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
-		} else {
-			$res = $creditnote->validate($user);
-		}
+			// Update stock for batch products
+			if (!$error && $res >= 0) {
+				if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
+					dol_syslog("Now we record the stock movement for each qualified line");
 
-		// Update stock for batch products
-		if (!$error && $res >= 0) {
-			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
-				// Update stocks
-				dol_syslog("Now we record the stock movement for each qualified line");
+					require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
+					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+					$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
+					$labeltakeposmovement = 'TakePOS - '.$langs->trans("CreditNote").' '.$creditnote->ref;
 
-				// The case !isModEnabled('productbatch') was processed few lines before.
-				require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
-				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-				$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
-				// Label of stock movement will be "TakePOS - Invoice XXXX"
-				$labeltakeposmovement = 'TakePOS - '.$langs->trans("CreditNote").' '.$creditnote->ref;
-
-				foreach ($creditnote->lines as $line) {
-					// Use the warehouse id defined on invoice line else in the setup
-					$warehouseid = ($line->fk_warehouse ? $line->fk_warehouse : getDolGlobalInt($constantforkey));
-					//var_dump('fk_product='.$line->fk_product.' batch='.$line->batch.' warehouse='.$line->fk_warehouse.' qty='.$line->qty);exit;
-
-					if ($line->batch != '' && $warehouseid > 0) {
-						//$prod_batch = new Productbatch($db);
-						//$prod_batch->find(0, '', '', $line->batch, $warehouseid);
+					foreach ($creditnote->lines as $line) {
+						// Use the warehouse id defined on invoice line else in the setup
+						$warehouseid = ($line->fk_warehouse ? $line->fk_warehouse : getDolGlobalInt($constantforkey));
 
 						$mouvP = new MouvementStock($db);
 						$mouvP->setOrigin($creditnote->element, $creditnote->id);
 
-						$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', $line->batch, '', 0, $inventorycode);
-						if ($res < 0) {
-							dol_htmloutput_errors($mouvP->error, $mouvP->errors, 1);
-							$error++;
-						}
-					} else {
-						$mouvP = new MouvementStock($db);
-						$mouvP->setOrigin($creditnote->element, $creditnote->id);
+						$batch_to_use = ($line->batch != '' && $warehouseid > 0) ? $line->batch : '';
 
-						$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
+						$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', $batch_to_use, '', 0, $inventorycode);
 						if ($res < 0) {
 							dol_htmloutput_errors($mouvP->error, $mouvP->errors, 1);
 							$error++;
@@ -621,7 +827,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && $res >= 0) {
+		if (!$error) {
 			$db->commit();
 		} else {
 			$creditnote->id = $placeid;	// Creation has failed, we reset to ID of source invoice so we go back to this one in action=history
@@ -630,7 +836,7 @@ if (empty($reshook)) {
 	}
 
 	if (($action == 'history' || $action == 'creditnote') && $user->hasRight('takepos', 'run')) {
-		if ($action == 'creditnote' && $creditnote->id > 0) {	// Test on permission already done
+		if ($action == 'creditnote' && $creditnote !== null && $creditnote->id > 0) {	// Test on permission already done
 			$placeid = $creditnote->id;
 		} else {
 			$placeid = GETPOSTINT('placeid');
@@ -653,6 +859,18 @@ if (empty($reshook)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$invoice->date = $dateinvoice;		// Invoice::create() needs a date with no hours
 
+		/*
+		print "monthuser=".$monthuser." dayuser=".$dayuser." yearuser=".$yearuser.'<br>';
+		print '---<br>';
+		print 'TZSERVER: '.dol_print_date(dol_now('tzserver'), 'dayhour', 'gmt').'<br>';
+		print 'TZUSER: '.dol_print_date(dol_now('tzuserrel'), 'dayhour', 'gmt').'<br>';
+		print 'GMT: '.dol_print_date(dol_now('gmt'), 'dayhour', 'gmt').'<br>';	// Hour in greenwich
+		print '---<br>';
+		print dol_print_date($invoice->date, 'dayhour', 'gmt').'<br>';
+		print "IN SQL, we will got: ".dol_print_date($db->idate($invoice->date), 'dayhour', 'gmt').'<br>';
+		print dol_print_date($db->idate($invoice->date, 'gmt'), 'dayhour', 'gmt').'<br>';
+		*/
+
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 		$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
@@ -665,15 +883,18 @@ if (empty($reshook)) {
 
 			// Create invoice
 			$placeid = $invoice->create($user);
+
 			if ($placeid < 0) {
-				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
-			}
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
-			$sql .= " SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-			$sql .= " WHERE rowid = ".((int) $placeid);
-			$resql = $db->query($sql);
-			if (!$resql) {
 				$error++;
+				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+			} else {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+				$sql .= " SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+				$sql .= " WHERE rowid = ".((int) $placeid);
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+				}
 			}
 
 			if (!$error) {
@@ -684,7 +905,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	// If we add a line by click on product (invoice exists here because it was created juste before if it didn't exists)
+	$tva_npr = 0;
+	// If we add a line by clicking on a product (invoice exists here because it was created juste before if it didn't exists)
 	if ($action == "addline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$prod = new Product($db);
 		$prod->fetch($idproduct);
@@ -694,13 +916,13 @@ if (empty($reshook)) {
 
 		$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 
-		$qty = GETPOSTISSET('qty') ? GETPOSTFLOAT('qty') : 1;
+		$qty = GETPOSTISSET('qty') ? GETPOSTFLOAT('qty', '', GETPOSTINT('qty_std') ? 1 : 2) : 1;
 		$price = $datapriceofproduct['pu_ht'];
 		$price_ttc = $datapriceofproduct['pu_ttc'];
 		//$price_min = $datapriceofproduct['price_min'];
 		$price_base_type = empty($datapriceofproduct['price_base_type']) ? 'HT' : $datapriceofproduct['price_base_type'];
 		$tva_tx = $datapriceofproduct['tva_tx'];
-		$tva_npr = $datapriceofproduct['tva_npr'];
+		$tva_npr = (int) $datapriceofproduct['tva_npr'];
 
 		// Local Taxes
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
@@ -741,7 +963,7 @@ if (empty($reshook)) {
 				echo "<script>\n";
 				echo "function addbatch(batch, warehouseid) {\n";
 				echo "console.log('We add batch '+batch+' from warehouse id '+warehouseid);\n";
-				echo '$("#poslines").load("'.DOL_URL_ROOT.'/takepos/invoice.php?action=addline&batch="+encodeURI(batch)+"&warehouseid="+warehouseid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {});'."\n";
+				echo '$("#poslines").load("'.DOL_URL_ROOT.'/takepos/invoice.php?action=addline&batch="+encodeURIComponent(batch)+"&warehouseid="+warehouseid+"&place='.$place.'&idproduct='.$idproduct.'&token='.newToken().'", function() {});'."\n";
 				echo "}\n";
 				echo "</script>\n";
 
@@ -763,12 +985,12 @@ if (empty($reshook)) {
 							print '<td class="left">';
 							$detail = '';
 							$detail .= '<span class="opacitymedium">'.$langs->trans("LotSerial").':</span> '.$dbatch->batch;
-							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-								//$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
-							}
-							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-								//$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
-							}
+							//if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+							//$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+							//}
+							//if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+							//$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
+							//}
 							$detail .= '</td><td>';
 							$detail .= '<span class="opacitymedium">'.$langs->trans("Qty").':</span> '.$dbatch->qty;
 							$detail .= '</td><td>';
@@ -785,6 +1007,16 @@ if (empty($reshook)) {
 						}
 					}
 				}
+
+				if ($nbofsuggested == 0) {
+					// Add manual entry for returns or new batches when stock is 0
+					print '<tr><td class="left" style="padding-top: 10px; border-top: 1px solid #ddd; text-align: center;">';
+					print '<span class="opacitymedium">'.$langs->trans("LotSerial").' (Manual) :</span> ';
+					print '<input type="text" id="manual_batch_add" class="flat" size="10"> ';
+					print '<button class="button" onclick="addbatch(document.getElementById(\'manual_batch_add\').value, '.$warehouseid.')">'.$langs->trans("Add").'</button>';
+					print '</td></tr>';
+				}
+
 				print "</table>";
 
 				print '</body></html>';
@@ -810,10 +1042,9 @@ if (empty($reshook)) {
 			}
 		}
 
-		$idoflineadded = 0;
 		$err = 0;
-		// Group if enabled. Skip group if line already sent to the printer
-		if (getDolGlobalString('TAKEPOS_GROUP_SAME_PRODUCT')) {
+		// Group if enabled. Skip group if line already sent to the printer, or if product requires a batch/serial number (cannot group different serials)
+		if (getDolGlobalString('TAKEPOS_GROUP_SAME_PRODUCT') && empty($prod->status_batch)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code == 4) {
@@ -885,7 +1116,7 @@ if (empty($reshook)) {
 				}
 
 				if (empty($err)) {
-					$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (empty($parent_line) ? '' : $parent_line), (empty($line['fk_fournprice']) ? 0 : $line['fk_fournprice']), (empty($line['pa_ht']) ? '' : $line['pa_ht']), '', $line['array_options'], 100, '', null, 0);
+					$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, (float) $line['remise_percent'], '', 0, 0, 0, 0, $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (empty($parent_line) ? '' : $parent_line), (empty($line['fk_fournprice']) ? 0 : $line['fk_fournprice']), (empty($line['pa_ht']) ? '' : $line['pa_ht']), '', $line['array_options'], 100, 0, $prod->fk_unit, 0);
 				}
 			}
 
@@ -898,7 +1129,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	// If we add a line by submitting freezone form (invoice exists here because it was created juste before if it didn't exists)
+	// If we add a line by submitting freezone form (invoice exists here because it was created just before if it didn't exist)
 	if ($action == "freezone" && $user->hasRight('takepos', 'run')) {
 		$customer = new Societe($db);
 		$customer->fetch($invoice->socid);
@@ -916,7 +1147,7 @@ if (empty($reshook)) {
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-		$res = $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', getDolGlobalInt('TAKEPOS_DISCOUNT_TTC') ? ($number >= 0 ? 'HT' : 'TTC') : (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC'), $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
+		$res = $invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, 0, getDolGlobalInt('TAKEPOS_DISCOUNT_TTC') ? ($number >= 0 ? 'HT' : 'TTC') : (getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC'), $number, 0, -1, 0, '', 0, 0, 0, 0, '', array(), 100, 0, null, 0);
 		if ($res < 0) {
 			dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 		}
@@ -937,7 +1168,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "deleteline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+	if ($action == "deleteline" && ($user->hasRight('takepos', 'editlines') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		/*
 		$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
@@ -947,28 +1178,47 @@ if (empty($reshook)) {
 				// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 			}
 		}*/
+		$db->begin();
 
-		if ($idline > 0 && $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
-			$invoice->deleteLine($idline);
+		if ($idline > 0 && $placeid > 0) { 	// If invoice exists and a line is selected.
+			$result = takeposDeleteLineWithChildren($invoice, $idline);
+			if ($result < 0) {
+				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+			}
 			$invoice->fetch($placeid);
-		} elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
+		} elseif ($placeid > 0) {           // If invoice exists but no line selected (delete from another device or with no line selected), proceed to delete the last line.
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".((int) $placeid)." ORDER BY rowid DESC";
 			$resql = $db->query($sql);
-			$row = $db->fetch_array($resql);
-			$deletelineid = $row[0];
-			$invoice->deleteLine($deletelineid);
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$deletelineid = $obj->rowid;
+				$result = takeposDeleteLineWithChildren($invoice, $deletelineid);
+				if ($result < 0) {
+					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+				}
+			}
 			$invoice->fetch($placeid);
 		}
 
-		if (count($invoice->lines) == 0) {
-			$invoice->delete($user);
+		$db->commit();
 
-			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-				header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
-			} else {
-				header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+		if (count($invoice->lines) == 0) {
+			// Keep an empty draft invoice alive when a non-default customer was
+			// already attached so deleting the last line does not silently lose
+			// the customer that was just selected (#38219). Only drop the invoice
+			// when it is still on the default cashdesk thirdparty (or none).
+			$defaultsocid = (int) getDolGlobalString('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]);
+			$invoicesocid = (int) $invoice->socid;
+			if ($invoicesocid === 0 || $invoicesocid === $defaultsocid) {
+				$invoice->delete($user);
+
+				if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+					header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
+				} else {
+					header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+				}
+				exit;
 			}
-			exit;
 		}
 	}
 
@@ -1012,6 +1262,18 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Action to fully remove (discard) the current sale: delete the draft invoice so its tab disappears
+	// (the "delete" action above only empties and resets the cart).
+	if ($action == "discardsale" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+		if ($placeid > 0) {
+			$result = $invoice->fetch($placeid);
+			if ($result > 0 && $invoice->status == Facture::STATUS_DRAFT) {
+				$invoice->delete($user);
+				$placeid = 0;
+			}
+		}
+	}
+
 	if ($action == "updateqty") {	// Test on permission is done later
 		foreach ($invoice->lines as $line) {
 			if ($line->id == $idline) {
@@ -1026,12 +1288,19 @@ if (empty($reshook)) {
 				if (!$permissiontoupdateline) {
 					dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos").' - No permission to updateqty', [], 1);
 				} else {
-					$vatratecode = $line->tva_tx;
-					if ($line->vat_src_code) {
-						$vatratecode .= ' ('.$line->vat_src_code.')';
-					}
+					if ($number <= 0) {
+						$result = takeposDeleteLineWithChildren($invoice, $line->id);
+						if ($result < 0) {
+							dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+						}
+					} else {
+						$vatratecode = $line->tva_tx;
+						if ($line->vat_src_code) {
+							$vatratecode .= ' ('.$line->vat_src_code.')';
+						}
 
-					$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $vatratecode, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+						$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $vatratecode, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+					}
 				}
 			}
 		}
@@ -1151,22 +1420,93 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
+	if ($action == "editbatch_popup" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+		$idline = GETPOSTINT('idline');
+		$idproduct = GETPOSTINT('idproduct');
+		$prod = new Product($db);
+		$prod->fetch($idproduct);
+		$prod->load_stock('warehouseopen');
+
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		$warehouseid = getDolGlobalInt($constantforkey);
+
+		print '<html><body>';
+		print '<div class="divscroll">';
+		print '<div class="marginbottomonly"><b>'.dolPrintLabel($prod->label).'</b>'.(!empty($prod->ref) ? ' <span class="opacitymedium">('.dolPrintLabel($prod->ref).')</span>' : '').'</div>';
+		print '<table class="noborder">';
+
+		$nbofsuggested = 0;
+		if (is_array($prod->stock_warehouse)) {
+			foreach ($prod->stock_warehouse as $tmpwarehouseid => $tmpval) {
+				if (getDolGlobalInt($constantforkey) && $tmpwarehouseid != getDolGlobalInt($constantforkey)) {
+					continue;
+				}
+				if (!empty($prod->stock_warehouse[$tmpwarehouseid]) && is_array($prod->stock_warehouse[$tmpwarehouseid]->detail_batch)) {
+					foreach ($prod->stock_warehouse[$tmpwarehouseid]->detail_batch as $dbatch) {
+						$detail = '';
+						$detail .= '<span class="opacitymedium">'.$langs->trans("LotSerial").':</span> '.$dbatch->batch;
+						$detail .= ' <span class="opacitymedium">'.$langs->trans("Qty").':</span> '.$dbatch->qty;
+						$detail .= ' <button class="marginleftonly" onclick="updatebatch(\''.dol_escape_js($dbatch->batch).'\', '.$tmpwarehouseid.', '.$idline.', '.((int) $clonebatch).')">'.$langs->trans("Select")."</button>";
+
+						print '<tr><td class="left">'.$detail;
+						$nbofsuggested++;
+						print '</td></tr>';
+					}
+				}
+			}
+		}
+		if ($nbofsuggested == 0) {
+			print '<tr><td class="left">'.$langs->trans("NoRecordFound").'</td></tr>';
+		}
+
+		// Add manual entry for returns or new batches
+		print '<tr><td class="left" style="padding-top: 10px; border-top: 1px solid #ddd;">';
+		print '<span class="opacitymedium">'.$langs->trans("LotSerial").' (Manual) :</span> ';
+		print '<input type="text" id="manual_batch" class="flat" size="10"> ';
+		print '<button class="button" onclick="updatebatch(document.getElementById(\'manual_batch\').value, '.$warehouseid.', '.$idline.', '.((int) $clonebatch).')">'.$langs->trans("Add").'</button>';
+		print ' &nbsp; <button type="button" class="button button-cancel" onclick="$(\'#poslines\').load(\'invoice.php?place=\'+place+\'&invoiceid=\'+invoiceid);">'.$langs->trans("Cancel").'</button>';
+		print '</td></tr>';
+
+		print "</table>";
+		print '</div></body></html>';
+		exit;
+	}
+
 	if ($action == "setbatch" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		$warehouseid = (GETPOSTINT('warehouseid') > 0 ? GETPOSTINT('warehouseid') : getDolGlobalInt($constantforkey));	// Get the warehouse id from GETPOSTINT('warehouseid'), otherwise use default setup.
+		$idline = (empty($idoflineadded) ? GETPOSTINT('idline') : $idoflineadded);
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET batch = '".$db->escape($batch)."', fk_warehouse = ".((int) $warehouseid);
-		$sql .= " WHERE rowid=".((int) $idoflineadded);
+		$sql .= " WHERE rowid = ".((int) $idline)." AND fk_facture = ".((int) $placeid);
 		$db->query($sql);
+
+		// Reload data
+		$invoice->fetch($placeid);
+
+		if ($clonebatch && isModEnabled('productbatch') && isModEnabled('stock')) {
+			$sql = 'SELECT fd.rowid, fd.fk_product';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet AS fd, '.MAIN_DB_PREFIX.'product AS p';
+			$sql .= ' WHERE fd.fk_product = p.rowid';
+			$sql .= ' AND fd.fk_facture = '.((int) $placeid);
+			$sql .= " AND (fd.batch IS NULL OR fd.batch = '') AND p.tobatch > 0";
+			$sql .= ' ORDER BY fd.rang, fd.rowid';
+			$sql .= $db->plimit(1);
+			$resql = $db->query($sql);
+			if ($resql && ($obj = $db->fetch_object($resql))) {
+				print '<script>editbatch('.((int) $obj->rowid).', '.((int) $obj->fk_product).', 1);</script>';
+				exit;
+			}
+		}
 	}
 
 	if ($action == "order" && $placeid != 0 && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		if ((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
 			$printer = new dolReceiptPrinter($db);
 		}
 
-		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
+		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid = ".((int) $place);
 		$resql = $db->query($sql);
 		$row = $db->fetch_object($resql);
 		$headerorder = '<html><br><b>'.$langs->trans('Place').' '.$row->label.'<br><table width="65%"><thead><tr><th class="left">'.$langs->trans("Label").'</th><th class="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
@@ -1191,7 +1531,7 @@ if (empty($reshook)) {
 			}
 			if ($count > 0) {
 				$linestoprint++;
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid=".$line->id; //Set to print on printer 1
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid = ".((int) $line->id); //Set to print on printer 1
 				$db->query($sql);
 				$order_receipt_printer1 .= '<tr><td class="left">';
 				if ($line->fk_product) {
@@ -1206,7 +1546,7 @@ if (empty($reshook)) {
 				$order_receipt_printer1 .= '</td></tr>';
 			}
 		}
-		if (((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && $linestoprint > 0) {
+		if (((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && $linestoprint > 0 && $printer !== null) {
 			$invoice->fetch($placeid); //Reload object before send to printer
 			$printer->orderprinter = 1;
 			echo "<script>";
@@ -1214,7 +1554,7 @@ if (empty($reshook)) {
 			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 1
 			echo "';</script>";
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture = ".((int) $invoice->id); // Set as printed
 		$db->query($sql);
 		$invoice->fetch($placeid); //Reload object after set lines as printed
 		$linestoprint = 0;
@@ -1229,7 +1569,7 @@ if (empty($reshook)) {
 			$count = count($result);
 			if ($count > 0) {
 				$linestoprint++;
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='2' where rowid=".$line->id; //Set to print on printer 2
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='2' where rowid = ".((int) $line->id); //Set to print on printer 2
 				$db->query($sql);
 				$order_receipt_printer2 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 				if (!empty($line->array_options['options_order_notes'])) {
@@ -1246,7 +1586,7 @@ if (empty($reshook)) {
 			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 2
 			echo "';</script>";
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture = ".((int) $invoice->id); // Set as printed
 		$db->query($sql);
 		$invoice->fetch($placeid); //Reload object after set lines as printed
 		$linestoprint = 0;
@@ -1261,7 +1601,7 @@ if (empty($reshook)) {
 			$count = count($result);
 			if ($count > 0) {
 				$linestoprint++;
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='3' where rowid=".$line->id; //Set to print on printer 3
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='3' where rowid = ".((int) $line->id); //Set to print on printer 3
 				$db->query($sql);
 				$order_receipt_printer3 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 				if (!empty($line->array_options['options_order_notes'])) {
@@ -1270,7 +1610,7 @@ if (empty($reshook)) {
 				$order_receipt_printer3 .= '</td></tr>';
 			}
 		}
-		if (((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && $linestoprint > 0) {
+		if (((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && $linestoprint > 0 && $printer !== null) {
 			$invoice->fetch($placeid); //Reload object before send to printer
 			$printer->orderprinter = 3;
 			echo "<script>";
@@ -1278,7 +1618,7 @@ if (empty($reshook)) {
 			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 3
 			echo "';</script>";
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture=".$invoice->id; // Set as printed
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture = ".((int) $invoice->id); // Set as printed
 		$db->query($sql);
 		$invoice->fetch($placeid); //Reload object after set lines as printed
 	}
@@ -1287,7 +1627,12 @@ if (empty($reshook)) {
 	if (($action == "valid" || $action == "history" || $action == 'creditnote' || ($action == 'addline' && $invoice->status == $invoice::STATUS_CLOSED)) && $user->hasRight('takepos', 'run')) {
 		$sectionwithinvoicelink .= '<!-- Section with invoice link -->'."\n";
 		$sectionwithinvoicelink .= '<span style="font-size:120%;" class="center inline-block marginbottomonly">';
-		$sectionwithinvoicelink .= $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
+		if ($invoice->status == $invoice::STATUS_DRAFT) {
+			$sectionwithinvoicelink .= $invoice->ref;
+		} else {
+			$sectionwithinvoicelink .= $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice');
+		}
+		$sectionwithinvoicelink .= " - ";
 		$remaintopay = $invoice->getRemainToPay();
 		if ($remaintopay > 0) {
 			$sectionwithinvoicelink .= $langs->trans('RemainToPay').': <span class="amountremaintopay" style="font-size: unset">'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
@@ -1296,31 +1641,62 @@ if (empty($reshook)) {
 		}
 
 		$sectionwithinvoicelink .= '</span><br>';
-		if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
-			$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">Invoice</a>';
-		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposConnector('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
-			} else {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
-			}
-		} elseif ((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
-		} else {
-			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
-			if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
-			}
-			if (getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
-				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
-			}
-		}
-		if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && getDolGlobalInt('TAKEPOS_EMAIL_TEMPLATE_INVOICE') > 0) {
-			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.')">'.$langs->trans('SendTicket').'</button>';
+
+		$customprinterallowed = false;
+		$customprinttemplateallowed = true;
+
+		// BAR RESTAURANT specific menu
+		if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
+			// Button to print receipt before payment
+			$customprinterallowed = true;
+			$customprinttemplateallowed = true;
 		}
 
-		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
-			$sectionwithinvoicelink .= '<script type="text/javascript">$("#buttonprint").click();</script>';
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		if (isALNERunningVersion()) {
+			// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
+			$customprinttemplateallowed = false;
+		}
+
+		if ($invoice->status == $invoice::STATUS_CLOSED) {
+			if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
+				$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">'.$langs->trans("Invoice").'</a>';
+			} else {
+				// This section should be same than into index.php
+				if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+					// Used when the external addon takeposconnector is installed. Deprecated.
+					if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
+						// If TAKEPOS_PRINT_SERVER is an URL
+						$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByESCPOSOld('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+					} else {
+						// If TAKEPOS_PRINT_SERVER is an IP
+						// Print by calling the receipt.php to get HTML content and send the HTML content to TAKEPOS_PRINT_SERVER:8111/print
+						$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintHTMLToSlashPrint('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+					}
+				} elseif ($customprinterallowed && $customprinttemplateallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {		// @phpstan-ignore-line
+					// Button Print Receipt on special custom printer using custom template
+					$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByESCPOS('.$placeid.')" title="'.dolPrintHTMLForAttribute($langs->trans("SentToPrinter").' '.$nameOfPrinter).'">'.$langs->trans('PrintTicket').'</button>';
+				} else {
+					// Button Print Receipt on browser
+					$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByBrowser('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
+
+					// Additional buttons
+					if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
+						$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintBox('.$placeid.', \'without_details\')">'.$langs->trans('PrintWithoutDetails').'</button>';
+					}
+					if ($customprinttemplateallowed && getDolGlobalString('TAKEPOS_GIFT_RECEIPT')) {
+						$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="PrintByBrowser('.$placeid.', 1)">'.$langs->trans('GiftReceipt').'</button>';
+					}
+				}
+			}
+			if (getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE') && getDolGlobalInt('TAKEPOS_EMAIL_TEMPLATE_INVOICE') > 0) {
+				$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.')">'.$langs->trans('SendTicket').'</button>';
+			}
+
+			if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
+				$sectionwithinvoicelink .= '<script type="text/javascript">console.log("Emulate click on #buttonprint"); $("#buttonprint").click();</script>';
+			}
 		}
 	}
 }
@@ -1333,7 +1709,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 // llxHeader
-if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
 	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 		$title = 'TakePOS - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
@@ -1458,17 +1834,6 @@ if ($action == "search" || $action == "valid") {
 }
 
 
-if ($action == "temp" && !empty($ticket_printer1)) {
-	?>
-	$.ajax({
-		type: "POST",
-		url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
-		data: '<?php
-		print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
-	});
-	<?php
-}
-
 if ($action == "search") {
 	?>
 	$('#search').focus();
@@ -1482,25 +1847,28 @@ if ($action == "search") {
 function SendTicket(id)
 {
 	console.log("Open box to select the Print/Send form");
-	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
+	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:<?php echo "'".dol_escape_js($langs->trans("SendTicket"))."'" ; ?>});
 	return true;
 }
 
+/* Open the popup of the receipt to allow printing */
 function PrintBox(id, action) {
 	console.log("Open box before printing");
 	$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
 	return true;
 }
 
-function Print(id, gift){
-	console.log("Call Print() to generate the receipt.");
-	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
+/* Open the popup of the receipt to allow printing */
+function PrintByBrowser(id, gift) {
+	console.log("Call PrintByBrowser() to generate the receipt.");
+	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:<?php echo "'".dol_escape_js($langs->trans("PrintTicket"))."'" ; ?>});
 	return true;
 }
 
-function TakeposPrinting(id){
+/* Print of configured printer when TAKEPOS_PRINT_SERVER is IP  */
+function PrintHTMLToSlashPrint(id){
 	var receipt;
-	console.log("TakeposPrinting" + id);
+	console.log("PrintHTMLToSlashPrint" + id);
 	$.get("receipt.php?facid="+id, function(data, status) {
 		receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
 		$.ajax({
@@ -1512,9 +1880,10 @@ function TakeposPrinting(id){
 	return true;
 }
 
-function TakeposConnector(id){
-	console.log("TakeposConnector" + id);
-	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo newToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
+/* Print of configured printer when TAKEPOS_PRINT_SERVER is URL, using the ESCPOS driver */
+function PrintByESCPOSOld(id){
+	console.log("PrintByESCPOSOld id=" + id);
+	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo currentToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id, function(data, status) {
 		$.ajax({
 			type: "POST",
 			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
@@ -1524,24 +1893,50 @@ function TakeposConnector(id){
 	return true;
 }
 
-// Call the ajax to execute the print.
+<?php
+$nameOfPrinter = dol_getIdFromCode($db, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term), 'printer_receipt', 'rowid', 'name', 1);
+?>
+// Call the ajax to execute the printinvoiceticket action, using the ESCPOS driver
 // With some external module another method may be called.
-function DolibarrTakeposPrinting(id) {
-	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id);
+function PrintByESCPOS(id) {
+	console.log("PrintByESCPOS Printing invoice ticket by calling takepos/aja/ajax.php id=" + id);
+
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
-
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.currentToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
+		success: function(){
+				showPrintResultPopup(<?php echo "'".dol_escape_js($langs->trans("SentToPrinter").' '.$nameOfPrinter)."'" ; ?>, 2000);
+			},
+		error: function(){
+				showPrintResultPopup(<?php echo "'".dol_escape_js($langs->trans("FailedToSendToPrinter"))."'" ; ?>, 2000);
+		}
 	});
 	return true;
 }
 
-// Call url to generate a credit note (with same lines) from existing invoice
-function CreditNote() {
-	$("#poslines").load("<?php print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {	});
-	return true;
+// Show the message in div popup
+function showPrintResultPopup(message, duration) {
+	 $("#dialogforpopuptakepos").show().text(message).fadeIn();
+
+	setTimeout(function(){
+		$("#dialogforpopuptakepos").fadeOut().hide();
+	}, duration);
 }
+
+
+
+// Call url to generate a credit note (with same lines) from existing invoice
+var creditNoteParams="";
+function CreditNote() {
+	<?php
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('paramsForCreditNote', $parameters, $invoice, $action);?>
+	$("#poslines").load("<?php
+	print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid+creditNoteParams, function() {	});
+		return true;
+}
+
 
 // Call url to add notes
 function SetNote() {
@@ -1575,9 +1970,9 @@ $( document ).ready(function() {
 	$("#shoppingcart").html('');
 
 	<?php if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT') == 0) { ?>
-		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag((string) $s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js((string) $s); ?></a>');
 	<?php } else { ?>
-		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js(dol_escape_htmltag($s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js(dol_escape_htmltag((string) $s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js((string) $s); ?></a>');
 	<?php } ?>
 
 	<?php
@@ -1588,7 +1983,7 @@ $( document ).ready(function() {
 		$sql .= " AND ref LIKE '(PROV-POS".$db->escape(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '')."-0%'";
 	} else {
 		// If TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED set, we show also draft invoice that already has a reference defined
-		$sql .= " AND pos_source = '".$db->escape($_SESSION["takeposterminal"])."'";
+		$sql .= " AND pos_source = '".$db->escape((string) $_SESSION["takeposterminal"])."'";
 		$sql .= " AND module_source = 'takepos'";
 	}
 
@@ -1630,7 +2025,7 @@ $( document ).ready(function() {
 	if (isModEnabled('stock')) {
 		if (getDolGlobalString($constantforkey) != "1") {
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-			$idwarehouse = getDolGlobalString($constantforkey);
+			$idwarehouse = getDolGlobalInt($constantforkey);
 			if ($idwarehouse > 0) {
 				$s = '<span class="small">';
 				$warehouse = new Entrepot($db);
@@ -1669,10 +2064,10 @@ $( document ).ready(function() {
 		$langs->load("members");
 		$s .= $langs->trans("Member").': ';
 		$adh = new Adherent($db);
-		$result = $adh->fetch('', '', $invoice->socid);
+		$result = $adh->fetch(0, '', $invoice->socid);
 		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
-			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
+			if (empty($adh->status) || $adh->status == Adherent::STATUS_EXCLUDED) {
 				$s .= "<s>";
 			}
 			$s .= $adh->getFullName($langs);
@@ -1684,11 +2079,11 @@ $( document ).ready(function() {
 				}
 			} else {
 				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
-				if ($adh->statut > 0) {
+				if ($adh->status > 0) {
 					$s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 				}
 			}
-			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
+			if (empty($adh->status) || $adh->status == Adherent::STATUS_EXCLUDED) {
 				$s .= "</s>";
 			}
 		} else {
@@ -1697,7 +2092,7 @@ $( document ).ready(function() {
 		$s .= '</span>';
 	}
 	?>
-	$("#moreinfo").html('<?php print dol_escape_js($s); ?>');
+	$("#moreinfo").html(<?php print "'".dol_escape_js($s)."'" ; ?>);
 
 });
 
@@ -1709,16 +2104,22 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 	echo "line1=line1.padEnd(20);";
 	echo "var line2='".$CUSTOMER_DISPLAY_line2."'.substring(0,20);";
 	echo "line2=line2.padEnd(20);";
-	echo "$.ajax({
-		type: 'GET',
-		data: { text: line1+line2 },
-		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
-	});";
+	if (getDolGlobalString('TAKEPOS_CONNECTOR_TO_WHB_CUSTOMER_DISPLAY')) {
+		echo 'webSocketCustomerDisplay.send(line1);';
+		echo 'webSocketCustomerDisplay.send(line2);';
+	} else {
+		echo "$.ajax({
+			type: 'GET',
+			data: { text: line1+line2 },
+			url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
+		});";
+	}
 	echo "}";
 }
 ?>
 
 </script>
+
 
 <?php
 // Add again js for footer because this content is injected into index.php page so all init
@@ -1728,7 +2129,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 }
 
-$usediv = (GETPOST('format') == 'div');
+$usediv = (GETPOST('format', 'aZ09') == 'div');
 
 print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' usediv='.json_encode($usediv).', mobilepage='.(empty($mobilepage) ? '' : $mobilepage).' $_SESSION["basiclayout"]='.(empty($_SESSION["basiclayout"]) ? '' : $_SESSION["basiclayout"]).' conf TAKEPOS_BAR_RESTAURANT='.getDolGlobalString('TAKEPOS_BAR_RESTAURANT').' -->'."\n";
 print '<div class="div-table-responsive-no-min invoice">';
@@ -1739,12 +2140,18 @@ if ($usediv) {
 }
 
 $buttontocreatecreditnote = '';
-if (($action == "valid" || $action == "history" ||  ($action == "addline" && $invoice->status == $invoice::STATUS_CLOSED)) && $invoice->type != Facture::TYPE_CREDIT_NOTE && !getDolGlobalString('TAKEPOS_NO_CREDITNOTE')) {
+if (($action == "valid" || $action == "history" || $action == "addline")
+	&& $invoice->type != Facture::TYPE_CREDIT_NOTE && !getDolGlobalString('TAKEPOS_NO_CREDITNOTE') && $invoice->status == $invoice::STATUS_CLOSED) {
 	$buttontocreatecreditnote .= ' &nbsp; <!-- Show button to create a credit note -->'."\n";
 	$buttontocreatecreditnote .= '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';
 	if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
 		$buttontocreatecreditnote .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . urlencode($invoice->ref . '/' . $invoice->ref . '.pdf').'">'.$langs->trans("Invoice").'</a>';
 	}
+}
+
+$buttontocloneticket = '';
+if (($action == 'valid' || $action == 'history' || $action == 'addline') && in_array($invoice->status, array(Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED)) && $invoice->type != Facture::TYPE_CREDIT_NOTE) {
+	$buttontocloneticket .= ' &nbsp;<button id="buttonclone" type="button" onclick="CloneTicket('.((int) $invoice->id).')">'.$langs->trans('CloneTicket').'</button>';
 }
 
 // Show the ref of invoice
@@ -1754,11 +2161,13 @@ if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) 
 		print '<tr><td colspan="5" class="paddingtopimp paddingbottomimp" style="padding-top: 10px !important; padding-bottom: 10px !important;">';
 		print $sectionwithinvoicelink;
 		print $buttontocreatecreditnote;
+		print $buttontocloneticket;
 		print '</td></tr>';
 	} else {
 		print '<tr><td colspan="4" class="paddingtopimp paddingbottomimp" style="padding-top: 10px !important; padding-bottom: 10px !important;">';
 		print $sectionwithinvoicelink;
 		print $buttontocreatecreditnote;
+		print $buttontocloneticket;
 		print '</td></tr>';
 	}
 }
@@ -1776,7 +2185,7 @@ if (empty($mobilepage) || $mobilepage == "invoice") {
 }
 if (!$usediv) {
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-		$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
+		$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid = ".((int) $place);
 		$resql = $db->query($sql);
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
@@ -1878,6 +2287,8 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 		$catid = GETPOSTINT('catid');
 		$result = $object->fetch($catid);
 		$prods = $object->getObjectsInCateg("product");
+		/** @var Product[] $prods */
+		'@phan-var-force  Product[] $prods';
 		$htmlforlines = '';
 		foreach ($prods as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
@@ -1934,6 +2345,9 @@ if ($placeid > 0) {
 		$htmlsupplements = array();
 		foreach ($tmplines as $line) {
 			if ($line->fk_parent_line != false) {
+				if (!isset($htmlsupplements[$line->fk_parent_line])) {
+					$htmlsupplements[$line->fk_parent_line] = '';
+				}
 				$htmlsupplements[$line->fk_parent_line] .= '<tr class="drag drop oddeven posinvoiceline';
 				if ($line->special_code == "4") {
 					$htmlsupplements[$line->fk_parent_line] .= ' order';
@@ -1944,7 +2358,7 @@ if ($placeid > 0) {
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
-				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow');
+				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow.png');
 				if ($line->product_label) {
 					$htmlsupplements[$line->fk_parent_line] .= $line->product_label;
 				}
@@ -2054,18 +2468,40 @@ if ($placeid > 0) {
 			if (!empty($line->array_options['options_order_notes'])) {
 				$htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
 			}
+			if (isModEnabled('productbatch') && $line->fk_product > 0) {
+				if (!is_object($line->product) || !($line->product->id > 0)) {
+					$line->fetch_product();
+				}
+
+				if (is_object($line->product) && $line->product->status_batch > 0) {
+					$batch_display = empty($line->batch) ? $langs->trans("NotDefined") : dol_escape_htmltag($line->batch);
+					$htmlforlines .= '<br><span class="opacitymedium">'.$langs->trans("LotSerial").' : '.$batch_display.'</span>';
+					// Only show edit button if invoice is a Draft (status == 0)
+					if ($invoice->status == Facture::STATUS_DRAFT) {
+						$htmlforlines .= ' <a href="#" onclick="editbatch('.$line->id.', '.$line->fk_product.'); return false;" title="'.dol_escape_htmltag($langs->trans("Modify")).'">'.img_edit().'</a>';
+					}
+				}
+			}
 			if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 				$htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty - 1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty + 1).');" class="publicphonebutton2 phonegreen">+</button>';
 			}
 			if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
+				// Set the content of tooltip
 				$moreinfo = '';
+				$moreinfo .= $langs->trans("VATRate").': '.price($line->tva_tx).' %<br>';
+				$moreinfo .= $langs->trans("UnitPrice").': '.price($line->subprice).'<br>';
+				$moreinfo .= '<br>';
 				$moreinfo .= $langs->transcountry("TotalHT", $mysoc->country_code).': '.price($line->total_ht);
 				if ($line->vat_src_code) {
 					$moreinfo .= '<br>'.$langs->trans("VATCode").': '.$line->vat_src_code;
 				}
-				$moreinfo .= '<br>'.$langs->transcountry("TotalVAT", $mysoc->country_code).': '.price($line->total_tva);
-				$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
-				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
+				$moreinfo .= '<br>'.$langs->trans("TotalVAT").': '.price($line->total_tva);
+				if ($mysoc->useLocalTax(1, 1, $mysoc)) {
+					$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
+				}
+				if ($mysoc->useLocalTax(2, 1, $mysoc)) {
+					$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
+				}
 				$moreinfo .= '<hr>';
 				$moreinfo .= $langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
 				//$moreinfo .= $langs->trans("TotalHT").': '.$line->total_ht;
@@ -2089,45 +2525,53 @@ if ($placeid > 0) {
 				// nowraponall keeps the qty and its '(stock)' block on one line: on narrow layouts
 				// the native display otherwise wraps over three lines inside the qty column.
 				$htmlforlines .= '<td class="right nowraponall">';
+				$htmlforlines .= $line->qty;
 				if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire')) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 					if (getDolGlobalString($constantforkey) && $line->fk_product > 0 && !getDolGlobalString('TAKEPOS_HIDE_STOCK_ON_LINE')) {
-						$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
-						$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
-						$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
-						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
-						$sql .= " WHERE ps.reel != 0";
-						$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalString($constantforkey));
-						$sql .= " AND e.entity IN (".getEntity('stock').")";
-						$sql .= " AND ps.fk_product = ".((int) $line->fk_product);
-						$resql = $db->query($sql);
-						if ($resql) {
-							$stock_real = 0;
-							$obj = $db->fetch_object($resql);
-							if ($obj) {
-								$stock_real = price2num($obj->reel, 'MS');
+						$productChildrenNb = 0;
+						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+							if (!is_object($line->product) || !($line->product->id > 0)) {
+								$line->fetch_product();
 							}
-							$htmlforlines .= $line->qty;
-							$htmlforlines .= '&nbsp; ';
-							$htmlforlines .= '<span class="opacitylow" title="'.$langs->trans("Stock").' '.price($stock_real, 1, '', 1, 0).'">';
-							$htmlforlines .= '(';
-							if ($line->qty && $line->qty > $stock_real) {
-								$htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';
+							if (is_object($line->product)) {
+								$productChildrenNb = $line->product->hasFatherOrChild(1);
 							}
-							$htmlforlines .= img_picto('', 'stock', 'class="pictofixedwidth"').price($stock_real, 1, '', 1, 0);
-							if ($line->qty && $line->qty > $stock_real) {
-								$htmlforlines .= "</span>";
-							}
-							$htmlforlines .= ')';
-							$htmlforlines .= '</span>';
-						} else {
-							dol_print_error($db);
 						}
-					} else {
-						$htmlforlines .= $line->qty;
+						if ($productChildrenNb == 0) {
+							$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
+							$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
+							$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
+							$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
+							$sql .= " WHERE ps.reel != 0";
+							$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalString($constantforkey));
+							$sql .= " AND e.entity IN (".getEntity('stock').")";
+							$sql .= " AND ps.fk_product = ".((int) $line->fk_product);
+							$resql = $db->query($sql);
+							if ($resql) {
+								$stock_real = 0;
+								$obj = $db->fetch_object($resql);
+								if ($obj) {
+									$stock_real = price2num($obj->reel, 'MS');
+								}
+								$htmlforlines .= $line->qty;
+								$htmlforlines .= '&nbsp; ';
+								$htmlforlines .= '<span class="opacitylow" title="'.$langs->trans("Stock").' '.price($stock_real, 1, '', 1, 0).'">';
+								$htmlforlines .= '(';
+								if ($line->qty && $line->qty > $stock_real) {
+									$htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';
+								}
+								$htmlforlines .= img_picto('', 'stock', 'class="pictofixedwidth"').price($stock_real, 1, '', 1, 0);
+								if ($line->qty && $line->qty > $stock_real) {
+									$htmlforlines .= "</span>";
+								}
+								$htmlforlines .= ')';
+								$htmlforlines .= '</span>';
+							} else {
+								dol_print_error($db);
+							}
+						}
 					}
-				} else {
-					$htmlforlines .= $line->qty;
 				}
 
 				$htmlforlines .= '</td>';
@@ -2195,6 +2639,6 @@ if ($action == "search") {
 print '</div>';
 
 // llxFooter
-if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	print '</body></html>';
 }

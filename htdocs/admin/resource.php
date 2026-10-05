@@ -25,13 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "resource"));
@@ -73,14 +70,15 @@ llxHeader('', $langs->trans('ResourceSetup'), '', '', 0, 0, '', '', '', 'mod-adm
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans('ResourceSetup'), $linkback, 'title_setup');
 
 $head = resource_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'general', $langs->trans("ResourceSingular"), -1, 'action');
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
@@ -102,10 +100,10 @@ if (empty($conf->use_javascript_ajax)) {
 } else {
 	print '<td width="60" class="right">';
 	$arrval = array(
-		$langs->trans("No"),
-		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		0 => array('label' => $langs->trans("No")),
+		1 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 1).')</span>'),
+		2 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 2).')</span>'),
+		3 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 3).')</span>'),
 	);
 	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalInt('RESOURCE_USE_SEARCH_TO_SELECT'));
 	print '</td>';

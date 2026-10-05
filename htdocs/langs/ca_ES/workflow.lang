@@ -29,8 +29,8 @@ descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Quan es valida una factura de clie
 descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Quan es valida una factura de compra, classifiqueu les recepcions d'origen enllaçades com a tancades (i si l'import de la factura és el mateix que l'import total de les recepcions enllaçades)
 descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Quan es valida una factura de compra, classifiqueu les recepcions d'origen enllaçades com a facturades (i si l'import de la factura és el mateix que l'import total de les recepcions enllaçades)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Quan es creï un bitllet, enllaceu-lo amb els contractes disponibles, coincidint amb el mateix tercer que el bitllet
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=En enllaçar automàticament un bitllet amb contractes, cerca contractes entre els de les empreses matrius
+descWORKFLOW_TICKET_LINK_CONTRACT=Quan es creï un tiquet, enllaceu-lo amb els contractes disponibles, coincidint amb el mateix tercer que el tiquet
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=En enllaçar automàticament un tiquet amb contractes, cerqueu contractes entre els de les empreses matrius
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Tanca totes les intervencions vinculades quan es tanca un tiquet
 AutomaticCreation=Creació automàtica

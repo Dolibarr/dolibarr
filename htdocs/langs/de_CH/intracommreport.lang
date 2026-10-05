@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - intracommreport
+IntraCommReport=Intracomm-Bericht
 Module68000Name =Intracomm-Bericht
 Module68000Desc =Intracomm-Berichtsverwaltung (Unterstützt das französische DEB / DES-Format)
 IntracommReportSetup =Einrichtung des Intracommreport-Moduls

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
@@ -33,27 +40,12 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'trips'));
 
 $id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-// TODO Add rule to restrict access payment
-//$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentExpenseReport($db);
 
@@ -64,6 +56,13 @@ if ($id > 0) {
 	}
 }
 
+// Security check
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
+}
+
+$result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'expensereport');
+
 
 /*
  * Actions
@@ -73,6 +72,7 @@ if ($id > 0) {
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expensereport', 'supprimer')) {
 	$db->begin();
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -127,9 +127,10 @@ print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object-
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note public
-print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public)).'</td></tr>';
+print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public)).'</td></tr>';
 
 $disable_delete = 0;
+$title_button = '';
 // Bank account
 if (isModEnabled("bank")) {
 	if ($object->bank_account) {
@@ -252,7 +253,7 @@ print '<div class="tabsAction">';
 if ($action == '') {
 	if ($user->hasRight('expensereport', 'supprimer')) {
 		if (!$disable_delete) {
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 		} else {
 			print dolGetButtonAction($title_button, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 		}

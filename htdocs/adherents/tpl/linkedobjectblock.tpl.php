@@ -2,8 +2,8 @@
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 /**
- * @var Conf $conf
+ * @var ?Conf $conf
  * @var User $user
  */
 // Protection to avoid direct call of template
@@ -31,19 +31,33 @@ if (empty($conf) || !is_object($conf)) {
 echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
+global $db;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/**
+ * @var Translate $langs
+ * @var CommonObject $object
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 '@phan-var-force Subscription[] $linkedObjectBlock';
+/** @var Subscription[] $linkedObjectBlock */
 $langs->load("members");
+
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+
+$memberstatic = new Adherent($db);
 
 $total = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<tr class="oddeven">';
 	echo '<td>'.$langs->trans("Subscription").'</td>';
 	echo '<td class="nowraponall">'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="center"></td>';
+	$memberstatic->id = $objectlink->fk_adherent;
+	$memberstatic->firstname = $objectlink->member_firstname;
+	$memberstatic->lastname = $objectlink->member_lastname;
+	$memberstatic->company = $objectlink->member_company;
+	echo '<td class="center">'.$memberstatic->getNomUrl(1).'</td>';
 	echo '<td class="center">'.dol_print_date($objectlink->dateh, 'day').'</td>';
 	echo '<td class="right">';
 	if ($user->hasRight('adherent', 'lire')) {
@@ -52,7 +66,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	echo '</td>';
 	echo '<td class="right"></td>';
-	echo '<td class="right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+	echo '<td class="right"><a class="reposition" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'dellink', 'dellinkid' => $key], true).'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	echo '</tr>';
 }
 

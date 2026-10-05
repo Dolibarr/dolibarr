@@ -77,6 +77,7 @@ CronType=ប្រភេទ​ការងារ
 CronType_method=វិធីសាស្ត្រហៅទៅថ្នាក់ PHP
 CronType_command=ពាក្យបញ្ជាសែល
 CronCannotLoadClass=មិនអាចផ្ទុកឯកសារថ្នាក់ %s (ដើម្បីប្រើថ្នាក់ %s)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=ឯកសារថ្នាក់ %s ត្រូវបានផ្ទុក ប៉ុន្តែវត្ថុ %s មិនត្រូវបានរកឃើញនៅក្នុងវាទេ
 UseMenuModuleToolsToAddCronJobs=ចូលទៅកាន់ម៉ឺនុយ "<a href="%s">Home - ឧបករណ៍គ្រប់គ្រង - ការងារដែលបានកំណត់ពេល</a>" ដើម្បីមើល និងកែសម្រួលការងារដែលបានកំណត់ពេល។
 JobDisabled=ការងារត្រូវបានបិទ

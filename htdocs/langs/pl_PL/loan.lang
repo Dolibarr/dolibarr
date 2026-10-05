@@ -23,12 +23,12 @@ AddLoan=Utwórz pożyczkę
 FinancialCommitment=Zobowiązanie finansowe
 InterestAmount=Odsetki
 CapitalRemain=Pozostały kapitał
-TermPaidAllreadyPaid = Ten termin jest już opłacony
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+TermPaidAllreadyPaid = Termin ten jest już opłacony
+CantUseScheduleWithLoanStartedToPaid = Nie można wygenerować harmonogramu pożyczki z rozpoczętą spłatą
 CantModifyInterestIfScheduleIsUsed = Nie możesz modyfikować odsetek, jeśli używasz harmonogramu
 # Admin
 ConfigLoan=Konfiguracja modułu kredytu
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Konto (z Planu Kont) przeznaczone domyślnie na kapitał (moduł Pożyczki)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konto (z Planu Kont) przeznaczone domyślnie na odsetki (moduł Pożyczki)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Konto (z Planu Kont) przeznaczone domyślnie do ubezpieczenia (moduł Kredyt)
 CreateCalcSchedule=Edytuj zobowiązanie finansowe

@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Промежуточные итоги
+SubTotalModuleDesc=Строки промежуточных итогов и заголовков для определённых документов
+#
+# Admin
+#
+SubtotalSetup=Настройка модуля промежуточных итогов
+MaxSubtotalLevel=Максимальный уровень
+SubtotalLineBackColor=Цвет фона строк уровня %s
+NotSupportedByAllPDF=Будет работать с новыми PDF, но не со старыми %s
+
+#
+# Card
+#
+AddTitleLine=Добавить строку заголовка
+AddSubtotalLine=Добавить строку промежуточного итога
+TitleNeedDesc=Для создания заголовка необходимо ввести корректное описание.
+TitleAddedLevelTooHigh=Уровень добавляемого заголовка слишком высок (добавлен с уровнем %s).
+TitleEditedLevelTooHigh=Уровень редактируемого заголовка слишком высок (изменён на уровень %s).
+DeleteSubtotalLine=Удалить строку промежуточного итога
+ConfirmDeleteSubtotalLine=Вы уверены, что хотите удалить эту строку промежуточного итога?
+DeleteTitleLine=Удалить строку заголовка
+ConfirmDeleteTitleLine=Вы уверены, что хотите удалить эту строку заголовка?
+DeleteCorrespondingSubtotalLine=Удалить соответствующую строку промежуточного итога?
+SubtotalLevel=Уровень %s
+SubtotalLineDesc=Описание строки
+SubtotalLineLevel=Уровень строки
+ShowUPOnPDF=Показывать цену за единицу в PDF
+ShowTotalExludingVATOnPDF=Показывать итог без НДС в PDF
+ForcePageBreak=Принудительный разрыв страницы перед заголовком
+NoTitleError=У вас нет строки заголовка, или для всех заголовков уже есть соответствующая строка промежуточного итога
+CorrespondingTitleLine=Соответствующая строка заголовка
+SelectVATRate=Выберите ставку НДС
+EnterRemisePercent=Введите процент скидки
+ApplyVATForBlock=Применить НДС к этому блоку
+ApplyDiscountForBlock=Применить скидку к этому блоку
+TitleUnderSameLevelSTLine=Заголовок того же уровня должен находиться под строкой промежуточного итога предыдущего заголовка.
+TitleUnderSameLevelOrGreater=Заголовок должен находиться под заголовком того же или более высокого уровня.
+TitleAfterStLineOfSameLevelTitle=Заголовок должен находиться после строки промежуточного итога предыдущего заголовка.
+PreviousTitleLevelTooHigh=Предыдущий заголовок на два или более уровня выше перемещаемой строки.
+STLineUnderCorrespondingTitleDesc=Строка промежуточного итога должна находиться под заголовком того же уровня с тем же описанием.
+STLineUnderCorrespondingTitle=Строка промежуточного итога должна находиться под заголовком того же уровня и с тем же описанием.
+STLineUnderTitle=Строка промежуточного итога должна находиться под своим заголовком
+UnsupportedModuleError=Нельзя добавить строку промежуточных итогов в неподдерживаемом модуле
+CorrespondingTitleNotFound=Соответствующий заголовок не найден
+
+#
+# PDF
+#
+SubtotalOf=Промежуточный итог %s:

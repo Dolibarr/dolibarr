@@ -77,6 +77,7 @@ CronType=İş türü
 CronType_method=PHP Sınıfının çağrı yöntemi
 CronType_command=Kabuk komutu
 CronCannotLoadClass=%s sınıf dosyası yüklenemiyor (%s sınıfını kullanmak için)
+CronModuleNotEnabledInThisEntity=kron modülü bu varlıkta etkinleştirilmedi (%s nesnesinin %s yöntemini kullanmak için)
 CronCannotLoadObject=%s sınıf dosyası yüklendi, ancak içinde %s nesnesi bulunamadı
 UseMenuModuleToolsToAddCronJobs=Zamanlanmış işleri görmek ve düzenlemek için "<a href="%s">Ana Sayfa - Yönetici araçları - Zamanlanmış işler</a>" menüsüne gidin.
 JobDisabled=İş engellendi

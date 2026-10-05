@@ -2,8 +2,15 @@
 NoPageYet=Sin páginas aun
 GrabImagesInto=Insertar también las imágenes encontradas en CSS y página.
 WebPortalAccessHidden=Oculto
+WebPortalInterSignedStatusNotSigned=No firmada
+WebPortalInterSignedStatusSignedThirdParty=Firmado por el tercero
+WebPortalInterSignedStatusSignedThirdPartyOnline=Firmado en-linea por el tercero
+WebPortalInterSignedStatusSignedAllParties=Firmado por todos
+WebPortalInterSignedDone=Firmada
+WebPortalInterDateEnd=Fecha de finalización
 WebPortalPropalListMenu=Cotizaciones
 WebPortalPropalListTitle=Cotizaciones
 WebPortalPropal=Cotización
 removeFilter=Remover filtro
 requiredField=Campo requerido
+socials=Redes Sociales

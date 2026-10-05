@@ -1,7 +1,10 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2024       Jose MARTINEZ			<jose.martinez@pichinov.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Jose Martinez           <jose.martinez@pichinov.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/api_products.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_contacts.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparties.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/api_tickets.class.php';
 
 /**
  * API class for categories
@@ -38,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
 class Categories extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'label',
@@ -46,7 +50,7 @@ class Categories extends DolibarrApi
 	);
 
 	/**
-	 * @var Categorie $category {@type Categorie}
+	 * @var Categorie {@type Categorie}
 	 */
 	public $category;
 
@@ -68,7 +72,9 @@ class Categories extends DolibarrApi
 	 *
 	 * @param	int		$id ID of category
 	 * @param	bool	$include_childs Include child categories list (true or false)
-	 * @return	array|mixed data without useless information
+	 * @return	array   Data without useless information
+	 * @phan-return Categorie
+	 * @phpstan-return Categorie
 	 *
 	 * @throws	RestException
 	 */
@@ -111,9 +117,11 @@ class Categories extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of category objects
+	 * @phan-return Categorie[]
+	 * @phpstan-return Categorie[]
 	 *
 	 * @throws RestException
 	 */
@@ -177,9 +185,31 @@ class Categories extends DolibarrApi
 	}
 
 	/**
+	 * List categories types
+	 *
+	 * Get a list of type of categories according to filters
+	 *
+	 * @return array<string, string> Array of category types
+	 * @url GET /types
+	 *
+	 * @throws RestException
+	 */
+	public function getTypes()
+	{
+
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return Categorie::$MAP_TYPE_TITLE_AREA;
+	}
+
+	/**
 	 * Create category object
 	 *
 	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of category
 	 */
 	public function post($request_data = null)
@@ -210,8 +240,12 @@ class Categories extends DolibarrApi
 	 * Update category
 	 *
 	 * @param 	int   		$id             Id of category to update
-	 * @param 	array 		$request_data   Datas
+	 * @param 	array 		$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
+	 * @phan-return Categorie
+	 * @phpstan-return Categorie
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -240,7 +274,7 @@ class Categories extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->category->array_options[$index] = $this->_checkValForAPI($field, $val, $this->category);
+					$this->category->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->category);
 				}
 				continue;
 			}
@@ -251,15 +285,18 @@ class Categories extends DolibarrApi
 		if ($this->category->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->category->error);
+			throw new RestException(500, $this->category->errorsToString());
 		}
 	}
 
 	/**
 	 * Delete category
 	 *
-	 * @param int $id   Category ID
-	 * @return array
+	 * @param 	int 	$id   Category ID
+	 * @return 	array
+	 *
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -276,7 +313,7 @@ class Categories extends DolibarrApi
 		}
 
 		if ($this->category->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when delete category : ' . $this->category->error);
+			throw new RestException(500, 'Error when delete category : ' . $this->category->errorsToString());
 		}
 
 		return array(
@@ -299,6 +336,8 @@ class Categories extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @return array                Array of category objects
+	 * @phan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
+	 * @phpstan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
 	 *
 	 * @throws RestException
 	 *
@@ -314,7 +353,11 @@ class Categories extends DolibarrApi
 			Categorie::TYPE_MEMBER,
 			Categorie::TYPE_PROJECT,
 			Categorie::TYPE_KNOWLEDGEMANAGEMENT,
-			Categorie::TYPE_ACTIONCOMM
+			Categorie::TYPE_ACTIONCOMM,
+			Categorie::TYPE_USER,
+			Categorie::TYPE_WAREHOUSE,
+			Categorie::TYPE_TICKET,
+			Categorie::TYPE_FICHINTER
 		])) {
 			throw new RestException(403);
 		}
@@ -335,6 +378,14 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_ACTIONCOMM && !DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
 			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_FICHINTER && !DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_TICKET && !DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_USER && !DolibarrApiAccess::$user->hasRight('user', 'lire')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_WAREHOUSE && !DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
@@ -353,6 +404,8 @@ class Categories extends DolibarrApi
 	 * @param int      $object_id ID of object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url POST {id}/objects/{type}/{object_id}
@@ -402,12 +455,18 @@ class Categories extends DolibarrApi
 				throw new RestException(403);
 			}
 			$object = new ActionComm($this->db);
+		} elseif ($type === Categorie::TYPE_PROJECT) {
+			if (!DolibarrApiAccess:: $user->hasRight('projet', 'creer')) {
+				throw new RestException(403);
+			}
+			$object = new Project($this->db);
 		} else {
 			throw new RestException(400, "this type is not recognized yet.");
 		}
 
 		$result = $object->fetch($object_id);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->add_type($object, $type);
 			if ($result < 0) {
 				if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -429,11 +488,13 @@ class Categories extends DolibarrApi
 	/**
 	 * Link an object to a category by ref
 	 *
-	 * @param int $id  ID of category
-	 * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact')
-	 * @param string   $object_ref Reference of object
+	 * @param int 		$id  		ID of category
+	 * @param string   	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param string   	$object_ref Reference of object (product, thirdparty, member, ...)
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url POST {id}/objects/{type}/ref/{object_ref}
@@ -489,6 +550,7 @@ class Categories extends DolibarrApi
 
 		$result = $object->fetch(0, $object_ref);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->add_type($object, $type);
 			if ($result < 0) {
 				if ($this->category->error != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -515,6 +577,8 @@ class Categories extends DolibarrApi
 	 * @param int      $object_id ID of the object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url DELETE {id}/objects/{type}/{object_id}
@@ -570,6 +634,7 @@ class Categories extends DolibarrApi
 
 		$result = $object->fetch((int) $object_id);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->del_type($object, $type);
 			if ($result < 0) {
 				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
@@ -589,11 +654,13 @@ class Categories extends DolibarrApi
 	/**
 	 * Unlink an object from a category by ref
 	 *
-	 * @param int      $id         ID of category
-	 * @param string   $type Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
-	 * @param string   $object_ref Reference of the object
+	 * @param int      $id         	ID of category
+	 * @param string   $type 		Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
+	 * @param string   $object_ref 	Reference of the object (product, thirdparty, member, ...)
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url DELETE {id}/objects/{type}/ref/{object_ref}
@@ -649,6 +716,7 @@ class Categories extends DolibarrApi
 
 		$result = $object->fetch(0, (string) $object_ref);
 		if ($result > 0) {
+			$this->_checkAccessToLinkedObject($type, $object);
 			$result = $this->category->del_type($object, $type);
 			if ($result < 0) {
 				throw new RestException(500, 'Error when unlinking object', array_merge(array($this->category->error), $this->category->errors));
@@ -669,9 +737,12 @@ class Categories extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Categorie  $object  Object to clean
 	 * @return  Object     			Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -679,6 +750,7 @@ class Categories extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		// Remove fields not relevant to categories
+		unset($object->MAP_ID);
 		unset($object->MAP_CAT_FK);
 		unset($object->MAP_CAT_TABLE);
 		unset($object->MAP_OBJ_CLASS);
@@ -687,11 +759,19 @@ class Categories extends DolibarrApi
 		unset($object->country_id);
 		unset($object->country_code);
 		unset($object->total_ht);
-		unset($object->total_ht);
 		unset($object->total_localtax1);
 		unset($object->total_localtax2);
 		unset($object->total_ttc);
 		unset($object->total_tva);
+
+		unset($object->multicurrency_tx);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+
 		unset($object->lines);
 		unset($object->civility_id);
 		unset($object->name);
@@ -699,6 +779,9 @@ class Categories extends DolibarrApi
 		unset($object->firstname);
 		unset($object->shipping_method_id);
 		unset($object->fk_delivery_address);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method);
 		unset($object->cond_reglement);
 		unset($object->cond_reglement_id);
 		unset($object->mode_reglement_id);
@@ -719,6 +802,14 @@ class Categories extends DolibarrApi
 		unset($object->fk_project);
 		unset($object->note);
 		unset($object->statut);
+		unset($object->actiontypecode);
+		unset($object->date_cloture);
+		unset($object->user_closing_id);
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->warehouse_id);
+		unset($object->state_id);
+		unset($object->region_id);
 
 		return $object;
 	}
@@ -726,13 +817,16 @@ class Categories extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array|null    $data   Data to validate
-	 * @return array				Return array with validated mandatory fields and their value
+	 * @param ?array<string,string>    $data	Data to validate
+	 * @return array<string,string>				Return array with validated mandatory fields and their value
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$category = array();
 		foreach (Categories::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -775,10 +869,25 @@ class Categories extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// The objects are returned only to a user who can read them: the permission of their module, and for each
+		// object the same restrictions as on its own API (sales representative, external user, entity).
+		$readaccess = array(
+			'member' => array(DolibarrApiAccess::$user->hasRight('adherent', 'lire'), 'adherent', ''),
+			'customer' => array(DolibarrApiAccess::$user->hasRight('societe', 'lire'), 'societe', ''),
+			'supplier' => array(DolibarrApiAccess::$user->hasRight('societe', 'lire'), 'societe', ''),
+			'product' => array(DolibarrApiAccess::$user->hasRight('produit', 'lire') || DolibarrApiAccess::$user->hasRight('service', 'lire'), 'product', ''),
+			'contact' => array(DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire'), 'contact', 'socpeople&societe'),
+			'project' => array(DolibarrApiAccess::$user->hasRight('projet', 'lire'), 'project', ''),
+			'ticket' => array(DolibarrApiAccess::$user->hasRight('ticket', 'read'), 'ticket', ''),
+		);
+		if (isset($readaccess[$type]) && !$readaccess[$type][0]) {
+			throw new RestException(403, 'Access to the objects of type '.$type.' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->category->getObjectsInCateg($type, $onlyids);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
+			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->errorsToString());
 		}
 
 		$objects = $result;
@@ -794,14 +903,54 @@ class Categories extends DolibarrApi
 			$objects_api = new Contacts();
 		} elseif ($type == 'project') {
 			$objects_api = new Projects();
+		} elseif ($type == 'ticket') {
+			$objects_api = new Tickets();
 		}
 
 		if (is_object($objects_api)) {
 			foreach ($objects as $obj) {
+				$objid = is_object($obj) ? (int) $obj->id : (int) $obj;
+				if (isset($readaccess[$type]) && !DolibarrApi::_checkAccessToResource($readaccess[$type][1], $objid, $readaccess[$type][2])) {
+					continue;
+				}
 				$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
 			}
 		}
 
 		return $cleaned_objects;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Check the user can access the object a category is linked to / unlinked from.
+	 * Linking is a write on the target object, so the same restrictions as on its own API apply
+	 * (sales representative and external user scoping, entity), not only the module permission.
+	 *
+	 * @param	string			$type		Category type (Categorie::TYPE_*)
+	 * @param	CommonObject	$object		Fetched target object
+	 * @return	void
+	 * @throws	RestException	403
+	 */
+	private function _checkAccessToLinkedObject($type, $object)
+	{
+		// phpcs:enable
+		if ($type === Categorie::TYPE_PRODUCT) {
+			$allowed = DolibarrApi::_checkAccessToResource('product', $object->id);
+		} elseif ($type === Categorie::TYPE_CUSTOMER || $type === Categorie::TYPE_SUPPLIER) {
+			$allowed = DolibarrApi::_checkAccessToResource('societe', $object->id);
+		} elseif ($type === Categorie::TYPE_CONTACT) {
+			$allowed = DolibarrApi::_checkAccessToResource('contact', $object->id, 'socpeople&societe');
+		} elseif ($type === Categorie::TYPE_MEMBER) {
+			$allowed = DolibarrApi::_checkAccessToResource('adherent', $object->id);
+		} elseif ($type === Categorie::TYPE_ACTIONCOMM) {
+			$allowed = DolibarrApi::_checkAccessToResource('agenda', $object->id, 'actioncomm', '', 'fk_soc', 'id');
+		} elseif ($type === Categorie::TYPE_PROJECT) {
+			$allowed = DolibarrApi::_checkAccessToResource('project', $object->id);
+		} else {
+			$allowed = false;
+		}
+		if (!$allowed) {
+			throw new RestException(403, 'Access to '.$type.' '.$object->id.' not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 	}
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2017      ATM Consulting         <contact@atm-consulting.fr>
  * Copyright (C) 2017      Pierre-Henry Favre     <phf@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php'
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "trips", "errors", "other", "dict"));
+$langs->loadLangs(array("admin", "trips", "other", "dict"));
 
 $error = 0;
 
@@ -98,7 +98,10 @@ if ($action == 'updateik') {
 			dol_print_error(null, $expIk->error, $expIk->errors);
 		}
 
-		$expIk->delete($user);
+		$result = $expIk->delete($user);
+		if ($result < 0) {
+			setEventMessages($expIk->error, $expIk->errors, 'errors');
+		}
 	}
 
 	header('Location: '.$_SERVER['PHP_SELF']);
@@ -116,7 +119,8 @@ llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'm
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 $head = expensereport_admin_prepare_head();
@@ -125,7 +129,7 @@ print dol_get_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), 
 echo '<span class="opacitymedium">'.$langs->trans('ExpenseReportIkDesc').'</span>';
 print '<br><br>';
 
-echo '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+echo '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" spellcheck="false">';
 echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
 if ($action == 'edit') {

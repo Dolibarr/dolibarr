@@ -44,7 +44,9 @@ if (!defined('NOBROWSERNOTIF')) {
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
+/**
+ * @var DoliDB $db
+ */
 $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $datetocheckbooking = GETPOSTINT('datetocheck');

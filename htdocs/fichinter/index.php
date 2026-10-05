@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015	   Charlene Benke        <charlene@patas-monkey.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2003-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2025  Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France		 <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 
 if (!$user->hasRight('ficheinter', 'lire')) {
 	accessforbidden();
@@ -54,12 +56,15 @@ $hookmanager->initHooks(array('interventionindex'));
 
 // Security check
 $socid = GETPOSTINT('socid');
-if ($user->socid > 0) {
+if ($user->isExternalUser()) {
 	$action = '';
-	$socid = $user->socid;
+	$socid = $user->isExternalUser();
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+// Load $resultboxes
+$resultboxes = FormOther::getBoxesArea($user, "20");
+
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*
@@ -98,82 +103,37 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 $sql .= " GROUP BY f.fk_statut";
 $resql = $db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
-
-	$total = 0;
-	$totalinprocess = 0;
-	$dataseries = array();
-	$colorseries = array();
 	$vals = array();
-	$bool = false;
-	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	if ($num > 0) {
-		while ($row = $db->fetch_row($resql)) {
-			if (!isset($vals[$row[1]])) {
-				$vals[$row[1]] = 0;
-			}
-			$vals[$row[1]] += $row[0];
-			$totalinprocess += $row[0];
-
-			$total += $row[0];
+	while ($row = $db->fetch_row($resql)) {
+		if (!isset($vals[$row[1]])) {
+			$vals[$row[1]] = 0;
 		}
+		$vals[$row[1]] += $row[0];
 	}
 	$db->free($resql);
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED);
+	$colors = getThemeBadgeStatusColors();
+	$colorofstatus = array(
+		Fichinter::STATUS_DRAFT => '-'.$colors[0],
+		Fichinter::STATUS_VALIDATED => $colors[1],
+		Fichinter::STATUS_CLOSED => $colors[2],
+		Fichinter::STATUS_BILLED => $colors[4],
+	);
+	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED, Fichinter::STATUS_CLOSED);
 	if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 		$listofstatus[] = Fichinter::STATUS_BILLED;
 	}
-
+	$series = array();
 	foreach ($listofstatus as $status) {
-		$dataseries[] = array($fichinterstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-
-		if ($status == Fichinter::STATUS_DRAFT) {
-			$colorseries[$status] = '-'.$badgeStatus0;
-		}
-		if ($status == Fichinter::STATUS_VALIDATED) {
-			$colorseries[$status] = $badgeStatus1;
-		}
-		if ($status == Fichinter::STATUS_BILLED) {
-			$colorseries[$status] = $badgeStatus4;
-		}
+		$series[] = array(
+			'label' => $fichinterstatic->LibStatut($status, 1),
+			'labelnojs' => $fichinterstatic->LibStatut($status, 0),
+			'nb' => (isset($vals[$status]) ? (int) $vals[$status] : 0),
+			'color' => $colorofstatus[$status],
+			'url' => 'list.php?search_status='.$status,
+		);
 	}
-
-	if ($conf->use_javascript_ajax) {
-		print '<tr class="impair"><td class="center" colspan="2">';
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->SetDataColor(array_values($colorseries));
-		$dolgraph->setShowLegend(2);
-		$dolgraph->setShowPercent(1);
-		$dolgraph->SetType(array('pie'));
-		$dolgraph->setHeight('200');
-		$dolgraph->draw('idgraphstatus');
-		print $dolgraph->show($total ? 0 : 1);
-
-		print '</td></tr>';
-	}
-	foreach ($listofstatus as $status) {
-		if (!$conf->use_javascript_ajax) {
-			print '<tr class="oddeven">';
-			print '<td>'.$fichinterstatic->LibStatut($status, 0).'</td>';
-			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
-			print $fichinterstatic->LibStatut($status, 3);
-			print '</a>';
-			print '</td>';
-			print "</tr>\n";
-		}
-	}
-	//if ($totalinprocess != $total)
-	//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-	print "</table></div><br>";
+	print getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("Interventions"), $series);
 } else {
 	dol_print_error($db);
 }
@@ -378,6 +338,27 @@ if (isModEnabled('intervention')) {
 }
 
 print '</div></div>';
+
+// boxes
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+$boxlist = '<div class="twocolumns">';
+
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= "</div>\n";
+
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>'."\n";
+
+$boxlist .= "</div>\n";
+
+print $boxlist;
+
+print '</div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardInterventions', $parameters, $object); // Note that $action and $object may have been modified by hook

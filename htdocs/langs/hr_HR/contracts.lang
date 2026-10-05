@@ -103,7 +103,13 @@ ConfirmCloneContract=Jeste li sigurni da želite za kloniranje ugovora <b>%s</b>
 LowerDateEndPlannedShort=Niži planirani datum završetka aktivnih usluga
 SendContractRef=Informacije o ugovoru __REF__
 OtherContracts=Ostali ugovori
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Predstavnik trgovca potpisuje ugovor
 TypeContact_contrat_internal_SALESREPFOLL=Ugovor za sljedeći ugovor prodajnog predstavnika
 TypeContact_contrat_external_BILLING=Izrada računa za klijentov ugovor

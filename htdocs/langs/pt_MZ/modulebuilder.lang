@@ -25,7 +25,6 @@ PageForLib=Arquivo para a biblioteca comum do PHP
 PageForObjLib=Arquivo para a biblioteca PHP dedicada ao objeto
 SqlFileKeyExtraFields=Arquivo SQL para chaves de atributos complementares
 ListOfDictionariesEntries=Lista de entradas dos dicionários
-PermissionsDefDescTooltip=As permissões fornecidas pelo seu módulo/aplicativo são definidas no array <strong>$this-> rights</strong> no arquivo descritor do módulo. Você pode editar manualmente este arquivo ou usar o editor incorporado. <br><br> Nota: Uma vez definida (e módulo reativado), as permissões são visíveis na configuração de permissões padrão %s.
 AddLanguageFile=Adicionar arquivo de idioma
 ContentOfREADMECustomized=Nota: O conteúdo do arquivo README.md foi substituído pelo valor específico definido na instalação do ModuleBuilder.
 ContentCantBeEmpty=O conteúdo do arquivo não pode estar vazio

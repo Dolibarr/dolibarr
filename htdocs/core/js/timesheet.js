@@ -127,7 +127,7 @@ function updateTotal(days,mode)
         for (var i=-1; i < nbline; i++)
         {
         	/* get value into timespent cell */
-        	
+
             var id='timespent['+i+']['+days+']';
             var taskTime = new Date(0);
             var element = document.getElementById(id);
@@ -152,9 +152,9 @@ function updateTotal(days,mode)
             		//console.log("i="+i+" nbextradays cumul="+nbextradays+" h="+total.getHours()+" "+taskTime.getHours());
                 }
             }
-			
+
 			/* get value into timeadded cell */
-			
+
             var id='timeadded['+i+']['+days+']';
             var taskTime= new Date(0);
             var element=document.getElementById(id);
@@ -229,21 +229,21 @@ function updateTotal(days,mode)
         		console.log(total.getMinutes())
             }
         });
-        
+
         var stringdays = days;
         if (startline >= 1 && startline <= 9 && stringdays < 10) {
         	stringdays = '0'+stringdays;
         }
-        
+
         /* Output total in top of column */
-        
+
         if (total.getHours() || total.getMinutes()) jQuery('.totalDay'+stringdays).addClass("bold");
         else jQuery('.totalDay'+stringdays).removeClass("bold");
         var texttoshow = pad(nbextradays * 24 + total.getHours())+':'+pad(total.getMinutes());
     	jQuery('.totalDay'+stringdays).text(texttoshow);
 
 		/* Output total of all total */
-		
+
     	var totalhour = 0;
     	var totalmin = 0;
         for (var i=0; i<7; i++)
@@ -309,7 +309,7 @@ function updateTotal(days,mode)
         	stringdays = '0'+stringdays;
         	console.log(stringdays);
         }
-        
+
         if (total) jQuery('.totalDay'+stringdays).addClass("bold");
         else jQuery('.totalDay'+stringdays).removeClass("bold");
     	jQuery('.totalDay'+stringdays).text(total);

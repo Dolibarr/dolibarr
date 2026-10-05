@@ -65,7 +65,11 @@ class modPaymentByBankTransfer extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array("modFournisseur", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
+		if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+			$this->depends = array("modSupplierInvoice", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
+		} else {
+			$this->depends = array("modFournisseur", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
+		}
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
@@ -76,14 +80,6 @@ class modPaymentByBankTransfer extends DolibarrModules
 		// Constants
 		$this->const = array();
 		$r = 0;
-
-		/*$this->const[$r][0] = "BANK_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "sepamandate";
-		$this->const[$r][3] = 'Name of manager to generate SEPA mandate';
-		$this->const[$r][4] = 0;
-		$r++;*/
-
 
 		// Boxes
 		$this->boxes = array();

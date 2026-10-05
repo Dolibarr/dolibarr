@@ -3,7 +3,8 @@
  * Copyright (C) 2015       Charlie BENKE        <charlie@patas-monkey.com>
  * Copyright (C) 2017-2023  Alexandre Spangaro   <aspangaro@easya.solutions>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,8 +72,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('salaryinfo', 'globalcard'));
 
 $object = new Salary($db);
-if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
+if ($id > 0) {
+	$object->fetch($id);
 
 	// Check current user can read this salary
 	$canread = 0;
@@ -108,7 +109,10 @@ if ($action == 'classin' && $permissiontoadd) {
 if ($action == 'setlabel' && $permissiontoadd) {
 	$object->fetch($id);
 	$object->label = $label;
-	$object->update($user);
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 
@@ -150,7 +154,7 @@ if ($action != 'editlabel') {
 	$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 	$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-	$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+	$morehtmlref .= '<input type="text" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"/>';
 	$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	$morehtmlref .= '</form>';
 }
@@ -166,9 +170,9 @@ if (isModEnabled('project')) {
 	if ($usercancreate) {
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
-		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
@@ -182,6 +186,11 @@ if (isModEnabled('project')) {
 }
 
 $morehtmlref .= '</div>';
+
+$totalpaid = $object->getSommePaiement();
+
+$object->totalpaid = $totalpaid;
+$object->alreadypaid = $totalpaid;	// Same then $totalpaid because there is no amount of credit note or deposits for salary payments.
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 

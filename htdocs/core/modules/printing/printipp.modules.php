@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2014-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -163,12 +163,25 @@ class printing_printipp extends PrintingDriver
 			dol_print_error($this->db);
 		}
 
-		$fileprint = $conf->{$module}->dir_output;
-		if ($subdir != '') {
-			$fileprint .= '/'.$subdir;
-		}
-		$fileprint .= '/'.$file;
+		$fileprint = getMultidirOutput(null, $module) . '/' . $file;
 		$ipp->setData($fileprint);
+		// Tell CUPS what we are sending so it picks the right filter chain (otherwise ODT/PDF arrive as raw and print as ASCII garbage).
+		$extension = strtolower(pathinfo($fileprint, PATHINFO_EXTENSION));
+		$mimebyext = array(
+			'pdf' => 'application/pdf',
+			'odt' => 'application/vnd.oasis.opendocument.text',
+			'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+			'odp' => 'application/vnd.oasis.opendocument.presentation',
+			'ps' => 'application/postscript',
+			'eps' => 'application/postscript',
+			'txt' => 'text/plain',
+			'png' => 'image/png',
+			'jpg' => 'image/jpeg',
+			'jpeg' => 'image/jpeg',
+		);
+		if (isset($mimebyext[$extension])) {
+			$ipp->setMimeMediaType($mimebyext[$extension]);
+		}
 		try {
 			$ipp->printJob();
 		} catch (Exception $e) {
@@ -218,17 +231,17 @@ class printing_printipp extends PrintingDriver
 			$html .= '<td>'.$langs->trans('STATE_IPP_'.$printer_det->printer_state->_value0).'</td>';
 			$html .= '<td>'.$langs->trans('STATE_IPP_'.$printer_det->printer_state_reasons->_value0).'</td>';
 			$html .= '<td>'.(!empty($printer_det->printer_state_reasons->_value1) ? $langs->trans('STATE_IPP_'.$printer_det->printer_state_reasons->_value1) : '').'</td>';
-			$html .= '<td>'.$langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value2).'</td>';
-			$html .= '<td>'.$langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value3).'</td>';
+			$html .= '<td>'.(!empty($printer_det->printer_type->_value2) ? $langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value2) : '').'</td>';
+			$html .= '<td>'.(!empty($printer_det->printer_type->_value3) ? $langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value3) : '').'</td>';
 			//$html.= '<td>'.$printer_det->device_uri->_value0.'</td>';
 			$html .= '<td>'.$printer_det->media_default->_value0.'</td>';
-			$html .= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
+			$html .= '<td>'.(!empty($printer_det->media_type_supported->_value1) ? $langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1) : '').'</td>';
 			// Default
 			$html .= '<td class="center">';
-			if ($conf->global->PRINTIPP_URI_DEFAULT == $value) {
+			if (getDolGlobalString('PRINTIPP_URI_DEFAULT') == $value) {
 				$html .= img_picto($langs->trans("Default"), 'on');
 			} else {
-				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'&mode=test&varname=PRINTIPP_URI_DEFAULT&driver=printipp&value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+				$html .= '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'setvalue', 'mode' => 'test', 'varname' => 'PRINTIPP_URI_DEFAULT', 'driver' => 'printipp', 'value' => $value], true).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			}
 			$html .= '</td>';
 			$html .= '</tr>'."\n";
@@ -244,7 +257,6 @@ class printing_printipp extends PrintingDriver
 	 */
 	public function getlistAvailablePrinters()
 	{
-		global $conf, $db;
 		include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
 		$ipp = new CupsPrintIPP();
 		$ipp->setLog(DOL_DATA_ROOT.'/dolibarr_printipp.log', 'file', 3); // logging very verbose
@@ -254,7 +266,12 @@ class printing_printipp extends PrintingDriver
 		if (!empty($this->user)) {
 			$ipp->setAuthentication($this->user, $this->password);
 		}
-		$ipp->getPrinters();
+		try {
+			$ipp->getPrinters();
+		} catch (Exception $e) {
+			setEventMessage($e->getMessage(), 'errors');
+		}
+
 		return $ipp->available_printers;
 	}
 

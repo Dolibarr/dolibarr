@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2012-2018  Charlene BENKE	<charlie@patas-monkey.com>
+/* Copyright (C) 2012-2026  Charlene BENKE	<charlene@patas-monkey.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,8 @@ class FormContract
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show a combo list with contracts qualified for a third party
+	 *  TODO This is a bugged function. It downloads all contracts into the select hanging the browser on large database.
+	 *  To allow its use, you must set the constant CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT.
 	 *
 	 *	@param	int		$socid      Id third party (-1=all, 0=only contracts not linked to a third party, id=contracts not linked or linked to third party id)
 	 *	@param  int		$selected   Id contract preselected
@@ -76,17 +79,18 @@ class FormContract
 		$ret = '';
 
 		// Search all contacts
-		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut,";
+		$sql = "SELECT c.rowid, c.ref, c.fk_soc, c.statut as status, s.nom,";
 		$sql .= " c.ref_customer, c.ref_supplier";
 		$sql .= " FROM ".$this->db->prefix()."contrat as c";
-		$sql .= " WHERE c.entity = ".$conf->entity;
+		$sql .= " INNER JOIN ".$this->db->prefix()."societe as s ON s.rowid = c.fk_soc";
+		$sql .= " WHERE c.entity = ".((int) $conf->entity);
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$this->db->sanitize($contratListId).")";
 		if ($socid > 0) {
 			// CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 			if (!getDolGlobalString('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')) {
 				$sql .= " AND (c.fk_soc=".((int) $socid)." OR c.fk_soc IS NULL)";
 			} elseif (getDolGlobalString('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') != 'all') {
-				$sql .= " AND (c.fk_soc IN (".$this->db->sanitize(((int) $socid).",".((int) $conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)).")";
+				$sql .= " AND (c.fk_soc IN (".$this->db->sanitize(((int) $socid).",".getDolGlobalInt('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY')).")";
 				$sql .= " OR c.fk_soc IS NULL)";
 			}
 		}
@@ -100,7 +104,7 @@ class FormContract
 		if ($resql) {
 			$ret .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) {
-				$ret .= '<option value="0">&nbsp;</option>';
+				$ret .= '<option value="0">&nbsp;</option>'."\n";
 			}
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -114,6 +118,7 @@ class FormContract
 						$labeltoshow = dol_trunc($obj->ref, 18);
 
 						if ($showRef) {
+							$labeltoshow = $labeltoshow." - ".$obj->nom;
 							if ($obj->ref_customer) {
 								$labeltoshow = $labeltoshow." - ".$obj->ref_customer;
 							}
@@ -124,17 +129,17 @@ class FormContract
 
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
-						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0) {
+						if (!empty($selected) && $selected == $obj->rowid && $obj->status > 0) {
 							$ret .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						} else {
 							$disabled = 0;
-							if ($obj->statut == 0) {
+							if ($obj->status == 0) {
 								$disabled = 1;
-								$labeltoshow .= ' ('.$langs->trans("Draft").')';
+								$labeltoshow .= ' ('.$langs->transnoentitiesnoconv("Draft").')';
 							}
 							if (!getDolGlobalString('CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY') && $socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
 								$disabled = 1;
-								$labeltoshow .= ' - '.$langs->trans("LinkedToAnotherCompany");
+								$labeltoshow .= ' - '.$langs->transnoentitiesnoconv("LinkedToAnotherCompany");
 							}
 
 							if ($hideunselectables && $disabled) {
@@ -146,8 +151,8 @@ class FormContract
 								}
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
-								$resultat .= '>'.$labeltoshow;
-								$resultat .= '</option>';
+								$resultat .= '>'.dolPrintHTML($labeltoshow);
+								$resultat .= '</option>'."\n";
 							}
 							$ret .= $resultat;
 						}
@@ -180,17 +185,17 @@ class FormContract
 	/**
 	 *  Show a form to select a contract
 	 *
-	 *  @param  int     $page       Page
+	 *  @param  string  $page       Page
 	 *  @param  int     $socid      Id third party (-1=all, 0=only contracts not linked to a third party, id=contracts not linked or linked to third party id)
 	 *  @param  int     $selected   Id contract preselected
 	 *  @param  string  $htmlname   Nom de la zone html
 	 *  @param  int     $maxlength	Maximum length of label
 	 *  @param  int     $showempty	Show empty line
 	 *  @param  int     $showRef    Show customer and supplier reference on each contract (when found)
-	 *  @param	int		$noouput	1=Return the output instead of display
+	 *  @param	int<0,1>	$nooutput	1=Return the output instead of display
 	 *  @return string|void         html string
 	 */
-	public function formSelectContract($page, $socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0)
+	public function formSelectContract($page, $socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $nooutput = 0)
 	{
 		global $langs;
 
@@ -201,7 +206,7 @@ class FormContract
 		$ret .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 		$ret .= '</form>';
 
-		if ($noouput) {
+		if ($nooutput) {
 			return $ret;
 		}
 

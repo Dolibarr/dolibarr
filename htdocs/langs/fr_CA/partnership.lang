@@ -26,3 +26,4 @@ YourPartnershipCanceledContent=Nous tenons à vous informer que notre partenaria
 LastCheckBacklink=Date de la dernière vérification de l'URL
 NewPartnershipRequestDesc=Ce formulaire vous permet de demander à faire partie de l'un de nos programmes de partenariat. Si vous avez besoin d'aide pour remplir ce formulaire, veuillez nous contacter par e-mail <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Cette page doit contenir au moins un lien vers l'un des domaines suivants : %s
+PartnershipConfirmReOpenAsk=Êtes-vous sûr de vouloir rouvrir ce partenariat <b> %s</b> ?

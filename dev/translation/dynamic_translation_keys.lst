@@ -10,6 +10,7 @@
 AiDescription
 AiDescriptionLong
 AiSetup
+AIError
 
 # datapolicy
 DATAPOLICY_ADHERENT
@@ -24,6 +25,10 @@ DATAPOLICY_TIERS_NIPROSPECT_NICLIENT
 DATAPOLICY_TIERS_PROSPECT
 DATAPOLICY_TIERS_PROSPECT_CLIENT
 
+#
+TOKEN_EXPIRE_AT
+TOKEN_EXPIRED
+
 # fournisseur
 CodePaymentTerm
 IdPaymentTerm
@@ -35,6 +40,15 @@ Map
 Reservation
 CompletePage
 PortionOfPage
+
+#
+AccountancyGroupCAPIT
+AccountancyGroupEXPENSE
+AccountancyGroupFINAN
+AccountancyGroupIMMO
+AccountancyGroupINCOME
+AccountancyGroupSTOCK
+AccountancyGroupTHIRDPARTY
 
 # Others
 ACCOUNTING_ACCOUNT_CUSTOMER
@@ -95,6 +109,24 @@ ACCOUNTING_VAT_BUY_REVERSE_CHARGES_DEBIT
 ACCOUNTING_VAT_PAY_ACCOUNT
 ACCOUNTING_VAT_SOLD_ACCOUNT
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT
+ACCOUNTING_LT1_BUY_ACCOUNT
+ACCOUNTING_LT2_BUY_ACCOUNT
+ACCOUNTING_LT1_BUY_REVERSE_CHARGES_CREDIT
+ACCOUNTING_LT2_BUY_REVERSE_CHARGES_CREDIT
+ACCOUNTING_LT1_PAY_ACCOUNT
+ACCOUNTING_LT2_PAY_ACCOUNT
+ACCOUNTING_LT1_PAY_REVERSE_CHARGES_CREDIT
+ACCOUNTING_LT2_PAY_REVERSE_CHARGES_CREDIT
+ACCOUNTING_LT1_SOLD_ACCOUNT
+ACCOUNTING_LT2_SOLD_ACCOUNT
+
+AI_API_MODEL_AUDIO
+AI_API_MODEL_IMAGE
+AI_API_MODEL_TEXT
+AI_API_MODEL_TRANSCRIPT
+AI_API_MODEL_TRANSLATE
+AI_API_MODEL_VIDEO
+
 AGENDA_EVENT_CURRENT_COLOR
 AGENDA_EVENT_FUTURE_COLOR
 AGENDA_EVENT_PAST_COLOR
@@ -775,6 +807,7 @@ Delays_MAIN_DELAY_CUSTOMER_BILLS_UNPAYED
 Delays_MAIN_DELAY_EXPENSEREPORTS
 Delays_MAIN_DELAY_HOLIDAYS
 Delays_MAIN_DELAY_MEMBERS
+Delays_MAIN_DELAY_MRP
 Delays_MAIN_DELAY_NOT_ACTIVATED_SERVICES
 Delays_MAIN_DELAY_ORDERS_TO_PROCESS
 Delays_MAIN_DELAY_PROJECT_TO_CLOSE
@@ -783,6 +816,8 @@ Delays_MAIN_DELAY_PROPALS_TO_CLOSE
 Delays_MAIN_DELAY_RUNNING_SERVICES
 Delays_MAIN_DELAY_SUPPLIER_BILLS_TO_PAY
 Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS
+Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL
+Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE
 Delays_MAIN_DELAY_TASKS_TODO
 Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE
 DeleteASms
@@ -887,6 +922,8 @@ DirectPrint
 Disassemble
 Dispatch
 DispatchVerb
+DocumentSigned
+DocumentUnsigned
 DoCreditTransferBeforePayments3
 DoNotAutofillButAutoConcat
 DoNotRemovePreviousCombinations
@@ -985,6 +1022,8 @@ ErrorBadCustomerCodeSyntax
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor
 ErrorBadMaskBadRazMonth
 ErrorBadMaskFailedToLocatePosOfSequence
+ErrorBadParametersForDirectDebitFileCreate
+ErrorBadParametersForDirectDebitFileCreateDids
 ErrorBadSupplierCodeSyntax
 ErrorBadThirdPartyName
 ErrorBadValueForParamNotAString
@@ -1009,16 +1048,20 @@ ErrorCustomerCodeRequired
 ErrorDeleteLineNotAllowedByObjectStatus
 ErrorDeleteNotPossibleLineIsConsolidated
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible
+ErrorDeletingAClosedCashControlIsNotPossible
 ErrorDeletingGeneratedProducts
 ErrorDescRequiredForFreeProductLines
 ErrorDirNotWritable
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice
+ErrorEmptyValueForQty
 ErrorEqualModule
 ErrorFailedToLoadRSSFile
 ErrorFeatureNeedJavascript
 ErrorFicheinterCompanyDoesNotExist
 ErrorFieldMustHaveXChar
 ErrorFileAlreadyExists
+ErrorFileIsAnInfectedPDFWithJSInside
+ErrorFileIsInfectedWithAVirus
 ErrorInAddAttachmentsImageBaseIsSrcData
 ErrorInAddAttachmentsImageBaseOnMedia
 ErrorInvalidSubtype
@@ -1029,13 +1072,15 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage
 ErrorLoginDisabled
 ErrorLoginDoesNotExists
 ErrorLoginHasNoEmail
-ErrorMandatoryParametersNotProvided
 ErrorMaxNumberReachForThisMask
 ErrorNewRefIsAlreadyUsed
 ErrorNoImagickReadimage
 ErrorNoTmpDir
+ErrorOnAtLeastOneFileUpload
+ErrorOneLineContainsADisactivatedProduct
 ErrorPROJECTLEADERRoleMissingRestoreIt
 ErrorPartialFile
+ErrorPaymentAmountMustNotBeNull
 ErrorPaymentConditionsNotEligibleToDepositCreation
 ErrorPrefixRequired
 ErrorPriceCantBeLowerThanMinPrice
@@ -1072,6 +1117,7 @@ ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved
 ErrorThisPaymentModeIsNotSepa
 ErrorTicketRefRequired
 ErrorTitleAlreadyExists
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter
 ErrorUpdateRate
 ErrorUploadBlockedByAddon
 ErrorUploadFileDragDrop
@@ -1082,6 +1128,7 @@ Error_COMMANDE_SUPPLIER_ADDON_NotDefined
 Error_EXPENSEREPORT_ADDON_NotDefined
 Error_OrderNotChecked
 Errors
+ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment
 EscompteOffered
 EstimatedDuration
 EstimatedDurationDesc
@@ -1328,6 +1375,11 @@ ImportDataset_service_1
 ImportDataset_tax_contrib
 ImportDataset_tax_vat
 ImportDataset_user_1
+ImportDataset_variants_attribute
+ImportDataset_variants_value
+ImportDataset_variants_combination
+ImportDataset_variants_combination2val
+ImportDataset_variants_pricelevel
 ImportSetup
 InWorkingOrder
 IncludeClosedAccount
@@ -1703,6 +1755,7 @@ Module0Desc
 Module0Name
 Module10000Desc
 Module10000Name
+Module100Desc
 Module100Name
 Module105Desc
 Module105Name
@@ -2552,7 +2605,6 @@ ShowStock
 ShowSubscription
 ShowSupplierPreview
 ShowTempMassFilesArea
-ShowTypeCard
 ShowUnpaidAll
 ShowUnpaidLateOnly
 ShowWithdraw
@@ -2677,6 +2729,7 @@ SubjectNotIn
 SubmitTranslation
 SubmitTranslationENUS
 SubscriptionId
+SubscriptionPayment
 SubscriptionRecorded
 SubscriptionReminderEmail
 SuggestedForTicketsInGroup
@@ -2993,7 +3046,6 @@ UserHideExternal
 UserHideNonEmployee
 UserID
 UserLogged
-UserLoginFailed
 UserLogoff
 UserMargins
 UserModif
@@ -3074,11 +3126,13 @@ WarningBillExist
 WarningCloseAlways
 WarningFailedToAddFileIntoDatabaseIndex
 WarningInstallationMayBecomeNotCompliantWithLaw
+WarningModuleAffiliatedToAReportedCompany
 WarningNoSmsAdded
 WarningNoteModuleInvoiceForFrenchLaw
 WarningNoteModulePOSForFrenchLaw
 Warnings
 WatermarkOnDraftSupplierProposal
+WEBHOOK_ENABLE_CALL_LOGSTooltip
 WebhookSetup
 Webpage
 WebsiteId

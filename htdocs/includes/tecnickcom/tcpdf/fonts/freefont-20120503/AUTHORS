@@ -85,7 +85,7 @@ particular ISO 10646 blocks.
 	Telugu					(U+0C00-U+0C7F)
 
 * Frans Velthuis <velthuis AT rc.rug.nl> and Anshuman Pandey
-  <apandey AT u.washington.edu> 
+  <apandey AT u.washington.edu>
 
 	Devanagari				(U+0900-U+097F)
 
@@ -130,14 +130,14 @@ particular ISO 10646 blocks.
 	Oriya					(U+0B00-U+0B7F)
 	Tamil					(U+0B80-U+0BFF)
 	Telugu					(U+0C00-U+0C7F)
-	Kannada					(U+0C80-U+0CFF)	
+	Kannada					(U+0C80-U+0CFF)
 	Malayalam				(U+0D00-U+0D7F)
 
 * DMS Electronics, The Sri Lanka Tipitaka Project, and Noah Levitt
   <nlevitt AT columbia.edu>
 
 	Sinhala					(U+0D80-U+0DFF)
-        
+
 * Dan Shurovich Chirkov <dansh AT chirkov.com>
 
 	Cyrillic				(U+0400-U+04FF)
@@ -219,7 +219,7 @@ particular ISO 10646 blocks.
 	Cyrillic Extended-B                     (U+A640-U+A65F)
 
 * Mark Williamson
-  Made the MPH 2 Damase font, from which 
+  Made the MPH 2 Damase font, from which
 	Hanunóo                                 (U+1720-U+173F)
 	Buginese                                (U+1A00-U+1A1F)
 	Tai Le                                  (U+1950-U+197F)

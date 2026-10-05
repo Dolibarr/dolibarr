@@ -6,6 +6,7 @@ TotalMargin=Общ марж
 MarginOnProducts=Марж / Продукти
 MarginOnServices=Марж / Услуги
 MarginRate=Брутен марж
+ModifyMarginRates=промени маржин проценти
 MarkRate=Нетен марж
 DisplayMarginRates=Показване на брутни маржове
 DisplayMarkRates=Показване на нетни маржове
@@ -22,7 +23,7 @@ ProductService=Продукт или услуга
 AllProducts=Всички продукти и услуги
 ChooseProduct/Service=Избиране на продукт или услуга
 ForceBuyingPriceIfNull=Форсиране на покупна цена / себестойност да бъде равна на продажната цена, ако не е дефинирана първата
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Ако покупната/себестойността не е предоставена, когато добавим нов ред и тази опция е „ВКЛЮЧЕНА“, маржът ще бъде 0%% на новия ред (покупна/себестойност = продажна цена). Ако тази опция е „ИЗКЛЮЧЕНА“ (препоръчително), маржът ще бъде равен на стойността, предложена по подразбиране (и може да бъде 100%%, ако не може да бъде намерена стойност по подразбиране).
 MARGIN_METHODE_FOR_DISCOUNT=Маржов метод за глобални отстъпки
 UseDiscountAsProduct=Като продукт
 UseDiscountAsService=Като услуга
@@ -30,14 +31,14 @@ UseDiscountOnTotal=Като междинна сума
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Определя дали глобалната отстъпка се третира като продукт, услуга или само като междинна сума за изчисление на маржа.
 MARGIN_TYPE=Покупна цена / себестойност предложена по подразбиране за изчисление на маржа
 MargeType1=Марж по най-добра покупна цена
-MargeType2=Марж по средно претеглена цена (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Марж по себестойност
-MarginTypeDesc=* Марж по най-добра покупна цена = продажна цена - най-добра покупна цена, дефинирани в картата на продукта / услугата.<br>* Марж по средно претеглена цена (WAP) = Продажна цена - Средно претеглена цена (WAP) или най-добра покупна цена, ако WAP все още не е дефиниран<br>* Марж по себестойност = Продажна цена - Себестойност, дефинирани в картата на продукта / услугата или WAP, ако себестойността не е дефинирана, или най-добра покупна цена, ако WAP не е дефиниран.
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Себестойност
 UnitCharges=Единични такси
 Charges=Такси
 AgentContactType=Тип контакт с търговски представител
-AgentContactTypeDetails=Определя какъв тип контакт (свързан с фактури) ще се използва за отчет на маржа за контакт / адрес. Обърнете внимание, че преглеждането на статистически данни за контакт не е надеждно, тъй като в повечето случаи контактът може да не е дефиниран изрично във фактурите.
+AgentContactTypeDetails=Определете какъв тип контакт (свързан във фактурите) ще се използва за отчет за марж за всеки контакт/адрес. Имайте предвид, че четенето на статистика за контакт не е надеждно, тъй като в повечето случаи контактът може да не е дефиниран изрично във фактурите.
 rateMustBeNumeric=Процента трябва да е числова стойност
 markRateShouldBeLesserThan100=Нетния марж трябва да бъде по-малък от 100
 ShowMarginInfos=Показване на информация за марж

@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 
 if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
-		define('XFRAMEOPTIONS_ALLOWALL', '1');
+	define('XFRAMEOPTIONS_ALLOWALL', '1');
 }
 
 // For MultiCompany module.
@@ -70,6 +70,7 @@ if (isModEnabled('paypal')) {
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user 		User object is initialized but empty as it is a public page
  *
  * @var string $dolibarr_main_url_root
  */
@@ -79,7 +80,7 @@ $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('newpayment'));
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe"));
 
 $PAYPALTOKEN = "";
 $PAYPALPAYERID = "";
@@ -92,10 +93,6 @@ if (isModEnabled('paypal')) {
 	if (empty($PAYPALPAYERID)) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
-}
-if (isModEnabled('paybox')) {
-}
-if (isModEnabled('stripe')) {
 }
 
 $FULLTAG = GETPOST('FULLTAG');
@@ -113,7 +110,12 @@ if (preg_match('/PM=([^\.]+)/', $FULLTAG, $reg)) {
 	$paymentmethod = $reg[1];
 }
 if (empty($paymentmethod)) {
-	dol_print_error(null, 'The back url does not contain a parameter fulltag that should help us to find the payment method used');
+	// Missing/invalid fulltag is a malformed client request, not a server failure: answer 400
+	// with a plain message instead of dol_print_error (which implies an internal error and
+	// returns a misleading 202 status).
+	dol_syslog("***** paymentko.php was called with a non valid parameter FULLTAG=".$FULLTAG, LOG_WARNING, 0, '_payment');
+	http_response_code(400);
+	print 'Bad request: the back url does not contain a valid fulltag parameter, required to find the payment method used.';
 	exit;
 } else {
 	dol_syslog("paymentko.php: paymentmethod=".$paymentmethod, LOG_DEBUG, 0, '_payment');
@@ -182,6 +184,7 @@ dol_syslog("paymentkosessioncode=".GETPOST('paymentkosessioncode')." SESSION['pa
 // Set $appli for emails title
 $appli = $mysoc->name;
 $error = 0;
+$FinalPaymentAmt = 0;
 
 
 if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
@@ -190,13 +193,14 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
-	$paymentType        = $_SESSION['PaymentType'];
+	$paymentType        = $_SESSION['PaymentType'] ?? '';
 	$currencyCodeType   = $_SESSION['currencyCodeType'];
 	$FinalPaymentAmt    = $_SESSION['FinalPaymentAmt'];
 	// From env
 	$ipaddress          = $_SESSION['ipaddress'];
 	$errormessage       = $_SESSION['errormessage'];
 
+	// @phpstan-ignore-next-line
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
 		// Call trigger @phan-suppress-next-line PhanUndeclaredMethod
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
@@ -212,16 +216,16 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	// Send warning of error to administrator
 	if ($sendemail) {
 		// Get default language to use for the company for supervision emails
-		$myCompanyDefaultLang = $mysoc->default_lang;
+		$myCompanyDefaultLang = (string) $mysoc->default_lang;
 		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
 			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
 			// so it must always be into the same language.
-			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+			$myCompanyDefaultLang = (string) getLanguageCodeFromCountryCode($mysoc->country_code);
 		}
 
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($myCompanyDefaultLang);
-		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
+		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'stripe'));
 
 		$from = getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;

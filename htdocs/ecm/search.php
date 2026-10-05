@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var array<int,string> $bc
  */
-
+'
+@phan-var-force array<int,string> $bc
+';
 // Load translation files required by the page
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
 
@@ -60,7 +63,7 @@ if (!$section) {
 	$section = 0;
 }
 
-$module  = GETPOST('module', 'alpha');
+$module  = GETPOST('module', 'aZ09arobase');
 $website = GETPOST('website', 'alpha');
 $pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
@@ -88,7 +91,7 @@ if (!$sortfield) {
 
 $ecmdir = new EcmDirectory($db);
 if (!empty($section)) {
-	$result = $ecmdir->fetch($section);
+	$result = $ecmdir->fetch((int) $section);
 	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
@@ -156,7 +159,7 @@ if (isModEnabled('supplier_proposal')) {
 }
 if (isModEnabled("supplier_order")) {
 	$rowspan++;
-	$sectionauto[] = array('level' => 1, 'module' => 'order_supplier', 'test' => isModEnabled("supplier_order"), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
+	$sectionauto[] = array('level' => 1, 'module' => 'order_supplier', 'test' => isModEnabled("supplier_order"), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SuppliersOrders")));
 }
 if (isModEnabled("supplier_invoice")) {
 	$rowspan++;
@@ -259,7 +262,7 @@ foreach ($sectionauto as $sectioncur) {
 	$butshown++;
 }
 
-print '<tr '.$bc[false].'><td colspan="4" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print '<tr '.$bc[0].'><td colspan="4" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form>";
 //print $langs->trans("ECMSectionAutoDesc");
 

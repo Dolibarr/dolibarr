@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 3.0.0 or higher. 
+-- when current version is 3.0.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
@@ -18,8 +18,8 @@ ALTER TABLE llx_c_methode_commande_fournisseur RENAME TO llx_c_input_method;
 
 ALTER TABLE llx_adherent MODIFY login varchar(50);
 
-ALTER TABLE llx_c_ziptown ADD COLUMN fk_pays integer NOT NULL DEFAULT 0 after fk_county; 
-ALTER TABLE llx_c_ziptown MODIFY fk_county integer NULL; 
+ALTER TABLE llx_c_ziptown ADD COLUMN fk_pays integer NOT NULL DEFAULT 0 after fk_county;
+ALTER TABLE llx_c_ziptown MODIFY fk_county integer NULL;
 
 ALTER TABLE llx_c_actioncomm ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_propal ADD COLUMN fk_demand_reason integer NULL DEFAULT 0;
@@ -167,7 +167,7 @@ create table llx_c_action_trigger
   description	varchar(255),
   elementtype	varchar(16) 			NOT NULL,
   rang			integer		DEFAULT 0
-  
+
 )ENGINE=innodb;
 ALTER TABLE llx_c_action_trigger ADD UNIQUE INDEX uk_action_trigger_code (code);
 
@@ -319,7 +319,7 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15406', 'Sociedad cooperativa', 1);
 
 -- Add Colombie data (id pays=70)
--- Regions Colombie 
+-- Regions Colombie
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (7001,  70, 7001, '', 0, 'Colombie', 1);
 -- Provinces Colombie
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('ANT', 7001, '', 0, 'ANT', 'Antioquia', 1);
@@ -357,7 +357,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MAG', 7001, '', 0, 'MAG', 'Magdalena', 1);
 
 -- Add Honduras data (id pays=114)
--- Regions Honduras 
+-- Regions Honduras
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (11401,  114, 11401, '', 0, 'Honduras', 1);
 -- Provinces Honduras
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AT', 11401, '', 0, 'AT', 'Atlántida', 1);
@@ -393,7 +393,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (15
 
 
 -- Add Barbados data (id pays=46)
--- Region Barbados 
+-- Region Barbados
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (4601,  46, 4601, 'Bridgetown', 0, 'Barbados', 1);
 -- Parish Barbados
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CC', 4601, 'Oistins', 0, 'CC', 'Christ Church', 1);
@@ -439,7 +439,7 @@ ALTER TABLE llx_product_extrafields ADD INDEX idx_product_extrafields (fk_object
 ALTER TABLE llx_societe_extrafields ADD INDEX idx_societe_extrafields (fk_object);
 
 alter table llx_adherent_options_label drop index uk_adherent_options_label_name;
-alter table llx_adherent_options_label rename to llx_extrafields; 
+alter table llx_adherent_options_label rename to llx_extrafields;
 ALTER TABLE llx_extrafields ADD COLUMN elementtype varchar(64) NOT NULL DEFAULT 'member' AFTER entity;
 ALTER TABLE llx_extrafields ADD UNIQUE INDEX uk_extrafields_name (name, entity, elementtype);
 ALTER TABLE llx_adherent_options rename to llx_adherent_extrafields;

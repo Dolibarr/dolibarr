@@ -73,7 +73,7 @@ class box_fediverse extends ModeleBoxes
 		$sql = '';
 		if (!empty($this->paramdef)) {
 			$sql = "SELECT value FROM ".MAIN_DB_PREFIX."const";
-			$sql .= " WHERE name like '%SOCIAL_NETWORKS_DATA_".$this->db->escape($this->paramdef)."%'";
+			$sql .= " WHERE name LIKE '%SOCIAL_NETWORKS_DATA_".$this->db->escape($this->paramdef)."%'";
 		}
 		$resql = $this->db->query($sql);
 		$num = $this->db->num_rows($resql);

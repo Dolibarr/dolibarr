@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ trait DolDeprecationHandler
 			if ($this->isDeprecatedReportingEnabled()) {
 				trigger_error($msg, E_USER_DEPRECATED);
 			}
-			return isset($newProperty);
+			return isset($this->$newProperty);
 		} elseif ($this->isDynamicPropertiesEnabled()) {
 			return isset($this->$name);
 		}
@@ -203,7 +203,7 @@ trait DolDeprecationHandler
 	{
 		// By default, if enableDynamicProperties is set, use that value.
 
-		if (property_exists($this, 'enableDynamicProperties')) {
+		if (property_exists($this, 'enableDynamicProperties')) { // @phpstan-ignore-line
 			// If the property exists, then we use it.
 			return (bool) $this->enableDynamicProperties;
 		}

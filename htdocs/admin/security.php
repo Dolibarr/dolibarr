@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2007  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015  Juanjo Menent		    <jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-
-$action = GETPOST('action', 'aZ09');
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +36,10 @@ $action = GETPOST('action', 'aZ09');
  *
  * @var string $dolibarr_main_db_pass
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+$action = GETPOST('action', 'aZ09');
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
@@ -58,7 +57,11 @@ $allow_disable_encryption = false;
  */
 
 if ($action == 'setgeneraterule') {
-	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', GETPOST("value", "alphanohtml"), 'chaine', 0, '', $conf->entity)) {
+	$value = GETPOST("value", "alphanohtml");
+	if (strtolower($value) === 'none' && isPasswordGenerationNoneForbidden()) {
+		// The 'none' model is forbidden on this installation (conf.php lock) — refuse the change.
+		setEventMessages($langs->trans("PasswordGenerationNoneDisabled"), null, 'errors');
+	} elseif (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', $value, 'chaine', 0, '', $conf->entity)) {
 		dol_print_error($db);
 	}
 }
@@ -131,7 +134,7 @@ if ($action == 'activate_encryptdbpassconf') {
 		header("Location: security.php");
 		exit;
 	} else {
-		setEventMessages($langs->trans('InstrucToEncodePass', dol_encode($dolibarr_main_db_pass)), null, 'warnings');
+		setEventMessages($langs->trans('InstrucToEncodePass', dolEncrypt($dolibarr_main_db_pass)), null, 'warnings');
 	}
 } elseif ($action == 'disable_encryptdbpassconf') {
 	$result = encodedecode_dbpassconf(0);
@@ -167,6 +170,14 @@ if ($action == 'updatepattern') {
 		$patternInError = true;
 	}
 
+	$minlengthallowed = getPasswordPatternMinLength();
+	if ((int) $explodePattern[0] < $minlengthallowed) {
+		// The 'none' model is forbidden on this installation, so the Perso model cannot be tuned
+		// down below the enforced floor either.
+		$patternInError = true;
+		setEventMessages($langs->trans("PasswordPatternMinLengthRestricted", $minlengthallowed), null, 'errors');
+	}
+
 	if (!$patternInError) {
 		dolibarr_set_const($db, "USER_PASSWORD_PATTERN", $pattern, 'chaine', 0, '', $conf->entity);
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -181,15 +192,12 @@ if ($action == 'updatepattern') {
  * View
  */
 
-$form = new Form($db);
-
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 llxHeader('', $langs->trans("Passwords"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("GeneratedPasswordDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("GeneratedPasswordDesc")."</div>\n";
 
 
 $head = security_prepare_head();
@@ -199,35 +207,42 @@ print dol_get_fiche_head($head, 'passwords', '', -1);
 print '<br>';
 
 // Select manager to generate passwords
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
 
-// Load array with all password generation modules
-$dir = "../core/modules/security/generate";
-clearstatcache();
-$handle = opendir($dir);
-$i = 1;
+// Load array with all password generation modules: scan core/modules/security/generate/
+// plus, for each enabled module declaring module_parts['models'], its own
+// core/modules/security/generate/ subdirectory — same multi-root convention already used
+// by every numbering-module scan in Dolibarr (see e.g. Facture::getNextNumRef()).
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 $arrayhandler = array();
-if (is_resource($handle)) {
-	while (($file = readdir($handle)) !== false) {
-		$reg = array();
-		if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {
-			// Charging the numbering class
-			$classname = $reg[1];
-			require_once $dir.'/'.$file;
-
-			$obj = new $classname($db, $conf, $langs, $user);
-			'@phan-var-force ModeleGenPassword $obj';
-			$arrayhandler[$obj->id] = $obj;
-			$i++;
+foreach ($dirmodels as $reldir) {
+	$dir = dol_buildpath($reldir.'core/modules/security/generate/');
+	clearstatcache();
+	$handle = @opendir($dir);
+	if (is_resource($handle)) {
+		while (($file = readdir($handle)) !== false) {
+			$reg = array();
+			if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {
+				// Charging the numbering class
+				$classname = $reg[1];
+				if (!class_exists($classname)) {
+					require_once $dir.$file;
+				}
+				if (class_exists($classname)) {
+					$obj = new $classname($db, $conf, $langs, $user);
+					'@phan-var-force ModeleGenPassword $obj';
+					$arrayhandler[$obj->id] = $obj;
+				}
+			}
 		}
+		closedir($handle);
 	}
-	closedir($handle);
 }
-asort($arrayhandler);
+$arrayhandler = dol_sort_array($arrayhandler, 'position');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -249,9 +264,9 @@ foreach ($arrayhandler as $key => $module) {
 	}
 
 	if ($module->isEnabled()) {
-		print '<tr class="oddeven"><td>';
+		print '<tr class="oddeven"><td class="nowraponall">';
 		print img_picto('', $module->picto, 'class="width25 size15x marginrightonly"').' ';
-		print ucfirst($key);
+		print '<div class="refid inline-block">'.ucfirst($key).'</span>';
 		print "</td><td>\n";
 		print $module->getDescription().'<br>';
 		print $langs->trans("MinLength").': <span class="opacitymedium">'.$module->length.'</span>';
@@ -271,7 +286,7 @@ foreach ($arrayhandler as $key => $module) {
 		print '</td>'."\n";
 
 		print '<td class="center">';
-		if ($conf->global->USER_PASSWORD_GENERATED == $key) {
+		if (getDolGlobalString('USER_PASSWORD_GENERATED') == $key) {
 			//print img_picto('', 'tick');
 			print img_picto($langs->trans("Enabled"), 'switch_on');
 		} else {
@@ -300,9 +315,14 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '</tr>';
 
 
+	$minlengthallowed = getPasswordPatternMinLength();
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("MinLength")."</td>";
-	print '<td><input type="number" class="width50 right" value="'.$tabConf[0].'" id="minlength" min="1"></td>';
+	print '<td>'.$langs->trans("MinLength");
+	if ($minlengthallowed > 1) {
+		print ' <span class="opacitymedium">('.$langs->trans("PasswordPatternMinLengthRestricted", $minlengthallowed).')</span>';
+	}
+	print "</td>";
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[0].'" id="minlength" min="'.$minlengthallowed.'"></td>';
 	print '</tr>';
 
 
@@ -401,7 +421,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 // Crypt passwords in database
 
 print '<br>';
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="encrypt">';
 
@@ -427,7 +447,6 @@ if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 } else {
 	print '<td class="center" width="100">';
 	if ($allow_disable_encryption) {
-		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 		//Do not allow "disable encryption" as passwords cannot be decrypted
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_encrypt&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	} else {
@@ -444,7 +463,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="60">';
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+if (preg_match('/(crypted|dolcrypt):/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 
@@ -483,7 +502,7 @@ if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print "</td>";
 }
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
-	print '<td center="center" width="100">';
+	print '<td class="center" width="100">';
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	print "</td>";
 }

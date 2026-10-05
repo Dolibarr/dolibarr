@@ -28,4 +28,3 @@ CREATE TABLE llx_comment (
     entity integer DEFAULT 1,
     import_key varchar(125) DEFAULT NULL
 )ENGINE=innodb;
-

@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
 
 /**
  * @var Conf $conf
@@ -92,79 +94,31 @@ $sql .= " AND p.fk_statut IN (0,1,2,3,4)";
 $sql .= " GROUP BY p.fk_statut";
 $resql = $db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-
-	$total = 0;
-	$totalinprocess = 0;
-	$dataseries = array();
-	$colorseries = array();
 	$vals = array();
-	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for sales orders), 3=Closed (Sent/Received, billed or not)
-	while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		if ($row) {
-			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-			{
-				$vals[$row[1]] = $row[0];
-				$totalinprocess += $row[0];
-			}
-			$total += $row[0];
-		}
-		$i++;
+	while ($row = $db->fetch_row($resql)) {
+		$vals[$row[1]] = $row[0];
 	}
 	$db->free($resql);
 
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
-	$listofstatus = array(0, 1, 2, 3, 4);
-	foreach ($listofstatus as $status) {
-		$dataseries[] = array($supplier_proposalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-		if ($status == SupplierProposal::STATUS_DRAFT) {
-			$colorseries[$status] = '-'.$badgeStatus0;
-		}
-		if ($status == SupplierProposal::STATUS_VALIDATED) {
-			$colorseries[$status] = $badgeStatus1;
-		}
-		if ($status == SupplierProposal::STATUS_SIGNED) {
-			$colorseries[$status] = $badgeStatus4;
-		}
-		if ($status == SupplierProposal::STATUS_NOTSIGNED) {
-			$colorseries[$status] = $badgeStatus9;
-		}
-		if ($status == SupplierProposal::STATUS_CLOSE) {
-			$colorseries[$status] = $badgeStatus6;
-		}
-
-		if (empty($conf->use_javascript_ajax)) {
-			print '<tr class="oddeven">';
-			print '<td>'.$supplier_proposalstatic->LibStatut($status, 0).'</td>';
-			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-			print "</tr>\n";
-		}
+	$colors = getThemeBadgeStatusColors();
+	$colorofstatus = array(
+		SupplierProposal::STATUS_DRAFT => '-'.$colors[0],
+		SupplierProposal::STATUS_VALIDATED => $colors[1],
+		SupplierProposal::STATUS_SIGNED => $colors[4],
+		SupplierProposal::STATUS_NOTSIGNED => $colors[9],
+		SupplierProposal::STATUS_CLOSE => $colors[6],
+	);
+	$series = array();
+	foreach (array(0, 1, 2, 3, 4) as $status) {
+		$series[] = array(
+			'label' => $supplier_proposalstatic->LibStatut($status, 1),
+			'labelnojs' => $supplier_proposalstatic->LibStatut($status, 0),
+			'nb' => (isset($vals[$status]) ? (int) $vals[$status] : 0),
+			'color' => $colorofstatus[$status],
+			'url' => 'list.php?search_status='.$status,
+		);
 	}
-	if ($conf->use_javascript_ajax) {
-		print '<tr><td class="center" colspan="2">';
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->SetDataColor(array_values($colorseries));
-		$dolgraph->setShowLegend(2);
-		$dolgraph->setShowPercent(1);
-		$dolgraph->SetType(array('pie'));
-		$dolgraph->setHeight('200');
-		$dolgraph->draw('idgraphstatus');
-		print $dolgraph->show($total ? 0 : 1);
-
-		print '</td></tr>';
-	}
-
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-	print "</table></div><br>";
+	print getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("CommRequests"), $series);
 } else {
 	dol_print_error($db);
 }
@@ -181,7 +135,7 @@ if (isModEnabled('supplier_proposal')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
-	$sql .= " AND c.entity = ".$conf->entity;
+	$sql .= " AND c.entity = ".((int) $conf->entity);
 	$sql .= " AND c.fk_statut = 0";
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -239,7 +193,7 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE c.fk_soc = s.rowid";
-$sql .= " AND c.entity = ".$conf->entity;
+$sql .= " AND c.entity = ".((int) $conf->entity);
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -342,7 +296,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'l
 			print ' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=1" alt="'.$langs->trans("GoOnList").'"><span class="badge">'.$num.'</span></a>';
 			print '</th></tr>';
 
-			$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+			$nbofloop = min($num, getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500));
 			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($result);
 
@@ -359,7 +313,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'l
 				print $supplier_proposalstatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="18" class="nobordernopadding nowrap">';
-				if ($db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) {
+				if (isset($obj->dfv) && $db->jdate($obj->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) {
 					print img_warning($langs->trans("Late"));
 				}
 				print '</td>';

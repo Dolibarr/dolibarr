@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - recruitment
 ModuleRecruitmentDesc =Gerenciar e acompanhar campanhas de recrutamento para novos cargos
 RecruitmentSetup =Configuração de recrutamento
-RecruitmentSetupPage =Entre aqui a configuração das opções principais para o módulo de recrutamento
+RecruitmentSetupPage =Insira aqui a configuração das principais opções do módulo de recrutamento
 PublicInterfaceRecruitmentDesc=As páginas públicas de empregos são URLs públicos para mostrar e responder a empregos abertos. Há um link diferente para cada vaga aberta, encontrada em cada registro de vaga.
 EnablePublicRecruitmentPages=Habilitar páginas públicas de novas vagas.
 NbOfEmployeesExpected=Número esperado de funcionários
@@ -22,6 +22,7 @@ ContractProposed=Contrato proposto
 ContractRefused=Contrato recusado
 JobPositions=Vagas de trabalho
 RecruitmentCandidatures=Aplicações
+InterviewToDo=Contatos a seguir
 AnswerCandidature=Resposta de aplicação
 YourCandidature=Sua aplicação
 YourCandidatureAnswerMessage=Obrigado pela sua aplicação. <br>...
@@ -30,3 +31,10 @@ JobClosedTextCanceled=A posição de trabalho foi preenchida.
 ExtrafieldsJobPosition=Atributos complementares (vagas de trabalho)
 ExtrafieldsApplication=Atributos complementares (aplicações para vagas)
 MakeOffer=Fazer uma proposta
+WeAreRecruiting=Estamos recrutando. Esta é uma lista de posições abertas para serem preenchidas...
+NoPositionOpen=Nenhuma posição aberta no momento
+ConfirmClose=Confirmar cancelamento
+ConfirmCloseAsk=Tem certeza de que deseja cancelar esta candidatura de recrutamento
+ApplyJobCandidature=Candidatar-se a este emprego
+ErrorRecruitmmentCandidatureAlreadyExists=Candidatura de recrutamento já existe com e-mail %s
+NoOpenJobOffer=Nenhuma oferta de emprego aberta no momento

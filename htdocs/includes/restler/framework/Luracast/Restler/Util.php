@@ -244,9 +244,8 @@ class Util
     {
     	// @CHANGE LDR
     	if (!is_string($className)) return;
-    	
+
     	$className = explode('\\', $className);
         return end($className);
     }
 }
-

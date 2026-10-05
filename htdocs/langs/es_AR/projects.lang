@@ -4,6 +4,7 @@ ProjectId=ID de Proyecto
 ProjectLabel=Etiqueta de Proyecto
 ProjectsArea=Area de Proyectos
 SharedProject=Todos
+ProjectReferers=Items relacionados
 OppStatusPROPO=Propuesta
 NewInter=Nueva intervención
 StartDateCannotBeAfterEndDate=La fecha de finalización no puede ser anterior a la fecha de inicio

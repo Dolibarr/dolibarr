@@ -43,7 +43,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 		$this->family = "technic";
 		$this->description = "Zapier triggers.";
 		$this->version = self::VERSIONS['dev'];
-		$this->picto = 'zapier';
+		$this->picto = 'zapier.png';
 	}
 
 	/**
@@ -416,20 +416,6 @@ function zapierPostWebhook($url, $json)
 
 	dol_syslog("Send message to Zapier with json size=".dol_strlen($json), LOG_DEBUG);
 	getURLContent($url, 'POSTALREADYFORMATED', $json, 1, $headers, array('http', 'https'), 0);
-
-	/*
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-	$output = curl_exec($ch);
-	curl_close($ch);
-	*/
 }
 
 /**
@@ -458,7 +444,6 @@ function cleanObjectDatas($toclean)
 	unset($toclean->ref_previous);
 	unset($toclean->ref_next);
 
-	unset($toclean->projet); // Should be fk_project
 	unset($toclean->project); // Should be fk_project
 	unset($toclean->author); // Should be fk_user_author
 	unset($toclean->timespent_old_duration);

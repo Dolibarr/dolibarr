@@ -27,12 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "partnership"));
@@ -96,11 +95,10 @@ $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-partnership page-admin-website');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = partnershipAdminPrepareHead();
-
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -110,7 +108,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print dol_get_fiche_head($head, 'website', $langs->trans("Partnerships"), -1, 'partnership');
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print 'jQuery(document).ready(function () {
                 function initemail()
                 {
@@ -144,7 +142,7 @@ if ($conf->use_javascript_ajax) {
 }
 
 
-print '<span class="opacitymedium">'.$langs->trans("PublicFormRegistrationPartnerDesc").'</span><br><br>';
+print '<div class="info">'.$langs->trans("PublicFormRegistrationPartnerDesc").'</div>';
 
 $param = '';
 
@@ -160,12 +158,11 @@ if (!getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
+
+print '<div class="neutral">';
 print $enabledisablehtml;
 print '<input type="hidden" id="PARTNERSHIP_ENABLE_PUBLIC" name="PARTNERSHIP_ENABLE_PUBLIC" value="'.(!getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC') ? 0 : 1).'">';
-
-
-print '<br>';
-
+print '</div>';
 
 /*
 if (getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
@@ -193,9 +190,6 @@ if (getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (isModEnabled('paybox')) {
-		$listofval['paybox'] = 'Paybox';
-	}
 	if (isModEnabled('paypal')) {
 		$listofval['paypal'] = 'PayPal';
 	}

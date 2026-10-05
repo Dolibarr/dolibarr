@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - assets
+MenuListAssets=قائمة
+MenuListAssetModels=قائمة
+AssetAcquisitionTypeOccasion=مستخدم
+AssetTypeInProgress=قيد التنفيذ
+AssetInProgress=قيد التنفيذ
+AssetDepreciationOptionDurationTypeAnnual=سنوي
+AssetDepreciationOptionDurationTypeMonthly=شهري

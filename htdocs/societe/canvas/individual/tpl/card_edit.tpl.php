@@ -61,20 +61,6 @@ if (empty($conf) || !is_object($conf)) {
 	<td colspan="3"><input type="text" size="40" maxlength="60" name="name" value="<?php echo $this->control->tpl['name']; ?>"></td>
 </tr>
 
-<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
-<tr>
-	<td><?php echo $langs->trans("Prefix"); ?></td>
-	<td colspan="3">
-	<?php if (($this->control->tpl['prefix_customercode'] || $this->control->tpl['prefix_suppliercode']) && $this->control->tpl['prefix_comm']) { ?>
-	<input type="hidden" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
-		<?php echo $this->control->tpl['prefix_comm']; ?>
-	<?php } else { ?>
-	<input type="text" size="5" maxlength="5" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
-	<?php } ?>
-	</td>
-</tr>
-<?php } ?>
-
 <tr>
 	<td width="25%"><span class="fieldrequired"><?php echo $langs->trans('ProspectCustomer'); ?></span></td>
 	<td width="25%"><?php echo $this->control->tpl['select_customertype']; ?></td>

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,22 +26,23 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by the page
 $langsLoad = array('projects', 'companies');
@@ -58,14 +59,16 @@ $socid  = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 $mine   = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
-if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && empty($object->comments)) {
 	$object->fetchComments();
 }
+
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
 
 // Security check
 $socid = 0;
@@ -76,6 +79,10 @@ $hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $permissiontoadd = $user->hasRight('projet', 'creer');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -88,16 +95,35 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+$formconfirmtoaddtasks = '';
 if (empty($reshook)) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'aZ09');
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+		if ($ret < 0) {
+			$error++;
+		}
+		if (!$error) {
+			$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
+
 	// Test if we can add contact to the tasks at the same times, if not or not required, make a redirect
-	$formconfirmtoaddtasks = '';
 	if ($action == 'addcontact' && $permissiontoadd) {
 		$form = new Form($db);
 
 		$source = GETPOST("source", 'aZ09');
 
 		$taskstatic = new Task($db);
-		$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
+		$task_array = $taskstatic->getTasksArray(null, null, $object->id, 0, 0);
 		$nbTasks = count($task_array);
 
 		//If no task available, redirec to to add confirm
@@ -191,7 +217,7 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				$excludefilter = 'statut = 1';
 				$tmpcontactarray = $usergroup->listUsersForGroup($excludefilter, 0);
-				if ($contactarray <= 0) {
+				if (!is_array($tmpcontactarray)) {
 					$error++;
 				} else {
 					foreach ($tmpcontactarray as $tmpuser) {
@@ -243,9 +269,9 @@ if (empty($reshook)) {
 					$task_to_affect = explode(',', $affecttotask);
 					if (!empty($task_to_affect)) {
 						foreach ($task_to_affect as $task_id) {
-							if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'san_alpha')) {
+							if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'aZ09comma')) {
 								$tasksToAffect = new Task($db);
-								$result = $tasksToAffect->fetch($task_id);
+								$result = $tasksToAffect->fetch((int) $task_id);
 								if ($result < 0) {
 									setEventMessages($tasksToAffect->error, null, 'errors');
 								} else {
@@ -331,7 +357,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * View
 	 */
-	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && empty($object->comments)) {
 		$object->fetchComments();
 	}
 	// To verify role of users
@@ -424,20 +450,14 @@ if ($id > 0 || !empty($ref)) {
 		print '</td></tr>';
 	}
 
+	$formproject = new FormProjets($db);
+
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 		// Opportunity status
 		print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-		$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-		if ($code) {
-			print $langs->trans("OppStatus".$code);
-		}
-
-		// Opportunity percent
-		print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
-		if (strcmp($object->opp_percent, '')) {
-			print price($object->opp_percent, 0, $langs, 1, 0).' %';
-		}
-		print '</span></td></tr>';
+		$percent_value = (GETPOSTISSET('opp_percent') ? GETPOSTINT('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : ''));
+		print $formproject->formOpportunityStatus($_SERVER['PHP_SELF'].'?socid='.$object->id, (string) $object->opp_status, $percent_value, 'none', 'none', '', 1);
+		print '</td></tr>';
 
 		// Opportunity Amount
 		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
@@ -523,9 +543,12 @@ if ($id > 0 || !empty($ref)) {
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) {
-			break;
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
 		}
 	}
 }

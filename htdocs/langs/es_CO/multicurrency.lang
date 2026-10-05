@@ -11,7 +11,6 @@ multicurrency_appCurrencySource=Moneda de origen
 multicurrency_alternateCurrencySource=Moneda de origen alternativa
 CurrenciesUsed=Monedas utilizadas
 CurrenciesUsed_help_to_add=Agregue las diferentes monedas y tasas que necesita usar en sus propuestas <b> </b>, <b> pedidos </b> etc.
-rate=índice
 MulticurrencyReceived=Recibido, moneda original
 MulticurrencyRemainderToTake=Importe restante, moneda original
 AmountToOthercurrency=Importe a (en la moneda de la cuenta receptora)

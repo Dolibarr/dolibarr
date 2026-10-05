@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Upravljanje partnerstva
 PartnershipDescription=Modul Partnerski management
 PartnershipDescriptionLong= Modul Partnerski management
@@ -24,17 +20,11 @@ Partnerships=Partnerstva
 AddPartnership=Dodajte partnerstvo
 CancelPartnershipForExpiredMembers=Partnerstvo: Prekličite partnerstvo članov s potečeno naročnino
 PartnershipCheckBacklink=Partnerstvo: Preverite napotitveno povratno povezavo
-
-#
 # Menu
-#
 NewPartnership=Novo partnerstvo
 NewPartnershipbyWeb=Vaša zahteva za partnerstvo je bila uspešno dodana. Morda vas kmalu kontaktiramo ...
 ListOfPartnerships=Seznam partnerstev
-
-#
 # Admin page
-#
 PartnershipSetup=Postavitev partnerstva
 PartnershipAbout=O partnerstvu
 PartnershipAboutPage=Partnerstvo o strani
@@ -45,10 +35,7 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Število dni pred prekl
 ReferingWebsiteCheck=Preverjanje napotitve na spletno stran
 ReferingWebsiteCheckDesc=Omogočite lahko funkcijo za preverjanje, ali so vaši partnerji dodali povratno povezavo do domen vašega spletnega mesta na svojem spletnem mestu.
 PublicFormRegistrationPartnerDesc=Dolibarr vam lahko zagotovi javni URL/spletno mesto, ki zunanjim obiskovalcem omogoča, da zaprosijo za sodelovanje v partnerskem programu.
-
-#
 # Object
-#
 DeletePartnership=Izbrišite partnerstvo
 PartnershipDedicatedToThisThirdParty=Partnerstvo, namenjeno tej tretji osebi
 PartnershipDedicatedToThisMember=Partnerstvo posvečeno temu članu
@@ -68,31 +55,24 @@ PartnershipAccepted=Sprejeto
 PartnershipRefused=Zavrnjeno
 PartnershipCanceled=Preklicano
 PartnershipManagedFor=Partnerji so
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Partnerstvo bo kmalu preklicano
 SendingEmailOnPartnershipRefused=Partnerstvo zavrnjeno
 SendingEmailOnPartnershipAccepted=Partnerstvo sprejeto
 SendingEmailOnPartnershipCanceled=Partnerstvo preklicano
-
 YourPartnershipWillSoonBeCanceledTopic=Partnerstvo bo kmalu preklicano
 YourPartnershipRefusedTopic=Partnerstvo zavrnjeno
 YourPartnershipAcceptedTopic=Partnerstvo sprejeto
 YourPartnershipCanceledTopic=Partnerstvo preklicano
-
 YourPartnershipWillSoonBeCanceledContent=Obveščamo vas, da bo naše partnerstvo kmalu prekinjeno (nismo dobili podaljšanja ali pa ni bil izpolnjen predpogoj za naše partnerstvo). Prosimo, kontaktirajte nas, če ste to prejeli zaradi napake.
 YourPartnershipRefusedContent=Obveščamo vas, da je bila vaša prošnja za partnerstvo zavrnjena. Predpogoji niso izpolnjeni. Kontaktirajte nas, če potrebujete več informacij.
 YourPartnershipAcceptedContent=Obveščamo vas, da je bila vaša prošnja za partnerstvo sprejeta.
 YourPartnershipCanceledContent=Obveščamo vas, da je naše partnerstvo preklicano. Prosimo, kontaktirajte nas, če potrebujete več informacij.
-
-CountLastUrlCheckError=Število napak pri zadnjem preverjanju URL-ja
+CountLastUrlCheckError=Number of URL check errors
 LastCheckBacklink=Datum zadnjega preverjanja URL-ja
-
 NewPartnershipRequest=Nova zahteva za partnerstvo
 NewPartnershipRequestDesc=Ta obrazec vam omogoča, da zaprosite za sodelovanje v enem od naših partnerskih programov. Če potrebujete pomoč pri izpolnjevanju tega obrazca, se obrnite na e-pošto <b> %s </b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Ta stran mora vsebovati vsaj eno povezavo do ene od naslednjih domen: %s
-
 IPOfApplicant=IP prijavitelja
-
+PartnershipToReopen=To reopen
+PartnershipConfirmReOpenAsk=Are you sure you want to reopen this partnership <b> %s</b>?

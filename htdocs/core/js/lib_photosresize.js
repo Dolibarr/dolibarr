@@ -34,7 +34,7 @@ function updateCoords(c)
 	ratio=1;
 	imagewidth=0;
 	imageheight=0;
-	
+
 	console.log(c);
 
 	if (parseInt(jQuery("#ratioforcrop").val()) > 1) {
@@ -42,7 +42,7 @@ function updateCoords(c)
 		if (parseInt(jQuery("#imagewidth").val()) > 0) imagewidth = parseInt(jQuery("#imagewidth").val());
 		if (parseInt(jQuery("#imageheight").val()) > 0) imageheight = parseInt(jQuery("#imageheight").val());
 	}
-	
+
 	x = Math.floor(c.x * ratio);
 	y = Math.floor(c.y * ratio);
 	x2 = Math.ceil(c.x2 * ratio);
@@ -60,7 +60,7 @@ function updateCoords(c)
 	if (imageheight > 0 && y2 > imageheight) {
 		y2 = imageheight;
 	}
-	
+
 	//console.log(ratio);
 	jQuery('#x').val(x);
 	jQuery('#y').val(y);

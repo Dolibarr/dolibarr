@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024 Frédéric France   	<frederic.france@free.fr>
+ * Copyright (C) 2025 MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +19,9 @@
 
 /**
  *      \file       htdocs/core/ajax/editinline.php
- *      \brief      Save edit inline changes
+ *      \ingroup    website
+ *      \brief      Save changes done into a website page when we are in "edit inline" mode.
  */
-
 
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
@@ -37,10 +38,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
-require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -48,16 +45,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
 
 $action = GETPOST('action', 'alpha');
 $website_ref = GETPOST('website_ref');
-$page_id = GETPOST('page_id');
+$page_id = GETPOSTINT('page_id');
 $content = GETPOST('content', 'restricthtml');
-$element_id = GETPOST('element_id');
-$element_type = GETPOST('element_type');
+$element_id = GETPOSTINT('element_id');
+$element_type = GETPOST('element_type', 'aZ09');
 
 $usercanmodify = $user->hasRight('website', 'write');
 if (!$usercanmodify) {
+	http_response_code(403);
 	print "You don't have permission for this action.";
 	exit;
 }
@@ -72,7 +73,7 @@ top_httphead();
 if (!empty($action) && $action === 'updatedElementContent' && $usercanmodify && !empty($content) && !empty($element_id) && !empty($website_ref) && !empty($page_id)) {
 	// Page object
 	$objectpage = new WebsitePage($db);
-	$res = $objectpage->fetch($page_id);
+	$res = $objectpage->fetch((int) $page_id);
 	if (!$res) {
 		print "Cannot find page with ID = " . $page_id . ".";
 		exit;
@@ -89,22 +90,34 @@ if (!empty($action) && $action === 'updatedElementContent' && $usercanmodify && 
 	$db->begin();
 	$error = 0;
 
-	// Replace element content into database and tpl file
-	$objectpage->content = preg_replace('/<' . $element_type . '[^>]*id="' . $element_id . '"[^>]*>\K(.*?)(?=<\/' . $element_type . '>)/s', $content, $objectpage->content, 1);
-	$res = $objectpage->update($user);
-	if ($res) {
-		global $dolibarr_main_data_root;
-		$pathofwebsite = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$website_ref;
-		$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
+	$oldContent = $objectpage->content;
 
-		$result = dolSavePageContent($filetpl, $objectwebsite, $objectpage, 1);
-		if (!$result) {
-			print "Failed to write file " . $filetpl . ".";
+	// Replace element content into database and tpl file
+	// TODO Enhance this by a DOM scan/replacement
+	$objectpage->content = preg_replace('/<' . preg_quote($element_type, '/') . '[^>]*\bid="' . $element_id . '"[^>]*>\K(.*?)(?=<\/' . preg_quote($element_type, '/') . '>)/s', $content, $objectpage->content, 1);
+
+	$oldPhp = dolKeepOnlyPhpCode($oldContent);
+	$newPhp = dolKeepOnlyPhpCode($objectpage->content);
+	if (checkPHPCode($oldPhp, $newPhp)) {
+		// Error php was modified when not allowed
+		$error++;
+		// A message was set by setEventMessages into checkPHPCode().
+	} else {
+		$res = $objectpage->update($user);
+		if ($res) {
+			global $dolibarr_main_data_root;
+			$pathofwebsite = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$website_ref;
+			$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
+
+			$result = dolSavePageContent($filetpl, $objectwebsite, $objectpage, 1);
+			if (!$result) {
+				print "Failed to write file " . $filetpl . ".";
+				$error++;
+			}
+		} else {
+			print "Failed to save changes error " . $objectpage->error . ".";
 			$error++;
 		}
-	} else {
-		print "Failed to save changes error " . $objectpage->error . ".";
-		$error++;
 	}
 
 	if (!$error) {

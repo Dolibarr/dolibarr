@@ -1,35 +1,67 @@
-# Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=حساب المحاسبة بشكل افتراضي لمدفوعات الأجور
-CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=بشكل افتراضي ، اترك خيار "إنشاء دفعة إجمالية تلقائيًا" فارغًا عند إنشاء راتب
 Salary=الراتب
 Salaries=الرواتب
 NewSalary=راتب جديد
-AddSalary=أضف الراتب
+AddSalary=إضافة راتب
 NewSalaryPayment=بطاقة راتب جديدة
-AddSalaryPayment=اضافة دفع الراتب
-SalaryID=Salary ID
-SalaryAmount=Salary amount
-SalaryPayment=دفع الرواتب
-SalariesPayments=مدفوعات الرواتب
-SalariesPaymentsOf=مدفوعات الرواتب %s
-ShowSalaryPayment=مشاهدة دفع الرواتب
-THM=متوسط معدل الساعة
-TJM=متوسط معدل يومي
+AddSalaryPayment=إضافة دفعة راتب
+SalaryPayment=دفعة راتب
+SalariesPayments=دفعات الرواتب
+SalariesPaymentsOf=دفعات رواتب %s
+ShowSalaryPayment=عرض دفعة الراتب
+SalaryID=معرّف الراتب
+SalaryAmount=مبلغ الراتب
+SalaryDate=تاريخ الراتب
+SalaryPaid=تم دفع الراتب
+SalaryNotPaid=لم يُدفع الراتب
+
+SalarySlip=قسيمة الراتب
+StandardSalaryDocModel=نموذج مستند قسيمة الراتب القياسي
+
+BasicSalary=الراتب الأساسي
+Bonus=مكافأة
+Allowance=بدل
+Overtime=العمل الإضافي
+Deduction=حسم
+Deductions=الحسميات
+Earnings=المستحقات
+TotalEarnings=إجمالي المستحقات
+TotalDeductions=إجمالي الحسميات
+NetPaid=صافي المبلغ المدفوع
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=الحساب (من دليل الحسابات) المستخدم افتراضيًا للمستخدمين في الرواتب
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=يُستخدم الحساب المخصص المحدد في بطاقة المستخدم لمحاسبة دفتر الأستاذ المساعد فقط. أما هذا الحساب فيُستخدم في دفتر الأستاذ العام، وكذلك كقيمة افتراضية لمحاسبة دفتر الأستاذ المساعد إذا لم يُحدد حساب محاسبي مخصص للمستخدم.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=الحساب المحاسبي الافتراضي لمدفوعات الأجور
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=افتراضيًا، اترك خيار «إنشاء دفعة إجمالية تلقائيًا» فارغًا عند إنشاء راتب
+
+# Stats / Info
 CurrentSalary=الراتب الحالي
-THMDescription=يمكن استخدام هذه القيمة لحساب تكلفة الوقت المستغرق في مشروع أدخله المستخدمون إذا تم استخدام مشروع الوحدة النمطية
-TJMDescription=هذه القيمة حاليًا للمعلومات فقط ولا تُستخدم لأي حساب
-LastSalaries=آخر %s الرواتب
-AllSalaries=كل الرواتب
-SalariesStatistics=إحصائيات الرواتب
-SalariesAndPayments=الرواتب والمدفوعات
-ConfirmDeleteSalaryPayment=هل تريد حذف هذا الراتب؟
-FillFieldFirst=املأ حقل الموظف أولاً
-UpdateAmountWithLastSalary=تعيين مقدار آخر راتب
-MakeTransferRequest=تقديم طلب النقل
-VirementOrder=طلب تحويل رصيد
-WithdrawalReceipt=أمر تحويل رصيد
-OrderWaiting=في انتظار طلب
-FillEndOfMonth=املأ بنهاية الشهر
-UserPaySlip=Pay Slip
+LastSalaries=أحدث %s رواتب
+AllSalaries=جميع الرواتب
+SalariesStatistics=إحصاءات الرواتب
+SalariesAndPayments=الرواتب والدفعات
+UserPaySlip=قسيمة راتب المستخدم
+PayPeriod=فترة الأجر
+
+# THM / TJM
+THM=متوسط معدل الساعة
+THMDescription=يمكن استخدام هذه القيمة لحساب تكلفة الوقت المستغرق على مشروع والمسجّل من المستخدمين، عند استخدام وحدة المشاريع
+TJM=متوسط المعدل اليومي
+TJMDescription=هذه القيمة مخصصة حاليًا للمعلومات فقط ولا تُستخدم في أي عملية حسابية
+
+# Other actions
+ConfirmDeleteSalaryPayment=هل تريد حذف دفعة الراتب هذه؟
+FillFieldFirst=املأ حقل الموظف أولًا
+UpdateAmountWithLastSalary=تعيين المبلغ وفق آخر راتب
+MakeTransferRequest=إنشاء طلب تحويل مصرفي
+VirementOrder=طلب تحويل مصرفي
+WithdrawalReceipt=أمر تحويل مصرفي
+OrderWaiting=طلب قيد الانتظار
+FillEndOfMonth=نهاية الشهر
+
+# Shortcuts
+PreviousMonthShort=الشهر السابق
+CurrentMonthShort=الشهر الحالي
+NextMonthShort=الشهر التالي
+PreviousWeekShort=الأسبوع السابق
+CurrentWeekShort=الأسبوع الحالي

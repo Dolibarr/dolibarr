@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019-2023		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +41,14 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1'); // This page saves constants: the token is required even in GET mode (the js callers send it)
+}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -54,12 +58,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  */
 
 $action = GETPOST('action', 'aZ09');
-$hash_unique_id = GETPOST('hash_unique_id', 'alpha');
-$hash_algo = GETPOST('hash_algo', 'alpha');
+
+// The hash of the instance unique id is computed here from the configuration, it is not taken from the request: the value saved
+// into MAIN_FIRST_PING_OK_ID / MAIN_FIRST_REGISTRATION_OK_ID is the identifier of this instance and must not be forgeable.
+$hash_unique_id = getHashUniqueIdOfRegistration('sha256');
 
 
 // Security check
-// None. Being connected is enough.
+// Being connected is enough (the ping is sent by any user from the home page), the token is required (CSRFCHECK_WITH_TOKEN).
 
 
 /*
@@ -80,17 +86,29 @@ top_httphead();
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // If ok
-if ($action == 'firstpingok') {
+if ($action == 'MAIN_FIRST_PING_OK_DATE') {
 	// Note: pings are per installed instances / entity.
 	// Once this constants are set, no more ping will be tried (except if we add parameter &forceping=1 on URL). So we can say this are 'first' ping.
 	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id.' - '.DOL_VERSION, 'chaine', 0, '', $conf->entity);
 
 	print 'First ping OK saved for entity '.$conf->entity;
-} elseif ($action == 'firstpingko') {
+} elseif ($action == 'MAIN_LAST_PING_KO_DATE') {
 	// If ko
 	// Note: pings are by installation, done on entity 1.
 	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity); // erase last value
+	print 'First ping KO saved for entity '.$conf->entity;
+} elseif ($action == 'MAIN_FIRST_REGISTRATION_OK_DATE') {
+	// Note: pings are per installed instances / entity.
+	// Once this constants are set, no more ping will be tried (except if we add parameter &forceping=1 on URL). So we can say this are 'first' ping.
+	dolibarr_set_const($db, 'MAIN_FIRST_REGISTRATION_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'MAIN_FIRST_REGISTRATION_OK_ID', $hash_unique_id.' - '.DOL_VERSION, 'chaine', 0, '', $conf->entity);
+
+	print 'First ping OK saved for entity '.$conf->entity;
+} elseif ($action == 'MAIN_LAST_REGISTRATION_KO_DATE') {
+	// If ko
+	// Note: pings are by installation, done on entity 1.
+	dolibarr_set_const($db, 'MAIN_LAST_REGISTRATION_KO_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity); // erase last value
 	print 'First ping KO saved for entity '.$conf->entity;
 } else {
 	print 'Error action='.$action.' not supported';

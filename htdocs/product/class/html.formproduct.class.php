@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2008-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017  Francis Appels          <francis.appels@yahoo.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class FormProduct
 	 */
 	public $cache_warehouses = array();
 	/**
-	 * @var array<int,array<int,array{id:int,batch:string,entrepot_id:int,entrepot_label:string,qty:float}>>
+	 * @var array<int,array<int,array{id:int,batch:string,entrepot_id:int,entrepot_label:string,qty:float,eatbydate:int|string,sellbydate:int|string}>>
 	 */
 	public $cache_lot = array();
 	/**
@@ -152,7 +152,23 @@ class FormProduct
 				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
-		$sql .= " ORDER BY ".$orderBy;
+		$reorderBy = explode(',', $orderBy);
+		$arraysortfield = array();
+		$arraysortorder = array();
+		foreach ($reorderBy as $element) {
+			$elementKey = explode(' ', $element)[0];
+			if ($elementKey) {
+				$arraysortfield[] = $elementKey;
+				if (isset($element[1])) {
+					$arraysortorder[] = $element[1];
+				} else {
+					$arraysortorder[] = 'ASC';
+				}
+			}
+		}
+		$sortfield = implode(',', $arraysortfield);
+		$sortorder_unsanitized = implode(',', $arraysortorder); // $db->order sanitizes  @phan-suppress-current-line SqlInjection
+		$sql .= $this->db->order($sortfield, $sortorder_unsanitized);
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -196,8 +212,6 @@ class FormProduct
 	 */
 	public function loadWorkstations($fk_product = 0, $exclude = array(), $orderBy = 'w.ref')
 	{
-		global $conf, $langs;
-
 		if (empty($fk_product) && count($this->cache_workstations)) {
 			return 0; // Cache already loaded and we do not want a list with information specific to a product
 		}
@@ -214,7 +228,7 @@ class FormProduct
 			$sql .= ' AND w.rowid NOT IN('.$this->db->sanitize(implode(',', $exclude)).')';
 		}
 
-		$sql .= " ORDER BY ".$orderBy;
+		$sql .= $this->db->order($orderBy);
 
 		dol_syslog(get_class($this).'::loadWorkstations', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -283,16 +297,16 @@ class FormProduct
 	 *                                          'warehouseopen' = select products from open warehouses,
 	 *                                          'warehouseclosed' = select products from closed warehouses,
 	 *                                          'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 *  @param  int<0,1>    $empty			    1=Can be empty, 0 if not
+	 *  @param  int<0,1>|string    $empty		Use 1 or 'label'=Can be empty, 0 if not
 	 * 	@param	int<0,1>    $disabled		    1=Select is disabled
 	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
+	 *  @param	string	    $empty_label	    Empty label if needed (deprecated, set the label into the field $empty)
 	 *  @param	int<0,1>    $showstock		    1=Show stock count
 	 *  @param	int<0,1>   	$forcecombo		    1=Force combo iso ajax select2
 	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
 	 *  @param  string      $morecss            Add more css classes to HTML select
 	 *  @param	int[]	    $exclude            Warehouses ids to exclude
-	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
+	 *  @param  int<0,1>    $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter (only warehouse with stock > stockMin are loaded) or false not not filter by minimum stock
 	 *  @param  string      $orderBy            [='e.ref'] Order by
 	 *  @param	int<0,1>	$multiselect		1=Allow multiselect
@@ -307,7 +321,7 @@ class FormProduct
 		dol_syslog(get_class($this)."::selectWarehouses " . (is_array($selected) ? 'selected is array' : $selected) . ", $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
-		if ((!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) && ($filterstatus==="warehouseinternal")) {
+		if ((!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) && ($filterstatus === "warehouseinternal")) {
 			$filterstatus = '';
 		}
 		if (!empty($fk_product) && $fk_product > 0) {
@@ -341,7 +355,7 @@ class FormProduct
 		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2
 		$out .= '>';
 		if ($empty) {
-			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
+			$out .= '<option value="-1">'.(is_numeric($empty) ? ($empty_label ? $empty_label : '&nbsp;') : $empty).'</option>';
 		}
 		foreach ($this->cache_warehouses as $id => $arraytypes) {
 			$label = '';
@@ -564,7 +578,7 @@ class FormProduct
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$selected            Preselected value
+	 *  @param  int|string	$selected            Preselected value. Can be a numeric -3, 0, 3, ... 60, 3600, ... for time or a short label like 'm', 'm2', ...
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int<0,2>	$mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
@@ -575,6 +589,8 @@ class FormProduct
 		global $langs, $db;
 
 		$langs->load("other");
+
+		$selected = (string) $selected;
 
 		$return = '';
 		$placeholderID = ($mode == 2 ? '99999999' : '-1'); // we don't want ajaxcombobox replace clearing option in mode 2
@@ -610,23 +626,24 @@ class FormProduct
 				if ($mode == 1) {
 					$return .= $lines->short_label;
 				} elseif ($mode == 2) {
-					$return .= $lines->scale;
+					$return .= (int) $lines->scale;
 				} else {
 					$return .= $lines->id;
 				}
 				$return .= '"';
 				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && $lines->scale == $selected) {
+				} elseif ($mode == 2 && (int) $lines->scale === (int) $selected) { // Careful null !== 0 !== '0' and when 0 is saved bdd store null
 					$return .= ' selected';
 				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';
 				}
+
 				$return .= '>';
 				if ($measuring_style == 'time') {
-					$return .= $langs->trans(ucfirst($lines->label));
+					$return .= $langs->trans(ucfirst((string) $lines->label));
 				} else {
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 				}
 				$return .= '</option>';
 			}
@@ -695,7 +712,7 @@ class FormProduct
 					}
 
 					$return .= '>';
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 					$return .= '</option>';
 				}
 			}
@@ -861,7 +878,16 @@ class FormProduct
 						$label = $arraytypes['entrepot_label'] . ' - ';
 						$label .= $arraytypes['batch'];
 						// Notice: Chrome show 1 line with value and 1 for label. Firefox show only 1 line with label
-						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">' . ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']) . ' (' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
+						$optionLabel = ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']);
+						$optionLabel .= ' ('.$langs->trans('TotalStock').': '.$arraytypes['qty'];
+						if (!empty($arraytypes['sellbydate'])) {
+							$optionLabel .= ' - '.$langs->trans('printSellby', $arraytypes['sellbydate']);
+						}
+						if (!empty($arraytypes['eatbydate'])) {
+							$optionLabel .= ' - '.$langs->trans('printEatby', $arraytypes['eatbydate']);
+						}
+						$optionLabel .= ')';
+						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" data-eatbydate="'.$arraytypes['eatbydate'].'" data-sellbydate="'.$arraytypes['sellbydate'].'" value="' . $arraytypes['batch'] . '">'.$optionLabel.'</option>';
 					}
 				}
 			}
@@ -923,10 +949,22 @@ class FormProduct
 				return $batch_count;
 			}
 
+			$is_eat_by_enabled = !getDolGlobalInt('PRODUCT_DISABLE_EATBY');
+			$is_sell_by_enabled = !getDolGlobalInt('PRODUCT_DISABLE_SELLBY');
+
 			$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.ref as label, ps.fk_product";
+			if ($is_eat_by_enabled) {
+				$sql .= ", pl.eatby";
+			}
+			if ($is_sell_by_enabled) {
+				$sql .= ", pl.sellby";
+			}
 			$sql .= " FROM ".$this->db->prefix()."product_batch as pb";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.rowid = pb.fk_product_stock";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
+			if ($is_eat_by_enabled || $is_sell_by_enabled) {
+				$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl on ps.fk_product = pl.fk_product AND pb.batch = pl.batch";
+			}
 			if (!empty($productIdList)) {
 				$sql .= " WHERE ps.fk_product IN (".$this->db->sanitize($productIdList).")";
 			}
@@ -944,6 +982,14 @@ class FormProduct
 					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_id'] = $obj->fk_entrepot;
 					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_label'] = $obj->label;
 					$this->cache_lot[$obj->fk_product][$obj->rowid]['qty'] = $obj->qty;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['eatbydate'] = '';
+					if (!empty($obj->eatby)) {
+						$this->cache_lot[$obj->fk_product][$obj->rowid]['eatbydate'] = dol_print_date($this->db->jdate($obj->eatby), 'day');
+					}
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['sellbydate'] = '';
+					if (!empty($obj->sellby)) {
+						$this->cache_lot[$obj->fk_product][$obj->rowid]['sellbydate'] = dol_print_date($this->db->jdate($obj->sellby), 'day');
+					}
 					$i++;
 				}
 

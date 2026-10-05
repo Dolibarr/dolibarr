@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,6 @@ function dolSessionOpen($save_path, $session_name)
 	if (empty($dolibarr_session_db_port)) {
 		$dolibarr_session_db_port = $dolibarr_main_db_port;
 	}
-	//var_dump('open '.$database_name.' '.$table_name);
 
 	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port);
 
@@ -86,7 +85,7 @@ function dolSessionRead($sess_id)
 	global $sessionlastvalueread;
 	global $sessionidfound;
 
-	$sql = "SELECT session_id, session_variable FROM ".MAIN_DB_PREFIX."session";
+	$sql = "SELECT session_id, session_variable, last_accessed FROM ".MAIN_DB_PREFIX."session";
 	$sql .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
 
 	// Execute the query
@@ -97,15 +96,32 @@ function dolSessionRead($sess_id)
 		$sessionlastvalueread = '';
 		$sessionidfound = '';
 		return '';
-	} else {
-		// Found a session - return the serialized string
-		$obj = $dbsession->fetch_object($resql);
-		$sessionlastvalueread = $obj->session_variable;
-		$sessionidfound = $obj->session_id;
-		//var_dump($sessionlastvalueread);
-		//var_dump($sessionidfound);
-		return $obj->session_variable;
 	}
+
+	$obj = $dbsession->fetch_object($resql);
+
+	// Enforce the session lifetime at read time, so an expired session is not honoured
+	// just because probabilistic garbage collection has not run yet (typically when
+	// session.gc_probability is 0). MAIN_SESSION_TIMEOUT is not available here (conf is
+	// not loaded yet during session_start()), so rely on session.gc_maxlifetime like
+	// PHP's native garbage collector does.
+	$max_lifetime = min(3600 * 24, (int) ini_get('session.gc_maxlifetime'));
+	if ($max_lifetime > 0 && $dbsession->jdate($obj->last_accessed) < (dol_now() - $max_lifetime)) {
+		// Expired: drop the stale row now, otherwise the INSERT done by dolSessionWrite()
+		// at the end of the request would collide with this still-existing primary key.
+		$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
+		$delete_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
+		$dbsession->query($delete_query);
+
+		$sessionlastvalueread = '';
+		$sessionidfound = '';
+		return '';
+	}
+
+	// Found a valid session - return the serialized string
+	$sessionlastvalueread = $obj->session_variable;
+	$sessionidfound = $obj->session_id;
+	return $obj->session_variable;
 }
 
 /**
@@ -118,7 +134,7 @@ function dolSessionRead($sess_id)
  */
 function dolSessionWrite($sess_id, $val)
 {
-	global $dbsession;
+	global $dbsession, $user;
 	global $sessionlastvalueread;
 	global $sessionidfound;
 
@@ -133,8 +149,8 @@ function dolSessionWrite($sess_id, $val)
 		if (empty($sessionidfound)) {
 			// No session found, insert a new one
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
-			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
-			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255))."')";
+			$insert_query .= "(session_id, session_variable, date_creation, last_accessed, fk_user, remote_ip, user_agent)";
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255))."')";
 
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
@@ -157,8 +173,7 @@ function dolSessionWrite($sess_id, $val)
 			// No session found, insert a new one
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
 			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
-			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255)."')";
-			//var_dump($insert_query);
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255)."')";
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
 				dol_print_error($dbsession);
@@ -170,14 +185,30 @@ function dolSessionWrite($sess_id, $val)
 			$update_query = "UPDATE ".MAIN_DB_PREFIX."session";
 			$update_query .= " SET session_variable = '".$dbsession->escape($val)."',";
 			$update_query .= " last_accessed = '".$dbsession->idate($time_stamp)."',";
+			$update_query .= " fk_user = ".(int) (!empty($user->id) ? $user->id : 0).",";
 			$update_query .= " remote_ip = '".$dbsession->escape(getUserRemoteIP())."',";
-			$update_query .= " user_agent = '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."'";
+			$update_query .= " user_agent = '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'] ?? '')."'";
 			$update_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
 
 			$result = $dbsession->query($update_query);
 			if (!$result) {
 				dol_print_error($dbsession);
 				return false;
+			}
+		}
+
+		// When session.gc_probability is 0 (or the save handler was registered after
+		// session_start(), so PHP never rolled the GC dice), dolSessionGC() is never
+		// triggered by PHP. Emulate a probabilistic garbage collection here, using
+		// session.gc_divisor as the odds, so the llx_session table does not grow unbounded.
+		// Run it after the insert/update above (every session write, not only new rows) so
+		// the purge still happens on sites where no new session is created for a long time,
+		// and so the row we just wrote (last_accessed = now) can never be its own target.
+		if ((int) ini_get('session.gc_probability') == 0) {
+			$gc_divisor = max(1, (int) ini_get('session.gc_divisor'));
+			if (mt_rand(1, $gc_divisor) == 1) {
+				$max_lifetime = min(3600 * 24, max(getDolGlobalInt('MAIN_SESSION_TIMEOUT'), (int) ini_get('session.gc_maxlifetime')));
+				dolSessionGC($max_lifetime);
 			}
 		}
 	}
@@ -240,9 +271,109 @@ function dolSessionGC($max_lifetime)
 	if ($resql) {
 		return true;
 	} else {
+		dol_syslog("dolSessionGC failed to purge expired sessions: ".$dbsession->lasterror(), LOG_WARNING);
 		return false;
 	}
 }
 
+/**
+ * Enforce a maximum number of concurrent database sessions for a given user.
+ *
+ * Called when a new authenticated session is being established. The existing rows
+ * of that user in llx_session are kept only for the ($keepcount - 1) most recently
+ * accessed ones, so that adding the session being established brings the total back
+ * to $keepcount. The other (older) sessions are deleted, which logs those browsers
+ * out on their next request (dolSessionRead() then finds no row).
+ *
+ * @param	int		$fk_user			Id of the user that just logged in
+ * @param	int		$keepcount			Max number of concurrent sessions for this user (<= 0 disables the feature)
+ * @param	string	$currentsessionid	Id of the session being established (never deleted)
+ * @return	int							Number of sessions that were evicted
+ */
+function dolSessionsLimitForUser($fk_user, $keepcount, $currentsessionid)
+{
+	global $dbsession;
+
+	$fk_user = (int) $fk_user;
+	$keepcount = (int) $keepcount;
+	if ($fk_user <= 0 || $keepcount <= 0) {
+		return 0;
+	}
+
+	// List the other sessions of this user, most recently accessed first.
+	$sql = "SELECT session_id FROM ".MAIN_DB_PREFIX."session";
+	$sql .= " WHERE fk_user = ".((int) $fk_user);
+	$sql .= " AND session_id <> '".$dbsession->escape($currentsessionid)."'";
+	$sql .= " ORDER BY last_accessed DESC, session_id DESC";
+
+	$resql = $dbsession->query($sql);
+	if (!$resql) {
+		dol_syslog("dolSessionsLimitForUser failed to list sessions: ".$dbsession->lasterror(), LOG_WARNING);
+		return 0;
+	}
+
+	$idstodelete = array();
+	$rank = 0;
+	while ($obj = $dbsession->fetch_object($resql)) {
+		$rank++;
+		if ($rank >= $keepcount) {	// Keep the ($keepcount - 1) most recent ones, evict the rest
+			$idstodelete[] = $obj->session_id;
+		}
+	}
+
+	if (empty($idstodelete)) {
+		return 0;
+	}
+
+	$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."session WHERE session_id IN (";
+	$i = 0;
+	foreach ($idstodelete as $idtodelete) {
+		$sqldel .= ($i > 0 ? ", " : "")."'".$dbsession->escape($idtodelete)."'";
+		$i++;
+	}
+	$sqldel .= ")";
+
+	$resqldel = $dbsession->query($sqldel);
+	if (!$resqldel) {
+		dol_syslog("dolSessionsLimitForUser failed to purge sessions: ".$dbsession->lasterror(), LOG_WARNING);
+		return 0;
+	}
+
+	dol_syslog("dolSessionsLimitForUser evicted ".count($idstodelete)." session(s) for fk_user=".$fk_user." to enforce a limit of ".$keepcount, LOG_NOTICE);
+
+	return count($idstodelete);
+}
+
 // Call to register user call back functions.
 session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC"); // @phpstan-ignore-line
+
+/**
+ * List sessions in db
+ *
+ * @return array<mixed,array{login:string,age:int,creation:int|false,modification:int,raw:string,remote_ip:string,user_agent:string}>
+ */
+function dolListSessions()
+{
+	global $dbsession;
+
+	$arrayofsessions = [];
+	$sql = "SELECT s.session_id, s.session_variable, s.fk_user, s.date_creation, s.last_accessed, s.remote_ip, s.user_agent";
+	$sql .= ", u.login";
+	$sql .= " FROM ".MAIN_DB_PREFIX."session as s";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
+	$sql .= " LIMIT 500";
+	$resql = $dbsession->query($sql);
+	while ($resql && $obj = $dbsession->fetch_object($resql)) {
+		$arrayofsessions[$obj->session_id] = [
+			"login" => (string) $obj->login,
+			"age" => dol_now() - (int) $dbsession->jdate($obj->date_creation),
+			"creation" => $dbsession->idate($obj->date_creation),
+			"modification" => $dbsession->idate($obj->last_accessed),
+			"remote_ip" => $obj->remote_ip,
+			"user_agent" => $obj->user_agent,
+			"raw" => "",
+		];
+	}
+
+	return $arrayofsessions;
+}

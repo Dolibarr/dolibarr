@@ -121,7 +121,6 @@ ValideTrip=Aprobar informe de gasto
 ExpenseReportPayments=Pagamentos de informes de gastos
 TaxUndefinedForThisCategory = O imposto non está definido para esta categoría
 errorComputeTtcOnMileageExpense=Erro ao calcular o gasto de quilometraxe
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Só se poden eliminar elementos co estado de borrador nunha acción masiva
 
 ## Dictionary
 EX_BRE=Almorzo
@@ -159,3 +158,4 @@ TF_TRAIN=Trén
 TF_TRIP=Transporte
 FailedToSetPaid=Non se puido clasificar como pagamento
 FailedToSetToCancel=Produciuse un erro ao cancelar
+NobodyHasPermissionToValidateExpenseReport=Ninguén ten permiso para validar o informe de gastos

@@ -1,4 +1,4 @@
--- Copyright (C) 2018 
+-- Copyright (C) 2018
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l''install et tous les sigles '--' sont supprimés.
---                                                         
+--
 
 -- ADD 18800000 before rowid # Do no remove this comment --
 
@@ -637,5 +637,3 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 93,'RO-BASE','MANAGEMENT','93','9','Costul producţiei',1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 9310,'RO-BASE','MANAGEMENT','931','93','Costul producţiei obţinute',1);
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 9330,'RO-BASE','MANAGEMENT','933','93','Costul producţiei în curs de execuţie',1);
-
-

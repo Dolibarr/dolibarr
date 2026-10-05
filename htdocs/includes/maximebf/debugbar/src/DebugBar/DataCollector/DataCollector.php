@@ -96,8 +96,8 @@ abstract class DataCollector implements DataCollectorInterface
             return ['url' => $url, 'ajax' => $this->getXdebugShouldUseAjax()];
         }
     }
-  
-    /**  
+
+    /**
      * Sets the default variable dumper used by all collectors subclassing this class
      *
      * @param DebugBarVarDumper $varDumper

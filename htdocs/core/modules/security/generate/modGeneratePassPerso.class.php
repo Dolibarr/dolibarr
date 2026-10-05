@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
  */
 class modGeneratePassPerso extends ModeleGenPassword
 {
+	/**
+	 * @var int		Position
+	 */
+	public $position = 60;
+
 	/**
 	 * @var string ID
 	 */
@@ -120,7 +125,10 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->Ambi = array("1", "I", "l", "|", "O", "0");
 
 		$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
-		$this->length2 = (int) $tabConf[0];
+		// When the 'none' model is forbidden on this installation, the Perso model cannot enforce a
+		// minimum length below the floor returned by getPasswordPatternMinLength(), even if the
+		// stored pattern still holds a lower value.
+		$this->length2 = max((int) $tabConf[0], getPasswordPatternMinLength());
 		$this->NbMaj = $tabConf[1];
 		$this->NbNum = $tabConf[2];
 		$this->NbSpe = $tabConf[3];
@@ -143,7 +151,16 @@ class modGeneratePassPerso extends ModeleGenPassword
 		}
 
 		$pattern = $this->Min.(!empty($this->NbMaj) ? $this->Maj : '').(!empty($this->NbNum) ? $this->Nb : '').(!empty($this->NbSpe) ? $this->Spe : '');
-		$this->All = str_shuffle($pattern);
+
+		// Use the Fisher-Yate to shake (this replace str_shuffle)
+		$passwordArray = str_split($pattern);
+		for ($i = count($passwordArray) - 1; $i > 0; $i--) {
+			$j = random_int(0, $i);
+			$tmp = $passwordArray[$i];
+			$passwordArray[$i] = $passwordArray[$j];
+			$passwordArray[$j] = $tmp;
+		}
+		$this->All = implode('', $passwordArray);
 	}
 
 	/**
@@ -199,8 +216,17 @@ class modGeneratePassPerso extends ModeleGenPassword
 			$pass .= $this->All[mt_rand(0, strlen($this->All) - 1)];
 		}
 
-		$pass = str_shuffle($pass);
+		// Use the Fisher-Yate to shake (this replace str_shuffle)
+		$passwordArray = str_split($pass);
+		for ($i = count($passwordArray) - 1; $i > 0; $i--) {
+			$j = random_int(0, $i);
+			$tmp = $passwordArray[$i];
+			$passwordArray[$i] = $passwordArray[$j];
+			$passwordArray[$j] = $tmp;
+		}
+		$pass = implode('', $passwordArray);
 
+		// Check that generation was ok
 		if ($this->validatePassword($pass)) {
 			return $pass;
 		}

@@ -16,7 +16,7 @@
 --
 -- ===========================================================================
 
-CREATE TABLE llx_categorie_user 
+CREATE TABLE llx_categorie_user
 (
   fk_categorie 	integer NOT NULL,
   fk_user 		integer NOT NULL,

@@ -121,7 +121,6 @@ ValideTrip=Genehmigen Spesenabrechnung
 ExpenseReportPayments=Zahlungen Spesenabrechnung
 TaxUndefinedForThisCategory = Für diese Kategorie ist keine Steuer definiert
 errorComputeTtcOnMileageExpense=Fehler bei der Berechnung der Kilometerpauschale
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Nur Elemente im Status 'Entwurf' können in einer Massenaktion gelöscht werden
 
 ## Dictionary
 EX_BRE=Frühstück
@@ -159,3 +158,4 @@ TF_TRAIN=Bahn
 TF_TRIP=Fahrschein/Ticket
 FailedToSetPaid=Als bezahlt setzen ist fehlgeschlagen
 FailedToSetToCancel=Stornieren ist fehlgeschlagen
+NobodyHasPermissionToValidateExpenseReport=Niemand hat die Berechtigung, den Spesenbericht freizugeben

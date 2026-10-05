@@ -17,6 +17,7 @@ AccountancyCodeAsset=Számviteli kód (eszköz)
 AccountancyCodeDepreciationAsset=Számviteli kód (értékcsökkenési eszköz számla)
 AccountancyCodeDepreciationExpense=Számviteli kód (értékcsökkenési leírás)
 AssetsLines=Eszközök
+ConfirmValidateAsset=Biztosan érvényesíteni szeretné ezt az elemet a <b>%s</b> referenciával?
 DeleteType=Törlés
 DeleteAnAssetType=Eszköztípus törlése
 ConfirmDeleteAssetType=Biztosan törölni szeretné ezt az eszköztípust?
@@ -70,6 +71,7 @@ AssetDisposal=Selejtezés
 AssetConfirmDisposalAsk=Biztosan el akarja adni a(z) <b> %s</b> eszközt?
 AssetConfirmReOpenAsk=Biztosan újra meg akarja nyitni a(z) <b> %s</b> elemet?
 # Asset status
+AssetInDraft=Piszkozat
 AssetInProgress=Folyamatban
 AssetDisposed=Elidegenítve
 AssetRecorded=Számlák

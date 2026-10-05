@@ -157,7 +157,7 @@ class IMAP {
      * @const integer IMAP_GC_ENV
      * @const integer IMAP_GC_TEXTS
      */
-    
+
     const NIL = 0;
     const IMAP_OPENTIMEOUT = 1;
     const IMAP_READTIMEOUT = 2;
@@ -371,5 +371,5 @@ class IMAP {
      * @link http://php.net/manual/en/imap.constants.php
      */
     const IMAP_GC_TEXTS = 4;
-    
+
 }

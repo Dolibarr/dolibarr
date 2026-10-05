@@ -17,6 +17,7 @@ AccountancyCodeAsset=Buchungskonto (Anlagegut)
 AccountancyCodeDepreciationAsset=Buchungskonto (Abschreibung auf Anlagegut)
 AccountancyCodeDepreciationExpense=Buchungskonto (Aufwendungen für Abschreibungen)
 AssetsLines=Anlagegüter
+ConfirmValidateAsset=Sind Sie sicher, dass Sie das Anlagegut mit der Referenz <b>%s</b> freigeben wollen?
 DeleteType=Lösche Gruppe
 DeleteAnAssetType=Vorlage für Anlagegüter löschen
 ConfirmDeleteAssetType=Möchten Sie diese Vorlage für Anlagegüter wirklich löschen?
@@ -70,6 +71,7 @@ AssetDisposal=Abgang
 AssetConfirmDisposalAsk=Sind Sie sicher, dass Sie einen Abgang für den Vermögenswert <b> %s </b> verbuchen möchten?
 AssetConfirmReOpenAsk=Möchten Sie den Vermögenswert <b> %s </b> wirklich erneut öffnen?
 # Asset status
+AssetInDraft=Entwurf
 AssetInProgress=In Verwendung
 AssetDisposed=Abgang verbucht
 AssetRecorded=Abgerechnet

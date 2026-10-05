@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2017       Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2020       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017       Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,21 +48,15 @@ class Workstation extends CommonObject
 	public $table_element = 'workstation_workstation';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for workstation. Must be the part after the 'object_' into object_workstation.png
 	 */
 	public $picto = 'workstation';
 
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'WORKSTATION';
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -70,7 +64,7 @@ class Workstation extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -78,7 +72,7 @@ class Workstation extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -96,7 +90,7 @@ class Workstation extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -143,12 +137,12 @@ class Workstation extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var int User ID
+	 * @var ?int User ID
 	 */
 	public $fk_user_modif;
 
 	/**
-	 * @var int status enabled or disabled
+	 * @var ?int status enabled or disabled
 	 */
 	public $status;
 
@@ -167,6 +161,15 @@ class Workstation extends CommonObject
 	 */
 	public $thm_machine_estimated;
 
+	/**
+	 * @var array<string,array{name:string,fk_element:string,enabled?:string}>	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array(
+		'product' => array('name' => 'Product', 'fk_element' => 'fk_default_workstation'),
+		'bom_bomline' => array('name' => 'BOM', 'fk_element' => 'fk_default_workstation', 'enabled' => 'isModEnabled("bom")'),
+		'mrp_production' => array('name' => 'ManufacturingOrder', 'fk_element' => 'fk_default_workstation', 'enabled' => 'isModEnabled("mrp")'),
+	);
+
 	// END MODULEBUILDER PROPERTIES
 
 	/**
@@ -178,6 +181,16 @@ class Workstation extends CommonObject
 	 * @var int[] array of ID
 	 */
 	public $usergroups;
+
+	/**
+	 * @var string Name of the field, in the child tables, that holds the id of the workstation
+	 */
+	public $fk_element = 'fk_workstation';
+
+	/**
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade = array('workstation_workstation_usergroup', 'workstation_workstation_resource');
 
 	/**
 	 * Constructor
@@ -194,12 +207,12 @@ class Workstation extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
-		$this->isextrafieldmanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -231,39 +244,67 @@ class Workstation extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $db;
-
-		$id = $this->createCommon($user, $notrigger);
+		$error = 0;
 
 		// Usergroups
 		$groups = GETPOST('groups', 'array:int');	// FIXME We should not GETPOST but receive array as parameter
 		if (empty($groups)) {
 			$groups = $this->usergroups; // createFromClone
 		}
-		if (!empty($groups)) {
-			foreach ($groups as $id_group) {
-				$ws_usergroup = new WorkstationUserGroup($db);
-				$ws_usergroup->fk_workstation = $id;
-				$ws_usergroup->fk_usergroup = $id_group;
-				$ws_usergroup->createCommon($user);
-				$this->usergroups[] = $id_group;
-			}
-		}
+		$groups = is_array($groups) ? array_unique(array_map('intval', $groups)) : array();
 
 		// Resources
 		$resources = GETPOST('resources', 'array:int');	// FIXME We should not GETPOST but receive array as parameter
 		if (empty($resources)) {
 			$resources = $this->resources; // createFromClone
 		}
-		if (!empty($resources)) {
+		$resources = is_array($resources) ? array_unique(array_map('intval', $resources)) : array();
+
+		$this->db->begin();
+
+		$id = $this->createCommon($user, $notrigger);
+		if ($id <= 0) {
+			// Nothing to link to a workstation that was not created
+			$this->db->rollback();
+			return $id;
+		}
+
+		$this->usergroups = array();
+		foreach ($groups as $id_group) {
+			$ws_usergroup = new WorkstationUserGroup($this->db);
+			$ws_usergroup->fk_workstation = $id;
+			$ws_usergroup->fk_usergroup = $id_group;
+			if ($ws_usergroup->createCommon($user) <= 0) {
+				$error++;
+				$this->error = $ws_usergroup->error;
+				$this->errors = array_merge($this->errors, $ws_usergroup->errors);
+				break;
+			}
+			$this->usergroups[] = $id_group;
+		}
+
+		$this->resources = array();
+		if (!$error) {
 			foreach ($resources as $id_resource) {
-				$ws_resource = new WorkstationResource($db);
+				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $id;
 				$ws_resource->fk_resource = $id_resource;
-				$ws_resource->createCommon($user);
+				if ($ws_resource->createCommon($user) <= 0) {
+					$error++;
+					$this->error = $ws_resource->error;
+					$this->errors = array_merge($this->errors, $ws_resource->errors);
+					break;
+				}
 				$this->resources[] = $id_resource;
 			}
 		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
 
 		return $id;
 	}
@@ -302,23 +343,12 @@ class Workstation extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) {
-			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		}
-		if (property_exists($object, 'label')) {
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		}
-		if (property_exists($object, 'status')) {
-			$object->status = self::STATUS_DISABLED;
-		}
-		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
-		}
-		if (property_exists($object, 'date_modification')) {
-			$object->date_modification = null;
-		}
-		// ...
+		$object->ref = "Copy_Of_".$object->ref;
+		$object->label = $langs->trans("CopyOf")." ".$object->label;
+		$object->status = self::STATUS_DISABLED;
+		$object->date_creation = dol_now();
+		$object->date_modification = null;
+
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
@@ -337,23 +367,13 @@ class Workstation extends CommonObject
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
 			// copy internal contacts
 			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
-			}
-		}
-
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
 			}
 		}
 
@@ -413,7 +433,7 @@ class Workstation extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return Workstation[]|int<-1,-1>                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -480,29 +500,34 @@ class Workstation extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
+		// The user groups and the resources to save are the ones of the object (loaded by fetch() and changed by the
+		// caller if needed), not the ones of a form: an update done from anywhere else than the card must keep them.
 
 		// Usergroups
-		$groups = GETPOST('groups', 'array:int');
-		WorkstationUserGroup::deleteAllGroupsOfWorkstation($this->id);
-		$this->usergroups = array();
+		if (is_array($this->usergroups)) {
+			$groups = array_unique(array_map('intval', $this->usergroups));
+			WorkstationUserGroup::deleteAllGroupsOfWorkstation($this->id);
+			$this->usergroups = array();
 
-		foreach ($groups as $id_group) {
-			$ws_usergroup = new WorkstationUserGroup($this->db);
-			$ws_usergroup->fk_workstation = $this->id;
-			$ws_usergroup->fk_usergroup = $id_group;
-			$ws_usergroup->createCommon($user);
-			$this->usergroups[] = $id_group;
+			foreach ($groups as $id_group) {
+				$ws_usergroup = new WorkstationUserGroup($this->db);
+				$ws_usergroup->fk_workstation = $this->id;
+				$ws_usergroup->fk_usergroup = (int) $id_group;
+				$ws_usergroup->createCommon($user);
+				$this->usergroups[] = $id_group;
+			}
 		}
 
 		// Resources
-		$resources = GETPOST('resources', 'array:int');
-		WorkstationResource::deleteAllResourcesOfWorkstation($this->id);
-		$this->resources = array();
-		if (!empty($resources)) {
+		if (is_array($this->resources)) {
+			$resources = array_unique(array_map('intval', $this->resources));
+			WorkstationResource::deleteAllResourcesOfWorkstation($this->id);
+			$this->resources = array();
+
 			foreach ($resources as $id_resource) {
 				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $this->id;
-				$ws_resource->fk_resource = $id_resource;
+				$ws_resource->fk_resource = (int) $id_resource;
 				$ws_resource->createCommon($user);
 				$this->resources[] = $id_resource;
 			}
@@ -520,6 +545,11 @@ class Workstation extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		global $langs;
+
+		// Labels of the objects that can prevent the deletion (see $childtables)
+		$langs->loadLangs(array('products', 'mrp'));
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
@@ -644,7 +674,8 @@ class Workstation extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = dol_buildpath('/workstation/workstation_card.php', 1).'?id='.$this->id;
+		$baseurl = DOL_URL_ROOT . '/workstation/workstation_card.php';
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -653,9 +684,10 @@ class Workstation extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -690,7 +722,7 @@ class Workstation extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -727,14 +759,12 @@ class Workstation extends CommonObject
 	/**
 	 *	Return a thumb for kanban views
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $conf, $langs;
-
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
@@ -743,23 +773,17 @@ class Workstation extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'label')) {
+		if (!empty($this->label)) {
 			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}
-		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+		if (isset($this->thirdparty) && is_object($this->thirdparty)) {
 			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br>';
-			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
@@ -815,9 +839,10 @@ class Workstation extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, tef.tms) as datem,';
+		$sql .= ' t.fk_user_creat, t.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_extrafields as tef ON tef.fk_object=t.rowid';
 		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -923,7 +948,6 @@ class Workstation extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("workstation");
 
@@ -939,9 +963,7 @@ class Workstation extends CommonObject
 
 		$modelpath = "core/modules/workstation/doc/";
 
-		if ($includedocgeneration) {
-			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		}
+		$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 
 		return $result;
 	}

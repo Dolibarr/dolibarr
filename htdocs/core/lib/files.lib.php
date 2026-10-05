@@ -4,9 +4,11 @@
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Lenin Rivas         <lenin.rivas777@gmail.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead		<william@m34d.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,44 +46,61 @@ function dol_basename($pathfile)
  * Scan a directory and return a list of files/directories.
  * Content for string is UTF8 and dir separator is "/".
  *
- * @param	string			$utf8_path     	Starting path from which to search. This is a full path.
- * @param	string			$types        	Can be "directories", "files", or "all"
- * @param	int				$recursive		Determines whether subdirectories are searched
- * @param	string			$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
- *                  	                    but must not contains the start and end '/'. Filter is checked into basename only.
- * @param	string|string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
- * @param	string			$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
- * @param	int 			$sortorder		Sort order (SORT_ASC, SORT_DESC)
- * @param	int				$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
- * @param	int				$nohook			Disable all hooks
- * @param	string			$relativename	For recursive purpose only. Must be "" at first call.
+ * @param	string			$utf8_path     			Starting path from which to search. This is a full path.
+ * @param	string			$types        			Can be "directories", "files", or "all"
+ * @param	int				$recursive				Determines whether subdirectories are searched
+ * @param	string|string[]|null	$filter        	Regex or Array of Regex filter to restrict list. The regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
+ *                  	                    		but must NOT contains the start and end '/'. Filter is checked into the basename onlyof each entry (so '^xxx' include dirscanned/xxx and dirscanned/dirscanned2/xxx).
+ * @param	string|string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
+ * @param	string			$sortcriteria			Sort criteria ('','fullname','relativename','name','date','size' or 'type,fullname')
+ * @param	int 			$sortorder				Sort order (SORT_ASC, SORT_DESC)
+ * @param	int				$mode					0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
+ * @param	int				$nohook					Disable all hooks
+ * @param	string			$relativename			For recursive purpose only. Must be "" at first call.
  * @param	int 			$donotfollowsymlinks	Do not follow symbolic links
- * @param	int 			$nbsecondsold	Only files older than $nbsecondsold
+ * @param	int 			$nbsecondsold			Only files older than $nbsecondsold
  * @return	array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)>
  * @see dol_dir_list_in_database()
  */
 function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0, $nbsecondsold = 0)
 {
-	global $db, $hookmanager;
+	global $hookmanager;
 	global $object;
 
 	if ($recursive <= 1) {	// Avoid too verbose log
-		// Verify filters (only on first call to function)
-		$filters_ok = true;
 		$error_info = "";
+
+		// Verify filters (only on the first call of the function)
+		$filter_ok = true;
+		if (!empty($filter) && !is_array($filter)) {
+			if (strlen($filter) > 25000) {	// Note that limit depends on syntax of filter
+				dol_syslog("Value for filter is too large", LOG_ERR);
+				$filter_ok = false;
+			} else {
+				// Check that all '/' are escaped.
+				if ((int) preg_match('/(?:^|[^\\\\])\//', $filter) > 0) {
+					$excludefilter_ok = false;
+					$error_info .= " error='filter_has_unescaped_slash'";
+					dol_syslog("'$filter' has unescaped '/'", LOG_ERR);
+				}
+			}
+		}
+
 		// Ensure we have an array for the exclusions
+		$excludefilter_ok = true;
 		$exclude_array = ($excludefilter === null || $excludefilter === '') ? array() : (is_array($excludefilter) ? $excludefilter : array($excludefilter));
-		foreach ((array($filter) + $exclude_array) as $f) {
+		foreach ($exclude_array as $f) {
 			// Check that all '/' are escaped.
 			if ((int) preg_match('/(?:^|[^\\\\])\//', $f) > 0) {
-				$filters_ok = false;
-				$error_info .= " error='$f unescaped_slash'";
+				$excludefilter_ok = false;
+				$error_info .= " error='excludefilter_has_unescaped_slash'";
 				dol_syslog("'$f' has unescaped '/'", LOG_ERR);
 			}
 		}
-		dol_syslog("files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter).$error_info);
-		// print 'xxx'."files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($exclude_array);
-		if (!$filters_ok) {
+
+		dol_syslog("files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".json_encode($filter)." excludefilter=".json_encode($excludefilter).$error_info);
+		// print 'xxx'."files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".json_encode($filter)." excludefilter=".json_encode($exclude_array);
+		if (!$filter_ok || !$excludefilter_ok) {
 			// Return empty array when filters are invalid
 			return array();
 		}
@@ -97,43 +116,52 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 	$loadsize = ($mode == 1 || $mode == 3 || $sortcriteria == 'size');
 	$loadperm = ($mode == 1 || $mode == 4 || $sortcriteria == 'perm');
 
-	// Clean parameters
-	$utf8_path = preg_replace('/([\\/]+)$/', '', $utf8_path);
-	$os_path = dol_osencode($utf8_path);
 	$now = dol_now();
-
 	$reshook = 0;
 	$file_list = array();
 
-	if (!$nohook && $hookmanager instanceof HookManager) {
-		$hookmanager->resArray = array();
+	// Clean parameters
+	$utf8_path = preg_replace('/([\\/]+)$/', '', $utf8_path);
 
-		$hookmanager->initHooks(array('fileslib'));
-
-		$parameters = array(
-			'path' => $os_path,
-			'types' => $types,
-			'recursive' => $recursive,
-			'filter' => $filter,
-			'excludefilter' => $exclude_array,  // Already converted to array.
-			'sortcriteria' => $sortcriteria,
-			'sortorder' => $sortorder,
-			'loaddate' => $loaddate,
-			'loadsize' => $loadsize,
-			'mode' => $mode
-		);
-		$reshook = $hookmanager->executeHooks('getDirList', $parameters, $object);
+	if (preg_match('/\*/', $utf8_path)) {
+		$utf8_path_array = glob($utf8_path, GLOB_ONLYDIR);	// This scan dir for files. If file does not exists, return empty.
+		//$os_path_array = dol_dir_list($utf8_path);
+	} else {
+		$utf8_path_array = array($utf8_path);
 	}
 
-	// $hookmanager->resArray may contain array stacked by other modules
-	if (empty($reshook)) {
-		if (!is_dir($os_path)) {
-			return array();
+	foreach ($utf8_path_array as $utf8_path_cursor) {
+		$os_path = dol_osencode($utf8_path_cursor);
+		if (!$nohook && $hookmanager instanceof HookManager) {
+			$hookmanager->resArray = array();
+
+			$hookmanager->initHooks(array('fileslib'));
+
+			$parameters = array(
+				'path' => $os_path,
+				'types' => $types,
+				'recursive' => $recursive,
+				'filter' => $filter,
+				'excludefilter' => $exclude_array,  // Already converted to array.
+				'sortcriteria' => $sortcriteria,
+				'sortorder' => $sortorder,
+				'loaddate' => $loaddate,
+				'loadsize' => $loadsize,
+				'mode' => $mode
+			);
+			$reshook = $hookmanager->executeHooks('getDirList', $parameters, $object);
 		}
 
-		if (($dir = opendir($os_path)) === false) {
-			return array();
-		} else {
+		// $hookmanager->resArray may contain array stacked by other modules
+		if (empty($reshook)) {
+			if (!is_dir($os_path)) {
+				continue;
+			}
+
+			if (($dir = opendir($os_path)) === false) {
+				continue;
+			}
+
 			$filedate = '';
 			$filesize = '';
 			$fileperm = '';
@@ -147,11 +175,10 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 					$utf8_file = $os_file;
 				}
 
-				$qualified = 1;
-
-				$utf8_fullpathfile = "$utf8_path/$utf8_file";  // Temp variable for speed
+				$utf8_fullpathfile = $utf8_path_cursor."/".$utf8_file;  // Temp variable for speed
 
 				// Check if file is qualified
+				$qualified = 1;
 				foreach ($excludefilterarray as $filt) {
 					if (preg_match('/'.$filt.'/i', $utf8_file) || preg_match('/'.$filt.'/i', $utf8_fullpathfile)) {
 						$qualified = 0;
@@ -176,7 +203,28 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 								$fileperm = dol_fileperm($utf8_fullpathfile);
 							}
 
-							if (!$filter || preg_match('/'.$filter.'/i', $utf8_file)) {	// We do not search key $filter into all $path, only into $file part
+							$qualifiedforfilter = 0;
+							if (empty($filter)) {
+								$qualifiedforfilter = 1;
+							} else {
+								$testpregmatch = false;
+								if (is_array($filter)) {
+									$chunks = array_chunk($filter, 500);
+									foreach ($chunks as $chunk) {
+										$testpregmatch = preg_match('/'.implode('|', $chunk).'/i', $utf8_file);	// May failed if $filter too large
+										if ($testpregmatch) {
+											break;
+										}
+									}
+								} else {
+									$testpregmatch = preg_match('/'.$filter.'/i', $utf8_file);		// May failed if $filter too large
+								}
+								if ($testpregmatch) {
+									$qualifiedforfilter = 1;
+								}
+							}
+
+							if ($qualifiedforfilter) {	// We do not search key $filter into all $path, only into $file part
 								$reg = array();
 								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpathfile, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
@@ -210,7 +258,28 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 							$filesize = dol_filesize($utf8_fullpathfile);
 						}
 
-						if (!$filter || preg_match('/'.$filter.'/i', $utf8_file)) {	// We do not search key $filter into $utf8_path, only into $utf8_file
+						$qualifiedforfilter = 0;
+						if (empty($filter)) {
+							$qualifiedforfilter = 1;
+						} else {
+							$testpregmatch = false;
+							if (is_array($filter)) {
+								$chunks = array_chunk($filter, 500);
+								foreach ($chunks as $chunk) {
+									$testpregmatch = preg_match('/'.implode('|', $chunk).'/i', $utf8_file);	// May failed if $filter too large
+									if ($testpregmatch) {
+										break;
+									}
+								}
+							} else {
+								$testpregmatch = preg_match('/'.$filter.'/i', $utf8_file);		// May failed if $filter too large
+							}
+							if ($testpregmatch) {
+								$qualifiedforfilter = 1;
+							}
+						}
+
+						if ($qualifiedforfilter) {	// We do not search key $filter into all $path, only into $file part
 							if (empty($nbsecondsold) || $filedate <= ($now - $nbsecondsold)) {
 								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpathfile, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
@@ -230,12 +299,12 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 				}
 			}
 			closedir($dir);
-
-			// Obtain a list of columns
-			if (!empty($sortcriteria) && $sortorder) {
-				$file_list = dol_sort_array($file_list, $sortcriteria, ($sortorder == SORT_ASC ? 'asc' : 'desc'));
-			}
 		}
+	}
+
+	// Obtain a list of columns
+	if (!empty($sortcriteria) && $sortorder) {
+		$file_list = dol_sort_array($file_list, $sortcriteria, ($sortorder == SORT_ASC ? 'asc' : 'desc'));
 	}
 
 	if ($hookmanager instanceof HookManager && is_array($hookmanager->resArray)) {
@@ -250,15 +319,15 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * Scan a directory and return a list of files/directories.
  * Content for string is UTF8 and dir separator is "/".
  *
- * @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD' or 'produit/%'
+ * @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD' or 'produit/%'. Must not end with "/".
  * @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.'))
  * @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
  * @param	int			$sortorder		Sort order (SORT_ASC, SORT_DESC)
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
  * @param	string		$sqlfilters		Filter as an Universal Search string.
- * @param	?Object		$object			Object used
  * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+ * @param	?Object		$object			Object used
  * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
@@ -270,13 +339,13 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 		$object = new stdClass();
 	}
 
-	$sql = " SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
+	$sql = "SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
 	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) {
 		$sql .= ", description";
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
-	if (!empty($object->entity) && $object->entity != $conf->entity) {
+	if (!empty($object->entity)) {
 		$sql .= " WHERE entity = ".((int) $object->entity);
 	} else {
 		$sql .= " WHERE entity = ".((int) $conf->entity);
@@ -323,6 +392,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 					"acl" => $obj->acl,
 					"share" => $obj->share,
 					"description" => ($mode ? $obj->description : '')
+					// TODO Add 'content' with $mode == 2 ?
 				);
 			}
 			$i++;
@@ -363,40 +433,39 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 
 	if (is_null($object)) {
 		$object = new stdClass();
+		$object->id = null;
+		$object->element = null;
 	}
 
-	$filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC, 0, '', $object);
+	$filearrayindatabase = dol_dir_list_in_database(rtrim($relativedir, "/\\"), '', null, 'name', SORT_ASC, 0, '', $object);
 
-	// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 	global $modulepart;
-	if ($modulepart == 'produit' && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+	// Note: $modulepart is 'product' when set by product/document.php, but 'produit' in some other contexts, so we accept both.
+	if (in_array($modulepart, array('produit', 'product')) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+		// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 		global $object;
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
-				$upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+				$upload_dirold = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			} else {
-				$upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+				$upload_dirold = $conf->service->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			}
 
 			$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dirold);
-			$relativedirold = preg_replace('/^[\\/]/', '', $relativedirold);
+			$relativedirold = ltrim($relativedirold, "/\\");
 
-			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
+			// Note: $object must be provided so the entity filter matches the one used to forge $upload_dirold (multicompany)
+			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC, 0, '', $object));
 		}
 	} elseif ($modulepart == 'ticket') {
 		foreach ($filearray as $key => $val) {
 			$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['path']);
-			$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
-			$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+			$rel_dir = trim($rel_dir, "/\\");
 			if ($rel_dir != $relativedir) {
 				$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($rel_dir, '', null, 'name', SORT_ASC));
 			}
 		}
 	}
-
-	//var_dump($relativedir);
-	//var_dump($filearray);
-	//var_dump($filearrayindatabase);
 
 	// Complete filearray with properties found into $filearrayindatabase
 	foreach ($filearray as $key => $val) {
@@ -428,6 +497,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 
 			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename)) {     // If not a tmp file
 				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
+
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$ecmfile = new EcmFiles($db);
 
@@ -442,6 +512,10 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname'])); // $destfile is a full path to file
 				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
 				$ecmfile->gen_or_uploaded = 'unknown';
+				if (is_object($object)) {
+					$ecmfile->src_object_type = $object->element;
+					$ecmfile->src_object_id = $object->id;
+				}
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
 				// When you scan file with dol_dir_list_in_database, you scan for files in entity of object (like with projects), even if you
@@ -692,13 +766,13 @@ function dol_fileperm($pathoffile)
 /**
  * Make replacement of strings into a file.
  *
- * @param	string					$srcfile			       Source file (can't be a directory)
- * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
- * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
- * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
- * @param	int						$indexdatabase		       1=index new file into database.
- * @param   int     				$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/'
- * @return	int											       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
+ * @param	string						$srcfile			       Source file (can't be a directory)
+ * @param	array<string,null|string|int> 	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	string						$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
+ * @param	string						$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
+ * @param	int							$indexdatabase		       1=index new file into database.
+ * @param   int     					$arrayreplacementisregex   1=Array of replacement is already an array with key that is a regex. Warning: the key must be escaped with preg_quote for '/' and include the starting/ending '/' in string.
+ * @return	int												       Return integer <0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy(), dolCopyDir()
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = '0', $indexdatabase = 0, $arrayreplacementisregex = 0)
@@ -752,7 +826,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 		$content = make_substitutions($content, $arrayreplacement, null);
 	} else {
 		foreach ($arrayreplacement as $key => $value) {
-			$content = preg_replace($key, $value, $content);
+			$content = preg_replace($key, (string) $value, $content);
 		}
 	}
 
@@ -760,7 +834,8 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	dolChmod($newpathoftmpdestfile, $newmask);
 
 	// Rename
-	$result = dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile) ? 1 : 0), 0, $indexdatabase);
+	$moreinfo = array('gen_or_uploaded' => 'unknown');
+	$result = dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile) ? 1 : 0), 0, $indexdatabase, $moreinfo);
 	if (!$result) {
 		dol_syslog("files.lib.php::dolReplaceInFile failed to move tmp file to final dest", LOG_WARNING);
 		return -3;
@@ -777,6 +852,52 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 
 	return 1;
 }
+
+/**
+ * Removes content from a file that matches a given pattern.
+ *
+ * @param string $filePath Path to the file to be processed.
+ * @param string $pattern Regular expression pattern to identify the content to remove.
+ * @return bool Returns true if the operation was successful, false otherwise.
+ */
+function removePatternFromFile(string $filePath, string $pattern): bool
+{
+	// Check if the file exists
+	if (! file_exists($filePath)) {
+		dol_syslog("files.lib.php::removePatternFromFile: File $filePath does not exist", LOG_WARNING);
+
+		return false;
+	}
+
+	// Read the file content
+	$content = file_get_contents($filePath);
+	if ($content === false) {
+		dol_syslog("files.lib.php::removePatternFromFile: Unable to read the file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	// Remove content matching the pattern
+	$updatedContent = preg_replace($pattern, '', $content);
+	if ($updatedContent === null) {
+		dol_syslog("files.lib.php::removePatternFromFile: Error while processing the file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	// Write the updated content back to the file
+	$result = file_put_contents($filePath, $updatedContent);
+	if ($result === false) {
+		dol_syslog("files.lib.php::removePatternFromFile: Permission denied to overwrite the target file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	dol_syslog("files.lib.php::removePatternFromFile: Content successfully removed in the file $filePath", LOG_INFO);
+
+	return true;
+}
+
 
 
 /**
@@ -913,10 +1034,10 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  * @param	string					$destfile				Destination file (a directory)
  * @param	string					$newmask				Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
  * @param 	int						$overwriteifexists		Overwrite file if exists (1 by default)
- * @param	array<string,string>	$arrayreplacement		Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
+ * @param	?array<string,string>	$arrayreplacement		Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int						$excludesubdir			0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
- * @param	string[]				$excludefileext			Exclude some file extensions
- * @param	int						$excludearchivefiles	Exclude archive files that begin with v+timestamp or d+timestamp (0 by default)
+ * @param	?string[]				$excludefileext			Exclude some file extensions
+ * @param	int						$excludearchivefiles	Exclude archive files that start with v+timestamp or d+timestamp (0 by default)
  * @return	int												Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
@@ -961,7 +1082,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 		while ($file = readdir($dir_handle)) {
 			if ($file != "." && $file != ".." && !is_link($ossrcfile."/".$file)) {
 				if (is_dir($ossrcfile."/".$file)) {
-					if (empty($excludesubdir) || ($excludesubdir == 2 && strlen($file) == 2)) {
+					if (empty($excludesubdir) || ($excludesubdir == 2 && dol_strlen($file) == 2)) {
 						$newfile = $file;
 						// Replace destination filename with a new one
 						if (is_array($arrayreplacement)) {
@@ -1026,18 +1147,18 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  *  - Database indexes for files are updated.
  *  - Test on virus is done only if param testvirus is provided and an antivirus was set.
  *
- * @param	string  	$srcfile            Source file (can't be a directory. use native php @rename() to move a directory)
- * @param   string		$destfile           Destination file (can't be a directory. use native php @rename() to move a directory)
- * @param   string		$newmask            Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
- * @param   int<0,1>	$overwriteifexists  Overwrite file if exists (1 by default)
- * @param   int<0,1>	$testvirus          Do an antivirus test. Move is canceled if a virus is found.
- * @param	int<0,1>	$indexdatabase		Index new file into database.
- * @param	array<string,mixed>	$moreinfo   Array with more information to set in index table
- * @param	int			$entity				Entity
- * @return  boolean 		            True if OK, false if KO
+ * @param	string				$srcfile			Source file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string				$destfile			Destination file (can't be a directory. use native php @rename() to move a directory)
+ * @param   string				$newmask			Mask in octal string for new file ('0' by default means $conf->global->MAIN_UMASK)
+ * @param   int<0,1>			$overwriteifexists	Overwrite file if exists (1 by default)
+ * @param   int<0,1>			$testvirus			Do an antivirus test. Move is canceled if a virus is found.
+ * @param	int<0,1>			$indexdatabase		Index new file into database.
+ * @param	array<string,mixed>	$moreinfo			Array with more information to set in index table
+ * @param	int|null			$entity				Entity (it's null by default to avoid problem with entity = 0)
+ * @return  boolean									True if OK, false if KO
  * @see dol_move_uploaded_file()
  */
-function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array(), $entity = 0)
+function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array(), $entity = null)
 {
 	global $user, $db;
 	$result = false;
@@ -1141,7 +1262,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['gen_or_uploaded'])) {
 						$ecmfile->gen_or_uploaded = $moreinfo['gen_or_uploaded'];
 					} else {
-						$ecmfile->gen_or_uploaded = 'uploaded';
+						$ecmfile->gen_or_uploaded = 'unknown';	// 'generated', 'uploaded', 'api'
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
@@ -1160,16 +1281,22 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 						$ecmfile->note_public = $moreinfo['note_public'];
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_type'])) {
-						$ecmfile->src_object_type = $moreinfo['src_object_type'];
+						$ecmfile->src_object_type = $moreinfo['src_object_type'];		// Usually the $object->table_element
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
 						$ecmfile->src_object_id = $moreinfo['src_object_id'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['agenda_id'])) {
+						$ecmfile->agenda_id = $moreinfo['agenda_id'];
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['position'])) {
 						$ecmfile->position = $moreinfo['position'];
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['cover'])) {
 						$ecmfile->cover = $moreinfo['cover'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['share'])) {
+						$ecmfile->share = $moreinfo['share'];
 					}
 					if (! empty($entity)) {
 						$ecmfile->entity = $entity;
@@ -1271,7 +1398,8 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase);
+								$moreinfo = array('gen_or_uploaded' => 'unknown');
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase, $moreinfo);
 							}
 							if (!$res) {
 								return $result;
@@ -1307,7 +1435,7 @@ function dol_unescapefile($filename)
  *
  * @param   string      $src_file       Source file to check
  * @param   string      $dest_file      Destination file name (to know the expected type)
- * @return  string[]                    Array of errors, or empty array if not virus found
+ * @return  string[]                    Array of errors (the translation key of the error is used as array key when the check has one), or empty array if not virus found
  */
 function dolCheckVirus($src_file, $dest_file = '')
 {
@@ -1318,7 +1446,7 @@ function dolCheckVirus($src_file, $dest_file = '')
 		return $reterrors;
 	}
 
-	if (getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
+	if (getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON')) {
 		if (!class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}
@@ -1337,7 +1465,7 @@ function dolCheckVirus($src_file, $dest_file = '')
  *
  * @param   string      $src_file       Source file to check
  * @param   string      $dest_file      Destination file name (to know the expected type)
- * @return  string[]                    Array of errors, or empty array if not virus found
+ * @return  string[]                    Array of errors (the translation key of the error is used as array key when the check has one), or empty array if not virus found
  */
 function dolCheckOnFileName($src_file, $dest_file = '')
 {
@@ -1347,7 +1475,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
 
 			$tmp = file_get_contents(trim($src_file));
 			if (preg_match('/[\n\s]+\/JavaScript[\n\s]+/m', $tmp)) {
-				return array('File is a PDF with javascript inside');
+				return array('ErrorFileIsAnInfectedPDFWithJSInside' => 'File is a PDF with javascript inside');
 			}
 		} else {
 			dol_syslog("dolCheckOnFileName Check js into pdf disabled");
@@ -1373,12 +1501,13 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  * 	@param	int		$disablevirusscan	1=Disable virus scan
  * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
- * 	@param	string	$varfiles			_FILES var name
+ * 	@param	string	$keyforsourcefile	Key for source file in _FILES (not used)
  *  @param	string	$upload_dir			For information. Already included into $dest_file.
+ *  @param	int		$mode				0=Default mode use to move a file from the default system upload dir (/tmp/...) into $upload_dir. 1=Mode to move an uploaded file with a simple rename (when uploaded dir is in same filesystem than $upload_dir).
  *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
  *  @see    dol_move()
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile', $upload_dir = '')
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $keyforsourcefile = 'addedfile', $upload_dir = '', $mode = 0)
 {
 	global $conf;
 	global $object, $hookmanager;
@@ -1390,7 +1519,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	if (empty($nohook)) {
 		$reshook = $hookmanager->initHooks(array('fileslib'));
 
-		$parameters = array('dest_file' => $dest_file, 'src_file' => $src_file, 'file_name' => $file_name, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite);
+		$parameters = array('dest_file' => $dest_file, 'src_file' => $src_file, 'file_name' => $file_name, 'varfiles' => $keyforsourcefile, 'allowoverwrite' => $allowoverwrite);
 		$reshook = $hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
 	}
 
@@ -1400,7 +1529,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			switch ($uploaderrorcode) {
 				case UPLOAD_ERR_INI_SIZE:	// 1
 					return 'ErrorFileSizeTooLarge';
-				case UPLOAD_ERR_FORM_SIZE:	// 2
+				case UPLOAD_ERR_FORM_SIZE:	// 2 - Exceed the MAX_FILE_SIZE specified into a field in form
 					return 'ErrorFileSizeTooLarge';
 				case UPLOAD_ERR_PARTIAL:	// 3
 					return 'ErrorPartialFile';
@@ -1421,7 +1550,14 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			$checkvirusarray = dolCheckVirus($src_file, $dest_file);
 			if (count($checkvirusarray)) {
 				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
-				return 'ErrorFileIsInfectedWithAVirus: '.implode(',', $checkvirusarray);
+				// We return a translation key alone, so the caller can translate it. The technical message of the
+				// antivirus is not appended to it (that would break the translation), it is kept into the log only.
+				foreach (array_keys($checkvirusarray) as $errorkey) {
+					if (is_string($errorkey)) {	// A check that knows its own error key returns it as array key
+						return $errorkey;
+					}
+				}
+				return 'ErrorFileIsInfectedWithAVirus';
 			}
 		}
 
@@ -1486,8 +1622,13 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			}
 		}
 
-		// Move file
-		$return = move_uploaded_file($src_file_osencoded, $file_name_osencoded);
+		// Move file using a simple system function
+		if ($mode == 0) {
+			$return = move_uploaded_file($src_file_osencoded, $file_name_osencoded);
+		} else {
+			$return	= rename($src_file_osencoded, $file_name_osencoded);
+		}
+
 		if ($return) {
 			dolChmod($file_name_osencoded);
 			dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=" . getDolGlobalString('MAIN_UMASK'), LOG_DEBUG);
@@ -1505,15 +1646,15 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  Remove a file or several files with a mask.
  *  This delete file physically but also database indexes.
  *
- *  @param	string	$file           File to delete or mask of files to delete
- *  @param  int		$disableglob    Disable usage of glob like * so function is an exact delete function that will return error if no file found
- *  @param  int		$nophperrors    Disable all PHP output errors
- *  @param	int		$nohook			Disable all hooks
+ *  @param	string	$file           	File to delete or mask of files to delete
+ *  @param  int		$disableglob    	Disable usage of glob like * so function is an exact delete function that will return error if no file found
+ *  @param  int		$nophperrors    	Disable all PHP output errors
+ *  @param	int		$nohook				Disable all hooks
  *  @param	object|null	$object			Current object in use
- *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
- *  @param	int		$indexdatabase	Try to remove also index entries.
- *  @param	int		$nolog			Disable log file
- *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
+ *  @param	boolean	$allowdotdot		Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
+ *  @param	int		$indexdatabase		Try to remove also index entries.
+ *  @param	int		$nolog				Disable log file
+ *  @return boolean         			True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir()
  */
 function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1, $nolog = 0)
@@ -1556,10 +1697,10 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 			$ok = true;
 			$globencoded = str_replace('[', '\[', $file_osencoded);
 			$globencoded = str_replace(']', '\]', $globencoded);
-			$listofdir = glob($globencoded);	// This scan dir for files. If file does not exists, return empty.
+			$listoffiles = glob($globencoded);	// This scan dir for files. If file does not exists, return empty.
 
-			if (!empty($listofdir) && is_array($listofdir)) {
-				foreach ($listofdir as $filename) {
+			if (!empty($listoffiles) && is_array($listoffiles)) {
+				foreach ($listoffiles as $filename) {
 					if ($nophperrors) {
 						$ok = @unlink($filename);
 					} else {
@@ -1593,7 +1734,8 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
 								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 								$ecmfile = new EcmFiles($db);
-								$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $object->entity ?? 0);
+								$entity = (isset($object->entity) ? $object->entity : null);
+								$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $entity);
 								if ($result >= 0 && $ecmfile->id > 0) {
 									$result = $ecmfile->delete($user);
 								}
@@ -1619,12 +1761,48 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 			} else {
 				$ok = unlink($file_osencoded);
 			}
+
+			$filename = $file_osencoded;
+
+			// If it fails and it is because of the missing write permission on parent dir
+			if (!$ok && file_exists(dirname($filename)) && !(fileperms(dirname($filename)) & 0200)) {
+				dol_syslog("Error in deletion, but parent directory exists with no permission to write, we try to change permission on parent directory and retry...", LOG_DEBUG);
+				dolChmod(dirname($filename), decoct(fileperms(dirname($filename)) | 0200));
+				// Now we retry deletion
+				if ($nophperrors) {
+					$ok = @unlink($filename);
+				} else {
+					$ok = unlink($filename);
+				}
+			}
+
 			if ($ok) {
 				if (empty($nolog)) {
-					dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+					dol_syslog("Removed file ".$filename, LOG_DEBUG);
+				}
+
+				// Delete entry into ecm database
+				$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
+				if (!preg_match('/(\/temp\/|\/thumbs\/|\.meta$)/', $rel_filetodelete)) {     // If not a tmp file
+					if (is_object($db) && $indexdatabase) {		// $db may not be defined when lib is in a context with define('NOREQUIREDB',1)
+						$rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
+						$rel_filetodelete = preg_replace('/\.noexe$/', '', $rel_filetodelete);
+
+						dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
+						include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+						$ecmfile = new EcmFiles($db);
+						$entity = (isset($object->entity) ? $object->entity : null);
+						$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $entity);
+						if ($result >= 0 && $ecmfile->id > 0) {
+							$result = $ecmfile->delete($user);
+						}
+						if ($result < 0) {
+							setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+						}
+					}
 				}
 			} else {
-				dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+				dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
 			}
 		}
 
@@ -1688,6 +1866,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
 						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog, ($level + 1));
 					} else {
+						dolChmod(dol_osencode("$dir/$item"));	// Try to set permission to write on file
 						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
 						if ($result) {
@@ -1832,7 +2011,7 @@ function dol_meta_create($object)
 	if ($dir) {
 		$object->fetch_thirdparty();
 
-		$objectref = dol_sanitizeFileName($object->ref);
+		$objectref = dol_sanitizeFileName((string) $object->ref);
 		$dir = $dir."/".$objectref;
 		$file = $dir."/".$objectref.".meta";
 
@@ -1856,7 +2035,7 @@ function dol_meta_create($object)
 			AMOUNT=\"" . $object->total_ttc."\"\n";
 
 			for ($i = 0; $i < $nblines; $i++) {
-				//Pour les articles
+				//For the items
 				$meta .= "ITEM_".$i."_QUANTITY=\"".$object->lines[$i]->qty."\"
 				ITEM_" . $i."_AMOUNT_WO_TAX=\"".$object->lines[$i]->total_ht."\"
 				ITEM_" . $i."_VAT=\"".$object->lines[$i]->tva_tx."\"
@@ -1911,33 +2090,43 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
 
 
 /**
- * Get and save an upload file (for example after submitting a new file a mail form). Database index of file is also updated if updatesessionordb is set to 1.
- * All information used are in db, conf, langs, user and _FILES.
+ * Get and save an upload file (for example after submitting a new file in a mail form).
+ * The database index of the file is also updated if $updatesessionordb is set to 1.
+ * Function can work in 2 mode, one to get file from $_FILES, one to get file from its full path.
  * Note: This function can be used only into a HTML page context.
  *
- * @param	string		$upload_dir			Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
- * @param	int<0,1>	$allowoverwrite		1=Allow overwrite existing file
- * @param	int<-1,1>	$updatesessionordb	1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
- * @param	string		$varfiles			_FILES var name
- * @param	string		$savingdocmask		Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
- * @param	?string		$link				Link to add (to add a link instead of a file)
- * @param   string		$trackid			Track id (used to prefix name of session vars to avoid conflict)
- * @param	int<0,1>	$generatethumbs		1=Generate also thumbs for uploaded image files
- * @param   ?Object		$object				Object used to set 'src_object_*' fields
- * @param	string		$forceFullTextIndexation		'1'=Force full text storage in database even if global option not set (consume a high level of data)
- * @return	int                             Return integer <=0 if KO, nb of success if OK (>0)
- * @see dol_remove_file_process()
+ * @param	string		$upload_dir					If mode=0, directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename). If $mode=1, the full destination path.
+ * @param	int<0,1>	$allowoverwrite				1=Allow overwrite existing file
+ * @param	int<-1,1>	$updatesessionordb			1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
+ * @param	string		$keyforsourcefile					If $mode=0, the key into _FILES with information of the file to move. If $mode=1, the source file name on disk (To Implement).
+ * @param	string		$savingdocmask				Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+ * @param	?string		$link						Link to add (to add a link instead of a file)
+ * @param   string		$trackid					Track id (used to prefix name of session vars to avoid conflict, when $updatesessionordb is 0)
+ * @param	int<0,1>	$generatethumbs				1=Generate also thumbs for uploaded image files
+ * @param   ?Object		$object						Object used to set the fields src_object_type and src_object_id.
+ * @param	string		$forceFullTextIndexation	'1'=Force full text storage in database even if global option not set (consume a high level of data)
+ * @param	int			$mode						0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
+ * @return	int                             		Return integer <=0 if KO, nb of success if OK (>0)
+ * @see dol_remove_file_process(), FileUpload::handleFileUpload()
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTextIndexation = '')
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $keyforsourcefile = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTextIndexation = '', $mode = 0)
 {
 	global $db, $user, $conf, $langs;
 
 	$res = 0;
 
-	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
-		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' updatesessionordb='.$updatesessionordb.' savingdocmask='.$savingdocmask, LOG_DEBUG);
+	// If mode 1, prepare environment to be compatible with mode 0
+	if ($mode == 1) {
+		$_FILES = array($keyforsourcefile => array());
+		$_FILES[$keyforsourcefile]['tmp_name'] = $keyforsourcefile;
+		$_FILES[$keyforsourcefile]['name'] = $keyforsourcefile;
+		$mode = 0;
+	}
+
+	if (!empty($_FILES[$keyforsourcefile])) { 	// For view $_FILES[$keyforsourcefile]['error']
+		dol_syslog('dol_add_file_process varfiles = '.$keyforsourcefile.' upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' updatesessionordb='.$updatesessionordb.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		$maxfilesinform = getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10);
-		if (is_array($_FILES[$varfiles]["name"]) && count($_FILES[$varfiles]["name"]) > $maxfilesinform) {
+		if (is_array($_FILES[$keyforsourcefile]["name"]) && count($_FILES[$keyforsourcefile]["name"]) > $maxfilesinform) {
 			$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 			setEventMessages($langs->trans("ErrorTooMuchFileInForm", $maxfilesinform), null, "errors");
 			return -1;
@@ -1947,7 +2136,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 		//var_dump($result);exit;
 
 		if ($result >= 0) {
-			$TFile = $_FILES[$varfiles];
+			$TFile = $_FILES[$keyforsourcefile];
 			// Convert value of $TFile
 			if (!is_array($TFile['name'])) {
 				foreach ($TFile as $key => &$val) {
@@ -1984,6 +2173,21 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				$info = pathinfo($destfile);
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 
+				// Check extension is allowed for upload.
+				$defaultexecutableextensions = function_exists('getExecutableContent') ? implode(',', getExecutableContent()) : 'htm,html,shtml,js,phar,php,php3,php4,php5,phtml,pht,pl,py,cgi,ksh,sh,bash,bat,cmd,wpk,exe';
+				$fileextensionrestriction = getDolGlobalString("MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", $defaultexecutableextensions);
+				if (!empty($fileextensionrestriction)) {
+					$arrayofregexextension = explode(",", $fileextensionrestriction);
+
+					foreach ($arrayofregexextension as $fileextension) {
+						if (preg_match('/\.'.preg_quote(trim($fileextension), '/').'$/i', $destfull)) {
+							$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+							setEventMessages($langs->trans("ErrorFilenameExtensionNotAllowed", $filenameto), null, 'errors');
+							return -1;
+						}
+					}
+				}
+
 				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
 				// this function is also applied when we rename and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 				$destfile = dol_string_nohtmltag($destfile);
@@ -2001,10 +2205,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 					}
 				}
 
-				// Move file from temp directory to final directory. A .noexe may also be appended on file name.
-				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles, $upload_dir);
+				// Move file from source directory to final destination. Check for virus is also embedded and a .noexe may also be appended on file name.
+				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $keyforsourcefile, $upload_dir, $mode);
 
-				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus...'
+				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus'
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 					$tmparraysize = getDefaultImageSizes();
@@ -2064,13 +2268,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 					$langs->load("errors");
 					if (is_numeric($resupload) && $resupload < 0) {	// Unknown error
 						setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-					} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {	// Files infected by a virus
-						if (preg_match('/File is a PDF with javascript inside/', $resupload)) {
-							setEventMessages($langs->trans("ErrorFileIsAnInfectedPDFWithJSInside"), null, 'errors');
-						} else {
-							setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus").'<br>'.dolGetFirstLineOfText($resupload), null, 'errors');
-						}
-					} else { // Known error
+					} else { // Known error, $resupload is a translation key
 						setEventMessages($langs->trans($resupload), null, 'errors');
 					}
 				}
@@ -2119,7 +2317,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
  */
 function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletefile = 1, $trackid = '')
 {
-	global $db, $user, $conf, $langs, $_FILES;
+	global $db, $langs;
 
 	$keytodelete = $filenb;
 	$keytodelete--;
@@ -2172,13 +2370,13 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  *  @param		string	$fullpathorig	Full path of origin for file (can be '')
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
  *  @param		int		$setsharekey	Set also the share key
- *  @param      Object  $object         Object used to set 'src_object_*' fields
+ *  @param      ?Object $object         Object used to set 'src_object_*' fields
  *  @param		string	$forceFullTextIndexation		'1'=Force full text indexation even if global option not set
  *	@return		int						Return integer <0 if KO, 0 if nothing done, >0 if OK
  */
 function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null, $forceFullTextIndexation = '')
 {
-	global $db, $user, $conf;
+	global $db, $user;
 
 	$result = 0;
 	$error = 0;
@@ -2230,12 +2428,12 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			$ecmfile->share = getRandomPassword(true);
 		}
 
-		// Use a convertisser Doc to Text
-		$useFullTextIndexation = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT');
+		// Use a convert tool for Doc to Text
+		$useFullTextIndexation = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT');	// Can be '', 'pdftotext' or 'docling'
 		if (empty($useFullTextIndexation) && $forceFullTextIndexation == '1') {
-			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT')) {
+			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT')) {		// Command line for pdftotext
 				$useFullTextIndexation = 'pdftotext';
-			} elseif (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING')) {
+			} elseif (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING')) {	// Command line for docling
 				$useFullTextIndexation = 'docling';
 			}
 		}
@@ -2251,61 +2449,15 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			$keywords = '';
 			$cmd = '';
 			if (preg_match('/\.pdf/i', $filename)) {
-				// TODO Move this into external submodule files
+				// Convertfile into text
+				$result = dolDocToText($filetoprocess);
 
-				// TODO Develop a native PHP parser using sample code in https://github.com/adeel/php-pdf-parser
-
-				// Use the method pdftotext to generate a HTML
-				if (preg_match('/pdftotext/i', $useFullTextIndexation)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-					$utils = new Utils($db);
-					$outputfile = $conf->admin->dir_temp.'/tmppdftotext.'.$user->id.'.out'; // File used with popen method
-
-					// We also exclude '/temp/' dir and 'documents/admin/documents'
-					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext')." -htmlmeta '".escapeshellcmd($filetoprocess)."' - ";
-					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
-
-					if (!$resultexec['error']) {
-						$txt = $resultexec['output'];
-						$matches = array();
-						if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
-							$keywords = $matches[1];
-						}
-						if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
-							$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
-						}
-					} else {
-						dol_syslog($resultexec['error']);
-						$error++;
-					}
-				}
-
-				// Use the method docling to generate a .md (https://ds4sd.github.io/docling/)
-				if (preg_match('/docling/i', $useFullTextIndexation)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-					$utils = new Utils($db);
-					$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
-
-					// We also exclude '/temp/' dir and 'documents/admin/documents'
-					// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
-					$cmd = getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
-					$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
-
-					if (!$resultexec['error']) {
-						$txt = $resultexec['output'];
-						//$matches = array();
-						//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
-						//	$keywords = $matches[1];
-						//}
-						//if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
-						//	$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
-						//}
-						$textforfulltextindex = $txt;
-					} else {
-						dol_syslog($resultexec['error']);
-						$error++;
-					}
+				if (empty($result['error'])) {
+					$textforfulltextindex = $result['content'];
+					$filetoprocess = $result['keywords'];
+					$cmd = $result['cmd'];
+				} else {
+					$error++;
 				}
 			}
 
@@ -2330,11 +2482,11 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 /**
  *  Delete files into database index using search criteria.
  *
- *  @param      string	$dir			Directory name (full real path without ending /)
- *  @param		string	$file			File name
- *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
- *  @param		Object	$object			object used for entity
- *	@return		int						Return integer <0 if KO, 0 if nothing done, >0 if OK
+ *  @param      string			$dir			Directory name (full real path without ending /)
+ *  @param		string			$file			File name
+ *  @param		string			$mode			How file was created ('uploaded', 'generated', ...)
+ *  @param		?CommonObject	$object			object used for entity
+ *	@return		int								Return integer <0 if KO, 0 if nothing done, >0 if OK
  */
 function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object = null)
 {
@@ -2354,7 +2506,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object =
 	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 
 	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a temporary directory. TODO Does this test work ?
-		$filename = basename($file);
+		//$filename = basename($file);
 		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
@@ -2391,12 +2543,49 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object =
 	}
 }
 
+/**
+ * Check if a file is a real PDF file by checking its signature and its MIME type.
+ * Testing first char may be enough. No need to use the finfo_file().
+ *
+ * @param 	string 	$filePath	File path to check
+ * @return 	bool				True if the file is a real PDF, false otherwise.
+ */
+function isRealPdf(string $filePath)
+{
+	if (!is_file($filePath) || !is_readable($filePath)) {
+		return false;
+	}
+
+	// Open file
+	$handle = fopen($filePath, 'rb');
+	if (!$handle) {
+		return false;
+	}
+	$header = fread($handle, 5);
+	fclose($handle);
+
+	if ($header !== '%PDF-') {
+		return false;
+	}
+
+	// Check using finfo_file
+	/*
+	$finfo = finfo_open(FILEINFO_MIME_TYPE);
+	$mime = finfo_file($finfo, $filePath);
+	finfo_close($finfo);
+	if ($mime !== 'application/pdf') {
+		return false;
+	}
+	*/
+
+	return true;
+}
 
 /**
- * 	Convert an image file or a PDF into another image format.
+ * 	Convert a PDF file into another image format.
  *  This need Imagick php extension. You can use dol_imageResizeOrCrop() for a function that need GD.
  *
- *  @param	string	$fileinput  Input file name
+ *  @param	string	$fileinput  Input full path name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
  *  @param  string  $page       Page number if we convert a PDF into png
@@ -2408,6 +2597,14 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 	if (class_exists('Imagick')) {
 		$image = new Imagick();
 		try {
+			// Imagick may have a support for Magick Scripting Language (MSL) that allows to run execution code with some files like SVG. So we need to check
+			// that file is really a PDF file.
+			// Note: The Imagick policy options can be disabled into /etc/ImageMagick*/policy.xml.
+			if (!isRealPdf($fileinput)) {
+				dol_syslog("We try to convert a PDF file with name ".$fileinput." but it is not a real PDF file (hack attempt ?).", LOG_WARNING);
+				return -4;
+			}
+
 			$filetoconvert = $fileinput.(($page != '') ? '['.$page.']' : '');
 			//var_dump($filetoconvert);
 			$ret = $image->readImage($filetoconvert);
@@ -2416,6 +2613,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 			dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install php-imagick ghostscript' and check there is no policy to disable ".$ext." conversion in /etc/ImageMagick*/policy.xml): ".$e->getMessage(), LOG_WARNING);
 			return 0;
 		}
+
 		if ($ret) {
 			$ret = $image->setImageFormat($ext);
 			if ($ret) {
@@ -2501,7 +2699,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 				}
 
 				// Create recursive directory iterator
-				/** @var SplFileInfo[] $files */
+				/** @var RecursiveIteratorIterator<RecursiveDirectoryIterator> $files */
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($rootPath, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
@@ -2516,7 +2714,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 						$fileName = $file->getFilename();
 						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						//$relativePath = substr($fileFullRealPath, strlen($rootPath) + 1);
+						//$relativePath = dol_substr($fileFullRealPath, strlen($rootPath) + 1);
 						$relativePath = substr(($filePath ? $filePath.'/' : '').$fileName, strlen($rootPath) + 1);
 
 						// Add current file to archive
@@ -2586,7 +2784,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 /**
  * Uncompress a file
  *
- * @param 	string 	$inputfile		File to uncompress
+ * @param 	string 	$inputfile		File (.zip, .gz, .bz2, .zst, ...) to uncompress
  * @param 	string	$outputdir		Target dir name
  * @return 	array{error?:string}	array('error'=>'Error code') or array() if no error
  * @see dol_compress_file(), dol_compress_dir()
@@ -2774,7 +2972,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 
 				// Create recursive directory iterator
 				// This does not return symbolic links
-				/** @var SplFileInfo[] $files */
+				/** @var RecursiveIteratorIterator<RecursiveDirectoryIterator> $files */
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($inputdir, FilesystemIterator::UNIX_PATHS),
 					RecursiveIteratorIterator::LEAVES_ONLY
@@ -2790,7 +2988,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 						$fileName = $file->getFilename();
 						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($fileFullRealPath, strlen($inputdir) + 1);
+						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').dol_substr($fileFullRealPath, strlen($inputdir) + 1);
 						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr(($filePath ? $filePath.'/' : '').$fileName, strlen($inputdir) + 1);
 
 						//var_dump($filePath);var_dump($fileFullRealPath);var_dump($relativePath);
@@ -2808,7 +3006,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 					$newmask = getDolGlobalString('MAIN_UMASK');
 				}
 				if (empty($newmask)) {	// This should no happen
-					dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
+					dol_syslog("Warning: dol_compress_dir called with empty value for newmask and no default value defined", LOG_WARNING);
 					$newmask = '0664';
 				}
 
@@ -2844,11 +3042,15 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
  * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	int<0,1>	$nohook			Disable all hooks
  * @param	int<0,3>	$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
- * @return	null|array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}	null if none or Array with properties (full path, date, ...) of the most recent file
+ * @param	int			$limit			0 or 1 = Return single array for the most recent file, >1 = Return array of the $limit most recent files
+ * @return	null|array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}|array<int,array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>	null if none or Array with properties of the most recent file, or Array of files if limit > 1
  */
-function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = 0, $mode = 0)
+function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = 0, $mode = 0, $limit = 0)
 {
 	$tmparray = dol_dir_list($dir, 'files', 0, $regexfilter, $excludefilter, 'date', SORT_DESC, $mode, $nohook);
+	if ($limit > 1) {
+		return array_slice($tmparray, 0, $limit);
+	}
 	return isset($tmparray[0]) ? $tmparray[0] : null;
 }
 
@@ -2858,11 +3060,11 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  *
  * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string		$original_file		Relative path with filename, relative to modulepart.
- * @param	int 		$entity				Restrict onto entity (0=no restriction)
+ * @param	int 		$entity				Restrict objects stored into entity (0=no restriction). Note that permissions tested are the one the user is logged in, so permissions for $conf->entity that may be different than $entity.
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
- * @param   string  	$mode               Check permission for 'read' or 'write'
- * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
+ * @param   string  	$mode               Check permission for 'read' or 'write' or 'delete'
+ * @return	mixed							Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' (a SQL to compare the fk_soc with the one of the user) & 'original_file' (as a full path name)
  * @see restrictedArea()
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = null, $refname = '', $mode = 'read')
@@ -2878,13 +3080,21 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if (empty($modulepart)) {
 		return 'ErrorBadParameter';
 	}
+
+	$originalmodulepart = $modulepart;
+
 	if (empty($entity)) {
 		if (!isModEnabled('multicompany')) {
 			$entity = 1;
 		} else {
 			$entity = 0;
 		}
+	} else {
+		// TODO Test that the user in session of conf->entity can see objects of the target $entity like restrictedArea() does, however
+		// it is better to limit the scope of this function to check "per module" permission only, and to do the test on "per object" permission
+		// by calling restrictedArea()by the caller.
 	}
+
 	// Fix modulepart for backward compatibility
 	if ($modulepart == 'facture') {
 		$modulepart = 'invoice';
@@ -2897,6 +3107,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$modulepart = 'delivery';
 	} elseif ($modulepart == 'propale') {
 		$modulepart = 'propal';
+	}
+
+	// If modulepart is composed of an objectpart@modulepart, we keep modulepart.
+	$reg = array();
+	if (preg_match('/(\w+)@(\w+)$/', $modulepart, $reg)) {
+		$modulepart = $reg[2];
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
@@ -2924,6 +3140,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$lire = 'creer';
 		$read = 'write';
 		$download = 'upload';
+	} elseif ($mode == 'delete') {
+		$lire = 'supprimer';
+		$read = 'delete';
+		$download = 'upload';
 	}
 
 	// Wrapping for miscellaneous medias files
@@ -2932,14 +3152,18 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = 1;
 		$original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/'.$original_file;
 	} elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root)) {
-		/* the medias directory is by default a public directory accessible online for everybody, so test on permission per entity has no sense
-		if (isModEnabled('multicompany') && (empty($entity) || empty($conf->medias->multidir_output[$entity]))) {
-			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
-		} */
+		/* the medias directory is by default a public directory accessible online for everybody, so test on permission per entity is not done, it has no sense */
 		if (empty($entity)) {
 			$entity = 1;
 		}
-		$accessallowed = 1;
+		$accessallowed = 0;
+		if ($mode == 'write') {
+			if ($fuser->hasRight('website', 'write')) {
+				$accessallowed = 1;
+			}
+		} else {
+			$accessallowed = 1;		// As dir is public, we allow read access to all files in medias directory
+		}
 		$original_file = (empty($conf->medias->multidir_output[$entity]) ? (empty($conf->medias->dir_output) ? DOL_DATA_ROOT.'/medias' : $conf->medias->dir_output) : $conf->medias->multidir_output[$entity]).'/'.$original_file;
 	} elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
@@ -2984,9 +3208,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessok = false;
 		$reg = array();
 		if (preg_match('/^(\d+)\/photos\//', $original_file, $reg)) {
-			if ($reg[1]) {
+			if ((int) $reg[1]) {
 				$tmpobject = new User($db);
-				$tmpobject->fetch($reg[1], '', '', 1);
+				$tmpobject->fetch((int) $reg[1], '', '', 1);
 				if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $tmpobject)) {
 					$securekey = GETPOST('securekey', 'alpha', 1);
 					// Security check
@@ -3010,7 +3234,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->member->dir_output)) {
 		// Wrapping for members photos
 		$accessallowed = 0;
+		// Simple chosen for automatic generation of member codes
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
+			$accessallowed = 1;
+		}
+		// Advanced chosen for automatic generation of member codes
+		if (preg_match('/^MEM\d\d\d\d-\d\d\d\d\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->member->dir_output.'/'.$original_file;
@@ -3020,48 +3249,56 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->invoice->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('invoice').")";
 	} elseif ($modulepart == 'apercupropal' && !empty($conf->propal->multidir_output[$entity])) {
-		// Wrapping pour les apercu propal
+		// Wrapping for preview of proposals
 		if ($fuser->hasRight('propal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('propal').")";
 	} elseif ($modulepart == 'apercucommande' && !empty($conf->order->multidir_output[$entity])) {
-		// Wrapping pour les apercu commande
+		// Wrapping for preview of orders
 		if ($fuser->hasRight('commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->order->multidir_output[$entity].'/'.$original_file;
-	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->dir_output)) {
-		// Wrapping pour les apercu intervention
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
+	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->multidir_output[$entity])) {
+		// Wrapping for preview of intervention
 		if ($fuser->hasRight('ficheinter', $lire)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
+		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'apercucontract') && !empty($conf->contract->multidir_output[$entity])) {
-		// Wrapping pour les apercu contrat
+		// Wrapping for preview of contracts
 		if ($fuser->hasRight('contrat', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contract->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."contrat WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('contract').")";
 	} elseif (($modulepart == 'apercusupplier_proposal') && !empty($conf->supplier_proposal->dir_output)) {
-		// Wrapping pour les apercu supplier proposal
+		// Wrapping for preview of vendor proposals
 		if ($fuser->hasRight('supplier_proposal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->supplier_proposal->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."supplier_proposal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('supplier_proposal').")";
 	} elseif (($modulepart == 'apercusupplier_order') && !empty($conf->fournisseur->commande->dir_output)) {
-		// Wrapping pour les apercu supplier order
+		// Wrapping for preview of purchase orders
 		if ($fuser->hasRight('fournisseur', 'commande', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'apercusupplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
-		// Wrapping pour les apercu supplier invoice
+		// Wrapping for preview of supplier invoices
 		if ($fuser->hasRight('fournisseur', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'holiday') && !empty($conf->holiday->dir_output)) {
 		if ($fuser->hasRight('holiday', $read) || $fuser->hasRight('holiday', 'readall') || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3074,6 +3311,26 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			}
 		}
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'salaries') && !empty($conf->salaries->dir_output)) {
+		// Wrapping for salaries. The subdirectory is the id of the salary, see salaries/document.php.
+		if ($fuser->hasRight('salaries', $read) || $fuser->hasRight('salaries', 'readall') || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+			// The 'read' permission is labelled "yours only" and the two screens leading to this
+			// download, salaries/card.php and salaries/document.php, do enforce it on fk_user.
+			// checkUserAccessToObject() only tests the entity for this feature, so the same rule has to
+			// be applied here: without it any holder of salaries->read downloads every payslip.
+			if ($refname && !$fuser->hasRight('salaries', 'readall') && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+				$tmpsalary = new Salary($db);
+				$tmpsalary->fetch((int) $refname);
+				// Same condition as salaries/card.php and salaries/document.php, word for word.
+				// getAllChildIds(1) includes the current user, so this covers their own payslip as well
+				// as those of the users below them. The test on fk_user also closes the case of an id
+				// that matches no salary, Salary::fetch() returning 1 even then.
+				$accessallowed = ($tmpsalary->fk_user > 0 && in_array($tmpsalary->fk_user, $fuser->getAllChildIds(1))) ? 1 : 0;
+			}
+		}
+		$original_file = $conf->salaries->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'expensereport') && !empty($conf->expensereport->dir_output)) {
 		if ($fuser->hasRight('expensereport', $lire) || $fuser->hasRight('expensereport', 'readall') || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3087,19 +3344,23 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercuexpensereport') && !empty($conf->expensereport->dir_output)) {
-		// Wrapping pour les apercu expense report
+		// Wrapping for preview of expense report
 		if ($fuser->hasRight('expensereport', $lire)) {
 			$accessallowed = 1;
+			// An expense report is always owned by an internal user, so an external user can never be allowed to access it
+			if ($fuser->socid > 0) {
+				$accessallowed = 0;
+			}
 		}
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'propalstats' && !empty($conf->propal->multidir_temp[$entity])) {
-		// Wrapping pour les images des stats propales
+		// Wrapping for statistics images of proposal
 		if ($fuser->hasRight('propal', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_temp[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'orderstats' && !empty($conf->order->dir_temp)) {
-		// Wrapping pour les images des stats commandes
+		// Wrapping for statistics images of orders
 		if ($fuser->hasRight('commande', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3110,7 +3371,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->fournisseur->commande->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'billstats' && !empty($conf->invoice->dir_temp)) {
-		// Wrapping pour les images des stats factures
+		// Wrapping for statistics images of purchase orders
 		if ($fuser->hasRight('facture', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3121,25 +3382,19 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->fournisseur->facture->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'expeditionstats' && !empty($conf->expedition->dir_temp)) {
-		// Wrapping pour les images des stats expeditions
+		// Wrapping for statistics images of shipments
 		if ($fuser->hasRight('expedition', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_temp.'/'.$original_file;
-	} elseif ($modulepart == 'tripsexpensesstats' && !empty($conf->deplacement->dir_temp)) {
-		// Wrapping pour les images des stats expeditions
-		if ($fuser->hasRight('deplacement', $lire)) {
-			$accessallowed = 1;
-		}
-		$original_file = $conf->deplacement->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'memberstats' && !empty($conf->member->dir_temp)) {
-		// Wrapping pour les images des stats expeditions
+		// Wrapping for statistics images of memberships
 		if ($fuser->hasRight('adherent', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->member->dir_temp.'/'.$original_file;
 	} elseif (preg_match('/^productstats_/i', $modulepart) && !empty($conf->product->dir_temp)) {
-		// Wrapping pour les images des stats produits
+		// Wrapping for statistics images of products
 		if ($fuser->hasRight('produit', $lire) || $fuser->hasRight('service', $lire)) {
 			$accessallowed = 1;
 		}
@@ -3151,7 +3406,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$modulepartsuffix = str_replace('tax-', '', $modulepart);
 		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
-	} elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output)) {
+	} elseif (($modulepart == 'actions' || $modulepart == 'actioncomm') && !empty($conf->agenda->dir_output)) {
 		// Wrapping for events
 		if ($fuser->hasRight('agenda', 'myactions', $read)) {
 			$accessallowed = 1;
@@ -3177,25 +3432,25 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->categorie->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'prelevement' && !empty($conf->prelevement->dir_output)) {
-		// Wrapping pour les prelevements
+		// Wrapping for direct debits
 		if ($fuser->hasRight('prelevement', 'bons', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->prelevement->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'graph_stock' && !empty($conf->stock->dir_temp)) {
-		// Wrapping pour les graph energie
+		// Wrapping for energy graphs
 		$accessallowed = 1;
 		$original_file = $conf->stock->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'graph_fourn' && !empty($conf->fournisseur->dir_temp)) {
-		// Wrapping pour les graph fournisseurs
+		// Wrapping for supplier graphs
 		$accessallowed = 1;
 		$original_file = $conf->fournisseur->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'graph_product' && !empty($conf->product->dir_temp)) {
-		// Wrapping pour les graph des produits
+		// Wrapping for product graphs
 		$accessallowed = 1;
 		$original_file = $conf->product->multidir_temp[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'barcode') {
-		// Wrapping pour les code barre
+		// Wrapping for barcodes
 		$accessallowed = 1;
 		// If viewimage is called for barcode, we try to output an image on the fly, with no build of file on disk.
 		//$original_file=$conf->barcode->dir_temp.'/'.$original_file;
@@ -3205,11 +3460,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = 1;
 		$original_file = $conf->mailing->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'scanner_user_temp' && !empty($conf->scanner->dir_temp)) {
-		// Wrapping pour le scanner
+		// Wrapping for the scanner
 		$accessallowed = 1;
 		$original_file = $conf->scanner->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'fckeditor' && !empty($conf->fckeditor->dir_output)) {
-		// Wrapping pour les images fckeditor
+		// Wrapping for fckeditor images
 		$accessallowed = 1;
 		$original_file = $conf->fckeditor->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'user' && !empty($conf->user->dir_output)) {
@@ -3231,16 +3486,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$db->escape($refname)."' AND entity IN (".getEntity('societe').")";
-	} elseif ($modulepart == 'contact' && !empty($conf->societe->multidir_output[$entity])) {
+		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('societe').")";
+	} elseif (($modulepart == 'contact' || $modulepart == 'socpeople') && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for contact
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
-		if ($fuser->hasRight('societe', $lire)) {
+		if ($fuser->hasRight('societe', 'contact', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/contact/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('contact').")";
 	} elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->invoice->multidir_output[$entity])) {
 		// Wrapping for invoices
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3304,36 +3560,34 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contract->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
-	} elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output)) {
+	} elseif ($modulepart == 'massfilesarea_stock' && !empty($conf->stock->dir_output)) {
+		if ($fuser->hasRight('stock', $lire) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		$original_file = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	} elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->multidir_output[$entity])) {
 		// Wrapping for interventions
 		if ($fuser->hasRight('ficheinter', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
-	} elseif ($modulepart == 'deplacement' && !empty($conf->deplacement->dir_output)) {
-		// Wrapping pour les deplacements et notes de frais
-		if ($fuser->hasRight('deplacement', $lire) || preg_match('/^specimen/i', $original_file)) {
-			$accessallowed = 1;
-		}
-		$original_file = $conf->deplacement->dir_output.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'propal' || $modulepart == 'propale') && isset($conf->propal->multidir_output[$entity])) {
-		// Wrapping pour les propales
+		// Wrapping for proposals
 		if ($fuser->hasRight('propal', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('propal').")";
 	} elseif (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->order->multidir_output[$entity])) {
-		// Wrapping pour les commandes
+		// Wrapping for orders
 		if ($fuser->hasRight('commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->order->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
 	} elseif ($modulepart == 'project' && !empty($conf->project->multidir_output[$entity])) {
-		// Wrapping pour les projects
+		// Wrapping for projects
 		if ($fuser->hasRight('projet', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
@@ -3360,34 +3614,38 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier' || $modulepart == 'supplier_order') && !empty($conf->fournisseur->commande->dir_output)) {
-		// Wrapping pour les commandes fournisseurs
+		// Wrapping for purchase orders
 		if ($fuser->hasRight('fournisseur', 'commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity = ".((int) $conf->entity);
 	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier' || $modulepart == 'supplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
-		// Wrapping pour les factures fournisseurs
+		// Wrapping for supplier invoices
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'supplier_payment') {
-		// Wrapping pour les rapport de paiements
+		// Wrapping for supplier payments
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
+		$original_file = preg_replace("/payment\//", "", $original_file);	// Because the $conf->fournisseur->payment->dir_output already contains the "payment/"
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT f.fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfourn as p";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON pf.fk_facturefourn = p.rowid";
+		$sqlprotectagainstexternals .= " WHERE p.ref = '".$db->escape($refname)."' AND p.entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'payment') {
-		// Wrapping pour les rapport de paiements
-		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		// Wrapping for report of payments
+		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->compta->payment->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'facture_paiement' && !empty($conf->invoice->dir_output)) {
-		// Wrapping pour les rapport de paiements
+		// Wrapping for report of payments
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3396,14 +3654,19 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		} else {
 			$original_file = $conf->invoice->dir_output.'/payments/'.$original_file;
 		}
-	} elseif ($modulepart == 'export_compta' && !empty($conf->accounting->dir_output)) {
+		/*      $sqlprotectagainstexternals = "SELECT f.fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiement as p";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = p.rowid";
+		$sqlprotectagainstexternals .= " WHERE p.ref = '".$db->escape($refname)."' AND p.entity=".((int) $conf->entity);
+		var_dump($sqlprotectagainstexternals);exit;*/
+	} elseif ($modulepart == 'accounting' && !empty($conf->accounting->dir_output)) {
 		// Wrapping for accounting exports
-		if ($fuser->hasRight('accounting', 'bind', 'write') || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('accounting', 'bind', 'write') || $fuser->hasRight('accounting', 'mouvements', 'export') || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
-	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment') && !empty($conf->expedition->dir_output)) {
-		// Wrapping pour les expedition
+	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment' || $modulepart == 'shipping') && !empty($conf->expedition->dir_output)) {
+		// Wrapping for shipments
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
@@ -3416,13 +3679,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'receipt/') === 0 ? '' : 'receipt/').$original_file;
 	} elseif ($modulepart == 'actionsreport' && !empty($conf->agenda->dir_temp)) {
-		// Wrapping pour les actions
+		// Wrapping for actions
 		if ($fuser->hasRight('agenda', 'allactions', $read) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->agenda->dir_temp."/".$original_file;
 	} elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service') {
-		// Wrapping pour les produits et services
+		// Wrapping for products and services
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3435,7 +3698,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$original_file = $conf->service->multidir_output[$entity].'/'.$original_file;
 		}
 	} elseif ($modulepart == 'product_batch' || $modulepart == 'produitlot') {
-		// Wrapping pour les lots produits
+		// Wrapping for product lots
 		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
@@ -3456,34 +3719,57 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (isModEnabled('stock')) {
 			$original_file = $conf->stock->multidir_output[$entity].'/movement/'.$original_file;
 		}
+	} elseif ($modulepart == 'inventory') {
+		// Wrapping for stock inventories
+		if (empty($entity) || empty($conf->stock->multidir_output[$entity])) {
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
+		}
+		if ($fuser->hasRight('stock', $lire) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		if (isModEnabled('stock')) {
+			$original_file = $conf->stock->multidir_output[$entity].'/inventory/'.$original_file;
+		}
+	} elseif ($modulepart == 'entrepot') {
+		// Wrapping for stock warehouse
+		if (empty($entity) || empty($conf->stock->multidir_output[$entity])) {
+			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
+		}
+		if (($fuser->hasRight('stock', $lire) || $fuser->hasRight('stock', 'movement', $lire) || $fuser->hasRight('stock', 'mouvement', $lire)) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+		}
+		if (isModEnabled('stock')) {
+			$original_file = $conf->stock->multidir_output[$entity].'/'.$original_file;
+		}
 	} elseif ($modulepart == 'contract' && !empty($conf->contract->multidir_output[$entity])) {
-		// Wrapping pour les contrats
+		// Wrapping for contracts
 		if ($fuser->hasRight('contrat', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->contract->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."contrat WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('contract').")";
 	} elseif ($modulepart == 'donation' && !empty($conf->don->dir_output)) {
-		// Wrapping pour les dons
+		// Wrapping for donation
 		if ($fuser->hasRight('don', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->don->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'dolresource' && !empty($conf->resource->dir_output)) {
-		// Wrapping pour les dons
+		// Wrapping for resources
 		if ($fuser->hasRight('resource', $read) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->resource->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'remisecheque' || $modulepart == 'chequereceipt') && !empty($conf->bank->dir_output)) {
-		// Wrapping pour les remises de cheques
+		// Wrapping for check deposits
 		if ($fuser->hasRight('banque', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->bank->dir_output.'/checkdeposits/'.$original_file; // original_file should contains relative path so include the get_exdir result
 	} elseif (($modulepart == 'banque' || $modulepart == 'bank') && !empty($conf->bank->dir_output)) {
 		// Wrapping for bank
-		if ($fuser->hasRight('banque', $lire)) {
+		// The bank module has no 'creer' permission: writing a bank file requires 'modifier', like account_statement_document.php
+		if ($fuser->hasRight('banque', ($mode == 'read' ? 'lire' : 'modifier'))) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->bank->dir_output.'/'.$original_file;
@@ -3521,7 +3807,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->admin->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'bittorrent' && !empty($conf->bittorrent->dir_output)) {
-		// Wrapping pour BitTorrent
+		// Wrapping for BitTorrent
 		$accessallowed = 1;
 		$dir = 'files';
 		if (dol_mimetype($original_file) == 'application/x-bittorrent') {
@@ -3529,11 +3815,36 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
 	} elseif ($modulepart == 'member' && !empty($conf->member->dir_output)) {
-		// Wrapping pour Foundation module
+		// Wrapping for Foundation module
 		if ($fuser->hasRight('adherent', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->member->dir_output.'/'.$original_file;
+	} elseif ($modulepart == 'ticket' && !empty($conf->ticket->multidir_output[$entity])) {
+		// Wrapping for events
+		if ($fuser->hasRight('ticket', $read)) {
+			$accessallowed = 1;
+		}
+		if (!isset($_SESSION['email_customer'])) {
+			// Request to check socid for external users
+			$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."ticket WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
+		} else {
+			$email_split = explode('@', $_SESSION['email_customer']);
+
+			$sqlprotectagainstexternals = 'SELECT t.rowid, t.fk_soc FROM '.MAIN_DB_PREFIX.'ticket t';
+			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id = t.rowid';
+			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople c ON c.rowid = ec.fk_socpeople';
+			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact tc ON tc.element = "ticket" AND tc.rowid = ec.fk_c_type_contact';
+			$sqlprotectagainstexternals .= " WHERE t.ref LIKE '".$db->escape($refname)."'";
+			$sqlprotectagainstexternals .= ' AND (';
+			$sqlprotectagainstexternals .= '   (';
+			$sqlprotectagainstexternals .= '     tc.rowid IS NOT NULL';
+			$sqlprotectagainstexternals .= "     AND c.email = '".$db->escape($email_split[0]).'@'.$db->sanitize($email_split[1])."'";
+			$sqlprotectagainstexternals .= '   )';
+			$sqlprotectagainstexternals .= "   OR t.origin_email = '".$db->escape($email_split[0]).'@'.$db->sanitize($email_split[1])."'";
+			$sqlprotectagainstexternals .= ' )';
+		}
+		$original_file = $conf->ticket->multidir_output[$entity].'/'.$original_file;
 		// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser
 		// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
 		// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser
@@ -3550,6 +3861,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1; // If user is admin
 		}
 
+		// For external modules, we can have (modulepart=mymodule and original_file=myobject/...) or (modulepart=mymodule-myobject and original_file=...)
 		$tmpmodulepart = explode('-', $modulepart);
 		if (!empty($tmpmodulepart[1])) {
 			$modulepart = $tmpmodulepart[0];
@@ -3594,11 +3906,21 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				dol_print_error(null, 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->hasRight($tmpmodule, $lire) || preg_match('/^specimen/i', $original_file)) {
+
+			// Check fuser->rights->modulepart->myobject->read and fuser->rights->modulepart->read
+			$partsofdirinoriginalfile = explode('/', $original_file);
+			if (!empty($partsofdirinoriginalfile[1])) {    // If original_file is xxx/filename (xxx is a part we will use)
+				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
+				if (($partofdirinoriginalfile && $fuser->hasRight($tmpmodule, $partofdirinoriginalfile, 'read')) || preg_match('/^specimen/i', $original_file)) {
+					$accessallowed = 1;
+				}
+			}
+			if ($fuser->hasRight($tmpmodule, $read) || preg_match('/^specimen/i', $original_file)) {
 				$accessallowed = 1;
 			}
 			$original_file = $conf->$tmpmodule->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 		} else {
+			// Main generic case
 			if (empty($conf->$modulepart->dir_output)) {	// modulepart not supported
 				dol_print_error(null, 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.'). The module for this modulepart value may not be activated.');
 				exit;
@@ -3616,11 +3938,21 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = 1;
 			}
 
-			if (is_array($conf->$modulepart->multidir_output) && !empty($conf->$modulepart->multidir_output[$entity])) {
-				$original_file = $conf->$modulepart->multidir_output[$entity].'/'.$original_file;
-			} else {
-				$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
+			$subdir = '';
+			$regs = array();
+			if (preg_match('/^(\w+)@(\w+)$/', $originalmodulepart, $regs)) {
+				$subdir = $regs[1].'/';
 			}
+
+			if (is_array($conf->$modulepart->multidir_output) && !empty($conf->$modulepart->multidir_output[$entity])) {
+				$original_file = $conf->$modulepart->multidir_output[$entity].'/'.$subdir.$original_file;
+			} else {
+				$original_file = $conf->$modulepart->dir_output.'/'.$subdir.$original_file;
+			}
+
+			// TODO
+			// Implement a way for the generic case to set $sqlprotectagainstexternals automatically.
+			// For the moment, external modules can use the following hook checkSecureAccess if they need to protect against external users.
 		}
 
 		$parameters = array(
@@ -3657,9 +3989,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 /**
  * Store object in file.
  *
- * @param string $directory Directory of cache
- * @param string $filename Name of filecache
- * @param mixed $object Object to store in cachefile
+ * @param string 	$directory 	Directory of cache
+ * @param string 	$filename 	Name of filecache
+ * @param string 	$object 	String to store in cachefile
  * @return void
  */
 function dol_filecache($directory, $filename, $object)
@@ -3672,9 +4004,8 @@ function dol_filecache($directory, $filename, $object)
 	}
 	$cachefile = $directory.$filename;
 
-	file_put_contents($cachefile, serialize($object), LOCK_EX);
-
-	dolChmod($cachefile, '0644');
+	file_put_contents($cachefile, json_encode($object), LOCK_EX);
+	dolChmod($cachefile);
 }
 
 /**
@@ -3696,14 +4027,14 @@ function dol_cache_refresh($directory, $filename, $cachetime)
 /**
  * Read object from cachefile.
  *
- * @param string 	$directory 		Directory of cache
- * @param string 	$filename 		Name of filecache
- * @return mixed 					Unserialise from file
+ * @param 	string 	$directory 		Directory of cache
+ * @param 	string 	$filename 		Name of filecache
+ * @return 	string 					Unserialise from file
  */
 function dol_readcachefile($directory, $filename)
 {
 	$cachefile = $directory.$filename;
-	$object = unserialize(file_get_contents($cachefile));
+	$object = json_decode(file_get_contents($cachefile));
 	return $object;
 }
 
@@ -3723,37 +4054,47 @@ function dirbasename($pathfile)
  * Function to get list of updated or modified files.
  * $file_list is used as global variable
  *
- * @param array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array for response
+ * @param array{}|array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>}	$file_list	Array for response
  * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
  * @param   string				$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
  * @param   string				$pathref            Path ref (DOL_DOCUMENT_ROOT)
  * @param   string[]			$checksumconcat     Array of checksum
- * @return	array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array of filenames
+ * @return	array{insignature:string[],missing?:array<array{filename:string,expectedhash:string,expectedsize:string,algo:string}>,updated:array<array{filename:string,expectedhash:string,expectedsize:string,hash:string,algo:string}>}	$file_list	Array of filenames
  */
 function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
 {
 	global $conffile;
 
-	$exclude = 'install';
+	//$exclude = 'install';
 
-	foreach ($dir->md5file as $file) {    // $file is a simpleXMLElement
+	$entry = array();
+	$algo = '';
+	if (!empty($dir->md5file)) {
+		$entry = $dir->md5file;
+		$algo = 'md5';
+	} elseif (!empty($dir->sha256file)) {
+		$entry = $dir->sha256file;
+		$algo = 'sha256';
+	}
+
+	foreach ($entry as $file) {    // $file is a simpleXMLElement
 		$filename = $path.$file['name'];
 		$file_list['insignature'][] = $filename;
 		$expectedsize = (empty($file['size']) ? '' : $file['size']);
-		$expectedmd5 = (string) $file;
+		$expectedhash = (string) $file;
 
 		if (!file_exists($pathref.'/'.$filename)) {
-			$file_list['missing'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize);
+			$file_list['missing'][] = array('filename' => $filename, 'expectedhash' => $expectedhash, 'expectedsize' => $expectedsize, 'algo' => (string) $algo);
 		} else {
-			$md5_local = md5_file($pathref.'/'.$filename);
+			$hash_local = hash_file($algo, $pathref.'/'.$filename);
 
 			if ($conffile == '/etc/dolibarr/conf.php' && $filename == '/filefunc.inc.php') {	// For install with deb or rpm, we ignore test on filefunc.inc.php that was modified by package
-				$checksumconcat[] = $expectedmd5;
+				$checksumconcat[] = $expectedhash;
 			} else {
-				if ($md5_local != $expectedmd5) {
-					$file_list['updated'][] = array('filename' => $filename, 'expectedmd5' => $expectedmd5, 'expectedsize' => $expectedsize, 'md5' => (string) $md5_local);
+				if ($hash_local != $expectedhash) {
+					$file_list['updated'][] = array('filename' => $filename, 'expectedhash' => $expectedhash, 'expectedsize' => $expectedsize, 'hash' => (string) $hash_local, 'algo' => (string) $algo);
 				}
-				$checksumconcat[] = $md5_local;
+				$checksumconcat[] = $hash_local;
 			}
 		}
 	}
@@ -3776,107 +4117,138 @@ function dragAndDropFileUpload($htmlname)
 {
 	global $object, $langs;
 
+	// Every generated javascript string that carries an interpolated value is delimited by a single quote, so
+	// dol_escape_js() is called with the mode 1 everywhere below: it escapes a single quote and leaves a double
+	// quote alone. The default mode would rewrite a double quote into an escaped single quote, which is safe
+	// inside a '...' string but silently alters the value.
+	// dol_escape_js() escapes the quotes but not '</', and PHP_SELF holds the path info of the request on a
+	// server that accepts it, so a request could close the script tag below and open one of its own.
+	$pageurl = str_replace('</', '<\\/', dol_escape_js($_SERVER["PHP_SELF"], 1));
+
+	// Values interpolated into the heredoc below via {$...}: dol_escape_js() is still called with
+	// mode 1 on each of them for the same reason as $pageurl above (they are embedded into JS '...' strings).
+	$nonce = getNonce();
+	$fkElement = dol_escape_js((string) $object->id, 1);
+	$elementType = dol_escape_js($object->element, 1);
+	$token = currentToken();
+	$ajaxUrl = DOL_URL_ROOT.'/core/ajax/fileupload.php';
+
 	$out = "";
 	$out .= '<div id="'.$htmlname.'Message" class="dragDropAreaMessage hidden"><span>'.img_picto("", 'download').'<br>'.$langs->trans("DropFileToAddItToObject").'</span></div>';
 	$out .= "\n<!-- JS CODE TO ENABLE DRAG AND DROP OF FILE -->\n";
-	$out .= "<script>";
-	$out .= '
-		jQuery(document).ready(function() {
-			var enterTargetDragDrop = null;
+	$out .= <<<JS
+<script nonce="{$nonce}">
+	jQuery(document).ready(function() {
+		var enterTargetDragDrop = null;
 
-			$("#'.$htmlname.'").addClass("cssDragDropArea");
+		$('#{$htmlname}').addClass('cssDragDropArea');
 
-			$(".cssDragDropArea").on("dragenter", function(ev, ui) {
-				var dataTransfer = ev.originalEvent.dataTransfer;
-				var dataTypes = dataTransfer.types;
-				//console.log(dataTransfer);
-				//console.log(dataTypes);
+		$(".cssDragDropArea").on("dragenter", function(ev, ui) {
+			var dataTransfer = ev.originalEvent.dataTransfer;
+			var dataTypes = dataTransfer.types;
+			// console.log(dataTransfer);
+			// console.log(dataTypes);
 
-				if (!dataTypes || ($.inArray(\'Files\', dataTypes) === -1)) {
-				    // The element dragged is not a file, so we avoid the "dragenter"
-				    ev.preventDefault();
-    				return false;
-  				}
-
-				// Entering drop area. Highlight area
-				console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
-				enterTargetDragDrop = ev.target;
-				$(this).addClass("highlightDragDropArea");
-				$("#'.$htmlname.'Message").removeClass("hidden");
-				ev.preventDefault();
-			});
-
-			$(".cssDragDropArea").on("dragleave", function(ev) {
-				// Going out of drop area. Remove Highlight
-				if (enterTargetDragDrop == ev.target){
-					console.log("dragAndDropFileUpload: We remove class highlightDragDropArea")
-					$("#'.$htmlname.'Message").addClass("hidden");
-					$(this).removeClass("highlightDragDropArea");
-				}
-			});
-
-			$(".cssDragDropArea").on("dragover", function(ev) {
+			if (!dataTypes || ($.inArray('Files', dataTypes) === -1)) {
+				// The element dragged is not a file, so we avoid the "dragenter"
 				ev.preventDefault();
 				return false;
-			});
+			}
 
-			$(".cssDragDropArea").on("drop", function(e) {
-				console.log("Trigger event file dropped. fk_element='.dol_escape_js($object->id).' element='.dol_escape_js($object->element).'");
-				e.preventDefault();
-				fd = new FormData();
-				fd.append("fk_element", "'.dol_escape_js($object->id).'");
-				fd.append("element", "'.dol_escape_js($object->element).'");
-				fd.append("token", "'.currentToken().'");
-				fd.append("action", "linkit");
-
-				var dataTransfer = e.originalEvent.dataTransfer;
-
-				if (dataTransfer.files && dataTransfer.files.length){
-					var droppedFiles = e.originalEvent.dataTransfer.files;
-					$.each(droppedFiles, function(index,file){
-						fd.append("files[]", file,file.name)
-					});
-				}
-				$(".cssDragDropArea").removeClass("highlightDragDropArea");
-				counterdragdrop = 0;
-				$.ajax({
-					url: "'.DOL_URL_ROOT.'/core/ajax/fileupload.php",
-					type: "POST",
-					processData: false,
-					contentType: false,
-					data: fd,
-					success:function() {
-						console.log("Uploaded.", arguments);
-						/* arguments[0] is the json string of files */
-						/* arguments[1] is the value for variable "success", can be 0 or 1 */
-						let listoffiles = JSON.parse(arguments[0]);
-						console.log(listoffiles);
-						let nboferror = 0;
-						for (let i = 0; i < listoffiles.length; i++) {
-							console.log(listoffiles[i].error);
-							if (listoffiles[i].error) {
-								nboferror++;
-							}
-						}
-						console.log(nboferror);
-						if (nboferror > 0) {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings";
-						} else {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=UploadFileDragDropSuccess:mesgs";
-						}
-					},
-					error:function() {
-						console.log("Error Uploading.", arguments)
-						if (arguments[0].status == 403) {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorUploadPermissionDenied:errors";
-						}
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors";
-					},
-				})
-			});
+			// Entering drop area. Highlight area
+			console.log("dragAndDropFileUpload: We add class highlightDragDropArea")
+			enterTargetDragDrop = ev.target;
+			$(this).addClass("highlightDragDropArea");
+			$('#{$htmlname}Message').removeClass('hidden');
+			ev.preventDefault();
 		});
-	';
-	$out .= "</script>\n";
+
+		$(".cssDragDropArea").on("dragleave", function(ev) {
+			// Going out of drop area. Remove Highlight
+			if (enterTargetDragDrop == ev.target){
+				console.log("dragAndDropFileUpload: We remove class highlightDragDropArea")
+				$('#{$htmlname}Message').addClass('hidden');
+				$(this).removeClass("highlightDragDropArea");
+			}
+		});
+
+		$(".cssDragDropArea").on("dragover", function(ev) {
+			ev.preventDefault();
+			return false;
+		});
+
+		$(".cssDragDropArea").on("drop", function(e) {
+			console.log('Trigger event file dropped. fk_element={$fkElement} element={$elementType}');
+			e.preventDefault();
+			fd = new FormData();
+			fd.append('fk_element', '{$fkElement}');
+			fd.append('element', '{$elementType}');
+			fd.append('token', '{$token}');
+			fd.append("action", "linkit");
+
+			var dataTransfer = e.originalEvent.dataTransfer;
+
+			if (dataTransfer.files && dataTransfer.files.length){
+				var droppedFiles = e.originalEvent.dataTransfer.files;
+				$.each(droppedFiles, function(index,file){
+					fd.append("files[]", file,file.name)
+				});
+			}
+			$(".cssDragDropArea").removeClass("highlightDragDropArea");
+			counterdragdrop = 0;
+			$.ajax({
+				url: '{$ajaxUrl}',
+				type: "POST",
+				processData: false,
+				contentType: false,
+				data: fd,
+				success:function() {
+					console.log("Uploaded.", arguments);
+					/* arguments[0] is the json string of files */
+					/* arguments[1] is the value for variable "success", can be 0 or 1 */
+					let listoffiles = [];
+					/* The answer is not the expected json when php stopped before answering, for example when
+					   post_max_size was reached. Without this, the exception of JSON.parse() would leave the
+					   user on a page with no message at all, thinking the file was added. */
+					try {
+						listoffiles = JSON.parse(arguments[0]);
+					} catch (e) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDrop:errors';
+						return;
+					}
+					console.log(listoffiles);
+					let nboferror = 0;
+					for (let i = 0; i < listoffiles.length; i++) {
+						console.log(listoffiles[i].error);
+						if (listoffiles[i].error) {
+							nboferror++;
+						}
+					}
+					console.log(nboferror);
+					/* An empty list means no file was stored at all, so it is an error and not a success:
+					   php empties \$_FILES when post_max_size is reached. */
+					if (listoffiles.length == 0) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDrop:errors';
+					} else if (nboferror > 0) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings';
+					} else {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=UploadFileDragDropSuccess:mesgs';
+					}
+				},
+				error:function(jqXHR) {
+					console.log("Error Uploading.", arguments)
+					if (jqXHR.status == 403) {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors';
+					} else {
+						window.location.href = '{$pageurl}?id={$fkElement}&seteventmessages=ErrorUploadFileDragDrop:errors';
+					}
+				},
+			})
+		});
+	});
+</script>
+
+JS;
 	return $out;
 }
 
@@ -3948,4 +4320,139 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 	}
 
 	return true;
+}
+
+/**
+ * @param 	string	$filetoprocess				File name to process
+ * @param 	string 	$useFullTextIndexation		Method for txt conversion
+ * @param	string	$options					Output format ('html', 'fulltext');
+ * @return array<string,mixed>					Array of result ('error'=>, 'content'=> , 'keywords'=>, 'cmd'=> )
+ */
+function dolDocToText($filetoprocess, $useFullTextIndexation = 'pdftotext', $options = 'html')
+{
+	global $conf, $db, $user;
+
+	$error = 0;
+	$keywords = array();
+	$textforfulltextindex = '';
+	$cmd = '';
+	$message = '';
+
+	if (empty($useFullTextIndexation)) {
+		$useFullTextIndexation = 'pdftotext';
+	}
+
+	// TODO Move this into external submodule files
+
+	// TODO Develop a native PHP parser using sample code in https://github.com/adeel/php-pdf-parser or https://github.com/smalot/pdfparser
+	// Use the method pdftotext to generate a HTML
+	if (preg_match('/pdftotext/i', $useFullTextIndexation)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+		$utils = new Utils($db);
+		$outputfile = $conf->admin->dir_temp.'/tmppdftotext.'.$user->id.'.out'; // File used with popen method
+
+		// We also exclude '/temp/' dir and 'documents/admin/documents'
+		// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+		if ($options == 'fulltext') {
+			$params = '-nodiag -layout';
+		} else {
+			$params = '-htmlmeta';
+		}
+
+		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT can be for example: "/usr/bin/pdftotext"
+		// It is for the moment a hidden constant.
+		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_PDFTOTEXT', 'pdftotext'))) . " " . $params ." '".escapeshellcmd($filetoprocess)."' - ";
+		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+
+		if (empty($resultexec['error'])) {
+			$matches = array();
+			if ($options == 'fulltext') {
+				$textforfulltextindex = $resultexec['output'];
+			}
+			if ($options == 'html') {
+				$txt = $resultexec['output'];
+				if (preg_match('/<meta name="keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+					$keywords = $matches[1];
+				}
+				if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+					$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
+				}
+			}
+		} else {
+			$message .= $resultexec['output'];
+			$message .= ($message ? "\n" : "").$resultexec['error'];
+			dol_syslog($resultexec['error']);
+			$error++;
+		}
+	}
+
+
+	// Use the method docling to generate a .md (https://ds4sd.github.io/docling/)
+	if (preg_match('/docling/i', $useFullTextIndexation)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+		$utils = new Utils($db);
+		$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
+
+		// We also exclude '/temp/' dir and 'documents/admin/documents'
+		// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+		// MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING can be for example: "/usr/bin/docling"
+		$cmd = escapeshellcmd(dol_sanitizePathName(getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT_DOCLING', 'docling')))." --from pdf --to text '".escapeshellcmd($filetoprocess)."'";
+		$resultexec = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
+
+		if (!$resultexec['error']) {
+			$txt = $resultexec['output'];
+			//$matches = array();
+			//if (preg_match('/<meta name="Keywords" content="([^\/]+)"\s*\/>/i', $txt, $matches)) {
+			//	$keywords = $matches[1];
+			//}
+			//if (preg_match('/<pre>(.*)<\/pre>/si', $txt, $matches)) {
+			//	$textforfulltextindex = dol_string_nounprintableascii($matches[1], 0);
+			//}
+			$textforfulltextindex = $txt;
+		} else {
+			$message .= $resultexec['output'];
+			$message .= ($message ? "\n" : "").$resultexec['error'];
+			dol_syslog($resultexec['error']);
+			$error++;
+		}
+	}
+
+	return array('error' => $error, 'message' => $message, 'keywords' => $keywords, 'content' => $textforfulltextindex, 'cmd' => $cmd);
+}
+
+/**
+ * Remove the last line of a text file
+ *
+ * @param  string	$fullpath		Full path of file
+ * @return int						Return <0 if error, >0 if OK
+ */
+function removeLastLine($fullpath)
+{
+	// Generate tmp file content without the last line
+	$fp = fopen($fullpath, "r");
+	fseek($fp, -1, SEEK_END);
+	$pos = -1;
+	$char = fgetc($fp);
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	while ($char !== "\n" && $char !== false) {
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	/*
+	while ($char === "\n" || $char === "\r") {	// Go to last real char of last-1 line
+		fseek($fp, $pos--, SEEK_END);
+		$char = fgetc($fp);
+	}
+	*/
+	$truncatePos = ftell($fp);
+	fclose($fp);
+	// Truncate the tmp file to remove the last line
+	$fp = fopen($fullpath, "c+");
+	ftruncate($fp, $truncatePos);
+	fclose($fp);
+
+	return 1;
 }

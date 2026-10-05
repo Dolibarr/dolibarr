@@ -1,2 +1,5 @@
 # Dolibarr language file - Source file is en_US - trips
-TripsAndExpenses=Expenses reports
+AUTHORPAIEMENT=دُفع بواسطة
+expenseReportOffset=إزاحة
+Trips=تقارير النفقات
+TripsAndExpenses=تقارير النفقات

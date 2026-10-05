@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s bir satır doldurdu.\nAnketi bu bağlantıda bulabilirsiniz
 ShowSurvey=Anketi göster
 UserMustBeSameThanUserUsedToVote=Yorum yazabilmek için oy vermiş olmanız ve oy verenle aynı kullanıcı adını kullanmanız gerekir
 ListOfOpenSurveys=Açık anketlerin listesi
+AddTheVote=Oy eklemek için tıklayın

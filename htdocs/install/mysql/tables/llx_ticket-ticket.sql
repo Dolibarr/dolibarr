@@ -1,6 +1,6 @@
 -- SQL definition for module ticket
 -- Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
--- Copyright (C) 2023  Charlene Benke <charlene@patas-monkey.com>
+-- Copyright (C) 2023-2025  Charlene Benke <charlene@patas-monkey.com>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -32,6 +32,9 @@ CREATE TABLE llx_ticket
 	subject	varchar(255),
 	message	mediumtext,
 	fk_statut integer,
+	note_public text,
+	note_private text,
+	fk_user_modif integer,
 	resolution integer,
 	progress integer DEFAULT 0,				-- progression 0 - 100 or null
 	timing varchar(20),

@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,15 +68,12 @@ $projectstatic = new Project($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// include comment actions
-include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
-
 // Security check
 $socid = 0;
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject)) {
 	if ($projectstatic->fetch(0, $project_ref) > 0) {
-		$objectsarray = $object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+		$objectsarray = $object->getTasksArray(null, null, $projectstatic->id, $socid, 0);
 		if (count($objectsarray) > 0) {
 			$id = $objectsarray[0]->id;
 		} else {
@@ -91,6 +88,9 @@ if ($id > 0 || $ref) {
 }
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+
+// include comment actions (after security check to prevent IDOR)
+include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 
 /*

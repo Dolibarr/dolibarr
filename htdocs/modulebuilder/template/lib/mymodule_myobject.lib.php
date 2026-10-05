@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,26 +34,37 @@ function myobjectPrepareHead($object)
 
 	$langs->load("mymodule@mymodule");
 
-	$showtabofpagecontact = 1;
-	$showtabofpagenote = 1;
-	$showtabofpagedocument = 1;
-	$showtabofpageagenda = 1;
+	// BEGIN MODULEBUILDER TABFLAG CONTACT
+	$showtabofpagecontact = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_CONTACT');
+	// END MODULEBUILDER TABFLAG CONTACT
+	// BEGIN MODULEBUILDER TABFLAG NOTE
+	$showtabofpagenote = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_NOTE');
+	// END MODULEBUILDER TABFLAG NOTE
+	// BEGIN MODULEBUILDER TABFLAG DOCUMENT
+	$showtabofpagedocument = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_DOCUMENT');
+	// END MODULEBUILDER TABFLAG DOCUMENT
+	// BEGIN MODULEBUILDER TABFLAG AGENDA
+	$showtabofpageagenda = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_AGENDA');
+	// END MODULEBUILDER TABFLAG AGENDA
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/mymodule/myobject_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/myobject_card.php", 1), ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("MyObject");
 	$head[$h][2] = 'card';
 	$h++;
 
+	// BEGIN MODULEBUILDER TAB CONTACT
 	if ($showtabofpagecontact) {
-		$head[$h][0] = dol_buildpath("/mymodule/myobject_contact.php", 1).'?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/myobject_contact.php", 1), ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Contacts");
 		$head[$h][2] = 'contact';
 		$h++;
 	}
+	// END MODULEBUILDER TAB CONTACT
 
+	// BEGIN MODULEBUILDER TAB NOTE
 	if ($showtabofpagenote) {
 		if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 			$nbNote = 0;
@@ -62,7 +74,7 @@ function myobjectPrepareHead($object)
 			if (!empty($object->note_public)) {
 				$nbNote++;
 			}
-			$head[$h][0] = dol_buildpath('/mymodule/myobject_note.php', 1).'?id='.$object->id;
+			$head[$h][0] = dolBuildUrl(dol_buildpath('/mymodule/myobject_note.php', 1), ['id' => $object->id]);
 			$head[$h][1] = $langs->trans('Notes');
 			if ($nbNote > 0) {
 				$head[$h][1] .= (!getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
@@ -71,14 +83,16 @@ function myobjectPrepareHead($object)
 			$h++;
 		}
 	}
+	// END MODULEBUILDER TAB NOTE
 
+	// BEGIN MODULEBUILDER TAB DOCUMENT
 	if ($showtabofpagedocument) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$upload_dir = $conf->mymodule->dir_output."/myobject/".dol_sanitizeFileName($object->ref);
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $object->element, $object->id);
-		$head[$h][0] = dol_buildpath("/mymodule/myobject_document.php", 1).'?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/myobject_document.php", 1), ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Documents');
 		if (($nbFiles + $nbLinks) > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -86,13 +100,16 @@ function myobjectPrepareHead($object)
 		$head[$h][2] = 'document';
 		$h++;
 	}
+	// END MODULEBUILDER TAB DOCUMENT
 
+	// BEGIN MODULEBUILDER TAB AGENDA
 	if ($showtabofpageagenda) {
-		$head[$h][0] = dol_buildpath("/mymodule/myobject_agenda.php", 1).'?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/myobject_agenda.php", 1), ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Events");
 		$head[$h][2] = 'agenda';
 		$h++;
 	}
+	// END MODULEBUILDER TAB AGENDA
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

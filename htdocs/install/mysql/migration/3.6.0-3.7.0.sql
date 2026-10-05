@@ -65,7 +65,7 @@ ALTER TABLE llx_user ADD COLUMN fk_user_creat integer AFTER tms;
 ALTER TABLE llx_user ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
 
 -- Add module accounting Expert
---ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert -> Line should be added into file sql/x.y.z-a.b.c.sql of module. 
+--ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert -> Line should be added into file sql/x.y.z-a.b.c.sql of module.
 
 
 CREATE TABLE llx_accounting_bookkeeping
@@ -218,7 +218,7 @@ DELETE from llx_product_price where fk_product NOT IN (SELECT rowid from llx_pro
 ALTER TABLE  llx_product_price DROP FOREIGN KEY fk_product_price_product;
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
 
-ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime; 
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN date_livraison datetime;
 
 ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_account integer AFTER date_livraison;
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_account integer AFTER fk_projet;
@@ -1105,7 +1105,7 @@ ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_d
 
 ALTER TABLE llx_projet_task MODIFY COLUMN duration_effective real DEFAULT 0 NULL;
 ALTER TABLE llx_projet_task MODIFY COLUMN planned_workload real DEFAULT 0 NULL;
-  
+
 -- VPGSQL8.2 ALTER TABLE llx_projet_task ALTER COLUMN planned_workload DROP NOT NULL;
 
 -- add extrafield on ficheinter lines
@@ -1176,7 +1176,7 @@ UPDATE llx_bank_url set url = REPLACE( url, 'fiche.php', 'card.php');
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;
 
 
--- Not into official 3.7 but must be into migration for 3.7 when migration is done by 3.8 code 
+-- Not into official 3.7 but must be into migration for 3.7 when migration is done by 3.8 code
 ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;
 ALTER TABLE llx_extrafields ADD COLUMN list integer DEFAULT 0 after perms;
 
@@ -1187,4 +1187,4 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_typ
 ALTER TABLE llx_livraison MODIFY COLUMN date_delivery DATETIME NULL DEFAULT NULL;
 
 -- This constant is for compatibility if user come from 3.6 or lower. Must not be enabled on 3.7.0 or +
-INSERT INTO llx_const (name, value, type, note, visible, entity) SELECT __ENCRYPT('PRODUCT_USE_OLD_PATH_FOR_PHOTO')__,__ENCRYPT('1')__,'chaine','Use old path for products images',1,0 FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_INSTALL' AND __DECRYPT('value')__ < '3.7.0'; 
+INSERT INTO llx_const (name, value, type, note, visible, entity) SELECT __ENCRYPT('PRODUCT_USE_OLD_PATH_FOR_PHOTO')__,__ENCRYPT('1')__,'chaine','Use old path for products images',1,0 FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_VERSION_LAST_INSTALL' AND __DECRYPT('value')__ < '3.7.0';

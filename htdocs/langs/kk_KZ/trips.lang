@@ -72,7 +72,8 @@ ExpenseReportRulesDesc=Шығын есептері үшін максималды
 ExpenseReportWaitingForApproval=Шығындар туралы жаңа есеп бекітуге ұсынылды
 ExpenseReportWaitingForApprovalMessage=Жаңа шығыстар туралы есеп берілді және мақұлдауды күтуде. <br> - Пайдаланушы: %s <br> - Мерзімі: %s <br> Тексеру үшін мына жерді басыңыз: %s
 ExpenseReportWaitingForReApproval=Шығындар есебі қайта бекітуге ұсынылды
-ExpenseReportWaitingForReApprovalMessage=Шығындар туралы есеп берілді және қайта бекітуді күтіп отыр. <br> %s, сіз осы себепті шығындар есебін мақұлдаудан бас тарттыңыз: %s. <br> Жаңа нұсқа ұсынылды және сіздің мақұлдауыңызды күтеді. <br> - Пайдаланушы: %s <br> - Мерзімі: %s <br> Тексеру үшін мына жерді басыңыз: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=Қозғалыс ақысын конфигурациялау
 ExpenseReportsRules=Шығындар туралы есеп ережелері
 ExpenseReportsToApprove=Бекіту үшін шығындар туралы есептер
@@ -120,7 +121,6 @@ ValideTrip=Шығындар есебін бекіту
 ExpenseReportPayments=Шығындар туралы есеп төлемдері
 TaxUndefinedForThisCategory = Бұл санат үшін салық анықталмаған
 errorComputeTtcOnMileageExpense=Профайл шығынын есептеу қатесі
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Тек жоба күйіндегі элементтерді жаппай әрекетте жоюға болады
 
 ## Dictionary
 EX_BRE=Таңғы ас
@@ -156,3 +156,6 @@ TF_PEAGE=Жол салығы
 TF_TAXI=Такси
 TF_TRAIN=Пойыз
 TF_TRIP=Тасымалдау
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

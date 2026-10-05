@@ -17,4 +17,3 @@ xml: html
 
 clean:
 	rm --preserve-root -Rf html latex xml doxygen_sqlite3.db all.xml warnings.log
-

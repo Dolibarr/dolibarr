@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022      Harry Winner Kamdem  <harry@sense.africa>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,12 +78,12 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 			$entitycol = 'entity';
 
 			$sql = "SELECT rowid, login, entity, pass, pass_crypted, datestartvalidity, dateendvalidity, flagdelsessionsbefore";
-			$sql .= " FROM ".$table;
-			$sql .= " WHERE (".$usernamecol1." = '".$db->escape($usertotest)."'";
+			$sql .= " FROM ".$db->sanitize($table);
+			$sql .= " WHERE (".$db->sanitize($usernamecol1)." = '".$db->escape($usertotest)."'";
 			if (preg_match('/@/', $usertotest)) {
-				$sql .= " OR ".$usernamecol2." = '".$db->escape($usertotest)."'";
+				$sql .= " OR ".$db->sanitize($usernamecol2)." = '".$db->escape($usertotest)."'";
 			}
-			$sql .= ") AND ".$entitycol." IN (0,".($entity ? ((int) $entity) : 1).")";
+			$sql .= ") AND ".$db->sanitize($entitycol)." IN (0,".($entity ? ((int) $entity) : 1).")";
 			$sql .= " AND statut = 1";
 			// Order is required to firstly found the user into entity, then the superadmin.
 			// For the case (TODO: we must avoid that) a user has renamed its login with same value than a user in entity 0.
@@ -148,7 +148,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 						if (!isset($mc)) {
 							unset($conf->multicompany->enabled); // Global not available, disable $conf->multicompany->enabled for safety
 						} else {
-							$ret = $mc->checkRight($obj->rowid, $entitytotest);
+							$ret = $mc->checkRight($obj->rowid, (string) $entitytotest);
 							if ($ret < 0) {
 								dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO entity '".$entitytotest."' not allowed for user '".$obj->rowid."'", LOG_NOTICE);
 

@@ -1,5 +1,6 @@
 #!/bin/bash
-# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2010-2026	Laurent Destailleur 		<eldy@users.sourceforge.net>
+# Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
 
 #------------------------------------------------------
 # Script to purge and initialize a database with demo values.
@@ -11,8 +12,9 @@
 # Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
-# Usage: initdemo.sh confirm
-# usage: initdemo.sh confirm mysqldump_dolibarr_x.x.x.sql database port login pass
+# Usage: initdemo.sh confirm|confirmcleanblockedlog
+# usage: initdemo.sh confirm|confirmcleanblockedlog mysqldump_dolibarr_x.x.x.sql database port login pass
+# Note: If the Mysql port is empty, mysql is called without port, user and password (so with the default local connection)
 #------------------------------------------------------
 
 
@@ -37,16 +39,22 @@ fi
 # ----------------------------- command line params
 confirm=$1
 dumpfile=$2
-base=$3
-port=$4
+base="${3:-dolibarrdemo}"
+port="${4:-3306}"
 admin=$5
 passwd=$6
 
 # ----------------------------- check params
-if [ "$confirm" != "confirm" ]
+if [ "$confirm" != "confirm" ] && [ "$confirm" != "confirmcleanblockedlog" ]
 then
 	echo "----- $0 -----"
-	echo "Usage: initdemo.sh confirm [mysqldump_dolibarr_x.x.x.sql database port login pass]"
+	echo "Usage: initdemo.sh confirm|confirmcleanblockedlog"
+	echo " or"
+	echo "Usage: initdemo.sh confirm|confirmcleanblockedlog [mysqldump_dolibarr_x.x.x.sql database port login pass]"
+	echo
+	echo "confirm:                To reload database"
+	echo "confirmcleanblockedlog: To reload database and reset blocked log"
+	echo
 	exit
 fi
 
@@ -56,6 +64,8 @@ command -v dialog >/dev/null 2>&1 || {
 	echo "Error: command dialog not found. On Linux, you can install it with: apt install dialog"
 	exit
 }
+DIALOG=${DIALOG:=dialog}
+DIALOG="$DIALOG --ascii-lines"
 
 
 # ----------------------------- if no params on command line
@@ -67,8 +77,7 @@ then
 	dumpfile=$(basename "$dumpfile")
 
 	# ----------------------------- input file
-	DIALOG=${DIALOG:=dialog}
-	DIALOG="$DIALOG --ascii-lines"
+
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f $fichtemp" 0 1 2 5 15
@@ -85,12 +94,10 @@ then
 	rm "$fichtemp"
 
 	# ----------------------------- database name
-	DIALOG=${DIALOG:=dialog}
-	DIALOG="$DIALOG --ascii-lines"
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 dolibarrdemo 2> "$fichtemp"
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql database name :" 16 55 "$base" 2> "$fichtemp"
 	valret=$?
 	case $valret in
 		0)
@@ -103,13 +110,10 @@ then
 	rm "$fichtemp"
 
 	# ---------------------------- database port
-	DIALOG=${DIALOG:=dialog}
 	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
 	# shellcheck disable=2064,2172
 	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-		--inputbox "Mysql port (ex: 3306):" 16 55 3306 2> "$fichtemp"
-
+	$DIALOG --title "Init Dolibarr with demo values" --clear --inputbox "Mysql port (ex: 3306, keep empty to use the default local connection, so no login and password):" 16 55 "$port" 2> "$fichtemp"
 	valret=$?
 
 	case $valret in
@@ -122,45 +126,47 @@ then
 	esac
 	rm "$fichtemp"
 
-	# ---------------------------- compte admin mysql
-	DIALOG=${DIALOG:=dialog}
-	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
-	# shellcheck disable=2064,2172
-	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG	 --title "Init Dolibarr with demo values" --clear \
-		--inputbox "Mysql user login (ex: root):" 16 55 root 2> "$fichtemp"
+	# If the Mysql port is empty, mysql will be called without port, user and password (so with the default local connection),
+	# so we do not ask for the login and password.
+	if [ "$port" != "" ]
+	then
+		# ---------------------------- compte admin mysql
+		fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
+		# shellcheck disable=2064,2172
+		trap "rm -f '$fichtemp'" 0 1 2 5 15
+		$DIALOG	 --title "Init Dolibarr with demo values" --clear --inputbox "Mysql user login (ex: root):" 16 55 root 2> "$fichtemp"
+		valret=$?
 
-	valret=$?
+		case $valret in
+			0)
+				admin=$(cat "$fichtemp") ;;
+			1)
+				exit ;;
+			255)
+				exit ;;
+		esac
+		rm "$fichtemp"
 
-	case $valret in
-		0)
-			admin=$(cat "$fichtemp") ;;
-		1)
-			exit ;;
-		255)
-			exit ;;
-	esac
-	rm "$fichtemp"
+		# ---------------------------- password admin mysql (root)
+		fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
+		# shellcheck disable=2064,2172
+		trap "rm -f '$fichtemp'" 0 1 2 5 15
+		$DIALOG --title "Init Dolibarr with demo values" --clear --passwordbox "Password for Mysql user login :" 16 55 2> "$fichtemp"
+		valret=$?
 
-	# ---------------------------- password admin mysql (root)
-	DIALOG=${DIALOG:=dialog}
-	fichtemp=$(mktemp 2>/dev/null) || fichtemp=/tmp/test$$
-	# shellcheck disable=2064,2172
-	trap "rm -f '$fichtemp'" 0 1 2 5 15
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-		--passwordbox "Password for Mysql user login :" 16 55 2> "$fichtemp"
-
-	valret=$?
-
-	case $valret in
-		0)
-			passwd=$(cat "$fichtemp") ;;
-		1)
-			exit ;;
-		255)
-			exit ;;
-	esac
-	rm "$fichtemp"
+		case $valret in
+			0)
+				passwd=$(cat "$fichtemp") ;;
+			1)
+				exit ;;
+			255)
+				exit ;;
+		esac
+		rm "$fichtemp"
+	else
+		admin=""
+		passwd=""
+	fi
 
 
 	export documentdir
@@ -169,9 +175,14 @@ then
 
 
 	# ---------------------------- confirmation
-	DIALOG=${DIALOG:=dialog}
-	$DIALOG --title "Init Dolibarr with demo values" --clear \
-		--yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
+	confirmationtext="Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : "
+	if [ "$port" != "" ]
+	then
+		confirmationtext="$confirmationtext'$port' \n Mysql login: '$admin' \n Mysql password : --hidden--"
+	else
+		confirmationtext="$confirmationtext(default local connection) \n Mysql login: (current user) \n Mysql password : (none)"
+	fi
+	$DIALOG --title "Erase Dolibarr with demo values" --clear --yesno "$confirmationtext" 15 55
 
 	case $? in
 		0)      echo "Ok, start process..." ;;
@@ -182,54 +193,80 @@ then
 fi
 
 
-# ---------------------------- run sql file
+# ---------------------------- Run sql file
+# Build the mysql parameters: a parameter is added only if it is not empty, so if the port is empty,
+# mysql is called without port, user and password (so with the default local connection).
+mysqloptions=()
+mysqloptionsshown=""
+if [ "$port" != "" ]
+then
+	mysqloptions+=("-P$port")
+	mysqloptionsshown="$mysqloptionsshown -P$port"
+fi
+if [ "$admin" != "" ]
+then
+	mysqloptions+=("-u$admin")
+	mysqloptionsshown="$mysqloptionsshown -u$admin"
+fi
 if [ "$passwd" != "" ]
 then
-	export passwd="-p$passwd"
-	export passwdshown="-p*****"
+	mysqloptions+=("-p$passwd")
+	mysqloptionsshown="$mysqloptionsshown -p*****"
 fi
-#echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
-#mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
+#echo "mysql$mysqloptionsshown $base < $mydir/$dumpfile"
+#mysql "${mysqloptions[@]}" "$base" < "$mydir/$dumpfile"
 #echo "drop old table"
-echo "drop table"
-echo "drop table if exists llx_accounting_account;" | mysql "-P$port" "-u$admin" "$passwd" "$base"
-echo "mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
-mysql "-P$port" "-u$admin" "$passwd" "$base" < "$mydir/$dumpfile"
+echo "drop table if exists llx_accounting_account;"
+echo "drop table if exists llx_accounting_account;" | mysql "${mysqloptions[@]}" "$base"
+echo "drop table if exists llx_accounting_system;"
+echo "drop table if exists llx_accounting_system;" | mysql "${mysqloptions[@]}" "$base"
+
+echo "mysql$mysqloptionsshown $base < '$mydir/$dumpfile'"
+mysql "${mysqloptions[@]}" "$base" < "$mydir/$dumpfile"
 export res=$?
 
 if [ $res -ne 0 ]; then
-	echo "Error to load database dump with: mysql -P$port -u$admin $passwdshown $base < '$mydir/$dumpfile'"
+	echo "Error to load database dump with: mysql$mysqloptionsshown $base < '$mydir/$dumpfile'"
 	exit
 fi
 
+
+# ---------------------------- Run update of demo data
+echo
+echo Run script updatedemo.php confirm
 "$mydir/updatedemo.php" confirm
 export res=$?
 
-# ---------------------------- copy demo files
+
+# ---------------------------- Run update of demo data
+if [ "$confirm" == "confirmcleanblockedlog" ]; then
+	echo
+	echo Run script updatedemo.php confirmcleanblockedlog
+	"$mydir/updatedemo.php" confirmcleanblockedlog
+	export res=$?
+fi
+
+
+# ---------------------------- Copy demo files
 export documentdir
 # shellcheck disable=2016
 documentdir=$(< "$mydir/../../htdocs/conf/conf.php" grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g')
 if [ "$documentdir" != "" ]
 then
-	"$DIALOG" --title "Reset document directory" --clear \
-		--inputbox "DELETE and recreate document directory '$documentdir/':" 16 55 n 2> "$fichtemp"
-
+	$DIALOG --title "Reset document directory" --clear --yesno "DELETE and recreate document directory '$documentdir/':" 16 55
 	valret=$?
 
 	case $valret in
 		0)
-			rep=$(cat "$fichtemp") ;;
+			#  YES
+			echo "RECREATE $documentdir"
+			echo "  rm -fr '$documentdir/'*"
+			rm -fr "${documentdir:?}/"* ;;
 		1)
 			exit ;;
 		255)
 			exit ;;
 	esac
-
-	echo "rep=$rep"
-	if [ "$rep" = "y" ]; then
-		echo "rm -fr '$documentdir/'*"
-		rm -fr "${documentdir:?}/"*
-	fi
 
 	echo "cp -pr '$mydir/documents_demo/'* '$documentdir/'"
 	cp -pr "$mydir/documents_demo/"* "$documentdir/"
@@ -255,14 +292,14 @@ fi
 
 
 if [ -s "$mydir/initdemopostsql.sql" ]; then
-	mysql "-P$port" "$base" < "$mydir/initdemopostsql.sql"
+	mysql "${mysqloptions[@]}" "$base" < "$mydir/initdemopostsql.sql"
 fi
 
 
 if [ "$res" = "0" ]
 then
-	echo "Success, file successfully loaded."
+	echo "Success, file successfully loaded: Note that crypted data need to have dolibarr_main_instance_unique_id=11f3c81e86fc9e3b3fd11d81c9a31bd0 with this data set to be readable."
 else
-	echo "Error, load failed."
+	echo "Error, 1 step of script has failed."
 fi
 echo

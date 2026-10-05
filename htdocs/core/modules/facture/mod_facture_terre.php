@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +27,25 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 
 /**
- *  \class      mod_facture_terre
- *  \brief      Class of numbering module Terre for invoices
+ *  Class of numbering module Terre for invoices
  */
 class mod_facture_terre extends ModeleNumRefFactures
 {
 	/**
+	 * @var string Sub-module name
+	 */
+	public $name = 'Terre';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 40;
+
+	/**
 	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
 	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
-	public $version = 'dolibarr';
+	public $version = 'dolibarr_deprecated';
 
 	/**
 	 * Prefix for invoices
@@ -73,7 +82,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 */
 	public function __construct()
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (((float) getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) >= 16.0 && $mysoc->country_code != 'FR') {
 			$this->prefixinvoice = 'IN'; // We use correct standard code "IN = Invoice"
@@ -128,10 +137,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$max = '';
 
 		$posindice = strlen($this->prefixinvoice) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -151,10 +160,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$fayymm = '';
 
 		$posindice = strlen($this->prefixcreditnote) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -173,10 +182,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$fayymm = '';
 
 		$posindice = strlen($this->prefixdeposit) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixdeposit)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -220,7 +229,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 		// First we get the max value
 		$posindice = strlen($prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
@@ -239,15 +248,15 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 		if ($mode == 'last') {
 			if ($max >= (pow(10, 4) - 1)) {
-				$num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
+				$sql_num = (int) $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04d", $max);
+				$sql_num = sprintf("%04d", (int) $max);
 			}
 
 			$ref = '';
 			$sql = "SELECT ref as ref";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-			$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-".$num."'";
+			$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-".$sql_num."'";
 			$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 			$sql .= " ORDER BY ref DESC";
 

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017  		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,11 +70,13 @@ foreach ($object->fields as $key => $val) {
 	}
 	print '"';
 	print '>';
+	print '<label for="'.$key.'" class="block">';
 	if (!empty($val['help'])) {
 		print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
 		print $langs->trans($val['label']);
 	}
+	print '</label>';
 	print '</td>';
 	print '<td class="valuefieldcreate">';
 	if (!empty($val['picto'])) {
@@ -119,6 +122,9 @@ foreach ($object->fields as $key => $val) {
 			print img_picto('', 'language', 'class="pictofixedwidth"');
 			print $formadmin->select_language($value, $key, 0, array(), 1, 0, 0, 'minwidth300', 2);
 		} else {
+			if (isset($val['notnull']) && $val['notnull'] > 0 && empty($value)) {
+				// $value = 'ifone'; 	// TODO Implement this
+			}
 			print $object->showInputField($val, $key, $value, '', '', '', 0);
 		}
 	}

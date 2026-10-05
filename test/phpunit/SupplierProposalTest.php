@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -77,6 +77,8 @@ class SupplierProposalTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
@@ -88,7 +90,7 @@ class SupplierProposalTest extends CommonClassTest
 
 		// Set permission not set by default sql sample
 		$user->addrights(0, 'supplier_proposal');
-		$user->getrights('supplier_proposal', 1);
+		$user->loadRights('supplier_proposal', 1);
 	}
 
 	/**
@@ -105,7 +107,8 @@ class SupplierProposalTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$localobject = new SupplierProposal($db);
-		$localobject->initAsSpecimen();
+		$param = array('tobuy' => 1);
+		$localobject->initAsSpecimen($param);
 		$result = $localobject->create($user);
 
 		$this->assertLessThan($result, 0);
@@ -183,7 +186,7 @@ class SupplierProposalTest extends CommonClassTest
 		$result = $user->addrights(0, 'supplier_proposal');
 		$this->assertLessThan($result, 0);
 
-		$result = $user->getrights('supplier_proposal', 1);
+		$result = $user->loadRights('supplier_proposal', 1);
 		//$this->assertLessThan($result, 0);
 
 		$result = $localobject->valid($user);

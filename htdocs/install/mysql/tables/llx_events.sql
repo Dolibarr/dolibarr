@@ -37,4 +37,3 @@ create table llx_events
   authentication_method varchar(64) NULL,     -- type of authentication mode used if internal login event
   fk_oauth_token integer NULL                 -- id in oauth_token if internal login event done using an oauth_token
 ) ENGINE=innodb;
-

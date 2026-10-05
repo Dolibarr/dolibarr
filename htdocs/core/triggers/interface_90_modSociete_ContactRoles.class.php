@@ -6,7 +6,7 @@
  * Copyright (C) 2013 		Cedric GROSS <c.gross@kreiz-it.fr>
  * Copyright (C) 2014 		Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2015 		Bahfir Abbes <bafbes@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Thomas Negre					<tnegre@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,6 +74,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 			dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 			'@phan-var-force Propal|Commande|Facture|CommandeFournisseur|FactureFournisseur|SupplierProposal|Contrat|Fichinter|Project|Ticket $object';
+
 			// Some objects (like Ticket) declare both $socid and $fk_soc but only populate $fk_soc on create().
 			// We must check which property actually holds a value, not just which one is declared (property_exists is true for both).
 			$socid = 0;

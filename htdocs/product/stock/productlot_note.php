@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,12 +23,7 @@
  *  \brief      Tab for notes on productlot
  */
 
-
-
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,19 +31,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'products', 'productbatch'));
 
 // Get parameters
 $id = GETPOSTINT('id');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize a technical objects
 $object = new Productlot($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->productlot->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->productbatch->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('productlotnote')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -56,18 +53,20 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->productlot->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
+	$upload_dir = $conf->productbatch->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->hasRight('produit', 'lire'); // Used by the include of actions_setnotes.inc.php
+$permissiontoread = $user->hasRight('product', 'read');
+$permissionnote = $user->hasRight('product', 'write'); // Used by the include of actions_setnotes.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-//if (empty($conf->calibration->enabled)) accessforbidden();
-//if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -89,7 +88,6 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$help_url = '';
 $shortlabel = dol_trunc($object->batch, 16);
 $title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Notes');
 $help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
@@ -105,7 +103,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'batch');
 
