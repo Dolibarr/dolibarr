@@ -121,6 +121,33 @@ function ticket_prepare_head($object)
 		$h++;
 	}
 
+	// Time spent. Internal only: element_time carries the cost rate of the contributors.
+	if (empty($user->socid) && $user->hasRight('ticket', 'read')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$langs->load('projects');	// TimeSpent
+
+		$nbTimeSpent = 0;
+		$cachekey = 'count_timespent_ticket_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbTimeSpent = $dataretrieved;
+		} else {
+			$nbTimeSpent = $object->countTimeSpent();
+			if ($nbTimeSpent < 0) {
+				$nbTimeSpent = 0;
+			} else {
+				dol_setcache($cachekey, $nbTimeSpent, 120);
+			}
+		}
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ticket/time.php', ['id' => $object->id]);
+		$head[$h][1] = $langs->trans('TimeSpent');
+		if ($nbTimeSpent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTimeSpent.'</span>';
+		}
+		$head[$h][2] = 'ticket_time';
+		$h++;
+	}
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'add', 'core');
 
 	// Attached files
