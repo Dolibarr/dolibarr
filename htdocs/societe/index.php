@@ -296,7 +296,7 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 }
 $sql .= ", s.logo";
 $sql .= ", s.entity";
-$sql .= ", s.canvas, GREATEST(s.tms, sef.tms) as date_modification, s.status as status";
+$sql .= ", s.canvas, GREATEST(s.tms, COALESCE(sef.tms, s.tms)) as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
@@ -419,7 +419,7 @@ $sql .= ", s.logo";
 $sql .= ", s.entity";
 $sql .= ", s.canvas";
 $sql .= ", s.status as status";
-$sql .= ", GREATEST(sp.tms, spef.tms) as date_modification, sp.statut as cstatus";
+$sql .= ", GREATEST(sp.tms, COALESCE(spef.tms, sp.tms)) as date_modification, sp.statut as cstatus";
 $sql .= ", sp.rowid as cid, sp.canvas as ccanvas, sp.email as cemail, sp.firstname, sp.lastname";
 $sql .= ", sp.address as caddress, sp.phone as cphone";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
