@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   dump:
@@ -23,20 +24,36 @@ jobs:
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml
 
       - name: Prepare apstats like config
-        run: python3 -c "s = open('phpstan.neon.dist').read(); s = s.replace('	- dev/build/phpstan/phpstan-baseline.neon
-', '').replace('includes:
-', ''); open('phpstan_apstats.neon', 'w').write(s)"
+        run: |
+          awk '!/phpstan-baseline\.neon/ && !/^includes:/ { print }' phpstan.neon.dist > phpstan_apstats.neon
+          echo "---- phpstan_apstats.neon head ----"
+          head -5 phpstan_apstats.neon
 
       - name: Run PHPStan like CTI
         run: |
-          phpstan --level=9 -v analyze --no-progress -a dev/build/phpstan/bootstrap.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon > td_raw.txt || true
-          wc -l td_raw.txt | awk '{print "TOTAL_TD_LINES="$1}' >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Commit result
-        run: |
+          set +e
+          phpstan --version 2>&1 | tee -a td_log.txt
+          phpstan --level=9 -v analyze --no-progress -a dev/build/phpstan/bootstrap.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon > td_raw.txt 2>> td_log.txt
+          echo "EXITCODE=$?" >> td_log.txt
           head -40 td_raw.txt > td_first40.txt
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add td_first40.txt
-          git commit -m "TMP: phpstan technical debt first 40 entries (temp branch, will be deleted)"
-          git push
+          wc -l td_raw.txt >> td_log.txt
+          true
+
+      - name: Publish result on temp PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          {
+            echo "TMP TD DUMP RESULT"
+            echo ""
+            echo '~~~'
+            cat td_first40.txt
+            echo '~~~'
+            echo ""
+            echo '~~~'
+            cat td_log.txt
+            echo '~~~'
+          } > td_comment.md
+          gh pr comment 41399 --repo Dolibarr/dolibarr --body-file td_comment.md
+          exit 0
