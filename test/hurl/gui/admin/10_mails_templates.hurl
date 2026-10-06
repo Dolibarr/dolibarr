@@ -17,6 +17,12 @@ body contains "Status"
 body contains "Subject"
 body contains "Type of template"
 body contains "NewEMailTemplate"
+xpath "count(//select[@name='search_private']/option[@value='0' or @value='1'])" == 2
+xpath "count(//select[@name='search_joinfiles']/option[@value='0' or @value='1'])" == 2
+xpath "count(//select[@name='search_defaultfortype']/option[@value='0' or @value='1'])" == 2
+xpath "count(//input[@name='search_position'])" == 1
+xpath "count(//tr[@id='Title line with search boxes']/td[not(contains(@class, 'liste_titre'))])" == 0
+xpath "count(//tr[@id='Title line with search boxes']/*) = count(//tr[@id='Title of lines']/*)" == true
 body not contains "xdebug-error"
 body not contains "Error:"
 body not contains "Warning:"
