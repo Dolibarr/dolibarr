@@ -5046,20 +5046,23 @@ class Societe extends CommonObject
 		// with thousands of opened invoices made the customer card run tens of thousands of requests. The option is
 		// off by default, so that the business rules of these methods stay on the PHP side.
 		$calculatebydb = getDolGlobalInt('MAIN_PERF_CALCULATE_OUTSTANDING_BILLS_BY_DB');
-		$sqlopened = "f.paye = 0 AND f.fk_statut NOT IN (".$this->db->sanitize($tmpobject::STATUS_DRAFT.", ".$tmpobject::STATUS_ABANDONED.", ".$tmpobject::STATUS_CLOSED).")";
+
 		$sql = "SELECT f.rowid, f.ref, f.total_ht, f.total_ttc, f.paye, f.type, f.fk_statut as status, f.close_code";
-		if ($calculatebydb && $mode == 'supplier') {
-			$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf WHERE pf.fk_facturefourn = f.rowid) ELSE 0 END as amount_paid";
-			$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture_fourn as fs";
-			$sql .= " WHERE rc.fk_invoice_supplier_source = fs.rowid AND rc.fk_invoice_supplier = f.rowid AND fs.type IN (".$this->db->sanitize($tmpobject::TYPE_STANDARD.", ".$tmpobject::TYPE_CREDIT_NOTE).")) ELSE 0 END as amount_creditnotes";
-			$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture_fourn as fs";
-			$sql .= " WHERE rc.fk_invoice_supplier_source = fs.rowid AND rc.fk_invoice_supplier = f.rowid AND fs.type = ".((int) $tmpobject::TYPE_DEPOSIT).") ELSE 0 END as amount_deposits";
-		} elseif ($calculatebydb) {
-			$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiement_facture as pf WHERE pf.fk_facture = f.rowid) ELSE 0 END as amount_paid";
-			$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture as fs";
-			$sql .= " WHERE rc.fk_facture_source = fs.rowid AND rc.fk_facture = f.rowid AND fs.type IN (".$this->db->sanitize($tmpobject::TYPE_STANDARD.", ".$tmpobject::TYPE_CREDIT_NOTE.", ".$tmpobject::TYPE_SITUATION).")) ELSE 0 END as amount_creditnotes";
-			$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture as fs";
-			$sql .= " WHERE rc.fk_facture_source = fs.rowid AND rc.fk_facture = f.rowid AND fs.type = ".((int) $tmpobject::TYPE_DEPOSIT).") ELSE 0 END as amount_deposits";
+		if ($calculatebydb) {
+			$sqlopened = "f.paye = 0 AND f.fk_statut NOT IN (".$this->db->sanitize($tmpobject::STATUS_DRAFT.", ".$tmpobject::STATUS_ABANDONED.", ".$tmpobject::STATUS_CLOSED).")";
+			if ($mode == 'supplier') {
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf WHERE pf.fk_facturefourn = f.rowid) ELSE 0 END as amount_paid";
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture_fourn as fs";
+				$sql .= " WHERE rc.fk_invoice_supplier_source = fs.rowid AND rc.fk_invoice_supplier = f.rowid AND fs.type IN (".$this->db->sanitize($tmpobject::TYPE_STANDARD.", ".$tmpobject::TYPE_CREDIT_NOTE).")) ELSE 0 END as amount_creditnotes";
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture_fourn as fs";
+				$sql .= " WHERE rc.fk_invoice_supplier_source = fs.rowid AND rc.fk_invoice_supplier = f.rowid AND fs.type = ".((int) $tmpobject::TYPE_DEPOSIT).") ELSE 0 END as amount_deposits";
+			} else {
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiement_facture as pf WHERE pf.fk_facture = f.rowid) ELSE 0 END as amount_paid";
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture as fs";
+				$sql .= " WHERE rc.fk_facture_source = fs.rowid AND rc.fk_facture = f.rowid AND fs.type IN (".$this->db->sanitize($tmpobject::TYPE_STANDARD.", ".$tmpobject::TYPE_CREDIT_NOTE.", ".$tmpobject::TYPE_SITUATION).")) ELSE 0 END as amount_creditnotes";
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture as fs";
+				$sql .= " WHERE rc.fk_facture_source = fs.rowid AND rc.fk_facture = f.rowid AND fs.type = ".((int) $tmpobject::TYPE_DEPOSIT).") ELSE 0 END as amount_deposits";
+			}
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE f.fk_soc = ".((int) $this->id);
