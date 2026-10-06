@@ -13,12 +13,6 @@ parameters:
 			path: ../../../htdocs/compta/tva/index.php
 
 		-
-			message: '#^Expression "\<\<\<''EOPHAN''…" on a separate line does not do anything\.$#'
-			identifier: expr.resultUnused
-			count: 1
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: '#^Parameter \#1 \$array of function sort contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
 			count: 1
