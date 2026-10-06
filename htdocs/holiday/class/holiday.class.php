@@ -1790,7 +1790,7 @@ class Holiday extends CommonObject
 							$endDate = $endOfMonth;
 						}
 
-						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday']);
+						$nbDaysToDeduct = (float) num_open_day($startDate, $endDate, 0, 1, $obj['halfday']);
 
 						if ($nbDaysToDeduct <= 0) {
 							continue;
