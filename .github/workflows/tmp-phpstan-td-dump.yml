@@ -24,44 +24,52 @@ jobs:
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml
 
       - name: Create fix branch from develop and apply fixes
+        id: apply
+        continue-on-error: true
         run: |
-          set -e
+          set -x
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin develop --depth=1
           git checkout -b fix-phpstan-td FETCH_HEAD
-          echo 'IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwojIEZpeCAyIFBIUFN0YW4gbGV2ZWwgOSBlcnJvcnMgb2YgdGhlIENUSSB0ZWNobmljYWwgZGVidDoKIyAtIGh0ZG9jcy9jb3JlL2FjdGlvbnNfbWFzc2FjdGlvbnMuaW5jLnBocDoxMzA1OiB1bnVzZWQgbm93ZG9jIEVPUEhBTiBleHByZXNzaW9uCiMgLSBodGRvY3MvY29yZS9jbGFzcy9jb21tb25vYmplY3QuY2xhc3MucGhwOjMwNDM6IEB2YXIgUHJvcGFsICR0aGlzIG5vdCBzdWJ0eXBlIG9mIENvbW1vbk9iamVjdAppbXBvcnQgc3lzCgpzdGF0dXMgPSBbXQoKIyAtLS0tIEZpeCAxOiBhY3Rpb25zX21hc3NhY3Rpb25zLmluYy5waHAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpwID0gJ2h0ZG9jcy9jb3JlL2FjdGlvbnNfbWFzc2FjdGlvbnMuaW5jLnBocCcKd2l0aCBvcGVuKHAsIGVuY29kaW5nPSd1dGYtOCcsIG5ld2xpbmU9JycpIGFzIGY6CiAgICBzID0gZi5yZWFkKCkKbGluZXMgPSBzLnNwbGl0KCdcbicpCm91dCA9IFtdCmkgPSAwCmZvdW5kID0gMAp3aGlsZSBpIDwgbGVuKGxpbmVzKToKICAgIGxpbmUgPSBsaW5lc1tpXQogICAgaWYgbGluZS5zdHJpcCgpID09ICI8PDwnRU9QSEFOJyI6CiAgICAgICAgY29udGVudCA9IGxpbmVzW2kgKyAxXQogICAgICAgIHRlcm1pbmF0b3IgPSBsaW5lc1tpICsgMl0KICAgICAgICBpZiBub3QgY29udGVudC5zdGFydHN3aXRoKCdAcGhhbi12YXItZm9yY2UnKSBvciB0ZXJtaW5hdG9yLnN0cmlwKCkgIT0gJ0VPUEhBTjsnOgogICAgICAgICAgICBzeXMuZXhpdCgnVW5leHBlY3RlZCBFT1BIQU4gYmxvY2sgYXQgbGluZSAlZDogJXIgLyAlcicgJSAoaSArIDEsIGNvbnRlbnQsIHRlcm1pbmF0b3IpKQogICAgICAgIGluZGVudCA9IGxpbmVbOmxlbihsaW5lKSAtIGxlbihsaW5lLmxzdHJpcCgpKV0KICAgICAgICBvdXQuYXBwZW5kKGluZGVudCArICcvLyAnICsgY29udGVudCkKICAgICAgICBmb3VuZCArPSAxCiAgICAgICAgaSArPSAzCiAgICAgICAgY29udGludWUKICAgIG91dC5hcHBlbmQobGluZSkKICAgIGkgKz0gMQppZiBmb3VuZCAhPSAxOgogICAgc3lzLmV4aXQoJ0VPUEhBTiBibG9jayBmb3VuZCAlZCB0aW1lcyBpbiAlcycgJSAoZm91bmQsIHApKQp3aXRoIG9wZW4ocCwgJ3cnLCBlbmNvZGluZz0ndXRmLTgnLCBuZXdsaW5lPScnKSBhcyBmOgogICAgZi53cml0ZSgnXG4nLmpvaW4ob3V0KSkKc3RhdHVzLmFwcGVuZCgnJXM6IGNvbnZlcnRlZCB0aGUgdW51c2VkIEVPUEhBTiBub3dkb2MgZXhwcmVzc2lvbiBpbnRvIGEgY29tbWVudCAoMSBvY2N1cnJlbmNlKScgJSBwKQoKIyAtLS0tIEZpeCAyOiBjb21tb25vYmplY3QuY2xhc3MucGhwIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpwID0gJ2h0ZG9jcy9jb3JlL2NsYXNzL2NvbW1vbm9iamVjdC5jbGFzcy5waHAnCndpdGggb3BlbihwLCBlbmNvZGluZz0ndXRmLTgnLCBuZXdsaW5lPScnKSBhcyBmOgogICAgcyA9IGYucmVhZCgpCmxpbmVzID0gcy5zcGxpdCgnXG4nKQpvdXQgPSBbXQppID0gMApmb3VuZCA9IDAKd2hpbGUgaSA8IGxlbihsaW5lcyk6CiAgICBsaW5lID0gbGluZXNbaV0KICAgIG91dC5hcHBlbmQobGluZSkKICAgIGlmIGxpbmUuc3RyaXAoKSA9PSAiY2FzZSAncHJvcGFsJzoiOgogICAgICAgIG54dCA9IGxpbmVzW2kgKyAxXQogICAgICAgIGlmICcvKiogQHZhciBQcm9wYWwgJHRoaXMgKi8nIG5vdCBpbiBueHQ6CiAgICAgICAgICAgIHN5cy5leGl0KCdMaW5lIGFmdGVyICJjYXNlIHByb3BhbCIgaXMgbm90IHRoZSBleHBlY3RlZCBAdmFyOiAlcicgJSBueHQpCiAgICAgICAgIyBEcm9wIHRoZSBAdmFyIGxpbmUgb25seSwga2VlcCBldmVyeSBvdGhlciBsaW5lIChpbmNsdWRpbmcgQHZhciBmb3IgJGxpbmUpCiAgICAgICAgZm91bmQgKz0gMQogICAgICAgIGkgKz0gMQogICAgaSArPSAxCmlmIGZvdW5kICE9IDE6CiAgICBzeXMuZXhpdCgncHJvcGFsIGNhc2UgZm91bmQgJWQgdGltZXMgaW4gJXMnICUgKGZvdW5kLCBwKSkKd2l0aCBvcGVuKHAsICd3JywgZW5jb2Rpbmc9J3V0Zi04JywgbmV3bGluZT0nJykgYXMgZjoKICAgIGYud3JpdGUoJ1xuJy5qb2luKG91dCkpCnN0YXR1cy5hcHBlbmQoJyVzOiByZW1vdmVkIHRoZSBAdmFyIFByb3BhbCAkdGhpcyBwaHBkb2Mgb2YgdGhlIHByb3BhbCBjYXNlICgxIG9jY3VycmVuY2UpJyAlIHApCgp3aXRoIG9wZW4oJ2ZpeF9zdGF0dXMudHh0JywgJ3cnKSBhcyBmOgogICAgZi53cml0ZSgnXG4nLmpvaW4oc3RhdHVzKSArICdcbicpCnByaW50KCdcbicuam9pbihzdGF0dXMpKQo=' | base64 -d > fix_td.py
-          python3 fix_td.py
+          echo 'IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwojIEZpeCAyIFBIUFN0YW4gbGV2ZWwgOSBlcnJvcnMgb2YgdGhlIENUSSB0ZWNobmljYWwgZGVidDoKIyAtIGh0ZG9jcy9jb3JlL2FjdGlvbnNfbWFzc2FjdGlvbnMuaW5jLnBocDoxMzA1OiB1bnVzZWQgbm93ZG9jIEVPUEhBTiBleHByZXNzaW9uCiMgLSBodGRvY3MvY29yZS9jbGFzcy9jb21tb25vYmplY3QuY2xhc3MucGhwOjMwNDM6IEB2YXIgUHJvcGFsICR0aGlzIG5vdCBzdWJ0eXBlIG9mIENvbW1vbk9iamVjdAppbXBvcnQgc3lzCgpzdGF0dXMgPSBbXQoKIyAtLS0tIEZpeCAxOiBhY3Rpb25zX21hc3NhY3Rpb25zLmluYy5waHAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpwID0gJ2h0ZG9jcy9jb3JlL2FjdGlvbnNfbWFzc2FjdGlvbnMuaW5jLnBocCcKd2l0aCBvcGVuKHAsIGVuY29kaW5nPSd1dGYtOCcsIG5ld2xpbmU9JycpIGFzIGY6CiAgICBzID0gZi5yZWFkKCkKbGluZXMgPSBzLnNwbGl0KCdcbicpCm91dCA9IFtdCmkgPSAwCmZvdW5kID0gMAp3aGlsZSBpIDwgbGVuKGxpbmVzKToKICAgIGxpbmUgPSBsaW5lc1tpXQogICAgaWYgbGluZS5zdHJpcCgpID09ICI8PDwnRU9QSEFOJyI6CiAgICAgICAgY29udGVudCA9IGxpbmVzW2kgKyAxXQogICAgICAgIHRlcm1pbmF0b3IgPSBsaW5lc1tpICsgMl0KICAgICAgICBpZiBub3QgY29udGVudC5zdGFydHN3aXRoKCdAcGhhbi12YXItZm9yY2UnKSBvciB0ZXJtaW5hdG9yLnN0cmlwKCkgIT0gJ0VPUEhBTjsnOgogICAgICAgICAgICBzeXMuZXhpdCgnVW5leHBlY3RlZCBFT1BIQU4gYmxvY2sgYXQgbGluZSAlZDogJXIgLyAlcicgJSAoaSArIDEsIGNvbnRlbnQsIHRlcm1pbmF0b3IpKQogICAgICAgIGluZGVudCA9IGxpbmVbOmxlbihsaW5lKSAtIGxlbihsaW5lLmxzdHJpcCgpKV0KICAgICAgICBvdXQuYXBwZW5kKGluZGVudCArICcvLyAnICsgY29udGVudCkKICAgICAgICBmb3VuZCArPSAxCiAgICAgICAgaSArPSAzCiAgICAgICAgY29udGludWUKICAgIG91dC5hcHBlbmQobGluZSkKICAgIGkgKz0gMQppZiBmb3VuZCAhPSAxOgogICAgc3lzLmV4aXQoJ0VPUEhBTiBibG9jayBmb3VuZCAlZCB0aW1lcyBpbiAlcycgJSAoZm91bmQsIHApKQp3aXRoIG9wZW4ocCwgJ3cnLCBlbmNvZGluZz0ndXRmLTgnLCBuZXdsaW5lPScnKSBhcyBmOgogICAgZi53cml0ZSgnXG4nLmpvaW4ob3V0KSkKc3RhdHVzLmFwcGVuZCgnJXM6IGNvbnZlcnRlZCB0aGUgdW51c2VkIEVPUEhBTiBub3dkb2MgZXhwcmVzc2lvbiBpbnRvIGEgY29tbWVudCAoMSBvY2N1cnJlbmNlKScgJSBwKQoKIyAtLS0tIEZpeCAyOiBjb21tb25vYmplY3QuY2xhc3MucGhwIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpwID0gJ2h0ZG9jcy9jb3JlL2NsYXNzL2NvbW1vbm9iamVjdC5jbGFzcy5waHAnCndpdGggb3BlbihwLCBlbmNvZGluZz0ndXRmLTgnLCBuZXdsaW5lPScnKSBhcyBmOgogICAgcyA9IGYucmVhZCgpCmxpbmVzID0gcy5zcGxpdCgnXG4nKQpvdXQgPSBbXQppID0gMApmb3VuZCA9IDAKd2hpbGUgaSA8IGxlbihsaW5lcyk6CiAgICBsaW5lID0gbGluZXNbaV0KICAgIG91dC5hcHBlbmQobGluZSkKICAgIGlmIGxpbmUuc3RyaXAoKSA9PSAiY2FzZSAncHJvcGFsJzoiIGFuZCAiLyoqIEB2YXIgUHJvcGFsICR0aGlzICovIiBpbiBsaW5lc1tpICsgMV06CiAgICAgICAgbnh0ID0gbGluZXNbaSArIDFdCiAgICAgICAgaWYgJy8qKiBAdmFyIFByb3BhbCAkdGhpcyAqLycgbm90IGluIG54dDoKICAgICAgICAgICAgc3lzLmV4aXQoJ0xpbmUgYWZ0ZXIgImNhc2UgcHJvcGFsIiBpcyBub3QgdGhlIGV4cGVjdGVkIEB2YXI6ICVyJyAlIG54dCkKICAgICAgICAjIERyb3AgdGhlIEB2YXIgbGluZSBvbmx5LCBrZWVwIGV2ZXJ5IG90aGVyIGxpbmUgKGluY2x1ZGluZyBAdmFyIGZvciAkbGluZSkKICAgICAgICBmb3VuZCArPSAxCiAgICAgICAgaSArPSAxCiAgICBpICs9IDEKaWYgZm91bmQgIT0gMToKICAgIHN5cy5leGl0KCdwcm9wYWwgY2FzZSBmb3VuZCAlZCB0aW1lcyBpbiAlcycgJSAoZm91bmQsIHApKQp3aXRoIG9wZW4ocCwgJ3cnLCBlbmNvZGluZz0ndXRmLTgnLCBuZXdsaW5lPScnKSBhcyBmOgogICAgZi53cml0ZSgnXG4nLmpvaW4ob3V0KSkKc3RhdHVzLmFwcGVuZCgnJXM6IHJlbW92ZWQgdGhlIEB2YXIgUHJvcGFsICR0aGlzIHBocGRvYyBvZiB0aGUgcHJvcGFsIGNhc2UgKDEgb2NjdXJyZW5jZSknICUgcCkKCndpdGggb3BlbignZml4X3N0YXR1cy50eHQnLCAndycpIGFzIGY6CiAgICBmLndyaXRlKCdcbicuam9pbihzdGF0dXMpICsgJ1xuJykKcHJpbnQoJ1xuJy5qb2luKHN0YXR1cykpCg==' | base64 -d > fix_td.py
+          python3 fix_td.py > td_apply.txt 2>&1
           git add -u
-          git commit -m "QUAL: Fix 2 PHPStan warnings of CTI technical debt (EOPHAN nowdoc, Propal atvar this)"
-          git show --stat --oneline HEAD > td_diff.txt
-          git diff HEAD~1 HEAD >> td_diff.txt
-          git push origin fix-phpstan-td 2>&1 | tee td_push.txt
+          if git diff --cached --quiet; then echo "NO CHANGES" >> td_apply.txt; else
+            git commit -m "QUAL: Fix 2 PHPStan warnings of CTI technical debt (EOPHAN nowdoc, Propal atvar this)"
+            git show --stat --oneline HEAD > td_diff.txt
+            git diff HEAD~1 HEAD >> td_diff.txt
+            git push origin fix-phpstan-td 2>&1 | tee td_push.txt
+          fi
 
       - name: Verify with PHPStan level 9 no baseline on the 2 files
+        continue-on-error: true
         run: |
           set +e
-          awk '!/phpstan-baseline\.neon/ && !/^includes:/ { print }' phpstan.neon.dist > phpstan_apstats.neon
+          awk '!/phpstan-baseline\\.neon/ && !/^includes:/ { print }' phpstan.neon.dist > phpstan_apstats.neon
           phpstan --level=9 -v analyze --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon htdocs/core/actions_massactions.inc.php htdocs/core/class/commonobject.class.php > td_verify.txt 2>&1
           echo "PHPSTAN_EXITCODE=$?" >> td_verify.txt
           true
 
       - name: Publish result on temp PR
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set +e
           {
-            echo "FIX APPLY RESULT v4"
+            echo "FIX APPLY RESULT v5"
             echo ""
+            echo '~~~ apply'
+            cat td_apply.txt 2>/dev/null || echo "apply step did not run"
             echo '~~~ status'
-            cat fix_status.txt
+            cat fix_status.txt 2>/dev/null || echo "no status"
             echo '~~~ diff'
-            cat td_diff.txt
+            cat td_diff.txt 2>/dev/null || echo "no diff"
             echo '~~~ push'
-            cat td_push.txt
+            cat td_push.txt 2>/dev/null || echo "no push"
             echo '~~~ phpstan verify'
-            cat td_verify.txt
+            cat td_verify.txt 2>/dev/null || echo "no verify"
             echo '~~~'
           } > td_comment.md
           gh pr comment 41399 --repo Dolibarr/dolibarr --body-file td_comment.md
