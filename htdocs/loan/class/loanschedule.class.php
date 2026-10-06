@@ -471,9 +471,10 @@ class LoanSchedule extends CommonObject
 	 * @param   int     $nbterm         nb term
 	 * @param   int     $frequency      Number of payments per year (52, 26, 12, 4, 2 or 1)
 	 * @param   int     $interest_basis 0 = rate / number of payments per year, 1 = daily (rate x days / 365, average period)
+	 * @param   float   $balloon        Balloon / residual paid with the last payment, on top of the last instalment (0 = none)
 	 * @return  double                  mensuality
 	 */
-	public function calcMonthlyPayments($capital, $rate, $nbterm, $frequency = 12, $interest_basis = 0)
+	public function calcMonthlyPayments($capital, $rate, $nbterm, $frequency = 12, $interest_basis = 0, $balloon = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
@@ -482,9 +483,10 @@ class LoanSchedule extends CommonObject
 		if (!empty($capital) && !empty($nbterm)) {
 			if (!empty($rate)) {
 				$periodrate = loanPeriodRate($rate, $frequency, $interest_basis);
-				$result = ($capital * $periodrate) / (1 - pow((1 + $periodrate), ($nbterm * -1)));
+				// With a balloon, only what is not left for the balloon (its present value) is repaid by the instalments
+				$result = (($capital - (float) $balloon / pow(1 + $periodrate, $nbterm)) * $periodrate) / (1 - pow((1 + $periodrate), ($nbterm * -1)));
 			} else {
-				$result = $capital / $nbterm;
+				$result = ($capital - (float) $balloon) / $nbterm;
 			}
 		}
 

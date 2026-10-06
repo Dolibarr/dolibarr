@@ -27,6 +27,7 @@
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -350,6 +351,7 @@ class Facture extends CommonInvoice
 		'datef' => array('type' => 'date', 'label' => 'DateInvoice', 'enabled' => 1, 'visible' => 1, 'position' => 20),
 		'date_valid' => array('type' => 'date', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 22),
 		'date_lim_reglement' => array('type' => 'date', 'label' => 'DateDue', 'enabled' => 1, 'visible' => 1, 'position' => 25),
+		'payment_reference' => array('type' => 'varchar(25)', 'label' => 'PaymentReference', 'enabled' => 1, 'visible' => -1, 'position' => 26),
 		'date_closing' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'paye' => array('type' => 'smallint(6)', 'label' => 'InvoicePaidCompletely', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 80),
 		'close_code' => array('type' => 'varchar(16)', 'label' => 'EarlyClosingReason', 'enabled' => 1, 'visible' => -1, 'position' => 92),
@@ -3986,6 +3988,15 @@ class Facture extends CommonInvoice
 				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->status = self::STATUS_VALIDATED;
 				$this->date_validation = $now;
+
+				// Generate the structured payment reference, see core/lib/paymentref.lib.php.
+				// Done here because the definitive ref and the validated status are both
+				// needed to build it.
+				if (getDolGlobalString('INVOICE_PAYMENT_REF_MODE')) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+					dolPayRefGenerateForInvoice($this, $user, 1);
+				}
+
 				$i = 0;
 
 				if (getDolGlobalInt('INVOICE_USE_SITUATION')) {

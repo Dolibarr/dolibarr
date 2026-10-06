@@ -29,6 +29,7 @@ create table llx_loan
 
   capital						double(24,8) DEFAULT 0 NOT NULL,
   insurance_amount				double(24,8) DEFAULT 0,
+  balloon_amount				double(24,8) DEFAULT 0 NOT NULL,	-- balloon / residual: lump sum paid with the last payment
 
   datestart						date,
   dateend						date,

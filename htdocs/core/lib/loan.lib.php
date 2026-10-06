@@ -105,9 +105,10 @@ function loan_prepare_head($object)
  * @param	int		$frequency				Number of payments per year (52, 26, 12, 4, 2 or 1)
  * @param	int		$interest_basis			0 = rate / number of payments per year, 1 = daily (rate x days in the period / 365)
  * @param	int		$datestart				Date of the first payment (needed for the daily basis)
+ * @param	float	$balloon				Balloon / residual paid with the last payment (0 = none)
  * @return array<array{cap_rest:float,cap_rest_str:string,interet:float,interet_str:string,amort:string,amort_num:float,mens:string,mens_num:float}>		Array with remaining capital, interest, amortization and mensuality for each remaining terms
  */
-function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbterm, $amort = null, $source = 'mens', $grace_period = 0, $int = null, $frequency = 12, $interest_basis = 0, $datestart = 0)
+function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbterm, $amort = null, $source = 'mens', $grace_period = 0, $int = null, $frequency = 12, $interest_basis = 0, $datestart = 0, $balloon = 0)
 {
 	global $conf, $db;
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
@@ -187,7 +188,7 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 			$mens = $int;
 			$cap_rest = $capital;
 		} else {
-			$mens = round($object->calcMonthlyPayments($capital, (float) $rate, $nbterm - $numactualloadterm + 1, $frequency, $interest_basis), 2, PHP_ROUND_HALF_UP);
+			$mens = round($object->calcMonthlyPayments($capital, (float) $rate, $nbterm - $numactualloadterm + 1, $frequency, $interest_basis, (float) $balloon), 2, PHP_ROUND_HALF_UP);
 
 			$int = ($capital * $periodrate($numactualloadterm));
 			$int = round($int, 2, PHP_ROUND_HALF_UP);
@@ -196,7 +197,8 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 
 			// Adjust rounding difference on the last installment if small remainder (with daily interest,
 			// periods are not all the same length, so the last installment always settles what is left)
-			if ($numactualloadterm == $nbterm && ($interest_basis || abs($cap_rest) <= 0.05) && $capital > 0) {
+			// A balloon is paid with the last installment, which then repays all the capital left.
+			if ($numactualloadterm == $nbterm && ($interest_basis || (float) $balloon > 0 || abs($cap_rest) <= 0.05) && $capital > 0) {
 				$amort = $capital;
 				$cap_rest = 0.0;
 				$mens = round($amort + $int, 2, PHP_ROUND_HALF_UP);
