@@ -254,7 +254,7 @@ class Product extends CommonObject
 	 */
 	public $prices_by_qty_id = array();
 	/**
-	 * @var array<int,array<array{rowid:int,price_base_type:string,unitprice:string}>>
+	 * @var array<int,array<array{rowid:int,price:string,unitprice:string,quantity:string,remise_percent:string,remise?:string,price_base_type:string}>>
 	 */
 	public $prices_by_qty_list = array();
 
