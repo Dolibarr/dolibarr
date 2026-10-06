@@ -22,6 +22,7 @@
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +195,7 @@ class Societe extends CommonObject
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
 		'code_client' => array('type' => 'varchar(24)', 'label' => 'CustomerCode', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'code_fournisseur' => array('type' => 'varchar(24)', 'label' => 'SupplierCode', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'tp_payment_reference' => array('type' => 'varchar(25)', 'label' => 'PaymentReference', 'enabled' => 1, 'visible' => -1, 'position' => 61),
 		'code_compta' => array('type' => 'varchar(24)', 'label' => 'CustomerAccountancyCode', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'code_compta_fournisseur' => array('type' => 'varchar(24)', 'label' => 'SupplierAccountancyCode', 'enabled' => 1, 'visible' => -1, 'position' => 70),
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 75),
@@ -668,6 +670,13 @@ class Societe extends CommonObject
 	 * @var ?string
 	 */
 	public $code_fournisseur;
+
+	/**
+	 * @var string	Structured payment reference of this third party. Generated once
+	 *				from its code and reused on all its invoices when the reference
+	 *				mode is set to one reference per third party.
+	 */
+	public $tp_payment_reference;
 
 	/**
 	 * Accounting code for client
@@ -1755,6 +1764,9 @@ class Societe extends CommonObject
 			if ($supplier) {
 				$sql .= ", code_fournisseur = ".(!empty($this->code_fournisseur) ? "'".$this->db->escape($this->code_fournisseur)."'" : "null");
 			}
+
+			// The payment reference applies to customers and suppliers alike
+			$sql .= ", tp_payment_reference = ".(!empty($this->tp_payment_reference) ? "'".$this->db->escape($this->tp_payment_reference)."'" : "null");
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? ((int) $user->id) : "null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
@@ -1970,7 +1982,7 @@ class Societe extends CommonObject
 			$sql .= ', spe.mode_reglement, spe.cond_reglement, spe.fk_account';
 			$sql .= ', spe.mode_reglement_supplier, spe.cond_reglement_supplier';
 		}
-		$sql .= ', s.code_client, s.code_fournisseur, s.parent, s.barcode';
+		$sql .= ', s.code_client, s.code_fournisseur, s.tp_payment_reference, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.deposit_percent, s.transport_mode';
 		$sql .= ', s.tva_assuj';
 		$sql .= ', s.transport_mode_supplier';
@@ -2124,6 +2136,7 @@ class Societe extends CommonObject
 
 				$this->code_client = $obj->code_client;
 				$this->code_fournisseur = $obj->code_fournisseur;
+				$this->tp_payment_reference = $obj->tp_payment_reference;
 
 				$this->accountancy_code_customer_general = $obj->accountancy_code_customer_general;
 				$this->code_compta_client = $obj->code_compta;

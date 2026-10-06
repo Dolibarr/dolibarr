@@ -12,7 +12,7 @@
  * Copyright (C) 2018-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Nick Fragoulis
+ * Copyright (C) 2024-2026  Nick Fragoulis
  * Copyright (C) 2024       Franck Moreau
  *
  * This program is free software; you can redistribute it and/or modify
@@ -515,6 +515,33 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					$extra_under_address_shift += 25;
+				}
+
+				// Finnish domestic payment barcode. Same data as the QR code but in the
+				// format finnish banks scan from a credit transfer form.
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $mysoc->country_code == 'FI') {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_fi.lib.php';
+					$fibarcodedata = dolFIGetInvoiceBarcodeData($object);
+					if ($fibarcodedata != '') {
+						$styleBc = array(
+							'position' => '',
+							'align' => 'L',
+							'stretch' => false,
+							'fitwidth' => true,
+							'cellfitalign' => '',
+							'border' => false,
+							'hpadding' => 'auto',
+							'vpadding' => 0,
+							'fgcolor' => array(0, 0, 0),
+							'bgcolor' => false,
+							'text' => false
+						);
+						$pdf->write1DBarcode($fibarcodedata, 'C128C', $this->marge_gauche, $this->tab_top + $extra_under_address_shift, 90, 13, 0.35, $styleBc, 'N');
+						$pdf->SetXY($this->marge_gauche, $pdf->GetY());
+						$pdf->SetFont('', '', $default_font_size - 4);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentitiesnoconv("FIVirtualBarcode").': '.dolFIFormatVirtualBarcode($fibarcodedata), 0, 'L', false);
+						$extra_under_address_shift += 22;
+					}
 				}
 
 				// Call hook printUnderHeaderPDFline
@@ -1676,6 +1703,19 @@ class pdf_sponge extends ModelePDFFactures
 				}
 			}
 
+			// A structured payment reference can be paid with on its own, so when no
+			// bank account is shown on the invoice it is printed by itself.
+			$showbankblock = ((empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
+				&& ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')));
+			if (!empty($object->payment_reference) && !$showbankblock) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+				$pdf->SetXY($this->marge_gauche, $posy);
+				// Same weight and size as the IBAN and BIC lines drawn by pdf_bank()
+				$pdf->SetFont('', 'B', $default_font_size - 3);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentReference').": " . $outputlangs->convToOutputCharset(dolPayRefFormatForDisplay($object->payment_reference, $mysoc->country_code)), 0, 'L', false);
+				$posy = $pdf->GetY() + 1;
+			}
+
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
 				if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
@@ -1716,8 +1756,20 @@ class pdf_sponge extends ModelePDFFactures
 						$posy = $pdf->GetY() + 2;
 					}
 
-					// Show structured communication
-					if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
+					// The payment reference belongs with the account it is paid to, so it
+					// is shown right after the IBAN and the BIC. Grouped for reading, the
+					// stored value stays compact for the QR code and the SEPA file.
+					if (!empty($object->payment_reference)) {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+						// Same weight and size as the IBAN and BIC lines above
+						$pdf->SetFont('', 'B', $default_font_size - 3);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentReference').": " . $outputlangs->convToOutputCharset(dolPayRefFormatForDisplay($object->payment_reference, $mysoc->country_code)), 0, 'L', false);
+						$posy = $pdf->GetY();
+					}
+
+					// Show structured communication of invoices validated before the
+					// payment reference was stored on them
+					if (empty($object->payment_reference) && getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
 						$invoicePaymentKey = dolBECalculateStructuredCommunication($object->ref, $object->type);
 
