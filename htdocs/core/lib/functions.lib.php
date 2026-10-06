@@ -7032,7 +7032,7 @@ function safeArrayMap($callback, array $array)
  *
  * Note: This function can be called thousand of times, so it should just make init of memory vars, with no db access. If you need a dynamic coming from the db,
  * the return entry must be a simple "lazy load" string, like this example:
- *   $substitutionarray['__SUBSTITUTION_KEY__@lazyload'] = '/pathtoclass.class.php:Object:methodToCall:params';
+ *   $substitutionarray['__SUBSTITUTION_KEY__@lazyload'] = '/pathtoclass.class.php:Object:methodToCall:id';
  * The call of the dynamic code methodToCall() to read data will be done by the function make_substitutions() but only if the key __SUBSTITUTION_KEY__ is found into the source string.
  *
  * @param	Translate       $outputlangs    Output language
