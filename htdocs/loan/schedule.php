@@ -331,6 +331,7 @@ $(document).ready(function() {
 				frequency: <?php echo (int) $object->frequency; ?>,
 				interest_basis: <?php echo (int) $object->interest_basis; ?>,
 				datestart: <?php echo (int) $object->datestart; ?>,
+				balloon: <?php echo (float) $object->balloon_amount; ?>,
 				token: '<?php echo currentToken(); ?>'
 			},
 			success: function(data) {
@@ -430,7 +431,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
 
 	while ($i < $object->nbterm + 1) {
-		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1, $object->frequency, $object->interest_basis), 'MT');
+		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1, $object->frequency, $object->interest_basis, $object->balloon_amount), 'MT');
 		$int = ($capital * loanPeriodRate($object->rate, $object->frequency, $object->interest_basis, ($object->interest_basis ? loanPeriodDays($object->datestart, $i, $object->frequency) : 0))) / 100;
 		$int = price2num($int, 'MT');
 		$amort = price2num((float) $mens - (float) $int, 'MT');
@@ -439,7 +440,8 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 
 		// Adjust rounding difference on last term (with daily interest, periods are not all the same
 		// length, so the last term always settles what is left)
-		if ($i == $object->nbterm && ($object->interest_basis || abs($cap_rest) <= 0.05) && $capital > 0) {
+		// A balloon is paid with the last term, which then repays all the capital left.
+		if ($i == $object->nbterm && ($object->interest_basis || (float) $object->balloon_amount > 0 || abs($cap_rest) <= 0.05) && $capital > 0) {
 			$amort = $capital;
 			$cap_rest = 0.0;
 			$mens = price2num((float) $amort + (float) $int, 'MT');
@@ -531,6 +533,10 @@ print '</tr>'."\n";
 
 print '</table>';
 print '</div>';
+
+if ((float) $object->balloon_amount > 0) {
+	print '<div class="opacitymedium margintoponly">'.$langs->trans("LoanBalloonInLastPayment", price($object->balloon_amount, 0, '', 1, -1, -1, $conf->currency)).'</div>';
+}
 
 print '<br>';
 
