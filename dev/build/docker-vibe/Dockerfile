@@ -13,6 +13,7 @@ RUN apt-get update \
 		curl \
         dialog \
 		gh \
+		ghostscript \
 		git \
         graphviz \
         gzip \
@@ -21,7 +22,8 @@ RUN apt-get update \
 		jq \
 		libglib2.0-bin \
         memcached \
-		mysql-client \
+		mariadb-client \
+		mariadb-server \
 		openssh-client \
 		php \
 		php-ast \

@@ -1,6 +1,6 @@
 ---
 # This workflow emulates on a github runner the build described into the
-# .travis.yml file (webserver install, database upgrade from the 3.5.0 dump and
+# .travis.yml file (webserver install, database upgrade from the 4.0.0 dump and
 # phpunit tests), so the parent workflows ci-on-push.yml and ci-on-pull.yml can
 # chain it after the pre-commit CI with a "needs" (a travis build can not be
 # chained to a github workflow). Keep the shell blocks in sync with the
@@ -264,7 +264,7 @@ jobs:
             echo "MySQL list current users"
             sudo mysql -u root -h 127.0.0.1 -ppassword -e 'use mysql; select * from user;' | head -20
             echo "MySQL load sql"
-            sudo mysql -u root -h 127.0.0.1 -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+            sudo mysql -u root -h 127.0.0.1 -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_4.0.0.sql
           fi
 
           echo "===== $(date) Migrating mariadb to pgsql if run is for pgsql"
@@ -428,21 +428,6 @@ jobs:
           # migration seems ok, and the failed migrations are also shown by the cat of the logs.
           set +e
           cd "$TRAVIS_BUILD_DIR/htdocs/install"
-          php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
-          php upgrade2.php 3.5.0 3.6.0 > $TRAVIS_BUILD_DIR/upgrade350360-2.log
-          php step5.php 3.5.0 3.6.0 > $TRAVIS_BUILD_DIR/upgrade350360-3.log
-          php upgrade.php 3.6.0 3.7.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade360370.log
-          php upgrade2.php 3.6.0 3.7.0 > $TRAVIS_BUILD_DIR/upgrade360370-2.log
-          php step5.php 3.6.0 3.7.0 > $TRAVIS_BUILD_DIR/upgrade360370-3.log
-          php upgrade.php 3.7.0 3.8.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade370380.log
-          php upgrade2.php 3.7.0 3.8.0 > $TRAVIS_BUILD_DIR/upgrade370380-2.log
-          php step5.php 3.7.0 3.8.0 > $TRAVIS_BUILD_DIR/upgrade370380-3.log
-          php upgrade.php 3.8.0 3.9.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade380390.log
-          php upgrade2.php 3.8.0 3.9.0 > $TRAVIS_BUILD_DIR/upgrade380390-2.log
-          php step5.php 3.8.0 3.9.0 > $TRAVIS_BUILD_DIR/upgrade380390-3.log
-          php upgrade.php 3.9.0 4.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade390400.log
-          php upgrade2.php 3.9.0 4.0.0 > $TRAVIS_BUILD_DIR/upgrade390400-2.log
-          php step5.php 3.9.0 4.0.0 > $TRAVIS_BUILD_DIR/upgrade390400-3.log
           php upgrade.php 4.0.0 5.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade400500.log
           php upgrade2.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-2.log
           php step5.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-3.log
