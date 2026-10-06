@@ -1,0 +1,49 @@
+name: tmp phpstan td dump
+
+on:
+  push:
+    branches:
+      - tmp-phpstan-td-dump
+
+permissions:
+  contents: write
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: phpstan:2.2.14
+          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml
+
+      - name: Prepare apstats like config
+        run: |
+          python3 - <<'EOF'
+          import re
+          s = open('phpstan.neon.dist').read()
+          s = s.replace('	- dev/build/phpstan/phpstan-baseline.neon
+', '')
+          s = s.replace('includes:
+', '')
+          open('phpstan_apstats.neon', 'w').write(s)
+          EOF
+
+      - name: Run PHPStan like CTI
+        run: |
+          phpstan --level=9 -v analyze --no-progress -a dev/build/phpstan/bootstrap.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon > td_raw.txt || true
+          wc -l td_raw.txt | awk '{print "TOTAL_TD_LINES="$1}' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit result
+        run: |
+          head -40 td_raw.txt > td_first40.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add td_first40.txt
+          git commit -m "TMP: phpstan technical debt first 40 entries (temp branch, will be deleted)"
+          git push
