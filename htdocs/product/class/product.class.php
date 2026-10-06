@@ -2572,7 +2572,7 @@ class Product extends CommonObject
 	 * @param	Societe		$thirdparty_seller		Seller
 	 * @param	Societe		$thirdparty_buyer		Buyer
 	 * @param	int			$pqp					Id of product price per quantity if a selection was done of such a price
-	 * @return	array{pu_ht:float|int|string,pu_ttc:float|int|string,price_min:float|int|string,price_base_type:string,tva_tx:float|string|null|int,tva_npr:float|int}
+	 * @return	array{pu_ht:float|int|string,pu_ttc:float|int|string,price_min:float|int|string,price_min_ttc:float|int|string,price_base_type:string,tva_tx:float|string|null|int,tva_npr:float|int,localtax1:int|string,localtax2:int|string}
 	 * @see get_buyprice(), find_min_price_product_fournisseur()
 	 */
 	public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
