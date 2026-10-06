@@ -369,6 +369,7 @@ function loanChargePerPayment($amount, $per_payment, $nbterm)
  */
 function loanRecalculateSchedule($db, $user, $loan, $lines, $from, $capital, $rate, $keep, $payment = 0.0)
 {
+	$from = (int) $from;
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 
 	$lines = array_values($lines);
@@ -525,7 +526,7 @@ function loanRecalculateSchedule($db, $user, $loan, $lines, $from, $capital, $ra
  * @param	float	$nbterm_old		Number of payments before
  * @param	float	$nbterm_new		Number of payments after
  * @param	int		$fk_payment		Payment that caused the change (reason 'payment'), 0 if none
- * @return	int						<0 if KO, id of the record if OK
+ * @return	int						Id of the record if OK, -1 if KO
  */
 function loanRecordChange($db, $user, $loanid, $reason, $datechange, $rate_old, $rate_new, $keep, $payment_old, $payment_new, $nbterm_old, $nbterm_new, $fk_payment = 0)
 {

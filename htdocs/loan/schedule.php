@@ -197,7 +197,7 @@ if ($action == 'recalculate' && $permissiontoadd) {
 			$capital = (float) $object->capital;
 			foreach ($echeances->lines as $k => $l) {
 				if (empty($l->fk_bank) && $l->datep >= $datefrom) {
-					$from = $k;
+					$from = (int) $k;
 					break;
 				}
 				$capital -= (float) $l->amount_capital;
