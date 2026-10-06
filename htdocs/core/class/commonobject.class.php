@@ -3038,7 +3038,6 @@ abstract class CommonObject
 
 						switch ($this->element) {
 							case 'propal':
-								/** @var Propal $this */
 								/** @var PropaleLigne $line */
 								'@phan-var-force Propal $this';
 								'@phan-var-force PropaleLigne $line';
