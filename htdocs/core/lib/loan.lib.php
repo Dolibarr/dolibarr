@@ -362,11 +362,9 @@ function loanChargePerPayment($amount, $per_payment, $nbterm)
  * @param	LoanSchedule[]	$lines		All the schedule lines of the loan, in date order
  * @param	int				$from		Index (0 = first line) of the first line to recalculate; it and all the following lines must be unpaid
  * @param	float			$capital	Capital left to repay before that line
- * @param	?float			$rate		Annual rate in percent for the recalculated lines (a rate change), or null to use, for each
- * 									payment, the rate in force on its date (see loanRateAt())
+ * @param	?float			$rate		Annual rate in percent for the recalculated lines (a rate change), or null to use, for each payment, the rate in force on its date (see loanRateAt())
  * @param	string			$keep		'term' = keep the number of payments (the repayment changes), 'payment' = keep the repayment (the number of payments changes)
- * @param	float			$payment	With 'payment': repayment (capital + interest) for every recalculated payment, or 0 = each
- * 									payment keeps its current repayment (added payments: the last regular one)
+ * @param	float			$payment	With 'payment': repayment (capital + interest) for every recalculated payment, or 0 = each payment keeps its current repayment (added payments: the last regular one)
  * @return	array{error:string,payment_old:float,payment_new:float,nbterm_old:int,nbterm_new:int}	'error' is a translation key, '' if OK
  */
 function loanRecalculateSchedule($db, $user, $loan, $lines, $from, $capital, $rate, $keep, $payment = 0.0)
