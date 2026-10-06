@@ -26,14 +26,13 @@ jobs:
       - name: Prepare apstats like config
         run: |
           awk '!/phpstan-baseline\.neon/ && !/^includes:/ { print }' phpstan.neon.dist > phpstan_apstats.neon
-          echo "---- phpstan_apstats.neon head ----"
           head -5 phpstan_apstats.neon
 
       - name: Run PHPStan like CTI
         run: |
           set +e
           phpstan --version 2>&1 | tee -a td_log.txt
-          phpstan --level=9 -v analyze --no-progress -a dev/build/phpstan/bootstrap.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon > td_raw.txt 2>> td_log.txt
+          phpstan --level=9 -v analyze --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon > td_raw.txt 2>> td_log.txt
           echo "EXITCODE=$?" >> td_log.txt
           head -40 td_raw.txt > td_first40.txt
           wc -l td_raw.txt >> td_log.txt
@@ -45,7 +44,7 @@ jobs:
         run: |
           set +e
           {
-            echo "TMP TD DUMP RESULT"
+            echo "TMP TD DUMP RESULT v2"
             echo ""
             echo '~~~'
             cat td_first40.txt
