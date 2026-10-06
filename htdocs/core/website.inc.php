@@ -326,7 +326,7 @@ if (empty($dolibarr_website_allow_custom_php) || ($dolibarr_website_allow_custom
 	print 'The value "'.$notdisabledsystemfunction.'" has NOT been found into the php parameter <b>current disable_functions</b> ';
 	//print '<textarea cols="100" rows="5">';
 	if (!class_exists('Form')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 	}
 	if (empty($form)) {
 		$form = new Form($db);
