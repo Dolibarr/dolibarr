@@ -426,6 +426,33 @@ dol_syslog("fulltag=".GETPOST("fulltag", 'alpha')." ws=".$ws." urlok=".$urlok, L
 
 // Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+	// Payment account information
+	$accountid = 0;
+	if ($paymentmethod == 'paybox') {
+		$accountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	if ($paymentmethod == 'paypal') {
+		$accountid = getDolGlobalString('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	if ($paymentmethod == 'stripe') {
+		$accountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
+	}
+	// Get bank account for a specific paymentmedthod
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+	];
+	$reshook = $hookmanager->executeHooks('getBankAccountPaymentMethod', $parameters, $object, $action);
+	if ($reshook >= 0) {
+		if (isset($hookmanager->resArray['bankaccountid'])) {
+			dol_syslog('accountid overwrite by hook return with value='.$hookmanager->resArray['bankaccountid'], LOG_DEBUG, 0, '_payment');
+			$accountid = $hookmanager->resArray['bankaccountid'];
+		}
+	}
+	if (isModEnabled('bank') && $accountid < 0) {
+		$mesg = 'Setup of bank account to use for payment is not correctly done for payment method '.$paymentmethod;
+		$action = '';
+	}
+
 	if ($paymentmethod == 'paypal') {
 		$PAYPAL_API_PRICE = price2num(GETPOST("newamount", 'alpha'), 'MT');
 		$PAYPAL_PAYMENT_TYPE = 'Sale';

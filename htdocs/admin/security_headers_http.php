@@ -314,7 +314,7 @@ function cleanSecurityCSP($securitycsp)
 		}
 	}
 	$securitycsp = preg_replace('/\s+/', ' ', $securitycsp);
-	var_dump($securitycsp);
+
 	return $securitycsp;
 }
 

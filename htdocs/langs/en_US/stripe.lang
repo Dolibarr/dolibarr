@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=Value for PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
 PAYBOX_HMAC_KEY=HMAC key
 FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup
+PaymentRecordedButPostPocessingKo=Your payment was recorded by the payment system. However, it appears that our post-payment processing could not be fully completed. We were alerted and will try to solve this soon. We recommend you to not try to pay a second time, and send us a screenshot of this page by email to be sure so we take into account the issue.
