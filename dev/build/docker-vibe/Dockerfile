@@ -38,6 +38,7 @@ RUN apt-get update \
 		php-ldap \
 		php-imagick \
 		php-cli \
+		pgloader \
 		python3 \
 		python3-pip \
 		shellcheck \
