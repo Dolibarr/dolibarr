@@ -1982,6 +1982,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		} else {
 			print '<input type="text" class="width75 amount" name="newamount" id="newamount" value="'.price($amount, 1, $langs, 1, -1, -1).'">';
 		}
+		print $langs->trans("Currency".$conf->currency);
 	} else {
 		print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 		if ($minimumamount > $amount) {
@@ -1990,7 +1991,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	}
 	print '<input type="hidden" name="amount" value="'.$amount.'">';
-	print '<input type="hidden" name="currency" value="'.$currency.'">'.$langs->trans("Currency".$conf->currency);
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
