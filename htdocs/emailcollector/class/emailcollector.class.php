@@ -262,7 +262,7 @@ class EmailCollector extends CommonObject
 	 */
 	public $filters;
 	/**
-	 * @var array<array{type:string,actionparam:string,status:int,position:int}>
+	 * @var array<int,array{id:int,type:string,actionparam:string,status:int,position?:int}>
 	 */
 	public $actions;
 
