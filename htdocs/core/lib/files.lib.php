@@ -4290,11 +4290,9 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 			}
 		}
 
-		// Add the latest file to the sorted list and remove it from the original list
-		if ($latest_file !== null) {
-			$sorted_files[] = $latest_file['file'];
-			unset($files_with_timestamps[$latest_index]);
-		}
+		// Add the latest file to the sorted list and remove it from the original list (the list is never empty here, so a latest file was always found)
+		$sorted_files[] = $latest_file['file'];
+		unset($files_with_timestamps[$latest_index]);
 	}
 
 	// Delete the oldest files to keep only the allowed number of versions

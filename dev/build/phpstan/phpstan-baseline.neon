@@ -37,21 +37,9 @@ parameters:
 			path: ../../../htdocs/core/class/fileupload.class.php
 
 		-
-			message: '#^Parameter \#3 \$optJson of method Form\:\:constructProjectListOption\(\) expects array\{key\: string, value\: string, type\: string\}, array\{\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
 			message: '#^PHPDoc tag @var with type array\<SplFileInfo\> is not subtype of native type RecursiveIteratorIterator\<RecursiveDirectoryIterator\>\.$#'
 			identifier: varTag.nativeType
 			count: 2
-			path: ../../../htdocs/core/lib/files.lib.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between array\{file\: string, timestamp\: int\|false\} and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
 			path: ../../../htdocs/core/lib/files.lib.php
 
 		-
