@@ -24,6 +24,9 @@
  *      \brief      Security options setup
  */
 
+// We force the CSP to none on thispage, so if we make an error, we can still have access to fix it
+define('MAIN_SECURITY_FORCECSP', '*');
+
 // Load Dolibarr environment
 require '../main.inc.php';
 /**
@@ -261,18 +264,45 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 function cleanSecurityCSP($securitycsp)
 {
 	if (!empty($securitycsp)) {
-		if (!preg_match('/script-src.*self/', $securitycsp) || !preg_match('/script-src.*unsafe-inline/', $securitycsp)) {
+		// We check if script-src contains self and unsafe-inline (if not the app will not work correctly)
+		if (!preg_match('/script-src[^;]*self/', $securitycsp) || !preg_match('/script-src[^;]*unsafe-inline/', $securitycsp)) {
 			if (!preg_match('/script-src/', $securitycsp)) {
-				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' script-src \'self\' \'unsafe-inline\';';
+				// TODO Show a warning to explain we add added entry to avoid app hanging ?
+				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' script-src \'self\' \'unsafe-inline\'';
+				if (isModEnabled('paypal')) {
+					$securitycsp .= ' *.paypal.com';
+				}
+				if (isModEnabled('stripe')) {
+					$securitycsp .= ' *.stripe.com';		// Must be added as they may be used by the core modules
+				}
+				$securitycsp .= ';';
 			} else {
-				$securitycsp = preg_replace('/script-src\s+/', 'script-src \'self\' \'unsafe-inline\' ', $securitycsp);
+				if (!preg_match('/script-src[^;]*self/', $securitycsp)) {
+					$securitycsp = preg_replace('/script-src\s+/', 'script-src \'self\' ', $securitycsp);
+				}
+				if (!preg_match('/script-src[^;]*unsafe-inline/', $securitycsp)) {
+					$securitycsp = preg_replace('/script-src\s+/', 'script-src \'unsafe-inline\' ', $securitycsp);
+				}
+				// We check if entry for paypal or stripe are present
+				if (isModEnabled('paypal') && !preg_match('/script-src[^;]*paypal/', $securitycsp)) {
+					$securitycsp = preg_replace('/script-src\s+/', 'script-src *.paypal.com ', $securitycsp);
+				}
+				if (isModEnabled('stripe') && !preg_match('/script-src[^;]*stripe/', $securitycsp)) {
+					$securitycsp = preg_replace('/script-src\s+/', 'script-src *.stripe.com ', $securitycsp);
+				}
 			}
 		}
-		if (!preg_match('/style-src.*self/', $securitycsp) || !preg_match('/style-src.*unsafe-inline/', $securitycsp)) {
+		// We check if style-src contains self and unsafe-inline (if not the app will not work correctly)
+		if (!preg_match('/style-src[^;]*self/', $securitycsp) || !preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
 			if (!preg_match('/style-src/', $securitycsp)) {
 				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' style-src \'self\' \'unsafe-inline\';';
 			} else {
-				$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' \'unsafe-inline\' ', $securitycsp);
+				if (!preg_match('/style-src[^;]*self/', $securitycsp)) {
+					$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' ', $securitycsp);
+				}
+				if (!preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
+					$securitycsp = preg_replace('/style-src\s+/', 'style-src \'unsafe-inline\' ', $securitycsp);
+				}
 			}
 		}
 		if (!preg_match('/dolibarr\.org/', $securitycsp)) {
@@ -284,6 +314,7 @@ function cleanSecurityCSP($securitycsp)
 		}
 	}
 	$securitycsp = preg_replace('/\s+/', ' ', $securitycsp);
+	var_dump($securitycsp);
 	return $securitycsp;
 }
 
