@@ -3068,65 +3068,67 @@ abstract class CommonObject
 								);
 								break;
 							case 'commande':
-								/** @var Commande $this */
-								/** @var OrderLine $line */
-								'@phan-var-force Commande $this';
-								'@phan-var-force OrderLine $line';
-								$this->updateline(
-									$line->id,
-									($line->description ? $line->description : $line->desc),
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									'HT',
-									$line->info_bits,
-									$line->date_start,
-									$line->date_end,
-									$line->product_type,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->special_code,
-									$line->array_options,
-									$line->fk_unit,
-									$line->multicurrency_subprice
-								);
+								if ($this instanceof Commande) {
+									/* @var Commande $this */
+									/** @var OrderLine $line */
+									'@phan-var-force OrderLine $line';
+									$this->updateline(
+										$line->id,
+										($line->description ? $line->description : $line->desc),
+										$line->subprice,
+										$line->qty,
+										$line->remise_percent,
+										$line->tva_tx,
+										$line->localtax1_tx,
+										$line->localtax2_tx,
+										'HT',
+										$line->info_bits,
+										$line->date_start,
+										$line->date_end,
+										$line->product_type,
+										$line->fk_parent_line,
+										$line->skip_update_total,
+										$line->fk_fournprice,
+										$line->pa_ht,
+										$line->label,
+										$line->special_code,
+										$line->array_options,
+										$line->fk_unit,
+										$line->multicurrency_subprice
+									);
+								}
 								break;
 							case 'facture':
-								/** @var Facture $this */
-								/** @var FactureLigne $line */
-								'@phan-var-force Facture $this';
-								'@phan-var-force FactureLigne $line';
-								$this->updateline(
-									$line->id,
-									($line->description ? $line->description : $line->desc),
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->date_start,
-									$line->date_end,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									'HT',
-									$line->info_bits,
-									$line->product_type,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->special_code,
-									$line->array_options,
-									$line->situation_percent,
-									$line->fk_unit,
-									$line->multicurrency_subprice
-								);
+								if ($this instanceof Facture) {
+									/* @var Facture $this */
+									/** @var FactureLigne $line */
+									'@phan-var-force FactureLigne $line';
+									$this->updateline(
+										$line->id,
+										($line->description ? $line->description : $line->desc),
+										$line->subprice,
+										$line->qty,
+										$line->remise_percent,
+										$line->date_start,
+										$line->date_end,
+										$line->tva_tx,
+										$line->localtax1_tx,
+										$line->localtax2_tx,
+										'HT',
+										$line->info_bits,
+										$line->product_type,
+										$line->fk_parent_line,
+										$line->skip_update_total,
+										$line->fk_fournprice,
+										$line->pa_ht,
+										$line->label,
+										$line->special_code,
+										$line->array_options,
+										$line->situation_percent,
+										$line->fk_unit,
+										$line->multicurrency_subprice
+									);
+								}
 								break;
 							case 'facturerec':
 								/** @var FactureRec $this */

@@ -25,19 +25,7 @@ parameters:
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: '#^PHPDoc tag @var with type Commande is not subtype of native type \$this\(CommonObject\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
 			message: '#^PHPDoc tag @var with type CommandeFournisseur is not subtype of native type \$this\(CommonObject\)\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type Facture is not subtype of native type \$this\(CommonObject\)\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: ../../../htdocs/core/class/commonobject.class.php
