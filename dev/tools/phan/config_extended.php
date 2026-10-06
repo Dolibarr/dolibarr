@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This is the phan config file used by dev/tools/apstats.php
@@ -12,6 +12,7 @@ $config = include __DIR__.DIRECTORY_SEPARATOR."config.php";
 $config['plugins'] = [
 		__DIR__.'/plugins/NoVarDumpPlugin.php',
 		__DIR__.'/plugins/ParamMatchRegexPlugin.php',
+		__DIR__.'/plugins/SqlInjectionPlugin.php',
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
 		'InvalidVariableIssetPlugin',
@@ -28,8 +29,8 @@ $config['plugins'] = [
 		'ConstantVariablePlugin', // Warns about values that are actually constant
 		//'HasPHPDocPlugin', // Requires PHPDoc
 		// 'InlineHTMLPlugin', // html in PHP file, or at end of file
-		'NonBoolBranchPlugin', // Requires test on bool, nont on ints
-		'NonBoolInLogicalArithPlugin',
+		//'NonBoolBranchPlugin', // Requires test on bool, not on ints
+		//'NonBoolInLogicalArithPlugin',
 		'NumericalComparisonPlugin',
 		// 'PHPDocToRealTypesPlugin',  // Report/Add types to function definitions
 		'PHPDocInWrongCommentPlugin', // Missing /** (/* was used)
@@ -68,15 +69,16 @@ $config['suppress_issue_types'] = [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanPluginConstantVariableNull',		// a lot of false positive, in most cases, we want to keep the code as it is
 		// 'PhanPluginUnknownArrayPropertyType', // Helps find missing array keys or mismatches, remaining occurrences are likely unused properties
-		'PhanTypeArraySuspiciousNullable',	// About 400 cases
+		'PhanTypeArraySuspiciousNullable',	// About 400 occurrences
 		// 'PhanTypeInvalidDimOffset',			// Helps identify missing array indexes in types or reference to unset indexes
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',		// a lot of false positive, in most cases, we want to keep the code as it is
 		'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
 		'PhanTypeMismatchArgumentSuperType', 	// a lot of false positive, in most cases, we want to keep the code as it is
 
-		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
+		'PhanPluginWhitespaceTab',		// Dolibarr uses tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
 		'PhanPluginShortArray',			// Dolibarr uses array()
 		'PhanPluginShortArrayList',		// Dolibarr uses array()
@@ -86,9 +88,9 @@ $config['suppress_issue_types'] = [
 		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
 		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
 
+		'PhanPluginEmptyStatementIf',		// Usually done on purpose with a comment
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		// 'PhanTypeMismatchArgument',		// Most fixed ~120 occurrences (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
@@ -100,6 +102,8 @@ $config['suppress_issue_types'] = [
 
 		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed
 		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed
+		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
+		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
 ];
 

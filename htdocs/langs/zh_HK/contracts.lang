@@ -36,10 +36,18 @@ ActivateAllOnContract=啟動所有服務
 CloseAContract=關閉合約
 ConfirmDeleteAContract=您確定要刪除此合約及其所有服務嗎？
 ConfirmValidateContract=您確定要以<b>%s</b>名義驗證此合約嗎?
+ConfirmSignContract=您確定要將此合約設定為已簽署嗎？
+ConfirmUnsignContract=您確定要將此合約設為未簽署嗎？
 ConfirmActivateAllOnContract=這將啟用所有服務（尚未啟用）。您確定要啟用所有服務嗎？
 ConfirmCloseContract=這將關閉所有服務（過期或未過期）。您確定要關閉此合約嗎？
 ConfirmCloseService=您確定要關閉此服務嗎？日期為 <b>%s</b>？
 ValidateAContract=驗證合約
+UnsignContract=未簽合約
+ContractSign=設定簽名
+ContractUnsign=設定未簽名
+ContractSignedInDolibarr=合約已簽署
+ContractSignedOnline=已網上簽約
+ContractUnsignedInDolibarr=合約已未簽署
 ActivateService=啟動服務
 ConfirmActivateService=您確定要啟動此服務嗎？日期為 <b>%s</b>？
 RefContract=合約參考
@@ -95,7 +103,13 @@ ConfirmCloneContract=您確定要複製合約 <b>%s</b> 嗎？
 LowerDateEndPlannedShort=降低有效服務的計劃結束日期
 SendContractRef=合約信息 __REF__
 OtherContracts=其他合約
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=銷售代表簽訂合約
 TypeContact_contrat_internal_SALESREPFOLL=銷售代表跟進合約
 TypeContact_contrat_external_BILLING=計費客戶聯絡方式

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010	    Pierre Morin            <pierre.morin@auguria.net>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
@@ -51,10 +51,15 @@ if (!defined('NOREQUIREAJAX')) {
  * @var User $user
  *
  * @var string $module
- * @var string $mode
+ * @var ?string $mode
  * @var string $websitekey
+ * @var string $dolibarr_main_data_root
  * @var int $pageid
  */
+
+'
+@phan-var-force ?string $mode
+';
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	require_once '../../main.inc.php';
@@ -68,6 +73,14 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$module = GETPOST("module", 'alpha');
 	$urlsource = GETPOST("urlsource", 'alpha');
 	$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
+	$search_doc_date_start = '';
+	$search_doc_date_end = '';
+	if (GETPOSTISSET('search_doc_date_start') || GETPOSTISSET('search_doc_date_startday') || GETPOSTISSET('search_doc_date_startmonth') || GETPOSTISSET('search_doc_date_startyear')) {
+		$search_doc_date_start = GETPOSTDATE('search_doc_date_start');
+	}
+	if (GETPOSTISSET('search_doc_date_end') || GETPOSTISSET('search_doc_date_endday') || GETPOSTISSET('search_doc_date_endmonth') || GETPOSTISSET('search_doc_date_endyear')) {
+		$search_doc_date_end = GETPOSTDATE('search_doc_date_end', 'end');
+	}
 
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$sortfield = GETPOST("sortfield", 'aZ09comma');
@@ -104,11 +117,20 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	// When no an ajax call (include from other file)
 	/**
 	 * @var string $module
+	 * @var int $section
+	 * @var string $action
+	 * @var string $dolibarr_main_data
+	 * @var string $showonrightsize
+	 * @var string $sortfield
+	 * @var string $sortorder
 	 */
 	'
 	@phan-var-force int $section
+	@phan-var-force string $action
 	@phan-var-force string $module
 	@phan-var-force string $showonrightsize
+	@phan-var-force string $sortfield
+	@phan-var-force string $sortorder
 	';
 
 	$rootdirfordoc = $conf->ecm->dir_output;
@@ -152,7 +174,7 @@ if (empty($modulepart)) {
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+// We forbid directory traversal as well as pipes in file names.
 if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_syslog("Refused to deliver file ".$upload_dir);
 	// Do no show plain path in shown error message
@@ -184,7 +206,7 @@ if ($modulepart == 'ecm') {
  */
 
 if (!isset($mode) || $mode != 'noajax') {
-	// Ajout directives pour resoudre bug IE
+	// Add directives to fix IE bug
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
 
@@ -265,7 +287,7 @@ if ($type == 'directory') {
 	} elseif ($module == 'invoice') {
 		$upload_dir = $conf->invoice->dir_output;
 	} elseif ($module == 'invoice_supplier') {
-		$upload_dir = $conf->fournisseur->facture->dir_output;
+		$upload_dir = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 	} elseif ($module == 'propal') {
 		$upload_dir = $conf->propal->dir_output;
 	} elseif ($module == 'supplier_proposal') {
@@ -321,11 +343,31 @@ if ($type == 'directory') {
 		if (isset($search_doc_ref) && $search_doc_ref != '') {
 			$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 		}
+		if (!empty($search_doc_date_start)) {
+			$param .= '&search_doc_date_startday='.dol_print_date($search_doc_date_start, '%d');
+			$param .= '&search_doc_date_startmonth='.dol_print_date($search_doc_date_start, '%m');
+			$param .= '&search_doc_date_startyear='.dol_print_date($search_doc_date_start, '%Y');
+		}
+		if (!empty($search_doc_date_end)) {
+			$param .= '&search_doc_date_endday='.dol_print_date($search_doc_date_end, '%d');
+			$param .= '&search_doc_date_endmonth='.dol_print_date($search_doc_date_end, '%m');
+			$param .= '&search_doc_date_endyear='.dol_print_date($search_doc_date_end, '%Y');
+		}
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
 
 		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
+		if (!empty($search_doc_date_start) || !empty($search_doc_date_end)) {
+			foreach ($filearray as $key => $file) {
+				$filedate = empty($file['date']) ? 0 : (int) $file['date'];
+				if ((!empty($search_doc_date_start) && $filedate < $search_doc_date_start)
+					|| (!empty($search_doc_date_end) && $filedate > $search_doc_date_end)
+				) {
+					unset($filearray[$key]);
+				}
+			}
+		}
 		//var_dump($filearray);
 
 		// To allow external users,we must restrict $filearray to entries the user is a thirdparty.
@@ -390,7 +432,7 @@ if ($type == 'directory') {
 		}
 
 		if ($section) {
-			$param .= '&section='.$section;
+			$param .= '&section='.urlencode($section);
 			if (isset($search_doc_ref) && $search_doc_ref != '') {
 				$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 			}
@@ -410,7 +452,7 @@ if ($type == 'directory') {
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';
-			$perm = ($user->hasRight("website", "write") || $user->hasRight("emailing", "creer"));
+			$perm = $user->hasRight("website", "write");
 			$title = 'none';
 		} elseif ($module == 'ecm') { // DMS/ECM -> manual structure
 			if ($user->hasRight("ecm", "read")) {

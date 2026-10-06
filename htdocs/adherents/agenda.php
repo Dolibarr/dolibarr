@@ -61,6 +61,7 @@ if (GETPOSTISARRAY('actioncode')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 $search_complete = GETPOST('search_complete');
+$search_filtert = GETPOSTINT('search_filtert');
 $search_dateevent_start = GETPOSTDATE('dateevent_start');
 $search_dateevent_end = GETPOSTDATE('dateevent_end');
 
@@ -129,6 +130,7 @@ if (empty($reshook)) {
 		$search_rowid = '';
 		$search_agenda_label = '';
 		$search_complete = '';
+		$search_filtert = '';
 	}
 }
 
@@ -249,8 +251,9 @@ if ($object->id > 0) {
 		$filters['search_agenda_label'] = $search_agenda_label;
 		$filters['search_rowid'] = $search_rowid;
 		$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
+		$filters['search_filtert'] = $search_filtert;
 
-		// TODO Replace this with same code than into list.php
+		// TODO Replace this with the same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, $object->module);
 	}
 }

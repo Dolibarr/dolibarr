@@ -31,9 +31,9 @@ UseDiscountOnTotal=उप-योग पर
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=यह निर्धारित करता है कि मार्जिन गणना के लिए वैश्विक छूट को उत्पाद, सेवा या केवल उप-योग के रूप में माना जाएगा।
 MARGIN_TYPE=मार्जिन गणना के लिए डिफ़ॉल्ट रूप से सुझाया गया क्रय/लागत मूल्य
 MargeType1=सर्वश्रेष्ठ विक्रेता मूल्य पर मार्जिन
-MargeType2=भारित औसत मूल्य पर मार्जिन (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=लागत मूल्य पर मार्जिन
-MarginTypeDesc=* सर्वोत्तम खरीद मूल्य पर मार्जिन = विक्रय मूल्य - उत्पाद कार्ड पर परिभाषित सर्वोत्तम विक्रेता मूल्य<br>* भारित औसत मूल्य (WAP) पर मार्जिन = विक्रय मूल्य - उत्पाद भारित औसत मूल्य (WAP) या सर्वोत्तम विक्रेता मूल्य यदि WAP अभी तक परिभाषित नहीं है<br>* लागत मूल्य पर मार्जिन = विक्रय मूल्य - उत्पाद कार्ड या WAP पर परिभाषित लागत मूल्य यदि लागत मूल्य परिभाषित नहीं है, या सर्वोत्तम विक्रेता मूल्य यदि WAP अभी तक परिभाषित नहीं है
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=लागत मूल्य
 UnitCharges=यूनिट शुल्क
 Charges=प्रभार

@@ -1,8 +1,8 @@
 <?php
 /*
  * Copyright (C) 2023 Marc Chenebaux <marc.chenebaux@maj44.com>
- * Copyright (C) 2025		MDW			<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,22 +68,42 @@ class Salaries extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.fk_user:=:6) and (t.datep:>:'20250101')"
 	 * @return array                List of salary objects
 	 * @phan-return Salary[]
 	 * @phpstan-return Salary[]
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readchild')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			throw new RestException(403);
 		}
 
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "salary as t";
-		//$sql .= ' WHERE t.entity IN ('.getEntity('bank_account').')';
+		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				$sql .= ' AND t.fk_user = '.((int) DolibarrApiAccess::$user->id);
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				$sql .= ' AND t.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
+			}
+		}
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -125,7 +145,9 @@ class Salaries extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readchild')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			throw new RestException(403);
 		}
 
@@ -133,6 +155,19 @@ class Salaries extends DolibarrApi
 		$result = $salary->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'salary not found');
+		}
+
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				if ($salary->fk_user != DolibarrApiAccess::$user->id) {
+					throw new RestException(404, 'salary not found');
+				}
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				if (!in_array($salary->fk_user, $childids)) {
+					throw new RestException(404, 'salary not found');
+				}
+			}
 		}
 
 		return $this->_cleanObjectDatas($salary);
@@ -196,7 +231,7 @@ class Salaries extends DolibarrApi
 		if ($salary->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $salary->error);
+			throw new RestException(500, $salary->errorsToString());
 		}
 	}
 
@@ -249,12 +284,22 @@ class Salaries extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readchild')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid FROM " . MAIN_DB_PREFIX . "payment_salary as t, ".MAIN_DB_PREFIX."salary as s";
 		$sql .= ' WHERE s.rowid = t.fk_salary AND t.entity IN ('.getEntity('salary').')';
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				$sql .= ' AND s.fk_user = '.((int) DolibarrApiAccess::$user->id).')';
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				$sql .= ' AND s.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
+			}
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -299,7 +344,11 @@ class Salaries extends DolibarrApi
 	 */
 	public function getPayments($pid)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+		// A payment of salary can be done on different salaries of different users, so only users with permission
+		// to read all area allowed.
+		// TODO To support read or readchild case, the get must be done with a SQL that include the paid user with
+		// a where on current user and childids of current user.
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			throw new RestException(403);
 		}
 
@@ -333,17 +382,34 @@ class Salaries extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validatepayments($request_data);
 
+		$salary = new Salary($this->db);
+		if ($salary->fetch($id) <= 0 || empty($salary->id)) {
+			throw new RestException(404, 'Salary not found');
+		}
+		// create() pays the salaries that are the keys of amounts, not {id}
+		if (!is_array($request_data['amounts']) || array_diff(array_keys($request_data['amounts']), array($salary->id))) {
+			throw new RestException(400, 'amounts must be keyed by the salary id '.$salary->id);
+		}
+
 		$paymentsalary = new PaymentSalary($this->db);
 		$paymentsalary->fk_salary = $id;
 		foreach ($request_data as $field => $value) {
 			$paymentsalary->$field = $this->_checkValForAPI($field, $value, $paymentsalary);
 		}
+		// create() and addPaymentToBank() read fk_typepayment, the mandatory field is paiementtype
+		if (empty($paymentsalary->fk_typepayment)) {
+			$paymentsalary->fk_typepayment = (int) $request_data['paiementtype'];
+		}
+
+		// Payment and bank line are written together, or not at all
+		$this->db->begin();
 
 		if ($paymentsalary->create(DolibarrApiAccess::$user, 1) < 0) {
-			throw new RestException(500, 'Error creating paymentsalary', array_merge(array($paymentsalary->error), $paymentsalary->errors));
+			$this->db->rollback();
+			throw new RestException(400, 'Payment error : '.$paymentsalary->errorsToString());
 		}
 		if (isModEnabled("bank")) {
-			$paymentsalary->addPaymentToBank(
+			$result = $paymentsalary->addPaymentToBank(
 				DolibarrApiAccess::$user,
 				'payment_salary',
 				'(SalaryPayment)',
@@ -351,7 +417,14 @@ class Salaries extends DolibarrApi
 				'',
 				''
 			);
+			if ($result <= 0) {
+				$this->db->rollback();
+				throw new RestException(400, 'Add payment to bank error : '.$paymentsalary->errorsToString());
+			}
 		}
+
+		$this->db->commit();
+
 		return $paymentsalary->id;
 	}
 
@@ -390,7 +463,7 @@ class Salaries extends DolibarrApi
 		if ($paymentsalary->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $paymentsalary->error);
+			throw new RestException(500, $paymentsalary->errorsToString());
 		}
 	}
 

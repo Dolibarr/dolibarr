@@ -52,6 +52,13 @@ $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
+	$refSupplierWithThirdparty = $objectlink->ref_supplier ? dolPrintHTML($objectlink->ref_supplier).'<br>' : '';
+
+	$objectlink->fetch_thirdparty();
+
+	$refSupplierWithThirdparty = '<span class="small">'.$refSupplierWithThirdparty;
+	$refSupplierWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refSupplierWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -61,7 +68,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="tdoverflowmax125"><?php echo $langs->trans("SupplierInvoice"); ?></td>
 
 		<td><?php echo $objectlink->getNomUrl(1) ?></td>
-		<td class="left linkedcol-ref tdoverflowmax125" title="<?php echo dolPrintHTMLForAttribute($objectlink->ref_supplier); ?>"><?php echo dolPrintHTML($objectlink->ref_supplier); ?></td>
+		<td class="left linkedcol-ref tdoverflowmax125 nopaddingtopimp nopaddingbottomimp" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo $refSupplierWithThirdparty; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {

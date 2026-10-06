@@ -4,8 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,9 +138,23 @@ if (empty($reshook)) {
 	if ($action == 'saveSkill' && $permissiontoadd) {
 		$TNote = GETPOST('TNote', 'array');
 		if (!empty($TNote)) {
+			$maxrank = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
 			foreach ($object->lines as $line) {
-				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
-				$line->update($user);
+				if (!isset($TNote[$line->fk_skill])) {
+					continue; // No rank received for this skill, we keep the current one
+				}
+				$newrank = ($TNote[$line->fk_skill] == "NA" ? -1 : (int) $TNote[$line->fk_skill]);
+				if ($newrank < -1 || $newrank > $maxrank) {
+					// A rank can only be "not applicable" (-1) or a level between 0 and the maximum number of levels
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorBadValueForParameter", $TNote[$line->fk_skill], 'TNote['.$line->fk_skill.']'), null, 'errors');
+					continue;
+				}
+				$line->rankorder = $newrank;
+				$result = $line->update($user);
+				if ($result < 0) {
+					setEventMessages($line->error, $line->errors, 'errors');
+				}
 			}
 			//setEventMessage($langs->trans("SaveLevelSkill"));
 		}
@@ -152,7 +166,7 @@ if (empty($reshook)) {
 		$TNote = GETPOST('TNote', 'array');
 		$emptyTNote = true;
 		foreach ($object->lines as $line) {
-			if (!in_array($TNote[$line->fk_skill], array("0", ""))) {
+			if (!in_array((isset($TNote[$line->fk_skill]) ? $TNote[$line->fk_skill] : ''), array("0", ""))) {
 				$emptyTNote = false;
 				break;
 			}
@@ -191,7 +205,7 @@ if (empty($reshook)) {
 	$trackid = 'evaluation'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	if ($action == 'close' && $permissiontoadd) {
+	if ($action == 'close' && $permissiontoadd && $object->status == Evaluation::STATUS_VALIDATED) {	// Only a validated assessment can be closed
 		// save evaldet lines to user;
 		$sk = new SkillRank($db);
 		$SkillrecordsForActiveUser = $sk->fetchAll('ASC', 'fk_skill', 0, 0, "(fk_object:=:".((int) $object->fk_user).") AND (objecttype:=:'".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."')", 'AND');
@@ -211,24 +225,31 @@ if (empty($reshook)) {
 				}
 			} else {
 				//check if the skill is present to use it
-				$find = false;
 				$keyFind = 0;
 				foreach ($SkillrecordsForActiveUser as $k => $sr) {
 					if ($sr->fk_skill == $line->fk_skill) {
 						$keyFind = $k;
-						$find = true;
 						break;
 					}
 				}
 				//we update the skill user
-				if ($find) {
-					$updSkill = $SkillrecordsForActiveUser[$k];
+				if ($keyFind) {
+					$updSkill = $SkillrecordsForActiveUser[$keyFind];
 
 					$updSkill->rankorder = $line->rankorder;
-					$updSkill->update($user);
-				} else { // sinon on ajoute la skill
+					$result = $updSkill->update($user);
+					if ($result < 0) {
+						$errors++;
+						setEventMessages($updSkill->error, $updSkill->errors, 'errors');
+					}
+				} else { // else we create the skill
 					$newSkill = new SkillRank($db);
 					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
+
+					if ($resCreate <= 0) {
+						$errors++;
+						setEventMessage($langs->trans('ErrorCreateUserSkill', $line->fk_skill), 'errors');
+					}
 				}
 			}
 		}
@@ -238,7 +259,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'reopen' && $permissiontoadd) {
+	if ($action == 'reopen' && $permissiontoadd && $object->status == Evaluation::STATUS_CLOSED) {	// Only a closed assessment can be reopened
 		// no update here we just change the evaluation status
 		$object->setStatut(Evaluation::STATUS_VALIDATED);
 	}
@@ -253,7 +274,7 @@ if (empty($reshook)) {
 
 		$upload_dir = $conf->hrm->dir_output;
 		$file = $upload_dir.'/'.GETPOST('file');
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$ret = dol_delete_file($file, 1, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -275,17 +296,18 @@ $help_url = '';
 $css = array();
 $css[] = '/hrm/css/style.css';
 llxHeader('', $title, $help_url, '', 0, 0, '', $css);
-
-print '<script type="text/javascript" language="javascript">
+?>
+<script>
 	$(document).ready(function() {
-	  $("#btn_valid").click(function() {
-		 console.log("Click on btn_valid");
-		 var form = $("#form_save_rank");
-		 form.submit();
-		 return true;
-	   });
+		$("#btn_valid").click(function() {
+			console.log("Click on btn_valid");
+			var form = $("#form_save_rank");
+			form.submit();
+			return true;
+		});
 	});
-</script>';
+</script>
+<?php
 
 // Part to create
 if ($action == 'create') {
@@ -359,7 +381,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = evaluationPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -484,7 +506,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		$conf->modules_parts['tpl']['hrm'] = '/hrm/core/tpl/'; // Pour utilisation du tpl hrm sur cet écran
+		$conf->modules_parts['tpl']['hrm'] = '/hrm/core/tpl/'; // To use the hrm tpl on this screen
 
 		print '<div class="div-table-responsive-no-min">';
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
@@ -683,7 +705,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 
 

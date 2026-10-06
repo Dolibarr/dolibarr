@@ -16,5 +16,3 @@ OAUTH_GOOGLE_ID=ID de Google OAuth
 OAUTH_GOOGLE_SECRET=Secreto de Google OAuth
 OAUTH_GITHUB_ID=ID de GitHub de OAuth
 OAUTH_GITHUB_SECRET=Secreto de GitHub de OAuth
-OAUTH_SECRET=secreto OAuth
-OAUTH_TENANT=inquilino de OAuth

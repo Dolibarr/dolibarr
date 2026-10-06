@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,6 +78,33 @@ class Subscription extends CommonObject
 	public $datef;
 
 	/**
+	 * Alias of $dateh exposed by the REST API GET response so the same payload
+	 * can be sent back to POST /members/{id}/subscriptions without renaming
+	 * client-side. Matches the date_start / date_end naming convention used by
+	 * other Dolibarr objects. Not persisted (see issue #38279).
+	 *
+	 * @var integer
+	 */
+	public $date_start;
+
+	/**
+	 * Alias of $datef exposed by the REST API GET response (see issue #38279).
+	 * Not persisted.
+	 *
+	 * @var integer
+	 */
+	public $date_end;
+
+	/**
+	 * Public note exposed under the documented field name. Already populated by
+	 * fetch() but not declared as a real property; declared here so phpstan and
+	 * phan stop flagging the API setter as touching a dynamic property.
+	 *
+	 * @var string
+	 */
+	public $note_public;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_type;
@@ -86,6 +113,21 @@ class Subscription extends CommonObject
 	 * @var int Member ID
 	 */
 	public $fk_adherent;
+
+	/**
+	 * @var string Member first name
+	 */
+	public $member_firstname;
+
+	/**
+	 * @var string Member last name
+	 */
+	public $member_lastname;
+
+	/**
+	 * @var string Member company
+	 */
+	public $member_company;
 
 	/**
 	 * @var double amount subscription
@@ -98,7 +140,7 @@ class Subscription extends CommonObject
 	public $fk_bank;
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -177,9 +219,9 @@ class Subscription extends CommonObject
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".((float) $this->amount).",";
 		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
-		$sql .= " '".$this->db->escape($this->note_private)."',";
+		$sql .= " '".$this->db->escape((string) $this->note_private)."',";
 		$sql .= " ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'").",";
-		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : $user->id));
+		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : ((int) $user->id)));
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
 
@@ -192,6 +234,16 @@ class Subscription extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$this->fk_type = $type;
+		}
+
+		// Update the denormalized end date of subscription of the member, like update() and delete() do
+		if (!$error) {
+			$result = $member->update_end_date($user);
+			if ($result < 0) {
+				$error++;
+				$this->error = $member->error;
+				$this->errors[] = $this->error;
+			}
 		}
 
 		if (!empty($this->linkedObjectsIds) && empty($this->linked_objects)) {	// To use new linkedObjectsIds instead of old linked_objects
@@ -249,13 +301,15 @@ class Subscription extends CommonObject
 	 */
 	public function fetch($rowid)
 	{
-		$sql = "SELECT rowid, fk_type, fk_adherent, datec,";
-		$sql .= " tms,";
-		$sql .= " dateadh as dateh,";
-		$sql .= " datef,";
-		$sql .= " subscription, note as note_public, fk_bank";
-		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= " WHERE rowid = ".((int) $rowid);
+		$sql = "SELECT s.rowid, s.fk_type, s.fk_adherent, s.datec,";
+		$sql .= " s.tms,";
+		$sql .= " s.dateadh as dateh,";
+		$sql .= " s.datef,";
+		$sql .= " s.subscription, s.note as note_public, s.fk_bank,";
+		$sql .= " a.firstname as member_firstname, a.lastname as member_lastname, a.societe as member_company";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as s";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as a ON a.rowid = s.fk_adherent";
+		$sql .= " WHERE s.rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -268,6 +322,9 @@ class Subscription extends CommonObject
 
 				$this->fk_type        = $obj->fk_type;
 				$this->fk_adherent    = $obj->fk_adherent;
+				$this->member_firstname = $obj->member_firstname;
+				$this->member_lastname  = $obj->member_lastname;
+				$this->member_company   = $obj->member_company;
 				$this->datec          = $this->db->jdate($obj->datec);
 				$this->datem          = $this->db->jdate($obj->tms);
 				$this->dateh          = $this->db->jdate($obj->dateh);
@@ -440,12 +497,21 @@ class Subscription extends CommonObject
 		$result = '';
 
 		$langs->load("members");
+		$langs->load("main");
 
 		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Subscription").'</u>';
 		/*if (isset($this->statut)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}*/
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->note_public;
+		$memberName = dolGetFirstLastname($this->member_firstname, $this->member_lastname);
+		if (empty($memberName)) {
+			$memberName = $this->member_company;
+		}
+		if (!empty($memberName)) {
+			$label .= '<br><b>'.$langs->trans('Member').':</b> '.$memberName;
+		}
 		if (!empty($this->dateh)) {
 			$label .= '<br><b>'.$langs->trans('DateStart').':</b> '.dol_print_date($this->dateh, 'day');
 		}
@@ -477,6 +543,16 @@ class Subscription extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
+
+		global $action, $hookmanager;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -518,9 +594,9 @@ class Subscription extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
-		$sql .= ' WHERE c.rowid = '.((int) $id);
+		$sql = "SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as c";
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

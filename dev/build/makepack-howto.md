@@ -53,7 +53,7 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 ```
 
 
-## Actions to do a BETA
+## Actions to do a FREEZE / BETA
 
 This section describes steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
 
@@ -84,7 +84,7 @@ git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //
 
 - Recopy the content of the output file into the file ChangeLog.
   
-  Note: To know number of lines changes: git diff --shortstat A B
+  Note: To know number of changed lines: git diff --shortstat A B
   
 - Update version number with x.y.z-w in file htdocs/filefunc.inc.php
 

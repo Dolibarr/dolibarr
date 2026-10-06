@@ -23,6 +23,8 @@
  * @var DoliDB $db
  * @var Form $form
  * @var Translate $langs
+ * @var Conf $conf
+ *
  * @var string $search_user
  * @var string $search_entity
  * @var string $search_datec_start
@@ -62,7 +64,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre_filter">';
 
 // Action buttons
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -110,7 +112,7 @@ if (!empty($arrayfields['oat.tms']['checked'])) {
 }
 
 // Action buttons
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -120,7 +122,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>";
 
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<th class="wrapcolumntitle center maxwidthsearch liste_titre">';
 	print $form->showCheckAddButtons('checkforselect', 1);
 	print '</th>';
@@ -137,7 +139,7 @@ if (!empty($arrayfields['oat.datec']['checked'])) {
 if (!empty($arrayfields['oat.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['oat.tms']['label'], $_SERVER["PHP_SELF"], 'oat.tms', '', $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<th class="wrapcolumntitle center maxwidthsearch liste_titre">';
 	print $form->showCheckAddButtons('checkforselect', 1);
 	print '</th>';
@@ -173,7 +175,7 @@ if ($num > 0) {
 
 		print '<tr class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -205,7 +207,7 @@ if ($num > 0) {
 		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_modification), 'dayhour');
 		print '</td>';
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {
 				$selected = 0;

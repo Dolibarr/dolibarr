@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2018  Charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -45,7 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -197,9 +196,12 @@ class pdf_beluga extends ModelePDFProjects
 	 *	@param	Project		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails			Do not show line details
+	 *  @param	int<0,1>	$hidedesc				Do not show desc
+	 *  @param	int<0,1>	$hideref				Do not show ref
 	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath = '')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
@@ -288,7 +290,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Project"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -411,16 +413,6 @@ class pdf_beluga extends ModelePDFProjects
 						'disableamount' => 1,
 						'test' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
 						'lang' => 'interventions'),
-					'trip' => array(
-						'name' => "TripsAndExpenses",
-						'title' => "ListExpenseReportsAssociatedProject",
-						'class' => 'Deplacement',
-						'table' => 'deplacement',
-						'datefieldname' => 'dated',
-						'margin' => 'minus',
-						'disableamount' => 1,
-						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire'),
-						'lang' => 'trip'),
 					'expensereport' => array(
 						'name' => "ExpensesReports",
 						'title' => "ListExpenseReportsAssociatedProject",
@@ -465,7 +457,7 @@ class pdf_beluga extends ModelePDFProjects
 					}
 
 					//var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, 0, 0, $projectField);
+					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, null, null, $projectField);
 
 					$num = is_array($elementarray) ? count($elementarray) : $elementarray;
 					if ($num >= 0) {
@@ -546,7 +538,7 @@ class pdf_beluga extends ModelePDFProjects
 								$pdf->startTransaction();
 								// Label
 								$pdf->SetXY($this->posxref, $curY);
-								$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+								$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 								$pageposafter = $pdf->getPage();
 								if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 									$pdf->rollbackTransaction(true);
@@ -556,7 +548,7 @@ class pdf_beluga extends ModelePDFProjects
 									// Label
 									$pdf->SetXY($this->posxref, $curY);
 									$posybefore = $pdf->GetY();
-									$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+									$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 									$pageposafter = $pdf->getPage();
 									$posyafter = $pdf->GetY();
 									if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -604,7 +596,7 @@ class pdf_beluga extends ModelePDFProjects
 											// Label
 											$pdf->SetXY($this->posxref, $curY);
 											$posybefore = $pdf->GetY();
-											$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+											$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 											$pageposafter = $pdf->getPage();
 											$posyafter = $pdf->GetY();
 										}
@@ -670,7 +662,7 @@ class pdf_beluga extends ModelePDFProjects
 								} else {
 									$pdf->SetXY($this->posxamountht, $curY);
 									if ($key == 'agenda') {
-										$textforamount = dol_trunc($element->label, 26);
+										$textforamount = pdf_truncate_text($pdf, $element->label, 26);
 										$pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, $textforamount, 1, 'L');
 									} else {
 										$pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
@@ -791,7 +783,7 @@ class pdf_beluga extends ModelePDFProjects
 		// Draw rect of all tab (title + lines). Rect takes a length in 3rd parameter
 		$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, '1234', 'D');
 
-		// line prend une position y en 3eme param
+		// line takes a y position as the 3rd param
 		$pdf->line($this->marge_gauche, $tab_top + $heightoftitleline, $this->page_largeur - $this->marge_droite, $tab_top + $heightoftitleline);
 
 		$pdf->SetTextColor(0, 0, 0);

@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2013-2017	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2017	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -38,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
 
 /**
  * @var Conf $conf
@@ -57,7 +59,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $type = GETPOST('type', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 if (empty($backtopage)) {
-	$backtopage = '/accountancy/bookkeeping/list.php';
+	$backtopage = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php';
 }
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -268,6 +270,7 @@ if (empty($reshook)) {
 
 			$action = 'create';
 		} elseif ($result > 0) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -284,6 +287,12 @@ if (empty($reshook)) {
 		}
 		if (!GETPOST('doc_ref', 'alpha')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Piece")), null, 'errors');
+			$action = 'create';
+			$error++;
+		}
+		if (dol_strlen(GETPOST('ref', 'alpha')) > 30) {	// Size of field ref in database
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 			$action = 'create';
 			$error++;
 		}
@@ -313,14 +322,79 @@ if (empty($reshook)) {
 
 				$action = 'create';
 			} else {
-				$reshook = $hookmanager->executeHooks('afterCreateBookkeeping', $parameters, $object, $action);
+				// Transaction created successfully
+				$piece_num = $object->piece_num;
 
-				if ($mode != '_tmp') {
-					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				// Check if a template was selected
+				$template_id = GETPOSTINT('template_id');
+
+				if ($template_id > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
+
+					$template = new BookkeepingTemplate($db);
+					$result_template = $template->fetch($template_id);
+
+					if ($result_template > 0 && !empty($template->lines)) {
+						$db->begin();
+						$error_template = 0;
+
+						foreach ($template->lines as $templateline) {
+							$bookkeeping = new BookKeeping($db);
+
+							// Set common fields from the form
+							$bookkeeping->doc_date = $date_start;
+							$bookkeeping->doc_type = GETPOST('doctype', 'alpha');
+							$bookkeeping->piece_num = $piece_num;
+							$bookkeeping->doc_ref = GETPOST('docref', 'alpha');
+							$bookkeeping->code_journal = $journal_code;
+							$bookkeeping->journal_label = $journal_label;
+							$bookkeeping->fk_doc = 0;
+							$bookkeeping->fk_docdet = 0;
+							$bookkeeping->ref = GETPOST('ref', 'alpha') ? GETPOST('ref', 'alpha') : $object->ref;
+
+							// Set fields from template line
+							$bookkeeping->numero_compte = $templateline->general_account;
+							$bookkeeping->label_compte = $templateline->general_label;
+							$bookkeeping->subledger_account = $templateline->subledger_account;
+							$bookkeeping->subledger_label = $templateline->subledger_label;
+							$bookkeeping->label_operation = $templateline->operation_label;
+							$bookkeeping->debit = (float) $templateline->debit;
+							$bookkeeping->credit = (float) $templateline->credit;
+
+							// Backward compatibility
+							if ((float) $bookkeeping->debit != 0.0) {
+								$bookkeeping->montant = $bookkeeping->debit;
+								$bookkeeping->amount = $bookkeeping->debit;
+								$bookkeeping->sens = 'D';
+							}
+							if ((float) $bookkeeping->credit != 0.0) {
+								$bookkeeping->montant = $bookkeeping->credit;
+								$bookkeeping->amount = $bookkeeping->credit;
+								$bookkeeping->sens = 'C';
+							}
+
+							$result_line = $bookkeeping->createStd($user, 0, '_tmp');
+
+							if ($result_line < 0) {
+								$error_template++;
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+								break;
+							}
+						}
+
+						if (!$error_template) {
+							$db->commit();
+							setEventMessages($langs->trans('TemplateLinesLoaded', count($template->lines)), null, 'mesgs');
+						} else {
+							$db->rollback();
+						}
+					}
 				}
-				$action = '';
-				$id = $object->id;
-				$piece_num = (int) $object->piece_num;
+
+				// Redirect to the transaction
+				header("Location: ".$_SERVER["PHP_SELF"]."?piece_num=".$piece_num."&mode=_tmp");
+				exit;
 			}
 		}
 	}
@@ -366,7 +440,14 @@ if (empty($reshook)) {
 
 	if ($action == 'setref' && $permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
 		$newref = GETPOST('ref', 'alpha');
-		$result = $object->updateByMvt($piece_num, 'ref', $newref, $mode);
+		if (dol_strlen($newref) > 30) {	// Size of field ref in database
+			$langs->load('errors');
+			$result = -1;
+			$object->error = $langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Ref"));
+			$object->errors = array();
+		} else {
+			$result = $object->updateByMvt($piece_num, 'ref', $newref, $mode);
+		}
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -383,7 +464,19 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			header("Location: " . $backtopage . "?sortfield=t.piece_num&sortorder=asc" . ($type ? '&type='.$type : ''));
+			// Retrieve the actual final part number (not the temporary number)
+			$piece_num = $object->piece_num;
+
+			$linkEntry = '<a href="'.$_SERVER["PHP_SELF"].'?piece_num='.(int) $piece_num.'">'.$langs->trans('NumMvts').': '.(int) $piece_num.'</a>';
+			setEventMessages($langs->trans('RecordSaved').' - '.$linkEntry, null, 'mesgs', '', 1);
+
+			if (getDolGlobalInt('ACCOUNTANCY_VALID_REDIRECT_TO_CARD')) {
+				// Redirection to the validated entry record
+				header("Location: ".$_SERVER["PHP_SELF"]."?piece_num=".(int) $piece_num);
+			} else {
+				// Default behavior: return on journal view
+				header("Location: ".$backtopage."?sortfield=t.piece_num&sortorder=asc".($type ? '&type='.$type : ''));
+			}
 			exit;
 		}
 	}
@@ -464,6 +557,7 @@ if (empty($reshook)) {
 
 		if ($result == -1) {
 			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		if (!$error) {
@@ -501,13 +595,29 @@ if (!empty($conf->use_javascript_ajax)) {
 	print "\n" . '<script type="text/javascript">';
 	print '$(document).ready(function () {
 			function toggleSubledger() {
-				var isCentral = $("#accountingaccount_number option:selected").data("centralized");
-				console.log("the selected general ledger account is centralised?", isCentral);
-				if (isCentral) {
-					$("#subledger_account, #subledger_label").prop("disabled", false);
-				} else {
-					$("#subledger_account, #subledger_label").prop("disabled", true);
-				}
+			    var isCentral = $("#accountingaccount_number option:selected").data("centralized");
+			    console.log("the selected general ledger account is centralised?", isCentral);
+
+			    var isAjaxMode = $("#search_subledger_account").length > 0;
+			    var $visibleSubledger = isAjaxMode
+			        ? $("#search_subledger_account")
+			        : $("#subledger_account");
+
+			    if (isCentral) {
+			        $visibleSubledger.prop("disabled", false);
+			        if (!isAjaxMode) {
+			            $("#subledger_account").prop("disabled", false).trigger("change");
+			        }
+			        $("#subledger_label").prop("disabled", false);
+			    } else {
+			        $visibleSubledger.prop("disabled", true).val("");
+			        if (!isAjaxMode) {
+			            $("#subledger_account").val("").prop("disabled", true).trigger("change");
+			        } else {
+			            $("#subledger_account").val("");
+			        }
+			        $("#subledger_label").val("").prop("disabled", true);
+			    }
 			}
 
 			toggleSubledger();
@@ -566,19 +676,51 @@ if ($action == 'create') {
 	print '<td>'.$form->textwithpicto($langs->trans("Ref"), $langs->trans("BankTransactionRef")).'</td>';
 	print '<td>';
 	if ($numRefModel === 'mod_bookkeeping_neon') {
-		print '<input type="text" class="minwidth200" name="ref" value="">';
+		print '<input type="text" class="minwidth200" name="ref" maxlength="30" value="">';
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("Automatic").'</span>';
 	}
 	print '</td>';
+
+	// Template
+	print '<tr>';
+	print '<td>'.$langs->trans("BookkeepingTemplate").'</td>';
+	print '<td>';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+
+	$sql = "SELECT rowid, code, label";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_transaction_template";
+	$sql .= " WHERE entity IN (".getEntity('accounting').")";
+	$sql .= " ORDER BY code ASC";
+
+	$resql = $db->query($sql);
+	$templates = array();
+
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			$templates[$obj->rowid] = $obj->code.' - '.$obj->label;
+			$i++;
+		}
+		$db->free($resql);
+	}
+
+	if (count($templates) > 0) {
+		print '<select class="flat minwidth300" name="template_id" id="template_id">';
+		print '<option value=""></option>';
+		foreach ($templates as $key => $label) {
+			print '<option value="'.$key.'">'.dol_escape_htmltag($label).'</option>';
+		}
+		print '</select>';
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("NoTemplateAvailable").'</span>';
+	}
+
+	print '</td>';
 	print '</tr>';
 
-	/*
-	print '<tr>';
-	print '<td>' . $langs->trans("Doctype") . '</td>';
-	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
-	print '</tr>';
-	*/
 	$reshookAddLine = $hookmanager->executeHooks('bookkeepingAddLine', $parameters, $object, $action);
 
 	print '</table>';
@@ -702,7 +844,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print '<input type="hidden" name="type" value="'.$type.'">';
-			print '<input type="text" size="20" name="ref" value="'.dol_escape_htmltag($object->ref).'">';
+			print '<input type="text" size="20" name="ref" maxlength="30" value="'.dol_escape_htmltag($object->ref).'">';
 			print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -990,11 +1132,11 @@ if ($action == 'create') {
 				if (empty($reshook)) {
 					if ($permissiontodelete) {
 						if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
-							print dolGetButtonAction('', $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete);
+							print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 						}
 					}
 					if ($permissiontoadd) {
-						print dolGetButtonAction('', $langs->trans('Clone'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token=' . newToken() . '&piece_num=' . ((int) $object->piece_num) . '&toselect=' . implode(',', $tmptoselect), 'action-clone', $permissiontoadd);
+						print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token=' . newToken() . '&piece_num=' . ((int) $object->piece_num) . '&toselect=' . implode(',', $tmptoselect), 'action-clone', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 					}
 				}
 
@@ -1064,15 +1206,7 @@ if ($action == 'create') {
 						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 						print '</td>';
 						print '<td>';
-						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-						// - It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-						// - Also, it is not possible to use a value that is not in the list.
-						// - Also, the label is not automatically filled when a value is selected.
-						if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
-						} else {
-							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
-						}
+						print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						// Add also input for subledger label
 						print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
@@ -1092,15 +1226,7 @@ if ($action == 'create') {
 							print $formaccounting->select_account($action == 'add' ? GETPOST('accountingaccount_number') : '', 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 							print '</td>';
 							print '<td>';
-							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-							// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-							// Also, it is not possible to use a value that is not in the list.
-							// Also, the label is not automatically filled when a value is selected.
-							if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
-							} else {
-								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
-							}
+							print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 							print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 							print '</td>';
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . dol_escape_htmltag($label_operation) . '"/></td>';

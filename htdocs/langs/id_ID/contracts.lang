@@ -103,7 +103,13 @@ ConfirmCloneContract=Apakah Anda yakin ingin mengkloning kontrak<b>%s </b>?
 LowerDateEndPlannedShort=Tanggal akhir yang direncanakan lebih rendah dari layanan aktif
 SendContractRef=Informasi kontrak __REF__
 OtherContracts=Kontrak lainnya
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Kontrak penandatanganan perwakilan penjualan
 TypeContact_contrat_internal_SALESREPFOLL=Perwakilan kontrak tindak lanjut perwakilan penjualan
 TypeContact_contrat_external_BILLING=Menagih kontak pelanggan

@@ -103,7 +103,13 @@ ConfirmCloneContract=Сигурни ли сте, че искате да клон
 LowerDateEndPlannedShort=По-ранна планирана крайна дата на активни услуги
 SendContractRef=Информация за договор __REF__
 OtherContracts=Други договори
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Търговски представител (подписващ)
 TypeContact_contrat_internal_SALESREPFOLL=Търговски представител (проследяващ)
 TypeContact_contrat_external_BILLING=Контакт на клиента за фактуриране

@@ -234,3 +234,5 @@ UPDATE llx_menu SET url = CONCAT(url, '&mode=init') WHERE fk_mainmenu = 'ticket'
 
 -- VMYSQL4.1 ALTER TABLE llx_asset_depreciation_options_economic MODIFY COLUMN accelerated_depreciation_option boolean DEFAULT false;
 -- VPGSQL8.2 ALTER TABLE llx_asset ALTER COLUMN llx_asset_depreciation_options_economic DROP DEFAULT, ALTER COLUMN llx_asset_depreciation_options_economic TYPE boolean USING llx_asset_depreciation_options_economic::integer <> 0, ALTER COLUMN llx_asset_depreciation_options_economic SET DEFAULT false;
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);

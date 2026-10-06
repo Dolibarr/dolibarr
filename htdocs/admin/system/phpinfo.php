@@ -23,14 +23,11 @@
 
 /**
  *      \file       htdocs/admin/system/phpinfo.php
- *		\brief      Page des infos systeme de php
+ *		\brief      Page of PHP system information
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,8 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->loadLangs(array("admin", "install", "errors"));
+$langs->loadLangs(array("admin", "install"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -53,10 +52,7 @@ if (!$user->admin) {
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_phpinfo');
 
 $title = 'InfoPHP';
-
-if (isset($title)) {
-	print load_fiche_titre($langs->trans($title), '', 'title_setup');
-}
+print load_fiche_titre($langs->trans($title), '', 'title_setup');
 
 
 // Check PHP setup is OK
@@ -138,6 +134,7 @@ print '</td></tr>';
 
 print '<tr><td>UTF-8 support</td><td>';
 if (!function_exists("utf8_encode")) {
+	$langs->load('errors');
 	print img_picto('Warning', 'warning').' '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
 } else {
 	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupport", "UTF8");
@@ -156,6 +153,16 @@ print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Extension").'</td>';
 print '<td>'.$langs->trans("Test").'</td>';
 print '</tr>';
+
+if ($db->type == 'mysqli') {
+	$functions = ["mysqli_connect"];
+	$name      = "MySQLi";
+
+	print "<tr>";
+	print "<td>".$name."</td>";
+	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+	print "</tr>";
+}
 
 $functions = ["mb_check_encoding"];
 $name      = "MBString";
@@ -390,6 +397,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 		} else {
 			//$html .= ' '.$langs->trans("NotLoaded").' - ';
 		}
+		$langs->load('errors');
 		$html .= ' '.$langs->trans("ErrorPHPDoesNotSupport", $name);
 		if ($optional) {
 			$html .= ' <span class="opacitymedium">'.$optional.'</span>';

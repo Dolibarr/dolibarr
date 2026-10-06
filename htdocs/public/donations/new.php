@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
@@ -85,7 +85,7 @@ $error = 0;
  */
 
 // Load translation files
-$langs->loadLangs(array("main", "donations", "companies", "install", "other", "errors"));
+$langs->loadLangs(array("main", "donations", "companies", "install", "other"));
 
 // Security check
 if (!isModEnabled('don')) {
@@ -150,9 +150,10 @@ if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -296,6 +297,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 			$error++;
+			$langs->load('errors');
 			$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
 			array_push($donation->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 		}

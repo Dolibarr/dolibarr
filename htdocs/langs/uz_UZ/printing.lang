@@ -46,6 +46,10 @@ IPP_Color=Rang
 IPP_Device=Qurilma
 IPP_Media=Printer media
 IPP_Supported=Ommaviy axborot vositalarining turi
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=None
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=Ushbu sahifada mavjud printerlar uchun topilgan chop etish ishlari ro'yxati keltirilgan.
 GoogleAuthNotConfigured=Google OAuth o'rnatilmagan. OAuth modulini yoqing va Google ID / Secretni o'rnating.
 GoogleAuthConfigured=Google OAuth hisob ma'lumotlari OAuth modulini o'rnatishda topildi.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Google Cloud Print drayverini chop etish uchun konfig
 PrintingDriverDescprintipp=Drayv kuboglarini bosib chiqarish uchun konfiguratsiya o'zgaruvchilari.
 PrintTestDescprintgcp=Google Cloud Print uchun printerlar ro'yxati.
 PrintTestDescprintipp=Kuboklar uchun printerlar ro'yxati.
-Testbbbb
+PrinterLocation=Printer location

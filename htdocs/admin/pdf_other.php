@@ -255,12 +255,12 @@ $tooltipconcatpdf = ($maxfilesizearray['maxmin'] > 0) ? $langs->trans('MaxSize')
 $documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php');
 
 
-print '<form enctype="multipart/form-data" method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form enctype="multipart/form-data" method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 if (isModEnabled('propal')) {
-	print '<div id="proposal" class="undertopmenu"></div>';
+	print '<div id="proposal" class="anchorundermenu"></div>';
 
 	print load_fiche_titre($langs->trans("Proposal"), '', 'proposal');
 	print '<div class="div-table-responsive-no-min">';
@@ -350,7 +350,7 @@ if (isModEnabled('propal')) {
 }
 
 if (isModEnabled('order')) {
-	print '<div id="order" class="undertopmenu"></div>';
+	print '<div id="order" class="anchorundermenu"></div>';
 
 	$langs->load("orders");
 	print load_fiche_titre($langs->trans('CustomersOrders'), '', 'order');
@@ -430,7 +430,7 @@ if (isModEnabled('order')) {
 }
 
 if (isModEnabled('contract')) {
-	print '<div id="contrat" class="undertopmenu"></div>';
+	print '<div id="contrat" class="anchorundermenu"></div>';
 
 	print load_fiche_titre($langs->trans("Contract"), '', 'contract');
 	print '<div class="div-table-responsive-no-min">';
@@ -474,7 +474,7 @@ if (isModEnabled('contract')) {
 
 
 if (isModEnabled('invoice')) {
-	print '<div id="invoice" class="undertopmenu"></div>';
+	print '<div id="invoice" class="anchorundermenu"></div>';
 
 	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
 

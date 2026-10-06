@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2020       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ class Workstation extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -90,7 +90,7 @@ class Workstation extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -161,6 +161,15 @@ class Workstation extends CommonObject
 	 */
 	public $thm_machine_estimated;
 
+	/**
+	 * @var array<string,array{name:string,fk_element:string,enabled?:string}>	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array(
+		'product' => array('name' => 'Product', 'fk_element' => 'fk_default_workstation'),
+		'bom_bomline' => array('name' => 'BOM', 'fk_element' => 'fk_default_workstation', 'enabled' => 'isModEnabled("bom")'),
+		'mrp_production' => array('name' => 'ManufacturingOrder', 'fk_element' => 'fk_default_workstation', 'enabled' => 'isModEnabled("mrp")'),
+	);
+
 	// END MODULEBUILDER PROPERTIES
 
 	/**
@@ -172,6 +181,16 @@ class Workstation extends CommonObject
 	 * @var int[] array of ID
 	 */
 	public $usergroups;
+
+	/**
+	 * @var string Name of the field, in the child tables, that holds the id of the workstation
+	 */
+	public $fk_element = 'fk_workstation';
+
+	/**
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade = array('workstation_workstation_usergroup', 'workstation_workstation_resource');
 
 	/**
 	 * Constructor
@@ -225,39 +244,67 @@ class Workstation extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $db;
-
-		$id = $this->createCommon($user, $notrigger);
+		$error = 0;
 
 		// Usergroups
 		$groups = GETPOST('groups', 'array:int');	// FIXME We should not GETPOST but receive array as parameter
 		if (empty($groups)) {
 			$groups = $this->usergroups; // createFromClone
 		}
-		if (!empty($groups)) {
-			foreach ($groups as $id_group) {
-				$ws_usergroup = new WorkstationUserGroup($db);
-				$ws_usergroup->fk_workstation = $id;
-				$ws_usergroup->fk_usergroup = $id_group;
-				$ws_usergroup->createCommon($user);
-				$this->usergroups[] = $id_group;
-			}
-		}
+		$groups = is_array($groups) ? array_unique(array_map('intval', $groups)) : array();
 
 		// Resources
 		$resources = GETPOST('resources', 'array:int');	// FIXME We should not GETPOST but receive array as parameter
 		if (empty($resources)) {
 			$resources = $this->resources; // createFromClone
 		}
-		if (!empty($resources)) {
+		$resources = is_array($resources) ? array_unique(array_map('intval', $resources)) : array();
+
+		$this->db->begin();
+
+		$id = $this->createCommon($user, $notrigger);
+		if ($id <= 0) {
+			// Nothing to link to a workstation that was not created
+			$this->db->rollback();
+			return $id;
+		}
+
+		$this->usergroups = array();
+		foreach ($groups as $id_group) {
+			$ws_usergroup = new WorkstationUserGroup($this->db);
+			$ws_usergroup->fk_workstation = $id;
+			$ws_usergroup->fk_usergroup = $id_group;
+			if ($ws_usergroup->createCommon($user) <= 0) {
+				$error++;
+				$this->error = $ws_usergroup->error;
+				$this->errors = array_merge($this->errors, $ws_usergroup->errors);
+				break;
+			}
+			$this->usergroups[] = $id_group;
+		}
+
+		$this->resources = array();
+		if (!$error) {
 			foreach ($resources as $id_resource) {
-				$ws_resource = new WorkstationResource($db);
+				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $id;
 				$ws_resource->fk_resource = $id_resource;
-				$ws_resource->createCommon($user);
+				if ($ws_resource->createCommon($user) <= 0) {
+					$error++;
+					$this->error = $ws_resource->error;
+					$this->errors = array_merge($this->errors, $ws_resource->errors);
+					break;
+				}
 				$this->resources[] = $id_resource;
 			}
 		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
 
 		return $id;
 	}
@@ -453,25 +500,30 @@ class Workstation extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
+		// The user groups and the resources to save are the ones of the object (loaded by fetch() and changed by the
+		// caller if needed), not the ones of a form: an update done from anywhere else than the card must keep them.
 
 		// Usergroups
-		$groups = GETPOST('groups', 'array:int');
-		WorkstationUserGroup::deleteAllGroupsOfWorkstation($this->id);
-		$this->usergroups = array();
+		if (is_array($this->usergroups)) {
+			$groups = array_unique(array_map('intval', $this->usergroups));
+			WorkstationUserGroup::deleteAllGroupsOfWorkstation($this->id);
+			$this->usergroups = array();
 
-		foreach ($groups as $id_group) {
-			$ws_usergroup = new WorkstationUserGroup($this->db);
-			$ws_usergroup->fk_workstation = $this->id;
-			$ws_usergroup->fk_usergroup = (int) $id_group;
-			$ws_usergroup->createCommon($user);
-			$this->usergroups[] = $id_group;
+			foreach ($groups as $id_group) {
+				$ws_usergroup = new WorkstationUserGroup($this->db);
+				$ws_usergroup->fk_workstation = $this->id;
+				$ws_usergroup->fk_usergroup = (int) $id_group;
+				$ws_usergroup->createCommon($user);
+				$this->usergroups[] = $id_group;
+			}
 		}
 
 		// Resources
-		$resources = GETPOST('resources', 'array:int');
-		WorkstationResource::deleteAllResourcesOfWorkstation($this->id);
-		$this->resources = array();
-		if (!empty($resources)) {
+		if (is_array($this->resources)) {
+			$resources = array_unique(array_map('intval', $this->resources));
+			WorkstationResource::deleteAllResourcesOfWorkstation($this->id);
+			$this->resources = array();
+
 			foreach ($resources as $id_resource) {
 				$ws_resource = new WorkstationResource($this->db);
 				$ws_resource->fk_workstation = $this->id;
@@ -493,6 +545,11 @@ class Workstation extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		global $langs;
+
+		// Labels of the objects that can prevent the deletion (see $childtables)
+		$langs->loadLangs(array('products', 'mrp'));
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
@@ -617,7 +674,8 @@ class Workstation extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = dol_buildpath('/workstation/workstation_card.php', 1).'?id='.$this->id;
+		$baseurl = DOL_URL_ROOT . '/workstation/workstation_card.php';
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -626,9 +684,10 @@ class Workstation extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -663,7 +722,7 @@ class Workstation extends CommonObject
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
@@ -780,7 +839,7 @@ class Workstation extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, tef.tms) as datem,';
+		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, COALESCE(tef.tms, t.tms)) as datem,';
 		$sql .= ' t.fk_user_creat, t.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_extrafields as tef ON tef.fk_object=t.rowid';

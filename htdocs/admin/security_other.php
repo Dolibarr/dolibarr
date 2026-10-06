@@ -76,11 +76,8 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$res4 = 1;
 	$res5 = 1;
 	$res6 = 1;
-	if (GETPOSTISSET('MAIN_APPLICATION_TITLE')) {
-		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	}
 	if (GETPOSTISSET('MAIN_SESSION_TIMEOUT')) {
-		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", max(120, min(3600 * 24, GETPOSTINT("MAIN_SESSION_TIMEOUT"))), 'chaine', 0, '', $conf->entity);	// Between 120 and 86400
 	}
 	if (GETPOSTISSET('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT')) {
 		$res3 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", GETPOST("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 'alphanohtml'), 'int', 0, '', $conf->entity);
@@ -112,12 +109,11 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', '
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("MiscellaneousDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("MiscellaneousDesc")."</div>\n";
 
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 
@@ -206,7 +202,7 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("MaxNumberOfFailedAuth").'</td><td class="right">';
+print '<td>'.$form->textwithpicto($langs->trans("MaxNumberOfFailedAuth"), $langs->trans("MaxNumberOfFailedAuthHelp", 'USER_LOGIN_FAILED', $langs->transnoentitiesnoconv("Audit"))).'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat right width50" name="MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 100).'"> '.$langs->trans("FailedAuth");

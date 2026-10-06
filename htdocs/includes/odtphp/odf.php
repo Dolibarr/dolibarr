@@ -99,7 +99,7 @@ class Odf
 	 * Class constructor
 	 *
 	 * @param string $filename     The name of the odt file
-	 * @param array $config       Array of config data
+	 * @param array $config        Array of config data
 	 * @throws OdfException
 	 */
 	public function __construct($filename, $config = array())
@@ -121,6 +121,10 @@ class Odf
 		$this->tmpfile = $this->tmpdir.'/'.$md5uniqid.'.odt';	// We keep .odt extension to allow OpenOffice usage during debug.
 
 		// A working directory is required for some zip proxy like PclZipProxy
+		if (in_array($this->config['ZIP_PROXY'], array('PclZipProxy')) && ! is_dir($this->config['PATH_TO_TMP'])) {
+			$result = mkdir($this->config['PATH_TO_TMP']);
+		}
+		// Check the dir has been created
 		if (in_array($this->config['ZIP_PROXY'], array('PclZipProxy')) && ! is_dir($this->config['PATH_TO_TMP'])) {
 			throw new OdfException('Temporary directory '.$this->config['PATH_TO_TMP'].' must exists');
 		}
@@ -901,7 +905,17 @@ IMG;
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			// By default LibreOffice exports a plain PDF. If MAIN_ODT_AS_PDFA is set to
+			// 1, 2 or 3, ask LibreOffice for a PDF/A archival format through the
+			// SelectPdfVersion export filter (1 = PDF/A-1b, 2 = PDF/A-2b, 3 = PDF/A-3b).
+			// PDF/A is suited for long term archival and is the required base format for
+			// electronic invoicing (for example Factur-X needs a PDF/A-3 file).
+			$converttarget = 'pdf';
+			$pdfaversion = getDolGlobalInt('MAIN_ODT_AS_PDFA');
+			if ($pdfaversion >= 1 && $pdfaversion <= 3) {
+				$converttarget = 'pdf:writer_pdf_Export:{"SelectPdfVersion":{"type":"long","value":"'.$pdfaversion.'"}}';
+			}
+			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to '.escapeshellarg($converttarget).' --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// This feature is now disabled by default. Must set var in conf.php to allow it.
 			global $dolibarr_main_allow_unoconv;
@@ -957,19 +971,32 @@ IMG;
 		// $result = $utils->executeCLI($command, $outputfile);  and replace test on $execmethod.
 		// $retval will be $result['result']
 		// $errorstring will be $result['output']
+
+		// Protect parentheses from being double-escaped by escapeshellcmd().
+		// The $command is already built with escapeshellarg() for all arguments,
+		// but escapeshellcmd() escapes parentheses inside quoted strings, breaking
+		// filenames like "(PROV35)_invoice.odt" for draft invoices.
+		// Security: reject if placeholder strings already exist to prevent injection.
+		if (strpos($command, '__PARENTHESIS_OPEN__') !== false || strpos($command, '__PARENTHESIS_CLOSE__') !== false) {
+			dol_syslog(get_class($this).'::exportAsAttachedPDF Invalid characters in command path: '.$command, LOG_WARNING);
+			throw new OdfException('Invalid characters in command path');
+		}
+		$commandprotected = str_replace(array('(', ')'), array('__PARENTHESIS_OPEN__', '__PARENTHESIS_CLOSE__'), $command);
+		$commandescaped = escapeshellcmd($commandprotected);
+		$commandescapedtoexec = str_replace(array('__PARENTHESIS_OPEN__', '__PARENTHESIS_CLOSE__'), array('(', ')'), $commandescaped);
+
 		$retval=0; $output_arr=array();
 		if ($execmethod == 1) {
-			exec(escapeshellcmd($command), $output_arr, $retval);
-		}
-		if ($execmethod == 2) {
+			exec($commandescapedtoexec, $output_arr, $retval);
+		} elseif ($execmethod == 2) {
 			$outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
 
 			$handle = fopen($outputfile, 'w');
 			if ($handle) {
 				dol_syslog(get_class($this)."Run command ".$command, LOG_DEBUG);
-				dol_syslog(get_class($this)."escapeshellcmd(command) = ".escapeshellcmd($command), LOG_DEBUG);
+				dol_syslog(get_class($this)."escapeshellcmd(command) = ".$commandescapedtoexec, LOG_DEBUG);
 				fwrite($handle, $command."\n");
-				$handlein = popen(escapeshellcmd($command), 'r');
+				$handlein = popen($commandescapedtoexec, 'r');
 				while (!feof($handlein)) {
 					$read = fgets($handlein);
 					fwrite($handle, $read);
@@ -1006,7 +1033,7 @@ IMG;
 			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
-			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.formatLogObject($output_arr), LOG_DEBUG);
 
 			if ($retval == 126) {
 				throw new OdfException('Permission execute convert script : ' . $command);

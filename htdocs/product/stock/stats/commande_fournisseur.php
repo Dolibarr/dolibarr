@@ -129,7 +129,6 @@ if ($id > 0 || !empty($ref)) {
 
 	if ($result > 0) {
 		$head = productlot_prepare_head($object);
-		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = 'lot';
 		$morehtmlref = '';
 		print dol_get_fiche_head($head, 'referers', $langs->trans("Batch"), -1, $object->picto);
@@ -327,10 +326,6 @@ if ($id > 0 || !empty($ref)) {
 				if ($num > 0) {
 					while ($i < min($num, $limit)) {
 						$objp = $db->fetch_object($result);
-
-						if ($objp->type == Facture::TYPE_CREDIT_NOTE) {
-							$objp->qty = -($objp->qty);
-						}
 
 						//                      $total_ht_pondere += $objp->total_ht_pondere;
 						$total_qty += $objp->qty;

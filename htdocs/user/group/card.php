@@ -33,6 +33,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -40,7 +41,6 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
@@ -74,7 +74,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $userid = GETPOSTINT('user');
 
 $object = new UserGroup($db);
-$extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -124,11 +124,16 @@ if (empty($reshook)) {
 	}
 
 	// Action remove group
-	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoedit) {
+	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodisable) {
 		$object->fetch($id);
-		$object->delete($user);
-		header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
-		exit;
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		$result = $object->delete($user);
+		if ($result > 0) {
+			header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Action add group
@@ -185,10 +190,10 @@ if (empty($reshook)) {
 			$edituser = new User($db);
 			$edituser->fetch($userid);
 			if ($action == 'adduser') {		// Test on permission already done
-				$result = $edituser->SetInGroup($object->id, $object->entity);
+				$result = $edituser->setInGroup($object->id, $object->entity);
 			}
 			if ($action == 'removeuser') {	// Test on permission already done
-				$result = $edituser->RemoveFromGroup($object->id, $object->entity);
+				$result = $edituser->removeFromGroup($object->id, $object->entity);
 			}
 
 			if ($result > 0) {
@@ -209,9 +214,12 @@ if (empty($reshook)) {
 		$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$object->name = GETPOST("nom", 'alphanohtml');
+
 		$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+		$object->note_private = $object->note;
+
 		$object->color = GETPOST("color", 'alphanohtml');
-		$object->tms = dol_now();
+		$object->date_modification = dol_now();
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -310,17 +318,12 @@ if ($action == 'create') {
 
 	print "</form>";
 } else {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Visu et edition                                                            */
-	/*                                                                            */
-	/* ************************************************************************** */
 	if ($id) {
 		$head = group_prepare_head($object);
 		$title = $langs->trans("Group");
 
 		/*
-		 * Confirmation suppression
+		 * Deletion confirmation
 		 */
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("DeleteAGroup"), $langs->trans("ConfirmDeleteGroup", $object->name), "confirm_delete", '', 0, 1);
@@ -476,7 +479,7 @@ if ($action == 'create') {
 						print '<td>'.$useringroup->firstname.'</td>';
 						print '<td class="center">'.$useringroup->getLibStatut(5).'</td>';
 						print '<td class="right">';
-						if (!empty($user->admin)) {
+						if ($permissiontoedit) {
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=removeuser&token='.newToken().'&user='.$useringroup->id.'">';
 							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';

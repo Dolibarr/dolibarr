@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2026	Alexandre Spangaro	<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -54,7 +55,6 @@ $error = 0;
 
 // Initialize a technical objects
 $object = new Fiscalyear($db);
-$extrafields = new ExtraFields($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
@@ -95,6 +95,7 @@ if ($reshook < 0) {
 }
 
 if ($action == 'confirm_delete' && $confirm == "yes" /* && $permissiontoadd // always true */) {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: fiscalyear.php");
@@ -284,7 +285,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input name="label" class="flat" size="32" value="'.$object->label.'">';
+	print '<input name="label" class="flat" size="32" value="'.dolPrintHTMLForAttribute($object->label).'">';
 	print '</td></tr>';
 
 	// Date start
@@ -321,7 +322,7 @@ if (($id || $ref) && $action == 'edit') {
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = fiscalyear_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("Fiscalyear"), -1, $object->picto, 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Fiscalyear"), -1, $object->picto);
 
 	$morehtmlref = '';
 	//$morehtmlref .= '<div class="refidno">';
@@ -399,7 +400,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
-		//print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+		//print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 
 		print '</div>';
 	}

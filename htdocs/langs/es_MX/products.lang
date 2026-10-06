@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - products
 ProductId=ID de producto / servicio
 ErrorProductBadRefOrLabel=Valor incorrecto para referencia o etiqueta.
+Suppliers=Vendedores
 ProductsAndServicesArea=Área de productos y servicios
 ProductsArea=Área de producto
 SetDefaultBarcodeType=Establecer el tipo de código de barras

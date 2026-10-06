@@ -7,8 +7,9 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +33,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -49,8 +41,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
-
-$hookmanager = new HookManager($db);
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
@@ -58,19 +55,15 @@ $hookmanager->initHooks(array('specialexpensesindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$contextpage = GETPOST('contextpage', 'aZ');
 
 $mode = GETPOST("mode", 'alpha');
 $year = GETPOSTINT("year");
 $filtre = GETPOST("filtre", 'alpha');
 if (!$year) {
-	$year = date("Y", time());
+	$year = (int) dol_print_date(dol_now(), "%Y");
 }
-$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -88,6 +81,12 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
 
 /*
@@ -141,12 +140,12 @@ if ($year) {
 	$param .= '&year='.$year;
 }
 
-print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'</span><br>';
+print '<div class="info">'.$langs->trans("DescTaxAndDividendsArea").'</div>';
 print "<br>";
 
 if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
-	$sql = "SELECT c.id, c.libelle as label,";
-	$sql .= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total,";
+	$sql = "SELECT c.id, c.libelle as type_label,";
+	$sql .= " cs.rowid, cs.libelle as label, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total,";
 	$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 	$sql .= " pct.code as payment_code,";
 	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
@@ -160,7 +159,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " AND cs.entity IN (".getEntity("tax").")";
 	if ($year > 0) {
 		$sql .= " AND (";
-		// If period defined, we use it as dat criteria, if not  we use date echeance,
+		// If period defined, we use it as date criteria, if not  we use date echeance,
 		// so we are compatible when period is not mandatory
 		$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
@@ -184,8 +183,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="120"', $sortfield, $sortorder, 'nowraponall ');
-		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
-		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "cs.libelle", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -221,7 +220,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
 			// Type
-			print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
+			print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Ref payment
@@ -275,7 +274,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 		print '<td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
 
-		// Total here has no sens because we can have several time the same line
+		// Total here makes no sense because we can have the same line several times.
 		//print '<td class="liste_total right">'.price($total).'</td>';
 		print '<td class="liste_total right"></td>';
 
@@ -306,7 +305,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 	$sql .= " WHERE pv.entity IN (".getEntity("tax").")";
 	if ($year > 0) {
-		// If period defined, we use it as dat criteria, if not  we use date echeance,
+		// If period defined, we use it as date criteria, if not  we use date echeance,
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
@@ -410,7 +409,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 		print '<td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 
-		// Total here has no sens because we can have several time the same line
+		// Total here makes no sense because we can have the same line several times.
 		//print '<td class="right">'.price($totaltopay).'</td>';
 		print '<td class="liste_total">&nbsp;</td>';
 
@@ -459,9 +458,9 @@ while ($j < $numlt) {
 
 	$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.datep as dp";
 	$sql .= " FROM ".MAIN_DB_PREFIX."localtax as pv";
-	$sql .= " WHERE pv.entity = ".$conf->entity." AND localtaxtype = ".((int) $j);
+	$sql .= " WHERE pv.entity = ".((int) $conf->entity)." AND localtaxtype = ".((int) $j);
 	if ($year > 0) {
-		// If period defined, we use it as dat criteria, if not  we use date echeance,
+		// If period defined, we use it as date criteria, if not  we use date echeance,
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}

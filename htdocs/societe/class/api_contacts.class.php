@@ -23,6 +23,7 @@ use Luracast\Restler\RestException;
 //require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -174,7 +175,7 @@ class Contacts extends DolibarrApi
 	 * @param	int			$page				Page number
 	 * @param	string		$thirdparty_ids		Third party ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param	int			$category			Use this param to filter list by category
-	 * @param	string		$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string		$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	int			$includecount		Include count of elements the contact is used as a link for
 	 * @param	int			$includeroles		Includes roles of the contact
 	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
@@ -207,15 +208,17 @@ class Contacts extends DolibarrApi
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object = t.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('contact').')';
+		// A private contact is only visible by the user that created it
+		$sql .= " AND (t.priv = 0 OR t.fk_user_creat = ".((int) DolibarrApiAccess::$user->id).")";
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Select contacts of given category
@@ -349,7 +352,7 @@ class Contacts extends DolibarrApi
 			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
 			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
 			if ($id < 0) {
-				throw new RestException(404, 'Country code not found in database: ' . $this->db->error);
+				throw new RestException(404, 'Country code not found in database: ' . $this->db->lasterror());
 			}
 			$request_data['country_id'] = $id;
 		}
@@ -361,8 +364,10 @@ class Contacts extends DolibarrApi
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
+				$this->contact->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
+					$this->contact->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contact);
 				}
 				continue;
 			}
@@ -430,7 +435,7 @@ class Contacts extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contact);
+					$this->contact->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contact);
 				}
 				continue;
 			}
@@ -456,7 +461,7 @@ class Contacts extends DolibarrApi
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 0, 'update') > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->contact->error);
+			throw new RestException(500, $this->contact->errorsToString());
 		}
 	}
 
@@ -486,7 +491,7 @@ class Contacts extends DolibarrApi
 		$this->contact->oldcopy = clone $this->contact; // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		if ($this->contact->delete(DolibarrApiAccess::$user) <= 0) {
-			throw new RestException(500, 'Error when delete contact ' . $this->contact->error);
+			throw new RestException(500, 'Error when delete contact ' . $this->contact->errorsToString());
 		}
 
 		return array(
@@ -576,12 +581,16 @@ class Contacts extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('contact', $id, 'socpeople&societe')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'contact', $sortfield, $sortorder, $limit, $page);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
 		return $result;
@@ -618,7 +627,7 @@ class Contacts extends DolibarrApi
 			throw new RestException(404, 'category not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
@@ -660,7 +669,7 @@ class Contacts extends DolibarrApi
 			throw new RestException(404, 'category not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {

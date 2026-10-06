@@ -1,3 +1,6 @@
+IntraCommReport=Intracomm report
+IntraCommReports=Intracomm reports
+
 Module68000Name = Ішкі есеп
 Module68000Desc = Ішкі есептерді басқару (француздық DEB/DES форматын қолдау)
 IntracommReportSetup = Ішкі хабарлау модулін орнату
@@ -32,3 +35,4 @@ IntracommReportTypeDeclaration=Декларация түрі
 IntracommReportDownload=xml файлын жүктеңіз
 # Invoice
 IntracommReportTransportMode=Тасымалдау режимі
+DeleteIntraCommReport=Delete IntraComm report

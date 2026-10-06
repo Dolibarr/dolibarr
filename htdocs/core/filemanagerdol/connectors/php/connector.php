@@ -26,6 +26,9 @@
 ob_start();
 
 require 'config.inc.php';	// This include the main.inc.php
+/**
+ * @var array<string,mixed>	$Config
+ */
 require 'connector.lib.php';
 
 if (!$Config['Enabled']) {

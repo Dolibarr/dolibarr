@@ -32,11 +32,13 @@ create table llx_facture_rec
   suspended          integer DEFAULT 0,					-- 1=suspended
 
   amount             double(24,8)     DEFAULT 0 NOT NULL,
-  remise             real     DEFAULT 0,
-  remise_percent     real     DEFAULT 0,
-  remise_absolue     real     DEFAULT 0,
 
-  vat_src_code		 varchar(10)  DEFAULT '',			-- TODO Remove this. Field is inside the table of lines
+  remise             real     DEFAULT 0,                -- deprecated (not used)
+  remise_percent     real     DEFAULT 0,                -- deprecated (not used)
+  remise_absolue     real     DEFAULT 0,                -- deprecated (not used)
+
+  vat_src_code		 varchar(10)  DEFAULT '',			-- deprecated TODO Remove this. Field is inside the table of lines
+
   total_tva          double(24,8)     DEFAULT 0,
   localtax1			 double(24,8)     DEFAULT 0,           -- amount localtax1
   localtax2          double(24,8)     DEFAULT 0,           -- amount localtax2

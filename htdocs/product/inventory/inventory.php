@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose MARTINEZ							<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,10 +91,6 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Sort by warehouse/product or product/warehouse, then by batch.
-$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
-$sortorder .= ',' . $sortorder.",ASC,ASC";
-
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -127,6 +124,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$paramwithsearch .= '&limit='.((int) $limit);
 }
 
+// Sort by warehouse/product or product/warehouse
+$sortfield .= ',' . ($sortfield == 'e.ref' ? 'p.ref' : 'e.ref') . ',id.batch,id.rowid';
+$sortorder .= ',' . $sortorder.",ASC,ASC";
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoadd = $user->hasRight('stock', 'creer');
@@ -262,8 +262,13 @@ if (empty($reshook)) {
 							setEventMessages($db->lasterror(), null, 'errors');
 							break;
 						}
-						if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
+						// Mirror Product::fetch (product.class.php:2995-2997) which reads pmp from
+						// llx_product_perentity only when MULTICOMPANY_PRODUCT_SHARING_ENABLED and
+						// MULTICOMPANY_PMP_PER_ENTITY_ENABLED are both set. MAIN_PRODUCT_PERENTITY_SHARED
+						// is the accountancy-codes flag; using it to gate the pmp write here means we
+						// silently write into a row that fetch never looks at (#37773).
+						if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
+							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.((int) $conf->entity);
 							$resqlpmp = $db->query($sqlpmp);
 							if (! $resqlpmp) {
 								$error++;
@@ -346,6 +351,9 @@ if (empty($reshook)) {
 
 				if ($result < 0 || $resultupdate < 0) {
 					$error++;
+					if ($resultupdate < 0) {
+						setEventMessages($inventoryline->error, $inventoryline->errors, 'errors');
+					}
 				}
 
 				$i++;
@@ -610,6 +618,9 @@ print '<input type="hidden" name="action" value="updateinventorylines">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
 print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
+// Keep the same limit as the displayed page, otherwise the save reads a different page slice
+// (plimit($limit, $offset)) than the one shown and quantities of the extra rows are lost (#35207).
+print '<input type="hidden" name="limit" value="' . ((int) $limit) . '">';
 if ($backtopage) {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
@@ -797,11 +808,16 @@ if ($action == 'updatebyscaning') {
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
 							if(product.hasOwnProperty("reelqty")){
 								$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-									data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
+									data: { "token":"'.currentToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":\''.dol_escape_js((string) $object->id).'\', "fk_product":product.fk_product, "reelqty":product.reelqty},
 									type: \'POST\',
 									async: false,
 									success: function(response) {
-										response = JSON.parse(response);
+										if (typeof response == "object") {
+											console.log("response is already type object, no need to parse it");
+										} else {
+											console.log("response is type "+(typeof response));
+											response = JSON.parse(response);
+										}
 										if(response.status == "success"){
 											console.log(response.message);
 											$("<input type=\'text\' value=\'"+product.Qty+"\' />")
@@ -821,33 +837,33 @@ if ($action == 'updatebyscaning') {
 							}
 						}
 					});
-					jQuery("#scantoolmessage").text("'.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\n");
+					jQuery("#scantoolmessage").text(\''.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\'+"\n");
 					/* document.forms["formrecord"].submit(); */
 				} else {
 					let stringerror = "";
 					if (Object.keys(errortab1).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': \';
 						errortab1.forEach(element => {
 							stringerror += (element + ", ")
 						});
 						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 					}
 					if (Object.keys(errortab2).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': \';
 						errortab2.forEach(element => {
 							stringerror += (element + ", ")
 						});
 						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 					}
 					if (Object.keys(errortab3).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': \';
 						errortab3.forEach(element => {
 							stringerror += (element + ", ")
 						});
 						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 					}
 					if (Object.keys(errortab4).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': \';
 						errortab4.forEach(element => {
 							stringerror += (element + ", ")
 						});
@@ -855,7 +871,7 @@ if ($action == 'updatebyscaning') {
 					}
 
 					jQuery("#scantoolmessage").html(\''.dol_escape_js($langs->transnoentities("ErrorOnElementsInventory")).'\' + stringerror);
-					//alert("'.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n" + stringerror);
+					//alert(\''.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n\' + stringerror);
 				}
 			}
 
@@ -872,7 +888,12 @@ if ($action == 'updatebyscaning') {
 					type: \'POST\',
 					async: false,
 					success: function(response) {
-						response = JSON.parse(response);
+						if (typeof response == "object") {
+							console.log("response is already type object, no need to parse it");
+						} else {
+							console.log("response is type "+(typeof response));
+							response = JSON.parse(response);
+						}
 						if (response.status == "success"){
 							console.log(response.message);
 							if(!newproductrow){
@@ -992,7 +1013,7 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 } else {
 	// Actions or link to stock movement
 	print '<td class="right">';
-	//print $langs->trans("StockMovement");
+	print $langs->trans("StockMovement");
 	print '</td>';
 }
 print '</tr>';
@@ -1127,7 +1148,7 @@ if ($resql) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty ?? 0;
 			} else {
-				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real ?? 0;
+				$valuetoshow = !empty($product_static->stock_warehouse[$obj->fk_warehouse]->real) ? $product_static->stock_warehouse[$obj->fk_warehouse]->real : 0;
 			}
 		}
 		print price2num($valuetoshow, 'MS');
@@ -1241,11 +1262,12 @@ if ($resql) {
 				print $obj->qty_view;	// qty found
 				print '</td>';
 			}
-			print '<td>';
+			print '<td class="right nowraponall">';
 			if ($obj->fk_movement > 0) {
 				$stockmovment = new MouvementStock($db);
 				$stockmovment->fetch($obj->fk_movement);
 				print $stockmovment->getNomUrl(1, 'movements');
+				print ' <span class="opacitymedium">('.dol_print_date($stockmovment->datem, 'dayhour').')</span>';
 			}
 			print '</td>';
 		}
@@ -1302,10 +1324,11 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page + 1).$paramwithsearch.'";
     						}});
+							return false;
     					});
 
 
-                         $(".paginationprevious:last").click(function(e){
+                        $(".paginationprevious:last").click(function(e){
                             var form = $("#formrecord");
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
@@ -1315,19 +1338,22 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'";
        					 	}});
-						 });
+							return false;
+						});
 
-                          $("#idbuttonmakemovementandclose").click(function(e){
+                        $("#idbuttonmakemovementandclose").click(function(e){
                             var form = $("#formrecord");
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
       					 	url: actionURL,
+        					type: "POST",
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'&action=record";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'&action=record";
        					 	}});
-						 });
+							return false;
+						});
 					});
 </script>';
 

@@ -68,3 +68,4 @@ ApplyJobCandidature=Bu işe başvur
 ErrorRecruitmmentCandidatureAlreadyExists= İşe alım adaylığı zaten %s e-postasıyla mevcut
 RecruitmentCandidatureSaved=İşe alım adaylığı başarıyla kaydedildi
 NoOpenJobOffer=Şu anda açık iş teklifi yok
+ShowPositionToBeFilled=Show Position to be filled

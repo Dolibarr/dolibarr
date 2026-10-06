@@ -44,8 +44,6 @@ $_SESSION["takeposterminal"] = getDolGlobalInt('TAKEPOS_TERMINAL_NB_FOR_PUBLIC',
 define('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE', 1);
 if (GETPOSTISSET("mobilepage")) {
 	require DOL_DOCUMENT_ROOT.'/takepos/invoice.php';	// The section with list of selected products in order
-} elseif (GETPOSTISSET("genimg")) {
-	require DOL_DOCUMENT_ROOT.'/takepos/genimg/index.php';
 } else {
 	require DOL_DOCUMENT_ROOT.'/takepos/phone.php';
 }

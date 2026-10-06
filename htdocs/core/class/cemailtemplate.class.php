@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025  		Jon Bendtsen         	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,7 @@ class CEmailTemplate extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
@@ -272,7 +272,7 @@ class CEmailTemplate extends CommonObject
 		if (is_null($this->fk_user)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((int) $this->fk_user)."',";
+			$sql .= " ".((int) $this->fk_user).",";
 		}
 		if (is_null($this->datec)) {
 			$sql .= " '".$this->db->idate($now)."',";
@@ -284,12 +284,12 @@ class CEmailTemplate extends CommonObject
 		if (is_null($this->enabled)) {
 			$sql .= " 1,";
 		} else {
-			$sql .= " '".((int) $this->enabled)."',";
+			$sql .= " ".((int) $this->enabled).",";
 		}
 		if (is_null($this->active)) {
 			$sql .= " 1,";
 		} else {
-			$sql .= " '".((int) $this->active)."',";
+			$sql .= " ".((int) $this->active).",";
 		}
 		if (is_null($this->email_from)) {
 			$sql .= " NULL,";
@@ -477,8 +477,7 @@ class CEmailTemplate extends CommonObject
 	public function fetch($id, $label = null, $noextrafields = 0, $nolines = 0)
 	{
 		// The table llx_c_email_templates has no field ref. The field ref was named "label" instead. So we change the call to fetchCommon.
-		//$result = $this->fetchCommon($id, $label, '', $noextrafields);
-		$result = $this->fetchCommon($id, '', " AND t.label = '".$this->db->escape($label)."'", $noextrafields);
+		$result = $this->fetchCommon($id, '', ((!$id || $label) ? " AND t.label = '".$this->db->escape($label)."'" : ''), $noextrafields);
 
 		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
@@ -489,15 +488,18 @@ class CEmailTemplate extends CommonObject
 	/**
 	 *	Get email template from database.
 	 *
-	 *	@param      int			$id       	row Id of email template
-	 *	@param      string		$label    	label of email template
-	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
+	 *	@param      int			$id       		row Id of email template
+	 *	@param      string		$label    		label of email template
+	 * 	@param		User		$userrequest	User request
+	 *	@return     int         				Return >0 if OK, <0 if KO, 0 if not found
 	 */
-	public function apifetch($id, $label = '')
+	public function apiFetch($id, $label = '', $userrequest = null)
 	{
+		global $langs;
+
 		// Check parameters
 		if (($id == 0 || empty($id)) && empty($label)) {
-			dol_syslog(get_class($this)."::apifetch id and label are empty", LOG_DEBUG);
+			dol_syslog(get_class($this)."::apiFetch id and label are empty", LOG_DEBUG);
 			$this->error = 'id='.$id.' and label are empty';
 			return -1;
 		}
@@ -507,16 +509,20 @@ class CEmailTemplate extends CommonObject
 		$sql .= " e.defaultfortype, e.enabled, e.active, e.email_from, e.email_to,";
 		$sql .= " e.email_tocc, e.email_tobcc, e.topic, e.joinfiles, e.content,";
 		$sql .= " e.content_lines FROM ".$this->db->prefix().$this->table_element." as e";
+		$sql .= " WHERE entity IN (".getEntity($this->element).")";
 		if ($id) {
-			$sql .= " WHERE e.rowid = ".((int) $id);
-		} else {
-			$sql .= " WHERE e.entity IN (".getEntity($this->table_element).")";
-			if ($label) {
-				$sql .= " AND e.label = '".$this->db->escape($label)."'";
-			}
+			$sql .= " AND e.rowid = ".((int) $id);
+		} elseif ($label) {
+			$sql .= " AND e.label = '".$this->db->escape($label)."'";
+		}
+		if (!$userrequest->admin) {
+			$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $userrequest->id)."))"; // Show only public and private to me
+			$sql .= " AND (active = 1 OR fk_user = ".((int) $userrequest->id).")"; // Show only active or owned by me
+		}
+		if (!getDolGlobalInt('MAIN_MULTILANGS')) {
+			$sql .= " AND (lang = '".$this->db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		}
 
-		dol_syslog(get_class($this)."::apifetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);

@@ -56,20 +56,28 @@ $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
+	$refWithThirdparty = $objectlink->ref_client ? dolPrintHTML($objectlink->ref_client).'<br>' : '';
+
+	$objectlink->fetch_thirdparty();
+
+	$refWithThirdparty = '<span class="small">'.$refWithThirdparty;
+	$refWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
 	}
 	print '<tr class="'.$trclass.'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
-	print '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Proposal");
+	print '<td class="linkedcol-element tdoverflowmax125">';
 	if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-		$url = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/card.php', ['id' => $objectlink->id, 'action' => 'selectlines'], true);
-		print '<a class="objectlinked_importbtn" href="'.$url.'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
+		$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$objectlink->id;
+		print '<a class="objectlinked_importbtn" href="'.$url.'&action=selectlines&token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 	}
+	print $langs->trans("Proposal");
 	print '</td>';
 	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="linkedcol-ref tdoverflowmax150" title="'.dolPrintHTMLForAttribute($objectlink->ref_client).'">'.dolPrintHTML($objectlink->ref_client).'</td>';
+	print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dolPrintHTMLForAttribute($objectlink->ref_client).'">'.$refWithThirdparty.'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="linkedcol-amount right">';
 	if ($user->hasRight('propal', 'lire')) {

@@ -98,9 +98,16 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-$apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
-'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
-
+$apiService = null;
+$nameofservice = 'GitHub';
+try {
+	//$nameofservice = ucfirst(strtolower($genericstring));
+	$apiService = $serviceFactory->createService($nameofservice, $credentials, $storage, $requestedpermissionsarray);
+	'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
+} catch (Exception $e) {
+	print 'Error, failed to create service for provider '.$nameofservice.($keyforprovider ? '-'.$keyforprovider : '').'. Message was: '.$e->getMessage();
+	exit;
+}
 // access type needed to have oauth provider refreshing token
 //$apiService->setAccessType('offline');
 

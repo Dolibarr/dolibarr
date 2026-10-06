@@ -46,6 +46,10 @@ IPP_Color=Kolor
 IPP_Device=Urządzenie
 IPP_Media=Nośnik drukarki
 IPP_Supported=Typ nośnika
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Żaden
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Kolor
 DirectPrintingJobsDesc=Ta strona pokazuje listę zadań wydruku dla dostępnych drukarek.
 GoogleAuthNotConfigured=Nie skonfigurowano protokołu Google OAuth. Włącz moduł OAuth i ustaw Google ID / Secret.
 GoogleAuthConfigured=Znaleziono dane uwierzytelniające Google OAuth w konfiguracji modułu OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Zmienne konfiguracyjne dla sterownika drukowania Goog
 PrintingDriverDescprintipp=Zmienne konfiguracyjne dla sterownika drukowania Cups.
 PrintTestDescprintgcp=Lista drukarek dla Google Cloud Print.
 PrintTestDescprintipp=Lista drukarek dla Cups..
-Testbbbb
+PrinterLocation=Printer location

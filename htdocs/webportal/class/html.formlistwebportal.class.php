@@ -2,8 +2,9 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Charlene Benke          <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -417,7 +418,7 @@ class FormListWebPortal
 					}
 					$field_spec = $this->object->fields[$key];
 					//  @phpstan-ignore-next-line
-					$alias = $field_spec['alias'] ?? 't.';
+					$sanitized_alias = $field_spec['alias'] ?? 't.';  // @phan-suppress-current-line SqlInjection
 					$mode_search = (($this->object->isInt($field_spec) || $this->object->isFloat($field_spec)) ? 1 : 0);
 					if ((strpos($field_spec['type'], 'integer:') === 0) || (strpos($field_spec['type'], 'sellist:') === 0) || !empty($field_spec['arrayofkeyval'])) {
 						if ($val == "$this->emptyValueKey" || ($val === '0' && (empty($field_spec['arrayofkeyval']) || !array_key_exists('0', $field_spec['arrayofkeyval'])))) {
@@ -434,11 +435,11 @@ class FormListWebPortal
 					//  @phpstan-ignore-next-line
 					if (empty($field_spec['searchmulti'])) {
 						if (!is_array($val) && $val != '') {
-							$this->sql_body .= natural_search($alias . $this->db->escape($key), $val, (($key == 'status') ? 2 : $mode_search));
+							$this->sql_body .= natural_search($sanitized_alias . $this->db->escape($key), $val, (($key == 'status') ? 2 : $mode_search));
 						}
 					} else {
 						if (is_array($val) && !empty($val)) {
-							$this->sql_body .= natural_search($alias . $this->db->escape($key), implode(',', $val), (($key == 'status') ? 2 : $mode_search));
+							$this->sql_body .= natural_search($sanitized_alias . $this->db->escape($key), implode(',', $val), (($key == 'status') ? 2 : $mode_search));
 						}
 					}
 				} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && $val != '') {
@@ -446,13 +447,13 @@ class FormListWebPortal
 					if (array_key_exists($columnName, $this->object->fields)) {
 						$field_spec = $this->object->fields[$columnName];
 						//  @phpstan-ignore-next-line
-						$alias = $field_spec['alias'] ?? 't.';
+						$sanitized_alias = $field_spec['alias'] ?? 't.';  // @phan-suppress-current-line SqlInjection
 						if (preg_match('/^(date|timestamp|datetime)/', $field_spec['type'])) {
 							if (preg_match('/_dtstart$/', $key)) {
-								$this->sql_body .= " AND " . $alias . $this->db->sanitize($columnName) . " >= '" . $this->db->idate((int) $val) . "'";
+								$this->sql_body .= " AND " . $sanitized_alias . $this->db->sanitize($columnName) . " >= '" . $this->db->idate((int) $val) . "'";
 							}
 							if (preg_match('/_dtend$/', $key)) {
-								$this->sql_body .= " AND " . $alias . $this->db->sanitize($columnName) . " <= '" . $this->db->idate((int) $val) . "'";
+								$this->sql_body .= " AND " . $sanitized_alias . $this->db->sanitize($columnName) . " <= '" . $this->db->idate((int) $val) . "'";
 							}
 						}
 					}
@@ -474,6 +475,7 @@ class FormListWebPortal
 			}
 			$this->offset = $this->limit * ($this->page - 1);
 
+			// Supposed GETPOST(...,"az09comma") is sql protection for sortfield @phan-suppress-next-line SqlInjection
 			$this->sql_order = $this->db->order($this->sortfield, $this->sortorder);
 			$this->sql_order .= $sqlOrder;
 			// Add order by from hooks
@@ -579,8 +581,22 @@ class FormListWebPortal
 		if (!empty($field_spec['arrayofkeyval']) && is_array($field_spec['arrayofkeyval'])) {
 			$out = $this->form->selectarray('search_' . $field_key, $field_spec['arrayofkeyval'], (isset($this->search[$field_key]) ? $this->search[$field_key] : ''), $field_spec['notnull'], 0, 0, '', 1, 0, 0, '', '');
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $field_spec['type'])) {
-			$postDateStart = dol_mktime(0, 0, 0, (int) $this->search[$field_key . '_dtstartmonth'], (int) $this->search[$field_key . '_dtstartday'], (int) $this->search[$field_key . '_dtstartyear']);
-			$postDateEnd = dol_mktime(0, 0, 0, (int) $this->search[$field_key . '_dtendmonth'], (int) $this->search[$field_key . '_dtendday'], (int) $this->search[$field_key . '_dtendyear']);
+			$postDateStart = dol_mktime(
+				0,
+				0,
+				0,
+				(int) isset($this->search[$field_key . '_dtstartmonth']) ? $this->search[$field_key . '_dtstartmonth'] : 0,
+				(int) isset($this->search[$field_key . '_dtstartday']) ? $this->search[$field_key . '_dtstartday'] : 0,
+				(int) isset($this->search[$field_key . '_dtstartyear']) ? $this->search[$field_key . '_dtstartyear'] : 0
+			);
+			$postDateEnd = dol_mktime(
+				0,
+				0,
+				0,
+				(int) isset($this->search[$field_key . '_dtendmonth']) ? $this->search[$field_key . '_dtendmonth'] : 0,
+				(int) isset($this->search[$field_key . '_dtendday']) ? $this->search[$field_key . '_dtendday'] : 0,
+				(int) isset($this->search[$field_key . '_dtendyear']) ? $this->search[$field_key . '_dtendyear'] : 0
+			);
 
 			$out = '<div class="grid width150">';
 			$out .= $this->form->inputDate('search_' . $field_key . '_dtstart', $postDateStart ? $postDateStart : '', $langs->trans('From'));
@@ -608,10 +624,13 @@ class FormListWebPortal
 
 			// specific to get invoice status (depends on payment)
 			if ($this->element == 'invoice') {
+				$invoice = $this->object;  // Copy to help static analysis
+				/** @var Facture $invoice */
+				'@phan-var-force Facture $invoice';
 				$discount = new DiscountAbsolute($this->db);
 
 				// Store company
-				$idCompany = (int) $this->object->socid;
+				$idCompany = (int) $invoice->socid;
 				if (!isset($this->companyStaticList[$idCompany])) {
 					$companyStatic = new Societe($this->db);
 					$companyStatic->fetch($idCompany);
@@ -620,19 +639,18 @@ class FormListWebPortal
 				$companyStatic = $this->companyStaticList[$idCompany];
 
 				// paid sum
-				$payment = $this->object->getSommePaiement();
-				$totalcreditnotes = $this->object->getSumCreditNotesUsed();
-				$totaldeposits = $this->object->getSumDepositsUsed();
+				$payment = $invoice->getSommePaiement();
+				$totalcreditnotes = $invoice->getSumCreditNotesUsed();
+				$totaldeposits = $invoice->getSumDepositsUsed();
 
 				// remain to pay
 				$totalpay = $payment + $totalcreditnotes + $totaldeposits;
-				$remaintopay = price2num($this->object->total_ttc - $totalpay);
-				if ($this->object->status == Facture::STATUS_CLOSED && $this->object->close_code == 'discount_vat') {        // If invoice closed with discount for anticipated payment
+				$remaintopay = price2num($invoice->total_ttc - $totalpay);
+				if ($invoice->status == Facture::STATUS_CLOSED && $invoice->close_code == 'discount_vat') {        // If invoice closed with discount for anticipated payment
 					$remaintopay = 0;
 				}
-				if ($this->object->type == Facture::TYPE_CREDIT_NOTE && $this->object->paye == 1) {
-					// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal
-					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, '', 'rc.fk_facture_source=' . $this->object->id);
+				if ($invoice->type == Facture::TYPE_CREDIT_NOTE && $invoice->paye == 1) {
+					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, null, 'rc.fk_facture_source=' . $invoice->id);
 					$remaintopay = -$remaincreditnote;
 				}
 
@@ -679,8 +697,11 @@ class FormListWebPortal
 					$filedir = $conf->{$element}->multidir_output[$this->object->entity] . '/' . dol_sanitizeFileName($this->object->ref);
 					$out = $this->form->getDocumentsLink($element, $filename, $filedir);
 				} elseif ($field_key == 'signature_link') {
-					if ($this->object->fk_statut == Propal::STATUS_VALIDATED) {
-						$out = $this->form->getSignatureLink('proposal', $this->object);
+					$webobject = $this->object;	// Intermediate var to help with typing.
+					/** @var WebPortalPropal|WebPortalOrder|WebPortalInvoice $webobject */
+					'@phan-var-force WebPortalPropal|WebPortalOrder|WebPortalInvoice $webobject';
+					if ($webobject->fk_statut == Propal::STATUS_VALIDATED) {
+						$out = $this->form->getSignatureLink('proposal', $webobject);
 					}
 				} else {
 					$out = $this->form->showOutputFieldForObject($this->object, $field_spec, $field_key, $this->object->$field_key, '');

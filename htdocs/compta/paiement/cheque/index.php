@@ -78,7 +78,7 @@ llxHeader('', $title);
 
 $newcardbutton = '';
 if ($usercancreate) {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=create2');
 }
 
 print load_fiche_titre($title, $newcardbutton, $checkdepositstatic->picto);
@@ -116,7 +116,7 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 		}
 		print '</td>';
 		print '<td class="right">';
-		print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new&type='.urlencode($val).'">'.dol_escape_htmltag($num).'</a>';
+		print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=create2&type='.urlencode($val).'">'.dol_escape_htmltag($num).'</a>';
 		print '</td></tr>';
 	} else {
 		dol_print_error($db);

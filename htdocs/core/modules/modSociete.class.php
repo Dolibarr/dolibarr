@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2003-2005  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio         <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier              <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2013  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2014  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2022       Ferran Marcet               <fmarcet@2byte.es>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,61 +77,59 @@ class modSociete extends DolibarrModules
 		$this->langfiles = array("companies", 'bills', "compta", "admin", "banks");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "SOCIETE_CODECLIENT_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_codeclient_monkey";
-		$this->const[$r][3] = 'Module to control third parties codes';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "SOCIETE_CODECOMPTA_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_codecompta_panicum";
-		$this->const[$r][3] = 'Module to control third parties codes';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "SOCIETE_FISCAL_MONTH_START";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = "Enter the month number of the first month of the fiscal year, e. g. 9 for September";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "COMPANY_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/thirdparties";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		/*
-		 $this->const[$r][0] = "COMPANY_HIDE_INACTIVE_IN_COMBOBOX";
-		 $this->const[$r][1] = "chaine";
-		 $this->const[$r][2] = "0";
-		 $this->const[$r][3] = "hide thirdparty customer inative in combobox";
-		 $this->const[$r][4] = 1;
-		 $r++;
-		 */
-
-		$this->const[$r][0] = "SOCIETE_ADD_REF_IN_LIST";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = "Display customer ref into select list";
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"SOCIETE_CODECLIENT_ADDON",
+				"chaine",
+				"mod_codeclient_monkey",
+				'Module to control third parties codes',
+				0,
+			],
+			[
+				"SOCIETE_CODECOMPTA_ADDON",
+				"chaine",
+				"mod_codecompta_panicum",
+				'Module to control third parties codes',
+				0,
+			],
+			[
+				"SOCIETE_FISCAL_MONTH_START",
+				"chaine",
+				"1",
+				"Enter the month number of the first month of the fiscal year, e. g. 9 for September",
+				0,
+			],
+			[
+				"COMPANY_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/thirdparties",
+				"",
+				0,
+			],
+			// [
+			// 	"COMPANY_HIDE_INACTIVE_IN_COMBOBOX",
+			// 	"chaine",
+			// 	"0",
+			// 	"hide thirdparty customer inative in combobox",
+			// 	1,
+			// ],
+			[
+				"SOCIETE_ADD_REF_IN_LIST",
+				"yesno",
+				"0",
+				"Display customer ref into select list",
+				0,
+			],
+		];
 
 		// Boxes
-		$this->boxes = array(
-			0 => array('file' => 'box_clients.php', 'enabledbydefaulton' => 'Home'),
-			1 => array('file' => 'box_prospect.php', 'enabledbydefaulton' => 'Home'),
-			2 => array('file' => 'box_contacts.php', 'enabledbydefaulton' => 'Home'),
-			3 => array('file' => 'box_activity.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'),
-			4 => array('file' => 'box_goodcustomers.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'),
-		);
+		$this->boxes = [
+			['file' => 'box_clients.php', 'enabledbydefaulton' => 'Home'],
+			['file' => 'box_prospect.php', 'enabledbydefaulton' => 'Home'],
+			['file' => 'box_contacts.php', 'enabledbydefaulton' => 'Home'],
+			['file' => 'box_activity.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'],
+			['file' => 'box_goodcustomers.php', 'enabledbydefaulton' => 'Home', 'note' => '(WarningUsingThisBoxSlowDown)'],
+		];
 
 		// Permissions
 		$this->rights = array();
@@ -138,10 +137,10 @@ class modSociete extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 121; // id de la permission
-		$this->rights[$r][1] = 'Read third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 121; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read third parties'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'lire';
 
 		/*$r++;
@@ -162,10 +161,10 @@ class modSociete extends DolibarrModules
 		 */
 
 		$r++;
-		$this->rights[$r][0] = 122; // id de la permission
-		$this->rights[$r][1] = 'Create and update third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 122; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create and update third parties'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'creer';
 
 		/* $r++;
@@ -186,17 +185,17 @@ class modSociete extends DolibarrModules
 		 */
 
 		$r++;
-		$this->rights[$r][0] = 125; // id de la permission
-		$this->rights[$r][1] = 'Delete third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 125; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete third parties'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 126; // id de la permission
-		$this->rights[$r][1] = 'Export third parties'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 126; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Export third parties'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'export';
 
 		$r++;
@@ -226,34 +225,34 @@ class modSociete extends DolibarrModules
 		 */
 
 		$r++;
-		$this->rights[$r][0] = 281; // id de la permission
-		$this->rights[$r][1] = 'Read contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 281; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read contacts'; // Permission label
+		$this->rights[$r][2] = 'r'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 282; // id de la permission
-		$this->rights[$r][1] = 'Create and update contact'; // libelle de la permission
-		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 282; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create and update contact'; // Permission label
+		$this->rights[$r][2] = 'w'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 283; // id de la permission
-		$this->rights[$r][1] = 'Delete contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 283; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete contacts'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 286; // id de la permission
-		$this->rights[$r][1] = 'Export contacts'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][0] = 286; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Export contacts'; // Permission label
+		$this->rights[$r][2] = 'd'; // Permission type (deprecated)
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'export';
 
@@ -283,7 +282,8 @@ class modSociete extends DolibarrModules
 			's.tva_intra' => "VATIntraShort", 's.capital' => "Capital", 's.note_private' => "NotePrivate",
 			's.note_public' => "NotePublic", 't.code' => "ThirdPartyType", 'ce.code' => "DictionaryStaff", "cfj.libelle" => "JuridicalStatus", 's.fk_prospectlevel' => 'ProspectLevel',
 			'st.code' => 'ProspectStatus', 'payterm.libelle' => 'PaymentConditions', 'paymode.libelle' => 'PaymentMode',
-			's.outstanding_limit' => 'OutstandingBill', 'pbacc.ref' => 'PaymentBankAccount', 'incoterm.code' => 'IncotermLabel'
+			's.outstanding_limit' => 'OutstandingBill', 'pbacc.ref' => 'PaymentBankAccount',
+			'incoterm.code' => 'IncotermLabel', 's.location_incoterms' => 'IncotermLocation'
 		);
 		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
@@ -321,7 +321,8 @@ class modSociete extends DolibarrModules
 			's.fk_prospectlevel' => 'List:c_prospectlevel:label:code',
 			'st.code' => 'List:c_stcomm:libelle:code',
 			'payterm.libelle' => 'Text', 'paymode.libelle' => 'Text',
-			's.outstanding_limit' => 'Numeric', 'pbacc.ref' => 'Text', 'incoterm.code' => 'Text',
+			's.outstanding_limit' => 'Numeric', 'pbacc.ref' => 'Text',
+			'incoterm.code' => 'Text', 's.location_incoterms' => 'Text',
 			'u.login' => 'Text', 'u.firstname' => 'Text', 'u.lastname' => 'Text',
 			's.entity' => 'List:entity:label:rowid', 's.price_level' => 'Numeric',
 			's.accountancy_code_sell' => 'Text', 's.accountancy_code_buy' => 'Text'
@@ -401,7 +402,7 @@ class modSociete extends DolibarrModules
 			's.code_compta' => "Text", 's.code_compta_fournisseur' => "Text",
 			's.client' => "Numeric", 's.fournisseur' => "Numeric",
 			's.address' => "Text", 's.zip' => "Text", 's.town' => "Text", 's.phone' => "Text", 's.email' => "Text",
-			't.code' => "List:c_stcomm:libelle:code",
+			't.code' => "List:c_typent:libelle:code",
 			'c.entity' => 'List:entity:label:rowid',
 			's.entity' => 'List:entity:label:rowid',
 		);
@@ -589,6 +590,7 @@ class modSociete extends DolibarrModules
 			's.outstanding_limit' => 'OutstandingBill',
 			's.fk_account' => 'PaymentBankAccount',
 			's.fk_incoterms' => 'IncotermLabel',
+			's.location_incoterms' => 'IncotermLocation',
 			's.tva_assuj' => 'VATIsUsed',
 			's.barcode' => 'BarCode',
 			's.default_lang' => 'DefaultLanguage',
@@ -616,16 +618,10 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on old database (during migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array(
 			's.fk_user_creat' => 'user->id',
 			'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'societe'
@@ -681,6 +677,13 @@ class modSociete extends DolibarrModules
 				'element' => 'c_stcomm',
 				'table_element' => 'c_stcomm'
 			),
+			's.fk_incoterms' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cincoterm.class.php',
+				'class' => 'Cincoterm',
+				'method' => 'fetch',
+				'dict' => 'IncotermLabel'
+			)
 			/*
 			 's.fk_prospectlevel' => array(
 			 'rule' => 'fetchidfromcodeid',
@@ -691,15 +694,7 @@ class modSociete extends DolibarrModules
 			 'element' => 'c_prospectlevel',
 			 'table_element' => 'c_prospectlevel'
 			 ),*/
-			//          TODO
-			//          's.fk_incoterms' => array(
-			//              'rule' => 'fetchidfromcodeid',
-				//              'classfile' => '/core/class/cincoterm.class.php',
-				//              'class' => 'Cincoterm',
-				//              'method' => 'fetch',
-				//              'dict' => 'IncotermLabel'
-				//			)
-			);
+		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
 			's.status' => '^[0|1]',
@@ -760,6 +755,7 @@ class modSociete extends DolibarrModules
 			's.outstanding_limit' => "5000",
 			's.fk_account' => "rowid or ref",
 			's.fk_incoterms' => '1/2/3...matches field "rowid" in table "'.MAIN_DB_PREFIX.'c_incoterms"',
+			's.location_incoterms' => 'PORT',
 			's.tva_assuj' => '0 (VAT not used) / 1 (VAT used)',
 			's.barcode' => '123456789',
 			's.default_lang' => 'en_US / es_ES etc...matches a language directory in htdocs/langs/',
@@ -857,16 +853,10 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {    // This can fail when class is used on an old database (during a migration for example)
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'socpeople';
+		$keyforelement = 'contact';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 		$this->import_fieldshidden_array[$r] = array(
 			's.fk_user_creat' => 'user->id',
 			'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'socpeople'

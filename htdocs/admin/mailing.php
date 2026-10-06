@@ -146,7 +146,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 print dolJSToSetRandomPassword($constname);
 
 print '<br>';
-print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '" spellcheck="false">';
 print '<input type="hidden" name="token" value="' . newToken() . '">';
 print '<input type="hidden" name="action" value="setvalue">';
 

@@ -4,9 +4,9 @@
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021 	   Gauthier VERDOL 	    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -201,7 +201,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		}
 
 		// Load translation files required by page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "sendings", "productbatch", "stocks", "other"));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
@@ -335,7 +335,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("StockTransfer"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("StockTransfer"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -424,7 +424,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					// Notes
 					if (!empty($object->note_public)) {
 						$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
@@ -451,7 +451,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					$barcode_path = '';
 					$result = 0;
 					if ($module->encodingIsSupported($encoding)) {
-						$result = $module->writeBarCode($object->ref, $encoding);
+						$result = $module->writeBarCode((string) $object->ref, $encoding);
 
 						// get path of qrcode image
 						$newcode = (string) $object->ref;
@@ -535,7 +535,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					$pdf->startTransaction();
 
-					if (method_exists($object->lines[$i], 'fetch_product')) {
+					if (is_object($object->lines[$i]) && method_exists($object->lines[$i], 'fetch_product')) {
 						$object->lines[$i]->fetch_product();
 						$object->lines[$i]->label = $object->lines[$i]->product->label;
 						$object->lines[$i]->description = $object->lines[$i]->product->description;
@@ -611,10 +611,14 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
 
-					// Lot / série
+					// Bottom of the highest cell of the line (batch and warehouses may be written on several lines)
+					$posYAfterCells = $nexY;
+
+					// Batch / serial number
 					if (isModEnabled('productbatch')) {
 						$pdf->SetXY($this->posxlot, $curY);
 						$pdf->MultiCell(($this->posxweightvol - $this->posxlot), 3, $object->lines[$i]->batch, '', 'C');
+						$posYAfterCells = max($posYAfterCells, $pdf->GetY());
 					}
 
 					// weight
@@ -650,6 +654,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 					$pdf->SetXY($this->posxwarehousesource, $curY);
 					$pdf->MultiCell(($this->posxwarehousedestination - $this->posxwarehousesource), 3, $wh_source->ref.(!empty($wh_source->lieu) ? ' - '.$wh_source->lieu : ''), '', 'C');
+					$posYAfterCells = max($posYAfterCells, $pdf->GetY());
 
 					// Warehouse destination
 					$wh_destination = new Entrepot($this->db);
@@ -661,6 +666,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 					$pdf->SetXY($this->posxwarehousedestination, $curY);
 					$pdf->MultiCell(($this->posxpuht - $this->posxwarehousedestination), 3, $wh_destination->ref.(!empty($wh_destination->lieu) ? ' - '.$wh_destination->lieu : ''), '', 'C');
+					$posYAfterCells = max($posYAfterCells, $pdf->GetY());
 
 					if (getDolGlobalString('STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT')) {
 						$pdf->SetXY($this->posxpuht, $curY);
@@ -670,6 +676,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 3, price($object->lines[$i]->total_ht, 0, $outputlangs), '', 'R');
 					}
 
+					$nexY = max($nexY, $posYAfterCells);
 					$nexY += 3;
 					if ($weighttxt && $voltxt) {
 						$nexY += 2;
@@ -832,10 +839,10 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$object->volume_units = $object->size_units * 3;
 		}
 
-		if ($totalWeight != '') {
+		if (!empty($totalWeight)) {
 			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
 		}
-		if ($totalVolume != '') {
+		if (!empty($totalVolume)) {
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
 		}
 		if (!empty($object->trueWeight)) {
@@ -1030,7 +1037,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK'))) {
+		if ($object->status == 0 && (getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK'))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SHIPPING_DRAFT_WATERMARK);
 		}
 
@@ -1075,7 +1082,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		$pdf->SetFont('', '', $default_font_size + 1);
 
-		// Date prévue depart
+		// Expected departure date
 		if (!empty($object->date_prevue_depart)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1083,7 +1090,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DatePrevueDepart")." : ".dol_print_date($object->date_prevue_depart, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		// Date prévue arrivée
+		// Expected arrival date
 		if (!empty($object->date_prevue_arrivee)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1099,7 +1106,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateReelleDepart")." : ".dol_print_date($object->date_reelle_depart, "day", false, $outputlangs, true), '', 'R');
 		}
 
-		// Date reelle arrivée
+		// Actual arrival date
 		if (!empty($object->date_reelle_arrivee)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
@@ -1225,7 +1232,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			}
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// We can use the name of the contact's company
 			if ($usecontact/* && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)*/) {
 				$thirdparty = $object->contact;
 			} else {

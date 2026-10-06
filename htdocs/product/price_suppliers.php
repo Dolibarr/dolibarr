@@ -169,11 +169,10 @@ if (empty($reshook)) {
 	if ($action == 'setpmp' && $usercancreate) {
 		if ($id) {
 			$result = $object->fetch($id);
-			$object->pmp = $pmp;
-			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".((float) $object->pmp)." WHERE rowid = ".((int) $id);
-			$resql = $db->query($sql);
-			//$result = $object->update($object->id, $user);
-			if ($resql) {
+			if ($result > 0) {
+				$result = $object->setValueFrom('pmp', price2num($pmp), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+			}
+			if ($result > 0) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				$action = '';
 			} else {
@@ -872,7 +871,7 @@ if ($id > 0 || $ref) {
 					$sql  = "SELECT";
 					$sql .= " fk_object";
 					foreach ($extralabels as $key => $value) {
-						$sql .= ", ".$key;
+						$sql .= ", ".$db->sanitize($key);
 					}
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
 					$sql .= " WHERE fk_object = ".((int) $rowid);
@@ -1008,7 +1007,7 @@ if ($id > 0 || $ref) {
 			include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-			$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+			$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formulaire">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1029,7 +1028,7 @@ if ($id > 0 || $ref) {
 			print '<tr class="liste_titre">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 				$nbfields++;
 			}
@@ -1138,7 +1137,7 @@ if ($id > 0 || $ref) {
 				$parameters = array('id_fourn' => (!empty($id_fourn) ? $id_fourn : ''), 'prod_id' => $object->id, 'nbfields' => $nbfields);
 				$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 			}
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 				$nbfields++;
 			}
@@ -1149,7 +1148,7 @@ if ($id > 0 || $ref) {
 					print '<tr class="oddeven">';
 
 					// Action column
-					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if ($conf->main_checkbox_left_column) {
 						print '<td class="center nowraponall">';
 						// EN: Allow editing and deletion when user can write supplier prices
 						if ($usercancreate) {
@@ -1310,23 +1309,25 @@ if ($id > 0 || $ref) {
 						$sql  = "SELECT";
 						$sql .= " fk_object";
 						foreach ($extralabels as $key => $value) {
-							$sql .= ", ".$key;
+							$sql .= ", ".$db->sanitize($key);
 						}
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
 						$sql .= " WHERE fk_object = ".((int) $productfourn->product_fourn_price_id);
 						$resql = $db->query($sql);
 						if ($resql) {
-							if ($db->num_rows($resql) != 1) {
-								foreach ($extralabels as $key => $value) {
-									if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+							// Row may not exist yet (e.g. if the only extrafield configured is a computed one, no row is ever inserted)
+							$obj = ($db->num_rows($resql) == 1) ? $db->fetch_object($resql) : null;
+							foreach ($extralabels as $key => $value) {
+								if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+									// If field is a computed field, we make computation to get value, whether or not a stored row exists
+									if (!empty($extrafields->attributes["product_fournisseur_price"]['computed'][$key])) {
+										$objectoffield = $productfourn; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+										$extravalue = dol_eval((string) $extrafields->attributes["product_fournisseur_price"]['computed'][$key], 1, 1, '2');
+										print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_fournisseur_price', $langs, $productfourn)."</td>";
+									} elseif ($obj) {
+										print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_fournisseur_price', $langs, $productfourn)."</td>";
+									} else {
 										print "<td></td>";
-									}
-								}
-							} else {
-								$obj = $db->fetch_object($resql);
-								foreach ($extralabels as $key => $value) {
-									if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-										print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_fournisseur_price')."</td>";
 									}
 								}
 							}
@@ -1340,7 +1341,7 @@ if ($id > 0 || $ref) {
 					}
 
 					// Modify-Remove
-					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					if (!$conf->main_checkbox_left_column) {
 						print '<td class="center nowraponall">';
 						// EN: Allow editing and deletion when user can write supplier prices
 						if ($usercancreate) {

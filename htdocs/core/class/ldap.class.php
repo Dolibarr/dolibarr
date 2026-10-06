@@ -30,7 +30,7 @@
  *  Note:
  *  LDAP_ESCAPE_FILTER is to escape char  array('\\', '*', '(', ')', "\x00")
  *  LDAP_ESCAPE_DN is to escape char  array('\\', ',', '=', '+', '<', '>', ';', '"', '#')
- *  @phan-file-suppress PhanTypeMismatchArgumentInternal (notifications concern 'resource)
+ *  @phan-file-suppress PhanTypeMismatchArgumentInternal (notifications concern 'resource')
  */
 
 /**
@@ -242,7 +242,8 @@ class Ldap
 	public $ldapcharset = 'UTF-8';
 
 	/**
-	 * @var bool|resource The internal LDAP connection handle
+	 * @var bool|resource|LDAP\Connection The internal LDAP connection handle. Resource was a resource before PHP 8.1 and is an object of class LDAP\Connection since PHP 8.1
+	 * @phpstan-var LDAP\Connection
 	 */
 	public $connection;
 
@@ -312,7 +313,6 @@ class Ldap
 	 * Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
 	 * After return, this->connection and $this->bind are defined
 	 *
-	 * @see connect_bind renamed
 	 * @return		int		if KO: <0 || if bind anonymous: 1 || if bind auth: 2
 	 */
 	public function connectBind()
@@ -347,7 +347,7 @@ class Ldap
 		if (empty($this->error)) {
 			// Loop on each ldap server
 			foreach ($this->server as $host) {
-				if ($connected) {
+				if ($connected) {  // @phpstan-ignore if.alwaysFalse
 					break;
 				}
 				if (empty($host)) {
@@ -359,7 +359,10 @@ class Ldap
 						dol_syslog(get_class($this)."::connectBind serverPing true, we try ldap_connect to ".$host, LOG_DEBUG);
 					}
 					if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
-						$uri = $host.':'.$this->serverPort;
+						// Since PHP 8.3, ldap_connect() expects a single URI argument. A scheme-less
+						// host (ex: localhost, 192.168.0.2) must be turned into a valid ldap:// URI,
+						// otherwise the host is parsed as the URI scheme and the later bind fails.
+						$uri = preg_match('/^ldaps?:\/\//i', $host) ? $host : 'ldap://'.$host.':'.$this->serverPort;
 						$this->connection = ldap_connect($uri);
 					} else {
 						$this->connection = ldap_connect($host, $this->serverPort);
@@ -372,7 +375,7 @@ class Ldap
 							dol_syslog(get_class($this)."::connectBind serverPing false, we try ldap_connect to ".$host, LOG_DEBUG);
 						}
 						if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
-							$uri = $host.':'.$this->serverPort;
+							$uri = preg_match('/^ldaps?:\/\//i', $host) ? $host : 'ldap://'.$host.':'.$this->serverPort;
 							$this->connection = ldap_connect($uri);
 						} else {
 							$this->connection = ldap_connect($host, $this->serverPort);
@@ -385,7 +388,7 @@ class Ldap
 					}
 				}
 
-				if (is_resource($this->connection) || is_object($this->connection)) {
+				if ($this->connection !== false) {
 					if ($ldapdebug) {
 						dol_syslog(get_class($this)."::connectBind this->connection is ok", LOG_DEBUG);
 					}
@@ -437,7 +440,7 @@ class Ldap
 							}
 						}
 						// Try in anonymous
-						if (!$this->bind) {
+						if (!$this->bind) {  // @phpstan-ignore booleanNot.alwaysTrue
 							dol_syslog(get_class($this)."::connectBind try bind anonymously on ".$host, LOG_DEBUG);
 							$result = $this->bind();
 							if ($result) {
@@ -452,7 +455,7 @@ class Ldap
 					}
 				}
 
-				if (!$connected) {
+				if (!$connected) {  // @phpstan-ignore booleanNot.alwaysTrue
 					$this->unbind();
 				}
 			}	// End loop on each server
@@ -541,8 +544,8 @@ class Ldap
 				}
 			}
 		} else {
-			if (is_resource($this->connection)) {
-				// @phan-suppress-next-line PhanTypeMismatchArgumentInternalReal
+			if ($this->connection !== false) {
+				// @phan-suppress-next-line PhanTypeMismatchArgumentInternalReal PhanTypeSuspiciousIndirectVariable
 				$this->result = @ldap_unbind($this->connection);
 			}
 		}
@@ -1105,6 +1108,13 @@ class Ldap
 			return -3;
 		}
 
+		// Honor the admin-configured user search filter (LDAP_FILTER_CONNECTION)
+		// so an identifier match outside the configured scope does not leak
+		// attributes for an unrelated LDAP user (see #37120).
+		if (!empty($this->filter) && !preg_match('/^\s*\(\s*&\s*\(/', $filter)) {
+			$filter = '(&(' . $this->filter . ')' . $filter . ')';
+		}
+
 		$search = @ldap_search($this->connection, $dn, $filter);
 
 		// Only one entry should ever be returned
@@ -1141,6 +1151,12 @@ class Ldap
 
 		// We need to search for this user in order to get their entry.
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
+		if ($this->result === false) {
+			// Invalid filter or search error: do not pass false to ldap_first_entry() (TypeError with PHP 8)
+			$this->ldapErrorCode = ldap_errno($this->connection);
+			$this->ldapErrorText = ldap_error($this->connection);
+			return false;
+		}
 
 		// What is this line for ?
 		//$info = ldap_get_entries($this->connection, $this->result);
@@ -1173,7 +1189,7 @@ class Ldap
 	 *	@param	string			$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
 	 *	@param	string			$useridentifier 	Name of key field (Ex: uid).
 	 *	@param	string[]		$attributeArray 	Array of fields required. Note this array must also contain field $useridentifier (Ex: sn,userPassword)
-	 *	@param	0|1|'1'|'user'|'group'|'member'	$activefilter	'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
+	 *	@param	int<0,1>|'1'|'user'|'group'|'member'	$activefilter	'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	string[]		$attributeAsArray 	Array of fields wanted as an array not a string
 	 *	@return	array<string,array<string,string>>|int<min,-1>				if KO: <0 || if OK: array of [id_record][ldap_field]=value
 	 */
@@ -1223,7 +1239,7 @@ class Ldap
 
 		$info = @ldap_get_entries($this->connection, $this->result);
 
-		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passe
+		// Warning: In info, attribute names are lowercase even if passed
 		// a ldap_search en majuscule !!!
 		//print_r($info);
 
@@ -1311,7 +1327,7 @@ class Ldap
 			$entry = ldap_first_entry($this->connection, $ldapSearchResult);
 
 			if (!$entry) {
-				// Si pas de resultat on cherche dans le domaine
+				// If no result, search in the domain
 				$searchDN = $this->domain;
 				$i++;
 			} else {
@@ -1428,7 +1444,7 @@ class Ldap
 			}
 
 			if (!$result) {
-				// Si pas de resultat on cherche dans le domaine
+				// If no result, search in the domain
 				$searchDN = $this->domain;
 				$i++;
 			} else {
@@ -1649,7 +1665,7 @@ class Ldap
 			$c = $result['count'];
 			$gids = array();
 			for ($i = 0; $i < $c; $i++) {
-				$gids[] = $result[$i]['gidnumber'][0];
+				$gids[] = (int) $result[$i]['gidnumber'][0];
 			}
 			rsort($gids);
 

@@ -10,7 +10,6 @@ ActionsOnFicheInter=Eventos sobre la intervención
 LastInterventions=Últimas %s intervenciones
 AllInterventions=Todas las intervenciones
 CreateDraftIntervention=Crear borrador
-InterventionContact=Contacto intervención
 DeleteIntervention=Eliminar intervención
 ValidateIntervention=Validar intervención
 SignIntervention=Firmar intervención

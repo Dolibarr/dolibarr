@@ -128,6 +128,7 @@ ShipmentDistribution=Distribución de envíos
 ErrorTooManyCombinationBatchcode=No se realizó envío para la línea %s porque se encontraron demasiadas combinaciones de almacén, producto y código de lote (%s).
 ErrorNoCombinationBatchcode=No se pudo guardar la línea %s como la combinación de almacén-producto-lote/serie (%s, %s, %s) no se encontró en stock.
 ErrorTooMuchShipped=La cantidad enviada no debe ser mayor que la cantidad solicitada para la línea %s
+NoShipmentLineChangeDetected=No se detectó ningún cambio en la línea de envío.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Responsable recepción pedido a proveedor
 TypeContact_shipping_external_BILLING=Contacto cliente de facturación presupuesto

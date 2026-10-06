@@ -5,6 +5,7 @@
  * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Abbes Bahfir		 <contact@ab1consult.com><bafbes@gmail.com>
+ * Copyright (C) 2026      Nathan Pixodeo        <nathan@pixodeo.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/receiptprinter.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "receiptprinter"));
@@ -204,25 +205,35 @@ if ($action == 'testprinter2') {
 
 if ($action == 'testtemplate') {
 	$error = 0;
-	// if (empty($printerid)) {
-	//     $error++;
-	//     setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
-	// }
-
-	// if (! $error) {
-	// test
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-	$object = new Facture($db);
-	$object->initAsSpecimen();
-	//$object->fetch(18);
-	//var_dump($object->lines);
-	$ret = $printer->sendToPrinter($object, $templateid, 1);
-	if ($ret == 0) {
-		setEventMessages($langs->trans("TestTemplateToPrinter", $printername), null);
-	} else {
-		setEventMessages($printer->error, $printer->errors, 'errors');
+	if (empty($printerid)) {
+		$ret = $printer->listPrinters();
+		if ($ret > 0) {
+			$error++;
+			setEventMessages($printer->error, $printer->errors, 'errors');
+		} elseif (!empty($printer->listprinters)) {
+			// Keep the historic first-printer behavior without assuming its rowid is 1.
+			$printerid = (int) min(array_column($printer->listprinters, 'rowid'));
+		}
 	}
-	//}
+	if (!$error && empty($printerid)) {
+		$error++;
+		setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
+	}
+
+	if (!$error) {
+		// test
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$object = new Facture($db);
+		$object->initAsSpecimen();
+		//$object->fetch(18);
+		//var_dump($object->lines);
+		$ret = $printer->sendToPrinter($object, $templateid, $printerid);
+		if ($ret == 0) {
+			setEventMessages($langs->trans("TestTemplateToPrinter", $printername), null);
+		} else {
+			setEventMessages($printer->error, $printer->errors, 'errors');
+		}
+	}
 	$action = '';
 }
 
@@ -319,7 +330,7 @@ $line = -1;
 
 // mode = config
 if ($mode == 'config') {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($action != 'editprinter') {
 		print '<input type="hidden" name="action" value="addprinter">';
@@ -457,7 +468,7 @@ if ($mode == 'template') {
 
 	print '<br>';
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($action != 'edittemplate') {
 		print '<input type="hidden" name="action" value="addtemplate">';
@@ -487,7 +498,7 @@ if ($mode == 'template') {
 				print '<input type="hidden" name="templateid" value="'.($printer->listprinterstemplates[$line]['rowid'] ?? '').'">';
 				print '<td><input type="text" class="minwidth200" name="templatename" value="'.($printer->listprinterstemplates[$line]['name'] ?? '').'"></td>';
 				print '<td class="wordbreak">';
-				print '<textarea name="template" wrap="soft" cols="120" rows="12">'.($printer->listprinterstemplates[$line]['template'] ?? '').'</textarea>';
+				print '<textarea name="template" wrap="soft" cols="90" rows="12">'.($printer->listprinterstemplates[$line]['template'] ?? '').'</textarea>';
 				print '</td>';
 				print '<td>';
 				print $form->buttonsSaveCancel("Save", '');
@@ -516,7 +527,7 @@ if ($mode == 'template') {
 		print '<tr>';
 		print '<td><input type="text" class="minwidth200" name="templatename" value="'.($printer->listprinterstemplates[$line]['name'] ?? '').'"></td>';
 		print '<td class="wordbreak">';
-		print '<textarea name="template" wrap="soft" cols="120" rows="12">';
+		print '<textarea name="template" wrap="soft" cols="90" rows="12">';
 		print '</textarea>';
 		print '</td>';
 		print '<td>';

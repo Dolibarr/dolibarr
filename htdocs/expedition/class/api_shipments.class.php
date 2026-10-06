@@ -4,6 +4,7 @@
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke  		<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  * API class for shipments
@@ -96,7 +98,7 @@ class Shipments extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter shipments of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of shipment objects
@@ -135,9 +137,9 @@ class Shipments extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -235,6 +237,13 @@ class Shipments extends DolibarrApi
 
 			$this->shipment->$field = $this->_checkValForAPI($field, $value, $this->shipment);
 		}
+
+		// A standalone shipment has no source order line to point to: its lines are free
+		// lines, recorded with addlinefree() exactly as the shipment card records them.
+		if (getDolGlobalString('SHIPMENT_STANDALONE') && !isset($request_data['origin_id']) && !isset($request_data['origin_type'])) {
+			return $this->createStandalone($request_data['lines'] ?? array());
+		}
+
 		if (isset($request_data["lines"])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
@@ -268,188 +277,293 @@ class Shipments extends DolibarrApi
 		return $this->shipment->id;
 	}
 
-	// /**
-	//  * Get lines of an shipment
-	//  *
-	//  * @param int   $id             Id of shipment
-	//  *
-	//  * @url	GET {id}/lines
-	//  *
-	//  * @return int
-	//  */
-	/*
+	/**
+	 * Create a standalone shipment (no source order) and its free lines
+	 *
+	 * @param   mixed   $lines   Lines of the request: fk_product, description, qty, fk_unit, rang, array_options
+	 * @return  int              ID of shipment created
+	 * @throws  RestException
+	 */
+	private function createStandalone($lines)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+		if (!is_array($lines)) {
+			throw new RestException(400, 'Field lines must be an array');
+		}
+		$this->shipment->lines = array();
+
+		$this->db->begin();
+
+		if ($this->shipment->create(DolibarrApiAccess::$user) < 0) {
+			$this->db->rollback();
+			throw new RestException(500, "Error creating shipment", array_merge(array($this->shipment->error), $this->shipment->errors));
+		}
+
+		foreach ($lines as $line) {
+			if (!is_array($line)) {
+				$this->db->rollback();
+				throw new RestException(400, 'Each line must be an object');
+			}
+			$fk_product = (int) ($line['fk_product'] ?? 0);
+			$description = sanitizeVal((string) ($line['description'] ?? ($line['desc'] ?? '')), 'restricthtml');
+			$qty = (float) price2num($line['qty'] ?? '', 'MS');
+			$fk_unit = isset($line['fk_unit']) ? (int) $line['fk_unit'] : null;
+
+			$error = '';
+			if (!isset($line['qty']) || $line['qty'] === '') {
+				$error = 'Field qty is mandatory';
+			} elseif ($qty < 0) {
+				$error = 'Field qty cannot be negative';
+			} elseif ($fk_product <= 0 && getDolGlobalString('MAIN_DISABLE_FREE_LINES')) {
+				$error = 'Field fk_product is mandatory (MAIN_DISABLE_FREE_LINES is on)';
+			} elseif ($fk_product <= 0 && $description === '') {
+				$error = 'A line needs a fk_product or a description';
+			} elseif ($fk_product > 0) {
+				$product = new Product($this->db);
+				if ($product->fetch($fk_product) <= 0) {
+					$error = 'Product '.$fk_product.' not found';
+				} elseif ($fk_unit === null) {
+					$fk_unit = $product->fk_unit;
+				}
+			}
+			if ($error !== '') {
+				$this->db->rollback();
+				throw new RestException(400, $error);
+			}
+
+			$array_options = (isset($line['array_options']) && is_array($line['array_options'])) ? $line['array_options'] : array();
+			$rang = (int) ($line['rang'] ?? 0);
+
+			if ($this->shipment->addlinefree($qty, 'shipping', $fk_product, $fk_unit, $rang > 0 ? $rang : -1, $description, 0, $array_options) <= 0) {
+				$this->db->rollback();
+				throw new RestException(500, "Error creating shipment line", array_merge(array($this->shipment->error), $this->shipment->errors));
+			}
+		}
+
+		$this->db->commit();
+
+		return $this->shipment->id;
+	}
+
+	/**
+	 * Get lines of a shipment
+	 *
+	 * @param int   $id             Id of shipment
+	 *
+	 * @url	GET {id}/lines
+	 *
+	 * @return array
+	 * @phan-return ExpeditionLigne[]
+	 * @phpstan-return ExpeditionLigne[]
+	 */
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
 		}
 
 		$result = $this->shipment->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Shipment not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->shipment->getLinesArray();
 		$result = array();
 		foreach ($this->shipment->lines as $line) {
-			array_push($result,$this->_cleanObjectDatas($line));
+			array_push($result, $this->_cleanObjectDatas($line));
 		}
 		return $result;
 	}
-	*/
-
-	// /**
-	//  * Add a line to given shipment
-	//  *
-	//  * @param int   $id             Id of shipment to update
-	//  * @param array $request_data   ShipmentLine data
-	//  * @phan-param ?array<string,string> $request_data
-	//  * @phpstan-param ?array<string,string> $request_data
-	//  *
-	//  * @url	POST {id}/lines
-	//  *
-	//  * @return int
-	//  */
-	/*
-	public function postLine($id, $request_data = null)
-	{
-	if(! DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
-		throw new RestException(403);
-	}
-
-	$result = $this->shipment->fetch($id);
-	if ( ! $result ) {
-		throw new RestException(404, 'Shipment not found');
-	}
-
-	if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
-		throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-	}
-
-	$request_data = (object) $request_data;
-
-	$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-	$request_data->label = sanitizeVal($request_data->label);
-
-	$updateRes = $this->shipment->addline(
-					$request_data->desc,
-					$request_data->subprice,
-					$request_data->qty,
-					$request_data->tva_tx,
-					$request_data->localtax1_tx,
-					$request_data->localtax2_tx,
-					$request_data->fk_product,
-					$request_data->remise_percent,
-					$request_data->info_bits,
-					$request_data->fk_remise_except,
-					'HT',
-					0,
-					$request_data->date_start,
-					$request_data->date_end,
-					$request_data->product_type,
-					$request_data->rang,
-					$request_data->special_code,
-					$fk_parent_line,
-					$request_data->fk_fournprice,
-					$request_data->pa_ht,
-					$request_data->label,
-					$request_data->array_options,
-					$request_data->fk_unit,
-					$request_data->origin,
-					$request_data->origin_id,
-					$request_data->multicurrency_subprice
-	);
-
-	if ($updateRes > 0) {
-		return $updateRes;
-
-	}
-	return false;
-	}*/
-
-	// /**
-	//  * Update a line to given shipment
-	//  *
-	//  * @param int   $id             Id of shipment to update
-	//  * @param int   $lineid         Id of line to update
-	//  * @param array $request_data   ShipmentLine data
-	//  *
-	//  * @url	PUT {id}/lines/{lineid}
-	//  *
-	//  * @return object
-	//  */
-	/*
-	public function putLine($id, $lineid, $request_data = null)
-	{
-	if (! DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
-		throw new RestException(403);
-	}
-
-	$result = $this->shipment->fetch($id);
-	if ( ! $result ) {
-		throw new RestException(404, 'Shipment not found');
-	}
-
-	if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
-		throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-	}
-
-	$request_data = (object) $request_data;
-
-	$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-	$request_data->label = sanitizeVal($request_data->label);
-
-	$updateRes = $this->shipment->updateline(
-					$lineid,
-					$request_data->desc,
-					$request_data->subprice,
-					$request_data->qty,
-					$request_data->remise_percent,
-					$request_data->tva_tx,
-					$request_data->localtax1_tx,
-					$request_data->localtax2_tx,
-					'HT',
-					$request_data->info_bits,
-					$request_data->date_start,
-					$request_data->date_end,
-					$request_data->product_type,
-					$request_data->fk_parent_line,
-					0,
-					$request_data->fk_fournprice,
-					$request_data->pa_ht,
-					$request_data->label,
-					$request_data->special_code,
-					$request_data->array_options,
-					$request_data->fk_unit,
-					$request_data->multicurrency_subprice
-	);
-
-	if ($updateRes > 0) {
-		$result = $this->get($id);
-		unset($result->line);
-		return $this->_cleanObjectDatas($result);
-	}
-	return false;
-	}*/
 
 	/**
-	 * Delete a line to given shipment
+	 * Add a line to a given shipment
 	 *
+	 * A shipment line always references the order line it ships (fk_origin_line):
+	 * the shipped quantity relates to that order line. A line can only be added
+	 * while the shipment is still a draft, before any stock movement.
+	 * Lines managed by lot/serial (batch) are not supported here (the quantity is
+	 * split by lot in expeditiondet_batch) - use the dedicated dispatch flow instead.
+	 *
+	 * @param int   $id                 Id of shipment to update
+	 * @param int   $fk_origin_line     Id of the order line shipped by this line			{@from body}{@required true}
+	 * @param float $qty                Quantity to ship for this line						{@from body}{@required true}{@min 1}
+	 * @param int   $warehouse_id       Source warehouse id (may be optional depending on STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS)	{@from body}{@required false}
+	 * @param int   $fk_product         Product id (optional, defaults to the order line product)	{@from body}{@required false}
+	 *
+	 * @url	POST {id}/lines
+	 *
+	 * @return int							Id of the created shipment line
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 405
+	 * @throws RestException 500
+	 */
+	public function postLine($id, $fk_origin_line = 0, $qty = 0, $warehouse_id = 0, $fk_product = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->shipment->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// A line can only be added while the shipment is a draft (no stock movement yet).
+		if ((int) $this->shipment->status != Expedition::STATUS_DRAFT) {
+			throw new RestException(405, 'Lines can only be added to a draft shipment');
+		}
+
+		$fk_origin_line = (int) $fk_origin_line;
+		if ($fk_origin_line <= 0) {
+			throw new RestException(400, 'Field fk_origin_line is mandatory');
+		}
+
+		$qty = (float) $qty;
+		if ($qty <= 0) {
+			throw new RestException(400, 'Field qty is mandatory and must be greater than 0');
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		$orderline = new OrderLine($this->db);
+		$resorderline = $orderline->fetch($fk_origin_line);
+		if ($resorderline <= 0) {
+			throw new RestException(404, 'Origin order line '.$fk_origin_line.' not found');
+		}
+		if (isModEnabled('productbatch') && !empty($orderline->product_tobatch)) {
+			throw new RestException(405, 'Adding a batch/lot managed shipment line is not supported through this endpoint. Use the dedicated dispatch flow instead.');
+		}
+
+		// addline() stacks the line in memory and runs native validation
+		// (warehouse requirement, stock availability, batch rejection).
+		$addResult = $this->shipment->addline((int) $warehouse_id, $fk_origin_line, $qty, array(), (int) $fk_product);
+		if ($addResult <= 0) {
+			$msg = $this->shipment->errorsToString() ? $this->shipment->errorsToString() : 'Error while adding shipment line';
+			// -1 missing warehouse, -3 not enough stock, -4 batch product: bad request from the caller.
+			if (in_array((int) $addResult, array(-1, -3, -4), true)) {
+				throw new RestException(400, $msg);
+			}
+			throw new RestException(500, $msg);
+		}
+
+		// addline() only fills $this->shipment->lines; persist the line just stacked.
+		$line = end($this->shipment->lines);
+		$line->fk_expedition = $this->shipment->id;
+
+		$insertRes = $line->insert(DolibarrApiAccess::$user);
+		if ($insertRes > 0) {
+			return $insertRes;
+		}
+
+		throw new RestException(500, $line->errorsToString());
+	}
+
+	/**
+	 * Update a line of a given shipment
+	 *
+	 * Only the quantity (and optionally the source warehouse) of the line can be
+	 * changed, and only while the shipment is still a draft: once validated the
+	 * stock has already been moved, so editing the line would desync the stock.
+	 * Lines managed by lot/serial (batch) are not supported here (the quantity is
+	 * split by lot in expeditiondet_batch) - delete the line and create it again.
+	 *
+	 * @param int   $id             Id of shipment to update
+	 * @param int   $lineid         Id of line to update
+	 * @param float $qty            New quantity to ship for this line			{@from body}{@required true}{@min 1}
+	 * @param int   $warehouse_id   Source warehouse id for this line (optional, 0 to keep the current one)	{@from body}{@required false}
+	 *
+	 * @url	PUT {id}/lines/{lineid}
+	 *
+	 * @return Object					Updated shipment
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 405
+	 * @throws RestException 500
+	 */
+	public function putLine($id, $lineid, $qty = 0, $warehouse_id = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->shipment->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// A line can only be edited while the shipment is a draft (no stock movement yet).
+		if ((int) $this->shipment->status != Expedition::STATUS_DRAFT) {
+			throw new RestException(405, 'Only draft shipment lines can be updated');
+		}
+
+		$qty = (float) $qty;
+		if ($qty <= 0) {
+			throw new RestException(400, 'Field qty is mandatory and must be greater than 0');
+		}
+
+		$line = new ExpeditionLigne($this->db);
+		$resline = $line->fetch($lineid);
+		if ($resline <= 0) {
+			throw new RestException(404, 'Shipment line not found');
+		}
+		if ((int) $line->fk_expedition != (int) $this->shipment->id) {
+			throw new RestException(404, 'Line '.((int) $lineid).' is not a line of shipment '.((int) $id));
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
+		$linebatch = new ExpeditionLineBatch($this->db);
+		$lots = $linebatch->fetchAll($line->id);
+		if (is_array($lots) && count($lots) > 0) {
+			throw new RestException(405, 'Update of a batch/lot managed shipment line is not supported. Delete and recreate the line instead.');
+		}
+
+		$line->qty = $qty;
+		if ($warehouse_id > 0) {
+			$line->entrepot_id = (int) $warehouse_id;
+		}
+
+		$updateRes = $line->update(DolibarrApiAccess::$user);
+		if ($updateRes > 0) {
+			return $this->get($id);
+		}
+
+		throw new RestException(500, $line->errorsToString() ? $line->errorsToString() : $this->shipment->errorsToString());
+	}
+
+	/**
+	 * Delete a line of a given shipment
+	 *
+	 * A line can only be deleted while the shipment is still a draft: once
+	 * validated the stock has already been moved, so removing the line would
+	 * desync the stock.
 	 *
 	 * @param int   $id             Id of shipment to update
 	 * @param int   $lineid         Id of line to delete
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
-	 * @return array
-	 * @phan-return array{success:array{code:int,message:string}}
-	 * @phpstan-return array{success:array{code:int,message:string}}
+	 * @return Object					Updated shipment
 	 *
-	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
+	 * @throws RestException 405
+	 * @throws RestException 500
 	 */
 	public function deleteLine($id, $lineid)
 	{
@@ -466,19 +580,26 @@ class Shipments extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of object
-
-		$updateRes = $this->shipment->deleteLine(DolibarrApiAccess::$user, $lineid);
-		if ($updateRes > 0) {
-			return array(
-			'success' => array(
-				'code' => 200,
-				'message' => 'line ' .$lineid. ' deleted'
-			)
-			);
-		} else {
-			throw new RestException(405, $this->shipment->error);
+		// A line can only be deleted while the shipment is a draft (no stock movement yet).
+		if ((int) $this->shipment->status != Expedition::STATUS_DRAFT) {
+			throw new RestException(405, 'Only draft shipment lines can be deleted');
 		}
+
+		$line = new ExpeditionLigne($this->db);
+		$resline = $line->fetch($lineid);
+		if ($resline <= 0) {
+			throw new RestException(404, 'Shipment line not found');
+		}
+		if ((int) $line->fk_expedition != (int) $this->shipment->id) {
+			throw new RestException(404, 'Line '.((int) $lineid).' is not a line of shipment '.((int) $id));
+		}
+
+		$deleteRes = $this->shipment->deleteLine(DolibarrApiAccess::$user, $lineid);
+		if ($deleteRes > 0) {
+			return $this->get($id);
+		}
+
+		throw new RestException(500, $this->shipment->errorsToString() ? $this->shipment->errorsToString() : 'Error while deleting shipment line');
 	}
 
 	/**
@@ -516,7 +637,7 @@ class Shipments extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->shipment->array_options[$index] = $this->_checkValForAPI($field, $val, $this->shipment);
+					$this->shipment->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->shipment);
 				}
 				continue;
 			}
@@ -526,7 +647,7 @@ class Shipments extends DolibarrApi
 		if ($this->shipment->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->shipment->error);
+			throw new RestException(500, $this->shipment->errorsToString());
 		}
 	}
 
@@ -554,7 +675,7 @@ class Shipments extends DolibarrApi
 		}
 
 		if (!$this->shipment->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->error);
+			throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->errorsToString());
 		}
 
 		return array(
@@ -603,7 +724,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
+			throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->errorsToString());
 		}
 
 		// Reload shipment
@@ -645,7 +766,7 @@ class Shipments extends DolibarrApi
 
 	$result = $this->shipment->classifyBilled(DolibarrApiAccess::$user);
 	if( $result < 0) {
-			throw new RestException(400, $this->shipment->error);
+			throw new RestException(400, $this->shipment->errorsToString());
 	}
 	return $result;
 	}
@@ -655,7 +776,7 @@ class Shipments extends DolibarrApi
 	//  /**
 	//  * Create a shipment using an existing order.
 	//  *
-	//  * @param int   $orderid       Id of the order
+	//  * @param int   $orderid    Id of the order
 	//  *
 	//  * @url     POST /createfromorder/{orderid}
 	//  *
@@ -689,7 +810,7 @@ class Shipments extends DolibarrApi
 
 	$result = $this->shipment->createFromOrder($order, DolibarrApiAccess::$user);
 	if( $result < 0) {
-			throw new RestException(405, $this->shipment->error);
+			throw new RestException(405, $this->shipment->errorsToString());
 	}
 	$this->shipment->fetchObjectLinked();
 	return $this->_cleanObjectDatas($this->shipment);
@@ -726,7 +847,55 @@ class Shipments extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when closing Order: '.$this->shipment->error);
+			throw new RestException(500, 'Error when closing Order: '.$this->shipment->errorsToString());
+		}
+
+		// Reload shipment
+		$result = $this->shipment->fetch($id);
+
+		$this->shipment->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->shipment);
+	}
+
+	/**
+	 * Set a shipment back to draft status
+	 *
+	 * This reverts a validated shipment to draft. If stock movements were recorded
+	 * at validation, they are cancelled back accordingly by the native method.
+	 *
+	 * @param   int $id             Shipment ID
+	 *
+	 * @url POST    {id}/settodraft
+	 *
+	 * @return  object
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function setToDraft($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->shipment->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->shipment->setDraft(DolibarrApiAccess::$user);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already draft');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when setting shipment back to draft: '.$this->shipment->errorsToString());
 		}
 
 		// Reload shipment
@@ -799,7 +968,14 @@ class Shipments extends DolibarrApi
 			$data = array();
 		}
 		$shipment = array();
-		foreach (Shipments::$FIELDS as $field) {
+		// A standalone shipment carries no source document, exactly as the card
+		// allows when SHIPMENT_STANDALONE is enabled: do not demand an origin the
+		// user is entitled to omit.
+		$mandatory = Shipments::$FIELDS;
+		if (getDolGlobalString('SHIPMENT_STANDALONE') && !isset($data['origin_id']) && !isset($data['origin_type'])) {
+			$mandatory = array_values(array_diff($mandatory, array('origin_id', 'origin_type')));
+		}
+		foreach ($mandatory as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}

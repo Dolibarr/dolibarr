@@ -101,7 +101,7 @@ $documentation->showSidebar(); ?>
 					'// Title with custom image icon, 4th parameter must be 1',
 					'print load_fiche_titre("'.$langs->trans('DocMyPageTitle').'", "", "IMAGE_URL", 1);',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 
 				<p class="documentation-text"><?php echo $langs->trans('DocTitleMoreContentDescription'); ?></p>
 				<div class="documentation-example">
@@ -133,7 +133,7 @@ $documentation->showSidebar(); ?>
 					'$moreContent = \'MyHTMLContent\';',
 					'print load_fiche_titre("'.$langs->trans('DocMyPageTitle').'", $moreHtmlRight, "fa-rocket_fas_#b0bb39", 0, $tableID, $moreclass, $moreContent);',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<!-- Table with filters -->
@@ -196,7 +196,7 @@ $documentation->showSidebar(); ?>
 					' */',
 					'print_barre_liste($title, $page, $file, $options, $sortfield, $sortorder, $morehtmlcenter, $num, $totalnboflines, $picto, $pictoisfullpath, $morehtmlright, $morecss, $limit, $selectlimitsuffix, $hidenavigation, $pagenavastextinput, $morehtmlrightbeforearrow);',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 		</div>

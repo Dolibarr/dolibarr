@@ -106,7 +106,7 @@ ListShippingAssociatedProject=Λίστα αποστολών που σχετίζ�
 ListFichinterAssociatedProject=Λίστα παρεμβάσεων που σχετίζονται με το έργο
 ListExpenseReportsAssociatedProject=Λίστα εκθέσεων δαπανών που σχετίζονται με το έργο
 ListDonationsAssociatedProject=Λίστα δωρεών που σχετίζονται με το έργο
-ListVariousPaymentsAssociatedProject=Λίστα διαφόρων πληρωμών που σχετίζονται με το έργο
+ListVariousPaymentsAssociatedProject=List of manual journal entries related to the project
 ListSalariesAssociatedProject=Λίστα πληρωμών μισθών που σχετίζονται με το σχέδιο
 ListActionsAssociatedProject=Λίστα ενεργειών που σχετίζονται με το έργο
 ListMOAssociatedProject=Λίστα παραγγελιών παραγωγής που σχετίζονται με το έργο
@@ -258,7 +258,7 @@ OtherFilteredTasks=Άλλες φιλτραρισμένες εργασίες
 NoAssignedTasks=Δεν βρέθηκαν ανατεθειμένες εργασίες (αναθέστε έργο/εργασίες στον τρέχοντα χρήστη από το επάνω πλαίσιο επιλογής για να εισαγάγετε χρόνο σε αυτό)
 ThirdPartyRequiredToGenerateIntervention=Ένα τρίτο μέρος πρέπει να έχει οριστεί στο έργο για να μπορέσει να δημιουργήσει παρέμβαση.
 ThirdPartyRequiredToGenerateInvoice=Ένα τρίτο μέρος πρέπει να έχει οριστεί στο έργο για να μπορεί να τιμολογηθεί.
-ChooseANotYetAssignedTask=Επιλέξτε μια εργασία που δεν σας έχει ανατεθεί ακόμη
+ChooseANotYetAssignedTask=Εργασίες που δεν σας έχουν ανατεθεί ακόμη
 # Comments trans
 AllowCommentOnTask=Επιτρέψτε στα σχόλια των χρηστών τις εργασίες
 AllowCommentOnProject=Επιτρέψτε τα σχόλια των χρηστών σε έργα

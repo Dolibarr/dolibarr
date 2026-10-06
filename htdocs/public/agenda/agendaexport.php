@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2024  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,9 +67,10 @@ if (!defined('NOIPCHECK')) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '<html><title>Export agenda cal</title><body>';
 }
@@ -313,7 +314,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		}
 		//$attachment = false;
 		$contenttype = 'text/calendar';
-		if (GETPOSTISSET("contenttype")) {
+		// Only types that can not be rendered as HTML, else the labels of events would be interpreted by the browser
+		if (GETPOSTISSET("contenttype") && in_array(GETPOST("contenttype"), array('text/calendar', 'text/plain'))) {
 			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
@@ -338,7 +340,8 @@ if ($format == 'ical' || $format == 'vcal') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
@@ -361,7 +364,8 @@ if ($format == 'rss') {
 		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (GETPOSTISSET("contenttype")) {
+		// Only types that can not be rendered as HTML, else the labels of events would be interpreted by the browser
+		if (GETPOSTISSET("contenttype") && in_array(GETPOST("contenttype"), array('application/rss+xml', 'text/plain'))) {
 			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
@@ -376,7 +380,7 @@ if ($format == 'rss') {
 			header('Content-Disposition: inline; filename="'.$filename.'"');
 		}
 
-		// Ajout directives pour resoudre bug IE
+		// Add directives to fix IE bug
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
 		if ($cachedelay) {
@@ -391,7 +395,8 @@ if ($format == 'rss') {
 		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
 		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
+			dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+			print 'File was empty.';
 		}
 
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));

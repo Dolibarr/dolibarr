@@ -106,7 +106,7 @@ ListShippingAssociatedProject=Listado de envíos asociados al proyecto
 ListFichinterAssociatedProject=Listado de intervenciones asociadas al proyecto
 ListExpenseReportsAssociatedProject=Listado de informes de gastos asociados al proyecto
 ListDonationsAssociatedProject=Listado de donaciones asociadas al proyecto
-ListVariousPaymentsAssociatedProject=Lista de pagos diversos asociados al proyecto
+ListVariousPaymentsAssociatedProject=Lista de entradas de diario manuales relacionadas con el proyecto
 ListSalariesAssociatedProject=Listado de pagos de salarios asociados al proyecto
 ListActionsAssociatedProject=Listado de eventos asociados al proyecto
 ListMOAssociatedProject=Lista de orden de fabricación relacionados con el proyecto.
@@ -258,7 +258,7 @@ OtherFilteredTasks=Otras tareas filtradas
 NoAssignedTasks=Sin tareas asignadas ( Asigne proyectos/tareas al usuario actual desde el selector superior  para indicar tiempos en ellas)
 ThirdPartyRequiredToGenerateIntervention=Se debe definir un tercero en el proyecto para poder crear una intervención.
 ThirdPartyRequiredToGenerateInvoice=Se debe definir un tercero en el proyecto para poder facturarlo.
-ChooseANotYetAssignedTask=Elige una tarea que aún no te haya sido asignada
+ChooseANotYetAssignedTask=Tareas que aún no te han sido asignadas
 # Comments trans
 AllowCommentOnTask=Permitir comentarios de los usuarios sobre las tareas
 AllowCommentOnProject=Permitir comentarios de los usuarios en los proyectos

@@ -36,10 +36,18 @@ ActivateAllOnContract=Activar todos os servizos
 CloseAContract=Pechar un contrato
 ConfirmDeleteAContract=¿Está certo de querer eliminar este contrato?
 ConfirmValidateContract=¿Está certo de querer validar este contrato baixo a referencia <b>%s</b>?
+ConfirmSignContract=Está certo de querer establecer este contrato como asinado?
+ConfirmUnsignContract=Está certo de querer establecer este contrato como sen asinar?
 ConfirmActivateAllOnContract=Esto abrirá todos os servizos (aínda non activos). ¿Está certo de que quere abrir todos os servizos?
 ConfirmCloseContract=Isto pechará todos os servizos (caducados ou non). Está certo de querer pechar este contrato?
 ConfirmCloseService=¿Está certo de querer pechar este servizo en data <b>%s</b>?
 ValidateAContract=Validar un contrato
+UnsignContract=Anular a sinatura do contrato
+ContractSign=Establecer Asinado
+ContractUnsign=Establecer sen asinar
+ContractSignedInDolibarr=Contrato asinado
+ContractSignedOnline=Contrato asinado en liña
+ContractUnsignedInDolibarr=Contrato sen asinar
 ActivateService=Activar o servizo
 ConfirmActivateService=¿Está certo de querer activar este servizo en data <b>%s</b>?
 RefContract=Ref. contrato
@@ -95,7 +103,13 @@ ConfirmCloneContract=¿Está certo de querer copiar o contrato <b>%s</b>?
 LowerDateEndPlannedShort=A data de finalización planificada é anterior aos servizos activos
 SendContractRef=Información do contrato __REF__
 OtherContracts=Outros contratos
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Estatísticas do contrato
+NbOfContracts=Número de contratos
+NumberOfContractsByMonth=Número de contratos por mes
+AmountOfServices=Número de servizos
+AmountOfServicesByMonthHT=Número de servizos (sen impostos) por mes
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial asinante do contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial de rastrexo do contrato
 TypeContact_contrat_external_BILLING=Contacto cliente de facturación do contrato

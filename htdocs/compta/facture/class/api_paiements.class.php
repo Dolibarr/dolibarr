@@ -96,7 +96,7 @@ class Paiements extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of paiements objects
 	 * @phan-return array<int,Paiement>
@@ -206,12 +206,12 @@ class Paiements extends DolibarrApi
 		if ($this->paiement->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->paiement->error);
+			throw new RestException(500, $this->paiement->errorsToString());
 		}
 	}
 
 	/**
-	 * Delete paiement
+	 * Delete payment
 	 *
 	 * @param   int     $id   Paiement ID
 	 * @return  array
@@ -226,7 +226,7 @@ class Paiements extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'supprimer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 
@@ -236,9 +236,9 @@ class Paiements extends DolibarrApi
 		}
 
 		if ($this->paiement->delete(DolibarrApiAccess::$user) == 0) {
-			throw new RestException(409, 'Error when deleting Paiement : '.$this->paiement->error);
+			throw new RestException(409, 'Error when deleting Paiement : '.$this->paiement->errorsToString());
 		} elseif ($this->paiement->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting Paiement : '.$this->paiement->error);
+			throw new RestException(500, 'Error when deleting Paiement : '.$this->paiement->errorsToString());
 		}
 
 		return array(

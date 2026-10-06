@@ -173,3 +173,5 @@ ErrorObjectMustNotBeFinishedToModifyDateEnd = Objektet %s må ikke være færdig
 ErrorObjectMustNotBeFinishedToModifyDateStart = Objektet %s må ikke være færdigt for at kunne ændre startdatoen.
 BOM_SUB_BOM=Brug underbomber
 UseSearchToSelectBom=Vent, indtil der trykkes på en tast, før indholdet af Boms-kombinationslisten indlæses.<br>Dette kan forbedre ydeevnen, hvis du har et stort antal projekter, men det er mindre praktisk.
+ReInitialize=Geninitialiser
+ReInitializeHelp=Geninitialiser linjerne til forbrug og produktion (hvis styklisten er ændret, og produktionen ikke er startet)

@@ -5,7 +5,7 @@
  * Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm", "withdraw
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$type = 'salaire';
+$type = 'salary';
 
 $label = GETPOST('label', 'alphanohtml');
 $projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project'));
@@ -118,17 +118,12 @@ $permissiontoadd = $user->hasRight('salaries', 'write'); // Used by the include 
 $permissiontodelete = $user->hasRight('salaries', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 
 $moreparam = '';
-if ($type == 'bank-transfer') {
-	$obj = new FactureFournisseur($db);
-	$moreparam = '&type='.$type;
-} else {
-	$obj = new Facture($db);
-}
+$obj = new Salary($db);
 
 // Load object
 if ($id > 0) {
 	$ret = $object->fetch($id);
-	$isdraft = (($obj->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+	$isdraft = (($obj->status == Salary::STATUS_UNPAID) ? 1 : 0);
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
 	}
@@ -153,7 +148,10 @@ if ($action == 'classin' && $user->hasRight('banque', 'modifier')) {
 if ($action == 'setlabel' && $user->hasRight('salaries', 'write')) {
 	$object->fetch($id);
 	$object->label = $label;
-	$object->update($user);
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 $parameters = array('socid' => $socid);
@@ -197,8 +195,8 @@ if ($action == "add" && $permissiontoadd) {
 
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		} else {
-			dol_print_error($db, $error);
 			$db->rollback();
+
 			setEventMessages($obj->error, $obj->errors, 'errors');
 		}
 	}
@@ -250,7 +248,7 @@ if ($action != 'editlabel') {
 	$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 	$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 	$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-	$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+	$morehtmlref .= '<input type="text" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"/>';
 	$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	$morehtmlref .= '</form>';
 }
@@ -488,11 +486,7 @@ $sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statu
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-if ($type == 'salaire') {
-	$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
-} else {
-	$sql .= " WHERE fk_facture = ".((int) $object->id);
-}
+$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.type = 'ban'";
 $sql .= " ORDER BY pfd.date_demande DESC";
@@ -559,21 +553,17 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td>&nbsp;</td>';
 }
 print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 print '<td>'.$langs->trans("User").'</td>';
 print '<td class="center">'.$langs->trans("Amount").'</td>';
 print '<td class="center">'.$langs->trans("DateProcess").'</td>';
-if ($type == 'bank-transfer') {
-	print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
-} else {
-	print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
-}
+print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
 print '<td>&nbsp;</td>';
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td>&nbsp;</td>';
 }
 print '</tr>';
@@ -595,13 +585,12 @@ if ($resql) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
@@ -639,22 +628,12 @@ if ($resql) {
 				print $withdrawreceipt->getNomUrl(1);
 			}
 
-			if (!in_array($type, array('bank-transfer', 'salaire', 'salary'))) {
-				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
-					$langs->load("stripe");
-					if ($obj->fk_prelevement_bons > 0) {
-						print ' &nbsp; ';
-					}
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripedirectdebit&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+			if (getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER')) {
+				$langs->load("stripe");
+				if ($obj->fk_prelevement_bons > 0) {
+					print ' &nbsp; ';
 				}
-			} else {
-				if (getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER')) {
-					$langs->load("stripe");
-					if ($obj->fk_prelevement_bons > 0) {
-						print ' &nbsp; ';
-					}
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequesCreditTransferWithStripe").'</a>';
-				}
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequesCreditTransferWithStripe").'</a>';
 			}
 			print '</td>';
 
@@ -662,7 +641,7 @@ if ($resql) {
 			print '<td class="center">-</td>';
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
@@ -688,11 +667,7 @@ $sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statu
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-if ($type == 'salaire') {
-	$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
-} else {
-	$sql .= " WHERE fk_facture = ".((int) $object->id);
-}
+$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
 $sql .= " AND pfd.traite = 1";
 $sql .= " AND pfd.type = 'ban'";
 $sql .= " ORDER BY pfd.date_demande DESC";
@@ -713,13 +688,12 @@ if ($resql) {
 			$tmpuser->email = $obj->email;
 			$tmpuser->lastname = $obj->lastname;
 			$tmpuser->firstname = $obj->firstname;
-			$tmpuser->statut = $obj->user_status;
 			$tmpuser->status = $obj->user_status;
 
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td>&nbsp;</td>';
 			}
 
@@ -746,7 +720,6 @@ if ($resql) {
 				$withdrawreceipt->date_trans = $db->jdate($obj->date_trans);
 				$withdrawreceipt->date_credit = $db->jdate($obj->date_credit);
 				$withdrawreceipt->date_creation = $db->jdate($obj->datec);
-				$withdrawreceipt->statut = $obj->status;
 				$withdrawreceipt->status = $obj->status;
 				$withdrawreceipt->fk_bank_account = $obj->fk_bank_account;
 				$withdrawreceipt->amount = $obj->pb_amount;
@@ -776,7 +749,7 @@ if ($resql) {
 			print '<td>&nbsp;</td>';
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td>&nbsp;</td>';
 			}
 

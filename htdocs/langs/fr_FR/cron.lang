@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Voir les tâches planifiées
-Permission23102 = Créer/Modifier des tâches planifiées
-Permission23103 = Supprimer une tâche planifiée
-Permission23104 = Exécuter une tâche planifiée
 # Admin
 CronSetup=Page de configuration du module - Gestion des travaux programmés
 URLToLaunchCronJobs=URL pour vérifier et lancer les travaux planifiés qualifiés depuis un navigateur
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser l'entrée
 CronExplainHowToRunWin=Sous Microsoft (tm) Windows, vous pouvez utiliser les outils Tâches programmées pour exécuter la ligne de commande toutes les 5 minutes.
 CronMethodDoesNotExists=La classe %s ne contient aucune méthode %s
 CronMethodNotAllowed=La méthode %s de la classe %s est dans la liste noire des méthodes interdites
-CronJobDefDesc=Les travaux planifiés sont définis dans le fichier descripteur de module. Lorsque le module est activé, ils sont chargés et disponibles afin que vous puissiez administrer les travaux à partir du menu des outils d'administration %s.
+CronJobDefDesc=Les profils de tâches Cron sont définis dans le descripteur de module fichier. Lorsque le module est activé, ils sont chargés et et disponibles afin que vous puissiez administrer les tâches à partir du menu Administrateur outils %s.
 CronJobProfiles=Liste des profils de travaux planifiés prédéfinis
 # Menu
 EnabledAndDisabled=Activés et désactivés
@@ -27,7 +22,7 @@ CronDelete=Effacer les travaux planifiés
 CronConfirmDelete=Êtes-vous sûr de vouloir supprimer ces travaux planifiées?
 CronExecute=Lancer maintenant
 CronConfirmExecute=Etes-vous sûr que vous voulez exécuter ces travaux planifiées maintenant?
-CronInfo=Le module de taches planifiés permet de planifier des tâches à exécuter automatiquement. Les travaux planifiés peuvent aussi être lancés manuellement.
+CronInfo=Le module de tâches planifiées vous permet de programmer l'exécution de tâches automatiquement. Les tâches peuvent également être lancées manuellement.
 CronTask=Travail planifié
 CronNone=Prochaine exécution des tâches planifiées
 CronNotYetRan=Jamais exécuté
@@ -79,7 +74,7 @@ CronType_command=Commande terminal
 CronCannotLoadClass=Impossible de charger le fichier %s (pour charger l'objet %s)
 CronModuleNotEnabledInThisEntity=Le module Cron n'est pas activé dans cette entité (pour utiliser la méthode %s de l'objet %s)
 CronCannotLoadObject=Le fichier de classe %s a été chargé, mais l'objet %s n'a pas été trouvé dedans
-UseMenuModuleToolsToAddCronJobs=Aller à la page "<a href="%s">Accueil - Outils administration - Travaux planifiées</a>" pour voir la listes des travaux programmés et les modifier.
+UseMenuModuleToolsToAddCronJobs=Allez dans le menu « <a href="%s"> » > Accueil - Administrateur > outils > - Tâches planifiées » pour voir </a> modifier les tâches planifiées.
 JobDisabled=Travail désactivé
 MakeLocalDatabaseDumpShort=Sauvegarde locale de base
 MakeLocalDatabaseDump=Créez un fichier dump de base local. Les paramètres sont: compression ('gz' ou 'bz' ou 'none'), type de sauvegarde ('mysql', 'pgsql', 'auto'), 1, 'auto' ou nom du fichier à générer, nombre de fichiers de sauvegarde à garder
@@ -92,11 +87,11 @@ WarningCronDelayed=Attention, à des fins de performance, quelle que soit la pro
 DATAPOLICYJob=Nettoyeur de données et anonymiseur
 JobXMustBeEnabled=La tâche planifiée %s doit être activée
 EmailIfError=E-mail d'avertissement en cas d'erreur
-JobNotFound=Travail %s introuvable dans la liste des travaux (essayez de désactiver/activer le module)
+JobNotFound=Travail %s introuvable dans la liste des tâches (essayez de désactiver/activer le module)
 ErrorInBatch=Erreur lors de l'exécution du travail %s
 
 # Cron Boxes
-LastExecutedScheduledJob=Dernier travail planifié exécuté
-NextScheduledJobExecute=Prochain travail planifié à exécuter
-NumberScheduledJobError=Nombre de travaux planifiées en erreur
+LastExecutedScheduledJob=Dernier tâche planifiée exécutée
+NextScheduledJobExecute=Prochaine tâche planifiée à exécuter
+NumberScheduledJobError=Nombre de tâches planifiées en erreur
 NumberScheduledJobNeverFinished=Nombre de tâches planifiées jamais terminées

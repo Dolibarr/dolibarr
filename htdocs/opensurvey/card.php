@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,13 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
 if (!$user->hasRight('opensurvey', 'read')) {
@@ -98,22 +96,32 @@ if (empty($reshook)) {
 			accessforbidden();
 		}
 
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user, 0, $numsondage);
-
-		header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
-		exit();
+		if ($result > 0) {
+			header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
+			exit();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Close
 	if ($action == 'close' && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_CLOSED;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Valid or Reopend
 	if (($action == 'reopen' || $action == 'validate') && $permissiontoadd) {
 		$object->status = Opensurveysondage::STATUS_VALIDATED;
-		$object->update($user);
+		$result = $object->update($user);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Update
@@ -254,7 +262,6 @@ print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td><
 
 // Title
 print '<tr><td>';
-$adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td>';
 if ($action == 'edit') {
 	print '<input class="width300" type="text" name="nouveautitre" value="'.dolPrintHTML($object->title).'">';
@@ -300,7 +307,7 @@ print '</td></tr>';
 // Description
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 if ($action == 'edit') {
-	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '100%');
 	$doleditor->Create(0, '');
 } else {
 	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
@@ -350,7 +357,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
-print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
+print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'" spellcheck="false">';
 //if ($action != 'edit') {
 print ajax_autoselect("opensurveyurl", $url, 'image');
 //}
@@ -401,13 +408,13 @@ if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 	}
 
 	// Delete
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.urlencode($numsondage).'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+	print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.urlencode($numsondage).'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 }
 
 print '</div>';
 
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.urlencode($numsondage), $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $id), 'delete_confirm', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.urlencode($numsondage), $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $numsondage), 'delete_confirm', '', '', 1);
 }
 
 
@@ -440,8 +447,7 @@ print '<br>';
 
 // Add comment
 if ($object->allow_comments) {
-	print $langs->trans("AddACommentForPoll").'<br>';
-	print '<textarea name="comment" rows="2" class="quatrevingtpercent"></textarea><br>'."\n";
+	print '<br><textarea name="comment" rows="2" class="quatrevingtpercent" placeholder="'.$langs->trans("AddACommentForPoll").'"></textarea><br>'."\n";
 	print $langs->trans("Name").': <input type="text" class="minwidth300" name="commentuser" value="'.dol_escape_htmltag($user->getFullName($langs)).'"> '."\n";
 	print '<input type="submit" class="button reposition smallpaddingimp" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 }

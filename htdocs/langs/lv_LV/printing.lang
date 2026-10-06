@@ -46,6 +46,10 @@ IPP_Color=Krāsainais
 IPP_Device=Ierīce
 IPP_Media=Printera multivide
 IPP_Supported=Mediju veids
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=None
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Krāsainais
 DirectPrintingJobsDesc=This page lists printing jobs found for available printers.
 GoogleAuthNotConfigured=Google OAuth nav iestatīts. Iespējot moduli OAuth un iestatiet Google ID / noslēpumu.
 GoogleAuthConfigured=Google OAuth akreditācijas dati tika atrasti moduļa OAuth iestatījumos.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cl
 PrintingDriverDescprintipp=Konfigurācijas mainīgie drukāšanas vadītāja krūzes.
 PrintTestDescprintgcp=Google mākoņdrukas printeru saraksts.
 PrintTestDescprintipp=CUPS printeru saraksts.
-Testbbbb
+PrinterLocation=Printer location

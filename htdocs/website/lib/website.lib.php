@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -145,6 +145,7 @@ function websiteGetContentPolicySources()
 		"fetch" => array(
 			"*" => array("label" => "*", "data-sourcetype" => "select"),
 			"data" => array("label" => "data:", "data-sourcetype" => "data"),
+			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"unsafe-eval" => array("label" => "unsafe-eval", "data-sourcetype" => "quoted"),
 			"wasm-unsafe-eval" => array("label" => "wasm-unsafe-eval", "data-sourcetype" => "quoted"),
@@ -153,21 +154,20 @@ function websiteGetContentPolicySources()
 			"inline-speculation-rules" => array("label" => "inline-speculation-rules", "data-sourcetype" => "quoted"),
 			"strict-dynamic" => array("label" => "strict-dynamic", "data-sourcetype" => "quoted"),
 			"report-sample" => array("label" => "report-sample", "data-sourcetype" => "quoted"),
-			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
 		),
 		// Document directives
 		"document" => array(
 			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
-			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source (*.mydomain.com)", "data-sourcetype" => "input"),
 		),
 		// Navigation directives
 		"navigation" => array(
 			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
-			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
 		),
 		// Reporting directives
@@ -202,7 +202,7 @@ function websiteGetContentPolicyToArray($forceCSP)
 	foreach ($sourceCSPArr as $key => $arr) {
 		$sourceCSPArrflatten = array_merge($sourceCSPArrflatten, array_keys($arr));
 	}
-	// Gerer le problème avec data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D qui est split + problème avec button ajouter
+	// Manage the issue where the data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D string is getting split, as well as the issue with the "add" button.
 	$forceCSP = preg_replace('/;base64,/', "__semicolumnbase64__", $forceCSP);
 	$securitypolicies = explode(";", $forceCSP);
 

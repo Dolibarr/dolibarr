@@ -173,3 +173,5 @@ RefSalary=給料
 NoSalaryInvoiceToWithdraw=「%s」待ちの給与はない。給与カードのタブ「%s」に移動しリクエストすること。
 SalaryInvoiceWaitingWithdraw=口座振替による支払い待ちの給与
 ErrorBankTransferNoPaymentRequestSelected=支払いリクエストが選択されていません。
+AmountRequestedAlreadyReachesTotal=請求額の合計はすでにお支払いいただいております
+AmountExceedsRemainingToRequest=要求された金額は、支払い要求に利用可能な残りの金額を超えています

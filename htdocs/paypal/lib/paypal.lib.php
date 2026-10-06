@@ -128,7 +128,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$desc
 	);
 
-	dol_syslog("print_paypal_redirect resArray=".var_export($resArray, true), LOG_DEBUG);
+	dol_syslog("print_paypal_redirect resArray=".formatLogObject($resArray), LOG_DEBUG);
 
 	$ack = strtoupper($resArray["ACK"]);
 	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {
@@ -476,6 +476,8 @@ function hash_call($methodName, $nvpStr)
 
 	dol_syslog("Paypal API endpoint ".$API_Endpoint);
 
+	// TODO Replace this part with getURLContent()
+
 	//setting the curl parameters.
 	$ch = curl_init();
 
@@ -484,7 +486,7 @@ function hash_call($methodName, $nvpStr)
 	 print $nvpStr;
 	 exit;*/
 	curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
-	curl_setopt($ch, CURLOPT_VERBOSE, 1);
+	curl_setopt($ch, CURLOPT_VERBOSE, true);
 	// TLSv1 by default or change to TLSv1.2 in module configuration
 	curl_setopt($ch, CURLOPT_SSLVERSION, (!getDolGlobalString('PAYPAL_SSLVERSION') ? 1 : $conf->global->PAYPAL_SSLVERSION));
 
@@ -501,13 +503,13 @@ function hash_call($methodName, $nvpStr)
 
 	//turning off the server and peer verification(TrustManager Concept).
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? 2 : 0));
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
 	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_POST, true);
 
 	//if USE_PROXY constant set to true in Constants.php, then only proxy will be enabled.
 	if ($USE_PROXY) {

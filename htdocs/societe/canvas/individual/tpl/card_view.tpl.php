@@ -35,6 +35,7 @@ if (empty($conf) || !is_object($conf)) {
 
 
 $object = $GLOBALS['objcanvas']->control->object;
+$socid = $object->id;
 
 
 print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP INDIVIDUAL -->\n";
@@ -199,9 +200,9 @@ if ($this->control->tpl['action_delete']) {
 
 <?php if ($user->hasRight('societe', 'supprimer')) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
-		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
+		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '', 'action-delete', true, array('attr' => array('class' => 'reposition')))."\n"; ?>
 	<?php } else { ?>
-		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans('Delete'); ?></a>
+		<?php echo dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas), '', true, array('attr' => array('class' => 'reposition')))."\n"; ?>
 	<?php } ?>
 <?php } ?>
 </div>
@@ -219,7 +220,7 @@ $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
 $genallowed = $user->hasRight('societe', 'lire');
 $delallowed = $user->hasRight('societe', 'creer');
 
-print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
+print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang);
 ?>
 
 </td>

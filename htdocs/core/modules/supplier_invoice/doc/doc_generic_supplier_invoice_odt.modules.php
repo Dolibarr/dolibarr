@@ -25,7 +25,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplier_invoce/doc/doc_generic_supplier_invoice_odt.modules.php
+ *	\file       htdocs/core/modules/supplier_invoice/doc/doc_generic_supplier_invoice_odt.modules.php
  *	\ingroup    invoice
  *	\brief      File of class to build ODT documents for supplier invoices
  */
@@ -70,6 +70,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 		$this->db = $db;
 		$this->name = "ODT templates";
 		$this->description = $langs->trans("DocumentModelOdt");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 		$this->scandir = 'SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH'; // Name of constant that is used to save list of directories to scan
 		// Page size for A4 format
 		$this->type = 'odt';

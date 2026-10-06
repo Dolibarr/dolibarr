@@ -23,6 +23,7 @@ create table llx_usergroup
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
   nom           varchar(180) NOT NULL,
   entity        integer DEFAULT 1 NOT NULL,	-- multi company id
+  fk_parent     integer DEFAULT NULL,		-- parent group for permission inheritance
   datec         datetime,
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   color         varchar(6),

@@ -101,7 +101,9 @@ if ($action == 'update') {
 				}
 			}
 			if (GETPOSTISSET($constvalue.'_URL')) {
-				if (!dolibarr_set_const($db, $newconstvalue.'_URL', GETPOST($constvalue.'_URL'), 'chaine', 0, '', $conf->entity)) {
+				$cleanurl = GETPOST($constvalue.'_URL');
+				$cleanurl = preg_replace('/\/$/', '', $cleanurl);
+				if (!dolibarr_set_const($db, $newconstvalue.'_URL', $cleanurl, 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
 			}
@@ -249,7 +251,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 
 print load_fiche_titre($title, $linkback, 'title_setup');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add">';
 
@@ -322,7 +324,7 @@ foreach ($conf->global as $key => $val) {
 
 
 if (count($listinsetup) > 0) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -443,7 +445,7 @@ if (count($listinsetup) > 0) {
 		print '</tr>';
 
 		// Tenant
-		if ($keybeforeprovider == 'MICROSOFT' || $keybeforeprovider == 'MICROSOFT2') {
+		if ($keybeforeprovider == 'MICROSOFT' || $keybeforeprovider == 'MICROSOFT2' || $keybeforeprovider == 'MICROSOFT3') {
 			print '<tr class="oddeven value">';
 			print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_TENANT").'</label></td>';
 			print '<td><input type="text" size="100" id="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" name="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" value="'.getDolGlobalString('OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT').'">';

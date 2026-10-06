@@ -165,6 +165,23 @@ class printing_printipp extends PrintingDriver
 
 		$fileprint = getMultidirOutput(null, $module) . '/' . $file;
 		$ipp->setData($fileprint);
+		// Tell CUPS what we are sending so it picks the right filter chain (otherwise ODT/PDF arrive as raw and print as ASCII garbage).
+		$extension = strtolower(pathinfo($fileprint, PATHINFO_EXTENSION));
+		$mimebyext = array(
+			'pdf' => 'application/pdf',
+			'odt' => 'application/vnd.oasis.opendocument.text',
+			'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+			'odp' => 'application/vnd.oasis.opendocument.presentation',
+			'ps' => 'application/postscript',
+			'eps' => 'application/postscript',
+			'txt' => 'text/plain',
+			'png' => 'image/png',
+			'jpg' => 'image/jpeg',
+			'jpeg' => 'image/jpeg',
+		);
+		if (isset($mimebyext[$extension])) {
+			$ipp->setMimeMediaType($mimebyext[$extension]);
+		}
 		try {
 			$ipp->printJob();
 		} catch (Exception $e) {

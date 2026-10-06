@@ -5,7 +5,7 @@
  * Copyright (C) 2014-2015  Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023 		Charlene Benke				<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -288,7 +288,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Shipment"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -308,8 +308,8 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90;	// position of top tab
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_top = 80 + $this->marge_haute + $top_shift;	// position of top tab
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? $this->marge_haute + 32 + $top_shift : $this->marge_haute);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -345,19 +345,20 @@ class pdf_espadon extends ModelePdfExpedition
 					$notetoshow = dol_concatdesc($notetoshow, $extranote);
 				}
 
-				if (!empty($notetoshow) || !empty($object->tracking_number)) {
+				if (!empty($notetoshow) || !empty($object->tracking_number) || $object->shipping_method_id > 0) {
 					$tab_top -= 2;
 					$tab_topbeforetrackingnumber = $tab_top;
+					$height_trackingnumber = 0;
 
 					// Tracking number
 					if (!empty($object->tracking_number)) {
-						$height_trackingnumber = 4;
+						$tracking_block_start_y = $tab_top;
 
 						$pdf->SetFont('', 'B', $default_font_size - 2);
-						$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
+						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
 						$tab_top_alt = $pdf->GetY();
 
-						$object->getUrlTrackingStatus($object->tracking_number);
+						$object->getUrlTrackingStatus((string) $object->tracking_number);
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
@@ -373,11 +374,22 @@ class pdf_espadon extends ModelePdfExpedition
 									$label .= $object->tracking_url;
 								}
 
-								$height_trackingnumber += 4;
 								$pdf->SetFont('', 'B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, $height_trackingnumber, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 							}
 						}
+						$tab_top = $pdf->GetY();
+						$height_trackingnumber = $tab_top - $tracking_block_start_y;
+						if ($height_trackingnumber < 4) {
+							$height_trackingnumber = 4;
+						}
+					}
+
+					// Shipping method, even when no tracking number is set
+					if (empty($object->tracking_number) && $object->shipping_method_id > 0) {
+						$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+						$pdf->SetFont('', 'B', $default_font_size - 2);
+						$pdf->writeHTMLCell(90, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code)), 0, 1, false, true, 'L');
 						$tab_top = $pdf->GetY();
 					}
 
@@ -532,7 +544,7 @@ class pdf_espadon extends ModelePdfExpedition
 					$barcode_path = '';
 					$result = 0;
 					if ($module->encodingIsSupported($encoding)) {
-						$result = $module->writeBarCode($object->ref, $encoding);
+						$result = $module->writeBarCode((string) $object->ref, $encoding);
 
 						// get path of qrcode image
 						$newcode = (string) $object->ref;
@@ -634,7 +646,7 @@ class pdf_espadon extends ModelePdfExpedition
 					// Description of product line
 					if ($this->getColumnStatus('desc')) {
 						if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
-							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
+							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty), 'ffffff'));
 							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						} else {
 							$pdf->startTransaction();
@@ -734,6 +746,11 @@ class pdf_espadon extends ModelePdfExpedition
 
 					if ($this->getColumnStatus('subprice') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$this->printStdColumnContent($pdf, $curY, 'subprice', price($object->lines[$i]->subprice, 0, $outputlangs));
+						$nexY = max($pdf->GetY(), $nexY);
+					}
+
+					if ($this->getColumnStatus('totalexcltax') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
+						$this->printStdColumnContent($pdf, $curY, 'totalexcltax', price($object->lines[$i]->total_ht, 0, $outputlangs));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -951,11 +968,11 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 
 		if ($this->getColumnStatus('qty_shipped') && $totalToShip) {
-			$this->printStdColumnContent($pdf, $tab2_top, 'qty_shipped', $totalToShip);
+			$this->printStdColumnContent($pdf, $tab2_top, 'qty_shipped', (string) $totalToShip);
 		}
 
-		if ($this->getColumnStatus('subprice')) {
-			$this->printStdColumnContent($pdf, $tab2_top, 'subprice', price($object->total_ht, 0, $outputlangs));
+		if ($this->getColumnStatus('totalexcltax')) {
+			$this->printStdColumnContent($pdf, $tab2_top, 'totalexcltax', price($object->total_ht, 0, $outputlangs));
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -1109,7 +1126,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : pdf_truncate_text($pdf, $object->project->title, 50)), '', 'R');
 			}
 		}
 
@@ -1204,7 +1221,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? $this->marge_haute + 30 : $this->marge_haute + 32;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -1264,7 +1281,7 @@ class pdf_espadon extends ModelePdfExpedition
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? $this->marge_haute + 30 : $this->marge_haute + 32;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
@@ -1362,7 +1379,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank = 0; // do not use negative rank
 		$this->cols['position'] = array(
 			'rank' => $rank,
-			'width' => 10,
+			'width' => 10.0,
 			'status' => getDolGlobalInt('PDF_ESPADON_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
 			'title' => array(
 				'textkey' => '#', // use lang key is useful in some case with module
@@ -1373,7 +1390,7 @@ class pdf_espadon extends ModelePdfExpedition
 			),
 			'content' => array(
 				'align' => 'C',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -1391,7 +1408,7 @@ class pdf_espadon extends ModelePdfExpedition
 			),
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -1399,14 +1416,14 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
+			'width' => (float) getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
 				'label' => ' '
 			),
 			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.0, 0.0, 0.0, 0.0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => false, // remove left line separator
 		);
@@ -1418,7 +1435,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['weight'] = array(
 			'rank' => $rank,
-			'width' => 30, // in mm
+			'width' => 30.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'WeightVolShort'
@@ -1430,7 +1447,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
-			'width' => 19, // in mm
+			'width' => 19.0, // in mm
 			'status' => getDolGlobalString('SHIPPING_PDF_DISPLAY_AMOUNT_HT') ? 1 : 0,
 			'title' => array(
 				'textkey' => 'PriceUHT'
@@ -1441,7 +1458,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
-			'width' => 26, // in mm
+			'width' => 26.0, // in mm
 			'status' => getDolGlobalString('SHIPPING_PDF_DISPLAY_AMOUNT_HT') ? 1 : 0,
 			'title' => array(
 				'textkey' => 'TotalHT'
@@ -1452,7 +1469,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['qty_asked'] = array(
 			'rank' => $rank,
-			'width' => 30, // in mm
+			'width' => 30.0, // in mm
 			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED') ? 1 : 0,
 			'title' => array(
 				'textkey' => 'QtyOrdered'
@@ -1466,7 +1483,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['unit_order'] = array(
 			'rank' => $rank,
-			'width' => 15, // in mm
+			'width' => 15.0, // in mm
 			'status' => !getDolGlobalString('PRODUCT_USE_UNITS') ? 0 : 1,
 			'title' => array(
 				'textkey' => 'Unit'
@@ -1480,7 +1497,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$rank += 10;
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
-			'width' => 30, // in mm
+			'width' => 30.0, // in mm
 			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP'),
 			'title' => array(
 				'textkey' => 'QtyToShip'

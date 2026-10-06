@@ -39,19 +39,12 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once __DIR__.'/../main.inc.php'; // __DIR__ allow this script to be included in custom themes
-/**
- * @var string $dolibarr_nocache
- */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 
 print '/* Here, the content of the common custom CSS defined into Home - Setup - Display - CSS'."*/\n";

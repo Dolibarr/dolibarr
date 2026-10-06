@@ -5,6 +5,7 @@
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2016-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017-2021	Open-DSI				<support@open-dsi.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,10 +156,10 @@ class modAccounting extends DolibarrModules
 		$this->module_parts = array();
 
 		// Boxes
-		$this->boxes = array(
-			0=>array('file'=>'box_accountancy_last_manual_entries.php', 'enabledbydefaulton'=>'accountancyindex'),
-			1=>array('file'=>'box_accountancy_suspense_account.php', 'enabledbydefaulton'=>'accountancyindex')
-		);
+		$this->boxes = [
+			['file'=>'box_accountancy_last_manual_entries.php', 'enabledbydefaulton'=>'accountancyindex'],
+			['file'=>'box_accountancy_suspense_account.php', 'enabledbydefaulton'=>'accountancyindex'],
+		];
 
 		// Permissions
 		$this->rights_class = 'accounting';
@@ -257,10 +258,11 @@ class modAccounting extends DolibarrModules
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'accounting_account as aa';
-		$this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_system as ac';
-		$this->export_sql_end[$r] .= ' ,'.MAIN_DB_PREFIX.'accounting_account as aa2';
-		$this->export_sql_end[$r] .= ' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').')';
-		$this->export_sql_end[$r] .= ' AND aa2.rowid = aa.account_parent AND aa2.active = 1 AND ac.pcg_version = aa2.fk_pcg_version AND aa2.entity IN ('.getEntity('accounting').')';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'accounting_system as ac ON ac.pcg_version = aa.fk_pcg_version';
+		// LEFT JOIN on the parent account: keep accounts that have no parent (root accounts) or whose parent is
+		// inactive or belongs to another chart (common when a custom chart is derived from a base one).
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_account as aa2 ON aa2.rowid = aa.account_parent AND aa2.entity IN ('.getEntity('accounting').')';
+		$this->export_sql_end[$r] .= ' WHERE aa.entity IN ('.getEntity('accounting').')';
 
 
 		// Imports

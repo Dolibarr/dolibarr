@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,12 +52,12 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $param;
 
 	/**
-	 * @var array<array{text:string,nbcol?:int,limit?:int,graph?:int<0,1>,sublink?:string,subtext?:string,picto?:string,target?:string,td?:string}>|array{text:string,nbcol?:int,limit?:int,graph?:int<0,1>,sublink?:string,subtext?:string,picto?:string,target?:string,td?:string} box info heads. Example: array('text' => $langs->trans("BoxScheduledJobs", $max), 'nbcol' => 4);
+	 * @var array<array{text:string,nbcol?:int,limit?:int,graph?:int<0,1>,sublink?:string,subtext?:string,picto?:string,target?:string,td?:string}>|array{text:string,nbcol?:int,limit?:int,graph?:int<0,1>,sublink?:string,subtext?:string,picto?:string,target?:string,td?:string} box info heads. Example: array('text' =>->trans("BoxScheduledJobs",), 'nbcol' => 4);
 	 */
 	public $info_box_head = array();
 
 	/**
-	 * @var array<array<array{td?:string,text:string,asis?:int<0,1>,maxlength?:int}>>|array<array{td?:string,text:string,asis?:int<0,1>,maxlength?:int}> box info content
+	 * @var array<array<array{td?:string,text:string,asis?:int<0,1>,maxlength?:int}|array{td?:string,textnoformat:string,asis?:int<0,1>,maxlength?:int}>>|array<array{td?:string,text:string,asis?:int<0,1>,maxlength?:int}|array{td?:string,textnoformat:string,asis?:int<0,1>,maxlength?:int}> box info content
 	 */
 	public $info_box_contents = array();
 
@@ -175,7 +175,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 * @param   DoliDB  $db     Database handler
 	 * @param   string  $param  More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		$this->db = $db;
 	}
@@ -221,7 +221,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		// Recupere liste des boites d'un user si ce dernier a sa propre liste
 		$sql = "SELECT b.rowid as id, b.box_id, b.position, b.box_order, b.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b";
-		$sql .= " WHERE b.entity = ".$conf->entity;
+		$sql .= " WHERE b.entity = ".((int) $conf->entity);
 		$sql .= " AND b.rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch rowid=".((int) $rowid));
@@ -487,7 +487,6 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 *
 	 *  @param	?string[]	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
 	 *	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
-	 *
 	 */
 	public static function getWidgetsList($forcedirwidget = null)
 	{

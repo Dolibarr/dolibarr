@@ -241,7 +241,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
@@ -265,7 +265,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -286,17 +286,17 @@ class FactureFournisseurRec extends CommonInvoice
 
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 210),
-		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label' => 'Fk projet', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 85),
-		'fk_account' => array('type' => 'integer', 'label' => 'Fk account', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
-		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'Fk cond reglement', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'Fk mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 85),
+		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'date_lim_reglement' => array('type' => 'date', 'label' => 'Date lim reglement', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 
 		'note_private' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 105),
 		'note_public' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
 		'modelpdf' => array('type' => 'varchar(255)', 'label' => 'Modelpdf', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 
-		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 180),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrency code', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'Multicurrency tx', 'enabled' => 1, 'visible' => -1, 'position' => 190, 'isameasure' => 1),
 		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ht', 'enabled' => 1, 'visible' => -1, 'position' => 195, 'isameasure' => 1),
@@ -347,6 +347,8 @@ class FactureFournisseurRec extends CommonInvoice
 
 		$error = 0;
 		$now = dol_now();
+
+		$label = $this->label ?? $this->libelle;
 
 		// Clean parameters
 		$this->titre = empty($this->titre) ? '' : $this->titre;	// deprecated
@@ -414,7 +416,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ", ".((int) $facfourn_src->socid);
 			$sql .= ", '".$this->db->idate($now)."'";
 			$sql .= ", ".((int) $this->suspended);
-			$sql .= ", '".$this->db->escape($this->libelle)."'";
+			$sql .= ", '".$this->db->escape($label)."'";
 			$sql .= ", " .(!empty($facfourn_src->total_ttc) ? (float) $facfourn_src->total_ttc : '0');                              // amount
 			$sql .= ", " .((int) $user->id);
 			$sql .= ", " .(!empty($this->fk_project) ? ((int) $this->fk_project) : 'NULL');
@@ -707,9 +709,10 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->socid                    = $obj->fk_soc;
 				$this->date_creation            = $obj->datec;
 				$this->date_modification        = $obj->tms;
+
 				$this->status	                = $obj->suspended;
 				$this->suspended                = $obj->suspended;
-				$this->libelle                  = $obj->label;
+
 				$this->label                    = $obj->label;
 				$this->vat_src_code             = $obj->vat_src_code;
 				$this->total_localtax1          = $obj->localtax1;
@@ -807,7 +810,7 @@ class FactureFournisseurRec extends CommonInvoice
 		*/
 
 		$sql = 'SELECT l.rowid,';
-		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref, l.label, l.description as line_desc,';
+		$sql .= ' l.fk_facture_fourn, l.fk_parent_line, l.fk_product, l.ref as ref_supplier, l.label, l.description as line_desc,';
 		$sql .= ' l.pu_ht, l.pu_ttc, l.qty, l.remise_percent, l.fk_remise_except, l.vat_src_code, l.tva_tx,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc, total_localtax1, total_localtax2,';
@@ -836,7 +839,11 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->fk_facture_fourn         = $objp->fk_facture_fourn;
 				$line->fk_parent                = $objp->fk_parent_line;
 				$line->fk_product               = $objp->fk_product;
-				$line->ref_supplier             = $objp->ref;
+				$line->ref                		= $objp->product_ref; // Ref of product
+				$line->product_ref         		= $objp->product_ref; // Ref of product
+				$line->product_label       		= $objp->product_label;
+				$line->product_desc       		= $objp->product_desc;
+				$line->ref_supplier             = $objp->ref_supplier;
 				$line->label                    = $objp->label;
 				$line->description              = $objp->line_desc;
 				$line->desc                     = $objp->line_desc;
@@ -859,8 +866,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->total_localtax2          = $objp->total_localtax2;
 				$line->total_ttc                = $objp->total_ttc;
 				$line->product_type             = $objp->product_type;
-				$line->date_start               = $this->db->jdate($objp->date_start);
-				$line->date_end                 = $this->db->jdate($objp->date_end);
+				$line->date_start               = $objp->date_start; // Not a SQL datetime string, but a boolean 0 or 1, jdate() would corrupt it
+				$line->date_end                 = $objp->date_end; // Not a SQL datetime string, but a boolean 0 or 1, jdate() would corrupt it
 				$line->info_bits                = $objp->info_bits	;
 				$line->special_code             = $objp->special_code;
 				$line->rang                     = $objp->rang;
@@ -909,10 +916,10 @@ class FactureFournisseurRec extends CommonInvoice
 		$error = 0;
 		$this->db->begin();
 
-		$main = MAIN_DB_PREFIX.'facture_fourn_det_rec';
-		$ef = $main."_extrafields";
+		$sql_main_table = MAIN_DB_PREFIX.'facture_fourn_det_rec';
+		$sql_ef_table = $sql_main_table."_extrafields";
 
-		$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture_fourn = ". (int) $rowid .")";
+		$sqlef = "DELETE FROM ".$sql_ef_table." WHERE fk_object IN (SELECT rowid FROM ".$sql_main_table." WHERE fk_facture_fourn = ". (int) $rowid .")";
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det_rec WHERE fk_facture_fourn = ". (int) $rowid;
 
 		if ($this->db->query($sqlef) && $this->db->query($sql)) {
@@ -1151,7 +1158,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param string 		$desc 				Description of the invoice line
 	 * @param float			$pu_ht 				Unit price HT (> 0 even for credit note)
 	 * @param float			$qty 				Quantity
-	 * @param int 			$remise_percent 	Percentage discount of the line
+	 * @param float			$remise_percent 	Percentage discount of the line
 	 * @param float|string	$txtva 				VAT rate forced with format '5.0 (XXX)', or -1
 	 * @param int 			$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 			$txlocaltax2 		Local tax 2 rate (deprecated)
@@ -1171,6 +1178,11 @@ class FactureFournisseurRec extends CommonInvoice
 	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0, $pu_ttc = 0)
 	{
 		global $mysoc, $user;
+
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
 
 		$facid = $this->id;
 
@@ -1270,7 +1282,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', special_code = ' . (int) $special_code;
 		$sql .= ', rang = ' . (int) $rang;
 		$sql .= ', fk_unit = ' . ($fk_unit ? "'" . $this->db->escape($fk_unit) . "'" : 'null');
-		$sql .= ', fk_user_modif = ' . (int) $user;
+		$sql .= ', fk_user_modif = ' . (int) $user->id;
 		$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
 		$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
 		$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);

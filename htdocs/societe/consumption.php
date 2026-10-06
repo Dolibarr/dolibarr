@@ -4,8 +4,8 @@
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2026  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ require "../main.inc.php";
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
@@ -87,6 +88,11 @@ $sref = GETPOST("sref");
 $sprod_fulldescr = GETPOST("sprod_fulldescr");
 $month = GETPOSTINT('month');
 $year = GETPOSTINT('year');
+if (GETPOSTISARRAY('search_status')) {
+	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
+} else {
+	$search_status = GETPOST('search_status', 'intcomma');
+}
 
 // Clean up on purge search criteria ?
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
@@ -94,6 +100,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$sprod_fulldescr = '';
 	$year = '';
 	$month = '';
+	$search_status = '';
 }
 
 // Customer or supplier selected in drop box
@@ -118,6 +125,7 @@ if ($reshook < 0) {
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formorder = new FormOrder($db);
 $productstatic = new Product($db);
 
 $title = $langs->trans("Referers", $object->name);
@@ -151,6 +159,9 @@ print '</td></tr>';
 
 //if (isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'read')) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
 $elementTypeArray = array();
+
+$sql = '';
+$where = '';
 
 if ($object->client) {
 	print '<tr><td class="titlefield">';
@@ -259,7 +270,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$sql_select .= 'NULL as fk_product, NULL as info_bits, NULL as date_start, NULL as date_end, NULL as prod_qty, NULL as total_ht, ';
 	$tables_from = MAIN_DB_PREFIX."fichinter as f LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as d ON d.fk_fichinter = f.rowid"; // Must use left join to work also with option that disable usage of lines.
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
-	$where .= " AND f.entity = ".$conf->entity;
+	$where .= " AND f.entity = ".((int) $conf->entity);
 	$dateprint = 'f.datec';
 	$doc_number = 'f.ref';
 }
@@ -309,7 +320,7 @@ if ($type_element == 'shipment') {
 	$where = " WHERE e.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND ed.fk_expedition = e.rowid";
 	$where .= " AND ed.element_type = 'commande' AND ed.fk_elementdet = d.rowid";
-	$where .= " AND e.entity = ".$conf->entity;
+	$where .= " AND e.entity = ".((int) $conf->entity);
 	$dateprint = 'e.date_creation';
 	$doc_number = 'e.ref';
 	$thirdTypeSelect = 'customer';
@@ -321,7 +332,7 @@ if ($type_element == 'supplier_invoice') { 	// Supplier : Show products from inv
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_facture_fourn = f.rowid";
-	$where .= " AND f.entity = ".$conf->entity;
+	$where .= " AND f.entity = ".((int) $conf->entity);
 	$dateprint = 'f.datef';
 	$doc_number = 'f.ref';
 	$thirdTypeSelect = 'supplier';
@@ -333,7 +344,7 @@ if ($type_element == 'supplier_proposal') {
 	$tables_from = MAIN_DB_PREFIX."supplier_proposal as c,".MAIN_DB_PREFIX."supplier_proposaldet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_supplier_proposal = c.rowid";
-	$where .= " AND c.entity = ".$conf->entity;
+	$where .= " AND c.entity = ".((int) $conf->entity);
 	$dateprint = 'c.date_valid';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'supplier';
@@ -346,7 +357,7 @@ if ($type_element == 'supplier_order') { 	// Supplier : Show products from order
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
-	$where .= " AND c.entity = ".$conf->entity;
+	$where .= " AND c.entity = ".((int) $conf->entity);
 	$dateprint = 'c.date_valid';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'supplier';
@@ -360,7 +371,7 @@ if ($type_element == 'reception') { 	// Supplier : Show products from orders.
 	$where = " WHERE r.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND rd.fk_reception = r.rowid";
 	$where .= " AND rd.fk_elementdet = d.rowid AND rd.element_type = 'supplier_order'";
-	$where .= " AND r.entity = ".$conf->entity;
+	$where .= " AND r.entity = ".((int) $conf->entity);
 	$dateprint = 'r.date_creation';
 	$doc_number = 'r.ref';
 	$thirdTypeSelect = 'supplier';
@@ -373,7 +384,7 @@ if ($type_element == 'contract') { 	// Order
 	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_contrat = c.rowid";
-	$where .= " AND c.entity = ".$conf->entity;
+	$where .= " AND c.entity = ".((int) $conf->entity);
 	$dateprint = 'c.date_valid';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
@@ -432,6 +443,9 @@ if (!empty($sql_select)) {
 		}
 		$sql .= ")";
 	}
+	if ($type_element == 'supplier_order' && $search_status !== '') {
+		$sql .= " AND c.fk_statut IN (".$db->sanitize($search_status).")";
+	}
 
 	$parameters = array('type_element' => $type_element);
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -467,7 +481,7 @@ $total_ht = 0;
 $param = '';
 $num = 0;
 
-if ($sql_select) {
+if ($sql_select && $sql !== '') {
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -494,11 +508,14 @@ if ($sql_select) {
 	if ($year) {
 		$param .= "&year=".urlencode((string) ($year));
 	}
+	if ($search_status !== '') {
+		$param .= "&search_status=".urlencode($search_status);
+	}
 	if ($optioncss) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', 'nogreyscale', $limit);
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="liste centpercent noborder">'."\n";
@@ -516,7 +533,10 @@ if ($sql_select) {
 	if ($type_element == 'order' || $type_element == 'supplier_order' || $type_element == 'shipment') {
 		print '<td class="liste_titre center"></td>';
 	}
-	print '<th class="liste_titre center">';
+	print '<th class="liste_titre center parentonrightofpage">';
+	if ($type_element == 'supplier_order') {
+		$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status', 'search_status width125 onrightofpage');
+	}
 	print '</th>';
 	print '<th class="liste_titre left">';
 	print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
@@ -547,7 +567,7 @@ if ($sql_select) {
 	print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('TotalHT', $_SERVER['PHP_SELF'], 'total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('UnitPrice', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
-	$parameters = array('param'=>$param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print "</tr>\n";
@@ -625,7 +645,7 @@ if ($sql_select) {
 
 				$outputlangs = $langs;
 				$newlang = '';
-				if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (empty($newlang)) {
@@ -781,7 +801,7 @@ if ($sql_select) {
 	}
 	$db->free($resql);
 } elseif (empty($type_element) || $type_element == -1) {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '', 0, '', 'nogreyscale', $limit);
 
 	print '<table class="liste centpercent noborder">'."\n";
 	// Titles with sort buttons
@@ -797,7 +817,7 @@ if ($sql_select) {
 
 	print "</table>";
 } else {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '', 0, '', 'nogreyscale', $limit);
 
 	print '<table class="liste centpercent">'."\n";
 

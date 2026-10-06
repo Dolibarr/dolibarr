@@ -70,10 +70,11 @@ if ($object->element == 'mo') {
 			$trclass = 'oddeven';
 
 			echo '<tr class="' . $trclass . '" >';
-			echo '<td class="linkedcol-element tdoverflowmax125">' . $langs->trans("ManufacturingOrder");
+			echo '<td class="linkedcol-element tdoverflowmax125">';
 			if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-				print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, '1') . '&amp;action=selectlines&amp;token='.newToken().'" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a';
+				print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, '1') . '&action=selectlines&token='.newToken().'" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a>';
 			}
+			$langs->trans("ManufacturingOrder");
 			echo '</td>';
 			echo '<td class="linkedcol-name nowraponall" >' . $objectlink->getNomUrl(1) . '</td>';
 
@@ -110,6 +111,13 @@ if ($object->element == 'mo') {
 	$ilink = 0;
 	foreach ($linkedObjectBlock as $key => $objectlink) {
 		$ilink++;
+		$refWithThirdparty = $objectlink->ref_client ? dolPrintHTML($objectlink->ref_client).'<br>' : '';
+
+		$objectlink->fetch_thirdparty();
+
+		$refWithThirdparty = '<span class="small">'.$refWithThirdparty;
+		$refWithThirdparty .= !empty($objectlink->thirdparty) ? $objectlink->thirdparty->getNomUrl(1) : '';
+		$refWithThirdparty .= '</span>';
 
 		$trclass = 'oddeven';
 		if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -124,7 +132,7 @@ if ($object->element == 'mo') {
 		print '</td>';
 
 		print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-		print '<td class="linkedcol-ref tdoverflowmax150" >'.$objectlink->ref_client.'</td>';
+		print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dolPrintHTMLForAttribute($objectlink->ref_client).'">'.$refWithThirdparty.'</td>';
 		print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_start_planned, 'day').'</td>';
 		print '<td class="linkedcol-amount right">-</td>';
 		print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';

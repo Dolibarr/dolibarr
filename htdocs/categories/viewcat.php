@@ -8,7 +8,7 @@
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023-2024	Charlene Benke				<charlene@patas-monkey.com>
  *
@@ -37,17 +37,17 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("categories", "compta", "mrp"));
+$langs->loadLangs(array("categories", "compta", "mrp", "stocks"));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -104,7 +104,6 @@ if (is_numeric($type)) {
 	$type = array_search($type, $object->MAP_ID);	// For backward compatibility
 }
 
-$extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 /*
@@ -191,6 +190,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new CommandeFournisseur($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'supplier_order';
+	} elseif ($type == Categorie::TYPE_SUPPLIER_INVOICE && $user->hasRight('fournisseur', 'facture', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+		$tmpobject = new FactureFournisseur($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'supplier_invoice';
 	} else {
 		dol_print_error(null, "Not supported value of type = ".$type);
 		$result = -100;
@@ -206,6 +210,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 }
 
 if ($user->hasRight('categorie', 'supprimer') && $action == 'confirm_delete' && $confirm == 'yes') {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	if ($object->delete($user) >= 0) {
 		if ($backtopage) {
 			header("Location: ".$backtopage);
@@ -258,6 +263,10 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$newobject = new User($db);
 		$elementtype = 'user';
+	} elseif ($type == Categorie::TYPE_WAREHOUSE && $user->hasRight('stock', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		$newobject = new Entrepot($db);
+		$elementtype = 'warehouse';
 	} elseif ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer')) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$newobject = new Account($db);
@@ -313,10 +322,10 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 $arrayofjs = array(
-	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
-	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js'
+	'/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js'
 );
-$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 $help_url = '';
 
@@ -401,7 +410,7 @@ if (empty($reshook)) {
 	}
 
 	if ($user->hasRight('categorie', 'supprimer')) {
-		print '<a class="butActionDelete" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id, 'type' => $type, 'backtolist' => $backtolist], true).'">'.$langs->trans("Delete").'</a>';
+		print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id, 'type' => $type, 'backtolist' => $backtolist], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 	}
 }
 
@@ -606,7 +615,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 			}
 
 			print '<table class="noborder centpercent">'."\n";
-			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Ref").'</td></tr>'."\n";
+			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 			if (count($prods) > 0) {
 				$i = 0;
@@ -620,7 +629,22 @@ if ($type == Categorie::TYPE_PRODUCT) {
 					print '<td class="nowrap tdtop">';
 					print $prod->getNomUrl(1);
 					print "</td>\n";
-					print '<td class="tdtop">'.dolPrintHTML($prod->label)."</td>\n";
+
+					$product_thumbnail_html = '';
+					if (!empty($prod->entity)) {
+						$product_thumbnail = $prod->show_photos('product', $conf->product->multidir_output[(int) $prod->entity], 1, 1, 0, 0, 0, 80);
+						if ($prod->nbphoto > 0) {
+							$product_thumbnail_html = $product_thumbnail;
+						}
+					}
+					print '<td class="left">' . $product_thumbnail_html . '</td>';
+					$product_stock_info = "";
+					if (isModEnabled("stock") && ($user->hasRight("stock", "read"))) {
+						$product_stock_info = "<br>" . $langs->trans("Stock") . ": " . $prod->stock_reel;
+					}
+
+					print '<td class="tdtop">' . dolPrintHTML($prod->label) . "<br>" . dolPrintHTML($prod->description) . $product_stock_info . "</td>\n";
+
 					// Link to delete from category
 					print '<td class="right">';
 					if ($permission) {
@@ -1255,7 +1279,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 			if ($showclassifyform) {
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre"><td>';
-				print $langs->trans("AddTicketIntoCategory").' &nbsp;';
+				print $langs->trans("AddWarehouseIntoCategory").' &nbsp;';
 				print $form->selectForForms('Entrepot:product/stock/class/entrepot.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
 				print '<input type="submit" class="button buttongen" name="addintocategory" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 				print '</tr>';

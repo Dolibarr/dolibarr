@@ -1,6 +1,15 @@
 name: "CI-PUSH"
 
-on: [push]
+
+on:
+  push:
+    # Executer only on push of the main repository, not on fork.
+    branches:
+      - develop
+      - master
+      - '=.0'
+    paths-ignore:
+      - '.agents/**'
 
 jobs:
   pre-commit:
@@ -20,23 +29,19 @@ jobs:
     needs: [pre-commit]
     with:
       gh_event: ${{ github.event_name }}
-  windows-ci:
-    needs: [pre-commit, phan, phpstan]
+  #windows-ci:
+  #  if: github.ref == 'refs/heads/develop'  # Condition for branch "develop"
+  #  needs: [pre-commit, phan, phpstan]
+  #  secrets: inherit
+  #  uses: ./.github/workflows/windows-ci.yml
+  #  with:
+  #    gh_event: ${{ github.event_name }}
+  # Runs the build of the .travis.yml emulated on a github runner (not on
+  # travis), see travis-emulated.yml. It starts only when the pre-commit CI
+  # has passed. Add phan, phpstan to the "needs" to also wait for them.
+  travis-emulated:
     secrets: inherit
-    uses: ./.github/workflows/windows-ci.yml
+    needs: [pre-commit]
+    uses: ./.github/workflows/travis-emulated.yml
     with:
       gh_event: ${{ github.event_name }}
-  # gh-travis:  # Runs travis script on github runner (not on travis)
-  #   if: false
-  #   # needs: [pre-commit, phan]
-  #   # needs: [windows-ci]
-  #   secrets: inherit
-  #   needs: [pre-commit, phan, phpstan]
-  #   uses: ./.github/workflows/gh-travis.yml
-  #   with:
-  #     gh_event: ${{ github.event_name }}
-
-# Note (not tested, from https://github.com/orgs/community/discussions/38361)
-# To cancel jobs if one fails, the following action may help
-#       - if: "failure()"
-#        uses: "andymckay/cancel-action@0.3"

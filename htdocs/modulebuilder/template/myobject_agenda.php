@@ -2,6 +2,7 @@
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +52,8 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
 $tmp2 = realpath(__FILE__);
-$i = strlen($tmp) - 1;
-$j = strlen($tmp2) - 1;
+$i = strlen($tmp) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+$j = strlen($tmp2) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
 	$i--;
 	$j--;
@@ -86,6 +87,7 @@ if (!$res) {
  */
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
@@ -101,8 +103,8 @@ $cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -111,14 +113,19 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
+$search_complete = GETPOST('search_complete');
+$search_filtert = GETPOSTINT('search_filtert');
+$search_dateevent_start = GETPOSTDATE('dateevent_start');
+$search_dateevent_end = GETPOSTDATE('dateevent_end');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -187,7 +194,10 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$actioncode = '';
+		$search_rowid = '';
 		$search_agenda_label = '';
+		$search_complete = '';
+		$search_filtert = '';
 	}
 }
 
@@ -318,6 +328,31 @@ if ($object->id > 0) {
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$param .= '&limit='.((int) $limit);
 		}
+		if ($search_rowid) {
+			$param .= '&search_rowid='.urlencode($search_rowid);
+		}
+		if ($actioncode !== '' && $actioncode !== '-1') {
+			$param .= '&actioncode='.urlencode($actioncode);
+		}
+		if ($search_agenda_label) {
+			$param .= '&search_agenda_label='.urlencode($search_agenda_label);
+		}
+		if ($search_complete != '') {
+			$param .= '&search_complete='.urlencode($search_complete);
+		}
+		if ($search_filtert != '') {
+			$param .= '&search_filtert='.urlencode((string) $search_filtert);
+		}
+		if ($search_dateevent_start != '') {
+			$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');
+			$param .= '&dateevent_startmonth='.GETPOSTINT('dateevent_startmonth');
+			$param .= '&dateevent_startday='.GETPOSTINT('dateevent_startday');
+		}
+		if ($search_dateevent_end != '') {
+			$param .= '&dateevent_endyear='.GETPOSTINT('dateevent_endyear');
+			$param .= '&dateevent_endmonth='.GETPOSTINT('dateevent_endmonth');
+			$param .= '&dateevent_endday='.GETPOSTINT('dateevent_endday');
+		}
 
 		// Try to know count of actioncomm from cache
 		$nbEvent = 0;
@@ -329,15 +364,25 @@ if ($object->id > 0) {
 			$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 		}
 
-		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+		// Hook to let external modules add buttons to the object right toolbar. Works on any object page; the hook gets the context (elementtype) so a module can scope itself (e.g. only on event pages).
+		$parameters = array('morehtmlright' => &$morehtmlright, 'elementtype' => $object->element);
+		$reshook = $hookmanager->executeHooks('printObjectRightToolbar', $parameters, $object, $action);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		} else {
+			$morehtmlright .= $hookmanager->resPrint;
+		}
+
+		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 		// List of all actions
-		$filters = [
-			'search_agenda_label' => $search_agenda_label,
-			'search_rowid' => $search_rowid,
-		];
+		$filters = array();
+		$filters['search_agenda_label'] = $search_agenda_label;
+		$filters['search_rowid'] = $search_rowid;
+		$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
+		$filters['search_filtert'] = $search_filtert;
 
-		// TODO Replace this with same code than into list.php
+		// TODO Replace this with the same code than into list.php
 		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, !empty($object->module) ? $object->module : '');
 	}
 }

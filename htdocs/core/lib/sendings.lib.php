@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,48 @@
 require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
+
+
+/**
+ * Resolve a standalone dispatch group from the loaded shipment lines.
+ * The caller must separately check shipment access and write permissions.
+ *
+ * @param Expedition $object       Shipment with its lines loaded
+ * @param int        $sourceLineId Root shipment line identifying the dispatch group
+ * @param int        $lineId       Existing allocation id, or <= 0 for a new allocation
+ * @param int        $productId    Product submitted for the allocation
+ * @return ExpeditionLigne|null    Stored source line, or null for an invalid dispatch
+ */
+function shippingGetStandaloneDispatchSourceLine($object, $sourceLineId, $lineId, $productId)
+{
+	if (!getDolGlobalString('SHIPMENT_STANDALONE') || $object->id <= 0 || $object->origin_id > 0 || $object->status != Expedition::STATUS_DRAFT || $productId <= 0) {
+		return null;
+	}
+
+	$sourceLine = null;
+	$dispatchLine = null;
+	foreach ($object->lines as $line) {
+		if ((int) $line->fk_expedition !== (int) $object->id) {
+			continue;
+		}
+		if ((int) $line->id === $sourceLineId) {
+			$sourceLine = $line;
+		}
+		if ((int) $line->id === $lineId) {
+			$dispatchLine = $line;
+		}
+	}
+
+	if ($sourceLine === null || $sourceLine->fk_parent > 0 || (int) $sourceLine->fk_product !== $productId) {
+		return null;
+	}
+	if ($lineId > 0 && ($dispatchLine === null || (int) $dispatchLine->fk_product !== $productId
+		|| ($lineId !== $sourceLineId && (int) $dispatchLine->fk_parent !== $sourceLineId))) {
+		return null;
+	}
+
+	return $sourceLine;
+}
 
 
 /**
@@ -324,18 +366,18 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$sql .= ' p.description as product_desc';
 	$sql .= " FROM " . MAIN_DB_PREFIX . "expeditiondet as ed,";
 	$sql .= " " . MAIN_DB_PREFIX . "expedition as e,";
-	$sql .= " " . MAIN_DB_PREFIX . $origin . "det as obj";	// for example llx_commandedet
+	$sql .= " " . MAIN_DB_PREFIX . $db->sanitize($origin) . "det as obj";	// for example llx_commandedet
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
 	$sql .= " WHERE e.entity IN (" . getEntity('expedition') . ")";
-	$sql .= " AND obj.fk_" . $origin . " = " . ((int) $origin_id);
+	$sql .= " AND obj.fk_" . $db->sanitize($origin) . " = " . ((int) $origin_id);
 	$sql .= " AND obj.rowid = ed.fk_elementdet";
 	if (isModEnabled('subtotals')) {
 		$sql .= " AND obj.special_code <> " . SUBTOTALS_SPECIAL_CODE;
 	}
 	$sql .= " AND ed.fk_expedition = e.rowid";
 	if ($filter) {
-		$sql .= $filter;
+		$sql .= $filter;  // @phan-suppress-current-line SqlInjection
 	}
 	$sql .= " ORDER BY obj.rowid, obj.fk_product";
 
@@ -410,7 +452,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 						$outputlangs = $langs;
 						$newlang = '';
-						if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (empty($newlang)) {

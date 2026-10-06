@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=ចូលទៅកាន់ <a class="notasortlink" hre
 OAUTH_STRIPE_TEST_NAME=Stripe Test
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=លេខសម្គាល់អតិថិជន OAuth
-OAUTH_SECRET=សម្ងាត់ OAuth
-OAUTH_TENANT=អ្នកជួល OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=អ្នកផ្តល់ OAuth បានបន្ថែម
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=ធាតុ OAuth សម្រាប់អ្នកផ្តល់សេវា និងស្លាកនេះមានរួចហើយ
 URLOfOAuthServiceEndpoints=Base URL for OAuth service endpoints
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL ដែលផ្តល់ដោយសេវាកម្ម OAuth សម្រាប់ការផ្ទៀងផ្ទាត់
 Scopes=ការអនុញ្ញាត (វិសាលភាព)
 ScopeUndefined=ការអនុញ្ញាត (វិសាលភាព) មិនបានកំណត់ (សូមមើលផ្ទាំងមុន)
-ScopesDesc=Example: read,write with Mastodom
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Full Token (object)
 AccessToken=Access Token
 TokenExpired=Expired
@@ -50,3 +50,4 @@ RefreshToken=Refresh token
 RefreshTokenHelp=Use the Refresh Token to get a new Access Token
 OldTokenWasExpiredItHasBeenRefresh=Old token was expired, it has been refreshed
 OldTokenWasNotExpiredButItHasBeenRefresh=Old token was not expired but it has been refreshed
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,7 +67,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 
 // Load translation files
-$langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("other", "dict", "bills", "companies", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -98,8 +98,6 @@ if ($resultproject < 0) {
 
 $hookmanager->initHooks(array('newpayment'));
 
-$extrafields = new ExtraFields($db);
-
 $user->loadDefaultValues();
 
 // Security check
@@ -120,9 +118,10 @@ if (empty($conf->project->enabled)) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -264,7 +263,7 @@ if ($project->date_start_event || $project->date_end_event) {
 if ($project->date_start_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_start_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_start_event, $format);
@@ -275,7 +274,7 @@ if ($project->date_start_event && $project->date_end_event) {
 if ($project->date_end_event) {
 	$format = 'day';
 	$tmparray = dol_getdate($project->date_end_event, false, '');
-	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['seconds']) {
 		$format = 'dayhour';
 	}
 	print dol_print_date($project->date_end_event, $format);

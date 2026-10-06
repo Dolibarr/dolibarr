@@ -164,7 +164,7 @@ $documentation->showSidebar(); ?>
 					'',
 					'</table>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<!-- Table with filters -->
@@ -242,7 +242,7 @@ $documentation->showSidebar(); ?>
 				</div>
 				<?php
 				$lines = array(
-					'<form method="POST" id="FORMID" action="ACTION_URL">',
+					'<form method="POST" id="FORMID" action="ACTION_URL" spellcheck="false">',
 					'',
 					'	<input type="hidden" name="token" value="TOKEN_VALUE">',
 					'	<input type="hidden" name="action" value="ACTION_VALUE">',
@@ -283,7 +283,7 @@ $documentation->showSidebar(); ?>
 					'	</table>',
 					'</form>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Add a row before filters -->
@@ -386,7 +386,7 @@ $documentation->showSidebar(); ?>
 					'	<!-- Total -->',
 					'</table>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- CSS classes for tables -->

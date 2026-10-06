@@ -106,7 +106,7 @@ ListShippingAssociatedProject=Liste over forsendelser relateret til projektet
 ListFichinterAssociatedProject=Liste over interventioner relateret til projektet
 ListExpenseReportsAssociatedProject=Liste over udgiftsrapporter relateret til projektet
 ListDonationsAssociatedProject=Liste over donationer i forbindelse med projektet
-ListVariousPaymentsAssociatedProject=Liste over diverse betalinger forbundet med projektet
+ListVariousPaymentsAssociatedProject=Liste over manuelle journalposteringer relateret til projektet
 ListSalariesAssociatedProject=Liste over lønninger i forbindelse med projektet
 ListActionsAssociatedProject=Liste over begivenheder i forbindelse med projektet
 ListMOAssociatedProject=Liste over fremstilling ordrer i forbindelse med projektet
@@ -258,7 +258,7 @@ OtherFilteredTasks=Andre filtrerede opgaver
 NoAssignedTasks=Der blev ikke fundet nogen tildelte opgaver (tildel projekt / opgaver til den aktuelle bruger fra det øverste valgfelt for at indtaste tid på det)
 ThirdPartyRequiredToGenerateIntervention=En tredjepart skal defineres på projektet for at kunne skabe intervention.
 ThirdPartyRequiredToGenerateInvoice=En tredjepart skal defineres på projektet for at kunne fakturere det.
-ChooseANotYetAssignedTask=Vælg en opgave, der endnu ikke er tildelt dig
+ChooseANotYetAssignedTask=Opgaver, der endnu ikke er tildelt dig
 # Comments trans
 AllowCommentOnTask=Tillad brugernes kommentarer til opgaver
 AllowCommentOnProject=Tillad brugernes kommentarer til projekter

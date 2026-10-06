@@ -2,11 +2,11 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022-2025  Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -423,10 +423,10 @@ class Task extends CommonObjectLine
 		$error = 0;
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->note_public = trim($this->note_public);
-		$this->note_private = trim($this->note_private);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->note_public = trim((string) $this->note_public);
+		$this->note_private = trim((string) $this->note_private);
 
 		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
 			$this->errors[] = $langs->trans('StartDateCannotBeAfterEndDate');
@@ -453,6 +453,7 @@ class Task extends CommonObjectLine
 		$sql .= ", priority";
 		$sql .= ", billable";
 		$sql .= ", fk_statut";
+		$sql .= ", rang";
 		$sql .= ") VALUES (";
 		$sql .= (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
@@ -472,6 +473,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(($this->priority != '' && $this->priority >= 0) ? (int) $this->priority : 'null');
 		$sql .= ", ".((int) $this->billable);
 		$sql .= ", ".((int) $this->status);
+		$sql .= ", ".((!empty($this->rang)) ? ((int) $this->rang) : "0");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -675,20 +677,20 @@ class Task extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
+		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "'".$this->db->escape((string) $this->id)."'").",";
-		$sql .= " fk_task_parent=".(isset($this->fk_task_parent) ? $this->fk_task_parent : "null").",";
+		$sql .= " fk_task_parent=".(isset($this->fk_task_parent) ? ((int) $this->fk_task_parent) : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
-		$sql .= " duration_effective=".(isset($this->duration_effective) ? $this->duration_effective : "null").",";
-		$sql .= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '') ? $this->planned_workload : "null").",";
+		$sql .= " duration_effective=".(isset($this->duration_effective) ? ((int) $this->duration_effective) : "null").",";
+		$sql .= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '') ? ((int) $this->planned_workload) : "null").",";
 		$sql .= " datec=".(isDolTms($this->date_c) ? "'".$this->db->idate($this->date_c)."'" : 'null').",";
 		$sql .= " dateo=".(isDolTms($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
 		$sql .= " datee=".(isDolTms($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
-		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
-		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
+		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null').",";
+		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((float) $this->budget_amount) : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? ((int) $this->rang) : "0").",";
 		$sql .= " priority=".((!empty($this->priority)) ? ((int) $this->priority) : "0").",";
 		$sql .= " billable=".((int) $this->billable).",";
@@ -1040,15 +1042,19 @@ class Task extends CommonObjectLine
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option == 'withproject' ? '&withproject=1' : '');
+		$query = ['id' => $this->id];
+		if ($option == 'withproject') {
+			$query['withproject'] = 1;
+		}
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
+			$query['save_lastsearch_values'] = 1;
 		}
+		$url = dolBuildUrl(DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php', $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -1266,6 +1272,7 @@ class Task extends CommonObjectLine
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
+		$search_options_pattern = 'search_task_options_'; // Aligned with perweek.php/perday.php that build $search_array_options with this prefix (via extrafields->getOptionalsFromPost('projet_task', '', 'search_task_')). Without it, the SQL template falls back to 'search_options_' and the preg_replace fails to strip the actual prefix, generating phantom column names like efpt.search_task_options_<field>.
 		global $db, $conf; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
@@ -1636,7 +1643,10 @@ class Task extends CommonObjectLine
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
-		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || empty($this->timespent_withhour)) {
+			// Sync datehour from the day-level date when no start hour was provided (withhour = 0), or when
+			// datehour is empty. When a start hour was entered (withhour = 1), keep datehour untouched so the
+			// hour is not discarded (#39276). This still resynchronizes datehour when only the day changes.
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
@@ -1683,6 +1693,16 @@ class Task extends CommonObjectLine
 			$ret = -1;
 		}
 
+		// Propagate trigger handler messages from $this->errors (plural array)
+		// to $this->error (singular string) so callers like the REST API can
+		// surface a useful message instead of an empty error tail.
+		if ($ret <= 0 && empty($this->error) && !empty($this->errors)) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+		}
+
 		if ($ret > 0) {
 			// Recalculate amount of time spent for task and update denormalized field
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
@@ -1696,10 +1716,10 @@ class Task extends CommonObjectLine
 				} else {
 					$this->status = Task::STATUS_VALIDATED;
 				}
-				$sql .= ", fk_statut = ".$this->status;
+				$sql .= ", fk_statut = ".((int) $this->status);
 			} else {
 				$this->status = Task::STATUS_ONGOING;
-				$sql .= ", fk_statut = ".$this->status;
+				$sql .= ", fk_statut = ".((int) $this->status);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -1918,11 +1938,11 @@ class Task extends CommonObjectLine
 		}
 		if ($dates > 0) {
 			$datefieldname = "element_datehour";
-			$sql .= " AND (".$datefieldname." >= '".$this->db->idate((int) $dates)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." >= '".$this->db->idate((int) $dates)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 		if ($datee > 0) {
 			$datefieldname = "element_datehour";
-			$sql .= " AND (".$datefieldname." <= '".$this->db->idate((int) $datee)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." <= '".$this->db->idate((int) $datee)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 		//print $sql;
 
@@ -2084,16 +2104,19 @@ class Task extends CommonObjectLine
 		}
 
 		// Clean parameters
-		if (empty($this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || empty($this->timespent_withhour)) {
+			// Sync datehour from the day-level date when no start hour was provided (withhour = 0), or when
+			// datehour is empty. When a start hour was entered (withhour = 1), keep datehour untouched so the
+			// hour is not discarded (#39276). This still resynchronizes datehour when only the day changes.
 			$this->timespent_datehour = $this->timespent_date;
 		}
 		if (isset($this->timespent_note)) {
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
-		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -2143,6 +2166,16 @@ class Task extends CommonObjectLine
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			$ret = -1;
+		}
+
+		// Propagate trigger handler messages from $this->errors (plural array)
+		// to $this->error (singular string) so callers like the REST API can
+		// surface a useful message instead of an empty error tail.
+		if ($ret < 0 && empty($this->error) && !empty($this->errors)) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
 		}
 
 		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM'))) {
@@ -2226,9 +2259,9 @@ class Task extends CommonObjectLine
 
 		$error = 0;
 
-		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -2262,7 +2295,7 @@ class Task extends CommonObjectLine
 
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = duration_effective - ".$this->db->escape($this->timespent_duration ? (string) $this->timespent_duration : '0');
+			$sql .= " SET duration_effective = duration_effective - ".((int) $this->timespent_duration);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
@@ -2327,6 +2360,8 @@ class Task extends CommonObjectLine
 
 		$origin_task->fetch($fromid);
 
+		$clone_task->date_c = $datec;	// Set the new creation date before computing the ref, else the numbering mask uses the source task year
+
 		$defaultref = '';
 		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
@@ -2342,7 +2377,6 @@ class Task extends CommonObjectLine
 		$clone_task->ref				= $defaultref;
 		$clone_task->fk_project = $project_id;
 		$clone_task->fk_task_parent = $parent_task_id;
-		$clone_task->date_c = $datec;
 		$clone_task->planned_workload = $origin_task->planned_workload;
 		$clone_task->rang = $origin_task->rang;
 		$clone_task->priority = $origin_task->priority;
@@ -2350,7 +2384,7 @@ class Task extends CommonObjectLine
 		//Manage Task Date
 		if ($clone_change_dt) {
 			$projectstatic = new Project($this->db);
-			$projectstatic->fetch($ori_project_id);
+			$projectstatic->fetch((int) $ori_project_id);
 
 			// Origin project start date
 			$orign_project_dt_start = (!isset($projectstatic->date_start) || $projectstatic->date_start == '') ? $projectstatic->date_c : $projectstatic->date_start;
@@ -2417,7 +2451,7 @@ class Task extends CommonObjectLine
 
 				//retrieve project origin ref to know folder to copy
 				$projectstatic = new Project($this->db);
-				$projectstatic->fetch($ori_project_id);
+				$projectstatic->fetch((int) $ori_project_id);
 				$ori_project_ref = $projectstatic->ref;
 
 				if ($ori_project_id != $project_id) {
@@ -2638,9 +2672,10 @@ class Task extends CommonObjectLine
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 		// List of tasks (does not care about permissions. Filtering will be done later)
-		$sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
-		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
-		$sql .= " t.dateo as date_start, t.datee as date_end";
+		// The count and the number of late tasks are computed by the database instead of reading every task. A task to do is late
+		// when it has an end date and that date is before now minus the warning delay (the rule of hasDelay()).
+		$sql = "SELECT COUNT(t.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN (t.progress IS NULL OR t.progress >= 0) AND t.datee IS NOT NULL AND t.datee < '".$this->db->idate(dol_now() - $conf->project->task->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -2660,8 +2695,6 @@ class Task extends CommonObjectLine
 		//print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$task_static = new Task($this->db);
-
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
@@ -2673,19 +2706,10 @@ class Task extends CommonObjectLine
 			$response->img = img_object('', "task");
 
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				$task_static->projectstatus = $obj->projectstatus;
-				$task_static->progress = $obj->progress;
-				$task_static->fk_statut = $obj->status;
-				$task_static->status = $obj->status;
-				$task_static->date_start = $this->db->jdate($obj->date_start);
-				$task_static->date_end = $this->db->jdate($obj->date_end);
-
-				if ($task_static->hasDelay()) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;

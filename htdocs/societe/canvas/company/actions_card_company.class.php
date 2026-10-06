@@ -150,7 +150,7 @@ class ActionsCardCompany extends ActionsCardCommon
 
 			for ($i = 1; $i <= 4; $i++) {
 				$this->tpl['langprofid'.$i]		= $langs->transcountry('ProfId'.$i, $this->object->country_code);
-				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i, $this->object);
+				$this->tpl['checkprofid'.$i]	= $this->object->id_prof_check($i);
 				$this->tpl['urlprofid'.$i] = $this->object->id_prof_url($i, $this->object);
 			}
 

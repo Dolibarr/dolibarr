@@ -5,7 +5,8 @@
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026  	   Pierre Ardoin     	<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +30,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,9 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails', 'contracts'));
+$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'mails', 'contracts'));
 
 // Security check
 if (!$user->admin) { // after this test, $user->admin is always true
@@ -193,7 +193,7 @@ print $langs->trans("NotificationsDescGlobal").' - '.$langs->trans("YouAreHere")
 print '</span>';
 print '<br>';
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
@@ -211,6 +211,7 @@ print '<td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input class="width150 quatrevingtpercentminusx" type="email" name="email_from" value="'.getDolGlobalString('NOTIFICATION_EMAIL_FROM').'">';
 if (getDolGlobalString('NOTIFICATION_EMAIL_FROM') && !isValidEmail(getDolGlobalString('NOTIFICATION_EMAIL_FROM'))) {
+	$langs->load('errors');
 	print ' '.img_warning($langs->trans("ErrorBadEMail"));
 }
 print '</td>';
@@ -269,7 +270,7 @@ print '<br><br>';
 
 // Emails templates for notification
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="settemplates">';
 
@@ -328,7 +329,15 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	} elseif ($notifiedevent['elementtype'] == 'member') {
 		$model = 'member';
 	} elseif ($notifiedevent['elementtype'] == 'contrat') {
-		$model = 'contract_send';
+		$model = 'contract';
+	} elseif ($notifiedevent['elementtype'] == 'stocktransfer') {
+		$model = 'stocktransfer_send';
+	} elseif ($notifiedevent['elementtype'] == 'agenda') {
+		$model = 'actioncomm_send';
+	}
+	// The events of leaves can be recorded with the elementtype 'expensereport' in a database migrated from an old version
+	if (strpos($notifiedevent['code'], 'HOLIDAY_') === 0) {
+		$model = 'holiday';
 	}
 
 	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
@@ -397,7 +406,7 @@ print '</form>';
 print '<br><br>';
 
 
-print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setfixednotif">';
 print '<input type="hidden" name="page_y" value="">';
@@ -487,14 +496,15 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$showwarning = 0;
 		foreach ($arrayemail as $keydet => $valuedet) {
 			$valuedet = trim($valuedet);
-			if (!empty($valuedet) && !isValidEmail($valuedet, 1)) {
+			if (!empty($valuedet) && $valuedet != '__SUPERVISOREMAIL__' && $valuedet != '__AUTHOREMAIL__' && !isValidEmail($valuedet, 1)) {
 				$showwarning++;
 			}
 		}
 		if (getDolGlobalString($param) && $showwarning) {
+			$langs->load('errors');
 			$s .= ' '.img_warning($langs->trans("ErrorBadEMail"));
 		}
-		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
+		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword").'<br>'.$langs->trans("YouCanAlsoUseAuthorKeyword"), 1, 'help', '', 0, 2);
 		print '<br>';
 
 		$inputfieldalreadyshown++;
@@ -502,7 +512,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	// New entry input fields
 	if (empty($inputfieldalreadyshown) || !$codehasnotrigger) {
 		$s = '<input type="text" class="minwidth200" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
-		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
+		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword").'<br>'.$langs->trans("YouCanAlsoUseAuthorKeyword"), 1, 'help', '', 0, 2);
 	}
 	print '</td>';
 

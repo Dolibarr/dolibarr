@@ -90,7 +90,7 @@ $documentation->showSidebar(); ?>
 					'<h5>Example heading <span class="badge badge-secondary">New</span></h5>',
 					'<h6>Example heading <span class="badge badge-secondary">New</span></h6>'
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 
 				<p class="documentation-text"><?php echo $langs->trans('DocBadgeUseOnLinksOrButtons'); ?></p>
 				<div class="documentation-example">
@@ -105,7 +105,7 @@ $documentation->showSidebar(); ?>
 					'	Notifications <span class="badge badge-primary">4</span>',
 					'</button>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 
 				<div class="warning">
 					<p class="documentation-text"><?php echo $langs->trans('DocBadgeWarningAriaHidden1'); ?></p>
@@ -127,7 +127,7 @@ $documentation->showSidebar(); ?>
 					'	<span class="sr-only">unread messages</span>',
 					'</button>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Contextual variations -->
@@ -155,7 +155,7 @@ $documentation->showSidebar(); ?>
 					'<span class="badge badge-light">Light</span>',
 					'<span class="badge badge-dark">Dark</span>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 				<div class="warning">
 					<p class="documentation-text"><strong><?php echo $langs->trans('DocBadgeContextualVariationsWarning1'); ?></strong></p>
 					<p class="documentation-text"><?php echo $langs->trans('DocBadgeContextualVariationsWarning2'); ?></p>
@@ -176,7 +176,7 @@ $documentation->showSidebar(); ?>
 				for ($i = 0; $i <= 9; $i++) :
 					$lines[] = '<span class="badge badge-status'.$i.'">status-'.$i.'</span>';
 				endfor;
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Pill badges -->
@@ -210,7 +210,7 @@ $documentation->showSidebar(); ?>
 				for ($i = 0; $i <= 9; $i++) :
 					$lines[] = '<span class="badge badge-pill badge-status'.$i.'">status-'.$i.'</span>';
 				endfor;
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Dot badges -->
@@ -244,7 +244,7 @@ $documentation->showSidebar(); ?>
 				for ($i = 0; $i <= 9; $i++) :
 					$lines[] = '<span class="badge badge-dot badge-status'.$i.'"></span>';
 				endfor;
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Links -->
@@ -278,7 +278,7 @@ $documentation->showSidebar(); ?>
 				for ($i = 0; $i <= 9; $i++) :
 					$lines[] = '<a href="#" class="badge badge-status'.$i.'" >status'.$i.'</a>';
 				endfor;
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Use badge helper function -->
@@ -308,7 +308,7 @@ $documentation->showSidebar(); ?>
 					"print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'danger', 'pill');",
 					"print dolGetBadge('your label for accessibility', 'your label', 'warning', 'dot');",
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<!--  -->

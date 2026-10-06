@@ -4,7 +4,7 @@
  * Copyright (C) 2021       Greg Rastklan 		<greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021       Jean-Pascal BOUDET 	<jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021       Grégory BLEMAND 	<gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2022-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,11 +34,10 @@
  */
 function hrmAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
 	$langs->load("hrm");
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('hrm_evaluation');
 	$extrafields->fetch_name_optionals_label('hrm_job');
 	$extrafields->fetch_name_optionals_label('hrm_skill');
@@ -55,7 +54,7 @@ function hrmAdminPrepareHead()
 	$head[$h][2] = 'establishments';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/skill_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'hrm_skill'));
 	$head[$h][1] = $langs->trans("SkillsExtraFields");
 	$nbExtrafields = $extrafields->attributes['hrm_skill']['count'];
 	if ($nbExtrafields > 0) {
@@ -64,7 +63,7 @@ function hrmAdminPrepareHead()
 	$head[$h][2] = 'skillsAttributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/job_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'hrm_job'));
 	$head[$h][1] = $langs->trans("JobsExtraFields");
 	$nbExtrafields = $extrafields->attributes['hrm_job']['count'];
 	if ($nbExtrafields > 0) {
@@ -73,7 +72,7 @@ function hrmAdminPrepareHead()
 	$head[$h][2] = 'jobsAttributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/evaluation_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'hrm_evaluation'));
 	$head[$h][1] = $langs->trans("EvaluationsExtraFields");
 	$nbExtrafields = $extrafields->attributes['hrm_evaluation']['count'];
 	if ($nbExtrafields > 0) {

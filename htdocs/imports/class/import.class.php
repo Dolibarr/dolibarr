@@ -4,6 +4,7 @@
  * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
  * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Alexandre Spangaro	<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +55,11 @@ class Import
 	 * @var array<array{position_of_profile:string,module:DolibarrModules}>
 	 */
 	public $array_import_module;
+
+	/**
+	 * @var array<array<string,string>>
+	 */
+	public $array_import_types;
 
 	/**
 	 * @var int[]
@@ -111,7 +117,7 @@ class Import
 	public $array_import_updatekeys;
 
 	/**
-	 * @var array<''|array<string,string>>
+	 * @var array<int,string[]>	Update keys preselected on the screen, as field aliases
 	 */
 	public $array_import_preselected_updatekeys;
 
@@ -270,18 +276,17 @@ class Import
 						// Array of tables creator field to import (key=alias, value=creator field name)
 						$this->array_import_tables_creator[$i] = (isset($module->import_tables_creator_array[$r]) ? $module->import_tables_creator_array[$r] : '');
 						// Array of fields to import (key=field, value=label)
-						$this->array_import_fields[$i] = $module->import_fields_array[$r];
+						$this->array_import_fields[$i] = (isset($module->import_fields_array[$r]) ? $module->import_fields_array[$r] : []);
 						// Array of hidden fields to import (key=field, value=label)
 						$this->array_import_fieldshidden[$i] = (isset($module->import_fieldshidden_array[$r]) ? $module->import_fieldshidden_array[$r] : '');
 						// Array of entities to export (key=field, value=entity)
-						$this->array_import_entities[$i] = $module->import_entities_array[$r];
+						$this->array_import_entities[$i] = (isset($module->import_entities_array[$r]) ? $module->import_entities_array[$r] : '');
 						// Array of aliases to export (key=field, value=alias)
 						$this->array_import_regex[$i] = (isset($module->import_regex_array[$r]) ? $module->import_regex_array[$r] : '');
 						// Array of columns allowed as UPDATE options
 						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
 						// Array of columns preselected as UPDATE options
-						// import_preselected_updatekeys_array does not exist - backward compatibility ?  @phan-suppress-next-line PhanUndeclaredProperty
-						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : '');
+						$this->array_import_preselected_updatekeys[$i] = (isset($module->import_preselected_updatekeys_array[$r]) ? $module->import_preselected_updatekeys_array[$r] : array());
 						// Array of examples
 						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
 						// Table of conversion rules for a value from another source (key=field, value=array of rules)
@@ -290,6 +295,8 @@ class Import
 						$this->array_import_run_sql_after[$i] = (isset($module->import_run_sql_after_array[$r]) ? $module->import_run_sql_after_array[$r] : '');
 						// Module
 						$this->array_import_module[$i] = array('position_of_profile' => ($module->module_position.'-'.$module->import_code[$r]), 'module' => $module);
+						// Type
+						$this->array_import_types[$i] = (isset($module->import_TypeFields_array[$r]) ? $module->import_TypeFields_array[$r] : array());
 
 						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_array[$r]));
 						$i++;

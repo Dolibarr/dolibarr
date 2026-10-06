@@ -112,6 +112,18 @@ span.badgeneutral {
 	border-radius: 10px;
 	white-space: nowrap;
 }
+span.badgeliketopmenu {
+	padding: 2px 7px 2px 7px;
+	background-color: var(--colorbackhmenu1);
+	color: var(--colorbackvmenu1);
+	border-radius: 10px;
+	white-space: nowrap;
+}
+
+span.badge-oppstatus {
+	color: #fff !important;
+	background-color: #776666;
+}
 
 
 /* PRIMARY */

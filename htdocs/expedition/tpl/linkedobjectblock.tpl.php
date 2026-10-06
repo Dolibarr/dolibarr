@@ -18,6 +18,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var	?Conf	$conf	Object config
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -47,6 +50,13 @@ $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
+	$refWithThirdparty = $objectlink->ref_customer ? dolPrintHTML($objectlink->ref_customer).'<br>' : '';
+
+	$objectlink->fetch_thirdparty();
+
+	$refWithThirdparty = '<span class="small">'.$refWithThirdparty;
+	$refWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -55,8 +65,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("Shipment"); ?></td>
 		<td class="tdoverflowmax125"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="tdoverflowmax125" title="<?php dolPrintHTMLForAttribute($objectlink->ref_customer); ?>"><?php echo dolPrintHTML($objectlink->ref_customer); ?></td>
-		<td class="center"><?php echo dol_print_date($objectlink->date_delivery ? $objectlink->date_delivery : $objectlink->date_creation, 'day'); ?></td>
+		<td class="tdoverflowmax125 nopaddingtopimp nopaddingbottomimp" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_customer); ?>"><?php echo $refWithThirdparty; ?></td>
+		<td class="center"><?php echo dol_print_date($objectlink->date_creation, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('expedition', 'lire')) {
 			$total += $objectlink->total_ht;

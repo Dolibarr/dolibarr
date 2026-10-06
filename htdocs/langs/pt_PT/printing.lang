@@ -46,6 +46,10 @@ IPP_Color=Cor
 IPP_Device=Dispositivo
 IPP_Media=Média da impressora
 IPP_Supported=Tipo de média
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Nenhum
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Cor
 DirectPrintingJobsDesc=Esta página lista as tarefas de impressão encontradas para as impressoras disponíveis.
 GoogleAuthNotConfigured=O Google OAuth não foi configurado. Hailite o módulo OAuth e defina um ID/Acesso do Google.
 GoogleAuthConfigured=As credenciais do Google OAuth foram encontradas na configuração do módulo OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Variáveis ​​de configuração para o driver de i
 PrintingDriverDescprintipp=Variáveis ​​de configuração para o driver de impressão.
 PrintTestDescprintgcp=Lista de Impressoras para a Impressão na Nuvem da Google
 PrintTestDescprintipp=Lista de impressoras para copos.
-Testbbbb
+PrinterLocation=Printer location

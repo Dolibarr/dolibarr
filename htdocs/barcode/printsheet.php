@@ -4,6 +4,7 @@
  * Copyright (C) 2006-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +35,6 @@ if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,12 +42,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
- *
+ */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+/**
  * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'members', 'errors'));
+$langs->loadLangs(array('admin', 'members'));
 
 // Choice of print year or current year.
 $now = dol_now();
@@ -63,6 +65,22 @@ $fk_barcode_type = GETPOSTINT('fk_barcode_type');
 $mode = GETPOST('mode', 'aZ09');
 $modellabel = GETPOST("modellabel", 'aZ09'); // Doc template to use
 $numberofsticker = GETPOSTINT('numberofsticker');
+
+$label_product_ref_option = GETPOSTISSET('label_product_ref_option');
+$label_product_label_option = GETPOSTISSET('label_product_label_option');
+
+if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
+	$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', 'nohtml') : null);
+} else {
+	$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', 'alpha') : null);
+}
+
+if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
+	$security_check = 'nohtml';
+} else {
+	$security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
+}
+$label_product_label = (GETPOSTISSET('label_product_label') ? GETPOST('label_product_label', $security_check) : null);
 
 $mesg = '';
 
@@ -117,6 +135,14 @@ if (empty($reshook)) {
 			if (empty($forbarcode) || empty($fk_barcode_type)) {
 				setEventMessages($langs->trans("DefinitionOfBarCodeForProductNotComplete", $producttmp->getNomUrl()), null, 'warnings');
 			}
+
+			if (empty($label_product_ref) && $label_product_ref_option) {
+				$label_product_ref = $producttmp->ref;
+			}
+
+			if (empty($label_product_label) && $label_product_label_option) {
+				$label_product_label = $producttmp->label;
+			}
 		}
 	}
 	if (GETPOST('submitthirdparty')) {
@@ -146,12 +172,27 @@ if (empty($reshook)) {
 		}
 		$MAXLENGTH = 51200;	// Limit set to 50Ko
 		if (dol_strlen($forbarcode) > $MAXLENGTH) {			// barcode value
+			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("BarcodeValue")).' ('.$langs->trans("RequireXStringMax", $MAXLENGTH).')', null, 'errors');
 			$error++;
 		}
 		if (empty($fk_barcode_type)) {		// barcode type = barcode encoding
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeType")), null, 'errors');
 			$error++;
+		}
+
+		if (GETPOSTINT('productid') > 0) {
+			$result = $producttmp->fetch(GETPOSTINT('productid'));
+			if ($result < 0) {
+				setEventMessage($producttmp->error, 'errors');
+			}
+			if (empty($label_product_ref) && $label_product_ref_option) {
+				$label_product_ref = $producttmp->ref;
+			}
+
+			if (empty($label_product_label) && $label_product_label_option) {
+				$label_product_label = $producttmp->label;
+			}
 		}
 
 		$stdobject = null;
@@ -170,9 +211,9 @@ if (empty($reshook)) {
 		$diroutput = null;
 		$template = null;
 		$is2d = false;
+		$code = $forbarcode;
 
 		if (!$error && $stdobject !== null) {
-			$code = $forbarcode;
 			$generator = $stdobject->barcode_type_coder; // coder (loaded by fetchBarCode). Engine.
 			$encoding = strtoupper($stdobject->barcode_type_code); // code (loaded by fetchBarCode). Example 'ean', 'isbn', ...
 
@@ -268,8 +309,16 @@ if (empty($reshook)) {
 			if ($mode == 'label') {
 				$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% possible when using TCPDF generator
 				$textleft = make_substitutions(getDolGlobalString('BARCODE_LABEL_LEFT_TEXT', $txtforsticker), $substitutionarray);
-				$textheader = make_substitutions(getDolGlobalString('BARCODE_LABEL_HEADER_TEXT'), $substitutionarray);
-				$textfooter = make_substitutions(getDolGlobalString('BARCODE_LABEL_FOOTER_TEXT'), $substitutionarray);
+				if ((GETPOSTINT('productid') > 0) && $label_product_ref_option) {
+					$textheader = $label_product_ref;
+				} else {
+					$textheader = make_substitutions(getDolGlobalString('BARCODE_LABEL_HEADER_TEXT'), $substitutionarray);
+				}
+				if ((GETPOSTINT('productid') > 0) && $label_product_label_option) {
+					$textfooter = $label_product_label;
+				} else {
+					$textfooter = make_substitutions(getDolGlobalString('BARCODE_LABEL_FOOTER_TEXT'), $substitutionarray);
+				}
 				$textright = make_substitutions(getDolGlobalString('BARCODE_LABEL_RIGHT_TEXT'), $substitutionarray);
 				$forceimgscalewidth = getDolGlobalString('BARCODE_FORCEIMGSCALEWIDTH', 1);
 				$forceimgscaleheight = getDolGlobalString('BARCODE_FORCEIMGSCALEHEIGHT', 1);
@@ -289,6 +338,7 @@ if (empty($reshook)) {
 						);
 					}
 				} else {
+					$langs->load('errors');
 					$mesg = $langs->trans("ErrorQuantityIsLimitedTo", $MAXSTICKERS);
 					$error++;
 				}
@@ -297,6 +347,7 @@ if (empty($reshook)) {
 			// Build and output PDF
 			if (!$error && $mode == 'label') {
 				if (!count($arrayofrecords)) {
+					$langs->load('errors');
 					$mesg = $langs->trans("ErrorRecordNotFound");
 				}
 				if (empty($modellabel) || $modellabel == '-1') {
@@ -316,7 +367,9 @@ if (empty($reshook)) {
 					try {
 						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, (string) $diroutput, (string) $template, dol_sanitizeFileName($outfile));
 					} catch (Exception $e) {
+						$langs->load('errors');
 						$mesg = $langs->trans('ErrorGeneratingBarcode');
+						$error++;
 					}
 
 					$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = $previousConf;
@@ -501,6 +554,23 @@ print $langs->trans("BarcodeValue").' &nbsp; ';
 print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 print '<input size="16" type="text" name="forbarcode" id="forbarcode" value="'.$forbarcode.'">';
 print '</div></div>';
+
+// Product ref & label
+
+if ($producttmp->id > 0) {
+	print '	<div class="tagtr">';
+	print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 500px;">';
+	print '<input id="label_product_ref_option" name="label_product_ref_option" type="checkbox" '.(GETPOSTISSET("label_product_ref_option") ? 'checked ' : '').' class="checkforselect"><label for="label_product_ref_option"> '.$langs->trans("BarcodeLabelProductRef").'</label>';
+	print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 500px;">';
+	print '<input type="text" name="label_product_ref" id="label_product_ref" placeholder="'.$langs->trans("BarcodeLabelProductRefPlaceholder").'" value="'.$label_product_ref.'">';
+	print '</div></div>';
+	print '	<div class="tagtr">';
+	print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 500px;">';
+	print '<input id="label_product_label_option" name="label_product_label_option" type="checkbox" '.(GETPOSTISSET("label_product_label_option") ? 'checked ' : '').' class="checkforselect"><label for="label_product_label_option"> '.$langs->trans("BarcodeLabelProductLabel").'</label>';
+	print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 500px;">';
+	print '<input type="text" name="label_product_label" id="label_product_label" placeholder="'.$langs->trans("BarcodeLabelProductLabelPlaceholder").'" value="'.$label_product_label.'">';
+	print '</div></div>';
+}
 
 /*
 $barcodestickersmask=GETPOST('barcodestickersmask');
