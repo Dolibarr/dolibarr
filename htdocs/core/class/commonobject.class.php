@@ -3038,33 +3038,34 @@ abstract class CommonObject
 
 						switch ($this->element) {
 							case 'propal':
-								/** @var PropaleLigne $line */
-								'@phan-var-force Propal $this';
-								'@phan-var-force PropaleLigne $line';
-								$this->updateline(
-									$line->id,
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									($line->description ? $line->description : $line->desc),
-									'HT',
-									$line->info_bits,
-									$line->special_code,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->product_type,
-									$line->date_start,
-									$line->date_end,
-									$line->array_options,
-									$line->fk_unit,
-									$line->multicurrency_subprice
-								);
+								if ($this instanceof Propal) {
+									/** @var PropaleLigne $line */
+									'@phan-var-force PropaleLigne $line';
+									$this->updateline(
+										$line->id,
+										$line->subprice,
+										$line->qty,
+										$line->remise_percent,
+										$line->tva_tx,
+										$line->localtax1_tx,
+										$line->localtax2_tx,
+										($line->description ? $line->description : $line->desc),
+										'HT',
+										$line->info_bits,
+										$line->special_code,
+										$line->fk_parent_line,
+										$line->skip_update_total,
+										$line->fk_fournprice,
+										$line->pa_ht,
+										$line->label,
+										$line->product_type,
+										$line->date_start,
+										$line->date_end,
+										$line->array_options,
+										$line->fk_unit,
+										$line->multicurrency_subprice
+									);
+								}
 								break;
 							case 'commande':
 								if ($this instanceof Commande) {
