@@ -115,6 +115,33 @@ class FactureSituationProgressTest extends CommonClassTest
 	}
 
 	/**
+	 * A credit note brought back to 50 % on a line invoiced at 60 % credits the 10 % left, as a negative amount
+	 *
+	 * @return void
+	 */
+	public function testPartialCreditNoteCreditsTheDifference()
+	{
+		$db = $this->savdb;
+		$cycle = 900000 + mt_rand(1, 99999);
+		$s1 = $this->insertInvoice(Facture::TYPE_SITUATION, $cycle, Facture::STATUS_VALIDATED);
+		$l1 = $this->insertLine($s1, 30, null);
+		$s2 = $this->insertInvoice(Facture::TYPE_SITUATION, $cycle, Facture::STATUS_VALIDATED);
+		$l2 = $this->insertLine($s2, 30, $l1);
+		$creditNoteId = $this->insertInvoice(Facture::TYPE_CREDIT_NOTE, $cycle, Facture::STATUS_DRAFT);
+		$lineId = $this->insertLine($creditNoteId, 0, $l2);
+		$db->query("UPDATE ".$db->prefix()."facturedet SET subprice = -1000 WHERE rowid = ".$lineId);
+
+		$creditNote = new Facture($db);
+		$creditNote->fetch($creditNoteId);
+		$creditNote->update_percent($creditNote->lines[0], 50, false);
+
+		$line = new FactureLigne($db);
+		$line->fetch($lineId);
+		$this->assertEquals(10, $line->situation_percent);
+		$this->assertEquals(-100, $line->total_ht);
+	}
+
+	/**
 	 * After a removal from cycle, the new cycle does not inherit the progress of the old one
 	 *
 	 * @return void
