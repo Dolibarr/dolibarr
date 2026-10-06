@@ -6,7 +6,7 @@ on:
       - tmp-phpstan-td-dump
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
 
 jobs:
@@ -15,44 +15,22 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          coverage: none
-          tools: phpstan:2.2.14
-          extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml
-
-      - name: Prepare apstats like config
+      - name: Dump source regions
         run: |
-          awk '!/phpstan-baseline\.neon/ && !/^includes:/ { print }' phpstan.neon.dist > phpstan_apstats.neon
-          head -5 phpstan_apstats.neon
-
-      - name: Run PHPStan like CTI
-        run: |
-          set +e
-          phpstan --version 2>&1 | tee -a td_log.txt
-          phpstan --level=9 -v analyze --no-progress -a dev/build/phpstan/bootstrap_action.php --memory-limit 7G --error-format=github -c phpstan_apstats.neon > td_raw.txt 2>> td_log.txt
-          echo "EXITCODE=$?" >> td_log.txt
-          head -40 td_raw.txt > td_first40.txt
-          wc -l td_raw.txt >> td_log.txt
-          true
+          {
+            echo "SOURCE REGION DUMP v3"
+            echo ""
+            echo '~~~ actions_massactions.inc.php 1280-1330'
+            sed -n '1280,1330p' htdocs/core/actions_massactions.inc.php
+            echo '~~~ commonobject.class.php 3020,3070'
+            sed -n '3020,3070p' htdocs/core/class/commonobject.class.php
+            echo '~~~ commonobject.class.php 3070,3240'
+            sed -n '3070,3240p' htdocs/core/class/commonobject.class.php
+            echo '~~~'
+          } > td_comment.md
 
       - name: Publish result on temp PR
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          set +e
-          {
-            echo "TMP TD DUMP RESULT v2"
-            echo ""
-            echo '~~~'
-            cat td_first40.txt
-            echo '~~~'
-            echo ""
-            echo '~~~'
-            cat td_log.txt
-            echo '~~~'
-          } > td_comment.md
           gh pr comment 41399 --repo Dolibarr/dolibarr --body-file td_comment.md
-          exit 0
