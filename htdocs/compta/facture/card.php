@@ -2249,18 +2249,16 @@ if (empty($reshook)) {
 					}
 				} elseif (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 					// Without origin the lines are copied as they are: in progressive mode their percent is the delta of the previous situation, so it must restart at 0
-					include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 					foreach ($object->lines as $line) {
 						$line->situation_percent = 0;
-						$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, array(), 0);
-						$line->total_ht = (float) $tabprice[0];
-						$line->total_tva = (float) $tabprice[1];
-						$line->total_ttc = (float) $tabprice[2];
-						$line->total_localtax1 = (float) $tabprice[9];
-						$line->total_localtax2 = (float) $tabprice[10];
-						$line->multicurrency_total_ht = (float) $tabprice[16];
-						$line->multicurrency_total_tva = (float) $tabprice[17];
-						$line->multicurrency_total_ttc = (float) $tabprice[18];
+						$line->total_ht = 0;
+						$line->total_tva = 0;
+						$line->total_ttc = 0;
+						$line->total_localtax1 = 0;
+						$line->total_localtax2 = 0;
+						$line->multicurrency_total_ht = 0;
+						$line->multicurrency_total_tva = 0;
+						$line->multicurrency_total_ttc = 0;
 					}
 				}
 
