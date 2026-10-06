@@ -755,7 +755,7 @@ class ContactTest extends CommonClassTest
 
 		foreach (array('contact', 'socpeople') as $i => $objecttype) {
 			$sql = "INSERT INTO ".$db->prefix()."ecm_files(entity, ref, label, filename, filepath, src_object_type, src_object_id, date_c)";
-			$sql .= " VALUES (".((int) $conf->entity).", 'phpunitmerge".((int) $i).((int) $origin->id)."', 'phpunitmergelabel',";
+			$sql .= " VALUES (".((int) $conf->entity).", 'phpunitmerge".((int) $i).((int) $origin->id)."', 'phpunitmergelabel".((int) $i).((int) $origin->id)."',";
 			$sql .= " 'phpunitmerge".((int) $i).".txt', 'contact/".((int) $origin->id)."', '".$db->escape($objecttype)."',";
 			$sql .= " ".((int) $origin->id).", '".$db->idate(dol_now())."')";
 			$this->assertNotFalse($db->query($sql), 'Cannot create the indexed file fixture');
@@ -765,7 +765,7 @@ class ContactTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(0, $result, 'mergeContact failed: '.$dest->error);
 
-		$sql = "SELECT COUNT(rowid) as nb FROM ".$db->prefix()."ecm_files WHERE label = 'phpunitmergelabel'";
+		$sql = "SELECT COUNT(rowid) as nb FROM ".$db->prefix()."ecm_files WHERE label LIKE 'phpunitmergelabel%'";
 		$sql .= " AND src_object_id = ".((int) $dest->id);
 		$resql = $db->query($sql);
 		$obj = $db->fetch_object($resql);
