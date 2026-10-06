@@ -379,7 +379,7 @@ if ($action == 'create') {
 	}
 	print '<br>';
 	if ($sumpaid < $loan->capital) {
-		print $langs->trans("Insurance").': <input type="text" size="8" name="amount_insurance" value="'.(GETPOSTISSET('amount_insurance') ? GETPOST('amount_insurance') : $amount_insurance).'">';
+		print loanChargeLabel($loan->charge_type, $langs).': <input type="text" size="8" name="amount_insurance" value="'.(GETPOSTISSET('amount_insurance') ? GETPOST('amount_insurance') : $amount_insurance).'">';
 	} else {
 		print '-';
 	}
