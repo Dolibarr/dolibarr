@@ -280,7 +280,9 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		$newobject = new FactureFournisseur($db);
 		$elementtype = 'supplier_invoice';
 	} else {
-		dol_print_error(null, "Not supported value of type = ".$type);
+		// No permission to modify the objects of this type: refuse instead of reporting a success
+		$result = -1;
+		$object->error = $langs->trans("NotEnoughPermissions");
 	}
 	if ($newobject !== null) {
 		$result = $newobject->fetch($elemid);
