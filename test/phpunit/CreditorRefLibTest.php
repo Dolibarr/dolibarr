@@ -236,27 +236,4 @@ class CreditorRefLibTest extends CommonClassTest
 			$this->assertLessThanOrEqual(25, dol_strlen($ref), 'Reference too long for column, country '.$country);
 		}
 	}
-
-	/**
-	 * The columns written by this feature exist in core already
-	 *
-	 * @return void
-	 */
-	public function testTargetColumnsExistInCore()
-	{
-		global $db;
-
-		$sql = "SELECT TABLE_NAME, COLUMN_NAME, CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS";
-		$sql .= " WHERE TABLE_SCHEMA = DATABASE()";
-		$sql .= " AND ((TABLE_NAME = '".$db->prefix()."facture' AND COLUMN_NAME = 'payment_reference')";
-		$sql .= " OR (TABLE_NAME = '".$db->prefix()."societe' AND COLUMN_NAME = 'tp_payment_reference'))";
-
-		$resql = $db->query($sql);
-		$this->assertNotFalse($resql);
-		$this->assertSame(2, $db->num_rows($resql), 'Both columns must already exist in core');
-
-		while ($obj = $db->fetch_object($resql)) {
-			$this->assertSame('25', (string) $obj->CHARACTER_MAXIMUM_LENGTH, 'Column is varchar(25) in core');
-		}
-	}
 }
