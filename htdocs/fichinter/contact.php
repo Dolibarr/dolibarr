@@ -43,11 +43,14 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
-$result = $object->fetch($id, $ref);
-if (!$result) {
+$resultfetch = $object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
+if (!$resultfetch) {
 	print 'Record not found';
 	exit;
 }
