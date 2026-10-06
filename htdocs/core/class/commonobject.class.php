@@ -3069,7 +3069,6 @@ abstract class CommonObject
 								break;
 							case 'commande':
 								if ($this instanceof Commande) {
-									/* @var Commande $this */
 									/** @var OrderLine $line */
 									'@phan-var-force OrderLine $line';
 									$this->updateline(
