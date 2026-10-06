@@ -1184,11 +1184,19 @@ class Holiday extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
+		// Delete extrafields before the leave request
+		$result = $this->deleteExtraFields();
+		if ($result < 0) {
 			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		if (!$error) {

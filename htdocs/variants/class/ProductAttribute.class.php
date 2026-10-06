@@ -492,6 +492,28 @@ class ProductAttribute extends CommonObject
 		}
 
 		if (!$error) {
+			// Delete extrafields of values
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element_line . "_extrafields";
+			$sql .= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element_line . " WHERE " . $this->fk_element . " = " . ((int) $this->id) . ")";
+
+			dol_syslog(__METHOD__ . ' - Delete extrafields of values', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = "Error " . $this->db->lasterror();
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			// Delete extrafields of the attribute
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$this->errors[] = "Error " . $this->error;
+				$error++;
+			}
+		}
+
+		if (!$error) {
 			// Delete values
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element_line;
 			$sql .= " WHERE " . $this->fk_element . " = " . ((int) $this->id);
