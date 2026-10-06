@@ -23,16 +23,9 @@ jobs:
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap, mysql, pgsql, sqlite3, ldap, xml
 
       - name: Prepare apstats like config
-        run: |
-          python3 - <<'EOF'
-          import re
-          s = open('phpstan.neon.dist').read()
-          s = s.replace('	- dev/build/phpstan/phpstan-baseline.neon
-', '')
-          s = s.replace('includes:
-', '')
-          open('phpstan_apstats.neon', 'w').write(s)
-          EOF
+        run: python3 -c "s = open('phpstan.neon.dist').read(); s = s.replace('	- dev/build/phpstan/phpstan-baseline.neon
+', '').replace('includes:
+', ''); open('phpstan_apstats.neon', 'w').write(s)"
 
       - name: Run PHPStan like CTI
         run: |
