@@ -3099,7 +3099,6 @@ abstract class CommonObject
 								break;
 							case 'facture':
 								if ($this instanceof Facture) {
-									/* @var Facture $this */
 									/** @var FactureLigne $line */
 									'@phan-var-force FactureLigne $line';
 									$this->updateline(
