@@ -302,3 +302,51 @@ function loanPeriodRate($rate, $frequency = 12, $interest_basis = 0, $days = 0)
 	}
 	return $rate / $frequency;
 }
+
+
+/**
+ * Kinds of charge the "insurance" amount of a loan can be.
+ *
+ * @return array<int,string>	charge_type => translation key
+ */
+function loanChargeTypes()
+{
+	return array(
+		0 => 'Insurance',
+		1 => 'LoanChargeAccountFee',
+		2 => 'LoanChargeOtherFee',
+	);
+}
+
+/**
+ * Label of the charge of a loan (Insurance, Account-keeping fee, Other fee).
+ *
+ * @param	int			$charge_type	charge_type of the loan
+ * @param	Translate	$outputlangs	Language
+ * @return	string
+ */
+function loanChargeLabel($charge_type, $outputlangs)
+{
+	$types = loanChargeTypes();
+	return $outputlangs->trans($types[(int) $charge_type] ?? $types[0]);
+}
+
+/**
+ * Charge of each payment of a loan.
+ *
+ * @param	float	$amount				insurance_amount of the loan
+ * @param	int		$per_payment		1 = the amount is due with every payment, 0 = it is a total spread over the payments
+ * @param	float	$nbterm				Number of payments
+ * @return	array{0:float,1:float}		Charge of each payment, rounding difference added to the first payment
+ */
+function loanChargePerPayment($amount, $per_payment, $nbterm)
+{
+	if ($per_payment) {
+		return array((float) price2num($amount, 'MT'), 0.0);
+	}
+	if ((float) $nbterm <= 0) {
+		return array(0.0, 0.0);
+	}
+	$each = (float) price2num((float) $amount / $nbterm, 'MT');
+	return array($each, (float) price2num((float) $amount - ($each * $nbterm)));
+}

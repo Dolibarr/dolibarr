@@ -403,7 +403,7 @@ if (count($echeances->lines) > 0) {
 print '<tr class="liste_titre">';
 print '<th class="center">'.$langs->trans("Term").'</th>';
 print '<th class="center">'.$langs->trans("Date").'</th>';
-print '<th class="center">'.$langs->trans("Insurance").'</th>';
+print '<th class="center">'.loanChargeLabel($object->charge_type, $langs).'</th>';
 print '<th class="center">'.$langs->trans("InterestAmount").'</th>';
 print '<th class="center">'.$langs->trans("CapitalAmortization").'</th>';
 print '<th class="center">'.$langs->trans("Amount").'</th>';
@@ -426,9 +426,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$cap_rest = (float) $capital;
-	$insurance = (float) $object->insurance_amount / $object->nbterm;
-	$insurance = price2num($insurance, 'MT');
-	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
+	list($insurance, $regulInsurance) = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
 
 	while ($i < $object->nbterm + 1) {
 		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1, $object->frequency, $object->interest_basis, $object->balloon_amount), 'MT');
@@ -468,9 +466,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$cap_rest = (float) $capital;
-	$insurance = (float) $object->insurance_amount / $object->nbterm;
-	$insurance = price2num($insurance, 'MT');
-	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
+	list($insurance, $regulInsurance) = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
 	$printed = false;
 
 	foreach ($echeances->lines as $line) {
