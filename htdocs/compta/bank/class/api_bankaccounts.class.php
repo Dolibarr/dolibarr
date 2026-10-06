@@ -323,7 +323,7 @@ class BankAccounts extends DolibarrApi
 			);
 		} else {
 			$this->db->rollback();
-			throw new RestException(500, $accountfrom->error . ' ' . $accountto->error);
+			throw new RestException(500, $accountfrom->errorsToString() . ' ' . $accountto->errorsToString());
 		}
 	}
 
@@ -370,7 +370,7 @@ class BankAccounts extends DolibarrApi
 		if ($account->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $account->error);
+			throw new RestException(500, $account->errorsToString());
 		}
 	}
 
@@ -558,7 +558,7 @@ class BankAccounts extends DolibarrApi
 			$num_releve
 		);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when adding line to account: ' . $account->error);
+			throw new RestException(503, 'Error when adding line to account: ' . $account->errorsToString());
 		}
 		return $result;
 	}
@@ -600,7 +600,7 @@ class BankAccounts extends DolibarrApi
 
 		$result = $account->add_url_line($line_id, $url_id, $url, $label, $type);
 		if ($result < 0) {
-			throw new RestException(503, 'Error when adding link to account line: ' . $account->error);
+			throw new RestException(503, 'Error when adding link to account line: ' . $account->errorsToString());
 		}
 		return $result;
 	}
@@ -670,7 +670,7 @@ class BankAccounts extends DolibarrApi
 
 		$result = $accountLine->updateLabel();
 		if ($result < 0) {
-			throw new RestException(503, 'Error when updating link to account line: ' . $accountLine->error);
+			throw new RestException(503, 'Error when updating link to account line: ' . $accountLine->errorsToString());
 		}
 		return $accountLine->id;
 	}

@@ -67,4 +67,14 @@ abstract class CommonDict
 	 * @var int<0,1>	1 if the entry is active, 0 if not
 	 */
 	public $active;
+
+	/**
+	 * Method to output saved errors
+	 *
+	 * @return	string		String with errors
+	 */
+	public function errorsToString()
+	{
+		return $this->error.(is_array($this->errors) ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
+	}
 }

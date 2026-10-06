@@ -226,7 +226,7 @@ class Webhook extends DolibarrApi
 		if ($this->target->update(DolibarrApiAccess::$user, 1) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->target->error);
+			throw new RestException(500, $this->target->errorsToString());
 		}
 	}
 
