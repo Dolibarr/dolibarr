@@ -28,6 +28,7 @@
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -7585,6 +7586,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $object->element == 'facture') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
 					$substitutionarray['__PAYMENT_STRUCTURED_COMMUNICATION__'] = dolBECalculateStructuredCommunication((string) $object->ref, $object->type);
+				}
+
+				// Structured payment reference stored on the invoice
+				if ($object->element == 'facture') {
+					$substitutionarray['__PAYMENT_REFERENCE__'] = empty($object->payment_reference) ? '' : $object->payment_reference;
+				}
+
+				// Finnish virtual barcode, the payer can type it into an online bank
+				if (getDolGlobalString('INVOICE_ADD_FI_BARCODE') && $object->element == 'facture' && $mysoc->country_code == 'FI') {
+					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_fi.lib.php';
+					$substitutionarray['__PAYMENT_VIRTUAL_BARCODE__'] = dolFIFormatVirtualBarcode(dolFIGetInvoiceBarcodeData($object));
 				}
 
 				if (getDolGlobalString('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD') && is_object($object) && $object->element == 'propal') {
