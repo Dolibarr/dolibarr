@@ -330,7 +330,7 @@ $formfile = new FormFile($db);
 if ($action == 'create2') {
 	$head = array();
 	$h = 0;
-	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new&token='.newToken();
 	$head[$h][1] = $langs->trans("MenuChequeDeposits");
 	$hselected = (string) $h;
 	$h++;
