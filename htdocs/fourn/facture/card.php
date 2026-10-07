@@ -2056,16 +2056,17 @@ if (empty($reshook)) {
 	}
 	if ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		// Actions on extra fields
 		if (!$error) {
-			$result = $object->insertExtraFields('BILL_SUPPLIER_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'BILL_SUPPLIER_MODIFY');
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');

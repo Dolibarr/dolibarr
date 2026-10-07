@@ -7370,7 +7370,17 @@ abstract class CommonObject
 			}
 
 			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql); exit;
-			if ($linealreadyfound) {
+			if (!$linealreadyfound) {
+				// Create an empty line, so we update only this field. Calling insertExtraFields() here would check
+				// all other mandatory fields, which may still be empty (record created before they became mandatory).
+				$sql = "INSERT INTO ".$this->db->prefix().$table_element."_extrafields (fk_object) VALUES (".((int) $this->id).")";
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+			}
+			if (!$error) {
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = null";
 				} else {
@@ -7382,11 +7392,6 @@ abstract class CommonObject
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
-				}
-			} else {
-				$result = $this->insertExtraFields('', $user);
-				if ($result < 0) {
-					$error++;
 				}
 			}
 
