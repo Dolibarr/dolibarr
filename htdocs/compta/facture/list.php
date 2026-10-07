@@ -1485,7 +1485,7 @@ $arrayofmassactions = array(
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
-if ($user->hasRight('facture', 'creer')) {
+if ($user->hasRight('facture', 'creer') && !empty($extrafields->attributes[$object->table_element]['label'])) { // The mass action is useless when there is no extrafield
 	$arrayofmassactions['edit_extrafields'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields");
 }
 if (isModEnabled('category') && $user->hasRight('facture', 'creer')) {
