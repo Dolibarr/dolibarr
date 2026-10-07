@@ -81,13 +81,23 @@ if ($action == 'convert') {
 			$db->begin();
 		}
 
-		// Clean vat code old
+		// Clean vat code old. A rate without code is either "20" (code NULL) or "20 ()" (code stored
+		// as an empty string): both are kept apart so one can be converted onto the other.
 		$vat_src_code_old = '';
+		$vat_src_code_old_isempty = false;
 		if (preg_match('/\((.*)\)/', $oldvatrate, $reg)) {
 			$vat_src_code_old = $reg[1];
+			$vat_src_code_old_isempty = ($reg[1] === '');
 			$oldvatrateclean = preg_replace('/\s*\(.*\)/', '', $oldvatrate); // Remove code into vatrate.
 		} else {
 			$oldvatrateclean = $oldvatrate;
+		}
+		if ($vat_src_code_old) {
+			$sqloldvatcode = " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
+		} elseif ($vat_src_code_old_isempty) {
+			$sqloldvatcode = " AND default_vat_code = ''";
+		} else {
+			$sqloldvatcode = " AND default_vat_code IS NULL";
 		}
 
 		// Clean vat code new
@@ -105,11 +115,7 @@ if ($action == 'convert') {
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product';
 			$sql .= ' WHERE entity IN ('.getEntity('product').')';
 			$sql .= " AND tva_tx = '".$db->escape($oldvatrateclean)."'";
-			if ($vat_src_code_old) {
-				$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
-			} else {
-				$sql .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
-			}
+			$sql .= $sqloldvatcode;
 
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -203,13 +209,9 @@ if ($action == 'convert') {
 			// rate and VAT code directly on any product/price row still matching the old value (products
 			// without a price, and historical price rows), so the mass change is complete.
 			$sweepwhere = " AND tva_tx = '".$db->escape($oldvatrateclean)."'";
-			if ($vat_src_code_old) {
-				$sweepwhere .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
-			} else {
-				$sweepwhere .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
-			}
-			$db->query("UPDATE ".MAIN_DB_PREFIX."product SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = '".$db->escape($vat_src_code_new)."' WHERE entity IN (".getEntity('product').")".$sweepwhere);
-			$db->query("UPDATE ".MAIN_DB_PREFIX."product_price SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = '".$db->escape($vat_src_code_new)."' WHERE 1 = 1".$sweepwhere);
+			$sweepwhere .= $sqloldvatcode;
+			$db->query("UPDATE ".MAIN_DB_PREFIX."product SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = ".($vat_src_code_new ? "'".$db->escape($vat_src_code_new)."'" : "NULL")." WHERE entity IN (".getEntity('product').")".$sweepwhere);
+			$db->query("UPDATE ".MAIN_DB_PREFIX."product_price SET tva_tx = '".$db->escape($newvatrateclean)."', default_vat_code = ".($vat_src_code_new ? "'".$db->escape($vat_src_code_new)."'" : "NULL")." WHERE 1 = 1".$sweepwhere);
 		}
 
 		$fourn = new Fournisseur($db);
@@ -219,11 +221,7 @@ if ($action == 'convert') {
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product').')';
 		$sql .= " AND tva_tx = '".$db->escape($oldvatrate)."'";
-		if ($vat_src_code_old) {
-			$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
-		} else {
-			$sql .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
-		}
+		$sql .= $sqloldvatcode;
 		$sql .= " AND s.fk_pays = ".((int) $country_id);
 
 		$resql = $db->query($sql);
@@ -357,9 +355,17 @@ if (empty($mysoc->country_code)) {
 	$resqloldvat = $db->query($sqloldvat);
 	while ($resqloldvat && $objoldvat = $db->fetch_object($resqloldvat)) {
 		$rateclean = price2num($objoldvat->tva_tx);
-		$hascode = !empty($objoldvat->default_vat_code);
-		$optval = $rateclean.($hascode ? ' ('.$objoldvat->default_vat_code.')' : '');
-		$optlbl = vatrate($rateclean, true).($hascode ? ' ('.$objoldvat->default_vat_code.')' : ' ('.$langs->trans("WithoutVATCode").')').' &nbsp; ['.$objoldvat->nb.' '.$langs->trans("Products").']';
+		if ($objoldvat->default_vat_code === null) {
+			$optval = $rateclean;
+			$optcodelbl = $langs->trans("WithoutVATCode").' : NULL';
+		} elseif ($objoldvat->default_vat_code === '') {
+			$optval = $rateclean.' ()';
+			$optcodelbl = $langs->trans("WithoutVATCode").' : \'\'';
+		} else {
+			$optval = $rateclean.' ('.$objoldvat->default_vat_code.')';
+			$optcodelbl = $objoldvat->default_vat_code;
+		}
+		$optlbl = vatrate($rateclean, true).' ('.$optcodelbl.') &nbsp; ['.$objoldvat->nb.' '.$langs->trans("Products").']';
 		print '<option value="'.dol_escape_htmltag($optval).'"'.((string) $oldvatrate === (string) $optval ? ' selected' : '').'>'.$optlbl.'</option>';
 	}
 	print '</select>';
