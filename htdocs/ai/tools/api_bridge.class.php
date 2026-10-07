@@ -56,8 +56,6 @@
  * (de)activation switches to a fresh cache file; editing this file - where
  * the enrichments live - invalidates it too). AI_MCP_BRIDGE_DEFS_CACHE_TTL
  * tunes the lifetime in seconds (default 86400, 0 disables the cache).
- *
- * Disabled unless the constant AI_MCP_API_BRIDGE is set to 1.
  */
 
 /**
@@ -1013,9 +1011,6 @@ class ToolApiBridge extends McpTool
 	 */
 	public function getDefinitions(): array
 	{
-		if (!getDolGlobalInt('AI_MCP_API_BRIDGE')) {
-			return [];	// Feature flag off: bridge exposes nothing.
-		}
 		if ($this->defs !== null) {
 			return $this->defs;
 		}
@@ -1100,7 +1095,7 @@ class ToolApiBridge extends McpTool
 	 * name, so any relevant change - a module (de)activated, a Dolibarr
 	 * upgrade, another entity, an edit of this file (which holds the
 	 * enrichments), or a change of the DB-driven restrictions
-	 * (AI_MCP_API_BRIDGE, AI_MCP_API_BRIDGE_METHODS) - simply points to a
+	 * (AI_MCP_API_BRIDGE_METHODS) - simply points to a
 	 * different file: no explicit invalidation hook to maintain, and an
 	 * administrator RESTRICTING what the AI may reach takes effect on the
 	 * very next request (review sonikf). External-module API updates that
@@ -1129,7 +1124,7 @@ class ToolApiBridge extends McpTool
 		// this file: they must be part of the signature too, or restricting
 		// them would silently keep serving the wider cached toolset for up to
 		// a full TTL (review sonikf on the initial version).
-		$signature .= '|'.getDolGlobalInt('AI_MCP_API_BRIDGE').'|'.getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
+		$signature .= '|'.getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
 
 		return rtrim($dir, '/').'/bridge_tooldefs_'.md5($signature).'.json';
 	}
@@ -1794,10 +1789,6 @@ class ToolApiBridge extends McpTool
 	 */
 	public function execute(string $name, array $args)
 	{
-		if (!getDolGlobalInt('AI_MCP_API_BRIDGE')) {
-			return ["error" => "API bridge is disabled (AI_MCP_API_BRIDGE not set)."];
-		}
-
 		// A model may send the record as a request_data body, or name line fields
 		// the way the custom tools do: accept both, so the write receives what the
 		// preview described.

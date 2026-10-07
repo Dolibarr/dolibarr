@@ -1553,8 +1553,11 @@ function sort_events_by_date($a, $b)
 	// datef => Event end time
 
 	// Events have different start time
+	// Note: datep may be empty or non numeric on an incomplete event. The (int) cast must be on each
+	// operand, not on the result, or PHP 8 throws "Unsupported operand types: string - int" before it
+	// is reached. datef is already guarded with is_numeric() below for the same reason.
 	if ($a->datep !== $b->datep) {
-		return (int) ($a->datep - $b->datep);
+		return (int) $a->datep - (int) $b->datep;
 	}
 
 	// Events have same start time and no end time

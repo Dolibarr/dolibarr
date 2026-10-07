@@ -72,6 +72,15 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+// Initialize objects
+$object = new Societe($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+	if ($object->id > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+	}
+}
+
 // Security check
 $socid = 0;
 if ($user->socid) {
@@ -84,8 +93,6 @@ $hookmanager->initHooks(array('thirdpartycontact', 'thirdpartycontactcard', 'glo
 $result = restrictedArea($user, 'societe', $id, '');
 
 
-// Initialize objects
-$object = new Societe($db);
 
 /*
  * Actions

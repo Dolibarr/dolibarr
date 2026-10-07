@@ -348,7 +348,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$error = 0;
 		$now = dol_now();
 
-		$label = $this->label ?? $this->libelle;
+		$label = empty($this->label) ? $this->libelle : $this->label;
 
 		// Clean parameters
 		$this->titre = empty($this->titre) ? '' : $this->titre;	// deprecated
@@ -1324,7 +1324,8 @@ class FactureFournisseurRec extends CommonInvoice
 		if (empty($this->date_when)) {
 			return false;
 		}
-		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency, 1);
+		// date_when is read from database in the timezone of the server (jdate), so the delay must be added in this timezone
+		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency, 1, 'tzserver');
 	}
 
 	/**

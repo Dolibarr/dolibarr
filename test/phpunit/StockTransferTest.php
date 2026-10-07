@@ -193,7 +193,7 @@ class StockTransferTest extends CommonClassTest
 
 		$this->assertEquals(StockTransfer::STATUS_VALIDATED, $localobject->status);
 		$this->assertNotEquals($oldref, $localobject->ref, 'validate() must replace the provisional ref with a definitive one');
-		$this->assertNotRegExp('/^\(?PROV/i', $localobject->ref);
+		$this->assertSame(0, preg_match('/^\(?PROV/i', (string) $localobject->ref), 'A validated stock transfer must not keep a provisional ref');
 
 		return $localobject;
 	}

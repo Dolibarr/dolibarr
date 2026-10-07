@@ -8524,10 +8524,10 @@ class Form
 		// Now we load the list of VAT
 		$this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
 
-		// Keep only the VAT qualified for $type_vat
+		// Keep only the VAT qualified for $type_vat (0 means all types)
 		$arrayofvatrates = array();
 		foreach ($this->cache_vatrates as $cachevalue) {
-			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
+			if ($type_vat == 0 || empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
 				$arrayofvatrates[] = $cachevalue;
 			}
 		}
@@ -9752,7 +9752,7 @@ class Form
 	 * @param stdClass 	$objp 		Result set of fetch
 	 * @param string 	$opt 		Option (var used for returned value in string option format)
 	 * @param array{}	$optJson 	Option (var used for returned value in json format) @phan-output-reference
-	 * @phan-param array{key:string,value:string,type:string}	$optJson 	Option (var used for returned value in json format) @phan-output-reference
+	 * @phan-param array{key?:string,value?:string,type?:string}	$optJson 	Option (var used for returned value in json format) @phan-output-reference
 	 * @phpstan-param-out array{key:string,value:string,type:string}	$optJson
 	 * @param string 	$selected 	Preselected value
 	 * @param string 	$filterkey 	Filter key to highlight
