@@ -33,6 +33,8 @@ print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
 print "PHPUNIT_DISABLE_API: ". getenv('PHPUNIT_DISABLE_API')."\n";
 print "PHPUNIT_DISABLE_SOURCE_SCAN: ". getenv('PHPUNIT_DISABLE_SOURCE_SCAN')."\n";
+print "DOL_CTI_ADMIN_LOGIN: ".getenv('DOL_CTI_ADMIN_LOGIN')."\n";
+print "DOL_CTI_ADMIN_PASSWORD: ".substr(getenv('DOL_CTI_ADMIN_PASSWORD'), 0, 3).'...'."\n";
 
 // Workaround for false security issue with main.inc.php on Windows in tests:
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
