@@ -761,6 +761,9 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 					// $object->id is now the task id
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
+					// Keep the time spent lines that feed this invoice line, so the back link below
+					// points each of them at its own line and not at the last one created.
+					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['ids'][] = (int) $value;
 				}
 
 				foreach ($arrayoftasks as $task_id => $data) {  // @phan-suppress-current-line PhanEmptyForeach
@@ -846,7 +849,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 						if (!$error) {
 							// Update lineid into line of timespent
 							$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'element_time SET invoice_line_id = ' . ((int) $lineid) . ', invoice_id = ' . ((int) $tmpinvoice->id);
-							$sql .= ' WHERE rowid IN (' . $db->sanitize(implode(',', $toselect)) . ')';
+							$sql .= ' WHERE rowid IN (' . $db->sanitize(implode(',', $timespent_data['ids'])) . ')';
 							$result = $db->query($sql);
 							if (!$result) {
 								$error++;
