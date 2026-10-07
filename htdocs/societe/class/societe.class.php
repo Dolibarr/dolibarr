@@ -5451,7 +5451,7 @@ class Societe extends CommonObject
 		$sql  = "SELECT rowid, ref, total_ht, total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
 		if (!empty($statuses)) {
-			$sql .= " AND f.fk_statut IN (".implode(',', array_map('intval', $statuses)).")";
+			$sql .= " AND f.fk_statut IN (".$this->db->sanitize(implode(',', array_map('intval', $statuses))).")";
 		}
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('supplier_order').")";
