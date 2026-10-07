@@ -688,6 +688,23 @@ class Categorie extends CommonObject
 			dol_syslog($this->error, LOG_WARNING);
 			return -1;
 		}
+		// Nor one of its descendants, which would detach both from the tree and make a loop: go up from the new parent
+		// (only when the parent changes, or when we do not know the previous parent)
+		if (empty($this->oldcopy) || $this->fk_parent != $this->oldcopy->fk_parent) {
+			$ancestorid = $this->fk_parent;
+			$protection = 1000;
+			while ($ancestorid > 0 && $protection-- > 0) {
+				$resql = $this->db->query("SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".((int) $ancestorid));
+				$obj = $resql ? $this->db->fetch_object($resql) : null;
+				$ancestorid = $obj ? (int) $obj->fk_parent : 0;
+				if ($ancestorid == $this->id) {
+					$langs->load('categories');
+					$this->error = $langs->trans("ErrorCategoryCannotBeMovedIntoItsDescendant");
+					dol_syslog($this->error, LOG_WARNING);
+					return -1;
+				}
+			}
+		}
 
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");

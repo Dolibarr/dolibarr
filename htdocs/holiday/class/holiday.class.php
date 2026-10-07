@@ -535,6 +535,7 @@ class Holiday extends CommonObject
 		$sql .= " uu.login as user_login,";
 		$sql .= " uu.statut as user_status,";
 		$sql .= " uu.photo as user_photo,";
+		$sql .= " uu.fk_country as country_id,";
 
 		$sql .= " ua.lastname as validator_lastname,";
 		$sql .= " ua.firstname as validator_firstname,";
@@ -615,6 +616,8 @@ class Holiday extends CommonObject
 				$tab_result[$i]['validator_statut'] = (int) $obj->validator_status;
 				$tab_result[$i]['validator_status'] = (int) $obj->validator_status;
 				$tab_result[$i]['validator_photo'] = (string) $obj->validator_photo;
+
+				$tab_result[$i]['country_id'] = (int) $obj->country_id; // id of country of user
 
 				$i++;
 			}
