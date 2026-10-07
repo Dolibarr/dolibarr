@@ -81,7 +81,7 @@ if ($reshook < 0) {
 if ($id > 0 || $ref) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
-		$projectstatic->fetch($object->fk_project);
+		$projectstatic->fetch((int) $object->fk_project);
 	}
 }
 
@@ -506,11 +506,11 @@ if ($id > 0 || !empty($ref)) {
 
 		// Ref
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-		print '<td><input class="minwidth100" name="taskref" value="'.$object->ref.'"></td></tr>';
+		print '<td><input class="minwidth100" name="taskref" value="'.dolPrintHTMLForAttribute($object->ref).'"></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input class="minwidth500" name="label" value="'.$object->label.'"></td></tr>';
+		print '<td><input class="minwidth500" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 		// Project
 		if (empty($withproject)) {
@@ -612,14 +612,14 @@ if ($id > 0 || !empty($ref)) {
 				4 => array('type' => 'checkbox', 'name' => 'clone_file', 'label' => $langs->trans("CloneFile"), 'value' => true),
 			);
 
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneTask"), "confirm_clone", $formquestion, '', 1, 300, 590);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneTask"), "confirm_clone", $formquestion, '', 1, 0, 600);
 		}
 
 		if ($action == 'close') {
 			$formquestion = array(
 				'text' => $langs->trans("ConfirmClosed"),
 			);
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClose"), $langs->trans("ConfirmCloseTask"), "confirm_close", $formquestion, '', 1, 300, 590);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClose"), $langs->trans("ConfirmCloseTask"), "confirm_close", $formquestion, '', 1, 0, 600);
 		}
 
 
@@ -791,7 +791,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
 				}
 
-				print '<a class="butAction butActionClone reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject), '', true, array('attr' => array('class' => 'reposition')));
 
 				print '<a class="butActionDelete classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=merge&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("MergeTasks").'">'.$langs->trans('Merge').'</a>';
 			} else {
@@ -802,12 +802,12 @@ if ($id > 0 || !empty($ref)) {
 			$permissiontodelete = $user->hasRight('projet', 'supprimer');
 			if ($permissiontodelete) {
 				if (!$object->hasChildren() && !$object->hasTimeSpent()) {
-					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete);
+					print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 				} else {
-					print dolGetButtonAction($langs->trans("TaskHasChild"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', -1);
+					print dolGetButtonAction($langs->trans("TaskHasChild"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', -1, array('attr' => array('class' => 'reposition')));
 				}
 			} else {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete);
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			print '</div>';

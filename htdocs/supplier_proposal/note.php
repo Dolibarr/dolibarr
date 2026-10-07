@@ -126,7 +126,7 @@ if ($id > 0 || !empty($ref)) {
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
-						$proj->fetch($object->fk_project);
+						$proj->fetch((int) $object->fk_project);
 						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
 							$morehtmlref .= ' - '.$proj->title;

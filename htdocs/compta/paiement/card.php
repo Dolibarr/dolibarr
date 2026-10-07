@@ -326,6 +326,12 @@ print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
 print $object->num_payment ? ' - '.$object->num_payment : '';
 print '</td></tr>';
 
+// Payment number
+$titlefield=$langs->trans('Numero').' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+print '<tr><td>'.$form->editfieldkey($titlefield, 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("facture", "creer")).'</td><td>';
+print $form->editfieldval($titlefield, 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("facture", "creer"), 'string', '', null, $langs->trans('PaymentNumberUpdateSucceeded'));
+print '</td></tr>';
+
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
@@ -636,13 +642,13 @@ if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
 	}
 }
 
-$params = array();
+$params = array('attr' => array('class' => 'reposition'));
 if (! empty($title_button)) {
-	$params['attr'] = array('title' => $title_button);
+	$params['attr']['title'] = $title_button;
 }
 
 if ($user->socid == 0 && $action == '') {
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->hasRight('facture', 'paiement') && !$disable_delete, $params);
+	print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->hasRight('facture', 'paiement') && !$disable_delete, $params)."\n";
 }
 
 print '</div>';

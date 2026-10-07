@@ -164,7 +164,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string,bi?:int<0,1>}>
 	 * @phpstan-var array<string, array{
 	 * type: string,
 	 * label: string,
@@ -197,7 +197,8 @@ abstract class CommonObject
 	 * searchmulti?: int<0, 1>,
 	 * picto?: string,
 	 * required?: int<0, 1>,
-	 * placeholder?: string
+	 * placeholder?: string,
+	 * bi?:int<0, 1>
 	 * }>
 	 * 'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
@@ -238,6 +239,7 @@ abstract class CommonObject
 	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 * 'description' is a description of the field that must be set to help the MCP server.
+	 *  'bi' is set to 0 if you want to hide property on BI tool.
 	 *
 	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -360,7 +362,7 @@ abstract class CommonObject
 	public $contact_id;
 
 	/**
-	 * @var ?Societe 	A related thirdparty object
+	 * @var ?Societe 		A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
@@ -372,25 +374,25 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var ?Product 	Populated by fetch_product()
+	 * @var ?Product 		Populated by fetch_product()
 	 * @see fetch_product()
 	 */
 	public $product;
 
 	/**
-	 * @var ?Entrepot 	A related warehouse object
+	 * @var ?Entrepot 		A related warehouse object
 	 * @see fetch_warehouse()
 	 */
 	public $warehouse;
 
 	/**
-	 * @var string 		The type of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
+	 * @var string 			The type of originating object. Combined with `$origin_id`, it allows to reload `$origin_object`
 	 * @see fetch_origin()
 	 */
 	public $origin_type;
 
 	/**
-	 * @var int 		The id of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
+	 * @var int 			The id of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
 	 * @see fetch_origin()
 	 */
 	public $origin_id;
@@ -1528,6 +1530,18 @@ abstract class CommonObject
 
 		$error = 0;
 
+		// When called on a loaded object, the link must be one of its own contacts (same filter as liste_contact())
+		if ($this->id > 0) {
+			$sql = "SELECT ec.rowid FROM ".$this->db->prefix()."element_contact as ec, ".$this->db->prefix()."c_type_contact as tc";
+			$sql .= " WHERE ec.rowid = ".((int) $rowid)." AND ec.element_id = ".((int) $this->id);
+			$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element = '".$this->db->escape($this->element)."'";
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorRecordNotFound';
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		if (!$error && empty($notrigger)) {
@@ -2595,7 +2609,9 @@ abstract class CommonObject
 			$aliastablesociete = 'te'; // te as table_element
 		}
 		$restrictiononfksoc = empty($this->restrictiononfksoc) ? 0 : $this->restrictiononfksoc;
-		$sql = "SELECT MAX(te.".$this->db->sanitize($fieldid).")";
+		// ORDER BY ... LIMIT 1 and not MAX()/MIN(): with the other conditions (entity...), MAX()/MIN() read the whole range
+		// of the index, while ORDER BY ... LIMIT 1 stops at the first row found.
+		$sql = "SELECT te.".$this->db->sanitize($fieldid);
 		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
@@ -2669,15 +2685,18 @@ abstract class CommonObject
 		}
 		//print 'socid='.$socid.' restrictiononfksoc='.$restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 
+		$sql .= " ORDER BY te.".$this->db->sanitize($fieldid)." DESC";
+		$sql .= $this->db->plimit(1);
+
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
 		$row = $this->db->fetch_row($result);
-		$this->ref_previous = $row[0];
+		$this->ref_previous = ($row ? $row[0] : null);
 
-		$sql = "SELECT MIN(te.".$this->db->sanitize($fieldid).")";
+		$sql = "SELECT te.".$this->db->sanitize($fieldid);
 		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
@@ -2759,13 +2778,16 @@ abstract class CommonObject
 		//print 'socid='.$socid.' restrictiononfksoc='.$restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
+		$sql .= " ORDER BY te.".$this->db->sanitize($fieldid)." ASC";
+		$sql .= $this->db->plimit(1);
+
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error = $this->db->lasterror();
 			return -2;
 		}
 		$row = $this->db->fetch_row($result);
-		$this->ref_next = $row[0];
+		$this->ref_next = ($row ? $row[0] : null);
 
 		return 1;
 	}
@@ -3016,157 +3038,157 @@ abstract class CommonObject
 
 						switch ($this->element) {
 							case 'propal':
-								/** @var Propal $this */
-								/** @var PropaleLigne $line */
-								'@phan-var-force Propal $this';
-								'@phan-var-force PropaleLigne $line';
-								$this->updateline(
-									$line->id,
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									($line->description ? $line->description : $line->desc),
-									'HT',
-									$line->info_bits,
-									$line->special_code,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->product_type,
-									$line->date_start,
-									$line->date_end,
-									$line->array_options,
-									$line->fk_unit,
-									$line->multicurrency_subprice
-								);
+								if ($this instanceof Propal) {
+									/** @var PropaleLigne $line */
+									'@phan-var-force PropaleLigne $line';
+									$this->updateline(
+										$line->id,
+										$line->subprice,
+										$line->qty,
+										$line->remise_percent,
+										$line->tva_tx,
+										$line->localtax1_tx,
+										$line->localtax2_tx,
+										($line->description ? $line->description : $line->desc),
+										'HT',
+										$line->info_bits,
+										$line->special_code,
+										$line->fk_parent_line,
+										$line->skip_update_total,
+										$line->fk_fournprice,
+										$line->pa_ht,
+										$line->label,
+										$line->product_type,
+										$line->date_start,
+										$line->date_end,
+										$line->array_options,
+										$line->fk_unit,
+										$line->multicurrency_subprice
+									);
+								}
 								break;
 							case 'commande':
-								/** @var Commande $this */
-								/** @var OrderLine $line */
-								'@phan-var-force Commande $this';
-								'@phan-var-force OrderLine $line';
-								$this->updateline(
-									$line->id,
-									($line->description ? $line->description : $line->desc),
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									'HT',
-									$line->info_bits,
-									$line->date_start,
-									$line->date_end,
-									$line->product_type,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->special_code,
-									$line->array_options,
-									$line->fk_unit,
-									$line->multicurrency_subprice
-								);
+								if ($this instanceof Commande) {
+									/** @var OrderLine $line */
+									'@phan-var-force OrderLine $line';
+									$this->updateline(
+										$line->id,
+										($line->description ? $line->description : $line->desc),
+										$line->subprice,
+										$line->qty,
+										$line->remise_percent,
+										$line->tva_tx,
+										$line->localtax1_tx,
+										$line->localtax2_tx,
+										'HT',
+										$line->info_bits,
+										$line->date_start,
+										$line->date_end,
+										$line->product_type,
+										$line->fk_parent_line,
+										$line->skip_update_total,
+										$line->fk_fournprice,
+										$line->pa_ht,
+										$line->label,
+										$line->special_code,
+										$line->array_options,
+										$line->fk_unit,
+										$line->multicurrency_subprice
+									);
+								}
 								break;
 							case 'facture':
-								/** @var Facture $this */
-								/** @var FactureLigne $line */
-								'@phan-var-force Facture $this';
-								'@phan-var-force FactureLigne $line';
-								$this->updateline(
-									$line->id,
-									($line->description ? $line->description : $line->desc),
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->date_start,
-									$line->date_end,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									'HT',
-									$line->info_bits,
-									$line->product_type,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->special_code,
-									$line->array_options,
-									$line->situation_percent,
-									$line->fk_unit,
-									$line->multicurrency_subprice
-								);
+								if ($this instanceof Facture) {
+									/** @var FactureLigne $line */
+									'@phan-var-force FactureLigne $line';
+									$this->updateline(
+										$line->id,
+										($line->description ? $line->description : $line->desc),
+										$line->subprice,
+										$line->qty,
+										$line->remise_percent,
+										$line->date_start,
+										$line->date_end,
+										$line->tva_tx,
+										$line->localtax1_tx,
+										$line->localtax2_tx,
+										'HT',
+										$line->info_bits,
+										$line->product_type,
+										$line->fk_parent_line,
+										$line->skip_update_total,
+										$line->fk_fournprice,
+										$line->pa_ht,
+										$line->label,
+										$line->special_code,
+										$line->array_options,
+										$line->situation_percent,
+										$line->fk_unit,
+										$line->multicurrency_subprice
+									);
+								}
 								break;
 							case 'facturerec':
-								/** @var FactureRec $this */
-								/** @var FactureLigneRec $line */
-								'@phan-var-force FactureRec $this';
-								'@phan-var-force FactureLigneRec $line';
-								$this->updateline(
-									$line->id,
-									($line->description ? $line->description : $line->desc),
-									$line->subprice,
-									$line->qty,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									$line->fk_product,
-									$line->remise_percent,
-									'HT',
-									$line->info_bits,
-									0,
-									0,
-									$line->product_type,
-									$line->rang,
-									$line->special_code,
-									$line->label,
-									$line->fk_unit,
-									$line->multicurrency_subprice,
-									0,
-									$line->date_start,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
-									$line->date_end,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->fk_parent_line
-								);
+								if ($this instanceof FactureRec) {
+									/** @var FactureLigneRec $line */
+									'@phan-var-force FactureLigneRec $line';
+									$this->updateline(
+										$line->id,
+										($line->description ? $line->description : $line->desc),
+										$line->subprice,
+										$line->qty,
+										$line->tva_tx,
+										$line->localtax1_tx,
+										$line->localtax2_tx,
+										$line->fk_product,
+										$line->remise_percent,
+										'HT',
+										$line->info_bits,
+										0,
+										0,
+										$line->product_type,
+										$line->rang,
+										$line->special_code,
+										$line->label,
+										$line->fk_unit,
+										$line->multicurrency_subprice,
+										0,
+										$line->date_start,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
+										$line->date_end,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
+										$line->fk_fournprice,
+										$line->pa_ht,
+										$line->fk_parent_line
+									);
+								}
 								break;
 							case 'supplier_proposal':
-								/** @var SupplierProposal $this */
-								/** @var SupplierProposalLine $line */
-								'@phan-var-force SupplierProposal $this';
-								'@phan-var-force SupplierProposalLine $line';
-								$this->updateline(
-									$line->id,
-									$line->subprice,
-									$line->qty,
-									$line->remise_percent,
-									$line->tva_tx,
-									$line->localtax1_tx,
-									$line->localtax2_tx,
-									($line->description ? $line->description : $line->desc),
-									'HT',
-									$line->info_bits,
-									$line->special_code,
-									$line->fk_parent_line,
-									$line->skip_update_total,
-									$line->fk_fournprice,
-									$line->pa_ht,
-									$line->label,
-									$line->product_type,
-									$line->array_options,
-									$line->ref_fourn,
-									(int) $line->fk_unit,
-									$line->multicurrency_subprice
-								);
+								if ($this instanceof SupplierProposal) {
+									/** @var SupplierProposalLine $line */
+									'@phan-var-force SupplierProposalLine $line';
+									$this->updateline(
+										$line->id,
+										$line->subprice,
+										$line->qty,
+										$line->remise_percent,
+										$line->tva_tx,
+										$line->localtax1_tx,
+										$line->localtax2_tx,
+										($line->description ? $line->description : $line->desc),
+										'HT',
+										$line->info_bits,
+										$line->special_code,
+										$line->fk_parent_line,
+										$line->skip_update_total,
+										$line->fk_fournprice,
+										$line->pa_ht,
+										$line->label,
+										$line->product_type,
+										$line->array_options,
+										$line->ref_fourn,
+										(int) $line->fk_unit,
+										$line->multicurrency_subprice
+									);
+								}
 								break;
 							case 'order_supplier':
 								/** @var CommandeFournisseur $this */
@@ -3742,6 +3764,10 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$this->db->sanitize($fieldposition)." = ".((int) $rang);
 		$sql .= ' WHERE rowid = '.((int) $rowid);
+		if ($this->id > 0 && !empty($this->fk_element)) {
+			// The line must belong to the object we reorder lines of
+			$sql .= " AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		}
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -3893,6 +3919,32 @@ abstract class CommonObject
 
 		$row = $this->db->fetch_row($resql);
 		return $row[0];
+	}
+
+	/**
+	 * Round a quantity up to the next multiple of a packaging quantity (options PRODUCT_USE_CUSTOMER_PACKAGING
+	 * and PRODUCT_USE_SUPPLIER_PACKAGING). The rounding is done on the absolute value, so a negative quantity
+	 * stays negative.
+	 *
+	 * @param	float|string		$qty		Quantity
+	 * @param	float|string|null	$packaging	Packaging quantity. Nothing is done if it is empty or not > 0.
+	 * @return	float|string					Quantity rounded to the packaging, or $qty if no rounding is needed
+	 */
+	public function roundQtyToPackaging($qty, $packaging)
+	{
+		if (empty($packaging) || !is_numeric($packaging) || (float) $packaging <= 0) {
+			return $qty;
+		}
+		$sign = ((float) $qty < 0 ? -1 : 1);
+		$absqty = abs((float) $qty);
+		if ($absqty < (float) $packaging) {
+			return $sign * (float) $packaging;
+		}
+		if ((float) price2num(fmod($absqty, (float) $packaging), 'MS')) {
+			$coeff = intval($absqty / (float) $packaging) + 1;
+			return $sign * (float) price2num((float) $packaging * $coeff, 'MS');
+		}
+		return $qty;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -11677,6 +11729,26 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Check that a line belongs to this object, using $this->table_element_line and $this->fk_element.
+	 * Returns true when the object is not loaded or does not define them.
+	 *
+	 * @param	int		$lineid		Id of the line
+	 * @return	bool				True if the line is a line of this object
+	 */
+	public function isLineOfObject($lineid)
+	{
+		if (!($this->id > 0) || empty($this->table_element_line) || empty($this->fk_element)) {
+			return true;
+		}
+
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
+		$sql .= " WHERE rowid = ".((int) $lineid)." AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+
+		return ($resql && $this->db->num_rows($resql) > 0);
+	}
+
+	/**
 	 *  Delete a line of object in database
 	 *
 	 *	@param  User	$user       User that delete
@@ -11690,6 +11762,17 @@ abstract class CommonObject
 
 		$tmpforobjectclass = get_class($this);
 		$tmpforobjectlineclass = ucfirst($tmpforobjectclass).'Line';
+
+		if ($this->id > 0 && !empty($this->fk_element)) {
+			// The line must belong to this object
+			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+			$sql .= " WHERE rowid = ".((int) $idline)." AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 

@@ -262,7 +262,7 @@ class EmailCollector extends CommonObject
 	 */
 	public $filters;
 	/**
-	 * @var array<array{type:string,actionparam:string,status:int,position:int}>
+	 * @var array<int,array{id:int,type:string,actionparam:string,status:int,position?:int}>
 	 */
 	public $actions;
 
@@ -325,10 +325,12 @@ class EmailCollector extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach ($this->fields as $key => $val) {
-			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-				foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
 				}
 			}
 		}
@@ -1871,7 +1873,7 @@ class EmailCollector extends CommonObject
 		$arrayofemailtodelete = array();	// Track email to delete to make the deletion at end.
 
 		// Loop on each email found
-		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0 && $connection !== false) {
+		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0) {
 			// Loop to get part html and plain
 			/*
 			 0 multipart/mixed
@@ -2595,11 +2597,11 @@ class EmailCollector extends CommonObject
 							if ($trackid) {
 								$projectfoundby = 'trackid ('.$trackid.')';
 							}
-							if (empty($contactid)) {
+							/* if (empty($contactid)) {
 								$contactid = $projectstatic->fk_contact;
-							}
+							} */
 							if (empty($thirdpartyid)) {
-								$thirdpartyid = $projectstatic->fk_soc;
+								$thirdpartyid = $projectstatic->socid;
 							}
 						}
 					}

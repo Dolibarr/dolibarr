@@ -123,8 +123,12 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeTest');
 		require_once dirname(__FILE__).'/AiMcpWireTest.php';
 		$suite->addTestSuite('AiMcpWireTest');
+		require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
+		$suite->addTestSuite('AiWriteConfirmationTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
 		$suite->addTestSuite('CompanyLibTest');
+		require_once dirname(__FILE__).'/CreditorRefLibTest.php';
+		$suite->addTestSuite('CreditorRefLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
 		$suite->addTestSuite('DateLibTest');
 		require_once dirname(__FILE__).'/UtilsTest.php';
@@ -208,8 +212,6 @@ class AllTests
 		$suite->addTestSuite('ActionCommTest');
 		require_once dirname(__FILE__).'/FormMailTest.php';
 		$suite->addTestSuite('FormMailTest');
-		require_once dirname(__FILE__).'/NotifyTest.php';
-		$suite->addTestSuite('NotifyTest');
 		require_once dirname(__FILE__).'/SocieteTest.php';
 		$suite->addTestSuite('SocieteTest');
 		require_once dirname(__FILE__).'/ExpeditionTest.php';

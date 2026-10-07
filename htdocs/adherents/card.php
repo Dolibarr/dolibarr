@@ -373,7 +373,7 @@ if (empty($reshook)) {
 			$object->morphy = GETPOST("morphy", 'alpha');
 
 			$current_photo = '';
-			if (!empty($_FILES['photo']['name'])) {
+			if (!empty($_FILES['photo']['name']) && empty($_FILES['photo']['error'])) {
 				$current_photo = $object->photo;
 				$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 			}
@@ -468,16 +468,18 @@ if (empty($reshook)) {
 								}
 							}
 						} else {
-							setEventMessages("ErrorBadImageFormat", null, 'errors');
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 						}
 					} else {
 						switch ($_FILES['photo']['error']) {
 							case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 							case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-								$errors[] = "ErrorFileSizeTooLarge";
+								$langs->load("errors");
+								setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
 								break;
 							case 3: //uploaded file was only partially uploaded
-								$errors[] = "ErrorFilePartiallyUploaded";
+								setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 								break;
 						}
 					}
@@ -726,7 +728,7 @@ if (empty($reshook)) {
 				$formmail = new FormMail($db);
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 				// Load traductions files required by page
 				$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 				// Get email content from template
@@ -775,7 +777,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_resiliate') {
+	if ($user->hasRight('adherent', 'creer') && $action == 'confirm_resiliate') {
 		$error = 0;
 
 		if ($confirm == 'yes') {
@@ -794,7 +796,7 @@ if (empty($reshook)) {
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
@@ -842,7 +844,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_exclude') {
+	if ($user->hasRight('adherent', 'creer') && $action == 'confirm_exclude') {
 		$error = 0;
 
 		if ($confirm == 'yes') {
@@ -861,7 +863,7 @@ if (empty($reshook)) {
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 					// Get email content from template
@@ -1091,7 +1093,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (count($listetype)) {
 			print $form->selectarray("typeid", $listetype, (GETPOSTINT('typeid') ? GETPOSTINT('typeid') : $typeid), (count($listetype) > 1 ? 1 : 0), 0, 0, '', 0, 0, 0, '', 'minwidth200', 1);
 		} else {
-			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</span>';
+			print '<span class="error">'.$langs->trans("NoTypeDefinedGoToSetup", $langs->transnoentitiesnoconv("MembersTypes")).'</span>';
 		}
 		if ($user->hasRight('member', 'configurer')) {
 			print ' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/adherents/type.php', ['action' => 'create', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'create', 'typeid' => '--IDFORBACKTOPAGE--'])]).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewMemberType").'"></span></a>';
@@ -1692,7 +1694,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 			// Get email content from template
@@ -1756,7 +1758,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
@@ -1817,7 +1819,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			$outputlangs->setDefaultLang(!empty($object->default_lang) ? $object->default_lang : (empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang));
 			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
@@ -2147,7 +2149,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Resiliate
 				if (Adherent::STATUS_VALIDATED == $object->status) {
-					if ($user->hasRight('adherent', 'supprimer')) {
+					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'resiliate'], true).'">'.$langs->trans("Resiliate")."</a></span>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate").'</span>'."\n";
@@ -2156,7 +2158,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Exclude
 				if (Adherent::STATUS_VALIDATED == $object->status) {
-					if ($user->hasRight('adherent', 'supprimer')) {
+					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'exclude'], true).'">'.$langs->trans("Exclude")."</a></span>\n";
 					} else {
 						print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Exclude").'</span>'."\n";
@@ -2202,11 +2204,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Merge
-				print dolGetButtonAction($langs->trans('MergeMembers'), $langs->trans('Merge'), 'danger', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'merge'], true), '', $user->hasRight('adherent', 'supprimer'));
+				print dolGetButtonAction($langs->trans('MergeMembers'), $langs->trans('Merge'), 'danger', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'merge'], true), '', $user->hasRight('adherent', 'supprimer'), array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
 
 				// Delete
 				if ($user->hasRight('adherent', 'supprimer')) {
-					print '<a class="butActionDelete" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true).'">'.$langs->trans("Delete").'</a>'."\n";
+					print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 				} else {
 					print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</span>'."\n";
 				}

@@ -38,6 +38,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -48,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/socialnetwork.lib.php';
 
-// constants for IDs of core dictionaries
+// Constants for IDs of core dictionaries
 const DICT_FORME_JURIDIQUE = 1;
 const DICT_DEPARTEMENTS = 2;
 const DICT_REGIONS = 3;
@@ -94,17 +102,8 @@ const DICT_PRODUCT_NATURE = 42;
 const DICT_PRODUCTBATCH_QCSTATUS = 43;
 const DICT_ASSET_DISPOSAL_TYPE = 44;
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "main", "companies", "compta", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
+$langs->loadLangs(array("admin", "main", "companies", "compta", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
 
 $action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -138,6 +137,10 @@ $pagenext = $page + 1;
 $search_country_id = GETPOST('search_country_id', 'int');
 $search_code = GETPOST('search_code', 'alpha');
 $search_active = GETPOST('search_active', 'alpha');
+
+// Context page must be different for each dictionary id, so the selection of columns to show
+// (saved into user parameters with key MAIN_SELECTEDFIELDS_<contextpage>) is done for each dictionary.
+$contextpage = 'dict'.((int) $id);
 
 // Special case to set a default value for country according to dictionary
 if (!GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == DICT_DEPARTEMENTS || $id == DICT_REGIONS || $id == DICT_TVA)) {	// Not a so good idea to force on current country for all dictionaries. Some tables have entries that are for all countries, we must be able to see them, so this is done for dedicated dictionaries only.
@@ -287,7 +290,7 @@ $tabsql[DICT_REGIONS] = "SELECT r.rowid as rowid, r.code_region as code, r.nom a
 $tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.phone_code, c.trunk_prefix, c.active, c.favorite, c.eec, c.sepa FROM ".MAIN_DB_PREFIX."c_country AS c";
 $tabsql[DICT_CIVILITY] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
-$tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
+$tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible as deductible, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
 $tabsql[DICT_TYPENT] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.module, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[DICT_CURRENCIES] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.code, t.type_vat, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, t.einvoice_vatex, c.label as country, c.code as country_code, t.fk_pays as country_id, t.fk_department_buyer as department_buyer_id, db.nom as department_buyer, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy, t.use_default FROM "
@@ -385,7 +388,7 @@ $tabfield[DICT_REGIONS] = "code,libelle,country_id,country";
 $tabfield[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfield[DICT_CIVILITY] = "code,label";
 $tabfield[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
-$tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
+$tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code,deductible";
 $tabfield[DICT_TYPENT] = "code,libelle,module,country_id,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfield[DICT_CURRENCIES] = "code,label,unicode";
 $tabfield[DICT_TVA] = "country_id,country,department_buyer_id,department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default,note";
@@ -424,6 +427,56 @@ $tabfield[DICT_PRODUCT_NATURE] = "code,label";
 $tabfield[DICT_PRODUCTBATCH_QCSTATUS] = "code,label";
 $tabfield[DICT_ASSET_DISPOSAL_TYPE] = "code,label";
 
+// Main fields to show by default into the list of each dictionary (subset of $tabfield, without the technical fields
+// entity, region_id, country_id and department_buyer_id that are never displayed).
+// All the other fields of $tabfield remain available: The user can choose to show or hide them with the selector
+// of columns (selection saved into setup of user for the key MAIN_SELECTEDFIELDS_dict<id>).
+// For dictionaries added by modules, there is no entry here, so all fields of $tabfield are shown by default.
+$tabfieldmain = array();
+$tabfieldmain[DICT_FORME_JURIDIQUE] = "code,libelle,country";
+$tabfieldmain[DICT_DEPARTEMENTS] = "code,libelle,region,country";
+$tabfieldmain[DICT_REGIONS] = "code,libelle,country";
+$tabfieldmain[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
+$tabfieldmain[DICT_CIVILITY] = "code,label";
+$tabfieldmain[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
+$tabfieldmain[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code,deductible";
+$tabfieldmain[DICT_TYPENT] = "code,libelle,module,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
+$tabfieldmain[DICT_CURRENCIES] = "code,label,unicode";
+$tabfieldmain[DICT_TVA] = "country,department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default";
+$tabfieldmain[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
+$tabfieldmain[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
+$tabfieldmain[DICT_PAIEMENT] = "code,libelle,type,accountancy_code";
+$tabfieldmain[DICT_ECOTAXE] = "code,label,price,organization,country";
+$tabfieldmain[DICT_PAPER_FORMAT] = "code,libelle,width,height,unit";
+$tabfieldmain[DICT_PROSPECTLEVEL] = "code,libelle,sortorder";
+$tabfieldmain[DICT_TYPE_FEES] = "code,label,accountancy_code";
+$tabfieldmain[DICT_SHIPMENT_MODE] = "code,libelle,tracking";
+$tabfieldmain[DICT_EFFECTIF] = "code,libelle";
+$tabfieldmain[DICT_INPUT_METHOD] = "code,libelle";
+$tabfieldmain[DICT_AVAILABILITY] = "code,label,qty,type_duration,position";
+$tabfieldmain[DICT_INPUT_REASON] = "code,label";
+$tabfieldmain[DICT_REVENUESTAMP] = "country,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldmain[DICT_TYPE_RESOURCE] = "code,label";
+$tabfieldmain[DICT_TYPE_CONTAINER] = "code,label";
+$tabfieldmain[DICT_STCOMM] = "code,libelle,picto";
+$tabfieldmain[DICT_HOLIDAY_TYPES] = "code,label,affect,delay,newbymonth,country,block_if_negative,sortorder";
+$tabfieldmain[DICT_LEAD_STATUS] = "code,label,percent,position";
+$tabfieldmain[DICT_FORMAT_CARDS] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
+$tabfieldmain[DICT_INVOICE_SUBTYPE] = "country,code,label";
+$tabfieldmain[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,year,month,day,country";
+$tabfieldmain[DICT_HRM_DEPARTMENT] = "code,label";
+$tabfieldmain[DICT_HRM_FUNCTION] = "code,label";
+$tabfieldmain[DICT_EXP_TAX_CAT] = "label";
+$tabfieldmain[DICT_EXP_TAX_RANGE] = "range_ik,fk_c_exp_tax_cat";
+$tabfieldmain[DICT_UNITS] = "code,label,short_label,unit_type,scale,sortorder";
+$tabfieldmain[DICT_SOCIALNETWORKS] = "code,label,url,icon";
+$tabfieldmain[DICT_PROSPECTCONTACTLEVEL] = "code,libelle,sortorder";
+$tabfieldmain[DICT_STCOMMCONTACT] = "code,libelle,picto";
+$tabfieldmain[DICT_TRANSPORT_MODE] = "code,label";
+$tabfieldmain[DICT_PRODUCT_NATURE] = "code,label";
+$tabfieldmain[DICT_PRODUCTBATCH_QCSTATUS] = "code,label";
+$tabfieldmain[DICT_ASSET_DISPOSAL_TYPE] = "code,label";
+
 // Edit field names for editing a record
 $tabfieldvalue = array();
 $tabfieldvalue[DICT_FORME_JURIDIQUE] = "code,libelle,country";
@@ -432,7 +485,7 @@ $tabfieldvalue[DICT_REGIONS] = "code,libelle,country";
 $tabfieldvalue[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfieldvalue[DICT_CIVILITY] = "code,label";
 $tabfieldvalue[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
-$tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
+$tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code,deductible";
 $tabfieldvalue[DICT_TYPENT] = "code,libelle,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldvalue[DICT_CURRENCIES] = "code,label,unicode";
 $tabfieldvalue[DICT_TVA] = "country,department_buyer_id,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default,note";
@@ -479,7 +532,7 @@ $tabfieldinsert[DICT_REGIONS] = "code_region,nom,fk_pays";
 $tabfieldinsert[DICT_COUNTRY] = "code,label,phone_code,trunk_prefix";
 $tabfieldinsert[DICT_CIVILITY] = "code,label";
 $tabfieldinsert[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
-$tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code";
+$tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code,deductible";
 $tabfieldinsert[DICT_TYPENT] = "code,libelle,fk_country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
 $tabfieldinsert[DICT_CURRENCIES] = "code_iso,label,unicode";
 $tabfieldinsert[DICT_TVA] = "fk_pays,fk_department_buyer,code,type_vat,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,einvoice_vatex,accountancy_code_sell,accountancy_code_buy,use_default,note,entity";
@@ -821,6 +874,9 @@ if (GETPOST('button_removefilter', 'alpha') || GETPOST('button_removefilter.x', 
 }
 
 if (empty($reshook)) {
+	// Change selection of columns to show into list (save the selection into user setup)
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
 	// Actions add or modify an entry into a dictionary
 	if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 		$listfield = explode(',', str_replace(' ', '', $tabfield[$id]));
@@ -941,14 +997,17 @@ if (empty($reshook)) {
 		}
 		if (($id == DICT_REGIONS || $id == DICT_PRODUCT_NATURE) && !is_numeric(GETPOST("code")) && GETPOST('actionadd')) {
 			$ok = 0;
+			$langs->load('errors');
 			setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
 		}
 		if ($id == DICT_COUNTRY && strlen(GETPOST("code")) != 2) {  // 2 char on code for country code
 			$ok = 0;
+			$langs->load('errors');
 			setEventMessages($langs->transnoentities("ErrorCountryCodeMustBe2Char", $langs->transnoentities("Code")), null, 'errors');
 		}
 		if ($id == DICT_PAIEMENT && strlen(GETPOST("code")) >= 6) {  // 6 char max on code for payment mode codes
 			$ok = 0;
+			$langs->load('errors');
 			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '6'), null, 'errors');
 		}
 
@@ -1060,6 +1119,7 @@ if (empty($reshook)) {
 				$_POST = array('id' => $id);
 			} else {
 				if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$langs->load('errors');
 					setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 				} else {
 					dol_print_error($db);
@@ -1565,9 +1625,26 @@ if ($id > 0) {
 	}
 	$fieldlist = explode(',', $tabfield[$id]);
 
+	// Definition of array of fields for columns.
+	// $val['label'] is the label of column shown into the selector of columns, $val['checked'] is 1 when
+	// the column is shown (main fields are shown by default, other ones only when selected by user).
+	$arrayfields = array();
+	$mainfieldlist = explode(',', str_replace(' ', '', empty($tabfieldmain[$id]) ? $tabfield[$id] : $tabfieldmain[$id])); // Fields shown by default
+	foreach ($fieldlist as $key => $value) {
+		if (empty($value) || in_array($value, array('entity', 'region_id', 'country_id', 'department_buyer_id'))) {
+			continue; // Technical fields are never displayed and not selectable
+		}
+		$arrayfields[$value] = array(
+			'label' => dictFieldLabel($value, $tabname[$id], $tablib[$id]),
+			'checked' => (in_array($value, $mainfieldlist) ? 1 : 0),
+			'position' => (int) $key
+		);
+	}
+
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag($from).'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 
 	// Special warning for VAT dictionary
 	if ($id == DICT_TVA && !getDolGlobalString('FACTURE_TVAOPTION')) {
@@ -1935,8 +2012,12 @@ if ($id > 0) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST" spellcheck="false">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+			print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		}
 
+
+		// Selection of columns to show (this also update the array $arrayfields with the setup of user)
+		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $contextpage, $conf->main_checkbox_left_column, 0);
 
 		$filterfound = 0;
 		foreach ($fieldlist as $field => $value) {
@@ -1947,6 +2028,9 @@ if ($id > 0) {
 			$showfield = 1; // By default
 			if ($value == 'region_id' || $value == 'country_id' || $value == 'department_buyer_id') {
 				$showfield = 0;
+			}
+			if (empty($arrayfields[$value]['checked'])) {
+				$showfield = 0; // Column was not selected to be displayed
 			}
 
 			if ($showfield) {
@@ -1969,7 +2053,7 @@ if ($id > 0) {
 
 		// Action button
 		if ($conf->main_checkbox_left_column) {
-			print '<td class="liste_titre center">';
+			print '<td class="liste_titre center maxwidthsearch">';
 			if ($filterfound) {
 				$searchpicto = $form->showFilterAndCheckAddButtons(0);
 				print $searchpicto;
@@ -1986,6 +2070,9 @@ if ($id > 0) {
 			$showfield = 1; // By default
 			if ($value == 'region_id' || $value == 'country_id' || $value == 'department_buyer_id') {
 				$showfield = 0;
+			}
+			if (empty($arrayfields[$value]['checked'])) {
+				$showfield = 0; // Column was not selected to be displayed
 			}
 
 			if ($showfield) {
@@ -2028,7 +2115,7 @@ if ($id > 0) {
 
 		// Action button
 		if (!$conf->main_checkbox_left_column) {
-			print '<td class="liste_titre center">';
+			print '<td class="liste_titre center maxwidthsearch">';
 			if ($filterfound) {
 				$searchpicto = $form->showFilterAndCheckAddButtons(0);
 				print $searchpicto;
@@ -2046,7 +2133,7 @@ if ($id > 0) {
 
 		// Action button
 		if ($conf->main_checkbox_left_column) {
-			print getTitleFieldOfList('');
+			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 		}
 
 		foreach ($fieldlist as $field => $value) {
@@ -2066,234 +2153,43 @@ if ($id > 0) {
 			$showfield = 1; // By default
 			$cssprefix = '';
 			$sortable = 1;
-			$valuetoshow = ucfirst($value); // By default
-			$valuetoshow = $langs->trans($valuetoshow); // try to translate
+			$valuetoshow = dictFieldLabel($value, $tabname[$id], $tablib[$id]); // Label of the column
 
-			// Special cases
-			if ($value == 'source') {
-				$valuetoshow = $langs->trans("Contact");
-			}
-			if ($value == 'price') {
-				$valuetoshow = $langs->trans("PriceUHT");
-			}
+			// Special cases for the CSS of the column or to disable the sort
 			if ($value == 'taux') {
-				if ($tabname[$id] != "c_revenuestamp") {
-					$valuetoshow = $langs->trans("Rate");
-				} else {
-					$valuetoshow = $langs->trans("Amount");
-				}
 				$cssprefix = 'center ';
 			}
-
-			if ($value == 'type_vat') {
-				$valuetoshow = $langs->trans("VATType");
+			if (in_array($value, array('type_vat', 'localtax1_type', 'localtax1', 'localtax2_type', 'localtax2'))) {
 				$cssprefix = "center minwidth75 ";
 				$sortable = 0;
 			}
-			if ($value == 'localtax1_type') {
-				$valuetoshow = $langs->trans("UseLocalTax")." 2";
-				$cssprefix = "center minwidth75 ";
-				$sortable = 0;
-			}
-			if ($value == 'localtax1') {
-				$valuetoshow = $langs->trans("RateOfTaxN", '2');
-				$cssprefix = "center minwidth75 ";
-				$sortable = 0;
-			}
-			if ($value == 'localtax2_type') {
-				$valuetoshow = $langs->trans("UseLocalTax")." 3";
-				$cssprefix = "center minwidth75 ";
-				$sortable = 0;
-			}
-			if ($value == 'localtax2') {
-				$valuetoshow = $langs->trans("RateOfTaxN", '3');
-				$cssprefix = "center minwidth75 ";
-				$sortable = 0;
-			}
-			if ($value == 'organization') {
-				$valuetoshow = $langs->trans("Organization");
-			}
-			if ($value == 'lang') {
-				$valuetoshow = $langs->trans("Language");
-			}
-			if ($value == 'type') {
-				$valuetoshow = $langs->trans("Type");
-			}
-			if ($value == 'code') {
-				$valuetoshow = $langs->trans("Code");
-			}
-			if (in_array($value, array('pos', 'position'))) {
-				$valuetoshow = $langs->trans("Position");
+			if (in_array($value, array('pos', 'position', 'deposit_percent', 'nbjour', 'decalage'))) {
 				$cssprefix = 'right ';
-			}
-			if ($value == 'libelle' || $value == 'label') {
-				$valuetoshow = $langs->trans("Label");
-			}
-			if ($value == 'libelle_facture') {
-				$valuetoshow = $langs->trans("LabelOnDocuments");
-			}
-			if ($value == 'deposit_percent') {
-				$valuetoshow = $langs->trans('DepositPercent');
-				$cssprefix = 'right ';
-			}
-			if ($value == 'country') {
-				$valuetoshow = $langs->trans("Country");
-			}
-			if ($value == 'phone_code') {
-				$valuetoshow = $langs->trans("PhoneCode");
-			}
-			if ($value == 'trunk_prefix') {
-				$valuetoshow = $langs->trans("TrunkPrefix");
-			}
-			if ($value == 'department_buyer') {
-				$valuetoshow = $langs->trans('DepartmentBuyer');
 			}
 			if ($value == 'recuperableonly') {
-				$valuetoshow = $langs->trans("NPR");
 				$cssprefix = "center ";
 			}
 			if ($value == 'einvoice_vatex') {
-				$valuetoshow = $langs->trans("VATExemptionCode");
 				$cssprefix = "center";
 			}
-			if ($value == 'nbjour') {
-				$valuetoshow = $langs->trans("NbOfDays");
-				$cssprefix = 'right ';
-			}
 			if ($value == 'type_cdr') {
-				$valuetoshow = $langs->trans("AtEndOfMonth");
 				$cssprefix = "center ";
 			}
-			if ($value == 'decalage') {
-				$valuetoshow = $langs->trans("Offset");
-				$cssprefix = 'right ';
-			}
-			if ($value == 'width' || $value == 'nx') {
-				$valuetoshow = $langs->trans("Width");
-			}
-			if ($value == 'height' || $value == 'ny') {
-				$valuetoshow = $langs->trans("Height");
-			}
-			if ($value == 'unit' || $value == 'metric') {
-				$valuetoshow = $langs->trans("MeasuringUnit");
-			}
-			if ($value == 'accountancy_code') {
-				$valuetoshow = $langs->trans("AccountancyCode");
-			}
-			if ($value == 'accountancy_code_sell') {
-				$valuetoshow = $langs->trans("AccountancyCodeSell");
+			if ($value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
 				$sortable = 0;
 			}
-			if ($value == 'accountancy_code_buy') {
-				$valuetoshow = $langs->trans("AccountancyCodeBuy");
-				$sortable = 0;
-			}
-			if ($value == 'fk_pcg_version') {
-				$valuetoshow = $langs->trans("Pcg_version");
-			}
-			if ($value == 'account_parent') {
-				$valuetoshow = $langs->trans("Accountsparent");
-			}
-			if ($value == 'pcg_type') {
-				$valuetoshow = $langs->trans("Pcg_type");
-			}
-			if ($value == 'pcg_subtype') {
-				$valuetoshow = $langs->trans("Pcg_subtype");
-			}
-			if ($value == 'sortorder') {
-				$valuetoshow = $langs->trans("SortOrder");
+			if (in_array($value, array('sortorder', 'fk_parent', 'use_default'))) {
 				$cssprefix = 'center ';
-			}
-			if ($value == 'short_label') {
-				$valuetoshow = $langs->trans("ShortLabel");
-			}
-			if ($value == 'fk_parent') {
-				$valuetoshow = $langs->trans("ParentID");
-				$cssprefix = 'center ';
-			}
-			if ($value == 'range_account') {
-				$valuetoshow = $langs->trans("Range");
-			}
-			if ($value == 'sens') {
-				$valuetoshow = $langs->trans("Sens");
-			}
-			if ($value == 'category_type') {
-				$valuetoshow = $langs->trans("Calculated");
-			}
-			if ($value == 'formula') {
-				$valuetoshow = $langs->trans("Formula");
-			}
-			if ($value == 'paper_size') {
-				$valuetoshow = $langs->trans("PaperSize");
-			}
-			if ($value == 'orientation') {
-				$valuetoshow = $langs->trans("Orientation");
-			}
-			if ($value == 'leftmargin') {
-				$valuetoshow = $langs->trans("LeftMargin");
-			}
-			if ($value == 'topmargin') {
-				$valuetoshow = $langs->trans("TopMargin");
-			}
-			if ($value == 'spacex') {
-				$valuetoshow = $langs->trans("SpaceX");
-			}
-			if ($value == 'spacey') {
-				$valuetoshow = $langs->trans("SpaceY");
-			}
-			if ($value == 'font_size') {
-				$valuetoshow = $langs->trans("FontSize");
-			}
-			if ($value == 'custom_x') {
-				$valuetoshow = $langs->trans("CustomX");
-			}
-			if ($value == 'custom_y') {
-				$valuetoshow = $langs->trans("CustomY");
-			}
-			if ($value == 'percent') {
-				$valuetoshow = $langs->trans("Percentage");
-			}
-			if ($value == 'affect') {
-				$valuetoshow = $langs->trans("WithCounter");
-			}
-			if ($value == 'delay') {
-				$valuetoshow = $langs->trans("NoticePeriod");
-			}
-			if ($value == 'newbymonth') {
-				$valuetoshow = $langs->trans("NewByMonth");
-			}
-			if ($value == 'fk_tva') {
-				$valuetoshow = $langs->trans("VAT");
-			}
-			if ($value == 'range_ik') {
-				$valuetoshow = $langs->trans("RangeIk");
-			}
-			if ($value == 'fk_c_exp_tax_cat') {
-				$valuetoshow = $langs->trans("CarCategory");
-			}
-			if ($value == 'revenuestamp_type') {
-				$valuetoshow = $langs->trans('TypeOfRevenueStamp');
-			}
-			if ($value == 'use_default') {
-				$valuetoshow = $langs->trans('Default');
-				$cssprefix = 'center ';
-			}
-			if ($value == 'unit_type') {
-				$valuetoshow = $langs->trans('TypeOfUnit');
 			}
 			if ($value == 'public' && $tablib[$id] == 'TicketDictCategory') {
-				$valuetoshow = $langs->trans('TicketGroupIsPublic');
 				$cssprefix = 'center ';
-			}
-			if ($value == 'block_if_negative') {
-				$valuetoshow = $langs->trans('BlockHolidayIfNegative');
-			}
-			if ($value == 'type_duration') {
-				$valuetoshow = $langs->trans('Unit');
 			}
 
 			if ($value == 'region_id' || $value == 'country_id' || $value == 'department_buyer_id') {
 				$showfield = 0;
+			}
+			if (empty($arrayfields[$value]['checked'])) {
+				$showfield = 0; // Column was not selected to be displayed
 			}
 
 			// Show field title
@@ -2323,7 +2219,7 @@ if ($id > 0) {
 
 		// Action button
 		if (!$conf->main_checkbox_left_column) {
-			print getTitleFieldOfList('');
+			print getTitleFieldOfList($selectedfields);
 		}
 		print '</tr>';
 
@@ -2483,6 +2379,9 @@ if ($id > 0) {
 						foreach ($fieldlist as $field => $value) {
 							$class = (isset($tabcomplete[$tabname[$id]]['css'][$value]) ? $tabcomplete[$tabname[$id]]['css'][$value] : '');
 							$showfield = 1;
+							if (empty($arrayfields[$value]['checked'])) {
+								$showfield = 0; // Column was not selected to be displayed
+							}
 							$valuetoshow = (isset($obj->$value) && $obj->$value !== null && $obj->$value !== '') ? $obj->$value : '';
 							$titletoshow = '';
 
@@ -2879,6 +2778,223 @@ if (GETPOST('id') && GETPOST('id') == DICT_SOCIALNETWORKS) {
 // End of page
 llxFooter();
 $db->close();
+
+
+/**
+ * Return the label of a field of a dictionary, translated, to use as title of a column.
+ *
+ * @param	string	$value		Name of field (for example: code, label, taux, country, ...)
+ * @param	string	$tabname	Name of dictionary table (example: c_tva)
+ * @param	string	$tablib		Label key of dictionary (example: DictionaryVAT)
+ * @return	string				Label of field translated
+ */
+function dictFieldLabel($value, $tabname = '', $tablib = '')
+{
+	global $langs;
+
+	$valuetoshow = ucfirst($value); // By default
+	$valuetoshow = $langs->trans($valuetoshow); // try to translate
+
+	// Special cases
+	if ($value == 'source') {
+		$valuetoshow = $langs->trans("Contact");
+	}
+	if ($value == 'price') {
+		$valuetoshow = $langs->trans("PriceUHT");
+	}
+	if ($value == 'taux') {
+		if ($tabname != "c_revenuestamp") {
+			$valuetoshow = $langs->trans("Rate");
+		} else {
+			$valuetoshow = $langs->trans("Amount");
+		}
+	}
+	if ($value == 'type_vat') {
+		$valuetoshow = $langs->trans("VATType");
+	}
+	if ($value == 'localtax1_type') {
+		$valuetoshow = $langs->trans("UseLocalTax")." 2";
+	}
+	if ($value == 'localtax1') {
+		$valuetoshow = $langs->trans("RateOfTaxN", '2');
+	}
+	if ($value == 'localtax2_type') {
+		$valuetoshow = $langs->trans("UseLocalTax")." 3";
+	}
+	if ($value == 'localtax2') {
+		$valuetoshow = $langs->trans("RateOfTaxN", '3');
+	}
+	if ($value == 'organization') {
+		$valuetoshow = $langs->trans("Organization");
+	}
+	if ($value == 'lang') {
+		$valuetoshow = $langs->trans("Language");
+	}
+	if ($value == 'type') {
+		$valuetoshow = $langs->trans("Type");
+	}
+	if ($value == 'code') {
+		$valuetoshow = $langs->trans("Code");
+	}
+	if (in_array($value, array('pos', 'position'))) {
+		$valuetoshow = $langs->trans("Position");
+	}
+	if ($value == 'libelle' || $value == 'label') {
+		$valuetoshow = $langs->trans("Label");
+	}
+	if ($value == 'libelle_facture') {
+		$valuetoshow = $langs->trans("LabelOnDocuments");
+	}
+	if ($value == 'deposit_percent') {
+		$valuetoshow = $langs->trans('DepositPercent');
+	}
+	if ($value == 'country') {
+		$valuetoshow = $langs->trans("Country");
+	}
+	if ($value == 'phone_code') {
+		$valuetoshow = $langs->trans("PhoneCode");
+	}
+	if ($value == 'trunk_prefix') {
+		$valuetoshow = $langs->trans("TrunkPrefix");
+	}
+	if ($value == 'department_buyer') {
+		$valuetoshow = $langs->trans('DepartmentBuyer');
+	}
+	if ($value == 'recuperableonly') {
+		$valuetoshow = $langs->trans("NPR");
+	}
+	if ($value == 'einvoice_vatex') {
+		$valuetoshow = $langs->trans("VATExemptionCode");
+	}
+	if ($value == 'nbjour') {
+		$valuetoshow = $langs->trans("NbOfDays");
+	}
+	if ($value == 'type_cdr') {
+		$valuetoshow = $langs->trans("AtEndOfMonth");
+	}
+	if ($value == 'decalage') {
+		$valuetoshow = $langs->trans("Offset");
+	}
+	if ($value == 'width' || $value == 'nx') {
+		$valuetoshow = $langs->trans("Width");
+	}
+	if ($value == 'height' || $value == 'ny') {
+		$valuetoshow = $langs->trans("Height");
+	}
+	if ($value == 'unit' || $value == 'metric') {
+		$valuetoshow = $langs->trans("MeasuringUnit");
+	}
+	if ($value == 'accountancy_code') {
+		$valuetoshow = $langs->trans("AccountancyCode");
+	}
+	if ($value == 'accountancy_code_sell') {
+		$valuetoshow = $langs->trans("AccountancyCodeSell");
+	}
+	if ($value == 'accountancy_code_buy') {
+		$valuetoshow = $langs->trans("AccountancyCodeBuy");
+	}
+	if ($value == 'fk_pcg_version') {
+		$valuetoshow = $langs->trans("Pcg_version");
+	}
+	if ($value == 'account_parent') {
+		$valuetoshow = $langs->trans("Accountsparent");
+	}
+	if ($value == 'pcg_type') {
+		$valuetoshow = $langs->trans("Pcg_type");
+	}
+	if ($value == 'pcg_subtype') {
+		$valuetoshow = $langs->trans("Pcg_subtype");
+	}
+	if ($value == 'sortorder') {
+		$valuetoshow = $langs->trans("SortOrder");
+	}
+	if ($value == 'short_label') {
+		$valuetoshow = $langs->trans("ShortLabel");
+	}
+	if ($value == 'fk_parent') {
+		$valuetoshow = $langs->trans("ParentID");
+	}
+	if ($value == 'range_account') {
+		$valuetoshow = $langs->trans("Range");
+	}
+	if ($value == 'sens') {
+		$valuetoshow = $langs->trans("Sens");
+	}
+	if ($value == 'category_type') {
+		$valuetoshow = $langs->trans("Calculated");
+	}
+	if ($value == 'formula') {
+		$valuetoshow = $langs->trans("Formula");
+	}
+	if ($value == 'paper_size') {
+		$valuetoshow = $langs->trans("PaperSize");
+	}
+	if ($value == 'orientation') {
+		$valuetoshow = $langs->trans("Orientation");
+	}
+	if ($value == 'leftmargin') {
+		$valuetoshow = $langs->trans("LeftMargin");
+	}
+	if ($value == 'topmargin') {
+		$valuetoshow = $langs->trans("TopMargin");
+	}
+	if ($value == 'spacex') {
+		$valuetoshow = $langs->trans("SpaceX");
+	}
+	if ($value == 'spacey') {
+		$valuetoshow = $langs->trans("SpaceY");
+	}
+	if ($value == 'font_size') {
+		$valuetoshow = $langs->trans("FontSize");
+	}
+	if ($value == 'custom_x') {
+		$valuetoshow = $langs->trans("CustomX");
+	}
+	if ($value == 'custom_y') {
+		$valuetoshow = $langs->trans("CustomY");
+	}
+	if ($value == 'percent') {
+		$valuetoshow = $langs->trans("Percentage");
+	}
+	if ($value == 'affect') {
+		$valuetoshow = $langs->trans("WithCounter");
+	}
+	if ($value == 'delay') {
+		$valuetoshow = $langs->trans("NoticePeriod");
+	}
+	if ($value == 'newbymonth') {
+		$valuetoshow = $langs->trans("NewByMonth");
+	}
+	if ($value == 'fk_tva') {
+		$valuetoshow = $langs->trans("VAT");
+	}
+	if ($value == 'range_ik') {
+		$valuetoshow = $langs->trans("RangeIk");
+	}
+	if ($value == 'fk_c_exp_tax_cat') {
+		$valuetoshow = $langs->trans("CarCategory");
+	}
+	if ($value == 'revenuestamp_type') {
+		$valuetoshow = $langs->trans('TypeOfRevenueStamp');
+	}
+	if ($value == 'use_default') {
+		$valuetoshow = $langs->trans('Default');
+	}
+	if ($value == 'unit_type') {
+		$valuetoshow = $langs->trans('TypeOfUnit');
+	}
+	if ($value == 'public' && $tablib == 'TicketDictCategory') {
+		$valuetoshow = $langs->trans('TicketGroupIsPublic');
+	}
+	if ($value == 'block_if_negative') {
+		$valuetoshow = $langs->trans('BlockHolidayIfNegative');
+	}
+	if ($value == 'type_duration') {
+		$valuetoshow = $langs->trans('Unit');
+	}
+
+	return $valuetoshow;
+}
 
 
 /**

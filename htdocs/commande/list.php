@@ -261,7 +261,9 @@ $arrayfields = array(
 	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
 	'c.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
 );
-
+if ($user->socid) {
+	unset($arrayfields['c.note_private']);
+}
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook > 0) {
@@ -430,6 +432,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$nbOrders = is_array($orders) ? count($orders) : 1;
+		$reuseNotesOnCreateFrom = getDolGlobalString('FACTURE_REUSE_NOTES_ON_CREATE_FROM');
 
 		$currentIndex = 0;
 		foreach ($orders as $id_order) {
@@ -449,10 +452,21 @@ if (empty($reshook)) {
 			$cmd->fetch_thirdparty();
 
 			$objecttmp = new Facture($db);
+			$notesUpdated = false;
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
 				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
 				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid];
+				if ($reuseNotesOnCreateFrom) {
+					if (!empty($cmd->note_public)) {
+						$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $cmd->note_public);
+						$notesUpdated = true;
+					}
+					if (!empty($cmd->note_private)) {
+						$objecttmp->note_private = dol_concatdesc($objecttmp->note_private, $cmd->note_private);
+						$notesUpdated = true;
+					}
+				}
 			} else {
 				// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
 				$objecttmp->socid = $cmd->socid;
@@ -469,7 +483,10 @@ if (empty($reshook)) {
 					$objecttmp->ref_client = $cmd->ref_client;
 				}
 
-				if (empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
+				$objecttmp->note_public = $objecttmp->getDefaultCreateValueFor('note_public', ($reuseNotesOnCreateFrom ? $cmd->note_public : null));
+				$objecttmp->note_private = $objecttmp->getDefaultCreateValueFor('note_private', ($reuseNotesOnCreateFrom ? $cmd->note_private : null));
+
+				if (!$reuseNotesOnCreateFrom && empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
 					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
@@ -675,12 +692,15 @@ if (empty($reshook)) {
 				}
 			}
 
-			if ($currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
+			if (!$reuseNotesOnCreateFrom && $currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')'));
 				if ($objecttmp->update($user) < 0) {
 					$error++;
 					$errors[] = $objecttmp->error;
 				}
+			} elseif ($notesUpdated && $objecttmp->update($user) < 0) {
+				$error++;
+				$errors[] = $objecttmp->error;
 			}
 
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.

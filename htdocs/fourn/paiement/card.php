@@ -223,6 +223,12 @@ if ($result > 0) {
 	print $object->num_payment ? ' - '.$object->num_payment : '';
 	print '</td></tr>';
 
+	// Payment number
+	print '<tr><td>'.$form->editfieldkey("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
+	print '<td>';
+	print $form->editfieldval("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer"), 'string', '', null, $langs->trans('PaymentNumberUpdateSucceeded'));
+	print '</td></tr>';
+
 	// Payment numero
 	/* TODO Add field num_payment into payment table and save it
 	print '<tr><td>'.$form->editfieldkey("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
@@ -393,7 +399,7 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action != 'presend') {
 		if ($user->hasRight('fournisseur', 'facture', 'supprimer')) {
 			if ($allow_delete) {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 			} else {
 				print dolGetButtonAction($title_button, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 			}

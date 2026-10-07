@@ -194,6 +194,8 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	} else {
 		$pdf = new TCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	}
+	// Allow "file://..." image src values (used to embed local server paths translated from a public URL)
+	$pdf->setAllowLocalFiles(true);
 
 	// Protection and encryption of pdf
 	if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {
@@ -2916,7 +2918,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 					// new mode: we need to compute the total (sum of previous + delta)
 					$prev_progress + $object->lines[$i]->situation_percent;
 			}
-			$result = round($result, 1).'%';
+			$result = round($result, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).'%';
 		}
 	}
 	return $result;

@@ -215,7 +215,7 @@ if (isModEnabled('project')) {
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
-			$proj->fetch($object->fk_project);
+			$proj->fetch((int) $object->fk_project);
 			$morehtmlref .= ' : '.$proj->getNomUrl(1);
 			if ($proj->title) {
 				$morehtmlref .= ' - '.$proj->title;
@@ -328,6 +328,10 @@ $(document).ready(function() {
 				capital: capital,
 				rate: <?php echo $object->rate / 100; ?>,
 				nbterm: <?php echo $object->nbterm; ?>,
+				frequency: <?php echo (int) $object->frequency; ?>,
+				interest_basis: <?php echo (int) $object->interest_basis; ?>,
+				datestart: <?php echo (int) $object->datestart; ?>,
+				balloon: <?php echo (float) $object->balloon_amount; ?>,
 				token: '<?php echo currentToken(); ?>'
 			},
 			success: function(data) {
@@ -381,7 +385,7 @@ if (count($echeances->lines) > 0) {
 
 if (empty($pay_without_schedule) && $permissiontoadd) {
 	print '<div class="marginbottomonly inline-block valignmiddle">';
-	print '<span class="opacitymedium">'.$langs->trans("GracePeriodMonths").': </span>';
+	print '<span class="opacitymedium">'.$langs->trans((int) $object->frequency == 12 ? "GracePeriodMonths" : "GracePeriodTerms").': </span>';
 	print '<input type="number" id="grace_period_months" min="1" max="'.max(1, $object->nbterm - 1).'" value="1" class="width50 right"> ';
 	print '<input type="button" id="btn_apply_grace_period" class="button valignmiddle" value="'.$langs->trans("Apply").'">';
 	print '</div>';
@@ -399,7 +403,7 @@ if (count($echeances->lines) > 0) {
 print '<tr class="liste_titre">';
 print '<th class="center">'.$langs->trans("Term").'</th>';
 print '<th class="center">'.$langs->trans("Date").'</th>';
-print '<th class="center">'.$langs->trans("Insurance").'</th>';
+print '<th class="center">'.loanChargeLabel($object->charge_type, $langs).'</th>';
 print '<th class="center">'.$langs->trans("InterestAmount").'</th>';
 print '<th class="center">'.$langs->trans("CapitalAmortization").'</th>';
 print '<th class="center">'.$langs->trans("Amount").'</th>';
@@ -422,19 +426,20 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$cap_rest = (float) $capital;
-	$insurance = (float) $object->insurance_amount / $object->nbterm;
-	$insurance = price2num($insurance, 'MT');
-	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
+	list($insurance, $regulInsurance) = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
 
 	while ($i < $object->nbterm + 1) {
-		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1), 'MT');
-		$int = ($capital * ($object->rate / 12)) / 100;
+		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1, $object->frequency, $object->interest_basis, $object->balloon_amount), 'MT');
+		$int = ($capital * loanPeriodRate($object->rate, $object->frequency, $object->interest_basis, ($object->interest_basis ? loanPeriodDays($object->datestart, $i, $object->frequency) : 0))) / 100;
 		$int = price2num($int, 'MT');
 		$amort = price2num((float) $mens - (float) $int, 'MT');
 		$insu = ((float) $insurance + (($i == 1) ? (float) $regulInsurance : 0));
+		$cap_rest = (float) price2num((float) $capital - (float) $amort, 'MT');
 
-		// Adjust rounding difference on last term
-		if ($i == $object->nbterm && abs($cap_rest) <= 0.05 && $capital > 0) {
+		// Adjust rounding difference on last term (with daily interest, periods are not all the same
+		// length, so the last term always settles what is left)
+		// A balloon is paid with the last term, which then repays all the capital left.
+		if ($i == $object->nbterm && ($object->interest_basis || (float) $object->balloon_amount > 0 || abs($cap_rest) <= 0.05) && $capital > 0) {
 			$amort = $capital;
 			$cap_rest = 0.0;
 			$mens = price2num((float) $amort + (float) $int, 'MT');
@@ -447,7 +452,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 
 		print '<tr>';
 		print '<td class="center" id="n'.$i.'">'.$i.'</td>';
-		print '<td class="center" id ="date'.$i.'"><input type="hidden" name="hi_date'.$i.'" id ="hi_date'.$i.'" value="'.dol_time_plus_duree($object->datestart, $i - 1, 'm').'">'.dol_print_date(dol_time_plus_duree($object->datestart, $i - 1, 'm'), 'day').'</td>';
+		print '<td class="center" id ="date'.$i.'"><input type="hidden" name="hi_date'.$i.'" id ="hi_date'.$i.'" value="'.loanTermDate($object->datestart, $i - 1, $object->frequency).'">'.dol_print_date(loanTermDate($object->datestart, $i - 1, $object->frequency), 'day').'</td>';
 		print '<td class="center amount" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.$insu.'">';
 		print '<td class="center"><input class="width75 right" name="interets'.$i.'" id="interets'.$i.'" value="'.price($int).'" ech="'.$i.'"><input type="hidden" name="hi_interets'.$i.'" id="hi_interets'.$i.'" value="'.$int.'"></td>';
 		print '<td class="center"><input class="width75 right" name="amort'.$i.'" id="amort'.$i.'" value="'.price($amort).'" ech="'.$i.'"><input type="hidden" name="hi_amort'.$i.'" id="hi_amort'.$i.'" value="'.$amort.'"></td>';
@@ -461,9 +466,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$cap_rest = (float) $capital;
-	$insurance = (float) $object->insurance_amount / $object->nbterm;
-	$insurance = price2num($insurance, 'MT');
-	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
+	list($insurance, $regulInsurance) = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
 	$printed = false;
 
 	foreach ($echeances->lines as $line) {
@@ -526,6 +529,10 @@ print '</tr>'."\n";
 
 print '</table>';
 print '</div>';
+
+if ((float) $object->balloon_amount > 0) {
+	print '<div class="opacitymedium margintoponly">'.$langs->trans("LoanBalloonInLastPayment", price($object->balloon_amount, 0, '', 1, -1, -1, $conf->currency)).'</div>';
+}
 
 print '<br>';
 

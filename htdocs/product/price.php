@@ -595,9 +595,16 @@ if (empty($reshook)) {
 	if ($action == 'activate_price_by_qty' && $permissiontoadd) {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOSTINT('level');
-		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
-		$basePriceMin = ($object->price_base_type == 'HT') ? $object->price_min : $object->price_min_ttc;
-		$ret = $object->updatePrice($basePrice, $object->price_base_type, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 1, 0, array(), $object->default_vat_code);
+		$basePriceType = $object->price_base_type;
+		$basePrice = ($basePriceType == 'HT') ? $object->price : $object->price_ttc;
+		$basePriceMin = ($basePriceType == 'HT') ? $object->price_min : $object->price_min_ttc;
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && $level > 0 && isset($object->multiprices[$level])) {
+			// With a price per level, the price to keep is the price of the level, not the default price of the product
+			$basePriceType = (empty($object->multiprices_base_type[$level]) ? 'HT' : $object->multiprices_base_type[$level]);
+			$basePrice = ($basePriceType == 'HT') ? $object->multiprices[$level] : $object->multiprices_ttc[$level];
+			$basePriceMin = ($basePriceType == 'HT') ? $object->multiprices_min[$level] : $object->multiprices_min_ttc[$level];
+		}
+		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 1, 0, array(), $object->default_vat_code);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -607,9 +614,16 @@ if (empty($reshook)) {
 	if ($action == 'disable_price_by_qty' && $permissiontoadd) {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
 		$level = GETPOSTINT('level');
-		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
-		$basePriceMin = ($object->price_base_type == 'HT') ? $object->price_min : $object->price_min_ttc;
-		$ret = $object->updatePrice($basePrice, $object->price_base_type, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+		$basePriceType = $object->price_base_type;
+		$basePrice = ($basePriceType == 'HT') ? $object->price : $object->price_ttc;
+		$basePriceMin = ($basePriceType == 'HT') ? $object->price_min : $object->price_min_ttc;
+		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && $level > 0 && isset($object->multiprices[$level])) {
+			// With a price per level, the price to keep is the price of the level, not the default price of the product
+			$basePriceType = (empty($object->multiprices_base_type[$level]) ? 'HT' : $object->multiprices_base_type[$level]);
+			$basePrice = ($basePriceType == 'HT') ? $object->multiprices[$level] : $object->multiprices_ttc[$level];
+			$basePriceMin = ($basePriceType == 'HT') ? $object->multiprices_min[$level] : $object->multiprices_min_ttc[$level];
+		}
+		$ret = $object->updatePrice($basePrice, $basePriceType, $user, $object->tva_tx, $basePriceMin, $level, $object->tva_npr, -1, 0, array(), $object->default_vat_code);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -639,6 +653,16 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 		}
+		if (!$error && !($rowid > 0)) {
+			// A new line can only be attached to a price line of the product being edited
+			$sql = "SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp";
+			$sql .= " WHERE pp.rowid = ".((int) $priceid)." AND pp.fk_product = ".((int) $object->id);
+			$resql = $db->query($sql);
+			if (!$resql || !$db->num_rows($resql)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+			}
+		}
 		if (!$error) {
 			// Calcul du prix HT et du prix unitaire
 			if ($object->price_base_type == 'TTC') {
@@ -657,6 +681,7 @@ if (empty($reshook)) {
 				$sql .= " remise_percent=".((float) $remise_percent).",";
 				$sql .= " remise=".((float) $remise);
 				$sql .= " WHERE rowid = ".((int) $rowid);
+				$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $object->id).")";
 
 				$result = $db->query($sql);
 				if (!$result) {
@@ -683,6 +708,7 @@ if (empty($reshook)) {
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE rowid = ".((int) $rowid);
+			$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $object->id).")";
 
 			$result = $db->query($sql);
 		} else {
@@ -695,6 +721,7 @@ if (empty($reshook)) {
 		if (!empty($priceid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE fk_product_price = ".((int) $priceid);
+			$sql .= " AND fk_product_price IN (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = ".((int) $object->id).")";
 
 			$result = $db->query($sql);
 		} else {
@@ -839,6 +866,15 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				$action = '';
 			}
+		}
+	}
+
+	// A customer price line can only be removed or updated from the page of its own product
+	if (in_array($action, ['confirm_remove_customer_price', 'update_customer_price_confirm']) && $prodcustprice !== null) {
+		$prodcustprice->fetch(GETPOSTINT('lineid'));
+		if ((int) $prodcustprice->fk_product !== (int) $object->id) {
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+			$action = '';
 		}
 	}
 
@@ -2379,7 +2415,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					$positiverates = '0';
 				}
 
-				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, ($line->tva_npr ? $line->tva_npr : $line->recuperableonly));
+				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, (!empty($line->tva_npr) ? $line->tva_npr : $line->recuperableonly));
 
 				//. vatrate($tva_tx, true, $line->recuperableonly) .
 				print "</td>";

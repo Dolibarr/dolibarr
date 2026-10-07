@@ -76,13 +76,13 @@ function getListOfAIServices()
 			'label'           => 'ChatGPT (OpenAI)',
 			'url'             => 'https://api.openai.com/v1/',
 			'setup'           => 'https://platform.openai.com/account/api-keys',
-			'textgeneration'  => array('default' => 'gpt-5.2'),             // Flagship model released late 2025, updated Feb 2026
-			'imagegeneration' => array('default' => 'gpt-image-1.5'),       // Replaced DALL-E 3; 4x faster and native to GPT-5
+			'textgeneration'  => array('default' => 'gpt-5.6'),             //  updated Oct 2026
+			'imagegeneration' => array('default' => 'gpt-image-2'),       // Replaced DALL-E 3; 4x faster and native to GPT-5
 			'audiogeneration' => array('default' => 'gpt-audio-1.5'),       // New Feb 23, 2026 release for high-fidelity audio out
 			'videogeneration' => array('default' => 'sora-2'),              // OpenAI's standard API video model
-			'transcription'   => array('default' => 'whisper-large-v3-turbo'), // The current speed/accuracy benchmark for ASR
-			'translation'     => array('default' => 'whisper-large-v3-turbo'), // Still the best for multi-language audio translation
-			'docparsing'      => array('default' => 'gpt-5.2'),             // Uses the new Responses API / Vision capabilities
+			'transcription'   => array('default' => 'gpt-transcribe'), 		// Dedicated model
+			'translation'     => array('default' => 'gpt-5.6'),				 // Still the best for multi-language audio translation
+			'docparsing'      => array('default' => 'gpt-5.6'),             // Uses the new Responses API / Vision capabilities
 			'adapter_type'    => 'openai'
 		),
 		'groq' => array(
@@ -168,13 +168,13 @@ function getListOfAIServices()
 			'label' => 'Anthropic (Claude)',
 			'url' => 'https://api.anthropic.com/v1/',
 			'setup' => 'https://console.anthropic.com/',
-			'textgeneration' => array('default' => 'claude-opus-4-6'),    // Released Feb 2026; features a 1M context window
+			'textgeneration' => array('default' => 'claude-opus-5'),    // Current Anthropic flagship; 1M context window
 			'imagegeneration' => array('default' => 'na'),              // Anthropic remains focused on text/code logic
 			'audiogeneration' => array('default' => 'na'),
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'claude-opus-4-6'),      // Leading model for "Computer Use" and PDF analysis
+			'docparsing' => array('default' => 'claude-opus-5'),      // Leading model for "Computer Use" and PDF analysis
 			'adapter_type' => 'anthropic'
 		),
 		'google' => array(
@@ -752,7 +752,7 @@ function getAiChatAssistantConfig()
 		'Download',
 		'Show',
 		'Confirm',
-		'ConfirmAiAction',
+		'ConfirmAiAction', 'ConfirmAiWrite',
 		'ClearChatHistoryTitle',
 		'HistoryCleared',
 		'Send',
@@ -820,6 +820,8 @@ function getAiChatAssistantConfig()
 		'FetchingData',
 		'GeneratingLink',
 		'Found',
+		'File',
+		'Preview',
 		'TypeResponse',
 		'OpenVerb',
 
@@ -877,9 +879,11 @@ function getAiChatAssistantConfig()
 		// Attachment count cap, so the client mirrors the server-side guard
 		// of ai_validate_attachments() instead of hardcoding its own.
 		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
-		// Recent exchanges that follow the model by default (sliding window);
-		// 0 keeps the context strictly opt-in.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 3),
+		// Recent exchanges that follow the model by default (sliding window).
+		// Off (0) until an administrator decides otherwise: past answers carry
+		// business content the privacy masking does not cover, so sending them
+		// back on every request is not a default the module takes by itself.
+		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0),
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),

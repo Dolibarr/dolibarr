@@ -837,7 +837,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " ref = '".$this->db->escape($this->ref)."'";
+		$sql .= " ref = '".$this->db->escape((string) $this->ref)."'";
 		$sql .= ", ref_ext = ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'");
 		$sql .= ", civility = ".($this->civility_code ? "'".$this->db->escape($this->civility_code)."'" : "null");
 		$sql .= ", firstname = ".($this->firstname ? "'".$this->db->escape($this->firstname)."'" : "null");
@@ -1085,13 +1085,29 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = $this->db->fetch_object($resql);
-			$dateop = $this->db->jdate($obj->dateop);
-			$datedeb = $this->db->jdate($obj->datedeb);
-			$datefin = $this->db->jdate($obj->datefin);
+			// The last subscription is the one with the latest start date (first record), but the end date of the member is
+			// the latest end date of all its subscriptions: a short subscription that starts after a longer one must not
+			// shorten the membership. There is no record at all when the last subscription of the member was deleted.
+			$dateop = '';
+			$datedeb = '';
+			$datefin = '';
+			$dateendmember = '';
+			$i = 0;
+			while ($obj = $this->db->fetch_object($resql)) {
+				$dateendsubscription = $this->db->jdate($obj->datefin);
+				if ($i == 0) {
+					$dateop = $this->db->jdate($obj->dateop);
+					$datedeb = $this->db->jdate($obj->datedeb);
+					$datefin = $dateendsubscription;
+				}
+				if ($dateendsubscription != '' && ($dateendmember == '' || $dateendsubscription > $dateendmember)) {
+					$dateendmember = $dateendsubscription;
+				}
+				$i++;
+			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-			$sql .= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
+			$sql .= " datefin=".($dateendmember != '' ? "'".$this->db->idate($dateendmember)."'" : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
@@ -1100,7 +1116,7 @@ class Adherent extends CommonObject
 				$this->last_subscription_date = $dateop;
 				$this->last_subscription_date_start = $datedeb;
 				$this->last_subscription_date_end = $datefin;
-				$this->datefin = $datefin;
+				$this->datefin = $dateendmember;
 				$this->db->commit();
 				return 1;
 			} else {
@@ -1606,7 +1622,7 @@ class Adherent extends CommonObject
 		$sql .= " d.email, d.url, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql .= " d.datec as datec,";
-		$sql .= " GREATEST(d.tms, aef.tms) as datem,";
+		$sql .= " GREATEST(d.tms, COALESCE(aef.tms, d.tms)) as datem,";
 		$sql .= " d.datefin as datefin, d.default_lang,";
 		$sql .= " d.birth as birthday,";
 		$sql .= " d.datevalid as datev,";
@@ -2684,9 +2700,9 @@ class Adherent extends CommonObject
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		} elseif ($status >= self::STATUS_VALIDATED) {
-			if ($need_subscription === 0) {
+			if (empty($need_subscription)) {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusNoSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("SubscriptionNotNeeded");
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
@@ -3122,7 +3138,7 @@ class Adherent extends CommonObject
 	{
 		$sql = 'SELECT a.rowid, a.datec as datec,';
 		$sql .= ' a.datevalid as datev,';
-		$sql .= ' GREATEST(a.tms, aef.tms) as datem,';
+		$sql .= ' GREATEST(a.tms, COALESCE(aef.tms, a.tms)) as datem,';
 		$sql .= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = a.rowid';
@@ -3294,13 +3310,15 @@ class Adherent extends CommonObject
 				$num_rows = $this->db->num_rows($resql);
 
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$adherent = new Adherent($this->db);
 				$formmail = new FormMail($this->db);
 
 				$i = 0;
 				while ($i < $num_rows) {
 					$obj = $this->db->fetch_object($resql);
 
+					// A new object for each member: fetch() does not reset the properties loaded for the previous member,
+					// like ->thirdparty that would be reused for a member that has no third party.
+					$adherent = new Adherent($this->db);
 					$adherent->fetch($obj->rowid, '', 0, '', true, true);
 
 					if (empty($adherent->email)) {
@@ -3312,8 +3330,12 @@ class Adherent extends CommonObject
 							$languagecodeformember = $mysoc->default_lang;
 						} else {
 							// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
-							$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
+							$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : (is_object($adherent->thirdparty) ? $adherent->thirdparty->country_code : ''));
 							$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
+						}
+						if (!empty($adherent->default_lang)) {
+							// The language set on the member itself has priority
+							$languagecodeformember = $adherent->default_lang;
 						}
 
 						// Send reminder email
@@ -3391,7 +3413,7 @@ class Adherent extends CommonObject
 								$actioncomm->datep = $now;
 								$actioncomm->datef = $now;
 								$actioncomm->percentage = -1; // Not applicable
-								$actioncomm->socid = $adherent->thirdparty->id;
+								$actioncomm->socid = (is_object($adherent->thirdparty) ? $adherent->thirdparty->id : 0);
 								$actioncomm->contact_id = 0;
 								$actioncomm->authorid = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
@@ -3422,7 +3444,8 @@ class Adherent extends CommonObject
 							$nbko++;
 							$listofmembersko[$adherent->id] = $adherent->id;
 
-							break;
+							// Do not break here: a template issue for one member (ex: not found for its language) must not prevent
+							// the reminder from being sent to the other members due the same day.
 						}
 					}
 

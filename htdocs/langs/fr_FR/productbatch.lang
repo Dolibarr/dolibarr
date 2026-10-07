@@ -47,9 +47,13 @@ HideLots=Masquer les lots
 OutOfOrder=Hors d'usage
 InWorkingOrder=En état de marche
 ToReplace=Remplacer
-CantMoveNonExistantSerial=Erreur : un numéro de série sur lequel vous avez demandé un mouvement n'existe plus. Peut-être avez-vous utilisé plusieurs fois le même numéro de série depuis le même entrepôt sur la même expédition, ou peut-être était-il utilisé sur une autre expédition. Supprimez cette expédition et préparez-en une autre.
+CantMoveNonExistantSerial=Erreur : Vous avez demandé un mouvement de stock pour un numéro de série qui n'existe plus. Il est possible que vous ayez utilisé ce même numéro de série plusieurs fois dans le même envoi (entrepôt) ou qu'il ait été utilisé par un autre envoi. Supprimez cet envoi (et) et préparez-en un autre.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Réparation incomplète de la table des lots, lancez le script repair avec le paramètre '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Correction de stock requise, car Numéro de série unique.
 ErrorBatchesNeedStockManagement=Erreur. Un produit avec gestion de lots doit également être géré en stock.
 ForceBatchesNeedStockManagement=Un produit avec gestion de lot doit être géré en stock (gestion de stock forcée à oui)
 BatchInformationNotfound=Informations sur le lot introuvables
+EnterMultipleSerialNumbers=Saisissez plusieurs numéros de série
+EnterOneSerialNumberPerLine=Saisissez, collez ou scannez les numéros de série, un par ligne.
+NbOfSerialNumbersDetected=%s Numéro de série(s) détectés
+ErrorDuplicateSerialNumberInList=Le numéro de série %s est présent plusieurs fois dans la liste
