@@ -208,7 +208,7 @@ class LocalTaxes extends DolibarrApi
 		}
 
 		if ($localtax->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating local tax: '.$localtax->error);
+			throw new RestException(500, 'Error when creating local tax: '.$localtax->errorsToString());
 		}
 
 		return $localtax->id;
@@ -264,7 +264,7 @@ class LocalTaxes extends DolibarrApi
 		if ($localtax->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating local tax: '.$localtax->error);
+			throw new RestException(500, 'Error when updating local tax: '.$localtax->errorsToString());
 		}
 	}
 
@@ -295,7 +295,7 @@ class LocalTaxes extends DolibarrApi
 		}
 
 		if ($localtax->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting local tax: '.$localtax->error);
+			throw new RestException(500, 'Error when deleting local tax: '.$localtax->errorsToString());
 		}
 
 		return array(

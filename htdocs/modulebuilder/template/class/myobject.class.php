@@ -121,6 +121,7 @@ class MyObject extends CommonObject
 	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *  'description' is a description of the field. Can be used to help the MCP server.
+	 *  'bi' is set to 0 if you want to hide property on BI tool.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -429,6 +430,7 @@ class MyObject extends CommonObject
 		return $result;
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 * Load object lines in memory from the database
 	 *

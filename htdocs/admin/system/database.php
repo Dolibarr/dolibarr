@@ -40,7 +40,7 @@ require '../../main.inc.php';
  * @var string $dolibarr_main_db_character_set
  */
 
-$langs->load("admin");
+$langs->loadLangs(array("admin", "install"));
 
 $action = GETPOST('action', 'aZ09');
 

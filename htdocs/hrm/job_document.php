@@ -167,7 +167,7 @@ if ($object->id && $upload_dir !== null) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'hrm';
+	$modulepart = 'job@hrm';
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='job/' . dol_sanitizeFileName($object->id).'/';

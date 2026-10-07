@@ -172,7 +172,7 @@ if ($object->id && $upload_dir !== null) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'hrm';
+	$modulepart = 'position@hrm';
 	$permtoedit = $permissiontoadd;
 	$param = '&id='.$object->id;
 

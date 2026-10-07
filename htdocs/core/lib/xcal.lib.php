@@ -100,7 +100,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			$description   = dol_string_nohtmltag(preg_replace("/<br[\s\/]?>/i", "\n", $event["desc"]), 0);
 			$created       = $event["created"];
 			$modified      = $event["modified"];
-			$assignedUsers = $event["assignedUsers"];
+			$assignedUsers = $event["assignedUsers"] ?? array();
 			//print $fulldayevent.' '.dol_print_date($startdate, 'dayhour', 'gmt');
 
 			// Format
@@ -342,7 +342,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		// Print header
 		fwrite($fichier, '<?xml version="1.0" encoding="'.$langs->charset_output.'"?>'."\n");
 
-		fwrite($fichier, '<rss version="2.0">'."\n");
+		//fwrite($fichier, '<rss version="2.0">'."\n");
+		fwrite($fichier, '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'."\n");		// xmlns:atom is required to be valid by parser (Publer RSS reader) for example.
 
 		fwrite($fichier, "<channel>\n");
 		fwrite($fichier, "<title>".dol_escape_xml($title)."</title>\n");

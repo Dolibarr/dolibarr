@@ -1,5 +1,6 @@
 <?php
-/*
+/* Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -16,7 +17,7 @@
 
 /**
  *       \file       htdocs/core/ajax/changepositionfields.php
- *       \brief      File for we change position of fields on a list page
+ *       \brief      File to change the position of columns in a list page
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -67,6 +68,8 @@ if ($userid != $user->id) {
  * Actions
  */
 
+$result = 0;
+
 // Registering the new value of constant
 if (!empty($action) && !empty($contextpage)) {
 	if ($action == "listafterchangingpositionfields") { // Test on permission not required here. Done in security check
@@ -94,4 +97,10 @@ if (!empty($action) && !empty($contextpage)) {
  * View
  */
 
+if ($result < 0) {
+	http_response_code(500);
+}
+
 top_httphead();
+
+// No output

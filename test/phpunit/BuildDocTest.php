@@ -27,7 +27,7 @@
  *      			See also PdfDocTest to test methods
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -43,12 +43,12 @@ require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/doc/pdf_azur.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/doc/pdf_baleine.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php';
 // Mother classes of pdf generators
 require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/modules_facture.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/supplier_invoice/modules_facturefournisseur.php';
@@ -269,8 +269,8 @@ class BuildDocTest extends CommonClassTest
 		$localobject = new Commande($db);
 		$localobject->initAsSpecimen();
 
-		// Einstein
-		$localobject->model_pdf = 'einstein';
+		// Eratosthene
+		$localobject->model_pdf = 'eratosthene';
 		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
@@ -297,8 +297,8 @@ class BuildDocTest extends CommonClassTest
 		$localobject = new CommandeFournisseur($db);
 		$localobject->initAsSpecimen();
 
-		// Muscadet
-		$localobject->model_pdf = 'muscadet';
+		// Cornas
+		$localobject->model_pdf = 'cornas';
 		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
@@ -324,8 +324,8 @@ class BuildDocTest extends CommonClassTest
 		$localobject = new Propal($db);
 		$localobject->initAsSpecimen();
 
-		// Azur
-		$localobject->model_pdf = 'azur';
+		// Cyan
+		$localobject->model_pdf = 'cyan';
 		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
@@ -411,8 +411,8 @@ class BuildDocTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 
-		// Rouget
-		$localobject->model_pdf = 'rouget';
+		// Espadon
+		$localobject->model_pdf = 'espadon';
 		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);

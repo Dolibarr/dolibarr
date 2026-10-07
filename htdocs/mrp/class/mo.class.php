@@ -311,10 +311,12 @@ class Mo extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach ($this->fields as $key => $val) {
-			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-				foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
 				}
 			}
 		}
@@ -995,6 +997,16 @@ class Mo extends CommonObject
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
+
+		// The line must belong to this MO (checked before any stock movement is reversed)
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+		$sql .= " WHERE rowid = ".((int) $idline)." AND fk_mo = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql || !$this->db->num_rows($resql)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$productstatic = new Product($this->db);
 
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
@@ -1011,7 +1023,12 @@ class Mo extends CommonObject
 			// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 			$moline = new MoLine($this->db);
 			$TArrayMoLine = $moline->fetchAll('', '', 1, 0, '(fk_stock_movement:=:'.((int) $fk_movement).')');
-			$moline = array_shift($TArrayMoLine);
+			$moline = is_array($TArrayMoLine) ? array_shift($TArrayMoLine) : null;
+			if (!is_object($moline) || (int) $moline->fk_mo !== (int) $this->id) {
+				$this->db->rollback();
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
 			$movement = new MouvementStock($this->db);
 			$movement->fetch($fk_movement);
@@ -2069,8 +2086,13 @@ class Mo extends CommonObject
 		}
 
 		$now = dol_now();
+		$warning_delay = $conf->mrp->progress->warning_delay;
 
-		$sql = "SELECT rowid, date_end_planned FROM ".$this->db->prefix()."mrp_mo";
+		// The count and the number of late MO are computed by the database instead of reading every MO. A MO is late when it has
+		// a planned end date and that date is before now minus the warning delay.
+		$sql = "SELECT COUNT(rowid) as nb,";
+		$sql .= " SUM(CASE WHEN date_end_planned IS NOT NULL AND date_end_planned < '".$this->db->idate($now - $warning_delay)."' THEN 1 ELSE 0 END) as nblate";
+		$sql .= " FROM ".$this->db->prefix()."mrp_mo";
 		$sql .= " WHERE status IN (" . self::STATUS_VALIDATED . ", " . self::STATUS_INPROGRESS .")"; // 1 = Ouvert, 2 = En cours
 		$sql .= " AND entity IN (".getEntity('mrp_mo').")";
 
@@ -2078,7 +2100,6 @@ class Mo extends CommonObject
 		if ($resql) {
 			$langs->load("mrp");
 			$response = new WorkboardResponse();
-			$warning_delay = $conf->mrp->progress->warning_delay ;
 			$response->warning_delay = $warning_delay / 86400;
 			$response->label = $langs->trans("MOProgress");
 			$response->labelShort = $langs->trans("MOProgress");
@@ -2086,15 +2107,12 @@ class Mo extends CommonObject
 			$response->img = img_object('', "mrp");
 
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if (!empty($obj->date_end_planned)) {
-					$date_end_planned = $this->db->jdate($obj->date_end_planned);
-					if ($now > ($date_end_planned + $warning_delay)) {
-						$response->nbtodolate++;
-						$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
-					}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
+				if ($response->nbtodolate > 0) {
+					$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
 				}
 			}
 

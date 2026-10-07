@@ -1834,17 +1834,6 @@ if ($action == "search" || $action == "valid") {
 }
 
 
-if ($action == "temp" && !empty($ticket_printer1)) {
-	?>
-	$.ajax({
-		type: "POST",
-		url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
-		data: '<?php
-		print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
-	});
-	<?php
-}
-
 if ($action == "search") {
 	?>
 	$('#search').focus();

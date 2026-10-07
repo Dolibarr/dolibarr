@@ -120,6 +120,12 @@ span.badgeliketopmenu {
 	white-space: nowrap;
 }
 
+span.badge-oppstatus {
+	color: #fff !important;
+	background-color: #776666;
+}
+
+
 /* PRIMARY */
 .badge-primary{
 	color: #fff !important;

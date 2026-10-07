@@ -4,7 +4,7 @@
  * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -214,6 +214,8 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$dbt_select = 'id';
 	} elseif ($features == 'bank') {
 		$features = 'banque';
+	} elseif ($features == 'remisecheque') {
+		$features = 'banque';
 	} elseif ($features == 'facturerec') {
 		$features = 'facture';
 	} elseif ($features == 'supplier_invoicerec') {
@@ -228,10 +230,16 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} elseif ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
+		$tableandshare = 'subscription&adherent';
+		$parentfortableentity = 'fk_adherent@adherent';	// A subscription has no entity, the entity is the one of its member
 	} elseif ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
 	} elseif ($features == 'project') {
 		$features = 'projet';
+	} elseif ($features == 'project_task') {
+		$features = 'projet';
+		$objectid = (int) $object->fk_project;
+		$object = $objectid;
 	} elseif (is_object($object) && ($features == 'conferenceorbooth@eventorganization' || ($features == 'eventorganization' && $object->element == 'conferenceorbooth'))) {
 		// The module of an event organization declares no permission of its own, on purpose.
 		// Permission are done on project table.
@@ -256,6 +264,16 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'workstation';
 	} elseif ($features == 'hrm' && is_object($object) && in_array($object->element, array('job', 'position', 'skill'))) {
 		$feature2 = 'all';	// These 3 objects have no permission of their own, they share the level "all"
+	} elseif ($features == 'recruitment' && is_object($object) && in_array($object->element, array('recruitmentjobposition', 'recruitmentcandidature'))) {
+		// The recruitment module declares no permission at its first level, all its objects share the
+		// second level "recruitmentjobposition". When the caller provides the module name only
+		// (like document.php with its modulepart), we complete the missing parameters from the object.
+		if (empty($feature2)) {
+			$feature2 = 'recruitmentjobposition';
+		}
+		if (empty($tableandshare)) {
+			$tableandshare = $object->table_element;
+		}
 	} elseif ($features == 'stocktransfer' && is_object($object) && $object->element == 'stocktransfer') {
 		$feature2 = 'stocktransfer';	// This module declares no permission at its first level, only this one
 	} elseif (in_array($features, array('fournisseur', 'commande_fournisseur', 'facture_fournisseur', 'order_supplier', 'invoice_supplier'))) {	// When vendor invoice and purchase order are into module 'fournisseur'
@@ -271,6 +289,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	} elseif ($features == 'payment_vat') {
 		$tableandshare = 'payment_vat';
 		$parentfortableentity = 'fk_tva@tva';
+	} elseif ($features == 'payment_donation') {
+		$tableandshare = 'payment_donation';
+		$parentfortableentity = 'fk_donation@don';	// A donation payment has no entity, the entity is the one of its donation
 	}
 
 	// if commonObjectLine : Using many2one related commonObject
@@ -301,6 +322,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'project_task';
 		if (empty($tableandshare)) {
 			$tableandshare = 'projet_task';
+		}
+	}
+
+	// If the $features parameter is empty, there is no permission we can check, so the access must
+	// be refused. Without this test, all the checks of permission below would be silently skipped and
+	// the access would be granted to any user without any test (see also selectobject.php that forces
+	// its features parameter to 'unknownobject' instead of '' for the same reason).
+	if (empty($features) || trim((string) $features) === '') {
+		dol_syslog('restrictedArea() called with an empty features parameter, we refuse the access', LOG_WARNING);
+		if ($nodie) {
+			return 0;
+		} else {
+			accessforbidden('Bad value for parameter features');
 		}
 	}
 
@@ -388,11 +422,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif ($feature == 'produit') {
-			if ($object->type == 0 && !$user->hasRight('produit', 'lire')) {
+			// $object is only a real Product/Service when the check is scoped to one specific
+			// record (e.g. a product card); a generic area check (e.g. the product/service
+			// dashboard) never sets it, so it keeps its default int value and has no ->type to
+			// tell products and services apart - fall back to requiring either right.
+			if (!is_object($object)) {
+				if (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire')) {
+					$readok = 0;
+					$nbko++;
+				}
+			} elseif ($object->type == 0 && !$user->hasRight('produit', 'lire')) {
 				$readok = 0;
 				$nbko++;
-			}
-			if ($object->type == 1 && !$user->hasRight('service', 'lire')) {
+			} elseif ($object->type == 1 && !$user->hasRight('service', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -428,6 +470,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			}
 		} elseif ($feature == 'payment_vat') {
 			if (!$user->hasRight('tax', 'charges', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_donation') {
+			if (!$user->hasRight('don', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -811,6 +858,9 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'category') {
 			$feature = 'categorie';
 		}
+		if ($feature == 'bank') {
+			$feature = 'banque';
+		}
 		if ($feature == 'contract') {
 			$dbtablename = 'contrat';
 		}
@@ -825,6 +875,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 		if ($feature == 'produit') {
 			$dbtablename = 'product';
+		}
+		if ($feature == 'ficheinter') {
+			$dbtablename = 'fichinter';
+		}
+		if ($feature == 'banque') {
+			// The module name (and permission name) is 'banque', but the table of the bank account object is 'bank_account'
+			$dbtablename = 'bank_account';
 		}
 		if ($feature == 'project') {
 			$feature = 'projet';
@@ -857,12 +914,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentityready = 0;
 
 		// Array to define rules of checks to do
+
 		// Test on entity only (Objects with no link to company)
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement', 'workstation');
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'payment_vat', 'payment_donation', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement', 'workstation');
 		// Test for object Societe
 		$checksoc = array('societe');
 		// Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
-		$checkparentsoc = array('agenda', 'contact', 'contrat', 'ticket');
+		$checkparentsoc = array('agenda', 'contact', 'contrat', 'ticket', 'stocktransfer');
 		// Test for project object
 		$checkproject = array('projet', 'project');
 		// Test for task object
@@ -1171,6 +1229,22 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 		}
 
+		// A private contact (field priv) can only be accessed by the user that created it
+		if ($feature == 'contact' && in_array($dbtablename, array('socpeople', 'contact')) && !empty($objectid)) {
+			$sqlpriv = "SELECT COUNT(dbt.rowid) as nb";
+			$sqlpriv .= " FROM ".MAIN_DB_PREFIX."socpeople as dbt";
+			$sqlpriv .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
+			$sqlpriv .= " AND dbt.priv = 1 AND (dbt.fk_user_creat IS NULL OR dbt.fk_user_creat <> ".((int) $user->id).")";
+			$resqlpriv = $db->query($sqlpriv);
+			if (!$resqlpriv) {
+				return false;
+			}
+			$objpriv = $db->fetch_object($resqlpriv);
+			if ($objpriv && $objpriv->nb > 0) {
+				return false;
+			}
+		}
+
 		if ($sql) {
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -1187,6 +1261,100 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 	dol_syslog("security.lib.php::checkUserAccessToObject::return True", LOG_DEBUG);
 	return true;
+}
+
+/**
+ * Return, among a list of ids of objects of the same type, the ids of the objects the user is not allowed to access,
+ * with the same rules as checkUserAccessToObject(): entity, third parties of the sales representative when the user can not
+ * see all third parties, projects the user can see... It is used by the mass actions of the lists, where the ids come from
+ * the request and not from the list (the list only showed the objects the user can see, the request can contain any id).
+ * Only the types of objects linked to a third party or to a project, and expense reports (author in the hierarchy of the user),
+ * are checked, an empty array is returned for the others.
+ *
+ * @param	User			$user		User
+ * @param	CommonObject	$object		An instance of the class of the objects (used for its element and table_element)
+ * @param	int[]			$ids		Ids of the objects
+ * @return	int[]						Ids of the objects the user can not access (empty if the user can access all of them)
+ * @see checkUserAccessToObject()
+ */
+function getObjectIdsRefusedToUser(User $user, $object, array $ids)
+{
+	$feature = '';
+	switch ($object->element) {
+		case 'societe':
+		case 'contact':
+		case 'contrat':
+		case 'ticket':
+		case 'facture':
+		case 'commande':
+		case 'propal':
+		case 'supplier_proposal':
+		case 'fichinter':
+		case 'shipping':
+		case 'reception':
+		case 'order_supplier':
+		case 'invoice_supplier':
+			$feature = $object->element;
+			break;
+		case 'action':
+			$feature = 'agenda';
+			break;
+		case 'project':
+			$feature = 'projet';
+			break;
+		case 'project_task':
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$feature = 'project_task';
+			break;
+		case 'expensereport':
+			// Not linked to a third party but to its author, who must be in the hierarchy of the user unless he can read
+			// all expense reports (same rule as checkUserAccessToObject() with the object, and expensereport/card.php).
+			// checkUserAccessToObject() can't check it with an id only, so all ids are checked with one request.
+			global $db;
+			$sanitizedids = [];
+			foreach ($ids as $id) {
+				if ((int) $id > 0) {
+					$sanitizedids[] = (int) $id;
+				}
+			}
+			if (empty($sanitizedids)) {
+				return [];
+			}
+			$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."expensereport as t";
+			$sql .= " WHERE t.rowid IN (".$db->sanitize(implode(',', $sanitizedids)).")";
+			$sql .= " AND (t.entity NOT IN (".getEntity('expensereport', 1).")";
+			if (!$user->hasRight('expensereport', 'readall')) {
+				$sql .= " OR t.fk_user_author NOT IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
+			}
+			$sql .= ")";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);
+				return $sanitizedids;
+			}
+			$refusedids = [];
+			while ($obj = $db->fetch_object($resql)) {
+				$refusedids[] = (int) $obj->rowid;
+			}
+			$db->free($resql);
+			return $refusedids;
+	}
+	if (empty($feature)) {
+		return [];
+	}
+
+	$refusedids = [];
+	foreach ($ids as $id) {
+		$id = (int) $id;
+		if ($id <= 0) {
+			continue;
+		}
+		if (!checkUserAccessToObject($user, [$feature], $id, $object->table_element.'&'.$object->element, '', 'fk_soc', 'rowid')) {
+			$refusedids[] = $id;
+		}
+	}
+
+	return $refusedids;
 }
 
 

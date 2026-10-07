@@ -224,7 +224,7 @@ abstract class CommonDocGenerator
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
+	 * @var array<string,array{rank:int,width:float|int|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}},content?:array{align?:string,padding?:array{0:float|int,1:float|int,2:float|int,3:float|int}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -1591,7 +1591,9 @@ abstract class CommonDocGenerator
 			$columnText = $hookmanager->resArray['columnText'];
 		}
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 		if (!$reshook || $reshook > 0) {
 			if (empty($columnText)) {
@@ -1667,7 +1669,9 @@ abstract class CommonDocGenerator
 		);
 		$reshook = $hookmanager->executeHooks('printColDescContent', $parameters, $this); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 	}
 
@@ -1735,7 +1739,9 @@ abstract class CommonDocGenerator
 		);
 		$reshook = $hookmanager->executeHooks('getPDFExtrafieldContent', $parameters, $this); // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) {
-			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			$this->error = $hookmanager->error;
+			$this->errors = $hookmanager->errors;
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 		}
 		if ($reshook) {
 			$extrafieldOutputContent = $hookmanager->resPrint;
@@ -1992,7 +1998,9 @@ abstract class CommonDocGenerator
 
 			$reshook = $hookmanager->executeHooks('pdfTabTitles', $parameters, $this); // Note that $object may have been modified by hook
 			if ($reshook < 0) {
-				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				$this->error = $hookmanager->error;
+				$this->errors = $hookmanager->errors;
+				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 			} elseif (empty($reshook)) {
 				if (!$this->getColumnStatus($colKey)) {
 					continue;

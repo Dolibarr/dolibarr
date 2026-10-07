@@ -34,6 +34,7 @@ allowlist = [
     "date",
     "diff",
     "dirname",
+    "dot",
     "du",
     "echo",
     "file",
@@ -135,4 +136,3 @@ permission = "always"
 
 [tools.connector_github_app_pull_request_read]
 permission = "always"
-

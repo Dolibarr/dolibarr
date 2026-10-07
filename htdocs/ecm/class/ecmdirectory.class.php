@@ -733,7 +733,9 @@ class EcmDirectory extends CommonObject
 			$this->buildPathFromId($key, 0);
 		}
 
-		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', 1, 0);
+		/** @var array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:string,id_children?:int[],level:int}> $cats Type of property $cats, to fix the unresolvable type of dol_sort_array call. */
+		$cats = $this->cats;
+		$this->cats = dol_sort_array($cats, 'fulllabel', 'asc', 1, 0);
 		$this->full_arbo_loaded = 1;
 
 		return $this->cats;

@@ -513,7 +513,7 @@ class FormMail extends Form
 
 			// Define output language
 			$outputlangs = $langs;
-			$newlang = '';
+			$newlang = getDolGlobalInt('MAIN_MULTILANGS') ? '' : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
 			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($this->param['langsmodels'])) {
 				$newlang = $this->param['langsmodels'];
 			}
@@ -602,7 +602,7 @@ class FormMail extends Form
 						$labeltouse = $line->label;
 					}
 
-					if ($break != $line->lang) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && $break != $line->lang) {
 						// New break for a new language, we add the break
 						$s = $line->lang;
 						$shtml = '----- '.$langs->trans("Language_".$line->lang).' -----';
@@ -612,7 +612,7 @@ class FormMail extends Form
 					// We escape the $labeltouse to store it into $modelmail_array.
 					$s = dol_escape_htmltag($labeltouse);
 					$shtml = dol_escape_htmltag($labeltouse);
-					if ($line->lang) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && $line->lang) {
 						$shtml = picto_from_langcode($line->lang).'</span> '.$shtml;
 					}
 					if ($line->private) {
@@ -2046,6 +2046,8 @@ class FormMail extends Form
 		}
 		if ($type_template === 'societe') {
 			$type_template = 'thirdparty';
+		} elseif ($type_template === 'action') {	// Object type used by notifications for an event of the agenda
+			$type_template = 'actioncomm';
 		}
 		$ret = new CEmailTemplate($dbs);
 
