@@ -127,18 +127,6 @@ parameters:
 			path: ../../../htdocs/debugbar/class/DataCollector/DolPhpCollector.php
 
 		-
-			message: '#^Parameter \#1 \$callback of function spl_autoload_register expects \(callable\(string\)\: void\)\|null, Closure\(mixed\)\: bool given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/debugbar/class/autoloader.php
-
-		-
-			message: '#^Strict comparison using \!\=\= between IMAP\\Connection\|true and false will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
-
-		-
 			message: '#^Property ExpeditionLigne\:\:\$detail_children \(array\<int, array\<int, float\|int\>\>\) on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.property
 			count: 1

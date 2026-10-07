@@ -1873,7 +1873,7 @@ class EmailCollector extends CommonObject
 		$arrayofemailtodelete = array();	// Track email to delete to make the deletion at end.
 
 		// Loop on each email found
-		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0 && $connection !== false) {
+		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0) {
 			// Loop to get part html and plain
 			/*
 			 0 multipart/mixed
