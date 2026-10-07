@@ -160,6 +160,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new User($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'user';
+	} elseif ($type == Categorie::TYPE_WAREHOUSE && $user->hasRight('stock', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		$tmpobject = new Entrepot($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'warehouse';
 	} elseif ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$tmpobject = new Ticket($db);
@@ -291,7 +296,9 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		$newobject = new FactureFournisseur($db);
 		$elementtype = 'supplier_invoice';
 	} else {
-		dol_print_error(null, "Not supported value of type = ".$type);
+		// No permission to modify the objects of this type: refuse instead of reporting a success
+		$result = -1;
+		$object->error = $langs->trans("NotEnoughPermissions");
 	}
 	if ($newobject !== null) {
 		$result = $newobject->fetch($elemid);
@@ -1494,6 +1501,10 @@ if ($type == Categorie::TYPE_FICHINTER) {
 }
 
 // List of Orders
+// The objects of the category are listed only to a user allowed to read them
+if ($type == Categorie::TYPE_ORDER && !$user->hasRight('commande', 'lire')) {
+	accessforbidden("NotEnoughPermissions", 0, 0);
+}
 if ($type == Categorie::TYPE_ORDER) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
@@ -1662,6 +1673,9 @@ if ($type == Categorie::TYPE_MO) {
 }
 
 // List of Invoices
+if ($type == Categorie::TYPE_INVOICE && !$user->hasRight('facture', 'lire')) {
+	accessforbidden("NotEnoughPermissions", 0, 0);
+}
 if ($type == Categorie::TYPE_INVOICE) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -1743,6 +1757,9 @@ if ($type == Categorie::TYPE_INVOICE) {
 }
 
 // List of Supplier Orders
+if ($type == Categorie::TYPE_SUPPLIER_ORDER && !((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')))) {
+	accessforbidden("NotEnoughPermissions", 0, 0);
+}
 if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
@@ -1825,6 +1842,9 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 }
 
 // List of Supplier Invoices
+if ($type == Categorie::TYPE_SUPPLIER_INVOICE && !((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire')))) {
+	accessforbidden("NotEnoughPermissions", 0, 0);
+}
 if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
