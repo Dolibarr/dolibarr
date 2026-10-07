@@ -1168,8 +1168,6 @@ trait CommonSubtotal
 	 * for the color of a subtotal line (footer of the block). When no color is defined for the
 	 * footer, the color of the header is used, so the behaviour stays the same as before the
 	 * footer color was introduced.
-	 * Note: the color of the footer is used on the screen only, the PDF keeps the color of the title
-	 * line for both lines of the block.
 	 *
 	 * @param int|float $level The level of the subtotal for which the color is requested.
 	 * @return string The background color in hexadecimal format, empty if not set.
@@ -1192,7 +1190,6 @@ trait CommonSubtotal
 	 * color of a subtotal line (footer of the block). When no color is defined for the footer, the color
 	 * of the header is used. An empty return value means no color was set, so the caller decides one
 	 * from the background color, which is the behaviour of the module when no text color is configured.
-	 * Note: used on the screen only, the PDF always computes the text color from the background.
 	 *
 	 * @param int|float $level The level of the subtotal for which the text color is requested.
 	 * @return string The text color in hexadecimal format, empty if not set.
