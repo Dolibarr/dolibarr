@@ -271,7 +271,7 @@ if (empty($reshook)) {
 				$result = $object->delete($user);
 				if ($result < 0) {
 					$langs->load("errors");
-					setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
+					setEventMessages($langs->trans("ErrorUserCannotBeDelete"), $object->errors, 'errors');
 				} else {
 					setEventMessages($langs->trans("RecordDeleted"), null);
 					header("Location: ".DOL_URL_ROOT."/user/list.php?restore_lastsearch_values=1");

@@ -2128,6 +2128,7 @@ class Products extends DolibarrApi
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url PUT variants/{id}
 	 */
@@ -2138,7 +2139,9 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		$prodcomb->fetch((int) $id);
+		if ($prodcomb->fetch((int) $id) <= 0) {
+			throw new RestException(404, "Variant not found");
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'rowid') {
@@ -2170,6 +2173,7 @@ class Products extends DolibarrApi
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url DELETE variants/{id}
 	 */
@@ -2180,7 +2184,9 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		$prodcomb->id = (int) $id;
+		if ($prodcomb->fetch((int) $id) <= 0) {
+			throw new RestException(404, "Variant not found");
+		}
 		$result = $prodcomb->delete(DolibarrApiAccess::$user);
 		if ($result <= 0) {
 			throw new RestException(500, "Error deleting variant");

@@ -1781,6 +1781,31 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
+		// A user that still has HRM data (competency assessments, job positions, skills) must not be deleted
+		if (isModEnabled('hrm')) {
+			global $langs;
+
+			$hrmtables = array(
+				'hrm_evaluation' => array('label' => 'EvaluationCard', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_job_user' => array('label' => 'EmployeePosition', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
+			);
+			foreach ($hrmtables as $hrmtable => $hrminfo) {
+				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$hrmtable." WHERE ".$hrminfo['filter'];
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj && $obj->nb > 0) {
+						$langs->loadLangs(array('errors', 'hrm'));
+						$this->error = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $this->login, $langs->transnoentitiesnoconv($hrminfo['label']));
+						$this->errors[] = $this->error;
+						$this->db->rollback();
+						return -1;
+					}
+				}
+			}
+		}
+
 		// Remove rights
 		$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id);
 
@@ -1798,6 +1823,13 @@ class User extends CommonObject
 
 		// Remove params
 		$sql = "DELETE FROM ".$this->db->prefix()."user_param WHERE fk_user  = ".((int) $this->id);
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		// Remove the private bookmarks of the user (the public ones have no owner and are kept)
+		$sql = "DELETE FROM ".$this->db->prefix()."bookmark WHERE fk_user = ".((int) $this->id);
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
