@@ -92,7 +92,9 @@ if (!$res) {
  */
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+// BEGIN MODULEBUILDER DOCGENERATION
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+// END MODULEBUILDER DOCGENERATION
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
@@ -161,7 +163,9 @@ if ($enablepermissioncheck) {
 	$permissiondellink = 1;
 }
 
-$upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1].'/myobject';
+// BEGIN MODULEBUILDER DOCGENERATION
+$upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1];
+// END MODULEBUILDER DOCGENERATION
 
 // Security check (enable at least one, the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -217,8 +221,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
 	//END MODULEBUILDER LINES
 
+	// BEGIN MODULEBUILDER DOCGENERATION
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	// END MODULEBUILDER DOCGENERATION
 
 	// Other special actions
 	/*
@@ -250,7 +256,9 @@ if ($action != 'create' && ! $object->id) {
 }
 
 $form = new Form($db);
+// BEGIN MODULEBUILDER DOCGENERATION
 $formfile = new FormFile($db);
+// END MODULEBUILDER DOCGENERATION
 
 $title = $langs->trans("MyObject")." - ".$langs->trans('Card');
 //$title = $object->ref." - ".$langs->trans('Card');
@@ -635,20 +643,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
+		// BEGIN MODULEBUILDER DOCGENERATION
 		print '<a name="builddoc"></a>'; // ancre
 
-		$includedocgeneration = 0;
-
 		// Documents
-		if ($includedocgeneration) {
-			$objref = dol_sanitizeFileName($object->ref);
-			$relativepath = $objref.'/'.$objref.'.pdf';
-			$filedir = $conf->mymodule->dir_output.'/'.$object->element.'/'.$objref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $permissiontoread; // If you can read, you can build the PDF to read content
-			$delallowed = $permissiontoadd; // If you can create/edit, you can remove a file on card
-			print $formfile->showdocuments($object->element.'@'.$object->module, $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-		}
+		$objref = dol_sanitizeFileName($object->ref);
+		$filedir = $conf->mymodule->dir_output.'/'.$object->element.'/'.$objref;
+		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+		$genallowed = $permissiontoread; // If you can read, you can build the PDF to read content
+		$delallowed = $permissiontoadd; // If you can create/edit, you can remove a file on card
+		print $formfile->showdocuments('mymodule:MyObject', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+		// END MODULEBUILDER DOCGENERATION
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('myobject'), 1);
