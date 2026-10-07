@@ -55,6 +55,22 @@ tar -cf - -C dev/build/docker-vibe . -C "$PWD" .pre-commit-config.yaml | sudo do
 ### Run image
 GIT_DIR=`basename $PWD` sudo docker run --rm -it -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e HOST_USER="$(id -un)" --network=host --cap-add=NET_ADMIN -v "$HOME/git/test:/test" -v "$HOME/.vibe:/home/$(id -un)/.vibe" --mount type=bind,src="$HOME/git/$GIT_DIR",dst=/$GIT_DIR -w /$GIT_DIR dockervibe bash
 
+## Clipboard and links work with the desktop of the host
+
+Two features of Vibe need to reach the desktop of the host, and a container cannot do it alone. The image and `vibes.sh` provide what is needed:
+
+- **Copy to clipboard**: Vibe copies first through `pyperclip` (installed into the image), that uses `xclip` (installed into the image) to talk to the X server of the host, reached through the socket `/tmp/.X11-unix` mounted by `vibes.sh`. When this native copy works, Vibe verifies it by reading the clipboard back (the message "Selection copied to clipboard" without a hint is then displayed). `wl-clipboard` is also installed for the Wayland native equivalent (`wl-copy`, `wl-paste`).
+- **Open links**: the links of the chat are opened by the program declared in the `BROWSER` environment variable of the image: `open-on-host`. It forwards the URL to the xdg-desktop-portal of the host session over the D-Bus session bus (socket into `XDG_RUNTIME_DIR`, mounted by `vibes.sh`), and the host opens the URL in its default browser. The container itself contains no browser.
+
+It works out of the box when the container is started with `vibes.sh` from a terminal of the graphical session of the host (GNOME on Wayland or X11): `vibes.sh` passes the environment (`DISPLAY`, `WAYLAND_DISPLAY`, `XDG_SESSION_TYPE`, `XDG_RUNTIME_DIR`, `XAUTHORITY`) and mounts the host sockets (`/tmp/.X11-unix`, `XDG_RUNTIME_DIR`). Outside a graphical session (SSH, console), nothing is added and Vibe falls back to its own mechanisms: the OSC 52 escape sequence for the clipboard, that the terminals based on VTE (GNOME Terminal, Tilix) do not support, and the selection of the terminal itself (hold Shift while selecting, paste with the mouse wheel).
+
+Security note: mounting `XDG_RUNTIME_DIR` gives the container an access to the session bus of the host, so to the same services as the applications of your session. It is consistent with the rest of this setup (the container already runs with `--network=host` and your repository mounted), but keep it in mind.
+
+If the clipboard still does not work:
+- Check that `DISPLAY` is set on the host (`echo $DISPLAY`). On a Wayland session, GNOME runs XWayland, so `DISPLAY` is normally defined and `xclip` works through it.
+- If the copy fails with an authorization error, allow your own user to connect to the X server from the container with `xhost +si:localuser:$(id -un)` on the host (the connections from the container come with your UID).
+- The links can also be opened with Shift+clic: it is then the terminal itself that opens them (OSC 8 hyperlinks), which bypasses the container.
+
 ## pre-commit
 The tool `pre-commit` is installed into the image (see https://pre-commit.com).
 Hooks for the Dolibarr repository are defined into the file `.pre-commit-config.yaml` at the repository root.

@@ -254,7 +254,7 @@ class Product extends CommonObject
 	 */
 	public $prices_by_qty_id = array();
 	/**
-	 * @var array<int,array<array{rowid:int,price_base_type:string,unitprice:string}>>
+	 * @var array<int,array<array{rowid:int,price:string,unitprice:string,quantity:string,remise_percent:string,remise?:string,price_base_type:string}>>
 	 */
 	public $prices_by_qty_list = array();
 
@@ -2572,7 +2572,7 @@ class Product extends CommonObject
 	 * @param	Societe		$thirdparty_seller		Seller
 	 * @param	Societe		$thirdparty_buyer		Buyer
 	 * @param	int			$pqp					Id of product price per quantity if a selection was done of such a price
-	 * @return	array{pu_ht:float|int|string,pu_ttc:float|int|string,price_min:float|int|string,price_base_type:string,tva_tx:float|string|null|int,tva_npr:float|int}
+	 * @return	array{pu_ht:float|int|string,pu_ttc:float|int|string,price_min:float|int|string,price_min_ttc:float|int|string,price_base_type:string,tva_tx:float|string|null|int,tva_npr:float|int,localtax1:int|string,localtax2:int|string}
 	 * @see get_buyprice(), find_min_price_product_fournisseur()
 	 */
 	public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
@@ -3291,7 +3291,7 @@ class Product extends CommonObject
 		} else {
 			$sql .= " p.pmp,";
 		}
-		$sql .= " p.datec, GREATEST(p.tms, pef.tms) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
+		$sql .= " p.datec, GREATEST(p.tms, COALESCE(pef.tms, p.tms)) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		$sql .= " p.price_label,";
 		if ($separatedStock) {
@@ -3819,7 +3819,7 @@ class Product extends CommonObject
 		$sql .= " AND p.entity IN (".getEntity('propal').")";
 		$sql .= " AND pd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND pr.fk_statut != 0";
 		if ($socid > 0) {
@@ -3896,7 +3896,7 @@ class Product extends CommonObject
 		$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 		$sql .= " AND pd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND pr.fk_statut != 0";
 		if ($socid > 0) {
@@ -3950,7 +3950,7 @@ class Product extends CommonObject
 		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'commande').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -4106,7 +4106,7 @@ class Product extends CommonObject
 		$sql .= " AND c.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -4178,7 +4178,7 @@ class Product extends CommonObject
 		$sql .= " AND ed.fk_elementdet = cd.rowid";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND e.fk_soc = ".((int) $socid);
@@ -4260,7 +4260,7 @@ class Product extends CommonObject
 		$sql .= " AND cf.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'supplier_order').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND cf.fk_soc = ".((int) $socid);
@@ -4332,7 +4332,7 @@ class Product extends CommonObject
 		$sql .= " AND mp.fk_product = ".((int) $this->id);
 		$sql .= " AND (mp.disable_stock_change IN (0) OR mp.disable_stock_change IS NULL)";
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = m.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = m.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($socid > 0) {
 			$sql .= " AND m.fk_soc = ".((int) $socid);
@@ -4457,7 +4457,7 @@ class Product extends CommonObject
 		$sql .= " AND c.entity IN (".getEntity('contract').")";
 		$sql .= " AND cd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND c.statut != 0";
 		if ($socid > 0) {
@@ -4530,7 +4530,7 @@ class Product extends CommonObject
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
@@ -4604,7 +4604,7 @@ class Product extends CommonObject
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
@@ -4675,7 +4675,7 @@ class Product extends CommonObject
 		$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 		$sql .= " AND fd.fk_product = ".((int) $this->id);
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir')) {	// For external user, restriction is done on filter on fk_soc directly
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " AND EXISTS (SELECT 1 FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 		}
 		//$sql.= " AND f.fk_statut != 0";
 		if ($socid > 0) {
@@ -7615,7 +7615,7 @@ class Product extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, GREATEST(p.tms, pef.tms) as date_modification,";
+		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, GREATEST(p.tms, COALESCE(pef.tms, p.tms)) as date_modification,";
 		$sql .= " p.fk_user_author, p.fk_user_modif";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as p";
 		$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as pef ON pef.fk_object=p.rowid";

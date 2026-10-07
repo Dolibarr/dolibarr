@@ -2252,8 +2252,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if ($useonlinepayment) {
 				print '<br>';
-				if (empty($amount)) {   // Take the maximum amount among what the member is supposed to pay / has paid in the past
-					$amount = max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount);
+				// Take the maximum amount among what the member is supposed to pay / has paid in the past
+				$amount = max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount);
+				if (!empty($adht->caneditamount)) {
+					$amount = max($amount, $adht->minimumamount);
 				}
 				if (empty($amount)) {
 					$amount = 0;

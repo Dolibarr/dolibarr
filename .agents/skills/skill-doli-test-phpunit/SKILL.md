@@ -48,7 +48,7 @@ The user request should contain, when available:
 - tests must be deterministic and independent
 - avoid dependencies on external services
 - clean up every object created during the test
-- when launching phpunit, set the cache directory to `/tmp` with `--cache-directory "/tmp"`
+- when launching phpunit, do not use cache directory with `--do-not-cache-result`
 
 
 ## Critical Rules (DO NOT VIOLATE)

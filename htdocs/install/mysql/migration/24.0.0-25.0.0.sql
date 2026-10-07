@@ -295,6 +295,34 @@ ALTER TABLE llx_paiementcharge ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_various ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_salary ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_loan ADD COLUMN import_key varchar(14);
+
+ALTER TABLE llx_loan ADD COLUMN frequency integer DEFAULT 12 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN interest_basis smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN balloon_amount double(24,8) DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN charge_type smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN charge_per_payment smallint DEFAULT 0 NOT NULL;
+-- History of the changes of a loan: rate changes, and payments that differ from the schedule,
+-- with how the unpaid payments were recalculated.
+create table llx_loan_change
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,
+  fk_loan			integer NOT NULL,
+  datec				datetime,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  date_change		date,							-- date from which the change applies
+  reason			varchar(16) NOT NULL,			-- 'rate' (rate change) or 'payment' (payment different from the schedule)
+  rate_old			double,
+  rate_new			double,
+  keep_mode			varchar(16),					-- 'term' (number of payments kept), 'payment' (repayment kept) or '' (no schedule)
+  payment_old		double(24,8),
+  payment_new		double(24,8),
+  nbterm_old		real,
+  nbterm_new		real,
+  fk_payment_loan	integer DEFAULT NULL,			-- payment that caused the change (reason 'payment')
+  fk_user_author	integer DEFAULT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_loan_change ADD INDEX idx_loan_change_fk_loan (fk_loan);
 ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
@@ -446,7 +474,17 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES 
 -- Top menu "Banks | Cash" now opens the new bank dashboard page instead of the list of accounts
 UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' WHERE type = 'top' AND mainmenu = 'bank' AND url LIKE '/compta/bank/list.php?search_status=opened%';
 
+-- Indexes for the widgets of the home page: latest prospects and latest suppliers (sorted on tms) and balance of bank accounts
+ALTER TABLE llx_societe ADD INDEX idx_societe_fournisseur_tms(fournisseur, tms);
+ALTER TABLE llx_societe ADD INDEX idx_societe_client_tms(client, tms);
+ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account_amount(fk_account, amount);
+
 -- The ref of a variant attribute is unique per entity, like the ref of a product, not for the whole database
 -- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
 -- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
 ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
+
+-- API keys created from the user's token tab were written to the deprecated column token, while
+-- the API authenticates against tokenstring (where the upgrade that moves user api_key values
+-- puts them). Those keys never worked: copy them where they are read.
+UPDATE llx_oauth_token SET tokenstring = token WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;

@@ -8,7 +8,8 @@
  * Copyright (C) 2019       JC Prieto			<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2026	Guillaume de Wellenstein	<guillaume@tecneo.fr>
+ * Copyright (C) 2026	   Guillaume de Wellenstein	<guillaume@tecneo.fr>
+ * Copyright (C) 2026	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2598,15 +2599,42 @@ class BonPrelevement extends CommonObject
 				$XML_DEBITOR .= '				</DbtrAcct>' . $CrLf;
 				$XML_DEBITOR .= '				<RmtInf>' . $CrLf;
 
-				// Structured data for Belgium
-				if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $mysoc->country_code == 'BE') {
+				// Structured payment reference, see core/lib/paymentref.lib.php
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_creditorref.lib.php';
+
+				$invoicestatic = new Facture($this->db);
+				$invoicestatic->fetch($row_idfac);
+
+				$paymentref = empty($invoicestatic->payment_reference) ? '' : (string) $invoicestatic->payment_reference;
+
+				// Invoices issued before the reference was stored still get one here
+				if ($paymentref === '' && getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') && $mysoc->country_code == 'BE') {
 					include_once DOL_DOCUMENT_ROOT . '/core/lib/functions_be.lib.php';
+					$paymentref = dolBECalculateStructuredCommunication($invoicestatic->ref, $invoicestatic->type);
+				}
 
-					$invoicestatic = new Facture($this->db);
-					$invoicestatic->fetch($row_idfac);
+				$scheme = dolPayRefDetectScheme($paymentref);
 
-					$invoicePaymentKey = dolBECalculateStructuredCommunication($invoicestatic->ref, $invoicestatic->type);
-					$XML_DEBITOR .= '					<strd>' . $invoicePaymentKey . '</strd>' . $CrLf;
+				if ($scheme == 'SCOR' || $scheme == 'BBA') {
+					// ISO 20022 needs the reference inside a CdtrRefInf block. SCOR is the
+					// code for ISO 11649, BBA the proprietary scheme of the belgian banks.
+					$XML_DEBITOR .= '					<Strd>' . $CrLf;
+					$XML_DEBITOR .= '						<CdtrRefInf>' . $CrLf;
+					$XML_DEBITOR .= '							<Tp>' . $CrLf;
+					$XML_DEBITOR .= '								<CdOrPrtry>' . $CrLf;
+					if ($scheme == 'SCOR') {
+						$XML_DEBITOR .= '									<Cd>SCOR</Cd>' . $CrLf;
+					} else {
+						$XML_DEBITOR .= '									<Prtry>BBA</Prtry>' . $CrLf;
+					}
+					$XML_DEBITOR .= '								</CdOrPrtry>' . $CrLf;
+					$XML_DEBITOR .= '							</Tp>' . $CrLf;
+					$XML_DEBITOR .= '							<Ref>' . dolEscapeXML(dolPayRefStrip($paymentref)) . '</Ref>' . $CrLf;
+					$XML_DEBITOR .= '						</CdtrRefInf>' . $CrLf;
+					$XML_DEBITOR .= '					</Strd>' . $CrLf;
+				} elseif ($scheme == 'FI') {
+					// A finnish national reference has no ISO 20022 code, it travels as free text
+					$XML_DEBITOR .= '					<Ustrd>' . dolEscapeXML($paymentref) . '</Ustrd>' . $CrLf;
 				} else {
 					// A string with some information on payment - 140 max
 					$XML_DEBITOR .= '					<Ustrd>' . getDolGlobalString('PRELEVEMENT_USTRD', dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($row_ref . ($row_comment ? ' - ' . $row_comment : '')), '', '', '', 1), 135, 'right', 'UTF-8', 1))) . '</Ustrd>' . $CrLf; // Free unstuctured data - 140 max

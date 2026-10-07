@@ -4521,7 +4521,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$text = $button['text'] ?? '';
 				$actionType = $button['actionType'] ?? '';
 				$tmpUrl = '';
-				if (!empty($subbutton['urlraw'])) {
+				if (isset($subbutton['urlraw']) && !empty($subbutton['urlraw'])) {
 					$tmpUrl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} elseif (!empty($button['urlroot'])) {
 					$tmpUrl = $button['urlroot'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
@@ -5578,7 +5578,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$contactGetNomUrlCache = array();
 
 		$out .= '<div class="filters-container" >';
-		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST" spellcheck="false">';
 		$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 
 		if (

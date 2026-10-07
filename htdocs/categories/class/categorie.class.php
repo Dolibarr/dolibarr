@@ -688,6 +688,23 @@ class Categorie extends CommonObject
 			dol_syslog($this->error, LOG_WARNING);
 			return -1;
 		}
+		// Nor one of its descendants, which would detach both from the tree and make a loop: go up from the new parent
+		// (only when the parent changes, or when we do not know the previous parent)
+		if (empty($this->oldcopy) || $this->fk_parent != $this->oldcopy->fk_parent) {
+			$ancestorid = $this->fk_parent;
+			$protection = 1000;
+			while ($ancestorid > 0 && $protection-- > 0) {
+				$resql = $this->db->query("SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".((int) $ancestorid));
+				$obj = $resql ? $this->db->fetch_object($resql) : null;
+				$ancestorid = $obj ? (int) $obj->fk_parent : 0;
+				if ($ancestorid == $this->id) {
+					$langs->load('categories');
+					$this->error = $langs->trans("ErrorCategoryCannotBeMovedIntoItsDescendant");
+					dol_syslog($this->error, LOG_WARNING);
+					return -1;
+				}
+			}
+		}
 
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");
@@ -811,6 +828,17 @@ class Categorie extends CommonObject
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
 		);
+		// The links of the category are in the table of its own type: make sure that table is purged even when it is
+		// missing from the list above or disabled there, otherwise its foreign key refuses to delete the category.
+		$typecode = is_numeric($this->type) ? array_search((int) $this->type, $this->MAP_ID) : $this->type;
+		if (!empty($typecode) && $typecode != 'bank_line') {	// the links of bank lines are in category_bankline, already in the list
+			$linktable = 'categorie_'.(empty($this->MAP_CAT_TABLE[$typecode]) ? $typecode : $this->MAP_CAT_TABLE[$typecode]);
+			if (array_key_exists($linktable, $arraydelete)) {
+				$arraydelete[$linktable] = 'fk_categorie';
+			} else {
+				$arraydelete = array($linktable => 'fk_categorie') + $arraydelete;
+			}
+		}
 		foreach ($arraydelete as $key => $value) {
 			$sanitizedvalue = $value;
 			if (is_array($value)) {

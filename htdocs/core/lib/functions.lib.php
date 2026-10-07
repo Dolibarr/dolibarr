@@ -2327,7 +2327,7 @@ function dolSlugify($stringtoslugify)
  * Returns text escaped for inclusion into JavaScript code.
  *
  * @param	int|string	$stringtoescape			String to escape
- * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and " with \\.
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and \" with \\.
  * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
  * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
@@ -6129,42 +6129,40 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		$dom->loadHTML('<?xml encoding="UTF-8"><div id="' . $wrapperId . '">' . $stringtoclean . '</div>', LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
 		error_reporting($savwarning);
 
-		if ($dom instanceof DOMDocument) {
-			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
-				$el = $els->item($i);
-				if (!$el instanceof DOMElement) {
-					continue;
-				}
-				$attrs = $el->attributes;
-				for ($ii = $attrs->length - 1; $ii >= 0; $ii--) {
-					//var_dump($attrs->item($ii));
-					if (!empty($attrs->item($ii)->name)) {
-						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
-							// Delete attribute if not into allowed_attributes  @phan-suppress-next-line PhanUndeclaredMethod
-							$els->item($i)->removeAttribute($attrs->item($ii)->name);
-						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
-							// If attribute is 'style'
-							$valuetoclean = $attrs->item($ii)->value;
+		for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
+			$el = $els->item($i);
+			if (!$el instanceof DOMElement) {
+				continue;
+			}
+			$attrs = $el->attributes;
+			for ($ii = $attrs->length - 1; $ii >= 0; $ii--) {
+				//var_dump($attrs->item($ii));
+				if (!empty($attrs->item($ii)->name)) {
+					if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+						// Delete attribute if not into allowed_attributes  @phan-suppress-next-line PhanUndeclaredMethod
+						$els->item($i)->removeAttribute($attrs->item($ii)->name);
+					} elseif (in_array($attrs->item($ii)->name, array('style'))) {
+						// If attribute is 'style'
+						$valuetoclean = $attrs->item($ii)->value;
 
-							if (isset($valuetoclean)) {
-								do {
-									$oldvaluetoclean = $valuetoclean;
-									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
-									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
-									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-										$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
-										$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
-										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
-									}
+						if ($valuetoclean !== null) {
+							do {
+								$oldvaluetoclean = $valuetoclean;
+								$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
+								$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
+								if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
+									$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
+								}
 
-									// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
-									$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
-									$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
-								} while ($oldvaluetoclean != $valuetoclean);
-							}
-
-							$attrs->item($ii)->value = $valuetoclean;
+								// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
+								$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
+								$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
+							} while ($oldvaluetoclean != $valuetoclean);
 						}
+
+						$attrs->item($ii)->value = $valuetoclean;
 					}
 				}
 			}
@@ -7028,7 +7026,12 @@ function safeArrayMap($callback, array $array)
 
 
 /**
- * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
+ * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'.
+ *
+ * Note: This function can be called thousand of times, so it should just make init of memory vars, with no db access. If you need a dynamic coming from the db,
+ * the return entry must be a simple "lazy load" string, like this example:
+ *   $substitutionarray['__SUBSTITUTION_KEY__@lazyload'] = '/pathtoclass.class.php:Object:methodToCall:id';
+ * The call of the dynamic code methodToCall() to read data will be done by the function make_substitutions() but only if the key __SUBSTITUTION_KEY__ is found into the source string.
  *
  * @param	Translate       $outputlangs    Output language
  * @param	int             $onlykey		1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys),
@@ -7061,7 +7064,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__USER_SIGNATURE__' => (string) (($usersignature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
 		));
 
-		if (is_object($user) && ($user instanceof User)) {
+		if (is_object($user)) {
 			$substitutionarray = array_merge($substitutionarray, array(
 				'__USER_ID__' => (string) $user->id,
 				'__USER_LOGIN__' => (string) $user->login,
@@ -7335,7 +7338,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (is_object($object) && $object->element == 'societe') {
 				/** @var Societe $object */
 				'@phan-var-force Societe $object';
-				$substitutionarray['__THIRDPARTY_ID__'] = $object->id ?? '';
+				$substitutionarray['__THIRDPARTY_ID__'] = ($object->id > 0 ? $object->id : '');
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->name ?? '';
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = $object->name_alias ?? '';
 				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = $object->code_client ?? '';
@@ -8071,7 +8074,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
  *  Complete the $substitutionarray with more entries coming from external module that had set the "substitutions=1" into module_part array.
  *  In this case, method completesubstitutionarray provided by module is called.
  *
- *  @param  array<string,string|float|null>	$substitutionarray		Array substitution old value => new value value
+ *  @param  array<string,string|int|float|null>	$substitutionarray		Array substitution old value => new value value
  *  @param  Translate		$outputlangs            Output language
  *  @param  ?CommonObject	$object                 Source object
  *  @param  ?mixed			$parameters       		Add more parameters (useful to pass product lines)

@@ -554,7 +554,7 @@ class User extends CommonObject
 		$sql .= " fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
 		$sql .= " u.statut as status, u.lang, u.entity,";
 		$sql .= " u.datec as datec,";
-		$sql .= " GREATEST(u.tms, uef.tms) as datem,";
+		$sql .= " GREATEST(u.tms, COALESCE(uef.tms, u.tms)) as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
 		$sql .= " u.flagdelsessionsbefore,";
@@ -1794,6 +1794,31 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
+		// A user that still has HRM data (competency assessments, job positions, skills) must not be deleted
+		if (isModEnabled('hrm')) {
+			global $langs;
+
+			$hrmtables = array(
+				'hrm_evaluation' => array('label' => 'EvaluationCard', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_job_user' => array('label' => 'EmployeePosition', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
+			);
+			foreach ($hrmtables as $hrmtable => $sanitizedhrminfo) {
+				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$hrmtable." WHERE ".$sanitizedhrminfo['filter'];
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj && $obj->nb > 0) {
+						$langs->loadLangs(array('errors', 'hrm'));
+						$this->error = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $this->login, $langs->transnoentitiesnoconv($sanitizedhrminfo['label']));
+						$this->errors[] = $this->error;
+						$this->db->rollback();
+						return -1;
+					}
+				}
+			}
+		}
+
 		// Remove rights
 		$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id);
 
@@ -1811,6 +1836,13 @@ class User extends CommonObject
 
 		// Remove params
 		$sql = "DELETE FROM ".$this->db->prefix()."user_param WHERE fk_user  = ".((int) $this->id);
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		// Remove the private bookmarks of the user (the public ones have no owner and are kept)
+		$sql = "DELETE FROM ".$this->db->prefix()."bookmark WHERE fk_user = ".((int) $this->id);
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
@@ -3796,7 +3828,7 @@ class User extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT u.rowid, u.login as ref, u.datec, fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
-		$sql .= " GREATEST(u.tms, uef.tms) as date_modification, u.entity";
+		$sql .= " GREATEST(u.tms, COALESCE(uef.tms, u.tms)) as date_modification, u.entity";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."user_extrafields as uef ON uef.fk_object = u.rowid";
 		$sql .= " WHERE u.rowid = ".((int) $id);
