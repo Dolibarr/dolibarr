@@ -171,6 +171,59 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule) && $permission
 	}
 }
 
+if ($action == 'recalculate' && $permissiontoadd) {
+	$newrate = GETPOSTFLOAT('newrate');
+	$keep = (GETPOST('keep', 'aZ09') === 'payment' ? 'payment' : 'term');
+	$datefrom = dol_mktime(0, 0, 0, GETPOSTINT('recalcfrommonth'), GETPOSTINT('recalcfromday'), GETPOSTINT('recalcfromyear'));
+	$oldrate = (float) $object->rate;
+	if (GETPOST('newrate') === '' || $newrate < 0 || empty($datefrom)) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanNewRate")), null, 'errors');
+	} else {
+		$db->begin();
+		$error = 0;
+		if (count($echeances->lines) == 0) {
+			// No schedule: only the rate of the loan changes
+			$object->rate = $newrate;
+			if ($object->update($user) < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} elseif (loanRecordChange($db, $user, $object->id, 'rate', $datefrom, $oldrate, $newrate, '', 0, 0, $object->nbterm, $object->nbterm) < 0) {
+				$error++;
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+		} else {
+			// First unpaid payment on or after the date; capital left before it
+			$from = -1;
+			$capital = (float) $object->capital;
+			foreach ($echeances->lines as $k => $l) {
+				if (empty($l->fk_bank) && $l->datep >= $datefrom) {
+					$from = (int) $k;
+					break;
+				}
+				$capital -= (float) $l->amount_capital;
+			}
+			$nbtermold = (float) $object->nbterm;
+			$res = loanRecalculateSchedule($db, $user, $object, $echeances->lines, $from, $capital, $newrate, $keep);
+			if ($res['error']) {
+				$error++;
+				setEventMessages($langs->trans($res['error']), null, 'errors');
+			} elseif (loanRecordChange($db, $user, $object->id, 'rate', (int) $echeances->lines[$from]->datep, $oldrate, $newrate, $keep, $res['payment_old'], $res['payment_new'], $nbtermold, $res['nbterm_new']) < 0) {
+				$error++;
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+			setEventMessages($langs->trans("LoanRecalcDone"), null);
+		}
+		$object->fetch($object->id);
+		$echeances = new LoanSchedule($db);
+		$echeances->fetchAll($object->id);
+	}
+}
+
 
 /*
  * View
@@ -403,7 +456,7 @@ if (count($echeances->lines) > 0) {
 print '<tr class="liste_titre">';
 print '<th class="center">'.$langs->trans("Term").'</th>';
 print '<th class="center">'.$langs->trans("Date").'</th>';
-print '<th class="center">'.$langs->trans("Insurance").'</th>';
+print '<th class="center">'.loanChargeLabel($object->charge_type, $langs).'</th>';
 print '<th class="center">'.$langs->trans("InterestAmount").'</th>';
 print '<th class="center">'.$langs->trans("CapitalAmortization").'</th>';
 print '<th class="center">'.$langs->trans("Amount").'</th>';
@@ -426,9 +479,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$cap_rest = (float) $capital;
-	$insurance = (float) $object->insurance_amount / $object->nbterm;
-	$insurance = price2num($insurance, 'MT');
-	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
+	list($insurance, $regulInsurance) = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
 
 	while ($i < $object->nbterm + 1) {
 		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1, $object->frequency, $object->interest_basis, $object->balloon_amount), 'MT');
@@ -468,9 +519,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$cap_rest = (float) $capital;
-	$insurance = (float) $object->insurance_amount / $object->nbterm;
-	$insurance = price2num($insurance, 'MT');
-	$regulInsurance = price2num((float) $object->insurance_amount - ((float) $insurance * $object->nbterm));
+	list($insurance, $regulInsurance) = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
 	$printed = false;
 
 	foreach ($echeances->lines as $line) {
@@ -547,6 +596,64 @@ if (count($echeances->lines) == 0) {
 }
 print '<div class="center"><input type="submit" class="button button-add" value="'.$label.'" '.(($pay_without_schedule == 1) ? 'disabled title="'.$langs->trans('CantUseScheduleWithLoanStartedToPaid').'"' : '').'title=""></div>';
 print '</form>';
+
+// Recalculate the unpaid payments from a date (rate change, or keep the repayment / the term)
+if ($permissiontoadd && $object->paid != Loan::STATUS_PAID) {
+	$firstunpaid = 0;
+	foreach ($echeances->lines as $l) {
+		if (empty($l->fk_bank)) {
+			$firstunpaid = (int) $l->datep;
+			break;
+		}
+	}
+	print '<br>';
+	print load_fiche_titre($langs->trans("LoanRecalculate"), '', '');
+	print '<form name="recalculate" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="loanid" value="'.$loanid.'">';
+	print '<input type="hidden" name="action" value="recalculate">';
+	print '<table class="border centpercent">';
+	print '<tr><td class="titlefield">'.$langs->trans("LoanRecalcFrom").'</td><td>'.$form->selectDate($firstunpaid ? $firstunpaid : dol_now(), 'recalcfrom', 0, 0, 0, 'recalculate', 1, 0).'</td></tr>';
+	print '<tr><td>'.$langs->trans("LoanNewRate").'</td><td><input name="newrate" size="5" value="'.dol_escape_htmltag((string) $object->rate).'"> %</td></tr>';
+	if (count($echeances->lines) > 0) {
+		print '<tr><td>'.$langs->trans("LoanRecalcKeep").'</td><td>'.$form->selectarray('keep', array('term' => $langs->trans("LoanRecalcKeepTerm"), 'payment' => $langs->trans("LoanRecalcKeepPayment")), 'term').'</td></tr>';
+	}
+	print '</table>';
+	print '<div class="opacitymedium margintoponly">'.$langs->trans(count($echeances->lines) > 0 ? "LoanRecalcHelp" : "LoanRecalcHelpNoSchedule").'</div>';
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("LoanRecalculateButton").'"></div>';
+	print '</form>';
+}
+
+// History of the changes
+$changes = loanFetchChanges($db, $object->id);
+if (count($changes)) {
+	print '<br>';
+	print load_fiche_titre($langs->trans("LoanChangesHistory"), '', '');
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><th>'.$langs->trans("Date").'</th><th>'.$langs->trans("LoanChangeReason").'</th><th>'.$langs->trans("LoanChangeFrom").'</th>';
+	print '<th class="right">'.$langs->trans("Rate").'</th><th>'.$langs->trans("LoanRecalcKeep").'</th><th class="right">'.$langs->trans("Amount").'</th><th class="right">'.$langs->trans("Nbterms").'</th><th>'.$langs->trans("User").'</th></tr>';
+	foreach ($changes as $c) {
+		$u = new User($db);
+		$u->fetch((int) $c->fk_user_author);
+		print '<tr class="oddeven">';
+		print '<td class="nowraponall">'.dol_print_date($c->datec, 'dayhour').'</td>';
+		print '<td>'.$langs->trans($c->reason == 'payment' ? 'LoanChangeReasonPayment' : 'LoanChangeReasonRate');
+		if (!empty($c->fk_payment_loan)) {
+			print ' <a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.((int) $c->fk_payment_loan).'">'.img_object($langs->trans("Payment"), "payment").' '.((int) $c->fk_payment_loan).'</a>';
+		}
+		print '</td>';
+		print '<td class="nowraponall">'.dol_print_date($c->date_change, 'day').'</td>';
+		print '<td class="right nowraponall">'.price($c->rate_old).'% &rarr; '.price($c->rate_new).'%</td>';
+		print '<td>'.($c->keep_mode == 'payment' ? $langs->trans("LoanRecalcKeepPayment") : ($c->keep_mode == 'term' ? $langs->trans("LoanRecalcKeepTerm") : '')).'</td>';
+		print '<td class="right nowraponall">'.($c->keep_mode ? price($c->payment_old, 0, $langs, 1, -1, -1, $conf->currency).' &rarr; '.price($c->payment_new, 0, $langs, 1, -1, -1, $conf->currency) : '').'</td>';
+		print '<td class="right nowraponall">'.((float) $c->nbterm_old != (float) $c->nbterm_new ? ((float) $c->nbterm_old).' &rarr; '.((float) $c->nbterm_new) : ((float) $c->nbterm_new)).'</td>';
+		print '<td>'.($u->id > 0 ? $u->getNomUrl(-1) : '').'</td>';
+		print '</tr>';
+	}
+	print '</table>';
+	print '</div>';
+}
 
 // End of page
 llxFooter();
