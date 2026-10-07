@@ -7395,10 +7395,10 @@ class Form
 		// Now we load the list of VAT
 		$this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
 
-		// Keep only the VAT qualified for $type_vat
+		// Keep only the VAT qualified for $type_vat (0 means all types)
 		$arrayofvatrates = array();
 		foreach ($this->cache_vatrates as $cachevalue) {
-			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
+			if ($type_vat == 0 || empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
 				$arrayofvatrates[] = $cachevalue;
 			}
 		}
