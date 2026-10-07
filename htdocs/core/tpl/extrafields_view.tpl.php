@@ -66,6 +66,7 @@ if (!empty($cols) && !isset($parameters['cols'])) {
 	$cols = $parameters['cols'];
 }
 if (property_exists($object, 'fk_soc') && !empty($object->fk_soc)) {
+	// @phan-suppress-next-line PhanUndeclaredProperty
 	$parameters['socid'] = $object->fk_soc;
 }
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
