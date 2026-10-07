@@ -66,7 +66,7 @@ function subtotalSaveCollapsedRows() {
 	try {
 		window.localStorage.setItem(subtotalCollapseKey, JSON.stringify(subtotalCollapsedRows));
 	} catch (e) {
-		console.log("subtotals: can not save the collapsed blocks in the local storage");
+		console.log('subtotals: can not save the collapsed blocks in the local storage');
 	}
 }
 
@@ -77,7 +77,7 @@ function subtotalSaveCollapsedRows() {
 function subtotalRefreshRows() {
 	var hideUntilLevel = 0;
 
-	$("#<?php echo $tagidfortablednd; ?> tr.drag").each(function () {
+	$('#<?php echo dol_escape_js($tagidfortablednd); ?> tr.drag').each(function () {
 		var row = this;
 		var level = (row.dataset.level !== undefined && row.dataset.level !== '') ? parseInt(row.dataset.level, 10) : null;
 
@@ -113,7 +113,7 @@ $(document).ready(function () {
 	subtotalLoadCollapsedRows();
 	subtotalRefreshRows();
 
-	$("#<?php echo $tagidfortablednd; ?>").on('click', '.subtotalcollapse', function (event) {
+	$('#<?php echo dol_escape_js($tagidfortablednd); ?>').on('click', '.subtotalcollapse', function (event) {
 		event.preventDefault();
 		var rowid = $(this).closest('tr').attr('id');
 		var pos = subtotalCollapsedRows.indexOf(rowid);
