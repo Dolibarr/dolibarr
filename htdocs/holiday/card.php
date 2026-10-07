@@ -92,6 +92,9 @@ $permissiontoapprove = $user->hasRight('holiday', 'approve');
 $canread = 0;
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
+	if ($object->id > 0) {
+		$fuserid = $object->fk_user;	// On an existing leave request, permissions are checked on its owner, never on the fuserid parameter
+	}
 
 	// Check current user can read this leave request
 	if ($user->hasRight('holiday', 'readall')) {
@@ -846,14 +849,25 @@ if (empty($reshook)) {
 
 		$object->fetch($id);
 
-		$oldstatus = $object->status;
-		$object->statut = Holiday::STATUS_DRAFT;
-		$object->status = Holiday::STATUS_DRAFT;
-
-		$result = $object->update($user);
-		if ($result < 0) {
+		// Same rules as the SetToDraft button: user allowed to edit the leave request of its owner, and canceled leave request only
+		if (!$user->hasRight('holiday', 'writeall') && !($user->hasRight('holiday', 'write') && in_array($object->fk_user, $childids))) {
+			accessforbidden();
+		}
+		if ($object->status != Holiday::STATUS_CANCELED) {
 			$error++;
-			setEventMessages($langs->trans('ErrorBackToDraft').' '.$object->error, $object->errors, 'errors');
+			setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('Canceled')), null, 'errors');
+		}
+
+		if (!$error) {
+			$oldstatus = $object->status;
+			$object->statut = Holiday::STATUS_DRAFT;
+			$object->status = Holiday::STATUS_DRAFT;
+
+			$result = $object->update($user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($langs->trans('ErrorBackToDraft').' '.$object->error, $object->errors, 'errors');
+			}
 		}
 
 		if (!$error) {
@@ -864,6 +878,12 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+	}
+
+	// An approved leave request that is already over can be canceled only by an approver (same rule as the Cancel button)
+	if ($action == 'confirm_cancel' && $object->status == Holiday::STATUS_APPROVED && $object->date_fin <= dol_now() && empty($user->admin) && $user->id != $object->fk_user_approve && !$user->hasRight('holiday', 'approve')) {
+		setEventMessages($langs->trans("HolidayStarted").' - '.$langs->trans("NotAllowed"), null, 'errors');
+		$action = '';
 	}
 
 	// If confirmation of cancellation
@@ -896,6 +916,7 @@ if (empty($reshook)) {
 
 				$startDate = $object->date_debut_gmt;
 				$endDate = $object->date_fin_gmt;
+				$alreadydebited = true;
 
 				if (!empty($decrease)) {
 					$lastUpdate = strtotime($object->getConfCP('lastUpdate', dol_print_date(dol_now(), '%Y%m%d%H%M%S')));
@@ -904,7 +925,7 @@ if (empty($reshook)) {
 					if ($object->date_debut_gmt < $endOfMonthBeforeLastUpdate && $object->date_fin_gmt > $endOfMonthBeforeLastUpdate) {
 						$endDate = $endOfMonthBeforeLastUpdate;
 					} elseif ($object->date_debut_gmt > $endOfMonthBeforeLastUpdate) {
-						$endDate = $startDate;
+						$alreadydebited = false;	// Leave after the last month processed by updateSoldeCP(), so nothing was debited yet
 					}
 				}
 
@@ -914,6 +935,9 @@ if (empty($reshook)) {
 				// Calculate number of days consumed
 				$nbopenedday = num_open_day($startDate, $endDate, 0, 1, $object->halfday, $tmpUser->country_id, $object->fk_user);
 
+				if (!$alreadydebited) {
+					$nbopenedday = 0;
+				}
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
 
@@ -1679,7 +1703,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 
 					if (($permissiontoadd || $permissiontoaddall) && $object->status == Holiday::STATUS_CANCELED) {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft&token='.newToken().'" class="butAction">'.$langs->trans("SetToDraft").'</a>';
 					}
 					if ($candelete) {	// If draft or canceled or refused
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
