@@ -39,13 +39,18 @@ $langs->loadLangs(array("companies", "bills"));
 $id = GETPOST("facid", 'int') ?GETPOST("facid", 'int') : GETPOST("id", 'int');
 $ref = GETPOST("ref", 'alpha');
 
+$object = new FactureFournisseur($db);
+$object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
-$object = new FactureFournisseur($db);
 
 
 /*
@@ -58,7 +63,6 @@ $title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Info');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);
 
-$object->fetch($id, $ref);
 $object->fetch_thirdparty();
 
 $object->info($object->id);
