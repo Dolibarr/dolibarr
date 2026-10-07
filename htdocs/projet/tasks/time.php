@@ -759,6 +759,9 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);        // Call method to get list of timespent for a timespent line id (We use the utility method found into Task object)
 					// $object->id is now the task id
+					if (!isset($arrayoftasks[$object->id][(int) $object->timespent_fk_product])) {
+						$arrayoftasks[$object->id][(int) $object->timespent_fk_product] = array('timespent' => 0, 'totalvaluetodivideby3600' => 0, 'ids' => array());
+					}
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 					// Keep the time spent lines that feed this invoice line, so the back link below
