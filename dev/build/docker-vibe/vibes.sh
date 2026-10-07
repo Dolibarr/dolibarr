@@ -33,6 +33,8 @@ if git remote -v 2>/dev/null | grep origin | awk '{print $2}' | sed -e 's/\.git$
 fi
 
 echo IS_DOLIBARR_CORE="$IS_DOLIBARR_CORE"
+echo DOL_CTI_ADMIN_LOGIN="$DOL_CTI_ADMIN_LOGIN"
+echo DOL_CTI_ADMIN_PASSWORD="${DOL_CTI_ADMIN_PASSWORD:0:3}..."
 
 GH_TOKEN=$(gh auth token)
 if [ -z "$GH_TOKEN" ]; then
