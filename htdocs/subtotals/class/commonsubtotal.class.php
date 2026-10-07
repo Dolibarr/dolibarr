@@ -337,7 +337,7 @@ trait CommonSubtotal
 	 * @param Translate	$langs					Translation.
 	 * @param int		$id						ID of the line to delete
 	 * @param bool		$correspondingstline	If true, also deletes the corresponding subtotal line
-	 * @param User		$user					performing the deletion (used for permissions in some modules)
+	 * @param ?User		$user					performing the deletion (used for permissions in some modules)
 	 * @param bool		$deleteblocklines	If true and $id is a title line, also deletes the product lines under it
 	 * @return int								ID of deleted line if successful, -1 on error
 	 *
