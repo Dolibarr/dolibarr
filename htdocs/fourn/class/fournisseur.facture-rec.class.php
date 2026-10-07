@@ -348,7 +348,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$error = 0;
 		$now = dol_now();
 
-		$label = $this->label ?? $this->libelle;
+		$label = empty($this->label) ? $this->libelle : $this->label;
 
 		// Clean parameters
 		$this->titre = empty($this->titre) ? '' : $this->titre;	// deprecated
