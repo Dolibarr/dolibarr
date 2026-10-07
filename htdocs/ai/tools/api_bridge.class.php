@@ -1452,6 +1452,7 @@ class ToolApiBridge extends McpTool
 		}
 		require_once DOL_DOCUMENT_ROOT.$paths[$class];
 		$obj = new $class($this->db);
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product $obj';
 		if ($obj->fetch((int) $id) > 0) {
 			return (string) $obj->ref;
 		}
