@@ -1129,13 +1129,13 @@ $param .= $hookmanager->resPrint;
 // List of mass actions available
 $arrayofmassactions = array(
 	'validate' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
-	//Begin Customisation: Allow Mass edit of extra fields in Vendor Invoice
-	'edit_extrafields' => img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields"),
-	//End Customisation
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
   'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
+if (!empty($extrafields->attributes[$object->table_element]['label'])) { // The mass action is useless when there is no extrafield
+	$arrayofmassactions['edit_extrafields'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields");
+}
 if (isModEnabled('category') && $user->hasRight("fournisseur", "facture", "lire")) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
