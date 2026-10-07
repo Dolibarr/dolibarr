@@ -1063,7 +1063,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$versiontrans .= $objMod->getVersion(1);
 		}
 
-		if ($objMod->isCoreOrExternalModule() == 'external' && ($action == 'checklastversion' || getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE'))) {
+		if ($objMod->isCoreOrExternalModule() == 'external' && getDolGlobalString($const_name) && ($action == 'checklastversion' || getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE'))) {
+			// Check is done only for activated modules.
 			// Setting CHECKLASTVERSION_EXTERNALMODULE to on is a bad practice to activate a check on an external access during the building of the admin page.
 			// 1 external module can hang the application.
 			// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
@@ -1075,7 +1076,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			}
 		}
 
-		if ($objMod->isCoreOrExternalModule() == 'external' && $action == 'checklastversion' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
+		if ($objMod->isCoreOrExternalModule() == 'external' && getDolGlobalString($const_name) && $action == 'checklastversion' && !getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES')) {
 			$checkRes = $objMod->checkForCompliance();	// Check if module is reported as non compliant with Dolibarr rules and law
 			if (!is_numeric($checkRes) && $checkRes != '') {
 				$langs->load("errors");
