@@ -45,11 +45,15 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'commande', $id, '');
 
 
 $object = new Commande($db);
-if (!$object->fetch($id, $ref) > 0) {
+$resultfetch = $object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'commande', $id, '');
+if (!$resultfetch > 0) {
 	dol_print_error($db);
 	exit;
 }
