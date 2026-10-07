@@ -1008,6 +1008,9 @@ class Holiday extends CommonObject
 		$error = 0;
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
+		if ($this->status == self::STATUS_REFUSED || $this->status == self::STATUS_APPROVED) {
+			$checkBalance = 0;	// No balance check to refuse a request, nor on an approved request (its days are already debited)
+		}
 
 		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT && $this->statut != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
@@ -1151,11 +1154,19 @@ class Holiday extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
+		// Delete extrafields before the leave request
+		$result = $this->deleteExtraFields();
+		if ($result < 0) {
 			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		if (!$error) {

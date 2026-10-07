@@ -146,6 +146,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new User($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'user';
+	} elseif ($type == Categorie::TYPE_WAREHOUSE && $user->hasRight('stock', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		$tmpobject = new Entrepot($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'warehouse';
 	} elseif ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) {
 		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$tmpobject = new Ticket($db);
