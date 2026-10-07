@@ -765,7 +765,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Presend form
 	$modelmail = 'evaluation';
 	$defaulttopic = 'InformationMessage';
-	$diroutput = $conf->hrm->dir_output;
+	$diroutput = $conf->hrm->dir_output.'/evaluation';
 	$trackid = 'evaluation'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
