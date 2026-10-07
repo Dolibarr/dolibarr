@@ -211,7 +211,7 @@ Before any modification, verify:
 
 ### Local Dolibarr Online test — Page Access
 
-You can find the URL of an online instance into file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
+You can find the URL of an online instance into file `htdocs/conf/conf.php` in parameter `$dolibarr_main_url_root`. 
 You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database.
 
 Dolibarr requires a CSRF token and a session cookie. To access any authenticated page:
@@ -219,7 +219,9 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
 1. **GET the login page** (e.g. `index.php?mainmenu=home`) to obtain:
    - The CSRF token: extract the `name="token" value="..."` field from the HTML.
    - The session cookie: the `DOLSESSID_*` cookie set in the response headers.
-2. **POST the login form** to `index.php` with `token`, `username`, `password`, and `actionlogin=dologin`. Keep the cookie for subsequent requests.
+2. **POST the login form** to `index.php` with `token`, `username`, `password`, and `actionlogin=dologin`
+	- Ask the password if you need one (don't try to guess it from database).
+	- Keep the cookie for subsequent requests.
 3. **Reuse the session cookie** on all subsequent page requests — the session is now authenticated.
 
 ---
