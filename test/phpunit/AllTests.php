@@ -69,19 +69,23 @@ $phpunit_modules_check = array(
 	'numberwords' => array('required' => false, 'blocking' => false, 'message' => 'Numberwords module should not be enabled.'),
 );
 
+$error = 0;
 foreach ($phpunit_modules_check as $module => $config) {
 	$enabled = isModEnabled($module);
 	if ($config['required'] && !$enabled) {
 		print "Error: ".$config['message']."\n";
 		if ($config['blocking']) {
-			exit(1);
+			$error++;
 		}
 	} elseif (!$config['required'] && $enabled) {
 		print ($config['blocking'] ? "Error: " : "Warning: ").$config['message']."\n";
 		if ($config['blocking']) {
-			exit(1);
+			$error++;
 		}
 	}
+}
+if ($error) {
+	exit(1);
 }
 
 if (empty($user->id)) {
