@@ -290,6 +290,26 @@ class ToolCategories extends McpTool
 	}
 
 	/**
+	 * Preview of the category this call would create.
+	 *
+	 * @param string $toolName Tool that would run.
+	 * @param array<string,mixed> $args Arguments it would run with.
+	 * @return string Preview text, or McpTool::NO_WRITE for a read.
+	 */
+	public function writeConfirmationPreview(string $toolName, array $args)
+	{
+		global $langs;
+
+		$langs->load("other");
+
+		if ($toolName === 'create_category') {
+			return $langs->trans("AIPreviewCreateCategory", (string) ($args['scope'] ?? ''), (string) ($args['label'] ?? ''));
+		}
+
+		return McpTool::NO_WRITE;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *

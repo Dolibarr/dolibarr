@@ -278,6 +278,30 @@ class UniversalLLMAdapter
 	}
 
 	/**
+	 * Drop a recorded model failure once that model answers again.
+	 *
+	 * @return void
+	 */
+	private function clearModelFailure()
+	{
+		global $db, $conf;
+
+		if (!is_object($db) || !is_object($conf)) {
+			return;
+		}
+		$raw = getDolGlobalString('AI_MODEL_RUNTIME_FAILURE');
+		if ($raw === '') {
+			return;
+		}
+		$rec = json_decode($raw, true);
+		if (!is_array($rec) || (string) ($rec['model'] ?? '') !== (string) $this->model) {
+			return;	// a different model failed: leave that warning standing
+		}
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		dolibarr_del_const($db, 'AI_MODEL_RUNTIME_FAILURE', -1);
+	}
+
+	/**
 	 * Record a "model not found / retired" type provider failure into the constant
 	 * AI_MODEL_RUNTIME_FAILURE, displayed as a warning banner on the models admin
 	 * page. Runtime is the only fully reliable signal for a retired model: a
@@ -304,6 +328,9 @@ class UniversalLLMAdapter
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 		dolibarr_set_const($db, 'AI_MODEL_RUNTIME_FAILURE', json_encode(array(
+			// The provider is recorded too: without it the banner survives a
+			// change of provider and blames a model nobody is using any more.
+			'service' => getDolGlobalString('AI_API_SERVICE'),
 			'model' => $this->model,
 			'ts' => dol_now(),
 			'http_code' => $httpCode,
@@ -408,6 +435,9 @@ class UniversalLLMAdapter
 		// request log: every provider returns it inside the response body under
 		// its own name. Thinking tokens are billed as output, so Gemini's
 		// thoughtsTokenCount is counted with the visible candidates tokens.
+		// The call succeeded: a warning recorded for this same model is now stale.
+		$this->clearModelFailure();
+
 		$this->lastUsage = array('model' => $this->model);
 		if ($isGemini) {
 			$this->lastUsage['input']  = (int) ($json['usageMetadata']['promptTokenCount'] ?? 0);

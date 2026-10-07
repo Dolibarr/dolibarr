@@ -94,7 +94,9 @@ class ToolApiBridge extends McpTool
 		'members' => array('thirdparty', 'billing'),
 		'subscriptions' => array('thirdparty', 'billing'),
 		'expensereports' => array('billing'),
-		'tickets' => array('thirdparty', 'project')
+		'tickets' => array('thirdparty', 'project'),
+		'shipments' => array('stock', 'commercial', 'thirdparty'),
+		'receptions' => array('stock', 'thirdparty')
 	);
 
 	/**
@@ -452,6 +454,71 @@ class ToolApiBridge extends McpTool
 				]
 			]
 		],
+		'orders' => [
+			'label' => 'customer orders (commandes)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,date_commande,delivery_date,total_ht,total_ttc,statut',
+					'description' => "Statuses (t.fk_statut): -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed). Dates are unix timestamps: date_commande (order date), delivery_date (planned delivery). Useful sqlfilters fields: t.ref, t.date_commande, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many orders match."
+					]
+				],
+				'get' => [
+					'description' => "One order with its lines (product, qty, unit price, discount, line totals), status and dates.",
+					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One order by its exact reference (e.g. 'CO2401-0001').",
+					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				]
+			]
+		],
+		'shipments' => [
+			'label' => 'customer shipments (expéditions, goods sent)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_customer,date_delivery,date_shipping,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods left), 2=closed (billed / processed). Dates are unix timestamps: date_shipping (sent), date_delivery (planned delivery). Useful sqlfilters fields: t.ref, t.ref_customer, t.fk_soc, t.fk_statut, t.date_delivery.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many shipments match."
+					]
+				],
+				'get' => [
+					'description' => "One shipment: customer, source order, dates, status, tracking number; the lines are in api_shipments_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a shipment: product, quantity shipped, batch/lot when the product is tracked.",
+					'params' => ['id' => "Rowid of the shipment."]
+				]
+			]
+		],
+		'receptions' => [
+			'label' => 'supplier receptions (réceptions, goods received)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_supplier,date_reception,date_delivery,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods received into stock), 2=closed / processed. Dates are unix timestamps: date_reception (received), date_delivery (planned). Useful sqlfilters fields: t.ref, t.ref_supplier, t.fk_soc, t.fk_statut, t.date_delivery. A draft created by the chat keeps its '(PROVnn)' reference: search it by id or with sqlfilters on t.ref_supplier.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated supplier rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many receptions match."
+					]
+				],
+				'get' => [
+					'description' => "One reception: supplier, supplier reference, dates, status; the lines are in api_receptions_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a reception: product, quantity received, batch/lot and warehouse when tracked.",
+					'params' => ['id' => "Rowid of the reception."]
+				]
+			]
+		],
 		'expensereports' => [
 			'label' => 'employee expense reports (notes de frais)',
 			'methods' => [
@@ -522,6 +589,20 @@ class ToolApiBridge extends McpTool
 		],
 		// NB: stock inventories have no REST API class in core yet (no api_inventories) —
 		// they cannot be bridged until one exists.
+		'documents' => [
+			'label' => 'documents attached to business objects',
+			'methods' => [
+				'getDocumentsListByElement' => [
+					'suffix' => 'list',
+					'description' => "List the files attached to a business object. Answers \"what files does this invoice have\", \"show the documents of that order\", \"is there anything attached to this third party\". Returns each file name, size, date and a download link, never the content. Give the object by id or by ref; search for it first when neither is known. A draft ref is written in parentheses, like (PROV42): pass it with them.",
+					'params' => [
+						'modulepart' => "Object type: invoice, supplier_invoice, order, supplier_order, propal (proposal), supplier_proposal, shipment, societe (third party), product, contract, ficheinter (intervention), project, project_task, ticket, expensereport, holiday, member, actioncomm (event), category, user.",
+						'id' => "Rowid of the object, when known.",
+						'ref' => "Reference of the object, when the id is unknown."
+					]
+				]
+			]
+		],
 	];
 
 	/**
@@ -639,8 +720,8 @@ class ToolApiBridge extends McpTool
 				}
 
 				while (($file_searched = readdir($handle_part)) !== false) {
-					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_documents.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
-						continue;	// Framework plumbing, not business endpoints (setup/documents even require main.inc.php, fatal outside a web page).
+					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
+						continue;	// Framework plumbing, not business endpoints.
 					}
 					$regapi = [];
 					if (!is_readable($dir_part.$file_searched) || !preg_match("/^api_(.*)\\.class\\.php$/i", $file_searched, $regapi)) {
@@ -1199,6 +1280,52 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Keep what the chat shows of a file list: name, size, date and a link.
+	 *
+	 * @param	mixed	$output		Result of getDocumentsListByElement()
+	 * @param	string	$modulepart	Object type the caller asked for
+	 * @return	mixed				Projected list, or $output unchanged if it is not a list
+	 */
+	private function projectDocumentList($output, $modulepart)
+	{
+		// document.php does not know every alias the API accepts
+		$aliases = array('contrat' => 'contract', 'projet' => 'project', 'categorie' => 'category', 'adherent' => 'member');
+		$part = $aliases[$modulepart] ?? $modulepart;
+		$paginated = is_array($output) && isset($output['data']) && is_array($output['data']);
+		$files = $paginated ? $output['data'] : $output;
+		if (!is_array($files)) {
+			return $output;
+		}
+		$list = array();
+		foreach ($files as $file) {
+			$level1 = (string) ($file['level1name'] ?? '');
+			$list[] = array(
+				'name' => (string) ($file['name'] ?? ''),
+				'size' => dol_print_size((int) ($file['size'] ?? 0), 1),
+				'modified' => dol_print_date((int) ($file['date'] ?? 0), 'dayhour'),
+				'url' => DOL_URL_ROOT.'/document.php?modulepart='.urlencode($part).'&file='.urlencode(($level1 !== '' ? $level1.'/' : '').(string) ($file['relativename'] ?? $file['name'] ?? ''))
+			);
+		}
+		if ($paginated) {
+			$output['data'] = $list;
+			return $output;
+		}
+		return $list;
+	}
+
+	/**
+	 * Whether the object a file list was asked for exists.
+	 *
+	 * @param	array<string,mixed>	$args	Tool arguments (modulepart, id, ref)
+	 * @return	bool
+	 */
+	private function documentObjectExists(array $args)
+	{
+		$object = fetchObjectByElement((int) ($args['id'] ?? 0), (string) ($args['modulepart'] ?? ''), (string) ($args['ref'] ?? ''));
+		return is_object($object) && $object->id > 0;
+	}
+
+	/**
 	 * Execute a bridged tool: authenticate the acting user, call the API method
 	 * in-process with positional arguments, catch RestException.
 	 *
@@ -1270,10 +1397,16 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($output === null) {
+			// Core can print an error page while refusing access (reproducible on
+			// the REST route): keep it out of the JSON answer, in the log instead.
+			ob_start();
 			try {
 				$result = call_user_func_array([$api, $method], $callArgs);
 				// Serialize API return (cleaned objects) into plain arrays for the MCP client.
 				$output = json_decode(json_encode($result), true);
+				if ($key === 'documents') {
+					$output = $this->projectDocumentList($output, (string) ($args['modulepart'] ?? ''));
+				}
 			} catch (Throwable $e) {
 				$code = (int) $e->getCode();
 				$message = $e->getMessage();
@@ -1286,6 +1419,15 @@ class ToolApiBridge extends McpTool
 					"error" => $message,
 					"http_status" => ($code > 0 ? $code : 500)
 				];
+				// The API answers 404 for an object with no files: that is an empty
+				// list, unless the object itself does not exist.
+				if ($key === 'documents' && $code == 404 && $this->documentObjectExists($args)) {
+					$output = [];
+				}
+			}
+			$printed = ob_get_clean();
+			if ($printed !== '' && $printed !== false) {
+				dol_syslog(get_class($this).'::execute '.$name.' printed output: '.dol_trunc(strip_tags($printed), 200), LOG_WARNING);
 			}
 		}
 

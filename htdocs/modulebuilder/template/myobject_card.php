@@ -164,10 +164,12 @@ if ($enablepermissioncheck) {
 $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1].'/myobject';
 
 // Security check (enable at least one, the most restrictive one)
+// BEGIN MODULEBUILDER ACCESSPOLICY
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, $object, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
+// END MODULEBUILDER ACCESSPOLICY
 if (!isModEnabled($object->module)) {
 	accessforbidden("Module ".$object->module." not enabled");
 }
@@ -245,6 +247,10 @@ if (empty($reshook)) {
  * View
  */
 
+if ($action != 'create' && ! $object->id) {
+	recordNotFound();
+}
+
 $form = new Form($db);
 $formfile = new FormFile($db);
 
@@ -316,7 +322,7 @@ if ($action == 'create') {
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit') {
+if ($object->id > 0 && $action == 'edit') {
 	print load_fiche_titre($langs->trans("MyObject"), '', $object->picto);
 
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
@@ -578,7 +584,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// BEGIN MODULEBUILDER ACTION CLONE
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 			}
 			// END MODULEBUILDER ACTION CLONE
 
@@ -615,7 +621,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$buttonId = 'action-delete';
 			}
 			$params = array();
-			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, $params);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 			// END MODULEBUILDER ACTION DELETE
 		}
 		print '</div>'."\n";

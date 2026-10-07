@@ -88,7 +88,7 @@ $confirm	= GETPOST("confirm");
 $ref = GETPOST('ref', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$backtopageforcancel = '';
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $lineid		= GETPOSTINT('lineid');
 $projectid = GETPOSTINT('projectid');
@@ -118,6 +118,9 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret < 0) {
 		dol_print_error($db, $object->error);
+	}
+	if ($object->id > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
 	}
 	$ret = $object->fetch_thirdparty();
 	if ($ret < 0) {
@@ -328,6 +331,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
+				$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 				$result = $object->delete($user);
 				if ($result > 0) {
 					header('Location: list.php?restore_lastsearch_values=1');
@@ -601,7 +605,15 @@ if (empty($reshook)) {
 							$depositdev = (float) $discount->multicurrency_amount_ttc;
 							if ($usemccompare && $depositdev != 0) {
 								$applydev = $maxtoabsorb;
-								$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+								// Convert the applied part with the rate the credit carries, when it has one. Deriving it from the
+								// rounded company-currency total of the credit shifts the part by a cent, which then shows up as a
+								// phantom exchange difference on an invoice that uses the very same rate.
+								$creditrate = !empty($discount->multicurrency_tx) ? (float) $discount->multicurrency_tx : 0;
+								if ($creditrate > 0) {
+									$applyeur = (float) price2num($applydev / $creditrate, 'MT');
+								} else {
+									$applyeur = (float) price2num($applydev / $depositdev * $depositeur, 'MT');
+								}
 							} else {
 								$applyeur = $maxtoabsorb;
 								$applydev = ($depositeur != 0 ? (float) price2num($applyeur / $depositeur * $depositdev, 'MT') : 0);
@@ -1142,6 +1154,7 @@ if (empty($reshook)) {
 				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 				$object->fk_account			= GETPOSTINT('fk_account');
 				$object->vat_reverse_charge	= GETPOST('vat_reverse_charge') == 'on' ? 1 : 0;
+				$tmpproject = GETPOSTINT('projectid');
 				$object->fk_project			= ($tmpproject > 0) ? $tmpproject : null;
 				$object->fk_incoterms = GETPOSTINT('incoterm_id');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
@@ -1286,6 +1299,7 @@ if (empty($reshook)) {
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
 						$desc = $langs->trans('invoiceAvoirLineWithPaymentRestAmount');
+
 						// Pass the amount already signed: addline() forces -abs() on credit notes with the default setup, so this
 						// changes nothing there, but it keeps the line negative when that forcing is relaxed (see addline()).
 						$retAddLine = $object->addline($desc, -$remain_to_pay, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'TTC');
@@ -1726,6 +1740,14 @@ if (empty($reshook)) {
 								if ($result < 0) {
 									$error++;
 									break;
+								}
+
+								// Keep the extra parameters of the source line (for example the options of subtotal lines)
+								if ($result > 0 && !empty($lines[$i]->extraparams)) {
+									$newline = new SupplierInvoiceLine($db);
+									$newline->id = $result;
+									$newline->extraparams = $lines[$i]->extraparams;
+									$newline->setExtraParameters();
 								}
 							}
 
@@ -2713,6 +2735,9 @@ if ($action == 'create') {
 		print '<input type="hidden" name="originmulticurrency_tx" value="'.$currency_tx.'">';
 	}
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
 	print dol_get_fiche_head();
 
@@ -4751,7 +4776,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($action != 'edit' && $usercancreate) {
-					print '<a class="butAction butActionClone" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&socid='.$object->socid.'&token='.newToken().'">'.$langs->trans('ToClone').'</a>';
+					print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=clone&socid='.$object->socid.'&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')));
 				}
 
 				// Clone as predefined / Create template
@@ -4783,7 +4808,7 @@ if ($action == 'create') {
 						$enableDelete = true;
 						$htmltooltip = '';
 					}
-					print dolGetButtonAction($htmltooltip, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), (string) $object->id, $enableDelete, $params);
+					print dolGetButtonAction($htmltooltip, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), (string) $object->id, $enableDelete, array('attr' => array('class' => 'reposition')));
 				}
 				print '</div>';
 

@@ -413,7 +413,7 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			if (dol_strlen($this->message) > 65000) {
+			if (dol_strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16000000)) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
@@ -1050,7 +1050,7 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			if (dol_strlen($this->message) > 65000) {
+			if (dol_strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16000000)) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
@@ -1717,7 +1717,7 @@ class Ticket extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1726,9 +1726,10 @@ class Ticket extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query['save_lastsearch_values'] = 1;
 			}
 		}
+		$url = dolBuildUrl(DOL_URL_ROOT.'/ticket/card.php', $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -2906,7 +2907,7 @@ class Ticket extends CommonObject
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
 			$resarray = $object->copyFilesForTicket();
 			if (is_numeric($resarray) && $resarray == -1) {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 				return -1;
 			}
 
@@ -3376,11 +3377,10 @@ class Ticket extends CommonObject
 
 				return 1;
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 				return -1;
 			}
 		} else {
-			setEventMessages($this->error, $this->errors, 'errors');
 			return -1;
 		}
 	}

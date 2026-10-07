@@ -308,7 +308,6 @@ ContactByDefaultFor=Default contact/address for
 AddThirdParty=Create third party
 DeleteACompany=Delete a company
 PersonalInformations=Personal data
-AccountancyCode=Accounting account
 CustomerCode=Customer Code
 SupplierCode=Vendor Code
 CustomerCodeShort=Customer Code
@@ -463,7 +462,7 @@ ErrorContactsMergePrivate=A private contact of another user cannot be merged
 ErrorContactsMergeIntoPrivate=A shared contact cannot be merged into a private contact, its data would no longer be visible to the other users
 ErrorContactsMergeLinkedToUser=One of the contacts is linked to a user account. Merging them requires the permission to create users.
 ErrorContactsMergeBothLinkedToUser=Both contacts are linked to a user account. Unlink one of them before merging.
-WarningContactsMergeFilesNotMoved=Contacts have been merged but some files could not be moved: %s
+WarningMergeFilesNotMoved=Objects have been merged but some files could not be moved: %s
 NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
 KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports

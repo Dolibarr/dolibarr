@@ -71,6 +71,17 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public $expensereport;
 
+	/**
+	 * @var string[]	Properties never taken from the request by post() and put(): set by the workflow methods or computed from the lines
+	 */
+	public static $FIELDSNOTUPDATABLE = array(
+		'fk_statut', 'status', 'statut', 'paid',
+		'fk_user_valid', 'fk_user_approve', 'fk_user_refuse', 'fk_user_cancel', 'fk_user_creat', 'fk_user_modif',
+		'date_valid', 'date_approve', 'date_refuse', 'date_cancel', 'detail_refuse', 'detail_cancel',
+		'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
+		'ref', 'entity',
+	);
+
 
 	/**
 	 * Constructor
@@ -151,6 +162,13 @@ class ExpenseReports extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('expensereport').')';
 		if ($user_ids) {
 			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize($user_ids).")";
+		}
+		// $user_ids is provided by the caller, so it can not be the only owner filter. Narrow the result
+		// set on the hierarchy of the caller, with the same condition as expensereport/list.php.
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'readall')
+			&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !DolibarrApiAccess::$user->hasRight('expensereport', 'writeall_advance'))) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize(implode(',', $childids)).")";
 		}
 
 		// Add sql filters
@@ -233,6 +251,18 @@ class ExpenseReports extends DolibarrApi
 
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
+
+		// Same rule as expensereport/card.php: a report can be created only for the user or a user of his hierarchy
+		$fk_user_author = (int) ($request_data['fk_user_author'] ?? 0);
+		if ($fk_user_author > 0 && $fk_user_author != DolibarrApiAccess::$user->id
+			&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !DolibarrApiAccess::$user->hasRight('expensereport', 'writeall_advance'))
+			&& !in_array($fk_user_author, DolibarrApiAccess::$user->getAllChildIds(1))) {
+			throw new RestException(403, 'User '.$fk_user_author.' is not in the hierarchy of login '.DolibarrApiAccess::$user->login);
+		}
+		// Exclude properties that must be set by the workflow methods or computed from the lines
+		foreach (ExpenseReports::$FIELDSNOTUPDATABLE as $field) {
+			unset($request_data[$field]);
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -523,6 +553,14 @@ class ExpenseReports extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// Same rule as expensereport/card.php: only a draft or a refused report can be modified
+		if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_REFUSED))) {
+			throw new RestException(403, 'Only a draft or refused expense report can be modified');
+		}
+		// Exclude properties that must be set by the workflow methods or computed from the lines
+		foreach (ExpenseReports::$FIELDSNOTUPDATABLE as $field) {
+			unset($request_data[$field]);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -933,7 +971,7 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getPayments($pid)
+	public function getPayment($pid)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
 			throw new RestException(403);
@@ -974,7 +1012,7 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function addPayment($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
 			throw new RestException(403);
 		}
 		// Check mandatory fields
@@ -998,6 +1036,19 @@ class ExpenseReports extends DolibarrApi
 		$paymentExpenseReport->fk_expensereport = $id;
 		foreach ($request_data as $field => $value) {
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
+		}
+
+		// Same checks as expensereport/payment/payment.php: only an approved report is paid, never more than the remainder
+		if ($this->expensereport->status != ExpenseReport::STATUS_APPROVED) {
+			throw new RestException(400, 'Expense report must be approved to be paid');
+		}
+		$totalpayment = 0;
+		foreach ((array) $paymentExpenseReport->amounts as $value) {
+			$totalpayment += (float) price2num($value, 'MT');
+		}
+		$remaintopay = (float) price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments(), 'MT');
+		if ((float) price2num($totalpayment, 'MT') > $remaintopay) {
+			throw new RestException(400, 'Payment higher than remainder to pay ('.$remaintopay.')');
 		}
 
 		// Same sequence as expensereport/payment/payment.php: all or nothing
@@ -1038,25 +1089,41 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @since	20.0.0	Initial implementation
 	 *
-	 * @param	int		$id				ID of paymentExpenseReport
+	 * @param	int		$id				ID of ExpenseReport
+	 * @param	int		$idp			ID of paymentExpenseReport
 	 * @param	array	$request_data	data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	object
 	 *
-	 * @url     PUT {id}/payments
+	 * @url     PUT {id}/payments/{idp}
 	 * @throws RestException
 	 */
-	public function updatePayment($id, $request_data = null)
+	public function updatePayment($id, $idp, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
 			throw new RestException(403);
 		}
 
 		$paymentExpenseReport = new PaymentExpenseReport($this->db);
-		$result = $paymentExpenseReport->fetch($id);
+		$result = $paymentExpenseReport->fetch($idp);
 		if (!$result) {
-			throw new RestException(404, 'payment of expense report not found');
+			throw new RestException(404, 'Payment of expense report not found');
+		}
+
+		// Check ids
+		if ($id != $paymentExpenseReport->fk_expensereport) {
+			throw new RestException(404, 'Payment id does not belongs to the Expense id');
+		}
+
+		// Check access to the parent expense report
+		$result = $this->expensereport->fetch($paymentExpenseReport->fk_expensereport);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// Check access to the parent expense report
@@ -1070,14 +1137,22 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
+			if ($field == 'id' || $field == 'fk_expensereport') {	// A payment can't be moved to another report
 				continue;
 			}
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
 		}
 
+		// The payments of the report can't exceed its total
+		$oldpayment = new PaymentExpenseReport($this->db);
+		$oldpayment->fetch($paymentExpenseReport->id);
+		$remaintopay = (float) price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments() + (float) $oldpayment->amount, 'MT');
+		if ((float) price2num($paymentExpenseReport->amount, 'MT') > $remaintopay) {
+			throw new RestException(400, 'Payment higher than remainder to pay ('.$remaintopay.')');
+		}
+
 		if ($paymentExpenseReport->update(DolibarrApiAccess::$user) > 0) {
-			return $this->get($id);
+			return $this->getPayment($idp);
 		} else {
 			throw new RestException(500, $paymentExpenseReport->errorsToString());
 		}
@@ -1089,29 +1164,29 @@ class ExpenseReports extends DolibarrApi
 	 * @param 	int    $id    ID of payment ExpenseReport
 	 * @return 	array
 	 *
-	 * @url     DELETE {id}/payments
+	 * @url     DELETE {id}/payments/{idp}
 	 */
-	/*public function delete($id)
+	/*public function delete($id, $idp)
 	 {
-	 if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer') {
-	 throw new RestException(403);
-	 }
-	 $paymentExpenseReport = new PaymentExpenseReport($this->db);
-	 $result = $paymentExpenseReport->fetch($id);
-	 if (!$result) {
-	 throw new RestException(404, 'paymentExpenseReport not found');
-	 }
+		 if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer') {
+		 throw new RestException(403);
+		 }
+		 $paymentExpenseReport = new PaymentExpenseReport($this->db);
+		 $result = $paymentExpenseReport->fetch($idp);
+		 if (!$result) {
+			 throw new RestException(404, 'paymentExpenseReport not found');
+		 }
 
-	 if ($paymentExpenseReport->delete(DolibarrApiAccess::$user) < 0) {
-	 throw new RestException(403, 'error when deleting paymentExpenseReport');
-	 }
+		 if ($paymentExpenseReport->delete(DolibarrApiAccess::$user) < 0) {
+			 throw new RestException(403, 'error when deleting paymentExpenseReport');
+		 }
 
-	 return array(
-	 'success' => array(
-	 'code' => 200,
-	 'message' => 'paymentExpenseReport deleted'
-	 )
-	 );
+		 return array(
+			 'success' => array(
+				 'code' => 200,
+				 'message' => 'paymentExpenseReport deleted'
+			 )
+		 );
 	 }*/
 
 

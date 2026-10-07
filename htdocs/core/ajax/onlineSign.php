@@ -127,8 +127,24 @@ if ($action == "importSignature") {
 		if ($mode == "propale" || $mode == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			$object = new Propal($db);
 			$object->fetch(0, $ref);
+
+			if (getDolGlobalInt('PROPOSAL_ONLINESIGN_REFUSE_IF_VALIDITY_DATE_PASSED') && !empty($object->fin_validite)
+				&& dol_get_first_hour($object->fin_validite) < dol_get_first_hour(dol_now())) {
+				// The proposal is no more valid. Tested before anything is written, and on
+				// calendar days: validity runs until the end of the due day.
+				$langs->load("errors");
+				print $langs->transnoentitiesnoconv("ErrorProposalValidityDatePassed", dol_print_date($object->fin_validite, 'day'));	// Must be a print that is shown by a javascript alert().
+				$error++;
+			} elseif ($object->status != $object::STATUS_VALIDATED) {
+				// Protection so we can't sign a proposal that is no more with status validated.
+				// The same test exists on the UPDATE request below, but it runs after the signed PDF has been generated.
+				$langs->load("errors");
+				print $langs->transnoentitiesnoconv("ErrorCantSignDocument");	// Must be a print that is shown by a javascript alert().
+				$error++;
+			}
 
 			$upload_dir = !empty($conf->propal->multidir_output[$object->entity ?? $conf->entity]) ? $conf->propal->multidir_output[$object->entity ?? $conf->entity] : $conf->propal->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
@@ -139,7 +155,7 @@ if ($action == "importSignature") {
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
 			$filename = "signatures/" . $date . "_signature.png";
-			if (!is_dir($upload_dir . "signatures/")) {
+			if (!$error && !is_dir($upload_dir . "signatures/")) {
 				if (!dol_mkdir($upload_dir . "signatures/")) {
 					$response = "Error mkdir. Failed to create dir " . $upload_dir . "signatures/";
 					$error++;

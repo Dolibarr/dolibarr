@@ -23,6 +23,10 @@
  * @var int[] $selectedLines
  */
 
+'
+@phan-var-force CommonObjectLine $line
+';
+
 $line_color = $object->getSubtotalColors($line->qty);
 $line_text_color = $object->getSubtotalCssTextColor($line->qty);
 

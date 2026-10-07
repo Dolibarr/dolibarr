@@ -473,7 +473,7 @@ a.dropdown-item {
  * SELECT FIELDS
  */
 
-li.liinputsearch {
+li.liinputsearch, div.liinputsearch {
 	position: sticky;
 	display: block;
 	top: 0;

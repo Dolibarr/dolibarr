@@ -29,7 +29,7 @@ jobs:
             exit 0
           fi
 
-          echo "::error::The title of the PR must start with one of the keywords (Fix|Close|New|Perf|Doc|Qual|Sec) followed by a space, a ':' (or a '#ID'). Current title: '$PR_TITLE'"
+          echo "::error::The title of the PR must start with one of the keywords (FIX|CLOSE|NEW|PERF|DOC|QUAL|SEC) followed by ':' and a description (Description can be free or '#ID' with ID of issue). Current title: '$PR_TITLE'"
           exit 1
 
       - name: Check PR type when the PR targets a branch other than develop
@@ -37,7 +37,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-          if [ "$PR_TARGET_BRANCH" = "develop" ]; then
+          if [ "$PR_TARGET_BRANCH" = "develop" ] || [ "$PR_TARGET_BRANCH" = "main" ] || [ "$PR_TARGET_BRANCH" = "master" ]; then
             echo "The PR targets the branch develop, so any type of PR is allowed."
             exit 0
           fi

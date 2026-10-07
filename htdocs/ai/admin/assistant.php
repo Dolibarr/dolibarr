@@ -282,10 +282,18 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '</td>';
 	print '</tr>';
 
+	// Second step: a write asked, a read answered -> run the read, then the write
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIChatTwoStepWrite"), $langs->trans("AIChatTwoStepWriteHelp")) . '</td>';
+	print '<td>';
+	print ajax_constantonoff('AI_CHAT_TWO_STEP_WRITE');
+	print '</td>';
+	print '</tr>';
+
 	// Context window of the chat
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextAutoExchanges"), $langs->trans("AIContextAutoExchangesHelp")) . '</td>';
-	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 3) . '"></td>';
+	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 0) . '"></td>';
 	print '</tr>';
 
 	// Logging

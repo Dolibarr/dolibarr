@@ -32,6 +32,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
@@ -43,15 +51,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var Form $form
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'hrm'));
@@ -181,9 +180,7 @@ if ($year > 0) {
 	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= ")";
 }
-if ($sortfield !== null
-	&& preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)
-) {
+if ($sortfield && preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)) {
 	$sql .= $db->order($sortfield, (string) $sortorder);
 }
 

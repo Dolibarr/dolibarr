@@ -162,7 +162,7 @@ $result = restrictedArea($user, 'facture', $object->id, $objecttype);
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	if ($action != 'updateline') {
+	if ($action != 'updateline' && $action != 'setdate_when') {
 		$action = 'list';
 		$massaction = '';
 	} else {
@@ -342,10 +342,14 @@ if (empty($reshook)) {
 
 	// Delete
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'supprimer')) {
-		$object->delete($user);
-
-		header("Location: ".DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
-		exit;
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		$result = $object->delete($user);
+		if ($result > 0) {
+			header("Location: ".DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 
@@ -2034,7 +2038,7 @@ if ($action == 'create') {
 			} else {
 				print $form->textwithpicto($langs->trans("NextDateToExecution"), $langs->trans("NextDateToExecutionHelp"));
 			}
-			print '</td><td>';
+			print '</td><td'.(isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency) ? ' colspan="2"' : '').'>';
 			if ($action == 'date_when' || $object->frequency > 0) {
 				print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
 			}
@@ -2047,9 +2051,6 @@ if ($action == 'create') {
 				print img_info($langs->trans("MaxNumberOfGenerationReached"));
 			}
 			print '</td>';
-			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td></td>';
-			}
 			print '</tr>';
 
 			// Max period / Rest period
@@ -2318,7 +2319,7 @@ if ($action == 'create') {
 			}
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $user->hasRight('facture', 'supprimer'));
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $user->hasRight('facture', 'supprimer'), array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>';
 
