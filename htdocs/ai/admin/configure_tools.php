@@ -72,6 +72,25 @@ $mode     = GETPOST('mode', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Load unfiltered schema
+/**
+ * Whether a tool writes. A tool that asks for confirmation is a write whatever its
+ * name (the API bridge names its writes api_<endpoint>_create); otherwise the
+ * naming convention of ai/tools/* applies.
+ *
+ * @param	McpHandler	$handler	Handler with the tools loaded
+ * @param	string		$name		Tool name
+ * @return	bool
+ */
+function aiToolIsWrite($handler, $name)
+{
+	$tool = $handler->toolsByName[$name] ?? null;
+	if (is_object($tool) && method_exists($tool, 'writeConfirmationPreview') && $tool->writeConfirmationPreview($name, array()) !== McpTool::NO_WRITE) {
+		return true;
+	}
+
+	return (bool) preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $name);
+}
+
 $mcpHandler = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
 $mcpHandler->loadTools();
 
@@ -154,10 +173,7 @@ if ($action == 'apply_preset' && !empty($toolcontext) && !empty($mode)) {
 		$resultSet = array();
 	} elseif ($mode === 'readonly') {
 		foreach ($allDiscoveredTools as $tName) {
-			// Tools starting with a mutating verb are write tools.
-			// This heuristic matches the naming convention used throughout ai/tools/*.
-			// External tool authors should follow the same convention.
-			if (!preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $tName)) {
+			if (!aiToolIsWrite($mcpHandler, $tName)) {
 				$resultSet[] = $tName;
 			}
 		}
@@ -246,7 +262,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			$isAstOn = $isSystem ? true : in_array($name, $astAllowed, true);
 			$isMcpOn = $isSystem ? true : in_array($name, $mcpAllowed, true);
 
-			if (preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $name)) {
+			if (aiToolIsWrite($mcpHandler, $name)) {
 				$type      = 'write';
 				$typeBadge = '<span class="badge badge-status2" style="display: inline-block;">' . $langs->trans('Modify') . '</span>';
 			} else {
