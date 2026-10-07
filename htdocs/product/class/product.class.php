@@ -254,7 +254,7 @@ class Product extends CommonObject
 	 */
 	public $prices_by_qty_id = array();
 	/**
-	 * @var array<int,array<array{rowid:int,price_base_type:string,unitprice:string}>>
+	 * @var array<int,array<array{rowid:int,price:string,unitprice:string,quantity:string,remise_percent:string,remise?:string,price_base_type:string}>>
 	 */
 	public $prices_by_qty_list = array();
 
@@ -2572,7 +2572,7 @@ class Product extends CommonObject
 	 * @param	Societe		$thirdparty_seller		Seller
 	 * @param	Societe		$thirdparty_buyer		Buyer
 	 * @param	int			$pqp					Id of product price per quantity if a selection was done of such a price
-	 * @return	array{pu_ht:float|int|string,pu_ttc:float|int|string,price_min:float|int|string,price_base_type:string,tva_tx:float|string|null|int,tva_npr:float|int}
+	 * @return	array{pu_ht:float|int|string,pu_ttc:float|int|string,price_min:float|int|string,price_min_ttc:float|int|string,price_base_type:string,tva_tx:float|string|null|int,tva_npr:float|int,localtax1:int|string,localtax2:int|string}
 	 * @see get_buyprice(), find_min_price_product_fournisseur()
 	 */
 	public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
@@ -3291,7 +3291,7 @@ class Product extends CommonObject
 		} else {
 			$sql .= " p.pmp,";
 		}
-		$sql .= " p.datec, GREATEST(p.tms, pef.tms) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
+		$sql .= " p.datec, GREATEST(p.tms, COALESCE(pef.tms, p.tms)) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		$sql .= " p.price_label,";
 		if ($separatedStock) {
@@ -7615,7 +7615,7 @@ class Product extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, GREATEST(p.tms, pef.tms) as date_modification,";
+		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, GREATEST(p.tms, COALESCE(pef.tms, p.tms)) as date_modification,";
 		$sql .= " p.fk_user_author, p.fk_user_modif";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as p";
 		$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as pef ON pef.fk_object=p.rowid";

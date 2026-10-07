@@ -13,14 +13,17 @@ RUN apt-get update \
 		curl \
         dialog \
 		gh \
+		ghostscript \
 		git \
         graphviz \
         gzip \
 		hurl \
 		iptables \
 		jq \
+		libglib2.0-bin \
         memcached \
-		mysql-client \
+		mariadb-client \
+		mariadb-server \
 		openssh-client \
 		php \
 		php-ast \
@@ -35,6 +38,7 @@ RUN apt-get update \
 		php-ldap \
 		php-imagick \
 		php-cli \
+		pgloader \
 		python3 \
 		python3-pip \
 		shellcheck \
@@ -43,17 +47,31 @@ RUN apt-get update \
 		time \
 		unzip \
 		w3m \
+		wl-clipboard \
+		xclip \
 		zip \
         zstd \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
 
+# pyperclip lets Vibe copy to the clipboard of the host (through xclip and the
+# X server mounted by vibes.sh) instead of relying on the OSC 52 escape
+# sequence, that the VTE terminals (GNOME Terminal, Tilix) do not support.
+# libglib2.0-bin provides gdbus, used by open-on-host to reach the
+# xdg-desktop-portal of the host session. wl-clipboard is the Wayland native
+# equivalent of xclip (also used by pyperclip). See README.md.
 RUN mkdir -p /opt/vibe \
     && uv venv /opt/vibe \
-    && uv pip install --python /opt/vibe/bin/python mistral-vibe
+    && uv pip install --python /opt/vibe/bin/python mistral-vibe pyperclip
 
 ENV PATH="/opt/vibe/bin:$PATH"
+
+# Python's webbrowser module (used by Vibe to open the links of the chat) runs
+# the BROWSER program with the URL as argument. open-on-host forwards it to the
+# xdg-desktop-portal of the host session over the D-Bus session bus, so the
+# host opens the URL in its default browser (see open-on-host and README.md).
+ENV BROWSER="/usr/local/bin/open-on-host"
 
 
 # Install RTK - Rust Token Killer
@@ -178,8 +196,10 @@ WORKDIR /workspace
 
 # Add the launcher
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+# Add the URL opener used by the BROWSER environment variable (see above)
+COPY open-on-host /usr/local/bin/open-on-host
 # Add the tool used by the launcher to block the outbound SMTP ports on the network stack
 # shared with the VM (see docker-entrypoint.sh and README.md)
 COPY smtpblock.sh /usr/local/bin/smtpblock.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/smtpblock.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh /usr/local/bin/open-on-host /usr/local/bin/smtpblock.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

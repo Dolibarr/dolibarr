@@ -22,6 +22,7 @@
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,6 +195,7 @@ class Societe extends CommonObject
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
 		'code_client' => array('type' => 'varchar(24)', 'label' => 'CustomerCode', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'code_fournisseur' => array('type' => 'varchar(24)', 'label' => 'SupplierCode', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'tp_payment_reference' => array('type' => 'varchar(25)', 'label' => 'PaymentReference', 'enabled' => 1, 'visible' => -1, 'position' => 61),
 		'code_compta' => array('type' => 'varchar(24)', 'label' => 'CustomerAccountancyCode', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'code_compta_fournisseur' => array('type' => 'varchar(24)', 'label' => 'SupplierAccountancyCode', 'enabled' => 1, 'visible' => -1, 'position' => 70),
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 75),
@@ -668,6 +670,13 @@ class Societe extends CommonObject
 	 * @var ?string
 	 */
 	public $code_fournisseur;
+
+	/**
+	 * @var string	Structured payment reference of this third party. Generated once
+	 *				from its code and reused on all its invoices when the reference
+	 *				mode is set to one reference per third party.
+	 */
+	public $tp_payment_reference;
 
 	/**
 	 * Accounting code for client
@@ -1755,6 +1764,9 @@ class Societe extends CommonObject
 			if ($supplier) {
 				$sql .= ", code_fournisseur = ".(!empty($this->code_fournisseur) ? "'".$this->db->escape($this->code_fournisseur)."'" : "null");
 			}
+
+			// The payment reference applies to customers and suppliers alike
+			$sql .= ", tp_payment_reference = ".(!empty($this->tp_payment_reference) ? "'".$this->db->escape($this->tp_payment_reference)."'" : "null");
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? ((int) $user->id) : "null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
@@ -1944,7 +1956,7 @@ class Societe extends CommonObject
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status, s.fk_warehouse';
 		$sql .= ', s.price_level';
-		$sql .= ', GREATEST(s.tms, sef.tms) as date_modification, s.fk_user_creat, s.fk_user_modif';
+		$sql .= ', GREATEST(s.tms, COALESCE(sef.tms, s.tms)) as date_modification, s.fk_user_creat, s.fk_user_modif';
 		$sql .= ', s.phone, s.phone_mobile, s.fax, s.email';
 		$sql .= ', s.socialnetworks';
 		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
@@ -1970,7 +1982,7 @@ class Societe extends CommonObject
 			$sql .= ', spe.mode_reglement, spe.cond_reglement, spe.fk_account';
 			$sql .= ', spe.mode_reglement_supplier, spe.cond_reglement_supplier';
 		}
-		$sql .= ', s.code_client, s.code_fournisseur, s.parent, s.barcode';
+		$sql .= ', s.code_client, s.code_fournisseur, s.tp_payment_reference, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.deposit_percent, s.transport_mode';
 		$sql .= ', s.tva_assuj';
 		$sql .= ', s.transport_mode_supplier';
@@ -2124,6 +2136,7 @@ class Societe extends CommonObject
 
 				$this->code_client = $obj->code_client;
 				$this->code_fournisseur = $obj->code_fournisseur;
+				$this->tp_payment_reference = $obj->tp_payment_reference;
 
 				$this->accountancy_code_customer_general = $obj->accountancy_code_customer_general;
 				$this->code_compta_client = $obj->code_compta;
@@ -4609,7 +4622,7 @@ class Societe extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom as name, s.datec, GREATEST(s.tms, sef.tms) as datem,";
+		$sql = "SELECT s.rowid, s.nom as name, s.datec, GREATEST(s.tms, COALESCE(sef.tms, s.tms)) as datem,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
@@ -5493,8 +5506,40 @@ class Societe extends CommonObject
 		 */
 		$today = dol_get_first_hour(dol_now('tzuser')); // Returns today at 00:00 in the user's time zone
 
-		$sql = "SELECT rowid, ref, total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
-		$sql .= " WHERE fk_soc = ".((int) $this->id);
+		if ($mode == 'supplier') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+			$tmpobject = new FactureFournisseur($this->db);
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$tmpobject = new Facture($this->db);
+		}
+
+		// With MAIN_PERF_CALCULATE_OUTSTANDING_BILLS_BY_DB, the amount already paid and the credit notes and deposits
+		// used are read for each opened invoice with subqueries of this request (same requests as getSommePaiement(),
+		// getSumCreditNotesUsed() and getSumDepositsUsed()), instead of 3 requests per opened invoice: a thirdparty
+		// with thousands of opened invoices made the customer card run tens of thousands of requests. The option is
+		// off by default, so that the business rules of these methods stay on the PHP side.
+		$calculatebydb = getDolGlobalInt('MAIN_PERF_CALCULATE_OUTSTANDING_BILLS_BY_DB');
+
+		$sql = "SELECT f.rowid, f.ref, f.total_ht, f.total_ttc, f.paye, f.type, f.fk_statut as status, f.close_code";
+		if ($calculatebydb) {
+			$sqlopened = "f.paye = 0 AND f.fk_statut NOT IN (".$this->db->sanitize($tmpobject::STATUS_DRAFT.", ".$tmpobject::STATUS_ABANDONED.", ".$tmpobject::STATUS_CLOSED).")";
+			if ($mode == 'supplier') {
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf WHERE pf.fk_facturefourn = f.rowid) ELSE 0 END as amount_paid";
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture_fourn as fs";
+				$sql .= " WHERE rc.fk_invoice_supplier_source = fs.rowid AND rc.fk_invoice_supplier = f.rowid AND fs.type IN (".$this->db->sanitize($tmpobject::TYPE_STANDARD.", ".$tmpobject::TYPE_CREDIT_NOTE).")) ELSE 0 END as amount_creditnotes";
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture_fourn as fs";
+				$sql .= " WHERE rc.fk_invoice_supplier_source = fs.rowid AND rc.fk_invoice_supplier = f.rowid AND fs.type = ".((int) $tmpobject::TYPE_DEPOSIT).") ELSE 0 END as amount_deposits";
+			} else {
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(pf.amount) FROM ".MAIN_DB_PREFIX."paiement_facture as pf WHERE pf.fk_facture = f.rowid) ELSE 0 END as amount_paid";
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture as fs";
+				$sql .= " WHERE rc.fk_facture_source = fs.rowid AND rc.fk_facture = f.rowid AND fs.type IN (".$this->db->sanitize($tmpobject::TYPE_STANDARD.", ".$tmpobject::TYPE_CREDIT_NOTE.", ".$tmpobject::TYPE_SITUATION).")) ELSE 0 END as amount_creditnotes";
+				$sql .= ", CASE WHEN (".$sqlopened.") THEN (SELECT SUM(rc.amount_ttc) FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."facture as fs";
+				$sql .= " WHERE rc.fk_facture_source = fs.rowid AND rc.fk_facture = f.rowid AND fs.type = ".((int) $tmpobject::TYPE_DEPOSIT).") ELSE 0 END as amount_deposits";
+			}
+		}
+		$sql .= " FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql .= " WHERE f.fk_soc = ".((int) $this->id);
 		if (!empty($late)) {
 			$sql .= " AND date_lim_reglement < '".$this->db->idate($today)."'";
 		}
@@ -5512,13 +5557,6 @@ class Societe extends CommonObject
 			$outstandingTotalIncTax = 0;
 			$arrayofref = array();
 			$arrayofrefopened = array();
-			if ($mode == 'supplier') {
-				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-				$tmpobject = new FactureFournisseur($this->db);
-			} else {
-				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-				$tmpobject = new Facture($this->db);
-			}
 			while ($obj = $this->db->fetch_object($resql)) {
 				$arrayofref[$obj->rowid] = $obj->ref;
 				$tmpobject->id = $obj->rowid;
@@ -5537,9 +5575,15 @@ class Societe extends CommonObject
 					&& $obj->status != $tmpobject::STATUS_ABANDONED	    // Not abandoned
 					&& $obj->status != $tmpobject::STATUS_CLOSED) {		// Not classified as paid
 					//$sql .= " AND (status <> 3 OR close_code <> 'abandon')";		// Not abandoned for undefined reason
-					$paiement = $tmpobject->getSommePaiement();
-					$creditnotes = $tmpobject->getSumCreditNotesUsed();
-					$deposits = $tmpobject->getSumDepositsUsed();
+					if ($calculatebydb) {
+						$paiement = (float) $obj->amount_paid;
+						$creditnotes = $obj->amount_creditnotes;
+						$deposits = $obj->amount_deposits;
+					} else {
+						$paiement = $tmpobject->getSommePaiement();
+						$creditnotes = $tmpobject->getSumCreditNotesUsed();
+						$deposits = $tmpobject->getSumDepositsUsed();
+					}
 
 					$remaintopay = ($obj->total_ttc - $paiement - $creditnotes - $deposits);
 					$outstandingOpened += $remaintopay;

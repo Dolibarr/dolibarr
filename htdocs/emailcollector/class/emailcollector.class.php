@@ -262,7 +262,7 @@ class EmailCollector extends CommonObject
 	 */
 	public $filters;
 	/**
-	 * @var array<array{type:string,actionparam:string,status:int,position:int}>
+	 * @var array<int,array{id:int,type:string,actionparam:string,status:int,position?:int}>
 	 */
 	public $actions;
 
@@ -1873,7 +1873,7 @@ class EmailCollector extends CommonObject
 		$arrayofemailtodelete = array();	// Track email to delete to make the deletion at end.
 
 		// Loop on each email found
-		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0 && $connection !== false) {
+		if (!$error && !empty($arrayofemail) && count($arrayofemail) > 0) {
 			// Loop to get part html and plain
 			/*
 			 0 multipart/mixed

@@ -980,7 +980,7 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, kef.tms) as datem,';
+		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, COALESCE(kef.tms, t.tms)) as datem,';
 		$sql .= ' t.fk_user_creat, t.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as kef ON kef.fk_object = t.rowid";
