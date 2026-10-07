@@ -395,7 +395,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
-		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), null, (bool) GETPOST('deleteblocklines'));
+		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), $user, (bool) GETPOST('deleteblocklines'));
 		if ($result > 0) {
 			// reorder lines
 			$object->line_order(true);
