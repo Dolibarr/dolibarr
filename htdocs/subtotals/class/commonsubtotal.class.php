@@ -357,32 +357,36 @@ trait CommonSubtotal
 
 		if ($deleteblocklines) {
 			$blocklines = $this->getSubtotalBlockLines($id);
-			foreach ($blocklines as $blockline) {
-				if ($blockline->id == $id) {
-					continue;
-				}
-				if ($blockline->special_code == SUBTOTALS_SPECIAL_CODE) {
-					continue;
-				}
-				if ($current_module == 'facture') {
-					$tmpresult = $this->deleteLine($blockline->id); // @phpstan-ignore-line
-				} elseif ($current_module == 'propal') {
-					$tmpresult = $this->deleteLine($blockline->id); // @phpstan-ignore-line
-				} elseif ($current_module == 'commande') {
-					$tmpresult = $this->deleteLine($user, $blockline->id); // @phpstan-ignore-line
-				} elseif ($current_module == 'facturerec') {
-					$tmpline = new FactureLigneRec($this->db);
-					$tmpline->id = $blockline->id;
-					$tmpresult = $tmpline->delete($user); // @phpstan-ignore-line
-				} elseif ($current_module == 'shipping') {
-					$tmpline = new ExpeditionLigne($this->db);
-					$tmpline->id = $blockline->id;
-					$tmpresult = $tmpline->delete($user); // @phpstan-ignore-line
-				} else {
-					$tmpresult = -1;
-				}
-				if ($tmpresult < 0) {
-					return -1;
+			if (!empty($blocklines)) {
+				$titlelevel = (int) $blocklines[0]->qty;
+				$titledesc = $blocklines[0]->desc;
+				foreach ($blocklines as $blockline) {
+					if ($blockline->id == $id) {
+						continue;
+					}
+					if ($blockline->special_code == SUBTOTALS_SPECIAL_CODE && (int) $blockline->qty == -$titlelevel && $blockline->desc == $titledesc) {
+						continue; // Closing subtotal line: handled by $correspondingstline below
+					}
+					if ($current_module == 'facture') {
+						$tmpresult = $this->deleteLine($blockline->id); // @phpstan-ignore-line
+					} elseif ($current_module == 'propal') {
+						$tmpresult = $this->deleteLine($blockline->id); // @phpstan-ignore-line
+					} elseif ($current_module == 'commande') {
+						$tmpresult = $this->deleteLine($user, $blockline->id); // @phpstan-ignore-line
+					} elseif ($current_module == 'facturerec') {
+						$tmpline = new FactureLigneRec($this->db);
+						$tmpline->id = $blockline->id;
+						$tmpresult = $tmpline->delete($user); // @phpstan-ignore-line
+					} elseif ($current_module == 'shipping') {
+						$tmpline = new ExpeditionLigne($this->db);
+						$tmpline->id = $blockline->id;
+						$tmpresult = $tmpline->delete($user); // @phpstan-ignore-line
+					} else {
+						$tmpresult = -1;
+					}
+					if ($tmpresult < 0) {
+						return -1;
+					}
 				}
 			}
 		}
