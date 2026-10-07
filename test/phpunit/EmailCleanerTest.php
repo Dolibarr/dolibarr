@@ -49,7 +49,7 @@ interface EmailCleanerTestDatabase extends Database
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
-class EmailCleanerTest extends \PHPUnit\Framework\TestCase
+class EmailCleanerTest extends CommonClassTest
 {
 	/** @var Conf|null Original configuration */
 	private $savedConf;

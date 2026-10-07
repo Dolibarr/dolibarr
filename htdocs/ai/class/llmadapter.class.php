@@ -162,7 +162,11 @@ class UniversalLLMAdapter
 
 		$this->lastRequest = $this->encodeRequestForLog($data);
 
-		return $this->curl($url, $data, array("Content-Type: application/json", "Authorization: Bearer " . $this->key));
+		dol_syslog('callOpenAI url='.$url, LOG_DEBUG, 0, '_ai');
+
+		$answer = $this->curl($url, $data, array("Content-Type: application/json", "Authorization: Bearer " . $this->key));
+
+		return $answer;
 	}
 
 	/**
@@ -411,23 +415,32 @@ class UniversalLLMAdapter
 		// a bare "Invalid JSON response from API." with an empty body.
 		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl . "\n--- body (" . strlen($body) . " bytes) ---\n"	. $body;
 
+		dol_syslog('curl answer received, size of response string = '.strlen($body), LOG_DEBUG, 0, '_ai');
+		dol_syslog('curl answer received, HTTP = '.$httpCode, LOG_DEBUG, 0, '_ai');
+
 		if (!empty($result['curl_error_no'])) {
+			dol_syslog("Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")", LOG_DEBUG, 0, '_ai');
 			return "Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")";
 		}
 
 		$json = json_decode($body, true);
+
+		dol_syslog("Result body=" . var_export($body, true), LOG_DEBUG, 0, '_ai');
+		dol_syslog("Result json_decoded=" . var_export($json, true), LOG_DEBUG, 0, '_ai');
 
 		if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
 			// Common real-world causes: HTTP 4xx/5xx with empty body, HTML error page
 			// from a proxy, gateway timeout, etc. Surface the HTTP code and a short
 			// body snippet so the admin can diagnose without re-running with curl.
 			$snippet = substr($body, 0, 500);
+			dol_syslog("Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>'), LOG_DEBUG, 0, '_ai');
 			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>');
 		}
 
 		if (isset($json['error'])) {
 			$msg = $json['error']['message'] ?? json_encode($json['error']);
 			$this->recordModelFailure($httpCode, (string) $msg);
+			dol_syslog("Error: API " . $msg, LOG_DEBUG, 0, '_ai');
 			return "Error: API " . $msg;
 		}
 
@@ -451,14 +464,23 @@ class UniversalLLMAdapter
 		}
 
 		// Extraction Logic
+		$answer = null;
 		if ($isClaude) {
-			return $json['content'][0]['text'] ?? null;
-		}
-		if ($isGemini) {
-			return $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
+			$answer = $json['content'][0]['text'] ?? null;
+		} elseif ($isGemini) {
+			$answer = $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
 		}
 
-		// Default (OpenAI compatible)
-		return $json['choices'][0]['message']['content'] ?? null;
+		if ($answer === null) {
+			// Default (OpenAI compatible)
+			$answer = $json['choices'][0]['message']['content'] ?? null;
+		}
+
+		// When answer was into the tool_calls instead of message
+		if (empty($answer) && !empty($json['choices'][0]['message']['tool_calls'])) {
+			$answer = json_encode($json['choices'][0]['message']['tool_calls']);
+		}
+
+		return $answer;
 	}
 }

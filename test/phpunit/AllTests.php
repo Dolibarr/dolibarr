@@ -63,24 +63,29 @@ $phpunit_modules_check = array(
 	'debugbar' => array('required' => false, 'blocking' => true, 'message' => 'Debugbar module should not be enabled. It generates troubles in db management.'),
 	'ldap' => array('required' => false, 'blocking' => true, 'message' => 'LDAP module should not be enabled.'),
 	// other external modules
-	'cabinetmed' => array('required' => false, 'blocking' => false, 'message' => 'DoliMed module should not be enabled.'),
-	'google' => array('required' => false, 'blocking' => false, 'message' => 'Google module should not be enabled.'),
+	'cabinetmed' => array('required' => false, 'blocking' => true, 'message' => 'DoliMed module should not be enabled.'),
+	'einvoicing' => array('required' => false, 'blocking' => true, 'message' => 'EInvoicing module should not be enabled.'),
+	'google' => array('required' => false, 'blocking' => true, 'message' => 'Google module should not be enabled.'),
 	'numberwords' => array('required' => false, 'blocking' => false, 'message' => 'Numberwords module should not be enabled.'),
 );
 
+$error = 0;
 foreach ($phpunit_modules_check as $module => $config) {
 	$enabled = isModEnabled($module);
 	if ($config['required'] && !$enabled) {
 		print "Error: ".$config['message']."\n";
 		if ($config['blocking']) {
-			exit(1);
+			$error++;
 		}
 	} elseif (!$config['required'] && $enabled) {
 		print ($config['blocking'] ? "Error: " : "Warning: ").$config['message']."\n";
 		if ($config['blocking']) {
-			exit(1);
+			$error++;
 		}
 	}
+}
+if ($error) {
+	exit(1);
 }
 
 if (empty($user->id)) {
