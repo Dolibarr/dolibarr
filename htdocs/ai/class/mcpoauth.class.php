@@ -774,13 +774,15 @@ class McpOauth
 	private function recordUse($rowid)
 	{
 		$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
-		$monthstart = $this->db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt');
-		$newmonth = "lastaccess < '".$monthstart."'";
+		$monthstart = dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0);
 
+		// The condition is written inline in each ifsql(), as api_access.class.php
+		// does: the SQL injection check of the CI refuses a condition passed in a
+		// variable, even one built from idate() alone.
 		$sql = "UPDATE ".$this->db->prefix()."oauth_token SET";
 		$sql .= " apicount_total = apicount_total + 1,";
-		$sql .= " apicount_previous_month = ".$this->db->ifsql($newmonth, 'apicount_month', 'apicount_previous_month').",";
-		$sql .= " apicount_month = ".$this->db->ifsql($newmonth, '1', 'apicount_month + 1').",";
+		$sql .= " apicount_previous_month = ".$this->db->ifsql("lastaccess < '".$this->db->idate($monthstart, 'gmt')."'", 'apicount_month', 'apicount_previous_month').",";
+		$sql .= " apicount_month = ".$this->db->ifsql("lastaccess < '".$this->db->idate($monthstart, 'gmt')."'", '1', 'apicount_month + 1').",";
 		$sql .= " lastaccess = '".$this->db->idate(dol_now('gmt'), 'gmt')."'";
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
