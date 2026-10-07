@@ -91,6 +91,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
+// BEGIN MODULEBUILDER RIGHTS
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
@@ -101,6 +102,7 @@ if ($enablepermissioncheck) {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
 }
+// END MODULEBUILDER RIGHTS
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

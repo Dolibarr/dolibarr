@@ -150,6 +150,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->mymodule->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
+// BEGIN MODULEBUILDER RIGHTS
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
@@ -160,6 +161,7 @@ if ($enablepermissioncheck) {
 	$permissiontoread = 1;
 	$permissiontoadd = 1;
 }
+// END MODULEBUILDER RIGHTS
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
