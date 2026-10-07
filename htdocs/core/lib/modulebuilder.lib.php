@@ -1580,6 +1580,99 @@ function filterEnabledTabs($requested, $map)
 }
 
 /**
+ * Add back the tab of a page generated after its object, when that tab was not selected at the object creation.
+ *
+ * @param	string			$libFile	Generated lib of the object
+ * @param	string			$tabKey		Key of getModuleBuilderObjectTabs()
+ * @param	NamingContract	$nc			Naming contract of the module and object
+ * @return	int							1 when the tab is declared (added or already there), 0 when the lib has no place for it, -1 on error
+ */
+function modulebuilderRestoreObjectTab(string $libFile, string $tabKey, NamingContract $nc): int
+{
+	$tabs = getModuleBuilderObjectTabs();
+	if (!isset($tabs[$tabKey])) {
+		dol_syslog(__FUNCTION__.': unknown tab '.$tabKey, LOG_ERR);
+		return -1;
+	}
+	$content = file_exists($libFile) ? file_get_contents($libFile) : false;
+	if ($content === false) {
+		dol_syslog(__FUNCTION__.': cannot read '.$libFile, LOG_ERR);
+		return -1;
+	}
+	$var = $tabs[$tabKey]['var'];
+	if (preg_match('/\$'.$var.'\s*=/', $content)) {
+		return 1;
+	}
+
+	$template = file_get_contents(DOL_DOCUMENT_ROOT.'/modulebuilder/template/lib/mymodule_myobject.lib.php');
+	$blocks = array();
+	foreach (array('TABFLAG', 'TAB') as $kind) {
+		$matches = array();
+		if ($template === false || !preg_match('/^\h*\/\/ BEGIN MODULEBUILDER '.$kind.' '.$tabs[$tabKey]['marker'].'\h*\R.*?^\h*\/\/ END MODULEBUILDER '.$kind.' '.$tabs[$tabKey]['marker'].'\h*\R/ms', $template, $matches)) {
+			dol_syslog(__FUNCTION__.': no '.$kind.' block for tab '.$tabKey.' in the lib template', LOG_ERR);
+			return -1;
+		}
+		$blocks[$kind] = $nc->applyTo($matches[0]);
+	}
+	$blocks['TABFLAG'] = (string) preg_replace('/\$'.$var.' = getDolGlobalInt\([^;]*\);/', '$'.$var.' = 1;', $blocks['TABFLAG']);
+
+	$keys = array_keys($tabs);
+	$position = (int) array_search($tabKey, $keys, true);
+	$following = array_slice($keys, $position + 1);
+	$preceding = array_reverse(array_slice($keys, 0, $position));
+
+	$content = modulebuilderInsertTabBlock($content, $blocks['TABFLAG'], 'TABFLAG', $following, $preceding, '/^\h*\$h = 0;/m', '', "\n");
+	if ($content !== null) {
+		$content = modulebuilderInsertTabBlock($content, $blocks['TAB'], 'TAB', $following, $preceding, '/^\h*\/\/ Show more tabs from modules/m', "\n", "\n");
+	}
+	if ($content === null) {
+		dol_syslog(__FUNCTION__.': no place to add tab '.$tabKey.' in '.$libFile, LOG_WARNING);
+		return 0;
+	}
+
+	if (file_put_contents($libFile, $content) === false) {
+		dol_syslog(__FUNCTION__.': cannot write '.$libFile, LOG_ERR);
+		return -1;
+	}
+
+	return 1;
+}
+
+/**
+ * Insert a tab block of the lib template next to the blocks of the neighbour tabs, or before a fallback line.
+ *
+ * @param	string		$content			Content of the generated lib
+ * @param	string		$block				Block to insert, ending with a newline
+ * @param	string		$kind				'TABFLAG' or 'TAB'
+ * @param	string[]	$following			Tabs after the inserted one, in template order
+ * @param	string[]	$preceding			Tabs before the inserted one, nearest first
+ * @param	string		$fallbackPattern	Line to insert before when no neighbour block is left
+ * @param	string		$separator			Text between the inserted block and a neighbour block
+ * @param	string		$fallbackSeparator	Text between the inserted block and the fallback line
+ * @return	string|null						New content, null when no place was found
+ */
+function modulebuilderInsertTabBlock(string $content, string $block, string $kind, array $following, array $preceding, string $fallbackPattern, string $separator, string $fallbackSeparator): ?string
+{
+	$tabs = getModuleBuilderObjectTabs();
+	$matches = array();
+	foreach ($following as $key) {
+		if (preg_match('/^\h*\/\/ BEGIN MODULEBUILDER '.$kind.' '.$tabs[$key]['marker'].'\h*$/m', $content, $matches, PREG_OFFSET_CAPTURE)) {
+			return substr_replace($content, $block.$separator, $matches[0][1], 0);
+		}
+	}
+	foreach ($preceding as $key) {
+		if (preg_match('/^\h*\/\/ END MODULEBUILDER '.$kind.' '.$tabs[$key]['marker'].'\h*\R/m', $content, $matches, PREG_OFFSET_CAPTURE)) {
+			return substr_replace($content, $separator.$block, $matches[0][1] + strlen($matches[0][0]), 0);
+		}
+	}
+	if (preg_match($fallbackPattern, $content, $matches, PREG_OFFSET_CAPTURE)) {
+		return substr_replace($content, $block.$fallbackSeparator, $matches[0][1], 0);
+	}
+
+	return null;
+}
+
+/**
  * Apply substitutions to a module descriptor file while preserving the MODULEBUILDER comment markers.
  * Markers such as "BEGIN MODULEBUILDER LEFTMENU MYOBJECT" must keep their MYOBJECT/MYMODULE placeholder
  * so that generating subsequent objects can still locate them (see checkExistComment()). A blanket

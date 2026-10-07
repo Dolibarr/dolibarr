@@ -678,6 +678,13 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 0;/' => '$'.$varnametoupdate.' = 1;');
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
+
+			// A tab unselected at the object creation was removed from the lib: add it back
+			foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+				if ($tabinfo['var'] === $varnametoupdate && $ncApiObj !== null && modulebuilderRestoreObjectTab($srcfile, $tabkey, $ncApiObj) <= 0) {
+					setEventMessages($langs->trans('WarningModuleBuilderTabNotRestored', basename($srcfile)), null, 'warnings');
+				}
+			}
 		}
 	} else {
 		$langs->load("errors");

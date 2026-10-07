@@ -183,6 +183,7 @@ RightsCheckedForDelete=Permission checked to delete
 ErrorModuleBuilderRightsConfig=Invalid permission settings: %s
 ErrorModuleBuilderRightsGeneration=The permissions of %s could not be generated, see the log
 WarningRightsConfigOnRegeneration=The object already exists: its pages keep the permission checks they were generated with.
+WarningModuleBuilderTabNotRestored=The page is generated but its tab could not be added to %s: add it to the tabs of the object.
 NoGenerateLines=I don't want to manage lines on this object
 NoGenerateLinesHelp=If you check this, some code will be removed to manage lines of the objects
 EnabledTabsForObject=Tabs to generate for this object

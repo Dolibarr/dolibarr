@@ -40,6 +40,9 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
  */
 class ModuleBuilderLibTest extends CommonClassTest
 {
+	/** @var string[] Generated lib fixtures to remove */
+	private $libFixtures = array();
+
 	/**
 	 * testGetModuleBuilderObjectTabs
 	 *
@@ -144,5 +147,134 @@ class ModuleBuilderLibTest extends CommonClassTest
 
 		// Duplicates collapsed
 		$this->assertSame(array('validate'), filterEnabledKeys(array('validate', 'validate'), $map));
+	}
+
+	/**
+	 * Generated lib of an object created with some tabs unselected, as initobject leaves it.
+	 *
+	 * @param string[] $unselected Tab keys unselected at the object creation
+	 * @return string Path to the generated lib
+	 */
+	private function makeObjectLib(array $unselected): string
+	{
+		$content = (string) file_get_contents(DOL_DOCUMENT_ROOT.'/modulebuilder/template/lib/mymodule_myobject.lib.php');
+		foreach (getModuleBuilderObjectTabs() as $key => $tab) {
+			if (in_array($key, $unselected, true)) {
+				$content = (string) preg_replace('/\h*\/\/ BEGIN MODULEBUILDER TABFLAG '.$tab['marker'].'.*?\/\/ END MODULEBUILDER TABFLAG '.$tab['marker'].'\s*/s', '', $content);
+				$content = (string) preg_replace('/\h*\/\/ BEGIN MODULEBUILDER TAB '.$tab['marker'].'.*?\/\/ END MODULEBUILDER TAB '.$tab['marker'].'\s*/s', '', $content);
+			} else {
+				$content = (string) preg_replace('/\$'.$tab['var'].' = getDolGlobalInt\([^;]*\);/', '$'.$tab['var'].' = 1;', $content);
+			}
+		}
+		$path = sys_get_temp_dir().'/mblib'.uniqid().'.lib.php';
+		file_put_contents($path, (new NamingContract('Rtest', 'Roauto'))->applyTo($content));
+		$this->libFixtures[] = $path;
+
+		return $path;
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function tearDown(): void
+	{
+		foreach ($this->libFixtures as $path) {
+			if (file_exists($path)) {
+				unlink($path);
+			}
+		}
+		$this->libFixtures = array();
+		parent::tearDown();
+	}
+
+	/**
+	 * @param string $content PHP content
+	 * @return void
+	 */
+	private function assertParses(string $content): void
+	{
+		try {
+			token_get_all($content, TOKEN_PARSE);
+		} catch (ParseError $e) {
+			$this->fail('Lib does not parse: '.$e->getMessage());
+		}
+		$this->addToAssertionCount(1);
+	}
+
+	/**
+	 * A page generated later with the Generate icon gets back the tab removed at the object creation, at its place.
+	 *
+	 * @return void
+	 */
+	public function testRestoreObjectTabPutsBackFlagAndTab()
+	{
+		$lib = $this->makeObjectLib(array('note'));
+
+		$this->assertSame(1, modulebuilderRestoreObjectTab($lib, 'note', new NamingContract('Rtest', 'Roauto')));
+
+		$content = (string) file_get_contents($lib);
+		$this->assertStringContainsString('$showtabofpagenote = 1;', $content);
+		$this->assertStringContainsString('/rtest/roauto_note.php', $content);
+		$this->assertStringNotContainsString('mymodule', $content);
+		$flag = strpos($content, '$showtabofpagenote = 1;');
+		$this->assertGreaterThan(strpos($content, '$showtabofpagecontact = 1;'), $flag);
+		$this->assertLessThan(strpos($content, '$showtabofpagedocument = 1;'), $flag);
+		$tab = strpos($content, 'if ($showtabofpagenote) {');
+		$this->assertGreaterThan(strpos($content, 'if ($showtabofpagecontact) {'), $tab);
+		$this->assertLessThan(strpos($content, 'if ($showtabofpagedocument) {'), $tab);
+		$this->assertParses($content);
+
+		// Already declared: nothing changes
+		$this->assertSame(1, modulebuilderRestoreObjectTab($lib, 'note', new NamingContract('Rtest', 'Roauto')));
+		$this->assertSame($content, (string) file_get_contents($lib));
+	}
+
+	/**
+	 * Without the previous tab, the restored tab still goes before the next one.
+	 *
+	 * @return void
+	 */
+	public function testRestoreObjectTabBeforeTheNextTab()
+	{
+		$lib = $this->makeObjectLib(array('contact', 'note'));
+
+		$this->assertSame(1, modulebuilderRestoreObjectTab($lib, 'note', new NamingContract('Rtest', 'Roauto')));
+
+		$content = (string) file_get_contents($lib);
+		$this->assertLessThan(strpos($content, '$showtabofpagedocument = 1;'), strpos($content, '$showtabofpagenote = 1;'));
+		$this->assertLessThan(strpos($content, 'if ($showtabofpagedocument) {'), strpos($content, 'if ($showtabofpagenote) {'));
+		$this->assertParses($content);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testRestoreObjectTabWhenEveryTabWasRemoved()
+	{
+		$lib = $this->makeObjectLib(array('contact', 'note', 'document', 'agenda'));
+
+		$this->assertSame(1, modulebuilderRestoreObjectTab($lib, 'agenda', new NamingContract('Rtest', 'Roauto')));
+
+		$content = (string) file_get_contents($lib);
+		$this->assertLessThan(strpos($content, '$h = 0;'), strpos($content, '$showtabofpageagenda = 1;'));
+		$this->assertGreaterThan(strpos($content, '$h = 0;'), strpos($content, 'if ($showtabofpageagenda) {'));
+		$this->assertLessThan(strpos($content, '// Show more tabs from modules'), strpos($content, 'if ($showtabofpageagenda) {'));
+		$this->assertParses($content);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testRestoreObjectTabLeavesAnUnknownLibUntouched()
+	{
+		$lib = sys_get_temp_dir().'/mblib'.uniqid().'.lib.php';
+		file_put_contents($lib, "<?php\nfunction roautoPrepareHead(\$object)\n{\n\treturn array();\n}\n");
+		$this->libFixtures[] = $lib;
+		$before = (string) file_get_contents($lib);
+
+		$this->assertSame(0, modulebuilderRestoreObjectTab($lib, 'note', new NamingContract('Rtest', 'Roauto')));
+		$this->assertSame($before, (string) file_get_contents($lib));
+		$this->assertSame(-1, modulebuilderRestoreObjectTab($lib, 'unknown', new NamingContract('Rtest', 'Roauto')));
+		$this->assertSame(-1, modulebuilderRestoreObjectTab($lib.'.missing', 'note', new NamingContract('Rtest', 'Roauto')));
 	}
 }
