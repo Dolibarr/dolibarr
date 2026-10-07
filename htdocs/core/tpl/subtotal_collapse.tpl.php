@@ -45,7 +45,7 @@ $langs->load("subtotals");
 ?>
 <!-- BEGIN PHP TEMPLATE SUBTOTAL_COLLAPSE.TPL.PHP - Script to collapse/expand the blocks of the subtotals module -->
 <script>
-var subtotalCollapseKey = 'subtotal_collapsed_<?php echo dol_escape_js($object->element.'_'.$object->id); ?>';
+var subtotalCollapseKey = <?php echo "'subtotal_collapsed_".dol_escape_js($object->element.'_'.$object->id)."'"; ?>;
 var subtotalCollapsedRows = [];
 
 /**
@@ -77,7 +77,7 @@ function subtotalSaveCollapsedRows() {
 function subtotalRefreshRows() {
 	var hideUntilLevel = 0;
 
-	$('#<?php echo dol_escape_js($tagidfortablednd); ?> tr.drag').each(function () {
+	$(<?php echo "'#".dol_escape_js($tagidfortablednd)." tr.drag'"; ?>).each(function () {
 		var row = this;
 		var level = (row.dataset.level !== undefined && row.dataset.level !== '') ? parseInt(row.dataset.level, 10) : null;
 
@@ -101,7 +101,7 @@ function subtotalRefreshRows() {
 			$(row).find('.subtotalcollapsepicto')
 				.toggleClass('fa-chevron-down', !collapsed)
 				.toggleClass('fa-chevron-right', collapsed)
-				.attr('title', collapsed ? '<?php echo dol_escape_js($langs->trans("ExpandBlock")); ?>' : '<?php echo dol_escape_js($langs->trans("CollapseBlock")); ?>');
+				.attr('title', collapsed ? <?php echo "'".dol_escape_js($langs->trans("ExpandBlock"))."'"; ?> : <?php echo "'".dol_escape_js($langs->trans("CollapseBlock"))."'"; ?>);
 			if (collapsed) {
 				hideUntilLevel = level;
 			}
@@ -113,7 +113,7 @@ $(document).ready(function () {
 	subtotalLoadCollapsedRows();
 	subtotalRefreshRows();
 
-	$('#<?php echo dol_escape_js($tagidfortablednd); ?>').on('click', '.subtotalcollapse', function (event) {
+	$(<?php echo "'#".dol_escape_js($tagidfortablednd)."'"; ?>).on('click', '.subtotalcollapse', function (event) {
 		event.preventDefault();
 		var rowid = $(this).closest('tr').attr('id');
 		var pos = subtotalCollapsedRows.indexOf(rowid);
