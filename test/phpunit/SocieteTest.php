@@ -355,6 +355,89 @@ class SocieteTest extends CommonClassTest
 
 
 	/**
+	 * Order summaries can exclude drafts and canceled orders without changing unfiltered callers.
+	 *
+	 * @return void
+	 */
+	public function testGetOutstandingOrdersFilteredByStatus()
+	{
+		global $conf, $db, $hookmanager;
+
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+
+		$savedHookmanager = $hookmanager;
+		$hookmanager = new HookManager($db);
+		$thirdpartyIds = array();
+		$orderIds = array();
+		$statuses = array(Commande::STATUS_VALIDATED, Commande::STATUS_SHIPMENTONPROCESS, Commande::STATUS_CLOSED);
+		$entities = array_map('intval', explode(',', getEntity('commande')));
+		$excludedEntity = max($entities) + 1;
+
+		try {
+			// Insert minimal fixtures directly: this test covers reads, not order lifecycle side effects.
+			for ($i = 0; $i < 3; $i++) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity) VALUES ('Order summary test', ".((int) $conf->entity).")";
+				$this->assertNotFalse($db->query($sql), $db->lasterror());
+				$thirdpartyIds[] = (int) $db->last_insert_id(MAIN_DB_PREFIX.'societe');
+			}
+
+			$fixtures = array(
+				array(Commande::STATUS_CANCELED, 0, 10, $thirdpartyIds[0], $conf->entity),
+				array(Commande::STATUS_DRAFT, 0, 20, $thirdpartyIds[0], $conf->entity),
+				array(Commande::STATUS_VALIDATED, 0, 30, $thirdpartyIds[0], $conf->entity),
+				array(Commande::STATUS_SHIPMENTONPROCESS, 0, 40, $thirdpartyIds[0], $conf->entity),
+				array(Commande::STATUS_CLOSED, 0, 50, $thirdpartyIds[0], $conf->entity),
+				array(Commande::STATUS_VALIDATED, 1, 60, $thirdpartyIds[0], $conf->entity),
+				array(Commande::STATUS_CLOSED, 1, 70, $thirdpartyIds[0], $conf->entity),
+				array(Commande::STATUS_VALIDATED, 0, 1000, $thirdpartyIds[1], $conf->entity),
+				array(Commande::STATUS_VALIDATED, 0, 2000, $thirdpartyIds[0], $excludedEntity),
+				array(Commande::STATUS_DRAFT, 0, 3000, $thirdpartyIds[2], $conf->entity),
+			);
+			$expectedRefs = array();
+			foreach ($fixtures as $index => $fixture) {
+				list($status, $billed, $amount, $socid, $entity) = $fixture;
+				$ref = 'SUMMARY-'.$thirdpartyIds[0].'-'.$index;
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (ref, fk_soc, entity, fk_statut, facture, total_ht, total_ttc)";
+				$sql .= " VALUES ('".$db->escape($ref)."', ".((int) $socid).", ".((int) $entity).", ".((int) $status).", ".((int) $billed).", ".((float) $amount).", ".((float) ($amount * 1.2)).")";
+				$this->assertNotFalse($db->query($sql), $db->lasterror());
+				$orderId = (int) $db->last_insert_id(MAIN_DB_PREFIX.'commande');
+				$orderIds[] = $orderId;
+				if ($index >= 2 && $index <= 6) {
+					$expectedRefs[$orderId] = $ref;
+				}
+			}
+
+			$thirdparty = new Societe($db);
+			$thirdparty->id = $thirdpartyIds[0];
+			$result = $thirdparty->getOutstandingOrders('customer', $statuses);
+			$this->assertEquals(250, $result['total_ht']);
+			$this->assertEquals(300, $result['total_ttc']);
+			$this->assertEquals(300, $result['opened']);
+			$this->assertEquals($expectedRefs, $result['refs']);
+
+			$unfiltered = $thirdparty->getOutstandingOrders();
+			$this->assertEquals(280, $unfiltered['total_ht']);
+			$this->assertEquals(336, $unfiltered['total_ttc']);
+			$this->assertEquals(312, $unfiltered['opened']);
+			$this->assertCount(7, $unfiltered['refs']);
+			$this->assertEquals($unfiltered, $thirdparty->getOutstandingOrders('customer', array()));
+
+			$thirdparty->id = $thirdpartyIds[2];
+			$empty = $thirdparty->getOutstandingOrders('customer', $statuses);
+			$this->assertEquals(array('opened' => 0, 'total_ht' => 0, 'total_ttc' => 0, 'refs' => array()), $empty);
+		} finally {
+			$hookmanager = $savedHookmanager;
+			if (!empty($orderIds)) {
+				$this->assertNotFalse($db->query("DELETE FROM ".MAIN_DB_PREFIX."commande WHERE rowid IN (".implode(',', $orderIds).")"), $db->lasterror());
+			}
+			if (!empty($thirdpartyIds)) {
+				$this->assertNotFalse($db->query("DELETE FROM ".MAIN_DB_PREFIX."societe WHERE rowid IN (".implode(',', $thirdpartyIds).")"), $db->lasterror());
+			}
+		}
+	}
+
+	/**
 	 * testSocieteDelete
 	 *
 	 * @param  int $id Id of company

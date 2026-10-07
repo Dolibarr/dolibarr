@@ -785,7 +785,7 @@ if ($object->id > 0) {
 
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 		// Box orders
-		$tmp = $object->getOutstandingOrders();
+		$tmp = $object->getOutstandingOrders('customer', array(Commande::STATUS_VALIDATED, Commande::STATUS_SHIPMENTONPROCESS, Commande::STATUS_CLOSED));
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
 		$outstandingTotalIncTax = $tmp['total_ttc'];
