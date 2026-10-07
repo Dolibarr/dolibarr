@@ -1804,7 +1804,7 @@ class User extends CommonObject
 				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
 			);
 			foreach ($hrmtables as $hrmtable => $sanitizedhrminfo) {
-				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$hrmtable." WHERE ".$sanitizedhrminfo['filter'];
+				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->sanitize($hrmtable)." WHERE ".$sanitizedhrminfo['filter'];
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
