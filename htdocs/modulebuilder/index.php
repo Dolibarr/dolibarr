@@ -332,6 +332,38 @@ function modulebuilderSyncRights(RightsSyncCommand $cmd): SyncReport
 	return $report;
 }
 
+/**
+ * Rights configuration posted by the new object form.
+ *
+ * @return RightsConfig Rights configuration
+ * @throws InvalidArgumentException When the posted settings are invalid
+ */
+function modulebuilderGetPostedRightsConfig(): RightsConfig
+{
+	$mode = GETPOST('rightsmode', 'aZ09');
+	if ($mode === '') {
+		// Form of older versions: a single checkbox
+		$mode = GETPOST('generatepermissions', 'aZ09') ? RightsGenerationMode::AUTO : RightsGenerationMode::NONE;
+	}
+
+	if ($mode === RightsGenerationMode::NONE) {
+		return RightsConfig::none();
+	}
+	if ($mode === RightsGenerationMode::AUTO) {
+		return RightsConfig::auto();
+	}
+	if ($mode !== RightsGenerationMode::CUSTOM) {
+		throw new InvalidArgumentException('Unknown rights generation mode "'.$mode.'"');
+	}
+
+	$map = array();
+	foreach (RightsConfig::OPERATIONS as $operation) {
+		$map[$operation] = GETPOST('rightsmap_'.$operation, 'aZ09');
+	}
+
+	return RightsConfig::custom(dol_strtolower(trim(GETPOST('rightskey', 'alphanohtml'))), $map);
+}
+
 if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission already done
 	$modulename = dol_string_nounprintableascii(dol_string_unaccent(dol_ucwords($modulename))); 		// Force first letter in uppercase
 	$destdir = '/not_set/';
@@ -437,6 +469,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 		dol_delete_file($destdir.'/sql/llx_'.dol_strtolower($modulename).'_myobject_extrafields.key.sql');
 		dol_delete_file($destdir.'/class/myobject.class.php');
 		dol_delete_file($destdir.'/class/myobjectstats.class.php');
+		// The stats page stays as a placeholder until the first object is generated
+		modulebuilderApplyRightsConfig($destdir.'/stats/myobject_index.php', null);
 
 		dol_delete_dir($destdir.'/class', 1);
 		dol_delete_dir($destdir.'/css', 1);
@@ -568,11 +602,39 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 		$varnametoupdate = 'showtabofpageagenda';
 	}
 
+	$pagecopied = false;
 	if (!file_exists($destfile)) {
 		$result = dol_copy($srcfile, $destfile, '0', 0);
+		$pagecopied = ($result > 0);
 	}
 
 	if ($result > 0) {
+		// A tab page generated later must check the permissions its object was generated with
+		if ($varnametoupdate && $pagecopied) {
+			$pagerightsconfig = null;
+			$objectclassfile = $destdir.'/class/'.dol_strtolower($objectname).'.class.php';
+			try {
+				$objectclasscontent = file_exists($objectclassfile) ? file_get_contents($objectclassfile) : '';
+				if ($objectclasscontent === false) {
+					throw new RuntimeException('Cannot read the class of '.$objectname);
+				}
+				if (modulebuilderGetRightsConfigState($objectclasscontent) === 'pending') {
+					throw new InvalidArgumentException('The generation of '.$objectname.' was not completed, generate the object again');
+				}
+				$pagerightsconfig = modulebuilderParseRightsConfig($objectclasscontent);
+			} catch (InvalidArgumentException | RuntimeException $e) {
+				$error++;
+				setEventMessages($langs->trans('ErrorModuleBuilderRightsConfig', $e->getMessage()), null, 'errors');
+			}
+			if (!$error && modulebuilderApplyRightsConfig($destfile, $pagerightsconfig) < 0) {
+				$error++;
+				setEventMessages($langs->trans('ErrorModuleBuilderRightsGeneration', basename($destfile)), null, 'errors');
+			}
+			if ($error) {
+				dol_delete_file($destfile);
+			}
+		}
+
 		//var_dump($phpfileval['fullname']);
 		try {
 			$ncApiObj = new NamingContract($modulename, $objectname);
@@ -610,12 +672,19 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			}
 		}
 
-		if ($varnametoupdate) {
+		if (!$error && $varnametoupdate) {
 			// Now we update the object file to set $$varnametoupdate to 1
 			$srcfile = $dirins.'/'.dol_strtolower($module).'/lib/'.dol_strtolower($module).'_'.dol_strtolower($objectname).'.lib.php';
 			$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 0;/' => '$'.$varnametoupdate.' = 1;');
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
+
+			// A tab unselected at the object creation was removed from the lib: add it back
+			foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+				if ($tabinfo['var'] === $varnametoupdate && $ncApiObj !== null && modulebuilderRestoreObjectTab($srcfile, $tabkey, $ncApiObj) <= 0) {
+					setEventMessages($langs->trans('WarningModuleBuilderTabNotRestored', basename($srcfile)), null, 'warnings');
+				}
+			}
 		}
 	} else {
 		$langs->load("errors");
@@ -1188,6 +1257,21 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 	$enabledcardactions = filterEnabledKeys(GETPOST('enabledcardaction', 'array'), getModuleBuilderObjectCardActions());
 	$objectalreadyexists = dol_is_file($destdir.'/class/'.dol_strtolower($objectname).'.class.php');
 
+	$rightsconfigs = array('page' => null, 'descriptor' => RightsConfig::none(), 'store' => false);
+	try {
+		$classcontent = $objectalreadyexists ? file_get_contents($destdir.'/class/'.dol_strtolower($objectname).'.class.php') : null;
+		if ($classcontent === false) {
+			throw new RuntimeException('Cannot read the class of '.$objectname);
+		}
+		$rightsconfigs = modulebuilderResolveRightsConfigs(modulebuilderGetPostedRightsConfig(), $classcontent);
+	} catch (InvalidArgumentException | RuntimeException $e) {
+		$error++;
+		setEventMessages($langs->trans('ErrorModuleBuilderRightsConfig', $e->getMessage()), null, 'errors');
+		$tabobj = 'newobject';
+	}
+	$pagerightsconfig = $rightsconfigs['page'];
+	$descriptorrightsconfig = $rightsconfigs['descriptor'];
+
 	// The dir was not created by init
 	dol_mkdir($destdir.'/class');
 	dol_mkdir($destdir.'/img');
@@ -1512,6 +1596,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				unset($filetogenerate[$tabinfo['file']]);
 			}
 		}
+		// The ajax endpoint writes any field of the object: without permission to check, it is not generated
+		if ($pagerightsconfig !== null && !$pagerightsconfig->generatesRights()) {
+			unset($filetogenerate['ajax/myobject.php']);
+		}
 
 		if (GETPOST('includerefgeneration', 'aZ09')) {
 			dol_mkdir($destdir.'/core/modules/'.dol_strtolower($module));
@@ -1536,7 +1624,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			}
 		}
 		$class = null;
-		if (GETPOST('generatepermissions', 'aZ09')) {
+		// The generated pages check these permissions: if they cannot be declared, nothing is generated
+		if ($descriptorrightsconfig->generatesRights()) {
 			$firstobjectname = 'myobject';
 			$pathtofile = $listofmodules[dol_strtolower($module)]['moduledescriptorrelpath'];
 			dol_include_once($pathtofile);
@@ -1560,11 +1649,21 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
 			$checkComment = checkExistComment($moduledescriptorfile, 1);
 			if ($checkComment < 0) {
+				$error++;
 				$langs->load("errors");
-				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'errors');
 			} else {
-				$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation($module, $moduledescriptorfile, is_array($rights) ? $rights : array(), $objectname));
-				if ($reportPerms->skipped > 0) {
+				$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation(
+					$module,
+					$moduledescriptorfile,
+					is_array($rights) ? $rights : array(),
+					$objectname,
+					$descriptorrightsconfig->getGeneratedCodes(),
+					$descriptorrightsconfig->getRightsKeyOverride()
+				));
+				if ($reportPerms->hasConflicts()) {
+					$error++;
+				} elseif ($reportPerms->skipped > 0) {
 					$langs->load("errors");
 					setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
 				}
@@ -1604,7 +1703,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		}
 
 		// Edit the class 'class/'.dol_strtolower($objectname).'.class.php'
-		if (GETPOST('includerefgeneration', 'aZ09')) {
+		if (!$error && GETPOST('includerefgeneration', 'aZ09')) {
 			// Replace 'visible' => 1, 'noteditable' => 0, 'default' => ''
 			$arrayreplacement = array(
 				'/\'visible\'s*=>s*1,\s*\'noteditable\'s*=>s*0,\s*\'default\'s*=>s*\'\'/' => "'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)'"
@@ -1620,7 +1719,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		}
 
 		// Edit the setup file and the card page
-		if (GETPOST('includedocgeneration', 'aZ09')) {
+		if (!$error && GETPOST('includedocgeneration', 'aZ09')) {
 			// Replace some var init into some files
 			$arrayreplacement = array(
 				'/\$includedocgeneration = 0;/' => '$includedocgeneration = 1;'
@@ -1673,7 +1772,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'langs' => 'mymodule@mymodule',
 			'position' => 1000 + \$r,
 			'enabled' => 'isModEnabled(\"mymodule\")',
-			'perms' => '".(GETPOST('generatepermissions') ? '$user->hasRight("mymodule", "myobject", "read")' : '1')."',
+			'perms' => '".RightsBlockRenderer::renderMenuPerms($descriptorrightsconfig, 'read')."',
 			'target' => '',
 			'user' => 2,
 			'object' => 'MyObject'
@@ -1688,7 +1787,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'langs' => 'mymodule@mymodule',
 			'position' => 1000 + \$r,
 			'enabled' => 'isModEnabled(\"mymodule\")',
-			'perms' => '".(GETPOST('generatepermissions') ? '$user->hasRight("mymodule", "myobject", "read")' : '1')."',
+			'perms' => '".RightsBlockRenderer::renderMenuPerms($descriptorrightsconfig, 'read')."',
 			'target' => '',
 			'user' => 2,
 			'object' => 'MyObject'
@@ -1703,7 +1802,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'langs' => 'mymodule@mymodule',
 			'position' => 1000 + \$r,
 			'enabled' => 'isModEnabled(\"mymodule\")',
-			'perms' => '".(GETPOST('generatepermissions') ? '$user->hasRight("mymodule", "myobject", "write")' : '1')."',
+			'perms' => '".RightsBlockRenderer::renderMenuPerms($descriptorrightsconfig, 'write')."',
 			'target' => '',
 			'user' => 2,
 			'object' => 'MyObject'
@@ -1741,7 +1840,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				$counter++;
 			}
 		}
-		if (!$counter) {
+		if (!$error && !$counter) {
 			$checkComment = checkExistComment($moduledescriptorfile, 0);
 			if ($checkComment < 0) {
 				$warning++;
@@ -1839,6 +1938,23 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		if ($objectalreadyexists) {
 			setEventMessages($langs->trans("WarningTabSelectionOnRegeneration"), null, 'warnings');
 			setEventMessages($langs->trans("WarningCardActionSelectionOnRegeneration"), null, 'warnings');
+			setEventMessages($langs->trans("WarningRightsConfigOnRegeneration"), null, 'warnings');
+		}
+	}
+
+	if (!$error) {
+		foreach (array('myobject_card.php', 'myobject_list.php', 'myobject_contact.php', 'myobject_document.php', 'myobject_note.php', 'myobject_agenda.php', 'ajax/myobject.php', 'stats/myobject_index.php') as $templatefile) {
+			if (empty($filetogenerate[$templatefile])) {
+				continue;
+			}
+			if (modulebuilderApplyRightsConfig($destdir.'/'.$filetogenerate[$templatefile], $pagerightsconfig) < 0) {
+				$error++;
+				setEventMessages($langs->trans('ErrorModuleBuilderRightsGeneration', $filetogenerate[$templatefile]), null, 'errors');
+			}
+		}
+		if (!$error && $rightsconfigs['store'] && modulebuilderStoreRightsConfig($destdir.'/class/'.dol_strtolower($objectname).'.class.php', $descriptorrightsconfig) < 0) {
+			$error++;
+			setEventMessages($langs->trans('ErrorModuleBuilderRightsGeneration', 'class/'.dol_strtolower($objectname).'.class.php'), null, 'errors');
 		}
 	}
 
@@ -4443,8 +4559,40 @@ if ($module == 'initmodule') {
 				print '<br>';
 				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label class="margintoponly" for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
-				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
 				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines"> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
+
+				$rightsmodeselected = GETPOSTISSET('rightsmode') ? GETPOST('rightsmode', 'aZ09') : RightsGenerationMode::NONE;
+				$rightsmodelabels = array(
+					RightsGenerationMode::NONE => $form->textwithpicto($langs->trans("RightsGenerationModeNone"), $langs->trans("RightsGenerationModeNoneHelp")),
+					RightsGenerationMode::AUTO => $form->textwithpicto($langs->trans("RightsGenerationModeAuto"), $langs->trans("RightsGenerationModeAutoHelp")),
+					RightsGenerationMode::CUSTOM => $form->textwithpicto($langs->trans("RightsGenerationModeCustom"), $langs->trans("RightsGenerationModeCustomHelp")),
+				);
+				print '<br><span class="opacitymedium">'.$langs->trans("RightsGenerationMode").'</span><br>';
+				foreach (RightsGenerationMode::all() as $rightsmode) {
+					print '<input type="radio" name="rightsmode" id="rightsmode_'.$rightsmode.'" value="'.$rightsmode.'"'.($rightsmode === $rightsmodeselected ? ' checked' : '').'> ';
+					print '<label for="rightsmode_'.$rightsmode.'">'.$rightsmodelabels[$rightsmode].'</label><br>';
+				}
+				print '<div id="rightscustomoptions" class="marginleftonly'.($rightsmodeselected === RightsGenerationMode::CUSTOM ? '' : ' hideobject').'">';
+				print '<label for="rightskey">'.$form->textwithpicto($langs->trans("RightsKey"), $langs->trans("RightsKeyHelp")).'</label> ';
+				print '<input type="text" name="rightskey" id="rightskey" maxlength="64" class="width150" value="'.dol_escape_htmltag(GETPOST('rightskey', 'alphanohtml')).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'"><br>';
+				$rightsoperationlabels = array('read' => 'RightsCheckedForRead', 'write' => 'RightsCheckedForWrite', 'delete' => 'RightsCheckedForDelete');
+				foreach (RightsConfig::OPERATIONS as $operation) {
+					$rightscodeselected = GETPOSTISSET('rightsmap_'.$operation) ? GETPOST('rightsmap_'.$operation, 'aZ09') : $operation;
+					print '<label for="rightsmap_'.$operation.'">'.$langs->trans($rightsoperationlabels[$operation]).'</label> ';
+					print '<select name="rightsmap_'.$operation.'" id="rightsmap_'.$operation.'" class="flat">';
+					foreach (RightsConfig::OPERATIONS as $code) {
+						print '<option value="'.$code.'"'.($code === $rightscodeselected ? ' selected' : '').'>'.$code.'</option>';
+					}
+					print '</select> &nbsp; ';
+				}
+				print '</div>';
+				print '<script>
+				$(document).ready(function() {
+					$("input[name=rightsmode]").on("change", function() {
+						$("#rightscustomoptions").toggleClass("hideobject", $("input[name=rightsmode]:checked").val() !== "'.RightsGenerationMode::CUSTOM.'");
+					});
+				});
+				</script>';
 				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("EnabledTabsForObject"), $langs->trans("EnabledTabsForObjectHelp")).'</span><br>';
 				foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
 					$checked = in_array($tabkey, $enabledtabsdefault, true) ? ' checked' : '';

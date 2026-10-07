@@ -537,14 +537,18 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 	}
 
 	/**
-	 * An object that already owns rights is skipped instead of duplicated.
+	 * An object that already owns every requested right is skipped instead of duplicated.
 	 *
 	 * @return void
 	 */
 	public function testObjectCreationSkipsAlreadyDeclaredObject()
 	{
 		$path = $this->makeDescriptorFixture('');
-		$existing = array(array(1 => 'Read myobject', 4 => 'myobject', 5 => 'read'));
+		$existing = array(
+			array(1 => 'Read myobject', 4 => 'myobject', 5 => 'read'),
+			array(1 => 'Write myobject', 4 => 'myobject', 5 => 'write'),
+			array(1 => 'Delete myobject', 4 => 'myobject', 5 => 'delete'),
+		);
 		$before = (string) file_get_contents($path);
 
 		$report = (new DescriptorRightsSyncService())->sync(
@@ -554,6 +558,100 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$this->assertSame(1, $report->skipped);
 		$this->assertFalse($report->hasConflicts());
 		$this->assertSame($before, (string) file_get_contents($path));
+	}
+
+	/**
+	 * The generated pages check every requested code: the missing ones are added, the declared ones are left untouched.
+	 *
+	 * @return void
+	 */
+	public function testObjectCreationCompletesPartiallyDeclaredObject()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$existing = array(array(1 => 'Read my objects', 4 => 'myobject', 5 => 'read'));
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forObjectCreation('MyModule', $path, $existing, 'MyObject')
+		);
+
+		$this->assertFalse($report->hasConflicts());
+		$this->assertSame(0, $report->skipped);
+		$rights = $this->parseRenderedRights($path);
+		$this->assertCount(3, $rights);
+		$this->assertSame('Read my objects', $rights[0][1]);
+		$this->assertSame(array('read', 'write', 'delete'), array($rights[0][5], $rights[1][5], $rights[2][5]));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testObjectCreationWithSubsetOfCodes()
+	{
+		$path = $this->makeDescriptorFixture('');
+
+		(new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forObjectCreation('MyModule', $path, array(), 'MyObject', array('read', 'write'))
+		);
+
+		$rights = $this->parseRenderedRights($path);
+		$this->assertCount(2, $rights);
+		$this->assertSame(array('myobject', 'myobject'), array($rights[0][4], $rights[1][4]));
+		$this->assertSame(array('read', 'write'), array($rights[0][5], $rights[1][5]));
+		$this->assertSame('Create/Update MyObject object of MyModule', $rights[1][1]);
+	}
+
+	/**
+	 * An object sharing the permissions of another key only adds the codes that key lacks.
+	 *
+	 * @return void
+	 */
+	public function testObjectCreationUnderSharedKeyAddsMissingCodesOnly()
+	{
+		$path = $this->makeDescriptorFixture('');
+		$existing = array(
+			array(1 => 'Read parent', 4 => 'parent', 5 => 'read'),
+			array(1 => 'Read other', 4 => 'other', 5 => 'read'),
+		);
+
+		$report = (new DescriptorRightsSyncService())->sync(
+			RightsSyncCommand::forObjectCreation('MyModule', $path, $existing, 'MyChild', array('read', 'write'), 'parent')
+		);
+
+		$this->assertFalse($report->hasConflicts());
+		$rights = $this->parseRenderedRights($path);
+		$this->assertCount(3, $rights);
+		$byKey = array();
+		foreach ($rights as $right) {
+			$byKey[$right[4].'/'.$right[5]] = $right[1];
+		}
+		$this->assertSame('Read parent', $byKey['parent/read']);
+		$this->assertSame('Create/Update MyChild object of MyModule', $byKey['parent/write']);
+		$this->assertSame('Read other', $byKey['other/read']);
+		$this->assertArrayNotHasKey('mychild/read', $byKey);
+	}
+
+	/**
+	 * @return array<string,array{0:string[],1:string}>
+	 */
+	public function invalidObjectCreationProvider(): array
+	{
+		return array(
+			'no code' => array(array(), ''),
+			'unknown code' => array(array('read', 'admin'), ''),
+			'invalid key' => array(array('read'), 'Bad key'),
+		);
+	}
+
+	/**
+	 * @dataProvider invalidObjectCreationProvider
+	 * @param string[] $codes Requested codes
+	 * @param string   $key   Permission key override
+	 * @return void
+	 */
+	public function testObjectCreationRejectsInvalidRequest(array $codes, string $key)
+	{
+		$this->expectException(\InvalidArgumentException::class);
+		RightsSyncCommand::forObjectCreation('MyModule', '/tmp/modMyModule.class.php', array(), 'MyObject', $codes, $key);
 	}
 
 	/**
@@ -746,8 +844,12 @@ class ModuleBuilderRightsSyncTest extends CommonClassTest
 		$this->assertSame(1, reWriteAllPermissions($path, array(), null, null, 'MyObject', 'MyModule', -2));
 		$this->assertCount(3, $this->parseRenderedRights($path));
 
-		// The object already owns rights: the legacy contract reports that as -1
-		$existing = array(array(1 => 'Read myobject', 4 => 'myobject', 5 => 'read'));
+		// The object already owns every right: the legacy contract reports that as -1
+		$existing = array(
+			array(1 => 'Read myobject', 4 => 'myobject', 5 => 'read'),
+			array(1 => 'Write myobject', 4 => 'myobject', 5 => 'write'),
+			array(1 => 'Delete myobject', 4 => 'myobject', 5 => 'delete'),
+		);
 		$this->assertSame(-1, reWriteAllPermissions($path, $existing, null, null, 'MyObject', 'MyModule', -2));
 
 		// Unknown action is refused

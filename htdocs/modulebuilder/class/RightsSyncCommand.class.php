@@ -22,6 +22,8 @@
  * \brief   Immutable request describing one permissions sync to perform on a module descriptor.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/RightsConfig.class.php';
+
 /**
  * Immutable request describing one permissions sync to perform on a module descriptor.
  *
@@ -69,6 +71,12 @@ final class RightsSyncCommand
 	/** @var string|null Permission crud code. Required for right-scoped add and update. */
 	public $rightCrud;
 
+	/** @var string[] Crud codes to declare. Only used by object creation. */
+	public $crudCodes;
+
+	/** @var string Permission key replacing the object key, '' to keep the object key. Only used by object creation. */
+	public $rightsKey;
+
 	/**
 	 * @param string                       $module         Module name
 	 * @param string                       $descriptorFile Path to the descriptor to patch
@@ -79,6 +87,8 @@ final class RightsSyncCommand
 	 * @param int|null                     $rightKey       Index in $permissions
 	 * @param string|null                  $rightLabel     Permission label
 	 * @param string|null                  $rightCrud      Permission crud code
+	 * @param string[]                     $crudCodes      Crud codes to declare, for object creation
+	 * @param string                       $rightsKey      Permission key override, for object creation
 	 * @throws \InvalidArgumentException When the command is incomplete for its scope and action
 	 */
 	private function __construct(
@@ -90,7 +100,9 @@ final class RightsSyncCommand
 		string $actionType,
 		?int $rightKey = null,
 		?string $rightLabel = null,
-		?string $rightCrud = null
+		?string $rightCrud = null,
+		array $crudCodes = array(),
+		string $rightsKey = ''
 	) {
 		if ($module === '') {
 			throw new \InvalidArgumentException('RightsSyncCommand requires a module name');
@@ -111,6 +123,12 @@ final class RightsSyncCommand
 			if ($actionType === self::ACTION_UPDATE) {
 				throw new \InvalidArgumentException('There is no object-scoped update in ModuleBuilder');
 			}
+			if ($actionType === self::ACTION_ADD) {
+				if (empty($crudCodes) || array_diff($crudCodes, RightsConfig::OPERATIONS)) {
+					throw new \InvalidArgumentException('Object creation declares one or more of '.implode(', ', RightsConfig::OPERATIONS));
+				}
+				RightsConfig::checkKey($rightsKey);
+			}
 		}
 		if ($scope === self::SCOPE_RIGHT && $actionType !== self::ACTION_ADD && $rightKey === null) {
 			throw new \InvalidArgumentException('A right-scoped '.$actionType.' requires a right key');
@@ -128,20 +146,25 @@ final class RightsSyncCommand
 		$this->rightKey = $rightKey;
 		$this->rightLabel = $rightLabel;
 		$this->rightCrud = $rightCrud;
+		$this->crudCodes = array_values($crudCodes);
+		$this->rightsKey = $rightsKey;
 	}
 
 	/**
-	 * Declare the three CRUD rights of a newly generated object.
+	 * Declare the CRUD rights of a newly generated object.
 	 *
 	 * @param string                       $module         Module name
 	 * @param string                       $descriptorFile Path to the descriptor to patch
 	 * @param array<int,array<int,string>> $permissions    Current rights array
 	 * @param string                       $objectName     Object being generated
+	 * @param string[]                     $crudCodes      Crud codes to declare, among RightsConfig::OPERATIONS
+	 * @param string                       $rightsKey      Permission key replacing the object key, '' to keep the object key
 	 * @return self New RightsSyncCommand instance for object creation
+	 * @throws \InvalidArgumentException When a code or the key is invalid
 	 */
-	public static function forObjectCreation(string $module, string $descriptorFile, array $permissions, string $objectName): self
+	public static function forObjectCreation(string $module, string $descriptorFile, array $permissions, string $objectName, array $crudCodes = RightsConfig::OPERATIONS, string $rightsKey = ''): self
 	{
-		return new self($module, $descriptorFile, $permissions, $objectName, self::SCOPE_OBJECT, self::ACTION_ADD);
+		return new self($module, $descriptorFile, $permissions, $objectName, self::SCOPE_OBJECT, self::ACTION_ADD, null, null, null, $crudCodes, $rightsKey);
 	}
 
 	/**

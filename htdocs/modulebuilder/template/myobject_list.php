@@ -211,6 +211,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// BEGIN MODULEBUILDER RIGHTS
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
@@ -223,6 +224,7 @@ if ($enablepermissioncheck) {
 	$permissiontoadd = 1;
 	$permissiontodelete = 1;
 }
+// END MODULEBUILDER RIGHTS
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) {

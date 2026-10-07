@@ -144,6 +144,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
+// BEGIN MODULEBUILDER RIGHTS
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
@@ -160,6 +161,7 @@ if ($enablepermissioncheck) {
 	$permissionnote = 1;
 	$permissiondellink = 1;
 }
+// END MODULEBUILDER RIGHTS
 
 $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1].'/myobject';
 
