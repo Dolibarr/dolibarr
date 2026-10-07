@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026  Frédéric France  <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@
  */
 function extrafieldsAdminProductServiceLabel($keyBoth, $keyServiceOnly, $keyProductOnly, $noconv = false)
 {
-	return function () use ($keyBoth, $keyServiceOnly, $keyProductOnly, $noconv) {
+	return /** @return string */ function () use ($keyBoth, $keyServiceOnly, $keyProductOnly, $noconv) {
 		global $langs;
 		$label = $noconv ? $langs->transnoentitiesnoconv($keyBoth) : $langs->trans($keyBoth);
 		if (!isModEnabled("product")) {
@@ -733,7 +734,7 @@ function getExtrafieldsAdminMap()
 			'headfile'     => 'core/lib/invoice.lib.php',
 			'tabid'        => 'attributes',
 			'headlabel'    => 'Invoices',
-			'textobject'   => function () {
+			'textobject'   => /** @return string */ function () {
 				global $langs;
 				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 			},
@@ -747,7 +748,7 @@ function getExtrafieldsAdminMap()
 			'headfile'     => 'core/lib/invoice.lib.php',
 			'tabid'        => 'attributeslines',
 			'headlabel'    => 'Invoices',
-			'textobject'   => function () {
+			'textobject'   => /** @return string */ function () {
 				global $langs;
 				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 			},
@@ -761,7 +762,7 @@ function getExtrafieldsAdminMap()
 			'headfile'     => 'core/lib/invoice.lib.php',
 			'tabid'        => 'attributesrec',
 			'headlabel'    => 'Invoices',
-			'textobject'   => function () {
+			'textobject'   => /** @return string */ function () {
 				global $langs;
 				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 			},
@@ -775,7 +776,7 @@ function getExtrafieldsAdminMap()
 			'headfile'     => 'core/lib/invoice.lib.php',
 			'tabid'        => 'attributeslinesrec',
 			'headlabel'    => 'Invoices',
-			'textobject'   => function () {
+			'textobject'   => /** @return string */ function () {
 				global $langs;
 				return strtolower($langs->transnoentitiesnoconv("BillsCustomers"));
 			},

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Open-Dsi	<support@open-dsi.fr>
+ * Copyright (C) 2026		MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,7 +188,7 @@ function dol_natural_search_phone($db, $fields, $value, $nofirstand = 0)
 		}
 	}
 
-	$candidates = array_values(array_unique(array_filter($candidates, function (string $c) {
+	$candidates = array_values(array_unique(array_filter($candidates, /** @return bool */ function (string $c) {
 		return $c !== '';
 	})));
 	if (empty($candidates)) {

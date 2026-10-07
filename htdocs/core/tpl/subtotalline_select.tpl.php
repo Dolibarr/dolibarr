@@ -23,6 +23,10 @@
  * @var int[] $selectedLines
  */
 
+'
+@phan-var-force CommonObjectLine $line
+';
+
 $line_color = $object->getSubtotalColors($line->qty);
 
 print '<!-- line for order line '.$line->id.' -->'."\n";
@@ -35,7 +39,7 @@ if (!empty($selectedLines) && !in_array($line->id, $selectedLines)) {
 }
 print "<td colspan='5'>";
 print '<input id="cb'.$line->rowid.'" class="flat checkforselect" type="checkbox" name="subtotal_toselect[]" value="'.$line->rowid.'" ' . ($selected ? ' checked="checked"' : '') . ' >';
-print $line->desc . "</td>\n";
+print dolPrintHTML($line->desc) . "</td>\n";
 
 
 print '</tr>';

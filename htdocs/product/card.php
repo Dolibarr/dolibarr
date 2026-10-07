@@ -23,6 +23,7 @@
  * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Mélina Joum		        <melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -415,16 +416,12 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// Delete the product
-					if ($productOrigin->delete($user) < 1) {
-						$error++;
-					}
-				}
-
-				if ($error) {
-					// Move files from the dir of the third party to delete into the dir of the third party to keep
-					if (!empty($conf->product->multidir_output[$productOrigin->entity ?? 1])) {
-						$srcdir = $conf->product->multidir_output[$productOrigin->entity ?? 1]."/".$productOrigin->ref;
+					// Move files from the dir of the product being deleted into the dir of the product kept.
+					// This must happen on success only: the filesystem is not part of the transaction, so
+					// moving the files on the failing path stripped the origin product of its documents
+					// while the database was rolled back, and left them orphaned on the successful one.
+					if (!empty($conf->product->multidir_output[$productOrigin->entity ?? $conf->entity])) {
+						$srcdir = $conf->product->multidir_output[$productOrigin->entity ?? $conf->entity]."/".$productOrigin->ref;
 						$destdir = $conf->product->multidir_output[$object->entity ?? $conf->entity]."/".$object->ref;
 
 						if (dol_is_dir($srcdir)) {
@@ -435,6 +432,11 @@ if (empty($reshook)) {
 							}
 							//exit;
 						}
+					}
+
+					// Delete the product
+					if ($productOrigin->delete($user) < 1) {
+						$error++;
 					}
 				}
 
@@ -1101,6 +1103,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 
 		if ($result > 0) {
@@ -3127,7 +3130,13 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 		2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
 	);
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPrices").')', 'value' => 0);
+		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("MultiPrices").')', 'value' => 0);
+	}
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPerPrices").')', 'value' => 0);
+	}
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("MultiPricesAndCustomerPerPrices").')', 'value' => 0);
 	}
 	if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
@@ -3142,7 +3151,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 			$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_otherboms', 'label' => $langs->trans("CloneOtherBomsProduct"), 'value' => 0);
 		}
 	}
-	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
+	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 0, 600);
 }
 
 // Call Hook formConfirm
@@ -3182,7 +3191,7 @@ if ($action != 'create' && $action != 'edit') {
 					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
 				}
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $cloneProductUrl, $cloneButtonId, $usercancreate);
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneProductUrl, $cloneButtonId, $usercancreate, array('attr' => array('class' => 'reposition')));
 			}
 		}
 		$object_is_used = $object->isObjectUsed($object->id);
@@ -3191,9 +3200,9 @@ if ($action != 'create' && $action != 'edit') {
 			if (empty($object_is_used)) {
 				if (!isset($hookmanager->resArray['no_button_delete']) || $hookmanager->resArray['no_button_delete'] != 1) {
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-						print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
+						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '#', 'action-delete', true, array('attr' => array('class' => 'reposition')))."\n";
 					} else {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '');
+						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 					}
 				}
 			} else {

@@ -121,7 +121,7 @@ class Utils
 					if ($choice == 'tempfilesold') {
 						foreach ($filesarray as $key => $val) {
 							if ($val['date'] > ($now - ($nbsecondsold))) {
-								unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
+								unset($filesarray[$key]); // Discard temp dir if modified during the last $nbsecondsold
 							}
 						}
 					}
@@ -427,7 +427,7 @@ class Utils
 				} elseif ($compression == 'bz') {
 					$handle = bzopen($outputfile, 'w');
 				} elseif ($compression == 'zstd') {
-					$handle = fopen($outputfile, 'w');
+					$handle = fopen("compress.zstd://" . $outputfile, "wb");
 				}
 			} else {
 				// TODO Add a pipe into script to decrypt dolCrypted values
@@ -778,8 +778,8 @@ class Utils
 					$newcommand = $matches[1] ?: ($matches[2] ?: $matches[3]);
 				}
 				if (!in_array(basename($newcommand), $arrayofallowedcommand)) {
-					dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($newcommand)." is not in the whitelist of allowed commands.", LOG_WARNING);
-					return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($newcommand).' is not in the whitelist of allowed commands');
+					dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($newcommand)." is not in the whitelist of allowed commands (param dolibarr_main_restrict_os_commands).", LOG_WARNING);
+					return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($newcommand).' is not in the whitelist of allowed commands (param dolibarr_main_restrict_os_commands)');
 				}
 			}
 		}
@@ -1011,7 +1011,8 @@ class Utils
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
-				if ($result < 0 && empty($this->errors)) {
+				if ($result == 0) {
+					// Add a human readable message to the raw output of the command
 					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOC);
 					$this->errors[] = $this->error;
 				}
@@ -1025,7 +1026,8 @@ class Utils
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
-				if ($result < 0 && empty($this->errors)) {
+				if ($result == 0) {
+					// Add a human readable message to the raw output of the command
 					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOCPDF);
 					$this->errors[] = $this->error;
 				}

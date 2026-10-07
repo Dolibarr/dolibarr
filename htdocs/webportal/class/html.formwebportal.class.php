@@ -1683,9 +1683,9 @@ class FormWebPortal extends Form
 		$context = Context::getInstance();
 
 		$html = str_replace(DOL_URL_ROOT . '/viewimage.php?', $context->getControllerUrl('viewimage') . $additionalViewImageParams . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/viewimage.php?')), urlencode(dol_escape_js($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&')), $html);
+		$html = str_replace(urlencode(DOL_URL_ROOT . '/viewimage.php?'), urlencode($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&'), $html);
 		$html = str_replace(DOL_URL_ROOT . '/document.php?', $context->getControllerUrl('document') . $additionalDocumentParams . '&', $html);
-		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/document.php?')), urlencode(dol_escape_js($context->getControllerUrl('document') . $additionalDocumentParams . '&')), $html);
+		$html = str_replace(urlencode(DOL_URL_ROOT . '/document.php?'), urlencode($context->getControllerUrl('document') . $additionalDocumentParams . '&'), $html);
 
 		return $html;
 	}

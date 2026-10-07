@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ if (isset($_GET["modulepart"])) {
 		$needlogin = 0;
 	}
 	// Used by TakePOS Auto Order. TODO Image product may became public in this case. A security check to check that product is in takepos tree must be done later.
-	// isModEnabled is not defined, DOL_DOCUMENT_ROOT is not defined
+	// isModEnabled is not yet defined, DOL_DOCUMENT_ROOT is not yet defined
 	if ($_GET["modulepart"] == 'product' /* && isModEnabled('takepos') */ && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
 	}
@@ -270,7 +270,7 @@ $original_file = str_replace('..\\', '/', $original_file);
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
-if ($refname == 'thumbs') {
+if ($refname == 'thumbs' || $refname == 'temp') {
 	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
 	$refname = basename(dirname(dirname($original_file))."/");
 }
@@ -292,20 +292,20 @@ if ($modulepart === 'medias' && $entity != $conf->entity) {
 	$conf->setValues($db);
 }
 
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 
+$imagepublicfortakepos = (GETPOSTISSET("publictakepos") && getDolGlobalString('TAKEPOS_AUTO_ORDER') && isModEnabled('takepos') && in_array($modulepart, array('product', 'category')));
+
 if (!empty($hashp) && $hashp != 'shared') {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
-} elseif (GETPOSTINT("publictakepos")) {
-	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
-		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
-		// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
-		// only shared images are visible
-	}
+} elseif ($imagepublicfortakepos) {
+	$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
+	// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
+	// only shared images are visible
 } else {
 	// Basic protection (against external users only)
 	if ($user->socid > 0) {
@@ -325,6 +325,17 @@ if (!empty($hashp) && $hashp != 'shared') {
 			}
 		}
 	}
+}
+
+// Check permission on per object basis
+if ($accessallowed && (empty($hashp) || $hashp == 'shared') && $needlogin && !$imagepublicfortakepos) {
+	$object = fetchObjectByElement(0, $modulepart, $refname);		// This init and load the object
+
+	if (is_object($object)) {
+		$accessallowed = restrictedArea($user, $modulepart, $object);
+	}
+	// If $modulepart is not an object type (userphoto, companylogo, memberphoto, apercuxxx, systemtools...), there is no object to check
+	// a permission on: we keep the result of dol_check_secure_access_document(), that has checked the permission for this modulepart.
 }
 
 // Security:

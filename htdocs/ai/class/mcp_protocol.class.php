@@ -329,10 +329,18 @@ class MCPServer
 		// McpHandler::executeTool() enforces the allow-list as a second gate.
 		$result = $this->mcpHandler->executeTool($name, $args);
 
-		// The handler returns an error array if the tool is blocked, not found or fails.
-		// We need to convert this into an MCP protocol exception.
+		// A tool that ran and failed is not a protocol failure. Raising it as a
+		// JSON-RPC error discarded the message on the way out (the outer catch
+		// answers a generic 'Internal server error'), so the caller was told the
+		// server had broken when it had in fact been refused, or had simply
+		// found nothing. The spec asks for a successful response carrying
+		// isError instead, which is what puts the reason in front of the model:
+		// "Access denied (HTTP 403)" is something it can act on, -32000 is not.
 		if (isset($result['error'])) {
-			throw new Exception($result['error']);
+			return [
+				'content' => [["type" => "text", "text" => (string) $result['error']]],
+				'isError' => true
+			];
 		}
 
 		// Format the successful result for the MCP protocol.
@@ -348,7 +356,7 @@ class MCPServer
 
 		return [
 			'content' => $content,
-			'isError' => false // We know it's not an error because we threw an exception above.
+			'isError' => false // Errors returned earlier, so reaching here means success.
 		];
 	}
 

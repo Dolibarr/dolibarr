@@ -196,7 +196,7 @@ if ($action == 'add_payment' && $permissiontoadd) {
 			if (!$error && !empty($line)) {
 				// If payment values are modified, recalculate schedule
 				if (($line->amount_capital != $pay_amount_capital) || ($line->amount_insurance != $pay_amount_insurance) || ($line->amount_interest != $pay_amount_interest)) {
-					$arr_term = loanCalcMonthlyPayment(($pay_amount_capital + $pay_amount_interest), $remaindertopay, ($loan->rate / 100), $echance, (int) $loan->nbterm);
+					$arr_term = loanCalcMonthlyPayment(($pay_amount_capital + $pay_amount_interest), $remaindertopay, ($loan->rate / 100), $echance, (int) $loan->nbterm, null, 'mens', 0, null, (int) $loan->frequency, (int) $loan->interest_basis, (int) $loan->datestart, (float) $loan->balloon_amount);
 					foreach ($arr_term as $k => $v) {
 						// Update fk_bank for current line
 						if ($k == $echance) {
@@ -323,7 +323,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, '(courant:=:'.Account::TYPE_CURRENT.')', 1); // Show opened bank account list
+	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->fk_bank, "accountid", 0, '(courant:=:'.Account::TYPE_CURRENT.')', 1, '', 0, '', 1); // Show open bank account list
 	print '</td></tr>';
 
 	// Number
@@ -379,7 +379,7 @@ if ($action == 'create') {
 	}
 	print '<br>';
 	if ($sumpaid < $loan->capital) {
-		print $langs->trans("Insurance").': <input type="text" size="8" name="amount_insurance" value="'.(GETPOSTISSET('amount_insurance') ? GETPOST('amount_insurance') : $amount_insurance).'">';
+		print loanChargeLabel($loan->charge_type, $langs).': <input type="text" size="8" name="amount_insurance" value="'.(GETPOSTISSET('amount_insurance') ? GETPOST('amount_insurance') : $amount_insurance).'">';
 	} else {
 		print '-';
 	}

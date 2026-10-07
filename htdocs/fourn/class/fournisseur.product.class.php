@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Christophe Battarel	    <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023	Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -333,6 +333,17 @@ class ProductFournisseur extends Product
 		global $user;
 
 		$error = 0;
+
+		// When called on a loaded product, the price line must be one of its own
+		if ($this->id > 0) {
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+			$sql .= " WHERE rowid = ".((int) $rowid)." AND fk_product = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorRecordNotFound';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
@@ -1339,11 +1350,12 @@ class ProductFournisseur extends Product
 	 *  @param  string  $morecss            		''=Add more css on link
 	 *  @param	int		$add_label					0=Default, 1=Add label into string, >1=Add first chars into string
 	 *  @param	string	$sep						' - '=Separator between ref and label if option 'add_label' is set
+	 *  @param	int		$addlinktonotes				1=Add link to notes
 	 *	@return	string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ', $addlinktonotes = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $hookmanager, $user;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1484,6 +1496,18 @@ class ProductFournisseur extends Product
 		$result .= $linkend;
 		if ($withpicto != 2) {
 			$result .= (($add_label && $this->label) ? $sep.dol_trunc($this->label, ($add_label > 1 ? $add_label : 0)) : '');
+		}
+
+		if ($addlinktonotes) {
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/product/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
 		}
 
 		global $action;

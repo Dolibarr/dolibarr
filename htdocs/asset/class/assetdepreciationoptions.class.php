@@ -213,7 +213,8 @@ class AssetDepreciationOptions extends CommonObject
 				// Unset required option (notnull) if field disabled
 				if (!empty($field_info['enabled_field'])) {
 					$info = explode(':', $field_info['enabled_field']);
-					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
+					// Use isset() + strict string compare, not empty(), because the gating value can legitimately be '0' (e.g. depreciation_type=0 for Linear)
+					if (isset($this->deprecation_options[$info[0]][$info[1]]) && (string) $this->deprecation_options[$info[0]][$info[1]] !== (string) $info[2] && isset($this->fields[$field_key]['notnull'])) {
 						unset($this->fields[$field_key]['notnull']);
 					}
 				}
@@ -346,6 +347,7 @@ class AssetDepreciationOptions extends CommonObject
 
 				//var_dump($field_key.' '.$value.' '.$field_info['type']);
 				$field_value = $value;
+
 				if ($field_info['notnull'] > 0 && $field_value == '' && !is_null($field_info['default']) && $field_info['default'] == '(PROV)') {
 					$field_value = '(PROV)';
 				} elseif ((!empty($field_info['required']) || $field_info['notnull'] > 0) && $field_value == '' && !empty($field_info['default'])) {
@@ -444,7 +446,8 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if (!empty($deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
+				// Use isset() + strict string compare, not empty(), because the gating value can legitimately be '0' (e.g. accelerated_depreciation_option=0)
+				if (isset($deprecation_options[$info[0]][$info[1]]) && (string) $deprecation_options[$info[0]][$info[1]] !== (string) $info[2]) {
 					unset($deprecation_options[$mode_key]);
 				}
 			}

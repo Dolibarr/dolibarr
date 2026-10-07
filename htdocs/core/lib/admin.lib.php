@@ -680,7 +680,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  */
 function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
-	global $conf, $hookmanager;
+	global $conf, $hookmanager, $user;
 
 	// Clean parameters
 	$name = trim($name);
@@ -714,6 +714,26 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 
 	//dol_syslog("dolibarr_set_const name=$name, value=$value type=$type, visible=$visible, note=$note entity=$entity");
 
+	$userid = (!empty($user) && is_object($user) && $user->id > 0) ? (int) $user->id : 0;
+
+	// Keep the original creator across the delete+recreate done below
+	$fk_user_creat = 0;
+	$sql = "SELECT fk_user_creat FROM ".MAIN_DB_PREFIX."const";
+	$sql .= " WHERE name = ".$db->encrypt($name);
+	if ($entity >= 0) {
+		$sql .= " AND entity = ".((int) $entity);
+	}
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj && $obj->fk_user_creat > 0) {
+			$fk_user_creat = (int) $obj->fk_user_creat;
+		}
+	}
+	if (empty($fk_user_creat)) {
+		$fk_user_creat = $userid;
+	}
+
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
@@ -727,26 +747,43 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
 		$tmpname = preg_replace('/(_TEST|_PROD)$/', '', $name);
-		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $tmpname))) {
+		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name)
+			&& (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_TOKEN|_REFRESH)$/', $tmpname))) {
 			// This seems a sensitive constant, we encrypt its value
 			// To list all sensitive constant, you can make a
 			// SELECT * from llx_const WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' ...
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-			$newvalue = dolEncrypt($value);
+			$newvalue = dolEncrypt($value);		// Encode using dolcrypt() function
 		} else {
 			$newvalue = $value;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity, fk_user_creat, fk_user_modif)";
 		$sql .= " VALUES (";
 		$sql .= $db->encrypt($name);
 		$sql .= ", ".$db->encrypt($newvalue);
-		$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity).")";
+		$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity);
+		$sql .= ", ".($fk_user_creat > 0 ? (int) $fk_user_creat : "NULL");
+		$sql .= ", ".($userid > 0 ? (int) $userid : "NULL").")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);
 		dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
 		$resql = $db->query($sql);
+
+		if (!$resql) {
+			// This function is also called by very old migration scripts (upgrade of a Dolibarr instance from an
+			// old version), at a point of the upgrade chain where llx_const may not yet have the fk_user_creat/fk_user_modif
+			// columns (added by a later migration). Fall back to the legacy insert so old upgrade paths keep working.
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
+			$sql .= " VALUES (";
+			$sql .= $db->encrypt($name);
+			$sql .= ", ".$db->encrypt($newvalue);
+			$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity).")";
+
+			dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
+			$resql = $db->query($sql);
+		}
 	}
 
 	if ($resql) {
@@ -2077,16 +2114,18 @@ function delDocumentModel($name, $type)
  *	block that was historically copy-pasted into most module setup pages (invoice.php, order.php,
  *	reception_setup.php, ...).
  *
- *	@param	string					$type			Value of document_model.type and root of the ADDON_PDF conf constant (e.g. 'invoice', 'reception')
- *	@param	string					$moduledir		Directory name under core/modules/ to scan for model classes (e.g. 'facture', 'reception'); may differ from $type
- *	@param	string					$constpdf		Name of the conf constant storing the default model name (e.g. 'FACTURE_ADDON_PDF')
- *	@param	string					$title			Already translated title printed above the table
- *	@param	array<string,string>	$features		Ordered list of extra tooltip feature rows to show, as array('TranslationKey' => 'option_property')
+ *	@param	string					$type				Value of document_model.type and root of the ADDON_PDF conf constant (e.g. 'invoice', 'reception')
+ *	@param	string					$moduledir			Directory name under core/modules/ to scan for model classes (e.g. 'facture', 'reception'); may differ from $type
+ *	@param	string					$constpdf			Name of the conf constant storing the default model name (e.g. 'FACTURE_ADDON_PDF')
+ *	@param	string					$title				Already translated title printed above the table
+ *	@param	array<string,string>	$features			Ordered list of extra tooltip feature rows to show, as array('TranslationKey' => 'option_property')
  *	@param	bool					$excludedisabled	If true, hide modules with version == 'disabled'
  *	@param	string					$constpdfdefault	Default value to assume for $constpdf when the conf constant is not set
+ *	@param	int<0,1>				$usedefault			If 1, show also the column Default.
+ *	@param	string					$actionunset		If not empty, action name used on the Default pictogram to unset the default model (e.g. 'unsetdoc'), if empty the pictogram is not clickable
  *	@return	void
  */
-function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '')
+function printDocumentModelList($type, $moduledir, $constpdf, $title, array $features, $excludedisabled = false, $constpdfdefault = '', $usedefault = 1, $actionunset = '')
 {
 	global $db, $langs, $conf;
 
@@ -2121,7 +2160,9 @@ function printDocumentModelList($type, $moduledir, $constpdf, $title, array $fea
 	print '<td>'.$langs->trans("Name").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
 	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-	print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
+	if ($usedefault) {
+		print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
+	}
 	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 	print '<td class="center" width="60">'.$langs->trans("Preview").'</td>';
 	print "</tr>\n";
@@ -2180,24 +2221,36 @@ function printDocumentModelList($type, $moduledir, $constpdf, $title, array $fea
 									// Active
 									if (in_array($name, $def)) {
 										print '<td class="center">'."\n";
-										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 										print img_picto($langs->trans("Enabled"), 'switch_on');
 										print '</a>';
 										print '</td>';
 									} else {
-										print '<td class="center">'."\n";
-										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-										print "</td>";
+										if (!empty($module->phpmin) && versioncompare($module->phpmin, versionphparray()) > 0) {
+											print '<td class="center">'."\n";
+											print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", implode('.', $module->phpmin))), 'switch_off', 'class="opacitymedium"');
+											print "</td>";
+										} else {
+											print '<td class="center">'."\n";
+											print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+											print "</td>";
+										}
 									}
 
 									// Default
-									print '<td class="center">';
-									if (getDolGlobalString($constpdf, $constpdfdefault) == (string) $name) {
-										print img_picto($langs->trans("Default"), 'on');
-									} else {
-										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									if ($usedefault) {
+										print '<td class="center">';
+										if (getDolGlobalString($constpdf, $constpdfdefault) == (string) $name) {
+											if ($actionunset) {
+												print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$actionunset.'&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Default"), 'on').'</a>';
+											} else {
+												print img_picto($langs->trans("Default"), 'on');
+											}
+										} else {
+											print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+										}
+										print '</td>';
 									}
-									print '</td>';
 
 									// Info
 									$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
@@ -2275,6 +2328,8 @@ function printNumberingModuleList($moduledir, $prefix, $constname, $title, $spec
 
 	clearstatcache();
 
+	$arrayofmodules = array();
+
 	foreach ($dirmodels as $reldir) {
 		$dir = dol_buildpath($reldir."core/modules/".$moduledir);
 
@@ -2291,69 +2346,79 @@ function printNumberingModuleList($moduledir, $prefix, $constname, $title, $spec
 						'@phan-var-force CommonNumRefGenerator $module';
 						/** @var CommonNumRefGenerator $module */
 
-						if ($module->isEnabled()) {
-							// Show modules according to features level
-							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-								continue;
-							}
-							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-								continue;
-							}
-
-							print '<tr class="oddeven"><td>'.$module->getName($langs)."</td>\n";
-							print '<td>';
-							print $module->info($langs);
-							print '</td>';
-
-							// Show example of numbering module
-							print '<td class="nowrap">';
-							$tmp = $module->getExample();  // @phan-suppress-current-line PhanUndeclaredMethod
-							if (preg_match('/^Error/', $tmp)) {
-								$langs->load("errors");
-								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-							} else {
-								print $tmp;
-							}
-							print '</td>'."\n";
-
-							print '<td class="center">';
-							if (getDolGlobalString($constname) == $file) {
-								print img_picto($langs->trans("Activated"), 'switch_on');
-							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$actionname.'&token='.newToken().'&value='.urlencode($file).'">';
-								print img_picto($langs->trans("Disabled"), 'switch_off');
-								print '</a>';
-							}
-							print '</td>';
-
-							// Info
-							$htmltooltip = '';
-							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-							$nextval = $module->getNextValue($mysoc, $specimenobject);  // @phan-suppress-current-line PhanUndeclaredMethod
-							if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
-								$htmltooltip .= ''.$langs->trans("NextValue").': ';
-								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-										$nextval = $langs->trans($nextval);
-									}
-									$htmltooltip .= $nextval.'<br>';
-								} else {
-									$htmltooltip .= $langs->trans($module->error).'<br>';
-								}
-							}
-
-							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 'info');
-							print '</td>';
-
-							print '</tr>';
-						}
+						$arrayofmodules[] = $module;
 					}
 				}
 				closedir($handle);
 			}
+		}
+	}
+
+	$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+	/** @var CommonNumRefGenerator[] $arrayofmodules */
+	'@phan-var-force CommonNumRefGenerator[] $arrayofmodules';
+
+	foreach ($arrayofmodules as $module) {
+		$file = get_class($module);
+
+		if ($module->isEnabled()) {
+			// Show modules according to features level
+			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+				continue;
+			}
+			if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+				continue;
+			}
+
+			print '<tr class="oddeven"><td>'.$module->getName($langs)."</td>\n";
+			print '<td>';
+			print $module->info($langs);
+			print '</td>';
+
+			// Show example of numbering module
+			print '<td class="nowrap">';
+			$tmp = $module->getExample();  // @phan-suppress-current-line PhanUndeclaredMethod
+			if (preg_match('/^Error/', $tmp)) {
+				$langs->load("errors");
+				print '<div class="error">'.$langs->trans($tmp).'</div>';
+			} elseif ($tmp == 'NotConfigured') {
+				print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+			} else {
+				print $tmp;
+			}
+			print '</td>'."\n";
+
+			print '<td class="center">';
+			if (getDolGlobalString($constname) == $file) {
+				print img_picto($langs->trans("Activated"), 'switch_on');
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$actionname.'&token='.newToken().'&value='.urlencode($file).'">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			}
+			print '</td>';
+
+			// Info
+			$htmltooltip = '';
+			$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+			$nextval = $module->getNextValue($mysoc, $specimenobject);  // @phan-suppress-current-line PhanUndeclaredMethod
+			if ((string) $nextval != $langs->trans("NotAvailable")) {  // Keep " on nextval
+				$htmltooltip .= ''.$langs->trans("NextValue").': ';
+				if ($nextval) {
+					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+						$nextval = $langs->trans($nextval);
+					}
+					$htmltooltip .= $nextval.'<br>';
+				} else {
+					$htmltooltip .= $langs->trans($module->error).'<br>';
+				}
+			}
+
+			print '<td class="center">';
+			print $form->textwithpicto('', $htmltooltip, 1, 'info');
+			print '</td>';
+
+			print '</tr>';
 		}
 	}
 
@@ -2548,6 +2613,7 @@ function GetContentPolicySources()
 			"*" => array("label" => "*", "data-sourcetype" => "select"),
 			"blob" => array("label" => "blob:", "data-sourcetype" => "blob"),
 			"data" => array("label" => "data:", "data-sourcetype" => "data"),
+			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"unsafe-eval" => array("label" => "unsafe-eval", "data-sourcetype" => "quoted"),
 			"wasm-unsafe-eval" => array("label" => "wasm-unsafe-eval", "data-sourcetype" => "quoted"),
@@ -2556,21 +2622,20 @@ function GetContentPolicySources()
 			"inline-speculation-rules" => array("label" => "inline-speculation-rules", "data-sourcetype" => "quoted"),
 			"strict-dynamic" => array("label" => "strict-dynamic", "data-sourcetype" => "quoted"),
 			"report-sample" => array("label" => "report-sample", "data-sourcetype" => "quoted"),
-			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
 		),
 		// Document directives
 		"document" => array(
 			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
-			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source (*.mydomain.com)", "data-sourcetype" => "input"),
 		),
 		// Navigation directives
 		"navigation" => array(
 			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
-			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
 		),
 		// Reporting directives

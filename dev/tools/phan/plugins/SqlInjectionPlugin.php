@@ -36,7 +36,7 @@ final class SqlInjectionPlugin extends PluginV3 implements PostAnalyzeNodeCapabi
 	 * @var bool If true, enable debug ('debug' option for plugin)
 	 * @internal
 	 */
-	public static bool $debugEnabled = false;
+	public static $debugEnabled = false;
 
 	/**
 	 * Constructor
@@ -458,7 +458,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 				// Determine the required quote type based on parameter value and quote map
 				// Cast to int to handle string representations of numbers
 				$paramValue = $paramValue !== null ? (int) $paramValue : null;
-				$requiredQuote = array_key_exists($paramValue, $quoteMap) ? $quoteMap[$paramValue] : $defaultQuote;
+				$requiredQuote = ($paramValue !== null && array_key_exists($paramValue, $quoteMap)) ? $quoteMap[$paramValue] : $defaultQuote;
 
 				// Only check if a specific quote is required
 				if ($requiredQuote !== null) {
@@ -477,11 +477,14 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 								$this->code_base, // @phpstan-ignore property.notFound
 								$this->context, // @phpstan-ignore property.notFound
 								'FunctionMissingSingleQuoteWrapping',
-								'Function %s output must be wrapped in %s quotes',
+								'Function %s output (not standalone PHP code) must be wrapped in %s quotes',
 								[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double']
 							);
 						}
 					} else {
+						// This case contains a lot of false positive, for example when the quote is in javascript world,
+						// for example with javascript like: console.log('<php code>');
+
 						// Standalone call - always flag it as it needs wrapping
 						$methodDisplay = $this->getNodeVarForMethodCall($node);
 						// @phpstan-ignore-next-line method.notFound
@@ -489,7 +492,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 							$this->code_base, // @phpstan-ignore property.notFound
 							$this->context, // @phpstan-ignore property.notFound
 							'FunctionMissingSingleQuoteWrapping',
-							'Function %s output must be wrapped in %s quotes',
+							'Function %s output (standalone PHP code) must be wrapped in %s quotes (may be false positive if quote is in javascript world)',
 							[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double']
 						);
 					}

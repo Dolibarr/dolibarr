@@ -121,6 +121,7 @@ try {
 	// one-line description is added to the system prompt so the model can
 	// resolve "this invoice" into real tool arguments.
 	$aiPageContextLine = '';
+	$ctxNamesToMask = array();
 	if (!empty($data['context']) && is_array($data['context'])) {
 		$ctxElement = isset($data['context']['element']) ? (string) $data['context']['element'] : '';
 		$ctxId = isset($data['context']['id']) ? (int) $data['context']['id'] : 0;
@@ -203,6 +204,13 @@ try {
 				// Under redaction, elements whose ref IS a personal/company name
 				// (societe: ref = company name) must not leak it - the privacy
 				// guard is pattern-based and cannot recognize arbitrary names.
+				$ctxNamesToMask[] = (string) $ctxObj->ref;
+				if (!empty($ctxObj->label)) {
+					$ctxNamesToMask[] = (string) $ctxObj->label;
+				}
+				if (!empty($ctxObj->name)) {
+					$ctxNamesToMask[] = (string) $ctxObj->name;
+				}
 				$ctxRefPart = " with ref \"".$ctxObj->ref."\"";
 				if (!empty($doRedact) && in_array($ctxElement, array('societe', 'contact'), true)) {
 					$ctxRefPart = "";
@@ -237,6 +245,9 @@ try {
 					continue;
 				}
 				$parts[] = $fk."='".dol_string_nohtmltag(dol_substr($fv, 0, 120))."'";
+				// Search values are names the user typed against real records:
+				// same class of arbitrary string as a thirdparty name.
+				$ctxNamesToMask[] = dol_string_nohtmltag(dol_substr($fv, 0, 120));
 				if (++$n >= 12) {
 					break;
 				}
@@ -267,8 +278,8 @@ try {
 	}
 
 	// This is to allow easy test of the parse_intent.php by calling the URL with param query=test
-	if (empty($query) && GETPOST('query', 'alphanohtml') == 'testdebug') {
-		$query = 'testdebug';
+	if (empty($query) && GETPOST('query', 'alphanohtml') == '/tools') {
+		$query = '/tools';
 	}
 
 	if (empty($query)) {
@@ -382,47 +393,52 @@ try {
 	$count = count($words);
 	$candidates = array();
 
-	// Helper function to validate a phrase without a dictionary
-	$isValidPhrase = function (string $phrase) use ($dynamicStopWords): bool {
+	// Helper function to validate a phrase without a dictionary.
+	// Returns 0 (not a candidate), 1 (candidate) or 2 (strict candidate, see RULE 2).
+	$isValidPhrase = function (string $phrase) use ($dynamicStopWords): int {
 		$phrase = trim($phrase);
 
 		// RULE 1: Minimum Length
 		// Filter out extremely short words (1-2 chars).
 		// This catches "a", "le", "la", "de", "y", "to", "in", "von", "zu" in almost all languages.
 		if (mb_strlen($phrase) < 3) {
-			return false;
+			return 0;
 		}
 
 		// RULE 2: First Word Check
-		// If the phrase starts with a translated keyword (e.g. "Invoice Acme"), skip it.
+		// A phrase starting with a translated keyword ("Invoice Acme") is most
+		// often a verb or an object name read as a company. A single such word
+		// is never a candidate. A longer phrase is kept as a STRICT candidate:
+		// it only resolves when a company carries that whole phrase as its name
+		// (a third party legitimately named "Test Corp" was collateral damage of
+		// the plain rejection - review sonikf on #38356).
 		$parts = explode(' ', $phrase);
 		$firstWord = dol_strtolower($parts[0]);
 
 		if (in_array($firstWord, $dynamicStopWords)) {
-			return false;
+			return count($parts) > 1 ? 2 : 0;
 		}
 
-		return true;
+		return 1;
 	};
 
 	// Fill array $candidates of thirdparty name we may want to work with
+	$strictCandidates = array();	// phrases that must match a whole company name
 	for ($i = 0; $i < $count; $i++) {
-		// Single Word
-		if ($isValidPhrase($words[$i])) {
-			$candidates[] = $words[$i];
-		}
-
+		$phrases = array($words[$i]);
 		if ($i + 1 < $count) {
-			$phrase = $words[$i] . ' ' . $words[$i + 1];
-			if ($isValidPhrase($phrase)) {
-				$candidates[] = $phrase;
-			}
+			$phrases[] = $words[$i] . ' ' . $words[$i + 1];
 		}
-
 		if ($i + 2 < $count) {
-			$phrase = $words[$i] . ' ' . $words[$i + 1] . ' ' . $words[$i + 2];
-			if ($isValidPhrase($phrase)) {
+			$phrases[] = $words[$i] . ' ' . $words[$i + 1] . ' ' . $words[$i + 2];
+		}
+		foreach ($phrases as $phrase) {
+			$valid = $isValidPhrase($phrase);
+			if ($valid > 0) {
 				$candidates[] = $phrase;
+				if ($valid === 2) {
+					$strictCandidates[$phrase] = true;
+				}
 			}
 		}
 	}
@@ -435,8 +451,15 @@ try {
 
 	if (!empty($candidates)) {
 		foreach ($candidates as $phrase) {
-			// We use LIKE '...' to match the start of the company name.
-			$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '" . $db->escape($phrase) . "%' LIMIT 1";
+			if (isset($strictCandidates[$phrase])) {
+				// Strict: the whole phrase must be the company name, or the name
+				// must continue with a space ("Test Corp" for "Test Corp SAS"),
+				// the shortest (closest) name first.
+				$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom = '" . $db->escape($phrase) . "' OR nom LIKE '" . $db->escape($phrase) . " %' ORDER BY LENGTH(nom) LIMIT 1";
+			} else {
+				// We use LIKE '...' to match the start of the company name.
+				$sql = "SELECT rowid, nom FROM " . MAIN_DB_PREFIX . "societe WHERE nom LIKE '" . $db->escape($phrase) . "%' LIMIT 1";
+			}
 
 			$res = $db->query($sql);
 
@@ -448,6 +471,9 @@ try {
 			}
 		}
 	}
+
+	// Token usage of the LLM call, filled after the adapter answered.
+	$usageContext = array();
 
 	// Apply privacy guard if enabled
 	$guard = null;
@@ -481,17 +507,30 @@ try {
 		$llmToolsBase   = $mcp->getToolsSchemaForLLM();
 
 		// Special case we ask debug info
-		if ($query == 'testdebug') {
-			print '----- loadedTools'."\n";
-			print '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			print "\n";
-			print "\n";
-			print '----- toolsByName'."\n";
-			print '<pre>' . json_encode($mcp->toolsByName, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
-			print "\n";
-			print "\n";
-			print '----- allToolsSchema (non system + system)'."\n";
-			print '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+		if ($query == '/tools') {
+			$s = '----- loadedTools (scan of family tools, not tools)'."\n";
+			$s .= '<pre>' . json_encode($mcp->loadedTools, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			$s .= "\n";
+			$s .= "\n";
+			$s .= '----- toolsByName'."\n";
+			$s .= '<pre>' . json_encode($mcp->toolsByName, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+			$s .= "\n";
+			$s .= "\n";
+			$s .= '----- allToolsSchema (non system + system)'."\n";
+			$s .= '<pre>' . json_encode($allToolsSchema, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . '</pre>';
+
+			$finalResponse = [
+				"tool" => "respond_to_user",
+				"arguments" => [
+					"message" => $s
+				]
+			];
+
+			// Log the low confidence response
+			//ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
+
+			ob_end_clean();
+			echo json_encode($finalResponse);
 			exit;
 		}
 
@@ -568,7 +607,13 @@ try {
 			// Masked like the query itself: under enforced redaction the ref
 			// becomes a placeholder that is restored server-side in tool
 			// arguments; the numeric ids the tools need stay usable.
-			$systemPrompt .= "\n\nPage context: ".(!empty($doRedact) && !empty($guard) ? $guard->mask($aiPageContextLine) : $aiPageContextLine);
+			// Mask once, use for both the system line and the user anchor:
+			// names first (dictionary - arbitrary strings the patterns cannot
+			// see), then the pattern pass for refs, emails, IBANs and the rest.
+			if (!empty($doRedact) && !empty($guard)) {
+				$aiPageContextLine = $guard->mask($guard->maskNames($aiPageContextLine, $ctxNamesToMask));
+			}
+			$systemPrompt .= "\n\nPage context: ".$aiPageContextLine;
 		}
 		$systemPrompt .= " Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.";
 
@@ -639,10 +684,49 @@ try {
 				// hallucinated tool names appeared with the long form). The
 				// full coaching stays in the system Page-context line above.
 				$aiPageContextShort = strtok($aiPageContextLine, ".").".";
-				$query .= "\n\n(Context: ".(!empty($doRedact) && !empty($guard) ? $guard->mask($aiPageContextShort) : $aiPageContextShort).")";
+				$query .= "\n\n(Context: ".$aiPageContextShort.")";
 			}
 
-			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments);
+			// Pinned context turns: past exchanges the user EXPLICITLY selected in
+			// the chat (nothing is carried over by default - context is opt-in, so
+			// its token cost is a visible, deliberate choice). Hard-sanitized here:
+			// roles constrained, embedded attachment payloads stripped (attachments
+			// stay one-shot), per-turn and global caps, privacy redaction applied.
+			$history = array();
+			if (!empty($data['history']) && is_array($data['history'])) {
+				$histBudget = 6000;
+				foreach (array_slice($data['history'], 0, 12) as $turn) {
+					if (!is_array($turn) || empty($turn['text']) || !is_string($turn['text'])) {
+						continue;
+					}
+					$htext = preg_replace('/__FILE_ATTACHMENT__\[[^\]]*\]::[^\s]+/', '[attachment removed]', $turn['text']);
+					$htext = trim((string) $htext);
+					if ($htext === '') {
+						continue;
+					}
+					if (dol_strlen($htext) > 1500) {
+						$htext = dol_substr($htext, 0, 1500).' ...';
+					}
+					if ($guard) {
+						$htext = $guard->mask($htext);
+					}
+					$histBudget -= dol_strlen($htext);
+					if ($histBudget < 0) {
+						break;
+					}
+					$history[] = array('role' => ((($turn['role'] ?? '') === 'assistant') ? 'assistant' : 'user'), 'text' => $htext);
+				}
+			}
+
+			// With past turns in the payload, the model must know what they are
+			// for. Two consecutive user turns (a request whose action the user
+			// cancelled, then a new one) read as "two things to do", and with a
+			// single tool call per answer the model picks the older one - field
+			// case: "set the phone of X" answered by creating "X bis".
+			if (!empty($history)) {
+				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references like \"this one\" or \"the second\". The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
+			}
+			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
 			dol_syslog('rawResponse='.$rawResponse, LOG_DEBUG);
@@ -652,6 +736,16 @@ try {
 			// Capture logs
 			$rawRequestLog = $adapter->lastRequest;
 			$rawResponseLog = $adapter->lastResponse;
+
+			// Token usage for the cost columns of the request log: reported by
+			// the provider inside the response, captured by the adapter.
+			if (!empty($adapter->lastUsage)) {
+				$usageContext = array(
+					'tokens_input' => (int) ($adapter->lastUsage['input'] ?? 0),
+					'tokens_output' => (int) ($adapter->lastUsage['output'] ?? 0),
+					'model' => (string) ($adapter->lastUsage['model'] ?? $model),
+				);
+			}
 
 			// Process response
 			if (is_string($rawResponse) && strpos($rawResponse, 'Error:') === 0) {
@@ -663,6 +757,12 @@ try {
 
 				$matches = array();
 				if (preg_match('/^\{.*\}$/s', $clean, $matches)) {
+					$clean = $matches[0];
+				} elseif (preg_match('/\{.*\}/s', $clean, $matches) && strpos($matches[0], '"tool"') !== false) {
+					// The model prefixed its tool call with a sentence ("I first need
+					// to find the third party... {"tool":...}"): the call is the
+					// answer, the sentence is not. Without this the whole text became
+					// a respond_to_user and the tool never ran.
 					$clean = $matches[0];
 				}
 
@@ -720,6 +820,23 @@ try {
 				if ($intentJSON && isset($intentJSON['tool'])) {
 					$validToolNames = array_column($allToolsSchema, 'name');
 					if (!in_array($intentJSON['tool'], $validToolNames)) {
+						// Near-miss name: recover only on a single match, same verb, all tokens present.
+						$reqTokens = explode('_', dol_strtolower((string) $intentJSON['tool']));
+						$candidates = array();
+						foreach ($validToolNames as $realName) {
+							if (strpos($realName, $reqTokens[0].'_') !== 0) {
+								continue;
+							}
+							if (!array_diff($reqTokens, explode('_', $realName))) {
+								$candidates[] = $realName;
+							}
+						}
+						if (count($candidates) === 1) {
+							dol_syslog("AI Validation: tool '".$intentJSON['tool']."' recovered to '".$candidates[0]."'.", LOG_INFO);
+							$intentJSON['tool'] = $candidates[0];
+						}
+					}
+					if (!in_array($intentJSON['tool'], $validToolNames)) {
 						dol_syslog("AI Validation: Tool '" . $intentJSON['tool'] . "' not found in filtered schema. Send error message via respond_to_user.", LOG_WARNING);
 
 						// Force the standard response for non-existent functionality
@@ -747,15 +864,34 @@ try {
 
 	// Handle no AI Intent
 	if (!$intentJSON || !isset($intentJSON['tool'])) {
+		$message = $langs->transnoentitiesnoconv('AICannotUnderstandRequest');
+		// A provider failure is not a misunderstanding: asking the user to
+		// rephrase when Gemini answers "503 high demand" sends them the wrong
+		// way. Say the service failed, with the provider's own reason, and
+		// for the transient cases (overloaded, rate limited) say to retry.
+		if (strpos($errorDetails, 'Error:') === 0) {
+			$reason = trim(preg_replace('/^Error:\s*(API|cURL #\d+)?\s*/', '', $errorDetails));
+			$reason = dol_trunc(preg_replace('/\s+/', ' ', $reason), 200);
+			if (preg_match('/high demand|overloaded|rate limit|quota|too many requests|try again|timed? ?out|HTTP (429|502|503|504)/i', $errorDetails)) {
+				$message = $langs->transnoentitiesnoconv('AIProviderBusy', $reason);
+			} else {
+				$message = $langs->transnoentitiesnoconv('AIProviderError', $reason);
+			}
+		}
 		$finalResponse = [
 			"tool" => "respond_to_user",
 			"arguments" => [
-				"message" => "I'm having trouble understanding your request. Please try rephrasing it differently. If the problem persists, please contact your administrator to check the AI connection status."
+				"message" => $message
 			]
 		];
+		if (strpos($errorDetails, 'Error:') === 0) {
+			// Lets the chat tell a failed call from a real answer (e.g. keep it
+			// out of the conversation context by default).
+			$finalResponse['status'] = 'error';
+		}
 
 		// Log the failure
-		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 0.0, $langs->transnoentitiesnoconv('Error'), $errorDetails, $rawRequestLog, $rawResponseLog);
+		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 0.0, $langs->transnoentitiesnoconv('Error'), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
 		ob_end_clean();
 		echo json_encode($finalResponse);
@@ -776,6 +912,120 @@ try {
 				if (!empty($intentJSON['arguments'][$altkey])) {
 					$intentJSON['arguments']['message'] = $intentJSON['arguments'][$altkey];
 					break;
+				}
+			}
+		}
+	}
+
+	// ask_for_confirmation is ours, built below around a real tool call; a model
+	// that emits it by itself (it does, on a follow-up question: "do you really
+	// want to update the phone of X?") sends the client a confirmation with
+	// nothing to confirm, which it rejects as malformed. Hand the question to
+	// the user as a plain answer instead: he replies, and the next turn acts.
+	if ($toolName === 'ask_for_confirmation' && empty($intentJSON['arguments']['original_intent'])) {
+		$question = '';
+		foreach (array('message', 'action', 'question', 'text') as $altkey) {
+			if (!empty($intentJSON['arguments'][$altkey]) && is_string($intentJSON['arguments'][$altkey])) {
+				$question = $intentJSON['arguments'][$altkey];
+				break;
+			}
+		}
+		dol_syslog("parse_intent.php model emitted ask_for_confirmation without an action, downgraded to respond_to_user", LOG_WARNING);
+		$toolName = 'respond_to_user';
+		$intentJSON = array('tool' => 'respond_to_user', 'arguments' => array('message' => ($question !== '' ? $question : $langs->transnoentitiesnoconv('AICannotUnderstandRequest'))));
+	}
+
+	// --- Second step: a write was asked, a read was answered -------------------
+	// "Set the phone of X", "delete the draft order of Y": when the object's id
+	// is neither in the message nor in the context, the model answers with a
+	// READ tool (a search). The chat runs one tool per turn, so it would show
+	// the search result and stop, and the user has to ask again with the id.
+	// When the administrator allows it, that read is executed here (rights and
+	// allow-list apply exactly as for a client call), its result goes back to
+	// the model as one extra assistant turn, and the write it then produces
+	// lands in the confirmation gate below like a direct call would.
+	//
+	// SAFETY PROPERTY - ONE STEP, NEVER A LOOP: the second answer is taken only
+	// when it is a write tool of the schema; anything else (another read, a
+	// question, an error) ends the turn on the first answer, unchanged. There
+	// is no third call whatever the model answers.
+	$twoStepLabel = '';
+	// Only on the model path: the shortcut paths above (classifier, page
+	// context...) answer without $adapter / $mcp / $history / $systemPrompt.
+	if (getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE') && is_array($intentJSON) && $toolName !== '' && isset($adapter, $mcp, $history, $systemPrompt, $toolsSchema) && is_object($adapter) && is_object($mcp) && is_array($history) && is_array($toolsSchema)) {
+		/**
+		 * @param string              $name Tool name
+		 * @param array<string,mixed> $args Tool arguments
+		 * @return bool                     True when the tool writes
+		 */
+		$isWriteTool = function ($name, array $args) use ($mcp) {
+			if (preg_match('/(create|update|delete|add|remove|modify|edit|validate|pay|send)/i', $name)) {
+				return true;
+			}
+			$inst = $mcp->toolsByName[$name] ?? null;
+			if (is_object($inst) && method_exists($inst, 'writeConfirmationPreview')) {
+				return ((string) $inst->writeConfirmationPreview($name, $args)) !== McpTool::NO_WRITE;
+			}
+			return false;
+		};
+		$readArgs = (isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) ? $intentJSON['arguments'] : array();
+		$systemTools = array('respond_to_user', 'reject_general_question', 'ask_for_clarification', 'ask_for_confirmation', 'navigate_to_page');
+		if (aiQueryAsksForWrite($query, $langs) && !in_array($toolName, $systemTools, true) && !$isWriteTool($toolName, $readArgs)) {
+			$readResult = $mcp->executeTool($toolName, $readArgs);
+			if (is_array($readResult) && !isset($readResult['error']) && (($readResult['resultType'] ?? '') !== 'input_required')) {
+				// The first call is a step of its own in the log (tokens included).
+				ai_log_request($db, $user, $query, $intentJSON, $providerUsed, microtime(true) - $startTime, $confidence, 'Step1', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
+
+				// Compact result, capped like a pinned tool result, and passed
+				// through the privacy guard exactly like the pinned history is.
+				$snippet = (string) json_encode($readResult, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+				if (dol_strlen($snippet) > 1500) {
+					$snippet = dol_substr($snippet, 0, 1500).' ...';
+				}
+				$snippet = '['.$toolName.' result] '.$snippet;
+				if ($guard) {
+					$snippet = $guard->mask($snippet);
+				}
+				$history2 = $history;
+				$history2[] = array('role' => 'assistant', 'text' => $snippet);
+				$systemPrompt2 = $systemPrompt."\n\nSTEP 2: the read tool ".$toolName." was already executed for you; its result is the last assistant turn. Now perform the WRITE the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the write cannot be done, answer with respond_to_user and say why. Do not call a read tool again.";
+
+				$rawResponse2 = $adapter->generate($systemPrompt2, $query, 'text', $attachments, $history2);
+				$rawRequestLog = $adapter->lastRequest;
+				$rawResponseLog = $adapter->lastResponse;
+				if (!empty($adapter->lastUsage)) {
+					$usageContext = array(
+						'tokens_input' => (int) ($adapter->lastUsage['input'] ?? 0),
+						'tokens_output' => (int) ($adapter->lastUsage['output'] ?? 0),
+						'model' => (string) ($adapter->lastUsage['model'] ?? (isset($model) ? $model : '')),
+					);
+				}
+
+				$intent2 = null;
+				if (is_string($rawResponse2) && strpos($rawResponse2, 'Error:') !== 0) {
+					$clean2 = trim((string) preg_replace('/```json\s*|\s*```/s', '', $rawResponse2));
+					$m2 = array();
+					if (preg_match('/\{.*\}/s', $clean2, $m2)) {
+						$clean2 = $m2[0];
+					}
+					if ($guard) {
+						$clean2 = $guard->unmaskAiResponse($clean2);
+					}
+					$intent2 = json_decode((string) preg_replace('/[\r\n]/', ' ', $clean2), true);
+					if (is_array($intent2) && $guard && isset($intent2['arguments'])) {
+						$intent2['arguments'] = recursiveUnmaskValues($intent2['arguments'], $guard);
+					}
+				}
+				$args2 = (is_array($intent2) && isset($intent2['arguments']) && is_array($intent2['arguments'])) ? $intent2['arguments'] : array();
+				if (is_array($intent2) && !empty($intent2['tool']) && is_string($intent2['tool']) && in_array($intent2['tool'], array_column($allToolsSchema, 'name'), true) && $isWriteTool($intent2['tool'], $args2)) {
+					dol_syslog("parse_intent.php two-step: read ".$toolName." then write ".$intent2['tool'], LOG_INFO);
+					$intentJSON = $intent2;
+					$toolName = $intent2['tool'];
+					$confidence = calculateConfidence($intentJSON, array_column($toolsSchema, null, 'name'), (string) $rawResponse2);
+					// The preview must name the object the read resolved, not an id.
+					$twoStepLabel = aiLabelOfResolvedObject($readResult, $args2);
+				} else {
+					dol_syslog("parse_intent.php two-step: second answer is not a write, the turn ends on the read ".$toolName, LOG_INFO);
 				}
 			}
 		}
@@ -802,6 +1052,21 @@ try {
 		$details = formatArgumentsForDisplay($arguments);
 		$action = extractActionFromTool($toolName);
 
+		// A write tool describes its own effect in a sentence, which is what the
+		// user has to act on: prefer it over the raw argument dump, and keep the
+		// dump underneath for the detail.
+		$toolInstance = $mcp->toolsByName[$toolName] ?? null;
+		if (is_object($toolInstance) && method_exists($toolInstance, 'writeConfirmationPreview')) {
+			$preview = (string) $toolInstance->writeConfirmationPreview($toolName, $arguments);
+			if ($preview !== McpTool::NO_WRITE) {
+				$action = $preview;
+			}
+		}
+		if (!empty($twoStepLabel)) {
+			// The id came from a read the user never saw: say which object it is.
+			$action .= ' - '.$twoStepLabel;
+		}
+
 		$confirmationResponse = [
 			"tool" => "ask_for_confirmation",
 			"arguments" => [
@@ -812,7 +1077,7 @@ try {
 		];
 
 		// Log the confirmation request
-		ai_log_request($db, $user, $query, $confirmationResponse, $providerUsed, microtime(true) - $startTime, $confidence, $langs->transnoentitiesnoconv("Confirm"), $errorDetails, $rawRequestLog, $rawResponseLog);
+		ai_log_request($db, $user, $query, $confirmationResponse, $providerUsed, microtime(true) - $startTime, $confidence, $langs->transnoentitiesnoconv("Confirm"), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
 		ob_end_clean();
 		echo json_encode($confirmationResponse);
@@ -829,7 +1094,7 @@ try {
 		];
 
 		// Log the low confidence response
-		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog);
+		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
 		ob_end_clean();
 		echo json_encode($finalResponse);
@@ -844,7 +1109,7 @@ try {
 	// Success!
 	$finalResponse = $intentJSON;
 	$execTime = microtime(true) - $startTime;
-	ai_log_request($db, $user, $query, $finalResponse, $providerUsed, $execTime, $confidence, $langs->transnoentitiesnoconv("Success"), $errorDetails, $rawRequestLog, $rawResponseLog);
+	ai_log_request($db, $user, $query, $finalResponse, $providerUsed, $execTime, $confidence, $langs->transnoentitiesnoconv("Success"), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
 	ob_end_clean();
 	echo json_encode($finalResponse);
@@ -872,7 +1137,8 @@ try {
 			'error',
 			$realErrorForLog,
 			$rawRequestLog ?? '',
-			$rawResponseLog ?? ''
+			$rawResponseLog ?? '',
+			$usageContext ?? array()
 		);
 	}
 
@@ -880,6 +1146,79 @@ try {
 	echo json_encode($friendlyResponse);
 }
 
+
+/**
+ * Does the user's message ask for a write (create / update / delete / ...)?
+ * Translated keys of the current language plus the short verbs users type in
+ * French and English whatever the UI language; whole words only.
+ *
+ * @param string    $query Message of the user
+ * @param Translate $langs Translations
+ * @return bool            True when a write verb is present
+ */
+function aiQueryAsksForWrite($query, $langs)
+{
+	$verbs = array();
+	foreach (array('Create', 'Add', 'Modify', 'Update', 'Delete', 'Remove', 'Validate', 'Send') as $key) {
+		$word = dol_strtolower((string) $langs->transnoentities($key));
+		if ($word !== '' && $word !== dol_strtolower($key)) {
+			$verbs[] = $word;
+		}
+	}
+	$verbs = array_merge($verbs, array(
+		'create', 'add', 'modify', 'update', 'delete', 'remove', 'validate', 'send', 'change', 'set', 'edit', 'rename', 'close', 'cancel',
+		'crée', 'cree', 'créer', 'creer', 'ajoute', 'ajouter', 'modifie', 'modifier', 'mets', 'met', 'mettre', 'change', 'changer', 'passe', 'passer',
+		'supprime', 'supprimer', 'efface', 'effacer', 'retire', 'retirer', 'valide', 'valider', 'envoie', 'envoyer', 'enregistre', 'enregistrer', 'renomme', 'renommer', 'clôture', 'cloture', 'annule', 'annuler'
+	));
+	$escaped = array();
+	foreach (array_unique(array_filter($verbs)) as $verb) {
+		$escaped[] = preg_quote($verb, '/');
+	}
+	$pattern = '/(^|[^\p{L}])('.implode('|', $escaped).')([^\p{L}]|$)/iu';
+	return (bool) preg_match($pattern, dol_strtolower((string) $query));
+}
+
+/**
+ * Name of the object a write targets, taken from the read result that
+ * produced its id (so the confirmation names "Dupont SA", not "socid 2305").
+ *
+ * @param array<mixed> $readResult Result of the read tool (a row, a list of rows, or {data:[...]})
+ * @param array<mixed> $writeArgs  Arguments of the write tool
+ * @return string                  Name / ref / label of the matching row, '' when not found
+ */
+function aiLabelOfResolvedObject(array $readResult, array $writeArgs)
+{
+	$ids = array();
+	foreach ($writeArgs as $k => $v) {
+		if ((is_int($v) || (is_string($v) && ctype_digit($v))) && preg_match('/(^id$|_id$|^socid$|^fk_)/', (string) $k)) {
+			$ids[] = (int) $v;
+		}
+	}
+	if (empty($ids)) {
+		return '';
+	}
+	$rows = $readResult;
+	if (isset($rows['data']) && is_array($rows['data'])) {
+		$rows = $rows['data'];
+	}
+	if (isset($rows['id']) || isset($rows['rowid'])) {
+		$rows = array($rows);
+	}
+	foreach ($rows as $row) {
+		if (!is_array($row)) {
+			continue;
+		}
+		$rowid = (int) ($row['id'] ?? $row['rowid'] ?? 0);
+		if ($rowid > 0 && in_array($rowid, $ids, true)) {
+			foreach (array('name', 'nom', 'ref', 'label', 'subject', 'title', 'login') as $key) {
+				if (!empty($row[$key]) && is_string($row[$key])) {
+					return dol_trunc($row[$key], 80);
+				}
+			}
+		}
+	}
+	return '';
+}
 
 /**
  * Recursively unmask values in a dataset.
@@ -1035,28 +1374,48 @@ function classifyIntentUniversal(string $query, Translate $langs)
 	$isLatin = !isComplexScript($query);
 	$searchQuery = $isLatin ? strtolower(dol_string_unaccent($query)) : $query;
 
-	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict"));
+	$langs->loadLangs(array("main", "bills", "orders", "propal", "companies", "products", "projects", "dict", "sendings", "receptions", "ticket", "members", "agenda", "interventions"));
 
+	// Vocabulary rule: every object family whose tools exist must light up the
+	// categories those tools carry (see ApiBridge::ENDPOINT_CATEGORIES), or the
+	// prompt filter drops them and the model claims the feature does not exist
+	// (that is how receptions were lost before). Families WITHOUT any bridged
+	// tool (bank accounts, donations, holidays) are deliberately absent: their
+	// words would activate categories that hold no matching tool and only
+	// narrow the prompt wrongly - add the endpoint first, the vocabulary second.
 	$intentMap = [
 		'billing' => [
-			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft'],
-			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue']
+			// Member/Subscription: members and subscriptions tools are
+			// categorized ['thirdparty', 'billing'].
+			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft', 'Member', 'Subscription'],
+			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue', 'member', 'membership', 'subscription', 'cotisation', 'adhesion']
 		],
 		'commercial' => [
-			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft'],
-			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote']
+			// 'Reception' and 'Shipment' matter: create_other_document (the tool
+			// that creates receptions/shipments) is categorized 'commercial', so a
+			// query like "create a reception from this delivery note" must light
+			// this category up or the creation tool is filtered out of the prompt
+			// and the model honestly answers it cannot create receptions.
+			// Intervention: interventions tools are ['project', 'commercial'].
+			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft', 'Reception', 'Shipment', 'Delivery', 'Intervention'],
+			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention']
 		],
 		'thirdparty' => [
-			'keys'     => ['ThirdParty', 'Customer', 'Supplier', 'Contact', 'Company'],
-			'synonyms' => ['client', 'partner', 'address', 'phone', 'vendor']
+			// Ticket and agenda-event tools are ['thirdparty', 'project'];
+			// members/subscriptions are ['thirdparty', 'billing']; the
+			// categories endpoint is ['thirdparty', 'stock'] (its 'Category'
+			// UI key translates to 'Tag/category' - unusable as a keyword,
+			// hence plain synonyms).
+			'keys'     => ['ThirdParty', 'Customer', 'Supplier', 'Contact', 'Company', 'Ticket', 'Member', 'Subscription', 'Event', 'Agenda'],
+			'synonyms' => ['client', 'partner', 'address', 'phone', 'vendor', 'ticket', 'support', 'incident', 'member', 'adherent', 'membership', 'meeting', 'appointment', 'rdv', 'category', 'categorie', 'tag']
 		],
 		'stock' => [
 			'keys'     => ['Product', 'Service', 'Stock', 'Warehouse'],
-			'synonyms' => ['item', 'inventory', 'sku', 'location', 'qty', 'warehouse']
+			'synonyms' => ['item', 'inventory', 'sku', 'location', 'qty', 'warehouse', 'category', 'categorie', 'tag']
 		],
 		'project' => [
-			'keys'     => ['Project', 'Task'],
-			'synonyms' => ['task', 'team', 'deadline', 'planning', 'milestone']
+			'keys'     => ['Project', 'Task', 'Ticket', 'Event', 'Agenda', 'Intervention'],
+			'synonyms' => ['task', 'team', 'deadline', 'planning', 'milestone', 'ticket', 'event', 'meeting', 'appointment', 'rdv', 'intervention']
 		],
 		'reporting' => [
 			'keys'     => ['Report', 'Statistics', 'Turnover', 'Revenue', 'Income'],
@@ -1070,7 +1429,7 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		global $conf;
 		$langsEnUs = new Translate('', $conf);
 		$langsEnUs->setDefaultLang('en_US');
-		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other'));
+		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions'));
 	}
 
 	$detectedCategories = [];

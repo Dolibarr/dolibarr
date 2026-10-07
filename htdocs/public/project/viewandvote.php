@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('newpayment'));
 global $dolibarr_main_url_root;
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -82,6 +82,7 @@ $errmsg = '';
 $error = 0;
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
+$suffix = GETPOST("suffix", 'aZ09');
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 

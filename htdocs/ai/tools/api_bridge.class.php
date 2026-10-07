@@ -47,10 +47,15 @@
  *     only as a complement, never a full rewrite.
  *
  * Remaining WIP limitations (POC scope):
- *   - Schemas come from a light docblock parser; TODO reuse Restler's
- *     CommentParser/Routes metadata (what generates swagger.json).
- *   - Tool definitions are rebuilt on every request; TODO cache them,
- *     invalidated on module (de)activation.
+ *   - Schemas come from a light docblock parser; reusing Restler's
+ *     CommentParser/Routes metadata was measured and rejected (see the
+ *     discussion in #38356).
+ *
+ * Tool definitions are cached across requests in the module temp directory
+ * (see defsCacheFile(): keyed on the enabled-modules list, so a module
+ * (de)activation switches to a fresh cache file; editing this file - where
+ * the enrichments live - invalidates it too). AI_MCP_BRIDGE_DEFS_CACHE_TTL
+ * tunes the lifetime in seconds (default 86400, 0 disables the cache).
  *
  * Disabled unless the constant AI_MCP_API_BRIDGE is set to 1.
  */
@@ -89,7 +94,9 @@ class ToolApiBridge extends McpTool
 		'members' => array('thirdparty', 'billing'),
 		'subscriptions' => array('thirdparty', 'billing'),
 		'expensereports' => array('billing'),
-		'tickets' => array('thirdparty', 'project')
+		'tickets' => array('thirdparty', 'project'),
+		'shipments' => array('stock', 'commercial', 'thirdparty'),
+		'receptions' => array('stock', 'thirdparty')
 	);
 
 	/**
@@ -447,6 +454,71 @@ class ToolApiBridge extends McpTool
 				]
 			]
 		],
+		'orders' => [
+			'label' => 'customer orders (commandes)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,date_commande,delivery_date,total_ht,total_ttc,statut',
+					'description' => "Statuses (t.fk_statut): -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed). Dates are unix timestamps: date_commande (order date), delivery_date (planned delivery). Useful sqlfilters fields: t.ref, t.date_commande, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many orders match."
+					]
+				],
+				'get' => [
+					'description' => "One order with its lines (product, qty, unit price, discount, line totals), status and dates.",
+					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One order by its exact reference (e.g. 'CO2401-0001').",
+					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				]
+			]
+		],
+		'shipments' => [
+			'label' => 'customer shipments (expéditions, goods sent)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_customer,date_delivery,date_shipping,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods left), 2=closed (billed / processed). Dates are unix timestamps: date_shipping (sent), date_delivery (planned delivery). Useful sqlfilters fields: t.ref, t.ref_customer, t.fk_soc, t.fk_statut, t.date_delivery.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many shipments match."
+					]
+				],
+				'get' => [
+					'description' => "One shipment: customer, source order, dates, status, tracking number; the lines are in api_shipments_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a shipment: product, quantity shipped, batch/lot when the product is tracked.",
+					'params' => ['id' => "Rowid of the shipment."]
+				]
+			]
+		],
+		'receptions' => [
+			'label' => 'supplier receptions (réceptions, goods received)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_supplier,date_reception,date_delivery,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods received into stock), 2=closed / processed. Dates are unix timestamps: date_reception (received), date_delivery (planned). Useful sqlfilters fields: t.ref, t.ref_supplier, t.fk_soc, t.fk_statut, t.date_delivery. A draft created by the chat keeps its '(PROVnn)' reference: search it by id or with sqlfilters on t.ref_supplier.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated supplier rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many receptions match."
+					]
+				],
+				'get' => [
+					'description' => "One reception: supplier, supplier reference, dates, status; the lines are in api_receptions_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a reception: product, quantity received, batch/lot and warehouse when tracked.",
+					'params' => ['id' => "Rowid of the reception."]
+				]
+			]
+		],
 		'expensereports' => [
 			'label' => 'employee expense reports (notes de frais)',
 			'methods' => [
@@ -517,6 +589,20 @@ class ToolApiBridge extends McpTool
 		],
 		// NB: stock inventories have no REST API class in core yet (no api_inventories) —
 		// they cannot be bridged until one exists.
+		'documents' => [
+			'label' => 'documents attached to business objects',
+			'methods' => [
+				'getDocumentsListByElement' => [
+					'suffix' => 'list',
+					'description' => "List the files attached to a business object. Answers \"what files does this invoice have\", \"show the documents of that order\", \"is there anything attached to this third party\". Returns each file name, size, date and a download link, never the content. Give the object by id or by ref; search for it first when neither is known. A draft ref is written in parentheses, like (PROV42): pass it with them.",
+					'params' => [
+						'modulepart' => "Object type: invoice, supplier_invoice, order, supplier_order, propal (proposal), supplier_proposal, shipment, societe (third party), product, contract, ficheinter (intervention), project, project_task, ticket, expensereport, holiday, member, actioncomm (event), category, user.",
+						'id' => "Rowid of the object, when known.",
+						'ref' => "Reference of the object, when the id is unknown."
+					]
+				]
+			]
+		],
 	];
 
 	/**
@@ -634,8 +720,8 @@ class ToolApiBridge extends McpTool
 				}
 
 				while (($file_searched = readdir($handle_part)) !== false) {
-					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_documents.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
-						continue;	// Framework plumbing, not business endpoints (setup/documents even require main.inc.php, fatal outside a web page).
+					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
+						continue;	// Framework plumbing, not business endpoints.
 					}
 					$regapi = [];
 					if (!is_readable($dir_part.$file_searched) || !preg_match("/^api_(.*)\\.class\\.php$/i", $file_searched, $regapi)) {
@@ -754,6 +840,27 @@ class ToolApiBridge extends McpTool
 		if ($this->defs !== null) {
 			return $this->defs;
 		}
+
+		// Cross-request cache of the generated definitions: the directory scans
+		// and the per-method reflection/docblock work below produce the same
+		// result for a given set of enabled modules, so it is generated once
+		// and reread from a JSON file until something relevant changes. The
+		// routes and the endpoint map ride along because execute() needs them
+		// (the endpoint class itself is still required lazily at call time).
+		$cachettl = getDolGlobalInt('AI_MCP_BRIDGE_DEFS_CACHE_TTL', 86400);
+		$cachefile = ($cachettl > 0) ? $this->defsCacheFile() : '';
+		if ($cachefile !== '' && is_readable($cachefile) && (dol_now() - (int) filemtime($cachefile)) < $cachettl) {
+			$payload = json_decode((string) file_get_contents($cachefile), true);
+			if (is_array($payload) && isset($payload['defs'], $payload['routes'], $payload['endpoints'])
+				&& is_array($payload['defs']) && is_array($payload['routes']) && is_array($payload['endpoints'])) {
+				$this->defs = $payload['defs'];
+				$this->routes = $payload['routes'];
+				$this->endpoints = $payload['endpoints'];
+
+				return $this->defs;
+			}
+		}
+
 		$this->loadApiRuntime();
 
 		$this->defs = [];
@@ -801,7 +908,77 @@ class ToolApiBridge extends McpTool
 			}
 		}
 
+		if ($cachefile !== '') {
+			$this->writeDefsCache($cachefile);
+		}
+
 		return $this->defs;
+	}
+
+	/**
+	 * Path of the definitions cache file for the CURRENT state, or '' when no
+	 * writable temp directory exists. The state signature is part of the file
+	 * name, so any relevant change - a module (de)activated, a Dolibarr
+	 * upgrade, another entity, an edit of this file (which holds the
+	 * enrichments), or a change of the DB-driven restrictions
+	 * (AI_MCP_API_BRIDGE, AI_MCP_API_BRIDGE_METHODS) - simply points to a
+	 * different file: no explicit invalidation hook to maintain, and an
+	 * administrator RESTRICTING what the AI may reach takes effect on the
+	 * very next request (review sonikf). External-module API updates that
+	 * change none of these are covered by the TTL.
+	 *
+	 * @return string Absolute cache file path, or '' to skip caching
+	 */
+	private function defsCacheFile()
+	{
+		global $conf;
+
+		$dir = '';
+		if (!empty($conf->ai->multidir_temp[$conf->entity])) {
+			$dir = $conf->ai->multidir_temp[$conf->entity];
+		} elseif (!empty($conf->ai->dir_temp)) {
+			$dir = $conf->ai->dir_temp;
+		}
+		if (empty($dir) || dol_mkdir($dir) < 0) {
+			return '';
+		}
+
+		$modules = array_map('strval', array_values((array) $conf->modules));
+		sort($modules);
+		$signature = implode(',', $modules).'|'.DOL_VERSION.'|'.((int) $conf->entity).'|'.((int) @filemtime(__FILE__)).'|'.DOL_DOCUMENT_ROOT;
+		// Security-relevant runtime restrictions live in the DATABASE, not in
+		// this file: they must be part of the signature too, or restricting
+		// them would silently keep serving the wider cached toolset for up to
+		// a full TTL (review sonikf on the initial version).
+		$signature .= '|'.getDolGlobalInt('AI_MCP_API_BRIDGE').'|'.getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
+
+		return rtrim($dir, '/').'/bridge_tooldefs_'.md5($signature).'.json';
+	}
+
+	/**
+	 * Persist the generated definitions/routes/endpoints, pruning cache files
+	 * of previous states so stale signatures do not pile up. Written to a
+	 * temporary name then renamed, so a concurrent reader never sees a
+	 * truncated file.
+	 *
+	 * @param string $cachefile Target file from defsCacheFile()
+	 * @return void
+	 */
+	private function writeDefsCache(string $cachefile)
+	{
+		$payload = json_encode(array('defs' => $this->defs, 'routes' => $this->routes, 'endpoints' => $this->endpoints));
+		if (!is_string($payload)) {
+			return;
+		}
+		foreach ((array) glob(dirname($cachefile).'/bridge_tooldefs_*.json') as $old) {
+			if (is_string($old) && $old !== $cachefile) {
+				@unlink($old);
+			}
+		}
+		$tmpfile = $cachefile.'.tmp.'.getmypid();
+		if (file_put_contents($tmpfile, $payload) !== false) {
+			@rename($tmpfile, $cachefile);
+		}
 	}
 
 	/**
@@ -864,10 +1041,19 @@ class ToolApiBridge extends McpTool
 			} else {
 				$pdesc = $this->commonParamDocs[$pname] ?? '';
 			}
+			// The API docblocks carry Restler's inline validation tags. They are
+			// markup, not prose: left in place they reach the model as noise
+			// ("... (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}"). Lift the
+			// ones JSON Schema can express into real constraints, and drop the
+			// rest from the text.
+			$constraints = [];
+			$pdesc = $this->liftInlineTags($pdesc, $ptype, $constraints);
+
 			$prop = [
 				'type' => $ptype,
 				'description' => $pdesc
 			];
+			$prop += $constraints;
 			if ($p->isOptional()) {
 				try {
 					$prop['default'] = ($pname == 'limit') ? self::BRIDGE_DEFAULT_LIMIT : $p->getDefaultValue();
@@ -905,6 +1091,110 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Lift Restler's inline validation tags out of a parameter description.
+	 *
+	 * The REST API documents constraints the way Restler reads them to build
+	 * swagger.json: {@min 1}, {@max 100}, {@choice yes,no}, {@pattern /re/flags}.
+	 * Those carry exactly what JSON Schema calls minimum, maximum, enum and
+	 * pattern, so they are translated instead of being shown to the model as
+	 * part of the sentence. Tags with no JSON Schema equivalent ({@type} names a
+	 * PHP class, {@from} names the HTTP source, which in-process calls have no
+	 * use for) are removed from the text and otherwise ignored.
+	 *
+	 * @param ?string $desc Parameter description, as written in the docblock (may be null)
+	 * @param string $ptype JSON Schema type already determined for this parameter
+	 * @param array<string, mixed> $constraints Filled with the JSON Schema constraints found
+	 * @return string The description with every inline tag removed
+	 */
+	private function liftInlineTags($desc, string $ptype, array &$constraints): string
+	{
+		$desc = (string) $desc;
+
+		if (strpos($desc, '{@') === false) {
+			return $desc;
+		}
+
+		$matches = [];
+		if (preg_match_all('/\{@(\w[\w-]*)\s*([^}]*)\}/', $desc, $matches, PREG_SET_ORDER)) {
+			foreach ($matches as $tag) {
+				$name = strtolower($tag[1]);
+				$value = trim($tag[2]);
+
+				if ($name === 'min' && is_numeric($value)) {
+					$constraints['minimum'] = $this->tagValueToNumber($value);
+				} elseif ($name === 'max' && is_numeric($value)) {
+					$constraints['maximum'] = $this->tagValueToNumber($value);
+				} elseif ($name === 'choice' && $value !== '') {
+					$choices = array_map('trim', explode(',', $value));
+					if ($ptype === 'integer' || $ptype === 'number') {
+						foreach ($choices as $i => $choice) {
+							if (is_numeric($choice)) {
+								$choices[$i] = $this->tagValueToNumber($choice);
+							}
+						}
+					}
+					$constraints['enum'] = array_values($choices);
+				} elseif ($name === 'pattern' && $value !== '') {
+					$pattern = $this->restlerPatternToJsonSchema($value);
+					if ($pattern !== '') {
+						$constraints['pattern'] = $pattern;
+					}
+				}
+			}
+		}
+
+		// Remove every tag, including the ones left untranslated, then tidy the
+		// whitespace the removal leaves behind.
+		$desc = preg_replace('/\s*\{@\w[\w-]*[^}]*\}/', '', $desc);
+
+		return trim(preg_replace('/\s{2,}/', ' ', (string) $desc));
+	}
+
+	/**
+	 * Convert a numeric tag value to the PHP number JSON encodes as a number.
+	 *
+	 * {@min 0} must reach the model as 0, not "0": a JSON Schema minimum given
+	 * as a string is not a minimum.
+	 *
+	 * @param string $value Numeric tag value, already checked with is_numeric()
+	 * @return int|float
+	 */
+	private function tagValueToNumber(string $value)
+	{
+		return (strpos($value, '.') === false) ? (int) $value : (float) $value;
+	}
+
+	/**
+	 * Convert a Restler {@pattern} value to a JSON Schema pattern.
+	 *
+	 * JSON Schema patterns are ECMA-262 regexps with no delimiters and no flags,
+	 * so the PCRE delimiters are stripped. A flag that changes what the regexp
+	 * accepts cannot be carried over; rather than silently tightening the
+	 * constraint, the pattern is then dropped and only the description keeps the
+	 * information. The one exception is /i on a regexp holding no letter, where
+	 * the flag has nothing to act on.
+	 *
+	 * @param string $value Raw tag value, e.g. "/^[0-9,]*$/i"
+	 * @return string JSON Schema pattern, or '' when it cannot be expressed
+	 */
+	private function restlerPatternToJsonSchema(string $value): string
+	{
+		$reg = [];
+		if (!preg_match('/^(.)(.*)\1([a-zA-Z]*)$/s', $value, $reg)) {
+			return '';	// not delimited: not a PCRE literal, leave it in the description
+		}
+
+		$expression = $reg[2];
+		$flags = $reg[3];
+
+		if ($flags !== '' && !($flags === 'i' && !preg_match('/[a-zA-Z]/', $expression))) {
+			return '';
+		}
+
+		return $expression;
+	}
+
+	/**
 	 * Convert a docblock type to a JSON Schema type.
 	 *
 	 * @param string $type Docblock type (may be a union like int|string)
@@ -926,6 +1216,17 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Rights are enforced by the REST API classes themselves.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return string RIGHTS_ENFORCED_DOWNSTREAM
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		return self::RIGHTS_ENFORCED_DOWNSTREAM;
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 *
 	 * @return array<string> List of categories
@@ -942,6 +1243,88 @@ class ToolApiBridge extends McpTool
 
 		return array_values(array_unique($all));
 	}
+	/**
+	 * Map a bridge endpoint key to the element type ExtraFields uses.
+	 *
+	 * @param string $key Endpoint key from the enrichment map.
+	 * @return string ExtraFields element type, '' when the objects carry none.
+	 */
+	private function extrafieldsElementForEndpoint($key)
+	{
+		$map = array(
+			'thirdparties' => 'societe',
+			'contacts' => 'socpeople',
+			'invoices' => 'facture',
+			'supplierinvoices' => 'facture_fourn',
+			'orders' => 'commande',
+			'supplierorders' => 'commande_fournisseur',
+			'proposals' => 'propal',
+			'supplierproposals' => 'supplier_proposal',
+			'products' => 'product',
+			'contracts' => 'contrat',
+			'interventions' => 'fichinter',
+			'tickets' => 'ticket',
+			'projects' => 'projet',
+			'tasks' => 'project_task',
+			'members' => 'adherent',
+			'expensereports' => 'expensereport',
+			'shipments' => 'expedition',
+			'receptions' => 'reception',
+			'agendaevents' => 'actioncomm',
+			'warehouses' => 'stock',
+			'categories' => 'categorie',
+			'bankaccounts' => 'bank_account'
+		);
+
+		return $map[$key] ?? '';
+	}
+
+	/**
+	 * Keep what the chat shows of a file list: name, size, date and a link.
+	 *
+	 * @param	mixed	$output		Result of getDocumentsListByElement()
+	 * @param	string	$modulepart	Object type the caller asked for
+	 * @return	mixed				Projected list, or $output unchanged if it is not a list
+	 */
+	private function projectDocumentList($output, $modulepart)
+	{
+		// document.php does not know every alias the API accepts
+		$aliases = array('contrat' => 'contract', 'projet' => 'project', 'categorie' => 'category', 'adherent' => 'member');
+		$part = $aliases[$modulepart] ?? $modulepart;
+		$paginated = is_array($output) && isset($output['data']) && is_array($output['data']);
+		$files = $paginated ? $output['data'] : $output;
+		if (!is_array($files)) {
+			return $output;
+		}
+		$list = array();
+		foreach ($files as $file) {
+			$level1 = (string) ($file['level1name'] ?? '');
+			$list[] = array(
+				'name' => (string) ($file['name'] ?? ''),
+				'size' => dol_print_size((int) ($file['size'] ?? 0), 1),
+				'modified' => dol_print_date((int) ($file['date'] ?? 0), 'dayhour'),
+				'url' => DOL_URL_ROOT.'/document.php?modulepart='.urlencode($part).'&file='.urlencode(($level1 !== '' ? $level1.'/' : '').(string) ($file['relativename'] ?? $file['name'] ?? ''))
+			);
+		}
+		if ($paginated) {
+			$output['data'] = $list;
+			return $output;
+		}
+		return $list;
+	}
+
+	/**
+	 * Whether the object a file list was asked for exists.
+	 *
+	 * @param	array<string,mixed>	$args	Tool arguments (modulepart, id, ref)
+	 * @return	bool
+	 */
+	private function documentObjectExists(array $args)
+	{
+		$object = fetchObjectByElement((int) ($args['id'] ?? 0), (string) ($args['modulepart'] ?? ''), (string) ($args['ref'] ?? ''));
+		return is_object($object) && $object->id > 0;
+	}
+
 	/**
 	 * Execute a bridged tool: authenticate the acting user, call the API method
 	 * in-process with positional arguments, catch RestException.
@@ -1014,10 +1397,16 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($output === null) {
+			// Core can print an error page while refusing access (reproducible on
+			// the REST route): keep it out of the JSON answer, in the log instead.
+			ob_start();
 			try {
 				$result = call_user_func_array([$api, $method], $callArgs);
 				// Serialize API return (cleaned objects) into plain arrays for the MCP client.
 				$output = json_decode(json_encode($result), true);
+				if ($key === 'documents') {
+					$output = $this->projectDocumentList($output, (string) ($args['modulepart'] ?? ''));
+				}
 			} catch (Throwable $e) {
 				$code = (int) $e->getCode();
 				$message = $e->getMessage();
@@ -1030,7 +1419,23 @@ class ToolApiBridge extends McpTool
 					"error" => $message,
 					"http_status" => ($code > 0 ? $code : 500)
 				];
+				// The API answers 404 for an object with no files: that is an empty
+				// list, unless the object itself does not exist.
+				if ($key === 'documents' && $code == 404 && $this->documentObjectExists($args)) {
+					$output = [];
+				}
 			}
+			$printed = ob_get_clean();
+			if ($printed !== '' && $printed !== false) {
+				dol_syslog(get_class($this).'::execute '.$name.' printed output: '.dol_trunc(strip_tags($printed), 200), LOG_WARNING);
+			}
+		}
+
+		// Extrafields flagged as personal data (GDPR) must not reach an AI provider.
+		$elementForExtrafields = $this->extrafieldsElementForEndpoint($key);
+		if ($elementForExtrafields !== '') {
+			require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
+			$output = aiStripPersonalExtrafields($this->db, $output, $elementForExtrafields);
 		}
 
 		// Restore the caller's context (single exit point).

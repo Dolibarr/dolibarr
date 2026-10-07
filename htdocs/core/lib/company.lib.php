@@ -1186,6 +1186,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 				print '<td>' . $langs->trans("Name") . '</td>';
 				print '<td class="center">' . $langs->trans("DateStart") . '</td>';
 				print '<td class="center">' . $langs->trans("DateEnd") . '</td>';
+				print '<td class="right">' . $langs->trans("Budget") . '</td>';
 				print '<td class="right">' . $langs->trans("OpportunityAmountShort") . '</td>';
 				print '<td class="center">' . $langs->trans("OpportunityStatusShort") . '</td>';
 				print '<td class="right">' . $langs->trans("OpportunityProbabilityShort") . '</td>';
@@ -1220,6 +1221,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 							print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 							// Date end
 							print '<td class="center">' . dol_print_date($db->jdate($obj->de), "day") . '</td>';
+							// Budget amount
+							print '<td class="right">';
+							if ($obj->budget_amount) {
+								print '<span class="amount">' . price($obj->budget_amount, 1, '', 1, -1, -1, '') . '</span>';
+							}
+							print '</td>';
 							// Opp amount
 							print '<td class="right">';
 							if ($obj->opp_status_code) {
@@ -2350,7 +2357,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$contactstatic = new Contact($db);
 		$elementlinkcache = array();
 
-		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST" spellcheck="false">';
 		$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
 		if (
 			$objcon && get_class($objcon) == 'Contact' &&
@@ -2774,9 +2781,10 @@ function show_subsidiaries($conf, $langs, $db, $object)
  *                                          ids. 0 / '' / empty array => only test that the thirdparty is assigned to
  *                                          at least one sales representative.
  * @param	int<0,1>			$not		1 to return "NOT EXISTS(...)" instead of "EXISTS(...)"
+ * @param	int<0,1>			$allownull	Allow null value for the sales representative (i.e. contract is not assigned to any third party)
  * @return	string							SQL "EXISTS(...)" / "NOT EXISTS(...)" fragment
  */
-function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0)
+function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0, $allownull = 0)
 {
 	global $db;
 
@@ -2787,13 +2795,19 @@ function getSalesRepresentativeSqlFilter($socidfield, $userids = 0, $not = 0)
 		return $v > 0;
 	}));
 
-	$sql = ($not ? 'NOT EXISTS' : 'EXISTS');
+	$sql = "";
+	if ($allownull) {
+		$sql .= "(t.fk_soc IS NULL OR ";
+	}
+	$sql .= ($not ? 'NOT EXISTS' : 'EXISTS');
 	// $socidfield is a column expression of the outer query (e.g. 's.rowid'); it is compared to sc.fk_soc
 	$sql .= ' (SELECT sc.fk_soc FROM '.$db->prefix().'societe_commerciaux as sc WHERE '.$db->sanitize($socidfield).' = sc.fk_soc';
 	if (!empty($userids)) {
 		$sql .= ' AND sc.fk_user IN ('.$db->sanitize(implode(',', $userids)).')';
 	}
-	$sql .= ')';
+	if ($allownull) {
+		$sql .= ')';
+	}
 
 	return $sql;
 }
@@ -2888,7 +2902,8 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 }
 
 /**
- *  Add Mailing Event Type SQL
+ *  Add Mailing Event Type SQL.
+ *  This generate a part of SQL that may be used into show_actions_done(). Be sure that it returns samenumber of columns than the code that include it.
  *
  *  @param	string	    $actioncode		Action code
  *  @param	Contact		$objcon		    objcon
@@ -2903,7 +2918,7 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 	if (isModEnabled('mailing') && !empty($objcon->email) && (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
 		$sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
 		$sql2 .= ", null as fk_element, '' as elementtype, null as contact_id";
-		$sql2 .= ", 'AC_EMAILING' as code, 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
+		$sql2 .= ", 'AC_EMAILING' as code, '0' as fulldayevent, 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
 		$sql2 .= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {
 			$sql2 .= ", '' as lastname, '' as firstname";
@@ -2917,7 +2932,7 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 			$sql2 .= ", '' as ref";
 		}
 		$sql2 .= " FROM " . MAIN_DB_PREFIX . "mailing as m, " . MAIN_DB_PREFIX . "mailing_cibles as mc, " . MAIN_DB_PREFIX . "user as u";
-		$sql2 .= " WHERE mc.email = '" . $db->escape($objcon->email) . "'"; // Search is done on email.
+		$sql2 .= " WHERE mc.email = '" . $db->escape((string) $objcon->email) . "'"; // Search is done on email.
 		$sql2 .= " AND mc.statut = 1";
 		$sql2 .= " AND u.rowid = m.fk_user_valid";
 		$sql2 .= " AND mc.fk_mailing=m.rowid";

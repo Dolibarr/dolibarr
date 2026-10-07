@@ -559,7 +559,7 @@ class FormTicket
 		}
 
 		// Message
-		print '<tr><td><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
+		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td class="tdtop">';
 
 		// If public form, display more information
 		$toolbarname = 'dolibarr_notes';
@@ -570,6 +570,34 @@ class FormTicket
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = false;
 		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= ($this->ispublic ? 2 : 1));		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+
+		// Add layout and AI tools for message (only for backoffice users)
+		if (!$this->ispublic) {
+			$out = '';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($this->db);
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+			$formai = new FormAI($this->db);
+
+			$formmail->withfckeditor = $ckeditorenabledforticket ? 1 : 0;
+			//$formmail->withlayout = ($ckeditorenabledforticket) ? 'email' : '';
+			$formmail->withaiprompt = (isModEnabled('ai')) ? 'text' : '';
+
+			$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
+			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+			$showlinktoai = ($formmail->withaiprompt ? 'textgenerationemail' : '');
+			$showlinktoailabel = $langs->trans("AIEnhancements");
+			$htmlname = 'message';
+
+			$formai->substit = $this->substit;
+
+			// Fill $out
+			$db = $this->db;
+			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+			print $out;
+			print '<br>';
+		}
+
 		if (!$ckeditorenabledforticket) {
 			$msg = dol_string_nohtmltag($msg, 2);
 		}
@@ -580,7 +608,7 @@ class FormTicket
 		// Categories
 		if (isModEnabled('category') && !$public) {
 			// Categories
-			print '<tr><td class="wordbreak"></td><td>';
+			print '<tr><td class="wordbreak">'.$langs->trans("Categories").'</td><td>';
 			print $form->selectCategories(Categorie::TYPE_TICKET, 'categories', $object);
 			print "</td></tr>";
 		}
@@ -604,7 +632,9 @@ class FormTicket
 			}
 
 			$out = '<tr>';
-			$out .= '<td></td>';
+			$out .= '<td>';
+			$out .= $langs->trans("LinkedFiles");
+			$out .='</td>';
 			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
@@ -675,7 +705,7 @@ class FormTicket
 				print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
 				$events = array();
 				$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-				print img_picto('', 'company', 'class="paddingright"');
+				print img_picto('', 'company', 'class="pictofixedwidth"');
 				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth200');
 				print '</td></tr>';
 				if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {

@@ -633,7 +633,7 @@ class FormAccounting extends Form
 		        jQuery(document).ready(() => {
 		            $(\'#'.dol_escape_js($htmlname).'\').on("select2:select", function(e) {
 		                var match = /\(([^)]+)\)/.exec(e.params.data.text);
-		                if (match) { $("input[name=\"'.dol_escape_js($labelhtmlname).'\"]").val(match[1]); }
+		                if (match) { $(\'input[name="'.dol_escape_js($labelhtmlname).'"]\').val(match[1]); }
 		            });
 		        });
         	</script>';

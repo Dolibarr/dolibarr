@@ -91,7 +91,7 @@ if ($result < 0) {
 }
 
 $permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
 
 // Security check - Protection if external user
 $result = restrictedArea($user, 'ticket', $object->id);
@@ -159,7 +159,7 @@ if ($object->id && $upload_dir !== null) {
 
 	$head = ticket_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'tabTicketDocument', $langs->trans("Ticket"), 0, 'ticket');
+	print dol_get_fiche_head($head, 'tabTicketDocument', $langs->trans("Ticket"), 0, 'ticket', 0, '', '', 0, '', 1);
 
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= $object->subject;

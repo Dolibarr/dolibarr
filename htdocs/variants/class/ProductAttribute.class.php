@@ -254,7 +254,12 @@ class ProductAttribute extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$this->errors[] = "Error " . $this->db->lasterror();
+			if ($this->db->lasterrno() == "DB_ERROR_RECORD_ALREADY_EXISTS") {
+				$langs->load("errors");
+				$this->errors[] = $langs->trans("ErrorRefAlreadyExists", $this->ref);
+			} else {
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 			$error++;
 		}
 
@@ -434,7 +439,12 @@ class ProductAttribute extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$this->errors[] = "Error " . $this->db->lasterror();
+			if ($this->db->lasterrno() == "DB_ERROR_RECORD_ALREADY_EXISTS") {
+				$langs->load("errors");
+				$this->errors[] = $langs->trans("ErrorRefAlreadyExists", $this->ref);
+			} else {
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 			$error++;
 		}
 		if (!$error) {
@@ -706,6 +716,11 @@ class ProductAttribute extends CommonObject
 	{
 		global $user;
 
+		if (!$this->isLineOfObject($lineid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		dol_syslog(__METHOD__ . " lineid=$lineid, ref=$ref, value=$value, notrigger=$notrigger");
 
 		// Clean parameters
@@ -757,6 +772,10 @@ class ProductAttribute extends CommonObject
 		// Fetch current line from the database
 		$this->line = new ProductAttributeValue($this->db);
 		$result = $this->line->fetch($lineid);
+		if ($result > 0 && $this->id > 0 && (int) $this->line->fk_product_attribute !== (int) $this->id) {
+			$this->line->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			$result = -1;
+		}
 		if ($result > 0) {
 			$this->line->context = $this->context;
 
@@ -1433,6 +1452,8 @@ class ProductAttribute extends CommonObject
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
+						/** @var CommonObject $object */
+						'@phan-var-force CommonObject $object';
 						$object->formAddObjectLine(1, $mysoc, $buyer);
 					}
 				}

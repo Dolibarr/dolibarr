@@ -169,6 +169,52 @@ class ToolThirdParty extends McpTool
 	}
 
 	/**
+	 * Third-party reads and writes.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'search_thirdparties' => array(array('societe', 'lire')),
+			'count_thirdparties' => array(array('societe', 'lire')),
+			'get_thirdparty_details' => array(array('societe', 'lire')),
+			'list_thirdparty_contacts' => array(array('societe', 'contact', 'lire')),
+			'create_thirdparty' => array(array('societe', 'creer')),
+			'update_thirdparty' => array(array('societe', 'creer')),
+			'add_thirdparty_contact' => array(array('societe', 'contact', 'creer'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
+	}
+
+	/**
+	 * Preview of the third-party record this call would write.
+	 *
+	 * @param string $toolName Tool that would run.
+	 * @param array<string,mixed> $args Arguments it would run with.
+	 * @return string Preview text, or McpTool::NO_WRITE for a read.
+	 */
+	public function writeConfirmationPreview(string $toolName, array $args)
+	{
+		global $langs;
+
+		$langs->load("other");
+
+		switch ($toolName) {
+			case 'create_thirdparty':
+				return $langs->trans("AIPreviewCreateThirdparty", (string) ($args['name'] ?? ''));
+			case 'update_thirdparty':
+				return $langs->trans("AIPreviewUpdateThirdparty", (string) ((int) ($args['id'] ?? 0)), implode(', ', array_keys(array_diff_key($args, array('id' => 1)))));
+			case 'add_thirdparty_contact':
+				return $langs->trans("AIPreviewAddContact", trim(((string) ($args['firstname'] ?? '')).' '.((string) ($args['lastname'] ?? ''))), (string) ((int) ($args['socid'] ?? 0)));
+			default:
+				return McpTool::NO_WRITE;
+		}
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *
@@ -360,8 +406,10 @@ class ToolThirdParty extends McpTool
 				"email"   => (string) $soc->email,
 				"phone"   => (string) $soc->phone,
 				"vat"     => (string) $soc->tva_intra,
-				// getLibStatut(2) returns the status label (short). Cast to string just in case.
-				"status"  => (string) $soc->getLibStatut(2),
+				// Mode 0: the plain label. Modes 2-5 return a <span class="badge">
+				// markup that the chat renders as raw HTML (and that the model
+				// would read as content), so they must not be used here.
+				"status"  => (string) $soc->getLibStatut(0),
 				"url"     => DOL_URL_ROOT . "/societe/card.php?socid=" . $soc->id
 			];
 		}

@@ -380,6 +380,12 @@ class McpHandler
 
 				$def['is_system'] = false;
 
+				// Same rule as getToolsSchemaForLLM(): this is what tools/list on the
+				// MCP server returns, so a caller must not be offered what it cannot run.
+				if ($this->checkToolRights($tool, $name) !== '') {
+					continue;
+				}
+
 				if (empty($allowed)) {
 					// No restriction configured — include everything
 					if (empty($def['categories'])) {
@@ -439,6 +445,11 @@ class McpHandler
 					continue;
 				}
 
+				// Do not advertise what this user cannot run.
+				if ($this->checkToolRights($tool, $name) !== '') {
+					continue;
+				}
+
 				if (empty($allowed)) {
 					// No restriction configured — include everything
 					if (empty($def['categories'])) {
@@ -458,6 +469,92 @@ class McpHandler
 		}
 
 		return $schema;
+	}
+
+	/**
+	 * Check the rights a tool declared for the acting user.
+	 *
+	 * @param McpTool $tool     Tool instance.
+	 * @param string  $toolName Tool being checked.
+	 * @return string '' when allowed, otherwise the missing right as "module/perm".
+	 */
+	private function checkToolRights($tool, $toolName)
+	{
+		if ($this->isSystemTool($tool)) {
+			return '';
+		}
+
+		$declared = method_exists($tool, 'getRequiredRights') ? $tool->getRequiredRights($toolName) : McpTool::RIGHTS_UNDECLARED;
+
+		if ($declared === McpTool::RIGHTS_ENFORCED_DOWNSTREAM) {
+			return '';	// REST API classes check DolibarrApiAccess::$user themselves
+		}
+		if ($declared === McpTool::RIGHTS_UNDECLARED) {
+			dol_syslog("[McpHandler] Tool '".$toolName."' declares no rights: denied.", LOG_WARNING);
+
+			return 'undeclared';
+		}
+		foreach ((array) $declared as $right) {
+			$right = (array) $right;
+			$module = isset($right[0]) ? $right[0] : '';
+			$perm = isset($right[1]) ? $right[1] : '';
+			$subperm = isset($right[2]) ? $right[2] : '';
+			if ($module === '' || !$this->user->hasRight($module, $perm, $subperm)) {
+				return $module.'/'.$perm.($subperm !== '' ? '/'.$subperm : '');
+			}
+		}
+
+		return '';
+	}
+	/**
+	 * Stop a write until it is confirmed, on the MCP multi-round-trip pattern.
+	 *
+	 * Returns null when the call may proceed: the tool writes nothing, or the
+	 * caller presented a valid confirmation. Otherwise returns what the caller
+	 * gets instead of the write.
+	 *
+	 * @param McpTool $tool     Tool instance.
+	 * @param string  $toolName Tool being executed.
+	 * @param array<string,mixed> $args Arguments, carrying requestState on the second leg.
+	 * @return array<string,mixed>|null Response to return, or null to proceed.
+	 */
+	private function checkWriteConfirmation($tool, $toolName, array $args)
+	{
+		if (!method_exists($tool, 'writeConfirmationPreview')) {
+			return null;
+		}
+		$preview = (string) $tool->writeConfirmationPreview($toolName, $args);
+		if ($preview === McpTool::NO_WRITE) {
+			return null;	// read tool
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/writeconfirmation.class.php';
+		$gate = new AiWriteConfirmation($this->db);
+
+		$state = isset($args['requestState']) ? (string) $args['requestState'] : '';
+		if ($state !== '') {
+			if ($gate->consume($this->user, $toolName, $args, $state)) {
+				return null;	// confirmed: the write runs
+			}
+
+			return array('error' => $gate->error);
+		}
+
+		$issued = $gate->issue($this->user, $toolName, $args, $preview);
+		if ($issued === '') {
+			return array('error' => $gate->error);
+		}
+
+		return array(
+			'resultType' => 'input_required',
+			'inputRequests' => array(
+				array(
+					'type' => 'confirmation',
+					'prompt' => $preview
+				)
+			),
+			'requestState' => $issued
+		);
 	}
 
 	/**
@@ -518,6 +615,20 @@ class McpHandler
 		// execute
 		try {
 			dol_syslog('[McpHandler] Executing tool \'' . $toolName . '\' with args: ' . json_encode($args), LOG_INFO);
+			$missingRight = $this->checkToolRights($toolInstance, $toolName);
+			if ($missingRight !== '') {
+				return array('error' => ($missingRight === 'undeclared')
+					? "Tool '".$toolName."' cannot run: it declares no required rights."
+					: "Permission denied: '".$toolName."' requires the right ".$missingRight.".");
+			}
+
+			// Writes do not execute on the first call: the caller gets a preview and
+			// a confirmation state, and comes back with it. Reads are unaffected.
+			$pending = $this->checkWriteConfirmation($toolInstance, $toolName, $args);
+			if ($pending !== null) {
+				return $pending;
+			}
+
 			$result = $toolInstance->execute($toolName, $args);
 			dol_syslog('[McpHandler] Tool \'' . $toolName . '\' executed successfully.', LOG_INFO);
 			return $result;

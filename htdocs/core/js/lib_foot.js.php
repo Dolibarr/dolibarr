@@ -303,9 +303,9 @@ print '
 					if (succeed) {
 						$(this).parent().children(".clipboardCPButton").hide();
 						$(this).parent().children(".clipboardCPTick").css("display", "inline-block");	/* better than .show() because the show set the display to "inline" */
-						//lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('CopiedToClipboard')).'</div>\';
+						//lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dolPrintHTML($langs->trans('CopiedToClipboard')).'</div>\';
 					} else {
-						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dol_escape_js($langs->trans('Error')).'</div>\';
+						lastchild.innerHTML = \'<div class="clipboardCPTextDivInside opacitymedium">'.dolPrintHTML($langs->trans('Error')).'</div>\';
 					}
 					setTimeout(() => { lastchild.innerHTML = tmp; lastparent.children(".clipboardCPTick").hide(); }, 2000);
 				});

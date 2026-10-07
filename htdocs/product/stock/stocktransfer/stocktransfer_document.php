@@ -86,9 +86,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//restrictedArea($user, 'stocktransfer', $object->id);
+restrictedArea($user, 'stocktransfer', $object->id, 'stocktransfer_stocktransfer', 'stocktransfer', 'fk_soc', 'rowid');
 
 $permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
@@ -118,7 +116,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = stocktransferPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("StockTransfer"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("StockTransfer"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list

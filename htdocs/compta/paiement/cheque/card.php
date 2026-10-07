@@ -827,7 +827,7 @@ if ($user->socid == 0 && !empty($object->id) && $object->statut == 0 && $user->h
 }
 
 if ($user->socid == 0 && !empty($object->id) && $user->hasRight('banque', 'cheque')) {
-	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+	print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 }
 print '</div>';
 

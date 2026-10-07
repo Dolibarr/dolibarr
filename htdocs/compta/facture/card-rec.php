@@ -162,7 +162,7 @@ $result = restrictedArea($user, 'facture', $object->id, $objecttype);
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	if ($action != 'updateline') {
+	if ($action != 'updateline' && $action != 'setdate_when') {
 		$action = 'list';
 		$massaction = '';
 	} else {
@@ -342,10 +342,14 @@ if (empty($reshook)) {
 
 	// Delete
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'supprimer')) {
-		$object->delete($user);
-
-		header("Location: ".DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
-		exit;
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		$result = $object->delete($user);
+		if ($result > 0) {
+			header("Location: ".DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 
@@ -1756,7 +1760,7 @@ if ($action == 'create') {
 			print $langs->trans('DebitBankAccount');
 			print '<td>';
 
-			if (($action != 'editbankaccountcustomer') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+			if (($action != 'editbankaccountcustomer') && $user->hasRight('facture', 'creer') && $object->status == FactureRec::STATUS_DRAFT) {
 				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editbankaccountcustomer&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetDebitBankAccount'), 1) . '</a></td>';
 			}
 			print '</tr></table>';
@@ -1776,7 +1780,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
 		print '<td>';
-		if (($action != 'editbankaccount') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+		if (($action != 'editbankaccount') && $user->hasRight('facture', 'creer') && $object->status == FactureRec::STATUS_DRAFT) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1816,7 +1820,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('Model');
 		print '<td>';
-		if (($action != 'editmodelpdf') && $user->hasRight('facture', 'creer') && $object->statut == FactureRec::STATUS_DRAFT) {
+		if (($action != 'editmodelpdf') && $user->hasRight('facture', 'creer') && $object->status == FactureRec::STATUS_DRAFT) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -2016,7 +2020,7 @@ if ($action == 'create') {
 			} else {
 				print $form->textwithpicto($langs->trans("NextDateToExecution"), $langs->trans("NextDateToExecutionHelp"));
 			}
-			print '</td><td>';
+			print '</td><td'.(isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency) ? ' colspan="2"' : '').'>';
 			if ($action == 'date_when' || $object->frequency > 0) {
 				print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
 			}
@@ -2029,9 +2033,6 @@ if ($action == 'create') {
 				print img_info($langs->trans("MaxNumberOfGenerationReached"));
 			}
 			print '</td>';
-			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td></td>';
-			}
 			print '</tr>';
 
 			// Max period / Rest period
@@ -2185,7 +2186,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="id" value="' . $object->id.'">';
 		print '<input type="hidden" name="page_y" value="">';
 
-		if (!empty($conf->use_javascript_ajax) && $object->statut == 0) {
+		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
 			if (isModEnabled('subtotals')) {
 				include DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_ajaxrow.tpl.php';
 			} else {
@@ -2297,7 +2298,7 @@ if ($action == 'create') {
 			}
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $user->hasRight('facture', 'supprimer'));
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $user->hasRight('facture', 'supprimer'), array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>';
 

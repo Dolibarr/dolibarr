@@ -185,6 +185,50 @@ class ToolInvoices extends McpTool
 	}
 
 	/**
+	 * Customer and supplier invoice reads and lifecycle actions.
+	 *
+	 * @param string $toolName Tool being executed.
+	 * @return array<int,array<int,string>>|string Rights required, or a RIGHTS_* constant.
+	 */
+	public function getRequiredRights(string $toolName)
+	{
+		$map = array(
+			'search_invoice' => array(array('facture', 'lire')),
+			'search_invoices' => array(array('facture', 'lire')),
+			'get_invoice' => array(array('facture', 'lire')),
+			'validate_invoice' => array(array('facture', 'creer')),
+			'pay_invoice' => array(array('facture', 'paiement')),
+			'search_supplier_invoice' => array(array('fournisseur', 'facture', 'lire')),
+			'get_supplier_invoice' => array(array('fournisseur', 'facture', 'lire'))
+		);
+
+		return isset($map[$toolName]) ? $map[$toolName] : self::RIGHTS_UNDECLARED;
+	}
+
+	/**
+	 * Preview of the invoice action this call would perform.
+	 *
+	 * @param string $toolName Tool that would run.
+	 * @param array<string,mixed> $args Arguments it would run with.
+	 * @return string Preview text, or McpTool::NO_WRITE for a read.
+	 */
+	public function writeConfirmationPreview(string $toolName, array $args)
+	{
+		global $langs;
+
+		$langs->load("other");
+
+		switch ($toolName) {
+			case 'validate_invoice':
+				return $langs->trans("AIPreviewValidateInvoice", (string) ($args['ref'] ?? $args['id'] ?? ''));
+			case 'pay_invoice':
+				return $langs->trans("AIPreviewPayInvoice", price((float) ($args['amount'] ?? 0)), (string) ($args['ref'] ?? $args['id'] ?? ''));
+			default:
+				return McpTool::NO_WRITE;
+		}
+	}
+
+	/**
 	 * Return categories this tool belongs to.
 	 * Used by the intent parser to filter available tools.
 	 *
@@ -418,6 +462,12 @@ class ToolInvoices extends McpTool
 		if ($user === null) {
 			return ["error" => "User not authenticated."];
 		}
+
+		// Checked here as well as centrally: validating is irreversible, so it
+		// must not depend on a single caller remembering to check.
+		if (!$user->hasRight('facture', 'creer')) {
+			return ["error" => "Permission denied: validating an invoice requires the right facture/creer."];
+		}
 		$invoice = $this->findInvoice($args['invoice']);
 		if (is_array($invoice)) {
 			return $invoice;
@@ -459,6 +509,11 @@ class ToolInvoices extends McpTool
 		$user = $this->getUser();
 		if ($user === null) {
 			return ["error" => "User not authenticated."];
+		}
+
+		// Checked here as well as centrally: a payment cannot be taken back.
+		if (!$user->hasRight('facture', 'paiement')) {
+			return ["error" => "Permission denied: recording a payment requires the right facture/paiement."];
 		}
 		$invoice = $this->findInvoice($args['invoice']);
 		if (is_array($invoice)) {

@@ -292,7 +292,7 @@ class FormFile
 				$out .= '<td>'.$options.'</td>';
 			}
 			$out .= '<td valign="middle" class="nowrap">';
-			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> ';
+			$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dolPrintHTMLForAttribute($savingdocmask).'"> ';
 			$out .= '<label class="opacitymedium small" for="savingdocmask">';
 			$out .= $langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
 			$out .= '</label>';
@@ -1540,7 +1540,7 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwidth200imp tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
+					print '<td class="minwidth200imp tdoverflowmax300" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8

@@ -830,7 +830,7 @@ if ($object->id > 0) {
 		if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened) {
 			$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 		}
-		$text = $langs->trans("CurrentOutstandingBill");
+		$text = $langs->transnoentitiesnoconv("CurrentOutstandingBill");
 
 		$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 		$icon = 'bill';
@@ -851,7 +851,7 @@ if ($object->id > 0) {
 			if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpenedLate) {
 				$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
 			}
-			$text = $langs->trans("CurrentOutstandingBillLate");
+			$text = $langs->transnoentitiesnoconv("CurrentOutstandingBillLate");
 
 			$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 			$icon = 'bill';
@@ -860,7 +860,7 @@ if ($object->id > 0) {
 			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpenedLate > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpenedLate, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 			$boxstattmp .= '</div>';
 			if ($link) {
-				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
+				$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstandinglate', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
 			} else {
 				$boxstat .= $boxstattmp;
 			}
@@ -1006,7 +1006,7 @@ if ($object->id > 0) {
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($propal_static->fk_project > 0) {
-					$project->fetch($propal_static->fk_project);
+					$project->fetch((int) $propal_static->fk_project);
 					print $project->getNomUrl(1);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1128,7 +1128,7 @@ if ($object->id > 0) {
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($commande_static->fk_project > 0) {
-					$project->fetch($commande_static->fk_project);
+					$project->fetch((int) $commande_static->fk_project);
 					print $project->getNomUrl(1);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1234,7 +1234,7 @@ if ($object->id > 0) {
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($sendingstatic->fk_project > 0) {
-					$project->fetch($sendingstatic->fk_project);
+					$project->fetch((int) $sendingstatic->fk_project);
 					print $project->getNomUrl(1);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1355,7 +1355,7 @@ if ($object->id > 0) {
 				print $late;
 				print '</td><td class="tdoverflowmax125">';
 				if ($contrat->fk_project > 0) {
-					$project->fetch($contrat->fk_project);
+					$project->fetch((int) $contrat->fk_project);
 					print $project->getNomUrl(1);
 				}
 				print "</td>\n";
@@ -1533,15 +1533,15 @@ if ($object->id > 0) {
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
-				$invoicetemplate->date_last_gen = $objp->date_last_gen;
-				$invoicetemplate->date_when = $objp->date_when;
+				$invoicetemplate->date_last_gen = $db->jdate($objp->date_last_gen);
+				$invoicetemplate->date_when = $db->jdate($objp->date_when);
 
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax250">';
 				print $invoicetemplate->getNomUrl(1);
 				print '</td><td class="tdoverflowmax125">';
 				if ($invoicetemplate->fk_project > 0) {
-					$project->fetch($invoicetemplate->fk_project);
+					$project->fetch((int) $invoicetemplate->fk_project);
 					print $project->getNomUrl(1);
 				}
 				print '</td>';
@@ -1682,7 +1682,7 @@ if ($object->id > 0) {
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($facturestatic->fk_project > 0) {
-					$project->fetch($facturestatic->fk_project);
+					$project->fetch((int) $facturestatic->fk_project);
 					print $project->getNomUrl(1);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1755,63 +1755,98 @@ if ($object->id > 0) {
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 
 	if (empty($reshook)) {
-		if (isModEnabled("propal") && $user->hasRight('propal', 'creer')) {
-			$langs->load("propal");
-			if ($object->status == 1) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddProp").'</a></div>';
-			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddProp").'</a></div>';
+		$langs->loadLangs(array("products", "compta"));
+
+		// Tooltip to use on buttons when the thirdparty is closed
+		$thirdpartyclosedtitle = ($object->status == 1 ? '' : $langs->trans("ThirdPartyIsClosed"));
+
+		// Url to go back to the thirdparty card when clicking on the cancel button of the creation page
+		$backtopageforcancel = $_SERVER['PHP_SELF'].'?socid='.$object->id;
+
+		$arrayforbutaction = array();
+
+		// Create a commercial proposal
+		$arrayforbutaction[] = array(
+			'lang' => 'propal',
+			'enabled' => isModEnabled('propal'),
+			'perm' => ($object->status == 1 && $user->hasRight('propal', 'creer')),
+			'label' => 'AddProp',
+			'url' => '/comm/propal/card.php?socid='.$object->id.'&action=create&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create a sale order
+		$arrayforbutaction[] = array(
+			'lang' => 'orders',
+			'enabled' => isModEnabled('order'),
+			'perm' => ($object->status == 1 && $user->hasRight('commande', 'creer')),
+			'label' => 'AddOrder',
+			'url' => '/commande/card.php?socid='.$object->id.'&action=create&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create a contract
+		$arrayforbutaction[] = array(
+			'lang' => 'contracts',
+			'enabled' => isModEnabled('contract'),
+			'perm' => ($object->status == 1 && $user->hasRight('contrat', 'creer')),
+			'label' => 'AddContract',
+			'url' => '/contrat/card.php?socid='.$object->id.'&action=create&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create an intervention
+		$arrayforbutaction[] = array(
+			'lang' => 'interventions',
+			'enabled' => isModEnabled('intervention'),
+			'perm' => ($object->status == 1 && $user->hasRight('ficheinter', 'creer')),
+			'label' => 'AddIntervention',
+			'url' => '/fichinter/card.php?socid='.$object->id.'&action=create&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($thirdpartyclosedtitle ? array('title' => $thirdpartyclosedtitle) : array()),
+			'params' => ($thirdpartyclosedtitle ? array('attr' => array('title' => $thirdpartyclosedtitle)) : array())
+		);
+
+		// Create an invoice or credit note
+		$billbuttontitle = $thirdpartyclosedtitle;
+		if (empty($billbuttontitle) && ($object->client == 0 || $object->client == 2)) {
+			// Thirdparty is a prospect only, so it must be edited as customer to be invoiced
+			$billbuttontitle = $langs->trans("ThirdPartyMustBeEditAsCustomer");
+		}
+		$arrayforbutaction[] = array(
+			'lang' => 'bills',
+			'enabled' => isModEnabled('invoice'),
+			'perm' => ($object->status == 1 && $object->client != 0 && $object->client != 2 && $user->hasRight('facture', 'creer')),
+			'label' => 'AddBill',
+			'url' => '/compta/facture/card.php?action=create&socid='.$object->id.'&backtopageforcancel='.urlencode($backtopageforcancel),
+			'attr' => ($billbuttontitle ? array('title' => $billbuttontitle) : array()),
+			'params' => ($billbuttontitle ? array('attr' => array('title' => $billbuttontitle)) : array())
+		);
+
+		// Check if at least one object can be created
+		$permissiontocreateatleastone = 0;
+		foreach ($arrayforbutaction as $butaction) {
+			if (!empty($butaction['perm'])) {
+				$permissiontocreateatleastone = 1;
+				break;
 			}
 		}
 
-		if (isModEnabled('order') && $user->hasRight('commande', 'creer')) {
-			$langs->load("orders");
-			if ($object->status == 1) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddOrder").'</a></div>';
-			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a></div>';
+		// Show the "Create" button with a dropdown list of objects (or flat buttons if option MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_THIRDPARTY is set)
+		if (!empty($arrayforbutaction)) {
+			$createbuttontitle = '';
+			$createbuttonright = 1;
+			if ($object->status != 1) {
+				$createbuttontitle = $langs->trans("ThirdPartyIsClosed");
+				$createbuttonright = 0;
+			} elseif (empty($permissiontocreateatleastone)) {
+				$createbuttontitle = $langs->trans("NotAllowed");
+				$createbuttonright = 0;
 			}
-		}
 
-		if (isModEnabled('contract') && $user->hasRight('contrat', 'creer')) {
-			$langs->load("contracts");
-			if ($object->status == 1) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddContract").'</a></div>';
-			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddContract").'</a></div>';
-			}
-		}
-
-		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer')) {
-			$langs->load("interventions");
-			if ($object->status == 1) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddIntervention").'</a></div>';
-			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddIntervention").'</a></div>';
-			}
-		}
-
-		if (isModEnabled('invoice')) {
-			if (!$user->hasRight('facture', 'creer')) {
-				$langs->load("bills");
-				if ($object->status == 1) {
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-				} else {
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-				}
-			} else {
-				$langs->loadLangs(array("orders", "bills"));
-
-				if ($object->client != 0 && $object->client != 2) {
-					if ($object->status == 1) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
-					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-					}
-				} else {
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-				}
-			}
+			print dolGetButtonAction($createbuttontitle, $langs->trans("Create"), 'default', $arrayforbutaction, '', $createbuttonright, array('areDropdownButtons' => !getDolGlobalInt("MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_THIRDPARTY")));
 		}
 
 		if (isModEnabled('invoice') && $user->hasRight('facture', 'creer')) {
@@ -1820,10 +1855,10 @@ if ($object->id > 0) {
 					if (!empty($orders2invoice) && $orders2invoice > 0) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dolPrintHTMLForAttribute($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 					}
 				} else {
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dolPrintHTMLForAttribute($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
 			}
 		}
@@ -1833,7 +1868,7 @@ if ($object->id > 0) {
 			if ($user->hasRight('agenda', 'myactions', 'create')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" title="'.dolPrintHTMLForAttribute($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a></div>';
 			}
 		}
 	}

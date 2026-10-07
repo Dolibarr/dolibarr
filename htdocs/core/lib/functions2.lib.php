@@ -2671,8 +2671,13 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'adherents';
 	} elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
 		$moduledirforclass = 'don';
-	} elseif ($moduleobject == 'banque' || $moduleobject == 'bankaccounts') {
+	} elseif ($moduleobject == 'banque' || $moduleobject == 'bankaccounts' || $moduleobject == 'variouspayments') {
 		$moduledirforclass = 'compta/bank';
+	} elseif (in_array($moduleobject, array('vatpayments', 'localtaxes', 'socialcontributions'))) {
+		// The tax module exposes its API classes from htdocs/tax/class/ (its module dir),
+		// even though the business classes live under compta/tva, compta/localtax and
+		// compta/sociales. The API Explorer discovers them there via the default 'tax' dir.
+		$moduledirforclass = 'tax';
 	} elseif ($moduleobject == 'category' || $moduleobject == 'categorie') {
 		$moduledirforclass = 'categories';
 	} elseif ($moduleobject == 'order' || $moduleobject == 'orders') {
@@ -2693,6 +2698,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fourn';
 	} elseif ($moduleobject == 'ficheinter' || $moduleobject == 'interventions') {
 		$moduledirforclass = 'fichinter';
+	} elseif ($moduleobject == 'cronjobs') {
+		$moduledirforclass = 'cron';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
 	} elseif ($moduleobject == 'workstations') {
@@ -3197,7 +3204,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>, action: '<?php echo $constanttosavefirstok ?>', token: <?php echo "'".currentToken()."'"; ?> },	// for update
+								data: { action: '<?php echo $constanttosavefirstok ?>', token: <?php echo "'".currentToken()."'"; ?> },	// for update
 							});
 					},
 					error: function (data,status,xhr) {   // error callback function
@@ -3207,7 +3214,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 								timeout: 500,     // timeout milliseconds
 								cache: false,
-								data: { hash_algo: 'dol_hash-sha256', hash_unique_id: <?php echo "'".dol_escape_js($hash_unique_id)."'"; ?>, action: '<?php echo $constanttosavelastko ?>', token: <?php echo "'".currentToken()."'"; ?> },
+								data: { action: '<?php echo $constanttosavelastko ?>', token: <?php echo "'".currentToken()."'"; ?> },
 							});
 					}
 				});

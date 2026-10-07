@@ -496,7 +496,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					}
 					if ($shipments_match_order) {
 						// No diff => mean everything is shipped
-						$ret = $order->cloture($user);
+						$ret = $order->cloture($user, 0, 0);	// 0 = do not check the close permission: this is an automatic action of the workflow, the user right checked is the one on the shipment
 						if ($ret < 0) {
 							$this->setErrorsFromObject($order);
 							return $ret;
@@ -543,13 +543,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 								continue;
 							}
 
+							/** @var Reception[] $shipping_array */
 							foreach ($shipping_array as $shipping) {
-								if (!is_array($shipping->lines) || count($shipping->lines) == 0) {
+								// A draft reception has received nothing yet
+								if ($shipping->status <= 0 || !is_array($shipping->lines) || count($shipping->lines) == 0) {
 									continue;
 								}
 
 								foreach ($shipping->lines as $shippingline) {
-									$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+									if (isset($qtyshipped[$shippingline->fk_product])) {
+										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+									} else {
+										$qtyshipped[$shippingline->fk_product] = $shippingline->qty;
+									}
 								}
 							}
 						}
@@ -567,7 +573,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							if ($orderline->product_type == 9) {
 								continue;
 							}
-							$qtyordred[$orderline->fk_product] += $orderline->qty;
+							if (isset($qtyordred[$orderline->fk_product])) {
+								$qtyordred[$orderline->fk_product] += $orderline->qty;
+							} else {
+								$qtyordred[$orderline->fk_product] = $orderline->qty;
+							}
 						}
 					}
 					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);

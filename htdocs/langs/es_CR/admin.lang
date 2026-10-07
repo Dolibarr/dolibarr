@@ -788,7 +788,6 @@ Permission20007=Aprobar solicitudes de vacaciones
 Permission23001=Leer trabajo programado
 Permission23002=Crear/actualizar trabajo programado
 Permission23003=Eliminar trabajo programado
-Permission23004=Ejecutar trabajo programado
 Permission50101=Usar Punto de Venta (SimplePOS)
 Permission50151=Usar Punto de Venta (TakePOS)
 Permission50153=Editar líneas de venta ordenadas

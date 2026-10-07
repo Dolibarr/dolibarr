@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2018	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016-2025	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2016-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
@@ -562,14 +562,14 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::create', LOG_DEBUG);
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->color = trim($this->color);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->color = trim((string) $this->color);
 		$this->position = (int) $this->position;
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
-		$this->ref_ext = trim($this->ref_ext);
+		$this->ref_ext = trim((string) $this->ref_ext);
 		if (empty($this->visible)) {
 			$this->visible = 0;
 		}
@@ -676,9 +676,9 @@ class Categorie extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->label = trim($this->label);
-		$this->description = trim($this->description);
-		$this->ref_ext = trim($this->ref_ext);
+		$this->label = trim((string) $this->label);
+		$this->description = trim((string) $this->description);
+		$this->ref_ext = trim((string) $this->ref_ext);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
@@ -687,6 +687,23 @@ class Categorie extends CommonObject
 			$this->error = $langs->trans("ErrorCategoryCannotBeItsOwnParent");
 			dol_syslog($this->error, LOG_WARNING);
 			return -1;
+		}
+		// Nor one of its descendants, which would detach both from the tree and make a loop: go up from the new parent
+		// (only when the parent changes, or when we do not know the previous parent)
+		if (empty($this->oldcopy) || $this->fk_parent != $this->oldcopy->fk_parent) {
+			$ancestorid = $this->fk_parent;
+			$protection = 1000;
+			while ($ancestorid > 0 && $protection-- > 0) {
+				$resql = $this->db->query("SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".((int) $ancestorid));
+				$obj = $resql ? $this->db->fetch_object($resql) : null;
+				$ancestorid = $obj ? (int) $obj->fk_parent : 0;
+				if ($ancestorid == $this->id) {
+					$langs->load('categories');
+					$this->error = $langs->trans("ErrorCategoryCannotBeMovedIntoItsDescendant");
+					dol_syslog($this->error, LOG_WARNING);
+					return -1;
+				}
+			}
 		}
 
 		if ($this->already_exists()) {
@@ -853,10 +870,11 @@ class Categorie extends CommonObject
 	 *
 	 * @param   CommonObject 	$obj  	Object to link to category
 	 * @param   string     		$type 	Type of category ('product', ...). Use '' to take $obj->element.
+	 * @param	int				$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 * @see del_type()
 	 */
-	public function add_type($obj, $type = '')
+	public function add_type($obj, $type = '', $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -914,10 +932,12 @@ class Categorie extends CommonObject
 			}
 
 			// Call trigger
-			$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
+			if (empty($notrigger)) {
+				$this->context = array('linkto' => $obj); // Save object we want to link category to into category instance to provide information to trigger
+				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 			// End call triggers
 
@@ -946,10 +966,11 @@ class Categorie extends CommonObject
 	 *
 	 * @param   CommonObject $obj  Object
 	 * @param   string       $type Type of category ('customer', 'supplier', 'contact', 'product', 'member')
+	 * @param	int			 $notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return  int          1 if OK, -1 if KO
 	 * @see add_type()
 	 */
-	public function del_type($obj, $type)
+	public function del_type($obj, $type, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -974,10 +995,12 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// Call trigger
-			$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
-			$result = $this->call_trigger('CATEGORY_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
+			if (empty($notrigger)) {
+				$this->context = array('unlinkoff' => $obj); // Save object we want to link category to into category instance to provide information to trigger
+				$result = $this->call_trigger('CATEGORY_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 			// End call triggers
 

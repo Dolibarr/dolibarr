@@ -6,7 +6,7 @@
  * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -625,8 +625,10 @@ if ($ispaymentok) {
 						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 						//}
 						// - If a min is set, we take it into account
-						$amountexpected = max(0, (float) $amountexpected, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"), (float) $minimumamount);
-
+						$amountexpected = max(0, (float) $amountexpected, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
+						if (!empty($adht->caneditamountamount)) {
+							$amountexpected = max($amountexpected, $adht->minimumamount);
+						}
 						if ($amountexpected && $amountexpected != $FinalPaymentAmt) {
 							$error++;
 							$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') propagated by payment page differs from the expected value for membership ('.$amountexpected.'). May be a hack to try to pay a different amount ?';
@@ -718,13 +720,13 @@ if ($ispaymentok) {
 
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(!empty($object->default_lang) ? (string) $object->default_lang : (empty($object->thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $object->thirdparty->default_lang));
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
 				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
 				$label = $langs->trans("OnlineSubscriptionPaymentLine", $formatteddate, $paymentmethod, $ipaddress, $TRANSACTIONID);
 
-				// Payment information
+				// Payment account information
 				$accountid = 0;
 				if ($paymentmethod == 'paybox') {
 					$accountid = getDolGlobalString('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS');
@@ -735,8 +737,7 @@ if ($ispaymentok) {
 				if ($paymentmethod == 'stripe') {
 					$accountid = getDolGlobalString('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');
 				}
-
-				//Get bank account for a specific paymentmedthod
+				// Get bank account for a specific paymentmedthod
 				$parameters = [
 					'paymentmethod' => $paymentmethod,
 				];
@@ -747,7 +748,7 @@ if ($ispaymentok) {
 						$accountid = $hookmanager->resArray['bankaccountid'];
 					}
 				}
-				if ($accountid < 0) {
+				if (isModEnabled('bank') && $accountid < 0) {
 					$error++;
 					$errmsg = 'Setup of bank account to use for payment is not correctly done for payment method '.$paymentmethod;
 					$postactionmessages[] = $errmsg;
@@ -917,7 +918,7 @@ if ($ispaymentok) {
 				$infouserlogin = '';
 
 				// Create external user
-				if (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN')) {
+				if (!$error && getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN')) {
 					$nuser = new User($db);
 					$tmpuser = dol_clone($object, 0);		// $object is type Adherent
 
@@ -1475,7 +1476,7 @@ if ($ispaymentok) {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch((int) $ref);  // @phan-suppress-curren-line PhanPluginSuspiciousParamPosition
+		$result = $object->fetch((int) $ref);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 		if ($result) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
@@ -2108,7 +2109,7 @@ if ($ispaymentok) {
 		}
 		// End call triggers
 	} elseif (get_class($object) == 'stdClass') {
-		//In some cases $object is not instantiated (for payment on custom object) We need to deal with payment
+		// In some cases $object is not instantiated (for payment on custom object). We need to deal with payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 		$paiement = new Paiement($db);
 		$result = $paiement->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
@@ -2131,11 +2132,48 @@ if (empty($doactionsthenredirect)) {
 		print img_picto('', 'tick', 'class="green fa-2x"');
 		print '</center>';
 
-		// Show a custom message
-		$key = 'ONLINE_PAYMENT_MESSAGE_OK';
-		if (getDolGlobalString($key)) {
+		if ($ispostactionok > 0) {
+			// Show a custom message
+			$key = 'ONLINE_PAYMENT_MESSAGE_OK';
+			if (getDolGlobalString($key)) {
+				print '<br>';
+				print getDolGlobalString($key);
+			}
+		} else {
 			print '<br>';
-			print getDolGlobalString($key);
+			print '<div class="warning marginleftonly marginrightonly">';
+			print $langs->trans("PaymentRecordedButPostPocessingKo").'<br>';
+			$s = '';
+			if ($ErrorLongMsg) {
+				$s .= $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
+			}
+			if ($ErrorShortMsg) {
+				$s .= $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
+			}
+			if ($ErrorCode) {
+				$s .= $langs->trans('ErrorCode').": ".$ErrorCode."<br>\n";
+			}
+			if ($ErrorSeverityCode) {
+				$s .= $langs->trans('ErrorSeverityCode').": ".$ErrorSeverityCode."<br>\n";
+			}
+			if (!empty($postactionmessages) && is_array($postactionmessages)) {
+				foreach ($postactionmessages as $postactionmessage) {
+					$s .= dol_string_nohtmltag($postactionmessage);		// This will remove links to backoffice
+					$s .= '<br>';
+				}
+			}
+			if ($s) {
+				print '<br>';
+				print '<div class="small">';
+				print $s;
+				print '</div>';
+			}
+			print '</div>';
+
+			if ($mysoc->email) {
+				print "<br>\n";
+				print "Please, send a screenshot of this page to ".$mysoc->email."<br>\n";
+			}
 		}
 	} else {
 		print $langs->trans('DoExpressCheckoutPaymentAPICallFailed')."<br>\n";
@@ -2153,7 +2191,8 @@ if (empty($doactionsthenredirect)) {
 		}
 
 		if ($mysoc->email) {
-			print "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
+			print "<br>\n";
+			print "Please, send a screenshot of this page to ".$mysoc->email."<br>\n";
 		}
 	}
 }

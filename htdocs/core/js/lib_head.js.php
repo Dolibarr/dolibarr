@@ -1599,6 +1599,26 @@ $(document).ready(function() {
 
 
 jQuery(document).ready(function() {
+	// Code to remove the separator spaces of a professional id pasted into a field that never holds one
+	// (SIREN "849 943 618", SIRET "849 943 618 00012"). Cleaning the pasted text before it is inserted
+	// makes the maxlength of the field apply to the id itself instead of to its presentation: without
+	// this the browser silently truncates the paste and the user records an id short of a few digits.
+	jQuery(document).on("paste", "input[data-profidnospace]", function(event) {
+		var clipboardData = (event.originalEvent || event).clipboardData;
+		if (!clipboardData) {
+			return;
+		}
+		var pastedText = clipboardData.getData("text");
+		var cleanedText = pastedText.replace(/\s+/g, "");
+		if (cleanedText == pastedText) {
+			return;		// Nothing to remove, leave the paste to the browser
+		}
+		event.preventDefault();
+		// insertText keeps the undo history and, unlike setRangeText, is subject to the maxlength
+		document.execCommand("insertText", false, cleanedText);
+	});
+
+
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("core/frames.php") == -1 && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
@@ -1782,25 +1802,58 @@ $(document).ready(function() {
  */
 function onKanbanColumnChange(item, newColumn) {
 	console.log("Call onKanbanColumnChange");
+	var originalColumn = item.data('original-column');
 	jQuery.ajax({
 		method: 'POST',
-		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/saveinplace.php',
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/savekanbanfield.php',
 		data: {
 			field: 'editval_'+newColumn.data('groupbyfield'),
 			element: item.data('element'),
 			table_element: item.data('tableelement'),
 			fk_element: item.data('itemid'),
 			value: newColumn.data('groupbyid'),
-			token: '<?php echo currentToken() ?>'
+			/* Token of the current page: this file is cached by the browser, so it must not contain a token */
+			token: jQuery("meta[name=anti-csrf-currenttoken]").attr("content")
 		},
 		context: document.body,
-		success: function() {
+		dataType: 'json',
+		success: function(response) {
+			if (response && response.error) {
+				onKanbanColumnChangeFailed(item, originalColumn, response.error);
+				return;
+			}
+			/* Record is saved, the new column becomes the reference for the next move */
+			item.data('original-column', newColumn);
 			if (newColumn.hasClass('kanbancollapsed')) {
 				item.hide();
 			}
+		},
+		error: function(xhr) {
+			onKanbanColumnChangeFailed(item, originalColumn, xhr.status+' '+xhr.statusText);
 		}
 	});
-	item.data('original-column', newColumn);
+}
+
+/**
+ * Function called when the new value of a dragged item could not be saved. Moves the item back
+ * to the column it came from, so the view never shows a value that is not into the database.
+ *
+ * @param {jQuery} item				The dragged item
+ * @param {jQuery} originalColumn	The column the item came from
+ * @param {string} errormessage		Error to show
+ * @return {void}
+ */
+function onKanbanColumnChangeFailed(item, originalColumn, errormessage) {
+	console.error("onKanbanColumnChange failed: "+errormessage);
+	if (originalColumn && originalColumn.length) {
+		originalColumn.append(item);
+	}
+	var msg = '<?php echo dol_escape_js($langs->transnoentities('ErrorFailedToUpdateRecord')); ?>'+' '+errormessage;
+	if (typeof jQuery.jnotify === 'function') {
+		jQuery.jnotify(msg, 'error', true);
+	} else {
+		window.alert(msg);
+	}
 }
 
 
@@ -1810,6 +1863,11 @@ if (typeof jQuery.fn.on === 'function') {
  * Intuitive table selection (with keyboard selection)
  */
 $(function() {
+
+	// MAIN_ROW_SINGLECLICK_TOSELECT: when enabled, a plain click anywhere on
+	// a .row-with-select row (not on a link/button/field) also toggles its
+	// checkbox, in addition to the Ctrl/Shift+click behaviour below.
+	let rowSingleClickToSelect = <?php echo getDolGlobalInt('MAIN_ROW_SINGLECLICK_TOSELECT') ? 'true' : 'false'; ?>;
 
 	/**
 	 * @param {jQuery}  el
@@ -1893,6 +1951,13 @@ $(function() {
 				lastLastChanged.find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
 				checkBox.prop('checked', nextCheckStatus).trigger('change');
 
+				setLastClickedRowStatus($(this), 1);
+			}
+		}
+
+		if (!e.ctrlKey && !e.metaKey && !e.shiftKey && rowSingleClickToSelect) {
+			if (!$(e.target).closest('a, button, input, select, textarea, label').length) {
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
 				setLastClickedRowStatus($(this), 1);
 			}
 		}

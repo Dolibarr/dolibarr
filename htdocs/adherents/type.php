@@ -9,7 +9,7 @@
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -271,6 +271,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 
 if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$res = $object->delete($user);
 
 	if ($res > 0) {
@@ -403,7 +404,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.amount']['checked'])) {
-			print '<th class="center">'.$langs->trans("RecommendedAmount").'</th>';
+			print '<th class="center">'.$langs->trans("Amount").'</th>';
 			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
@@ -481,7 +482,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.libelle']['checked'])) {
-					print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+					print '<td><span class="spantitle">'.dolPrintHTML($objp->label).'</td>';
 				}
 				if (!empty($arrayfields['t.morphy']['checked'])) {
 					print '<td class="center">';
@@ -616,7 +617,9 @@ if ($action == 'create') {
 	print '<input name="minimumamount" size="5" value="'.(GETPOSTISSET('minimumamount') ? GETPOST('minimumamount') : ($minimumamount ? price($minimumamount): '')).'">';
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("RecommendedAmount").'</td><td>';
+	print '<tr><td>'.$langs->trans("Amount");
+
+	print '</td><td>';
 	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : '').'">';
 	print '</td></tr>';
 
@@ -700,12 +703,18 @@ if ($rowid > 0) {
 		print yn($object->caneditamount);
 		print '</td></tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("MinimumAmountShort").'</td><td>';
-		$minimumamount = ((is_null($object->minimumamount) || $object->minimumamount === '') ? '' : price($object->minimumamount));
-		print $minimumamount;
-		print '</tr>';
+		if (!empty($object->caneditamount)) {
+			print '<tr><td class="titlefield">'.$langs->trans("MinimumAmountShort").'</td><td>';
+			$minimumamount = ((is_null($object->minimumamount) || $object->minimumamount === '') ? '' : price($object->minimumamount));
+			print $minimumamount;
+			print '</tr>';
+		}
 
-		print '<tr><td class="titlefield">'.$langs->trans("RecommendedAmount").'</td><td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Amount");
+		if (!empty($object->caneditamount)) {
+			print ' <span class="opacitymedium">('.$langs->trans("Recommended").')</span>';
+		}
+		print '</td><td>';
 		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<span class="amount">'.$amount.'</span>';
 		if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
@@ -713,6 +722,10 @@ if ($rowid > 0) {
 		}
 		if ($amount && $minimumamount && $amount < $minimumamount) {
 			print ' '.img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup');
+		}
+		if (empty($object->caneditamount) && empty($object->amount)) {
+			$langs->load("errors");
+			print img_warning($langs->trans("WarningAmountRequiredIfFreeAmountNotAllowed"));
 		}
 		print '</tr>';
 
@@ -1023,8 +1036,7 @@ if ($rowid > 0) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
-					}
-					if ($user->hasRight('adherent', 'supprimer')) {
+
 						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
@@ -1091,8 +1103,7 @@ if ($rowid > 0) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
-					}
-					if ($user->hasRight('adherent', 'supprimer')) {
+
 						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
@@ -1166,7 +1177,8 @@ if ($rowid > 0) {
 		print '">';
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("RecommendedAmount").'</td><td>';
+		print '<tr><td>'.$langs->trans("Amount");
+		print '</td><td>';
 		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<input name="amount" size="5" value="';
 		print $amount;
