@@ -1803,14 +1803,14 @@ class User extends CommonObject
 				'hrm_job_user' => array('label' => 'EmployeePosition', 'filter' => "fk_user = ".((int) $this->id)),
 				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
 			);
-			foreach ($hrmtables as $hrmtable => $hrminfo) {
-				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$hrmtable." WHERE ".$hrminfo['filter'];
+			foreach ($hrmtables as $hrmtable => $sanitizedhrminfo) {
+				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$hrmtable." WHERE ".$sanitizedhrminfo['filter'];
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->nb > 0) {
 						$langs->loadLangs(array('errors', 'hrm'));
-						$this->error = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $this->login, $langs->transnoentitiesnoconv($hrminfo['label']));
+						$this->error = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $this->login, $langs->transnoentitiesnoconv($sanitizedhrminfo['label']));
 						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return -1;
