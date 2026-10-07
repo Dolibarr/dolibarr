@@ -104,6 +104,18 @@ if [ -z "${XAUTHORITY:-}" ] && [ -f "$HOME/.Xauthority" ]; then
     GRAPHIC_ARGS+=(-e "XAUTHORITY=$HOME/.Xauthority" --mount "type=bind,src=$HOME/.Xauthority,dst=$HOME/.Xauthority")
 fi
 
+# Pass the Dolibarr PHPUnit credentials to the container: the REST API tests
+# (test/phpunit/AbstractRestAPITest.php) and SecurityLoginTest.php use them to
+# log in with a dedicated account instead of the admin/admin default.
+# Nothing is added when the variables are not set on the host.
+TEST_ARGS=()
+for VAR in DOL_CTI_ADMIN_LOGIN DOL_CTI_ADMIN_PASSWORD; do
+    VAR_VALUE=$(printenv "$VAR" || true)
+    if [ -n "$VAR_VALUE" ]; then
+        TEST_ARGS+=(-e "$VAR=$VAR_VALUE")
+    fi
+done
+
 sudo docker run --rm -it \
   -e HOST_UID="$(id -u)" \
   -e HOST_GID="$(id -g)" \
@@ -111,6 +123,7 @@ sudo docker run --rm -it \
   -e HOST_GROUP="$(id -un)" \
   -e GH_TOKEN="$GH_TOKEN" \
   "${GRAPHIC_ARGS[@]}" \
+  "${TEST_ARGS[@]}" \
   --network=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \
