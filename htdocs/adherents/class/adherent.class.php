@@ -2091,7 +2091,27 @@ class Adherent extends CommonObject
 				$vattouse = 0;
 				if (getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') == 'defaultforfoundationcountry') {
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
+				} elseif (getDolGlobalInt('ADHERENT_VAT_FOR_SUBSCRIPTIONS') > 0) {
+					$sql = "SELECT t.taux as vat_default_rate, t.code as vat_default_code, einvoice_vatex";
+					$sql .= " FROM " . $this->db->prefix() . "c_tva as t";
+					//$sql .= " INNER JOIN " . $this->db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
+					$sql .= " WHERE t.active > 0";
+					$sql .= " AND t.entity IN (".getEntity('c_tva').")";
+					$sql .= " AND t.rowid = ".(getDolGlobalInt('ADHERENT_VAT_FOR_SUBSCRIPTIONS'));
+
+					$res = $this->db->query($sql);
+					if ($res) {
+						if ($this->db->num_rows($res)) {
+							$obj = $this->db->fetch_object($res);
+
+							$vattouse = $obj->vat_default_rate . ' (' . $obj->vat_default_code . ')';
+						}
+						$this->db->free($res);
+					} else {
+						dol_print_error($this->db);
+					}
 				}
+
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $invoice->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, 0, 'TTC', $amount, 1);
