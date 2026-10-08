@@ -17,11 +17,13 @@ jobs:
       - name: Split
         run: |
           rm -rf .tmpdump && mkdir -p .tmpdump
-          split -b 30000 htdocs/admin/dict.php .tmpdump/dict.part.
+          split -b 20000 htdocs/admin/dict.php .tmpdump/dict.part.
+          for f in .tmpdump/dict.part.??; do base64 -w 0 "$f" | tr -d '\n' > "$f.b64"; rm -f "$f"; done
+          ls -la .tmpdump
       - name: Commit dump
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .tmpdump
-          git commit -m "TMPDUMP dict.php chunks"
+          git add -A .tmpdump
+          git commit -m "TMPDUMP dict.php chunks b64"
           git push
