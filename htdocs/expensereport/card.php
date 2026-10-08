@@ -125,9 +125,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('expensereportcard', 'globalcard'));
 
-$permissionnote = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
+// An existing expense report can be modified only if it is for the user or one of his subordinates, or with the permission to write the expense reports of everybody
+$caneditreport = (empty($object->id) || in_array($object->fk_user_author, $childids) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')));
+
+$permissionnote = $user->hasRight('expensereport', 'creer') && $caneditreport; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('expensereport', 'creer') && $caneditreport; // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('expensereport', 'creer') && $caneditreport; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
@@ -144,6 +148,9 @@ if ($object->id > 0) {
 	$canread = 0;
 	if ($user->hasRight('expensereport', 'readall')) {
 		$canread = 1;
+	}
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')) {
+		$canread = 1;	// Can create an expense report for everybody, so can also read it
 	}
 	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
 		$canread = 1;
@@ -167,7 +174,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'expensereport', $object->id, 'expensereport');
 
-$permissiontoadd = $user->hasRight('expensereport', 'creer');	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('expensereport', 'creer') && $caneditreport;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -221,6 +228,30 @@ if (empty($reshook)) {
 		$fk_c_type_fees = -1;
 	}
 
+	// Refuse a status change that the buttons of this page do not offer for the current status of the report
+	$allowedstatusforaction = array(
+		'confirm_validate' => array(ExpenseReport::STATUS_DRAFT),
+		'confirm_save_from_refuse' => array(ExpenseReport::STATUS_REFUSED),
+		'confirm_approve' => array(ExpenseReport::STATUS_VALIDATED),
+		'confirm_refuse' => array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED),
+		'confirm_cancel' => array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED),
+		'confirm_setdraft' => array(ExpenseReport::STATUS_VALIDATED),
+	);
+	if ($user->hasRight('expensereport', 'approve') || $user->hasRight('expensereport', 'to_paid')) {
+		$allowedstatusforaction['confirm_cancel'][] = ExpenseReport::STATUS_CLOSED;
+	}
+	if ($user->hasRight('expensereport', 'to_paid')) {
+		$allowedstatusforaction['confirm_setdraft'][] = ExpenseReport::STATUS_APPROVED;
+	}
+	if (array_key_exists($action, $allowedstatusforaction) && $object->id > 0 && !in_array($object->status, $allowedstatusforaction[$action])) {
+		$labelsofallowedstatus = array();
+		foreach ($allowedstatusforaction[$action] as $allowedstatus) {
+			$labelsofallowedstatus[] = $object->LibStatut($allowedstatus, 0);
+		}
+		setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, implode(' / ', $labelsofallowedstatus)), null, 'errors');
+		$action = '';
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 	if (!empty(GETPOST('sendit', 'alpha'))) {   // If we just submit a file
@@ -242,7 +273,12 @@ if (empty($reshook)) {
 		if (GETPOSTINT('fk_user_author') <= 0) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
-			if ($object->id > 0) {
+			// Check that the new expense report is for a user inside the hierarchy, or that advanced permission for all is set (same rule as for action 'add')
+			$fk_user_author_clone = (GETPOSTINT('fk_user_author') > 0 ? GETPOSTINT('fk_user_author') : $user->id);
+			if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance')) && !in_array($fk_user_author_clone, $childids)) {
+				setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+				$action = '';
+			} elseif ($object->id > 0) {
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later if it fails
 				$orig = clone $object;
 
@@ -1166,7 +1202,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == "addline" && $user->hasRight('expensereport', 'creer')) {
+	if ($action == "addline" && $permissiontoadd) {
 		// First save uploaded file
 		$fk_ecm_files = 0;
 		if (GETPOSTISSET('attachfile')) {
@@ -1293,7 +1329,13 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->hasRight('expensereport', 'creer')) {
+	// A line can be deleted only when lines can be added or modified: report in draft or refused
+	if ($action == 'confirm_delete_line' && (empty($object->id) || ($object->status != ExpenseReport::STATUS_DRAFT && $object->status != ExpenseReport::STATUS_REFUSED))) {
+		setEventMessages($langs->trans("ErrorDeleteLineNotAllowedByObjectStatus"), null, 'errors');
+		$action = '';
+	}
+
+	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $permissiontoadd) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -1727,7 +1769,7 @@ if ($action == 'create') {
 			if ($action == 'clone') {
 				// Create an array for form
 				$criteriaforfilter = 'hierarchyme';
-				if ($user->hasRight('expensereport', 'readall')) {
+				if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')) {
 					$criteriaforfilter = '';
 				}
 				$formquestion = array(
@@ -2368,7 +2410,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						// Ajout des boutons de modification/suppression
-						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->hasRight('expensereport', 'creer')) {
+						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $permissiontoadd) {
 							print '<td class="nowrap right linecolaction">';
 
 							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$line->rowid.'">';
@@ -2531,7 +2573,7 @@ if ($action == 'create') {
 			}
 
 			// Add a new line
-			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->hasRight('expensereport', 'creer')) {
+			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $permissiontoadd) {
 				$colspan = 12;
 				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					$colspan++;
