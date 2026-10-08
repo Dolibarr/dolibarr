@@ -198,6 +198,17 @@ if (empty($reshook)) {
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 		}
 
+		// A serial number can be only once in a transfer (a line with the same product, warehouses and serial number would be merged into a qty of 2)
+		if (!$error && $prod->status_batch == 2) {
+			foreach ($object->lines as $tmpline) {
+				if ($tmpline->fk_product == $fk_product && dol_strtolower((string) $tmpline->batch) == dol_strtolower($batch)) {
+					$error++;
+					setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref, $batch), null, 'errors');
+					break;
+				}
+			}
+		}
+
 		if (empty($error)) {
 			$line = new StockTransferLine($db);
 			$records = $line->fetchAll('', '', 0, 0, '(fk_stocktransfer:=:'.((int) $id).') AND (fk_product:=:'.((int) $fk_product).') AND (fk_warehouse_source:=:'.((int) $fk_warehouse_source).') AND (fk_warehouse_destination:=:'.((int) $fk_warehouse_destination).') AND ('.(empty($batch) ? "(batch:=:'') OR (batch:IS:NULL)" : "batch:=:'".$db->escape($batch)."'").')');
@@ -260,6 +271,18 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 			$action = 'editline';
+		}
+
+		// A serial number can be only once in a transfer
+		if (!$error && $prod->status_batch == 2) {
+			foreach ($object->lines as $tmpline) {
+				if ($tmpline->id != $lineid && $tmpline->fk_product == $fk_product && dol_strtolower((string) $tmpline->batch) == dol_strtolower($batch)) {
+					$error++;
+					setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref, $batch), null, 'errors');
+					$action = 'editline';
+					break;
+				}
+			}
 		}
 
 		if (empty($error)) {
