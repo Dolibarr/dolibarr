@@ -62,6 +62,7 @@ if (defined('THEME_ONLY_CONSTANT')) {
 // Types from theme_vars
 '
 @phan-var-force string $badgeWarning
+@phan-var-force string $badgeDanger
 @phan-var-force string $butactionbg
 @phan-var-force string $colorbackbody
 @phan-var-force string $colorbackhmenu1
