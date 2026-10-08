@@ -606,7 +606,11 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoread) {
+	} elseif (($action == 'deleteline' || ($action == 'updateline' && GETPOST('save'))) && $object->status != Reception::STATUS_DRAFT) {
+		// Lines can be modified or deleted only on a draft reception (stock may have been moved after validation)
+		setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('StatusReceptionDraftShort')), null, 'errors');
+		$action = '';
+	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoadd) {
 		// delete a line
 		$lines = $object->lines;
 		$line = new CommandeFournisseurDispatch($db);
