@@ -1419,6 +1419,43 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
 }
 
 /**
+ * Convert the left indentation of div and p tags (style margin-left in px, as produced by the WYSIWYG editor)
+ * into nested blockquote tags, because TCPDF ignores margin-left.
+ *
+ * @param	string	$html	HTML content
+ * @return	string			HTML content with indentation converted into blockquote tags
+ */
+function pdfConvertIndentToBlockquote($html)
+{
+	if (stripos($html, 'margin-left') === false) {
+		return $html;
+	}
+
+	// Must match the indentOffset of the WYSIWYG editor (CKEditor default)
+	$indentstep = 40;
+	$stack = [];
+
+	return preg_replace_callback('/<(\/?)(div|p)\b([^>]*)>/i', function ($matches) use (&$stack, $indentstep) {
+		if ($matches[1] === '/') {
+			$nblevel = (int) array_pop($stack);
+			return ($nblevel > 0 ? str_repeat('</blockquote>', $nblevel) : $matches[0]);
+		}
+
+		$nblevel = 0;
+		$attributes = preg_replace_callback('/margin-left\s*:\s*(\d+(?:\.\d+)?)px\s*;?\s*/i', function ($submatches) use (&$nblevel, $indentstep) {
+			$nblevel = (int) round((float) $submatches[1] / $indentstep);
+			return '';
+		}, $matches[3]);
+		$stack[] = $nblevel;
+
+		if ($nblevel == 0) {
+			return $matches[0];
+		}
+		return '<blockquote'.$attributes.'>'.str_repeat('<blockquote>', $nblevel - 1);
+	}, $html);
+}
+
+/**
  *	Output line description into PDF
  *
  *  @param  TCPDF			$pdf               	PDF object
@@ -1473,7 +1510,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		}
 
 		// Description
-		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, $align, true);
+		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset(pdfConvertIndentToBlockquote($labelproductservice)), 0, 1, false, true, $align, true);
 		$result .= $labelproductservice;
 	}
 	return $result;
