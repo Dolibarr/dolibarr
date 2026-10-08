@@ -244,6 +244,21 @@ class MouvementStockTest extends CommonClassTest
 		$productbatch->find(0, '', '', 'LOTFLOAT', $warehouseid, $productid);
 		$this->assertEmpty($productbatch->id, 'Batch line with a null quantity must be deleted');
 
+		// A remaining quantity below the stock precision (MAIN_MAX_DECIMALS_STOCK) is null, the smallest storable one is not
+		$this->assertGreaterThan(0, $movement->reception($user, $productid, $warehouseid, 1, 0, 'phpunit', '', '', 'LOTBELOWPRECISION'));
+		$this->assertGreaterThan(0, $movement->livraison($user, $productid, $warehouseid, 0.999993, 0, 'phpunit', '', '', '', 'LOTBELOWPRECISION'));
+
+		$productbatch = new Productbatch($db);
+		$productbatch->find(0, '', '', 'LOTBELOWPRECISION', $warehouseid, $productid);
+		$this->assertEmpty($productbatch->id, 'Batch line with a quantity below stock precision must be deleted');
+
+		$this->assertGreaterThan(0, $movement->reception($user, $productid, $warehouseid, 1, 0, 'phpunit', '', '', 'LOTATPRECISION'));
+		$this->assertGreaterThan(0, $movement->livraison($user, $productid, $warehouseid, 0.99999, 0, 'phpunit', '', '', '', 'LOTATPRECISION'));
+
+		$productbatch = new Productbatch($db);
+		$productbatch->find(0, '', '', 'LOTATPRECISION', $warehouseid, $productid);
+		$this->assertNotEmpty($productbatch->id, 'Batch line with the smallest storable quantity must be kept');
+
 		$this->assertGreaterThan(0, $movement->reception($user, $productid, $warehouseid, 0, 0, 'phpunit', '', '', 'LOTZERO'));
 
 		$productbatch = new Productbatch($db);
