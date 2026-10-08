@@ -191,6 +191,7 @@ WebPortalPartnerShipCardAccessHelp=Enable access to the partnership record (Hidd
 WEBPORTAL_PROPAL_LIST_ACCESS=Enable access to the proposals
 WEBPORTAL_ORDER_LIST_ACCESS=Enable access to the orders
 WEBPORTAL_INVOICE_LIST_ACCESS=Enable access to the invoices
+WEBPORTAL_CONTRACT_LIST_ACCESS=Enable access to the customer contracts
 WEBPORTAL_FICHEINTER_LIST_ACCESS=Enable access to interventions
 WEBPORTAL_TICKET_LIST_ACCESS=Enable access to tickets
 WebPortalFicheinterListMenu=Interventions
@@ -507,5 +508,9 @@ WebPortalSharedDocsDirHelp=Enter the name of the directory, located in the ECM/G
 DateM=Modification Date
 ThisDirectoryIsEmpty=This directory is empty
 WrittenBy=Written by %s
+
+WebPortalContractListMenu=Contracts
+WebPortalContractListTitle=Customer contracts
+WebPortalContractListDesc=List of my customer contracts
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.

@@ -93,7 +93,8 @@ class DocumentListController extends AbstractDocumentController
 		if (!empty($thirdparty) && $thirdparty->id) {
 			// 1. Prepare data
 			$client_dir_name = $thirdparty->id;
-			$dir_ged_tiers = $conf->societe->multidir_output[$thirdparty->entity ?? $conf->entity]."/".$client_dir_name;
+			$entity = (int) ($thirdparty->entity ?? $conf->entity);
+			$dir_ged_tiers = $conf->societe->multidir_output[$entity]."/".$client_dir_name;
 			$fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC, 1);
 
 			// 2. Define the link builder function
@@ -103,8 +104,8 @@ class DocumentListController extends AbstractDocumentController
 			 * @param	array<string, mixed> $file  File (array) to get url for
 			 * @return	string						Url for file
 			 */
-			$linkBuilder = static function (array $file) use ($client_dir_name) {
-				return DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $file['name']);
+			$linkBuilder = static function (array $file) use ($client_dir_name, $entity) {
+				return DOL_URL_ROOT . '/document.php?modulepart=societe&entity=' . ((int) $entity) . '&attachment=1&file=' . urlencode($client_dir_name . '/' . $file['name']);
 			};
 
 			// 3. Encapsulate the link builder in an array, as required by displayDocumentTable
