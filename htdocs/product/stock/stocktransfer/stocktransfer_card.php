@@ -159,7 +159,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'addline' && $permissiontoadd) {
+	if ($action == 'addline' && $permissiontoadd && $object->status == $object::STATUS_DRAFT) {
 		if ($qty <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
@@ -220,7 +220,14 @@ if (empty($reshook)) {
 			}
 			$object->fetchLines();
 		}
-	} elseif ($action === 'updateline' && $permissiontoadd) {
+	} elseif ($action === 'updateline' && $permissiontoadd && $object->status == $object::STATUS_DRAFT) {
+		$line = new StockTransferLine($db);
+		if ($line->fetch($lineid) <= 0 || $line->fk_stocktransfer != $object->id) {
+			$error++;
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+			$action = '';
+		}
+
 		if ($qty <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
