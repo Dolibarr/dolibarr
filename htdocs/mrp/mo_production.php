@@ -1681,9 +1681,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Split All
 						print '<td></td>';
 					}
-					// Delete
+					// Delete, if nothing was produced for this line
 					if ($permissiontodelete) {
-						if ($line->origin_type == 'free') {
+						if ($line->origin_type == 'free' && empty($arrayoflines)) {
 							$href = $_SERVER["PHP_SELF"];
 							$href .= '?id='.$object->id;
 							$href .= '&action=deleteline';
