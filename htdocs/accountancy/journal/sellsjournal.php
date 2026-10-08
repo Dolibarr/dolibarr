@@ -421,7 +421,7 @@ if ($result) {
 					continue;
 				}
 				$accrualaccount = getDolGlobalString($year < $docyear ? 'ACCOUNTING_ACCOUNT_OUT_OF_PERIOD_INCOME' : 'ACCOUNTING_ACCOUNT_DEFERRED_INCOME', 'NotDefined');
-				$accruallabel = $langs->transnoentities('AccrualShare', $year, $share['days'], $share['percent']);
+				$accruallabel = $langs->transnoentities('AccrualShare', (string) $year, (string) $share['days'], (string) $share['percent']);
 				$accrualkey = $accrualaccount.'|'.$compta_prod.'|'.$accruallabel;
 				if (!isset($tabaccrual[$obj->rowid][$accrualkey])) {
 					$tabaccrual[$obj->rowid][$accrualkey] = array('account' => $accrualaccount, 'subledger' => $compta_prod, 'label' => $accruallabel, 'amount' => 0);
@@ -1363,7 +1363,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			$accountingaccount->fetch(0, $accrual['account'], true);
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
-			print '"'.$val["ref"].'"'.$sep;
+			print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($accrual['account'])).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($accrual['account'])).'"'.$sep;

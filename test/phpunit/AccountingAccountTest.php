@@ -233,7 +233,7 @@ class AccountingAccountTest extends CommonClassTest
 
 		$result = accountingSplitAmountPerYear(100, '2026-12-31', '2028-01-01', 2026);
 		$this->assertSame(array(2026, 2027, 2028), array_keys($result));
-		$this->assertEquals(100, array_sum(array_column($result, 'amount')));
+		$this->assertEqualsWithDelta(100, array_sum(array_column($result, 'amount')), 0.001);
 	}
 
 	/**

@@ -562,9 +562,9 @@ function accountingSplitAmountPerYear(float $amount, string $datestart, string $
 	$shares = array($docyear => array('days' => 0, 'percent' => 0.0, 'amount' => 0.0));
 	$amountotheryears = 0.0;
 	for ($year = $firstyear; $year <= $lastyear; $year++) {
-		$from = max($start, new DateTimeImmutable($year.'-01-01', $utc));
-		$to = min($end, new DateTimeImmutable($year.'-12-31', $utc));
-		$days = $from->diff($to)->days + 1;
+		$periodstart = ($year == $firstyear ? $start : new DateTimeImmutable($year.'-01-01', $utc));
+		$periodend = ($year == $lastyear ? $end : new DateTimeImmutable($year.'-12-31', $utc));
+		$days = $periodstart->diff($periodend)->days + 1;
 		$shares[$year] = array('days' => $days, 'percent' => round($days * 100 / $totaldays, 2), 'amount' => 0.0);
 		if ($year != $docyear) {
 			$shares[$year]['amount'] = (float) price2num($amount * $days / $totaldays, 'MT');
