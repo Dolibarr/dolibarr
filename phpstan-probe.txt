@@ -1,0 +1,23 @@
+::error file=htdocs/admin/clicktodial.php,line=172,col=0::Property Societe::$phone (string) on left side of ?? is not nullable.
+::error file=htdocs/admin/dict.php,line=2385,col=0::Strict comparison using !== between mixed and null will always evaluate to true.
+ ------ ----------------------------------------------------------------------- 
+  Line   admin/clicktodial.php                                                  
+ ------ ----------------------------------------------------------------------- 
+  172    Property Societe::$phone (string) on left side of ?? is not nullable.  
+         🪪  nullCoalesce.property                                              
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------- 
+  Line   admin/dict.php                                                  
+ ------ ---------------------------------------------------------------- 
+  2385   Strict comparison using !== between mixed and null will always  
+         evaluate to true.                                               
+         🪪  notIdentical.alwaysTrue                                     
+         💡  Type null has already been eliminated from mixed.           
+ ------ ---------------------------------------------------------------- 
+
+ [ERROR] Found 2 errors                                                         
+
+Elapsed time: 27.09 seconds
+Peak memory: 127.6 MB (main process), 405.6 MB (the spawned worker)
+PHPStan - PHP Static Analysis Tool 2.2.14

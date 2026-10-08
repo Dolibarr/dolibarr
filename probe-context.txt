@@ -1,0 +1,171 @@
+===== restrictedArea signature =====
+183:function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $nodie = 0, $mode = '')
+function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $nodie = 0, $mode = '')
+===== savekanbanfield.php lines 50-70 =====
+$field = preg_replace('/^editval_/', '', GETPOST('field', 'aZ09'));
+$value = GETPOST('value', 'aZ09');
+
+// Load object according to $fk_element and $element
+$object = fetchObjectByElement($fk_element, $element);
+if (!is_object($object) || $object->id <= 0) {
+	httponly_accessforbidden('Not allowed, bad combination of parameters for fetchObjectByElement');
+}
+
+// Security check with mode 'write', so restrictedArea() tests the write permission and not only the read permission.
+$result = restrictedArea($user, empty($object->module) ? $element : $object->module, $object, $object->table_element, '', 'fk_soc', 'rowid', 0, 1, 'write');	// Call with nodie return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
+
+// Add blacklist of some forbidden field name.
+$blacklistedfields = array('pass', 'pass_crypted', 'pass_temp', 'api_key', 'openid', 'admin', 'status', 'statut');
+$canreadsalary = ((isModEnabled('salaries') && $user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+if (!$canreadsalary) {
+	$blacklistedfields[] = 'salary';
+	$blacklistedfields[] = 'salaryextra';
+===== updateextrafield.php lines 70-95 =====
+}
+
+$module = $object->module;
+$element = $object->element;
+
+// Security check
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !$user->hasRight($module, $element, 'write') && !$user->hasRight($module, 'write')) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+// print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+// Security check with mode 'write', so restrictedArea() tests the write permission and not only the read
+// permission, because this page makes a write operation on the object (update of an extrafield value).
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1, 'write');	// Call with nodie return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
+
+// Add blacklist of some forbidden field name.
+/* Removed, this is useful only for main fields not for extrafields
+$blacklistedfields = array('pass', 'pass_crypted', 'pass_temp', 'api_key', 'openid', 'admin', 'status', 'statut');
+$canreadsalary = ((isModEnabled('salaries') && $user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+if (!$canreadsalary) {
+	$blacklistedfields[] = 'salary';
+	$blacklistedfields[] = 'salaryextra';
+===== dict.php lines 2360-2400 =====
+						print '<input type="hidden" name="entity" value="'.$withentity.'">';
+					}
+					print '<input type="submit" class="button button-edit smallpaddingimp" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<input type="submit" class="button button-cancel smallpaddingimp" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '</td>';
+				} else {
+					$tmpaction = 'view';
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
+					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+
+					$error = $hookmanager->error;
+					$errors = $hookmanager->errors;
+
+					$langs->loadLangs(array("bills", "agenda", "propal"));
+
+					if (empty($reshook)) {
+						$withentity = null;
+						$TDurationTypes = $form->getDurationTypes($langs);
+
+						foreach ($fieldlist as $field => $value) {
+							$class = (isset($tabcomplete[$tabname[$id]]['css'][$value]) ? $tabcomplete[$tabname[$id]]['css'][$value] : '');
+							$showfield = 1;
+							if (empty($arrayfields[$value]['checked'])) {
+								$showfield = 0; // Column was not selected to be displayed
+							}
+							$valuetoshow = (isset($obj->$value) && $obj->$value !== null && $obj->$value !== '') ? $obj->$value : '';
+							$titletoshow = '';
+
+							if ($value == 'entity') {
+								$withentity = $valuetoshow;
+								continue;
+							}
+
+							// Management of several special cases and exceptions
+							if ($value == 'code' && $id == DICT_PRODUCT_NATURE) {
+								$valuetoshow = (int) $valuetoshow;
+							} elseif ($value == 'element') {
+								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
+							} elseif ($value == 'source') {
+								$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
+							} elseif ($valuetoshow == 'all') {
+===== clicktodial.php lines 155-185 =====
+if (!empty($conf->use_javascript_ajax)) {
+	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
+print '</td>';
+print '</tr>';
+
+print '</table>';
+print '</div>';
+
+print $form->buttonsSaveCancel("Modify", '');
+
+print '</form><br><br>';
+
+
+if (getDolGlobalString('CLICKTODIAL_URL')) {
+	$user->fetch_clicktodial();
+
+	$phonefortest = $mysoc->phone ?? '';
+	if (GETPOST('phonefortest')) {
+		$phonefortest = GETPOST('phonefortest');
+	}
+
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print $langs->trans("LinkToTestClickToDial", $user->login).' : ';
+	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';
+	print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
+	print '</form>';
+
+	$setupcomplete = 1;
+	if (preg_match('/__LOGIN__/', getDolGlobalString('CLICKTODIAL_URL')) && empty($user->clicktodial_login)) {
+===== dict.php 2375-2395 cat -A (tabs visible) =====
+^I^I^I^I^Iif (empty($reshook)) {$
+^I^I^I^I^I^I$withentity = null;$
+^I^I^I^I^I^I$TDurationTypes = $form->getDurationTypes($langs);$
+$
+^I^I^I^I^I^Iforeach ($fieldlist as $field => $value) {$
+^I^I^I^I^I^I^I$class = (isset($tabcomplete[$tabname[$id]]['css'][$value]) ? $tabcomplete[$tabname[$id]]['css'][$value] : '');$
+^I^I^I^I^I^I^I$showfield = 1;$
+^I^I^I^I^I^I^Iif (empty($arrayfields[$value]['checked'])) {$
+^I^I^I^I^I^I^I^I$showfield = 0; // Column was not selected to be displayed$
+^I^I^I^I^I^I^I}$
+^I^I^I^I^I^I^I$valuetoshow = (isset($obj->$value) && $obj->$value !== null && $obj->$value !== '') ? $obj->$value : '';$
+^I^I^I^I^I^I^I$titletoshow = '';$
+$
+^I^I^I^I^I^I^Iif ($value == 'entity') {$
+^I^I^I^I^I^I^I^I$withentity = $valuetoshow;$
+^I^I^I^I^I^I^I^Icontinue;$
+^I^I^I^I^I^I^I}$
+$
+^I^I^I^I^I^I^I// Management of several special cases and exceptions$
+^I^I^I^I^I^I^Iif ($value == 'code' && $id == DICT_PRODUCT_NATURE) {$
+^I^I^I^I^I^I^I^I$valuetoshow = (int) $valuetoshow;$
+===== clicktodial.php 165-180 cat -A =====
+$
+print '</form><br><br>';$
+$
+$
+if (getDolGlobalString('CLICKTODIAL_URL')) {$
+^I$user->fetch_clicktodial();$
+$
+^I$phonefortest = $mysoc->phone ?? '';$
+^Iif (GETPOST('phonefortest')) {$
+^I^I$phonefortest = GETPOST('phonefortest');$
+^I}$
+$
+^Iprint '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';$
+^Iprint '<input type="hidden" name="token" value="'.newToken().'">';$
+^Iprint $langs->trans("LinkToTestClickToDial", $user->login).' : ';$
+^Iprint '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';$
+===== file byte sizes =====
+  7926 htdocs/admin/clicktodial.php
+147966 htdocs/admin/dict.php
+  4335 htdocs/core/ajax/savekanbanfield.php
+  5405 htdocs/core/ajax/updateextrafield.php
+165632 total
