@@ -285,6 +285,7 @@ class Inventory extends CommonObject
 			}
 			$sql .= ", ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
 			$sql .= " WHERE p.entity IN (".getEntity('product').")";
+			$sql .= " AND e.entity IN (".getEntity('stock').")";
 			$sql .= " AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid";
 			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 				$sql .= " AND p.fk_product_type = 0";
