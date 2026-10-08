@@ -1814,7 +1814,7 @@ class FactureFournisseur extends CommonInvoice
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				// Call trigger
-				$result = $this->call_trigger('BILL_SUPPLIER_CANCEL', $user);
+				$result = $this->call_trigger('BILL_SUPPLIER_CANCELED', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;
