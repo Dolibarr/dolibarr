@@ -135,12 +135,12 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	if ($action == 'cancel_record' && $permissiontoupdatestock) {
+	if ($action == 'cancel_record' && $confirm == 'yes' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
 		$object->setCanceled($user);
 	}
 
 	// Close inventory by recording the stock movements
-	if ($action == 'update' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
+	if ($action == 'update' && $confirm == 'yes' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
 		$stockmovment = new MouvementStock($db);
 		$stockmovment->setOrigin($object->element, $object->id);
 
@@ -345,6 +345,12 @@ if (empty($reshook)) {
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 	$backtopage = DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&page='.$page.$paramwithsearch;
+
+	// Action 'update' of this page is the recording of the inventory (done above or refused), never the
+	// generic update of the object: it would overwrite the fields of the inventory with empty values.
+	if ($action == 'update') {
+		$action = '';
+	}
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
