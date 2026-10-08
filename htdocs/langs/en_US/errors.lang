@@ -244,6 +244,8 @@ ErrorObjectMustHaveStatusDraftToBeValidated=Object %s must have status 'Draft' t
 ErrorObjectHasWrongStatus=Object %s must have another status for this operation.
 ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Only validated invoices can be sent using the "Send by email" mass action.
+ErrorOnlyProposalNotDraftCanBeSentInMassAction=Proposal %s is a draft. A draft cannot be sent using the "Send by email" mass action.
+ErrorOnlyOrderNotDraftCanBeSentInMassAction=Order %s is a draft. A draft cannot be sent using the "Send by email" mass action.
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a predefined product or not
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
 ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
@@ -262,6 +264,7 @@ ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked
 ErrorSearchCriteriaTooSmall=Search criteria too short.
 ErrorObjectMustHaveStatusActiveToBeDisabled=Objects must have status 'Active' to be disabled
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Objects must have status 'Draft' or 'Disabled' to be enabled
+ErrorObjectMustHaveStatusValidToBeCanceled=Object %s must have status 'Validated' to be canceled.
 ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' into definition of object '%s'. No way to show the combolist.
 ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 AlreadyTooMuchPostOnThisIPAdress=You have already posted too much on this IP address.
@@ -386,6 +389,7 @@ ErrorThirdPartyNotFound=Error ThirdParty Not Found
 ErrorDynamicPHPContentNotAllowed=Error: %s=1 so dynamic PHP content is allowed only if RCE PHP functions (exec, shell_exec, ...) are all disabled.
 ErrorTooManyLinksIntoHTMLString=The HTML content contains too many links or images. Reduce the number or raise MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
 ErrorDeletingAClosedCashControlIsNotPossible=Deleting a closed cash control is not possible
+ErrorCantSignDocument=Error, can't sign the document. May be the link has expired or the documet was modified since the link was sent.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -441,6 +445,7 @@ WarningModuleAffiliatedToAPiratPlatform=Be careful when getting a module (paid o
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
 WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
+WarningAmountRequiredIfFreeAmountNotAllowed=An amount is required when "Any amount" is not allowed
 
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)

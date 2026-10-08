@@ -10,6 +10,7 @@
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,55 +274,59 @@ $nowday = $nowarray['mday'];
 $listofextcals = array();
 
 // Define list of external calendars (global admin setup)
-$i = 0;
-while ($i < $MAXAGENDA) {
-	$i++;
-	$source = 'AGENDA_EXT_SRC'.$i;
-	$name = 'AGENDA_EXT_NAME'.$i;
-	$offsettz = 'AGENDA_EXT_OFFSETTZ'.$i;
-	$color = 'AGENDA_EXT_COLOR'.$i;
-	$enabled = 'AGENDA_EXT_ENABLED'.$i;
-	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
-	$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
-	if (getDolGlobalString($source) && getDolGlobalString($name) && getDolGlobalString($enabled)) {
-		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-		$listofextcals[] = array(
-			'type' => 'globalsetup',
-			'src' => getDolGlobalString($source),
-			'name' => dol_string_nohtmltag(getDolGlobalString($name)),
-			'offsettz' => (int) getDolGlobalInt($offsettz, 0),
-			'color' => dol_string_nohtmltag(getDolGlobalString($color)),
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-			'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
-		);
+if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
+	$i = 0;
+	while ($i < $MAXAGENDA) {
+		$i++;
+		$source = 'AGENDA_EXT_SRC'.$i;
+		$name = 'AGENDA_EXT_NAME'.$i;
+		$offsettz = 'AGENDA_EXT_OFFSETTZ'.$i;
+		$color = 'AGENDA_EXT_COLOR'.$i;
+		$enabled = 'AGENDA_EXT_ENABLED'.$i;
+		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
+		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
+		if (getDolGlobalString($source) && getDolGlobalString($name) && getDolGlobalString($enabled)) {
+			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+			$listofextcals[] = array(
+				'type' => 'globalsetup',
+				'src' => getDolGlobalString($source),
+				'name' => dol_string_nohtmltag(getDolGlobalString($name)),
+				'offsettz' => (int) getDolGlobalInt($offsettz, 0),
+				'color' => dol_string_nohtmltag(getDolGlobalString($color)),
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
+				'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile, ''))
+			);
+		}
 	}
 }
 
 // Define list of external calendars (user setup)
-$i = 0;
-while ($i < $MAXAGENDA) {
-	$i++;
-	$source = 'AGENDA_EXT_SRC_'.$user->id.'_'.$i;
-	$name = 'AGENDA_EXT_NAME_'.$user->id.'_'.$i;
-	$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$user->id.'_'.$i;
-	$color = 'AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
-	$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
-	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
-	$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
+if (!getDolGlobalString('AGENDA_DISABLE_EXT')) {
+	$i = 0;
+	while ($i < $MAXAGENDA) {
+		$i++;
+		$source = 'AGENDA_EXT_SRC_'.$user->id.'_'.$i;
+		$name = 'AGENDA_EXT_NAME_'.$user->id.'_'.$i;
+		$offsettz = 'AGENDA_EXT_OFFSETTZ_'.$user->id.'_'.$i;
+		$color = 'AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
+		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
+		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
+		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 
-	if (getDolUserString($source) && getDolUserString($name)) {
-		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-		$listofextcals[] = array(
-			'type' => 'usersetup',
-			'src' => getDolUserString($source),
-			'name' => dol_string_nohtmltag(getDolUserString($name)),
-			'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
-			'color' => dol_string_nohtmltag(getDolUserString($color)),
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			'default' => dol_string_nohtmltag(getDolUserString($default)),
-			'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
-		);
+		if (getDolUserString($source) && getDolUserString($name)) {
+			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+			$listofextcals[] = array(
+				'type' => 'usersetup',
+				'src' => getDolUserString($source),
+				'name' => dol_string_nohtmltag(getDolUserString($name)),
+				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
+				'color' => dol_string_nohtmltag(getDolUserString($color)),
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				'default' => dol_string_nohtmltag(getDolUserString($default)),
+				'buggedfile' => dol_string_nohtmltag($buggedfile)
+			);
+		}
 	}
 }
 
@@ -1085,80 +1090,99 @@ if ($resql) {
 
 
 // BIRTHDATES CALENDAR
-// Complete $eventarray with birthdates
-if ($check_birthday) {
-	// Add events in array
-	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
-	$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.((int) $user->id).'))';
-	$sql .= " AND sp.entity IN (".getEntity('contact').")";
-	if ($mode == 'show_day') {
-		$sql .= ' AND MONTH(birthday) = '.((int) $month);
-		$sql .= ' AND DAY(birthday) = '.((int) $day);
-	} else {
-		$sql .= ' AND MONTH(birthday) = '.((int) $month);
+// Complete $eventarray with birthdates.
+// Birthdays are always loaded so the JavaScript toggle (jQuery(".family_birthday").toggle())
+// can show/hide them client-side. They are hidden by CSS class "hidden" when check_birthday is not set.
+// Add events in array
+
+// Build the map of month => year for the displayed period so we can load birthdays
+// for all months covered by the view. A week or a month grid can span two or three months,
+// and a week at a year boundary can even span two years, so we cannot rely on the reference
+// $month/$year only.
+$birthdaymonthyearmap = array();
+$tmpstamp = $firstdaytoshow;
+while ($tmpstamp < $lastdaytoshow) {
+	$m = (int) dol_print_date($tmpstamp, '%m', 'tzuserrel');
+	if (!isset($birthdaymonthyearmap[$m])) {
+		$birthdaymonthyearmap[$m] = (int) dol_print_date($tmpstamp, '%Y', 'tzuserrel');
 	}
-	$sql .= ' ORDER BY birthday';
+	$tmpstamp = dol_time_plus_duree($tmpstamp, 1, 'd');
+}
 
-	dol_syslog("comm/action/index.php", LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$nbevents += $num;
+$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
+$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
+$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.((int) $user->id).'))';
+$sql .= " AND sp.entity IN (".getEntity('contact').")";
+if ($mode == 'show_day') {
+	$sql .= ' AND MONTH(birthday) = '.((int) $month);
+	$sql .= ' AND DAY(birthday) = '.((int) $day);
+} else {
+	// Load birthdays for all months covered by the displayed period (week or month grid)
+	$sql .= ' AND MONTH(birthday) IN ('.$db->sanitize(implode(',', array_keys($birthdaymonthyearmap))).')';
+}
+$sql .= ' ORDER BY birthday';
 
-		$i = 0;
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
+dol_syslog("comm/action/index.php", LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$nbevents += $num;
 
-			$event = new ActionComm($db);
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
 
-			$event->id = $obj->rowid; // We put contact id in action id for birthdays events
-			$event->ref = (string) $event->id;
+		$event = new ActionComm($db);
 
-			$datebirth = dol_stringtotime($obj->birthday, 1);
-			//print 'ee'.$obj->birthday.'-'.$datebirth;
-			$datearray = dol_getdate($datebirth, true);
-			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they won't but converted during output
-			$event->datef = $event->datep;
+		$event->id = $obj->rowid; // We put contact id in action id for birthdays events
+		$event->ref = (string) $event->id;
 
-			$event->type_code = 'BIRTHDAY';
-			$event->type_label = '';
-			$event->type_color = '';
-			$event->type = 'birthdate';
-			$event->type_picto = 'birthdate';
+		$datebirth = dol_stringtotime($obj->birthday, 1);
+		//print 'ee'.$obj->birthday.'-'.$datebirth;
+		$datearray = dol_getdate($datebirth, true);
+		// Use the year that matches the birthday month within the displayed period
+		// (handles a week/month grid spanning two months or a year boundary)
+		$birthdayyear = isset($birthdaymonthyearmap[(int) $datearray['mon']]) ? $birthdaymonthyearmap[(int) $datearray['mon']] : $year;
+		$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $birthdayyear, true); // For full day events, date are also GMT but they won't but converted during output
+		$event->datef = $event->datep;
 
-			$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
-			$event->percentage = 100;
-			$event->fulldayevent = 1;
+		$event->type_code = 'BIRTHDAY';
+		$event->type_label = '';
+		$event->type_color = '';
+		$event->type = 'birthdate';
+		$event->type_picto = 'birthdate';
 
-			$event->contact_id = $obj->rowid;
+		$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
+		$event->percentage = 100;
+		$event->fulldayevent = 1;
 
-			$event->date_start_in_calendar = $event->datep;
-			$event->date_end_in_calendar = $event->datef;
+		$event->contact_id = $obj->rowid;
 
-			// Add an entry in eventarray for each day
-			$daycursor = $event->datep;
-			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
+		$event->date_start_in_calendar = $event->datep;
+		$event->date_end_in_calendar = $event->datef;
 
-			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
+		// Add an entry in eventarray for each day
+		$daycursor = $event->datep;
+		$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+		$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+		$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
-			$eventarray[$daykey][] = $event;
+		$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 
-			/*$loop = true;
-			 $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-			 do {
-			 $eventarray[$daykey][] = $event;
-			 $daykey += 60 * 60 * 24;
-			 if ($daykey > $event->date_end_in_calendar) $loop = false;
-			 } while ($loop);
-			 */
-			$i++;
-		}
-	} else {
-		dol_print_error($db);
+		$eventarray[$daykey][] = $event;
+
+		/*$loop = true;
+		 $daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
+		 do {
+		 $eventarray[$daykey][] = $event;
+		 $daykey += 60 * 60 * 24;
+		 if ($daykey > $event->date_end_in_calendar) $loop = false;
+		 } while ($loop);
+		 */
+		$i++;
 	}
+} else {
+	dol_print_error($db);
 }
 
 // LEAVE-HOLIDAY CALENDAR
@@ -2127,17 +2151,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$cssclass .= " unmovable";
 					} elseif ($event->type_code == 'ICALEVENT') {
 						$cssclass .= " unmovable";
-					} elseif ($event->date_start_in_calendar && $event->date_end_in_calendar && date('Ymd', $event->date_start_in_calendar) != date('Ymd', $event->date_end_in_calendar)) {
-						// If the event is on several days
-						$tmpyearend = dol_print_date($event->date_start_in_calendar, '%Y', 'tzuserrel');
-						$tmpmonthend = dol_print_date($event->date_start_in_calendar, '%m', 'tzuserrel');
-						$tmpdayend = dol_print_date($event->date_start_in_calendar, '%d', 'tzuserrel');
-						//var_dump($tmpyearend.' '.$tmpmonthend.' '.$tmpdayend);
-						if ($tmpyearend != $annee || $tmpmonthend != $mois || $tmpdayend != $jour) {
-							$cssclass .= " unmovable unmovable-mustusefirstdaytodrag";
-						} else {
-							$cssclass .= ' movable cursormove';
-						}
+					} elseif (dol_print_date($event->datep, '%Y%m%d', 'tzuserrel') != sprintf("%04d%02d%02d", $annee, $mois, $jour)) {
+						// The event is shown on a day that is not its real start day (it is on several days, maybe
+						// starting before the displayed range). A drop sets the start to the drop day, so only its
+						// real start day can be dragged.
+						$cssclass .= " unmovable unmovable-mustusefirstdaytodrag";
 					} else {
 						if ($user->hasRight('agenda', 'allactions', 'create') ||
 							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
@@ -2508,8 +2526,11 @@ function sort_events_by_date($a, $b)
 	// datef => Event end time
 
 	// Events have different start time
+	// Note: datep may be empty or non numeric on an incomplete event. The (int) cast must be on each
+	// operand, not on the result, or PHP 8 throws "Unsupported operand types: string - int" before it
+	// is reached. datef is already guarded with is_numeric() below for the same reason.
 	if ($a->datep !== $b->datep) {
-		return (int) ($a->datep - $b->datep);
+		return (int) $a->datep - (int) $b->datep;
 	}
 
 	// Events have same start time and no end time

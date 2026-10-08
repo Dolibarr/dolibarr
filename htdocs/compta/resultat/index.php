@@ -926,9 +926,13 @@ if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN') && isModEnabled('loan'
 
 if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 	$sanitizedpredefinedgroupwhere = "(";
-	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type = 'EXPENSE')";
+	// Some shipped charts of accounts (e.g. US-BASE) split income and expense
+	// accounts across more than one pcg_type value (COGS, OTHER_REVENUE,
+	// OTHER_EXPENSES), unlike FR/GB-style charts which only use INCOME/EXPENSE.
+	// Include those here so this report does not silently omit them.
+	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type IN ('EXPENSE', 'COGS', 'OTHER_EXPENSES'))";
 	$sanitizedpredefinedgroupwhere .= " OR ";
-	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type = 'INCOME')";
+	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type IN ('INCOME', 'OTHER_REVENUE'))";
 	$sanitizedpredefinedgroupwhere .= ")";
 
 	$charofaccountstring = getDolGlobalInt('CHARTOFACCOUNTS');
@@ -959,14 +963,14 @@ if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
-				if ($obj->pcg_type == 'INCOME') {
+				if (in_array($obj->pcg_type, array('INCOME', 'OTHER_REVENUE'))) {
 					if (!isset($encaiss[$obj->dm])) {
 						$encaiss[$obj->dm] = 0;	// To avoid warning of var not defined
 					}
 					$encaiss[$obj->dm] += $obj->credit;
 					$encaiss[$obj->dm] -= $obj->debit;
 				}
-				if ($obj->pcg_type == 'EXPENSE') {
+				if (in_array($obj->pcg_type, array('EXPENSE', 'COGS', 'OTHER_EXPENSES'))) {
 					if (!isset($decaiss[$obj->dm])) {
 						$decaiss[$obj->dm] = 0;	// To avoid warning of var not defined
 					}

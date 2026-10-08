@@ -309,12 +309,11 @@ if (empty($reshook)) {
 			$tmpmember->fetch($idtoclose);
 			$result = $tmpmember->resiliate($user);
 
-			if ($result < 0 && !count($tmpmember->errors)) {
+			if ($result < 0) {
 				setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
-			} else {
-				if ($result > 0) {
-					$nbclose++;
-				}
+				$error++;
+			} elseif ($result > 0) {
+				$nbclose++;
 			}
 		}
 
@@ -343,12 +342,11 @@ if (empty($reshook)) {
 
 				$result = $nuser->create_from_member($tmpuser, $tmpmember->login);
 
-				if ($result < 0 && !count($tmpmember->errors)) {
-					setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
-				} else {
-					if ($result > 0) {
-						$nbcreated++;
-					}
+				if ($result < 0) {
+					setEventMessages($nuser->error, $nuser->errors, 'errors');
+					$error++;
+				} elseif ($result > 0) {
+					$nbcreated++;
 				}
 			}
 		}
@@ -1192,7 +1190,7 @@ if (!empty($arrayfields['d.login']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.morphy']['checked'])) {
-	print_liste_field_titre($arrayfields['d.morphy']['label'], $_SERVER["PHP_SELF"], 'd.morphy', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.morphy']['label'], $_SERVER["PHP_SELF"], 'd.morphy', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.libelle']['checked'])) {

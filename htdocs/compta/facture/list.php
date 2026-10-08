@@ -323,7 +323,9 @@ $arrayfields = array(
 	'f.dispute_status' => array('label' => "DisputeStatus", 'checked' => '-1', 'position' => 999),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
-
+if ($user->socid) {
+	unset($arrayfields['f.note_private']);
+}
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => '0', 'position' => 86);
 }
@@ -2948,7 +2950,7 @@ if ($num > 0) {
 			// Currency rate
 			if (!empty($arrayfields['f.multicurrency_tx']['checked'])) {
 				print '<td class="nowraponall">';
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->id, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
 				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;

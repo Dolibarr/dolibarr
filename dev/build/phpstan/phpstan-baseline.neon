@@ -3931,15 +3931,15 @@ parameters:
 			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
 
 		-
-			message: '#^Loose comparison using \!\= between 0 and '''' will always evaluate to true\.$#'
-			identifier: notEqual.alwaysTrue
-			count: 2
-			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
-
-		-
 			message: '#^Loose comparison using \!\= between int\<min, \-1\>\|int\<1, max\> and '''' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 6
+			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
+
+		-
+			message: '#^Loose comparison using \!\= between int\<min, \-1\>\|int\<2, max\> and '''' will always evaluate to true\.$#'
+			identifier: notEqual.alwaysTrue
+			count: 2
 			path: ../../../htdocs/core/modules/dons/html_cerfafr.modules.php
 
 		-
@@ -6523,8 +6523,8 @@ parameters:
 			path: ../../../htdocs/product/price.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_price'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
+			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_customer_price'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
 			count: 2
 			path: ../../../htdocs/product/price.php
 
@@ -7941,13 +7941,19 @@ parameters:
 		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
-			count: 6
+			count: 3
+			path: ../../../htdocs/recruitment/class/api_recruitments.class.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 2
 			path: ../../../htdocs/recruitment/class/api_recruitments.class.php
 
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 2
+			count: 1
 			path: ../../../htdocs/recruitment/class/api_recruitments.class.php
 
 		-
@@ -8293,8 +8299,8 @@ parameters:
 			path: ../../../htdocs/societe/price.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_price'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
+			message: '#^Loose comparison using \=\= between ''edit_customer_price'' and ''edit_customer_price'' will always evaluate to true\.$#'
+			identifier: equal.alwaysTrue
 			count: 2
 			path: ../../../htdocs/societe/price.php
 

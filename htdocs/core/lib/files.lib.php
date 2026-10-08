@@ -45,19 +45,19 @@ function dol_basename($pathfile)
  * Scan a directory and return a list of files/directories.
  * Content for string is UTF8 and dir separator is "/".
  *
- * @param	string			$utf8_path     	Starting path from which to search. This is a full path.
- * @param	string			$types        	Can be "directories", "files", or "all"
- * @param	int				$recursive		Determines whether subdirectories are searched
+ * @param	string			$utf8_path     			Starting path from which to search. This is a full path.
+ * @param	string			$types        			Can be "directories", "files", or "all"
+ * @param	int				$recursive				Determines whether subdirectories are searched
  * @param	string|string[]|null	$filter        	Regex or Array of Regex filter to restrict list. The regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
- *                  	                    		but must NOT contains the start and end '/'. Filter is checked into basename only.
+ *                  	                    		but must NOT contains the start and end '/'. Filter is checked into the basename onlyof each entry (so '^xxx' include dirscanned/xxx and dirscanned/dirscanned2/xxx).
  * @param	string|string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
- * @param	string			$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size' or 'type,fullname')
- * @param	int 			$sortorder		Sort order (SORT_ASC, SORT_DESC)
- * @param	int				$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
- * @param	int				$nohook			Disable all hooks
- * @param	string			$relativename	For recursive purpose only. Must be "" at first call.
+ * @param	string			$sortcriteria			Sort criteria ('','fullname','relativename','name','date','size' or 'type,fullname')
+ * @param	int 			$sortorder				Sort order (SORT_ASC, SORT_DESC)
+ * @param	int				$mode					0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
+ * @param	int				$nohook					Disable all hooks
+ * @param	string			$relativename			For recursive purpose only. Must be "" at first call.
  * @param	int 			$donotfollowsymlinks	Do not follow symbolic links
- * @param	int 			$nbsecondsold	Only files older than $nbsecondsold
+ * @param	int 			$nbsecondsold			Only files older than $nbsecondsold
  * @return	array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)>
  * @see dol_dir_list_in_database()
  */
@@ -1284,6 +1284,9 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
 						$ecmfile->src_object_id = $moreinfo['src_object_id'];
+					}
+					if (!empty($moreinfo) && !empty($moreinfo['agenda_id'])) {
+						$ecmfile->agenda_id = $moreinfo['agenda_id'];
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['position'])) {
 						$ecmfile->position = $moreinfo['position'];
@@ -3279,6 +3282,26 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			}
 		}
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'salaries') && !empty($conf->salaries->dir_output)) {
+		// Wrapping for salaries. The subdirectory is the id of the salary, see salaries/document.php.
+		if ($fuser->hasRight('salaries', $read) || $fuser->hasRight('salaries', 'readall') || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+			// The 'read' permission is labelled "yours only" and the two screens leading to this
+			// download, salaries/card.php and salaries/document.php, do enforce it on fk_user.
+			// checkUserAccessToObject() only tests the entity for this feature, so the same rule has to
+			// be applied here: without it any holder of salaries->read downloads every payslip.
+			if ($refname && !$fuser->hasRight('salaries', 'readall') && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+				$tmpsalary = new Salary($db);
+				$tmpsalary->fetch((int) $refname);
+				// Same condition as salaries/card.php and salaries/document.php, word for word.
+				// getAllChildIds(1) includes the current user, so this covers their own payslip as well
+				// as those of the users below them. The test on fk_user also closes the case of an id
+				// that matches no salary, Salary::fetch() returning 1 even then.
+				$accessallowed = ($tmpsalary->fk_user > 0 && in_array($tmpsalary->fk_user, $fuser->getAllChildIds(1))) ? 1 : 0;
+			}
+		}
+		$original_file = $conf->salaries->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'expensereport') && !empty($conf->expensereport->dir_output)) {
 		if ($fuser->hasRight('expensereport', $lire) || $fuser->hasRight('expensereport', 'readall') || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3446,7 +3469,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/contact/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpepople WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('contact').")";
+		$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('contact').")";
 	} elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->invoice->multidir_output[$entity])) {
 		// Wrapping for invoices
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3570,14 +3593,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
-	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') && !empty($conf->fournisseur->commande->dir_output)) {
+	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier' || $modulepart == 'supplier_order') && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping for purchase orders
 		if ($fuser->hasRight('fournisseur', 'commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
-	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') && !empty($conf->fournisseur->facture->dir_output)) {
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity = ".((int) $conf->entity);
+	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier' || $modulepart == 'supplier_invoice') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping for supplier invoices
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3616,7 +3639,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = p.rowid";
 		$sqlprotectagainstexternals .= " WHERE p.ref = '".$db->escape($refname)."' AND p.entity=".((int) $conf->entity);
 		var_dump($sqlprotectagainstexternals);exit;*/
-	} elseif ($modulepart == 'export_compta' && !empty($conf->accounting->dir_output)) {
+	} elseif ($modulepart == 'accounting' && !empty($conf->accounting->dir_output)) {
 		// Wrapping for accounting exports
 		if ($fuser->hasRight('accounting', 'bind', 'write') || $fuser->hasRight('accounting', 'mouvements', 'export') || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3714,7 +3737,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->bank->dir_output.'/checkdeposits/'.$original_file; // original_file should contains relative path so include the get_exdir result
 	} elseif (($modulepart == 'banque' || $modulepart == 'bank') && !empty($conf->bank->dir_output)) {
 		// Wrapping for bank
-		if ($fuser->hasRight('banque', $lire)) {
+		// The bank module has no 'creer' permission: writing a bank file requires 'modifier', like account_statement_document.php
+		if ($fuser->hasRight('banque', ($mode == 'read' ? 'lire' : 'modifier'))) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->bank->dir_output.'/'.$original_file;

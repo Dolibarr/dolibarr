@@ -810,6 +810,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImgTarget = '.webp';
 			$newquality = $quality;
 			break;
+		case 19:	// 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+			$extImgTarget = '.avif';
+			$newquality = $quality;
+			break;
 	}
 	if (function_exists("imagefill") && $trans_colour !== false) {
 		imagefill($imgThumb, 0, 0, $trans_colour);

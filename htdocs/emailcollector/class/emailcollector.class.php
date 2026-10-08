@@ -1892,10 +1892,6 @@ class EmailCollector extends CommonObject
 			$richarrayofemail = array();
 
 			foreach ($arrayofemail as $imapemail) {
-				if ($nbemailprocessed > 1000) {
-					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
-				}
-
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
@@ -1923,6 +1919,10 @@ class EmailCollector extends CommonObject
 
 			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
+				if ($nbemailprocessed > 1000) {
+					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
+				}
+
 				$iforemailloop++;
 
 				$imapemail = $tmpval['imapemail'];
@@ -2594,11 +2594,11 @@ class EmailCollector extends CommonObject
 							if ($trackid) {
 								$projectfoundby = 'trackid ('.$trackid.')';
 							}
-							if (empty($contactid)) {
+							/* if (empty($contactid)) {
 								$contactid = $projectstatic->fk_contact;
-							}
+							} */
 							if (empty($thirdpartyid)) {
-								$thirdpartyid = $projectstatic->fk_soc;
+								$thirdpartyid = $projectstatic->socid;
 							}
 						}
 					}
@@ -3399,7 +3399,7 @@ class EmailCollector extends CommonObject
 									include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 									$hookmanager = new HookManager($this->db);
 								}
-								$hookmanager->initHooks(array('emailcolector'));
+								$hookmanager->initHooks(array('emailcolector', 'emailcollector'));
 								$parameters = array('arrayobject' => $arrayobject);
 								$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
 								if ($reshook > 0) {
@@ -3871,7 +3871,7 @@ class EmailCollector extends CommonObject
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
 							}
-							$hookmanager->initHooks(['emailcolector']);
+							$hookmanager->initHooks(array('emailcolector', 'emailcollector'));
 
 							$parameters = array(
 								'connection' =>  $connection,

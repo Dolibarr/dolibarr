@@ -85,7 +85,8 @@ class ModuleBuilderShowOnComboboxTest extends CommonClassTest
 		$class = file_get_contents($base.'/class/'.strtolower($objectname).'.class.php');
 		// Bound the match to the field's own array (up to the next "fieldname" => array( entry) so it cannot
 		// leak into a neighbouring field that also carries showoncombobox.
-		$this->assertMatchesRegularExpression('/"mylabelfield"\s*=>\s*array\((?:(?!=>\s*array\().)*"showoncombobox"\s*=>\s*"1"/s', $class, 'showoncombobox must be serialized for a regular field');
+		$match = preg_match('/"mylabelfield"\s*=>\s*array\((?:(?!=>\s*array\().)*"showoncombobox"\s*=>\s*"1"/s', $class);
+		$this->assertSame(1, $match, 'showoncombobox must be serialized for a regular field');
 
 		// Same field with the flag turned off must NOT serialize showoncombobox (toggle off / default).
 		$addfieldentry['showoncombobox'] = 0;

@@ -553,7 +553,7 @@ class User extends CommonObject
 		$sql .= " fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
 		$sql .= " u.statut as status, u.lang, u.entity,";
 		$sql .= " u.datec as datec,";
-		$sql .= " GREATEST(u.tms, uef.tms) as datem,";
+		$sql .= " GREATEST(u.tms, COALESCE(uef.tms, u.tms)) as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
 		$sql .= " u.flagdelsessionsbefore,";
@@ -1781,6 +1781,32 @@ class User extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
+		// A user that still has HRM data (competency assessments, job positions, skills) must not be deleted
+		if (isModEnabled('hrm')) {
+			global $langs;
+
+			$hrmtables = array(
+				'hrm_evaluation' => array('label' => 'EvaluationCard', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_job_user' => array('label' => 'EmployeePosition', 'filter' => "fk_user = ".((int) $this->id)),
+				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
+			);
+			foreach ($hrmtables as $hrmtable => $sanitizedhrminfo) {
+				$sanitizedfilter = $sanitizedhrminfo['filter'];	// Built above from the id of the user only
+				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->db->sanitize($hrmtable)." WHERE ".$sanitizedfilter;
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj && $obj->nb > 0) {
+						$langs->loadLangs(array('errors', 'hrm'));
+						$this->error = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $this->login, $langs->transnoentitiesnoconv($sanitizedhrminfo['label']));
+						$this->errors[] = $this->error;
+						$this->db->rollback();
+						return -1;
+					}
+				}
+			}
+		}
+
 		// Remove rights
 		$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id);
 
@@ -1798,6 +1824,13 @@ class User extends CommonObject
 
 		// Remove params
 		$sql = "DELETE FROM ".$this->db->prefix()."user_param WHERE fk_user  = ".((int) $this->id);
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		// Remove the private bookmarks of the user (the public ones have no owner and are kept)
+		$sql = "DELETE FROM ".$this->db->prefix()."bookmark WHERE fk_user = ".((int) $this->id);
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
@@ -2095,8 +2128,15 @@ class User extends CommonObject
 		// Set properties on new user
 		$this->admin = 0;
 		$this->civility_code = $member->civility_code;
-		$this->lastname     = $member->lastname;
-		$this->firstname    = $member->firstname;
+		// A corporation member has no lastname/firstname (the name is in the company field), so use it as
+		// the user lastname, otherwise the created user would have an empty name and login (#33642).
+		if ($member->morphy == 'mor' && empty($member->lastname) && !empty($member->company)) {
+			$this->lastname = $member->company;
+			$this->firstname = '';
+		} else {
+			$this->lastname     = $member->lastname;
+			$this->firstname    = $member->firstname;
+		}
 		$this->gender		= $member->gender;
 		$this->email        = $member->email;
 		$this->fk_member    = $member->id;
@@ -2113,7 +2153,8 @@ class User extends CommonObject
 
 		if (empty($login)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$login = dol_buildlogin($member->lastname, $member->firstname);
+			// Use the resolved name so a corporation member (name in company field) still gets a login.
+			$login = dol_buildlogin($this->lastname, $this->firstname);
 		}
 		$this->login = $login;
 
@@ -2304,7 +2345,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		// Check if login already exists in same entity or into entity 0.
-		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && $this->oldcopy->login != $this->login) {
+		if (is_object($this->oldcopy) && !empty($this->oldcopy->id) && $this->oldcopy->login != $this->login) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
@@ -2318,7 +2359,7 @@ class User extends CommonObject
 				}
 			}
 		}
-		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && !empty($this->email) && $this->oldcopy->email != $this->email) {
+		if (is_object($this->oldcopy) && !empty($this->oldcopy->id) && !empty($this->email) && $this->oldcopy->email != $this->email) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
@@ -2390,8 +2431,12 @@ class User extends CommonObject
 			$sql .= ", salaryextra= ".($this->salaryextra != '' ? "'".$this->db->escape($this->salaryextra)."'" : "null");
 		}
 		$sql .= ", weeklyhours= ".($this->weeklyhours != '' ? "'".$this->db->escape($this->weeklyhours)."'" : "null");
-		if (!empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
-			$sql .= ", entity = ".((int) $this->entity); // entity flag can be set/unset only by an another superadmin user
+		if (isModEnabled('multicompany') && !empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
+			// entity flag can be set/unset only by another superadmin user, and only when multicompany is enabled.
+			// Without multicompany, entity must never be written here: fetch() forces an admin's entity to 0 in memory
+			// (an admin is a global admin without multicompany), and persisting that would wrongly turn the user into
+			// a "whole database" (entity 0) admin.
+			$sql .= ", entity = ".((int) $this->entity);
 		}
 
 		$sql .= ", default_range = ".($this->default_range > 0 ? ((int) $this->default_range) : 'null');
@@ -3608,7 +3653,7 @@ class User extends CommonObject
 
 				// Check if it is the LDAP key and if its value has been changed
 				if (getDolGlobalString('LDAP_KEY_USERS') && getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString($constname)) {
-					if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && $this->$varname != $this->oldcopy->$varname) {
+					if (is_object($this->oldcopy) && !empty($this->oldcopy->id) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
 				}
@@ -3785,7 +3830,7 @@ class User extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT u.rowid, u.login as ref, u.datec, fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
-		$sql .= " GREATEST(u.tms, uef.tms) as date_modification, u.entity";
+		$sql .= " GREATEST(u.tms, COALESCE(uef.tms, u.tms)) as date_modification, u.entity";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."user_extrafields as uef ON uef.fk_object = u.rowid";
 		$sql .= " WHERE u.rowid = ".((int) $id);
@@ -4109,7 +4154,7 @@ class User extends CommonObject
 			$childids = $this->cache_childids[$this->id];
 		} else {
 			// Init this->users
-			$this->get_full_tree();
+			$treeresult = $this->get_full_tree();
 
 			$idtoscan = $this->id;
 
@@ -4118,6 +4163,14 @@ class User extends CommonObject
 				if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) {
 					$childids[$val['id']] = $val['id'];
 				}
+			}
+
+			// A loop anywhere in the hierarchy aborts get_full_tree(), leaving the branches it had not
+			// walked yet with an empty fullpath, so they silently drop out of the list above. Do not
+			// cache such a truncated result, it would be reused for the whole request.
+			if ($treeresult < 0) {
+				dol_syslog(get_class($this)."::getAllChildIds got a truncated tree: ".$this->error, LOG_WARNING);
+				return $addcurrentuser ? array($this->id => $this->id) : $childids;
 			}
 		}
 		$this->cache_childids[$this->id] = $childids;

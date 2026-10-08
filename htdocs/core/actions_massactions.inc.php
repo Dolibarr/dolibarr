@@ -521,6 +521,13 @@ if (!$error && $massaction == 'confirm_presend') {
 					if ($obj) {
 						$email_from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 					}
+				} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
+					$sql = "SELECT rowid, email_from FROM ".MAIN_DB_PREFIX."c_email_templates WHERE rowid = ".(int) $reg[1];
+					$resql = $db->query($sql);
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$email_from = $obj->email_from;
+					}
 				} else {
 					$email_from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
 				}
@@ -1647,6 +1654,7 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
 			if ($ret > 0) {
 				$objecttmp->insertExtraFields();
+				$nbok++;
 			} else {
 				$error++;
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1660,9 +1668,9 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 
 	if (!$error) {
 		if ($nbok > 1) {
-			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("save"), null, 'mesgs');
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		} elseif ($nbok == 1) {
+			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {
@@ -1779,6 +1787,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 				if ($verif <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
+				} else {
+					$nbok++;
 				}
 
 				// If no SQL error, we redirect to the request form
@@ -1791,18 +1801,21 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
 
-					// The modification is added to the LOG
-					$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
-					}
+					// With HOLIDAY_DECREASE_AT_END_OF_MONTH, the balance is decreased at the end of the month by updateSoldeCP(), as for an approval from the card
+					if (!getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH')) {
+						// The modification is added to the LOG
+						$result = $objecttmp->addLogCP($user->id, $objecttmp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 
-					// Update balance
-					$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
-					if ($result < 0) {
-						$error++;
-						setEventMessages(null, $objecttmp->errors, 'errors');
+						// Update balance
+						$result = $objecttmp->updateSoldeCP($objecttmp->fk_user, $newSolde, $objecttmp->fk_type);
+						if ($result < 0) {
+							$error++;
+							setEventMessages(null, $objecttmp->errors, 'errors');
+						}
 					}
 				}
 
@@ -1960,8 +1973,28 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 	if ($permisstiontoadd) {
 		$taskidsmapping = array();		// old task id => new cloned task id
 		$clonedtaskoldparent = array();	// new cloned task id => old parent task id
+
+		// Build the list of projects the current user is allowed to read, used to authorize
+		// every source task against its actual project before cloning it (the previous fix for
+		// CVE-2026-77923 only validated the destination project).
+		$authorizedsourceprojects = null;
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			$sourceprojectstatic = new Project($db);
+			$tmps = $sourceprojectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+			$authorizedsourceprojects = explode(',', $tmps);
+		}
+
 		foreach (GETPOST('selected') as $task) {
-			$origin_task->fetch($task, '', 0);
+			if ($origin_task->fetch($task, '', 0) <= 0) {
+				continue;	// Source task not found, skip it
+			}
+
+			// Authorize the source task against its actual project before cloning it
+			if (is_array($authorizedsourceprojects) && !in_array($origin_task->fk_project, $authorizedsourceprojects)) {
+				setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
+				$error++;
+				break;
+			}
 
 			$defaultref = '';
 			$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');

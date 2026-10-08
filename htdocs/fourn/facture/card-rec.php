@@ -1012,7 +1012,7 @@ if ($action == 'create') {
 			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
-			$numprojet = $formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->thirdparty->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, '');
+			$numprojet = $formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->thirdparty->id : -1), $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $object->thirdparty->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $object->thirdparty->id . (!empty($id) ? '&id=' . $id : '')) . '">' . $langs->trans("AddProject") . '</a>';
 			print '</td></tr>';
 		}
@@ -1291,7 +1291,7 @@ if ($action == 'create') {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
 		print '<td>';
-		if ($action != 'editbankaccount' && $usercancreate && $object->statut == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
+		if ($action != 'editbankaccount' && $usercancreate && $object->status == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
 			print '<td class="right"><a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=editbankaccount&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetBankAccount'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
@@ -1312,7 +1312,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('Model');
 		print '<td>';
-		if ($action != 'editmodelpdf' && $usercancreate && $object->statut == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
+		if ($action != 'editmodelpdf' && $usercancreate && $object->status == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
 			print '<td class="right"><a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=editmodelpdf&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->trans('SetModel'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
@@ -1525,7 +1525,7 @@ if ($action == 'create') {
         	<input type="hidden" name="id" value="' . $object->id . '">
         	';
 
-		if (!empty($conf->use_javascript_ajax) && $object->statut == 0) {
+		if (!empty($conf->use_javascript_ajax) && $object->status == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 		}
 
@@ -1544,7 +1544,7 @@ if ($action == 'create') {
 
 		// Form to add new line
 		//TODO : Droits
-		if ($object->statut == $object::STATUS_DRAFT && $usercancreate && $action != 'valid' && $action != 'editline') {
+		if ($object->status == FactureFournisseurRec::STATUS_NOTSUSPENDED && $usercancreate && $action != 'valid' && $action != 'editline') {
 			if ($action != 'editline') {
 				// Add free products/services
 

@@ -741,7 +741,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return pg_escape_string($this->db, $stringtoencode);
+		return pg_escape_string($this->db, (string) $stringtoencode);
 	}
 
 	/**

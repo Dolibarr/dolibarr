@@ -390,11 +390,13 @@ if ($mysoc->country_code == 'FR') {
 		} else {
 			$infotoshow = $langs->trans("LNECertifiedVersionFR", $versionbadge);
 		}
+		$infotoshow .= ' - ';
 	} else {
 		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
+		$infotoshow .= '<br>';
 	}
 
-	$infotoshow .= ' - <a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
+	$infotoshow .= '<a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
 }
 
 // Show generic message (for countries that need registration) to explain we need registration to collect data and why

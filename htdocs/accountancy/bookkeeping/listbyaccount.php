@@ -518,6 +518,10 @@ if (empty($reshook)) {
 					$result = $object->deleteMvtNum($object->piece_num);
 					if ($result > 0) {
 						$nbok++;
+					} elseif ($result == 0) {
+						setEventMessages($langs->trans("ErrorBookkeepingDocDateNotOnActiveFiscalPeriod"), null, 'errors');
+						$error += 1;
+						break;
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error += 1;
@@ -560,7 +564,7 @@ if (empty($reshook)) {
 		if ($result == -1) {
 			$error += 1;
 		}
-		if ($error) {
+		if (!$error) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit;

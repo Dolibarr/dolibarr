@@ -182,13 +182,11 @@ class LangTest extends CommonClassTest
 
 	/**
 	 * testLang
-	 * @dataProvider langDataProvider
 	 *
-	 * @param 	string	$code 	Language code for which to verify translations
 	 * @return 	void
 	 * @depends testTransWithHTMLInParam
 	 */
-	public function testLang($code): void
+	public function testLang(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -198,81 +196,84 @@ class LangTest extends CommonClassTest
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
-		$prefix = __METHOD__."($code) ";
-		$tmplangs = new Translate('', $conf);
-		$langcode = $code;
-		$tmplangs->setDefaultLang($langcode);
-		$tmplangs->load("main");
+		foreach ($this->langDataProvider() as $case) {
+			list($code) = $case;
+			$prefix = __METHOD__."($code) ";
+			$tmplangs = new Translate('', $conf);
+			$langcode = $code;
+			$tmplangs->setDefaultLang($langcode);
+			$tmplangs->load("main");
 
-		print PHP_EOL.$prefix."Check language files".PHP_EOL;
+			print PHP_EOL.$prefix."Check language files".PHP_EOL;
 
-		$result = $tmplangs->transnoentitiesnoconv("FONTFORPDF");
-		print $prefix."FONTFORPDF=".$result.PHP_EOL;
-		$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
+			$result = $tmplangs->transnoentitiesnoconv("FONTFORPDF");
+			print $prefix."FONTFORPDF=".$result.PHP_EOL;
+			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
 
-		$result = $tmplangs->transnoentitiesnoconv("DIRECTION");
-		print $prefix."DIRECTION=".$result.PHP_EOL;
-		$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error bad value for DIRECTION in main.lang file '.$code);
+			$result = $tmplangs->transnoentitiesnoconv("DIRECTION");
+			print $prefix."DIRECTION=".$result.PHP_EOL;
+			$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error bad value for DIRECTION in main.lang file '.$code);
 
-		$result = $tmplangs->transnoentitiesnoconv("SeparatorDecimal");
-		print $prefix."SeparatorDecimal=".$result.PHP_EOL;
-		$this->assertTrue(in_array($result, array('.',',','/','。',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$result = $tmplangs->transnoentitiesnoconv("SeparatorDecimal");
+			print $prefix."SeparatorDecimal=".$result.PHP_EOL;
+			$this->assertTrue(in_array($result, array('.',',','/','。',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
-		$result = $tmplangs->transnoentitiesnoconv("SeparatorThousand");
-		print $prefix."SeparatorThousand=".$result.PHP_EOL;
-		$this->assertTrue(in_array($result, array('.',',','/',' ','','\'','None','Space')), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$result = $tmplangs->transnoentitiesnoconv("SeparatorThousand");
+			print $prefix."SeparatorThousand=".$result.PHP_EOL;
+			$this->assertTrue(in_array($result, array('.',',','/',' ','','\'','None','Space')), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
-		// Test java string contains only d,M,y,/,-,. and not m,...
-		$result = $tmplangs->transnoentitiesnoconv("FormatDateShortJava");
-		print $prefix."FormatDateShortJava=".$result.PHP_EOL;
-		$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
-		$this->assertEquals(1, $tmpvar, 'FormatDateShortJava KO for lang code '.$code.'. Does not match /[dMy\/\-\.]+/');
+			// Test java string contains only d,M,y,/,-,. and not m,...
+			$result = $tmplangs->transnoentitiesnoconv("FormatDateShortJava");
+			print $prefix."FormatDateShortJava=".$result.PHP_EOL;
+			$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
+			$this->assertEquals(1, $tmpvar, 'FormatDateShortJava KO for lang code '.$code.'. Does not match /[dMy\/\-\.]+/');
 
-		$result = $tmplangs->trans("FormatDateShortJavaInput");
-		print $prefix."FormatDateShortJavaInput=".$result.PHP_EOL;
-		$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
-		$this->assertEquals(1, $tmpvar, 'FormatDateShortJavaInput KO for lang code '.$code.'. Does not match /^[dMy\/\-\.]+$/');
+			$result = $tmplangs->trans("FormatDateShortJavaInput");
+			print $prefix."FormatDateShortJavaInput=".$result.PHP_EOL;
+			$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
+			$this->assertEquals(1, $tmpvar, 'FormatDateShortJavaInput KO for lang code '.$code.'. Does not match /^[dMy\/\-\.]+$/');
 
-		unset($tmplangs);
+			unset($tmplangs);
 
-		print $prefix."Check syntax rules in the language files".PHP_EOL;
-		foreach (glob(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/*.lang') as $fullpath) {
-			$file = basename($fullpath);
+			print $prefix."Check syntax rules in the language files".PHP_EOL;
+			foreach (glob(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/*.lang') as $fullpath) {
+				$file = basename($fullpath);
 
-			//print $prefix.'Check lang file '.$file.PHP_EOL;
-			$filecontent = file_get_contents($fullpath);
+				//print $prefix.'Check lang file '.$file.PHP_EOL;
+				$filecontent = file_get_contents($fullpath);
 
-			$result = preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
-			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
-			$this->assertTrue($result == 0, 'Found a translation KEY=-- in file '.$code.'/'.$file.'. We probably want Key=- instead.');
-
-			$result = strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
-			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
-			$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % in file '.$code.'/'.$file);
-
-			$reg = array();
-			$result = preg_match('/(.*)([^%])%$/m', $filecontent, $reg);	// A sequence of char we don't want
-			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
-			$this->assertTrue($result == 0, 'Found the character % alone in the translation file '.$code.'/'.$file.' on line '.(empty($reg[1]) ? '' : $reg[1]).(empty($reg[2]) ? '' : $reg[2]).'. We probably want %s or %%');
-
-			$result = preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
-			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
-			$this->assertTrue($result == 0, 'Found a sequence %n in the translation file '.$code.'/'.$file.'. We probably want %s');
-
-			$result = preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
-			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
-			$this->assertTrue($result == 0, 'Found a sequence <<<<< in the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
-
-			$reg = array();
-			$result = preg_match('/(.*)\'notranslate\'/im', $filecontent, $reg);	// A sequence of char we don't want
-			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
-			$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' in the translation file '.$code.'/'.$file.' in line '.(empty($reg[1]) ? '' : $reg[1]));
-
-			if (!in_array($code, array('ar_SA'))) {
-				$reg = array();
-				$result = preg_match('/(.*)<([^a-z\/\s,=\(]1)/im', $filecontent, $reg);	// A sequence of char we don't want
+				$result = preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
 				//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
-				//$this->assertTrue($result == 0, 'Found a sequence tag <'.(empty($reg[2]) ? '' : $reg[2]).' in the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
+				$this->assertTrue($result == 0, 'Found a translation KEY=-- in file '.$code.'/'.$file.'. We probably want Key=- instead.');
+
+				$result = strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
+				//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+				$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % in file '.$code.'/'.$file);
+
+				$reg = array();
+				$result = preg_match('/(.*)([^%])%$/m', $filecontent, $reg);	// A sequence of char we don't want
+				//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+				$this->assertTrue($result == 0, 'Found the character % alone in the translation file '.$code.'/'.$file.' on line '.(empty($reg[1]) ? '' : $reg[1]).(empty($reg[2]) ? '' : $reg[2]).'. We probably want %s or %%');
+
+				$result = preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
+				//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+				$this->assertTrue($result == 0, 'Found a sequence %n in the translation file '.$code.'/'.$file.'. We probably want %s');
+
+				$result = preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
+				//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+				$this->assertTrue($result == 0, 'Found a sequence <<<<< in the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
+
+				$reg = array();
+				$result = preg_match('/(.*)\'notranslate\'/im', $filecontent, $reg);	// A sequence of char we don't want
+				//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+				$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' in the translation file '.$code.'/'.$file.' in line '.(empty($reg[1]) ? '' : $reg[1]));
+
+				if (!in_array($code, array('ar_SA'))) {
+					$reg = array();
+					$result = preg_match('/(.*)<([^a-z\/\s,=\(]1)/im', $filecontent, $reg);	// A sequence of char we don't want
+					//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+					//$this->assertTrue($result == 0, 'Found a sequence tag <'.(empty($reg[2]) ? '' : $reg[2]).' in the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
+				}
 			}
 		}
 	}
@@ -304,18 +305,10 @@ class LangTest extends CommonClassTest
 
 	/**
 	 * testTrans
-	 * @dataProvider transDataProvider
 	 *
-	 * @param string  $description Test description
-	 * @param string  $langcode    Language code for translation
-	 * @param string  $dict        Dictionary file for translation
-	 * @param string  $expected    Expected translation result
-	 * @param string  $key         Key for translation
-	 * @param string  $param1      Parameter 1 for translation
-	 * @param string  $param2      Parameter 2 for translation
 	 * @return void
 	 */
-	public function testTrans($description, $langcode, $dict, $expected, $key, $param1 = '', $param2 = ''): void
+	public function testTrans(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -323,13 +316,17 @@ class LangTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$tmplangs = new Translate('', $conf);
-		$tmplangs->setDefaultLang($langcode);
-		$tmplangs->load($dict);
+		foreach ($this->transDataProvider() as $casename => $case) {
+			list($description, $langcode, $dict, $expected, $key, $param1, $param2) = array_pad($case, 7, '');
 
-		$result = $tmplangs->trans($key, $param1, $param2);
-		$prefix = __METHOD__."({$this->dataName()}) ";
-		print $prefix."result trans $key = ".$result.PHP_EOL;
-		$this->assertEquals($expected, $result, $description);
+			$tmplangs = new Translate('', $conf);
+			$tmplangs->setDefaultLang($langcode);
+			$tmplangs->load($dict);
+
+			$result = $tmplangs->trans($key, $param1, $param2);
+			$prefix = __METHOD__."($casename) ";
+			print $prefix."result trans $key = ".$result.PHP_EOL;
+			$this->assertEquals($expected, $result, $description);
+		}
 	}
 }

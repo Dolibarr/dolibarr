@@ -1,7 +1,8 @@
 ---
-name: skill-doli-phpunit
-description: >
-  Creates or modify PHP unit tests for Dolibarr ERP/CRM functions and methods. Use when the user asks to add, write, create, or complete a PHPUnit test for Dolibarr, or mentions testing a specific function, method, or class in the Dolibarr codebase.
+name: skill-doli-test-phpunit
+description:
+  Creates or modify PHP unit tests for Dolibarr ERP/CRM functions and methods. Use when the user asks to add, write, create, or complete a PHPUnit test for Dolibarr,
+  or mentions testing a specific function, method, or class in the Dolibarr codebase.
 license: MIT
 user-invocable: true
 allowed-tools:
@@ -10,13 +11,26 @@ allowed-tools:
  - grep
 ---
 
+
 # Skill: Add or modify a PHP Unit Test for Dolibarr
+
 
 ## When to Use This Skill
 
 Use this skill whenever the user asks to create, modify, or complete a PHP unit test for the Dolibarr ERP/CRM project.
-
 The goal is to produce a unit test that follows Dolibarr conventions and integrates cleanly into the existing PHPUnit test suite.
+
+
+## Relationship with AGENTS.md
+
+The instructions in this file are **complementary to** the instructions defined in `.agents/AGENTS.md`.
+
+- `AGENTS.md` contains the general instructions and rules for the project.
+- `SKILLS.md` contains additional instructions specific to skills.
+- Unless explicitly stated otherwise, the instructions from both files apply.
+- `SKILLS.md` does not replace or override `AGENTS.md`.
+- If an instruction in `SKILLS.md` conflicts with `AGENTS.md`, follow the rules defined by `AGENTS.md`.
+
 
 ## Inputs
 
@@ -24,6 +38,7 @@ The user request should contain, when available:
 
 - a name of the function to test
 - or the class method name to test
+
 
 ## General Rules
 
@@ -33,12 +48,29 @@ The user request should contain, when available:
 - tests must be deterministic and independent
 - avoid dependencies on external services
 - clean up every object created during the test
+- when launching phpunit, do not use cache directory with `--do-not-cache-result`
+
+
+## Critical Rules (DO NOT VIOLATE)
+
+- Do not use @dataProvider or #[DataProvider] in test methods. Use a simple PHP loop instead. 
+- Do not use the `assertRegExp()`, `assertNotRegExp`, `assertMatchesRegularExpression()`, or `assertDoesNotMatchRegularExpression()` method. Use a simple PHP regex and an assert on result instead.
+- Do not remove comment like, above all lines with @depends
+
+
+## Critical Rules (DO NOT VIOLATE)
+
+- Do not use @dataProvider or #[DataProvider] in test methods. Use a simple PHP loop instead. 
+- Do not use the `assertRegExp()`, `assertNotRegExp`, `assertMatchesRegularExpression()`, or `assertDoesNotMatchRegularExpression()` method. Use a simple PHP regex and an assert on result instead.
+- Do not remove comment like, above all lines with @depends
+
 
 ## Test Location
 
 Locate the most appropriate existing PHPUnit test file in `test/phpunit/`.
 
 If no suitable test file exists, create one using the naming convention `FeatureTest.php`.
+
 
 ## Naming
 
@@ -52,6 +84,7 @@ public function testDeleteObject()
 public function testFetchReturnsExpectedValues()
 public function testInvalidInputThrowsException()
 ```
+
 
 ## Assertions
 
@@ -68,6 +101,7 @@ $this->assertNull($value);
 $this->assertNotNull($value);
 ```
 
+
 ## Output
 
 When generating code:
@@ -77,12 +111,13 @@ When generating code:
 - do not rewrite unrelated methods
 - explain briefly what is being tested
 
+
 ## Examples
 
 ### Input: "Add a unit test for the create() method of the Invoice class"
 
 **Action:**
-1. locate or create `test/phpunit/InvoiceTest.php`
+1. locate or create `test/phpunit/MyObjectTest.php`
 2. add test method following Dolibarr conventions
 
 ### Input: "Write tests for the calculateVAT() function in price.lib.php"
@@ -90,6 +125,8 @@ When generating code:
 **Action:**
 1. locate or create appropriate test file in `test/phpunit/`
 2. add test methods for various VAT calculation scenarios
+3. you can test or suggest to test it by running the command: `phpunit test/phpunit/TheTestFile.php`
+
 
 ## Error Handling
 

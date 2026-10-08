@@ -195,6 +195,10 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
 		$link->fetch($linkid);
+		// Verify the link belongs to the current object to prevent IDOR
+		if (!is_object($object) || $link->objecttype != $object->element || $link->objectid != $object->id) {
+			accessforbidden();
+		}
 		$res = $link->delete($user);
 
 		$langs->load('link');
@@ -225,6 +229,10 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	$link = new Link($db);
 	$f = $link->fetch(GETPOSTINT('linkid'));
 	if ($f) {
+		// Verify the link belongs to the current object to prevent IDOR
+		if (!is_object($object) || $link->objecttype != $object->element || $link->objectid != $object->id) {
+			accessforbidden();
+		}
 		$link->url = GETPOST('link', 'alpha');
 		if (substr($link->url, 0, 7) != 'http://'
 			&& substr($link->url, 0, 8) != 'https://'

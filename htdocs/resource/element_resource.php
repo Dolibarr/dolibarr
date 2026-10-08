@@ -211,6 +211,15 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Actions on an existing link: it must be a link of the element of the page, on which access was checked
+	if (in_array($action, ['update_linked_resource', 'confirm_delete_linked_resource'])) {
+		$tmplink = new Dolresource($db);
+		if ($tmplink->fetchElementResource($lineid) <= 0 || (int) $tmplink->element_id !== (int) $element_id || $tmplink->element_type !== $element) {
+			setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+			$action = '';
+		}
+	}
+
 	// Update resource
 	if ($action == 'update_linked_resource' && $permissiontoadd && !$cancel) {
 		$res = $object->fetchElementResource($lineid);

@@ -586,7 +586,8 @@ class CMailFile
 				$smtps->setInReplyTo($this->in_reply_to);
 			}
 			if (!empty($this->references)) {
-				$smtps->setReferences($this->references);
+				// SMTPs expects the list of Message-IDs as an array
+				$smtps->setReferences(preg_split('/[\s,]+/', trim($this->references), -1, PREG_SPLIT_NO_EMPTY));
 			}
 
 			if (!empty($moreinheader)) {
@@ -690,12 +691,17 @@ class CMailFile
 			}
 
 			// Add 'In-Reply-To:' header
+			// Swift adds the angle brackets itself and rejects an id that still has them
 			if (!empty($this->in_reply_to)) {
-				$headers->addIdHeader('In-Reply-To', $this->in_reply_to);
+				$headers->addIdHeader('In-Reply-To', trim($this->in_reply_to, " \t<>"));
 			}
 			// Add 'References:' header
 			if (!empty($this->references)) {
-				$headers->addIdHeader('References', $this->references);
+				$references = array();
+				foreach (preg_split('/[\s,]+/', trim($this->references), -1, PREG_SPLIT_NO_EMPTY) as $reference) {
+					$references[] = trim($reference, '<>');
+				}
+				$headers->addIdHeader('References', $references);
 			}
 
 			if (!empty($moreinheader)) {
@@ -1172,6 +1178,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1359,6 +1368,9 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+
+							// Force the curl client, the default stream one uses file_get_contents() which
+							// fails to reach the token endpoint on many setups, so the token is never refreshed.
 							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
 							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1549,8 +1561,14 @@ class CMailFile
 
 			if ($fp) {
 				if ($this->sendmode == 'mail') {
+					fwrite($fp, 'Param 1 (dest) for mail(): Not yet available in dump');
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 2 (topic) for mail(): '.$this->subject);
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 4 (headers) for mail():'."\n");
 					fwrite($fp, $this->headers);
 					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, 'Param 3 (message) for mail():'."\n");
 					fwrite($fp, $this->message);
 				} elseif ($this->sendmode == 'smtps') {
 					fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
@@ -1972,7 +1990,7 @@ class CMailFile
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($host);
-		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
+		$hosttocheck = $newUrlArray['host'] ?? ($newUrlArray['path'] ?? '');
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names

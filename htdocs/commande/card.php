@@ -140,8 +140,6 @@ $classname = null;
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordercard', 'globalcard'));
 
-$result = restrictedArea($user, 'commande', $id);
-
 $object = new Commande($db);
 
 // fetch optionals attributes and labels
@@ -149,6 +147,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php';     // Must be 'include', not 'include_once'
+
+$result = restrictedArea($user, 'commande', $id);	// After the fetch: the page may be called with the ref only, the security check must be done on the object found
 
 // Permissions / Rights
 $usercanread    =  $user->hasRight("commande", "lire");
@@ -1225,7 +1225,23 @@ if (empty($reshook)) {
 					}
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 					// If price per quantity and customer
-					if ($prod->prices_by_qty[$object->thirdparty->price_level]) {	// yes, this product has some prices per quantity
+					if (!empty($object->thirdparty->price_level)) {
+						// The price of the level of the customer is the price to use when no price per quantity is selected
+						$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+						$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
+						$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
+						if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
+							if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
+								$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
+							}
+							if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) {
+								$tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+							}
+						}
+					}
+					if (!empty($object->thirdparty->price_level) && !empty($prod->prices_by_qty[$object->thirdparty->price_level])) {	// yes, this product has some prices per quantity
 						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
 						$pqp = GETPOSTINT('pbq');
 						// Search price into product_price_by_qty from $prod->id
@@ -2595,9 +2611,9 @@ if ($action == 'create' && $usercancreate) {
 			print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
 
 			if (isModEnabled("multicurrency")) {
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code).'</td></tr>';
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code)."</td></tr>";
+				print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc, 0, $langs, 1, -1, -1, $objectsrc->multicurrency_code)."</td></tr>";
 			}
 		}
 
@@ -3581,12 +3597,12 @@ if ($action == 'create' && $usercancreate) {
 				if (isModEnabled('shipping')) {
 					$numshipping = $object->countNbOfShipments();
 
-					if ($object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
+					if ($object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || (getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $object->getNbOfServicesLines() > 0))) {
 						if ((getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'creer')) || (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer'))) {
 							// Add button to create shipment into the combo
 							$arrayforbutaction[] = array(
 								'lang' => 'sendings',
-								'enabled' => (isModEnabled("shipping") && ($object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')))),
+								'enabled' => (isModEnabled("shipping") && ($object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || (getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $object->getNbOfServicesLines() > 0)))),
 								'perm' => $user->hasRight('expedition', 'creer'),
 								'label' => 'CreateShipment',
 								'url' => '/expedition/shipment.php?id=' . $object->id
@@ -3596,7 +3612,7 @@ if ($action == 'create' && $usercancreate) {
 							//print dolGetButtonAction($langs->trans('ErrorModuleSetupNotComplete'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 							$arrayforbutaction[] = array(
 								'lang' => 'sendings',
-								'enabled' => (isModEnabled("shipping") && ($object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')))),
+								'enabled' => (isModEnabled("shipping") && ($object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || (getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $object->getNbOfServicesLines() > 0)))),
 								'perm' => 0,
 								'label' => 'CreateShipment',
 								'url' => '/expedition/shipment.php?id=' . $object->id

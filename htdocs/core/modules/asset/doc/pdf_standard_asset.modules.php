@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,8 +253,9 @@ class pdf_standard_asset extends ModelePDFAsset
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("PdfTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset((string) $object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset(is_object($object->thirdparty) ? (string) $object->thirdparty->name : ''));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
@@ -918,7 +919,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		}
 		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date_acquisition, "day", false, $outputlangs), '', 'R');
 
-		if ($object->thirdparty->code_client) {
+		if (is_object($object->thirdparty) && $object->thirdparty->code_client) {
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -994,7 +995,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			}
 
 			// Recipient name
-			if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+			if (is_object($object->contact) && is_object($object->thirdparty) && $object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1119,7 +1120,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			),
 			'content' => array(
 				'align' => 'L',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
 
@@ -1127,7 +1128,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
-			'width' => 16, // in mm
+			'width' => 16.0, // in mm
 			'title' => array(
 				'textkey' => 'VAT'
 			),
@@ -1141,7 +1142,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
-			'width' => 19, // in mm
+			'width' => 19.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'PriceUHT'
@@ -1152,7 +1153,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
-			'width' => 16, // in mm
+			'width' => 16.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'Qty'
@@ -1163,7 +1164,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		$rank += 10;
 		$this->cols['progress'] = array(
 			'rank' => $rank,
-			'width' => 19, // in mm
+			'width' => 19.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Progress'
@@ -1178,7 +1179,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
-			'width' => 11, // in mm
+			'width' => 11.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Unit'
@@ -1192,7 +1193,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
-			'width' => 13, // in mm
+			'width' => 13.0, // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'ReductionShort'
@@ -1206,7 +1207,7 @@ class pdf_standard_asset extends ModelePDFAsset
 		$rank += 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
-			'width' => 26, // in mm
+			'width' => 26.0, // in mm
 			'status' => true,
 			'title' => array(
 				'textkey' => 'TotalHT'

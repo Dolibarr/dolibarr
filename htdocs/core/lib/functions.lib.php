@@ -147,7 +147,7 @@ function formatLogObject($data)
  *
  * @param 	CommonObject|BlockedLog|null	$object 	Dolibarr common object.
  * @param 	string 							$module 	Override object element, for example to use 'mycompany' instead of 'societe'
- * @param	int								$forobject	Return the more complete path for the given object (including ref) instead of for the module only.
+ * @param	int								$forobject	Use 1 to return the more complete path for the given object (including ref) instead of for the module only.
  * @param	string							$mode		'output' (full main dir) or 'outputrel' (relative dir) or 'temp' (full dir for temporary files) or 'version' (full dir for archived files)
  * @return 	string|null									The path of the relative directory of the module, ending with /
  * @since Dolibarr V18
@@ -226,7 +226,13 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
-				$s = $conf->$module->multidir_output[(empty($object->entity) ? $conf->entity : $object->entity)] . $subdirectory;
+				// An entity with no declared directory returned an undefined index, so an empty path that
+				// made the caller read or write a relative path under the web root. Answer the error instead.
+				$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
+				if (!isset($conf->$module->multidir_output[$entity])) {
+					return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
+				}
+				$s = $conf->$module->multidir_output[$entity] . $subdirectory;
 			}
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
@@ -242,15 +248,20 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			}
 			return dol_sanitizePathName($s);
 		} else {
-			return 'error-diroutput-not-defined-for-this-object=' . $module;
+			return 'error-diroutput-not-defined-for-this-entity-and-object='.$module;
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
-			return dol_sanitizePathName($conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)]);
+			// Same guard as the 'output' mode above, see the comment there
+			$entity = (int) (empty($object->entity) ? $conf->entity : $object->entity);
+			if (!isset($conf->$module->multidir_temp[$entity])) {
+				return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
+			}
+			return dol_sanitizePathName($conf->$module->multidir_temp[$entity]);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
 			return dol_sanitizePathName($conf->$module->dir_temp);
 		} else {
-			return 'error-dirtemp-not-defined-for-this-object=' . $module;
+			return 'error-dirtemp-not-defined-for-this-entity-and-object='.$module;
 		}
 	} else {
 		return 'error-bad-value-for-mode';
@@ -3140,7 +3151,6 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		}
 	}
 
-	// Show tabs
 	// if =0 we don't use the feature
 	if (empty($limittoshow)) {
 		$limittoshow = getDolGlobalInt('MAIN_MAXTABS_IN_CARD', 99);
@@ -3276,6 +3286,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out .= '">' . "\n";
 	}
 	if (!empty($dragdropfile)) {
+		// Add the js code to manage the drag and drop
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 		$out .= dragAndDropFileUpload("dragDropAreaTabBar");
 	}
@@ -4133,7 +4144,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode. deprecated.
- *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'Europe/Paris' or '+0200' to force timezone.
+ *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'tzserver', 'Europe/Paris' or '+0200' to force timezone.
  *	@return	array{}|array{seconds:int<0,59>,minutes:int<0,59>,hours:int<0,23>,mday:int<1,31>,wday:int<0,6>,mon:int<1,12>,year:int<0,9999>,yday:int<0,366>,0:int}						Array of information
  *										'seconds' => $secs,
  *										'minutes' => $min,
@@ -4154,7 +4165,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
-	if ($forcetimezone) {
+	if ($forcetimezone && $forcetimezone != 'tzserver') {
 		$datetimeobj->setTimezone(new DateTimeZone($forcetimezone == 'gmt' ? 'UTC' : $forcetimezone)); //  (add timezone relative to the date entered)
 	}
 	$arrayinfo = array(
@@ -5081,7 +5092,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		$newphone .= '><span class="paddingright fab fa-whatsapp" style="color:#25D366;" title="WhatsApp"></span></a>';
 	}
 
-	if (empty($titlealt)) {
+	if (empty($titlealt) && isset($langs)) {
 		$titlealt = ($withpicto == 'fax' ? $langs->trans("Fax") : $langs->trans("Phone"));
 	}
 	$rep = '';
@@ -5651,6 +5662,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 	$path = 'theme/' . $theme;
 	if (empty($picto)) {
 		$picto = 'generic';
+	}
+
+	if ($titlealt) {
+		$titlealt = str_replace(array('\n', "\n"), ' - ', $titlealt);
 	}
 
 	// Define fullpathpicto to use into src
@@ -10364,6 +10379,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_MESSAGE__'] = '__TICKET_MESSAGE__';
 				$substitutionarray['__TICKET_PROGRESSION__'] = '__TICKET_PROGRESSION__';
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
+				$substitutionarray['__TICKET_TYPE_LABEL__'] = '__TICKET_TYPE_LABEL__';
+				$substitutionarray['__TICKET_SEVERITY_LABEL__'] = '__TICKET_SEVERITY_LABEL__';
+				$substitutionarray['__TICKET_CATEGORY_LABEL__'] = '__TICKET_CATEGORY_LABEL__';
+				$substitutionarray['__TICKET_PUBLIC_URL__'] = '__TICKET_PUBLIC_URL__';
+				$substitutionarray['__TICKET_MANAGEMENT_URL__'] = '__TICKET_MANAGEMENT_URL__';
 			}
 			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature') && (empty($exclude) || !in_array('recruitment', $exclude)) && (empty($include) || in_array('recruitment', $include))) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
@@ -10521,7 +10541,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->state ?? '';
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ?: '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->country_id > 0 ? $object->country_id : '');
 				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->country_code ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->idprof2 ?? '';
@@ -10546,7 +10566,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ZIP__'] = $object->thirdparty->zip ?? '';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = $object->thirdparty->town ?? '';
 				$substitutionarray['__THIRDPARTY_STATE__'] = $object->thirdparty->state ?? '';
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->thirdparty->country_id > 0 ?: '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = ($object->thirdparty->country_id > 0 ? $object->thirdparty->country_id : '');
 				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = $object->thirdparty->country_code ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF1__'] = $object->thirdparty->idprof1 ?? '';
 				$substitutionarray['__THIRDPARTY_IDPROF2__'] = $object->thirdparty->idprof2 ?? '';
@@ -10658,6 +10678,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_ANALYTIC_CODE__'] = $object->category_code;
 				$substitutionarray['__TICKET_MESSAGE__'] = $object->message;
 				$substitutionarray['__TICKET_PROGRESSION__'] = $object->progress;
+				// __TICKET_TYPE__, __TICKET_SEVERITY__ and __TICKET_CATEGORY__ hold the raw codes.
+				// An email usually needs the human readable labels instead.
+				$substitutionarray['__TICKET_TYPE_LABEL__'] = empty($object->type_code) ? '' : $outputlangs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
+				$substitutionarray['__TICKET_SEVERITY_LABEL__'] = empty($object->severity_code) ? '' : $outputlangs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
+				$substitutionarray['__TICKET_CATEGORY_LABEL__'] = empty($object->category_code) ? '' : $outputlangs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
+				$substitutionarray['__TICKET_PUBLIC_URL__'] = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.urlencode((string) $object->track_id);
+				$substitutionarray['__TICKET_MANAGEMENT_URL__'] = dol_buildpath('/ticket/card.php', 2).'?track_id='.urlencode((string) $object->track_id);
 				$userstat = new User($db);
 				if ($object->fk_user_assign > 0) {
 					$userstat->fetch($object->fk_user_assign);
@@ -11039,7 +11066,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  *  @param	string		$text	      					Source string in which we must do substitution
  *  @param  array<string,null|string|float|int>	$substitutionarray	Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
  *  @param	?Translate	$outputlangs					Output language
- *  @param	int<0,1>	$converttextinhtmlifnecessary	0=Convert only value into HTML if text is already in HTML
+ *  @param	int<0,1>	$converttextinhtmlifnecessary	0=Convert the substitution value into HTML if the original text is already in HTML
  *  													1=Will also convert initial $text into HTML if we try to insert one value that is HTML
  * 	@return string  		    						Output string after substitutions
  *  @see	complete_substitutions_array(), getCommonSubstitutionArray()
@@ -11078,18 +11105,19 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				// convert $newval into HTML is necessary
 				$text = preg_replace('/__\(' . preg_quote($reg[1], '/') . '\)__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 			} else {
-				if (! $msgishtml) {
-					$valueishtml = dol_textishtml($value, 1);
-					//var_dump("valueishtml=".$valueishtml);
+				if (preg_match('/__\(' . preg_quote($reg[1], '/') . '\)__/', $text)) {		// If found, so replacement will be done later
+					if (! $msgishtml) {
+						$valueishtml = dol_textishtml($value, 1);
+						//var_dump("valueishtml=".$valueishtml);
 
-					if ($valueishtml) {
-						$text = dol_htmlentitiesbr($text);
-						$msgishtml = 1;
+						if ($valueishtml) {
+							$text = dol_htmlentitiesbr($text);
+							$msgishtml = 1;
+						}
+					} else {
+						$value = dol_nl2br((string) $value);
 					}
-				} else {
-					$value = dol_nl2br((string) $value);
 				}
-
 				$text = preg_replace('/__\(' . preg_quote($reg[1], '/') . '\)__/', $value, $text);
 			}
 		}
@@ -11116,17 +11144,18 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			// convert $newval into HTML is necessary
 			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
 		} else {
-			if (! $msgishtml) {
-				$valueishtml = dol_textishtml($value, 1);
+			if (preg_match('/__\[' . preg_quote($reg[1], '/') . '\]__/', $text)) {		// If found, so replacement will be done later
+				if (! $msgishtml) {
+					$valueishtml = dol_textishtml($value, 1);
 
-				if ($valueishtml) {
-					$text = dol_htmlentitiesbr($text);
-					$msgishtml = 1;
+					if ($valueishtml) {
+						$text = dol_htmlentitiesbr($text);
+						$msgishtml = 1;
+					}
+				} else {
+					$value = dol_nl2br((string) $value);
 				}
-			} else {
-				$value = dol_nl2br((string) $value);
 			}
-
 			$text = preg_replace('/__\[' . preg_quote($originalkeyfound, '/') . '\]__/', $value, $text);
 		}
 	}
@@ -11140,21 +11169,22 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 		if (getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN') && ($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__')) {
 			$value = ''; // Protection
 		}
-
 		if (empty($converttextinhtmlifnecessary)) {
 			$text = str_replace((string) $key, (string) $value, $text); // Cast to string is needed when value is 123.5 for example
 		} else {
-			if (! $msgishtml) {
-				$valueishtml = dol_textishtml($value, 1);
+			if (strpos($text, (string) $key) !== false) {		// If found, so replacement will be done later
+				if (! $msgishtml) {
+					$valueishtml = dol_textishtml($value, 1);
 
-				if ($valueishtml) {
-					$text = dol_htmlentitiesbr($text);
-					$msgishtml = 1;
+					if ($valueishtml) {
+						$text = dol_htmlentitiesbr($text);
+						$msgishtml = 1;
+					}
+				} else {
+					$value = dol_nl2br((string) $value);
 				}
-			} else {
-				$value = dol_nl2br((string) $value);
 			}
-			$text = str_replace((string) $key, (string) $value, $text); // Cast to string is needed 123.5 for example
+			$text = str_replace((string) $key, (string) $value, $text); // Cast to string is needed, for 123.5 for example
 		}
 	}
 
@@ -11520,7 +11550,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	$divstart = $divend = '';
 
 	// If inline message with no format, we add it.
-	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
+	if ((empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') || defined('DISABLE_JQUERY_JNOTIFY') || $keepembedded) && !preg_match('/<div class=".*">/i', $out)) {
 		$divstart = '<div class="' . $style . ' clearboth">';
 		$divend = '</div>';
 	}
@@ -11545,7 +11575,7 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	}
 
 	if ($out) {
-		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
+		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
 			$return = '<script nonce="' . getNonce() . '">
 				$(document).ready(function() {
 					/* jnotify(message, preset of message type, keepmessage) */
@@ -14870,7 +14900,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
 			// Deprecated, forbidden.
 			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
-		} elseif ($key == 'href') {
+		} elseif (in_array($key, ['href', 'data-confirm-url'])) {
 			$value = dolPrintHTMLForAttributeUrl($value);
 		} else {
 			$value = dolPrintHTMLForAttribute($value);

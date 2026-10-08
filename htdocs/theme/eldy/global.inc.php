@@ -815,6 +815,10 @@ input.pageplusone {
 .noopacity {
 	opacity: unset !important;
 }
+.spantitle {
+	opacity: 0.5;
+	font-size: 0.95em;
+}
 .colorwhite {
 	color: var(--colorwhite);
 }
@@ -1107,8 +1111,14 @@ textarea.centpercent {
 	font-size: 95%;
 	font-weight: bold;
 }
+.tdlineheightsmall {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	vertical-align: middle;
+}
 .lineheightsmall {
 	line-height: 1.2em;
+	vertical-align: middle;
 }
 .lineheightmedium {
 	line-height: 1.5em;
@@ -1191,7 +1201,10 @@ textarea.centpercent {
 }
 .liste_titre.sticky {
 	position: sticky;
-	top:0;
+	/* The top menu is itself sticky at top 0 with a z-index of 1005 (see .side-nav-vert below),
+	   so a table header stuck at 0 is painted underneath it and stays invisible. Offset it by the
+	   height of the top menu, the same value .side-nav is offset by when it is made sticky. */
+	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? '50px' : '0'); ?>;
 	z-index: 2;
 }
 

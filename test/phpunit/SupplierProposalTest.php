@@ -77,6 +77,8 @@ class SupplierProposalTest extends CommonClassTest
 	 */
 	protected function setUp(): void
 	{
+		parent::setUp();
+
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
 		$user = $this->savuser;

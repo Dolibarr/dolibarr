@@ -588,7 +588,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		}
 
 		// $("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
-		$("input[name='price_ht']:first").val(pricejs(price));
+		$("input[name='price_ht']:first").val(pricejs(price, 'MU'));
 
 		return true;
 	}
@@ -670,7 +670,7 @@ jQuery(document).ready(function()
 				<?php if ($line->fk_fournprice > 0) { ?>
 				if (this.id == <?php echo $line->fk_fournprice; ?>) {
 					options += ' selected';
-					$("#buying_price").val(this.price);
+					$("#buying_price").val(pricejs(this.price, 'MU'));
 					trouve = true;
 				}
 				<?php } ?>
@@ -687,7 +687,7 @@ jQuery(document).ready(function()
 			$("#fournprice").change(function() {
 				var selval = $(this).find('option:selected').attr("price");
 				if (selval)
-					$("#buying_price").val(selval).hide();
+					$("#buying_price").val(pricejs(selval, 'MU')).hide();
 				else
 					$('#buying_price').show();
 			});
