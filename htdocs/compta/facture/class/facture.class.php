@@ -3176,6 +3176,16 @@ class Facture extends CommonInvoice
 			return 0;
 		}
 
+		// Block deletion of validated credit notes that have consumed deposit credits (draft can still be deleted: credits consumed only on validate)
+		if ($this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0 && $this->status != self::STATUS_DRAFT) {
+			$srcInvoice = new Facture($this->db);
+			if ($srcInvoice->fetch($this->fk_facture_source) > 0 && $srcInvoice->type == self::TYPE_DEPOSIT) {
+				$langs->load('bills');
+				$this->error = $langs->trans('CreditNoteOnDepositCantBeDeleted');
+				return -1;
+			}
+		}
+
 		$error = 0;
 
 		$this->db->begin();
@@ -3727,6 +3737,24 @@ class Facture extends CommonInvoice
 			}
 		}
 
+		// Cap check: credit note on deposit must not exceed available deposit credit
+		if (!$error && $this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0) {
+			$srcCheckInv = new Facture($this->db);
+			if ($srcCheckInv->fetch($this->fk_facture_source) > 0 && $srcCheckInv->type == self::TYPE_DEPOSIT) {
+				$sqlcap = 'SELECT COALESCE(SUM(amount_ttc),0) as avail FROM '.MAIN_DB_PREFIX.'societe_remise_except'
+					.' WHERE fk_facture_source='.((int) $this->fk_facture_source).' AND fk_facture IS NULL AND fk_facture_line IS NULL';
+				$rescap = $this->db->query($sqlcap);
+				if ($rescap) {
+					$available_ttc = (float) $this->db->fetch_object($rescap)->avail;
+					if (price2num(abs((float) $this->total_ttc), 'MT') > price2num($available_ttc, 'MT')) {
+						$langs->load('bills');
+						$this->error = $langs->trans('CreditNoteExceedsDepositCredit', price($available_ttc));
+						return -1;
+					}
+				}
+			}
+		}
+
 		$this->db->begin();
 
 		// Check parameters
@@ -3944,6 +3972,17 @@ class Facture extends CommonInvoice
 				}
 			}
 
+			// If credit note on a deposit invoice, consume unused deposit credit up to credit note TTC amount
+			if (!$error && $this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+				$depositInvoice = new Facture($this->db);
+				if ($depositInvoice->fetch($this->fk_facture_source) > 0 && $depositInvoice->type == self::TYPE_DEPOSIT) {
+					if ($this->consumeDepositCredits($user, $depositInvoice, abs((float) $this->total_ttc)) < 0) {
+						$error++;
+					}
+				}
+			}
+
 			// Trigger calls
 			if (!$error && !$notrigger) {
 				// Call trigger
@@ -4069,6 +4108,117 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Consume unused deposit credit rows (llx_societe_remise_except) up to $amount_ttc.
+	 * Called during validate() when a credit note whose source is a deposit invoice is validated.
+	 *
+	 * DiscountAbsolute::delete() is called with $noresetinvoice=true and fk_facture_source=0
+	 * so that: (a) the deposit invoice status is NOT reset to unpaid, and (b) the series
+	 * pre-check is bypassed (other rows of the same deposit may already be linked to invoices).
+	 *
+	 * @param  User    $user            User performing the action
+	 * @param  Facture $depositInvoice  Deposit invoice whose unused credit rows are consumed
+	 * @param  float   $amount_ttc      TTC amount to consume (must be > 0)
+	 * @return int<-1,1>               1 if OK, -1 if KO (error set in $this->error)
+	 */
+	public function consumeDepositCredits(User $user, Facture $depositInvoice, float $amount_ttc)
+	{
+		global $langs;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+		if ($amount_ttc <= 0) {
+			return 1;
+		}
+
+		$sql  = 'SELECT rowid, amount_ttc, tva_tx, multicurrency_amount_ttc, description, fk_user, fk_soc, discount_type, vat_src_code';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except';
+		$sql .= ' WHERE fk_facture_source = '.((int) $depositInvoice->id);
+		$sql .= ' AND fk_facture IS NULL AND fk_facture_line IS NULL';
+		$sql .= ' ORDER BY amount_ttc ASC';
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$remaining = $amount_ttc;
+		while ($remaining > 0 && ($row = $this->db->fetch_object($resql))) {
+			$row_ttc = (float) $row->amount_ttc;
+			if ($row_ttc <= $remaining + 0.001) {
+				// Whole row consumed: delete by rowid (fk_facture_source=0 bypasses series pre-check, noresetinvoice=true keeps deposit paid)
+				$disc = new DiscountAbsolute($this->db);
+				$disc->id = (int) $row->rowid;
+				if ($disc->delete($user, true) < 0) {
+					$this->error = $disc->error;
+					$this->db->free($resql);
+					return -1;
+				}
+				$remaining = (float) price2num($remaining - $row_ttc, 'MT');
+			} else {
+				// Partial: delete original, recreate the part to keep
+				$keep_ttc  = (float) price2num($row_ttc - $remaining, 'MT');
+				$tva_tx    = (float) $row->tva_tx;
+				$mc_ratio  = ($row_ttc > 0) ? ((float) $row->multicurrency_amount_ttc / $row_ttc) : 1;
+
+				$disc = new DiscountAbsolute($this->db);
+				$disc->id = (int) $row->rowid;
+				if ($disc->delete($user, true) < 0) {
+					$this->error = $disc->error;
+					$this->db->free($resql);
+					return -1;
+				}
+
+				$d = new DiscountAbsolute($this->db);
+				$d->fk_facture_source        = (int) $depositInvoice->id;
+				$d->description              = $row->description;
+				$d->fk_user                  = (int) $row->fk_user;
+				$d->fk_soc                   = (int) $row->fk_soc;
+				$d->socid                    = (int) $row->fk_soc;
+				$d->discount_type            = (int) $row->discount_type;
+				$d->tva_tx                   = $tva_tx;
+				$d->vat_src_code             = $row->vat_src_code;
+				$d->amount_ttc               = $keep_ttc;
+				$d->amount_ht                = (float) price2num($keep_ttc / (1 + $tva_tx / 100), 'MT');
+				$d->amount_tva               = (float) price2num($keep_ttc - $d->amount_ht);
+				$d->multicurrency_amount_ttc = (float) price2num($keep_ttc * $mc_ratio);
+				$d->multicurrency_amount_ht  = (float) price2num($d->multicurrency_amount_ttc / (1 + $tva_tx / 100), 'MT');
+				$d->multicurrency_amount_tva = (float) price2num($d->multicurrency_amount_ttc - $d->multicurrency_amount_ht);
+
+				if ($d->create($user) <= 0) {
+					$this->error = $d->error;
+					$this->db->free($resql);
+					return -1;
+				}
+				$remaining = 0;
+			}
+		}
+		$this->db->free($resql);
+
+		// Trace in agenda of both deposit and credit note (non-blocking)
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+		$langs->load('bills');
+		$label = $langs->trans('CreditNoteDepositCreditConsumed', (!empty($this->newref) ? $this->newref : $this->ref), price($amount_ttc));
+		foreach (array($depositInvoice->id, $this->id) as $facid) {
+			$actioncomm                = new ActionComm($this->db);
+			$actioncomm->type_code     = 'AC_OTH_AUTO';
+			$actioncomm->code          = 'AC_OTH_AUTO';
+			$actioncomm->label         = $label;
+			$actioncomm->socid         = $this->socid;
+			$actioncomm->datep         = dol_now();
+			$actioncomm->datef         = $actioncomm->datep;
+			$actioncomm->percentage    = -1;
+			$actioncomm->authorid      = $user->id;
+			$actioncomm->userownerid   = $user->id;
+			$actioncomm->elementtype   = 'invoice';
+			$actioncomm->elementid     = $facid;
+			$actioncomm->create($user);
+		}
+
+		return 1;
+	}
+
+	/**
 	 * Update price of next invoice
 	 *
 	 * @param	Translate	$langs	Translate object
@@ -4143,6 +4293,16 @@ class Facture extends CommonInvoice
 		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		// Block draft revert for credit notes on deposit invoices: credits have been consumed and cannot be recreated
+		if ($this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0) {
+			$sourceInvoice = new Facture($this->db);
+			if ($sourceInvoice->fetch($this->fk_facture_source) > 0 && $sourceInvoice->type == self::TYPE_DEPOSIT) {
+				$langs->load('bills');
+				$this->error = $langs->trans('CreditNoteOnDepositCantBeSetToDraft');
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
