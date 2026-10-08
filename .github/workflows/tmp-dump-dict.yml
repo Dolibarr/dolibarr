@@ -1,0 +1,27 @@
+name: TMP dump dict chunks
+on:
+  push:
+    branches:
+      - qual_phpstan_dict_sql_null
+permissions:
+  contents: write
+jobs:
+  dump:
+    if: ${{ !startsWith(github.event.head_commit.message, 'TMPDUMP') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 1
+      - name: Split
+        run: |
+          rm -rf .tmpdump && mkdir -p .tmpdump
+          split -b 30000 htdocs/admin/dict.php .tmpdump/dict.part.
+      - name: Commit dump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .tmpdump
+          git commit -m "TMPDUMP dict.php chunks"
+          git push
