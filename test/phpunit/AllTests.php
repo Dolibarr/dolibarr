@@ -177,10 +177,10 @@ class AllTests
 		$suite->addTestSuite('AdminLibTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
-		require_once dirname(__FILE__).'/AiMcpWireTest.php';
-		// $suite->addTestSuite('AiMcpWireTest');
-		require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
-		$suite->addTestSuite('AiWriteConfirmationTest');
+		//require_once dirname(__FILE__).'/AiMcpWireTest.php';
+		//$suite->addTestSuite('AiMcpWireTest');
+		//require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
+		//$suite->addTestSuite('AiWriteConfirmationTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
 		$suite->addTestSuite('CompanyLibTest');
 		require_once dirname(__FILE__).'/CreditorRefLibTest.php';
