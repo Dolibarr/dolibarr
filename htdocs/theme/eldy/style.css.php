@@ -113,6 +113,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var MenuManager $menumanager Value set through main.inc.php
  *
  * @var string $badgeWarning
+ * @var string $badgeDanger
  * @var string $butactionbg
  * @var string $colorbackbody
  * @var string $colorbackhmenu1
