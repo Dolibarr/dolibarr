@@ -1105,7 +1105,7 @@ try {
 		}
 	}
 
-	dol_syslog("parse_intent.php needsConfirmation=" . $needsConfirmation, LOG_DEBUG, 0, '_ai');
+	dol_syslog("parse_intent.php needsConfirmation=" . (string) $needsConfirmation, LOG_DEBUG, 0, '_ai');
 
 	// Handle confirmation
 	if ($needsConfirmation) {
