@@ -12102,6 +12102,86 @@ function array_merge_recursive_distinct(array $array1, array $array2): array
 }
 
 /**
+ * Function to remove parameters having their default value.
+ * By example, it could be useful to filter useless params from $_GET.
+ *
+ * @param array<string,string> $parameters An array containing a list of parameters to filter
+ *
+ * @return array<string,string> The filtered array cleaned from its default values.
+ */
+function dolRemoveDefaultParameters(array $parameters): array
+{
+	foreach ($parameters as $key => $value) {
+		if ($value == '' || $value == '-1') {
+			unset($parameters[$key]);
+		}
+	}
+
+	return $parameters;
+}
+
+/**
+ * Function to redirect search list forms from POST to GET request
+ * The redirection is done only for search list forms following these conditions :
+ * - request parameter 'action' must be 'list'
+ * - request parameter 'formfilteraction' must be 'list'
+ * - request method must be 'POST'
+ * - request must not be a massaction request
+ * - string length of the redirection URL must be <= 2000
+ * If conditions are not met, Dolibarr will use standard mode and return search list page content directly in POST request response
+ *
+ * The goal of this function is to be able to avoid browser warning when going back to a search list page result
+ * when navigating in browser history.
+ * Typical case :
+ * - go to a search list page (propal list)
+ * - click on a propal item
+ * - go back in browser history
+ * - browser ask to resend post action (because search form list page return directly html content in the POST response)
+ *
+ * By redirecting POST request to a GET one, there will be not problem to go back to
+ * the search list page (because browser is going back to a GET page)
+ *
+ * @param string $context The current page context name
+ *
+ * @return void
+ */
+function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
+{
+	if (getDolGlobalBool("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE") &&
+		preg_match('/list$/', $context) &&
+		GETPOST('action') == 'list' &&
+		in_array(GETPOST('formfilteraction'), array('list', 'listafterchangingselectedfields')) &&
+		$_SERVER['REQUEST_METHOD'] == 'POST'
+	) {
+		// Detect if it is a simple search (not an massaction)
+		if (!GETPOST('massaction')) {
+			$postData = $_POST;
+
+			// Remove useless data for a simple search list request
+			unset($postData['massaction']);
+			unset($postData['confirmmassactioninvisible']);
+			unset($postData['token']);
+
+			$postData = dolRemoveDefaultParameters($postData);
+
+			// Prepare redirection URL
+			$newLocationUrl = $_SERVER['SCRIPT_NAME'];
+			$queryString = http_build_query($postData);
+			if ($queryString !== '') {
+				$newLocationUrl .= '?' . $queryString;
+			}
+
+			// Make a GET redirection if URL is not too long
+			$maxUrlLength = 2000;
+			if (strlen($newLocationUrl) <= $maxUrlLength) {
+				header('Location: ' . $newLocationUrl);
+				exit();
+			}
+		}
+	}
+}
+
+/**
  * Get the socid of an object, supporting legacy attribute names.
  *
  * @param object $obj The Dolibarr object
