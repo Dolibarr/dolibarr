@@ -237,6 +237,13 @@ if (empty($reshook)) {
 		exit;
 	}
 
+	// Consumption and production are possible only on a validated or in progress MO
+	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $object->status != $object::STATUS_VALIDATED && $object->status != $object::STATUS_INPROGRESS) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorObjectHasWrongStatus", $object->ref), null, 'errors');
+		$action = '';
+	}
+
 	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $permissiontoproduce) {
 		$stockmove = new MouvementStock($db);
 
