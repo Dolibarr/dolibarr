@@ -1,24 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
-			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/sociales/payments.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between true and true will always evaluate to true\.$#'
-			identifier: identical.alwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/tva/index.php
-
-		-
-			message: '#^Parameter \#1 \$array of function sort contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 1
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: '#^PHPDoc tag @var with type CommandeFournisseur is not subtype of native type \$this\(CommonObject\)\.$#'
 			identifier: varTag.nativeType
 			count: 1
@@ -35,12 +17,6 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: ../../../htdocs/core/class/fileupload.class.php
-
-		-
-			message: '#^PHPDoc tag @var with type array\<SplFileInfo\> is not subtype of native type RecursiveIteratorIterator\<RecursiveDirectoryIterator\>\.$#'
-			identifier: varTag.nativeType
-			count: 2
-			path: ../../../htdocs/core/lib/files.lib.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between string and false will always evaluate to true\.$#'
@@ -313,12 +289,6 @@ parameters:
 			path: ../../../htdocs/opensurvey/results.php
 
 		-
-			message: '#^Parameter \#3 \$value of function curl_setopt expects bool, int given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../../htdocs/paypal/lib/paypal.lib.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between ''0'' and ''0'' will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
@@ -329,12 +299,6 @@ parameters:
 			identifier: identical.alwaysTrue
 			count: 1
 			path: ../../../htdocs/product/class/html.formproduct.class.php
-
-		-
-			message: '#^Variable \$draftchecked in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: ../../../htdocs/product/stock/replenish.php
 
 		-
 			message: '#^Variable \$total_time in isset\(\) always exists and is not nullable\.$#'
@@ -427,18 +391,6 @@ parameters:
 			path: ../../../htdocs/public/payment/newpayment.php
 
 		-
-			message: '#^Variable \$charge might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/payment/newpayment.php
-
-		-
-			message: '#^Variable \$customer might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/payment/newpayment.php
-
-		-
 			message: '#^Variable \$invoice might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -499,18 +451,6 @@ parameters:
 			path: ../../../htdocs/public/test/test_arrays.php
 
 		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/ticket/view.php
-
-		-
-			message: '#^Variable \$context might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/webportal/tpl/hero-header-banner.tpl.php
-
-		-
 			message: '#^Parameter \#1 \$array of function uasort contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
 			count: 2
@@ -521,48 +461,6 @@ parameters:
 			identifier: argument.unresolvableType
 			count: 2
 			path: ../../../htdocs/public/webportal/tpl/menu.tpl.php
-
-		-
-			message: '#^Variable \$formfile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/societe/canvas/company/tpl/card_view.tpl.php
-
-		-
-			message: '#^Property Contact\:\:\$roles \(array\<int, array\{id\: int, socid\: int, element\: string, source\: string, code\: string, label\: string\}\>\|null\) does not accept non\-empty\-list\<string\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/societe/class/societe.class.php
-
-		-
-			message: '#^Variable \$body_ticket might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/invoice.php
-
-		-
-			message: '#^Variable \$footer_ticket might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/invoice.php
-
-		-
-			message: '#^Variable \$header_soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/invoice.php
-
-		-
-			message: '#^Variable \$header_ticket might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/invoice.php
-
-		-
-			message: '#^Variable \$ticket_total might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/takepos/invoice.php
 
 		-
 			message: '#^Variable \$keyforstripeterminalbank in isset\(\) always exists and is not nullable\.$#'
