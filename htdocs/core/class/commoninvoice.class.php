@@ -744,7 +744,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
 	 *  If there is one payment -> no (-4)
 	 *  If already sent by email -> no (-5)
-	 *  If already printed -> no (-6)
+	 *  If already printed -> no (-6) (unless hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is set)
 	 *  If running a LNE version and customer invoice was validated -> no (-7)
 	 *  Otherwise -> yes (2)
 	 *
@@ -777,8 +777,8 @@ abstract class CommonInvoice extends CommonObject
 					return -5;
 				}
 
-				// If printed, we refuse
-				if ((int) $this->pos_print_counter > 0) {
+				// If printed, we refuse (unless hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is set)
+				if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && (int) $this->pos_print_counter > 0) {
 					return -6;
 				}
 
@@ -914,11 +914,11 @@ abstract class CommonInvoice extends CommonObject
 	 *  If invoice is draft and has a temporary ref -> yes (1)
 	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is 1 -> no (0)
 	 *  If invoice is transferred in bookkeeping -> no (-1)
-	 *  If invoice has a definitive ref, is not last in ref -> no (-2)
+	 *  If invoice has a definitive ref, is not last in ref -> no (-2) (unless hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is set)
 	 *  If invoice has a definitive ref, is not last in a situation cycle -> no (-3)
 	 *  If there is one payment -> no (-4)
 	 *  If already sent by email -> no (-5)
-	 *  If already printed -> no (-6)
+	 *  If already printed -> no (-6) (unless hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is set)
 	 *  If running a LNE version and customer invoice was validated -> no (-7)
 	 *  Other value (may be returned by a hook -10, -11, ...)
 	 *  Otherwise -> yes (2)
@@ -950,8 +950,8 @@ abstract class CommonInvoice extends CommonObject
 					return -5;
 				}
 
-				// If printed, we refuse
-				if ((int) $this->pos_print_counter > 0) {
+				// If printed, we refuse (unless hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is set)
+				if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && (int) $this->pos_print_counter > 0) {
 					return -6;
 				}
 
@@ -976,8 +976,8 @@ abstract class CommonInvoice extends CommonObject
 				$maxref = $this->getNextNumRef($this->thirdparty, 'last');
 				// $maxref can be '' (means not found) if there is no invoice yet, but also if there is no invoice for the new period when there is a reset at each period
 
-				// If invoice to delete is not the last one, we refuse
-				if ($maxref != '' && $maxref != $this->ref) {
+				// If invoice to delete is not the last one, we refuse (unless hidden option INVOICE_CAN_ALWAYS_BE_REMOVED is set)
+				if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $maxref != '' && $maxref != $this->ref) {
 					return -2;
 				}
 
