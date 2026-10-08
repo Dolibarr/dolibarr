@@ -1,0 +1,82 @@
+CTI dump generated Thu Oct 08 08:33:43 UTC
+CTI page size: 335810
+phpstan markers: [88297, 97988, 98933, 99596, 100552, 101034, 101590, 102036, 102536, 103044, 103546, 104042]
+table found at marker 88297, slice size 35470
+PHPSTAN rows: 77
+0	File	Line	Type
+1	htdocs/admin/clicktodial.php	172	Property Societe::$phone (string) on left side of ?? is not nullable.
+2	htdocs/admin/dict.php	2385	Strict comparison using !== between mixed and null will always evaluate to true.
+3	htdocs/core/ajax/savekanbanfield.php	60	Function restrictedArea invoked with 10 parameters, 2-9 required.
+4	htdocs/core/ajax/updateextrafield.php	84	Function restrictedArea invoked with 10 parameters, 2-9 required.
+5	htdocs/core/class/commonobject.class.php	3196	PHPDoc tag `@var` with type CommandeFournisseur is not subtype of native type $this(CommonObject).
+6	htdocs/core/class/commonobject.class.php	3222	PHPDoc tag `@var` with type FactureFournisseur is not subtype of native type $this(CommonObject).
+7	htdocs/core/class/fileupload.class.php	84	Strict comparison using !== between array|string and null will always evaluate to true.
+8	htdocs/core/class/html.form.class.php	7161	Offset 'datenow' on array{name?: string, value?: bool|float|string, values?: array, default?: string, label?: string, type: 'date'|'datetime', size?: int|string, morecss?: string, ...} in empty() does not exist.
+9	htdocs/core/class/html.form.class.php	7164	Offset 'hours' on array{name?: string, value?: bool|float|string, values?: array, default?: string, label?: string, type: 'date'|'datetime', size?: int|string, morecss?: string, ...} in isset() does not exist.
+10	htdocs/core/class/html.form.class.php	7165	Offset 'minutes' on array{name?: string, value?: bool|float|string, values?: array, default?: string, label?: string, type: 'date'|'datetime', size?: int|string, morecss?: string, ...} in isset() does not exist.
+11	htdocs/core/lib/functions.lib.php	7342	Property Societe::$name (string) on left side of ?? is not nullable.
+12	htdocs/core/lib/functions.lib.php	7343	Property Societe::$name_alias (string) on left side of ?? is not nullable.
+13	htdocs/core/lib/functions.lib.php	7350	Property Societe::$phone (string) on left side of ?? is not nullable.
+14	htdocs/core/lib/functions.lib.php	7351	Property Societe::$fax (string) on left side of ?? is not nullable.
+15	htdocs/core/lib/functions.lib.php	7357	Property Societe::$country_code (string) on left side of ?? is not nullable.
+16	htdocs/core/lib/modulebuilder.lib.php	731	Strict comparison using !== between string and false will always evaluate to true.
+17	htdocs/core/lib/phone.lib.php	87	Strict comparison using !== between mixed and null will always evaluate to true.
+18	htdocs/core/lib/phone.lib.php	125	Strict comparison using !== between mixed and null will always evaluate to true.
+19	htdocs/core/lib/propal.lib.php	314	Parameter #1 $array (array{non-falsy-string, mixed, mixed, mixed, mixed}) of array_values is already a list, call has no effect.
+20	htdocs/core/lib/tax.lib.php	118	Function tax_by_thirdparty() never returns array so it can be removed from the return type.
+21	htdocs/core/lib/tax.lib.php	671	Function tax_by_thirdparty() should return array|int but returns array.
+22	htdocs/core/lib/tax.lib.php	691	Function tax_by_rate() never returns array so it can be removed from the return type.
+23	htdocs/core/lib/tax.lib.php	1210	Function tax_by_rate() should return array|int but returns array.
+24	htdocs/core/modules/facture/doc/doc_generic_invoice_odt.modules.php	343	Variable $array_propal_object in isset() always exists and is not nullable.
+25	htdocs/core/modules/facture/doc/pdf_octopus.modules.php	885	Parameter #2 $current_line of method pdf_octopus::getInfosLineLastSituation() expects FactureLigne, CommonInvoiceLine given.
+26	htdocs/core/modules/facture/modules_facture.php	193	Call to static method create() on an unknown class Sprain\SwissQrBill\QrBill.
+27	htdocs/core/modules/facture/modules_facture.php	196	Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\CombinedAddress.
+28	htdocs/core/modules/facture/modules_facture.php	211	Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\CreditorInformation.
+29	htdocs/core/modules/facture/modules_facture.php	227	Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\PaymentReference.
+30	htdocs/core/modules/facture/modules_facture.php	228	Access to constant TYPE_NON on an unknown class Sprain\SwissQrBill\DataGroup\Element\PaymentReference.
+31	htdocs/core/modules/facture/modules_facture.php	235	Call to static method create() on an unknown class Sprain\SwissQrBill\DataGroup\Element\PaymentAmountInformation.
+32	htdocs/core/modules/import/import_csv.modules.php	260	Method ImportCsv::import_read_record() return type has no value type specified in iterable type array.
+33	htdocs/core/modules/import/import_xlsx.modules.php	338	Method ImportXlsx::import_read_record() return type has no value type specified in iterable type array.
+34	htdocs/core/modules/modUser.class.php	281	Property DolibarrModules::$export_permission (array) does not accept non-empty-array.
+35	htdocs/core/modules/oauth/stripelive_oauthcallback.php	147	Strict comparison using === between null and null will always evaluate to true.
+36	htdocs/core/modules/oauth/stripelive_oauthcallback.php	178	Strict comparison using === between null and null will always evaluate to true.
+37	htdocs/dav/fileserver.php	229	Variable $baseUri in isset() always exists and is not nullable.
+38	htdocs/debugbar/class/DataCollector/DolPhpCollector.php	60	Parameter #1 $callback of function set_error_handler expects (callable(int, string, string, int): bool)|null, array{$this(PhpCollector), 'errorHandler'} given.
+39	htdocs/expedition/card.php	3637	Property ExpeditionLigne::$detail_children (array) on left side of ?? is not nullable.
+40	htdocs/holiday/class/holiday.class.php	175	Property Holiday::$events has no type specified.
+41	htdocs/imports/import.php	873	Parameter #3 $insertArray of function arrayInsert expects array{label?: string, example1?: string, required?: bool, imported?: bool|int, position?: int}, non-empty-array given.
+42	htdocs/main.inc.php	2372	Variable $_POST in isset() always exists and is not nullable.
+43	htdocs/modulebuilder/index.php	5168	Variable $proparrayofkeyval in isset() always exists and is not nullable.
+44	htdocs/opensurvey/class/opensurveysondage.class.php	73	PHPDoc type array of property Opensurveysondage::$lines is not covariant with PHPDoc type array of overridden property CommonObject::$lines.
+45	htdocs/opensurvey/results.php	259	Variable $erreur_ajout_date in isset() always exists and is not nullable.
+46	htdocs/product/canvas/product/actions_card_product.class.php	339	Property ActionsCardProduct::$field_list (array) does not accept non-empty-list.
+47	htdocs/product/class/html.formproduct.class.php	280	Strict comparison using === between 2 and 2 will always evaluate to true.
+48	htdocs/projet/element.php	1932	Variable $total_time in isset() always exists and is not nullable.
+49	htdocs/public/payment/newpayment.php	2236	Variable $attendee might not be defined.
+50	htdocs/public/payment/newpayment.php	2253	Variable $attendee might not be defined.
+51	htdocs/public/payment/newpayment.php	2258	Variable $attendee might not be defined.
+52	htdocs/public/payment/newpayment.php	2261	Variable $attendee might not be defined.
+53	htdocs/public/payment/newpayment.php	2268	Variable $invoice might not be defined.
+54	htdocs/public/payment/newpayment.php	2354	Variable $invoice might not be defined.
+55	htdocs/public/payment/paymentko.php	143	PHPDoc tag `@var` with type CommonObject is not subtype of native type stdClass.
+56	htdocs/public/test/test_arrays.php	198	Variable $param might not be defined.
+57	htdocs/public/test/test_arrays.php	199	Variable $actioncode might not be defined.
+58	htdocs/public/test/test_arrays.php	200	Variable $actioncode might not be defined.
+59	htdocs/public/test/test_arrays.php	202	Variable $status might not be defined.
+60	htdocs/public/test/test_arrays.php	203	Variable $status might not be defined.
+61	htdocs/public/test/test_arrays.php	205	Variable $filter might not be defined.
+62	htdocs/public/test/test_arrays.php	208	Variable $filtert might not be defined.
+63	htdocs/public/test/test_arrays.php	211	Variable $socid might not be defined.
+64	htdocs/public/test/test_arrays.php	220	Variable $type might not be defined.
+65	htdocs/public/test/test_arrays.php	223	Variable $usergroup might not be defined.
+66	htdocs/takepos/pay.php	163	Variable $keyforstripeterminalbank in isset() always exists and is not nullable.
+67	htdocs/takepos/pay.php	641	Variable $keyforstripeterminalbank in isset() always exists and is not nullable.
+68	htdocs/takepos/pay.php	752	Variable $keyforstripeterminalbank in isset() always exists and is not nullable.
+69	htdocs/user/list.php	1364	Offset 'val' on array{val: array{'u.salary': (float|int)}, nbfield: int, pos?: non-empty-array} in isset() always exists and is not nullable.
+70	htdocs/user/list.php	1367	Offset 'u.salary' on array{'u.salary': (float|int)} in isset() always exists and is not nullable.
+71	htdocs/user/perms.php	761	Variable $permsgroupbyentitypluszero in isset() always exists and is not nullable.
+72	htdocs/user/perms.php	834	Variable $permsgroupbyentitypluszero in isset() always exists and is not nullable.
+73	htdocs/user/perms.php	842	Variable $permsgroupbyentitypluszero in isset() always exists and is not nullable.
+74	htdocs/webportal/class/webportalmember.class.php	315	Strict comparison using === between 'nolink' and 'nolink' will always evaluate to true.
+75	htdocs/webportal/class/webportalorder.class.php	236	Strict comparison using === between 'nolink' and 'nolink' will always evaluate to true.
+76	htdocs/webportal/class/webportalpropal.class.php	230	Strict comparison using === between 'nolink' and 'nolink' will always evaluate to true.
