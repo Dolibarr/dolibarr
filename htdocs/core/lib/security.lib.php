@@ -838,6 +838,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	$params = explode('&', $tableandshare);
 	$dbtablename = (!empty($params[0]) ? $params[0] : '');
 	$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename);
+	$tablegivenbycaller = !empty($params[0]);	// The table of the object given by the caller must not be replaced by the default table of the feature
 
 	foreach ($featuresarray as $feature) {
 		$sql = '';
@@ -861,25 +862,25 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'bank') {
 			$feature = 'banque';
 		}
-		if ($feature == 'contract') {
+		if (!$tablegivenbycaller && $feature == 'contract') {
 			$dbtablename = 'contrat';
 		}
-		if ($feature == 'mrp') {
+		if (!$tablegivenbycaller && $feature == 'mrp') {
 			$dbtablename = 'mrp_mo';
 		}
-		if ($feature == 'order_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'order_supplier')) {
+		if (!$tablegivenbycaller && ($feature == 'order_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'order_supplier'))) {
 			$dbtablename = 'commande_fournisseur';
 		}
-		if ($feature == 'invoice_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'invoice_supplier')) {
+		if (!$tablegivenbycaller && ($feature == 'invoice_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'invoice_supplier'))) {
 			$dbtablename = 'facture_fourn';
 		}
-		if ($feature == 'produit') {
+		if (!$tablegivenbycaller && $feature == 'produit') {
 			$dbtablename = 'product';
 		}
-		if ($feature == 'ficheinter') {
+		if (!$tablegivenbycaller && $feature == 'ficheinter') {
 			$dbtablename = 'fichinter';
 		}
-		if ($feature == 'banque') {
+		if (!$tablegivenbycaller && $feature == 'banque') {
 			// The module name (and permission name) is 'banque', but the table of the bank account object is 'bank_account'
 			$dbtablename = 'bank_account';
 		}
@@ -889,7 +890,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'projet' && !empty($feature2) && is_array($feature2) && !empty(array_intersect(array('project_task', 'projet_task'), $feature2))) {
 			$feature = 'project_task';
 		}
-		if ($feature == 'stock') {
+		if (!$tablegivenbycaller && $feature == 'stock') {
 			$dbtablename = 'entrepot';
 		}
 		if ($feature == 'task' || $feature == 'projet_task') {
@@ -907,7 +908,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$feature = "chargesociales";
 			$objectid = (string) $object->fk_charge;
 		}
-		if ($feature == 'workstation') {
+		if (!$tablegivenbycaller && $feature == 'workstation') {
 			$dbtablename = 'workstation_workstation';
 		}
 
