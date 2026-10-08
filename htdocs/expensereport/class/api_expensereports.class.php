@@ -608,7 +608,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->expensereport->delete(DolibarrApiAccess::$user)) {
+		if ($this->expensereport->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete Expense Report : '.$this->expensereport->error);
 		}
 

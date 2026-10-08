@@ -165,7 +165,9 @@ if ($action == 'add_payment' && $permissiontoadd) {
 
 			if (!$error) {
 				$payment->fetch($paymentid);
-				if ($expensereport->total_ttc - $payment->amount == 0) {
+				// Set the expense report as paid when the sum of all its payments (not only this one) reaches its total
+				$remaintopay = price2num($expensereport->total_ttc - $expensereport->getSumPayments(), 'MT');
+				if ($remaintopay <= 0) {
 					$result = $expensereport->setPaid($expensereport->id, $user);
 					if (!($result > 0)) {
 						setEventMessages($payment->error, $payment->errors, 'errors');
