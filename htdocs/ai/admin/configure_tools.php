@@ -194,7 +194,7 @@ if ($action == 'apply_preset' && !empty($toolcontext) && !empty($mode)) {
 $help_url = '';
 $title = 'AiSetup';
 
-llxHeader('', $langs->trans($title), '', '', 0, 0, array('/ai/js/ai.js'), array('/ai/css/ai.css'), '', 'mod-ai page-admin');
+llxHeader('', $langs->trans($title), '', '', 0, 0, array('/ai/js/ai.js'), array(), '', 'mod-ai page-admin');
 
 $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1') . '">' . img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"') . '<span class="hideonsmartphone">' . $langs->trans("BackToModuleList") . '</span></a>';
 
