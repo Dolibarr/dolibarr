@@ -464,8 +464,9 @@ if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 		$product = $supplierorderdispatch->fk_product;
 		$price = GETPOSTFLOAT('price');
 		$comment = $supplierorderdispatch->comment;
-		$eatby = $supplierorderdispatch->eatby;
-		$sellby = $supplierorderdispatch->sellby;
+		// Dates are not given to the stock movements: those of the lot are used (the copy on the line may be outdated)
+		$eatby = '';
+		$sellby = '';
 		$batch = $supplierorderdispatch->batch;
 
 		$supplierorderdispatch->qty = GETPOSTFLOAT('qty', 'MS');
