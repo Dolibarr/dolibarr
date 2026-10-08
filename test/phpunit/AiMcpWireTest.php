@@ -70,7 +70,9 @@ class AiMcpWireTest extends CommonClassTest
 	{
 		$res = $this->getServer()->handleRequest(array('jsonrpc' => '2.0', 'id' => 1, 'method' => 'server/discover'));
 
+		// Test
 		$this->assertTrue($res !== null);
+
 		$this->assertArrayHasKey('result', $res);
 		$r = $res['result'];
 		foreach (array('supportedVersions', 'capabilities', 'cacheScope', 'ttlMs', 'resultType') as $required) {
