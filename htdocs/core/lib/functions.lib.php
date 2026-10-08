@@ -12142,7 +12142,8 @@ function dolRemoveDefaultParameters(array $parameters): array
  */
 function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 {
-	if (preg_match('/list$/', $context) &&
+	if (getDolGlobalBool("MAIN_REDIRECT_POST_AS_GET_IF_POSSIBLE") &&
+		preg_match('/list$/', $context) &&
 		GETPOST('action') == 'list' &&
 		in_array(GETPOST('formfilteraction'), array('list', 'listafterchangingselectedfields')) &&
 		$_SERVER['REQUEST_METHOD'] == 'POST'
