@@ -1400,7 +1400,6 @@ class Conf extends stdClass
 				$this->global->PRODUCT_USE_CUSTOMER_PACKAGING = 0;
 			}
 
-
 			// For backward compatibility
 			if (!empty($this->global->LDAP_SYNCHRO_ACTIVE)) {
 				if ($this->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {

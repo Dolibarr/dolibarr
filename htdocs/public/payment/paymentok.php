@@ -536,6 +536,23 @@ dol_syslog("ispaymentok=".$ispaymentok." tmptag=".formatLogObject($tmptag), LOG_
 // Set $appli for emails title
 $appli = $mysoc->name;
 
+// A transaction of the payment service is recorded only once: refuse it if a payment already uses it
+if ($ispaymentok && !empty($TRANSACTIONID)) {
+	$sqltransaction = "SELECT p.rowid FROM ".MAIN_DB_PREFIX."paiement as p";
+	$sqltransaction .= " WHERE p.ext_payment_id = '".$db->escape($TRANSACTIONID)."' OR p.ext_payment_id LIKE '".$db->escape($db->escapeforlike($TRANSACTIONID)).":%'";
+	$sqltransaction .= " UNION";
+	$sqltransaction .= " SELECT pd.rowid FROM ".MAIN_DB_PREFIX."payment_donation as pd";
+	$sqltransaction .= " WHERE pd.ext_payment_id = '".$db->escape($TRANSACTIONID)."' OR pd.ext_payment_id LIKE '".$db->escape($db->escapeforlike($TRANSACTIONID)).":%'";
+	$resqltransaction = $db->query($sqltransaction);
+	if (!$resqltransaction || $db->num_rows($resqltransaction) > 0) {
+		dol_syslog("The transaction ".$TRANSACTIONID." is already used by a recorded payment (or the check failed), so it is not recorded again", LOG_WARNING, 0, '_payment');
+		$ispaymentok = false;
+		$ErrorCode = "ALREADYRECORDED";
+		$ErrorShortMsg = "Payment already recorded";
+		$ErrorLongMsg = "The transaction ".$TRANSACTIONID." of the payment service was already recorded for a payment. It is not recorded again.";
+	}
+}
+
 
 // Make complementary actions (post payment actions if payment is ok)
 $ispostactionok = 0;

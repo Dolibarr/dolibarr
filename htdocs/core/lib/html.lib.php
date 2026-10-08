@@ -4521,7 +4521,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$text = $button['text'] ?? '';
 				$actionType = $button['actionType'] ?? '';
 				$tmpUrl = '';
-				if (!empty($subbutton['urlraw'])) {
+				if (isset($subbutton['urlraw']) && !empty($subbutton['urlraw'])) {
 					$tmpUrl = $subbutton['urlraw']; // Use raw url, no url completion, use only what developer send
 				} elseif (!empty($button['urlroot'])) {
 					$tmpUrl = $button['urlroot'] . (empty($params['backtopage']) ? '' : '&amp;backtopage=' . urlencode($params['backtopage']));
