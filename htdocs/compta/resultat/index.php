@@ -233,7 +233,7 @@ function resultatPdfTableHeader($pdf, $outputlangs, $years, $wmonth, $wcol, $fon
 	$pdf->Ln();
 	$pdf->SetX($x + $wmonth);
 	foreach ($years as $yearlabel) {
-		$pdf->Cell($wcol, 6, $outputlangs->transnoentities("Outcome"), 1, 0, 'R', true, '', 1);
+		$pdf->Cell($wcol, 6, $outputlangs->transnoentities("Expenses"), 1, 0, 'R', true, '', 1);
 		$pdf->Cell($wcol, 6, $outputlangs->transnoentities("Income"), 1, 0, 'R', true, '', 1);
 	}
 	$pdf->Ln();
@@ -852,7 +852,7 @@ if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modec
 
 	$sql .= " GROUP BY dm";
 
-	dol_syslog("get expense report outcome");
+	dol_syslog("get expense report Expenses");
 	$result = $db->query($sql);
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
@@ -1250,7 +1250,7 @@ if ($isexport) {
 			$sheet->setCellValueExplicit($c0.$headrow, $yearlabel, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
 			$sheet->mergeCells($c0.$headrow.':'.$c1.$headrow);
 			$sheet->getStyle($c0.$headrow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-			$sheet->setCellValue($c0.($headrow + 1), $outputlangs->transnoentitiesnoconv("Outcome"));
+			$sheet->setCellValue($c0.($headrow + 1), $outputlangs->transnoentitiesnoconv("Expenses"));
 			$sheet->setCellValue($c1.($headrow + 1), $outputlangs->transnoentitiesnoconv("Income"));
 			$sheet->getColumnDimension($c0)->setWidth(14);
 			$sheet->getColumnDimension($c1)->setWidth(14);
@@ -1338,7 +1338,7 @@ for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 	print '<td class="liste_titre" align="center">';
 	$htmlhelp = '';
 	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("PurchasesPlusVATEarnedAndDue");
-	print $form->textwithpicto($langs->trans("Outcome"), $htmlhelp);
+	print $form->textwithpicto($langs->trans("Expenses"), $htmlhelp);
 	print '</td>';
 	print '<td class="liste_titre" align="center" class="borderrightlight">';
 	$htmlhelp = '';
