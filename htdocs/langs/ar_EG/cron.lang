@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - cron
+CronLastResult=رمز آخر نتيجة
+CronArgs=معاملات
+CronErrEndDateStartDt=لا يمكن أن يكون تاريخ الانتهاء قبل تاريخ البدء
+CronStatusInactiveBtn=تعطيل
+CronFrom=من موقع

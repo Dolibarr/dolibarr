@@ -1,0 +1,12 @@
+#!/bin/sh
+# Hook to force a prefix on commits
+
+commit_msg_file=$1
+first_line=$(head -n1 "$commit_msg_file")
+
+if echo "$first_line" | grep -Eqi '^(QUAL|SEC|PERF|FIX|CLOSE|NEW|Clean code|Debug[CSS)'; then
+	exit 0
+else
+	echo "The commit message must start with QUAL, SEC, PERF, FIX, CLOSE, NEW, Clean code, Debug, CSS ..."
+	exit 1
+fi

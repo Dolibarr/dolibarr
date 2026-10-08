@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marjă
+Margins=Marje
+TotalMargin=Total Marjă
+MarginOnProducts=Marjă / Produse
+MarginOnServices=Marjă / Servicii
+MarginRate=Cotă Marjă
+ModifyMarginRates=Modificare marje
+MarkRate=Cotă marcă
+DisplayMarginRates=Afişează cotă marjă
+DisplayMarkRates=Afişează cotă marcă
+InputPrice=Preţ intrare
+margin=Management marje profit
+margesSetup=Configurare Management marje profit
+MarginDetails=Detalii marjă
+ProductMargins=Marjă Produs
+CustomerMargins=Marje Client
+SalesRepresentativeMargins=Marje Reprezentanţi vănzări
+ContactOfInvoice=Contact pentru factură
+UserMargins=Marje Utilizator
+ProductService=Produs sau serviciu
+AllProducts=Toate produsele şi serviciile
+ChooseProduct/Service=Alege produs sau serviciu
+ForceBuyingPriceIfNull=Forțaţi prețul de achiziţie/de cost la prețul de vânzare, dacă nu este definit
+ForceBuyingPriceIfNullDetails=Dacă prețul de achiziţie/cost nu este furnizat atunci când adăugăm o linie nouă, iar această opțiune este "ACTIVATĂ", marja va fi 0 %% pe noua linie (preț de achiziţie/cost = preț de vânzare). Dacă această opțiune este "DEZACTIVATĂ" (recomandat), marja va fi egală cu valoarea implicită (și poate fi 100 %% dacă nu se găsește nicio valoare implicită).
+MARGIN_METHODE_FOR_DISCOUNT=Metoda de marjă pentru reduceri globale
+UseDiscountAsProduct=Ca produs
+UseDiscountAsService=Ca serviciu
+UseDiscountOnTotal=Pe subtotal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiţi dacă discount-ul global e tratat ca un produs, serviciu, sau numai pe total la calcularea marjei.
+MARGIN_TYPE=Prețul de achiziţie/cost sugerat implicit pentru calcularea marjei
+MargeType1=Marja la prețul cel mai bun al furnizororului
+MargeType2=Margin on Weighted Average Cost (WAC)
+MargeType3=Marja pe prețul de cost
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
+CostPrice=Preţ de cost
+UnitCharges=Cheltuieli unitare
+Charges=Cheltuieli
+AgentContactType=Tip contact agent comercial
+AgentContactTypeDetails=Definește ce tip de contact (asociat la facturi) va fi utilizat pentru raportul de marjă per contact/adresă. Reține că citirea statisticilor despre un contact nu este de încredere, deoarece în majoritatea cazurilor este posibil ca contactul să nu fie definit în mod explicit pe facturi.
+rateMustBeNumeric=Cota trebuie să fie numerică
+markRateShouldBeLesserThan100=Cota mărcii trebuie să fie mai mică de 100
+ShowMarginInfos=Arată informaţii marjă
+CheckMargins=Detaliu marjă
+MarginPerSaleRepresentativeWarning=Raportul privind marja per utilizator utilizează legătura dintre terți și reprezentanții de vânzare pentru a calcula marja fiecărui reprezentant de vânzare. Deoarece unii terți nu pot avea un reprezentant dedicat vânzării și unii terți pot fi legate de mai mulți, este posibil ca anumite sume să nu fie incluse în acest raport (dacă nu există reprezentant de vânzare) și unele pot apărea pe diferite linii (pentru fiecare reprezentant de vânzare) .

@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Pembezoni
+Margins=Pembezoni
+TotalMargin=Jumla ya Pambizo
+MarginOnProducts=Pembezoni / Bidhaa
+MarginOnServices=Pembezoni / Huduma
+MarginRate=Kiwango cha ukingo
+ModifyMarginRates=Rekebisha viwango vya ukingo
+MarkRate=Kiwango cha alama
+DisplayMarginRates=Onyesha viwango vya ukingo
+DisplayMarkRates=Onyesha viwango vya alama
+InputPrice=Bei ya kuingiza
+margin=Usimamizi wa pembezo za faida
+margesSetup=Usanidi wa usimamizi wa pembezo za faida
+MarginDetails=Maelezo ya ukingo
+ProductMargins=Mipaka ya bidhaa
+CustomerMargins=Pembezoni za wateja
+SalesRepresentativeMargins=Mipaka ya mwakilishi wa mauzo
+ContactOfInvoice=Mawasiliano ya ankara
+UserMargins=Mipaka ya watumiaji
+ProductService=Bidhaa au Huduma
+AllProducts=Bidhaa na huduma zote
+ChooseProduct/Service=Chagua bidhaa au huduma
+ForceBuyingPriceIfNull=Lazimisha bei ya kununua/gharama kwa bei ya kuuzia ikiwa haijafafanuliwa
+ForceBuyingPriceIfNullDetails=Ikiwa bei ya kununua/gharama haijatolewa tunapoongeza laini mpya, na chaguo hili "IMEWASHWA", ukingo utakuwa 0%% kwenye laini mpya (bei ya kununua/gharama = bei ya kuuza). Ikiwa chaguo hili "IMEZIMWA" (inapendekezwa), ukingo utakuwa sawa na thamani iliyopendekezwa na chaguo-msingi (na inaweza kuwa 100%% ikiwa hakuna thamani chaguo-msingi inayoweza kupatikana).
+MARGIN_METHODE_FOR_DISCOUNT=Mbinu ya ukingo kwa mapunguzo ya kimataifa
+UseDiscountAsProduct=Kama bidhaa
+UseDiscountAsService=Kama huduma
+UseDiscountOnTotal=Kwa jumla ndogo
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Inafafanua ikiwa punguzo la kimataifa linachukuliwa kama bidhaa, huduma, au kwa jumla ndogo kwa hesabu ya ukingo.
+MARGIN_TYPE=Bei ya Kununua/Gharama iliyopendekezwa kwa chaguomsingi kwa ukokotoaji wa ukingo
+MargeType1=Margin kwa Bei bora ya muuzaji
+MargeType2=Margin on Weighted Average Cost (WAC)
+MargeType3=Pembe kwenye Bei ya Gharama
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
+CostPrice=Bei ya gharama
+UnitCharges=Gharama za kitengo
+Charges=Malipo
+AgentContactType=Aina ya mawasiliano ya wakala wa kibiashara
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitly on the invoices.
+rateMustBeNumeric=Kiwango lazima kiwe thamani ya nambari
+markRateShouldBeLesserThan100=Kiwango cha alama kinapaswa kuwa chini ya 100
+ShowMarginInfos=Onyesha maelezo ya ukingo
+CheckMargins=Maelezo ya pembezoni
+MarginPerSaleRepresentativeWarning=Ripoti ya ukingo kwa kila mtumiaji hutumia kiungo kati ya wahusika wengine na wawakilishi wa mauzo ili kukokotoa ukingo wa kila mwakilishi wa mauzo. Kwa sababu baadhi ya wahusika huenda wasiwe na mwakilishi wowote maalum wa mauzo na baadhi ya wahusika wengine wanaweza kuunganishwa kwa kadhaa, baadhi ya pesa huenda zisijumuishwe kwenye ripoti hii (ikiwa hakuna mwakilishi wa mauzo) na zingine zinaweza kuonekana kwenye laini tofauti (kwa kila mwakilishi wa ofa).

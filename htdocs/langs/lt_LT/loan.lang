@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Paskola
+Loans=Paskolos
+NewLoan=Nauja paskola
+ShowLoan=Rodyti paskolą
+PaymentLoan=Paskolos apmokėjimas
+LoanPayment=Paskolos apmokėjimas
+ShowLoanPayment=Rodyti paskolos apmokėjimą
+LoanCapital=Kapitalas
+Insurance=Draudimas
+Interest=Palūkanos
+Nbterms=Sąlygos numeris
+Term=Terminas
+LoanAccountancyCapitalCode=Apskaitos sąskaitos kapitalas
+LoanAccountancyInsuranceCode=Apskaitos sąskaitos draudimas
+LoanAccountancyInterestCode=Apskaitos sąskaitos palūkanos
+ConfirmDeleteLoan=Patvirtinti šios paskolos panaikinimą
+LoanDeleted=Skola sėkmingai panaikinta
+ConfirmPayLoan=Patvirtinti paskolos priskyrimą prie apmokėtų
+LoanPaid=Paskola grąžinta
+ListLoanAssociatedProject=Su projektu susijusių paskolų sąrašas
+AddLoan=Sukurti paskolą
+FinancialCommitment=Finansinis įsipareigojimas
+InterestAmount=Palūkanos
+CapitalRemain=Kapitalas lieka
+TermPaidAllreadyPaid = Šis terminas jau apmokėtas
+CantUseScheduleWithLoanStartedToPaid = Nepavyksta sugeneruoti paskolos, kurios mokėjimas jau pradėtas, laiko juostos
+CantModifyInterestIfScheduleIsUsed = Negalite keisti palūkanų, jei naudojate tvarkaraštį
+# Admin
+ConfigLoan=Paskolos modulio konfigūracija
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Sąskaita (iš sąskaitų plano), kuri pagal numatytuosius nustatymus bus naudojama kapitalui (paskolų modulis)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Sąskaita (iš sąskaitų plano), kuri pagal numatytuosius nustatymus bus naudojama palūkanoms (paskolų modulis)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Sąskaita (iš sąskaitų plano), kuri pagal numatytuosius nustatymus bus naudojama draudimui (paskolų modulis)
+CreateCalcSchedule=Redaguoti finansinį įsipareigojimą

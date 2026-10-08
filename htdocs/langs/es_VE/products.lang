@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - products
+ProductDescription=Descripción del Producto
+ProductVatMassChange=Actualización global del IVA
+MassBarcodeInit=Inicialización masiva de código de barra
+MassBarcodeInitDesc=Esta página se puede utilizar para inicializar un código de barras en objetos que no tienen un código de barras definido. Verifique antes de que se complete la configuración del código de barras del módulo.
+ProductsOnSaleOnly=Productos solo a para venta
+ProductsOnPurchaseOnly=Productos solo para compra
+ProductStatusNotOnBuyShort=Fuera compra
+ExportDataset_produit_1=Productos
+PriceExpressionEditorHelp2=Puede acceder a los atributos adicionales con variables como <b>#extrafield_myextrafieldkey#</b> y variables globales con <b>#global_mycode#</b>
+NbProducts=Numero de productos

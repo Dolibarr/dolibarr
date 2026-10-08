@@ -1,0 +1,167 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = ການຈັດຕັ້ງກິດຈະກຳ
+EventOrganizationDescription = ການຈັດຕັ້ງກິດຈະກຳຜ່ານໂມດູນໂຄງການ
+EventOrganizationDescriptionLong= ຈັດການການຈັດຕັ້ງກິດຈະກຳ (ການສະແດງ, ກອງປະຊຸມ, ຜູ້ເຂົ້າຮ່ວມ ຫຼື ວິທະຍາກອນ, ພ້ອມກັບໜ້າເວັບສາທາລະນະສຳລັບການສະເໜີ, ລົງຄະແນນສຽງ ຫຼື ລົງທະບຽນ)
+EventOrganizationMenuLeft = ກິດຈະກຳທີ່ຈັດຂຶ້ນ
+EventOrganizationConferenceOrBoothMenuLeft = ກອງປະຊຸມ ຫຼື ບູດ
+PaymentEvent=ການຊຳລະເງິນຂອງກິດຈະກຳ
+EventFee=ຄ່າທຳນຽມກິດຈະກຳ
+# Admin page
+NewRegistration=ການລົງທະບຽນໃໝ່
+EventOrganizationSetup=ການຕັ້ງຄ່າການຈັດຕັ້ງກິດຈະກຳ
+EventOrganization=ການຈັດຕັ້ງກິດຈະກຳ
+EventOrganizationSetupPage = ໜ້າຕັ້ງຄ່າການຈັດຕັ້ງກິດຈະກຳ
+EVENTORGANIZATION_TASK_LABEL = ຊື່ຂອງວຽກທີ່ຈະສ້າງໂດຍອັດຕະໂນມັດເມື່ອໂຄງການຖືກຢືນຢັນ
+EVENTORGANIZATION_TASK_LABELTooltip = ເມື່ອທ່ານຢືນຢັນກິດຈະກຳທີ່ຈະຈັດຂຶ້ນ, ບາງວຽກສາມາດຖືກສ້າງຂຶ້ນໂດຍອັດຕະໂນມັດໃນໂຄງການ<br><br>ຕົວຢ່າງ: <br>ສົ່ງຄຳເຊີນສຳລັບກອງປະຊຸມ<br>ສົ່ງຄຳເຊີນສຳລັບບູດ<br>ຢືນຢັນຂໍ້ສະເໜີຂອງກອງປະຊຸມ<br>ຢືນຢັນການສະໝັກບູດ<br>ເປີດການລົງທະບຽນກິດຈະກຳສຳລັບຜູ້ເຂົ້າຮ່ວມ<br>ສົ່ງແຈ້ງເຕືອນກິດຈະກຳຫາວິທະຍາກອນ<br>ສົ່ງແຈ້ງເຕືອນກິດຈະກຳຫາເຈົ້າຂອງບູດ<br>ສົ່ງແຈ້ງເຕືອນກິດຈະກຳຫາຜູ້ເຂົ້າຮ່ວມ
+EVENTORGANIZATION_TASK_LABELTooltip2=ປະວ່າງໄວ້ ຖ້າທ່ານບໍ່ຕ້ອງການສ້າງວຽກໂດຍອັດຕະໂນມັດ.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = ໝວດໝູ່ທີ່ຈະເພີ່ມໃຫ້ກັບບຸກຄົນພາຍນອກທີ່ຖືກສ້າງຂຶ້ນໂດຍອັດຕະໂນມັດເມື່ອມີຜູ້ສະເໜີກອງປະຊຸມ
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = ໝວດໝູ່ທີ່ຈະເພີ່ມໃຫ້ກັບບຸກຄົນພາຍນອກທີ່ຖືກສ້າງຂຶ້ນໂດຍອັດຕະໂນມັດເມື່ອພວກເຂົາສະເໜີບູດ
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = ແບບຟອມອີເມລທີ່ຈະສົ່ງຫຼັງຈາກໄດ້ຮັບການສະເໜີກອງປະຊຸມ.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = ແບບຟອມອີເມລທີ່ຈະສົ່ງຫຼັງຈາກໄດ້ຮັບການສະເໜີບູດ.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = ແບບຟອມອີເມລທີ່ຈະສົ່ງຫຼັງຈາກການລົງທະບຽນບູດໄດ້ຖືກຊຳລະແລ້ວ.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = ແບບຟອມອີເມລທີ່ຈະສົ່ງຫຼັງຈາກການລົງທະບຽນກິດຈະກຳໄດ້ຖືກຊຳລະແລ້ວ.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = ແບບຟອມອີເມລທີ່ຈະໃຊ້ເມື່ອສົ່ງອີເມລຈຳນວນຫຼາຍຫາວິທະຍາກອນ
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = ແບບຟອມອີເມລທີ່ຈະໃຊ້ເມື່ອສົ່ງອີເມລຈຳນວນຫຼາຍຫາລາຍຊື່ຜູ້ເຂົ້າຮ່ວມ
+EVENTORGANIZATION_FILTERATTENDEES_CAT = ໃນຟອມສ້າງ/ເພີ່ມຜູ້ເຂົ້າຮ່ວມ, ຈຳກັດລາຍຊື່ບຸກຄົນພາຍນອກສະເພາະໃນໝວດໝູ່
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = ໃນຟອມສ້າງ/ເພີ່ມຜູ້ເຂົ້າຮ່ວມ, ຈຳກັດລາຍຊື່ບຸກຄົນພາຍນອກສະເພາະປະເພດນີ້
+# Object
+OrganizedEvent=ກິດຈະກຳທີ່ຈັດຂຶ້ນ
+EventOrganizationConfOrBooth= ກອງປະຊຸມ ຫຼື ບູດ
+EventOrganizationConfOrBoothes=ກອງປະຊຸມ ຫຼື ບູດທັງໝົດ
+ManageOrganizeEvent = ຈັດການການຈັດຕັ້ງກິດຈະກຳ
+ConferenceOrBooth = ກອງປະຊຸມ ຫຼື ບູດ
+ConferenceOrBoothTab = ກອງປະຊຸມ ຫຼື ບູດ
+AmountPaid = ຈຳນວນເງິນທີ່ຊຳລະແລ້ວ
+DateOfRegistration = ວັນທີລົງທະບຽນ
+ConferenceOrBoothAttendee = ຜູ້ເຂົ້າຮ່ວມກອງປະຊຸມ ຫຼື ບູດ
+ConferenceOrBoothAttendeesShort = ຜູ້ເຂົ້າຮ່ວມ ກອງປະຊຸມ/ບູດ
+ApplicantOrVisitor=ຜູ້ສະໝັກ ຫຼື ຜູ້ຢ້ຽມຊົມ
+Speaker=ວິທະຍາກອນ
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = ໄດ້ຮັບຄຳຮ້ອງຂໍກອງປະຊຸມຂອງທ່ານແລ້ວ
+YourOrganizationEventBoothRequestWasReceived = ໄດ້ຮັບຄຳຮ້ອງຂໍບູດຂອງທ່ານແລ້ວ
+EventOrganizationEmailAskConf = ຄຳຮ້ອງຂໍກອງປະຊຸມ
+EventOrganizationEmailAskBooth = ຄຳຮ້ອງຂໍບູດ
+EventOrganizationEmailBoothPayment = ການຊຳລະເງິນສຳລັບບູດຂອງທ່ານ
+EventOrganizationEmailRegistrationPayment = ການລົງທະບຽນສຳລັບກິດຈະກຳ
+EventOrganizationMassEmailAttendees = ການສື່ສານຫາຜູ້ເຂົ້າຮ່ວມ
+EventOrganizationMassEmailSpeakers = ການສື່ສານຫາວິທະຍາກອນ
+ToSpeakers=ເຖິງວິທະຍາກອນ
+# Event
+AllowUnknownPeopleSuggestConf=ອະນຸຍາດໃຫ້ບຸກຄົນທົ່ວໄປສະເໜີກອງປະຊຸມ
+AllowUnknownPeopleSuggestConfHelp=ອະນຸຍາດໃຫ້ບຸກຄົນທີ່ບໍ່ຮູ້ຈັກສະເໜີກອງປະຊຸມທີ່ພວກເຂົາຕ້ອງການຈັດ
+AllowUnknownPeopleSuggestBooth=ອະນຸຍາດໃຫ້ບຸກຄົນທົ່ວໄປສະໝັກບູດ
+AllowUnknownPeopleSuggestBoothHelp=ອະນຸຍາດໃຫ້ບຸກຄົນທີ່ບໍ່ຮູ້ຈັກສະໝັກບູດ
+PriceOfRegistration=ລາຄາລົງທະບຽນ
+PriceOfRegistrationHelp=ລາຄາທີ່ຕ້ອງຊຳລະເພື່ອລົງທະບຽນ ຫຼື ເຂົ້າຮ່ວມກິດຈະກຳ
+PriceOfBooth=ລາຄາສະໝັກຕັ້ງບູດ
+PriceOfBoothHelp=ລາຄາສະໝັກເພື່ອຕັ້ງບູດ
+EventOrganizationICSLinkProject=ລິ້ງ ICS ສຳລັບກິດຈະກຳ
+EventOrganizationICSLink=ລິ້ງ ICS ສຳລັບກອງປະຊຸມ
+ConferenceOrBoothInformation=ຂໍ້ມູນກອງປະຊຸມ ຫຼື ບູດ
+ConferenceOrBoothFormat=ຮູບແບບກອງປະຊຸມ ຫຼື ບູດ
+ConferenceOrBoothFormatID=ລະຫັດຮູບແບບກອງປະຊຸມ ຫຼື ບູດ
+ConferenceOrBoothFormatCode=ໂຄ້ດຮູບແບບກອງປະຊຸມ ຫຼື ບູດ
+ConferenceOrBoothFormatLabel=ຊື່ຮູບແບບກອງປະຊຸມ ຫຼື ບູດ
+Attendees=ຜູ້ເຂົ້າຮ່ວມ
+ListOfAttendeesOfEvent=ລາຍຊື່ຜູ້ເຂົ້າຮ່ວມຂອງໂຄງການກິດຈະກຳ
+ListOfConfOrBoothOfEvent=ລາຍຊື່ກອງປະຊຸມ ຫຼື ບູດ ຂອງໂຄງການກິດຈະກຳ
+DownloadICSLink=ດາວໂຫຼດໄຟລ໌ ICS
+EVENTORGANIZATION_SECUREKEY=ລະຫັດຄວາມປອດໄພສຳລັບໜ້າລົງທະບຽນສາທາລະນະເພື່ອສະເໜີກອງປະຊຸມ
+SERVICE_BOOTH_LOCATION=ບໍລິການທີ່ຈະໃຊ້ໃນລາຍການໃບແຈ້ງໜີ້ສຳລັບການຂາຍບູດ.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=ບໍລິການທີ່ຈະໃຊ້ໃນລາຍການໃບແຈ້ງໜີ້ສຳລັບຄ່າທຳນຽມການເຂົ້າຮ່ວມ.
+NbVotes=ຈຳນວນການລົງຄະແນນ
+# Status
+EvntOrgDraft = ຮ່າງ
+EvntOrgSuggested = ສະເໜີແລ້ວ
+EvntOrgConfirmed = ຢືນຢັນແລ້ວ
+EvntOrgNotQualified = ບໍ່ຜ່ານເກນ
+EvntOrgDone = ສຳເລັດແລ້ວ
+EvntOrgCancelled = ຍົກເລີກແລ້ວ
+# Other
+SuggestForm = ໜ້າສະເໜີ
+SuggestOrVoteForConfOrBooth = ໜ້າສຳລັບການສະເໜີ ຫຼື ລົງຄະແນນ
+EvntOrgRegistrationHelpMessage = ຢູ່ທີ່ນີ້, ທ່ານສາມາດລົງຄະແນນສຽງໃຫ້ກັບກອງປະຊຸມ ຫຼື ສະເໜີອັນໃໝ່ສຳລັບກິດຈະກຳ. ທ່ານຍັງສາມາດສະໝັກເພື່ອຂໍບູດໃນລະຫວ່າງກິດຈະກຳໄດ້.
+EvntOrgRegistrationConfHelpMessage = ຢູ່ທີ່ນີ້, ທ່ານສາມາດສະເໜີກອງປະຊຸມໃໝ່ເພື່ອດຳເນີນໃນລະຫວ່າງກິດຈະກຳ.
+EvntOrgRegistrationBoothHelpMessage = ຢູ່ທີ່ນີ້, ທ່ານສາມາດສະໝັກເພື່ອຂໍບູດໃນລະຫວ່າງກິດຈະກຳ.
+ListOfSuggestedConferences = ລາຍຊື່ກອງປະຊຸມທີ່ຖືກສະເໜີ
+ListOfSuggestedBooths=ບູດທີ່ຖືກສະເໜີ
+ListOfConferencesOrBooths=ກອງປະຊຸມ ຫຼື ບູດ ຂອງໂຄງການກິດຈະກຳ
+SuggestConference = ສະເໜີກອງປະຊຸມໃໝ່
+SuggestBooth = ສະເໜີບູດ
+ViewAndVote = ເບິ່ງ ແລະ ລົງຄະແນນສຽງໃຫ້ກັບກິດຈະກຳທີ່ຖືກສະເໜີ
+PublicAttendeeSubscriptionGlobalPage = ລິ້ງສາທາລະນະສຳລັບການລົງທະບຽນກິດຈະກຳ
+PublicAttendeeSubscriptionPage = ລິ້ງສາທາລະນະສຳລັບການລົງທະບຽນກິດຈະກຳນີ້ເທົ່ານັ້ນ
+MissingOrBadSecureKey = ລະຫັດຄວາມປອດໄພບໍ່ຖືກຕ້ອງ ຫຼື ບໍ່ມີ
+EvntOrgWelcomeMessage = ແບບຟອມນີ້ອະນຸຍາດໃຫ້ທ່ານລົງທະບຽນເປັນຜູ້ເຂົ້າຮ່ວມໃໝ່ໃນກິດຈະກຳ
+EvntOrgDuration = ກອງປະຊຸມນີ້ເລີ່ມຕົ້ນໃນວັນທີ %s ແລະ ສິ້ນສຸດໃນວັນທີ %s.
+ConferenceAttendeeFee = ຄ່າທຳນຽມຜູ້ເຂົ້າຮ່ວມກອງປະຊຸມສຳລັບກິດຈະກຳ : '%s' ຈັດຂຶ້ນຕັ້ງແຕ່ວັນທີ %s ຫາ %s.
+BoothLocationFee = ຄ່າເຊົ່າສະຖານທີ່ບູດສຳລັບກິດຈະກຳ : '%s' ຈັດຂຶ້ນຕັ້ງແຕ່ວັນທີ %s ຫາ %s
+EventType = ປະເພດກິດຈະກຳ
+LabelOfBooth=ຊື່ບູດ
+LabelOfconference=ຊື່ກອງປະຊຸມ
+ConferenceIsNotConfirmed=ການລົງທະບຽນຍັງບໍ່ພ້ອມໃຊ້ງານ, ກອງປະຊຸມຍັງບໍ່ທັນໄດ້ຮັບການຢືນຢັນ
+EventRegistrationAreClosed=ການລົງທະບຽນກິດຈະກຳຖືກປິດແລ້ວ
+DateMustBeBeforeThan=%s ຕ້ອງແມ່ນກ່ອນ %s
+DateMustBeAfterThan=%s ຕ້ອງແມ່ນຫຼັງຈາກ %s
+MaxNbOfAttendeesReached=ຈຳນວນຜູ້ເຂົ້າຮ່ວມສູງສຸດເຕັມແລ້ວ
+NewSubscription=ການລົງທະບຽນໃໝ່
+OrganizationEventConfRequestWasReceived=ໄດ້ຮັບຂໍ້ສະເໜີສຳລັບກອງປະຊຸມຂອງທ່ານແລ້ວ
+OrganizationEventBoothRequestWasReceived=ໄດ້ຮັບຄຳຮ້ອງຂໍບູດຂອງທ່ານແລ້ວ
+OrganizationEventPaymentOfBoothWasReceived=ການຊຳລະເງິນສຳລັບບູດຂອງທ່ານໄດ້ຖືກບັນທຶກແລ້ວ
+OrganizationEventPaymentOfRegistrationWasReceived=ການຊຳລະເງິນສຳລັບການລົງທະບຽນກິດຈະກຳຂອງທ່ານໄດ້ຖືກບັນທຶກແລ້ວ
+OrganizationEventBulkMailToAttendees=ນີ້ແມ່ນການແຈ້ງເຕືອນກ່ຽວກັບການເຂົ້າຮ່ວມຂອງທ່ານໃນກິດຈະກຳໃນຖານະຜູ້ເຂົ້າຮ່ວມ
+OrganizationEventBulkMailToSpeakers=ນີ້ແມ່ນການແຈ້ງເຕືອນກ່ຽວກັບການເຂົ້າຮ່ວມຂອງທ່ານໃນກິດຈະກຳໃນຖານະວິທະຍາກອນ
+OrganizationEventLinkToThirdParty=ເຊື່ອມຕໍ່ຫາບຸກຄົນພາຍນອກ (ລູກຄ້າ, ຜູ້ສະໜອງ ຫຼື ຄູ່ຄ້າ)
+OrganizationEvenLabelName=ຊື່ສາທາລະນະຂອງກອງປະຊຸມ ຫຼື ບູດ
+NewSuggestionOfBooth=ການສະໝັກຂໍບູດ
+NewSuggestionOfConference=ການສະໝັກເພື່ອຈັດກອງປະຊຸມ
+EvntOrgRegistrationWelcomeMessage = ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ໜ້າສະເໜີກອງປະຊຸມ ຫຼື ບູດ.
+EvntOrgRegistrationConfWelcomeMessage = ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ໜ້າສະເໜີກອງປະຊຸມ.
+EvntOrgRegistrationBoothWelcomeMessage = ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ໜ້າສະໝັກບູດ.
+EvntOrgVoteHelpMessage = ຢູ່ທີ່ນີ້, ທ່ານສາມາດເບິ່ງ ແລະ ລົງຄະແນນສຽງໃຫ້ກັບກິດຈະກຳທີ່ຖືກສະເໜີສຳລັບໂຄງການ
+VoteOk = ການລົງຄະແນນຂອງທ່ານໄດ້ຮັບການຍອມຮັບແລ້ວ.
+AlreadyVoted = ທ່ານໄດ້ລົງຄະແນນໃຫ້ກັບກິດຈະກຳນີ້ແລ້ວ.
+VoteError = ເກີດຂໍ້ຜິດພາດໃນລະຫວ່າງການລົງຄະແນນ, ກະລຸນາລອງໃໝ່ອີກຄັ້ງ.
+SubscriptionOk=ການລົງທະບຽນຂອງທ່ານໄດ້ຖືກບັນທຶກແລ້ວ
+AmountOfRegistrationPaid=ຈຳນວນເງິນລົງທະບຽນທີ່ຊຳລະແລ້ວ
+ConfAttendeeSubscriptionConfirmation = ການຢືນຢັນການລົງທະບຽນເຂົ້າຮ່ວມກິດຈະກຳຂອງທ່ານ
+Attendee = ຜູ້ເຂົ້າຮ່ວມ
+PaymentConferenceAttendee = ການຊຳລະເງິນຂອງຜູ້ເຂົ້າຮ່ວມກອງປະຊຸມ
+PaymentBoothLocation = ການຊຳລະເງິນຄ່າສະຖານທີ່ບູດ
+DeleteConferenceOrBoothAttendee=ລຶບຜູ້ເຂົ້າຮ່ວມອອກ
+RegistrationAndPaymentWereAlreadyRecorder=ການລົງທະບຽນ ແລະ ການຊຳລະເງິນໄດ້ຖືກບັນທຶກໄວ້ແລ້ວສຳລັບອີເມລ <b>%s</b>
+EmailAttendee=ອີເມລຜູ້ເຂົ້າຮ່ວມ
+EmailCompany=ອີເມລບໍລິສັດ
+EmailCompanyForInvoice=ອີເມລບໍລິສັດ (ສຳລັບໃບແຈ້ງໜີ້, ຖ້າແຕກຕ່າງຈາກອີເມລຜູ້ເຂົ້າຮ່ວມ)
+ErrorSeveralCompaniesWithEmailContactUs=ພົບເຫັນຫຼາຍບໍລິສັດທີ່ໃຊ້ອີເມລນີ້ ດັ່ງນັ້ນພວກເຮົາຈຶ່ງບໍ່ສາມາດຢືນຢັນການລົງທະບຽນຂອງທ່ານໂດຍອັດຕະໂນມັດໄດ້. ກະລຸນາຕິດຕໍ່ຫາພວກເຮົາທີ່ %s ເພື່ອຢືນຢັນດ້ວຍຕົນເອງ
+ErrorSeveralCompaniesWithNameContactUs=ພົບເຫັນຫຼາຍບໍລິສັດທີ່ໃຊ້ຊື່ນີ້ ດັ່ງນັ້ນພວກເຮົາຈຶ່ງບໍ່ສາມາດຢືນຢັນການລົງທະບຽນຂອງທ່ານໂດຍອັດຕະໂນມັດໄດ້. ກະລຸນາຕິດຕໍ່ຫາພວກເຮົາທີ່ %s ເພື່ອຢືນຢັນດ້ວຍຕົນເອງ
+NoPublicActionsAllowedForThisEvent=ບໍ່ມີການດຳເນີນການສາທາລະນະໃດໆທີ່ເປີດໃຫ້ຄົນທົ່ວໄປສຳລັບກິດຈະກຳນີ້
+MaxNbOfAttendees=ຈຳນວນຜູ້ເຂົ້າຮ່ວມສູງສຸດ
+DateStartEvent=ວັນທີເລີ່ມກິດຈະກຳ
+DateEndEvent=ວັນທີສິ້ນສຸດກິດຈະກຳ
+ModifyStatus=ແກ້ໄຂສະຖານະ
+ConfirmModifyStatus=ຢືນຢັນການປ່ຽນແປງສະຖານະ
+ConfirmModifyStatusQuestion=ທ່ານແນ່ໃຈບໍວ່າຕ້ອງການແກ້ໄຂ %s ລາຍການທີ່ເລືອກ?
+RecordsUpdated=%s ລາຍການຖືກອັບເດດແລ້ວ
+RecordUpdated=ລາຍການຖືກອັບເດດແລ້ວ
+NoRecordUpdated=ບໍ່ມີລາຍການໃດຖືກອັບເດດ
+ProfitPerValidatedAttendee=ກຳໄລຕໍ່ຜູ້ເຂົ້າຮ່ວມທີ່ຢືນຢັນແລ້ວ
+Confirmed=ຢືນຢັນແລ້ວ
+NotSelected=ບໍ່ຖືກເລືອກ
+TheLinkIsAvailableOnTheProjectEventCard=ລິ້ງສຳລັບສະເໜີ ຫຼື ລົງຄະແນນສຽງກອງປະຊຸມ ຫຼື ສະໝັກບູດ ແມ່ນມີໃຫ້ຢູ່ໃນໜ້າຂອງ ໂຄງການ/ກິດຈະກຳ
+ShowedUp=ມາຮ່ວມງານແລ້ວ

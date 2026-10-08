@@ -1,0 +1,29 @@
+# Junk that could exist anywhere:
+.DS_Store
+*.swp
+*.tmp
+*~
+
+# Project files that should not be in the repo
+.*
+\#*
+!/.github
+!/.gitignore
+.*.gz
+*.tmTheme.js
+package-lock.json
+
+# A handy place to put stuff that git should ignore:
+/coverage
+/ignore/
+node_modules/
+jam/
+* *
+
+.git-ref
+npm-debug.log
+deps/
+dist
+
+lib/ace
+styles

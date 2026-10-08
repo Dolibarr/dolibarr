@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Lexoni punën e planifikuar
+Permission23102 = Krijo/përditëso punë të planifikuar
+Permission23103 = Fshi punën e planifikuar
+Permission23104 = Ekzekutoni punën e planifikuar
+# Admin
+CronSetup=Konfigurimi i planifikuar i menaxhimit të punës
+URLToLaunchCronJobs=URL për të kontrolluar dhe nisur punët e kualifikuara të cron nga një shfletues
+OrToLaunchASpecificJob=Ose për të kontrolluar dhe nisur një punë specifike nga një shfletues
+KeyForCronAccess=Çelësi i sigurisë për URL-në për të nisur punët e cron
+FileToLaunchCronJobs=Linja e komandës për të kontrolluar dhe nisur punët e kualifikuara të cron
+CronExplainHowToRunUnix=Në mjedisin Unix, duhet të përdorni hyrjen e mëposhtme të crontab për të ekzekutuar vijën e komandës çdo 5 minuta
+CronExplainHowToRunWin=Në mjedisin Microsoft(tm) Windows mund të përdorni veglat e detyrave të planifikuara për të ekzekutuar vijën e komandës çdo 5 minuta
+CronMethodDoesNotExists=Klasa %s nuk përmban asnjë metodë %s
+CronMethodNotAllowed=Metoda %s e klasës %s është në listën e bllokimit të metodave të ndaluara
+CronJobDefDesc=Profilet e punës Cron përcaktohen në skedarin e përshkruesit të modulit. Kur moduli aktivizohet, ato ngarkohen dhe disponohen, kështu që ju mund të administroni punët nga menyja e veglave të administratorit %s.
+CronJobProfiles=Lista e profileve të paracaktuara të punës cron
+# Menu
+EnabledAndDisabled=Aktivizuar dhe çaktivizuar
+# Page list
+CronLastOutput=Prodhimi i fundit i ekzekutimit
+CronLastResult=Kodi i fundit i rezultatit
+CronCommand=Komanda
+CronList=Punët e planifikuara
+CronDelete=Fshini punët e planifikuara
+CronConfirmDelete=Je i sigurt që dëshiron t'i fshish këto punë të planifikuara?
+CronExecute=Niseni tani
+CronConfirmExecute=Je i sigurt që dëshiron t'i ekzekutosh këto punë të planifikuara tani?
+CronInfo=Moduli i punës së planifikuar ju lejon të planifikoni punë për t'i ekzekutuar ato automatikisht. Punët mund të fillojnë edhe me dorë.
+CronTask=Punë
+CronNone=Ekzekutimi tjetër i detyrës së planifikuar
+CronNotYetRan=Nuk u ekzekutua kurrë
+CronDtStart=Jo më parë
+CronDtEnd=Jo pas
+CronDtNextLaunch=Ekzekutimi i radhës
+CronDtLastLaunch=Data e fillimit të ekzekutimit të fundit
+CronDtLastResult=Data e përfundimit të ekzekutimit të fundit
+CronFrequency=Frekuenca
+CronClass=Klasa
+CronMethod=Metoda
+CronModule=Moduli
+CronNoJobs=Asnjë punë e regjistruar
+CronPriority=Prioriteti
+CronLabel=Etiketa
+CronNbRun=Numri i nisjeve
+CronMaxRun=Numri maksimal i lëshimeve
+CronEach=Çdo
+JobFinished=Puna filloi dhe mbaroi
+Scheduled=I planifikuar
+#Page card
+CronAdd=Shto vende pune
+CronEvery=Ekzekuto punën çdo
+CronObject=Shembull/Objekt për të krijuar
+CronArgs=Parametrat
+CronSaveSucess=Ruaje me sukses
+CronNote=Koment
+CronFieldMandatory=Fushat %s janë të detyrueshme
+CronErrEndDateStartDt=Data e përfundimit nuk mund të jetë para datës së fillimit
+StatusAtInstall=Statusi në instalimin e modulit
+CronStatusActiveBtn=Aktivizo planifikimin
+CronStatusInactiveBtn=Çaktivizo
+CronTaskInactive=Kjo punë është e çaktivizuar (jo e planifikuar)
+CronId=Id
+CronClassFile=Emri i skedarit me klasën
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=Emri i objektit për t'u ngarkuar. <BR> Për shembull për të thirrur metodën e marrjes së Dolibarr Produkt objekt /htdocs/product/class/product.class.php, vlera për emrin e skedarit të klasës është <br><i>Produkt</i>
+CronMethodHelp=Metoda e objektit për të nisur. <BR> Për shembull, për të thirrur metodën e marrjes së Dolibarr Produkt objekt /htdocs/product/class/product.class.php, vlera për metodën është  <br><i>marr</i>
+CronArgsHelp=Argumentet e metodës. <BR> Për shembull, për të thirrur metodën e marrjes së Dolibarr Produkt objekt /htdocs/product/class/product.class.php, vlera për parametrat mund të jetë <br><i>0, ProductRef</i>
+CronCommandHelp=Linja e komandës së sistemit për të ekzekutuar.
+CronCreateJob=Krijo një punë të re të planifikuar
+CronFrom=Nga
+# Info
+# Common
+CronType=Lloji i punës
+CronType_method=Metoda e thirrjes së një klase PHP
+CronType_command=Komanda e guaskës
+CronCannotLoadClass=Nuk mund të ngarkohet skedari i klasës %s (për të përdorur klasën %s)
+CronModuleNotEnabledInThisEntity=Moduli Cron nuk është aktivizuar në këtë entitet (për të përdorur metodën %s të objektit %s)
+CronCannotLoadObject=Skedari i klasës %s u ngarkua, por objekti %s nuk u gjet në të
+UseMenuModuleToolsToAddCronJobs=Shkoni te menyja "<a href="%s">Faqja kryesore - Veglat e administratorit - Punët e planifikuara</a>" për të parë dhe modifikuar punët e planifikuara.
+JobDisabled=Punë me aftësi të kufizuara
+MakeLocalDatabaseDumpShort=Rezervimi i bazës së të dhënave lokale
+MakeLocalDatabaseDump=Krijo një hale lokale të bazës së të dhënave. Parametrat janë: kompresimi ('gz' ose 'bz' ose 'asnjë'), lloji i rezervës ('mysql', 'pgsql', 'auto'), 1, 'auto' ose emri i skedarit për t'u ndërtuar, numri i skedarëve rezervë për t'u mbajtur
+MakeSendLocalDatabaseDumpShort=Dërgo kopje rezervë të bazës së të dhënave lokale
+MakeSendLocalDatabaseDump=Dërgoni kopje rezervë të bazës së të dhënave lokale me email. Parametrat janë: te, nga, tema, mesazhi, emri i skedarit (Emri i skedarit të dërguar), filtri ('sql' vetëm për kopje rezervë të bazës së të dhënave)
+BackupIsTooLargeSend=Na vjen keq, skedari i fundit rezervë është shumë i madh për t'u dërguar me email
+CleanUnfinishedCronjobShort=Pastroni cronjobën e papërfunduar
+CleanUnfinishedCronjob=Cronjob i pastër ka ngecur në përpunim kur procesi nuk po funksionon më
+WarningCronDelayed=Kujdes, për qëllimin e performancës, cilado qoftë data e ardhshme e ekzekutimit të punëve të aktivizuara, punët tuaja mund të vonohen në një maksimum prej %s orësh, përpara se të ekzekutohen.
+DATAPOLICYJob=Pastrues dhe anonimizues i të dhënave
+JobXMustBeEnabled=Puna %s duhet të aktivizohet
+EmailIfError=Email për paralajmërim për gabim
+JobNotFound=Puna %s nuk u gjet në listën e punëve (provoni të çaktivizoni/aktivizoni modulin)
+ErrorInBatch=Gabim gjatë ekzekutimit të punës %s
+
+# Cron Boxes
+LastExecutedScheduledJob=Puna e planifikuar e fundit e ekzekutuar
+NextScheduledJobExecute=Puna tjetër e planifikuar për t'u ekzekutuar
+NumberScheduledJobError=Numri i punëve të planifikuara gabimisht
+NumberScheduledJobNeverFinished=Numri i punëve të planifikuara që nuk kanë përfunduar kurrë

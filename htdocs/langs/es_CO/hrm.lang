@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - hrm
+HRM_EMAIL_EXTERNAL_SERVICE=Correo electrónico para evitar el servicio externo de HRM
+ConfirmDeleteEstablishment=¿Estás seguro de que deseas eliminar este establecimiento?
+OpenEtablishment=Establecimiento abierto
+CloseEtablishment=Establecimiento cerrado
+DictionaryPublicHolidays=Licencia - Días festivos
+DictionaryDepartment=HRM - Unidad organizativa
+DictionaryFunction=HRM - Puestos de trabajo
+ListOfEmployees=Lista de empleados
+HrmSetup=Configuración del módulo HRM
+JobCard=Tarjeta de trabajo
+JobProfile=Perfil del puesto
+SkillCard=Tarjeta de habilidad
+EmployeeSkillsUpdated=Se actualizaron las habilidades de los empleados (consulte la pestaña "Habilidades" de la tarjeta de empleado)
+MaxlevelGreaterThan=El nivel de empleados es mayor que el nivel esperado
+MaxLevelEqualTo=El nivel del empleado es igual al nivel esperado
+MaxLevelLowerThan=El nivel de empleados es inferior al nivel esperado
+MaxLevelLowerThanShort=Nivel más bajo de lo esperado
+AddSkill=Añadir habilidades al perfil del puesto
+JobsExtraFields=Atributos complementarios (Perfiles de puestos)
+TheJobProfileHasNoSkillsDefinedFixBefore=El perfil laboral evaluado de este empleado no tiene habilidades definidas. Agregue habilidades, luego elimínelas y reinicie la evaluación.

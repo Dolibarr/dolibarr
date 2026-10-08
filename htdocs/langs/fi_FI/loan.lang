@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Laina
+Loans=Lainat
+NewLoan=Uusi laina
+ShowLoan=Näytä laina
+PaymentLoan=Lainan lyhennys
+LoanPayment=Lainan lyhennys
+ShowLoanPayment=Näyt lainanlyhennys
+LoanCapital=Pääkaupunki
+Insurance=Vakuutus
+Interest=Korko
+Nbterms=Kausien lukumäärä
+Term=Termi
+LoanAccountancyCapitalCode=Kirjanpitotili pääoma
+LoanAccountancyInsuranceCode=Kirjanpitotili vakuutukset
+LoanAccountancyInterestCode=Kirjanpitotili korot
+ConfirmDeleteLoan=Vahvista lainan poisto
+LoanDeleted=Laina poistettu onnistuneesti
+ConfirmPayLoan=Vahvista tämän lainan maksu
+LoanPaid=Laina maksettu
+ListLoanAssociatedProject=Tämän projektin lainat
+AddLoan=luo laina
+FinancialCommitment=Taloudellinen sitoutuminen
+InterestAmount=Korko
+CapitalRemain=Pääomaa jää
+TermPaidAllreadyPaid = Tämä aika on jo maksettu
+CantUseScheduleWithLoanStartedToPaid = Aikajanaa ei voi luoda laina:lle, jonka maksu on alkanut
+CantModifyInterestIfScheduleIsUsed = Et voi muuttaa kiinnostusta, jos käytät aikataulua
+# Admin
+ConfigLoan=Moduulin laina määritykset
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Tili (tilikaaviosta), jota oletus käyttää pääomaan (laina-moduuli)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Tili (tilikaaviosta), jota oletus käyttää korkoa varten (laina-moduuli)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Tili (tilikaaviosta), jota oletus käyttää vakuutuksiin (laina-moduuli)
+CreateCalcSchedule=Muokkaa taloudellista sitoumusta

@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - stocks
+MovementId=ID de Movimiento
+StockMovementForId=ID de Movimiento %d
+ListMouvementStockProject=Lista de movimientos de stock asociados al proyecto
+QtyDispatchedShort=Cant. despachada
+MassMovement=Movimiento masivo
+StockMovementRecorded=Movimiento de stock grabado
+MovementLabel=Etiqueta de movimiento
+MovementCorrectStock=Corrección de stock del producto %s
+inventoryEdit=Editar
+AddProduct=Agregar
+ListInventory=Lista
+DisableStockChangeOfSubProduct=Desactiva el cambio de stock para todos los productos de este Kit durante este movimiento.

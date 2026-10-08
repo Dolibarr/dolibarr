@@ -1,0 +1,3 @@
+#!/bin/ksh
+
+echo Text utf8 avec un é encodé en ISO.

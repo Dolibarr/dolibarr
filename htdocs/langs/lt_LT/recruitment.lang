@@ -1,0 +1,71 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Įdarbinimas
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Tvarkyti ir sekti naujų darbo vietų įdarbinimo kampanijas
+# Admin page
+RecruitmentSetup = Įdarbinimo sąranka
+RecruitmentSetupPage = Čia įveskite pagrindines įdarbinimo modulio parinktis
+RecruitmentArea=Įdarbinimo sritis
+PublicInterfaceRecruitmentDesc=Vieši darbo skelbimų puslapiai yra vieši URL adresai, skirti rodyti ir atsakyti į laisvus darbo skelbimus. Kiekvienam laisvam darbo skelbimui yra atskira nuoroda, kurią galima rasti kiekvieno darbo skelbimo įraše.
+EnablePublicRecruitmentPages=Įjungti viešus atvirų darbo vietų puslapius
+
+NbOfEmployeesExpected=Numatomas darbuotojų skaičius
+JobLabel=Pareigybės pavadinimas
+WorkPlace=Darbo vieta
+DateExpected=Numatoma data
+FutureManager=Būsimasis vadovas
+ResponsibleOfRecruitement=Atsakingas už įdarbinimą
+IfJobIsLocatedAtAPartner=Jei darbas yra partnerio vietoje
+PositionToBeFilled=Pareigos
+PositionsToBeFilled=Darbo pozicijos
+ListOfPositionsToBeFilled=Darbo vietų sąrašas
+NewPositionToBeFilled=Naujos darbo pozicijos
+JobOfferToBeFilled=Darbo pozicija, kurią reikia užpildyti
+ThisIsInformationOnJobPosition=Informacija apie pareigas, kurias norima užimti
+ContactForRecruitment=Susisiekite dėl įdarbinimo
+EmailRecruiter=El. paštas įdarbintojui
+ToUseAGenericEmail=Naudoti bendrą el. pašto adresą. Jei nenurodytas, bus naudojamas už įdarbinimą atsakingo asmens el. pašto adresas.
+NewCandidature=Nauja paraiška
+ListOfCandidatures=Paraiškų sąrašas
+Remuneration=Atlyginimas
+RequestedRemuneration=Pageidaujamas atlyginimas
+ProposedRemuneration=Siūlomas atlyginimas
+ContractProposed=Pasiūlyta sutartis
+ContractSigned=Pasirašyta sutartis
+ContractRefused=Sutartis atmesta
+RecruitmentCandidature=Paraiška
+JobPositions=Darbo pozicijos
+RecruitmentCandidatures=Paraiškos
+InterviewToDo=Kontaktai, kuriuos reikia sekti
+AnswerCandidature=Atsakymas į paraišką
+YourCandidature=Jūsų paraiška
+YourCandidatureAnswerMessage=Dėkojame už jūsų paraišką.<br>...
+JobClosedTextCandidateFound=Darbo pozicija uždaryta. Pareigos užimtos.
+JobClosedTextCanceled=Darbo pozicija uždaryta.
+ExtrafieldsJobPosition=Papildomi atributai (pareigos)
+ExtrafieldsApplication=Papildomi atributai (darbo paraiškos)
+MakeOffer=Pateikite pasiūlymą
+WeAreRecruiting=Ieškome darbuotojų. Tai yra laisvų pozicijų, kurias norime užpildyti, sąrašas...
+NoPositionOpen=Šiuo metu nėra laisvų pozicijų
+ConfirmClose=Patvirtinti atšaukimą
+ConfirmCloseAsk=Ar tikrai norite atšaukti šią kandidatūrą į atranką?
+Recruitment=Įdarbinimas
+ApplyJobCandidature=Kreipkitės dėl šio darbo
+ErrorRecruitmmentCandidatureAlreadyExists= Jau yra įdarbinimo kandidatūra su el. pašto adresu %s
+RecruitmentCandidatureSaved=Įdarbinimo kandidatūra sėkmingai išsaugota
+NoOpenJobOffer=Šiuo metu nėra atvirų darbo pasiūlymų
+ShowPositionToBeFilled=Show Position to be filled

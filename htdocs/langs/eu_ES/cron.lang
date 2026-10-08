@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Irakurri programatutako lana
+Permission23102 = Sortu/eguneratu programatutako lana
+Permission23103 = Ezabatu programatutako lana
+Permission23104 = Programatutako lana exekutatu
+# Admin
+CronSetup=Lan-kudeaketaren konfigurazioa programatuta
+URLToLaunchCronJobs=URLa cron lan kualifikatuak arakatzaile batetik egiaztatu eta abiarazteko
+OrToLaunchASpecificJob=Edo arakatzaile batetik lan zehatz bat egiaztatu eta abiarazteko
+KeyForCronAccess=Cron lanak abiarazteko URLaren segurtasun-giltza
+FileToLaunchCronJobs=Komando-lerroa cron lan kualifikatuak egiaztatu eta abiarazteko
+CronExplainHowToRunUnix=Unix ingurunean, crontab sarrera hau erabili beharko zenuke komando-lerroa 5 minuturo exekutatzeko.
+CronExplainHowToRunWin=Microsoft(tm) Windows ingurunean, Programatutako Zereginen tresnak erabil ditzakezu komando-lerroa 5 minuturo exekutatzeko.
+CronMethodDoesNotExists=%s klaseak ez du %s metodorik.
+CronMethodNotAllowed=%s klaseko %s metodoa debekatutako metodoen blokeo-zerrendan dago.
+CronJobDefDesc=Cron lan-profilak moduluaren deskribapen-fitxategian definitzen dira. Modulua aktibatzen denean, kargatu eta eskuragarri jartzen dira, beraz, lanak administrazio-tresnen menutik %s administratu ahal izango dituzu.
+CronJobProfiles=Aurredefinitutako cron lan profilen zerrenda
+# Menu
+EnabledAndDisabled=Gaituta eta desgaituta
+# Page list
+CronLastOutput=Azken exekuzio-irteera
+CronLastResult=Azken emaitza kodea
+CronCommand=Agindua
+CronList=Programatutako lanak
+CronDelete=Ezabatu programatutako lanak
+CronConfirmDelete=Ziur zaude programatutako lan hauek ezabatu nahi dituzula?
+CronExecute=Abiarazi orain
+CronConfirmExecute=Ziur zaude programatutako lan hauek orain exekutatu nahi dituzula?
+CronInfo=Programatutako lan moduluak lanak automatikoki exekutatzeko programatzea ahalbidetzen du. Lanak eskuz ere has daitezke.
+CronTask=Lana
+CronNone=Programatutako zereginaren hurrengo exekuzioa
+CronNotYetRan=Inoiz ez exekutatua
+CronDtStart=Ez lehenago.
+CronDtEnd=Ez ondoren.
+CronDtNextLaunch=Hurrengo exekuzioa
+CronDtLastLaunch=Azken exekuzioaren hasiera data
+CronDtLastResult=Azken exekuzioaren amaiera data
+CronFrequency=Maiztasuna
+CronClass=Klasea
+CronMethod=Metodoa
+CronModule=Modulua
+CronNoJobs=Ez dago lanposturik erregistratuta
+CronPriority=Lehentasuna
+CronLabel=Etiketa
+CronNbRun=Jaurtiketa kopurua
+CronMaxRun=Abiarazte kopuru maximoa
+CronEach=Bakoitza
+JobFinished=Lana abiarazi eta amaitu da
+Scheduled=Programatuta
+#Page card
+CronAdd=Gehitu lanpostuak
+CronEvery=Lana exekutatu egunero
+CronObject=Sortu beharreko instantzia/objektua
+CronArgs=Parametroak
+CronSaveSucess=Gorde behar bezala
+CronNote=Iruzkina
+CronFieldMandatory=%s eremuak derrigorrezkoak dira
+CronErrEndDateStartDt=Amaiera-data ezin da hasiera-data baino lehenagokoa izan
+StatusAtInstall=Moduluaren instalazioaren egoera
+CronStatusActiveBtn=Gaitu programazioa
+CronStatusInactiveBtn=Desgaitu
+CronTaskInactive=Lan hau desgaituta dago (ez dago programatuta)
+CronId=IDa
+CronClassFile=Fitxategi-izena klasearekin
+CronModuleHelp=Dolibarr moduluaren direktorioaren izena (kanpoko Dolibarr moduluarekin ere funtzionatzen du). <BR> Adibidez, Dolibarr Produktu objektuaren /htdocs/<u>produktua</u>/class/product.class.php fetch metodoa deitzeko, moduluaren balioa<br><i>produktua</i> da.
+CronClassFileHelp=Kargatzeko bide-izen erlatiboa eta fitxategi-izena (bidea web zerbitzariaren erro-direktorioarekiko erlatiboa da). <BR> Adibidez, Dolibarr Produktu objektuaren htdocs/product/class/<u>product.class.php</u> fetch metodoa deitzeko, klase fitxategi izenaren balioa hau da:<br><i>product/class/product.class.php</i>
+CronObjectHelp=Kargatu beharreko objektuaren izena. <BR> Adibidez, Dolibarr Produktu objektuaren /htdocs/product/class/product.class.php fetch metodoa deitzeko, klase fitxategiaren izenaren balioa hau da: <br><i>Produktua</i>
+CronMethodHelp=Abiarazi beharreko objektu-metodoa. <BR> Adibidez, Dolibarr Produktu objektuaren /htdocs/product/class/product.class.php fetch metodoa deitzeko, metodoaren balioa hau da: <br><i>fetch</i>
+CronArgsHelp=Metodoaren argumentuak. <BR> Adibidez, Dolibarr Produktu objektuaren /htdocs/product/class/product.class.php fetch metodoa deitzeko, parametroen balioa hau izan daiteke: <br><i>0, ProductRef</i>
+CronCommandHelp=Exekutatzeko sistemaren komando-lerroa.
+CronCreateJob=Sortu programatutako lan berria
+CronFrom=-tik
+# Info
+# Common
+CronType=Lan mota
+CronType_method=PHP klase baten deitzeko metodoa
+CronType_command=Shell komandoa
+CronCannotLoadClass=Ezin da %s klase fitxategia kargatu (%s klasea erabiltzeko)
+CronModuleNotEnabledInThisEntity=Cron modulua ez dago gaituta entitate honetan (%s objektuaren %s metodoa erabiltzeko)
+CronCannotLoadObject=%s klase-fitxategia kargatu da, baina %s objektua ez da bertan aurkitu.
+UseMenuModuleToolsToAddCronJobs=Joan "<a href="%s">Hasiera - Administrazio tresnak - Programatutako lanak</a>" menura programatutako lanak ikusteko eta editatzeko.
+JobDisabled=Lana desgaituta
+MakeLocalDatabaseDumpShort=Tokiko datu-basearen babeskopia
+MakeLocalDatabaseDump=Sortu datu-base lokal baten zabortegi bat. Parametroak hauek dira: konpresioa ('gz' edo 'bz' edo 'none'), babeskopia mota ('mysql', 'pgsql', 'auto'), 1, 'auto' edo eraikitzeko fitxategi-izena, gordetzeko babeskopia-fitxategien kopurua
+MakeSendLocalDatabaseDumpShort=Bidali tokiko datu-basearen babeskopia
+MakeSendLocalDatabaseDump=Bidali tokiko datu-basearen babeskopia posta elektronikoz. Parametroak hauek dira: nori, igorleari, gaiari, mezuari, fitxategi-izenari (bidalitako fitxategiaren izena), iragazkiari ('sql' datu-basearen babeskopietarako soilik)
+BackupIsTooLargeSend=Barkatu, azken babeskopia fitxategia handiegia da posta elektronikoz bidaltzeko.
+CleanUnfinishedCronjobShort=Amaitu gabeko cronjob garbitu
+CleanUnfinishedCronjob=Garbitu cronjob prozesuan trabatuta prozesua jada martxan ez dagoenean
+WarningCronDelayed=Kontuz, errendimenduaren arrazoiengatik, gaitutako lanen hurrengo exekuzio data edozein dela ere, zure lanak gehienez %s orduz atzeratu daitezke, exekutatu aurretik.
+DATAPOLICYJob=Datuen garbitzailea eta anonimizatzailea
+JobXMustBeEnabled=%s lana gaituta egon behar da
+EmailIfError=Akatsen berri emateko mezu elektronikoa
+JobNotFound=%s lana ez da aurkitu lanen zerrendan (saiatu modulua desgaitzen/gaitzen)
+ErrorInBatch=Errorea gertatu da %s lana exekutatzean
+
+# Cron Boxes
+LastExecutedScheduledJob=Azken exekuzio programatutako lana
+NextScheduledJobExecute=Hurrengo exekutatzeko programatutako lana
+NumberScheduledJobError=Akatsak dituzten programatutako lanen kopurua
+NumberScheduledJobNeverFinished=Amaitu ez diren programatutako lanen kopurua

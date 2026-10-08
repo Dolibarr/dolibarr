@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal modulio nustatymas
+PaypalDesc=Šis modulis leidžia klientams atlikti mokėjimus per <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Tai galima naudoti ad hoc mokėjimams arba mokėjimams, susijusiems su „Dolibarr“ objektu (sąskaita faktūra, užsakymu ir kt.).
+PaypalOrCBDoPayment=Mokėti naudojant „PayPal“ (kortele arba „PayPal“)
+PaypalDoPayment=Mokėti naudojant PayPal
+PAYPAL_API_SANDBOX=Režimas testas/smėlio dėžė (Sandbox)
+PAYPAL_API_USER=API vartotojo vardas
+PAYPAL_API_PASSWORD=API slaptažodis
+PAYPAL_API_SIGNATURE=API parašas
+PAYPAL_SSLVERSION=Curl SSL versija
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Siūlykite „integruotą“ mokėjimą (kreditinė kortelė + „PayPal“) arba tik „PayPal“
+PaypalModeIntegral=Integruotas
+PaypalModeOnlyPaypal=Tik PayPal
+ONLINE_PAYMENT_CSS_URL=Pasirinktinai CSS stiliaus lapo URL internetinio mokėjimo puslapyje
+ThisIsTransactionId=This is id of transaction
+PAYPAL_ADD_PAYMENT_URL=Įtraukite „PayPal“ mokėjimo URL adresą, kai siunčiate dokumentą el. paštu
+NewOnlinePaymentReceived=Gautas naujas mokėjimas internetu
+NewOnlinePaymentFailed=Bandyta atlikti naują mokėjimą internetu, bet nepavyko
+ONLINE_PAYMENT_SENDEMAIL=El. pašto adresas pranešimams gauti po kiekvieno mokėjimo bandymo (sėkmingo ir nesėkmingo)
+ReturnURLAfterPayment=Grįžti į URL po apmokėjimo
+ValidationOfOnlinePaymentFailed=Nepavyko patvirtinti internetinio mokėjimo
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Mokėjimo sistema iškvietė mokėjimo patvirtinimo puslapį ir pateikė klaidą
+SetExpressCheckoutAPICallFailed=„SetExpressCheckout“ API iškvietimas nepavyko.
+DoExpressCheckoutPaymentAPICallFailed=Nepavyko iškviesti „DoExpressCheckoutPayment“ API.
+DetailedErrorMessage=Išsamus klaidos pranešimas
+ShortErrorMessage=Trumpas klaidos pranešimas
+ErrorCode=Klaidos kodas
+ErrorSeverityCode=Klaidos sunkumo kodas
+OnlinePaymentSystem=Internetinė mokėjimo sistema
+PaypalLiveEnabled=Įjungtas „PayPal“ tiesioginis režimas (kitaip – bandymo / smėlio dėžės režimas)
+PaypalImportPayment=Importuoti PayPal mokėjimus
+PostActionAfterPayment=Įrašo veiksmai po apmokėjimų
+ARollbackWasPerformedOnPostActions=Visiems paskelbimo veiksmams atliktas atšaukimas. Jei paskelbimo veiksmus reikia atlikti rankiniu būdu.
+ValidationOfPaymentFailed=Mokėjimo patvirtinimas nepavyko
+CardOwner=Kortelės turėtojas
+PayPalBalance=PayPal kreditas
+OnlineSubscriptionPaymentLine=Internetinė prenumerata užregistruota %s<br>Apmokėta per %s<br>Pradinis IP adresas: %s<br>Operacijos ID: %s

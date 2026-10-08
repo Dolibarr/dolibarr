@@ -1,0 +1,36 @@
+From: dolibarr-robot@domain.com <dolibarr-robot@domain.com>
+Return-Path: dolibarr-robot@domain.com <dolibarr-robot@domain.com>
+X-Mailer: Dolibarr version 2.7.0-beta (using php mail)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8f5b32f1596aaf192b28988da8f0c4e9"
+X-attachments: images.jpg
+--8f5b32f1596aaf192b28988da8f0c4e9
+Content-Type: text/plain; charset=UTF-8
+
+Testé
+--8f5b32f1596aaf192b28988da8f0c4e9
+--8f5b32f1596aaf192b28988da8f0c4e9
+Content-Type: image/jpeg; name="images.jpg"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="images.jpg"
+
+/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYI
+DAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkF
+BQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU
+FBQUFBT/wAARCAAQABADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQF
+BgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEI
+I0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNk
+ZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLD
+xMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEB
+AQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJB
+UQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZH
+SElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaan
+qKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oA
+DAMBAAIRAxEAPwD6I/bC/bMXwjqQ+G/gK+ZvFN3KtrfapaDzDp+4hSkYB+aXn1G31B5X
+zD4UftWfEX4cfEnw14COtj4sadqTwQzjUnUX+lNJOIT5t1E8qtglWO5nOGC5U8V2PxJ/
+YyTQzNcJoFxeoklw0HirwX+61iFJS5YXNmxKXQAkKl4yJCOAoo/ZX/ZRtXWO4KXtt4Ot
+LpZpL26t3s73xFcRPlCY2w8FpGy5CHDSMOflyXwlCrKvGop2ppaxsvefdvdJdEt+vn5X
+s68q3M3pf7l2ts79/uP/2Q==
+
+--8f5b32f1596aaf192b28988da8f0c4e9--

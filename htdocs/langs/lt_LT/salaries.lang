@@ -1,0 +1,67 @@
+Salary=Atlyginimas
+Salaries=Atlyginimai
+NewSalary=Naujas atlyginimas
+AddSalary=Pridėti atlyginimą
+NewSalaryPayment=Nauja atlyginimo kortelė
+AddSalaryPayment=Pridėti atlyginimo mokėjimą
+SalaryPayment=Atlyginimo mokėjimas
+SalariesPayments=Atlyginimų mokėjimai
+SalariesPaymentsOf=%s atlyginimų mokėjimai
+ShowSalaryPayment=Rodyti atlyginimo mokėjimą
+SalaryID=Atlyginimo ID
+SalaryAmount=Atlyginimo suma
+SalaryDate=Salary date
+SalaryPaid=Išmokėtas atlyginimas
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=Grynasis apmokėtas
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Sąskaita (iš sąskaitų plano), pagal numatytuosius nustatymus naudojama atlyginimų „vartotojams“
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Vartotojo kortelėje apibrėžta speciali sąskaita bus naudojama tik papildomai apskaitai. Ji bus naudojama Didžiajai knygai, bet taip pat ir kaip numatytoji papildomos apskaitos reikšmė, jei vartotojui nenurodyta speciali vartotojo apskaitos sąskaita.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Apskaitos sąskaita pagal numatytuosius nustatymus darbo užmokesčio mokėjimams
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Pagal numatytuosius nustatymus, kurdami atlyginimą, palikite parinktį „Automatiškai sukurti bendrą mokėjimą“ tuščią.
+
+# Stats / Info
+CurrentSalary=Dabartinis atlyginimas
+LastSalaries=Naujausi **%s** atlyginimai
+AllSalaries=Visi atlyginimai
+SalariesStatistics=Atlyginimų statistika
+SalariesAndPayments=Atlyginimai ir mokėjimai
+UserPaySlip=Atlyginimo lapelis
+PayPeriod=Pay period
+
+# THM / TJM
+THM=Vidutinis valandinis įkainis
+THMDescription=Ši reikšmė gali būti naudojama apskaičiuoti vartotojų įvesto projekto laiko sąnaudas, jei naudojamas modulio projektas.
+TJM=Vidutinė dienos norma
+TJMDescription=Ši vertė šiuo metu skirta tik informaciniams tikslams ir nenaudojama jokiems skaičiavimams
+
+# Other actions
+ConfirmDeleteSalaryPayment=Ar norite ištrinti šį atlyginimo mokėjimą?
+FillFieldFirst=Pirmiausia užpildykite darbuotojo laukelį
+UpdateAmountWithLastSalary=Nustatykite paskutinio atlyginimo dydį
+MakeTransferRequest=Pateikti perkėlimo užklausą
+VirementOrder=Kredito perkėlimo užklausa
+WithdrawalReceipt=Kredito pervedimo pavedimas
+OrderWaiting=Laukiamas užsakymas
+FillEndOfMonth=Mėnesio pabaiga
+
+# Shortcuts
+PreviousMonthShort=Praėjusį mėnesį
+CurrentMonthShort=Einamasis mėnuo
+NextMonthShort=Next month
+PreviousWeekShort=Praėjusią savaitę
+CurrentWeekShort=Dabartinė savaitė

@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = निर्धारित कार्य पढ़ें
+Permission23102 = शेड्यूल्ड जॉब बनाएं/अपडेट करें
+Permission23103 = शेड्यूल किया गया कार्य हटाएं
+Permission23104 = निर्धारित कार्य निष्पादित करें
+# Admin
+CronSetup=अनुसूचित कार्य प्रबंधन सेटअप
+URLToLaunchCronJobs=ब्राउज़र से योग्य क्रॉन जॉब्स की जांच और लॉन्च करने के लिए URL
+OrToLaunchASpecificJob=या ब्राउज़र से किसी विशिष्ट कार्य की जांच और उसे शुरू करने के लिए
+KeyForCronAccess=क्रॉन जॉब्स लॉन्च करने के लिए URL हेतु सुरक्षा कुंजी
+FileToLaunchCronJobs=योग्य क्रॉन जॉब्स की जांच और लॉन्च करने के लिए कमांड लाइन
+CronExplainHowToRunUnix=यूनिक्स वातावरण पर आपको प्रत्येक 5 मिनट में कमांड लाइन चलाने के लिए निम्नलिखित crontab प्रविष्टि का उपयोग करना चाहिए
+CronExplainHowToRunWin=Microsoft(tm) Windows परिवेश पर आप प्रत्येक 5 मिनट में कमांड लाइन चलाने के लिए शेड्यूल्ड टास्क टूल का उपयोग कर सकते हैं
+CronMethodDoesNotExists=क्लास %s में कोई भी विधि %s नहीं है
+CronMethodNotAllowed=%s वर्ग की विधि %s निषिद्ध विधियों की ब्लॉक सूची में है
+CronJobDefDesc=क्रॉन जॉब प्रोफाइल को मॉड्यूल डिस्क्रिप्टर फ़ाइल में परिभाषित किया जाता है। जब मॉड्यूल सक्रिय होता है, तो वे लोड हो जाते हैं और उपलब्ध होते हैं ताकि आप एडमिन टूल मेनू %s से जॉब्स को प्रबंधित कर सकें।
+CronJobProfiles=पूर्वनिर्धारित क्रॉन जॉब प्रोफाइल की सूची
+# Menu
+EnabledAndDisabled=सक्षम और अक्षम
+# Page list
+CronLastOutput=नवीनतम रन आउटपुट
+CronLastResult=नवीनतम परिणाम कोड
+CronCommand=आज्ञा
+CronList=अनुसूचित नौकरियाँ
+CronDelete=शेड्यूल किए गए कार्य हटाएं
+CronConfirmDelete=क्या आप वाकई इन शेड्यूल किए गए कार्यों को हटाना चाहते हैं?
+CronExecute=अब लोकार्पण हुआ
+CronConfirmExecute=क्या आप वाकई इन शेड्यूल किए गए कार्यों को अभी निष्पादित करना चाहते हैं?
+CronInfo=शेड्यूल्ड जॉब मॉड्यूल जॉब को स्वचालित रूप से निष्पादित करने के लिए शेड्यूल करने की अनुमति देता है। जॉब को मैन्युअल रूप से भी शुरू किया जा सकता है।
+CronTask=काम
+CronNone=निर्धारित कार्य का अगला रन
+CronNotYetRan=कभी निष्पादित नहीं किया गया
+CronDtStart=इससे पहले नही
+CronDtEnd=बाद में नहीं
+CronDtNextLaunch=अगला निष्पादन
+CronDtLastLaunch=नवीनतम निष्पादन की आरंभ तिथि
+CronDtLastResult=नवीनतम निष्पादन की अंतिम तिथि
+CronFrequency=आवृत्ति
+CronClass=कक्षा
+CronMethod=तरीका
+CronModule=मॉड्यूल
+CronNoJobs=कोई नौकरी पंजीकृत नहीं
+CronPriority=प्राथमिकता
+CronLabel=लेबल
+CronNbRun=प्रक्षेपणों की संख्या
+CronMaxRun=प्रक्षेपणों की अधिकतम संख्या
+CronEach=प्रत्येक
+JobFinished=काम शुरू हुआ और ख़त्म हुआ
+Scheduled=अनुसूचित
+#Page card
+CronAdd=नौकरियाँ जोड़ें
+CronEvery=हर दिन नौकरी चलाएँ
+CronObject=बनाने के लिए इंस्टेंस/ऑब्जेक्ट
+CronArgs=पैरामीटर
+CronSaveSucess=सफलतापूर्वक सहेजें
+CronNote=टिप्पणी
+CronFieldMandatory=फ़ील्ड %s अनिवार्य है
+CronErrEndDateStartDt=अंतिम तिथि, आरंभ तिथि से पहले नहीं हो सकती
+StatusAtInstall=मॉड्यूल स्थापना के समय स्थिति
+CronStatusActiveBtn=शेड्यूलिंग सक्षम करें
+CronStatusInactiveBtn=अक्षम करना
+CronTaskInactive=यह कार्य अक्षम है (शेड्यूल नहीं किया गया है)
+CronId=पहचान
+CronClassFile=क्लास के साथ फ़ाइल नाम
+CronModuleHelp=Dolibarr मॉड्यूल निर्देशिका का नाम (बाह्य Dolibarr मॉड्यूल के साथ भी काम करता है)। <BR> उदाहरण के लिए Dolibarr Product ऑब्जेक्ट /htdocs/<u>product</u>/class/product.class.php की fetch विधि को कॉल करने के लिए, मॉड्यूल का मान है<br><i>product</i>
+CronClassFileHelp=लोड करने हेतु सापेक्ष पथ और फ़ाइल नाम (पथ वेब सर्वर रूट निर्देशिका से सापेक्ष है)। <BR> उदाहरण के लिए, Dolibarr Product ऑब्जेक्ट htdocs/product/class/<u>product.class.php</u> की fetch विधि को कॉल करने के लिए, क्लास फ़ाइल नाम का मान है<br><i>product/class/product.class.php</i>
+CronObjectHelp=लोड करने के लिए ऑब्जेक्ट का नाम. <BR> उदाहरण के लिए Dolibarr Product ऑब्जेक्ट /htdocs/product/class/product.class.php की fetch विधि को कॉल करने के लिए, क्लास फ़ाइल नाम का मान है<br><i>Product</i>
+CronMethodHelp=लॉन्च करने के लिए ऑब्जेक्ट विधि। <BR> उदाहरण के लिए Dolibarr Product ऑब्जेक्ट /htdocs/product/class/product.class.php की fetch विधि को कॉल करने के लिए, विधि का मान है<br><i>fetch</i>
+CronArgsHelp=विधि तर्क. <BR> उदाहरण के लिए Dolibarr Product ऑब्जेक्ट /htdocs/product/class/product.class.php की fetch विधि को कॉल करने के लिए, पैरामीटर का मान <br><i>0, ProductRef</i> हो सकता है
+CronCommandHelp=निष्पादित करने के लिए सिस्टम कमांड लाइन.
+CronCreateJob=नया शेड्यूल किया गया कार्य बनाएँ
+CronFrom=से
+# Info
+# Common
+CronType=नौकरी का प्रकार
+CronType_method=PHP क्लास की कॉल विधि
+CronType_command=शेल कमांड
+CronCannotLoadClass=क्लास फ़ाइल %s लोड नहीं की जा सकती (क्लास %s का उपयोग करने के लिए)
+CronModuleNotEnabledInThisEntity=इस इकाई में क्रॉन मॉड्यूल सक्षम नहीं है (%s ऑब्जेक्ट की %s विधि का उपयोग करने के लिए)
+CronCannotLoadObject=क्लास फ़ाइल %s लोड की गई, लेकिन इसमें ऑब्जेक्ट %s नहीं मिला
+UseMenuModuleToolsToAddCronJobs=शेड्यूल किए गए कार्यों को देखने और संपादित करने के लिए मेनू "<a href="%s">होम - एडमिन टूल्स - शेड्यूल किए गए कार्य</a>" पर जाएं।
+JobDisabled=नौकरी अक्षम
+MakeLocalDatabaseDumpShort=स्थानीय डेटाबेस बैकअप
+MakeLocalDatabaseDump=स्थानीय डेटाबेस डंप बनाएँ। पैरामीटर हैं: संपीड़न ('gz' या 'bz' या 'कोई नहीं'), बैकअप प्रकार ('mysql', 'pgsql', 'auto'), 1, 'auto' या बनाने के लिए फ़ाइल नाम, रखने के लिए बैकअप फ़ाइलों की संख्या
+MakeSendLocalDatabaseDumpShort=स्थानीय डेटाबेस बैकअप भेजें
+MakeSendLocalDatabaseDump=ईमेल द्वारा स्थानीय डेटाबेस बैकअप भेजें। पैरामीटर हैं: to, from, subject, message, filename (भेजी गई फ़ाइल का नाम), फ़िल्टर ('sql' केवल डेटाबेस के बैकअप के लिए)
+BackupIsTooLargeSend=क्षमा करें, अंतिम बैकअप फ़ाइल ईमेल द्वारा भेजने के लिए बहुत बड़ी है
+CleanUnfinishedCronjobShort=अधूरे क्रोनजॉब को साफ़ करें
+CleanUnfinishedCronjob=जब प्रक्रिया अब चालू नहीं है तो प्रसंस्करण में फंसे क्रोनजॉब को साफ करें
+WarningCronDelayed=ध्यान दें, प्रदर्शन के उद्देश्य से, सक्षम नौकरियों के निष्पादन की अगली तिथि जो भी हो, आपकी नौकरियों को चलाने से पहले अधिकतम %s घंटों तक विलंबित किया जा सकता है।
+DATAPOLICYJob=डेटा क्लीनर और एनोनिमाइज़र
+JobXMustBeEnabled=कार्य %s सक्षम होना चाहिए
+EmailIfError=त्रुटि पर चेतावनी हेतु ईमेल भेजें
+JobNotFound=जॉब %s जॉब की सूची में नहीं मिला (मॉड्यूल को अक्षम/सक्षम करने का प्रयास करें)
+ErrorInBatch=कार्य चलाते समय त्रुटि %s
+
+# Cron Boxes
+LastExecutedScheduledJob=अंतिम निष्पादित शेड्यूल किया गया कार्य
+NextScheduledJobExecute=निष्पादित करने के लिए अगला शेड्यूल किया गया कार्य
+NumberScheduledJobError=त्रुटिपूर्ण शेड्यूल किए गए कार्यों की संख्या
+NumberScheduledJobNeverFinished=कभी भी समाप्त न होने वाले निर्धारित कार्यों की संख्या

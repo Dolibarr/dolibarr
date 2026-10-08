@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Rejalashtirilgan ishni o'qing
+Permission23102 = Rejalashtirilgan ishni yaratish / yangilash
+Permission23103 = Rejalashtirilgan ishni o'chirish
+Permission23104 = Rejalashtirilgan ishni bajaring
+# Admin
+CronSetup=Rejalashtirilgan ishni boshqarish
+URLToLaunchCronJobs=Brauzerdan malakali cron ishlarini tekshirish va ishga tushirish uchun URL
+OrToLaunchASpecificJob=Yoki brauzerdan ma'lum bir ishni tekshirish va ishga tushirish uchun
+KeyForCronAccess=Cron ishlarini boshlash uchun URL uchun xavfsizlik kaliti
+FileToLaunchCronJobs=Malakali cron ishlarini tekshirish va ishga tushirish uchun buyruq satri
+CronExplainHowToRunUnix=Unix muhitida buyruq satrini har 5 daqiqada bajarish uchun quyidagi crontab yozuvidan foydalanishingiz kerak
+CronExplainHowToRunWin=Microsoft (tm) Windows muhitida har 5 daqiqada buyruq satrini bajarish uchun Rejalashtirilgan Vazifa vositalaridan foydalanishingiz mumkin
+CronMethodDoesNotExists=%s sinfida hech qanday usul mavjud emas %s
+CronMethodNotAllowed=%s sinfining %s usuli taqiqlangan usullar bloklangan ro‘yxatida
+CronJobDefDesc=Cron ishi profillari modul identifikatori faylida aniqlanadi. Modul faollashtirilganda, ular yuklanadi va mavjud bo'ladi, shuning uchun siz ishlarni administrator vositalari menyusidan %s boshqarishingiz mumkin.
+CronJobProfiles=Oldindan belgilangan cron ish profillari ro'yxati
+# Menu
+EnabledAndDisabled=Yoqilgan va o'chirilgan
+# Page list
+CronLastOutput=Oxirgi ishlash natijasi
+CronLastResult=Oxirgi natija kodi
+CronCommand=Buyruq
+CronList=Rejalashtirilgan ish joylari
+CronDelete=Rejalashtirilgan ishlarni o'chirish
+CronConfirmDelete=Ushbu rejalashtirilgan ishlarni o'chirishni xohlaysizmi?
+CronExecute=Hozir ishga tushiring
+CronConfirmExecute=Ushbu rejalashtirilgan ishlarni hoziroq bajarishni xohlaysizmi?
+CronInfo=Rejalashtirilgan ish moduli ishlarni avtomatik ravishda bajarilishini rejalashtirishga imkon beradi. Ishlarni qo'lda boshlash ham mumkin.
+CronTask=Ish
+CronNone=Rejalashtirilgan vazifaning keyingi ishga tushirilishi
+CronNotYetRan=Hech qachon ijro etilmagan
+CronDtStart=Oldin emas
+CronDtEnd=Keyin emas
+CronDtNextLaunch=Keyingi ijro
+CronDtLastLaunch=Oxirgi ijroning boshlanish sanasi
+CronDtLastResult=Oxirgi ijroning tugash sanasi
+CronFrequency=Chastotani
+CronClass=Sinf
+CronMethod=Usul
+CronModule=Modul
+CronNoJobs=Hech qanday ish joyi ro'yxatdan o'tkazilmagan
+CronPriority=Afzallik
+CronLabel=Yorliq
+CronNbRun=Ishga tushirilganlar soni
+CronMaxRun=Ishga tushirishning maksimal soni
+CronEach=Har bir
+JobFinished=Ish ishga tushirildi va tugadi
+Scheduled=Rejalashtirilgan
+#Page card
+CronAdd=Ish joylarini qo'shing
+CronEvery=Har safar ishni bajaring
+CronObject=Yaratiladigan misol / ob'ekt
+CronArgs=Parametrlar
+CronSaveSucess=Muvaffaqiyatli saqlang
+CronNote=Izoh
+CronFieldMandatory=%s maydonlari majburiydir
+CronErrEndDateStartDt=Tugash sanasi boshlanish sanasidan oldin bo'lishi mumkin emas
+StatusAtInstall=Modulni o'rnatish holati
+CronStatusActiveBtn=Rejalashtirishni yoqish
+CronStatusInactiveBtn=O'chirish
+CronTaskInactive=Bu ish o'chirilgan (rejalashtirilgan emas)
+CronId=Id
+CronClassFile=Sinf bilan fayl nomi
+CronModuleHelp=Dolibarr moduli katalogining nomi (tashqi Dolibarr moduli bilan ham ishlaydi). <BR> Masalan, Dolibarr Product ob'ektini olish usulini chaqirish uchun object / htdocs / <u> product </u> /class/product.class.php, modul uchun qiymat <br> a04927zbac18
+CronClassFileHelp=Yuklanadigan nisbiy yo'l va fayl nomi (yo'l veb-serverning ildiz katalogiga nisbatan). <BR> Masalan, Dolibarr Product ob'ektini olish usulini chaqirish uchun htdocs / product / class / <u> product.class.php </u>, sinf fayli nomi uchun qiymati <br> a049271ecaf / product07f.c8f
+CronObjectHelp=Yuklanadigan ob'ekt nomi. <BR> Masalan, Dolibarr Product ob'ektini olish usulini chaqirish uchun
+CronMethodHelp=Ob'ektni ishga tushirish usuli. <BR> Masalan, Dolibarr Product ob'ektini olish usulini chaqirish uchun
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
+CronCommandHelp=Amalga oshirish uchun tizim buyruq satri.
+CronCreateJob=Yangi Rejalashtirilgan ish yarating
+CronFrom=Kimdan
+# Info
+# Common
+CronType=Ish turi
+CronType_method=PHP sinfining qo'ng'iroq usuli
+CronType_command=Shell buyrug'i
+CronCannotLoadClass=%s sinf fayli yuklanmadi (%s sinfidan foydalanish uchun)
+CronModuleNotEnabledInThisEntity=Bu obyektda Cron moduli yoqilmagan (%s obyektining %s usulidan foydalanish uchun)
+CronCannotLoadObject=%s sinf fayli yuklandi, lekin %s ob'ekti topilmadi
+UseMenuModuleToolsToAddCronJobs=Rejalashtirilgan ishlarni ko'rish va tahrirlash uchun "<a href="%s"> Bosh sahifa - Administrator vositalari - Rejalashtirilgan ish o'rinlari </a>" menyusiga o'ting.
+JobDisabled=Ish o'chirilgan
+MakeLocalDatabaseDumpShort=Mahalliy ma'lumotlar bazasini zaxiralash
+MakeLocalDatabaseDump=Mahalliy ma'lumotlar bazasi axlatxonasini yarating. Parametrlar quyidagilardir: siqish ('gz' yoki 'bz' yoki 'yo'q'), zaxira turi ('mysql', 'pgsql', 'auto'), 1, 'auto' yoki fayl nomi yaratish, saqlash uchun zaxira fayllar soni
+MakeSendLocalDatabaseDumpShort=Mahalliy ma'lumotlar bazasi zahirasini yuboring
+MakeSendLocalDatabaseDump=Mahalliy ma'lumotlar bazasi zahirasini elektron pochta orqali yuboring. Parametrlar: kimga, kimdan, mavzu, xabar, fayl nomi (yuborilgan fayl nomi), filtr (faqat maʼlumotlar bazasini zaxiralash uchun "sql")
+BackupIsTooLargeSend=Kechirasiz, oxirgi zaxira fayl juda katta va elektron pochta orqali yuborilmaydi
+CleanUnfinishedCronjobShort=Tugallanmagan cronjobni tozalang
+CleanUnfinishedCronjob=Jarayon endi ishlamay qolganda, ishlov berishda tiqilib qolgan toza cronjob
+WarningCronDelayed=E'tibor bering, ishga tushirilgan ish kunining keyingi sanasi qanday bo'lishidan qat'i nazar, sizning ishingiz bajarilishidan oldin maksimal %s soatga kechiktirilishi mumkin.
+DATAPOLICYJob=Ma'lumotlarni tozalovchi va anonimayzer
+JobXMustBeEnabled=%s ishi yoqilgan bo'lishi kerak
+EmailIfError=Xato haqida ogohlantirish uchun elektron pochta
+JobNotFound=Ish %s ishlar roʻyxatida topilmadi (modulni oʻchirib/yoqib koʻring)
+ErrorInBatch=%s ishni bajarishda xatolik yuz berdi
+
+# Cron Boxes
+LastExecutedScheduledJob=Oxirgi marta rejalashtirilgan ish
+NextScheduledJobExecute=Keyingi rejalashtirilgan ish
+NumberScheduledJobError=Xatoda rejalashtirilgan ishlarning soni
+NumberScheduledJobNeverFinished=Hech qachon tugatilmagan rejalashtirilgan ishlar soni

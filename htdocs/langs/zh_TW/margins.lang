@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=毛利
+Margins=毛利
+TotalMargin=總毛利
+MarginOnProducts=毛利 / 商品
+MarginOnServices=毛利 / 服務
+MarginRate=毛利率
+ModifyMarginRates=修改毛利率
+MarkRate=加價率
+DisplayMarginRates=顯示毛利率
+DisplayMarkRates=顯示加價率
+InputPrice=進價
+margin=毛利管理
+margesSetup=毛利管理設定
+MarginDetails=毛利明細
+ProductMargins=商品毛利
+CustomerMargins=客戶毛利
+SalesRepresentativeMargins=業務員毛利
+ContactOfInvoice=發票聯絡人
+UserMargins=用戶毛利
+ProductService=商品或服務
+AllProducts=所有商品與服務
+ChooseProduct/Service=選擇商品或服務
+ForceBuyingPriceIfNull=若未定義進價則強制使用售價
+ForceBuyingPriceIfNullDetails=當新增品項時若未提供進價/成本價，若此選項為「開啟」，則該行毛利將為 0%%(進價 = 售價)。若此選項為「關閉」(建議)，毛利將使用預設建議值(若無預設值，毛利可能為 100%%)。
+MARGIN_METHODE_FOR_DISCOUNT=全局折扣毛利計算方式
+UseDiscountAsProduct=視為商品
+UseDiscountAsService=視為服務
+UseDiscountOnTotal=計算於小計
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=定義全局折扣在毛利計算中被視為商品、服務，或僅影響小計。
+MARGIN_TYPE=毛利計算時預設的進價/成本價
+MargeType1=以最佳供應商價計算毛利
+MargeType2=Margin on Weighted Average Cost (WAC)
+MargeType3=以成本價計算毛利
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
+CostPrice=成本價
+UnitCharges=單位費用
+Charges=費用
+AgentContactType=業務代理人聯絡人類型
+AgentContactTypeDetails=定義將用於聯絡人/地址毛利報表的聯絡人類型(連結於發票上)。注意，根據聯絡人讀取統計通常不可靠，因多數情況下發票上未明確定義聯絡人。
+rateMustBeNumeric=利率必須是數值
+markRateShouldBeLesserThan100=加價率應低於 100
+ShowMarginInfos=顯示毛利資訊
+CheckMargins=毛利明細
+MarginPerSaleRepresentativeWarning=業務員毛利報表使用合作方與業務員的連結來計算每位業務員的毛利。由於部分合作方可能沒有專屬業務員，或同時對應多位業務員，部分金額可能未包含在報表中(若無業務員)，或同一金額會出現在多位業務員的不同列中。

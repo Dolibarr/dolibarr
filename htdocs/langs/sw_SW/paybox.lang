@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Usanidi wa moduli ya PayBox
+PayBoxDesc=Sehemu hii inatoa kurasa za kuruhusu malipo kwenye <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a>  na wateja. Hii inaweza kutumika kwa malipo ya bure au kwa malipo ya kitu fulani cha Dolibarr (ankara, agizo, ...)
+PayBoxDoPayment=Lipa kwa Paybox
+YouWillBeRedirectedOnPayBox=Utaelekezwa kwingine kwenye ukurasa wa Paybox uliolindwa ili kuingiza maelezo ya kadi ya mkopo
+SetupPayBoxToHavePaymentCreatedAutomatically=Sanidi Paybox yako kwa url <b> %s </b>  ili malipo yaundwe kiotomatiki yakithibitishwa na Paybox.
+YourPaymentHasBeenRecorded=Ukurasa huu unathibitisha kuwa malipo yako yamerekodiwa. Asante.
+YourPaymentHasNotBeenRecorded=Malipo yako HAYAJAREKODIWA na muamala umeghairiwa. Asante.
+PAYBOX_CGI_URL_V2=Url ya moduli ya Paybox CGI kwa malipo
+NewPayboxPaymentReceived=Malipo mapya ya Paybox yamepokelewa
+NewPayboxPaymentFailed=Malipo mapya ya Paybox yalijaribiwa lakini yameshindwa
+PAYBOX_PAYONLINE_SENDEMAIL=Arifa ya barua pepe baada ya jaribio la malipo (imefaulu au kutofaulu)
+PAYBOX_PBX_SITE=Thamani ya PBX SITE
+PAYBOX_PBX_RANG=Thamani ya PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Thamani ya kitambulisho cha PBX
+PAYBOX_HMAC_KEY=Kitufe cha HMAC

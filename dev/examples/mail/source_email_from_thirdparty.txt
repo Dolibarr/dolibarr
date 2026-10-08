@@ -1,0 +1,48 @@
+Content-Type: multipart/mixed; boundary="===============4543832834454763172=="
+Date: Thu, 12 Nov 2015 17:58:00 -0000
+From: Administrator <admin@yourcompany.example.com>
+MIME-Version: 1.0
+Message-ID: 5nLkUQEIn50FnlwxWDkh59NfLof1ode0uC5cZEgm9Y4=@mailhog.example
+Message-Id: <1447351080.369951963424683.576889035053436-dolibarr-7-thirdparty@PCHOME-LD>
+Received: from pchome-ld by mailhog.example (Go-MailHog)
+          id 5nLkUQEIn50FnlwxWDkh59NfLof1ode0uC5cZEgm9Y4=@mailhog.example; Thu, 12 Nov 2015 18:58:00 +0100
+Reply-To: Administrator <admin@yourcompany.example.com>
+Return-Path: <admin@yourcompany.example.com>
+Subject: A test email from thirdparty card
+To: Thirdparty company <thirdpartycompany@yourcompany.example.com>
+
+--===============4543832834454763172==
+Content-Type: multipart/alternative;
+ boundary="===============8764907306434163361=="
+MIME-Version: 1.0
+
+--===============8764907306434163361==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+
+dGVzdDIKCi0tCkFkbWluaXN0cmF0b3IKClNlbnQgYnkgWW91ckNvbXBhbnkgWzFdIHVzaW5nIE9k
+b28gWzJdCgosICBhY2Nlc3MgZGlyZWN0bHkgdG8gUGFydG5lciBBZ3JvbGFpdCBbM10KCgpbMV0g
+aHR0cDovL3d3dy5leGFtcGxlLmNvbQpbMl0gaHR0cHM6Ly93d3cub2Rvby5jb20vClszXSBodHRw
+Oi8vbG9jYWxob3N0OjgxNjkvd2ViL3NpZ251cD9yZWRpcmVjdD0lMkZ3ZWIlMjNhY3Rpb24lM0Rt
+YWlsLmFjdGlvbl9tYWlsX3JlZGlyZWN0JTI2bW9kZWwlM0RyZXMucGFydG5lciUyNmlkJTNENyZ0
+b2tlbj1nM0s0QWU1T0Q5a3UxaEVubVZUQiZkYj1vZG9vX3Y4Cg==
+
+--===============8764907306434163361==
+Content-Type: text/html; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+
+PHA+dGVzdDI8L3A+Cgo8c3Bhbj4tLTxicj4KQWRtaW5pc3RyYXRvcjwvc3Bhbj4KCjxiciAvPjxz
+bWFsbD5TZW50IGJ5IDxhIHN0eWxlPSdjb2xvcjppbmhlcml0JyBocmVmPSdodHRwOi8vd3d3LmV4
+YW1wbGUuY29tJz5Zb3VyQ29tcGFueTwvYT4gdXNpbmcgPGEgc3R5bGU9J2NvbG9yOmluaGVyaXQn
+IGhyZWY9J2h0dHBzOi8vd3d3Lm9kb28uY29tLyc+T2RvbzwvYT48L3NtYWxsPgoKCiwgPHNwYW4g
+Y2xhc3M9J29lX21haWxfZm9vdGVyX2FjY2Vzcyc+PHNtYWxsPmFjY2VzcyBkaXJlY3RseSB0byA8
+YSBzdHlsZT0nY29sb3I6aW5oZXJpdCcgaHJlZj0naHR0cDovL2xvY2FsaG9zdDo4MTY5L3dlYi9z
+aWdudXA/cmVkaXJlY3Q9JTJGd2ViJTIzYWN0aW9uJTNEbWFpbC5hY3Rpb25fbWFpbF9yZWRpcmVj
+dCUyNm1vZGVsJTNEcmVzLnBhcnRuZXIlMjZpZCUzRDcmdG9rZW49ZzNLNEFlNU9EOWt1MWhFbm1W
+VEImZGI9b2Rvb192OCc+UGFydG5lciBBZ3JvbGFpdDwvYT48L3NtYWxsPjwvc3Bhbj4K
+
+--===============8764907306434163361==--
+
+--===============4543832834454763172==--

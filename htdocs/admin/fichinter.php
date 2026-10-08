@@ -1,0 +1,577 @@
+<?php
+/* Copyright (C) 2003-2004  Rodolphe Quiedeville            <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur             <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio             <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier                  <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2014  Regis Houssin                   <regis.houssin@inodbox.com>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic)     <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2011-2013  Juanjo Menent                   <jmenent@2byte.es>
+ * Copyright (C) 2011-2018  Philippe Grand                  <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024-2026	MDW                             <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France                 <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro              <alexandre@inovea-conseil.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file       htdocs/admin/fichinter.php
+ *	\ingroup    fichinter
+ *	\brief      Setup page of module Interventions
+ */
+
+// Load Dolibarr environment
+require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'interventions', 'other'));
+
+if (!$user->admin) {
+	accessforbidden();
+}
+
+$action = GETPOST('action', 'aZ09');
+$value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
+$type = 'ficheinter';
+
+
+/*
+ * Actions
+ */
+$error = 0;
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
+if ($action == 'updateMask') {
+	$maskconst = GETPOST('maskconst', 'aZ09');
+	$maskvalue = GETPOST('maskvalue', 'alpha');
+
+	$res = 0;
+
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
+	}
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'specimen') { // For Intervention card
+	$modele = GETPOST('module', 'alpha');
+
+	$inter = new Fichinter($db);
+	$inter->initAsSpecimen();
+
+	// Search template files
+	$file = '';
+	$classname = '';
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/fichinter/doc/pdf_".$modele.".modules.php", 0);
+		if (file_exists($file)) {
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($classname !== '') {
+		require_once $file;
+
+		$module = new $classname($db);
+		'@phan-var-force ModelePDFFicheinter $module';
+
+		if ($module->write_file($inter, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=ficheinter&file=SPECIMEN.pdf");
+			return;
+		} else {
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
+		}
+	} else {
+		$langs->load('errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+} elseif ($action == 'set') {
+	// Activate a model
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+} elseif ($action == 'del') {
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		if (getDolGlobalString('FICHEINTER_ADDON_PDF') == "$value") {
+			dolibarr_del_const($db, 'FICHEINTER_ADDON_PDF', $conf->entity);
+		}
+	}
+} elseif ($action == 'setdoc') {
+	// Set default model
+	if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
+		// The constant that was read before the new set
+		// so we go through a variable to get a consistent display
+		$conf->global->FICHEINTER_ADDON_PDF = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
+} elseif ($action == 'setmod') {
+	// TODO Verify if the chosen numbering module can be activated
+	// by calling method canBeActivated
+
+	dolibarr_set_const($db, "FICHEINTER_ADDON", $value, 'chaine', 0, '', $conf->entity);
+} elseif ($action == 'set_FICHINTER_FREE_TEXT') {
+	$freetext = GETPOST('FICHINTER_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
+	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'set_FICHINTER_DRAFT_WATERMARK') {
+	$draft = GETPOST('FICHINTER_DRAFT_WATERMARK', 'alpha');
+	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS') {
+	$setFichInterPrintProducts = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS", $setFichInterPrintProducts, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+} elseif ($action == 'set_FICHINTER_USE_SERVICE_DURATION') {
+	$setFichInterUseServiceDuration = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", $setFichInterUseServiceDuration, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+} elseif ($action == 'set_FICHINTER_WITHOUT_DURATION') {
+	$setFichInterWithoutDuration = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", $setFichInterWithoutDuration, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+} elseif ($action == 'set_FICHINTER_DATE_WITHOUT_HOUR') {
+	$setFichInterDateWithoutHour = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", $setFichInterDateWithoutHour, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+} elseif ($action == "set_FICHINTER_ALLOW_ONLINE_SIGN") {
+	$setFichInterAllowOnlineSign = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_ONLINE_SIGN", $setFichInterAllowOnlineSign, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+} elseif ($action == "set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD") {
+	$setFichInterAllowExternalDownload = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_EXTERNAL_DOWNLOAD", $setFichInterAllowExternalDownload, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+
+
+/*
+ * View
+ */
+
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-fichinter');
+
+$form = new Form($db);
+
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
+print load_fiche_titre($langs->trans("InterventionsSetup"), $linkback, 'title_setup');
+
+
+$head = fichinter_admin_prepare_head();
+
+print dol_get_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), -1, 'intervention');
+
+// Interventions numbering model
+
+print load_fiche_titre($langs->trans("FicheinterNumberingModules"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td width="100">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir) {
+	$dir = dol_buildpath($reldir."core/modules/fichinter/");
+
+	if (is_dir($dir)) {
+		$handle = opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
+					$file = $reg[1];
+					$classname = dol_substr($file, 4);
+
+					require_once $dir.$file.'.php';
+
+					$module = new $file();
+
+					'@phan-var-force ModeleNumRefFicheinter $module';
+
+					if ($module->isEnabled()) {
+						// Show modules according to features level
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+							continue;
+						}
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+							continue;
+						}
+
+
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
+						print $module->info($langs);
+						print '</td>';
+
+						// Show example of numbering model
+						print '<td class="nowrap">';
+						$tmp = $module->getExample();
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						} elseif ($tmp == 'NotConfigured') {
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+						} else {
+							print $tmp;
+						}
+						print '</td>'."\n";
+
+						print '<td class="center">';
+						if (getDolGlobalString('FICHEINTER_ADDON') == $classname) {
+							print img_picto($langs->trans("Activated"), 'switch_on');
+						} else {
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($classname).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+						}
+						print '</td>';
+
+						$ficheinter = new Fichinter($db);
+						$ficheinter->initAsSpecimen();
+
+						// Info
+						$htmltooltip = '';
+						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$nextval = $module->getNextValue($mysoc, $ficheinter);
+						if ("$nextval" != $langs->trans("NotAvailable")) {   // Keep " on nextval
+							$htmltooltip .= ''.$langs->trans("NextValue").': ';
+							if ($nextval) {
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+									$langs->load('errors');
+									$nextval = $langs->trans($nextval);
+								}
+								$htmltooltip .= $nextval.'<br>';
+							} else {
+								$langs->load('errors');
+								$htmltooltip .= $langs->trans($module->error).'<br>';
+							}
+						}
+						print '<td class="center">';
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
+						print '</td>';
+
+						print '</tr>';
+					}
+				}
+			}
+			closedir($handle);
+		}
+	}
+}
+
+print '</table>';
+print '</div>';
+
+print '<br>';
+
+
+/*
+ *  Documents models for Interventions
+ */
+
+printDocumentModelList('ficheinter', 'fichinter', 'FICHEINTER_ADDON_PDF', $langs->trans("TemplatePDFInterventions"), array(
+	'Logo' => 'option_logo',
+	'PaymentMode' => 'option_modereg',
+	'PaymentConditions' => 'option_condreg',
+	'MultiLanguage' => 'option_multilang',
+	'WatermarkOnDraftOrders' => 'option_draft_watermark',
+));
+print "<br>";
+
+/*
+ * Other options
+ */
+
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60"></td>';
+print "<td>&nbsp;</td>\n";
+print "</tr>\n";
+
+$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach ($substitutionarray as $key => $val) {
+	$htmltext .= $key.'<br>';
+}
+$htmltext .= '</i>';
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnInterventions"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+$variablename = 'FICHINTER_FREE_TEXT';
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
+} else {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
+	print $doleditor->Create();
+}
+print '</td><td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+//Use draft Watermark
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftInterventionCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
+print '</td><td>';
+print '<input class="flat minwidth200" type="text" name="FICHINTER_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('FICHINTER_DRAFT_WATERMARK')).'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+// Print products on fichinter
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_PRINT_PRODUCTS');
+} else {
+	if (getDolGlobalString('FICHINTER_PRINT_PRODUCTS')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_PRINT_PRODUCTS&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_PRINT_PRODUCTS&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
+print '</td>';
+print '</tr>';
+
+// Use services duration
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("UseServicesDurationOnFichinter").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_USE_SERVICE_DURATION');
+} else {
+	if (getDolGlobalString('FICHINTER_USE_SERVICE_DURATION')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_USE_SERVICE_DURATION&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_USE_SERVICE_DURATION&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
+print '</td>';
+print '</tr>';
+
+// Use duration
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("UseDurationOnFichinter").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_WITHOUT_DURATION');
+} else {
+	if (getDolGlobalString('FICHINTER_WITHOUT_DURATION')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_WITHOUT_DURATION&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_WITHOUT_DURATION&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
+print '</td>';
+print '</tr>';
+
+// Use date without hour
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("UseDateWithoutHourOnFichinter").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_DATE_WITHOUT_HOUR');
+} else {
+	if (getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_DATE_WITHOUT_HOUR&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_DATE_WITHOUT_HOUR&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
+print '</td>';
+print '</tr>';
+
+// Allow online signing
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("AllowOnlineSign").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_ALLOW_ONLINE_SIGN');
+} else {
+	if (getDolGlobalString('FICHINTER_ALLOW_ONLINE_SIGN')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_ALLOW_ONLINE_SIGN&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_ALLOW_ONLINE_SIGN&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
+print '</td>';
+print '</tr>';
+
+// Allow external download
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD');
+} else {
+	if (getDolGlobalString('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
+print '</td>';
+print '</tr>';
+
+
+print '</table>';
+print '</div>';
+
+print '<br>';
+
+// End of page
+llxFooter();
+$db->close();

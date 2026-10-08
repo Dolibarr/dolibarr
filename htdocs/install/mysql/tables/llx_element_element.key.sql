@@ -1,0 +1,28 @@
+-- ============================================================================
+-- Copyright (C) 2008 Laurent Destailleur <eldy@users.sourceforge.net>
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
+--
+-- ============================================================================
+
+
+ALTER TABLE llx_element_element ADD UNIQUE INDEX idx_element_element_idx1 (fk_source, sourcetype, fk_target, targettype);
+
+ALTER TABLE llx_element_element ADD INDEX idx_element_element_fk_target (fk_target);
+
+-- No constraint on fk_source and fk_target because they points to different tables
+
+-- No hard constraint on a link table as it breaks a lot of features
+--ALTER TABLE llx_element_element ADD CONSTRAINT fk_element_element_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
+--ALTER TABLE llx_element_element ADD CONSTRAINT fk_element_element_fk_user_modif FOREIGN KEY (fk_user_modif) REFERENCES llx_user (rowid);

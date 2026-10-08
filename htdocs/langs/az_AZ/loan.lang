@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Kredit
+Loans=Kreditlər
+NewLoan=Yeni Kredit
+ShowLoan=Kredit göstərin
+PaymentLoan=Kredit ödənişi
+LoanPayment=Kredit ödənişi
+ShowLoanPayment=Kredit ödənişini göstərin
+LoanCapital=Kapital
+Insurance=Sığorta
+Interest=Maraq
+Nbterms=Şərtlərin sayı
+Term=Müddət
+LoanAccountancyCapitalCode=Mühasibat uçotu kapitalı
+LoanAccountancyInsuranceCode=Mühasibat uçotunun sığortası
+LoanAccountancyInterestCode=Mühasibat hesabı faizi
+ConfirmDeleteLoan=Bu kreditin silinməsini təsdiqləyin
+LoanDeleted=Kredit Uğurla Silindi
+ConfirmPayLoan=Bu kreditin ödənildiyini təsnifləşdirin
+LoanPaid=Kredit Ödənildi
+ListLoanAssociatedProject=Layihə ilə əlaqəli kreditlərin siyahısı
+AddLoan=Kredit yaradın
+FinancialCommitment=Maliyyə öhdəliyi
+InterestAmount=Maraq
+CapitalRemain=Kapital qalır
+TermPaidAllreadyPaid = Bu müddət artıq ödənilib
+CantUseScheduleWithLoanStartedToPaid = Ödəniş başlanmış kredit üçün vaxt qrafiki yaratmaq mümkün deyil
+CantModifyInterestIfScheduleIsUsed = Cədvəldən istifadə etsəniz, marağı dəyişdirə bilməzsiniz
+# Admin
+ConfigLoan=Modul kreditinin konfiqurasiyası
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Kapital üçün standart olaraq istifadə ediləcək hesab (Hesab Planından) (Kredit modulu)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Faizlər üçün defolt olaraq istifadə ediləcək hesab (Hesab Planından) (Kredit modulu)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Sığorta üçün defolt olaraq istifadə ediləcək hesab (Kredit modulu)
+CreateCalcSchedule=Maliyyə öhdəliyini redaktə edin

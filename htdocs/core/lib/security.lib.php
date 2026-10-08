@@ -1,0 +1,1570 @@
+<?php
+
+/* Copyright (C) 2008-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
+ */
+
+/**
+ *  \file		htdocs/core/lib/security.lib.php
+ *  \ingroup    core
+ *  \brief		Set of function used for dolibarr security (common function included into filefunc.inc.php)
+ *  			Warning, this file must not depends on other library files, except function.lib.php
+ *  			because it is used at low code level.
+ */
+
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
+
+
+/**
+ *	Encode a string with base 64 algorithm + specific delta change.
+ *
+ *	@param   string		$chain		string to encode
+ *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
+ *	@return  string					encoded string with format 'passcrypted'
+ *  @see dol_decode(), dolEncrypt()
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
+ */
+function dol_encode($chain, $key = '1')
+{
+	if (is_numeric($key) && $key == '1') {	// rule 1 is offset of 17 for char
+		$output_tab = array();
+		$strlength = strlen($chain);
+		for ($i = 0; $i < $strlength; $i++) {
+			$output_tab[$i] = chr(ord(substr($chain, $i, 1)) + 17);
+		}
+		$chain = implode("", $output_tab);
+	} elseif ($key) {
+		$result = '';
+		$strlength = strlen($chain);
+		for ($i = 0; $i < $strlength; $i++) {
+			$keychar = substr($key, ($i % strlen($key)) - 1, 1);
+			$result .= chr(ord(substr($chain, $i, 1)) + (ord($keychar) - 65));
+		}
+		$chain = $result;
+	}
+
+	return base64_encode($chain);
+}
+
+/**
+ *	Decode a base 64 encoded + specific delta change.
+ *  This function is called by filefunc.inc.php at each page call.
+ *
+ *	@param   string		$chain		string to decode
+ *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
+ *	@return  string					decoded string
+ *  @see dol_encode(), dolDecrypt
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
+ */
+function dol_decode($chain, $key = '1')
+{
+	$chain = base64_decode($chain);
+
+	if (is_numeric($key) && $key == '1') {	// rule 1 is offset of 17 for char
+		$output_tab = array();
+		$strlength = strlen($chain);
+		for ($i = 0; $i < $strlength; $i++) {
+			$output_tab[$i] = chr(ord(substr($chain, $i, 1)) - 17);
+		}
+
+		$chain = implode("", $output_tab);
+	} elseif ($key) {
+		$result = '';
+		$strlength = strlen($chain);
+		for ($i = 0; $i < $strlength; $i++) {
+			$keychar = substr($key, ($i % strlen($key)) - 1, 1);
+			$result .= chr(ord(substr($chain, $i, 1)) - (ord($keychar) - 65));
+		}
+		$chain = $result;
+	}
+
+	return $chain;
+}
+
+/**
+ * Return a string of random bytes (hexa string) with length = $length for cryptographic purposes.
+ *
+ * @param 	int			$length		Length of random string
+ * @return	string					Random string
+ */
+function dolGetRandomBytes($length)
+{
+	if (function_exists('random_bytes')) {	// Available with PHP 7+ only.
+		return bin2hex(random_bytes((int) floor($length / 2)));	// the bin2hex will double the number of bytes so we take length / 2
+	}
+
+	return bin2hex(openssl_random_pseudo_bytes((int) floor($length / 2)));		// the bin2hex will double the number of bytes so we take length / 2. May be very slow on Windows.
+}
+
+/**
+ * 	Returns a specific ldap hash of a password.
+ *
+ * 	@param 		string		$password	Password to hash
+ * 	@param		'md5'|'md5frommd5'|'smd5'|'sha'|'ssha'|'sha256'|'ssha256'|'sha384'|'ssha384'|'sha512'|'ssha512'|'crypt'|'clear'		$type		Type of hash
+ * 	@return		string					Hash of password
+ *  @phan-suppress DolibarrForbiddenFunctionPlugin
+ */
+function dolGetLdapPasswordHash($password, $type = 'md5')
+{
+	if (empty($type)) {
+		$type = 'md5';
+	}
+
+	$salt = substr(sha1((string) time()), 0, 8);
+
+	if ($type === 'md5') {
+		return '{MD5}' . base64_encode(hash("md5", $password, true)); //For OpenLdap with md5 (based on an unencrypted password in base)
+	} elseif ($type === 'md5frommd5') {
+		return '{MD5}' . base64_encode(hex2bin($password)); // Create OpenLDAP MD5 password from Dolibarr MD5 password
+	} elseif ($type === 'smd5') {
+		return "{SMD5}" . base64_encode(hash("md5", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha') {
+		return '{SHA}' . base64_encode(hash("sha1", $password, true));
+	} elseif ($type === 'ssha') {
+		return "{SSHA}" . base64_encode(hash("sha1", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha256') {
+		return "{SHA256}" . base64_encode(hash("sha256", $password, true));
+	} elseif ($type === 'ssha256') {
+		return "{SSHA256}" . base64_encode(hash("sha256", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha384') {
+		return "{SHA384}" . base64_encode(hash("sha384", $password, true));
+	} elseif ($type === 'ssha384') {
+		return "{SSHA384}" . base64_encode(hash("sha384", $password . $salt, true) . $salt);
+	} elseif ($type === 'sha512') {
+		return "{SHA512}" . base64_encode(hash("sha512", $password, true));
+	} elseif ($type === 'ssha512') {
+		return "{SSHA512}" . base64_encode(hash("sha512", $password . $salt, true) . $salt);
+	} elseif ($type === 'crypt') {
+		return '{CRYPT}' . crypt($password, $salt);
+	} elseif ($type === 'clear') {
+		return '{CLEAR}' . $password;  // Just for test, plain text password is not secured !
+	}
+	return "";
+}
+
+/**
+ *	Check permissions of a user to show a page and an object. Check read, write or delete permission (depending on $mode or on GUI GETPOST() values)
+ *  This method check permission on module then call checkUserAccessToObject() for permission on object (according to entity and socid of user).
+ *
+ *	@param	User				$user      	  	User to check
+ *	@param  string				$features	    Features to check (it must be module name or $object->element. Can be a 'or' check with 'levela|levelb'.
+ *												Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
+ *												This is used to check permission $user->rights->features->...
+ *	@param  int|string|Object	$object      	Object (recommended) or Object ID or list of Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+ *	@param  string				$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
+ *	@param  string				$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
+ *												This is used to check permission $user->rights->features->feature2...
+ *  @param  string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
+ *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
+ *  @param	int<0,1>			$isdraft		1=The object with id=$objectid is a draft
+ *  @param	int<0,1>			$nodie			Mode (0=default, 1=return without dying)
+ *  @param  string  			$mode           Check permission for 'read' or 'write' or 'delete'. Use '' for automatic mode from GETPOST vars (only if in GUI context)
+ * 	@return	int									If mode = 0 (default): die process if not allowed (else return 1). If mode = 1: Return 0 if access not allowed (else return 1).
+ *  @see dol_check_secure_access_document(), checkUserAccessToObject()
+ */
+function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $nodie = 0, $mode = '')
+{
+	global $hookmanager;
+
+	// Define $objectid
+	if (is_object($object)) {
+		$objectid = $object->id;
+	} else {
+		$objectid = $object;		// $objectid can be X or 'X,Y,Z'
+	}
+	if ($objectid == "-1") {
+		$objectid = 0;
+	}
+	if ($objectid) {
+		$objectid = preg_replace('/[^0-9\.\,]/', '', (string) $objectid);	// For the case value is coming from a non sanitized user input
+	}
+
+	//dol_syslog("functions.lib:restrictedArea $feature, $object, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
+	/*print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", object=".$object;
+	print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
+	print ", perm: user->hasRight(".$features.($feature2 ? ",".$feature2 : "").", lire) = ".($feature2 ? $user->hasRight($features, $feature2, 'lire') : $user->hasRight($features, 'lire'))."<br>";
+	*/
+
+	$parentfortableentity = '';
+
+	$originalfeatures = $features;
+
+	// Fix syntax of $features param to support non standard module names.
+	if ($features == 'agenda') {
+		$tableandshare = 'actioncomm&societe';
+		$feature2 = 'myactions|allactions';
+		$dbt_select = 'id';
+	} elseif ($features == 'bank') {
+		$features = 'banque';
+	} elseif ($features == 'remisecheque') {
+		$features = 'banque';
+	} elseif ($features == 'facturerec') {
+		$features = 'facture';
+	} elseif ($features == 'supplier_invoicerec') {
+		$features = 'fournisseur';
+		$feature2 = 'facture';
+	} elseif ($features == 'company') {
+		$features = 'societe';
+	} elseif ($features == 'mo') {
+		$features = 'mrp';
+	} elseif ($features == 'member') {
+		$features = 'adherent';
+	} elseif ($features == 'subscription') {
+		$features = 'adherent';
+		$feature2 = 'cotisation';
+		$tableandshare = 'subscription&adherent';
+		$parentfortableentity = 'fk_adherent@adherent';	// A subscription has no entity, the entity is the one of its member
+	} elseif ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
+		$parentfortableentity = 'fk_website@website';
+	} elseif ($features == 'project') {
+		$features = 'projet';
+	} elseif ($features == 'project_task') {
+		$features = 'projet';
+		$objectid = (int) $object->fk_project;
+		$object = $objectid;
+	} elseif (is_object($object) && ($features == 'conferenceorbooth@eventorganization' || ($features == 'eventorganization' && $object->element == 'conferenceorbooth'))) {
+		// The module of an event organization declares no permission of its own, on purpose.
+		// Permission are done on project table.
+		if (!empty($user->socid) || empty($object->fk_project)) {
+			if ($nodie) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
+		}
+		$features = 'projet';
+		$tableandshare = 'projet&project';
+		$objectid = (int) $object->fk_project;
+		$object = $objectid;
+	} elseif ($features == 'product') {
+		$features = 'produit';
+	} elseif ($features == 'productbatch') {
+		$features = 'produit';
+	} elseif ($features == 'tax') {
+		$feature2 = 'charges';
+	} elseif ($features == 'workstation') {
+		$feature2 = 'workstation';
+	} elseif ($features == 'hrm' && is_object($object) && in_array($object->element, array('job', 'position', 'skill'))) {
+		$feature2 = 'all';	// These 3 objects have no permission of their own, they share the level "all"
+	} elseif ($features == 'recruitment' && is_object($object) && in_array($object->element, array('recruitmentjobposition', 'recruitmentcandidature'))) {
+		// The recruitment module declares no permission at its first level, all its objects share the
+		// second level "recruitmentjobposition". When the caller provides the module name only
+		// (like document.php with its modulepart), we complete the missing parameters from the object.
+		if (empty($feature2)) {
+			$feature2 = 'recruitmentjobposition';
+		}
+		if (empty($tableandshare)) {
+			$tableandshare = $object->table_element;
+		}
+	} elseif ($features == 'stocktransfer' && is_object($object) && $object->element == 'stocktransfer') {
+		$feature2 = 'stocktransfer';	// This module declares no permission at its first level, only this one
+	} elseif (in_array($features, array('fournisseur', 'commande_fournisseur', 'facture_fournisseur', 'order_supplier', 'invoice_supplier'))) {	// When vendor invoice and purchase order are into module 'fournisseur'
+		$features = 'fournisseur';
+		if (is_object($object) && $object->element == 'invoice_supplier') {
+			$feature2 = 'facture';
+		} elseif (is_object($object) && $object->element == 'order_supplier') {
+			$feature2 = 'commande';
+		}
+	} elseif ($features == 'payment_sc') {
+		$tableandshare = 'paiementcharge';
+		$parentfortableentity = 'fk_charge@chargesociales';
+	} elseif ($features == 'payment_vat') {
+		$tableandshare = 'payment_vat';
+		$parentfortableentity = 'fk_tva@tva';
+	} elseif ($features == 'payment_donation') {
+		$tableandshare = 'payment_donation';
+		$parentfortableentity = 'fk_donation@don';	// A donation payment has no entity, the entity is the one of its donation
+	}
+
+	// if commonObjectLine : Using many2one related commonObject
+	// @see commonObjectLine::parentElement
+	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
+		$features = substr($features, 0, -3);  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
+	} elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
+		$features = substr($features, 0, -4);  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
+	} elseif ($features == 'commandefournisseurdispatch') {
+		$features = 'commandefournisseur';
+	} elseif ($features == 'invoice_supplier_det_rec') {
+		$features = 'invoice_supplier_rec';
+	}
+	if ($features == 'evaluation') {
+		$features = 'hrm';
+		$feature2 = 'evaluation';
+	}
+
+	// When the object is a task (element='project_task') and $feature2 is empty,
+	// $checkUserAccessToObject() falls into the $checkproject path and uses the task ID
+	// as project ID, which always fails. Setting $feature2='project_task' triggers the
+	// normalization at line 974 that redirects to the $checktask path, which correctly
+	// resolves $task->fk_project before calling getProjectsAuthorizedForUser().
+	if (is_object($object) && in_array($object->element, array('project_task', 'task'))
+		&& (empty($features) || in_array($features, array('projet', 'project')))
+		&& empty($feature2)) {
+		$features = 'projet';
+		$feature2 = 'project_task';
+		if (empty($tableandshare)) {
+			$tableandshare = 'projet_task';
+		}
+	}
+
+	// If the $features parameter is empty, there is no permission we can check, so the access must
+	// be refused. Without this test, all the checks of permission below would be silently skipped and
+	// the access would be granted to any user without any test (see also selectobject.php that forces
+	// its features parameter to 'unknownobject' instead of '' for the same reason).
+	if (empty($features) || trim((string) $features) === '') {
+		dol_syslog('restrictedArea() called with an empty features parameter, we refuse the access', LOG_WARNING);
+		if ($nodie) {
+			return 0;
+		} else {
+			accessforbidden('Bad value for parameter features');
+		}
+	}
+
+	// print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
+
+	// Get more permissions checks from hooks
+	$parameters = array(
+		'features' => $features,
+		'feature2' => $feature2,
+		'originalfeatures' => $originalfeatures,
+		'tableandshare' => $tableandshare,
+		'object' => $object,
+		'objectid' => $objectid,
+		'dbt_keyfield' => $dbt_keyfield,
+		'dbt_select' => $dbt_select,
+		'idtype' => $dbt_select,
+		'isdraft' => $isdraft,
+		'nodie' => $nodie,
+		'mode' => $mode
+	);
+	if (!empty($hookmanager)) {
+		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
+
+		if (isset($hookmanager->resArray['result'])) {
+			if ($hookmanager->resArray['result'] == 0) {
+				if ($nodie) {
+					return 0;
+				} else {
+					accessforbidden(); // Module returns 0, so access forbidden
+				}
+			}
+		}
+		if ($reshook > 0) {		// No other test done.
+			return 1;
+		}
+	}
+
+	// Features/modules to check (to support the & and | operator)
+	$featuresarray = array($features);
+	if (preg_match('/&/', $features)) {
+		$featuresarray = explode("&", $features);
+	} elseif (preg_match('/\|/', $features)) {
+		$featuresarray = explode("|", $features);
+	}
+
+	// More subfeatures to check
+	if (!empty($feature2)) {
+		$feature2 = explode("|", $feature2);
+	}
+
+	$listofmodules = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
+
+	//var_dump($featuresarray, $object->id);
+
+	// Check read permission from module
+	$readok = 1;
+	$nbko = 0;
+	foreach ($featuresarray as $feature) {	// first we check nb of test ko
+		$featureforlistofmodule = $feature;
+		if ($featureforlistofmodule == 'produit') {
+			$featureforlistofmodule = 'product';
+		}
+		if ($featureforlistofmodule == 'supplier_proposal') {
+			$featureforlistofmodule = 'supplierproposal';
+		}
+		if (!empty($user->socid) && getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL') && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
+			$readok = 0;
+			$nbko++;
+			continue;
+		}
+
+		if (in_array($feature, array('societe', 'company')) && (empty($feature2) || !in_array('contact', $feature2))) {
+			if (!$user->hasRight('societe', 'lire') && !$user->hasRight('fournisseur', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ((in_array($feature, array('societe', 'company')) && (!empty($feature2) && in_array('contact', $feature2))) || $feature == 'contact') {
+			if (!$user->hasRight('societe', 'contact', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'produit|service') {
+			if (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'produit') {
+			// $object is only a real Product/Service when the check is scoped to one specific
+			// record (e.g. a product card); a generic area check (e.g. the product/service
+			// dashboard) never sets it, so it keeps its default int value and has no ->type to
+			// tell products and services apart - fall back to requiring either right.
+			if (!is_object($object)) {
+				if (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire')) {
+					$readok = 0;
+					$nbko++;
+				}
+			} elseif ($object->type == 0 && !$user->hasRight('produit', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			} elseif ($object->type == 1 && !$user->hasRight('service', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'prelevement') {
+			if (!$user->hasRight('prelevement', 'bons', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'cheque') {
+			if (!$user->hasRight('banque', 'cheque')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'projet') {
+			if (!$user->hasRight('projet', 'lire') && !$user->hasRight('projet', 'all', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment') {
+			if (!$user->hasRight('facture', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_supplier') {
+			if (!$user->hasRight('fournisseur', 'facture', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_sc') {
+			if (!$user->hasRight('tax', 'charges', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_vat') {
+			if (!$user->hasRight('tax', 'charges', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'payment_donation') {
+			if (!$user->hasRight('don', 'lire')) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif ($feature == 'webhook') {
+			if (empty($user->admin)) {
+				$readok = 0;
+				$nbko++;
+			}
+		} elseif (!empty($feature2)) { 													// This is for permissions on 2 levels (module->object->read)
+			$tmpreadok = 1;
+			foreach ($feature2 as $subfeature) {
+				if ($subfeature == 'user' && $user->id == $objectid) {
+					continue; // A user can always read its own card
+				}
+				if ($subfeature == 'fiscalyear' && $user->hasRight('accounting', 'fiscalyear', 'write')) {
+					// only one right for fiscalyear
+					$tmpreadok = 1;
+					continue;
+				}
+				if (!empty($subfeature) && !$user->hasRight($feature, $subfeature, 'lire') && !$user->hasRight($feature, $subfeature, 'read')) {
+					$tmpreadok = 0;
+				} elseif (empty($subfeature) && !$user->hasRight($feature, 'lire') && !$user->hasRight($feature, 'read')) {
+					$tmpreadok = 0;
+				} else {
+					$tmpreadok = 1;
+					break;
+				} // Break is to bypass second test if the first is ok
+			}
+			if (!$tmpreadok) {	// We found a test on feature that is ko
+				$readok = 0; // All tests are ko (we manage here the and, the or will be managed later using $nbko).
+				$nbko++;
+			}
+		} elseif (!empty($feature) && ($feature != 'user' && $feature != 'usergroup')) {		// This is permissions on 1 level (module->read)
+			if (!$user->hasRight($feature, 'lire')
+				&& !$user->hasRight($feature, 'read')
+				&& !$user->hasRight($feature, 'run')) {
+				$readok = 0;
+				$nbko++;
+			}
+		}
+	}
+
+	// If a or and at least one ok
+	if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) {
+		$readok = 1;
+	}
+
+	if (!$readok) {
+		if ($nodie) {
+			return 0;
+		} else {
+			accessforbidden();
+		}
+	}
+	//print "Read access is ok";
+
+	// Check write permission from module (we need to know write permission to create but also to delete drafts record or to upload files)
+	$createok = 1;
+	$nbko = 0;
+	if ($mode == 'read') {
+		$wemustcheckpermissionforcreate = 0;
+		$wemustcheckpermissionfordeletedraft = 0;
+		$wemustcheckpermissionfordelete = 0;
+	} elseif ($mode == 'write') {
+		$wemustcheckpermissionforcreate = 1;
+		$wemustcheckpermissionfordeletedraft = 1;
+		$wemustcheckpermissionfordelete = 0;
+	} elseif ($mode == 'delete') {
+		$wemustcheckpermissionforcreate = 0;
+		$wemustcheckpermissionfordeletedraft = 0;
+		$wemustcheckpermissionfordelete = 1;
+	} else {
+		// This is possible in a GUI context only
+		$wemustcheckpermissionforcreate = (GETPOST('sendit', 'alpha') || GETPOST('linkit', 'alpha') || in_array(GETPOST('action', 'aZ09'), array('create', 'update', 'set', 'upload', 'add_element_resource', 'confirm_deletebank', 'confirm_delete_linked_resource')) || GETPOST('roworder', 'alpha', 2));
+		$wemustcheckpermissionfordeletedraft = ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete');
+		$wemustcheckpermissionfordelete = ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete');
+	}
+
+	//var_dump($wemustcheckpermissionforcreate, $wemustcheckpermissionfordeletedraft, $wemustcheckpermissionfordelete);
+
+	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
+		foreach ($featuresarray as $feature) {
+			if ($feature == 'contact') {
+				if (!$user->hasRight('societe', 'contact', 'creer')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'produit|service') {
+				if (!$user->hasRight('produit', 'creer') && !$user->hasRight('service', 'creer')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'prelevement') {
+				if (!$user->hasRight('prelevement', 'bons', 'creer')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'commande_fournisseur') {
+				if (!$user->hasRight('fournisseur', 'commande', 'creer') || !$user->hasRight('supplier_order', 'creer')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'banque') {
+				if (!$user->hasRight('banque', 'modifier')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'cheque') {
+				if (!$user->hasRight('banque', 'cheque')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'import') {
+				if (!$user->hasRight('import', 'run')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'ecm') {
+				if (!$user->hasRight('ecm', 'upload')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'modulebuilder') {
+				if (!$user->hasRight('modulebuilder', 'run')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'payment') {
+				if (!$user->hasRight('facture', 'paiement')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'payment_supplier') {	// Permission to write on a payment of an invoice is permission to edit an invoice.
+				if (!$user->hasRight('fournisseur', 'facture', 'creer')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'webhook') {
+				if (empty($user->admin)) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif (!empty($feature2)) {													// This is for permissions on 2 levels (module->object->write)
+				foreach ($feature2 as $subfeature) {
+					if ($subfeature == 'user' && $user->id == $objectid && $user->hasRight('user', 'self', 'creer')) {
+						continue; // User can edit its own card
+					}
+					if ($subfeature == 'user' && $user->id == $objectid && $user->hasRight('user', 'self', 'password')) {
+						continue; // User can edit its own password
+					}
+					if ($subfeature == 'user' && $user->id != $objectid && $user->hasRight('user', 'user', 'password')) {
+						continue; // User can edit another user's password
+					}
+
+					if (!$user->hasRight($feature, $subfeature, 'creer')
+					&& !$user->hasRight($feature, $subfeature, 'write')
+					&& !$user->hasRight($feature, $subfeature, 'create')) {
+						$createok = 0;
+						$nbko++;
+					} else {
+						$createok = 1;
+						// Break to bypass second test if the first is ok
+						break;
+					}
+				}
+			} elseif (!empty($feature)) {												// This is for permissions on 1 levels (module->write)
+				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write; exit;
+				if (!$user->hasRight($feature, 'creer')
+				&& !$user->hasRight($feature, 'write')
+				&& !$user->hasRight($feature, 'create')) {
+					$createok = 0;
+					$nbko++;
+				}
+			}
+		}
+
+		// If a or and at least one ok
+		if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) {
+			$createok = 1;
+		}
+
+		if ($wemustcheckpermissionforcreate && !$createok) {
+			if ($nodie) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
+		}
+		//print "Write access is ok";
+	}
+
+	// Check create user permission (special case)
+	$createuserok = 1;
+	if (GETPOST('action', 'aZ09') == 'confirm_create_user' && GETPOST("confirm", 'aZ09') == 'yes') {
+		if (!$user->hasRight('user', 'user', 'creer')) {
+			$createuserok = 0;
+		}
+
+		if (!$createuserok) {
+			if ($nodie) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
+		}
+		//print "Create user access is ok";
+	}
+
+	// Check delete permission from module
+	$deleteok = 1;
+	$nbko = 0;
+	if ($wemustcheckpermissionfordelete) {
+		foreach ($featuresarray as $feature) {
+			if ($feature == 'bookmark') {
+				if (!$user->hasRight('bookmark', 'supprimer')) {
+					if ($user->id != $object->fk_user || !$user->hasRight('bookmark', 'creer')) {
+						$deleteok = 0;
+					}
+				}
+			} elseif ($feature == 'contact') {
+				if (!$user->hasRight('societe', 'contact', 'supprimer')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'produit|service') {
+				if (!$user->hasRight('produit', 'supprimer') && !$user->hasRight('service', 'supprimer')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'commande_fournisseur') {
+				if (!$user->hasRight('fournisseur', 'commande', 'supprimer')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'payment_supplier') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
+				if (!$user->hasRight('fournisseur', 'facture', 'creer')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'payment') {
+				if (!$user->hasRight('facture', 'paiement')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'payment_sc') {
+				if (!$user->hasRight('tax', 'charges', 'creer')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'banque') {
+				if (!$user->hasRight('banque', 'modifier')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'cheque') {
+				if (!$user->hasRight('banque', 'cheque')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'ecm') {
+				if (!$user->hasRight('ecm', 'upload')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'ftp') {
+				if (!$user->hasRight('ftp', 'write')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'salaries') {
+				if (!$user->hasRight('salaries', 'delete')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'adherent') {
+				if (!$user->hasRight('adherent', 'supprimer')) {
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'paymentbybanktransfer') {
+				if (!$user->hasRight('paymentbybanktransfer', 'create')) {	// There is no delete permission
+					$deleteok = 0;
+				}
+			} elseif ($feature == 'prelevement') {
+				if (!$user->hasRight('prelevement', 'bons', 'creer')) {		// There is no delete permission
+					$deleteok = 0;
+				}
+			} elseif (!empty($feature2)) {							// This is for permissions on 2 levels
+				foreach ($feature2 as $subfeature) {
+					if (!$user->hasRight($feature, $subfeature, 'supprimer') && !$user->hasRight($feature, $subfeature, 'delete')) {
+						$deleteok = 0;
+					} else {
+						$deleteok = 1;
+						break;
+					} // For bypass the second test if the first is ok
+				}
+			} elseif (!empty($feature)) {							// This is used for permissions on 1 level
+				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
+				if (!$user->hasRight($feature, 'supprimer')
+					&& !$user->hasRight($feature, 'delete')
+					&& !$user->hasRight($feature, 'run')) {
+					$deleteok = 0;
+				}
+			}
+		}
+
+		// If a or and at least one ok
+		if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) {
+			$deleteok = 1;
+		}
+
+		if (!$deleteok && !($isdraft && $createok)) {
+			if ($nodie) {
+				return 0;
+			} else {
+				accessforbidden();
+			}
+		}
+		//print "Delete access is ok";
+	}
+
+	// If we have a particular object to check permissions on, we check if $user has permission
+	// for this given object (link to company, is contact for project, ...)
+	if (!empty($objectid) && $objectid > 0) {
+		$ok = checkUserAccessToObject($user, $featuresarray, $object, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
+		$params = array('objectid' => $objectid, 'features' => implode(',', $featuresarray), 'features2' => $feature2);
+		//print 'checkUserAccessToObject ok='.$ok;
+		if ($nodie) {
+			return $ok ? 1 : 0;
+		} else {
+			if ($ok) {
+				return 1;
+			} else {
+				accessforbidden('', 1, 1, 0, $params);
+			}
+		}
+	}
+
+	return 1;
+}
+
+/**
+ * Check that access by a given user to an object is ok.
+ * This function is also called by restrictedArea() that check before if module is enabled and if permission of user for $action is ok.
+ *
+ * @param 	User				$user					User to check
+ * @param 	string[]			$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
+ * @param 	int|string|Object	$object					Object (recommended) or Object ID or list of Object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+ * @param 	string				$tableandshare			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
+ * @param 	string[]|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+ * @param 	string				$dbt_keyfield			Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
+ * @param 	string				$dbt_select				Field name for select if not rowid. Not used if objectid is null (optional).
+ * @param 	string				$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
+ * @return	bool										True if user has access, False otherwise
+ * @see restrictedArea()
+ */
+function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = '', $dbt_select = 'rowid', $parenttableforentity = '')
+{
+	global $db, $conf;
+
+	if (is_object($object)) {
+		$objectid = $object->id;
+	} else {
+		$objectid = $object;		// $objectid can be X or 'X,Y,Z'
+	}
+	$objectid = preg_replace('/[^0-9\.\,]/', '', (string) $objectid);	// For the case value is coming from a non sanitized user input
+
+	//dol_syslog("functions.lib:restrictedArea $feature, $object, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
+	//print "user_id=".$user->id.", features=".join(',', $featuresarray).", object=".$object;
+	//print ", tableandshare=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select."<br>";
+
+	// More parameters
+	$params = explode('&', $tableandshare);
+	$dbtablename = (!empty($params[0]) ? $params[0] : '');
+	$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename);
+
+	foreach ($featuresarray as $feature) {
+		$sql = '';
+
+		//var_dump($feature);exit;
+
+		// Normalize table and feature name for compatibility
+		if ($feature == 'bom') {
+			$feature = 'bom_bom';
+		}
+		if ($feature == 'societe' && !empty($feature2) && is_array($feature2) && in_array('contact', $feature2)) {
+			$feature = 'contact';
+			$feature2 = '';
+		}
+		if ($feature == 'member') {
+			$feature = 'adherent';
+		}
+		if ($feature == 'category') {
+			$feature = 'categorie';
+		}
+		if ($feature == 'bank') {
+			$feature = 'banque';
+		}
+		if ($feature == 'contract') {
+			$dbtablename = 'contrat';
+		}
+		if ($feature == 'mrp') {
+			$dbtablename = 'mrp_mo';
+		}
+		if ($feature == 'order_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'order_supplier')) {
+			$dbtablename = 'commande_fournisseur';
+		}
+		if ($feature == 'invoice_supplier' || ($feature == 'fournisseur' && is_object($object) && $object->element == 'invoice_supplier')) {
+			$dbtablename = 'facture_fourn';
+		}
+		if ($feature == 'produit') {
+			$dbtablename = 'product';
+		}
+		if ($feature == 'ficheinter') {
+			$dbtablename = 'fichinter';
+		}
+		if ($feature == 'banque') {
+			// The module name (and permission name) is 'banque', but the table of the bank account object is 'bank_account'
+			$dbtablename = 'bank_account';
+		}
+		if ($feature == 'project') {
+			$feature = 'projet';
+		}
+		if ($feature == 'projet' && !empty($feature2) && is_array($feature2) && !empty(array_intersect(array('project_task', 'projet_task'), $feature2))) {
+			$feature = 'project_task';
+		}
+		if ($feature == 'stock') {
+			$dbtablename = 'entrepot';
+		}
+		if ($feature == 'task' || $feature == 'projet_task') {
+			$feature = 'project_task';
+			$dbtablename = 'projet_task';
+		}
+		if ($feature == 'eventorganization') {
+			$feature = 'agenda';
+			$dbtablename = 'actioncomm';
+		}
+		if ($feature == 'payment_sc' && empty($parenttableforentity)) {
+			// If we check perm on payment page but $parenttableforentity not defined, we force value on parent table
+			$parenttableforentity = '';
+			$dbtablename = "chargesociales";
+			$feature = "chargesociales";
+			$objectid = (string) $object->fk_charge;
+		}
+		if ($feature == 'workstation') {
+			$dbtablename = 'workstation_workstation';
+		}
+
+		$checkonentityready = 0;
+
+		// Array to define rules of checks to do
+
+		// Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'payment_vat', 'payment_donation', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock', 'stockmovement', 'workstation');
+		// Test for object Societe
+		$checksoc = array('societe');
+		// Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
+		$checkparentsoc = array('agenda', 'contact', 'contrat', 'ticket', 'stocktransfer');
+		// Test for project object
+		$checkproject = array('projet', 'project');
+		// Test for task object
+		$checktask = array('projet_task', 'project_task');
+		// Check permission among the hierarchy of user
+		$checkhierarchy = array('expensereport', 'holiday', 'hrm');
+		// Check permission among the fk_user (must be myself or null)
+		$checkuser = array('bookmark');
+		// No test
+		$nocheck = array('barcode', 'webhook');
+
+		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
+
+		// If dbtablename not defined, we use same name for table than module name
+		if (empty($dbtablename)) {
+			$dbtablename = $feature;
+			$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename); // We change dbtablename, so we set sharedelement too.
+		}
+
+		// The default rule reads the columns entity and $dbt_keyfield of the table, but some tables own neither of
+		// them. The sql was then built on columns that do not exist, so it always failed and the access was refused
+		// to the users that this rule applies to.
+		// The rule is selected on the table and not on the element of the object, because $object is an id and not
+		// an object for most of the callers, the card of an asset and the card of a workstation included.
+		if (!empty($objectid) && in_array($dbtablename, array('asset', 'paiement', 'paiementfourn', 'workstation_workstation', 'hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+			// None of these objects is linked to a third party, so an external user can own none of them. The
+			// default rule refused him through a link that does not exist, we must refuse him explicitly instead,
+			// otherwise the rules below, which do not look at the third party of the user at all, would grant it.
+			if (!empty($user->socid)) {
+				return false;
+			}
+			if (in_array($dbtablename, array('hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+				// These 3 tables have no entity column either, so no rule that reads the table can be run on them.
+				// The permission is still checked by restrictedArea(), and the $checkhierarchy rule below still runs.
+				// Note that these 3 objects are therefore not partitioned between entities at all, in the database
+				// itself: their cards already answer to a user of another entity, and their lists already show the
+				// records of all of them. This rule does not widen that, it aligns with it.
+				$nocheck[] = $feature;
+			} else {
+				$check[] = $feature;	// Test on the entity only, there is no third party to restrict on
+			}
+		}
+
+		// $objectid was already sanitized at begin of this method (can be an int or a list of int separated by comma).
+		// To avoid an access forbidden with a numeric ref
+		if ($dbt_select != 'rowid' && $dbt_select != 'id') {
+			$objectid = "'".$objectid."'";
+		}
+
+		//var_dump($feature, $dbtablename, $parenttableforentity);
+
+		// Check permission for objectid on entity only
+		if (in_array($feature, $check) && !empty($objectid)) {		// For $objectid = 0, no check
+			$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
+			if (($feature == 'user' || $feature == 'usergroup') && isModEnabled('multicompany')) {	// Special for multicompany
+				if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+					if ($conf->entity == 1 && $user->admin && !$user->entity) {
+						$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+						$sql .= " AND dbt.entity IS NOT NULL";
+					} else {
+						$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+						$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+						$sql .= " AND ((ug.fk_user = dbt.rowid";
+						$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
+						$sql .= " OR dbt.entity = 0)"; // Show always superadmin
+					}
+				} else {
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+				}
+			} else {
+				$reg = array();
+				if ($parenttableforentity && preg_match('/(.*)@(.*)/', $parenttableforentity, $reg)) {
+					$sql .= ", ".MAIN_DB_PREFIX.$db->sanitize($reg[2])." as dbtp";
+					$sql .= " WHERE dbt.".$db->sanitize($reg[1])." = dbtp.rowid AND dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " AND dbtp.entity IN (".getEntity($sharedelement, 1).")";
+				} else {
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+				}
+			}
+			$checkonentityready = 1;
+			//var_dump($checkonentityready, $sql);
+		}
+
+		if (in_array($feature, $checksoc) && !empty($objectid)) {	// We check feature = checksoc. For $objectid = 0, no check
+			// If external user: Check permission for external users
+			if ($user->socid > 0) {
+				if ((string) $user->socid != $objectid) {
+					return false;
+				}
+			} elseif (isModEnabled('societe') && !$user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir')) {
+				dol_syslog("security.lib.php::checkUserAccessToObject Deny access due: (isModEnabled('societe') && !user->hasRight('societe', 'lire') && !user->hasRight('societe', 'client', 'voir'))", LOG_DEBUG);
+				return false;
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
+				// If internal user: Check permission for internal users that are restricted on their objects
+				$sql = "SELECT COUNT(sc.fk_soc) as nb";
+				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				$sql .= ", ".MAIN_DB_PREFIX."societe as s)";
+				$sql .= " WHERE sc.fk_soc IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " AND (sc.fk_user = ".((int) $user->id);
+				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+					$userschilds = $user->getAllChildIds();
+					if (!empty($userschilds)) {
+						$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+					}
+				}
+				$sql .= ")";
+				$sql .= " AND sc.fk_soc = s.rowid";
+				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
+			} elseif (isModEnabled('multicompany')) {
+				// If multicompany and internal users with all permissions, check user is in correct entity
+				$sql = "SELECT COUNT(s.rowid) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+				$sql .= " WHERE s.rowid IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
+			}
+
+			$checkonentityready = 1;
+		}
+
+		if (in_array($feature, $checkparentsoc) && !empty($objectid)) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
+			if ($user->socid > 0) {
+				// If external user: Check permission for external users (limtited to their company, even object with company link that is null must remain not visible)
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";	// Link to third party
+				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);											// Third party must be user company
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
+				// If internal user: Check permission for internal users that are restricted on their objects
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON dbt.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)"; // Contact not linked to a company or to a company of user
+				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+			} elseif (isModEnabled('multicompany')) {
+				// If multicompany and internal users with all permissions, check user is in correct entity
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+			}
+
+			$checkonentityready = 1;
+		}
+
+		if (in_array($feature, $checkproject) && !empty($objectid)) {
+			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
+				$projectid = $objectid;	// Note that if $objectid is a string list of id; the test later will return false
+
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$projectstatic = new Project($db);
+				$tmps = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+
+				$tmparray = explode(',', $tmps);
+				if (!in_array($projectid, $tmparray)) {
+					return false;
+				}
+			} else {
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+			}
+			$checkonentityready = 1;
+		}
+
+		if (in_array($feature, $checktask) && !empty($objectid)) {
+			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
+				if (preg_match('/,/', $objectid)) {		// if this is a list of id
+					return false;
+				}
+				$task = new Task($db);
+				$task->fetch((int) $objectid);
+				$projectid = $task->fk_project;
+
+				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$projectstatic = new Project($db);
+				$tmps = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
+
+				$tmparray = explode(',', $tmps);
+				if (!in_array($projectid, $tmparray)) {
+					return false;
+				}
+			} else {
+				$sharedelement = 'project'; // for multicompany compatibility
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+			}
+
+			$checkonentityready = 1;
+		}
+		//var_dump($checkonentityready, $sql);
+
+		if (!$checkonentityready && !in_array($feature, $nocheck) && !empty($objectid)) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
+			// If external user: Check permission for external users
+			if ($user->socid > 0) {
+				if (empty($dbt_keyfield)) {
+					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
+				}
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_keyfield).") as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " AND dbt.".$db->sanitize($dbt_keyfield)." = ".((int) $user->socid);
+			} elseif (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
+				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
+				if (empty($dbt_keyfield)) {
+					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
+				}
+				if ($feature != 'ticket') {
+					$sql = "SELECT COUNT(sc.fk_soc) as nb";
+					$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+					$sql .= " AND sc.fk_soc = dbt.".$db->sanitize($dbt_keyfield);
+					$sql .= " AND (sc.fk_user = ".((int) $user->id);
+					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+						$userschilds = $user->getAllChildIds();
+						if (!empty($userschilds)) {
+							$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+						}
+					}
+					$sql .= ')';
+				} else {
+					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
+					$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$db->sanitize($dbt_keyfield)." AND sc.fk_user = ".((int) $user->id);
+					$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR dbt.".$dbt_keyfield." IS NULL OR dbt.".$dbt_keyfield." = 0)";
+				}
+			} elseif (isModEnabled('multicompany') && (!empty($object->ismultientitymanaged) || !isset($object->ismultientitymanaged))) {
+				// If multicompany, and user is an internal user with all permissions, check that object is in correct entity
+				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
+				$sql .= " WHERE dbt.".$db->sanitize($dbt_select)." IN (".$db->sanitize($objectid, 1).")";
+				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+			}
+		}
+
+		// For events, check on users assigned to event
+		if ($feature === 'agenda' && !empty($objectid)) {
+			// Also check owner or attendee for users without allactions->read
+			if (!$user->hasRight('agenda', 'allactions', 'read')) {
+				if (preg_match('/,/', $objectid)) {		// if this is a list of id
+					return false;
+				}
+
+				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+				$action = new ActionComm($db);
+				$action->fetch((int) $objectid);
+				if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id, $action->userassigned))) {
+					return false;
+				}
+			}
+		}
+
+		// For some object, we also have to check it is in the user hierarchy
+		// Param $object must be the full object and not a simple id to have this test possible.
+		if (in_array($feature, $checkhierarchy) && is_object($object) && !empty($objectid)) {
+			$childids = $user->getAllChildIds(1);
+			$useridtocheck = 0;
+			if ($feature == 'holiday') {
+				$useridtocheck = $object->fk_user;
+				if (!$user->hasRight('holiday', 'readall') && !in_array($useridtocheck, $childids) && !in_array($object->fk_validator, $childids)) {
+					return false;
+				}
+			}
+			if ($feature == 'expensereport') {
+				$useridtocheck = $object->fk_user_author;
+				if (!$user->hasRight('expensereport', 'readall')) {
+					if (!in_array($useridtocheck, $childids)) {
+						return false;
+					}
+				}
+			}
+			if ($feature == 'hrm' && in_array('evaluation', $feature2)) {
+				$useridtocheck = $object->fk_user;
+
+				if ($user->hasRight('hrm', 'evaluation', 'readall')) {
+					// the user can view evaluations for anyone
+					return true;
+				}
+				if (!$user->hasRight('hrm', 'evaluation', 'read')) {
+					// the user can't view any evaluations
+					return false;
+				}
+				// the user can only see their own evaluations or their subordinates'
+				return in_array($useridtocheck, $childids);
+			}
+		}
+
+		// For some object, we also have to check it is public or owned by user
+		// Param $object must be the full object and not a simple id to have this test possible.
+		if (in_array($feature, $checkuser) && is_object($object) && !empty($objectid)) {
+			$useridtocheck = $object->fk_user;
+			if (!empty($useridtocheck) && $useridtocheck > 0 && $useridtocheck != $user->id && empty($user->admin)) {
+				return false;
+			}
+		}
+
+		// A private contact (field priv) can only be accessed by the user that created it
+		if ($feature == 'contact' && in_array($dbtablename, array('socpeople', 'contact')) && !empty($objectid)) {
+			$sqlpriv = "SELECT COUNT(dbt.rowid) as nb";
+			$sqlpriv .= " FROM ".MAIN_DB_PREFIX."socpeople as dbt";
+			$sqlpriv .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
+			$sqlpriv .= " AND dbt.priv = 1 AND (dbt.fk_user_creat IS NULL OR dbt.fk_user_creat <> ".((int) $user->id).")";
+			$resqlpriv = $db->query($sqlpriv);
+			if (!$resqlpriv) {
+				return false;
+			}
+			$objpriv = $db->fetch_object($resqlpriv);
+			if ($objpriv && $objpriv->nb > 0) {
+				return false;
+			}
+		}
+
+		if ($sql) {
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if (!$obj || $obj->nb < count(explode(',', $objectid))) {	// error if we found 0 or less record than the nb of ids provided
+					return false;
+				}
+			} else {
+				dol_syslog("Bad forged sql in security.lib.php::checkUserAccessToObject", LOG_WARNING);
+				return false;
+			}
+		}
+	}
+
+	dol_syslog("security.lib.php::checkUserAccessToObject::return True", LOG_DEBUG);
+	return true;
+}
+
+/**
+ * Return, among a list of ids of objects of the same type, the ids of the objects the user is not allowed to access,
+ * with the same rules as checkUserAccessToObject(): entity, third parties of the sales representative when the user can not
+ * see all third parties, projects the user can see... It is used by the mass actions of the lists, where the ids come from
+ * the request and not from the list (the list only showed the objects the user can see, the request can contain any id).
+ * Only the types of objects linked to a third party or to a project, and expense reports (author in the hierarchy of the user),
+ * are checked, an empty array is returned for the others.
+ *
+ * @param	User			$user		User
+ * @param	CommonObject	$object		An instance of the class of the objects (used for its element and table_element)
+ * @param	int[]			$ids		Ids of the objects
+ * @return	int[]						Ids of the objects the user can not access (empty if the user can access all of them)
+ * @see checkUserAccessToObject()
+ */
+function getObjectIdsRefusedToUser(User $user, $object, array $ids)
+{
+	$feature = '';
+	switch ($object->element) {
+		case 'societe':
+		case 'contact':
+		case 'contrat':
+		case 'ticket':
+		case 'facture':
+		case 'commande':
+		case 'propal':
+		case 'supplier_proposal':
+		case 'fichinter':
+		case 'shipping':
+		case 'reception':
+		case 'order_supplier':
+		case 'invoice_supplier':
+			$feature = $object->element;
+			break;
+		case 'action':
+			$feature = 'agenda';
+			break;
+		case 'project':
+			$feature = 'projet';
+			break;
+		case 'project_task':
+			include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$feature = 'project_task';
+			break;
+		case 'expensereport':
+			// Not linked to a third party but to its author, who must be in the hierarchy of the user unless he can read
+			// all expense reports (same rule as checkUserAccessToObject() with the object, and expensereport/card.php).
+			// checkUserAccessToObject() can't check it with an id only, so all ids are checked with one request.
+			global $db;
+			$sanitizedids = [];
+			foreach ($ids as $id) {
+				if ((int) $id > 0) {
+					$sanitizedids[] = (int) $id;
+				}
+			}
+			if (empty($sanitizedids)) {
+				return [];
+			}
+			$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."expensereport as t";
+			$sql .= " WHERE t.rowid IN (".$db->sanitize(implode(',', $sanitizedids)).")";
+			$sql .= " AND (t.entity NOT IN (".getEntity('expensereport', 1).")";
+			if (!$user->hasRight('expensereport', 'readall')) {
+				$sql .= " OR t.fk_user_author NOT IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
+			}
+			$sql .= ")";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				dol_syslog(__FUNCTION__." ".$db->lasterror(), LOG_ERR);
+				return $sanitizedids;
+			}
+			$refusedids = [];
+			while ($obj = $db->fetch_object($resql)) {
+				$refusedids[] = (int) $obj->rowid;
+			}
+			$db->free($resql);
+			return $refusedids;
+	}
+	if (empty($feature)) {
+		return [];
+	}
+
+	$refusedids = [];
+	foreach ($ids as $id) {
+		$id = (int) $id;
+		if ($id <= 0) {
+			continue;
+		}
+		if (!checkUserAccessToObject($user, [$feature], $id, $object->table_element.'&'.$object->element, '', 'fk_soc', 'rowid')) {
+			$refusedids[] = $id;
+		}
+	}
+
+	return $refusedids;
+}
+
+
+/**
+ *	Show a message to say access is forbidden and stop program.
+ *  This includes only HTTP header.
+ *	Calling this function terminate execution of PHP.
+ *
+ *	@param	string		$message					Force error message
+ *	@param	int			$http_response_code			HTTP response code (403 for forbidden access, 400 bad parameters or request)
+ *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
+ *  @return	never
+ *  @see accessforbidden()
+ */
+function httponly_accessforbidden($message = '1', $http_response_code = 403, $stringalreadysanitized = 0)
+{
+	top_httphead();
+	http_response_code($http_response_code);
+
+	if ($stringalreadysanitized) {
+		print $message;
+	} else {
+		print htmlentities($message);
+	}
+
+	exit(1);
+}
+
+/**
+ *	Show a message to say access is forbidden and stop program.
+ *  This includes HTTP and HTML header and footer (except if $printheader and $printfooter is  0, use this case inside an already started page).
+ *	Calling this function terminate execution of PHP.
+ *
+ *	@param	string		$message			Force error message
+ *	@param	int<0,1>	$printheader		Show header before
+ *  @param  int<0,1>	$printfooter        Show footer after
+ *  @param  int<0,1>	$showonlymessage    Show only message parameter. Otherwise add more information.
+ *  @param  ?array<string,mixed>	$params More parameters provided to hook
+ *  @return	never
+ *  @see httponly_accessforbidden()
+ */
+function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
+{
+	global $conf, $db, $user, $langs, $hookmanager;
+	global $action, $object;
+
+	if (!is_object($langs)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang();
+	}
+
+	$langs->loadLangs(array("main", "errors"));
+
+	if ($printheader && !defined('NOHEADERNOFOOTER')) {
+		if (function_exists("llxHeader")) {
+			llxHeader('');
+		} elseif (function_exists("llxHeaderVierge")) {
+			llxHeaderVierge('');
+		}
+		print '<div style="padding: 20px">';
+	}
+	print '<div class="error">';
+	if (empty($message)) {
+		print $langs->trans("ErrorForbidden");
+	} else {
+		print $langs->trans($message);
+	}
+	print '</div>';
+	print '<br>';
+	if (empty($showonlymessage)) {
+		if (empty($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($db);
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+			$hookmanager->initHooks(array('main'));
+		}
+
+		$parameters = array('message' => $message, 'params' => $params);
+		$reshook = $hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		print $hookmanager->resPrint;
+		if (empty($reshook)) {
+			$langs->loadLangs(array("errors"));
+			if ($user->login) {
+				print $langs->trans("CurrentLogin").': <span class="error">'.$user->login.'</span><br>';
+				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
+				print $langs->trans("ErrorForbidden4");
+			} else {
+				print $langs->trans("ErrorForbidden3");
+			}
+		}
+	}
+	if ($printfooter && !defined('NOHEADERNOFOOTER') && function_exists("llxFooter")) {
+		print '</div>';
+		llxFooter();
+	}
+
+	// End PHP
+	exit(0);
+}
+
+
+/**
+ *	Return the max allowed for file upload.
+ *  Analyze among: upload_max_filesize, post_max_size, MAIN_UPLOAD_DOC
+ *
+ *	@return array{max:string,maxmin:mixed,maxphptoshow:int|string,maxphptoshowparam:''|'post_max_size'|'upload_max_filesize'}	Array with all max sizes for file upload
+ */
+function getMaxFileSizeArray()
+{
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
+
+	$maxphp = @ini_get('upload_max_filesize'); // In unknown
+	if (preg_match('/k$/i', $maxphp)) {
+		$maxphp = preg_replace('/k$/i', '', $maxphp);
+		$maxphp = (int) ((float) $maxphp * 1);
+	}
+	if (preg_match('/m$/i', $maxphp)) {
+		$maxphp = preg_replace('/m$/i', '', $maxphp);
+		$maxphp = (int) ((float) $maxphp * 1024);
+	}
+	if (preg_match('/g$/i', $maxphp)) {
+		$maxphp = preg_replace('/g$/i', '', $maxphp);
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024);
+	}
+	if (preg_match('/t$/i', $maxphp)) {
+		$maxphp = preg_replace('/t$/i', '', $maxphp);
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024 * 1024);
+	}
+	$maxphp2 = @ini_get('post_max_size'); // In unknown
+	if (preg_match('/k$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
+		$maxphp2 = (int) ((float) $maxphp2) * 1;
+	}
+	if (preg_match('/m$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
+		$maxphp2 = (int) ((float) $maxphp2 * 1024);
+	}
+	if (preg_match('/g$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024);
+	}
+	if (preg_match('/t$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024 * 1024);
+	}
+	// Now $max and $maxphp and $maxphp2 are in Kb
+	$maxmin = $max;
+	$maxphptoshow = $maxphptoshowparam = '';
+	if ($maxphp > 0) {
+		$maxmin = min($maxmin, $maxphp);
+		$maxphptoshow = $maxphp;
+		$maxphptoshowparam = 'upload_max_filesize';
+	}
+	if ($maxphp2 > 0) {
+		$maxmin = min($maxmin, $maxphp2);
+		if ($maxphp2 < $maxphp) {
+			$maxphptoshow = $maxphp2;
+			$maxphptoshowparam = 'post_max_size';
+		}
+	}
+	//var_dump($maxphp.'-'.$maxphp2);
+	//var_dump($maxmin);
+
+	return array('max' => $max, 'maxmin' => $maxmin, 'maxphptoshow' => $maxphptoshow, 'maxphptoshowparam' => $maxphptoshowparam);
+}
+
+/**
+ * Check if IP address is in CIDR range
+ *
+ * @param	string		$ip			IP address to check (ex: 192.168.0.50, 2001:db8:3333:4444::5555:6666)
+ * @param	string		$cidr		Network IP CIDR notation (ex: 192.168.0.0/24, 2001:db8:3333:4444::/64)
+ * @return	int						1 if IP is in CIDR range, 0 if IP out of CIDR range, -1 if check error
+ * @phan-suppress DolibarrForbiddenFunctionPlugin
+ */
+function checkIPInCidr($ip, $cidr)
+{
+	list($network, $prefix) = explode('/', $cidr, 2);
+
+	// Convert IPs to binary format
+	$ip_bin = @inet_pton($ip);
+	$net_bin = @inet_pton($network);
+	if ($ip_bin === false || $net_bin === false) {
+		return -1;
+	}
+
+	// Require same address IPvX family
+	if (strlen($ip_bin) !== strlen($net_bin)) {  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
+		return -1;
+	}
+
+	// Comparison boundaries
+	$total_bits = strlen($ip_bin) * 8;
+	$prefix = max(0, min((int) $prefix, $total_bits));
+	$full_bytes = intdiv($prefix, 8);
+	$rem_bits = $prefix % 8;
+
+	// Compare full bytes and partial bytes
+	if ($full_bytes > 0) {
+		if (substr($ip_bin, 0, $full_bytes) !== substr($net_bin, 0, $full_bytes)) {  // @phan-suppress-current-line  DolibarrForbiddenFunctionPlugin
+			return 0;
+		}
+	}
+	if ($rem_bits > 0) {
+		$mask = (0xFF << (8 - $rem_bits)) & 0xFF;
+		$ip_byte = ord($ip_bin[$full_bytes]);
+		$net_byte = ord($net_bin[$full_bytes]);
+		if (($ip_byte & $mask) !== ($net_byte & $mask)) {
+			return 0;
+		}
+	}
+	return 1;
+}

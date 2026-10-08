@@ -1,0 +1,1 @@
+Files and tools of a skeleton to build a module were moved into htdocs/modulebuilder/template

@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Configuración do modulo Fluxo de Traballo
+WorkflowDesc=Este módulo permite algunhas accíóns automátizadas. Por defecto, o fluxo de traballo está aberto (podense facer cousas na orde desexada) mais aquí pode activar algunhas accións automátizadas.
+ThereIsNoWorkflowToModify=No hai dispoñibles modificacións de fluxo de traballo nos módulos activados.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear automáticamente un pedimento de cliente despois da sinatura dun orzamento (o novo pedimento terá o mesmo importe que o orzamento)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear automáticamente una factura a cliente despois da sinatura dun orzamento (a nova factura terá o mesmo importe que o orzamento)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear unha factura a cliente automáticamente despois de validar un contrato
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automáticamente unha factura a cliente despois de pechar o pedimento de cliente ( nova factura terá o mesmo importe que o pedimento)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Na creación do ticket, crea automaticamente unha intervención.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Cando se configura un pedidmento de cliente como facturado, clasifique as orzamentos a cliente de orixe ligados como facturados (e se o importe do pedimento é o mesmo que o importe total dos orzamentos de cliente ligados e asinados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Cando se valida unha factura a cliente, clasifique os orzamentos a cliente de orixe ligados como facturados (e se o importe da factura é o mesmo que o importe total dos orzamentos a cliente ligados e asinados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Cando unha factura a cliente está configurada como paga, clasifique os pedimentos a cliente de orixe ligados como facturados (e se o importe da factura é o mesmo que o importe total dos pedimentos de cliente ligados). Se xera 1 factura para n pedidmentos, é posible que todos os pedimentos sexan facturados tamén.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Cando se valida unha factura a cliente, clasifique todos os pedimentos de cliente de orixe ligados como facturados (e se o importe da factura é o mesmo que o importe total dos pedimentos de cliente de orixe ligados). Se xeraa 1 factura común para n pedimentos, é posible que todos os pedimentos de orixe sexan facturados.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Cando se valida unha factura a cliente, clasifique o pedimento de cliente ligado  (se só hai un) como facturado, se o importe total do pedimento de cliente ligado é igual ao importe total de todas as facturas emitidas a partir del. Se xera n facturas para 1 pedimento, isto permite configurar o pedimento como facturado en canto se validen todas as facturas.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Cando se valida un envío, clasifique os pedimentos de cliente de orixe ligados como enviados (e se a cantidade enviada por todos os envíos é a mesma que na orde para actualizar)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Cando se pecha un envío, clasifique o pedimento de cliente de orixe ligado como enviado (e se a cantidade enviada por todos os envíos é a mesma que na orde para actualizar)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Cando se valida unha factura de provedor, clasifique o orzamento de provedor de orixe ligado como facturado (e se o importe da factura é o mesmo que o importe total dos orzamentos a provedor ligados)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Cando se valida unha factura de provedor, clasifique o pedimento a provedor de orixe ligado como facturado (e se o importe da factura é o mesmo que o importe total dos pedidmentos a provedor ligados)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Cando se valida unha recepción, clasifique o pedimento a provedor de orixe ligado como recibido (e se a cantidade recibida por todas as recepcións é a mesma que no pediemto a provedort que se actualiza)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Cando se pecha unha recepción, clasifique os pedimentos a provedor de orixe ligados como recibidos (e se a cantidade recibida por todas as recepcións emitidas a partir do pedimento a provedor é a mesma que no pedimento a provedor para actualizar)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Cando se valida unha factura a cliente, clasifique o envío de orixe ligado como pechado (e se o importe da factura é o mesmo que o importe total dos envíos ligados)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Cando se valida unha factura a cliente, clasifique o envío de orixe ligado como facturado (e se o importe da factura é o mesmo que o importe total dos envíos ligados)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Cando se valida unha factura de provedor, clasifique as recepcións de orixe ligadas como pechadas (e se o importe da factura é o mesmo que o importe total das recepcións ligadas)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Cando se valida unha factura de compra, clasifique as recepcións de orixe ligadas como facturadas (e se o importe da factura é o mesmo que o importe total das recepcións ligadas)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Cando se crea un ticket, ligado cos contratos dispoñibles, coincidindo co mesmo terceiro que o ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Ao ligar automaticamente un ticket con contratos, busque contratos entre os das empresas matrices
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Pecha todas as intervencións ligadas ao ticket cando o ticket está pechado
+AutomaticCreation=Creación automática
+AutomaticClassification=Clasificación automática
+AutomaticClosing=Peche automático
+AutomaticLinking=Ligazón automática

@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalOrCBDoPayment=Mit Paypal bezahlen (Guthaben oder Kreditkarte)
+PaypalDoPayment=Mit PayPal bezahlen
+PAYPAL_API_SANDBOX=Testmoduds/Sandbox
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Wähle zwischen Bezahlung mit reinem PayPal - Guthaben, oder Guthaben und Kreditkarte.
+ONLINE_PAYMENT_CSS_URL=URL zu spezieller CSS - Datei für die Bezahlseite (optional)
+PAYPAL_ADD_PAYMENT_URL=Automatisch den PayPal - Zahlungslink in Emails einbinden
+NewOnlinePaymentReceived=Neue PayPal - Zahlung erhalten
+NewOnlinePaymentFailed=PayPal - Zahlung hat nicht geklappt...
+ONLINE_PAYMENT_SENDEMAIL=Email - Adresse für Zahlungsbestätigungen und -fehler
+ValidationOfOnlinePaymentFailed=Die PayPal Zahlung wurde nicht autorisiert...
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Fehler beim Aufruf der Zahlungs - Bestätigungsseite.
+OnlinePaymentSystem=Online Bezahlsystem
+PaypalLiveEnabled=PayPal aktiv schalten (oder im Test- / Sandboxmodus laufen lassen)
+PaypalImportPayment=PayPal Zahlungen importieren
+PostActionAfterPayment=Nachbearbeitungen nach Zahlungen
+ARollbackWasPerformedOnPostActions=Alle Nachbearbeitungen wurden zurückgesetzt. Falls nötig, erledige jene von Hand.
+ValidationOfPaymentFailed=Die Zahlung wurde nicht frei gegeben...
+PayPalBalance=Aktuelles PayPal - Guthaben

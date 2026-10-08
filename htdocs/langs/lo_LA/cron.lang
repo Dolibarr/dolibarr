@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = ອ່ານວຽກທີ່ຕັ້ງເວລາໄວ້
+Permission23102 = ສ້າງ/ອັບເດດ ວຽກທີ່ຕັ້ງເວລາໄວ້
+Permission23103 = ລຶບວຽກທີ່ຕັ້ງເວລາໄວ້
+Permission23104 = ປະຕິບັດວຽກທີ່ຕັ້ງເວລາໄວ້
+# Admin
+CronSetup=ການຕັ້ງຄ່າຈັດການວຽກທີ່ຕັ້ງເວລາໄວ້
+URLToLaunchCronJobs=URL ສຳລັບກວດສອບ ແລະ ເລີ່ມວຽກ Cron ຜ່ານບຣາວເຊີ
+OrToLaunchASpecificJob=ຫຼື ເພື່ອກວດສອບ ແລະ ເລີ່ມວຽກໃດໜຶ່ງໂດຍສະເພາະຜ່ານບຣາວເຊີ
+KeyForCronAccess=ຄີຄວາມປອດໄພສຳລັບ URL ເພື່ອເລີ່ມວຽກ Cron
+FileToLaunchCronJobs=ຄຳສັ່ງ (Command line) ສຳລັບກວດສອບ ແລະ ເລີ່ມວຽກ Cron
+CronExplainHowToRunUnix=ໃນສະພາບແວດລ້ອມ Unix, ທ່ານຄວນໃຊ້ crontab ດັ່ງຕໍ່ໄປນີ້ ເພື່ອໃຫ້ຄຳສັ່ງເຮັດວຽກທຸກໆ 5 ນາທີ
+CronExplainHowToRunWin=ໃນສະພາບແວດລ້ອມ Microsoft(tm) Windows, ທ່ານສາມາດໃຊ້ Scheduled Task ເພື່ອໃຫ້ຄຳສັ່ງເຮັດວຽກທຸກໆ 5 ນາທີ
+CronMethodDoesNotExists=ຄລາສ (Class) %s ບໍ່ມີເມທອດ (Method) %s
+CronMethodNotAllowed=ເມທອດ %s ຂອງຄລາສ %s ຢູ່ໃນລາຍຊື່ທີ່ຖືກຫ້າມ
+CronJobDefDesc=ໂປຣໄຟລ໌ວຽກ Cron ຖືກກຳນົດໄວ້ໃນໄຟລ໌ລາຍລະອຽດຂອງໂມດູນ. ເມື່ອໂມດູນຖືກເປີດໃຊ້, ພວກມັນຈະຖືກໂຫຼດ ແລະ ພ້ອມໃຫ້ທ່ານຈັດການໄດ້ທີ່ເມນູເຄື່ອງມືຜູ້ດູແລ %s.
+CronJobProfiles=ລາຍຊື່ໂປຣໄຟລ໌ວຽກ Cron ທີ່ກຳນົດໄວ້ລ່ວງໜ້າ
+# Menu
+EnabledAndDisabled=ເປີດໃຊ້ ແລະ ປິດໃຊ້
+# Page list
+CronLastOutput=ຜົນການເຮັດວຽກຫຼ້າສຸດ
+CronLastResult=ລະຫັດຜົນລັກສະນະຫຼ້າສຸດ
+CronCommand=ຄຳສັ່ງ
+CronList=ລາຍການວຽກທີ່ຕັ້ງເວລາໄວ້
+CronDelete=ລຶບວຽກທີ່ຕັ້ງເວລາໄວ້
+CronConfirmDelete=ເຈົ້າແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບວຽກທີ່ຕັ້ງເວລາເຫຼົ່ານີ້?
+CronExecute=ເລີ່ມດຽວນີ້
+CronConfirmExecute=ເຈົ້າແນ່ໃຈບໍ່ວ່າຕ້ອງການປະຕິບັດວຽກທີ່ຕັ້ງເວລາເຫຼົ່ານີ້ດຽວນີ້?
+CronInfo=ໂມດູນວຽກທີ່ຕັ້ງເວລາ ຊ່ວຍໃຫ້ສາມາດຕັ້ງເວລາວຽກເພື່ອໃຫ້ເຮັດວຽກໂດຍອັດຕະໂນມັດ. ວຽກຍັງສາມາດເລີ່ມດ້ວຍຕົນເອງໄດ້ເຊັ່ນກັນ.
+CronTask=ວຽກ
+CronNone=ການເຮັດວຽກຄັ້ງຕໍ່ໄປຂອງວຽກທີ່ຕັ້ງເວລາ
+CronNotYetRan=ບໍ່ເຄີຍປະຕິບັດມາກ່ອນ
+CronDtStart=ບໍ່ກ່ອນວັນທີ
+CronDtEnd=ບໍ່ຫຼັງວັນທີ
+CronDtNextLaunch=ການປະຕິບັດຄັ້ງຕໍ່ໄປ
+CronDtLastLaunch=ວັນທີເລີ່ມການປະຕິບັດຫຼ້າສຸດ
+CronDtLastResult=ວັນທີສິ້ນສຸດການປະຕິບັດຫຼ້າສຸດ
+CronFrequency=ຄວາມຖີ່
+CronClass=ຄລາສ (Class)
+CronMethod=ເມທອດ (Method)
+CronModule=ໂມດູນ
+CronNoJobs=ບໍ່ມີວຽກທີ່ລົງທະບຽນໄວ້
+CronPriority=ລຳດັບຄວາມສຳຄັນ
+CronLabel=ປ້າຍຊື່
+CronNbRun=ຈຳນວນຄັ້ງທີ່ເລີ່ມ
+CronMaxRun=ຈຳນວນຄັ້ງສູງສຸດທີ່ເລີ່ມໄດ້
+CronEach=ທຸກໆ
+JobFinished=ວຽກຖືກເລີ່ມ ແລະ ສິ້ນສຸດແລ້ວ
+Scheduled=ຕັ້ງເວລາໄວ້
+#Page card
+CronAdd=ເພີ່ມວຽກ
+CronEvery=ເຮັດວຽກທຸກໆ
+CronObject=ອິນສະແຕນຊ໌/ອັອບເຈັກ ທີ່ຈະສ້າງ
+CronArgs=ພາຣາມິເຕີ
+CronSaveSucess=ບັນທຶກສຳເລັດແລ້ວ
+CronNote=ໝາຍເຫດ
+CronFieldMandatory=ຊ່ອງຂໍ້ມູນ %s ຈຳເປັນຕ້ອງປ້ອນ
+CronErrEndDateStartDt=ວັນທີສິ້ນສຸດ ບໍ່ສາມາດຢູ່ກ່ອນວັນທີເລີ່ມຕົ້ນໄດ້
+StatusAtInstall=ສະຖານະຕອນຕິດຕັ້ງໂມດູນ
+CronStatusActiveBtn=ເປີດໃຊ້ການຕັ້ງເວລາ
+CronStatusInactiveBtn=ປິດໃຊ້
+CronTaskInactive=ວຽກນີ້ຖືກປິດໄວ້ (ບໍ່ໄດ້ຕັ້ງເວລາ)
+CronId=ໄອດີ (ID)
+CronClassFile=ຊື່ໄຟລ໌ທີ່ມີຄລາສ (Class)
+CronModuleHelp=ຊື່ຂອງໄດເຣັກທໍຣີໂມດູນ Dolibarr (ໃຊ້ໄດ້ກັບໂມດູນພາຍນອກເຊັ່ນກັນ). <BR> ຕົວຢ່າງ: ຖ້າຕ້ອງການເອີ້ນໃຊ້ເມທອດ fetch ຂອງອັອບເຈັກ Dolibarr Product /htdocs/<u>product</u>/class/product.class.php, ຄ່າຂອງໂມດູນແມ່ນ <br><i>product</i>
+CronClassFileHelp=ເສັ້ນທາງ (Path) ແລະ ຊື່ໄຟລ໌ທີ່ຈະໂຫຼດ (ເສັ້ນທາງແມ່ນທຽບກັບໄດເຣັກທໍຣີຫຼັກຂອງເວັບເຊີເວີ). <BR> ຕົວຢ່າງ: ເພື່ອເອີ້ນໃຊ້ເມທອດ fetch ຂອງອັອບເຈັກ Dolibarr Product htdocs/product/class/<u>product.class.php</u>, ຄ່າຂອງຊື່ໄຟລ໌ຄລາສແມ່ນ <br><i>product/class/product.class.php</i>
+CronObjectHelp=ຊື່ຂອງອັອບເຈັກທີ່ຈະໂຫຼດ. <BR> ຕົວຢ່າງ: ເພື່ອເອີ້ນໃຊ້ເມທອດ fetch ຂອງອັອບເຈັກ Dolibarr Product /htdocs/product/class/product.class.php, ຄ່າຂອງຊື່ຄລາສແມ່ນ <br><i>Product</i>
+CronMethodHelp=ເມທອດຂອງອັອບເຈັກທີ່ຈະເລີ່ມໃຊ້. <BR> ຕົວຢ່າງ: ເພື່ອເອີ້ນໃຊ້ເມທອດ fetch ຂອງອັອບເຈັກ Dolibarr Product /htdocs/product/class/product.class.php, ຄ່າຂອງເມທອດແມ່ນ <br><i>fetch</i>
+CronArgsHelp=ອາຄິວເມນ (Arguments) ຂອງເມທອດ. <BR> ຕົວຢ່າງ: ເພື່ອເອີ້ນໃຊ້ເມທອດ fetch ຂອງອັອບເຈັກ Dolibarr Product /htdocs/product/class/product.class.php, ຄ່າຂອງພາຣາມິເຕີສາມາດເປັນ <br><i>0, ProductRef</i>
+CronCommandHelp=ຄຳສັ່ງລະບົບ (Command line) ທີ່ຈະປະຕິບັດ.
+CronCreateJob=ສ້າງວຽກທີ່ຕັ້ງເວລາໃໝ່
+CronFrom=ຈາກ
+# Info
+# Common
+CronType=ປະເພດວຽກ
+CronType_method=ເອື່ນໃຊ້ເມທອດຂອງ PHP Class
+CronType_command=ຄຳສັ່ງ Shell
+CronCannotLoadClass=ບໍ່ສາມາດໂຫຼດໄຟລ໌ຄລາສ %s (ເພື່ອໃຊ້ຄລາສ %s)
+CronModuleNotEnabledInThisEntity=ໂມດູນ Cron ບໍ່ໄດ້ຖືກເປີດໃຊ້ໃນໜ່ວຍງານນີ້ (ເພື່ອໃຊ້ເມທອດ %s ຂອງອັອບເຈັກ %s)
+CronCannotLoadObject=ໂຫຼດໄຟລ໌ຄລາສ %s ແລ້ວ, ແຕ່ບໍ່ພົບອັອບເຈັກ %s ໃນນັ້ນ
+UseMenuModuleToolsToAddCronJobs=ເຂົ້າໄປທີ່ເມນູ "<a href="%s">ໜ້າຫຼັກ - ເຄື່ອງມືຜູ້ດູແລ - ວຽກທີ່ຕັ້ງເວລາ</a>" ເພື່ອເບິ່ງ ແລະ ແກ້ໄຂວຽກທີ່ຕັ້ງເວລາໄວ້.
+JobDisabled=ວຽກຖືກປິດໃຊ້ງານ
+MakeLocalDatabaseDumpShort=ສຳຮອງຂໍ້ມູນຖານຂໍ້ມູນທ້ອງຖິ່ນ
+MakeLocalDatabaseDump=ສ້າງໄຟລ໌ດັັມພ໌ (Dump) ຂອງຖານຂໍ້ມູນທ້ອງຖິ່ນ. ພາຣາມິເຕີມີ: ການບີບອັດ ('gz', 'bz' ຫຼື 'none'), ປະເພດການສຳຮອງ ('mysql', 'pgsql', 'auto'), 1, 'auto' ຫຼື ຊື່ໄຟລ໌ທີ່ຈະສ້າງ, ຈຳນວນໄຟລ໌ສຳຮອງທີ່ຈະເກັບໄວ້
+MakeSendLocalDatabaseDumpShort=ສົ່ງໄຟລ໌ສຳຮອງຖານຂໍ້ມູນທ້ອງຖິ່ນ
+MakeSendLocalDatabaseDump=ສົ່ງໄຟລ໌ສຳຮອງຖານຂໍ້ມູນທ້ອງຖິ່ນຜ່ານອີເມວ. ພາຣາມິເຕີມີ: ຫາ, ຈາກ, ຫົວຂໍ້, ຂໍ້ຄວາມ, ຊື່ໄຟລ໌ (ຊື່ໄຟລ໌ທີ່ສົ່ງ), ຟິວເຕີ ('sql' ສຳລັບສຳຮອງສະເພາະຖານຂໍ້ມູນເທົ່ານັ້ນ)
+BackupIsTooLargeSend=ຂໍອະໄພ, ໄຟລ໌ສຳຮອງຫຼ້າສຸດມີຂະໜາດໃຫຍ່ເກີນໄປທີ່ຈະສົ່ງຜ່ານອີເມວ
+CleanUnfinishedCronjobShort=ລ້າງວຽກ Cron ທີ່ຍັງບໍ່ສຳເລັດ
+CleanUnfinishedCronjob=ລ້າງວຽກ Cron ທີ່ຄ້າງຢູ່ໃນຂະບວນການ ໃນເວລາທີ່ໂປຣເຊສນັ້ນບໍ່ໄດ້ເຮັດວຽກແລ້ວ
+WarningCronDelayed=ຄຳເຕືອນ: ເພື່ອປະສິດທິພາບ, ບໍ່ວ່າກຳນົດເວລາການເຮັດວຽກຄັ້ງຕໍ່ໄປຂອງວຽກທີ່ເປີດໃຊ້ຈະເປັນຕອນໃດກໍຕາມ, ວຽກຂອງທ່ານອາດຈະຖືກເລື່ອນອອກໄປສູງສຸດ %s ຊົ່ວໂມງ ກ່ອນທີ່ຈະຖືກເລີ່ມເຮັດວຽກ.
+DATAPOLICYJob=ເຄື່ອງມືລ້າງຂໍ້ມູນ ແລະ ເຮັດໃຫ້ຂໍ້ມູນເປັນນາມແຝງ
+JobXMustBeEnabled=ວຽກ %s ຕ້ອງຖືກເປີດໃຊ້ງານ
+EmailIfError=ອີເມວສຳລັບແຈ້ງເຕືອນເມື່ອເກີດຂໍ້ຜິດພາດ
+JobNotFound=ບໍ່ພົບວຽກ %s ໃນລາຍການວຽກ (ລອງປິດ/ເປີດ ໂມດູນຄືນໃໝ່)
+ErrorInBatch=ເກີດຂໍ້ຜິດພາດໃນຂະນະທີ່ກຳລັງເຮັດວຽກ %s
+
+# Cron Boxes
+LastExecutedScheduledJob=ວຽກທີ່ຕັ້ງເວລາທີ່ປະຕິບັດໄປຫຼ້າສຸດ
+NextScheduledJobExecute=ວຽກທີ່ຕັ້ງເວລາທີ່ຈະປະຕິບັດເປັນລຳດັບຖັດໄປ
+NumberScheduledJobError=ຈຳນວນວຽກທີ່ຕັ້ງເວລາທີ່ເກີດຂໍ້ຜິດພາດ
+NumberScheduledJobNeverFinished=ຈຳນວນວຽກທີ່ຕັ້ງເວລາທີ່ເຮັດວຽກບໍ່ເຄີຍສຳເລັດ

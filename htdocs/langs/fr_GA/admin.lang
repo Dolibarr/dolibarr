@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - admin
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
+OldVATRates=Ancien taux de TPS
+NewVATRates=Nouveau taux de TPS
+Module20Name=Devis
+Module30Name=Factures
+DictionaryVAT=Taux de TPS ou de Taxes de Ventes
+VATManagement=Gestion TPS
+OptionVatMode=TPS due
+DeadlineDayVATSubmission=Date limite pour la soumission de la TPS le mois suivant

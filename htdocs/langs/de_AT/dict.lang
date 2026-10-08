@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - dict
+CountryUK=UK
+CivilityMTRE=Mag.
+CivilityDR=Dr.
+CurrencyCAD=CAN-Dollar
+CurrencySingCAD=CAN-Dollar
+CurrencyFRF=Französische Franken
+CurrencyGBP=GB Pfund
+CurrencyTND=TND
+CurrencyUSD=US-Dollar
+CurrencySingUSD=US-Dollar
+CurrencyXAF=CFA-Franc BEAC
+DemandReasonTypeSRC_CAMP_MAIL=Mailing-Kampagne
+DemandReasonTypeSRC_CAMP_EMAIL=Emailing Kampagne
+DemandReasonTypeSRC_CAMP_PHO=Telefon-Kampagne

@@ -1,0 +1,2 @@
+OFX is an old Financial format:
+See https://stackoverflow.com/questions/15735330/how-to-parse-a-ofx-version-1-0-2-file-in-php

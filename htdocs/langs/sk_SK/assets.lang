@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=Nové aktívum
+AccountancyCodeAsset=Účtovný kód (majetok)
+AccountancyCodeDepreciationAsset=Účtovný kód (účet odpisov)
+AccountancyCodeDepreciationExpense=Účtovný kód (nákladový účet odpisov)
+AssetsLines=Aktíva
+ConfirmValidateAsset=Naozaj chcete overiť tento prvok s odkazom <b>%s</b>?
+DeleteType=Odstrániť
+DeleteAnAssetType=Odstráňte model aktív
+ConfirmDeleteAssetType=Naozaj chcete odstrániť tento model aktív?
+ShowTypeCard=Zobraziť model '%s'
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=Aktíva
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=Popis majetku
+# Admin page
+AssetSetup=Nastavenie aktív
+AssetSetupPage=Stránka nastavenia aktív
+ExtraFieldsAssetModel=Doplnkové atribúty (model aktíva)
+AssetsType=Model aktív
+AssetsTypeId=ID modelu majetku
+AssetsTypeLabel=Štítok modelu majetku
+AssetsTypes=Modely aktív
+ASSET_ACCOUNTANCY_CATEGORY=Účtovná skupina dlhodobého majetku
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Pomerné obdobie v dňoch pre výpočet amortizácie počas jedného roka
+# Menu
+MenuAssets=Aktíva
+MenuNewAsset=Nové aktívum
+MenuAssetModels=Modelové aktíva
+MenuListAssets=Zoznam
+MenuNewAssetModel=Nový model majetku
+MenuListAssetModels=Zoznam
+# Module
+ConfirmDeleteAsset=Naozaj chcete odstrániť toto dielo?
+# Tab
+AssetDepreciationOptions=Možnosti odpisovania
+AssetAccountancyCodes=Účty účtovníctva
+AssetDepreciation=Odpisy
+# Asset
+Asset=aktíva
+Assets=Aktíva
+AssetReversalAmountHT=Zvratná suma (bez daní)
+AssetAcquisitionValueHT=Akvizičná suma (bez daní)
+AssetRecoveredVAT=Vrátená DPH
+AssetReversalDate=Dátum obrátenia
+AssetDateAcquisition=Dátum nadobudnutia
+AssetDateStart=Dátum spustenia
+AssetAcquisitionType=Typ akvizície
+AssetAcquisitionTypeNew=Nový
+AssetAcquisitionTypeOccasion=Použité
+AssetType=Typ aktíva
+AssetTypeIntangible=Nehmotný
+AssetTypeTangible=Hmatateľné
+AssetTypeInProgress=Prebieha
+AssetTypeFinancial=Finančné
+AssetNotDepreciated=Neodpisované
+AssetDisposal=Dispozícia
+AssetConfirmDisposalAsk=Naozaj sa chcete zbaviť aktíva <b> %s</b>
+AssetConfirmReOpenAsk=Naozaj chcete znova otvoriť dielo <b> %s</b>
+# Asset status
+AssetInDraft=Návrh
+AssetInProgress=Prebieha
+AssetDisposed=Zlikvidovaný
+AssetRecorded=Zaúčtované
+# Asset disposal
+AssetDisposalDate=Dátum likvidácie
+AssetDisposalAmount=Dispozičná hodnota
+AssetDisposalType=Typ likvidácie
+AssetDisposalDepreciated=Odpísať rok prevodu
+AssetDisposalSubjectToVat=Likvidácia podlieha DPH
+# Asset model
+AssetModel=Model aktíva
+AssetModels=Modely aktív
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Ekonomické odpisy
+AssetDepreciationOptionAcceleratedDepreciation=zrýchlené odpisy (daňové)
+AssetDepreciationOptionDepreciationType=Typ odpisu
+AssetDepreciationOptionDepreciationTypeLinear=Lineárne
+AssetDepreciationOptionDepreciationTypeDegressive=Degresívne
+AssetDepreciationOptionDepreciationTypeExceptional=Výnimočné
+AssetDepreciationOptionDegressiveRate=Degresívna sadzba
+AssetDepreciationOptionDuration=Trvanie
+AssetDepreciationOptionDurationType=Zadajte trvanie
+AssetDepreciationOptionDurationTypeAnnual=Výročný
+AssetDepreciationOptionDurationTypeMonthly=Mesačne
+AssetDepreciationOptionDurationTypeDaily=Denne
+AssetDepreciationOptionRate=Sadzba (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Odpisový základ (bez DPH)
+AssetDepreciationOptionAmountBaseDeductibleHT=Odpočítateľný základ (bez DPH)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Celková suma posledného odpisu (bez DPH)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Ekonomické odpisy
+AssetAccountancyCodeAsset=aktíva
+AssetAccountancyCodeDepreciationAsset=Odpisy
+AssetAccountancyCodeDepreciationExpense=Výdavky na odpisy
+AssetAccountancyCodeValueAssetSold=Hodnota vyradeného majetku
+AssetAccountancyCodeReceivableOnAssignment=Pohľadávka pri likvidácii
+AssetAccountancyCodeProceedsFromSales=Výťažok z likvidácie
+AssetAccountancyCodeVatCollected=Inkasovaná DPH
+AssetAccountancyCodeVatDeductible=Vrátená DPH z majetku
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=zrýchlené odpisy (daňové)
+AssetAccountancyCodeAcceleratedDepreciation=Účet
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Výdavky na odpisy
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Odňatie vlastníctva/poskytnutie
+# Asset depreciation
+AssetBaseDepreciationHT=Základ odpisov (bez DPH)
+AssetDepreciationBeginDate=Začiatok odpisovania dňa
+AssetDepreciationDuration=Trvanie
+AssetDepreciationRate=Sadzba (%%)
+AssetDepreciationDate=Dátum odpisu
+AssetDepreciationHT=Odpisy (bez DPH)
+AssetCumulativeDepreciationHT=Kumulatívne odpisy (bez DPH)
+AssetResidualHT=zostatková hodnota (bez DPH)
+AssetDispatchedInBookkeeping=Zaúčtované odpisy
+AssetFutureDepreciationLine=Budúce odpisy
+AssetDepreciationReversal=Zvrat
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Nebolo poskytnuté ID majetku alebo nájdeného modelu
+AssetErrorFetchAccountancyCodesForMode=Chyba pri získavaní účtovných účtov pre režim odpisovania '%s'
+AssetErrorDeleteAccountancyCodesForMode=Chyba pri odstraňovaní účtovných účtov z režimu odpisovania '%s'
+AssetErrorInsertAccountancyCodesForMode=Chyba pri vkladaní účtovných účtov v režime odpisovania '%s'
+AssetErrorFetchDepreciationOptionsForMode=Chyba pri načítavaní možností pre režim odpisovania '%s'
+AssetErrorDeleteDepreciationOptionsForMode=Chyba pri odstraňovaní možností režimu odpisovania '%s'
+AssetErrorInsertDepreciationOptionsForMode=Chyba pri vkladaní možností režimu odpisovania '%s'
+AssetErrorFetchDepreciationLines=Chyba pri získavaní zaznamenaných riadkov odpisov
+AssetErrorClearDepreciationLines=Chyba pri čistení zaznamenaných odpisových línií (storno a budúce)
+AssetErrorAddDepreciationLine=Chyba pri pridávaní odpisového riadku
+AssetErrorCalculationDepreciationLines=Chyba pri výpočte odpisových riadkov (návratné a budúce)
+AssetErrorReversalDateNotProvidedForMode=Dátum zrušenia nie je uvedený pre metódu odpisovania '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Dátum zrušenia musí byť väčší alebo rovnaký ako začiatok aktuálneho fiškálneho roka pre metódu odpisovania '%s'
+AssetErrorReversalAmountNotProvidedForMode=Pre režim odpisovania '%s' nie je suma storna poskytnutá.
+AssetErrorFetchCumulativeDepreciation=Chyba pri získavaní sumy akumulovaných odpisov z riadku odpisov
+AssetErrorSetLastCumulativeDepreciation=Chyba pri zaznamenávaní poslednej akumulovanej sumy odpisov

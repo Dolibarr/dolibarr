@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=पेबॉक्स मॉड्यूल सेटअप
+PayBoxDesc=यह मॉड्यूल ग्राहकों द्वारा <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">पेबॉक्स</a> पर भुगतान की अनुमति देने के लिए पेज प्रदान करता है। इसका उपयोग निःशुल्क भुगतान के लिए या किसी विशेष Dolibarr ऑब्जेक्ट (इनवॉइस, ऑर्डर, ...) पर भुगतान के लिए किया जा सकता है।
+PayBoxDoPayment=पेबॉक्स से भुगतान करें
+YouWillBeRedirectedOnPayBox=आपको क्रेडिट कार्ड की जानकारी दर्ज करने के लिए सुरक्षित पेबॉक्स पृष्ठ पर पुनः निर्देशित किया जाएगा
+SetupPayBoxToHavePaymentCreatedAutomatically=अपने पेबॉक्स को यूआरएल <b>%s</b> के साथ सेटअप करें, ताकि पेबॉक्स द्वारा मान्य किए जाने पर भुगतान स्वचालित रूप से बनाया जा सके।
+YourPaymentHasBeenRecorded=यह पृष्ठ पुष्टि करता है कि आपका भुगतान दर्ज कर लिया गया है। धन्यवाद।
+YourPaymentHasNotBeenRecorded=आपका भुगतान दर्ज नहीं किया गया है और लेनदेन रद्द कर दिया गया है। धन्यवाद।
+PAYBOX_CGI_URL_V2=भुगतान के लिए पेबॉक्स CGI मॉड्यूल का URL
+NewPayboxPaymentReceived=नया पेबॉक्स भुगतान प्राप्त हुआ
+NewPayboxPaymentFailed=नया पेबॉक्स भुगतान प्रयास किया गया लेकिन विफल रहा
+PAYBOX_PAYONLINE_SENDEMAIL=भुगतान प्रयास के बाद ईमेल सूचना (सफल या असफल)
+PAYBOX_PBX_SITE=पीबीएक्स साइट के लिए मूल्य
+PAYBOX_PBX_RANG=पीबीएक्स रेंज का मान
+PAYBOX_PBX_IDENTIFIANT=पीबीएक्स आईडी का मान
+PAYBOX_HMAC_KEY=HMAC कुंजी

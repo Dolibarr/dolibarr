@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - withdrawals
+StatusMotif2=Abbuchung angefochten
+StatusMotif5=Fehlerhafte Kontodaten
+OrderWaiting=Wartestellung

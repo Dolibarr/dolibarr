@@ -1,0 +1,14 @@
+README (English)
+--------------------------------
+
+This directory contains sub-directories to provide tools or documentation for developers.
+
+Note: All files in this directory are in the source repository only and are not provided with a standard release. They are useless to make Dolibarr working.
+
+You may find a more complete documentation on Dolibarr on the wiki:
+
+https://wiki.dolibarr.org/
+
+and on
+
+https://doxygen.dolibarr.org/

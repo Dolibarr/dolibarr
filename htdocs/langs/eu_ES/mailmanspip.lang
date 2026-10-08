@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Mailman eta SPIP moduluaren konfigurazioa
+MailmanTitle=Mailman posta-zerrenda sistema
+TestSubscribe=Mailman zerrendetako harpidetza probatzeko
+TestUnSubscribe=Mailman zerrendetatik harpidetza kentzeko proba bat egiteko
+MailmanCreationSuccess=Harpidetza proba arrakastaz gauzatu da
+MailmanDeletionSuccess=Harpidetza kentzeko proba arrakastaz gauzatu da
+SynchroMailManEnabled=Mailman eguneratze bat egingo da
+SynchroSpipEnabled=Spip eguneratze bat egingo da
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Mailman administratzailearen pasahitza
+DescADHERENT_MAILMAN_URL=Mailman harpidetzen URLa
+DescADHERENT_MAILMAN_UNSUB_URL=Mailman harpidetza-bajarako URLa
+DescADHERENT_MAILMAN_LISTS=Kide berrien izen-emate automatikorako zerrenda(k) (koma batez bereizita)
+SPIPTitle=SPIP Edukien Kudeaketa Sistema
+DescADHERENT_SPIP_SERVEUR=SPIP zerbitzaria
+DescADHERENT_SPIP_DB=SPIP datu-basearen izena
+DescADHERENT_SPIP_USER=SPIP datu-baseko saioa hasteko
+DescADHERENT_SPIP_PASS=SPIP datu-basearen pasahitza
+AddIntoSpip=Gehitu SPIP-era
+AddIntoSpipConfirmation=Ziur zaude kide hau SPIP-era gehitu nahi duzula?
+AddIntoSpipError=Erabiltzailea SPIP-en gehitzea huts egin da
+DeleteIntoSpip=Kendu SPIPetik
+DeleteIntoSpipConfirmation=Ziur zaude kide hau SPIPetik kendu nahi duzula?
+DeleteIntoSpipError=Erabiltzailea SPIPetik ezabatzea huts egin du
+SPIPConnectionFailed=SPIPera konektatzea huts egin du
+SuccessToAddToMailmanList=%s arrakastaz gehitu da %s posta-zerrendara edo SPIP datu-basera
+SuccessToRemoveToMailmanList=%s arrakastaz kendu da posta-zerrendatik %s edo SPIP datu-basetik

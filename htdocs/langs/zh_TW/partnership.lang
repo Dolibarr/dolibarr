@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=合作夥伴管理
+PartnershipDescription=合作夥伴管理模組
+PartnershipDescriptionLong= 用於管理合作夥伴的模組
+Partnership=合作夥伴
+Partnerships=合作夥伴
+AddPartnership=新增合作夥伴
+CancelPartnershipForExpiredMembers=合作夥伴：取消已到期會員的合作資格
+PartnershipCheckBacklink=合作夥伴：檢查返回連結
+# Menu
+NewPartnership=新增合作夥伴
+NewPartnershipbyWeb=您的合作夥伴申請已成功提交，我們將盡快與您聯絡...
+ListOfPartnerships=合作夥伴清單
+# Admin page
+PartnershipSetup=合作夥伴設定
+PartnershipAbout=關於合作夥伴
+PartnershipAboutPage=合作夥伴說明頁
+partnershipforthirdpartyormember=合作夥伴狀態必須設定於「合作方」或「會員」
+PARTNERSHIP_IS_MANAGED_FOR=合作適用對象
+PARTNERSHIP_BACKLINKS_TO_CHECK=需檢查的返回連結
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=會員到期後幾天取消合作資格
+ReferingWebsiteCheck=合作網站返回連結檢查
+ReferingWebsiteCheckDesc=可啟用此功能，檢查合作方網站是否已放置指向您網站的返回連結。
+PublicFormRegistrationPartnerDesc=Dolibarr 可提供公開網址，讓外部訪客申請加入合作夥伴計畫。
+# Object
+DeletePartnership=刪除合作夥伴
+PartnershipDedicatedToThisThirdParty=此合作夥伴屬於此合作方
+PartnershipDedicatedToThisMember=此合作夥伴屬於此會員
+DatePartnershipStart=開始日期
+DatePartnershipEnd=結束日期
+ReasonDecline=拒絕原因
+ReasonDeclineOrCancel=拒絕或取消原因
+PartnershipAlreadyExist=合作夥伴已存在
+ManagePartnership=管理合作夥伴
+BacklinkNotFoundOnPartnerWebsite=合作方網站未找到返回連結
+ConfirmClosePartnershipAsk=您確定要取消此合作夥伴關係嗎？
+PartnershipType=合作類型
+PartnershipRefApproved=合作夥伴 %s 已核准
+KeywordToCheckInWebsite=若需檢查合作方網站是否包含特定關鍵字，請在此輸入
+PartnershipDraft=草稿
+PartnershipAccepted=已接受
+PartnershipRefused=已拒絕
+PartnershipCanceled=已取消
+PartnershipManagedFor=適用對象
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=合作夥伴即將取消
+SendingEmailOnPartnershipRefused=合作夥伴申請已拒絕
+SendingEmailOnPartnershipAccepted=合作夥伴申請已接受
+SendingEmailOnPartnershipCanceled=合作夥伴已取消
+YourPartnershipWillSoonBeCanceledTopic=合作夥伴即將取消
+YourPartnershipRefusedTopic=合作夥伴申請已拒絕
+YourPartnershipAcceptedTopic=合作夥伴申請已接受
+YourPartnershipCanceledTopic=合作夥伴已取消
+YourPartnershipWillSoonBeCanceledContent=我們通知您，您的合作夥伴資格即將被取消(可能因未續約或未符合合作條件)。若您認為此為錯誤，請與我們聯絡。
+YourPartnershipRefusedContent=我們通知您，您的合作夥伴申請已被拒絕，因未符合必要條件。如需更多資訊，請與我們聯絡。
+YourPartnershipAcceptedContent=我們通知您，您的合作夥伴申請已被接受。
+YourPartnershipCanceledContent=我們通知您，您的合作夥伴資格已被取消。如需更多資訊，請與我們聯絡。
+CountLastUrlCheckError=Number of URL check errors
+LastCheckBacklink=上次返回連結檢查日期
+NewPartnershipRequest=合作夥伴申請
+NewPartnershipRequestDesc=此表單可讓您申請加入我們的合作夥伴計畫。如需協助，請聯絡 <b>%s</b>。
+ThisUrlMustContainsAtLeastOneLinkToWebsite=此頁面必須至少包含一個指向以下網域的返回連結：%s
+IPOfApplicant=申請者 IP
+PartnershipToReopen=重新啟用
+PartnershipConfirmReOpenAsk=您確定要重新啟用合作夥伴 <b>%s</b> 嗎？

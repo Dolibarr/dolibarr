@@ -1,0 +1,67 @@
+Salary=ເງິນເດືອນ
+Salaries=ເງິນເດືອນ
+NewSalary=ເງິນເດືອນໃໝ່
+AddSalary=ເພີ່ມເງິນເດືອນ
+NewSalaryPayment=ການຈ່າຍເງິນເດືອນໃໝ່
+AddSalaryPayment=ເພີ່ມການຈ່າຍເງິນເດືອນ
+SalaryPayment=ການຈ່າຍເງິນເດືອນ
+SalariesPayments=ລາຍການຈ່າຍເງິນເດືອນ
+SalariesPaymentsOf=ລາຍການຈ່າຍເງິນເດືອນຂອງ %s
+ShowSalaryPayment=ສະແດງການຈ່າຍເງິນເດືອນ
+SalaryID=ລະຫັດເງິນເດືອນ
+SalaryAmount=ຈຳນວນເງິນເດືອນ
+SalaryDate=ວັນທີຈ່າຍເງິນເດືອນ
+SalaryPaid=ຈ່າຍເງິນເດືອນແລ້ວ
+SalaryNotPaid=ຍັງບໍ່ທັນຈ່າຍເງິນເດືອນ
+
+SalarySlip=ໃບແຈ້ງເງິນເດືອນ
+StandardSalaryDocModel=ແບບຟອມໃບແຈ້ງເງິນເດືອນມາດຕະຖານ
+
+BasicSalary=ເງິນເດືອນພື້ນຖານ
+Bonus=ເງິນລາງວັນ
+Allowance=ເງິນອຸດໜູນ
+Overtime=ຄ່າລ່ວງເວລາ
+Deduction=ການຫັກອອກ
+Deductions=ລາຍການຫັກອອກ
+Earnings=ລາຍຮັບ
+TotalEarnings=ລາຍຮັບທັງໝົດ
+TotalDeductions=ລາຍການຫັກທັງໝົດ
+NetPaid=ເງິນຮັບສຸດທິ
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=ຜັງບັນຊີທີ່ໃຊ້ເປັນຄ່າເລີ່ມຕົ້ນສຳລັບ "ຜູ້ໃຊ້" ໃນການຈ່າຍເງິນເດືອນ
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=ບັນຊີສະເພາະທີ່ກຳນົດໄວ້ໃນຂໍ້ມູນຜູ້ໃຊ້ຈະຖືກນຳໃຊ້ສຳລັບບັນຊີຍ່ອຍເທົ່ານັ້ນ. ສ່ວນບັນຊີນີ້ຈະຖືກນຳໃຊ້ສຳລັບບັນຊີທົ່ວໄປ ແລະ ຍັງເປັນຄ່າເລີ່ມຕົ້ນຂອງບັນຊີຍ່ອຍ ຫາກບໍ່ມີການກຳນົດບັນຊີສະເພາະໃຫ້ກັບຜູ້ໃຊ້.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=ບັນຊີລາຍຈ່າຍເງິນເດືອນເລີ່ມຕົ້ນ
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=ເມື່ອສ້າງລາຍການເງິນເດືອນ ໃຫ້ປະວ່າງຕົວເລືອກ "ສ້າງການຈ່າຍເງິນທັງໝົດໂດຍອັດຕະໂນມັດ" ໄວ້ເປັນຄ່າເລີ່ມຕົ້ນ
+
+# Stats / Info
+CurrentSalary=ເງິນເດືອນປັດຈຸບັນ
+LastSalaries=%s ລາຍການເງິນເດືອນຫຼ້າສຸດ
+AllSalaries=ເງິນເດືອນທັງໝົດ
+SalariesStatistics=ສະຖິຕິເງິນເດືອນ
+SalariesAndPayments=ເງິນເດືອນ ແລະ ການຈ່າຍເງິນ
+UserPaySlip=ໃບແຈ້ງເງິນເດືອນ
+PayPeriod=ງວດການຈ່າຍເງິນເດືອນ
+
+# THM / TJM
+THM=ອັດຕາສະເລ່ຍຕໍ່ຊົ່ວໂມງ
+THMDescription=ຄ່ານີ້ອາດຈະຖືກໃຊ້ເພື່ອຄິດໄລ່ຕົ້ນທຶນເວລາທີ່ໃຊ້ໃນໂຄງການ ຫາກມີການໃຊ້ໂມດູນໂຄງການ
+TJM=ອັດຕາສະເລ່ຍຕໍ່ມື້
+TJMDescription=ຄ່ານີ້ແມ່ນມີໄວ້ເພື່ອເປັນຂໍ້ມູນເທົ່ານັ້ນ ແລະ ບໍ່ໄດ້ນຳໃຊ້ເຂົ້າໃນການຄິດໄລ່ໃດໆ
+
+# Other actions
+ConfirmDeleteSalaryPayment=ເຈົ້າຕ້ອງການລົບການຈ່າຍເງິນເດືອນນີ້ບໍ?
+FillFieldFirst=ກະລຸນາປ້ອນຂໍ້ມູນພະນັກງານກ່ອນ
+UpdateAmountWithLastSalary=ຕັ້ງຄ່າຈຳນວນເງິນຕາມເງິນເດືອນຫຼ້າສຸດ
+MakeTransferRequest=ສ້າງຄຳຮ້ອງຂໍໂອນເງິນ
+VirementOrder=ຄຳສັ່ງໂອນເງິນ
+WithdrawalReceipt=ໃບຢັ້ງຢືນການໂອນເງິນ
+OrderWaiting=ລາຍການທີ່ກຳລັງລໍຖ້າ
+FillEndOfMonth=ທ້າຍເດືອນ
+
+# Shortcuts
+PreviousMonthShort=ເດືອນກ່ອນ
+CurrentMonthShort=ເດືອນນີ້
+NextMonthShort=ເດືອນໜ້າ
+PreviousWeekShort=ອາທິດກ່ອນ
+CurrentWeekShort=ອາທິດນີ້

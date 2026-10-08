@@ -1,0 +1,38 @@
+IntraCommReport=Intracomm-rapport
+IntraCommReports=Intracomm rapporterer
+
+Module68000Name = Intracomm-rapport
+Module68000Desc = Intracomm rapportstyring (understøttelse af fransk DEB / DES-format)
+IntracommReportSetup = Opsætning af internt rapporteringsmodul
+IntracommReportAbout = Om intracommreport
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Godkendelsesnummer (udstedt af vedhæftet fil CISD)
+INTRACOMMREPORT_TYPE_ACTEUR=Skuespiller type
+INTRACOMMREPORT_ROLE_ACTEUR=Rolle spillet af skuespiller
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Forpligtelses niveau ved introduktioner
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Forpligtelsesniveau ved forsendelser
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Servicekategori af typen "Porto"
+INTRACOMMREPORT_NUM_DECLARATION=Erklæringsnummer
+# Menu
+MenuIntracommReport=Intracomm-rapport
+MenuIntracommReportNew=Ny erklæring
+MenuIntracommReportList=Liste
+# View
+NewDeclaration=Ny erklæring
+Declaration=Erklæring
+AnalysisPeriod=Analyseperiode
+TypeOfDeclaration=Type erklæring
+DEB=Godsudvekslingserklæring (DEB)
+DES=Erklæring om udveksling af tjenester (DES)
+# Export page
+IntracommReportTitle=Forberedelse af en XML-fil i ProDouane-format
+# List
+IntracommReportList=Liste over genererede erklæringer
+IntracommReportNumber=Numero af erklæring
+IntracommReportPeriod=Analyseperiode
+IntracommReportTypeDeclaration=Type erklæring
+IntracommReportDownload=download XML-fil
+# Invoice
+IntracommReportTransportMode=Transporttilstand
+DeleteIntraCommReport=Slet IntraComm-rapport

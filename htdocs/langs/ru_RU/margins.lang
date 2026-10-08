@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Наценка
+Margins=Наценки
+TotalMargin=Общая наценка
+MarginOnProducts=Наценка / Продукты
+MarginOnServices=Наценка / Услуги
+MarginRate=Ставка наценки
+ModifyMarginRates=Изменить ставки наценки
+MarkRate=Ставка наценки на себестоимость
+DisplayMarginRates=Отобразить ставки наценки
+DisplayMarkRates=Отобразить ставки наценки на себестоимость
+InputPrice=Исходная цена
+margin=Управление доходом с наценок
+margesSetup=Настройка управления доходом с наценок
+MarginDetails=Детали наценки
+ProductMargins=Товарные наценки
+CustomerMargins=Наценки клиентов
+SalesRepresentativeMargins=Маржа торгового представителя
+ContactOfInvoice=Контакт счета-фактуры
+UserMargins=Пользовательские наценки
+ProductService=Продукт или Услуга
+AllProducts=Все продукты и услуги
+ChooseProduct/Service=Выберите продукт или услугу
+ForceBuyingPriceIfNull=Если не указано иное, привязать цену покупки/себестоимости к цене продажи
+ForceBuyingPriceIfNullDetails=Если цена покупки/себестоимости не указана, когда мы добавляем новую строку, и эта опция «ВКЛ», маржа будет 0%% на новой строке (цена покупки / себестоимости = цена продажи). Если эта опция выключена (рекомендуется), маржа будет равна значению, предлагаемому по умолчанию (и может быть 100%%, если значение по умолчанию не может быть найдено).
+MARGIN_METHODE_FOR_DISCOUNT=Метод маржи для глобальных скидок
+UseDiscountAsProduct=Как товар
+UseDiscountAsService=Как услуга
+UseDiscountOnTotal=На промежуточный итог
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Определяет, рассматривается ли глобальная скидка как продукт, услуга или только как промежуточный итог для расчета маржи.
+MARGIN_TYPE=Цена покупки/себестоимости, предлагаемая по умолчанию для расчета маржи
+MargeType1=Маржа по лучшей цене продавца
+MargeType2=Margin on Weighted Average Cost (WAC)
+MargeType3=Маржа на себестоимость
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
+CostPrice=Себестоимость
+UnitCharges=Стоимость единицы
+Charges=Сборы
+AgentContactType=Тип контакта коммерческого агента
+AgentContactTypeDetails=Определите, какой тип контакта (привязанный к счетам-фактурам) будет использоваться для отчета о марже по каждому контакту/адресу. Обратите внимание, что чтение статистики по контакту ненадежно, поскольку в большинстве случаев контакт может быть не указан явно в счетах-фактурах.
+rateMustBeNumeric=Ставка должна быть числом
+markRateShouldBeLesserThan100=Ставка наценки должна быть меньше 100
+ShowMarginInfos=Показать инф-цию о наценке
+CheckMargins=Детали наценки
+MarginPerSaleRepresentativeWarning=В отчете о марже на пользователя используется связь между третьими сторонами и торговыми представителями для расчета маржи каждого торгового представителя. Поскольку некоторые третьи стороны могут не иметь специального торгового представителя, а некоторые третьи стороны могут быть связаны с несколькими, некоторые суммы могут не быть включены в этот отчет (если нет торгового представителя), а некоторые могут отображаться в разных строках (для каждого торгового представителя) .

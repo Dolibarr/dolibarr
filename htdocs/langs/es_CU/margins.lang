@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - margins
+MarginRate=tasa de margen
+MarkRate=Tasa de marca
+DisplayMarginRates=Mostrar tasas de margen
+DisplayMarkRates=Tasas de marcas de visualización
+InputPrice=Precio de entrada
+margin=Gestión de márgenes de beneficio
+margesSetup=Configuración de gestión de márgenes de beneficio
+MarginDetails=Detalles del margen
+ProductMargins=Márgenes de producto
+CustomerMargins=márgenes de clientes
+SalesRepresentativeMargins=Márgenes del representante de ventas
+ContactOfInvoice=contacto de factura
+UserMargins=Márgenes de usuario
+ChooseProduct/Service=Elige producto o servicio
+ForceBuyingPriceIfNull=Forzar el precio de compra/costo al precio de venta si no está definido
+ForceBuyingPriceIfNullDetails=Si no se proporciona el precio de compra/costo cuando agregamos una nueva línea, y esta opción está activada, el margen será 0%% en la nueva línea (precio de compra/costo = precio de venta). Si esta opción está "DESACTIVADA" (recomendada), el margen será igual al valor sugerido por defecto (y puede ser 100%% si no se encuentra ningún valor predeterminado).
+MARGIN_METHODE_FOR_DISCOUNT=Método de margen para descuentos globales
+UseDiscountAsProduct=como producto
+UseDiscountAsService=como un servicio
+UseDiscountOnTotal=en subtotal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define si un descuento global se trata como un producto, un servicio o solo como subtotal para el cálculo del margen.
+MARGIN_TYPE=Precio de compra/costo sugerido por defecto para el cálculo del margen
+MargeType1=Margen sobre el precio del mejor proveedor
+MargeType3=Margen sobre precio de coste
+CostPrice=Precio de coste
+UnitCharges=Cargos unitarios
+Charges=Cargos
+AgentContactType=Tipo de contacto del agente comercial
+rateMustBeNumeric=La tarifa debe ser un valor numérico
+markRateShouldBeLesserThan100=La tasa de marca debe ser inferior a 100
+ShowMarginInfos=Mostrar información de margen
+CheckMargins=Detalle de márgenes
+MarginPerSaleRepresentativeWarning=El informe de margen por usuario utiliza el vínculo entre terceros y representantes de ventas para calcular el margen de cada representante de ventas. Debido a que algunos terceros pueden no tener un representante de ventas dedicado y algunos terceros pueden estar vinculados a varios, es posible que algunos montos no se incluyan en este informe (si no hay un representante de ventas) y algunos pueden aparecer en líneas diferentes (para cada representante de ventas) .

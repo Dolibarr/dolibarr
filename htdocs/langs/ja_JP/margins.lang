@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=利益
+Margins=利益
+TotalMargin=総利益
+MarginOnProducts=利益/製品
+MarginOnServices=利益/サービス
+MarginRate=利益率
+ModifyMarginRates=証拠金率の変更
+MarkRate=マーク率
+DisplayMarginRates=利益率を表示する
+DisplayMarkRates=マーク率を表示する
+InputPrice=入力価格
+margin=利益率管理
+margesSetup=利益率管理の設定
+MarginDetails=利益の詳細
+ProductMargins=製品利益
+CustomerMargins=顧客利益
+SalesRepresentativeMargins=営業担当者の利益
+ContactOfInvoice=請求書の連絡先
+UserMargins=ユーザ利益
+ProductService=製品やサービス
+AllProducts=全製品とサービス
+ChooseProduct/Service=製品またはサービスを選択すること
+ForceBuyingPriceIfNull=定義されていない場合、購入/原価を販売価格に強制する
+ForceBuyingPriceIfNullDetails=新しい行を追加するときに購入/原価が提供されておらず、このオプションが「オン」の場合、マージンは新しい行の0%%になる（購入/原価=販売価格）。このオプションが「オフ」（推奨）の場合、マージンはデフォルトで提案されている値と等しくなる（デフォルト値が見つからない場合は、100%%になる可能性がある）。
+MARGIN_METHODE_FOR_DISCOUNT=グローバル割引の利益方式
+UseDiscountAsProduct=製品として
+UseDiscountAsService=サービスとして
+UseDiscountOnTotal=小計について
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=グローバル割引を製品、サービスとして扱うか、利益計算の小計としてのみ扱うかを定義する。
+MARGIN_TYPE=利益計算のためにデフォルトで提案された購入/原価
+MargeType1=最高のベンダー価格の利益
+MargeType2=加重平均コスト（WAC）に基づくマージン
+MargeType3=原価利益
+MarginTypeDesc=* 最良購入価格に対するマージン = 販売価格 - カードで定義された最良価格 * 加重平均コスト (WAC) に対するマージン = 販売価格 - 加重平均価格 (WAP) または WAP がまだ定義されていない場合は最良価格 * コストに対するマージン価格 = 販売価格 - 製品 カードで定義された原価、または原価が定義されていない場合は WAC、または WAC がまだ定義されていない場合は最良 仕入先 価格
+CostPrice=原価
+UnitCharges=ユニット料金
+Charges=料金
+AgentContactType=商取引代理店の連絡先タイプ
+AgentContactTypeDetails=連絡先/住所ごとの証拠金レポートに使用される連絡先タイプ (請求書にリンクされている) を定義する。ほとんどの場合、連絡先は請求書に明示的に定義されていない可能性があるため、連絡先に関する統計の読み取りは信頼できないことに注意すること。
+rateMustBeNumeric=レートは数値でなければならない
+markRateShouldBeLesserThan100=マーク率は100未満である必要がある
+ShowMarginInfos=利益情報を表示する
+CheckMargins=利益の詳細
+MarginPerSaleRepresentativeWarning=ユーザあたりの利益の報告書は、取引先と営業担当者の間のリンクを使用して、各営業担当者の利益を計算する。一部の取引先には専任の営業担当者がいない場合や、一部の取引先が複数にリンクされている場合があるため、一部の金額はこの報告書に含まれない場合があり(営業担当者がいない場合)、一部は異なる行に表示される場合がある(営業担当者ごとに) 。

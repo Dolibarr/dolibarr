@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Кредит
+Loans=Кредити
+NewLoan=Нов кредит
+ShowLoan=Показване на кредит
+PaymentLoan=Плащане по кредит
+LoanPayment=Плащане по кредит
+ShowLoanPayment=Показване на плащане по кредит
+LoanCapital=Капитал
+Insurance=Застраховка
+Interest=Лихва
+Nbterms=Брой условия
+Term=Условие
+LoanAccountancyCapitalCode=Счетоводна сметка за капитал
+LoanAccountancyInsuranceCode=Счетоводна сметка за застраховка
+LoanAccountancyInterestCode=Счетоводна сметка за лихва
+ConfirmDeleteLoan=Потвърдете изтриването на този кредит
+LoanDeleted=Кредитът е успешно изтрит
+ConfirmPayLoan=Потвърдете класифицирането на този кредит като платен
+LoanPaid=Кредитът е платен
+ListLoanAssociatedProject=Списък на кредити, свързани с проекта
+AddLoan=Създаване на кредит
+FinancialCommitment=Финансово задължение
+InterestAmount=Лихва
+CapitalRemain=Оставащ капитал
+TermPaidAllreadyPaid = Този срок вече е платен
+CantUseScheduleWithLoanStartedToPaid = Не може да се генерира времева линия за заем със започнат плащане
+CantModifyInterestIfScheduleIsUsed = Не можете да промени лихва, ако използвате график
+# Admin
+ConfigLoan=Конфигуриране на модула кредити
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Сметка (от сметкоплана), която да се използва по подразбиране за капитал (модул за заем)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Сметка (от сметкоплана), която да се използва по подразбиране за лихви (модул за заем)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Сметка (от сметкоплана), която да се използва по подразбиране за застраховка (модул за кредит)
+CreateCalcSchedule=Променяне на финансово задължение

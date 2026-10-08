@@ -1,0 +1,38 @@
+IntraCommReport=Relatório Intracomm
+IntraCommReports=Relatórios Intracomm
+
+Module68000Name = Relatório intracomunicação
+Module68000Desc = Gerenciamento de relatórios intracomm (suporte para formato francês DEB/DES)
+IntracommReportSetup = Configuração do relatório intracomm módulo
+IntracommReportAbout = Sobre o relatório intracomm
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Número de acordo (distribuído pelo CISD de adesão)
+INTRACOMMREPORT_TYPE_ACTEUR=Tipo de ator
+INTRACOMMREPORT_ROLE_ACTEUR=Papel jogado pelo ator
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introduções
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Nível de obrigação nas expedições
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Categoria de serviços do tipo "Frais de porto"
+INTRACOMMREPORT_NUM_DECLARATION=Número de declarante
+# Menu
+MenuIntracommReport=Relatório intracomunicação
+MenuIntracommReportNew=Nova declaração
+MenuIntracommReportList=Lista
+# View
+NewDeclaration=Nova declaração
+Declaration=Declaração
+AnalysisPeriod=Período de análise
+TypeOfDeclaration=Tipo de declaração
+DEB=Declaração de troca de mercadorias (DEB)
+DES=Declaração de troca de serviços (DES)
+# Export page
+IntracommReportTitle=Preparação de um XML ficheiro em formato ProDouane
+# List
+IntracommReportList=Lista de declarações geradas
+IntracommReportNumber=Número da declaração
+IntracommReportPeriod=Período de análise
+IntracommReportTypeDeclaration=Tipo de declaração
+IntracommReportDownload=baixar XML ficheiro
+# Invoice
+IntracommReportTransportMode=Modo de transporte
+DeleteIntraCommReport=eliminar, apagar Relatório IntraComm

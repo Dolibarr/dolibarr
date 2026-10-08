@@ -1,0 +1,43 @@
+# Dolibarr language file - fr_FR - commissions
+
+Module60000Desc=Komisyon yönetimi
+commissionsSetup=Komisyon yönetimi ayarları
+
+ProductCommissionRate=Ürünlerde komisyon oranı
+ServiceCommissionRate=Hizmetlerde komisyon oranı
+
+ProductCommissionRateDetails=Ürün satışlarında komisyon oranı
+ServiceCommissionRateDetails=Hizmet satışlarında komisyon oranı
+
+Commissions=Komisyonlar
+CommissionDetails=Komisyon ayrıntıları
+
+IncludeUnpayedInvoices=Vadesi geçen faturaları içer
+TotalCommission=Komisyonlar ara toplamı
+
+ProductMargin=Oran / ürünler
+ServiceMargin=Oran / hizmetler
+
+CommissionRate=Komisyon oranı
+
+ProductCommission=Komisyon / ürünler
+ServiceCommission=Komisyon / hizmetler
+
+CommissionBase=Komisyon dayanağı
+CommissionBasedOnTurnover=Ciroya dayalı komisyonlar
+CommissionBasedOnMargins=Orana dayalı komisyonlar
+CommissionBaseDetails=Komisyon hesaplama yöntemini tanımla
+CommissionBasedOnMarginsDetails=Orana dayalı komisyonlar oran modülünün etkinleştirilmesini gerektirir.
+
+TurnoverTotal = Toplam ciro
+ProductTurnover=Ürün cirosu
+ServiceTurnover=Hizmet cirosu
+
+CommercialAgent=Ticari temsilci
+
+StartDate=Başlama tarihi
+EndDate=Biriş tarihi
+Launch=Başlat
+
+AgentContactType=Komisyonda kullanılacak kişi türü
+AgentContactTypeDetails=Ticari temsilcilerle hangi kişi türünün (faturalarla bağlantılı) ilişkilendirileceğini tanımlayın

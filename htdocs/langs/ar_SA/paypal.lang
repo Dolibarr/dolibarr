@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=إعدادات وحدة PayPal
+PaypalDesc=تتيح هذه الوحدة للعملاء الدفع عبر <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. ويمكن استخدامها لإجراء دفعة حرة أو لسداد عنصر محدد في Dolibarr (فاتورة، أمر، ...).
+PaypalOrCBDoPayment=الدفع عبر PayPal (بالبطاقة أو حساب PayPal)
+PaypalDoPayment=الدفع عبر PayPal
+PAYPAL_API_SANDBOX=وضع الاختبار/البيئة التجريبية
+PAYPAL_API_USER=اسم مستخدم API
+PAYPAL_API_PASSWORD=كلمة مرور API
+PAYPAL_API_SIGNATURE=توقيع API
+PAYPAL_SSLVERSION=إصدار SSL في cURL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=تقديم خيار الدفع «المتكامل» (بطاقة ائتمان + PayPal) أو PayPal فقط
+PaypalModeIntegral=متكامل
+PaypalModeOnlyPaypal=PayPal فقط
+ONLINE_PAYMENT_CSS_URL=عنوان URL اختياري لملف أنماط CSS في صفحة الدفع عبر الإنترنت
+ThisIsTransactionId=هذا هو معرّف المعاملة
+PAYPAL_ADD_PAYMENT_URL=تضمين عنوان URL للدفع عبر PayPal عند إرسال مستند بالبريد الإلكتروني
+NewOnlinePaymentReceived=تم استلام دفعة جديدة عبر الإنترنت
+NewOnlinePaymentFailed=جرت محاولة دفع جديدة عبر الإنترنت لكنها فشلت
+ONLINE_PAYMENT_SENDEMAIL=عنوان البريد الإلكتروني الذي تُرسل إليه إشعارات بعد كل محاولة دفع، سواء نجحت أم فشلت
+ReturnURLAfterPayment=عنوان URL للعودة بعد الدفع
+ValidationOfOnlinePaymentFailed=فشل التحقق من صحة الدفع عبر الإنترنت
+PaymentSystemConfirmPaymentPageWasCalledButFailed=استدعى نظام الدفع صفحة تأكيد الدفع، لكنها أعادت خطأً
+SetExpressCheckoutAPICallFailed=فشل استدعاء واجهة API‏ SetExpressCheckout.
+DoExpressCheckoutPaymentAPICallFailed=فشل استدعاء واجهة API‏ DoExpressCheckoutPayment.
+DetailedErrorMessage=رسالة الخطأ التفصيلية
+ShortErrorMessage=رسالة الخطأ المختصرة
+ErrorCode=رمز الخطأ
+ErrorSeverityCode=رمز مستوى خطورة الخطأ
+OnlinePaymentSystem=نظام الدفع عبر الإنترنت
+PaypalLiveEnabled=تم تفعيل وضع PayPal الفعلي، وإلا يُستخدم وضع الاختبار/البيئة التجريبية
+PaypalImportPayment=استيراد مدفوعات PayPal
+PostActionAfterPayment=الإجراءات اللاحقة للدفع
+ARollbackWasPerformedOnPostActions=تم التراجع عن جميع الإجراءات اللاحقة للدفع. يجب إكمال هذه الإجراءات يدويًا إن كانت ضرورية.
+ValidationOfPaymentFailed=فشل التحقق من صحة الدفع
+CardOwner=حامل البطاقة
+PayPalBalance=رصيد PayPal
+OnlineSubscriptionPaymentLine=تم تسجيل الاشتراك عبر الإنترنت بتاريخ %s<br>تم الدفع عبر %s<br>عنوان IP المصدر: %s<br>معرّف المعاملة: %s

@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=ការដំឡើងម៉ូឌុល PayBox
+PayBoxDesc=ម៉ូឌុលនេះផ្តល់ជូនទំព័រដើម្បីអនុញ្ញាតឱ្យបង់ប្រាក់នៅលើ <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> ដោយអតិថិជន។ វាអាចត្រូវបានប្រើសម្រាប់ការបង់ប្រាក់ដោយឥតគិតថ្លៃ ឬសម្រាប់ការទូទាត់លើវត្ថុ Dolibarr ជាក់លាក់មួយ (វិក្កយបត្រ ការបញ្ជាទិញ ...)
+PayBoxDoPayment=បង់ជាមួយ Paybox
+YouWillBeRedirectedOnPayBox=អ្នកនឹងត្រូវបានបញ្ជូនបន្តនៅលើទំព័រ Paybox ដែលមានសុវត្ថិភាព ដើម្បីបញ្ចូលព័ត៌មានកាតឥណទានរបស់អ្នក។
+SetupPayBoxToHavePaymentCreatedAutomatically=រៀបចំ Paybox របស់អ្នកជាមួយ url <b>%s</b> ដើម្បីបង្កើតការទូទាត់ដោយស្វ័យប្រវត្តិនៅពេល បញ្ជាក់ដោយ Paybox ។
+YourPaymentHasBeenRecorded=ទំព័រនេះបញ្ជាក់ថាការទូទាត់របស់អ្នកត្រូវបានកត់ត្រាទុក។ សូមអរគុណ។
+YourPaymentHasNotBeenRecorded=ការទូទាត់របស់អ្នកមិនត្រូវបានកត់ត្រាទេ ហើយប្រតិបត្តិការត្រូវបានលុបចោល។ សូមអរគុណ។
+PAYBOX_CGI_URL_V2=Url នៃ Paybox CGI module សម្រាប់ការទូទាត់
+NewPayboxPaymentReceived=បានទទួលការទូទាត់ Paybox ថ្មី។
+NewPayboxPaymentFailed=ការទូទាត់ Paybox ថ្មីបានព្យាយាមប៉ុន្តែមិនបានសម្រេច
+PAYBOX_PAYONLINE_SENDEMAIL=ការជូនដំណឹងតាមអ៊ីមែលបន្ទាប់ពីការព្យាយាមបង់ប្រាក់ (ជោគជ័យ ឬបរាជ័យ)
+PAYBOX_PBX_SITE=តម្លៃសម្រាប់គេហទំព័រ PBX
+PAYBOX_PBX_RANG=តម្លៃសម្រាប់ PBX Rang
+PAYBOX_PBX_IDENTIFIANT=តម្លៃសម្រាប់លេខសម្គាល់ PBX
+PAYBOX_HMAC_KEY=សោ HMAC

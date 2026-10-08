@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Танзими модули PayBox
+PayBoxDesc=Ин модул саҳифаҳоеро пешниҳод мекунад, ки ба муштариён пардохт дар <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> иҷозат диҳад. Ин метавонад барои пардохти ройгон ё пардохт дар объекти мушаххаси Dolibarr (инвойс, фармоиш, ...) истифода шавад.
+PayBoxDoPayment=Бо Paybox пардохт кунед
+YouWillBeRedirectedOnPayBox=Шумо барои ворид кардани маълумоти корти кредитӣ ба саҳифаи боэътимоди Paybox равона карда мешавед
+SetupPayBoxToHavePaymentCreatedAutomatically=Паёмдони худро бо url <b> %s </b> танзим кунед, то пардохт ҳангоми тасдиқи Paybox ба таври худкор эҷод карда шавад.
+YourPaymentHasBeenRecorded=Ин саҳифа тасдиқ мекунад, ки пардохти шумо сабт шудааст. Сипос.
+YourPaymentHasNotBeenRecorded=Пардохти шумо сабт нашудааст ва муомилот бекор карда шудааст. Сипос.
+PAYBOX_CGI_URL_V2=URLи модули Paybox CGI барои пардохт
+NewPayboxPaymentReceived=Пардохти нави Paybox гирифта шуд
+NewPayboxPaymentFailed=Пардохти нави Paybox кӯшиш шуд, аммо ноком шуд
+PAYBOX_PAYONLINE_SENDEMAIL=Огоҳинома тавассути почтаи электронӣ пас аз кӯшиши пардохт (муваффақият ё нокомӣ)
+PAYBOX_PBX_SITE=Арзиш барои PBX SITE
+PAYBOX_PBX_RANG=Арзиши PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Арзиш барои ID PBX
+PAYBOX_HMAC_KEY=Калиди HMAC

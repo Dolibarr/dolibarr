@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Configurare modul PayBox
+PayBoxDesc=Acest modul oferă pagini de plată prin <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> pentru clienți. Acesta poate fi folosit pentru o plată liberă sau pentru o plată aferentă unui anumit obiect din sistem (factură, comandă, ...)
+PayBoxDoPayment=Plăteşte cu Paybox
+YouWillBeRedirectedOnPayBox=Vei fi redirecţionat către pagina securizată Paybox pentru a introduce informaţii despre cardul de credit
+SetupPayBoxToHavePaymentCreatedAutomatically=Configurare Paybox cu url-ul <b>%s</b> pentru a avea o plată creată automat când este validată de Paybox.
+YourPaymentHasBeenRecorded=Această pagină confirmă faptul că plata ta a fost înregistrată. \nVă mulţumim.
+YourPaymentHasNotBeenRecorded=Plata ta NU a fost înregistrată și tranzacția a fost anulată. Vă mulţumim.
+PAYBOX_CGI_URL_V2=URL modul CGI Paybox pentru plată
+NewPayboxPaymentReceived=O nouă plată Paybox a fost primită
+NewPayboxPaymentFailed=O plată nouă Paybox încercată dar eşuată
+PAYBOX_PAYONLINE_SENDEMAIL=Notificare email după încercarea de plată (succes sau eșec)
+PAYBOX_PBX_SITE=Valoare pentru PBX SITE
+PAYBOX_PBX_RANG=Valoare pentru PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Valoare pentru PBX ID
+PAYBOX_HMAC_KEY=Cheie HMAC

@@ -1,0 +1,9 @@
+* Page with license compatibility
+[EN] https://www.gnu.org/licenses/quick-guide-gplv3.en.html
+[FR] https://www.gnu.org/licenses/quick-guide-gplv3.fr.html
+
+* FAQ on GPL license
+https://www.fsf.org/licensing/licenses/gpl-faq.html
+
+* Questions/Answers on Fork for using Dolibarr as a SaaS
+https://stackoverflow.com/questions/539291/rebranding-a-gpld-app-as-saas

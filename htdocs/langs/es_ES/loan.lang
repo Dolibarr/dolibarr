@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Préstamo
+Loans=Préstamos
+NewLoan=Nuevo Préstamo
+ShowLoan=Ver Préstamo
+PaymentLoan=Pago de préstamo
+LoanPayment=Pago del préstamo
+ShowLoanPayment=Ver Pago de Préstamo
+LoanCapital=Capital
+Insurance=Seguro
+Interest=Interés
+Nbterms=Plazos
+Term=Plazo
+LoanAccountancyCapitalCode=Cuenta contable capital
+LoanAccountancyInsuranceCode=Cuenta contable seguro
+LoanAccountancyInterestCode=Cuenta contable interés
+ConfirmDeleteLoan=¿Está seguro de querer eliminar este préstamo?
+LoanDeleted=Préstamo eliminado correctamente
+ConfirmPayLoan=¿Esa seguro de querer clasificar como pagado este préstamo?
+LoanPaid=Préstamo pagado
+ListLoanAssociatedProject=Listado de préstamos asociados al proyecto
+AddLoan=Crear crédito
+FinancialCommitment=Prestamo
+InterestAmount=Interés
+CapitalRemain=Capital restante
+CapitalAmortization=Amortización de capital
+GracePeriodMonths=Período de gracia (meses)
+ApplyGracePeriod=Aplicar período de gracia
+TermPaidAllreadyPaid = Este plazo ya está pagado.
+CantUseScheduleWithLoanStartedToPaid = No se puede generar una línea de tiempo para un préstamo con un pago iniciado
+CantModifyInterestIfScheduleIsUsed = No puede modificar el interés si usa el programador
+# Admin
+ConfigLoan=Configuración del módulo préstamos
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cuenta (del Plan Contable) que se usará por defecto para el capital (módulo de préstamos)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Cuenta (del Plan Contable) que se utilizará por defecto para intereses (módulo de préstamo)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Cuenta (del Plan Contable) que se utilizará por defecto para el seguro (módulo de préstamos)
+CreateCalcSchedule=Editar el prestamo

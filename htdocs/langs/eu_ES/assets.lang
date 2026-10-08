@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=Aktibo berria
+AccountancyCodeAsset=Kontabilitate kodea (aktiboa)
+AccountancyCodeDepreciationAsset=Kontabilitate kodea (aktiboen amortizazio kontua)
+AccountancyCodeDepreciationExpense=Kontabilitate kodea (amortizazio gastuen kontua)
+AssetsLines=Aktiboak
+ConfirmValidateAsset=Ziur zaude aktibo hau <b>%s</b> erreferentziarekin balioztatu nahi duzula?
+DeleteType=Ezabatu
+DeleteAnAssetType=Ezabatu aktibo-eredu bat
+ConfirmDeleteAssetType=Ziur zaude aktibo-eredu hau ezabatu nahi duzula?
+ShowTypeCard=Erakutsi '%s' eredua
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=Aktiboak
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=Aktiboen deskribapena
+# Admin page
+AssetSetup=Aktiboen konfigurazioa
+AssetSetupPage=Aktiboak konfiguratzeko orria
+ExtraFieldsAssetModel=Osagarri diren atributuak (Aktiboen eredua)
+AssetsType=Aktiboen eredua
+AssetsTypeId=Aktiboaren ereduaren IDa
+AssetsTypeLabel=Aktiboen ereduaren etiketa
+AssetsTypes=Aktiboen ereduak
+ASSET_ACCOUNTANCY_CATEGORY=Aktibo finkoen kontabilitate taldea
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Urtebeteko amortizazioa kalkulatzeko proportziozko epea egunetan
+# Menu
+MenuAssets=Aktiboak
+MenuNewAsset=Aktibo berria
+MenuAssetModels=Eredu-aktiboak
+MenuListAssets=Zerrenda
+MenuNewAssetModel=Aktibo berriaren eredua
+MenuListAssetModels=Zerrenda
+# Module
+ConfirmDeleteAsset=Benetan kendu nahi duzu aktibo hau?
+# Tab
+AssetDepreciationOptions=Amortizazio aukerak
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=Amortizazioa
+# Asset
+Asset=Aktiboa
+Assets=Aktiboak
+AssetReversalAmountHT=Itzulketa zenbatekoa (zergarik gabe)
+AssetAcquisitionValueHT=Erosketa zenbatekoa (zergarik gabe)
+AssetRecoveredVAT=Berreskuratutako BEZa
+AssetReversalDate=Atzeraegite data
+AssetDateAcquisition=Erosketa data
+AssetDateStart=Abiarazteko data.
+AssetAcquisitionType=Erosketa mota
+AssetAcquisitionTypeNew=Berria
+AssetAcquisitionTypeOccasion=Erabilia
+AssetType=Aktibo mota
+AssetTypeIntangible=Ukiezina
+AssetTypeTangible=Ukigarria
+AssetTypeInProgress=Prozesuan
+AssetTypeFinancial=Finantza
+AssetNotDepreciated=Ez da amortizatua
+AssetDisposal=Ezabatzea
+AssetConfirmDisposalAsk=Ziur zaude <b> %s</b> aktiboa kendu nahi duzula?
+AssetConfirmReOpenAsk=Ziur zaude <b> %s</b> aktiboa berriro ireki nahi duzula?
+# Asset status
+AssetInDraft=Zirriborroa
+AssetInProgress=Prozesuan
+AssetDisposed=Botatuta
+AssetRecorded=Kontuan hartua
+# Asset disposal
+AssetDisposalDate=Ezabatze data
+AssetDisposalAmount=Ezabatze-balioa
+AssetDisposalType=Hondakin mota
+AssetDisposalDepreciated=Transferentziaren urtea amortizatu
+AssetDisposalSubjectToVat=BEZaren menpeko kentzea
+# Asset model
+AssetModel=Aktiboaren eredua
+AssetModels=Aktiboen ereduak
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Ekonomiaren balio-galera
+AssetDepreciationOptionAcceleratedDepreciation=Amortizazio bizkortua (zerga)
+AssetDepreciationOptionDepreciationType=Amortizazio mota
+AssetDepreciationOptionDepreciationTypeLinear=Lineala
+AssetDepreciationOptionDepreciationTypeDegressive=Degresiboa
+AssetDepreciationOptionDepreciationTypeExceptional=Ezohikoa
+AssetDepreciationOptionDegressiveRate=Tasa beherakorra
+AssetDepreciationOptionDuration=Iraupena
+AssetDepreciationOptionDurationType=Idatzi iraupena
+AssetDepreciationOptionDurationTypeAnnual=Urteko
+AssetDepreciationOptionDurationTypeMonthly=Hilero
+AssetDepreciationOptionDurationTypeDaily=Egunero
+AssetDepreciationOptionRate=Tarifa (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Amortizazio oinarria (BEZ gabe)
+AssetDepreciationOptionAmountBaseDeductibleHT=Kenkari oinarria (BEZ gabe)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Azken amortizazioaren zenbateko osoa (BEZ gabe)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Ekonomiaren balio-galera
+AssetAccountancyCodeAsset=Aktiboa
+AssetAccountancyCodeDepreciationAsset=Amortizazioa
+AssetAccountancyCodeDepreciationExpense=Amortizazio gastua
+AssetAccountancyCodeValueAssetSold=Saldutako aktiboaren balioa
+AssetAccountancyCodeReceivableOnAssignment=Saltzean kobratzeko modukoa
+AssetAccountancyCodeProceedsFromSales=Salmentatik lortutako irabaziak
+AssetAccountancyCodeVatCollected=Bildutako BEZa
+AssetAccountancyCodeVatDeductible=Aktiboen gaineko BEZ berreskuratua
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Amortizazio bizkortua (zerga)
+AssetAccountancyCodeAcceleratedDepreciation=Account
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Amortizazio gastua
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Berreskuratzea/Hornidura
+# Asset depreciation
+AssetBaseDepreciationHT=Amortizazio oinarria (BEZ gabe)
+AssetDepreciationBeginDate=Amortizazioaren hasiera hemen:
+AssetDepreciationDuration=Iraupena
+AssetDepreciationRate=Tarifa (%%)
+AssetDepreciationDate=Amortizazio data
+AssetDepreciationHT=Amortizazioa (BEZ gabe)
+AssetCumulativeDepreciationHT=Metatutako amortizazioa (BEZ gabe)
+AssetResidualHT=Hondar-balioa (BEZ gabe)
+AssetDispatchedInBookkeeping=Erregistratutako amortizazioa
+AssetFutureDepreciationLine=Etorkizuneko amortizazioa
+AssetDepreciationReversal=Alderantzikatzea
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Ez da aurkitutako aktiboaren edo modeloaren IDa eman.
+AssetErrorFetchAccountancyCodesForMode=Errorea gertatu da '%s' amortizazio modurako kontabilitate kontuak berreskuratzean
+AssetErrorDeleteAccountancyCodesForMode=Errorea '%s' amortizazio modutik kontabilitate kontuak ezabatzean
+AssetErrorInsertAccountancyCodesForMode=Errorea gertatu da '%s' amortizazio moduko kontabilitate kontuak txertatzean
+AssetErrorFetchDepreciationOptionsForMode=Errorea gertatu da '%s' amortizazio modurako aukerak berreskuratzean
+AssetErrorDeleteDepreciationOptionsForMode=Errorea gertatu da '%s' amortizazio moduaren aukerak ezabatzean
+AssetErrorInsertDepreciationOptionsForMode=Errorea gertatu da '%s' amortizazio moduaren aukerak txertatzean
+AssetErrorFetchDepreciationLines=Errorea erregistratutako amortizazio-lerroak berreskuratzean
+AssetErrorClearDepreciationLines=Errorea erregistratutako amortizazio-lerroak (itzulketa eta etorkizuna) ezabatzean
+AssetErrorAddDepreciationLine=Errorea amortizazio-lerro bat gehitzean
+AssetErrorCalculationDepreciationLines=Errorea amortizazio-lerroak kalkulatzerakoan (berreskurapena eta etorkizuna)
+AssetErrorReversalDateNotProvidedForMode=Ez da atzeraeraginezko data ematen '%s' amortizazio metodorako.
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode='%s' amortizazio metodorako, alderantzikatze data uneko ekitaldi fiskalaren hasiera baino handiagoa edo berdina izan behar da.
+AssetErrorReversalAmountNotProvidedForMode=Ez da alderantzikatze zenbatekoa ematen '%s' amortizazio modurako.
+AssetErrorFetchCumulativeDepreciation=Errorea amortizazio-lerrotik metatutako amortizazio-zenbatekoa berreskuratzean
+AssetErrorSetLastCumulativeDepreciation=Errorea azken metatutako amortizazio zenbatekoa erregistratzean

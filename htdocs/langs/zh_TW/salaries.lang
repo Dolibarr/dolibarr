@@ -1,0 +1,67 @@
+Salary=薪資
+Salaries=薪資紀錄
+NewSalary=新增薪資
+AddSalary=新增薪資
+NewSalaryPayment=新增薪資明細
+AddSalaryPayment=新增薪資付款
+SalaryPayment=薪資付款
+SalariesPayments=薪資付款紀錄
+SalariesPaymentsOf=%s 的薪資付款
+ShowSalaryPayment=顯示薪資付款
+SalaryID=薪資編號
+SalaryAmount=薪資金額
+SalaryDate=Salary date
+SalaryPaid=Salary paid
+SalaryNotPaid=Salary not paid
+
+SalarySlip=Salary slip
+StandardSalaryDocModel=Standard salary slip document
+
+BasicSalary=Basic salary
+Bonus=Bonus
+Allowance=Allowance
+Overtime=Overtime
+Deduction=Deduction
+Deductions=Deductions
+Earnings=Earnings
+TotalEarnings=Total earnings
+TotalDeductions=Total deductions
+NetPaid=實付淨額
+
+# Accounting
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=薪資中「用戶」預設使用的會計科目(依會計科目表)
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=專用會計科目會在用戶卡片上定義，僅用於分戶會計。此科目用於總帳，若用戶未定義專用分戶會計科目，則以此為預設值。
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=薪資發放預設會計科目
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=建立薪資時，預設取消勾選「自動建立薪資總付款」
+
+# Stats / Info
+CurrentSalary=目前薪資
+LastSalaries=最近 %s 筆薪資
+AllSalaries=所有薪資紀錄
+SalariesStatistics=薪資統計
+SalariesAndPayments=薪資與付款
+UserPaySlip=薪資單
+PayPeriod=Pay period
+
+# THM / TJM
+THM=平均時薪
+THMDescription=若啟用專案模組，該值可用來計算用戶在專案上所花費時間的成本
+TJM=平均日薪
+TJMDescription=目前僅供參考，未用於任何計算
+
+# Other actions
+ConfirmDeleteSalaryPayment=確定要刪除此薪資付款嗎？
+FillFieldFirst=請先填寫員工欄位
+UpdateAmountWithLastSalary=以最近薪資金額更新
+MakeTransferRequest=建立轉帳請求
+VirementOrder=信用轉帳請求
+WithdrawalReceipt=信用轉帳單
+OrderWaiting=待處理訂單
+FillEndOfMonth=月底
+
+# Shortcuts
+PreviousMonthShort=上月
+CurrentMonthShort=本月
+NextMonthShort=下個月
+PreviousWeekShort=上週
+CurrentWeekShort=本週

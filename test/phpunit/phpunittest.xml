@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE phpunit SYSTEM "phpunit.dtd" >
+<phpunit
+  backupGlobals="false"
+  backupStaticAttributes="true"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+  colors="true"
+  processIsolation="false"
+  stopOnFailure="true">
+  <php>
+    <ini name="max_execution_time" value="1800"/>
+    <!-- Also don't forget to change suhosin.memory_limit=4G -->
+    <ini name="max_input_time" value="1800"/>
+    <ini name="fail_on_warning" value="On"/>
+    <ini name="fail_on_deprecation" value="On"/>
+    <ini name="fail_on_notice" value="On"/>
+    <ini name="display_startup_errors" value="On"/>
+    <ini name="display_errors" value="On"/>
+    <ini name="display_notices" value="On"/>
+    <ini name="display_warnings" value="On"/>
+    <ini name="display_deprecations" value="On"/>
+    <ini name="memory_limit" value="4G" />
+  </php>
+</phpunit>

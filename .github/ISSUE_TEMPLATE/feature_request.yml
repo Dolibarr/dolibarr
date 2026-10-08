@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest a new idea for this project
+labels: ["Feature request"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.
+        If your issue is related to einvoicing please fill in an issue on the [Dolibarr community modules project](https://github.com/Dolibarr/dolibarr-community-modules/issues)
+
+  - type: textarea
+    id: feature-request
+    attributes:
+      label: Feature Request
+      description: Short description
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: Verbose description
+
+  - type: textarea
+    id: suggested-implementation
+    attributes:
+      label: Suggested implementation
+      description: Verbose description
+

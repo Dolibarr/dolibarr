@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=เงินกู้
+Loans=เงินให้กู้ยืม
+NewLoan=สินเชื่อใหม่
+ShowLoan=แสดงสินเชื่อ
+PaymentLoan=การชำระเงินสินเชื่อ
+LoanPayment=การชำระเงินสินเชื่อ
+ShowLoanPayment=แสดงการชำระเงินสินเชื่อ
+LoanCapital=เมืองหลวง
+Insurance=ประกันภัย
+Interest=ความสนใจ
+Nbterms=จำนวนของข้อตกลง
+Term=ภาคเรียน
+LoanAccountancyCapitalCode=การบัญชีทุนทางบัญชี
+LoanAccountancyInsuranceCode=การทำบัญชีประกันภัย
+LoanAccountancyInterestCode=บัญชีดอกเบี้ยบัญชี
+ConfirmDeleteLoan=ยืนยันการลบเงินให้กู้ยืมนี้
+LoanDeleted=สินเชื่อที่ถูกลบประสบความสำเร็จ
+ConfirmPayLoan=ยืนยันการจำแนกจ่ายเงินให้กู้ยืมนี้
+LoanPaid=สินเชื่อการชำระเงิน
+ListLoanAssociatedProject=รายการเงินกู้ที่เกี่ยวข้องกับโครงการ
+AddLoan=สร้างสินเชื่อ
+FinancialCommitment=ความมุ่งมั่นทางการเงิน
+InterestAmount=ความสนใจ
+CapitalRemain=ทุนคงเหลือ
+TermPaidAllreadyPaid = งวดนี้ชำระเรียบร้อยแล้ว
+CantUseScheduleWithLoanStartedToPaid = ไม่สามารถสร้างไทม์ไลน์สำหรับเงินกู้ที่เริ่มต้นการชำระเงินได้
+CantModifyInterestIfScheduleIsUsed = คุณไม่สามารถแก้ไขความสนใจได้หากคุณใช้กำหนดการ
+# Admin
+ConfigLoan=การกำหนดค่าของเงินให้กู้ยืมโมดูล
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=บัญชี (จากผังบัญชี) ที่จะใช้เป็นค่าเริ่มต้นสำหรับเงินทุน (โมดูลสินเชื่อ)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=บัญชี (จากผังบัญชี) ที่จะใช้เป็นค่าเริ่มต้นสำหรับดอกเบี้ย (โมดูลสินเชื่อ)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=บัญชี (จากผังบัญชี) ที่จะใช้เป็นค่าเริ่มต้นสำหรับการประกันภัย (โมดูลสินเชื่อ)
+CreateCalcSchedule=แก้ไขข้อผูกพันทางการเงิน

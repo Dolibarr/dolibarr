@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=ህዳግ
+Margins=ህዳጎች
+TotalMargin=ጠቅላላ ህዳግ
+MarginOnProducts=ህዳግ / ምርቶች
+MarginOnServices=ህዳግ / አገልግሎቶች
+MarginRate=የትርፍ መጠን
+ModifyMarginRates=የኅዳግ ዋጋዎችን ያስተካክሉ
+MarkRate=የደረጃ ምልክት ያድርጉ
+DisplayMarginRates=የትርፍ መጠን አሳይ
+DisplayMarkRates=የማሳያ ምልክቶች ተመኖች
+InputPrice=የግቤት ዋጋ
+margin=የትርፍ ህዳጎች አስተዳደር
+margesSetup=የትርፍ ህዳጎች አስተዳደር ማዋቀር
+MarginDetails=የኅዳግ ዝርዝሮች
+ProductMargins=የምርት ህዳጎች
+CustomerMargins=የደንበኛ ህዳጎች
+SalesRepresentativeMargins=የሽያጭ ተወካይ ህዳጎች
+ContactOfInvoice=የክፍያ መጠየቂያ እውቂያ
+UserMargins=የተጠቃሚ ህዳጎች
+ProductService=ምርት ወይም አገልግሎት
+AllProducts=ሁሉም ምርቶች እና አገልግሎቶች
+ChooseProduct/Service=ምርት ወይም አገልግሎት ይምረጡ
+ForceBuyingPriceIfNull=ካልተገለጸ የግዢ/ዋጋን ወደ መሸጫ ዋጋ አስገድዱ
+ForceBuyingPriceIfNullDetails=አዲስ መስመር ስንጨምር የግዢ/ዋጋ ካልቀረበ እና ይህ አማራጭ "በርቷል" ከሆነ ህዳጉ 0%% በአዲሱ መስመር (የግዢ/ዋጋ ዋጋ =) ይሆናል። የመሸጫ ዋጋ). ይህ አማራጭ "ጠፍቷል" (የሚመከር) ከሆነ ህዳግ በነባሪነት ከተጠቆመው እሴት ጋር እኩል ይሆናል (እና ምንም ነባሪ እሴት ካልተገኘ 100%% ሊሆን ይችላል)።
+MARGIN_METHODE_FOR_DISCOUNT=ለአለም አቀፍ ቅናሾች የኅዳግ ዘዴ
+UseDiscountAsProduct=እንደ ምርት
+UseDiscountAsService=እንደ አገልግሎት
+UseDiscountOnTotal=በንዑስ ድምር
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=አለምአቀፍ ቅናሽ እንደ ምርት፣ አገልግሎት ወይም በንዑስ ድምር ለኅዳግ ስሌት ብቻ መያዙን ይገልጻል።
+MARGIN_TYPE=ለኅዳግ ስሌት የግዢ/ዋጋ በነባሪነት የተጠቆመ
+MargeType1=በምርጥ አቅራቢ ዋጋ ላይ ህዳግ
+MargeType2=በክብደት አማካይ ዋጋ (ዋፕ) ላይ ህዳግ
+MargeType3=በወጪ ዋጋ ላይ ህዳግ
+MarginTypeDesc=* በምርጥ የግዢ ዋጋ ላይ ህዳግ = የመሸጫ ዋጋ - በምርት ካርድ ላይ የተገለጸ ምርጥ የአቅራቢ ዋጋ<br>* በተመዘነ አማካይ ዋጋ (WAP) = የመሸጫ ዋጋ - የምርት ክብደት አማካኝ ዋጋ (WAP) ወይም ምርጥ የአቅራቢ ዋጋ WAP ገና ካልተገለጸ<br>* በወጪ ዋጋ ላይ ህዳግ = የመሸጫ ዋጋ - የወጪ ዋጋ በምርት ካርድ ወይም WAP ላይ የዋጋ ዋጋው ካልተገለጸ፣ ወይም ምርጥ የአቅራቢ ዋጋ ከሆነ WAP እስካሁን አልተገለጸም።
+CostPrice=የወጪ ዋጋ
+UnitCharges=የክፍል ክፍያዎች
+Charges=ክፍያዎች
+AgentContactType=የንግድ ወኪል የእውቂያ አይነት
+AgentContactTypeDetails=በእያንዳንዱ አድራሻ/አድራሻ ለኅዳግ ሪፖርት ምን ዓይነት የእውቂያ ዓይነት (በደረሰኞች ላይ የተገናኘ) ጥቅም ላይ እንደሚውል ይግለጹ። በአብዛኛዎቹ ሁኔታዎች እውቂያው በደረሰኞች ላይ በግልጽ ሊገለጽ ስለማይችል በእውቂያ ላይ የንባብ ስታቲስቲክስ አስተማማኝ እንዳልሆነ ልብ ይበሉ።
+rateMustBeNumeric=ተመን የቁጥር እሴት መሆን አለበት።
+markRateShouldBeLesserThan100=የማርክ መጠኑ ከ100 በታች መሆን አለበት።
+ShowMarginInfos=የኅዳግ መረጃ አሳይ
+CheckMargins=የኅዳግ ዝርዝር
+MarginPerSaleRepresentativeWarning=የአንድ ተጠቃሚ የህዳግ ሪፖርት የእያንዳንዱን የሽያጭ ተወካይ ህዳግ ለማስላት በሶስተኛ ወገኖች እና በሽያጭ ተወካዮች መካከል ያለውን ግንኙነት ይጠቀማል። አንዳንድ የሶስተኛ ወገኖች የተወሰነ የሽያጭ ተወካይ ላይኖራቸው ስለሚችል እና አንዳንድ ሶስተኛ ወገኖች ከብዙ ጋር ሊገናኙ ስለሚችሉ፣ አንዳንድ መጠኖች በዚህ ሪፖርት ውስጥ ላይካተቱ ይችላሉ (የሽያጭ ተወካይ ከሌለ) እና አንዳንዶቹ በተለያዩ መስመሮች ላይ ሊታዩ ይችላሉ (ለእያንዳንዱ የሽያጭ ተወካይ) .

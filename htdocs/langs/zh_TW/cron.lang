@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = 讀取排程作業
+Permission23102 = 建立/更新排程作業
+Permission23103 = 刪除排程作業
+Permission23104 = 執行排程作業
+# Admin
+CronSetup=排程作業管理設定
+URLToLaunchCronJobs=從瀏覽器檢查並執行符合條件的排程作業的 URL
+OrToLaunchASpecificJob=或從瀏覽器檢查並執行特定作業
+KeyForCronAccess=執行排程作業的安全金鑰
+FileToLaunchCronJobs=命令列執行符合條件排程作業
+CronExplainHowToRunUnix=在 Unix 環境下，可於 crontab 中每 5 分鐘執行一次以下命令
+CronExplainHowToRunWin=在 Microsoft Windows 環境下，可使用排程工作工具每 5 分鐘執行一次以下命令
+CronMethodDoesNotExists=類別 %s 中不存在方法 %s
+CronMethodNotAllowed=類別 %s 的方法 %s 在禁止清單中
+CronJobDefDesc=Cron 作業設定檔定義於模組描述檔中，當模組啟用後，將載入並可於管理工具選單 %s 進行管理。
+CronJobProfiles=預設排程作業設定檔清單
+# Menu
+EnabledAndDisabled=已啟用與已停用
+# Page list
+CronLastOutput=最後執行輸出
+CronLastResult=最後結果碼
+CronCommand=命令
+CronList=排程作業
+CronDelete=刪除排程作業
+CronConfirmDelete=確定要刪除這些排程作業？
+CronExecute=立即執行
+CronConfirmExecute=確定要立即執行這些排程作業？
+CronInfo=排程作業模組可自動排程執行作業，也可手動啟動
+CronTask=作業
+CronNone=排程作業下次執行
+CronNotYetRan=尚未執行
+CronDtStart=起始不可早於
+CronDtEnd=結束不可晚於
+CronDtNextLaunch=下次執行
+CronDtLastLaunch=最後執行開始日期
+CronDtLastResult=最後執行結束日期
+CronFrequency=頻率
+CronClass=類別
+CronMethod=方法
+CronModule=模組
+CronNoJobs=無排程作業
+CronPriority=優先順序
+CronLabel=標籤
+CronNbRun=執行次數
+CronMaxRun=最大執行次數
+CronEach=每
+JobFinished=作業已執行完成
+Scheduled=已排程
+#Page card
+CronAdd=新增作業
+CronEvery=執行頻率
+CronObject=實體/物件名稱
+CronArgs=參數
+CronSaveSucess=儲存成功
+CronNote=備註
+CronFieldMandatory=欄位 %s 為必填
+CronErrEndDateStartDt=結束日期不可早於開始日期
+StatusAtInstall=模組安裝時狀態
+CronStatusActiveBtn=啟用排程
+CronStatusInactiveBtn=停用排程
+CronTaskInactive=此作業已停用(未排程)
+CronId=編號
+CronClassFile=類別檔案名稱
+CronModuleHelp=Dolibarr 模組目錄名稱(外掛模組亦適用)。<br>例如要呼叫 Dolibarr Product 物件的 fetch 方法 /htdocs/<u>product</u>/class/product.class.php，模組值為<br><i>product</i>
+CronClassFileHelp=要載入的相對路徑及檔案名稱(以 web server 根目錄為基準)。<br>例如要呼叫 Dolibarr Product 物件 fetch 方法，檔案值為<br><i>product/class/product.class.php</i>
+CronObjectHelp=要載入的物件名稱。<br>例如要呼叫 Dolibarr Product 物件 fetch 方法，物件名稱值為<br><i>Product</i>
+CronMethodHelp=要執行的物件方法名稱。<br>例如要呼叫 fetch 方法，方法值為<br><i>fetch</i>
+CronArgsHelp=方法參數。<br>例如呼叫 fetch 方法，可輸入參數<br><i>0, ProductRef</i>
+CronCommandHelp=要執行的系統命令列
+CronCreateJob=建立新排程作業
+CronFrom=來源
+# Info
+# Common
+CronType=作業類型
+CronType_method=呼叫 PHP 類別方法
+CronType_command=Shell 命令
+CronCannotLoadClass=無法載入類別檔案 %s(欲使用類別 %s)
+CronModuleNotEnabledInThisEntity=此實體未啟用排程作業模組(欲使用 %s 方法於 %s 物件)
+CronCannotLoadObject=已載入類別檔案 %s，但其中未找到物件 %s
+UseMenuModuleToolsToAddCronJobs=請至「<a href="%s">首頁 - 管理工具 - 排程作業</a>」查看與編輯排程作業
+JobDisabled=作業已停用
+MakeLocalDatabaseDumpShort=本地資料庫備份
+MakeLocalDatabaseDump=建立本地資料庫備份。參數為：壓縮('gz'、'bz'、'none')、備份類型('mysql'、'pgsql'、'auto')、1、'auto' 或建立的檔名、保留備份檔數量
+MakeSendLocalDatabaseDumpShort=傳送本地資料庫備份
+MakeSendLocalDatabaseDump=以 email 傳送本地資料庫備份。參數為：收件者、寄件者、主旨、訊息、檔名(發送的檔案名稱)、過濾條件('sql' 僅發送資料庫備份)
+BackupIsTooLargeSend=抱歉，上次備份檔過大，無法透過 email 傳送
+CleanUnfinishedCronjobShort=清理未完成排程作業
+CleanUnfinishedCronjob=清理因程序中斷而卡住的排程作業
+WarningCronDelayed=注意，為提升效能，無論排程作業下次執行日期為何，執行時間可能延遲最長 %s 小時
+DATAPOLICYJob=資料清理與匿名化
+JobXMustBeEnabled=作業 %s 必須啟用
+EmailIfError=錯誤警告 email
+JobNotFound=清單中未找到作業 %s(請嘗試停用/啟用模組)
+ErrorInBatch=執行作業 %s 時發生錯誤
+
+# Cron Boxes
+LastExecutedScheduledJob=最後執行排程作業
+NextScheduledJobExecute=下次執行排程作業
+NumberScheduledJobError=發生錯誤的排程作業數
+NumberScheduledJobNeverFinished=從未完成的排程作業數

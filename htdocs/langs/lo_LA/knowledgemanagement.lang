@@ -1,0 +1,45 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+# Generic
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = ລະບົບການຈັດການຄວາມຮູ້
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=ຈັດການຖານຂໍ້ມູນການຈັດການຄວາມຮູ້ (KM) ຫຼື ໜ່ວຍງານຊ່ວຍເຫຼືອ (Help-Desk)
+# Admin page
+KnowledgeManagementSetup = ການຕັ້ງຄ່າລະບົບການຈັດການຄວາມຮູ້
+KnowledgeManagementSetupPage = ໜ້າການຕັ້ງຄ່າລະບົບການຈັດການຄວາມຮູ້
+# About page
+KnowledgeManagementAbout = ກ່ຽວກັບການຈັດການຄວາມຮູ້
+KnowledgeManagementAboutPage = ໜ້າຂໍ້ມູນກ່ຽວກັບການຈັດການຄວາມຮູ້
+KnowledgeManagementArea = ສ່ວນການຈັດການຄວາມຮູ້
+MenuKnowledgeRecord = ຖານຄວາມຮູ້
+MenuKnowledgeRecordShort = ຖານຄວາມຮູ້
+ListKnowledgeRecord = ລາຍການບົດຄວາມ
+NewKnowledgeRecord = ບົດຄວາມໃໝ່
+ValidateReply = ຢືນຢັນຄຳຕອບ
+KnowledgeRecords = ບົດຄວາມ
+KnowledgeRecord = ບົດຄວາມ
+KnowledgeRecordExtraFields = ຂໍ້ມູນເພີ່ມເຕີມສຳລັບບົດຄວາມ
+GroupOfTicket=ກຸ່ມຂອງລາຍການແຈ້ງບັນຫາ
+YouCanLinkArticleToATicketCategory=ທ່ານສາມາດເຊື່ອມໂຍງບົດຄວາມເຂົ້າກັບກຸ່ມລາຍການແຈ້ງບັນຫາ (ເພື່ອໃຫ້ບົດຄວາມສະແດງເດັ່ນໃນທຸກໆລາຍການແຈ້ງບັນຫາໃນກຸ່ມນີ້)
+SuggestedForTicketsInGroup=ແນະນຳໃນເວລາສ້າງລາຍການແຈ້ງບັນຫາ
+SetObsolete=ກຳນົດວ່າເລີກໃຊ້ແລ້ວ
+ConfirmCloseKM=ທ່ານຢືນຢັນທີ່ຈະປິດບົດຄວາມນີ້ເປັນແບບເລີກໃຊ້ແລ້ວບໍ່?
+ConfirmReopenKM=ທ່ານຕ້ອງການກູ້ຄືນບົດຄວາມນີ້ໃຫ້ເປັນສະຖານະ "ຢືນຢັນແລ້ວ" ບໍ່?
+BoxLastKnowledgerecordDescription=%s ບົດຄວາມຫຼ້າສຸດ
+BoxLastKnowledgerecord=ບົດຄວາມຫຼ້າສຸດ
+BoxLastKnowledgerecordContent=ບົດຄວາມຫຼ້າສຸດ
+BoxLastKnowledgerecordModifiedContent=ບົດຄວາມທີ່ຖືກແກ້ໄຂຫຼ້າສຸດ
+BoxLastModifiedKnowledgerecordDescription=%s ບົດຄວາມທີ່ຖືກແກ້ໄຂຫຼ້າສຸດ
+BoxLastModifiedKnowledgerecord=ບົດຄວາມທີ່ຖືກແກ້ໄຂຫຼ້າສຸດ

@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox ሞጁል ማዋቀር
+PayBoxDesc=ይህ ሞጁል በደንበኞች <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> ላይ ክፍያ ለመፍቀድ ገጾችን ያቀርባል። ይህ ለነጻ ክፍያ ወይም በአንድ የተወሰነ የዶሊባርር ነገር (ደረሰኝ፣ ትዕዛዝ፣ ...) ላይ ለክፍያ ሊያገለግል ይችላል።
+PayBoxDoPayment=በ Paybox ይክፈሉ።
+YouWillBeRedirectedOnPayBox=የክሬዲት ካርድ መረጃን ለማስገባት ደህንነቱ በተጠበቀው የ Paybox ገጽ ላይ ይዛወራሉ።
+SetupPayBoxToHavePaymentCreatedAutomatically=የክፍያ ሳጥንዎን በ url <b>%s</b> ለመክፈል በራስ-ሰር ሲፈጠር ያዋቅሩ። በ Paybox የተረጋገጠ።
+YourPaymentHasBeenRecorded=ይህ ገጽ ክፍያዎ መመዝገቡን ያረጋግጣል። አመሰግናለሁ.
+YourPaymentHasNotBeenRecorded=ክፍያዎ አልተመዘገበም እና ግብይቱ ተሰርዟል። አመሰግናለሁ.
+PAYBOX_CGI_URL_V2=የ Paybox CGI ሞጁል ዩአርኤል ለክፍያ
+NewPayboxPaymentReceived=አዲስ የ Paybox ክፍያ ተቀብሏል።
+NewPayboxPaymentFailed=አዲስ የ Paybox ክፍያ ሞክሮ አልተሳካም።
+PAYBOX_PAYONLINE_SENDEMAIL=ከክፍያ ሙከራ በኋላ የኢሜል ማሳወቂያ (ስኬት ወይም ውድቀት)
+PAYBOX_PBX_SITE=ለPBX SITE ዋጋ
+PAYBOX_PBX_RANG=የPBX Rang ዋጋ
+PAYBOX_PBX_IDENTIFIANT=ለPBX መታወቂያ ዋጋ
+PAYBOX_HMAC_KEY=HMAC ቁልፍ

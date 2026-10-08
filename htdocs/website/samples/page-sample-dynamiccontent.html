@@ -1,0 +1,47 @@
+<!-- Enter here your HTML content. Add a section with an id tag and tag contenteditable="true" if you want to use the inline editor for the content  -->
+<section id="div1" class="dolcontenteditable" style="text-align: center" contenteditable="true">
+<br>
+__(MyContainerTitle)__
+<br><br>
+</section>
+
+
+<section id="divmycompany" style="text-align: center" contenteditable="true">
+This is example of dynamic content to get the name of your company (see source of page to see code):<br>
+</section>
+<h1 style="text-align: center">
+<?php echo $mysoc->name; ?>
+<br>
+</h1>
+
+
+<section id="divmetadata" style="text-align: center" contenteditable="true">
+This is another example of dynamic content to get meta data of a container/page (see source of page to see code):<br>
+</section>
+<div style="text-align: center">
+__(Title)__ : <?php echo $websitepage->title; ?><br>
+__(Description)__ : <?php echo $websitepage->description; ?><br>
+__(Keywords)__ : <?php echo $websitepage->keywords; ?><br>
+__(DateCreation)__ : <?php echo dol_print_date($websitepage->date_creation, 'dayhour', $weblangs); ?><br>
+<br>
+</div>
+
+
+<section id="divinclude" style="text-align: center" contenteditable="true">
+__(AnotherContainer)__
+</section>
+<div style="text-align: center">
+<?php includeContainer('alias_of_container_to_include'); ?>
+</div>
+
+
+<section id="div5" style="text-align: center" contenteditable="true">
+<br><br>
+__(YouCanEditHtmlSource)__
+__(YouCanEditHtmlSourceb)__
+__(YouCanEditHtmlSourcec)__
+__(YouCanEditHtmlSourced)__
+<br><br>
+Page created by __WEBSITE_CREATED_BY__
+<br>
+</section>

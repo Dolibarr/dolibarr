@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Úvěr
+Loans=Úvěry
+NewLoan=Nový úvěr
+ShowLoan=Zobrazit úvěr
+PaymentLoan=Platba úvěru
+LoanPayment=Platba úvěru
+ShowLoanPayment=Zobrazit platbu úvěru
+LoanCapital=Jistina
+Insurance=Pojištění
+Interest=Úrok
+Nbterms=Počet termínů
+Term=Období
+LoanAccountancyCapitalCode=Účetní účet jistiny
+LoanAccountancyInsuranceCode=Účetnictví účetního pojištění
+LoanAccountancyInterestCode=Účetní účet úroku
+ConfirmDeleteLoan=Potvrdit smazání tohoto úvěru
+LoanDeleted=Úvěr úspěšně smazán
+ConfirmPayLoan=Potvrďte klasifikaci tohoto úvěru jako zaplaceného
+LoanPaid=Splacený úvěr
+ListLoanAssociatedProject=Seznam úvěrů spojených s projektem
+AddLoan=Vytvořit úvěr
+FinancialCommitment=Finanční závazek
+InterestAmount=Výše úroku
+CapitalRemain=Zůstatek kapitálu
+TermPaidAllreadyPaid = Tento termín je již zaplacený
+CantUseScheduleWithLoanStartedToPaid = Nelze vygenerovat časový harmonogram pro půjčku se zahájenou splátkou
+CantModifyInterestIfScheduleIsUsed = Pokud používáte plán splátek, nemůžete změnit úrok
+# Admin
+ConfigLoan=Konfigurace modulu úvěru
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Účet (z účtového rozvrhu), který se má standardně používat pro kapitál (modul úvěrů)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Účet (z účtového rozvrhu), který se má standardně použít pro úroky (modul Úvěr)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Účet (z účtového rozvrhu), který se má standardně používat pro pojištění (modul Úvěr)
+CreateCalcSchedule=Úprava finančního závazku

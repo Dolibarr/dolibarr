@@ -1,0 +1,161 @@
+<?php
+/* Copyright (C) 2012      Christophe Battarel <christophe.battarel@altairis.fr>
+ * Copyright (C) 2014-2015 Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2016	   Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *	\file			/htdocs/margin/lib/margins.lib.php
+ *  \ingroup		margin
+ *  \brief			Library for common margin functions
+ */
+
+/**
+ *  Define head array for tabs of marges tools setup pages
+ *
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function marges_admin_prepare_head()
+{
+	global $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/margin/admin/margin.php";
+	$head[$h][1] = $langs->trans("Parameters");
+	$head[$h][2] = 'parameters';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margesadmin');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margesadmin', 'remove');
+
+	return $head;
+}
+
+/**
+ * Return array of tabs to used on pages for third parties cards.
+ *
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function marges_prepare_head()
+{
+	global $langs, $conf, $user;
+	$langs->load("margins");
+
+	$h = 0;
+	$head = array();
+
+	if ($user->hasRight('produit', 'lire')) {
+		$head[$h][0] = DOL_URL_ROOT."/margin/productMargins.php";
+		$head[$h][1] = $langs->trans("ProductMargins");
+		$head[$h][2] = 'productMargins';
+		$h++;
+	}
+
+	if ($user->hasRight('societe', 'lire')) {
+		$head[$h][0] = DOL_URL_ROOT."/margin/customerMargins.php";
+		$head[$h][1] = $langs->trans("CustomerMargins");
+		$head[$h][2] = 'customerMargins';
+		$h++;
+	}
+
+	if ($user->hasRight('margins', 'read', 'all')) {
+		$title = 'UserMargins';
+	} else {
+		$title = 'SalesRepresentativeMargins';
+	}
+
+	$head[$h][0] = DOL_URL_ROOT."/margin/agentMargins.php";
+	$head[$h][1] = $langs->trans($title);
+	$head[$h][2] = 'agentMargins';
+
+
+	if ($user->hasRight('margins', 'creer')) {
+		$h++;
+		$head[$h][0] = DOL_URL_ROOT."/margin/checkMargins.php";
+		$head[$h][1] = $langs->trans('CheckMargins');
+		$head[$h][2] = 'checkMargins';
+	}
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins', 'remove');
+
+	return $head;
+}
+
+/**
+ * Return an array with margins information of a line
+ *
+ * @param 	float 	$pv_ht				Selling price without tax
+ * @param 	float	$remise_percent		Discount percent on line
+ * @param 	float	$tva_tx				Vat rate (not used)
+ * @param 	float	$localtax1_tx		Vat rate special 1 (not used)
+ * @param 	float	$localtax2_tx		Vat rate special 2 (not used)
+ * @param 	int		$fk_pa				Id of buying price (prefer set this to 0 and provide $pa_ht instead. With id, buying price may have change)
+ * @param 	float	$pa_ht				Buying price without tax
+ * @return	array{0:float,1:float,2:float}	Array of margin info (buying price, marge rate, marque rate)
+ */
+function getMarginInfos($pv_ht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $pa_ht)
+{
+	global $db, $conf;
+
+	$marge_tx_ret = '';
+	$marque_tx_ret = '';
+
+	if ($fk_pa > 0 && empty($pa_ht)) {
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$product = new ProductFournisseur($db);
+		if ($product->fetch_product_fournisseur_price($fk_pa)) {
+			$pa_ht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
+		} else {
+			$pa_ht_ret = $pa_ht;
+		}
+	} else {
+		$pa_ht_ret = $pa_ht;
+	}
+
+	// Calculate selling unit price including line discount
+	// We don't use calculate_price, because this function is dedicated to calculation of total with accuracy of total. We need an accuracy of a unit price.
+	// Also we must not apply rounding on non decimal rule defined by option MAIN_ROUNDING_RULE_TOT
+	$pu_ht_remise = $pv_ht * (1 - ($remise_percent / 100));
+	$pu_ht_remise = price2num($pu_ht_remise, 'MU');
+
+	// calcul marge
+	if ($pu_ht_remise < 0) {
+		$marge = -1 * (abs((float) $pu_ht_remise) - $pa_ht_ret);
+	} else {
+		$marge = (float) $pu_ht_remise - $pa_ht_ret;
+	}
+
+	// calcul taux marge
+	if ($pa_ht_ret != 0) {
+		$marge_tx_ret = (100 * $marge) / $pa_ht_ret;
+	}
+	// calcul taux marque
+	if ($pu_ht_remise != 0) {
+		$marque_tx_ret = (100 * $marge) / (float) $pu_ht_remise;
+	}
+
+	return array($pa_ht_ret, $marge_tx_ret, $marque_tx_ret);
+}

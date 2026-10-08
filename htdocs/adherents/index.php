@@ -1,0 +1,147 @@
+<?php
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2023	Waël Almoman				<info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *       \file       htdocs/adherents/index.php
+ *       \ingroup    member
+ *       \brief      Home page of membership module
+ */
+
+// Load Dolibarr environment
+require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/dashboard.lib.php';
+
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "members"));
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('membersindex'));
+
+// Security check
+$result = restrictedArea($user, 'adherent');
+
+
+/*
+ * Actions
+ */
+
+$userid = GETPOSTINT('userid');
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
+// Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+$resultboxes = FormOther::getBoxesArea($user, "2");
+
+$title = $langs->trans("Members");
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-index');
+
+$staticmember = new Adherent($db);
+$statictype = new AdherentType($db);
+$subscriptionstatic = new Subscription($db);
+
+print load_fiche_titre($langs->trans("MembersArea"), $resultboxes['selectboxlist'], 'members');
+
+/*
+ * Statistics
+ */
+
+$boxgraph = '';
+if ($conf->use_javascript_ajax) {
+	$year = idate('Y');
+	$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
+
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
+	$stats = new AdherentStats($db, 0, $userid);
+
+	// Show array
+	$sumMembers = $stats->countMembersByTypeAndStatus($numberyears);
+	foreach (array('members_draft', 'members_pending', 'members_uptodate', 'members_expired', 'members_excluded', 'members_resiliated') as $val) {
+		if (empty($sumMembers['total'][$val])) {
+			$sumMembers['total'][$val] = 0;
+		}
+	}
+
+	$colors = getThemeBadgeStatusColors();
+	$series = array(
+		array('label' => $langs->transnoentitiesnoconv("MembersStatusToValid"), 'nb' => $sumMembers['total']['members_draft'], 'color' => '-'.$colors[0]), // Draft, not yet validated
+		array('label' => $langs->transnoentitiesnoconv("WaitingSubscription"), 'nb' => $sumMembers['total']['members_pending'], 'color' => $colors[1]),
+		array('label' => $langs->transnoentitiesnoconv("UpToDate"), 'nb' => $sumMembers['total']['members_uptodate'], 'color' => $colors[4]),
+		array('label' => $langs->transnoentitiesnoconv("OutOfDate"), 'nb' => $sumMembers['total']['members_expired'], 'color' => $colors[8]),
+		array('label' => $langs->transnoentitiesnoconv("MembersStatusExcluded"), 'nb' => $sumMembers['total']['members_excluded'], 'color' => '-'.$colors[8]),
+		array('label' => $langs->transnoentitiesnoconv("MembersStatusResiliated"), 'nb' => $sumMembers['total']['members_resiliated'], 'color' => $colors[6]),
+	);
+
+	$boxgraph .= getStatusPieChart($langs->trans("Statistics").' - '.$langs->trans("Status").' '.($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''), $series);
+}
+
+// boxes
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
+print $boxgraph;
+
+print $resultboxes['boxlista'];
+
+print '</div>'."\n";
+
+print '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+
+print $resultboxes['boxlistb'];
+
+print '</div>'."\n";
+
+print '</div>';
+print '</div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardMembers', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+// End of page
+llxFooter();
+$db->close();

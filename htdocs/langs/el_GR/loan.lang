@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Δάνειο
+Loans=Δάνεια
+NewLoan=Νέο δάνειο
+ShowLoan=Εμφάνιση Δανείου
+PaymentLoan=Πληρωμή δανείου
+LoanPayment=Πληρωμή δανείου
+ShowLoanPayment=Εμφάνιση Πληρωμής Δανείου
+LoanCapital=Κεφάλαιο
+Insurance=Ασφάλιση
+Interest=Επιτόκιο
+Nbterms=Αριθμός περιόδων
+Term=Περίοδος
+LoanAccountancyCapitalCode=Κεφάλαιο λογιστικού λογαριασμού
+LoanAccountancyInsuranceCode=Ασφάλιση λογιστικού λογαριασμού
+LoanAccountancyInterestCode=Επιτόκιο λογιστικού λογαριασμού
+ConfirmDeleteLoan=Επιβεβαίωση διαγραφής δανείου
+LoanDeleted=Το Δάνειο διαγράφηκε με επιτυχία
+ConfirmPayLoan=Επιβεβαίωση πληρωμής δανείου
+LoanPaid=Πληρωμές δανείου
+ListLoanAssociatedProject=Λίστα δανείων που σχετίζονται με το έργο
+AddLoan=Δημιουργία δανείου
+FinancialCommitment=Χρηματοδοτική δέσμευση
+InterestAmount=Επιτόκιο
+CapitalRemain=Κεφάλαιο που απομένει
+TermPaidAllreadyPaid = Αυτή η περίοδος είναι ήδη πληρωμένη
+CantUseScheduleWithLoanStartedToPaid = Δεν είναι δυνατή η δημιουργία χρονοδιαγράμματος δάνειου για το οποίο έχουν ξεκινήσει η πληρωμές
+CantModifyInterestIfScheduleIsUsed = Δεν μπορείτε να τροποποιήσετε το επιτόκιο εάν χρησιμοποιείτε χρονοδιάγραμμα
+# Admin
+ConfigLoan=Διαμόρφωση της ενότητας δανείου
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Λογαριασμός (από το λογιστικό σχέδιο) που θα χρησιμοποιηθεί από προεπιλογή για κεφάλαια (ενότητα δανείου)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Λογαριασμός (από το λογιστικό σχέδιο) που θα χρησιμοποιηθεί από προεπιλογή για τόκους (ενότητα δανείου)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Λογαριασμός (από το λογιστικό σχέδιο) που θα χρησιμοποιηθεί από προεπιλογή για ασφάλιση (ενότητα δανείου)
+CreateCalcSchedule=Επεξεργασία οικονομικής δέσμευσης

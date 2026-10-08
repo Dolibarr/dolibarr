@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Pengaturan modul PayBox
+PayBoxDesc=Modul ini menawarkan halaman untuk memungkinkan pembayaran di <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> oleh pelanggan. Ini dapat digunakan untuk pembayaran gratis atau untuk pembayaran objek Dolibarr tertentu (faktur, pesanan, ...)
+PayBoxDoPayment=Bayar dengan Paybox
+YouWillBeRedirectedOnPayBox=Anda akan diarahkan ke halaman Paybox aman untuk memasukkan informasi kartu kredit Anda
+SetupPayBoxToHavePaymentCreatedAutomatically=Siapkan Paybox Anda dengan url<b>%s</b>agar pembayaran dibuat secara otomatis saat divalidasi oleh Paybox.
+YourPaymentHasBeenRecorded=Halaman ini mengkonfirmasi bahwa pembayaran Anda telah dicatat. Terima kasih.
+YourPaymentHasNotBeenRecorded=Pembayaran Anda TIDAK telah dicatat dan transaksi telah dibatalkan. Terima kasih.
+PAYBOX_CGI_URL_V2=Url modul Paybox CGI untuk pembayaran
+NewPayboxPaymentReceived=Pembayaran Paybox baru diterima
+NewPayboxPaymentFailed=Pembayaran Paybox baru dicoba tetapi gagal
+PAYBOX_PAYONLINE_SENDEMAIL=Pemberitahuan email setelah upaya pembayaran (berhasil atau gagal)
+PAYBOX_PBX_SITE=Nilai untuk PBX SITE
+PAYBOX_PBX_RANG=Nilai untuk PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Nilai untuk PBX ID
+PAYBOX_HMAC_KEY=Kunci HMAC
