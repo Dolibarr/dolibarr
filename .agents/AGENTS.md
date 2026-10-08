@@ -51,6 +51,13 @@ Before writing any code, the agent **must**:
 
 ---
 
+## File Creation (Tooling)
+
+- The `write_file` tool must creates files with permissions `664` (the web server www-data must be able to read them).
+- Pattern: `write_file` → `bash chmod 664 <path>`
+
+---
+
 ## PHP Best Practices
 
 - Try to use the more portable PHP code possible >= 7.2

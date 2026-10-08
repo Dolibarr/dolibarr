@@ -58,6 +58,7 @@ $hookmanager->initHooks(array('ordercontactcard', 'globalcard'));
 
 $usercancreate  =  $user->hasRight("commande", "creer");
 
+
 /*
  * Actions
  */
