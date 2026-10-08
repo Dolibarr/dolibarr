@@ -1798,7 +1798,7 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->nb > 0) {
 						$langs->loadLangs(array('errors', 'hrm'));
-						$this->error = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $this->login, $langs->transnoentitiesnoconv($hrminfo['label']));
+						$this->error = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $this->login, $langs->transnoentitiesnoconv($sanitizedhrminfo['label']));
 						$this->errors[] = $this->error;
 						$this->db->rollback();
 						return -1;
