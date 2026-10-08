@@ -50,6 +50,7 @@ $object = new FactureFournisseur($db);
 $object->fetch($id, $ref);
 if ($object->id > 0) {
 	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+	$ref = '';			// FactureFournisseur::fetch() of this version fails when it receives both the id and the ref
 }
 
 // Security check
