@@ -90,7 +90,6 @@ $hookmanager->initHooks(array('contactthirdparty', 'globalcard'));
 $result = restrictedArea($user, 'societe', $id, '');
 
 
-
 /*
  * Actions
  */

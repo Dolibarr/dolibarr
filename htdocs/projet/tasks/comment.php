@@ -68,8 +68,6 @@ $projectstatic = new Project($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// include comment actions
-include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 // Security check
 $socid = 0;
@@ -97,7 +95,8 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
  * Actions
  */
 
-// None
+// include comment actions (after security check to prevent IDOR)
+include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 
 /*
