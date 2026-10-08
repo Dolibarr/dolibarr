@@ -117,7 +117,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var string $badgeDanger
  * @var string $badgeStatus4
  * @var string $badgeWarning
- * @var string $badgeDanger
  * @var string $butactionbg
  * @var string $colorbackbody
  * @var string $colorbackhmenu1
