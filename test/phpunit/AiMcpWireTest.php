@@ -70,7 +70,9 @@ class AiMcpWireTest extends CommonClassTest
 	{
 		$res = $this->getServer()->handleRequest(array('jsonrpc' => '2.0', 'id' => 1, 'method' => 'server/discover'));
 
-		$this->assertNotNull($res);
+		// Test
+		$this->assertTrue($res !== null);
+
 		$this->assertArrayHasKey('result', $res);
 		$r = $res['result'];
 		foreach (array('supportedVersions', 'capabilities', 'cacheScope', 'ttlMs', 'resultType') as $required) {
@@ -149,10 +151,10 @@ class AiMcpWireTest extends CommonClassTest
 		$req = array('jsonrpc' => '2.0', 'id' => 1, 'method' => 'tools/call', 'params' => array('name' => 'get_company_info'));
 
 		// Absent headers: valid.
-		$this->assertNull($this->getServer()->validateTransportHeaders(array(), $req));
+		$this->assertSame(null, $this->getServer()->validateTransportHeaders(array(), $req));
 
 		// Matching headers: valid (case-insensitive lookup).
-		$this->assertNull($this->getServer()->validateTransportHeaders(array('MCP-METHOD' => 'tools/call', 'Mcp-Name' => 'get_company_info'), $req));
+		$this->assertSame(null, $this->getServer()->validateTransportHeaders(array('MCP-METHOD' => 'tools/call', 'Mcp-Name' => 'get_company_info'), $req));
 
 		// Mcp-Method mismatch.
 		$server = $this->getServer();
@@ -213,14 +215,14 @@ class AiMcpWireTest extends CommonClassTest
 	{
 		$server = $this->getServer();
 		$err = $server->validateTransportHeaders(array('Mcp-Method' => 'ping'), array('jsonrpc' => '2.0', 'id' => 7, 'method' => 'server/discover'));
-		$this->assertNotNull($err);
+		$this->assertTrue($err !== null);
 		$this->assertEquals(-32020, $err['error']['code']);
 		$this->assertEquals(400, $server->getHttpStatus(), 'batch item mismatch must drive the HTTP status to 400');
 
 		// Notification item: response suppressed (JSON-RPC), status still 400.
 		$server = $this->getServer();
 		$err = $server->validateTransportHeaders(array('Mcp-Method' => 'ping'), array('jsonrpc' => '2.0', 'method' => 'server/discover'));
-		$this->assertNull($err, 'notification gets no response body');
+		$this->assertSame(null, $err, 'notification gets no response body');
 		$this->assertEquals(400, $server->getHttpStatus(), 'but the transport status must still tell the truth');
 		// The transport wraps this into a synthesized id:null error body on
 		// BOTH dispatch paths (single and batch) so a 400 never goes out
@@ -247,7 +249,7 @@ class AiMcpWireTest extends CommonClassTest
 		$this->assertEquals(1, $res['id']);
 		$res = $this->getServer()->handleRequest(array('foo' => 'bar'));
 		$this->assertEquals(-32600, $res['error']['code']);
-		$this->assertNull($res['id']);
+		$this->assertSame(null, $res['id']);
 
 		foreach (array(-32600, -32601, -32000) as $own) {
 			$this->assertFalse($own <= -32020 && $own >= -32099, 'own code '.$own.' sits in the reserved band');

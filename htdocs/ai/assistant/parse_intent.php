@@ -69,7 +69,9 @@ if (!$user->hasRight('ai', 'assistant', 'use')) {
 // executions, so it must not be reachable from another site.
 aiCheckCsrfToken('ai/assistant/parse_intent.php');
 
+// Start to capture output
 ob_start();
+
 top_httphead('application/json');
 
 // Confirmation level: 0=no confirmation, 1=only create/update/delete, 2=all actions
@@ -563,7 +565,7 @@ try {
 				dol_syslog("AI Pro: Non-Latin query classified into ".implode(',', $detectedCategories).". Filtering schema.", LOG_DEBUG, 0, '_ai');
 				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
 			} else {
-				dol_syslog("AI Pro: Non-Latin language detected, no category match. Sending full (cleaned) schema.");
+				dol_syslog("AI Pro: Non-Latin language detected, no category match. Sending full (cleaned) schema.", LOG_DEBUG, 0, '_ai');
 				$toolsSchema = $llmToolsBase;
 			}
 		} else {
@@ -848,7 +850,7 @@ try {
 						}
 					} elseif (is_array($intentJSON)) {
 						// If answer is array of type=function.
-						dol_syslog('parse_intent.php clean response is array of type="function"', LOG_DEBUG, 0, '_ai');
+						dol_syslog('parse_intent.php clean response is array"', LOG_DEBUG, 0, '_ai');
 
 						foreach ($intentJSON as $f) {
 							if (($f['type'] ?? '') === 'function' && isset($f['function']) && !empty($f['function']['name']) && !empty($f['function']['arguments'])) {
@@ -909,19 +911,18 @@ try {
 				}
 
 				// Comment this line (too verbose, kept for debug need)
-				dol_syslog("parse_intent.php AI Intent: " . json_encode(['query' => $query, 'intent' => $intentJSON]), LOG_DEBUG);
+				dol_syslog("parse_intent.php AI Intent: " . json_encode(['query' => $query, 'intent' => $intentJSON]), LOG_DEBUG, 0, '_ai');
 
 				// Calculate confidence (only if not manually set to 1.0 above)
 				if ($intentJSON && $confidence === 0.0) {
 					$mappedToolsSchema = array_column($toolsSchema, null, 'name');
 					$confidence = calculateConfidence($intentJSON, $mappedToolsSchema, $rawResponse);
 
-					dol_syslog("parse_intent.php AI Intent: " . json_encode(['query' => $query, 'intent' => $intentJSON, 'confidence' => $confidence]), LOG_DEBUG);
+					dol_syslog("parse_intent.php AI Intent: " . json_encode(['query' => $query, 'intent' => $intentJSON, 'confidence' => $confidence]), LOG_DEBUG, 0, '_ai');
 				}
 			}
 		}
 	}
-
 
 	// Handle no AI Intent
 	if (!$intentJSON || !isset($intentJSON['tool'])) {
@@ -995,6 +996,8 @@ try {
 		$toolName = 'respond_to_user';
 		$intentJSON = array('tool' => 'respond_to_user', 'arguments' => array('message' => ($question !== '' ? $question : $langs->transnoentitiesnoconv('AICannotUnderstandRequest'))));
 	}
+
+	dol_syslog("parse_intent.php AI_CHAT_TWO_STEP_WRITE=" . getDolGlobalInt('AI_CHAT_TWO_STEP_WRITE'), LOG_DEBUG, 0, '_ai');
 
 	// --- Second step: a write was asked, a read was answered -------------------
 	// "Set the phone of X", "delete the draft order of Y": when the object's id
@@ -1101,6 +1104,8 @@ try {
 			$needsConfirmation = true;
 		}
 	}
+
+	dol_syslog("parse_intent.php needsConfirmation=" . $needsConfirmation, LOG_DEBUG, 0, '_ai');
 
 	// Handle confirmation
 	if ($needsConfirmation) {
