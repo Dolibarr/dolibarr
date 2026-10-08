@@ -1778,7 +1778,7 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 	/**
-	 *	Tag invoice as canceled, with no payment on it (example for replacement invoice or payment never received) + call trigger BILL_CANCEL
+	 *	Tag invoice as canceled, with no payment on it (example for replacement invoice or payment never received) + call trigger BILL_SUPPLIER_CANCEL
 	 *	Warning, if option to decrease stock on invoice was set, this function does not change stock (it might be a cancel because
 	 *  of no payment even if merchandises were sent).
 	 *
@@ -1814,7 +1814,7 @@ class FactureFournisseur extends CommonInvoice
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				// Call trigger
-				$result = $this->call_trigger('BILL_SUPPLIER_CANCELED', $user);
+				$result = $this->call_trigger('BILL_SUPPLIER_CANCEL', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;
