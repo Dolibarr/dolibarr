@@ -388,13 +388,14 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
-					if ($result) {
-						$srcwarehouseid = $pdluo->warehouseid;
+					if ($result > 0 && $pdluo->id > 0 && $pdluo->fk_product == $object->id) {
+						// The lot row gives the lot and its dates, the source warehouse is the one selected in the form (checked against the target above)
+						$srcwarehouseid = GETPOSTINT('id_entrepot');
 						$batch = $pdluo->batch;
 						$eatby = $pdluo->eatby;
 						$sellby = $pdluo->sellby;
 					} else {
-						setEventMessages($pdluo->error, $pdluo->errors, 'errors');
+						setEventMessages($pdluo->error ? $pdluo->error : $langs->trans('ErrorRecordNotFound'), $pdluo->errors, 'errors');
 						$error++;
 					}
 				} else {
