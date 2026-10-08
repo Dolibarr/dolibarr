@@ -4043,4 +4043,201 @@ class CommandeFournisseur extends CommonOrder
 		$return .= '</div>';
 		return $return;
 	}
+
+	/**
+	 * Send an internal reminder by email when a supplier order's expected delivery date has passed and the
+	 * order is still not fully received.
+	 * CAN BE A CRON TASK
+	 *
+	 * Modeled on Propal::sendReminderForExpiringProposals()/Contrat::sendReminderForExpiredServices(): for
+	 * each requested delay, it looks for orders sent to the supplier (or partially received) whose expected
+	 * delivery date falls on that one exact day (today + delay), so an order is only ever matched once per
+	 * delay value. An order already reminded today for the same delay is skipped, so running the job more
+	 * than once the same day does not resend the reminder. The reminder goes to the user who created the
+	 * order (not the supplier), since this is an internal follow-up, not a customer-facing one. Each
+	 * successful send is logged as an agenda event on the order. A failure on one order (ex: no email
+	 * template found, order's author has no email) is counted and does not prevent the other due orders
+	 * from being processed.
+	 *
+	 * @param	string		$daysbeforeendlist		Nb of days before expected delivery date (negative number = after, i.e. already late). Can be a list of delays, separated by a semicolon, for example '0;-3;-7'
+	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForLateSupplierDeliveries($daysbeforeendlist = '0')
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		$blockingerrormsg = '';
+
+		if (!isModEnabled('supplier_order')) { // Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("SupplierOrder"));
+			return 0;
+		}
+
+		$langs->loadLangs(array('main', 'orders'));
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$listofordersok = array();
+		$listofordersko = array();
+
+		$arraydaysbeforeend = explode(';', $daysbeforeendlist);
+		foreach ($arraydaysbeforeend as $daysbeforeend) { // Loop on each delay
+			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
+
+			if (!is_numeric($daysbeforeend)) {
+				$blockingerrormsg = "Value for delta is not a numeric value";
+				$nbko++;
+				break;
+			}
+
+			// Label of the event recorded once a reminder is sent for a given delay. Also used to not send the same reminder twice the same day.
+			$labelreminderok = 'sendReminderForLateSupplierDeliveriesOK (daysbeforeend='.$daysbeforeend.')';
+
+			$tmp = dol_getdate($now);
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+			$datetosearchforend = dol_time_plus_duree(dol_mktime(23, 59, 59, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
+
+			$sql = "SELECT c.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+			$sql .= " WHERE c.entity = ".((int) $conf->entity); // Do not use getEntity('supplier_order') here, we want the batch to be on its entity only
+			$sql .= " AND c.fk_statut IN (".self::STATUS_ORDERSENT.", ".self::STATUS_RECEIVED_PARTIALLY.")"; // Sent to supplier or partially received, so still awaiting delivery
+			$sql .= " AND c.date_livraison >= '".$this->db->idate($datetosearchfor)."'";
+			$sql .= " AND c.date_livraison <= '".$this->db->idate($datetosearchforend)."'";
+			$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+			$sql .= " WHERE a.elementtype = 'order_supplier' AND a.fk_element = c.rowid AND a.code = 'AC_EMAIL'";
+			$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+			$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num_rows = $this->db->num_rows($resql);
+
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+				$formmail = new FormMail($this->db);
+
+				$i = 0;
+				while ($i < $num_rows) {
+					$obj = $this->db->fetch_object($resql);
+
+					$orderstatic = new CommandeFournisseur($this->db);
+					$orderstatic->fetch($obj->rowid);
+
+					$recipient = new User($this->db);
+					$recipientres = (!empty($orderstatic->user_author_id)) ? $recipient->fetch($orderstatic->user_author_id) : -1;
+
+					if ($recipientres <= 0 || empty($recipient->email)) {
+						$nbko++;
+						$listofordersko[$orderstatic->id] = $orderstatic->id;
+					} else {
+						$orderstatic->fetch_thirdparty();
+
+						$arraydefaultmessage = null;
+						$labeltouse = getDolGlobalString('SUPPLIER_ORDER_EMAIL_TEMPLATE_REMIND_LATE_DELIVERY');
+
+						if (!empty($labeltouse)) {
+							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'order_supplier', $user, $langs, 0, 1, $labeltouse);
+						}
+
+						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $orderstatic);
+							complete_substitutions_array($substitutionarray, $langs, $orderstatic);
+							$substitutionarray['__SUPPLIER_ORDER_DELIVERY_DATE__'] = dol_print_date($orderstatic->delivery_date, 'day', 'tzuserrel', $langs);
+							$substitutionarray['__SUPPLIER_ORDER_SUPPLIER_NAME__'] = (is_object($orderstatic->thirdparty) ? $orderstatic->thirdparty->name : '');
+							$substitutionarray['__SUPPLIER_ORDER_URL__'] = DOL_MAIN_URL_ROOT.'/fourn/commande/card.php?id='.$orderstatic->id;
+
+							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $langs);
+							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $langs);
+							$email_from = getDolGlobalString('SUPPLIER_ORDER_MAIL_FROM', $conf->email_from);
+							$to = (string) $recipient->email;
+
+							$trackid = 'ord'.$orderstatic->id;
+							$moreinheader = 'X-Dolibarr-Info: sendReminderForLateSupplierDeliveries'."\r\n";
+
+							require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+							$cmail = new CMailFile($subject, $to, $email_from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
+							$result = $cmail->sendfile();
+							if (!$result) {
+								$error++;
+								$this->error .= $cmail->error.' ';
+								if (!is_null($cmail->errors)) {
+									$this->errors = array_merge($this->errors, $cmail->errors);
+								}
+								$nbko++;
+								$listofordersko[$orderstatic->id] = $orderstatic->id;
+							} else {
+								$nbok++;
+								$listofordersok[$orderstatic->id] = $orderstatic->id;
+
+								// Insert record of email sent, as an agenda event on the order (same convention as other automated reminder emails)
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								$actioncomm = new ActionComm($this->db);
+								$actioncomm->type_code = 'AC_OTH_AUTO';
+								$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = $labelreminderok;
+								$actioncomm->note_private = $msg;
+								$actioncomm->fk_project = $orderstatic->fk_project;
+								$actioncomm->datep = $now;
+								$actioncomm->datef = $now;
+								$actioncomm->percentage = -1; // Not applicable
+								$actioncomm->socid = (is_object($orderstatic->thirdparty) ? $orderstatic->thirdparty->id : 0);
+								$actioncomm->contact_id = 0;
+								$actioncomm->authorid = $user->id;
+								$actioncomm->userownerid = $user->id;
+								$actioncomm->email_msgid = $cmail->msgid;
+								$actioncomm->email_from = $email_from;
+								$actioncomm->email_sender = '';
+								$actioncomm->email_to = $to;
+								$actioncomm->email_subject = $subject;
+
+								$actioncomm->fk_element = $orderstatic->id;
+								$actioncomm->elementid = $orderstatic->id;
+								$actioncomm->elementtype = $orderstatic->element;
+
+								$actioncomm->create($user);
+							}
+						} else {
+							$error++;
+							$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
+
+							$nbko++;
+							$listofordersko[$orderstatic->id] = $orderstatic->id;
+
+							// Do not break here: a template issue for one order (ex: template not found) must not
+							// prevent the reminder from being sent for the other orders due the same day.
+						}
+					}
+
+					$i++;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				return 1;
+			}
+		}
+
+		if ($blockingerrormsg) {
+			$this->error = $blockingerrormsg;
+			return 1;
+		} else {
+			$this->output = 'Found '.($nbok + $nbko).' orders to send reminder for.';
+			$this->output .= ' Sent email successfully for '.$nbok.' orders';
+			if ($nbko) {
+				$this->output .= ' - Canceled for '.$nbko.' order(s) (no email for the order author, missing template, or send error)';
+			}
+		}
+
+		if ($error) {
+			return 1;
+		}
+		return 0;
+	}
 }

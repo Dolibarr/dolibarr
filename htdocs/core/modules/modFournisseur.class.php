@@ -127,6 +127,21 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 					"",
 					0,
 				],
+				// For emails
+				[
+					"SUPPLIER_ORDER_MAIL_FROM",
+					"chaine",
+					"",
+					"From des mails",
+					0,
+				],
+				[
+					"SUPPLIER_ORDER_EMAIL_TEMPLATE_REMIND_LATE_DELIVERY",
+					"emailtemplate:order_supplier",
+					"(SendingReminderForLateSupplierDelivery)",
+					"",
+					0,
+				],
 			];
 
 			/* For supplier invoice, we must not have default pdf template on. In most cases, we need to join PDF from supplier, not have a document generated.
@@ -180,6 +195,21 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 					'priority' => 50,
 					'status' => 0,
 					'test' => 'isModEnabled("supplier_invoice")',
+					'datestart' => $datestart
+				),
+				2 => array(
+					'label' => 'SendReminderForLateSupplierDeliveriesTitle',
+					'jobtype' => 'method',
+					'class' => 'fourn/class/fournisseur.commande.class.php',
+					'objectname' => 'CommandeFournisseur',
+					'method' => 'sendReminderForLateSupplierDeliveries',
+					'parameters' => '0',
+					'comment' => 'SendReminderForLateSupplierDeliveries',
+					'frequency' => 1,
+					'unitfrequency' => 3600 * 24,
+					'priority' => 50,
+					'status' => 1,
+					'test' => 'isModEnabled("supplier_order")',
 					'datestart' => $datestart
 				));
 
