@@ -185,7 +185,17 @@ if (empty($reshook)) {
 				// Get the real quantity in stock now, but before the stock move for inventory.
 				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
 				if (isModEnabled('productbatch') && $product_static->hasbatch()) {
-					$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
+					// Search the lot without case sensitivity, like the database (and the stock movement) does,
+					// otherwise a lot typed with another case is seen as empty and the full counted qty is added.
+					$realqtynow = 0;
+					if (!empty($product_static->stock_warehouse[$line->fk_warehouse]->detail_batch)) {
+						foreach ($product_static->stock_warehouse[$line->fk_warehouse]->detail_batch as $tmpbatchnumber => $tmpdetailbatch) {
+							if (dol_strtolower((string) $tmpbatchnumber) == dol_strtolower((string) $line->batch)) {
+								$realqtynow = $tmpdetailbatch->qty;
+								break;
+							}
+						}
+					}
 				}
 
 				if (!is_null($qty_view)) {
