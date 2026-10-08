@@ -785,8 +785,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
-					// TODO Add test that production has not started
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>';
+					if (!$object->hasConsumedOrProducedLines()) {
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>';
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($object->error).'">'.$langs->trans("SetToDraft").'</a>';
+					}
 				}
 			}
 
