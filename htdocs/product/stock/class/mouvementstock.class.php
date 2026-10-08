@@ -977,13 +977,13 @@ class MouvementStock extends CommonObject
 			// No error
 			if ($pdluo->id > 0) {	// product_batch record found
 				//print "Avant ".$pdluo->qty." Apres ".($pdluo->qty + $qty)."<br>";
-				$pdluo->qty += $qty;
-				if ($this->isBatchQtyNull((float) $pdluo->qty)) {
+				$pdluo->qty = (float) price2num($pdluo->qty + $qty, 'MS');
+				if ($pdluo->qty == 0) {
 					$result = $pdluo->delete($user, 1);
 				} else {
 					$result = $pdluo->update($user, 1);
 				}
-			} elseif ($this->isBatchQtyNull((float) $qty)) {
+			} elseif ((float) price2num($qty, 'MS') == 0) {
 				$result = 0;
 			} else {					// product_batch record not found
 				$pdluo->fk_product_stock = $vfk_product_stock;
@@ -1000,20 +1000,6 @@ class MouvementStock extends CommonObject
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Check if a batch quantity is below the smallest quantity that can be stored for stock (MAIN_MAX_DECIMALS_STOCK)
-	 *
-	 * @param	float	$qty	Quantity
-	 * @return	bool			True if quantity must be considered as null
-	 */
-	private function isBatchQtyNull(float $qty): bool
-	{
-		$nbdec = getDolGlobalInt('MAIN_MAX_DECIMALS_STOCK', 5);
-
-		// Rounding to one more decimal avoids treating a float like 9.9999999E-6 as below 10^-nbdec
-		return abs((float) price2num($qty, $nbdec + 1)) < pow(10, -$nbdec);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
