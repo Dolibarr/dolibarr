@@ -2382,7 +2382,7 @@ if ($id > 0) {
 							if (empty($arrayfields[$value]['checked'])) {
 								$showfield = 0; // Column was not selected to be displayed
 							}
-							$valuetoshow = (isset($obj->$value) && $obj->$value !== null && $obj->$value !== '') ? $obj->$value : '';
+							$valuetoshow = (isset($obj->$value) && $obj->$value !== '') ? $obj->$value : '';
 							$titletoshow = '';
 
 							if ($value == 'entity') {
