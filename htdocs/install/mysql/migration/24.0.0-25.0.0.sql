@@ -38,6 +38,8 @@
 --noqa:disable=RF03
 
 
+ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
+
 -- V24 forgotten
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
@@ -103,6 +105,43 @@ UPDATE llx_commande SET model_pdf = 'eratosthene' WHERE model_pdf = 'einstein';
 UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='COMMANDE_ADDON_PDF';
 UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
+
+-- Switch all aurore templates into zenith
+UPDATE llx_supplier_proposal SET model_pdf = 'zenith' WHERE model_pdf = 'aurore';
+UPDATE llx_const SET value = 'zenith' WHERE value = 'aurore' AND name ='SUPPLIER_PROPOSAL_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'zenith' WHERE nom = 'aurore' AND type = 'supplier_proposal' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'zenith' AND type = 'supplier_proposal') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'aurore' AND type = 'supplier_proposal';
+
+-- Switch all muscadet templates into cornas
+UPDATE llx_commande_fournisseur SET model_pdf = 'cornas' WHERE model_pdf = 'muscadet';
+UPDATE llx_const SET value = 'cornas' WHERE value = 'muscadet' AND name ='COMMANDE_SUPPLIER_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'cornas' WHERE nom = 'muscadet' AND type = 'order_supplier' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'cornas' AND type = 'order_supplier') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'muscadet' AND type = 'order_supplier';
+
+-- Switch all rouget templates into espadon
+UPDATE llx_expedition SET model_pdf = 'espadon' WHERE model_pdf = 'rouget';
+UPDATE llx_const SET value = 'espadon' WHERE value = 'rouget' AND name ='EXPEDITION_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'espadon' WHERE nom = 'rouget' AND type = 'shipping' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'espadon' AND type = 'shipping') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'rouget' AND type = 'shipping';
+
+-- The donation receipt template "generic" (html) has been removed and replaced by the
+-- template "standard" (pdf), available for any country. Switch all generic templates into standard.
+UPDATE llx_don SET model_pdf = 'pdf_standard_donation' WHERE model_pdf = 'html_generic';
+UPDATE llx_const SET value = 'pdf_standard_donation' WHERE value = 'html_generic' AND name ='DON_ADDON_MODEL';
+UPDATE llx_document_model SET nom = 'pdf_standard_donation' WHERE nom = 'html_generic' AND type = 'donation' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'pdf_standard_donation' AND type = 'donation') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'html_generic' AND type = 'donation';
+-- The label of a model is what the user sees in the list of generation templates, so it must
+-- show the name of the new template, not the name of the old "generic" one it was migrated from.
+UPDATE llx_document_model SET libelle = 'Standard' WHERE nom = 'pdf_standard_donation' AND type = 'donation' AND (libelle IS NULL OR libelle = '' OR libelle = 'generic' OR libelle = 'standard');
+-- Same for the "cerfafr" template, so the label shows its display name everywhere.
+UPDATE llx_document_model SET libelle = 'Cerfa HTML FR' WHERE nom = 'html_cerfafr' AND type = 'donation' AND (libelle IS NULL OR libelle = '' OR libelle = 'cerfafr');
+
+-- The delivery receipt template "typhon" has been removed and replaced by "storm".
+-- Switch all typhon templates into storm.
+UPDATE llx_delivery SET model_pdf = 'storm' WHERE model_pdf = 'typhon';
+UPDATE llx_const SET value = 'storm' WHERE value = 'typhon' AND name IN ('DELIVERY_ADDON_PDF', 'LIVRAISON_ADDON_PDF');
+UPDATE llx_document_model SET nom = 'storm', libelle = NULL WHERE nom = 'typhon' AND type = 'delivery' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'storm' AND type = 'delivery') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'typhon' AND type = 'delivery';
 
 -- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
 ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
@@ -256,6 +295,34 @@ ALTER TABLE llx_paiementcharge ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_various ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_salary ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_loan ADD COLUMN import_key varchar(14);
+
+ALTER TABLE llx_loan ADD COLUMN frequency integer DEFAULT 12 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN interest_basis smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN balloon_amount double(24,8) DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN charge_type smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN charge_per_payment smallint DEFAULT 0 NOT NULL;
+-- History of the changes of a loan: rate changes, and payments that differ from the schedule,
+-- with how the unpaid payments were recalculated.
+create table llx_loan_change
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,
+  fk_loan			integer NOT NULL,
+  datec				datetime,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  date_change		date,							-- date from which the change applies
+  reason			varchar(16) NOT NULL,			-- 'rate' (rate change) or 'payment' (payment different from the schedule)
+  rate_old			double,
+  rate_new			double,
+  keep_mode			varchar(16),					-- 'term' (number of payments kept), 'payment' (repayment kept) or '' (no schedule)
+  payment_old		double(24,8),
+  payment_new		double(24,8),
+  nbterm_old		real,
+  nbterm_new		real,
+  fk_payment_loan	integer DEFAULT NULL,			-- payment that caused the change (reason 'payment')
+  fk_user_author	integer DEFAULT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_loan_change ADD INDEX idx_loan_change_fk_loan (fk_loan);
 ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
@@ -276,13 +343,17 @@ ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_contact integer AFTER fk_soc;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_contact (fk_contact);
 
+-- Link an event attendee to the member represented by the registration.
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_member integer AFTER fk_contact;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_member (fk_member);
+
 
 ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;
 
 -- NEW schemas table and schemas extrafields
 CREATE TABLE llx_schemas (
     rowid 			integer AUTO_INCREMENT PRIMARY KEY,
-    uuid 			varchar(64) NOT NULL,                
+    uuid 			varchar(64) NOT NULL,
     name 			varchar(64) NOT NULL,
     label 			varchar(255) NOT NULL,
     schema_kind 	varchar(32) NULL,
@@ -342,3 +413,78 @@ ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcod
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
 
 
+-- AI chat: conversation history (reopen past conversations; storage is separate from the pinned context sent to the model)
+create table llx_ai_chat_conversation
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  fk_user					integer NOT NULL,
+  title						varchar(255),
+  date_creation				datetime NOT NULL,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+create table llx_ai_chat_message
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  fk_conversation			integer NOT NULL,
+  role						varchar(16) NOT NULL,
+  content_raw				text,
+  content_html				MEDIUMTEXT,
+  tool_name					varchar(255),
+  pinned					smallint DEFAULT 0,
+  is_error					smallint DEFAULT 0,
+  position					integer DEFAULT 0,
+  datec						datetime NOT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_ai_chat_conversation ADD INDEX idx_ai_chat_conversation_user (fk_user, tms);
+ALTER TABLE llx_ai_chat_message ADD INDEX idx_ai_chat_message_conv (fk_conversation, position);
+ALTER TABLE llx_ai_chat_message ADD CONSTRAINT fk_ai_chat_message_conv FOREIGN KEY (fk_conversation) REFERENCES llx_ai_chat_conversation (rowid);
+
+-- Add table for the AI assistant pending write confirmations (MCP multi-round-trip)
+create table llx_ai_write_confirmation
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  state_hash				varchar(80) NOT NULL,					-- Hash of the requestState handed to the caller
+  fk_user					integer NOT NULL,						-- User the state was issued to
+  tool_name					varchar(255) NOT NULL,					-- Tool the confirmation is for
+  args_hash					varchar(80) NOT NULL,					-- Hash of the arguments, so confirmed arguments cannot change
+  preview					text,									-- Description of the pending write
+  date_creation				datetime NOT NULL,
+  date_expiration			datetime NOT NULL,						-- After this date the state is refused
+  date_consumed				datetime,								-- Set when the write was confirmed and executed
+  ip						varchar(250)							-- Origin of the request that asked for the write
+)ENGINE=innodb;
+ALTER TABLE llx_ai_write_confirmation ADD UNIQUE INDEX uk_ai_write_confirmation_state (state_hash, entity);
+ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_expiration (date_expiration);
+ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_fk_user (fk_user);
+
+-- The events of leaves HOLIDAY_VALIDATE, HOLIDAY_MODIFY and HOLIDAY_APPROVE were inserted with the elementtype of the expense reports
+-- by the migrations 8.0.0-9.0.0 and 16.0.0-17.0.0 (and the correct rows inserted after were rejected by the unique key on code).
+-- Same values as in data/llx_c_action_trigger.sql.
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday validated', description = 'Executed when a holiday is validated', rang = 802 WHERE code = 'HOLIDAY_VALIDATE' AND elementtype = 'expensereport';
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday modified', description = 'Executed when a holiday is modified', rang = 801 WHERE code = 'HOLIDAY_MODIFY' AND elementtype = 'expensereport';
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approved', description = 'Executed when a holiday is aprouved', rang = 803 WHERE code = 'HOLIDAY_APPROVE' AND elementtype = 'expensereport';
+
+-- Add type of contacts for stock transfer (module is new in v25). Same values as in data/llx_c_type_contact.sql.
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1);
+
+-- Top menu "Banks | Cash" now opens the new bank dashboard page instead of the list of accounts
+UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' WHERE type = 'top' AND mainmenu = 'bank' AND url LIKE '/compta/bank/list.php?search_status=opened%';
+
+-- Indexes for the widgets of the home page: latest prospects and latest suppliers (sorted on tms) and balance of bank accounts
+ALTER TABLE llx_societe ADD INDEX idx_societe_fournisseur_tms(fournisseur, tms);
+ALTER TABLE llx_societe ADD INDEX idx_societe_client_tms(client, tms);
+ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account_amount(fk_account, amount);
+
+-- The ref of a variant attribute is unique per entity, like the ref of a product, not for the whole database
+-- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
+-- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
+ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
+
+-- API keys created from the user's token tab were written to the deprecated column token, while
+-- the API authenticates against tokenstring (where the upgrade that moves user api_key values
+-- puts them). Those keys never worked: copy them where they are read.
+UPDATE llx_oauth_token SET tokenstring = token WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;

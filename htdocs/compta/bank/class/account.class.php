@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Sylvain Legrand			<contact@infras.fr>
  * Copyright (C) 2026		Lucky Ranasolonirina	<technique@infras.fr>
@@ -1343,6 +1343,15 @@ class Account extends CommonObject
 			}
 		}
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BANKACCOUNT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -1481,7 +1490,13 @@ class Account extends CommonObject
 			return -1; // Protection to prevent calls by external users
 		}
 
-		$sql = "SELECT b.rowid, b.datev as datefin";
+		$now = dol_now();
+
+		// The count and the number of late transactions are computed by the database instead of reading every transaction to
+		// conciliate (there can be a lot of them). A transaction is late when its value date is before now minus the warning
+		// delay (a transaction without value date was counted as late, this is kept).
+		$sql = "SELECT COUNT(b.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN b.datev IS NULL OR b.datev < '".$this->db->idate($now - $conf->bank->rappro->warning_delay)."' THEN 1 ELSE 0 END) as nblate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b,";
 		$sql .= " ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.rappro=0";
@@ -1495,7 +1510,6 @@ class Account extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
-			$now = dol_now();
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
@@ -1506,11 +1520,10 @@ class Account extends CommonObject
 			$response->url = DOL_URL_ROOT.'/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank';
 			$response->img = img_object('', "payment");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-				if ((int) $this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 			return $response;
 		} else {
@@ -1678,11 +1691,13 @@ class Account extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/compta/bank/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/compta/bank/card.php';
+		$query = ['id' => $this->id];
 		if ($mode == 'transactions') {
-			$url = DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/bank/bankentries_list.php';
 		} elseif ($mode == 'receipts') {
-			$url = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/compta/bank/releve.php';
+			$query = ['account' => $this->id];
 		}
 
 		if ($option != 'nolink') {
@@ -1692,9 +1707,10 @@ class Account extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -2604,14 +2620,24 @@ class AccountLine extends CommonObjectLine
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			$this->db->commit();
-			return 1;
-		} else {
+		if (!$resql) {
 			$this->db->rollback();
 			$this->error = $this->db->error();
 			return -1;
 		}
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 
@@ -2645,12 +2671,13 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *	Update conciliation field
 	 *
-	 *	@param	User	$user			Object user making update
-	 *	@param 	int		$cat			Category id
-	 *	@param	int		$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@param	User		$user			Object user making update
+	 *	@param 	int			$cat			Category id
+	 *	@param	int			$conciliated	1=Set transaction to conciliated, 0=Keep transaction non conciliated
+	 *	@param	int<0,1>	$notrigger		1=Disable triggers
+	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function update_conciliation(User $user, $cat, $conciliated = 1)
+	public function update_conciliation(User $user, $cat, $conciliated = 1, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -2694,6 +2721,16 @@ class AccountLine extends CommonObjectLine
 			}
 
 			$this->rappro = (int) $conciliated;
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BANKACCOUNTLINE_MODIFY', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+			}
 
 			$this->db->commit();
 			return 1;

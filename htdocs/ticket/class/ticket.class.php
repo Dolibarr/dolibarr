@@ -413,8 +413,8 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			// Default is the capacity in bytes of the mediumtext column llx_ticket.message
-			if (strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16777215)) {
+			// Field for message is "mediumtext" that has a capacity in bytes (not in chars like it is with varchar), so we must use strlen()
+			if (strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16000000)) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
@@ -1051,8 +1051,8 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			// Default is the capacity in bytes of the mediumtext column llx_ticket.message
-			if (strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16777215)) {
+			// Field for message is "mediumtext" that has a capacity in bytes (not in chars like it is with varchar), so we must use strlen()
+			if (strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16000000)) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
@@ -1719,7 +1719,7 @@ class Ticket extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1728,9 +1728,10 @@ class Ticket extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query['save_lastsearch_values'] = 1;
 			}
 		}
+		$url = dolBuildUrl(DOL_URL_ROOT.'/ticket/card.php', $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -2908,7 +2909,7 @@ class Ticket extends CommonObject
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
 			$resarray = $object->copyFilesForTicket();
 			if (is_numeric($resarray) && $resarray == -1) {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 				return -1;
 			}
 
@@ -3378,11 +3379,10 @@ class Ticket extends CommonObject
 
 				return 1;
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 				return -1;
 			}
 		} else {
-			setEventMessages($this->error, $this->errors, 'errors');
 			return -1;
 		}
 	}
@@ -3554,7 +3554,9 @@ class Ticket extends CommonObject
 
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
+		// The count is computed by the database instead of reading every ticket. No ticket is counted as late: the delay is 0
+		// and the check on the creation date was doing nothing.
+		$sql = "SELECT COUNT(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
 		if (empty($user->socid) && isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
@@ -3589,14 +3591,9 @@ class Ticket extends CommonObject
 			$response->img = img_object('', "ticket");
 
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-				if ($mode == 'opened') {
-					$datelimit = (int) $this->db->jdate($obj->datec) + (int) $delay_warning;
-					if ($datelimit < $now) {
-						//$response->nbtodolate++;
-					}
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
 			}
 			return $response;
 		} else {

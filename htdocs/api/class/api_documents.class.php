@@ -8,6 +8,7 @@
  * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 /**
- * API class for receive files
+ * API class to receive files
  *
  * @since	6.0.0	Initial implementation
  *
@@ -472,6 +473,10 @@ class Documents extends DolibarrApi
 
 		$id = (empty($id) ? 0 : $id);
 
+		if ($modulepart == 'facture_fournisseur') {
+			$modulepart = 'supplier_invoice';	// Alias unknown by fetchObjectByElement()
+		}
+
 		// Define $object
 		$object = fetchObjectByElement($id, $modulepart, $ref);		// Note that we don't mind id and ref, we want to get a valid instantiated $object but not necessarily initialized
 		if (!is_object($object)) {
@@ -479,7 +484,12 @@ class Documents extends DolibarrApi
 		}
 
 		// Define $upload_dir to scan
-		$upload_dir = getMultidirOutput($object, '', 1);
+		if ($object->element == 'invoice_supplier' && $object->id > 0) {
+			// Supplier invoices are stored under a hashed subdir, as in the other methods of this file
+			$upload_dir = getMultidirOutput($object).'/'.get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
+		} else {
+			$upload_dir = (string) getMultidirOutput($object, '', 1);
+		}
 
 		// Check object-level permissions
 		$ok = checkUserAccessToObject(DolibarrApiAccess::$user, array($object->element), $object, $object->table_element, '');
@@ -520,6 +530,10 @@ class Documents extends DolibarrApi
 			}
 		} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
 			if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+				throw new RestException(403);
+			}
+		} elseif ($modulepart == 'reception') {
+			if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 				throw new RestException(403);
 			}
 		} elseif ($modulepart == 'facture' || $modulepart == 'invoice') {

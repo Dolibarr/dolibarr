@@ -23,7 +23,7 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/don/class/don.class.php';
 require_once dirname(__FILE__).'/../../htdocs/don/class/paymentdonation.class.php';

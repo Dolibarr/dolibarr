@@ -601,6 +601,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -709,6 +711,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 								$error++;
 								$langs->load("errors");
 								setEventMessages(null, $tmpproduct->errors, 'errors');
+								// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+								continue;
 							}
 
 							$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -755,8 +759,14 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);        // Call method to get list of timespent for a timespent line id (We use the utility method found into Task object)
 					// $object->id is now the task id
+					if (!isset($arrayoftasks[$object->id][(int) $object->timespent_fk_product])) {
+						$arrayoftasks[$object->id][(int) $object->timespent_fk_product] = array('timespent' => 0, 'totalvaluetodivideby3600' => 0, 'ids' => array());
+					}
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
+					// Keep the time spent lines that feed this invoice line, so the back link below
+					// points each of them at its own line and not at the last one created.
+					$arrayoftasks[$object->id][(int) $object->timespent_fk_product]['ids'][] = (int) $value;
 				}
 
 				foreach ($arrayoftasks as $task_id => $data) {  // @phan-suppress-current-line PhanEmptyForeach
@@ -787,6 +797,8 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 									$error++;
 									$langs->load("errors");
 									setEventMessages(null, $tmpproduct->errors, 'errors');
+									// Skip this entry: without it the loop reaches addline() and divides by the duration (#40805).
+									continue;
 								}
 
 								$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
@@ -840,7 +852,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 						if (!$error) {
 							// Update lineid into line of timespent
 							$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'element_time SET invoice_line_id = ' . ((int) $lineid) . ', invoice_id = ' . ((int) $tmpinvoice->id);
-							$sql .= ' WHERE rowid IN (' . $db->sanitize(implode(',', $toselect)) . ')';
+							$sql .= ' WHERE rowid IN (' . $db->sanitize(implode(',', $timespent_data['ids'])) . ')';
 							$result = $db->query($sql);
 							if (!$result) {
 								$error++;
@@ -893,7 +905,7 @@ if ($action == 'confirm_generateinter' && $user->hasRight('fichinter', 'creer'))
 		$tmpinter->socid = $projectstatic->thirdparty->id;
 		$tmpinter->date = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		$tmpinter->fk_project = $projectstatic->id;
-		$tmpinter->description = $projectstatic->title . (!empty($projectstatic->description) ? '-' . $projectstatic->label : '');
+		$tmpinter->description = $projectstatic->title . (!empty($projectstatic->description) ? '-' . $projectstatic->description : '');
 
 		if ($interToUse) {
 			$tmpinter->fetch($interToUse);

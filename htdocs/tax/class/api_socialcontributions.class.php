@@ -23,6 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution
 // PaymentSocialContribution::delete() instantiates AccountLine without requiring
 // it; load it here so deleting a bank-linked payment via the API does not fatal.
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 /**
  * API class for social/fiscal contributions (taxes) and their payments
@@ -284,7 +285,7 @@ class SocialContributions extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
-	 * @throws RestException 403 Access denied
+	 * @throws RestException 403 Access denied, or social contribution with payments
 	 * @throws RestException 404 Social contribution not found
 	 * @throws RestException 500 Error when deleting the social contribution
 	 */
@@ -298,6 +299,11 @@ class SocialContributions extends DolibarrApi
 		$result = $contrib->fetch($id);
 		if ($result <= 0 || empty($contrib->id)) {
 			throw new RestException(404, 'Social contribution not found');
+		}
+
+		// As the card does, and as DELETE /invoices/{id}: not once something is paid
+		if (!empty($contrib->getSommePaiement())) {
+			throw new RestException(403, 'Social contribution not erasable, it has payments');
 		}
 
 		if ($contrib->delete(DolibarrApiAccess::$user) < 0) {
@@ -437,16 +443,16 @@ class SocialContributions extends DolibarrApi
 	 * Add a payment to a social contribution.
 	 *
 	 * @param	int		$id				ID of the social contribution
-	 * @param	array	$request_data	Request data (datepaye, amount, paiementtype, [num_payment], [accountid])
+	 * @param	array	$request_data	Request data (datepaye, amount, paiementtype, accountid if module bank is on, [num_payment], [note], [closepaidcontrib])
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	int						ID of the created payment
 	 *
 	 * @url     POST {id}/payments
 	 *
-	 * @throws RestException 400 Missing mandatory field
+	 * @throws RestException 400 Missing mandatory field, bad date, or payment refused
 	 * @throws RestException 403 Access denied
-	 * @throws RestException 500 Error when creating the payment
+	 * @throws RestException 404 Social contribution not found
 	 */
 	public function addPayment($id, $request_data = null)
 	{
@@ -456,11 +462,24 @@ class SocialContributions extends DolibarrApi
 
 		// Check mandatory fields
 		$this->_validatePayment($request_data);
+		if (isModEnabled("bank") && !((int) ($request_data['accountid'] ?? 0) > 0)) {
+			throw new RestException(400, 'accountid field missing');
+		}
+		// A day alone is taken at noon, as the payment form does
+		$datepaye = is_numeric($request_data['datepaye']) ? (int) $request_data['datepaye'] : dol_stringtotime((string) $request_data['datepaye'], 1, 1);
+		if (empty($datepaye)) {
+			throw new RestException(400, 'datepaye must be a timestamp or a date YYYY-MM-DD');
+		}
+
+		$contrib = new ChargeSociales($this->db);
+		if ($contrib->fetch($id) <= 0 || empty($contrib->id)) {
+			throw new RestException(404, 'Social contribution not found');
+		}
 
 		$payment = new PaymentSocialContribution($this->db);
-		$payment->chid = $id;
-		$payment->datepaye = $request_data['datepaye'];
-		$payment->amounts = array($id => (float) $request_data['amount']);
+		$payment->chid = $contrib->id;
+		$payment->datepaye = $datepaye;
+		$payment->amounts = array($contrib->id => (float) $request_data['amount']);
 		$payment->paiementtype = $request_data['paiementtype'];
 		if (isset($request_data['num_payment'])) {
 			$payment->num_payment = $request_data['num_payment'];
@@ -468,14 +487,25 @@ class SocialContributions extends DolibarrApi
 		if (isset($request_data['note'])) {
 			$payment->note = $request_data['note'];
 		}
+		// Same default as the payment form: a contribution paid in full is closed
+		$closepaidcontrib = isset($request_data['closepaidcontrib']) ? (int) $request_data['closepaidcontrib'] : 1;
 
-		if ($payment->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating payment', array_merge(array($payment->error), $payment->errors));
+		// Payment and bank line are written together, or not at all
+		$this->db->begin();
+
+		if ($payment->create(DolibarrApiAccess::$user, $closepaidcontrib) < 0) {
+			$this->db->rollback();
+			throw new RestException(400, 'Payment error : '.$payment->errorsToString());
 		}
 
-		if (isModEnabled("bank") && !empty($request_data['accountid'])) {
-			$payment->addPaymentToBank(DolibarrApiAccess::$user, 'payment_sc', '(SocialContributionPayment)', (int) $request_data['accountid'], '', '');
+		if (isModEnabled("bank")) {
+			if ($payment->addPaymentToBank(DolibarrApiAccess::$user, 'payment_sc', '(SocialContributionPayment)', (int) $request_data['accountid'], '', '') <= 0) {
+				$this->db->rollback();
+				throw new RestException(400, 'Add payment to bank error : '.$payment->errorsToString());
+			}
 		}
+
+		$this->db->commit();
 
 		return $payment->id;
 	}

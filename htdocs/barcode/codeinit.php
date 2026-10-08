@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'members', 'errors', 'other'));
+$langs->loadLangs(array('admin', 'members', 'other'));
 
 // Choice of print year or current year.
 $now = dol_now();

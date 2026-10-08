@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2017	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "bills", "compta", "errors"));
+$langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -270,6 +270,7 @@ if (empty($reshook)) {
 
 			$action = 'create';
 		} elseif ($result > 0) {
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -290,6 +291,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (dol_strlen(GETPOST('ref', 'alpha')) > 30) {	// Size of field ref in database
+			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 			$action = 'create';
 			$error++;
@@ -439,6 +441,7 @@ if (empty($reshook)) {
 	if ($action == 'setref' && $permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
 		$newref = GETPOST('ref', 'alpha');
 		if (dol_strlen($newref) > 30) {	// Size of field ref in database
+			$langs->load('errors');
 			$result = -1;
 			$object->error = $langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Ref"));
 			$object->errors = array();
@@ -554,6 +557,7 @@ if (empty($reshook)) {
 
 		if ($result == -1) {
 			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		if (!$error) {
@@ -1128,11 +1132,11 @@ if ($action == 'create') {
 				if (empty($reshook)) {
 					if ($permissiontodelete) {
 						if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
-							print dolGetButtonAction('', $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete);
+							print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 						}
 					}
 					if ($permissiontoadd) {
-						print dolGetButtonAction('', $langs->trans('Clone'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token=' . newToken() . '&piece_num=' . ((int) $object->piece_num) . '&toselect=' . implode(',', $tmptoselect), 'action-clone', $permissiontoadd);
+						print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token=' . newToken() . '&piece_num=' . ((int) $object->piece_num) . '&toselect=' . implode(',', $tmptoselect), 'action-clone', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 					}
 				}
 

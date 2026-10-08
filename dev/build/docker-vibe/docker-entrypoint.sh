@@ -6,6 +6,21 @@ GROUP_ID="${HOST_GID:-1000}"
 USER_NAME="${HOST_USER:-developer}"
 GROUP_NAME="${HOST_GROUP:-developer}"
 
+# Block the outbound SMTP ports (25, 465, 587) of the machine running the container (the VM).
+# The container uses --network=host, so the block is installed once on the network stack shared
+# with the VM (it requires the capability NET_ADMIN, added by vibes.sh).
+# It guarantees that no email can be sent from the container (see dev/build/docker-vibe/README.md).
+# Set the environment variable VIBE_ALLOW_SMTP=1 to start a container without this protection.
+if [ "${VIBE_ALLOW_SMTP}" != "1" ]; then
+    if ! /usr/local/bin/smtpblock.sh; then
+        echo "ERROR: Failed to block the outbound SMTP ports 25, 465 and 587."
+        echo "The container is stopped to guarantee that no email can be sent from it."
+        echo "Run the container with the capability NET_ADMIN (--cap-add=NET_ADMIN),"
+        echo "or set VIBE_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
+        exit 1
+    fi
+fi
+
 # Create group
 EXISTING_GROUP=$(getent group "$GROUP_ID" | cut -d: -f1)
 
@@ -54,6 +69,18 @@ else
         "$USER_NAME"
 fi
 
+# The home directory of the user is created by docker itself (as root) to
+# receive the volume mounts of vibes.sh, so it stays owned by root and the
+# user can not write into it. Give it to the user so the tools can create
+# their files into it (rtk: ~/.config/rtk, git: ~/.config/git, ...).
+chown "$USER_NAME:$GROUP_NAME" "/home/$USER_NAME"
+
+
+# Allow the user to become root inside the container with a passwordless sudo
+# (the account is created without a password, so a sudo asking for one would never work).
+#echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/$USER_NAME"
+#chmod 440 "/etc/sudoers.d/$USER_NAME"
+
 
 echo "Running as $USER_NAME ($USER_ID:$GROUP_ID)"
 
@@ -71,6 +98,10 @@ if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/.vibe" ]; then
 	echo "Create link $WORKDIR/.vibe"
 	ln -fs .agents .vibe 2>/dev/null
 fi
+#if [ -n "$WORKDIR" ] && [ ! -L "$WORKDIR/AGENTS.md" ]; then
+#	echo "Create link $WORKDIR/AGENTS.md"
+#	ln -fs .agents/AGENTS.md AGENTS.md 2>/dev/null
+#fi
 
 
 # Create .cache directory
@@ -79,6 +110,20 @@ chmod 700 "/home/$USER_NAME/.cache"
 chown -R "$USER_NAME:$USER_NAME" "/home/$USER_NAME/.cache"
 
 export XDG_CACHE_HOME="/home/$USER_NAME/.cache"
+
+# Expose the host graphical session (mounted by vibes.sh) to the vibe user.
+# XDG_RUNTIME_DIR contains the sockets of the host session: the D-Bus session
+# bus (used by open-on-host to open links in the browser of the host through
+# the xdg-desktop-portal) and the Wayland socket (used to reach the clipboard).
+# See README.md.
+if [ -d "/run/user/$USER_ID" ]; then
+    if [ -z "${XDG_RUNTIME_DIR:-}" ]; then
+        export XDG_RUNTIME_DIR="/run/user/$USER_ID"
+    fi
+    if [ -S "/run/user/$USER_ID/bus" ]; then
+        export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$USER_ID/bus"
+    fi
+fi
 
 install -d -m 700 -o "$USER_NAME" -g "$USER_NAME" "/home/$USER_NAME/.ssh"
 
@@ -89,14 +134,29 @@ su -s /bin/sh "$USER_NAME" -c \
 chmod 644 "/home/$USER_NAME/.ssh/known_hosts"
 
 
-if [ "$1" = "--yolo" ]; then
-    VIBE_OPTIONS="--yolo"
-else
-    VIBE_OPTIONS=""
-fi
+# --yolo is the default mode. Use --no-yolo to disable it.
+VIBE_OPTIONS="--yolo"
+KEEP_CONTAINER=0
+
+for arg in "$@"; do
+    case "$arg" in
+        --yolo)
+            VIBE_OPTIONS="--yolo"
+            ;;
+        --no-yolo)
+            VIBE_OPTIONS=""
+            ;;
+        --no-exit)
+            KEEP_CONTAINER=1
+            ;;
+    esac
+done
 
 echo "VIBE_OPTIONS=$VIBE_OPTIONS"
 
-# Execute order
-exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"'; exec bash'
-#exec "$@"
+# Execute order. Once vibe has ended, stay into the container only when --no-exit was provided.
+if [ "$KEEP_CONTAINER" = "1" ]; then
+    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"'; exec bash'
+else
+    exec runuser -u "$USER_NAME" -- "bash" --rcfile /etc/bash.bashrc -i -c 'vibe --agent agent-power '"$VIBE_OPTIONS"
+fi

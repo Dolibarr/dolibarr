@@ -277,7 +277,7 @@ class VatPayments extends DolibarrApi
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
-	 * @throws RestException 403 Access denied
+	 * @throws RestException 403 Access denied, or VAT declaration with payments
 	 * @throws RestException 404 VAT payment not found
 	 * @throws RestException 500 Error when deleting the VAT payment
 	 */
@@ -293,6 +293,11 @@ class VatPayments extends DolibarrApi
 		// so also check that the id was actually loaded.
 		if ($result <= 0 || empty($vat->id)) {
 			throw new RestException(404, 'VAT payment not found');
+		}
+
+		// As the card does, and as DELETE /invoices/{id}: not once something is paid
+		if (!empty($vat->getSommePaiement())) {
+			throw new RestException(403, 'VAT declaration not erasable, it has payments');
 		}
 
 		if ($vat->delete(DolibarrApiAccess::$user) < 0) {

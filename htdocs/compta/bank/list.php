@@ -689,7 +689,11 @@ foreach ($accounts as $key => $type) {
 
 		// Label
 		if (!empty($arrayfields['b.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->label).'">'.dol_escape_htmltag($objecttmp->label).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($objecttmp->label).'">';
+			print '<span class="spantitle">';
+			print dolPrintHTML($objecttmp->label);
+			print '</span>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

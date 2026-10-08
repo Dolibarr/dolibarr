@@ -36,6 +36,7 @@ require '../main.inc.php';
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -387,7 +388,7 @@ if (!empty($withproject)) {
 	print dol_htmlentitiesbr($projectstatic->description);
 	print '</td></tr>';
 
-	print '<tr><td class="ntitlefield owrap">';
+	print '<tr><td class="titlefield nowrap">';
 	$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
@@ -538,6 +539,15 @@ if ($action == 'create' && $confOrBooth === null) {
 
 // Part to edit attendee
 if (($id || $ref) && $action == 'edit') {
+	// If an invoice is already linked to the attendee, we prefill the field "Amount paid" with the amount of the invoice
+	if (isModEnabled('invoice') && !GETPOSTISSET('amount') && $object->fk_invoice > 0) {
+		$invoice = new Facture($db);
+		$result = $invoice->fetch($object->fk_invoice);
+		if ($result > 0) {
+			$object->amount = $invoice->total_ttc;
+		}
+	}
+
 	print load_fiche_titre($langs->trans("ConferenceOrBoothAttendee"), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
@@ -592,7 +602,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	$head = conferenceorboothAttendeePrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto, 0, '', 'reposition');
 
 	$formconfirm = '';
 
@@ -642,7 +652,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	$keyforbreak = 'num_vote';
+	$keyforbreak = 'fk_invoice';	// Used by commonfields_view.tpl.php
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
@@ -675,10 +685,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(is_object($confOrBooth) && !empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd, array('attr' => array('class' => 'reposition')));
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd), array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

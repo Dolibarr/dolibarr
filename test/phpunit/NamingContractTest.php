@@ -32,7 +32,7 @@ require_once dirname(__FILE__) . '/../../htdocs/modulebuilder/class/NamingContra
  * @phan-file-suppress PhanNoopNew
  */
 /** @phpstan-ignore class.notFound */
-class NamingContractTest extends \PHPUnit\Framework\TestCase
+class NamingContractTest extends CommonClassTest
 {
 	// ── NamingContract — properties ───────────────────────────────────────
 

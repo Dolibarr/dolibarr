@@ -1727,6 +1727,11 @@ class Contrat extends CommonObject
 	{
 		global $user, $langs, $mysoc;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$error = 0;
 
 		// Clean parameters
@@ -1895,6 +1900,15 @@ class Contrat extends CommonObject
 		$error = 0;
 
 		if ($this->statut >= 0) {
+			if ($this->id > 0) {
+				// The line must belong to this contract
+				$contractline = new ContratLigne($this->db);
+				if ($contractline->fetch($idline) <= 0 || (int) $contractline->fk_contrat !== (int) $this->id) {
+					$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+					return -1;
+				}
+			}
+
 			// Call trigger
 			$this->context['line_id'] = $idline;
 			$result = $this->call_trigger('LINECONTRACT_DELETE', $user);
@@ -2323,29 +2337,38 @@ class Contrat extends CommonObject
 			$this->from .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
+		$now = dol_now();
 		if ($mode == 'inactive') {
-			$sql = "SELECT cd.rowid, cd.date_ouverture_prevue as datefin";
+			$warning_delay = $conf->contract->services->inactifs->warning_delay;
+			$datefield = 'cd.date_ouverture_prevue';
+		} elseif ($mode == 'expired' || $mode == 'active') {
+			$warning_delay = $conf->contract->services->expires->warning_delay;
+			$datefield = 'cd.date_fin_validite';
+		} else {
+			return -1;
+		}
+
+		// The count and the number of late services are computed by the database instead of reading every service. A service
+		// is late when it has a date (planned start for inactive services, end of validity for the others) and that date is
+		// before now minus the warning delay.
+		$sql = "SELECT COUNT(cd.rowid) as nb,";
+		$sql .= " SUM(CASE WHEN ".$this->db->sanitize($datefield)." IS NOT NULL AND ".$this->db->sanitize($datefield)." < '".$this->db->idate($now - $warning_delay)."' THEN 1 ELSE 0 END) as nblate";
+		if ($mode == 'inactive') {
 			$sql .= $this->from;
 			$sql .= " WHERE c.statut = 1";
 			$sql .= " AND c.rowid = cd.fk_contrat";
 			$sql .= " AND cd.statut = 0";
 		} elseif ($mode == 'expired') {
-			$sql = "SELECT cd.rowid, cd.date_fin_validite as datefin";
 			$sql .= $this->from;
 			$sql .= " WHERE c.statut = 1";
 			$sql .= " AND c.rowid = cd.fk_contrat";
 			$sql .= " AND cd.statut = 4";
-			$sql .= " AND cd.date_fin_validite < '".$this->db->idate(dol_now())."'";
-		} elseif ($mode == 'active') {
-			$sql = "SELECT cd.rowid, cd.date_fin_validite as datefin";
-			$sql .= $this->from;
-			$sql .= " WHERE c.statut = 1";
-			$sql .= " AND c.rowid = cd.fk_contrat";
-			$sql .= " AND cd.statut = 4";
-			//$datetouse = dol_now();
-			//$sql.= " AND cd.date_fin_validite < '".$this->db->idate($datetouse)."'";
+			$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
 		} else {
-			return -1;
+			$sql .= $this->from;
+			$sql .= " WHERE c.statut = 1";
+			$sql .= " AND c.rowid = cd.fk_contrat";
+			$sql .= " AND cd.statut = 4";
 		}
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity = ".((int) $conf->entity);
@@ -2359,22 +2382,18 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("contracts");
-			$now = dol_now();
 
 			if ($mode == 'inactive') {
-				$warning_delay = $conf->contract->services->inactifs->warning_delay;
 				$label = $langs->trans("BoardNotActivatedServices");
 				$labelShort = $langs->trans("BoardNotActivatedServicesShort");
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=0&sortfield=cd.date_fin_validite&sortorder=asc';
 				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=0&search_option=late';
 			} elseif ($mode == 'expired') {
-				$warning_delay = $conf->contract->services->expires->warning_delay;
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&filter=expired&sortfield=cd.date_fin_validite&sortorder=asc';
 				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&search_option=late';
 				$label = $langs->trans("BoardExpiredServices");
 				$labelShort = $langs->trans("BoardExpiredServicesShort");
 			} else {
-				$warning_delay = $conf->contract->services->expires->warning_delay;
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&sortfield=cd.date_fin_validite&sortorder=asc';
 				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_option=late';
 				$label = $langs->trans("BoardRunningServices");
@@ -2389,12 +2408,10 @@ class Contrat extends CommonObject
 			$response->url_late = $url_late;
 			$response->img = img_object('', "contract");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-
-				if ($obj->datefin && $this->db->jdate($obj->datefin) < ($now - $warning_delay)) {
-					$response->nbtodolate++;
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
+				$response->nbtodolate = (int) $obj->nblate;
 			}
 
 			return $response;
@@ -3214,7 +3231,8 @@ class Contrat extends CommonObject
 							$nbko++;
 							$listoflinesko[$contractline->id] = $contractline->id;
 
-							break;
+							// Do not break here: a template issue for one contract line (ex: not found for its language) must not
+							// prevent the reminder from being sent for the other contract lines due the same day.
 						}
 					}
 

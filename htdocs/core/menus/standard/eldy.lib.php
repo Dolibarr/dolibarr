@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -339,7 +339,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 	$menu_arr[] = array(
 		'name' => 'Bank',
-		'link' => dolBuildUrl('/compta/bank/list.php', ['mainmenu' => 'bank', 'leftmenu' => '', 'search_status' => 'opened']),
+		'link' => dolBuildUrl('/compta/bank/index.php', ['mainmenu' => 'bank', 'leftmenu' => '']),
 		'title' =>  "MenuBankCash",
 		'level' => 0,
 		'enabled' => (int) ($showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal)),
@@ -2192,7 +2192,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 
 		// Bank-Cash account
 		if (isModEnabled('bank')) {
-			$newmenu->add("/compta/bank/list.php?leftmenu=bank&mainmenu=bank&search_status=opened", $langs->trans("MenuBankCash"), 0, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank', 0, '', '', '', img_picto('', 'bank_account', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/compta/bank/index.php?leftmenu=bank&mainmenu=bank", $langs->trans("MenuBankCash"), 0, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank', 0, '', '', '', img_picto('', 'bank_account', 'class="paddingright pictofixedwidth"'));
 
 			$newmenu->add("/compta/bank/card.php?action=create&token=" . newToken(), $langs->trans("MenuNewFinancialAccount"), 1, $user->hasRight('banque', 'configurer'));
 			$newmenu->add("/compta/bank/list.php?leftmenu=bank&mainmenu=bank&search_status=opened", $langs->trans("List"), 1, $user->hasRight('banque', 'lire'), '', $mainmenu, 'bank');

@@ -25,7 +25,7 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -163,6 +163,46 @@ class ProductTest extends CommonClassTest
 		$this->assertEquals(0, 0);
 
 		return $localobject->id;
+	}
+
+	/**
+	 * testLoadStatsWithoutRightToSeeAllThirdparties
+	 *
+	 * Statistics of a product must not generate an SQL error for a user who is not allowed to see all thirdparties.
+	 *
+	 * @param   int $id     Id of product
+	 * @return  void
+	 *
+	 * @depends testProductOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testLoadStatsWithoutRightToSeeAllThirdparties($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Product($db);
+		$localobject->fetch($id);
+
+		$limiteduser = new User($db);
+		$limiteduser->id = 999999;
+		$this->assertEquals(0, $limiteduser->hasRight('societe', 'client', 'voir'));
+
+		$adminuser = $user;
+		$user = $limiteduser;
+		try {
+			foreach (array('propale', 'proposal_supplier', 'commande', 'commande_fournisseur', 'sending', 'reception', 'inproduction', 'contrat', 'facture', 'facturerec', 'facture_fournisseur') as $stat) {
+				$method = 'load_stats_'.$stat;
+				$result = $localobject->$method();
+				print __METHOD__." ".$method." result=".$result."\n";
+				$this->assertGreaterThanOrEqual(0, $result, $method." failed: ".$localobject->error);
+			}
+		} finally {
+			$user = $adminuser;
+		}
 	}
 
 	/**

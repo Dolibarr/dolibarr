@@ -19,6 +19,7 @@ Every modification must respect:
 - Never remove blank lines from the code, even when multiple consecutive blank lines are present. 
 - Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
 - Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
+- Never use PHP native exec functions to call a CLI, but use instead the Dolibarr method Utils->executeCLI()
 - Never use PHP native functions when Dolibarr provides wrappers: time()→dol_now(), strtolower()→dol_strtolower(), strtoupper()→dol_strtoupper(), strlen()→dol_strlen(), mktime()→dol_mktime(), getdate()→dol_getdate(), strtotime()→dol_stringtotime(), ucfirst()→dol_ucfirst(), ucwords()→dol_ucwords(), substr()→dol_substr(), basename()→dol_basename()
 - Use Dolibarr hooks whenever possible
 - Respect existing naming conventions
@@ -54,9 +55,7 @@ Before writing any code, the agent **must**:
 
 ## PHP Best Practices
 
-- Try to use the more portable PHP code possible >= 7.2
-- When writing a **bug fix**, always target the lowest compatible PHP version
-  of the branch being patched — do not use PHP 8.x syntax on a fix targeting v19 or v20
+- Try to use the more portable PHP code possible >= 7.0
 - Respect PSR-12, but **indentations must use Tabs, not Spaces**
 - Write short, readable, and testable functions
 - Avoid side effects
@@ -106,7 +105,7 @@ Before writing any code, the agent **must**:
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
 - Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is used into HTML escaped functions
-- Language files must be placed in `mymodule/langs/en_US/` (never change, update or translate other locales files, this is managed into an external tool)
+- Language files must be placed in `htdocs/langs/en_US/` (Never change, update or translate other locales files, this is managed into an external tool)
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
 - All code comments and variables or functions names must be in English
@@ -166,6 +165,7 @@ Before writing any code, the agent **must**:
   - Ajax calls: use `currentToken()` instead of `newToken()`, and set `NOTOKENRENEWAL` on the called ajax endpoint
 - Public endpoints called without a session (e.g. webhooks) are exempt via `NOCSRFCHECK` (page-level constant) or, exceptionally, `$dolibarr_nocsrfcheck` (global conf.php override)
 - Use the Dolibarr filesystem wrappers (`dol_mkdir()`, `dol_delete_file()`, `dol_copy()`, `dol_is_file()`, `dol_is_dir()`) and sanitize any user-provided name with `dol_sanitizeFileName()` / `dol_sanitizePathName()`, never raw PHP `mkdir()` / `unlink()` / `file_exists()`
+- For method fetch, update and delete, if database action is done usign a criteria based on a rowid, the rowid must be the only criteria. Any additionnal securty check must be done by the caller.  
 
 ---
 
@@ -205,14 +205,14 @@ Before any modification, verify:
 ### Code check
 
 - If making a major change or adding an important function, add or update PHPUnit test files into `test/phpunit/` (check to have the entry into file `test/phpunit/AllTests.php`).
-- If code validation with `phan` is expected, you must add the parameter `-k .phan/config.php -B dev/tools/phan/baseline.txt --quick` to the phan command line. For example:
-	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --minimum-target-php-version 7.2 [list_of_modified_file.php ...]`
 - If code validation with `phpstan` is expected, you must add the parameter `-a dev/build/phpstan/bootstrap_action.php` to the phpstan command line. For example:
 	`phpstan analyse --allow-older --no-progress -a dev/build/phpstan/bootstrap_action.php  [list_of_modified_file.php ...]`
+- Do not validate the code with `phan` as it is too slow, except if it is explicitly requested. In this case, you must add the parameter `-k .phan/config.php -B dev/tools/phan/baseline.txt --quick` to the phan command line. For example:
+	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --minimum-target-php-version 7.2 [list_of_modified_file.php ...]`
 
 ### Local Dolibarr Online test — Page Access
 
-You can find the URL of an online instance into file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
+You can find the URL of an online instance into file `htdocs/conf/conf.php` in parameter `$dolibarr_main_url_root`. 
 You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database.
 
 Dolibarr requires a CSRF token and a session cookie. To access any authenticated page:
@@ -220,7 +220,9 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
 1. **GET the login page** (e.g. `index.php?mainmenu=home`) to obtain:
    - The CSRF token: extract the `name="token" value="..."` field from the HTML.
    - The session cookie: the `DOLSESSID_*` cookie set in the response headers.
-2. **POST the login form** to `index.php` with `token`, `username`, `password`, and `actionlogin=dologin`. Keep the cookie for subsequent requests.
+2. **POST the login form** to `index.php` with `token`, `username`, `password`, and `actionlogin=dologin`
+	- Ask the password if you need one (don't try to guess it from database).
+	- Keep the cookie for subsequent requests.
 3. **Reuse the session cookie** on all subsequent page requests — the session is now authenticated.
 
 ---
@@ -232,7 +234,7 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
     - One branch per major version (bug fixes only)
     - `develop` branch for both fixes and new features
 - Commit message format: `TYPE: #issueNumber Short description`
-    - Types: `NEW`, `FIX`, `CLOSE`, `QUAL`, `PERF`, `UIUX` (uppercase, so it appears in the ChangeLog)
+    - TYPE: `NEW`, `FIX`, `CLOSE`, `QUAL`, `PERF`, `UIUX` (uppercase, so it appears in the ChangeLog)
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Do not update the `ChangeLog` file (this file will be generated by the maintener before the release from all commit titles)
 - When committing, keep your commit title short (never exceed 70 lines) on first line and add a line "Generated by" xor "Co-authored-by:" to mention the AI agent name at the end of the rest of description. 

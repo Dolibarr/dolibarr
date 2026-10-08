@@ -56,8 +56,6 @@
  * (de)activation switches to a fresh cache file; editing this file - where
  * the enrichments live - invalidates it too). AI_MCP_BRIDGE_DEFS_CACHE_TTL
  * tunes the lifetime in seconds (default 86400, 0 disables the cache).
- *
- * Disabled unless the constant AI_MCP_API_BRIDGE is set to 1.
  */
 
 /**
@@ -81,6 +79,9 @@ class ToolApiBridge extends McpTool
 		'thirdparties' => array('thirdparty', 'billing', 'commercial'),
 		'categories' => array('thirdparty', 'stock'),
 		'invoices' => array('billing', 'thirdparty'),
+		'supplier_invoices' => array('billing', 'thirdparty'),
+		'supplier_orders' => array('commercial', 'thirdparty'),
+		'supplier_proposals' => array('commercial', 'thirdparty'),
 		'proposals' => array('commercial', 'thirdparty'),
 		'orders' => array('commercial', 'thirdparty'),
 		'products' => array('stock', 'commercial'),
@@ -94,7 +95,9 @@ class ToolApiBridge extends McpTool
 		'members' => array('thirdparty', 'billing'),
 		'subscriptions' => array('thirdparty', 'billing'),
 		'expensereports' => array('billing'),
-		'tickets' => array('thirdparty', 'project')
+		'tickets' => array('thirdparty', 'project'),
+		'shipments' => array('stock', 'commercial', 'thirdparty'),
+		'receptions' => array('stock', 'thirdparty')
 	);
 
 	/**
@@ -149,6 +152,19 @@ class ToolApiBridge extends McpTool
 		'thirdparties' => [
 			'label' => 'third parties (customers, prospects, suppliers)',
 			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a third party (customer, prospect or supplier). The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewCreateThirdparty',
+						'object' => 'Societe',
+						'args' => ['name'],
+						'right' => ['societe', 'creer']
+					],
+					'params' => [
+						"name" => "Company or person name.", "client" => "1 customer, 2 prospect, 3 both, 0 none.", "fournisseur" => "1 when the third party is a supplier."
+					]
+				],
 				'index' => [
 					'default_properties' => 'id,name,code_client,code_fournisseur,email,town,client,fournisseur,status',
 					'description' => "Use 'mode' to restrict to a nature of third party instead of filtering on names. To find one company by name use sqlfilters on t.nom (e.g. \"(t.nom:like:'%acme%')\"); other useful fields: t.name_alias, t.code_client, t.code_fournisseur, t.email, t.town, t.zip, t.fk_pays (country rowid), t.status (1=open, 0=closed). Prefer a small 'limit' and 'properties' (e.g. 'id,name,code_client,code_fournisseur,email,town,client,fournisseur,status') to keep answers short.",
@@ -186,6 +202,18 @@ class ToolApiBridge extends McpTool
 		'categories' => [
 			'label' => 'categories / tags',
 			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a category (tag). The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewCreateCategory',
+						'args' => ['type', 'label'],
+						'right' => ['categorie', 'creer']
+					],
+					'params' => [
+						"label" => "Category label.", "type" => "What it classifies: product, customer, supplier, member, contact, project."
+					]
+				],
 				'index' => [
 					'description' => "Categories form a tree per type (fk_parent = parent rowid, 0 for root). Always pass 'type' to restrict to one kind of object. Search by name with sqlfilters on t.label.",
 					'params' => [
@@ -206,9 +234,113 @@ class ToolApiBridge extends McpTool
 				]
 			]
 		],
+		'supplier_invoices' => [
+			'label' => 'supplier invoices (vendor bills)',
+			'methods' => [
+				'index' => [
+					'description' => "List supplier invoices (vendor bills). Filter with sqlfilters, for example to restrict to one supplier.",
+					'params' => [
+						'sqlfilters' => "Universal filter, e.g. (t.fk_soc:=:2)",
+						'limit' => "Rows to return."
+					]
+				],
+				'get' => [
+					'description' => "Get one supplier invoice by rowid, with its lines."
+				],
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a DRAFT supplier invoice (vendor bill). Nothing is validated or paid: the draft is created and the user finishes it in Dolibarr. Give socid, or simply the supplier name, plus ref_supplier (the vendor's own invoice number) and the lines; a line may name its product with product_ref and the catalogue price is used. Do not call a search tool first. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewCreateSupplierInvoice',
+						'object' => 'FactureFournisseur',
+						'thirdparty' => 'socid',
+						'lines' => 'lines',
+						'right' => ['fournisseur', 'facture', 'creer'],
+						'defaults' => ['date' => 'now']
+					],
+					'params' => [
+						'socid' => "Rowid of the supplier, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'ref_supplier' => "The vendor's own invoice number, as printed on the bill.",
+						'lines' => "Array of lines: desc, qty, subprice (unit price excl. tax), tva_tx (VAT rate). A line may instead give product_ref, and the catalogue product and price are used."
+					]
+				]
+			]
+		],
+		'supplier_orders' => [
+			'label' => 'supplier order (purchase order)',
+			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a DRAFT supplier order (purchase order). Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. Give socid, or simply the third party name, and the lines; a line may name its product with product_ref and the catalogue price is used. Do not call a search tool first. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewCreateSupplierOrder',
+						'object' => 'CommandeFournisseur',
+						'thirdparty' => 'socid',
+						'lines' => 'lines',
+						'right' => ['fournisseur', 'commande', 'creer'],
+						'defaults' => ['date' => 'now']
+					],
+					'params' => [
+						'socid' => "Rowid of the third party, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'lines' => "Array of lines: desc, qty, subprice (unit price excl. tax), tva_tx (VAT rate). A line may instead give product_ref, and the catalogue product and price are used."
+					]
+				],
+				'index' => [
+					'description' => "List supplier order (purchase order). Filter with sqlfilters.",
+					'params' => ['sqlfilters' => "Universal filter, e.g. (t.fk_soc:=:2)", 'limit' => "Rows to return."]
+				],
+				'get' => ['description' => "Get one record by rowid, with its lines."]
+			]
+		],
+		'supplier_proposals' => [
+			'label' => 'supplier proposal (price request)',
+			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a DRAFT supplier proposal (price request). Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. Give socid, or simply the third party name, and the lines; a line may name its product with product_ref and the catalogue price is used. Do not call a search tool first. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewCreateSupplierProposal',
+						'object' => 'SupplierProposal',
+						'thirdparty' => 'socid',
+						'lines' => 'lines',
+						'right' => ['supplier_proposal', 'creer'],
+						'defaults' => ['date' => 'now']
+					],
+					'params' => [
+						'socid' => "Rowid of the third party, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'lines' => "Array of lines: desc, qty, subprice (unit price excl. tax), tva_tx (VAT rate). A line may instead give product_ref, and the catalogue product and price are used."
+					]
+				],
+				'index' => [
+					'description' => "List supplier proposal (price request). Filter with sqlfilters.",
+					'params' => ['sqlfilters' => "Universal filter, e.g. (t.fk_soc:=:2)", 'limit' => "Rows to return."]
+				],
+				'get' => ['description' => "Get one record by rowid, with its lines."]
+			]
+		],
 		'invoices' => [
 			'label' => 'customer invoices',
 			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a DRAFT customer invoice. Nothing is validated, sent or paid: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. Give socid, or simply the third party name, and the lines; a line may name its product with product_ref and the catalogue price is used. Do not call a search tool first. The user confirms before anything is written.",
+					'write' => [
+						// Hand-written: a preview cannot be derived from a method
+						// signature, and it is the sentence a human approves.
+						'preview' => 'AIPreviewCreateInvoice',
+						'object' => 'Facture',
+						'thirdparty' => 'socid',
+						'lines' => 'lines',
+						// The REST method checks this itself, but declaring it
+						// here refuses the call before a confirmation is issued:
+						// no preview for a write the user could never perform.
+						'right' => ['facture', 'creer']
+					],
+					'params' => [
+						'socid' => "Rowid of the customer, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'lines' => "Array of lines: desc, qty, subprice (unit price excl. tax), tva_tx (VAT rate). A line may instead give product_ref, and the catalogue product and price are used."
+					]
+				],
 				'index' => [
 					'default_properties' => 'id,ref,socid,date,date_lim_reglement,total_ht,total_ttc,paye,remaintopay',
 					'description' => "Use 'status' for the usual questions (unpaid, paid, drafts). Oldest first: sortfield 't.datef' with sortorder 'ASC' (due-date order: 't.date_lim_reglement'). Set withLines=false for lists: lines are large and rarely needed. Amounts: total_ht (excl. tax), total_tva, total_ttc (incl. tax), paye (1=paid). Dates are unix timestamps: date (invoice date), date_lim_reglement (due date). Overdue unpaid invoices: status='unpaid' plus sqlfilters \"(t.date_lim_reglement:<:'YYYY-MM-DD')\". Useful sqlfilters fields: t.ref, t.datef, t.total_ttc, t.fk_soc, t.type (0=standard, 1=replacement, 2=credit note, 3=deposit, 4=proforma), t.fk_statut (0=draft, 1=validated, 2=paid, 3=abandoned).",
@@ -242,6 +374,22 @@ class ToolApiBridge extends McpTool
 		'proposals' => [
 			'label' => 'commercial proposals (quotes / devis)',
 			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a DRAFT commercial proposal (quote). Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. Give socid, or simply the third party name, and the lines; a line may name its product with product_ref and the catalogue price is used. Do not call a search tool first. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewCreateProposal',
+						'object' => 'Propal',
+						'thirdparty' => 'socid',
+						'lines' => 'lines',
+						'right' => ['propal', 'creer'],
+						'defaults' => ['date' => 'now']
+					],
+					'params' => [
+						'socid' => "Rowid of the third party, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'lines' => "Array of lines: desc, qty, subprice (unit price excl. tax), tva_tx (VAT rate). A line may instead give product_ref, and the catalogue product and price are used."
+					]
+				],
 				'index' => [
 					'default_properties' => 'id,ref,socid,datep,fin_validite,total_ht,total_ttc,fk_statut',
 					'description' => "Statuses (t.fk_statut): 0=draft, 1=validated (open, awaiting answer), 2=signed/accepted, 3=not signed/refused, 4=billed. Dates are unix timestamps: datep (proposal date), fin_validite (validity end — expired open proposals: fk_statut=1 plus sqlfilters \"(t.fin_validite:<:'YYYY-MM-DD')\"). Useful sqlfilters fields: t.ref, t.datep, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
@@ -452,6 +600,89 @@ class ToolApiBridge extends McpTool
 				]
 			]
 		],
+		'orders' => [
+			'label' => 'customer orders (commandes)',
+			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a DRAFT customer order. Nothing is validated or sent: the draft is created and the user finishes it in Dolibarr, or asks for the next step explicitly. Give socid, or simply the third party name, and the lines; a line may name its product with product_ref and the catalogue price is used. Do not call a search tool first. The order date defaults to today. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewCreateOrder',
+						'object' => 'Commande',
+						'thirdparty' => 'socid',
+						'lines' => 'lines',
+						'right' => ['commande', 'creer'],
+						// Commande::create() refuses without one, and a draft
+						// created today is what the user means.
+						'defaults' => ['date' => 'now']
+					],
+					'params' => [
+						'socid' => "Rowid of the customer, or its name: a name is resolved here, so no separate lookup call is needed.",
+						'lines' => "Array of lines: desc, qty, subprice (unit price excl. tax), tva_tx (VAT rate). A line may instead give product_ref, and the catalogue product and price are used."
+					]
+				],
+				'index' => [
+					'default_properties' => 'id,ref,socid,date_commande,delivery_date,total_ht,total_ttc,statut',
+					'description' => "Statuses (t.fk_statut): -1=cancelled, 0=draft, 1=validated (open), 2=shipment in progress, 3=closed (delivered / billed). Dates are unix timestamps: date_commande (order date), delivery_date (planned delivery). Useful sqlfilters fields: t.ref, t.date_commande, t.total_ht, t.total_ttc, t.fk_soc, t.fk_statut.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many orders match."
+					]
+				],
+				'get' => [
+					'description' => "One order with its lines (product, qty, unit price, discount, line totals), status and dates.",
+					'params' => ['contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				],
+				'getByRef' => [
+					'suffix' => 'get_by_ref',
+					'description' => "One order by its exact reference (e.g. 'CO2401-0001').",
+					'params' => ['ref' => "Exact order reference.", 'contact_list' => "0 = no contacts, 1 (default) = contact rowids, 2 = full contact records."]
+				]
+			]
+		],
+		'shipments' => [
+			'label' => 'customer shipments (expéditions, goods sent)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_customer,date_delivery,date_shipping,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods left), 2=closed (billed / processed). Dates are unix timestamps: date_shipping (sent), date_delivery (planned delivery). Useful sqlfilters fields: t.ref, t.ref_customer, t.fk_soc, t.fk_statut, t.date_delivery.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many shipments match."
+					]
+				],
+				'get' => [
+					'description' => "One shipment: customer, source order, dates, status, tracking number; the lines are in api_shipments_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a shipment: product, quantity shipped, batch/lot when the product is tracked.",
+					'params' => ['id' => "Rowid of the shipment."]
+				]
+			]
+		],
+		'receptions' => [
+			'label' => 'supplier receptions (réceptions, goods received)',
+			'methods' => [
+				'index' => [
+					'default_properties' => 'id,ref,socid,ref_supplier,date_reception,date_delivery,statut',
+					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods received into stock), 2=closed / processed. Dates are unix timestamps: date_reception (received), date_delivery (planned). Useful sqlfilters fields: t.ref, t.ref_supplier, t.fk_soc, t.fk_statut, t.date_delivery. A draft created by the chat keeps its '(PROVnn)' reference: search it by id or with sqlfilters on t.ref_supplier.",
+					'params' => [
+						'thirdparty_ids' => "Comma-separated supplier rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many receptions match."
+					]
+				],
+				'get' => [
+					'description' => "One reception: supplier, supplier reference, dates, status; the lines are in api_receptions_get_lines."
+				],
+				'getLines' => [
+					'suffix' => 'get_lines',
+					'description' => "Lines of a reception: product, quantity received, batch/lot and warehouse when tracked.",
+					'params' => ['id' => "Rowid of the reception."]
+				]
+			]
+		],
 		'expensereports' => [
 			'label' => 'employee expense reports (notes de frais)',
 			'methods' => [
@@ -471,6 +702,19 @@ class ToolApiBridge extends McpTool
 		'products' => [
 			'label' => 'products and services catalog',
 			'methods' => [
+				'post' => [
+					'suffix' => 'create',
+					'description' => "Create a product or service in the catalog. The user confirms before anything is written.",
+					'write' => [
+						'preview' => 'AIPreviewCreateProduct',
+						'object' => 'Product',
+						'args' => ['label'],
+						'right' => ['produit', 'creer']
+					],
+					'params' => [
+						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service."
+					]
+				],
 				'index' => [
 					'default_properties' => 'id,ref,label,type,price,price_ttc,tva_tx,status,status_buy',
 					'description' => "Search by name with sqlfilters on t.label, by reference on t.ref (e.g. \"(t.label:like:'%screw%')\"). Result fields: type (0=product, 1=service), price (sale price excl. tax), price_ttc, tva_tx (VAT rate), status (1=for sale), status_buy (1=for purchase), stock_reel (only with includestockdata=1). Prefer 'properties' (e.g. 'id,ref,label,type,price,price_ttc,tva_tx,status,status_buy') and a small 'limit'.",
@@ -522,6 +766,20 @@ class ToolApiBridge extends McpTool
 		],
 		// NB: stock inventories have no REST API class in core yet (no api_inventories) —
 		// they cannot be bridged until one exists.
+		'documents' => [
+			'label' => 'documents attached to business objects',
+			'methods' => [
+				'getDocumentsListByElement' => [
+					'suffix' => 'list',
+					'description' => "List the files attached to a business object. Answers \"what files does this invoice have\", \"show the documents of that order\", \"is there anything attached to this third party\". Returns each file name, size, date and a download link, never the content. Give the object by id or by ref; search for it first when neither is known. A draft ref is written in parentheses, like (PROV42): pass it with them.",
+					'params' => [
+						'modulepart' => "Object type: invoice, supplier_invoice, order, supplier_order, propal (proposal), supplier_proposal, shipment, societe (third party), product, contract, ficheinter (intervention), project, project_task, ticket, expensereport, holiday, member, actioncomm (event), category, user.",
+						'id' => "Rowid of the object, when known.",
+						'ref' => "Reference of the object, when the id is unknown."
+					]
+				]
+			]
+		],
 	];
 
 	/**
@@ -639,8 +897,8 @@ class ToolApiBridge extends McpTool
 				}
 
 				while (($file_searched = readdir($handle_part)) !== false) {
-					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_documents.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
-						continue;	// Framework plumbing, not business endpoints (setup/documents even require main.inc.php, fatal outside a web page).
+					if (in_array($file_searched, ['api_access.class.php', 'api_setup.class.php', 'api_login.class.php', 'api_status.class.php'], true)) {
+						continue;	// Framework plumbing, not business endpoints.
 					}
 					$regapi = [];
 					if (!is_readable($dir_part.$file_searched) || !preg_match("/^api_(.*)\\.class\\.php$/i", $file_searched, $regapi)) {
@@ -753,9 +1011,6 @@ class ToolApiBridge extends McpTool
 	 */
 	public function getDefinitions(): array
 	{
-		if (!getDolGlobalInt('AI_MCP_API_BRIDGE')) {
-			return [];	// Feature flag off: bridge exposes nothing.
-		}
 		if ($this->defs !== null) {
 			return $this->defs;
 		}
@@ -840,7 +1095,7 @@ class ToolApiBridge extends McpTool
 	 * name, so any relevant change - a module (de)activated, a Dolibarr
 	 * upgrade, another entity, an edit of this file (which holds the
 	 * enrichments), or a change of the DB-driven restrictions
-	 * (AI_MCP_API_BRIDGE, AI_MCP_API_BRIDGE_METHODS) - simply points to a
+	 * (AI_MCP_API_BRIDGE_METHODS) - simply points to a
 	 * different file: no explicit invalidation hook to maintain, and an
 	 * administrator RESTRICTING what the AI may reach takes effect on the
 	 * very next request (review sonikf). External-module API updates that
@@ -869,7 +1124,7 @@ class ToolApiBridge extends McpTool
 		// this file: they must be part of the signature too, or restricting
 		// them would silently keep serving the wider cached toolset for up to
 		// a full TTL (review sonikf on the initial version).
-		$signature .= '|'.getDolGlobalInt('AI_MCP_API_BRIDGE').'|'.getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
+		$signature .= '|'.getDolGlobalString('AI_MCP_API_BRIDGE_METHODS');
 
 		return rtrim($dir, '/').'/bridge_tooldefs_'.md5($signature).'.json';
 	}
@@ -1138,11 +1393,292 @@ class ToolApiBridge extends McpTool
 	 * Rights are enforced by the REST API classes themselves.
 	 *
 	 * @param string $toolName Tool being executed.
-	 * @return string RIGHTS_ENFORCED_DOWNSTREAM
+	 * @return array<int,array<int,string>>|string Rights triples for a write, or RIGHTS_ENFORCED_DOWNSTREAM for a read.
 	 */
 	public function getRequiredRights(string $toolName)
 	{
+		// A write declares its right here as well as relying on the REST class,
+		// so the call is refused before the gate issues a confirmation: no
+		// preview for a write the user could never perform.
+		$write = $this->writeMetaFor($toolName);
+		if (!empty($write['right'])) {
+			return array($write['right']);
+		}
+
 		return self::RIGHTS_ENFORCED_DOWNSTREAM;
+	}
+
+	/**
+	 * VAT rate core would apply to a line, when the caller gave none.
+	 *
+	 * @param  int $socid      Third party of the document.
+	 * @param  int $fk_product Product of the line, 0 for a free line.
+	 * @return float           Rate to write.
+	 */
+	private function defaultVatRate($socid, $fk_product)
+	{
+		global $mysoc;
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$soc = new Societe($this->db);
+		if ($socid <= 0 || $soc->fetch($socid) <= 0 || !is_object($mysoc)) {
+			return 0;
+		}
+
+		return (float) get_default_tva($mysoc, $soc, $fk_product);
+	}
+
+	/**
+	 * Ref of a record just created, for the confirmation shown to the user.
+	 *
+	 * @param  string $class Business class declared by the write.
+	 * @param  int    $id    Rowid returned by the API.
+	 * @return string        Ref, or empty when it cannot be read.
+	 */
+	private function refOfCreatedObject($class, $id)
+	{
+		$paths = array(
+			'Facture' => '/compta/facture/class/facture.class.php',
+			'Commande' => '/commande/class/commande.class.php',
+			'Propal' => '/comm/propal/class/propal.class.php',
+			'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+			'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+			'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+			'Societe' => '/societe/class/societe.class.php',
+			'Product' => '/product/class/product.class.php'
+		);
+		if (empty($paths[$class])) {
+			return '';
+		}
+		require_once DOL_DOCUMENT_ROOT.$paths[$class];
+		$obj = new $class($this->db);
+		'@phan-var-force Facture|Commande|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Societe|Product $obj';
+		if ($obj->fetch((int) $id) > 0) {
+			return (string) $obj->ref;
+		}
+
+		return '';
+	}
+
+	/**
+	 * Normalise the arguments of a write before they are previewed or executed.
+	 *
+	 * A model may send the record as a request_data body (sometimes a JSON
+	 * string) instead of flat fields, and may name line fields the way the
+	 * custom tools do. Both are accepted here so the preview describes what the
+	 * API will actually write.
+	 *
+	 * @param  array<string,mixed> $args Arguments as received.
+	 * @return array<string,mixed>       Flat arguments with REST field names.
+	 */
+	private function normaliseWriteArgs(array $args)
+	{
+		if (isset($args['request_data'])) {
+			$body = $args['request_data'];
+			if (is_string($body)) {
+				$decoded = json_decode($body, true);
+				$body = is_array($decoded) ? $decoded : array();
+			}
+			if (is_array($body)) {
+				// A model may nest the record under a key of its own naming
+				// ({"thirdparty": {...}}): unwrap a lone array value rather than
+				// passing the wrapper to the API, which sees no fields at all.
+				if (count($body) === 1) {
+					$only = reset($body);
+					if (is_array($only) && !isset($body[0])) {
+						$body = $only;
+					}
+				}
+				unset($args['request_data']);
+				$args = array_merge($body, $args);
+			}
+		}
+
+		// Record fields under the names a model is likely to use: the database
+		// column (nom) rather than the API field (name), or the obvious synonym.
+		$fieldAliases = array('nom' => 'name', 'company' => 'name', 'mail' => 'email', 'tel' => 'phone', 'telephone' => 'phone', 'libelle' => 'label', 'title' => 'label');
+		foreach ($fieldAliases as $from => $to) {
+			if (isset($args[$from]) && !isset($args[$to]) && !is_array($args[$from])) {
+				$args[$to] = $args[$from];
+				unset($args[$from]);
+			}
+		}
+
+		// The third party may arrive as a name: resolve it here rather than making
+		// the model spend a turn on a lookup, which with one tool call per answer
+		// means the write never happens.
+		if (empty($args['socid']) || !is_numeric($args['socid'])) {
+			$named = '';
+			foreach (array('socid', 'thirdparty', 'company', 'customer', 'supplier') as $key) {
+				if (!empty($args[$key]) && !is_numeric($args[$key])) {
+					$named = (string) $args[$key];
+					break;
+				}
+			}
+			if ($named !== '') {
+				$sql = "SELECT rowid FROM ".$this->db->prefix()."societe";
+				$sql .= " WHERE entity IN (".getEntity('societe').")";
+				$sql .= " AND (nom = '".$this->db->escape($named)."' OR code_client = '".$this->db->escape($named)."' OR code_fournisseur = '".$this->db->escape($named)."')";
+				$sql .= " LIMIT 2";
+				$resql = $this->db->query($sql);
+				if ($resql && $this->db->num_rows($resql) === 1) {
+					// One match only: several would mean guessing which company the
+					// user meant, and the guess would only surface in the preview.
+					$obj = $this->db->fetch_object($resql);
+					$args['socid'] = (int) $obj->rowid;
+				}
+			}
+		}
+
+		if (!empty($args['lines']) && is_array($args['lines'])) {
+			$aliases = array('quantity' => 'qty', 'unit_price' => 'subprice', 'price' => 'subprice', 'description' => 'desc', 'vat_rate' => 'tva_tx', 'product_id' => 'fk_product');
+			foreach ($args['lines'] as $i => $line) {
+				if (!is_array($line)) {
+					continue;
+				}
+				foreach ($aliases as $from => $to) {
+					if (isset($line[$from]) && !isset($line[$to])) {
+						$line[$to] = $line[$from];
+						unset($line[$from]);
+					}
+				}
+				// A line given by product ref carries no price: resolve it so the
+				// preview and the write use the catalogue product, as the REST
+				// endpoint expects an id.
+				if (empty($line['fk_product']) && !empty($line['product_ref'])) {
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+					$prod = new Product($this->db);
+					$wanted = (string) $line['product_ref'];
+					$found = ($prod->fetch(0, $wanted) > 0);
+					if (!$found) {
+						// A user names a product the way it appears on screen, which is
+						// its label: accept that too, and only when it is not ambiguous,
+						// so nothing is billed off a guess.
+						$sql = "SELECT rowid FROM ".$this->db->prefix()."product";
+						$sql .= " WHERE entity IN (".getEntity('product').")";
+						$sql .= " AND (label = '".$this->db->escape($wanted)."' OR ref = '".$this->db->escape($wanted)."')";
+						$sql .= " LIMIT 2";
+						$resql = $this->db->query($sql);
+						if ($resql && $this->db->num_rows($resql) === 1) {
+							$obj = $this->db->fetch_object($resql);
+							$found = ($prod->fetch((int) $obj->rowid) > 0);
+						}
+					}
+					if ($found) {
+						$line['fk_product'] = $prod->id;
+						if (!isset($line['desc'])) {
+							$line['desc'] = $prod->label;
+						}
+						if (!isset($line['subprice'])) {
+							$line['subprice'] = $prod->price;
+						}
+					}
+					if (!$found && !isset($line['desc'])) {
+						// Unknown or ambiguous: keep what the user called it, so the
+						// line reads "popularpt" instead of appearing blank.
+						$line['desc'] = $wanted;
+					}
+					unset($line['product_ref']);
+				}
+				// A line with no rate is written at 0 %: ask core for the rate that
+				// applies between the two companies for this product, which is what
+				// the card would have filled in.
+				if (!isset($line['tva_tx']) && !empty($args['socid'])) {
+					$line['tva_tx'] = $this->defaultVatRate((int) $args['socid'], (int) ($line['fk_product'] ?? 0));
+				}
+				$args['lines'][$i] = $line;
+			}
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Preview of what a bridge write would do, for the confirmation gate.
+	 *
+	 * Read tools return NO_WRITE and run as before. A method declaring a
+	 * 'write' block in its enrichment is gated: the sentence below is what the
+	 * user approves, so it names the third party and the lines rather than
+	 * echoing arguments.
+	 *
+	 * @param  string             $toolName Tool being called.
+	 * @param  array<string,mixed> $args    Arguments as received.
+	 * @return string                       Preview sentence, or McpTool::NO_WRITE.
+	 */
+	public function writeConfirmationPreview(string $toolName, array $args)
+	{
+		global $langs;
+
+		$langs->load("other");
+
+		$write = $this->writeMetaFor($toolName);
+		if (empty($write)) {
+			return McpTool::NO_WRITE;
+		}
+
+		$args = $this->normaliseWriteArgs($args);
+
+		// A single record (third party, product, category) has no lines: it
+		// names the arguments that make up its sentence instead.
+		if (!empty($write['args'])) {
+			$values = array();
+			foreach ($write['args'] as $argname) {
+				$values[] = dol_trunc((string) ($args[$argname] ?? ''), 60);
+			}
+			return $langs->trans($write['preview'], ...$values);
+		}
+
+		$who = '';
+		$socid = (int) ($args[$write['thirdparty']] ?? 0);
+		if ($socid > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$soc = new Societe($this->db);
+			if ($soc->fetch($socid) > 0) {
+				$who = ' '.$langs->trans("AIPreviewForThirdparty", $soc->name);
+			}
+		}
+
+		$lines = isset($args[$write['lines']]) && is_array($args[$write['lines']]) ? $args[$write['lines']] : array();
+		$total = 0.0;
+		$priced = false;
+		foreach ($lines as $line) {
+			if (!isset($line['subprice']) || $line['subprice'] === '') {
+				continue;
+			}
+			$priced = true;
+			$total += ((float) ($line['qty'] ?? 1)) * ((float) $line['subprice']);
+		}
+		$what = $langs->trans(count($lines) === 1 ? "AIPreviewLine" : "AIPreviewLines", (string) count($lines));
+		if ($priced) {
+			$what .= ', '.price($total);
+		} else {
+			$what .= ', '.$langs->trans("AIPreviewFromCatalogue");
+		}
+
+		return $langs->trans($write['preview'], $who, $what);
+	}
+
+	/**
+	 * The 'write' enrichment of a tool, when it has one.
+	 *
+	 * @param  string $toolName Tool name as exposed.
+	 * @return array<string,mixed> Empty when the tool is a read.
+	 */
+	private function writeMetaFor($toolName)
+	{
+		foreach ($this->enrichments as $key => $meta) {
+			foreach (($meta['methods'] ?? array()) as $method => $mmeta) {
+				if (empty($mmeta['write'])) {
+					continue;
+				}
+				$suffix = $mmeta['suffix'] ?? ($method === 'index' ? 'list' : strtolower($method));
+				if ($toolName === 'api_'.$key.'_'.$suffix) {
+					return $mmeta['write'];
+				}
+			}
+		}
+
+		return array();
 	}
 
 	/**
@@ -1199,6 +1735,52 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * Keep what the chat shows of a file list: name, size, date and a link.
+	 *
+	 * @param	mixed	$output		Result of getDocumentsListByElement()
+	 * @param	string	$modulepart	Object type the caller asked for
+	 * @return	mixed				Projected list, or $output unchanged if it is not a list
+	 */
+	private function projectDocumentList($output, $modulepart)
+	{
+		// document.php does not know every alias the API accepts
+		$aliases = array('contrat' => 'contract', 'projet' => 'project', 'categorie' => 'category', 'adherent' => 'member');
+		$part = $aliases[$modulepart] ?? $modulepart;
+		$paginated = is_array($output) && isset($output['data']) && is_array($output['data']);
+		$files = $paginated ? $output['data'] : $output;
+		if (!is_array($files)) {
+			return $output;
+		}
+		$list = array();
+		foreach ($files as $file) {
+			$level1 = (string) ($file['level1name'] ?? '');
+			$list[] = array(
+				'name' => (string) ($file['name'] ?? ''),
+				'size' => dol_print_size((int) ($file['size'] ?? 0), 1),
+				'modified' => dol_print_date((int) ($file['date'] ?? 0), 'dayhour'),
+				'url' => DOL_URL_ROOT.'/document.php?modulepart='.urlencode($part).'&file='.urlencode(($level1 !== '' ? $level1.'/' : '').(string) ($file['relativename'] ?? $file['name'] ?? ''))
+			);
+		}
+		if ($paginated) {
+			$output['data'] = $list;
+			return $output;
+		}
+		return $list;
+	}
+
+	/**
+	 * Whether the object a file list was asked for exists.
+	 *
+	 * @param	array<string,mixed>	$args	Tool arguments (modulepart, id, ref)
+	 * @return	bool
+	 */
+	private function documentObjectExists(array $args)
+	{
+		$object = fetchObjectByElement((int) ($args['id'] ?? 0), (string) ($args['modulepart'] ?? ''), (string) ($args['ref'] ?? ''));
+		return is_object($object) && $object->id > 0;
+	}
+
+	/**
 	 * Execute a bridged tool: authenticate the acting user, call the API method
 	 * in-process with positional arguments, catch RestException.
 	 *
@@ -1208,8 +1790,11 @@ class ToolApiBridge extends McpTool
 	 */
 	public function execute(string $name, array $args)
 	{
-		if (!getDolGlobalInt('AI_MCP_API_BRIDGE')) {
-			return ["error" => "API bridge is disabled (AI_MCP_API_BRIDGE not set)."];
+		// A model may send the record as a request_data body, or name line fields
+		// the way the custom tools do: accept both, so the write receives what the
+		// preview described.
+		if ($this->writeMetaFor($name)) {
+			$args = $this->normaliseWriteArgs($args);
 		}
 
 		$this->getDefinitions();	// ensure routes are built
@@ -1257,6 +1842,21 @@ class ToolApiBridge extends McpTool
 		$output = null;
 		foreach ($rm->getParameters() as $p) {
 			$pname = $p->getName();
+			// A write method takes the record as one body parameter. The tool
+			// advertises the fields flat, because that is what a model fills
+			// in, so the body is rebuilt here from everything it sent.
+			if ($pname === 'request_data') {
+				$body = $args;
+				unset($body['requestState']);
+				$write = $this->writeMetaFor($name);
+				foreach (($write['defaults'] ?? array()) as $field => $default) {
+					if (!isset($body[$field])) {
+						$body[$field] = ($default === 'now') ? dol_now() : $default;
+					}
+				}
+				$callArgs[] = $body;
+				continue;
+			}
 			if (array_key_exists($pname, $args)) {
 				// Cap an explicit 'limit': one call must not pull thousands of full objects.
 				$callArgs[] = ($pname == 'limit') ? min((int) $args[$pname], self::BRIDGE_MAX_LIMIT) : $args[$pname];
@@ -1270,10 +1870,30 @@ class ToolApiBridge extends McpTool
 		}
 
 		if ($output === null) {
+			// Core can print an error page while refusing access (reproducible on
+			// the REST route): keep it out of the JSON answer, in the log instead.
+			ob_start();
 			try {
 				$result = call_user_func_array([$api, $method], $callArgs);
 				// Serialize API return (cleaned objects) into plain arrays for the MCP client.
 				$output = json_decode(json_encode($result), true);
+				// A create returns the new rowid as a scalar: name it, so the
+				// caller gets the same shape as any other tool result.
+				if (!is_array($output)) {
+					$output = array('success' => true, 'id' => (int) $output);
+					// Name what was written: an id alone tells the user nothing, and
+					// the ref is what they see on the document itself.
+					$written = $this->writeMetaFor($name);
+					if (!empty($written['object']) && $output['id'] > 0) {
+						$ref = $this->refOfCreatedObject($written['object'], $output['id']);
+						if ($ref !== '') {
+							$output['ref'] = $ref;
+						}
+					}
+				}
+				if ($key === 'documents') {
+					$output = $this->projectDocumentList($output, (string) ($args['modulepart'] ?? ''));
+				}
 			} catch (Throwable $e) {
 				$code = (int) $e->getCode();
 				$message = $e->getMessage();
@@ -1286,6 +1906,15 @@ class ToolApiBridge extends McpTool
 					"error" => $message,
 					"http_status" => ($code > 0 ? $code : 500)
 				];
+				// The API answers 404 for an object with no files: that is an empty
+				// list, unless the object itself does not exist.
+				if ($key === 'documents' && $code == 404 && $this->documentObjectExists($args)) {
+					$output = [];
+				}
+			}
+			$printed = ob_get_clean();
+			if ($printed !== '' && $printed !== false) {
+				dol_syslog(get_class($this).'::execute '.$name.' printed output: '.dol_trunc(strip_tags($printed), 200), LOG_WARNING);
 			}
 		}
 

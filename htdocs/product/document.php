@@ -167,8 +167,6 @@ if ($action == 'filemerge' && $permissiontoadd) {
 	if (empty($is_refresh)) {
 		$filetomerge_file_array = GETPOST('filetoadd');
 
-		$filetomerge_file_array = GETPOST('filetoadd');
-
 		$lang_id = null;
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$lang_id = GETPOST('lang_id', 'aZ09');

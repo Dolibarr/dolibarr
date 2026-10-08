@@ -181,7 +181,7 @@ print '<table class="border centpercent">';
 // Ref
 print '<tr><td class="titlefieldcreate fieldrequired">';
 print $langs->trans("Ref").'</td>';
-print '<td><input type="text" size="25" id="label" name ="label" value="'.$object->label.'" />';
+print '<td><input type="text" size="25" id="label" name ="label" value="'.dolPrintHTMLForAttribute($object->label).'" />';
 print '</tr>';
 
 // Description

@@ -75,34 +75,36 @@ class UniversalLLMAdapter
 	 * the text prompt — which is what allows the provider to actually see the file
 	 * (vision/document understanding).
 	 *
-	 * @param string $system   The system prompt/instruction
-	 * @param string $userMsg  The specific user query
-	 * @param string $mode     'json' for strict JSON (MCP), 'text' for legacy (default)
+	 * @param string $system   		The system prompt/instruction
+	 * @param string $userMsg  		The specific user query
+	 * @param string $mode     		'json' for strict JSON (MCP), 'text' for legacy (default)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional documents/images, each entry is array('mime' => 'image/png', 'data' => '<base64>')
-	 * @return string|null     The text response from the AI or null on failure
+	 * @param array<int,array{role:string,text:string}> $history     Optional prior conversation turns (role 'user'|'assistant'), sent as native multi-turn messages before the current query. Caller sanitizes and caps them.
+	 * @return string|null     		The text response from the AI or null on failure
 	 */
-	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array()): ?string
+	public function generate(string $system, string $userMsg, string $mode = 'text', array $attachments = array(), array $history = array()): ?string
 	{
 		switch ($this->type) {
 			case 'anthropic':
-				return $this->callAnthropic($system, $userMsg, $mode, $attachments);
+				return $this->callAnthropic($system, $userMsg, $mode, $attachments, $history);
 			case 'google':
-				return $this->callGoogle($system, $userMsg, $mode, $attachments);
+				return $this->callGoogle($system, $userMsg, $mode, $attachments, $history);
 			default:
-				return $this->callOpenAI($system, $userMsg, $mode, $attachments);
+				return $this->callOpenAI($system, $userMsg, $mode, $attachments, $history);
 		}
 	}
 
 	/**
 	 * Call OpenAI-compatible API
 	 *
-	 * @param string $sys System prompt
-	 * @param string $msg User message
-	 * @param string $mode 'json' or 'text'
-	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
-	 * @return string|null Response content or null on failure
+	 * @param 	string 			$sys 		System prompt
+	 * @param 	string 			$msg 		User message
+	 * @param 	string 			$mode 		'json' or 'text'
+	 * @param 	array<int,array{mime:string,data:string}> $attachments 		Optional attachments sent as native multimodal parts
+	 * @param 	array<int,array{role:string,text:string}> $history 			Optional prior turns inserted before the current query
+	 * @return 	string|null 				Response content or null on failure
 	 */
-	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array()): ?string
+	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array()): ?string
 	{
 		$url = $this->baseUrl;
 		if (strpos($url, '/chat/completions') === false && strpos($url, '/generate') === false) {
@@ -134,12 +136,15 @@ class UniversalLLMAdapter
 			}
 		}
 
+		$messages = array(array("role" => "system", "content" => $sys));
+		foreach ($history as $turn) {
+			$messages[] = array("role" => (($turn['role'] ?? '') === 'assistant' ? 'assistant' : 'user'), "content" => (string) $turn['text']);
+		}
+		$messages[] = array("role" => "user", "content" => $userContent);
+
 		$data = array(
 			"model" => $this->model,
-			"messages" => array(
-				array("role" => "system", "content" => $sys),
-				array("role" => "user", "content" => $userContent)
-			),
+			"messages" => $messages,
 			"temperature" => 0.1
 		);
 		if (!empty($attachments)) {
@@ -157,7 +162,11 @@ class UniversalLLMAdapter
 
 		$this->lastRequest = $this->encodeRequestForLog($data);
 
-		return $this->curl($url, $data, array("Content-Type: application/json", "Authorization: Bearer " . $this->key));
+		dol_syslog('callOpenAI url='.$url, LOG_DEBUG, 0, '_ai');
+
+		$answer = $this->curl($url, $data, array("Content-Type: application/json", "Authorization: Bearer " . $this->key));
+
+		return $answer;
 	}
 
 	/**
@@ -167,10 +176,11 @@ class UniversalLLMAdapter
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
+	 * @param array<int,array{role:string,text:string}> $history Optional prior turns inserted before the current query
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callAnthropic(string $sys, string $msg, string $mode = 'text', array $attachments = array())
+	private function callAnthropic(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array())
 	{
 
 		$url = $this->baseUrl . (strpos($this->baseUrl, '/messages') === false ? '/messages' : '');
@@ -193,10 +203,16 @@ class UniversalLLMAdapter
 			$maxTokens = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
 		}
 
+		$messages = array();
+		foreach ($history as $turn) {
+			$messages[] = array("role" => (($turn['role'] ?? '') === 'assistant' ? 'assistant' : 'user'), "content" => (string) $turn['text']);
+		}
+		$messages[] = array("role" => "user", "content" => $userContent);
+
 		$data = array(
 			"model" => $this->model,
 			"system" => $sys,
-			"messages" => array(array("role" => "user", "content" => $userContent)),
+			"messages" => $messages,
 			"max_tokens" => $maxTokens
 		);
 
@@ -212,10 +228,11 @@ class UniversalLLMAdapter
 	 * @param string $msg User message
 	 * @param string $mode Response mode (default: text)
 	 * @param array<int,array{mime:string,data:string}> $attachments Optional attachments sent as native multimodal parts
+	 * @param array<int,array{role:string,text:string}> $history Optional prior turns inserted before the current query
 	 *
 	 * @return string|null Response content or null on failure
 	 */
-	private function callGoogle(string $sys, string $msg, string $mode = 'text', array $attachments = array())
+	private function callGoogle(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array())
 	{
 		$url = $this->baseUrl;
 
@@ -237,16 +254,55 @@ class UniversalLLMAdapter
 		}
 		$parts[] = array("text" => $sys . "\nUser: " . $msg);
 
+		// Single-turn payload stays exactly as before (no 'role' key) so the
+		// historical behavior is untouched; only a non-empty history switches
+		// to Gemini's multi-turn format, where every content needs its role
+		// ('model' is Gemini's name for the assistant role).
+		$contents = array();
+		if (!empty($history)) {
+			foreach ($history as $turn) {
+				$contents[] = array(
+					"role" => (($turn['role'] ?? '') === 'assistant' ? 'model' : 'user'),
+					"parts" => array(array("text" => (string) $turn['text']))
+				);
+			}
+			$contents[] = array("role" => "user", "parts" => $parts);
+		} else {
+			$contents[] = array("parts" => $parts);
+		}
+
 		$data = array(
-			"contents" => array(
-				array("parts" => $parts)
-			),
+			"contents" => $contents,
 			"generationConfig" => (empty($attachments) ? array("temperature" => 0.1) : array("temperature" => 0.1, "maxOutputTokens" => 16384))	// thinking models count their reasoning tokens INSIDE maxOutputTokens: at 4096 a multi-line reception intent came back finishReason=MAX_TOKENS, cut mid-JSON
 		);
 
 		$this->lastRequest = $this->encodeRequestForLog($data);
 
 		return $this->curl($url, $data, array("Content-Type: application/json"), false, true);
+	}
+
+	/**
+	 * Drop a recorded model failure once that model answers again.
+	 *
+	 * @return void
+	 */
+	private function clearModelFailure()
+	{
+		global $db, $conf;
+
+		if (!is_object($db) || !is_object($conf)) {
+			return;
+		}
+		$raw = getDolGlobalString('AI_MODEL_RUNTIME_FAILURE');
+		if ($raw === '') {
+			return;
+		}
+		$rec = json_decode($raw, true);
+		if (!is_array($rec) || (string) ($rec['model'] ?? '') !== (string) $this->model) {
+			return;	// a different model failed: leave that warning standing
+		}
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		dolibarr_del_const($db, 'AI_MODEL_RUNTIME_FAILURE', -1);
 	}
 
 	/**
@@ -276,6 +332,9 @@ class UniversalLLMAdapter
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 		dolibarr_set_const($db, 'AI_MODEL_RUNTIME_FAILURE', json_encode(array(
+			// The provider is recorded too: without it the banner survives a
+			// change of provider and blames a model nobody is using any more.
+			'service' => getDolGlobalString('AI_API_SERVICE'),
 			'model' => $this->model,
 			'ts' => dol_now(),
 			'http_code' => $httpCode,
@@ -356,23 +415,32 @@ class UniversalLLMAdapter
 		// a bare "Invalid JSON response from API." with an empty body.
 		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl . "\n--- body (" . strlen($body) . " bytes) ---\n"	. $body;
 
+		dol_syslog('curl answer received, size of response string = '.strlen($body), LOG_DEBUG, 0, '_ai');
+		dol_syslog('curl answer received, HTTP = '.$httpCode, LOG_DEBUG, 0, '_ai');
+
 		if (!empty($result['curl_error_no'])) {
+			dol_syslog("Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")", LOG_DEBUG, 0, '_ai');
 			return "Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")";
 		}
 
 		$json = json_decode($body, true);
+
+		dol_syslog("Result body=" . var_export($body, true), LOG_DEBUG, 0, '_ai');
+		dol_syslog("Result json_decoded=" . var_export($json, true), LOG_DEBUG, 0, '_ai');
 
 		if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
 			// Common real-world causes: HTTP 4xx/5xx with empty body, HTML error page
 			// from a proxy, gateway timeout, etc. Surface the HTTP code and a short
 			// body snippet so the admin can diagnose without re-running with curl.
 			$snippet = substr($body, 0, 500);
+			dol_syslog("Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>'), LOG_DEBUG, 0, '_ai');
 			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>');
 		}
 
 		if (isset($json['error'])) {
 			$msg = $json['error']['message'] ?? json_encode($json['error']);
 			$this->recordModelFailure($httpCode, (string) $msg);
+			dol_syslog("Error: API " . $msg, LOG_DEBUG, 0, '_ai');
 			return "Error: API " . $msg;
 		}
 
@@ -380,6 +448,9 @@ class UniversalLLMAdapter
 		// request log: every provider returns it inside the response body under
 		// its own name. Thinking tokens are billed as output, so Gemini's
 		// thoughtsTokenCount is counted with the visible candidates tokens.
+		// The call succeeded: a warning recorded for this same model is now stale.
+		$this->clearModelFailure();
+
 		$this->lastUsage = array('model' => $this->model);
 		if ($isGemini) {
 			$this->lastUsage['input']  = (int) ($json['usageMetadata']['promptTokenCount'] ?? 0);
@@ -393,14 +464,23 @@ class UniversalLLMAdapter
 		}
 
 		// Extraction Logic
+		$answer = null;
 		if ($isClaude) {
-			return $json['content'][0]['text'] ?? null;
-		}
-		if ($isGemini) {
-			return $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
+			$answer = $json['content'][0]['text'] ?? null;
+		} elseif ($isGemini) {
+			$answer = $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
 		}
 
-		// Default (OpenAI compatible)
-		return $json['choices'][0]['message']['content'] ?? null;
+		if ($answer === null) {
+			// Default (OpenAI compatible)
+			$answer = $json['choices'][0]['message']['content'] ?? null;
+		}
+
+		// When answer was into the tool_calls instead of message
+		if (empty($answer) && !empty($json['choices'][0]['message']['tool_calls'])) {
+			$answer = json_encode($json['choices'][0]['message']['tool_calls']);
+		}
+
+		return $answer;
 	}
 }

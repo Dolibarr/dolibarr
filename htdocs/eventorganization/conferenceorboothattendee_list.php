@@ -524,6 +524,10 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
+		// Define $urlwithroot
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
+
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
@@ -645,32 +649,32 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print '<tr><td class="nowrap">';
 		$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
 		$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
-		print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? '1' : '0', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+		print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? '1' : '0', $projectstatic, $permissiontoadd, $typeofdata, '&withproject=1', 0, 0, 'projectid', $htmltext);
 		print '</td><td>';
-		print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
+		print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? 1 : 0, $projectstatic, $permissiontoadd, $typeofdata, '', null, null, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
 		$typeofdata = 'checkbox:'.($projectstatic->accept_booth_suggestions ? ' checked="checked"' : '');
 		$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
-		print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? '1' : '0', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+		print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? '1' : '0', $projectstatic, $permissiontoadd, $typeofdata, '&withproject=1', 0, 0, 'projectid', $htmltext);
 		print '</td><td>';
-		print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
+		print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? 1 : 0, $projectstatic, $permissiontoadd, $typeofdata, '', null, null, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $projectstatic, $permissiontoadd, 'amount', '&withproject=1', 0, 0, 'projectid');
 		print '</td><td>';
-		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', null, null, '', 0, '', 'projectid');
+		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, $permissiontoadd, 'amount:6', '', null, null, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, $permissiontoadd, 'amount', '&withproject=1', 0, 0, 'projectid');
 		print '</td><td>';
-		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', null, null, '', 0, '', 'projectid');
+		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, $permissiontoadd, 'amount:6', '', null, null, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="">';
 		print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $projectstatic, $permissiontoadd, 'integer:3', '&withproject=1', 0, 0, 'projectid');
 		print '</td><td class="valuefield">';
 		print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, $permissiontoadd, 'integer:3', '', null, null, '&withproject=1', 0, '', 'projectid');
@@ -678,22 +682,20 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		// Link to ICS for the event
 		print '<tr><td class="titlefield valignmiddle">'.$langs->trans("EventOrganizationICSLinkProject").'</td><td class="valuefield">';
-		// Define $urlwithroot
-		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 		// Show message
 		$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 		$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
 		$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 		print $message;
+		if (empty($project->date_start_event) || empty($project->date_end_event)) {
+			print img_warning($langs->trans("EventStartOrEndDateNotDefined"), '', 'marginleftonlyshort');
+		}
 		print "</td></tr>";
 
-		print '<tr><td class="valignmiddle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
-		// Define $urlwithroot
-		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
-
+		// Link for ICS for conference or booth
+		print '<tr><td class="valignmiddle">'.$langs->trans("EventOrganizationICSLink");
+		print '</td><td class="valuefield">';
 		// Show message
 		$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 		$message .= '&exportkey='.(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') ? urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) : '...');
@@ -723,14 +725,14 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		//print '<span class="opacitymedium">';
 		print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 		//print '</span>';
-		print '</td><td>';
+		print '</td><td class="valuefield nowrap">';
 		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.$projectstatic->id.'&type=global';
 		$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
-		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
-		print '<a target="_blank" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+		print '<div class="tdoverflowmax150 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
+		print '<a target="_blank" rel="noopener noreferrer" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
 		print '</td></tr>';
