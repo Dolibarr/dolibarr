@@ -226,7 +226,9 @@ if (empty($reshook)) {
 		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
-		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+		if (GETPOSTISSET("civility_code")) {
+			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
+		}
 		$object->poste = (string) GETPOST("poste", 'alpha');
 		$object->address = (string) GETPOST("address", 'alpha');
 		$object->zip = (string) GETPOST("zipcode", 'alpha');
