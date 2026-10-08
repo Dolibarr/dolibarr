@@ -12,6 +12,7 @@ The following changes may create regressions for some external modules, but were
 * All names of functions for hooks in the webportal module have been renamed into webPortalX... to avoid conflict with backoffice.
 * The config $dolibarr_allow_download_external_modules has been renamed into $dolibarr_allow_download_app (Value 1 allows to download the application binaries)
 * The hook 'completeAjaxReturnArray', fired by the TakePOS ajax endpoint to let modules add data to the product tiles, has been renamed into 'takeposCompleteProductOrCategory'. It is now also fired when a category is browsed, and not only on search results.
+* The trigger 'BILL_SUPPLIER_CANCELED', fired when a supplier invoice is canceled, has been renamed into 'BILL_SUPPLIER_CANCEL' to be consistent with others
 
 * The use of starting char '^...' for parameter $picto name in img_object() has been removed.
 * Removed library MathPHP. Was introduced in 2023. Never used by Dolibarr after 3 years.
