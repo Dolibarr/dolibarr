@@ -242,7 +242,7 @@ install:
   if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = '8.3' ] || [ "$TRAVIS_PHP_VERSION" = '8.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.5' ] || [ "$TRAVIS_PHP_VERSION" = 'latest' ]; then
     sudo composer self-update 2.4.4
     # phpunit 8+ is required for php 8
-    composer -n require --ignore-platform-reqs phpunit/phpunit ^8
+    composer -n require --ignore-platform-reqs phpunit/phpunit ^9
     if [ "x$TRAVIS_RUN_PHPCS" = "xyes" ]; then
       composer -n require --ignore-platform-reqs squizlabs/php_codesniffer ^3
     fi
