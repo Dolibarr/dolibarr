@@ -1,0 +1,84 @@
+name: TMP dump CTI PHPSTAN debt table
+
+on:
+  push:
+    branches: [tmp-cti-dump-20261008]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tmp-cti-dump-20261008
+  cancel-in-progress: true
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Fetch CTI page
+        run: |
+          curl -sL --max-time 180 https://cti.dolibarr.org/ -o cti.html
+          wc -c cti.html
+
+      - name: Parse PHPSTAN debt table
+        run: |
+          cat > parse_cti.py <<'PYEOF'
+import re, html, datetime
+raw = open('cti.html', encoding='utf-8', errors='replace').read()
+low = raw.lower()
+out = open('cti-phpstan-debt.txt', 'w', encoding='utf-8')
+out.write('CTI dump generated %s UTC\n' % datetime.datetime.utcnow().strftime('%a %b %d %H:%M:%S'))
+out.write('CTI page size: %d\n' % len(raw))
+markers = [m.start() for m in re.finditer('phpstan', low)]
+out.write('phpstan markers: %s\n' % markers[:12])
+# take slice after first phpstan marker
+best = None
+for i in markers:
+    sl = raw[i:i+250000]
+    tabs = re.findall(r'<table\b.*?</table>', sl, re.S | re.I)
+    for t in tabs:
+        if 'file' in t.lower() and 'line' in t.lower() and 'type' in t.lower():
+            best = t
+            break
+    if best:
+        out.write('table found at marker %d, slice size %d\n' % (i, len(best)))
+    break
+if not best:
+    out.write('NO PHPSTAN TABLE FOUND\n')
+    # dump 3000 chars around each marker for debug
+    for i in markers[:3]:
+        out.write('\n--- context %d ---\n' % i)
+        out.write(re.sub(r'\s+', ' ', raw[max(0,i-200):i+2800]))
+else:
+    rows = re.findall(r'<tr\b.*?</tr>', best, re.S | re.I)
+    def clean(cell):
+        c = re.sub(r'<[^>]+>', '', cell)
+        c = html.unescape(c)
+        c = re.sub(r'\s+', ' ', c).strip()
+        return c
+    parsed = []
+    for r in rows:
+        cells = re.findall(r'<t[dh]\b[^>]*>(.*?)</t[dh]>', r, re.S | re.I)
+        parsed.append([clean(c) for c in cells])
+    out.write('PHPSTAN rows: %d\n' % len(parsed))
+    out.write('')
+    n = 0
+    for cells in parsed:
+        line = '\t'.join(cells)
+        out.write('%d\t%s\n' % (n, line))
+        n += 1
+out.close()
+print(open('cti-phpstan-debt.txt', encoding='utf-8').read()[:2000])
+PYEOF
+          python3 parse_cti.py
+
+      - name: Commit dump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add cti-phpstan-debt.txt
+          git commit -m "[skip ci] TMP: dump CTI PHPSTAN technical debt table (temporary, branch will be deleted)"
+          git push
