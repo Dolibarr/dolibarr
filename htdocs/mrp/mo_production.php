@@ -179,7 +179,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
-	if ($action == 'confirm_reopen' && $permissiontoadd) {
+	if ($action == 'confirm_reopen' && $permissiontoadd && $object->status == $object::STATUS_PRODUCED) {	// The reopen of a canceled MO is done by $object->reopen() (with confirm=yes)
 		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
 	}
 
@@ -483,9 +483,15 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_editline' && $permissiontoadd) {
+	if ($action == 'confirm_editline' && $permissiontoadd && !in_array($object->status, array($object::STATUS_PRODUCED, $object::STATUS_CANCELED))) {
 		$moline = new MoLine($db);
-		$res = $moline->fetch(GETPOSTINT('lineid'));
+		$result = $moline->fetch(GETPOSTINT('lineid'));
+		if ($result > 0 && $moline->fk_mo != $object->id) {
+			$result = -1;	// The line must belong to this MO
+		}
+		if ($result > 0 && in_array($moline->role, array('consumed', 'produced'))) {
+			$result = -1;	// A consumed or produced quantity is changed by its stock movement, not here (only the quantities to consume or produce can be edited)
+		}
 		if ($result > 0) {
 			$extrafields->fetch_name_optionals_label($moline->element);
 			foreach ($extrafields->attributes[$moline->table_element]['label'] as $key => $label) {
