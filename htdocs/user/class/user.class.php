@@ -1790,8 +1790,8 @@ class User extends CommonObject
 				'hrm_job_user' => array('label' => 'EmployeePosition', 'filter' => "fk_user = ".((int) $this->id)),
 				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
 			);
-			foreach ($hrmtables as $hrmtable => $hrminfo) {
-				$sanitizedfilter = $hrminfo['filter'];	// Built above from the id of the user only
+			foreach ($hrmtables as $hrmtable => $sanitizedhrminfo) {
+				$sanitizedfilter = $sanitizedhrminfo['filter'];	// Built above from the id of the user only
 				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->db->sanitize($hrmtable)." WHERE ".$sanitizedfilter;
 				$resql = $this->db->query($sql);
 				if ($resql) {
