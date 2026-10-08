@@ -589,7 +589,7 @@ if (empty($reshook)) {
 		}
 
 		$action = "";
-	} elseif ($action == 'classifybilled') {
+	} elseif ($action == 'classifybilled' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setBilled();
 		if ($result >= 0) {
@@ -597,7 +597,7 @@ if (empty($reshook)) {
 			exit();
 		}
 		setEventMessages($object->error, $object->errors, 'errors');
-	} elseif ($action == 'classifyclosed') {
+	} elseif ($action == 'classifyclosed' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setClosed();
 		if ($result >= 0) {
