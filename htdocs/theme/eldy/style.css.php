@@ -62,6 +62,7 @@ if (defined('THEME_ONLY_CONSTANT')) {
 // Types from theme_vars
 '
 @phan-var-force string $badgeDanger
+@phan-var-force string $badgeStatus4
 @phan-var-force string $badgeWarning
 @phan-var-force string $butactionbg
 @phan-var-force string $colorbackbody
@@ -114,6 +115,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var MenuManager $menumanager Value set through main.inc.php
  *
  * @var string $badgeDanger
+ * @var string $badgeStatus4
  * @var string $badgeWarning
  * @var string $butactionbg
  * @var string $colorbackbody
