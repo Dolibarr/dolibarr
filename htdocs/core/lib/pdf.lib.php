@@ -1503,6 +1503,8 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		$nbrep = 0;
 		$labelproductservice = preg_replace('/(<img[^>]*src=")([^"]*)(&amp;)([^"]*")/', '\1\2&\4', $labelproductservice, -1, $nbrep);
 
+		$labelproductservice = pdfConvertIndentToBlockquote($labelproductservice);
+
 		if (getDolGlobalString('MARGIN_TOP_ZERO_UL')) {
 			$pdf->setListIndentWidth(5);
 			$TMarginList = ['ul' => [['h'=>0.1, ],['h'=>0.1, ]], 'li' => [['h'=>0.1, ],],];
@@ -1510,7 +1512,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 		}
 
 		// Description
-		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset(pdfConvertIndentToBlockquote($labelproductservice)), 0, 1, false, true, $align, true);
+		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, $align, true);
 		$result .= $labelproductservice;
 	}
 	return $result;
