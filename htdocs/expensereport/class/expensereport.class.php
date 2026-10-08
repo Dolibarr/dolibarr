@@ -1195,6 +1195,19 @@ class ExpenseReport extends CommonObject
 
 		$error = 0;
 
+		// Refuse to delete a report that has payments: they would be left without their expense report
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."payment_expensereport WHERE fk_expensereport = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		if ($obj && $obj->nb > 0) {
+			$this->error = 'ErrorRecordHasChildren';
+			return -1;
+		}
+
 		$this->db->begin();
 
 		if (!$notrigger) {
