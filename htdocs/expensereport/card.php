@@ -248,7 +248,12 @@ if (empty($reshook)) {
 		if (1 == 0 && !GETPOST('clone_content', 'alpha') && !GETPOST('clone_receivers', 'alpha')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
-			if ($object->id > 0) {
+			// Check that the new expense report is for a user inside the hierarchy, or that advanced permission for all is set (same rule as for action 'add')
+			$fk_user_author_clone = (GETPOSTINT('fk_user_author') > 0 ? GETPOSTINT('fk_user_author') : $user->id);
+			if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance')) && !in_array($fk_user_author_clone, $childids)) {
+				setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
+				$action = '';
+			} elseif ($object->id > 0) {
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later if it fails
 				$orig = clone $object;
 
@@ -1721,7 +1726,7 @@ if ($action == 'create') {
 			if ($action == 'clone') {
 				// Create an array for form
 				$criteriaforfilter = 'hierarchyme';
-				if ($user->hasRight('expensereport', 'readall')) {
+				if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')) {
 					$criteriaforfilter = '';
 				}
 				$formquestion = array(
