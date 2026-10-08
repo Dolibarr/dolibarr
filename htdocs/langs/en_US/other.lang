@@ -528,7 +528,7 @@ WorkerInitFailed=Failed to initialize worker (Network or CSP error?). Try 'Cloud
 NetworkError=Failed to load
 AIError=AI Error
 AISessionExpiredReload=Your session has expired: please reload the page and sign in again
-AIContextCounter=Context: %s exchange(s), %s message(s) (~%s tokens)
+AIContextCounter=Context: %s exchange(s), %s message(s) =~ %s tokens
 AIContextClear=None
 AIContextClearTitle=Send nothing back with the next question (recent exchanges excluded, pins removed)
 AIContextAll=All

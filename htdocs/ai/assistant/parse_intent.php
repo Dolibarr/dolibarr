@@ -595,7 +595,7 @@ try {
 		$basePrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM with access to a set of tools.";
 
 		$systemRules = "\n\nRules: Respond ONLY JSON and ensure any json string does not contains special chars and are correctly json encoded.\n";
-		$systemRules .= "Format: {\"type\": \"message\", \"content\": \"...\"} ou {\"tool\":..., \"arguments\":{...}}.\n";
+		$systemRules .= "Answer JSON format: {\"type\": \"message\", \"content\": \"...\"} ou {\"tool\":..., \"arguments\":{...}}.\n";
 		$systemRules .= "ALWAYS write user-facing text (the message/question/answer argument values) in the SAME LANGUAGE as the user's message. English context notes, tool names, or schemas never change the response language. ";
 		$systemRules .= "When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed. Only when genuinely NO tool can fulfill the request, use respond_to_user to say the feature is not available. ";
 
@@ -746,6 +746,7 @@ try {
 			dol_syslog('parse_intent.php systemPrompt='.$systemPrompt, LOG_DEBUG, 0, '_ai');
 			dol_syslog('parse_intent.php query='.$query, LOG_DEBUG, 0, '_ai');
 
+			// Call LLM and get answer string
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachments, $history);
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
@@ -772,7 +773,9 @@ try {
 				$errorDetails = $rawResponse;
 			} elseif ($rawResponse) {
 				// Clean JSON response
-				$clean = preg_replace('/```json\s*|\s*```/s', '', $rawResponse);
+				$clean = preg_replace('/^```json|```$/s', '', $rawResponse);
+				$clean = preg_replace('/^<glm_block>|<\/glm_block>$/s', '', $clean);
+				$clean = preg_replace('/^_tool_call/s', '', $clean);
 				$clean = trim($clean);
 
 				$matches = array();
@@ -848,9 +851,19 @@ try {
 								]
 							];
 						}
+					} elseif (is_array($intentJSON) && ($intentJSON['name'] ?? '') !== '' && ($intentJSON['arguments'] ?? '') !== '') {
+						// If answer is array name: "nameoftool", "arguments": ...
+						dol_syslog('parse_intent.php clean response is name="toolname" and arguments="arguments"', LOG_DEBUG, 0, '_ai');
+
+						$intentJSON = [
+							"tool" => $intentJSON['name'],
+							'arguments' => [
+								"message" => $intentJSON['arguments'] ?? ''
+							]
+						];
 					} elseif (is_array($intentJSON)) {
 						// If answer is array of type=function.
-						dol_syslog('parse_intent.php clean response is array"', LOG_DEBUG, 0, '_ai');
+						dol_syslog('parse_intent.php clean response is array', LOG_DEBUG, 0, '_ai');
 
 						foreach ($intentJSON as $f) {
 							if (($f['type'] ?? '') === 'function' && isset($f['function']) && !empty($f['function']['name']) && !empty($f['function']['arguments'])) {
@@ -918,7 +931,7 @@ try {
 					$mappedToolsSchema = array_column($toolsSchema, null, 'name');
 					$confidence = calculateConfidence($intentJSON, $mappedToolsSchema, $rawResponse);
 
-					dol_syslog("parse_intent.php AI Intent: " . json_encode(['query' => $query, 'intent' => $intentJSON, 'confidence' => $confidence]), LOG_DEBUG, 0, '_ai');
+					dol_syslog("parse_intent.php confidence => $confidence", LOG_DEBUG, 0, '_ai');
 				}
 			}
 		}
@@ -1054,7 +1067,9 @@ try {
 				$history2[] = array('role' => 'assistant', 'text' => $snippet);
 				$systemPrompt2 = $systemPrompt."\n\nSTEP 2: the read tool ".$toolName." was already executed for you; its result is the last assistant turn. Now perform the WRITE the user asked for in the last user message, with the ids found in that result. If the result does not identify one object with certainty, or the write cannot be done, answer with respond_to_user and say why. Do not call a read tool again.";
 
+				// Call LLM
 				$rawResponse2 = $adapter->generate($systemPrompt2, $query, 'text', $attachments, $history2);
+
 				$rawRequestLog = $adapter->lastRequest;
 				$rawResponseLog = $adapter->lastResponse;
 				if (!empty($adapter->lastUsage)) {
