@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2014 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,7 +179,11 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// pu calculation from pu_devise if pu empty
 	if (empty($pu) && !empty($pu_devise)) {
 		if (!empty($multicurrency_tx)) {
-			$pu = $pu_devise / $multicurrency_tx;
+			if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT')) {
+				$pu = $pu_devise * $multicurrency_tx;
+			} else {
+				$pu = $pu_devise / $multicurrency_tx;
+			}
 		} else {
 			dol_syslog('Price.lib::calcul_price_total function called with bad parameters combination (multicurrency_tx empty when pu_devise not) ', LOG_ERR);
 			return array();
@@ -190,7 +195,11 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// pu_devise calculation from pu
 	if (empty($pu_devise) && !empty($multicurrency_tx)) {
 		if (is_numeric($pu) && is_numeric($multicurrency_tx)) {
-			$pu_devise = $pu * $multicurrency_tx;
+			if (getDolGlobalString('MULTICURRENCY_USE_RATE_DIRECT')) {
+				$pu_devise = $pu / $multicurrency_tx;
+			} else {
+				$pu_devise = $pu * $multicurrency_tx;
+			}
 		} else {
 			dol_syslog('Price.lib::calcul_price_total function called with bad parameters combination (pu or multicurrency_tx are not numeric)', LOG_ERR);
 			return array();
