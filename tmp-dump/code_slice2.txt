@@ -1,0 +1,122 @@
+3011			dol_syslog(get_class($this).'::setMulticurrencyRate('.$rate.', '.$mode.')');
+3012			if ($this->status >= 0 || $this->element == 'societe') {
+3013				$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
+3014				$sql .= " SET multicurrency_tx = ".((float) $rate);
+3015				$sql .= ' WHERE rowid='.((int) $this->id);
+3016	
+3017				if ($this->db->query($sql)) {
+3018					$this->multicurrency_tx = $rate;
+3019	
+3020					// Update line price
+3021					if (!empty($this->lines)) {
+3022						foreach ($this->lines as &$line) {
+3023							// A credit line (deposit, credit note, discount applied to the invoice) is not priced at the invoice rate:
+3024							// both its amounts are the historical ones of the credit, so a rate change must leave it untouched.
+3025							if (!empty($line->fk_remise_except)) {
+3026								continue;
+3027							}
+3028	
+3029							// Amounts in company currency will be recalculated
+3030							if ($mode == 1) {
+3031								$line->subprice = 0;
+3032							}
+3033	
+3034							// Amounts in foreign currency will be recalculated
+3035							if ($mode == 2) {
+3036								$line->multicurrency_subprice = 0;
+3037							}
+3038	
+3039							switch ($this->element) {
+3040								case 'propal':
+3041									if ($this instanceof Propal) {
+3042										/** @var PropaleLigne $line */
+3043										'@phan-var-force PropaleLigne $line';
+3044										$this->updateline(
+3045											$line->id,
+3046											$line->subprice,
+3047											$line->qty,
+3048											$line->remise_percent,
+3049											$line->tva_tx,
+3050											$line->localtax1_tx,
+3051											$line->localtax2_tx,
+3052											($line->description ? $line->description : $line->desc),
+3053											'HT',
+3054											$line->info_bits,
+3055											$line->special_code,
+3056											$line->fk_parent_line,
+3057											$line->skip_update_total,
+3058											$line->fk_fournprice,
+3059											$line->pa_ht,
+3060											$line->label,
+3061											$line->product_type,
+3062											$line->date_start,
+3063											$line->date_end,
+3064											$line->array_options,
+3065											$line->fk_unit,
+3066											$line->multicurrency_subprice
+3067										);
+3068									}
+3069									break;
+3070								case 'commande':
+3071									if ($this instanceof Commande) {
+3072										/** @var OrderLine $line */
+3073										'@phan-var-force OrderLine $line';
+3074										$this->updateline(
+3075											$line->id,
+3076											($line->description ? $line->description : $line->desc),
+3077											$line->subprice,
+3078											$line->qty,
+3079											$line->remise_percent,
+3080											$line->tva_tx,
+3081											$line->localtax1_tx,
+3082											$line->localtax2_tx,
+3083											'HT',
+3084											$line->info_bits,
+3085											$line->date_start,
+3086											$line->date_end,
+3087											$line->product_type,
+3088											$line->fk_parent_line,
+3089											$line->skip_update_total,
+3090											$line->fk_fournprice,
+3091											$line->pa_ht,
+3092											$line->label,
+3093											$line->special_code,
+3094											$line->array_options,
+3095											$line->fk_unit,
+3096											$line->multicurrency_subprice
+3097										);
+3098									}
+3099									break;
+3100								case 'facture':
+3101									if ($this instanceof Facture) {
+3102										/** @var FactureLigne $line */
+3103										'@phan-var-force FactureLigne $line';
+3104										$this->updateline(
+3105											$line->id,
+3106											($line->description ? $line->description : $line->desc),
+3107											$line->subprice,
+3108											$line->qty,
+3109											$line->remise_percent,
+3110											$line->date_start,
+3111											$line->date_end,
+3112											$line->tva_tx,
+3113											$line->localtax1_tx,
+3114											$line->localtax2_tx,
+3115											'HT',
+3116											$line->info_bits,
+3117											$line->product_type,
+3118											$line->fk_parent_line,
+3119											$line->skip_update_total,
+3120											$line->fk_fournprice,
+3121											$line->pa_ht,
+3122											$line->label,
+3123											$line->special_code,
+3124											$line->array_options,
+3125											$line->situation_percent,
+3126											$line->fk_unit,
+3127											$line->multicurrency_subprice
+3128										);
+3129									}
+3130									break;
+3131								case 'facturerec':
+3132									if ($this instanceof FactureRec) {
