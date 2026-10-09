@@ -318,7 +318,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', $css);
 					$.jnotify(data.error, "error", true);
 				}
 			}).fail(function(xhr) {
-				$.jnotify("<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>", "error", true);
+				$.jnotify('<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>', "error", true);
 			});
 		});
 	});
