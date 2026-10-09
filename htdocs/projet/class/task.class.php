@@ -2384,7 +2384,7 @@ class Task extends CommonObjectLine
 		//Manage Task Date
 		if ($clone_change_dt) {
 			$projectstatic = new Project($this->db);
-			$projectstatic->fetch($ori_project_id);
+			$projectstatic->fetch((int) $ori_project_id);
 
 			// Origin project start date
 			$orign_project_dt_start = (!isset($projectstatic->date_start) || $projectstatic->date_start == '') ? $projectstatic->date_c : $projectstatic->date_start;
@@ -2451,7 +2451,7 @@ class Task extends CommonObjectLine
 
 				//retrieve project origin ref to know folder to copy
 				$projectstatic = new Project($this->db);
-				$projectstatic->fetch($ori_project_id);
+				$projectstatic->fetch((int) $ori_project_id);
 				$ori_project_ref = $projectstatic->ref;
 
 				if ($ori_project_id != $project_id) {

@@ -63,7 +63,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors", "uxdocumentation"));
+$langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "uxdocumentation"));
 
 // GET Parameters
 $action  = GETPOST('action', 'aZ09');
@@ -481,6 +481,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			//var_dump($result);
 			if ($result < 0) {
+				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
 			}
 		}
@@ -521,6 +522,7 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 	$modulename = dol_ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
 	$varnametoupdate = '';
+	$accesspolicyfailed = false;
 	$dirins = $listofmodules[dol_strtolower($module)]['moduledescriptorrootpath'];
 	$destdir = $dirins.'/'.dol_strtolower($module);
 
@@ -603,13 +605,34 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 				dolReplaceInFile($destfile, $headerFix);
 				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
 			} else {
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				dolReplaceInFile($destfile, $arrayreplacement);
-				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
+				// A tab page must follow the access policy stored in the object class, and never keep the template markers
+				if ($varnametoupdate) {
+					$classfile = $destdir.'/class/'.dol_strtolower($objectname).'.class.php';
+					try {
+						$storedaccesspolicy = getModuleBuilderAccessPolicyFromClassFile($classfile);
+						if (applyModuleBuilderAccessPolicyToPage($destfile, $storedaccesspolicy) < 0) {
+							$accesspolicyfailed = true;
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $destfile), null, 'errors');
+						}
+					} catch (\InvalidArgumentException $e) {
+						$accesspolicyfailed = true;
+						dol_syslog("modulebuilder: invalid access policy stored in ".$classfile.": ".$e->getMessage(), LOG_ERR);
+						setEventMessages($langs->trans("ErrorModuleBuilderInvalidStoredAccessPolicy", basename($classfile)), null, 'errors');
+					}
+				}
+				if ($accesspolicyfailed) {
+					$error++;
+					dol_delete_file($destfile);
+				} else {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+					dolReplaceInFile($destfile, $arrayreplacement);
+					modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
+				}
 			}
 		}
 
-		if ($varnametoupdate) {
+		if ($varnametoupdate && !$accesspolicyfailed) {
 			// Now we update the object file to set $$varnametoupdate to 1
 			$srcfile = $dirins.'/'.dol_strtolower($module).'/lib/'.dol_strtolower($module).'_'.dol_strtolower($objectname).'.lib.php';
 			$arrayreplacement = array('/\$'.preg_quote($varnametoupdate, '/').' = 0;/' => '$'.$varnametoupdate.' = 1;');
@@ -669,6 +692,7 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module) /* && $user->h
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile1), null, 'errors');
 		}
 		if ($result2 <= 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile2), null, 'errors');
 		}
 	}
@@ -1039,6 +1063,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module) /* && $user->hasRight
 
 			$result = dol_copy($srcfile, $destfile, '0', 0);
 			if ($result < 0) {
+				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFailToCopyFile", $srcfile, $destfile), null, 'errors');
 			}
 		} else {
@@ -1099,6 +1124,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) /* && $user->h
 		}
 
 		if (!$result) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
 		} else {
 			// If we delete a .sql file, we delete also the other .sql file
@@ -1183,6 +1209,38 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 	$enabledtabs = filterEnabledKeys(GETPOST('enabledtab', 'array'), getModuleBuilderObjectTabs());
 	$enabledcardactions = filterEnabledKeys(GETPOST('enabledcardaction', 'array'), getModuleBuilderObjectCardActions());
 	$objectalreadyexists = dol_is_file($destdir.'/class/'.dol_strtolower($objectname).'.class.php');
+
+	// Access policy of the object pages: an invalid policy rejects the whole generation, its predicates are never filtered
+	$accesspolicy = null;
+	$copiedfiles = array();
+	$accesspolicyalternatives = array();
+	for ($i = 0; $i < AccessPolicyConfig::MAX_ALTERNATIVES; $i++) {
+		$accesspolicyalternatives[] = GETPOST('accesspolicy_'.$i, 'array:aZ09');
+	}
+	try {
+		$accesspolicy = AccessPolicyConfig::fromAlternatives($accesspolicyalternatives, GETPOST('accesspolicymessage', 'alphanohtml'));
+	} catch (\InvalidArgumentException $e) {
+		$error++;
+		dol_syslog("modulebuilder: invalid access policy for object ".$objectname.": ".$e->getMessage(), LOG_WARNING);
+		setEventMessages($langs->trans("ErrorModuleBuilderInvalidAccessPolicy"), null, 'errors');
+		$tabobj = 'newobject';
+	}
+	// All the pages of an object follow the policy stored in its class: on regeneration it overrides the form
+	if (!$error && $objectalreadyexists) {
+		$classfile = $destdir.'/class/'.dol_strtolower($objectname).'.class.php';
+		try {
+			$storedaccesspolicy = getModuleBuilderAccessPolicyFromClassFile($classfile);
+			if ($accesspolicy !== null && ($storedaccesspolicy === null || $storedaccesspolicy->toJson() !== $accesspolicy->toJson())) {
+				setEventMessages($langs->trans("WarningAccessPolicyOnRegeneration"), null, 'warnings');
+			}
+			$accesspolicy = $storedaccesspolicy;
+		} catch (\InvalidArgumentException $e) {
+			$error++;
+			dol_syslog("modulebuilder: invalid access policy stored in ".$classfile.": ".$e->getMessage(), LOG_ERR);
+			setEventMessages($langs->trans("ErrorModuleBuilderInvalidStoredAccessPolicy", basename($classfile)), null, 'errors');
+			$tabobj = 'newobject';
+		}
+	}
 
 	// The dir was not created by init
 	dol_mkdir($destdir.'/class');
@@ -1556,10 +1614,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
 			$checkComment = checkExistComment($moduledescriptorfile, 1);
 			if ($checkComment < 0) {
+				$langs->load("errors");
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 			} else {
 				$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectCreation($module, $moduledescriptorfile, is_array($rights) ? $rights : array(), $objectname));
 				if ($reportPerms->skipped > 0) {
+					$langs->load("errors");
 					setEventMessages($langs->trans("WarningPermissionAlreadyExist", $langs->transnoentities($objectname)), null, 'warnings');
 				}
 			}
@@ -1568,6 +1628,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		if (!$error) {
 			foreach ($filetogenerate as $srcfile => $destfile) {
 				$result = dol_copy($srcdir.'/'.$srcfile, $destdir.'/'.$destfile, $newmask, 0);
+				if ($result > 0) {
+					$copiedfiles[$srcfile] = $destfile;
+				}
 				if ($result <= 0) {
 					if ($result < 0) {
 						$warning++;
@@ -1739,6 +1802,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			$checkComment = checkExistComment($moduledescriptorfile, 0);
 			if ($checkComment < 0) {
 				$warning++;
+				$langs->load("errors");
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), basename($moduledescriptorfile)), null, 'warnings');
 			} else {
 				$arrayofreplacement = array(
@@ -1755,6 +1819,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		$checkComment = checkExistComment($moduledescriptorfile, 0);
 		if ($checkComment < 0) {
 			$warning++;
+			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), basename($moduledescriptorfile)), null, 'warnings');
 		} else {
 			// File path
@@ -1828,6 +1893,25 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			}
 		}
 
+		// Resolve the access policy block of the files copied by this run only: a file that already existed holds
+		// substituted names and no marker any more
+		if (!$error) {
+			$accesspolicytargets = array_fill_keys(getModuleBuilderAccessPolicyPages(), 'page');
+			$accesspolicytargets['class/myobject.class.php'] = 'class';
+			foreach ($accesspolicytargets as $templatefile => $targettype) {
+				if (!isset($copiedfiles[$templatefile])) {
+					continue;
+				}
+				$targetfile = $destdir.'/'.$copiedfiles[$templatefile];
+				$result = ($targettype == 'class') ? applyModuleBuilderAccessPolicyToClass($targetfile, $accesspolicy) : applyModuleBuilderAccessPolicyToPage($targetfile, $accesspolicy);
+				if ($result < 0) {
+					$error++;
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $targetfile), null, 'errors');
+				}
+			}
+		}
+
 		if ($objectalreadyexists) {
 			setEventMessages($langs->trans("WarningTabSelectionOnRegeneration"), null, 'warnings');
 			setEventMessages($langs->trans("WarningCardActionSelectionOnRegeneration"), null, 'warnings');
@@ -1860,6 +1944,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			}
 			//var_dump($result);
 			if ($result < 0) {
+				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
 			} else {
 				modulebuilderValidateGeneratedFile($phpfileval['fullname'], $ncObj);
@@ -1894,6 +1979,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				}
 				$result = dolReplaceInFile($phpFileval['fullname'], $moduleReplacementAll);
 				if ($result < 0) {
+					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpFileval['fullname']), null, 'warnings');
 				}
 			}
@@ -1917,6 +2003,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 
 		if (is_numeric($object) && $object <= 0) {
 			$pathoffiletoeditsrc = $destdir.'/class/'.dol_strtolower($objectname).'.class.php';
+			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$warning++;
 		}
@@ -1933,6 +2020,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, '', $object);
 
 		if ($result <= 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFailToCreateFile', '.sql'), null);
 			$error++;
 		}
@@ -1952,6 +2040,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
+		$langs->load("errors");
 		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module);
 		exit;
@@ -2001,6 +2090,7 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel) /* && $user->ha
 		$dictionaries = $moduleobj->dictionaries;
 		$checkComment = checkExistComment($moduledescriptorfile, 2);
 		if ($checkComment < 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
 		} else {
 			createNewDictionnary($module, $moduledescriptorfile, $newdicname, $dictionaries);
@@ -2067,6 +2157,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 	$objects = dolGetListOfObjectClasses($destdir);
 	if (!in_array($objectname, array_values($objects))) {
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorObjectNotFound", $langs->transnoentities($objectname)), null, 'errors');
 	}
 
@@ -2148,6 +2239,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 
 		if (is_numeric($object) && $object <= 0) {
 			$pathoffiletoeditsrc = $destdir.'/class/'.dol_strtolower($objectname).'.class.php';
+			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$error++;
 		}
@@ -2158,6 +2250,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object, $moduletype);
 
 		if ($result <= 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFailToCreateFile', '.sql'), null, 'errors');
 			$error++;
 		}
@@ -2193,6 +2286,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey /* && $user->
 
 		if (is_numeric($object) && $object <= 0) {
 			$pathoffiletoeditsrc = $destdir.'/class/'.dol_strtolower($objectname).'.class.php';
+			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$error++;
 		}
@@ -2203,6 +2297,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey /* && $user->
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
 
 		if ($result <= 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorFailToCreateFile', '.sql'), null, 'errors');
 			$error++;
 		}
@@ -2367,6 +2462,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 		$rewriteMenu = checkExistComment($moduledescriptorfile, 0);
 
 		if ($rewriteMenu < 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
 		} else {
 			reWriteAllMenus($moduledescriptorfile, $menus, $objectname, null, -1);
@@ -2376,6 +2472,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 		$permissions = $moduleobj->rights;
 		$rewritePerms = checkExistComment($moduledescriptorfile, 1);
 		if ($rewritePerms < 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
 			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forObjectDeletion($module, $moduledescriptorfile, is_array($permissions) ? $permissions : array(), $objectname));
@@ -2422,6 +2519,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
+		$langs->load("errors");
 		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&tabobj=deleteobject&module='.urlencode($module));
 		exit;
@@ -2473,6 +2571,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	$checkComment = checkExistComment($moduledescriptorfile, 2);
 	if ($checkComment < 0) {
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
 	}
 
@@ -2507,6 +2606,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		}
 	} else {
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorDictionaryNotFound", dol_ucfirst($dicname)), null, 'errors');
 	}
 	if (!$error && $newdicname !== null) {
@@ -2563,6 +2663,7 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey') /* && 
 		$dicts['tablib'][$keydict] = dol_ucfirst(dol_strtolower(GETPOST('tablib')));
 		$checkComment = checkExistComment($moduledescriptorfile, 2);
 		if ($checkComment < 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Dictionaries"), "mod".$module."class.php"), null, 'warnings');
 		} else {
 			$updateDict = updateDictionaryInFile($module, $moduledescriptorfile, $dicts);
@@ -2719,6 +2820,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 	for ($j = 0; $j < $countPermsObj; $j++) {
 		if (in_array($crud, $permsForObject[$j])) {
 			$error++;
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorExistingPermission", $langs->transnoentities($crud), $langs->transnoentities($objectForPerms)), null, 'errors');
 		}
 	}
@@ -2730,6 +2832,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
+			$langs->load("errors");
 			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		}
 
@@ -2737,6 +2840,7 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) /* && 
 		// Rewriting all permissions section in the descriptor file
 		$rewrite = checkExistComment($moduledescriptorfile, 1);
 		if ($rewrite < 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
 			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightAddition($module, $moduledescriptorfile, $permissions, $objectForPerms, $label, $crud));
@@ -2841,6 +2945,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 		for ($j = 0; $j < $countPermsObj; $j++) {
 			if (in_array($label, $permsForObject[$j])) {
 				$error++;
+				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorExistingPermission", $langs->transnoentities($label), $langs->transnoentities($objectForPerms)), null, 'errors');
 			}
 		}
@@ -2853,6 +2958,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
+			$langs->load("errors");
 			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		}
 
@@ -2860,6 +2966,7 @@ if ($dirins && GETPOST('action') == 'update_right' && GETPOST('modifyright') && 
 		// rewriting all permissions after update permission needed
 		$rewrite = checkExistComment($moduledescriptorfile, 1);
 		if ($rewrite < 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
 			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightUpdate($module, $moduledescriptorfile, $permissions, $key, $objectForPerms, $label, $crud));
@@ -2905,6 +3012,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
+			$langs->load("errors");
 			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
 			exit;
@@ -2914,6 +3022,7 @@ if ($dirins && $action == 'confirm_deleteright' && !empty($module) && GETPOSTINT
 		$moduledescriptorfile = $dirins.'/'.dol_strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		$rewrite = checkExistComment($moduledescriptorfile, 1);
 		if ($rewrite < 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
 		} else {
 			$reportPerms = modulebuilderSyncRights(RightsSyncCommand::forRightDeletion($module, $moduledescriptorfile, $permissions, $key));
@@ -3044,6 +3153,7 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey') /* && $u
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
+		$langs->load("errors");
 		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 		exit;
@@ -3075,6 +3185,7 @@ if ($dirins && $action == 'confirm_deletemenu' && GETPOSTINT('menukey') /* && $u
 
 	$checkcomment = checkExistComment($moduledescriptorfile, 0);
 	if ($checkcomment < 0) {
+		$langs->load("errors");
 		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
 	} else {
 		if ($menus[$key]['fk_menu'] === 'fk_mainmenu='.dol_strtolower($module)) {
@@ -3107,6 +3218,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel) /* && $user->hasRight("mod
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
+		$langs->load("errors");
 		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 		exit;
@@ -3152,6 +3264,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel) /* && $user->hasRight("mod
 		$targets = array('_blank','_self','_parent','_top','');
 		if (!in_array(GETPOST('target'), $targets)) {
 			$error++;
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldValue", $langs->transnoentities("target")), null, 'errors');
 		}
 	}
@@ -3162,11 +3275,13 @@ if ($dirins && $action == 'addmenu' && empty($cancel) /* && $user->hasRight("mod
 	foreach ($menus as $menu) {
 		if (!empty(GETPOST('url')) && GETPOST('url') == $menu['url']) {
 			$error++;
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldExist", $langs->transnoentities("url")), null, 'errors');
 			break;
 		}
 		if (dol_strtolower(GETPOST('titre')) == dol_strtolower($menu['titre'])) {
 			$error++;
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldExist", $langs->transnoentities("titre")), null, 'errors');
 			break;
 		}
@@ -3185,11 +3300,13 @@ if ($dirins && $action == 'addmenu' && empty($cancel) /* && $user->hasRight("mod
 	if (GETPOST('type', 'alpha') == 'left') {
 		if (empty(GETPOST('leftmenu')) && count($objects) > 0) {
 			$error++;
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorCoherenceMenu", $langs->transnoentities("LeftmenuId"), $langs->transnoentities("type")), null, 'errors');
 		}
 	}
 	if (GETPOST('type', 'alpha') == 'top') {
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorTypeMenu", $langs->transnoentities("type")), null, 'errors');
 	}
 
@@ -3231,6 +3348,7 @@ if ($dirins && $action == 'addmenu' && empty($cancel) /* && $user->hasRight("mod
 
 		$checkcomment = checkExistComment($moduledescriptorfile, 0);
 		if ($checkcomment < 0) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
 		} else {
 			// Write all menus
@@ -3267,6 +3385,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 			if ($result) {
 				setEventMessages($result, null, 'errors');
 			}
+			$langs->load("errors");
 			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 			exit;
@@ -3323,6 +3442,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 
 		if (GETPOST('type', 'alpha') == 'top') {
 			$error++;
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorTypeMenu", $langs->transnoentities("type")), null, 'errors');
 		}
 
@@ -3331,6 +3451,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 			$checkComment = checkExistComment($moduledescriptorfile, 0);
 
 			if ($checkComment < 0) {
+				$langs->load("errors");
 				setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), "mod".$module."class.php"), null, 'warnings');
 			} else {
 				// Write all menus
@@ -3342,6 +3463,7 @@ if ($dirins && $action == "update_menu" && GETPOSTINT('menukey') && GETPOST('tab
 				}
 
 				if ($result < 0) {
+					$langs->load("errors");
 					setEventMessages($langs->trans('ErrorMenuExistValue'), null, 'errors');
 					//var_dump($_SESSION);exit;
 					header("Location: ".$_SERVER["PHP_SELF"].'?action=editmenu&token='.newToken().'&menukey='.urlencode((string) ($key + 1)).'&tab='.urlencode((string) ($tab)).'&module='.urlencode((string) ($module)).'&tabobj='.($key + 1));
@@ -3370,6 +3492,7 @@ if ($dirins && $action == "update_props_module" && !empty(GETPOST('keydescriptio
 		if ($result) {
 			setEventMessages($result, null, 'errors');
 		}
+		$langs->load("errors");
 		setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=menus&module='.$module);
 		exit;
@@ -3575,6 +3698,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 		}
 		$langs->load("errors");
 		print '<!-- ErrorFailedToLoadModuleDescriptorForXXX -->';
+		$langs->load("errors");
 		print img_warning('').' '.$langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
 		print $loadclasserrormessage;
 		print '<br>';
@@ -4137,6 +4261,7 @@ if ($module == 'initmodule') {
 					print '</div>';
 					print '</form>';
 				} else {
+					$langs->load("errors");
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
 				}
 
@@ -4150,6 +4275,7 @@ if ($module == 'initmodule') {
 					if (dol_is_file($dirread.'/'.$pathtofilereadme)) {
 						print '<div class="underbanner clearboth"></div><div class="fichecenter">'.$moduleobj->getDescLong().'</div>';
 					} else {
+						$langs->load("errors");
 						print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtofilereadme).'</span>';
 					}
 
@@ -4162,6 +4288,7 @@ if ($module == 'initmodule') {
 					if (dol_is_file($dirread.'/'.$pathtochangelog)) {
 						print '<div class="underbanner clearboth"></div><div class="fichecenter">'.$moduleobj->getChangeLog().'</div>';
 					} else {
+						$langs->load("errors");
 						print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtochangelog).'</span>';
 					}
 				}
@@ -4407,6 +4534,20 @@ if ($module == 'initmodule') {
 					print '<input type="checkbox" name="enabledcardaction[]" id="enabledcardaction_'.$actionkey.'" value="'.dol_escape_htmltag($actionkey).'"'.$checked.'> ';
 					print '<label for="enabledcardaction_'.$actionkey.'">'.dol_escape_htmltag($langs->trans($actioninfo['label'])).'</label> &nbsp; ';
 				}
+				print '<br>';
+				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("AccessPolicyForObject"), $langs->trans("AccessPolicyForObjectHelp")).'</span><br>';
+				for ($i = 0; $i < AccessPolicyConfig::MAX_ALTERNATIVES; $i++) {
+					$accesspolicyselected = GETPOST('accesspolicy_'.$i, 'array:aZ09');
+					print '<span class="opacitymedium">'.dol_escape_htmltag($langs->trans($i == 0 ? "AccessPolicyFirstAlternative" : "AccessPolicyOtherAlternative", $i + 1)).'</span> &nbsp; ';
+					foreach (array_keys(PredicateRule::PREDICATES) as $predicatename) {
+						$checked = in_array($predicatename, $accesspolicyselected, true) ? ' checked' : '';
+						print '<span class="nowraponall"><input type="checkbox" name="accesspolicy_'.$i.'[]" id="accesspolicy_'.$i.'_'.$predicatename.'" value="'.dol_escape_htmltag($predicatename).'"'.$checked.'> ';
+						print '<label for="accesspolicy_'.$i.'_'.$predicatename.'">'.dol_escape_htmltag($langs->trans("AccessPolicyPredicate".ucfirst($predicatename))).'</label></span> &nbsp; ';
+					}
+					print '<br>';
+				}
+				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("AccessPolicyMessage"), $langs->trans("AccessPolicyMessageHelp")).'</span> &nbsp; ';
+				print '<input type="text" name="accesspolicymessage" maxlength="'.AccessPolicyConfig::MAX_MESSAGE_LENGTH.'" value="'.dol_escape_htmltag(GETPOST('accesspolicymessage', 'alphanohtml')).'" placeholder="ErrorForbidden">';
 				print '<br>';
 				print '<br>';
 				print '<input type="submit" class="button small" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
@@ -7031,6 +7172,7 @@ if ($module == 'initmodule') {
 			print '<br>';
 
 			if (!class_exists('ZipArchive') && !defined('ODTPHP_PATHTOPCLZIP')) {
+				$langs->load("errors");
 				print img_warning().' '.$langs->trans("ErrNoZipEngine");
 				print '<br>';
 			}

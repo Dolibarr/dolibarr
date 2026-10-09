@@ -188,7 +188,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= ", ".MAIN_DB_PREFIX."mrp_production as cd";
 		$sql .= " WHERE c.rowid = cd.fk_mo";
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
-		$sql .= " AND cd.batch = '".($db->escape($object->batch))."'";
+		$sql .= " AND cd.batch = '".($db->escape((string) $object->batch))."'";
 		if (!empty($search_month)) {
 			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize((string) $search_month).')';
 		}

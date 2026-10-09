@@ -168,8 +168,8 @@ if (empty($reshook)) {
 					$error++;
 					setEventMessages($skillAdded->error, null, 'errors');
 					break;
-				} else {
-					// Create new EvaluationLine for each Skill to add in draft evaluation
+				} elseif ($objecttype == 'job') {
+					// Create new EvaluationLine for each Skill to add in draft evaluation (the id is the one of a job only in this case)
 					$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 					$sql_eval .= " WHERE e.status = 0 ";
 					$sql_eval .= " AND e.entity = ".(int) getEntity($object->element);
@@ -206,8 +206,17 @@ if (empty($reshook)) {
 		if (!empty($TNote)) {
 			$db->begin();
 			$error = 0;
+			$maxrank = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
 			foreach ($TNote as $skillId => $rank) {
-				$rank = ($rank == "NA" ? -1 : $rank);
+				$newrank = ($rank == "NA" ? -1 : (int) $rank);
+				if ($newrank < -1 || $newrank > $maxrank) {
+					// A rank can only be "not applicable" (-1) or a level between 0 and the maximum number of levels
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorBadValueForParameter", $rank, 'TNote['.((int) $skillId).']'), null, 'errors');
+					$error++;
+					break;
+				}
+				$rank = $newrank;
 				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $id).") AND (objecttype:=:'".$db->escape($objecttype)."') AND (fk_skill:=:".((int) $skillId).')');
 				'@phan-var-force SkillRank[] $tSkills';
 				if (is_array($TSkills) && !empty($TSkills)) {
@@ -219,8 +228,8 @@ if (empty($reshook)) {
 							setEventMessages($tmpObj->error, null, 'errors');
 							break;
 						}
-						if (!$error) {
-							// Update draft Evaluations using this Skill
+						if (!$error && $objecttype == 'job') {
+							// Update draft Evaluations using this Skill (the id is the one of a job only in this case)
 							$sql_eval = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."hrm_evaluation as e";
 							$sql_eval .= " WHERE e.status = 0 ";
 							$sql_eval .= " AND e.entity = ".getEntity($object->element);
@@ -266,7 +275,7 @@ if (empty($reshook)) {
 			} else {
 				$db->rollback();
 			}
-			header("Location: " . DOL_URL_ROOT.'/hrm/skill_tab.php?id=' . $id. '&objecttype=job');
+			header("Location: " . DOL_URL_ROOT.'/hrm/skill_tab.php?id=' . $id. '&objecttype='.urlencode($objecttype));
 			exit;
 		}
 	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes' && $permissiontoadd) {

@@ -5735,6 +5735,7 @@ img.boxhandle, img.boxclose {
 .fieldcombo-list {
 	max-height: 300px;
 	overflow-y: auto;
+	padding-bottom: 10px
 }
 .fieldcombo-elementheader {
 	display: flex;
@@ -5762,7 +5763,7 @@ img.boxhandle, img.boxclose {
 	padding-left: 26px;
 }
 .fieldcombo-field {
-	padding: 3px 8px;
+	padding: 4px 8px;
 	cursor: pointer;
 }
 .fieldcombo-field:hover, .fieldcombo-field:focus {
@@ -9138,6 +9139,16 @@ table.jPicker {
 	padding-top: 6px;
 	border-radius: <?php echo $borderradius; ?>px;
 }
+/* Module AI - configure_tools.php: chevron rotation animation on collapse/expand */
+.toggle-icon {
+	display: inline-block;
+	margin-right: 8px;
+	transition: transform 0.2s ease-in-out;
+}
+
+.trgroup.collapsed .toggle-icon {
+	transform: rotate(-90deg);
+}
 
 
 /* ============================================================================== */
@@ -9518,6 +9529,7 @@ if (is_object($db)) {
 	user-select: none; /* Non-prefixed version, currently
 			  supported by Chrome, Edge, Opera and Firefox */
 }
+
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

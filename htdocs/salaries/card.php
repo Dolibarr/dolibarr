@@ -918,7 +918,7 @@ if ($id > 0) {
 		$morehtmlref .= '<form method="post" action="'.$pageurl.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+		$morehtmlref .= '<input type="text" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"/>';
 		$morehtmlref .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
@@ -1268,7 +1268,7 @@ if ($id > 0) {
 			if (empty($object->ref)) $object->ref = (string) $object->id;
 
 			$objref = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->salaries->dir_output.'/'.$object->element.'/'.$objref;
+			$filedir = $conf->salaries->dir_output.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
 			$genallowed = 1;
@@ -1277,7 +1277,7 @@ if ($id > 0) {
 
 			print $formfile->showdocuments(
 				'salaries:Salary',
-				$object->element.'/'.$objref,
+				$objref,
 				$filedir,
 				$urlsource,
 				(int) $genallowed,

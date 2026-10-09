@@ -236,8 +236,9 @@ $newbutton .= img_picto('', 'add');
 $newbutton .= '</a>';
 */
 
-print load_fiche_titre($langs->trans("AIPromptForFeatures", $arrayofai[$aiservice]['label']), $newcardbutton, '');
+print '<br>';
 
+print load_fiche_titre($langs->trans("AIPromptForFeatures", $arrayofai[$aiservice]['label']), $newcardbutton, '');
 
 if ($action == 'deleteproperty') {
 	$formconfirm = $form->formconfirm(

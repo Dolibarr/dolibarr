@@ -24,6 +24,7 @@
  * Copyright (C) 2026		Joachim Küter				<git-jk@bloxera.com>
  * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
  * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -497,6 +498,16 @@ if (empty($reshook)) {
 		$result = $object->update($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'regeneratepaymentref' && $usercancreate) {
+		// Build the structured payment reference of an invoice that was validated
+		// before the feature was set up. See core/lib/paymentref.lib.php.
+		if ($object->status == Facture::STATUS_VALIDATED && getDolGlobalString('INVOICE_PAYMENT_REF_MODE')) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+			$newpaymentref = dolPayRefGenerateForInvoice($object, $user, 1);
+			if ($newpaymentref == '') {
+				setEventMessages($langs->trans("WarningPaymentRefNotGenerated"), null, 'warnings');
+			}
 		}
 	} elseif ($action == 'setmode' && $usercancreate) {
 		$object->fetch($id);
@@ -3518,7 +3529,7 @@ if (empty($reshook)) {
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOSTINT('lineid'));
 		$percent = $line->get_prev_progress($object->id);
-		$progress = price2num(GETPOST('progress', 'alpha'));
+		$progress = GETPOSTFLOAT('progress', getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2));
 
 		if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref > 0) {
 			// in case of situation credit note
@@ -3633,7 +3644,7 @@ if (empty($reshook)) {
 		// Invoice situation
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
-			$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
+			$fullprogress = GETPOSTFLOAT('progress', getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2));
 
 			if ($fullprogress < $previousprogress) {
 				$error++;
@@ -4269,6 +4280,9 @@ if ($action == 'create') {
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	}
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 	print '<input name="ref" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
 	print '<input name="force_cond_reglement_id" type="hidden" value="0">';
@@ -5982,6 +5996,35 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 
+		// Structured payment reference, see core/lib/paymentref.lib.php.
+		// Read only, the value is written when the invoice is validated.
+		if (getDolGlobalString('INVOICE_PAYMENT_REF_MODE')) {
+			print '<tr><td>'.$langs->trans('PaymentReference').'</td><td>';
+			if (!empty($object->payment_reference)) {
+				print '<span class="opacitymedium paddingright">'.dol_escape_htmltag($object->payment_reference).'</span>';
+			} elseif ($object->status == Facture::STATUS_DRAFT) {
+				// Show what validation would produce, without storing anything
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+				$tmpinvoice = clone $object;
+				$tmpinvoice->status = Facture::STATUS_VALIDATED;
+				$previewpayref = dolPayRefGenerateForInvoice($tmpinvoice, $user, 0);
+				if ($previewpayref != '') {
+					print '<span class="opacitymedium">'.dol_escape_htmltag($previewpayref).' ('.$langs->trans("Preview").')</span>';
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans("PaymentRefGeneratedOnValidation").'</span>';
+				}
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+				// The invoice was validated before the reference was set up
+				if ($usercancreate && $object->status == Facture::STATUS_VALIDATED) {
+					print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=regeneratepaymentref&token='.newToken().'">';
+					print $langs->trans("GeneratePaymentReference");
+					print '</a>';
+				}
+			}
+			print '</td></tr>';
+		}
+
 		// Bank Account
 		if (isModEnabled("bank")) {
 			print '<tr><td class="nowrap">';
@@ -7172,8 +7215,8 @@ if ($action == 'create') {
 				}
 			}
 
-			// Create next situation invoice
-			if ($usercancreate && $object->isSituationInvoice() && ($object->status == 1 || $object->status == 2)) {
+			// Create next situation invoice (a credit note of the cycle is not a situation to continue from)
+			if ($usercancreate && $object->isSituationInvoice() && $object->type == Facture::TYPE_SITUATION && ($object->status == 1 || $object->status == 2)) {
 				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create&type=5&origin=facture&originid='.$object->id.'&socid='.$object->socid.'" >'.$langs->trans('CreateNextSituationInvoice').'</a>';
 				} elseif (!$object->is_last_in_cycle()) {

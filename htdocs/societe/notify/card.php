@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->loadLangs(array("companies", "mails", "admin", "other", "errors"));
+$langs->loadLangs(array("companies", "mails", "admin", "other"));
 
 $socid     = GETPOSTINT("socid");
 $action    = GETPOST('action', 'aZ09');

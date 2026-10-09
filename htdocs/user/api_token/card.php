@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 // Load translation files required by page
-$langs->loadLangs(array('admin', 'users', 'errors'));
+$langs->loadLangs(array('admin', 'users'));
 $error = 0;
 
 // Security check
@@ -65,7 +65,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // SQL query to retrieve the selected token
-$sql = "SELECT oat.rowid as token_id, oat.token, oat.entity, oat.state as rights, oat.datec as date_creation, oat.tms as date_modification";
+$sql = "SELECT oat.rowid as token_id, oat.tokenstring as token, oat.entity, oat.state as rights, oat.datec as date_creation, oat.tms as date_modification";
 if (isModEnabled('multicompany')) {
 	$sql .= ", e.label";
 }
@@ -152,7 +152,7 @@ if (empty($reshook)) {
 		$nbtotalofrecords = '';
 		$sqlforcount = 'SELECT COUNT(*) as nbtotalofrecords';
 		$sqlforcount .= " FROM ".MAIN_DB_PREFIX."oauth_token as oat";
-		$sqlforcount .= " WHERE token = '".$db->escape(dolEncrypt($tokenstring, '', '', 'dolibarr'))."'";
+		$sqlforcount .= " WHERE tokenstring = '".$db->escape(dolEncrypt($tokenstring, '', '', 'dolibarr'))."'";
 		$sqlforcount .= " AND service = 'dolibarr_rest_api'";
 		$resql = $db->query($sqlforcount);
 		if ($resql) {
@@ -164,6 +164,7 @@ if (empty($reshook)) {
 		}
 
 		if (isset($nbtotalofrecords) && $nbtotalofrecords > 0) {
+			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldExist", $langs->transnoentitiesnoconv("Token")), null, 'errors');
 			$action = 'create';
 			$error++;
@@ -172,7 +173,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		if (!$error) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, state, fk_user, entity, datec)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, state, fk_user, entity, datec)";
 			$sql .= " VALUES ('dolibarr_rest_api', '".$db->escape(dolEncrypt($tokenstring, '', '', 'dolibarr'))."', 0, ".((int) $useridtoadd).", ".((int) $entity).", '".$db->idate(dol_now())."')";
 			$resql = $db->query($sql);
 			if (!$resql) {

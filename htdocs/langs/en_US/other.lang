@@ -68,7 +68,7 @@ Notify_BILL_SENTBYMAIL=Customer invoice sent by mail
 Notify_BILL_SUPPLIER_VALIDATE=Vendor invoice validated
 Notify_BILL_SUPPLIER_PAYED=Vendor invoice paid
 Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail
-Notify_BILL_SUPPLIER_CANCELED=Vendor invoice canceled
+Notify_BILL_SUPPLIER_CANCEL=Vendor invoice canceled
 Notify_CONTRACT_MODIFY=Contract modified
 Notify_CONTRACT_VALIDATE=Contract validated
 Notify_FICHINTER_VALIDATE=Intervention validated
@@ -303,11 +303,8 @@ ObjectId=Object ID
 FullData=Full data
 
 ##### Export #####
-ExportsArea=Exports area
-AvailableFormats=Available formats
 LibraryUsed=Library used
 LibraryVersion=Library version
-ExportableDatas=Exportable data
 NoExportableData=No exportable data (no modules with exportable data loaded, or missing permissions)
 ##### External sites #####
 WebsiteSetup=Setup of module website
@@ -473,6 +470,10 @@ ConfirmAiAction=Are you sure you want to %1$s using the %2$s tool?
 ConfirmAiWrite=%s
 AIPreviewCreateInvoice=Create a draft customer invoice%s with %s.
 AIPreviewCreateOrder=Create a draft sales order%s with %s.
+AIPreviewCreateProposal=Create a draft commercial proposal%s with %s.
+AIPreviewCreateSupplierInvoice=Create a draft supplier invoice%s with %s.
+AIPreviewCreateSupplierOrder=Create a draft supplier order%s with %s.
+AIPreviewCreateSupplierProposal=Create a draft supplier proposal%s with %s.
 AIPreviewCreateDocument=Create a draft %s%s with %s.
 AIPreviewAddLine=Add a line to %s %s.
 AIPreviewDelete=DELETE the %s with id %s. This cannot be undone.
@@ -527,8 +528,8 @@ WorkerInitFailed=Failed to initialize worker (Network or CSP error?). Try 'Cloud
 NetworkError=Failed to load
 AIError=AI Error
 AISessionExpiredReload=Your session has expired: please reload the page and sign in again
-AIContextCounter=Context: %s exchange(s), %s message(s) (~%s tokens)
-AIContextClear=Clear
+AIContextCounter=Context: %s exchange(s), %s message(s) =~ %s tokens
+AIContextClear=None
 AIContextClearTitle=Send nothing back with the next question (recent exchanges excluded, pins removed)
 AIContextAll=All
 AIContextAllTitle=Send the whole conversation back with the next question
