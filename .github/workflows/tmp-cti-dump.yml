@@ -18,22 +18,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Get failed CI logs of PR 41522
+      - name: Get Travis CI build info
         run: |
           set -e
-          export GH_TOKEN=${GITHUB_TOKEN}
-          export GH_REPO=Dolibarr/dolibarr
-          gh run list --branch qual-phpstan-commonobject-varthis --limit 20 --json databaseId,name,conclusion,workflowName > tmp-dump/runs.json 2>&1 || true
-          cat tmp-dump/runs.json
-          for id in $(gh run list --branch qual-phpstan-commonobject-varthis --limit 20 --json databaseId,conclusion --jq '.[] | select(.conclusion=="failure") | .databaseId'); do
-            gh run view $id --log-failed > tmp-dump/failed_${id}.log 2>&1 || echo "no log for $id" > tmp-dump/failed_${id}.log
+          curl -sS -H "Travis-API-Version: 3" -H "User-Agent: Mozilla/5.0" https://api.travis-ci.com/build/278963382 -o tmp-dump/travis_build.json
+          cat tmp-dump/travis_build.json | head -c 2000
+          for jobid in $(python3 -c "import json;d=json.load(open('tmp-dump/travis_build.json'));print(' '.join(str(j['id']) for j in d.get('jobs',[])))"); do
+            echo "Job $jobid"
+            curl -sS -H "Travis-API-Version: 3" -H "User-Agent: Mozilla/5.0" "https://api.travis-ci.com/job/$jobid" -o tmp-dump/travis_job_$jobid.json || true
+            curl -sSL -H "User-Agent: Mozilla/5.0" "https://api.travis-ci.com/job/$jobid/log.txt" -o tmp-dump/travis_log_$jobid.txt || echo "log fetch failed" > tmp-dump/travis_log_$jobid.txt
           done
           ls -la tmp-dump
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Commit dump
         run: |
           git config user.name "dolibot" && git config user.email "dolibarr-bot@users.noreply.github.com"
           git add tmp-dump
-          git commit -m "TMP: dump failed CI logs" || echo "nothing to commit"
+          git commit -m "TMP: dump travis logs" || echo "nothing to commit"
           git push || echo "push failed"
