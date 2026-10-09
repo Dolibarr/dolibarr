@@ -117,15 +117,15 @@ $tabsql[35] = "SELECT a.rowid as rowid, a.code as code, a.label, a.nature, a.act
 $tabsqlsort = array();
 $tabsqlsort[35] = "code ASC";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Name of the fields in the result of select to display the dictionary
 $tabfield = array();
 $tabfield[35] = "code,label,nature";
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Name of editing fields for record modification
 $tabfieldvalue = array();
 $tabfieldvalue[35] = "code,label,nature";
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Name of the fields in the table for inserting a record
 $tabfieldinsert = array();
 $tabfieldinsert[35] = "code,label,nature";
 
@@ -529,7 +529,6 @@ if ($resql) {
 		// Determine the field name based on the possible names
 		// in the data dictionaries.
 		$class = "left";
-		$sortable = 1;
 		$valuetoshow = '';
 		/*
 		$tmparray=getLabelOfField($fieldlist[$field]);
@@ -550,7 +549,7 @@ if ($resql) {
 		}
 
 		// Affiche nom du champ
-		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
+		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $fieldlist[$field], ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
 	}
 	print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 	print getTitleFieldOfList('');
@@ -616,7 +615,7 @@ if ($resql) {
 				$iserasable = 1;
 				$canbedisabled = 1;
 				$canbemodified = 1; // true by default
-				if (isset($obj->code) && $id != 10) {
+				if (isset($obj->code)) {
 					if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
 						$iserasable = 0;
 						$canbedisabled = 0;

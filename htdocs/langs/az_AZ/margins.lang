@@ -31,9 +31,9 @@ UseDiscountOnTotal=Ara cəmi üzrə
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Qlobal endirimin məhsul, xidmət kimi və ya marja hesablanması üçün yalnız ara cəmi kimi qəbul edildiyini müəyyən edir.
 MARGIN_TYPE=Marjanın hesablanması üçün defolt olaraq təklif olunan alış/qiymət qiyməti
 MargeType1=Ən yaxşı satıcı qiymətində marja
-MargeType2=Çəkili Orta Qiymət üzrə Marja (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Xərc qiymətində marja
-MarginTypeDesc=* Ən yaxşı alış qiyməti üzrə marja = Satış qiyməti - Məhsul kartında müəyyən edilmiş ən yaxşı satıcı qiyməti<br>* Çəkili Orta Qiymət üzrə Marja (WAP) = Satış qiyməti - Məhsulun Çəkili Orta Qiyməti (WAP) və ya WAP hələ müəyyən edilməyibsə ən yaxşı satıcı qiyməti<br>* Xərc qiyməti üzrə marja = Satış qiyməti - Məhsul kartında və ya maya dəyəri müəyyən edilmədikdə WAP-da müəyyən edilmiş maya dəyəri və ya ən yaxşı satıcı qiyməti WAP hələ müəyyən edilməmişdir
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Xərc qiyməti
 UnitCharges=Vahid ödənişləri
 Charges=Ödənişlər

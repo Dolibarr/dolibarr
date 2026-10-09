@@ -287,10 +287,12 @@ class BOM extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach ($this->fields as $key => $val) {
-			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-				foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
 				}
 			}
 		}
@@ -459,7 +461,7 @@ class BOM extends CommonObject
 		$sql = "SELECT ".$objectline->getFieldList('l');
 		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = l.fk_product";
-		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
+		$sql .= " WHERE l.fk_".$this->db->sanitize($this->element)." = ".((int) $this->id);
 		$sql .= " AND p.fk_product_type = ". ((int) $typeproduct);
 		if (isset($objectline->fields['position'])) {
 			$sql .= $this->db->order('position', 'ASC');
@@ -715,6 +717,11 @@ class BOM extends CommonObject
 	{
 		global $user;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$logtext = "::updateLine bomid=$this->id, qty=$qty, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
 		$logtext .= ", import_key=$import_key";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
@@ -830,11 +837,15 @@ class BOM extends CommonObject
 			return -2;
 		}
 
-		$this->db->begin();
-
 		// Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new BOMLine($this->db);
 		$line->fetch($idline);
+		if ($this->id > 0 && (int) $line->fk_bom !== (int) $this->id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
+		$this->db->begin();
 		$line->fetch_optionals();
 
 		$staticLine = clone $line;

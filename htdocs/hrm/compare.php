@@ -44,7 +44,6 @@ require_once '../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
@@ -439,7 +438,7 @@ function mergeSkills($TSkill1, $TSkill2)
  */
 function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list-user')
 {
-	global $db, $langs, $conf, $form;
+	global $db, $langs, $conf, $form, $user;
 
 	$out = '';
 	if ($fk_usergroup > 0) {
@@ -451,6 +450,11 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 		LEFT JOIN " . MAIN_DB_PREFIX . "usergroup_user as ugu ON (u.rowid = ugu.fk_user)
 		WHERE u.statut > 0 AND ugu.entity = ".((int) $conf->entity);
 		$sql .= " AND ugu.fk_usergroup=" . ((int) $fk_usergroup);
+		// Without the permission to read all the assessments or to compare all the employees, a user only compares
+		// himself and the employees of his hierarchy (same rule as for the assessments).
+		if (!$user->hasRight('hrm', 'evaluation', 'readall') && !$user->hasRight('hrm', 'compare_advance', 'read')) {
+			$sql .= " AND u.rowid IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
+		}
 
 		$res = $db->query($sql);
 		$out .= '<ul name="' . $namelist . '">';

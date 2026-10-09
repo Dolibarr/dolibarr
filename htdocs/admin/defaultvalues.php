@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'errors'));
+$langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -256,7 +256,7 @@ if ($defaultvalue) {
 }
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }

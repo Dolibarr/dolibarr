@@ -272,9 +272,6 @@ table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	line-height: 18px;
 }
 
-.listofchoicesdesc {
-	color: #999 !important;
-}
 .blinkwait {
 	font-weight: bold;
 	text-decoration:blink !important;
@@ -307,6 +304,15 @@ div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
     padding-bottom: 16px;
     margin: 1em 0em 1em 0em;
     border-radius: 5px;
+}
+
+div.info, div.warning, div.neutral, div.green {
+    box-shadow: 1px 1px 6px #d4d4d4;
+    margin: 1em 0em 1.2em 0em;
+}
+
+div.warning, div.warningborder, section.warning, section.warningborder {
+    border-left: solid 5px #f2cf87;
 }
 
 /* Neutral message */
@@ -348,7 +354,7 @@ span.okinversed {
 
 /* Warning */
 div.warning, span.warning {
-	color: #777711;
+	color: #776611;
 }
 div.warningbackground {
 	padding-top: 16px;

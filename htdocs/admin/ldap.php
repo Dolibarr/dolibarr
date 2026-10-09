@@ -148,7 +148,7 @@ if (!function_exists("ldap_connect")) {
 $form = new Form($db);
 $formldap = new FormLdap($db);
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'ldap', '', -1);
@@ -282,7 +282,7 @@ print '<br>';
  */
 if (function_exists("ldap_connect")) {
 	if (getDolGlobalString('LDAP_SERVER_HOST')) {
-		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
+		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=test&token='.newToken().'">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
 	}
 
 	if ($action == 'test') {

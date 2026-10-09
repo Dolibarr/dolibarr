@@ -77,6 +77,7 @@ CronType=Math o swydd
 CronType_method=Dull galw Dosbarth PHP
 CronType_command=Gorchymyn cregyn
 CronCannotLoadClass=Methu llwytho ffeil dosbarth %s (i ddefnyddio dosbarth %s)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=Cafodd ffeil dosbarth %s ei llwytho, ond ni ddaethpwyd o hyd i wrthrych %s ynddi
 UseMenuModuleToolsToAddCronJobs=Ewch i'r ddewislen " <a href="%s"> Cartref - Offer gweinyddol - Swyddi wedi'u hamserlennu </a> " i weld a golygu swyddi sydd wedi'u hamserlennu.
 JobDisabled=Swydd yn anabl

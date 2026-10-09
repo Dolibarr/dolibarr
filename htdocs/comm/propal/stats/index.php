@@ -99,6 +99,7 @@ $langs->loadLangs(array('propal', 'other', 'companies'));
 
 $picto = 'propal';
 $title = $langs->trans('Proposals');
+$modheader = 'propal';
 
 $dir = $conf->propal->dir_temp;
 $cat_type = Categorie::TYPE_CUSTOMER;
@@ -106,13 +107,14 @@ $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
 
 if ($mode == 'supplier') {
 	$picto = 'supplier_proposal';
-	$title = $langs->trans("ProposalsStatisticsSuppliers");
+	$title = $langs->trans("SupplierProposals");
+	$modheader = 'supplier_proposal';
 	$dir = $conf->supplier_proposal->dir_temp;
 	$cat_type = Categorie::TYPE_SUPPLIER;
 	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Supplier"));
 }
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-'.$modheader.' page-stats');
 
 $page = 0;
 $param = '';
@@ -129,11 +131,23 @@ if (!empty($socid)) {
 }
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/comm/propal/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/comm/propal/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/comm/propal/stats/index.php'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('propal', 'creer'));
+if ($mode == 'supplier') {
+	$urlnew = DOL_URL_ROOT.'/supplier_proposal/card.php?action=create';
+	if (!empty($socid)) {
+		$urlnew .= '&socid='.$socid;
+	}
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/supplier_proposal/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/supplier_proposal/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/comm/propal/stats/index.php?mode=supplier', '', 2, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', $urlnew, '', $user->hasRight('supplier_proposal', 'creer'));
+} else {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT . '/comm/propal/list.php?mode=common' . preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT . '/comm/propal/list.php?mode=kanban' . preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT . '/comm/propal/stats/index.php' . preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('propal', 'creer'));
+}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 

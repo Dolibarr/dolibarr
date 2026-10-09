@@ -1,40 +1,38 @@
-Module68000Name = ບົດລາຍງານ Intracomm
-Module68000Desc = ການຄຸ້ມຄອງບົດລາຍງານ Intracomm (ສະ ໜັບ ສະ ໜູນ ຮູບແບບ DEB/DES ຂອງFrenchຣັ່ງ)
-IntracommReportSetup = ການຕັ້ງຄ່າໂມດູນ Intracommreport
-IntracommReportAbout = ກ່ຽວກັບ intracommreport
+IntraCommReport=ບົດລາຍງານການຄ້າພາຍໃນກຸ່ມ
+IntraCommReports=ບົດລາຍງານການຄ້າພາຍໃນກຸ່ມ
+
+Module68000Name = ບົດລາຍງານການຄ້າພາຍໃນກຸ່ມ
+Module68000Desc = ການຈັດການບົດລາຍງານການຄ້າພາຍໃນກຸ່ມ (ຮອງຮັບຮູບແບບ DEB/DES ຂອງຝຣັ່ງ)
+IntracommReportSetup = ການຕັ້ງຄ່າມໍດູນບົດລາຍງານການຄ້າພາຍໃນກຸ່ມ
+IntracommReportAbout = ກ່ຽວກັບບົດລາຍງານການຄ້າພາຍໃນກຸ່ມ
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numérod'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=ປະເພດນັກສະແດງ
-INTRACOMMREPORT_ROLE_ACTEUR=Rôlejoué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
+INTRACOMMREPORT_NUM_AGREMENT=ເລກທີອະນຸມັດ (ອອກໂດຍ CISD ທີ່ກ່ຽວຂ້ອງ)
+INTRACOMMREPORT_TYPE_ACTEUR=ປະເພດຜູ້ດຳເນີນການ
+INTRACOMMREPORT_ROLE_ACTEUR=ບົດບາດຂອງຜູ້ດຳເນີນການ
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=ລະດັບພັນທະໃນການນຳເຂົ້າ
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=ລະດັບພັນທະໃນການສົ່ງອອກ
+INTRACOMMREPORT_CATEG_FRAISDEPORT=ໝວດໝູ່ການບໍລິການປະເພດ "ຄ່າຂົນສົ່ງ"
+INTRACOMMREPORT_NUM_DECLARATION=ເລກທີຜູ້ແຈ້ງ
 # Menu
-MenuIntracommReport=ບົດລາຍງານ Intracomm
-MenuIntracommReportNew=ການປະກາດໃ່
+MenuIntracommReport=ບົດລາຍງານການຄ້າພາຍໃນກຸ່ມ
+MenuIntracommReportNew=ສ້າງການແຈ້ງໃໝ່
 MenuIntracommReportList=ລາຍການ
-
 # View
-NewDeclaration=ການປະກາດໃ່
-Declaration=ຖະແຫຼງການ
+NewDeclaration=ສ້າງການແຈ້ງໃໝ່
+Declaration=ການແຈ້ງ
 AnalysisPeriod=ໄລຍະເວລາການວິເຄາະ
-TypeOfDeclaration=ປະເພດຂອງການປະກາດ
-DEB=ແຈ້ງການແລກປ່ຽນສິນຄ້າ (DEB)
-DES=ແຈ້ງການແລກປ່ຽນການບໍລິການ (DES)
-
+TypeOfDeclaration=ປະເພດຂອງການແຈ້ງ
+DEB=ການແຈ້ງການແລກປ່ຽນສິນຄ້າ (DEB)
+DES=ການແຈ້ງການແລກປ່ຽນການບໍລິການ (DES)
 # Export page
-IntracommReportTitle=ການກະກຽມໄຟລ X XML ໃນຮູບແບບ ProDouane
-
+IntracommReportTitle=ການກຽມໄຟລ໌ XML ໃນຮູບແບບ ProDouane
 # List
-IntracommReportList=ລາຍຊື່ການປະກາດທີ່ສ້າງຂຶ້ນ
-IntracommReportNumber=ເລກປະກາດ
-IntracommReportPeriod=ໄລຍະເວລາຂອງການວິເຄາະ
-IntracommReportTypeDeclaration=ປະເພດຂອງການປະກາດ
-IntracommReportDownload=ດາວໂຫລດໄຟລ X XML
-
+IntracommReportList=ລາຍການການແຈ້ງທີ່ສ້າງຂຶ້ນ
+IntracommReportNumber=ເລກທີການແຈ້ງ
+IntracommReportPeriod=ໄລຍະເວລາການວິເຄາະ
+IntracommReportTypeDeclaration=ປະເພດຂອງການແຈ້ງ
+IntracommReportDownload=ດາວໂຫຼດໄຟລ໌ XML
 # Invoice
 IntracommReportTransportMode=ຮູບແບບການຂົນສົ່ງ
+DeleteIntraCommReport=ລຶບບົດລາຍງານການຄ້າພາຍໃນກຸ່ມ

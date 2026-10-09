@@ -36,10 +36,18 @@ ActivateAllOnContract=Aktivizēt visus pakalpojumus
 CloseAContract=Slēgt līgumu
 ConfirmDeleteAContract=Vai tiešām vēlaties dzēst šo līgumu un visus tā pakalpojumus?
 ConfirmValidateContract=Vai tiešām vēlaties apstiprināt šo līgumu ar nosaukumu <b> %s </b>?
+ConfirmSignContract=Vai tiešām vēlaties iestatīt šo līgumu kā parakstītu?
+ConfirmUnsignContract=Vai tiešām vēlaties iestatīt šo līgumu kā neparakstītu?
 ConfirmActivateAllOnContract=Tas atvērs visus pakalpojumus (vēl nav aktīvi). Vai tiešām vēlaties atvērt visus pakalpojumus?
 ConfirmCloseContract=Tādējādi tiks slēgti visi pakalpojumi (beidzies vai nav beidzies). Vai tiešām vēlaties slēgt šo līgumu?
 ConfirmCloseService=Vai jūs tiešām vēlaties aizvērt šo pakalpojumu ar datumu <b>%s</b> ?
 ValidateAContract=Apstiprināt līgumu
+UnsignContract=Atteikties no līguma
+ContractSign=Iestatīt Parakstīts
+ContractUnsign=Iestatīt Neparakstīts
+ContractSignedInDolibarr=Līgums parakstīts
+ContractSignedOnline=Līgums parakstīts tiešsaistē
+ContractUnsignedInDolibarr=Līgums neparakstīts
 ActivateService=Aktivizēt pakalpojumu
 ConfirmActivateService=Vai tiešām vēlaties aktivizēt šo pakalpojumu sākot ar datumu <b> %s </b>?
 RefContract=Līguma atsauce
@@ -95,7 +103,13 @@ ConfirmCloneContract=Vai tiešām vēlaties klonēt līgumu <b> %s </b>?
 LowerDateEndPlannedShort=Aktīvo pakalpojumu beigu datums
 SendContractRef=Informācija par līgumu __REF__
 OtherContracts=Citi līgumi
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Tirdzniecības pārstāvis, parakstot līgumu,
 TypeContact_contrat_internal_SALESREPFOLL=Tirdzniecības pārstāvis, turpinot darboties līgums
 TypeContact_contrat_external_BILLING=Norēķinu klientu kontaktu

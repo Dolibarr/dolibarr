@@ -175,7 +175,7 @@ print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 if (empty($mysoc->tva_assuj)) {
 	print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
 } else {
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 

@@ -152,6 +152,7 @@ MailSendSetupIs=ការកំណត់រចនាសម្ព័ន្ធន�
 MailSendSetupIs2=ជាដំបូងអ្នកត្រូវតែចូលទៅជាមួយគណនីអ្នកគ្រប់គ្រង ចូលទៅក្នុងម៉ឺនុយ %sHome - Setup - EMails%s ដើម្បីផ្លាស់ប្តូរប៉ារ៉ាម៉ែត្រ <strong>'%s'</strong> ដើម្បីប្រើរបៀប '<span class='0ecf29ec' </span>'។ ជាមួយនឹងទម្រង់នេះ អ្នកអាចបញ្ចូលការដំឡើងម៉ាស៊ីនមេ SMTP ដែលផ្តល់ដោយអ្នកផ្តល់សេវាអ៊ីនធឺណិតរបស់អ្នក ហើយប្រើមុខងារផ្ញើអ៊ីមែលដ៏ធំ។
 MailSendSetupIs3=ប្រសិនបើអ្នកមានសំណួរអំពីរបៀបដំឡើងម៉ាស៊ីនមេ SMTP របស់អ្នក អ្នកអាចសួរទៅកាន់ %s។
 YouCanAlsoUseSupervisorKeyword=អ្នកក៏អាចបន្ថែមពាក្យគន្លឹះ <strong>__SUPERVISOREMAIL__</strong> ដើម្បីឱ្យអ៊ីមែលត្រូវបានផ្ញើទៅអ្នកគ្រប់គ្រងអ្នកប្រើប្រាស់ (ដំណើរការបានលុះត្រាតែមានអ៊ីមែល កំណត់សម្រាប់អ្នកគ្រប់គ្រងនេះ)
+YouCanAlsoUseAuthorKeyword=You can also add the keyword <strong>__AUTHOREMAIL__</strong> to have email being sent to the author of the document (works only if an email is defined for this author)
 NbOfTargetedContacts=ចំនួនបច្ចុប្បន្ននៃអ៊ីមែលទំនាក់ទំនងគោលដៅ
 UseFormatFileEmailToTarget=ឯកសារដែលបាននាំចូលត្រូវតែមានទម្រង់ <strong>email;name;firstname;other</strong>
 UseFormatInputEmailToTarget=បញ្ចូលខ្សែអក្សរដែលមានទម្រង់ <strong>email;name;firstname;other</strong>
@@ -211,3 +212,4 @@ MailingNumberOfEmailsPerBatchHelp=Define the number of emails you want to send f
 SelectSomeArticlesOrEnterYourOwnContent=Select your articles or enter your own text...
 SelectOneArticleOrEnterYourOwnContent=Select one product or service or enter your own text...
 MailingOf=EMailing of %s
+OtherEMailingsForProject=Other emailings of project

@@ -23,7 +23,6 @@
  *   \ingroup    barcode
  *   \brief      File with parent classes for barcode document modules and numbering modules
  */
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 

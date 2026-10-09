@@ -101,6 +101,7 @@ if (empty($reshook)) {
 	// Delete loan
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoadd) {
 		$object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans('LoanDeleted'), null, 'mesgs');
@@ -149,6 +150,9 @@ if (empty($reshook)) {
 				$object->dateend = $dateend;
 				$object->nbterm = (float) price2num(GETPOST('nbterm'));
 				$object->rate = $rate;
+				$object->frequency = (GETPOSTINT('frequency') > 0 ? GETPOSTINT('frequency') : 12);
+				$object->interest_basis = GETPOSTINT('interest_basis') ? 1 : 0;
+				$object->balloon_amount = GETPOSTFLOAT('balloon_amount');
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_project = GETPOSTINT('projectid');
@@ -205,7 +209,12 @@ if (empty($reshook)) {
 
 				$object->nbterm = GETPOSTINT("nbterm");
 				$object->rate = GETPOSTFLOAT("rate");
+				$object->frequency = (GETPOSTINT('frequency') > 0 ? GETPOSTINT('frequency') : 12);
+				$object->interest_basis = GETPOSTINT('interest_basis') ? 1 : 0;
+				$object->balloon_amount = GETPOSTFLOAT('balloon_amount');
 				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
+				$object->charge_type = GETPOSTINT('charge_type');
+				$object->charge_per_payment = GETPOSTINT('charge_per_payment') ? 1 : 0;
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -333,8 +342,27 @@ if ($action == 'create') {
 	// Rate
 	print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="'.dol_escape_htmltag(GETPOST("rate")).'"> %</td></tr>';
 
+	// Payment frequency and interest basis
+	$frequencies = array();
+	foreach (loanFrequencies() as $key => $label) {
+		$frequencies[$key] = $langs->trans($label);
+	}
+	print '<tr><td>'.$langs->trans("LoanFrequency").'</td><td>'.$form->selectarray('frequency', $frequencies, (GETPOSTINT('frequency') > 0 ? GETPOSTINT('frequency') : 12)).'</td></tr>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans("LoanInterestBasis"), $langs->trans("LoanInterestBasisHelp")).'</td><td>'.$form->selectarray('interest_basis', array(0 => $langs->trans('LoanInterestBasisPeriod'), 1 => $langs->trans('LoanInterestBasisDaily')), GETPOSTINT('interest_basis')).'</td></tr>';
+
+	// Balloon / residual
+	print '<tr><td>'.$form->textwithpicto($langs->trans("LoanBalloon"), $langs->trans("LoanBalloonHelp")).'</td><td><input name="balloon_amount" size="10" value="'.dol_escape_htmltag(GETPOST("balloon_amount")).'" placeholder="'.$langs->trans('Amount').'"></td></tr>';
+
 	// Insurance amount
-	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="'.dol_escape_htmltag(GETPOST("insurance_amount")).'" placeholder="'.$langs->trans('Amount').'"></td></tr>';
+	$chargetypes = array();
+	foreach (loanChargeTypes() as $key => $label) {
+		$chargetypes[$key] = $langs->trans($label);
+	}
+	print '<tr><td>'.$form->textwithpicto($langs->trans("LoanCharge"), $langs->trans("LoanChargeHelp")).'</td><td>';
+	print $form->selectarray('charge_type', $chargetypes, GETPOSTINT('charge_type')).' ';
+	print '<input name="insurance_amount" size="10" value="'.dol_escape_htmltag(GETPOST("insurance_amount")).'" placeholder="'.$langs->trans('Amount').'"> ';
+	print $form->selectarray('charge_per_payment', array(0 => $langs->trans('LoanChargeTotal'), 1 => $langs->trans('LoanChargePerPayment')), GETPOSTINT('charge_per_payment'));
+	print '</td></tr>';
 
 	// Project
 	if (isModEnabled('project')) {
@@ -442,7 +470,7 @@ if ($id > 0) {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'money-bill-alt', 0, '', '', 0, '', 1);
+		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'money-bill-alt', 0, '', '', 0, '', ($action == 'edit' ? 0 : 1));
 
 		// Loan card
 		$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -507,11 +535,18 @@ if ($id > 0) {
 
 		// Insurance
 		if ($action == 'edit') {
-			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
-			print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
+			$chargetypes = array();
+			foreach (loanChargeTypes() as $key => $label) {
+				$chargetypes[$key] = $langs->trans($label);
+			}
+			print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("LoanCharge"), $langs->trans("LoanChargeHelp")).'</td><td>';
+			print $form->selectarray('charge_type', $chargetypes, (int) $object->charge_type).' ';
+			print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"> ';
+			print $form->selectarray('charge_per_payment', array(0 => $langs->trans('LoanChargeTotal'), 1 => $langs->trans('LoanChargePerPayment')), (int) $object->charge_per_payment);
+			print '</td></tr>';
 			print '</td></tr>';
 		} else {
-			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td><span class="amount">'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span></td></tr>';
+			print '<tr><td class="titlefield">'.loanChargeLabel($object->charge_type, $langs).'</td><td><span class="amount">'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span>'.((float) $object->insurance_amount ? ' <span class="opacitymedium">'.$langs->trans($object->charge_per_payment ? 'LoanChargePerPayment' : 'LoanChargeTotal').'</span>' : '').'</td></tr>';
 		}
 
 		// Date start
@@ -554,6 +589,41 @@ if ($id > 0) {
 		}
 		print '</td></tr>';
 
+		// Payment frequency
+		$frequencies = array();
+		foreach (loanFrequencies() as $key => $label) {
+			$frequencies[$key] = $langs->trans($label);
+		}
+		print '<tr><td>'.$langs->trans("LoanFrequency").'</td>';
+		print '<td>';
+		if ($action == 'edit') {
+			print $form->selectarray('frequency', $frequencies, (int) $object->frequency);
+		} else {
+			print $frequencies[(int) $object->frequency] ?? (int) $object->frequency;
+		}
+		print '</td></tr>';
+
+		// Interest basis
+		$bases = array(0 => $langs->trans('LoanInterestBasisPeriod'), 1 => $langs->trans('LoanInterestBasisDaily'));
+		print '<tr><td>'.$form->textwithpicto($langs->trans("LoanInterestBasis"), $langs->trans("LoanInterestBasisHelp")).'</td>';
+		print '<td>';
+		if ($action == 'edit') {
+			print $form->selectarray('interest_basis', $bases, (int) $object->interest_basis);
+		} else {
+			print $bases[(int) $object->interest_basis];
+		}
+		print '</td></tr>';
+
+		// Balloon / residual
+		print '<tr><td>'.$form->textwithpicto($langs->trans("LoanBalloon"), $langs->trans("LoanBalloonHelp")).'</td>';
+		print '<td>';
+		if ($action == 'edit') {
+			print '<input name="balloon_amount" size="10" value="'.((float) $object->balloon_amount ? price2num($object->balloon_amount) : '').'">';
+		} else {
+			print ((float) $object->balloon_amount ? '<span class="amount">'.price($object->balloon_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span>' : '');
+		}
+		print '</td></tr>';
+
 		// Accountancy account capital
 		print '<tr>';
 		if ($action == 'edit') {
@@ -590,7 +660,7 @@ if ($id > 0) {
 		print '<tr>';
 		if ($action == 'edit') {
 			print '<td class="nowrap fieldrequired">';
-			print $langs->trans("LoanAccountancyInsuranceCode");
+			print $langs->trans("LoanAccountancyChargeCode", loanChargeLabel($object->charge_type, $langs));
 			print '</td><td>';
 
 			if (isModEnabled('accounting') && $formaccounting !== null) {
@@ -602,7 +672,7 @@ if ($id > 0) {
 			print '</td>';
 		} else {
 			print '<td class="nowrap">';
-			print $langs->trans("LoanAccountancyInsuranceCode");
+			print $langs->trans("LoanAccountancyChargeCode", loanChargeLabel($object->charge_type, $langs));
 			print '</td><td>';
 
 			if (isModEnabled('accounting')) {
@@ -690,7 +760,7 @@ if ($id > 0) {
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
 			print '<td>'.$langs->trans("BankAccount").'</td>';
-			print '<td class="right">'.$langs->trans("Insurance").'</td>';
+			print '<td class="right">'.loanChargeLabel($object->charge_type, $langs).'</td>';
 			print '<td class="right">'.$langs->trans("Interest").'</td>';
 			print '<td class="right">'.$langs->trans("LoanCapital").'</td>';
 			print '<td class="right">'.$langs->trans("Total").'</td>';
@@ -786,7 +856,7 @@ if ($id > 0) {
 
 				// Delete
 				if (($object->paid == 0 || $object->paid == 2) && $user->hasRight('loan', 'delete')) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+					print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 				}
 
 				print "</div>";

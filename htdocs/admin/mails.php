@@ -4,9 +4,11 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
  * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- *
+ * Copyright (C) 2026		Anthony Berton				<anthony.berton@bb2a.fr>
+
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -41,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
+$langs->loadLangs(array("companies", "products", "admin", "mails", "other"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -93,6 +95,7 @@ if ($action == 'update' && !$cancel) {
 	}
 	if (!$error && !isValidEmail(GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml'))) {
 		$error++;
+		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorBadEMail", GETPOST("MAIN_MAIL_EMAIL_FROM", 'alphanohtml')), null, 'errors');
 		$action = 'edit';
 	}
@@ -102,6 +105,9 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO", GETPOST("MAIN_MAIL_FORCE_SENDTO", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT", GETPOSTINT("MAIN_MAIL_ENABLED_USER_DEST_SELECT"), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MAIN_MAIL_NO_WITH_TO_SELECTED', GETPOSTINT('MAIN_MAIL_NO_WITH_TO_SELECTED'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', GETPOST('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
+
+
 		// Send mode parameters
 		dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", GETPOST("MAIN_MAIL_SENDMODE", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT", GETPOSTINT("MAIN_MAIL_SMTP_PORT"), 'chaine', 0, '', $conf->entity);
@@ -500,7 +506,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID" size="32" value="'.$mainstmpid.'">';
+			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID" size="32" value="'.$mainstmpid.'" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_ID'), $htmltext, 1, 'superadmin');
@@ -518,7 +524,7 @@ if ($action == 'edit') {
 		print '</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '" autocomplete="off">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="' . htmlspecialchars($mainsmtppw, ENT_COMPAT, 'UTF-8') . '" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_PW'), $htmltext, 1, 'superadmin');
@@ -670,6 +676,12 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>';
 	print $form->selectyesno('MAIN_MAIL_NO_WITH_TO_SELECTED', getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED'), 1);
 	print '</td></tr>';
+	// Global signature for all users employees
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS'), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, 0, '90%');
+	$text = $langs->trans("MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS");
+	$texthelp = $langs->trans("MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS_Help");
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($text, $texthelp, 1, 'help').'</td><td>'.$doleditor->Create(1).'</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -903,6 +915,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
 		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
 			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
+				$langs->load('errors');
 				print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')));
 			} else {
 				print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
@@ -921,6 +934,7 @@ if ($action == 'edit') {
 	if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
 		print img_warning($langs->trans("Mandatory"));
 	} elseif (!isValidEmail(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'))) {
+		$langs->load('errors');
 		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_EMAIL_FROM')));
 	}
 	print '</td></tr>';
@@ -969,6 +983,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.(getDolGlobalString('MAIN_MAIL_ERRORS_TO'));
 	if (getDolGlobalString('MAIN_MAIL_ERRORS_TO') && !isValidEmail(getDolGlobalString('MAIN_MAIL_ERRORS_TO'))) {
+		$langs->load('errors');
 		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_ERRORS_TO')));
 	}
 	print '</td></tr>';
@@ -986,6 +1001,7 @@ if ($action == 'edit') {
 			$val = trim($val);
 			print $val;
 			if (!isValidEmail($val, 0, 1)) {
+				$langs->load('errors');
 				print img_warning($langs->trans("ErrorBadEMail", $val));
 			}
 			$i++;
@@ -999,7 +1015,12 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')).'</td></tr>';
 	//Disable autoselect to
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED')).'</td></tr>';
-
+	// Global signature for all users employees
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS'), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, 0, '90%', 1);
+	$text = $langs->trans("MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS");
+	$texthelp = $langs->trans("MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS_Help");
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($text, $texthelp, 1, 'help').'</td><td>'.$doleditor->Create(1).'</td></tr>';
 	print '</table>';
 	print '</div>';
 
@@ -1015,7 +1036,10 @@ if ($action == 'edit') {
 	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') /* && $port && $server */) { // $port and $server can't be empty
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'&date='.dol_now().'#formmailaftertstconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$mailtest = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
+				$testconnectrefusal = $mailtest->checkSmtpTargetAllowed((string) $server, (int) $port);
+				print dolGetButtonAction($testconnectrefusal, $langs->trans("DoTestServerAvailability"), 'default', $_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'&date='.dol_now().'#formmailaftertstconnect', '', $testconnectrefusal ? -1 : 1);
 			}
 		} else {
 			//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
@@ -1168,12 +1192,7 @@ if ($action == 'edit') {
 
 		$mail = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
-		$errormsg = '';
-
-		$listOfAllowedPorts = array('25', '465', '587', '2525');
-		if (!in_array((string) $port, $listOfAllowedPorts)) {
-			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
-		}
+		$errormsg = $mail->checkSmtpTargetAllowed((string) $server, (int) $port);
 
 		if (empty($errormsg)) {
 			$result = $mail->check_server_port((string) $server, (int) $port);

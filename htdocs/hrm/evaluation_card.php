@@ -138,9 +138,23 @@ if (empty($reshook)) {
 	if ($action == 'saveSkill' && $permissiontoadd) {
 		$TNote = GETPOST('TNote', 'array');
 		if (!empty($TNote)) {
+			$maxrank = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
 			foreach ($object->lines as $line) {
-				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
-				$line->update($user);
+				if (!isset($TNote[$line->fk_skill])) {
+					continue; // No rank received for this skill, we keep the current one
+				}
+				$newrank = ($TNote[$line->fk_skill] == "NA" ? -1 : (int) $TNote[$line->fk_skill]);
+				if ($newrank < -1 || $newrank > $maxrank) {
+					// A rank can only be "not applicable" (-1) or a level between 0 and the maximum number of levels
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorBadValueForParameter", $TNote[$line->fk_skill], 'TNote['.$line->fk_skill.']'), null, 'errors');
+					continue;
+				}
+				$line->rankorder = $newrank;
+				$result = $line->update($user);
+				if ($result < 0) {
+					setEventMessages($line->error, $line->errors, 'errors');
+				}
 			}
 			//setEventMessage($langs->trans("SaveLevelSkill"));
 		}
@@ -149,10 +163,10 @@ if (empty($reshook)) {
 	}
 
 	if ($action == "validate" && $permissiontoadd) {
-		$TNote = GETPOST('TNote', 'array');
+		// Levels are saved in database as soon as they are clicked (see core/ajax/updatefield.php)
 		$emptyTNote = true;
 		foreach ($object->lines as $line) {
-			if (!in_array($TNote[$line->fk_skill], array("0", ""))) {
+			if ((int) $line->rankorder != 0) {
 				$emptyTNote = false;
 				break;
 			}
@@ -191,7 +205,7 @@ if (empty($reshook)) {
 	$trackid = 'evaluation'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	if ($action == 'close' && $permissiontoadd) {
+	if ($action == 'close' && $permissiontoadd && $object->status == Evaluation::STATUS_VALIDATED) {	// Only a validated assessment can be closed
 		// save evaldet lines to user;
 		$sk = new SkillRank($db);
 		$SkillrecordsForActiveUser = $sk->fetchAll('ASC', 'fk_skill', 0, 0, "(fk_object:=:".((int) $object->fk_user).") AND (objecttype:=:'".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."')", 'AND');
@@ -223,10 +237,19 @@ if (empty($reshook)) {
 					$updSkill = $SkillrecordsForActiveUser[$keyFind];
 
 					$updSkill->rankorder = $line->rankorder;
-					$updSkill->update($user);
+					$result = $updSkill->update($user);
+					if ($result < 0) {
+						$errors++;
+						setEventMessages($updSkill->error, $updSkill->errors, 'errors');
+					}
 				} else { // else we create the skill
 					$newSkill = new SkillRank($db);
 					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
+
+					if ($resCreate <= 0) {
+						$errors++;
+						setEventMessage($langs->trans('ErrorCreateUserSkill', $line->fk_skill), 'errors');
+					}
 				}
 			}
 		}
@@ -236,7 +259,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'reopen' && $permissiontoadd) {
+	if ($action == 'reopen' && $permissiontoadd && $object->status == Evaluation::STATUS_CLOSED) {	// Only a closed assessment can be reopened
 		// no update here we just change the evaluation status
 		$object->setStatut(Evaluation::STATUS_VALIDATED);
 	}
@@ -251,7 +274,7 @@ if (empty($reshook)) {
 
 		$upload_dir = $conf->hrm->dir_output;
 		$file = $upload_dir.'/'.GETPOST('file');
-		$ret = dol_delete_file($file, 0, 0, 0, $object);
+		$ret = dol_delete_file($file, 1, 0, 0, $object);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -276,11 +299,27 @@ llxHeader('', $title, $help_url, '', 0, 0, '', $css);
 ?>
 <script>
 	$(document).ready(function() {
-		$("#btn_valid").click(function() {
-			console.log("Click on btn_valid");
-			var form = $("#form_save_rank");
-			form.submit();
-			return true;
+		// Save the level of a skill as soon as it is clicked, so it is not lost when leaving the page
+		$("#form_save_rank").on("change", "input[name^=TNote]", function() {
+			var lineid = $(this).closest("tr").attr("id").replace(/^row-/, "");
+			var rank = $(this).val();
+			if (rank == "NA") {
+				rank = -1;	/* Not applicable */
+			}
+			console.log("Save rank "+rank+" for evaluation line "+lineid);
+			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/updatefield.php", {
+				token: "<?php echo currentToken(); ?>",
+				element: "evaluationdet",
+				fk_element: lineid,
+				field: "rankorder",
+				value: rank
+			}).done(function(data) {
+				if (data && data.error) {
+					$.jnotify(data.error, "error", true);
+				}
+			}).fail(function(xhr) {
+				$.jnotify("<?php echo dol_escape_js($langs->transnoentitiesnoconv("ErrorFailedToUpdateRecord")); ?>", "error", true);
+			});
 		});
 	});
 </script>
@@ -358,7 +397,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = evaluationPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -673,7 +712,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
-					print dolGetButtonAction($langs->trans('Save').'&nbsp;'.$langs->trans('and').'&nbsp;'.$langs->trans('Valid'), '', 'default', '#', 'btn_valid', $permissiontovalidate);
+					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=validate&token='.newToken(), 'btn_valid', $permissiontovalidate);
 				} else {
 					$langs->load("errors");
 					print dolGetButtonAction($langs->trans("ErrorAddAtLeastOneLineFirst"), $langs->trans("Validate"), 'default', '#', '', 0);
@@ -682,7 +721,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete);
+			print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 
 
@@ -742,7 +781,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Presend form
 	$modelmail = 'evaluation';
 	$defaulttopic = 'InformationMessage';
-	$diroutput = $conf->hrm->dir_output;
+	$diroutput = $conf->hrm->dir_output.'/evaluation';
 	$trackid = 'evaluation'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

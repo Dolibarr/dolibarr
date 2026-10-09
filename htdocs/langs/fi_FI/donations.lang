@@ -57,3 +57,7 @@ donAnonymous=Anonyymi lahjoitus
 AnonymousDonationTooltip=Rastita tämä ruutu, jos haluat lahjoituksesi pysyvän nimettömänä. Henkilötietojasi ei kysytä.
 publicDonationFieldHelp=%s voi julkaista lahjoitukseni julkisessa rekisterissä
 listOfPublicDonations=Luettelo julkisista lahjoituksista
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

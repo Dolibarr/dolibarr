@@ -3,7 +3,7 @@
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -380,6 +380,14 @@ class Members extends DolibarrApi
 
 		$member = new Adherent($this->db);
 		foreach ($request_data as $field => $value) {
+			if (in_array($field, array('pass', 'pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+				// This properties can't be set/modified with API
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
+			}
+			if (in_array($field, array('user_id')) && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+				// This properties can't be set/modified with API without permission user->user->creer
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without permission user->user->create");
+			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$member->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -423,7 +431,17 @@ class Members extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$sav_user_id = $member->user_id;
+
 		foreach ($request_data as $field => $value) {
+			if (in_array($field, array('pass', 'pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
+				// This properties can't be set/modified with API
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs");
+			}
+			if (in_array($field, array('user_id')) && !DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+				// This properties can't be set/modified with API without permission user->user->creer
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without the permission user->user->create");
+			}
 			if ($field == 'id') {
 				continue;
 			}
@@ -441,20 +459,24 @@ class Members extends DolibarrApi
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {
+				// Resiliating or excluding a member requires the permission to delete members, like on the member card
+				if (in_array((string) $value, array('0', '-2'), true) && (string) $member->status !== (string) $value && !DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
+					throw new RestException(403, 'Resiliating or excluding a member requires the permission to delete members');
+				}
 				if ($value == '0') {
 					$result = $member->resiliate(DolibarrApiAccess::$user);
 					if ($result < 0) {
-						throw new RestException(500, 'Error when resiliating member: '.$member->error);
+						throw new RestException(500, 'Error when resiliating member: '.$member->errorsToString());
 					}
 				} elseif ($value == '1') {
 					$result = $member->validate(DolibarrApiAccess::$user);
 					if ($result < 0) {
-						throw new RestException(500, 'Error when validating member: '.$member->error);
+						throw new RestException(500, 'Error when validating member: '.$member->errorsToString());
 					}
 				} elseif ($value == '-2') {
 					$result = $member->exclude(DolibarrApiAccess::$user);
 					if ($result < 0) {
-						throw new RestException(500, 'Error when excluding member: '.$member->error);
+						throw new RestException(500, 'Error when excluding member: '.$member->errorsToString());
 					}
 				}
 			} else {
@@ -464,10 +486,12 @@ class Members extends DolibarrApi
 
 		// If there is no error, update() returns the number of affected rows
 		// so if the update is a no op, the return value is zero.
-		if ($member->update(DolibarrApiAccess::$user) >= 0) {
+		$nosyncuser = 0;
+		$nosyncpassword = 1;										// Disable password sync. Management of password must be done using the user API only.
+		if ($member->update(DolibarrApiAccess::$user, 0, $nosyncuser, $nosyncpassword) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating member: '.$member->error);
+			throw new RestException(500, 'Error when updating member: '.$member->errorsToString());
 		}
 	}
 
@@ -565,6 +589,9 @@ class Members extends DolibarrApi
 			unset($object->fk_delivery_address);
 			unset($object->shipping_method_id);
 
+			unset($object->pass);
+			unset($object->pass_crypted);
+
 			unset($object->total_ht);
 			unset($object->total_ttc);
 			unset($object->total_tva);
@@ -655,6 +682,10 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$obj_ret = array();
 		foreach ($member->subscriptions as $subscription) {
 			$obj_ret[] = $this->_cleanObjectDatas($subscription);
@@ -697,9 +728,13 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result =  $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
 		if ($result < 1) {
-			throw new RestException(500, $member->error);
+			throw new RestException(500, $member->errorsToString());
 		} else {
 			return $result;
 		}
@@ -734,12 +769,16 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'Member not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
 		return $result;
@@ -966,7 +1005,7 @@ class Members extends DolibarrApi
 		if ($membertype->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating member type: '.$membertype->error);
+			throw new RestException(500, 'Error when updating member type: '.$membertype->errorsToString());
 		}
 	}
 

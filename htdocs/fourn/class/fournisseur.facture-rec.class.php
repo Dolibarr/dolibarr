@@ -286,17 +286,17 @@ class FactureFournisseurRec extends CommonInvoice
 
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 210),
-		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label' => 'Fk projet', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 85),
-		'fk_account' => array('type' => 'integer', 'label' => 'Fk account', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
-		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'Fk cond reglement', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'Fk mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 85),
+		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 175),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'date_lim_reglement' => array('type' => 'date', 'label' => 'Date lim reglement', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 
 		'note_private' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 105),
 		'note_public' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
 		'modelpdf' => array('type' => 'varchar(255)', 'label' => 'Modelpdf', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 
-		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 180),
 		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrency code', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'Multicurrency tx', 'enabled' => 1, 'visible' => -1, 'position' => 190, 'isameasure' => 1),
 		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ht', 'enabled' => 1, 'visible' => -1, 'position' => 195, 'isameasure' => 1),
@@ -347,6 +347,8 @@ class FactureFournisseurRec extends CommonInvoice
 
 		$error = 0;
 		$now = dol_now();
+
+		$label = empty($this->label) ? $this->libelle : $this->label;
 
 		// Clean parameters
 		$this->titre = empty($this->titre) ? '' : $this->titre;	// deprecated
@@ -414,7 +416,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ", ".((int) $facfourn_src->socid);
 			$sql .= ", '".$this->db->idate($now)."'";
 			$sql .= ", ".((int) $this->suspended);
-			$sql .= ", '".$this->db->escape($this->libelle)."'";
+			$sql .= ", '".$this->db->escape($label)."'";
 			$sql .= ", " .(!empty($facfourn_src->total_ttc) ? (float) $facfourn_src->total_ttc : '0');                              // amount
 			$sql .= ", " .((int) $user->id);
 			$sql .= ", " .(!empty($this->fk_project) ? ((int) $this->fk_project) : 'NULL');
@@ -707,9 +709,10 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->socid                    = $obj->fk_soc;
 				$this->date_creation            = $obj->datec;
 				$this->date_modification        = $obj->tms;
+
 				$this->status	                = $obj->suspended;
 				$this->suspended                = $obj->suspended;
-				$this->libelle                  = $obj->label;
+
 				$this->label                    = $obj->label;
 				$this->vat_src_code             = $obj->vat_src_code;
 				$this->total_localtax1          = $obj->localtax1;
@@ -863,8 +866,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->total_localtax2          = $objp->total_localtax2;
 				$line->total_ttc                = $objp->total_ttc;
 				$line->product_type             = $objp->product_type;
-				$line->date_start               = $this->db->jdate($objp->date_start);
-				$line->date_end                 = $this->db->jdate($objp->date_end);
+				$line->date_start               = $objp->date_start; // Not a SQL datetime string, but a boolean 0 or 1, jdate() would corrupt it
+				$line->date_end                 = $objp->date_end; // Not a SQL datetime string, but a boolean 0 or 1, jdate() would corrupt it
 				$line->info_bits                = $objp->info_bits	;
 				$line->special_code             = $objp->special_code;
 				$line->rang                     = $objp->rang;
@@ -1176,6 +1179,11 @@ class FactureFournisseurRec extends CommonInvoice
 	{
 		global $mysoc, $user;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$facid = $this->id;
 
 		dol_syslog(get_class($this). '::updateline facid=' .$facid." rowid=$rowid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
@@ -1274,7 +1282,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', special_code = ' . (int) $special_code;
 		$sql .= ', rang = ' . (int) $rang;
 		$sql .= ', fk_unit = ' . ($fk_unit ? "'" . $this->db->escape($fk_unit) . "'" : 'null');
-		$sql .= ', fk_user_modif = ' . (int) $user;
+		$sql .= ', fk_user_modif = ' . (int) $user->id;
 		$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
 		$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
 		$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);
@@ -1316,7 +1324,8 @@ class FactureFournisseurRec extends CommonInvoice
 		if (empty($this->date_when)) {
 			return false;
 		}
-		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency, 1);
+		// date_when is read from database in the timezone of the server (jdate), so the delay must be added in this timezone
+		return dol_time_plus_duree((int) $this->date_when, $this->frequency, $this->unit_frequency, 1, 'tzserver');
 	}
 
 	/**

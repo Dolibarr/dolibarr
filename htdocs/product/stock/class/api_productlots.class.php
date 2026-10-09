@@ -86,6 +86,10 @@ class Productlots extends DolibarrApi
 			throw new RestException(404, 'Product lots not found');
 		}
 
+		if ($id > 0 && !DolibarrApi::_checkAccessToResource('produit', $this->productlot->id, 'product_lot')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		return $this->_cleanObjectDatas($this->productlot);
 	}
 
@@ -127,7 +131,9 @@ class Productlots extends DolibarrApi
 		$sql  = "SELECT pl.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lot AS pl";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot_extrafields AS ple ON ple.fk_object = pl.rowid";
-		$sql .= " WHERE 1=1";
+		// Productlot sets ismultientitymanaged = 1, so the list must be restricted to the entities the
+		// caller may see, as productlot_list.php does. Without it the API returns the lots of every entity.
+		$sql .= " WHERE pl.entity IN (".getEntity('productlot').")";
 
 		// Global filters
 		if ($sqlfilters) {
@@ -275,7 +281,7 @@ class Productlots extends DolibarrApi
 			throw new RestException(404, 'productlot not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('productlot', $this->productlot->id, 'product_lot', '', 'fk_soc', 'rowid')) {
+		if (!DolibarrApi::_checkAccessToResource('produit', $this->productlot->id, 'product_lot')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
@@ -333,7 +339,7 @@ class Productlots extends DolibarrApi
 			throw new RestException(404, 'Product lot not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('productlot', $this->productlot->id, 'product_lot', '', 'fk_soc', 'rowid')) {
+		if (!DolibarrApi::_checkAccessToResource('produit', $this->productlot->id, 'product_lot')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

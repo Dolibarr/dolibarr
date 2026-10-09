@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
+$langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -475,7 +475,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven hideifdefault"><td>' . $langs->trans("MAIN_MAIL_SMTPS_ID") . '</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || (/* $user->admin && */ !$user->entity)) {
-			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_EMAILING" size="32" value="' . $mainstmpid . '">';
+			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID_EMAILING" size="32" value="' . $mainstmpid . '" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_ID_EMAILING'), $htmltext, 1, 'superadmin');
@@ -490,7 +490,7 @@ if ($action == 'edit') {
 		print '<tr class="drag drop oddeven smtp_pw hideifdefault"><td>' . $langs->trans("MAIN_MAIL_SMTPS_PW") . '</td><td>';
 		// SuperAdministrator access only
 		if (!isModEnabled('multicompany') || (/* $user->admin && */ !$user->entity)) {
-			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW_EMAILING" size="32" value="' . $mainsmtppw . '">';
+			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW_EMAILING" size="32" value="' . $mainsmtppw . '" autocomplete="new-password">';
 		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto(getDolGlobalString('MAIN_MAIL_SMTPS_PW_EMAILING'), $htmltext, 1, 'superadmin');
@@ -732,16 +732,19 @@ if ($action == 'edit') {
 	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') && $port && $server) {
-				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=testconnect&token='.newToken().'">' . $langs->trans("DoTestServerAvailability") . '</a>';
+				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$mailtest = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
+				$testconnectrefusal = $mailtest->checkSmtpTargetAllowed((string) $server, (int) $port);
+				print dolGetButtonAction($testconnectrefusal, $langs->trans("DoTestServerAvailability"), 'default', $_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken(), '', $testconnectrefusal ? -1 : 1);
 			}
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("FeatureNotAvailableOnLinux") . '">' . $langs->trans("DoTestServerAvailability") . '</a>';
 		}
 
-		print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=test&mode=init">' . $langs->trans("DoTestSend") . '</a>';
+		print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=test&mode=init&token=' . newToken() . '">' . $langs->trans("DoTestSend") . '</a>';
 
 		if (isModEnabled('fckeditor')) {
-			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=testhtml&mode=init">' . $langs->trans("DoTestSendHTML") . '</a>';
+			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=testhtml&mode=init&token=' . newToken() . '">' . $langs->trans("DoTestSendHTML") . '</a>';
 		}
 	}
 
@@ -761,12 +764,7 @@ if ($action == 'edit') {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
-		$errormsg = '';
-
-		$listOfAllowedPorts = array('25', '465', '587', '2525');
-		if (!in_array((string) $port, $listOfAllowedPorts)) {
-			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
-		}
+		$errormsg = $mail->checkSmtpTargetAllowed((string) $server, (int) $port);
 
 		if (empty($errormsg)) {
 			$result = $mail->check_server_port((string) $server, (int) $port);
@@ -822,9 +820,9 @@ if ($action == 'edit') {
 		$formmail->withdeliveryreceipt = 1;
 		$formmail->withfckeditor = ($action == 'testhtml' ? 1 : 0);
 		$formmail->ckeditortoolbar = 'dolibarr_mailings';
-		// Tableau des substitutions
+		// Array of substitutions
 		$formmail->substit = $substitutionarrayfortest;
-		// Tableau des parameters complementaires du post
+		// Array of additional post parameters
 		$formmail->param["action"] = "send";
 		$formmail->param["models"] = "body";
 		$formmail->param["mailid"] = 0;

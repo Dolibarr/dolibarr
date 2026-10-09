@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -92,7 +92,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		// Setting of prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$mask = !getDolGlobalString('PROPALE_SAPHIR_MASK') ? '' : $conf->global->PROPALE_SAPHIR_MASK;
+		$mask = getDolGlobalString('PROPALE_SAPHIR_MASK');
 		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpropal" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$texte .= '<td class="left"><input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
@@ -139,12 +139,12 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	 */
 	public function getNextValue($objsoc, $propal)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = !getDolGlobalString('PROPALE_SAPHIR_MASK') ? '' : $conf->global->PROPALE_SAPHIR_MASK;
+		$mask = getDolGlobalString('PROPALE_SAPHIR_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

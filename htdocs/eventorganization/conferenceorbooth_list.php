@@ -3,7 +3,7 @@
  * Copyright (C) 2021		Florian Henry				<florian.henry@scopen.fr>
  * Copyright (C) 2023-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,6 +146,9 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -558,13 +561,13 @@ if ($projectid > 0) {
 	print '<tr><td class="">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', null, null, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount:6', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', null, null, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount:6', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="">';
@@ -579,7 +582,7 @@ if ($projectid > 0) {
 	// Show message
 	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
-	$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&file='.urlencode('calendar-'.$project->ref.'.ics').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
+	$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	if (empty($project->date_start_event) || empty($project->date_end_event)) {
 		print img_warning($langs->trans("EventStartOrEndDateNotDefined"), '', 'marginleftonlyshort');
@@ -603,7 +606,7 @@ if ($projectid > 0) {
 	print "</td></tr>";
 
 	// Link to the submit vote/register page
-	print '<tr><td class="">';
+	print '<tr><td>';
 	//print '<span class="opacitymedium">';
 	print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
 	//print '</span>';
@@ -613,14 +616,14 @@ if ($projectid > 0) {
 	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
-	print '<div class="tdoverflowmax150 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+	print '<div class="tdoverflowmax150 inline-block valignmiddle"><a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
 	print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
 	//print '</div>';
 	//print ajax_autoselect("linkregister");
 	print '</td></tr>';
 
 	// Link to the subscribe
-	print '<tr><td class="">';
+	print '<tr><td>';
 	//print '<span class="opacitymedium">';
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
@@ -713,10 +716,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -835,7 +838,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].(!empty($projectid) ? '?projectid='.$projectid : '').'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].(!empty($projectid) ? '?projectid='.$projectid : '').'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }

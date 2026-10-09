@@ -258,7 +258,7 @@ OtherFilteredTasks=งานอื่นๆ ที่ถูกกรอง
 NoAssignedTasks=ไม่พบงานที่มอบหมาย (มอบหมายโครงการ/งานให้กับผู้ใช้ปัจจุบันจากช่องเลือกด้านบนเพื่อป้อนเวลา)
 ThirdPartyRequiredToGenerateIntervention=จะต้องกำหนดบุคคลที่สามในโครงการจึงจะสามารถสร้างการแทรกแซงได้
 ThirdPartyRequiredToGenerateInvoice=ต้องกำหนดบุคคลที่สามในโครงการเพื่อให้สามารถออกใบแจ้งหนี้ได้
-ChooseANotYetAssignedTask=เลือกงานที่ยังไม่ได้มอบหมายให้กับคุณ
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=อนุญาตให้ผู้ใช้แสดงความคิดเห็นเกี่ยวกับงาน
 AllowCommentOnProject=อนุญาตให้ผู้ใช้แสดงความคิดเห็นเกี่ยวกับโครงการ

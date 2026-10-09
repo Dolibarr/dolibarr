@@ -282,7 +282,7 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print '<br><br>';
 
 
-	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data"  spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setvar">';
 

@@ -174,7 +174,7 @@ if (!empty($conf->use_javascript_ajax)) {
 	print '</script>'."\n";
 }
 
-print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" name="form_index">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" name="form_index" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';
@@ -217,8 +217,8 @@ print '</td></tr>'."\n";
 
 // Telephone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input name="phone" id="phone" class="maxwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_PHONE')).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_ACCOUNTANT_PHONE'), 'phone', getDolGlobalInt('MAIN_INFO_ACCOUNTANT_COUNTRY'), 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Fax

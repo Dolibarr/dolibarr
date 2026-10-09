@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s has filled a line.\nYou can find your poll at the link:\n%s
 ShowSurvey=Rādīt aptauju
 UserMustBeSameThanUserUsedToVote=Jums jāpiedalās balsošanā un jāizmanto tas pats lietotājvārds, kuru izmantoja balsošanai, lai ievietotu komentāru
 ListOfOpenSurveys=Atvērto aptauju saraksts
+AddTheVote=Click to add the vote

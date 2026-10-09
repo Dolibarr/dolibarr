@@ -242,7 +242,7 @@ class Ldap
 	public $ldapcharset = 'UTF-8';
 
 	/**
-	 * @var false|resource	The internal LDAP connection handle. Was a resource before PHP 8.1 and is an object of class LDAP\Connection since PHP 8.1
+	 * @var bool|resource|LDAP\Connection The internal LDAP connection handle. Resource was a resource before PHP 8.1 and is an object of class LDAP\Connection since PHP 8.1
 	 * @phpstan-var LDAP\Connection
 	 */
 	public $connection;
@@ -1151,6 +1151,12 @@ class Ldap
 
 		// We need to search for this user in order to get their entry.
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
+		if ($this->result === false) {
+			// Invalid filter or search error: do not pass false to ldap_first_entry() (TypeError with PHP 8)
+			$this->ldapErrorCode = ldap_errno($this->connection);
+			$this->ldapErrorText = ldap_error($this->connection);
+			return false;
+		}
 
 		// What is this line for ?
 		//$info = ldap_get_entries($this->connection, $this->result);
@@ -1183,7 +1189,7 @@ class Ldap
 	 *	@param	string			$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
 	 *	@param	string			$useridentifier 	Name of key field (Ex: uid).
 	 *	@param	string[]		$attributeArray 	Array of fields required. Note this array must also contain field $useridentifier (Ex: sn,userPassword)
-	 *	@param	0|1|'1'|'user'|'group'|'member'	$activefilter	'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
+	 *	@param	int<0,1>|'1'|'user'|'group'|'member'	$activefilter	'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	string[]		$attributeAsArray 	Array of fields wanted as an array not a string
 	 *	@return	array<string,array<string,string>>|int<min,-1>				if KO: <0 || if OK: array of [id_record][ldap_field]=value
 	 */
@@ -1233,7 +1239,7 @@ class Ldap
 
 		$info = @ldap_get_entries($this->connection, $this->result);
 
-		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passe
+		// Warning: In info, attribute names are lowercase even if passed
 		// a ldap_search en majuscule !!!
 		//print_r($info);
 
@@ -1321,7 +1327,7 @@ class Ldap
 			$entry = ldap_first_entry($this->connection, $ldapSearchResult);
 
 			if (!$entry) {
-				// Si pas de resultat on cherche dans le domaine
+				// If no result, search in the domain
 				$searchDN = $this->domain;
 				$i++;
 			} else {
@@ -1438,7 +1444,7 @@ class Ldap
 			}
 
 			if (!$result) {
-				// Si pas de resultat on cherche dans le domaine
+				// If no result, search in the domain
 				$searchDN = $this->domain;
 				$i++;
 			} else {

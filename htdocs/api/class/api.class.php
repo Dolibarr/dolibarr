@@ -3,7 +3,7 @@
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025-2026	William Mead			<william@m34d.com>
  *
@@ -101,12 +101,12 @@ class DolibarrApi
 	protected function _checkValForAPI($field, $value, $object)
 	{
 		// phpcs:enable
+		if (!preg_match('/^[a-zA-Z0-9_]+$/', $field)) {
+			throw new RestException(400, 'Parameter '.$field.' is not allowed in request');
+		}
+
 		if (!is_array($value)) {
 			// Make protected values for forbidden properties
-			/* Disabled. A protection exists to check that ->entity is same than the HTTP header DOLAPIENTITY
-			if (in_array($field, array('entity'))) {
-				throw new RestException(400, 'Parameter '.$field.' is not allowed in request. To work on a different entity, you must set the entity into the HTTP header "DOLAPIENTITY: idOfEntity"');
-			}*/
 			if (in_array($field, array(
 				'db', 'table_element', 'table_rowid', 'table_ref_field', 'table_element_line', 'element', 'fk_element', 'element_for_permission', 'class_element_line',
 				'fields', 'TRIGGER_PREFIX', 'picto',
@@ -126,7 +126,7 @@ class DolibarrApi
 
 			// Sanitize the value using its type declared into ->fields of $object
 			if (!empty($object->fields) && !empty($object->fields[$field]) && !empty($object->fields[$field]['type'])) {
-				if (strpos($object->fields[$field]['type'], 'int') || strpos($object->fields[$field]['type'], 'double') || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {
+				if (strpos($object->fields[$field]['type'], 'int') === 0 || strpos($object->fields[$field]['type'], 'double') === 0 || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {
 					return sanitizeVal($value, 'int');
 				}
 				if ($object->fields[$field]['type'] == 'html') {
@@ -184,9 +184,13 @@ class DolibarrApi
 	 */
 	protected function _checkValExtrafieldsForAPI($field, $value, $object)
 	{
+		// phpcs:enable
 		global $extrafields;
 
-		// phpcs:enable
+		if (!preg_match('/^[a-zA-Z0-9_]+$/', $field)) {
+			throw new RestException(400, 'Parameter '.$field.' is not allowed in request');
+		}
+
 		if (!is_array($value)) {
 			// Sanitize the value using its type declared into ->fields of $object
 			$typeOfExtraField = '';
@@ -197,7 +201,7 @@ class DolibarrApi
 			}
 
 			if ($typeOfExtraField) {
-				if (strpos($typeOfExtraField, 'int') || strpos($typeOfExtraField, 'double') || in_array($typeOfExtraField, array('real', 'price', 'stock'))) {
+				if (strpos($typeOfExtraField, 'int') === 0 || strpos($typeOfExtraField, 'double') === 0 || in_array($typeOfExtraField, array('real', 'price', 'stock'))) {
 					return sanitizeVal($value, 'int');
 				}
 				if ($typeOfExtraField == 'html') {
@@ -305,8 +309,19 @@ class DolibarrApi
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 		unset($object->table_rowid);
+		unset($object->childtablesoncascade);
+		unset($object->picto);
+		unset($object->element);
+		unset($object->element_for_permission);
+		unset($object->fk_element);
+		unset($object->table_element);
+		unset($object->table_element_line);
+		unset($object->class_element_line);
+		unset($object->rowid);				// Property must be id
+
 		unset($object->pass);
 		unset($object->pass_indatabase);
+		unset($object->pass_indatabase_crypted);
 
 		// Remove linkedObjects. We should already have and keep only linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
@@ -314,6 +329,7 @@ class DolibarrApi
 
 		unset($object->fields);
 		unset($object->oldline);
+		unset($object->oldcopy);
 
 		unset($object->error);
 		unset($object->errors);
@@ -321,6 +337,7 @@ class DolibarrApi
 		unset($object->warning);
 		unset($object->warnings);
 		unset($object->TRIGGER_PREFIX);
+		unset($object->errorsstring);
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
@@ -334,6 +351,7 @@ class DolibarrApi
 		unset($object->note);				// We use note_public or note_private now
 		unset($object->contact);			// We use contact_id now
 		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
+		unset($object->warehouse);			// We use warehouse_id now
 
 		unset($object->project); // Should be fk_project
 		unset($object->fk_projet); // Should be fk_project
@@ -371,6 +389,13 @@ class DolibarrApi
 		unset($object->stats_reception);
 		unset($object->stats_mrptoconsume);
 		unset($object->stats_mrptoproduce);
+		unset($object->stats_bom);
+		unset($object->stats_mo);
+		unset($object->stats_expedition);
+		unset($object->stats_facturerec);
+		unset($object->stats_facture_fournisseur);
+		unset($object->stats_facturefournrec);
+		unset($object->stats_proposal_supplier);
 
 		unset($object->fieldsforcombobox);
 		unset($object->regeximgext);
@@ -404,25 +429,8 @@ class DolibarrApi
 		unset($object->module);
 		unset($object->origin_object);
 		unset($object->origin);
-		unset($object->element);
-		unset($object->element_for_permission);
-		unset($object->fk_element);
-		unset($object->table_element);
-		unset($object->table_element_line);
-		unset($object->class_element_line);
-		unset($object->picto);
 		unset($object->linked_objects);
 
-		// Remove the $oldcopy property because it is not supported by the JSON
-		// encoder. The following error is generated when trying to serialize
-		// it: "Error encoding/decoding JSON: Type is not supported"
-		// Note: Event if this property was correctly handled by the JSON
-		// encoder, it should be ignored because keeping it would let the API
-		// have a very strange behavior: calling PUT and then GET on the same
-		// resource would give different results:
-		// PUT /objects/{id} -> returns object with oldcopy = previous version of the object
-		// GET /objects/{id} -> returns object with oldcopy empty
-		unset($object->oldcopy);
 
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
@@ -482,15 +490,16 @@ class DolibarrApi
 	/**
 	 * Check access by user to a given resource
 	 *
-	 * @param 	string				$resource		element to check
-	 * @param 	int|string|Object	$resource_id	Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
-	 * @param 	string				$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
-	 * @param 	string				$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
-	 * @param 	string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
-	 * @param 	string				$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+	 * @param 	string				$resource				Element code to check
+	 * @param 	int|string|Object	$resource_id			Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+	 * @param 	string				$dbtablename			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+	 * @param 	string				$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+	 * @param 	string				$dbt_keyfield   		Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
+	 * @param 	string				$dbt_select     		Field name for select if not rowid. Not used if objectid is null (optional)
+	 * @param 	string				$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
 	 * @return 	bool
 	 */
-	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $parenttableforentity = '')
 	{
 		// phpcs:enable
 		// Features/modules to check
@@ -506,7 +515,7 @@ class DolibarrApi
 			$feature2 = explode("|", $feature2);
 		}
 
-		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
+		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select, $parenttableforentity);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

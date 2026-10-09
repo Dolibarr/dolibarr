@@ -176,6 +176,9 @@ foreach ($object->fields as $key => $val) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -283,15 +286,17 @@ if (empty($reshook)) {
 							continue;
 						}
 						if (!empty($changeDate)) {
-							if ($action == 'changedatestart_confirm') {			// Test on permission not required
+							if ($action == 'changedatestart_confirm') { 		// Test on permission not required
+								// The start date can be set IF (the end date is empty OR the new date is BEFORE the existing end date).
 								if (empty($objMo->date_end_planned) || $newDate < $objMo->date_end_planned) {
 									$objMo->date_start_planned = $newDate;
 								} else {
 									setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
 									break;
 								}
-							} elseif ($action == 'changedateend_confirm') {		// Test on permission not required
-								if ($newDate > $objMo->date_start_planned) {
+							} elseif ($action == 'changedateend_confirm') {	// Test on permission not required
+								// The end date can be set IF (the start date is empty OR the new date is AFTER the existing start date).
+								if (empty($objMo->date_start_planned) || $newDate > $objMo->date_start_planned) {
 									$objMo->date_end_planned = $newDate;
 								} else {
 									setEventMessages($langs->trans('ErrorModifyMoDateEnd', $objMo->ref), null, 'errors');
@@ -606,7 +611,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Anthony Berton		<anthony.berton@bb2a.fr>
  *
@@ -80,7 +80,7 @@ $utils = new Utils($db);
 
 if ($file && !$what) {
 	//print DOL_URL_ROOT.'/dolibarr_export.php';
-	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))).(GETPOSTINT('page_y') ? '&page_y='.GETPOSTINT('page_y') : ''));
+	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))).(GETPOSTINT('page_y') ? '&page_y='.GETPOSTINT('page_y') : '').(GETPOSTINT('allow_download_app') ? '&allow_download_app=1' : ''));
 	exit;
 }
 
@@ -143,17 +143,15 @@ if ($what == 'mysql') {
 		}
 	}
 
-	if (!$errormsg && $cmddump) {
+	if ($cmddump) {
 		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump, 'chaine', 0, '', 0);
 	}
 
-	if (!$errormsg) {
-		$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
+	$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 
-		$errormsg = $utils->error;
-		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
-		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
-	}
+	$errormsg = $utils->error;
+	$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
+	$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
 }
 
 // MYSQL NO BIN
@@ -234,5 +232,13 @@ top_httphead();
 $db->close();
 
 // Redirect to backup page
-header("Location: dolibarr_export.php".(GETPOSTINT('page_y') ? '?page_y='.GETPOSTINT('page_y') : ''));
+$returnto = 'dolibarr_export.php';
+if (GETPOSTINT('page_y')) {
+	$returnto .= '?page_y='.GETPOSTINT('page_y');
+}
+if (GETPOSTINT('allow_download_app')) {
+	// Keep the parameter to keep the step to export the application files visible
+	$returnto .= (GETPOSTINT('page_y') ? '&' : '?').'allow_download_app=1';
+}
+header("Location: ".$returnto);
 exit();

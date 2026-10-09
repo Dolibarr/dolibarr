@@ -77,6 +77,7 @@ CronType=Aina ya kazi
 CronType_method=Njia ya kupiga simu ya Hatari ya PHP
 CronType_command=Amri ya Shell
 CronCannotLoadClass=Haiwezi kupakia faili ya darasa %s (kutumia darasa %s)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=Faili ya darasa %s ilipakiwa, lakini kitu %s haikupatikana ndani yake
 UseMenuModuleToolsToAddCronJobs=Nenda kwenye menyu " <a href="%s"> Nyumbani - Zana za Msimamizi - Kazi zilizoratibiwa </a> " kuona na kuhariri kazi zilizopangwa.
 JobDisabled=Kazi imezimwa

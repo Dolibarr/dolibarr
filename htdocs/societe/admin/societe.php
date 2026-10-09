@@ -175,6 +175,45 @@ if ($action == 'setdoc') {
 	}
 }
 
+if ($action == 'specimen') {
+	$modele = GETPOST('module', 'alpha');
+
+	$object = new Societe($db);
+	$object->initAsSpecimen();
+
+	// Search template files
+	$file = '';
+	$classname = '';
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/societe/doc/pdf_".$modele.".modules.php", 0);
+		if (file_exists($file)) {
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($classname !== '') {
+		require_once $file;
+
+		$module = new $classname($db);
+		'@phan-var-force ModeleThirdPartyDoc $module';
+		/** @var ModeleThirdPartyDoc $module */
+
+		if ($module->write_file($object, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=societe&file=SPECIMEN.pdf");
+			return;
+		} else {
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
+		}
+	} else {
+		$langs->load('errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+}
+
 //Activate Set accountancy code customer invoice mandatory
 if ($action == "setaccountancycodecustomerinvoicemandatory") {
 	$setaccountancycodecustomerinvoicemandatory = GETPOSTINT('value');
@@ -379,8 +418,8 @@ foreach ($dirsociete as $dirroot) {
 	if (is_resource($handle)) {
 		// Loop on each module find in opened directory
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php') {
-				$file = substr($file, 0, dol_strlen($file) - 4);
+			if (dol_substr($file, 0, 15) == 'mod_codeclient_' && dol_substr($file, -3) == 'php') {
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 				try {
 					dol_include_once($dirroot.$file.'.php');
@@ -468,8 +507,8 @@ foreach ($dirsociete as $dirroot) {
 	$handle = @opendir($dir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php') {
-				$file = substr($file, 0, dol_strlen($file) - 4);
+			if (dol_substr($file, 0, 15) == 'mod_codecompta_' && dol_substr($file, -3) == 'php') {
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 
 				try {
 					dol_include_once($dirroot.$file.'.php');
@@ -520,135 +559,17 @@ print '</div>';
 /*
  *  Document templates generators
  */
+
 print '<br>';
-print load_fiche_titre($langs->trans("ModelModules"), '', '');
-
-// Load array def with activated templates
-$def = array();
-// TODO Replace with $def = getListOfModels($db, $type);
-$sql = "SELECT nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = 'company'";
-$sql .= " AND entity = ".((int) $conf->entity);
-$resql = $db->query($sql);
-if ($resql) {
-	$i = 0;
-	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		if (is_array($array)) {
-			array_push($def, $array[0]);
-		}
-		$i++;
-	}
-} else {
-	dol_print_error($db);
-}
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
-print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Preview").'</td>';
-print "</tr>\n";
-
-foreach ($dirsociete as $dirroot) {
-	$dir = dol_buildpath($dirroot.'doc/', 0);
-
-	$handle = @opendir($dir);
-	if (is_resource($handle)) {
-		while (($file = readdir($handle)) !== false) {
-			if (preg_match('/\.modules\.php$/i', $file)) {
-				$name = substr($file, 4, dol_strlen($file) - 16);
-				$classname = substr($file, 0, dol_strlen($file) - 12);
-
-				try {
-					dol_include_once($dirroot.'doc/'.$file);
-				} catch (Exception $e) {
-					dol_syslog($e->getMessage(), LOG_ERR);
-				}
-
-				$module = new $classname($db);
-				'@phan-var-force ModeleThirdPartyDoc $module';
-
-				$modulequalified = 1;
-				if (!empty($module->version)) {
-					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-						$modulequalified = 0;
-					} elseif ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-						$modulequalified = 0;
-					}
-				}
-
-				if ($modulequalified) {
-					print '<tr class="oddeven"><td width="100">';
-					print dol_escape_htmltag($module->name);
-					print "</td><td>\n";
-					if (method_exists($module, 'info')) {
-						print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
-					} else {
-						print $module->description;
-					}
-					print '</td>';
-
-					// Activate / Disable
-					if (in_array($name, $def)) {
-						print '<td class="center">'."\n";
-						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
-						print img_picto($langs->trans("Enabled"), 'switch_on');
-						print '</a>';
-						print "</td>";
-					} else {
-						if (versioncompare($module->phpmin, versionphparray()) > 0) {
-							print '<td class="center">'."\n";
-							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", implode('.', $module->phpmin))), 'switch_off', 'class="opacitymedium"');
-							print "</td>";
-						} else {
-							print '<td class="center">'."\n";
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.urlencode($name).'&token='.newToken().'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-							print "</td>";
-						}
-					}
-
-					// Info
-					$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-					$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-					if ($module->type == 'pdf') {
-						$htmltooltip .= '<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-					}
-					$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraft").': '.yn((isset($module->option_draft_watermark) ? $module->option_draft_watermark : ''), 1, 1);
-
-					print '<td class="center nowrap">';
-					print $form->textwithpicto('', $htmltooltip, 1, 'info');
-					print '</td>';
-
-					// Preview
-					print '<td class="center nowrap">';
-					if ($module->type == 'pdf') {
-						$linkspec = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
-					} else {
-						$linkspec = img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
-					}
-					print $linkspec;
-					print '</td>';
-
-					print "</tr>\n";
-				}
-			}
-		}
-		closedir($handle);
-	}
-}
-print '</table>';
-print '</div>';
+printDocumentModelList('company', 'societe', 'COMPANY_ADDON_PDF', $langs->trans("ModelModules"), array(
+	'Logo' => 'option_logo',
+	'WatermarkOnDraft' => 'option_draft_watermark',
+), false, '', 0);
 
 print '<br>';
 
-//IDProf
+
+// IDProf
 print load_fiche_titre($langs->trans("CompanyIdProfChecker"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
@@ -823,10 +744,11 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td width="60" class="right">';
-	$arrval = array('0' => $langs->trans("No"),
-	'1' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
-	'2' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
-	'3' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
+	$arrval = array(
+		0 => array('label' => $langs->trans("No")),
+		1 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 1).')</span>'),
+		2 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 2).')</span>'),
+		3 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 3).')</span>'),
 	);
 	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth400');
 	print '</td><td class="right">';
@@ -844,10 +766,11 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td width="60" class="right">';
-	$arrval = array('0' => $langs->trans("No"),
-	'1' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
-	'2' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
-	'3' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
+	$arrval = array(
+		0 => array('label' => $langs->trans("No")),
+		1 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 1).')</span>'),
+		2 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 2).')</span>'),
+		3 => array('label' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')', 'labelhtml' => $langs->trans("Yes").' <span class="opacitymedium small">('.$langs->trans("NumberOfKeyToSearch", 3).')</span>'),
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth400');
 	print '</td><td class="right">';

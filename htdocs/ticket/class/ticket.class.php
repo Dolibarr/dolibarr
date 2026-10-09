@@ -413,7 +413,8 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			if (dol_strlen($this->message) > 65000) {
+			// Field for message is "mediumtext" that has a capacity in bytes (not in chars like it is with varchar), so we must use strlen()
+			if (strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16000000)) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
@@ -1050,7 +1051,8 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
-			if (dol_strlen($this->message) > 65000) {
+			// Field for message is "mediumtext" that has a capacity in bytes (not in chars like it is with varchar), so we must use strlen()
+			if (strlen($this->message) > getDolGlobalInt('TICKET_MAX_LENGTH_FOR_MESSAGE', 16000000)) {
 				global $langs;
 				$langs->loadLangs(array('errors', 'ticket'));
 				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
@@ -1076,15 +1078,15 @@ class Ticket extends CommonObject
 		}
 
 		if (isset($this->type_code)) {
-			$this->timing = trim($this->type_code);
+			$this->type_code = trim($this->type_code);
 		}
 
 		if (isset($this->category_code)) {
-			$this->timing = trim($this->category_code);
+			$this->category_code = trim($this->category_code);
 		}
 
 		if (isset($this->severity_code)) {
-			$this->timing = trim($this->severity_code);
+			$this->severity_code = trim($this->severity_code);
 		}
 		if (isset($this->model_pdf)) {
 			$this->model_pdf = trim($this->model_pdf);
@@ -1372,14 +1374,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheTypesTickets()
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		if (!empty($this->cache_types_tickets) && count($this->cache_types_tickets)) {
 			return 0;
 		}
 		// Cache deja charge
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_type').")";
 		$sql .= " AND active > 0";
@@ -1396,9 +1400,21 @@ class Ticket extends CommonObject
 				$this->cache_types_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_types_tickets[$obj->rowid]['use_default'] = $obj->use_default;
 				$this->cache_types_tickets[$obj->rowid]['pos'] = $obj->pos;
+				$this->cache_types_tickets[$obj->rowid]['entity'] = (int) $obj->entity;
 				$i++;
 			}
-			return $num;
+
+			$parameters = array('dictionary' => 'tickettype');
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$this->cache_types_tickets = array_merge($this->cache_types_tickets, $hookmanager->resArray);
+				}
+			} else {
+				$this->cache_types_tickets = $hookmanager->resArray;
+			}
+
+			return count($this->cache_types_tickets);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -1413,14 +1429,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheCategoriesTickets($publicgroup = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if ($publicgroup == -1 && !empty($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description, public, active, force_severity, fk_parent";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_category').")";
 		$sql .= " AND active > 0";
@@ -1435,24 +1453,39 @@ class Ticket extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$categorytickets = array();
+			'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int,public:int,active:int,force_severity:?string,fk_parent:int}> $categorytickets';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$conf->cache['category_tickets'][$obj->rowid]['code'] = $obj->code;
-				$conf->cache['category_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
-				$conf->cache['category_tickets'][$obj->rowid]['pos'] = $obj->pos;
-				$conf->cache['category_tickets'][$obj->rowid]['public'] = $obj->public;
-				$conf->cache['category_tickets'][$obj->rowid]['active'] = $obj->active;
-				$conf->cache['category_tickets'][$obj->rowid]['force_severity'] = $obj->force_severity;
-				$conf->cache['category_tickets'][$obj->rowid]['fk_parent'] = $obj->fk_parent;
+				$categorytickets[$obj->rowid]['code'] = $obj->code;
+				$categorytickets[$obj->rowid]['use_default'] = $obj->use_default;
+				$categorytickets[$obj->rowid]['pos'] = $obj->pos;
+				$categorytickets[$obj->rowid]['public'] = $obj->public;
+				$categorytickets[$obj->rowid]['active'] = $obj->active;
+				$categorytickets[$obj->rowid]['force_severity'] = $obj->force_severity;
+				$categorytickets[$obj->rowid]['fk_parent'] = $obj->fk_parent;
 
 				// If  translation exists, we use it to store already translated string.
 				// Warning: You should not use this and recompute the translated string into caller code to get the value into expected language
 				$label = ($langs->trans("TicketCategoryShort".$obj->code) != "TicketCategoryShort".$obj->code ? $langs->trans("TicketCategoryShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$conf->cache['category_tickets'][$obj->rowid]['label'] = $label;
+				$categorytickets[$obj->rowid]['label'] = $label;
+				$categorytickets[$obj->rowid]['entity'] = (int) $obj->entity;
 
 				$i++;
 			}
-			return $num;
+			$conf->cache['category_tickets'] = $categorytickets;
+
+			$parameters = array('dictionary' => 'ticketcategory', 'publicgroup' => $publicgroup);
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$conf->cache['category_tickets'] = array_merge($conf->cache['category_tickets'], $hookmanager->resArray);
+				}
+			} else {
+				$conf->cache['category_tickets'] = $hookmanager->resArray;
+			}
+
+			return count($conf->cache['category_tickets']);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -1466,14 +1499,16 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheSeveritiesTickets()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
 			// Cache already loaded
 			return 0;
 		}
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description";
+		// entity is returned so a hook on loadDictionaryCache can tell two rows apart when the
+		// dictionary is read across entities
+		$sql = "SELECT rowid, entity, code, label, use_default, pos, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity";
 		$sql .= " WHERE entity IN (".getEntity('c_ticket_severity').")";
 		$sql .= " AND active > 0";
@@ -1483,17 +1518,32 @@ class Ticket extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			$severitytickets = array();
+			'@phan-var-force array<int,array{code:string,label:string,use_default:int,pos:int}> $severitytickets';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$conf->cache['severity_tickets'][$obj->rowid]['code'] = $obj->code;
+				$severitytickets[$obj->rowid]['code'] = $obj->code;
 				$label = ($langs->trans("TicketSeverityShort".$obj->code) != "TicketSeverityShort".$obj->code ? $langs->trans("TicketSeverityShort".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$conf->cache['severity_tickets'][$obj->rowid]['label'] = $label;
-				$conf->cache['severity_tickets'][$obj->rowid]['use_default'] = $obj->use_default;
-				$conf->cache['severity_tickets'][$obj->rowid]['pos'] = $obj->pos;
+				$severitytickets[$obj->rowid]['label'] = $label;
+				$severitytickets[$obj->rowid]['use_default'] = $obj->use_default;
+				$severitytickets[$obj->rowid]['pos'] = $obj->pos;
+				$severitytickets[$obj->rowid]['entity'] = (int) $obj->entity;
 				$i++;
 			}
-			return $num;
+			$conf->cache['severity_tickets'] = $severitytickets;
+
+			$parameters = array('dictionary' => 'ticketseverity');
+			$reshook = $hookmanager->executeHooks('loadDictionaryCache', $parameters, $this); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+					$conf->cache['severity_tickets'] = array_merge($conf->cache['severity_tickets'], $hookmanager->resArray);
+				}
+			} else {
+				$conf->cache['severity_tickets'] = $hookmanager->resArray;
+			}
+
+			return count($conf->cache['severity_tickets']);
 		} else {
 			dol_print_error($this->db);
 			return -1;
@@ -1669,7 +1719,7 @@ class Ticket extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1678,9 +1728,10 @@ class Ticket extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query['save_lastsearch_values'] = 1;
 			}
 		}
+		$url = dolBuildUrl(DOL_URL_ROOT.'/ticket/card.php', $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -2300,16 +2351,39 @@ class Ticket extends CommonObject
 	public function setCustomer($id)
 	{
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
+			$this->db->begin();
+
+			$sql = "UPDATE ".$this->db->prefix()."ticket";
 			$sql .= " SET fk_soc = ".($id > 0 ? (int) $id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
 			$resql = $this->db->query($sql);
-			if ($resql) {
-				return 1;
-			} else {
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::setCustomer '.$this->error, LOG_ERR);
+				$this->db->rollback();
+
 				return -1;
 			}
+
+			// The Agenda tab of a third party filters on actioncomm.fk_soc alone, so the events already recorded on
+			// the ticket must follow it, as Societe::mergeCompany() already does when two third parties are merged.
+			$sql = "UPDATE ".$this->db->prefix()."actioncomm";
+			$sql .= " SET fk_soc = ".($id > 0 ? (int) $id : "null");
+			$sql .= " WHERE elementtype = 'ticket' AND fk_element = ".((int) $this->id);
+			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this).'::setCustomer '.$this->error, LOG_ERR);
+				$this->db->rollback();
+
+				return -1;
+			}
+
+			$this->db->commit();
+
+			return 1;
 		} else {
 			return -1;
 		}
@@ -2835,7 +2909,7 @@ class Ticket extends CommonObject
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
 			$resarray = $object->copyFilesForTicket();
 			if (is_numeric($resarray) && $resarray == -1) {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 				return -1;
 			}
 
@@ -3078,7 +3152,7 @@ class Ticket extends CommonObject
 									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_replyto, 'email' => $object->origin_replyto, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0));
 									$external_contacts = array_merge($external_contacts, $array_external);
 								} elseif (empty($object->fk_soc) && !empty($object->origin_email)) {
-									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->thirdparty->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $object->thirdparty->id));
+									$array_external = array(array('id' => -1, 'firstname' => '', 'lastname' => $object->origin_email, 'email' => $object->origin_email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => 0)); // no fk_soc here, so $object->thirdparty was never fetched (mirrors the origin_replyto branch above)
 									$external_contacts = array_merge($external_contacts, $array_external);
 								}
 							}
@@ -3167,9 +3241,95 @@ class Ticket extends CommonObject
 									$sendto = $hookmanager->resArray;
 								}
 
+								// If standardised form submitted, override auto-computed recipients with user selection
+								if (GETPOSTISSET('receiver_multiselect')) {
+									$sendto_manual = array();
+
+									$receiver_selected = GETPOST('receiver', 'array');
+									if (is_array($receiver_selected)) {
+										foreach ($receiver_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $email;
+											}
+										}
+									}
+
+									// Free input: plain email or "Name <email>", comma-separated
+									$sendto_free = GETPOST('sendto', 'alphawithlgt');
+									if ($sendto_free !== '') {
+										foreach (explode(',', $sendto_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+												$sendto_manual[$email] = $entry;
+											}
+										}
+									}
+
+									$sendto = $sendto_manual;
+								}
+
+								// CC: start with TICKET_SEND_INTERNAL_CC, then append form selection
 								$sendtocc = array();
+								$sendtocc_emails = array(); // lowercase email index for case-insensitive dedup
 								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
-									$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
+									foreach (explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC")) as $cc_entry) {
+										$cc_entry = trim($cc_entry);
+										if (!$cc_entry) {
+											continue;
+										}
+										// Extract bare email from optional "Name <email>" format
+										if (preg_match('/<\s*([^>]+)\s*>/', $cc_entry, $m)) {
+											$cc_email = strtolower(trim($m[1]));
+										} else {
+											$cc_email = strtolower($cc_entry);
+										}
+										if (!in_array($cc_email, $sendtocc_emails)) {
+											$sendtocc[] = $cc_entry;
+											$sendtocc_emails[] = $cc_email;
+										}
+									}
+								}
+
+								if (GETPOSTISSET('receivercc_multiselect')) {
+									$receivercc_selected = GETPOST('receivercc', 'array');
+									if (is_array($receivercc_selected)) {
+										foreach ($receivercc_selected as $email) {
+											$email = trim((string) $email);
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
+												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
+											}
+										}
+									}
+
+									// Free input: plain email or "Name <email>", comma-separated
+									$sendtocc_free = GETPOST('sendtocc', 'alphawithlgt');
+									if ($sendtocc_free !== '') {
+										foreach (explode(',', $sendtocc_free) as $entry) {
+											$entry = trim($entry);
+											if ($entry === '') {
+												continue;
+											}
+											if (preg_match('/.*<\s*([^>]+)\s*>/', $entry, $matches)) {
+												$email = trim($matches[1]);
+											} else {
+												$email = $entry;
+											}
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
+												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
+											}
+										}
+									}
 								}
 
 								// Don't try to send email when no recipient
@@ -3219,11 +3379,10 @@ class Ticket extends CommonObject
 
 				return 1;
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
+				$this->setErrorsFromObject($object);
 				return -1;
 			}
 		} else {
-			setEventMessages($this->error, $this->errors, 'errors');
 			return -1;
 		}
 	}
@@ -3395,7 +3554,9 @@ class Ticket extends CommonObject
 
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
+		// The count is computed by the database instead of reading every ticket. No ticket is counted as late: the delay is 0
+		// and the check on the creation date was doing nothing.
+		$sql = "SELECT COUNT(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
 		if (empty($user->socid) && isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
@@ -3430,14 +3591,9 @@ class Ticket extends CommonObject
 			$response->img = img_object('', "ticket");
 
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
-				if ($mode == 'opened') {
-					$datelimit = (int) $this->db->jdate($obj->datec) + (int) $delay_warning;
-					if ($datelimit < $now) {
-						//$response->nbtodolate++;
-					}
-				}
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$response->nbtodo = (int) $obj->nb;
 			}
 			return $response;
 		} else {
@@ -3569,5 +3725,198 @@ class Ticket extends CommonObject
 		$modelpath = "core/modules/ticket/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+	/**
+	 * Send an email to the assigned user when a non-closed ticket has gone too long without a reply.
+	 * CAN BE A CRON TASK
+	 *
+	 * The "too long" thresholds are the same ones already used to show the "Late" warning icon on the
+	 * ticket list (TICKET_DELAY_BEFORE_FIRST_RESPONSE and TICKET_DELAY_SINCE_LAST_RESPONSE, both in hours):
+	 * this method does not add new setup, it just acts by email on what that existing warning already
+	 * detects. A ticket is only ever reminded once per calendar day (same dedup convention as the other
+	 * automated reminder emails in the application, via the AC_EMAIL agenda event it logs on success), so
+	 * it keeps being reminded once a day for as long as it stays late, which is the point of an escalation.
+	 * A failure on one ticket (ex: no email template found, assigned user has no email) is counted and does
+	 * not prevent the other late tickets from being processed.
+	 *
+	 * @return	int		0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForStaleTickets()
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+
+		if (!isModEnabled('ticket')) { // Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Ticket"));
+			return 0;
+		}
+
+		$delaybeforefirstresponse = getDolGlobalInt('TICKET_DELAY_BEFORE_FIRST_RESPONSE');
+		$delaysincelastresponse = getDolGlobalInt('TICKET_DELAY_SINCE_LAST_RESPONSE');
+		if (empty($delaybeforefirstresponse) && empty($delaysincelastresponse)) {
+			$this->output = 'Neither TICKET_DELAY_BEFORE_FIRST_RESPONSE nor TICKET_DELAY_SINCE_LAST_RESPONSE is set, nothing to check.';
+			return 0;
+		}
+
+		$langs->loadLangs(array('main', 'ticket'));
+
+		$now = dol_now();
+		$nbok = 0;
+		$nbko = 0;
+
+		$listofticketsok = array();
+		$listofticketsko = array();
+
+		// Label of the event recorded once a reminder is sent for a ticket. Also used to not send the same reminder twice the same day.
+		$labelreminderok = 'sendReminderForStaleTicketsOK';
+
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."ticket as t";
+		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
+		$sql .= " AND t.fk_statut NOT IN (".self::STATUS_CLOSED.", ".self::STATUS_CANCELED.")";
+		$sql .= " AND t.fk_user_assign > 0";
+		$sql .= " AND NOT EXISTS (SELECT a.id FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " WHERE a.elementtype = 'ticket' AND a.fk_element = t.rowid AND a.code = 'AC_EMAIL'";
+		$sql .= " AND a.label = '".$this->db->escape($labelreminderok)."'";
+		$sql .= " AND a.datep >= '".$this->db->idate(dol_get_first_hour($now))."')";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num_rows = $this->db->num_rows($resql);
+
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+			$formmail = new FormMail($this->db);
+
+			$i = 0;
+			while ($i < $num_rows) {
+				$obj = $this->db->fetch_object($resql);
+
+				$ticketstatic = new Ticket($this->db);
+				$ticketstatic->fetch($obj->rowid);
+
+				// Same late/not-late decision as the warning icon on ticket/list.php, so the email only ever
+				// fires for tickets that already show as late there.
+				$islate = false;
+				$datelastmsgsent = (int) $ticketstatic->date_last_msg_sent;
+				if ($delaybeforefirstresponse && $datelastmsgsent == 0) {
+					$hourdiffcreation = ($now - (int) $ticketstatic->datec) / 3600;
+					$islate = ($hourdiffcreation > $delaybeforefirstresponse);
+				} elseif ($delaysincelastresponse) {
+					$hourdiff = ($now - $datelastmsgsent) / 3600;
+					$islate = ($hourdiff > $delaysincelastresponse);
+				}
+				if (!$islate) {
+					$i++;
+					continue;
+				}
+
+				$recipient = new User($this->db);
+				$recipientres = $recipient->fetch($ticketstatic->fk_user_assign);
+
+				if ($recipientres <= 0 || empty($recipient->email)) {
+					$nbko++;
+					$listofticketsko[$ticketstatic->id] = $ticketstatic->id;
+				} else {
+					$ticketstatic->fetch_thirdparty();
+
+					$arraydefaultmessage = null;
+					$labeltouse = getDolGlobalString('TICKET_EMAIL_TEMPLATE_REMIND_STALE');
+
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'ticket', $user, $langs, 0, 1, $labeltouse);
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $ticketstatic);
+						complete_substitutions_array($substitutionarray, $langs, $ticketstatic);
+						$substitutionarray['__TICKET_STALE_SINCE_HOURS__'] = ($datelastmsgsent == 0)
+							? (string) round(($now - (int) $ticketstatic->datec) / 3600)
+							: (string) round(($now - $datelastmsgsent) / 3600);
+
+						$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $langs);
+						$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $langs);
+						$email_from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM', $conf->email_from);
+						$to = (string) $recipient->email;
+
+						$trackid = 'tic'.$ticketstatic->id;
+						$moreinheader = 'X-Dolibarr-Info: sendReminderForStaleTickets'."\r\n";
+
+						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+						$cmail = new CMailFile($subject, $to, $email_from, $msg, array(), array(), array(), '', '', 0, 1, '', '', $trackid, $moreinheader);
+						$result = $cmail->sendfile();
+						if (!$result) {
+							$error++;
+							$this->error .= $cmail->error.' ';
+							if (!is_null($cmail->errors)) {
+								$this->errors = array_merge($this->errors, $cmail->errors);
+							}
+							$nbko++;
+							$listofticketsko[$ticketstatic->id] = $ticketstatic->id;
+						} else {
+							$nbok++;
+							$listofticketsok[$ticketstatic->id] = $ticketstatic->id;
+
+							// Insert record of email sent, as an agenda event on the ticket (same convention as other automated reminder emails)
+							require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+							$actioncomm = new ActionComm($this->db);
+							$actioncomm->type_code = 'AC_OTH_AUTO';
+							$actioncomm->code = 'AC_EMAIL';
+							$actioncomm->label = $labelreminderok;
+							$actioncomm->note_private = $msg;
+							$actioncomm->fk_project = 0;
+							$actioncomm->datep = $now;
+							$actioncomm->datef = $now;
+							$actioncomm->percentage = -1; // Not applicable
+							$actioncomm->socid = (is_object($ticketstatic->thirdparty) ? $ticketstatic->thirdparty->id : 0);
+							$actioncomm->contact_id = 0;
+							$actioncomm->authorid = $user->id;
+							$actioncomm->userownerid = $user->id;
+							$actioncomm->email_msgid = $cmail->msgid;
+							$actioncomm->email_from = $email_from;
+							$actioncomm->email_sender = '';
+							$actioncomm->email_to = $to;
+							$actioncomm->email_subject = $subject;
+
+							$actioncomm->fk_element = $ticketstatic->id;
+							$actioncomm->elementid = $ticketstatic->id;
+							$actioncomm->elementtype = $ticketstatic->element;
+
+							$actioncomm->create($user);
+						}
+					} else {
+						$error++;
+						$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
+
+						$nbko++;
+						$listofticketsko[$ticketstatic->id] = $ticketstatic->id;
+
+						// Do not break here: a template issue for one ticket (ex: template not found) must not
+						// prevent the reminder from being sent for the other late tickets.
+					}
+				}
+
+				$i++;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return 1;
+		}
+
+		$this->output = 'Found '.($nbok + $nbko).' late tickets to send reminder for.';
+		$this->output .= ' Sent email successfully for '.$nbok.' tickets';
+		if ($nbko) {
+			$this->output .= ' - Canceled for '.$nbko.' ticket(s) (no email for the assigned user, missing template, or send error)';
+		}
+
+		if ($error) {
+			return 1;
+		}
+		return 0;
 	}
 }

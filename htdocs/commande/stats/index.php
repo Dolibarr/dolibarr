@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +180,6 @@ if ($mode == 'supplier') {
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
@@ -229,7 +228,6 @@ if (!$mesg) {
 
 // Build graphic amount of object
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
-//var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 $fileurlamount = '';
@@ -421,7 +419,10 @@ if (isModEnabled('category')) {
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+// Pass -1 (not 0) when no user is selected so the combo keeps its empty entry instead of defaulting to the
+// current user. The statistics query below is not filtered on the current user by default, so preselecting
+// them here wrongly suggests the displayed figures are limited to that user while they are actually global.
+print $form->select_dolusers(($userid > 0 ? $userid : -1), 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 // Status
 print '<tr><td>'.$langs->trans("Status").'</td><td>';
 if ($mode == 'customer') {

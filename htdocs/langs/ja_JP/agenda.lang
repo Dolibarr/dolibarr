@@ -29,6 +29,7 @@ ViewWeek=週ビュー
 ViewPerUser=ユーザビューごと
 ViewPerType=種別ビューごと
 AutoActions= 議題の自動充填
+ManualActions=ユーザ によって手動で作成されました
 AgendaAutoActionDesc= ここで、Dolibarrが議題で自動的に作成するイベントを定義できる。何もチェックされていない場合、手動アクションのみがログに含まれ、議題に表示される。オブジェクトに対して実行されたビジネスアクション(検証、状態変更)の自動追跡は保存されない。
 AgendaSetupOtherDesc= このページには、Dolibarrイベントを外部カレンダー(Thunderbird、Googleカレンダーなど)にエクスポートできるようにするオプションがある。
 AgendaExtSitesDesc=このページでは、Dolibarrの議題にそれらのイベントを表示するにはカレンダーの外部ソースを宣言することができる。
@@ -215,3 +216,8 @@ EventPartOfARecurringSerie=このイベントは、ID %s の定期的なシリ�
 BookCalSystem=オンライン予約
 BookCalInitHelp=まず、メニュー にアクセスして、空き状況を含む新しいカレンダーを作成する...
 PublicLinkForBooking=予約用の公開リンク
+STOCKTRANSFER_CLOSEInDolibarr=在庫 転送 %s が完了しました。
+STOCKTRANSFER_VALIDATEInDolibarr=在庫 転送 %s が検証されました。
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=在庫 転送 %s ドラフトに戻します。
+STOCKTRANSFER_MODIFYInDolibarr=在庫 転送 %s が変更されました。

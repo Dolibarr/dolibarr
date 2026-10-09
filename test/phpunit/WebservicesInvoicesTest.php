@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -62,22 +62,16 @@ class WebservicesInvoicesTest extends CommonClassTest
 
 
 	/**
-	 * Constructor
-	 * We save global variables into local variables
+	 * Init phpunit tests
+	 * The nusoap_client is created here (and not in a constructor) because
+	 * TestCase::__construct() is final since PHPUnit 10, and the constructor
+	 * was called for each test anyway.
 	 *
-	 * @param 	string	$name		Name
-	 * @return WebservicesInvoicesTest
+	 * @return void
 	 */
-	public function __construct($name = '')
+	protected function setUp(): void
 	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf = $conf;
-		$this->savuser = $user;
-		$this->savlangs = $langs;
-		$this->savdb = $db;
+		parent::setUp();
 
 		// Set the WebService URL
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
@@ -88,8 +82,8 @@ class WebservicesInvoicesTest extends CommonClassTest
 			$this->soapclient->decodeUTF8(false);
 		}
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
+		print __METHOD__." db->type=".$this->savdb->type." user->id=".$this->savuser->id;
+		//print " - db ".$this->savdb->db;
 		print "\n";
 	}
 

@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -79,8 +79,9 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		$badgeStatus7 = '#baa32b';
 		$badgeStatus8 = '#993013';
 		$badgeStatus9 = '#e7f0f0';
-		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
-			include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$theme_vars_file = dol_getThemeFilePath('theme_vars.inc.php');
+		if ($theme_vars_file) {
+			include $theme_vars_file;
 		}
 		$this->max = $max;
 
