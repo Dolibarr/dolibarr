@@ -6,6 +6,7 @@
  * Copyright (C) 2015 Claudio Aschieri				<c.aschieri@19.coop>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Joel MPUNGA				<joelmpunga79@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,4 +152,27 @@ function expedition_admin_prepare_head()
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'expedition_admin', 'remove');
 
 	return $head;
+}
+
+/**
+ * Return true if an order/shipment line product type can be included on a shipment.
+ * Products (type 0) are always shippable. Services (type 1) are shippable when
+ * STOCK_SUPPORTS_SERVICES or SHIPMENT_SUPPORTS_SERVICES is enabled.
+ * Other types (e.g. subtotals) are never shippable via this helper.
+ *
+ * @param	int|string|null	$product_type	0 = product, 1 = service
+ * @return	bool
+ * @see		Product::TYPE_PRODUCT, Product::TYPE_SERVICE
+ */
+function isProductLineShippable($product_type)
+{
+	$product_type = (int) $product_type;
+	if ($product_type === 0) {
+		return true;
+	}
+	if ($product_type === 1) {
+		return (bool) getDolGlobalString('STOCK_SUPPORTS_SERVICES')
+			|| (bool) getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES');
+	}
+	return false;
 }
