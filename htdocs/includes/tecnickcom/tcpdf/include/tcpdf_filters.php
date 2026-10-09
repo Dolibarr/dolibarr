@@ -364,11 +364,7 @@ class TCPDF_FILTERS {
 			if (false != $ztmp) {
 				fwrite($ztmp, "\x1f\x8b\x08\x00\x00\x00\x00\x00".$data);
 				$file = stream_get_meta_data($ztmp)['uri'];
-				if (0 === $decodeMemoryLimit) {
-					$decoded = file_get_contents('compress.zlib://'.$file);
-				} else {
-					$decoded = file_get_contents('compress.zlib://'.$file, false, null, 0, $decodeMemoryLimit);
-				}
+				$decoded = file_get_contents('compress.zlib://'.$file);
 				fclose($ztmp);
 			}
 		}
