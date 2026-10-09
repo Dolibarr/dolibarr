@@ -54,8 +54,12 @@ gh pr list -R Repo/project --state open --limit 50 --json number,title,author,la
 * List open PRs with a failing CI:
 
 ```bash
-gh pr list -R Repo/project --state open --limit 50 --json number,title,author,updatedAt,statusCheckRollup \
-  --jq '.[] | {n: .number, a: .author.login, d: .updatedAt[:10], t: .title, f: ([.statusCheckRollup[] | select((.conclusion // .state) | IN("FAILURE","ERROR","TIMED_OUT","STARTUP_FAILURE","ACTION_REQUIRED")) | (.name // .context)] | unique)} | select(.f | length > 0) | "#\(.n) \(.d) \(.a) - \(.t) (failing: \(.f | join(", ")))"'
+gh pr list -R Repo/project --state open --limit 200 --json number,title,author,updatedAt,statusCheckRollup \
+  --jq '.[] | . as $pr | ($pr.statusCheckRollup | group_by(.name // .context) | map(max_by(.startedAt // .createdAt // .updatedAt // ""))) as $latest | {n: $pr.number, a: $pr.author.login, d: $pr.updatedAt[:10], t: $pr.title, f: ([$latest[] | select((.conclusion // .state) | IN("FAILURE","ERROR","TIMED_OUT","STARTUP_FAILURE","ACTION_REQUIRED")) | (.name // .context)] | unique)} | select(.f | length > 0) | "#\(.n) \(.d) \(.a) - \(.t) (failing: \(.f | join(", ")))"'
+# statusCheckRollup can contain several runs of the same check (re-runs, matrix jobs). The
+# group_by(name) | map(max_by(startedAt)) keeps only the latest run per check, so a check fixed
+# since the last commit no longer appears as failing.
+# Increase --limit if the repo has many open PRs (Dolibarr has 400+ open PRs).
 # Output is sorted by most recently created PR first; add "| head -N" to keep only the N last ones.
 # GitHub Actions checks have a .name/.conclusion, external statuses (Travis) a .context/.state.
 # "Check PR quota per user" is not a code error: it means the author has too many open PRs.
