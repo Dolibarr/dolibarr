@@ -5706,14 +5706,15 @@ abstract class CommonObject
 
 			// Recalculate unit price with tax if not defined
 			if (empty((float) $line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
-				// So we calculate an estimated value just to show something on screen.
-				// Not: the unit price is always for 100% of line, it is not a prorata of situation invoice (when total is)
-				if ($line->remise_percent != 100) {
-					$line->subprice_ttc = (float) price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / $line->qty / (1 - $line->remise_percent / 100), 'MU');
-				} else {
-					// Other method is less accurate
-					$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
-				}
+				// So we calculate a value just to show something on screen.
+				// We calculate it from the unit price excl. tax and not from the total incl. tax: the total is rounded, so a unit price
+				// calculated from it shows a lot of not significant decimals (13.5952381 instead of 13.596).
+				// Note: the unit price is always for 100% of line, it is not a prorata of situation invoice (when total is)
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+				$localtaxes_array = array($line->localtax1_type ?? '', $line->localtax1_tx ?? 0, $line->localtax2_type ?? '', $line->localtax2_tx ?? 0);
+				$uselocaltax = (is_object($seller) ? -1 : 0);
+				$tmparray = calcul_price_total(1, (float) $line->subprice, 0, (float) $line->tva_tx, $uselocaltax, $uselocaltax, 0, 'HT', (int) $line->info_bits, (int) $line->product_type, $seller, $localtaxes_array);
+				$line->subprice_ttc = (float) $tmparray[5];
 			}
 			$line->pu_ttc = $line->subprice_ttc;	// deprecated
 
