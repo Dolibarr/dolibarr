@@ -2,26 +2,20 @@ import re, html
 
 page = open('tmp-dump/page.html', encoding='utf-8', errors='replace').read()
 print('PAGE_SIZE=' + str(len(page)))
+out = open('tmp-dump/debug.txt', 'w')
+out.write('PAGE_SIZE=' + str(len(page)) + '\n')
 idxs = [m.start() for m in re.finditer(r'PHPSTAN', page)]
-print('PHPSTAN_IDXS=' + str(idxs[:10]))
-best = []
-best_at = -1
-for idx in idxs:
-    window = page[idx:idx + 90000]
-    for tm in re.finditer(r'<table[^>]*>(.*?)</table>', window, re.S):
-        table = tm.group(1)
-        rows = []
-        for tr in re.findall(r'<tr[^>]*>(.*?)</tr>', table, re.S):
-            tds = re.findall(r'<t[dh][^>]*>(.*?)</t[dh]>', tr, re.S)
-            if len(tds) < 3:
-                continue
-            clean = [html.unescape(re.sub(r'<[^>]+>', '', t)).strip() for t in tds[:3]]
-            rows.append('\t'.join(clean))
-        if len(rows) > 5 and sum(1 for r in rows if '.php' in r) > 5 and len(rows) > len(best):
-            best = rows
-            best_at = idx
-open('tmp-dump/phpstan_debt.txt', 'w').write('\n'.join(best))
-print('BEST_AT=' + str(best_at))
-print('ROWS=' + str(len(best)))
-for r in best[:10]:
-    print('ROW: ' + r)
+out.write('PHPSTAN_IDXS=' + str(idxs[:20]) + '\n')
+for n, idx in enumerate(idxs[:8]):
+    out.write('\n===== OCCURRENCE ' + str(n) + ' at ' + str(idx) + ' =====\n')
+    out.write(page[idx:idx + 3500])
+    out.write('\n')
+# count php-ish patterns
+out.write('\nhtdocs php occurrences: ' + str(len(re.findall(r'htdocs/', page))) + '\n')
+# show a sample around first htdocs occurrence
+h = page.find('htdocs/')
+if h >= 0:
+    out.write('\n===== AROUND FIRST htdocs =====\n')
+    out.write(page[max(0, h - 1500):h + 1500])
+out.close()
+print('done')
