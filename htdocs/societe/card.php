@@ -14,7 +14,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
- * Copyright (C) 2023       Nick Fragoulis
+ * Copyright (C) 2023-2026  Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
@@ -261,6 +261,46 @@ if (empty($reshook)) {
 		$value = GETPOST('lt2');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
+	}
+
+	// Write the payment reference of this third party by hand. A value that is
+	// already a valid reference is kept as it is, anything else is treated as the
+	// base to build one from, so the user never has to work out check digits.
+	// An empty value clears it, and a new one is generated on the next invoice.
+	if ($action == 'setpaymentref' && $permissiontoadd) {
+		$object->fetch($socid);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+
+		$postedref = trim(GETPOST('tp_payment_reference', 'alphanohtml'));
+		$newref = '';
+		if ($postedref != '') {
+			$newref = dolPayRefBuild($postedref, 1, $mysoc->country_code);
+		}
+
+		if ($postedref != '' && $newref == '') {
+			setEventMessages($langs->trans("WarningPaymentRefNotGenerated"), null, 'warnings');
+		} elseif (dol_strlen($newref) > 25) {
+			setEventMessages($langs->trans("WarningPaymentRefTooLong"), null, 'warnings');
+		} else {
+			$res = $object->setValueFrom('tp_payment_reference', $newref, '', null, 'text', '', $user, 'COMPANY_MODIFY');
+			if ($res < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+		$action = '';
+	}
+
+	// Clear the structured payment reference so a new one is generated on the next
+	// invoice. Invoices already validated keep the reference they were issued with.
+	if ($action == 'unsetpaymentref' && $user->admin) {
+		$object->fetch($socid);
+		$res = $object->setValueFrom('tp_payment_reference', '', '', null, 'text', '', $user, 'COMPANY_MODIFY');
+		if ($res > 0) {
+			setEventMessages($langs->trans("PaymentReferenceReset"), null, 'mesgs');
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		$action = '';
 	}
 
 	if ($action == 'update_extras' && $permissiontoeditextra) {
@@ -3086,6 +3126,39 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 				print '</td>';
 				print '</tr>';
+			}
+
+			// Structured payment reference of this third party, see core/lib/paymentref.lib.php.
+			// Written the first time an invoice of this third party is validated, then reused.
+			if ($object->client && getDolGlobalString('INVOICE_PAYMENT_REF_MODE') == 'thirdparty') {
+				print '<tr><td>';
+				print $form->textwithpicto($langs->trans('PaymentReference'), $langs->trans('ThirdPartyPaymentReferenceHelp'));
+				print '</td><td>';
+				if ($action == 'editpaymentref' && $permissiontoadd) {
+					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+					print '<input type="hidden" name="action" value="setpaymentref">';
+					print '<input type="text" name="tp_payment_reference" class="minwidth200" maxlength="25" value="'.dolPrintHTMLForAttribute((string) $object->tp_payment_reference).'">';
+					print ' <input type="submit" class="button button-edit smallpaddingimp" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
+					print '</form>';
+				} elseif (!empty($object->tp_payment_reference)) {
+					print showValueWithClipboardCPButton(dol_escape_htmltag($object->tp_payment_reference));
+					if ($permissiontoadd) {
+						print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editpaymentref&token='.newToken().'">'.img_edit().'</a>';
+					}
+					if ($user->admin) {
+						print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=unsetpaymentref&token='.newToken().'"';
+						print ' title="'.dolPrintHTMLForAttribute($langs->trans('ResetPaymentReferenceHelp')).'">';
+						print img_picto($langs->trans('ResetPaymentReference'), 'refresh');
+						print '</a>';
+					}
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans('PaymentReferenceOnFirstInvoice').'</span>';
+					if ($permissiontoadd) {
+						print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editpaymentref&token='.newToken().'">'.img_edit().'</a>';
+					}
+				}
+				print '</td></tr>';
 			}
 
 			// Supplier code
