@@ -18,45 +18,42 @@ jobs:
       - name: Fetch and extract PHPSTAN debt table
         run: |
           mkdir -p tmp-dump
-          python3 - <<'PYEOF'
-          import urllib.request, re, html
-          req = urllib.request.Request('https://cti.dolibarr.org/', headers={'User-Agent': 'Mozilla/5.0'})
-          page = urllib.request.urlopen(req, timeout=120).read().decode('utf-8', 'replace')
-          open('tmp-dump/page.html', 'w').write(page)
+          set +e
+          {
+            curl -sL --max-time 180 -A "Mozilla/5.0" https://cti.dolibarr.org/ -o tmp-dump/page.html
+            ls -la tmp-dump
+            cat > /tmp/extract.py <<'PYEOF'
+          import re, html
+          page = open('tmp-dump/page.html', encoding='utf-8', errors='replace').read()
           print('PAGE_SIZE=' + str(len(page)))
-          # Locate the PHPSTAN technical debt section: find the anchor/heading then the following table
-          idx = page.find('PHPSTAN')
-          print('PHPSTAN_IDX=' + str(idx))
-          # try to find, after each occurrence of PHPSTAN, a table whose rows look like file/line/error
+          idxs = [m.start() for m in re.finditer(r'PHPSTAN', page)]
+          print('PHPSTAN_IDXS=' + str(idxs[:10]))
           best = []
-          for m in re.finditer(r'PHPSTAN', page):
-              start = m.start()
-              # take the next 80KB window and parse tables in it
-              window = page[start:start+80000]
+          for idx in idxs:
+              window = page[idx:idx+90000]
               for tm in re.finditer(r'<table[^>]*>(.*?)</table>', window, re.S):
                   table = tm.group(1)
-                  trs = re.findall(r'<tr[^>]*>(.*?)</tr>', table, re.S)
                   rows = []
-                  ok = True
-                  for tr in trs:
+                  for tr in re.findall(r'<tr[^>]*>(.*?)</tr>', table, re.S):
                       tds = re.findall(r'<t[dh][^>]*>(.*?)</t[dh]>', tr, re.S)
                       if len(tds) < 3:
                           continue
                       clean = [html.unescape(re.sub(r'<[^>]+>', '', t)).strip() for t in tds[:3]]
-                      rows.append('	'.join(clean))
-                  # heuristics: rows mention php files
-                  if len(rows) > 5 and sum(1 for r in rows if '.php' in r) > 5:
-                      if len(rows) > len(best):
-                          best = rows
-          open('tmp-dump/phpstan_debt.txt', 'w').write('
-'.join(best))
+                      rows.append('\t'.join(clean))
+                  if len(rows) > 5 and sum(1 for r in rows if '.php' in r) > 5 and len(rows) > len(best):
+                      best = rows
+          open('tmp-dump/phpstan_debt.txt', 'w').write('\n'.join(best))
           print('ROWS=' + str(len(best)))
-          for r in best[:6]:
+          for r in best[:8]:
               print('ROW: ' + r)
           PYEOF
+            python3 /tmp/extract.py
+          } > tmp-dump/run.log 2>&1
+          cat tmp-dump/run.log
+          exit 0
       - name: Commit dump
         run: |
           git config user.name "dolibot" && git config user.email "dolibarr-bot@users.noreply.github.com"
           git add tmp-dump
           git commit -m "TMP: dump CTI PHPStan debt table" || echo "nothing to commit"
-          git push
+          git push || echo "push failed"
