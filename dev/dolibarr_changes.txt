@@ -2,538 +2,608 @@
 This file describes the changes made on external libraries to fix some bugs, after they were included
 in Dolibarr external vendor dir (htdocs/includes).
 
-
-
-ALL:
-----
-Check "@CHANGE"
-
-
-
-PCLZIP
-------
-Replace
-	touch($p_entry['filename'], $p_entry['mtime']);
-With
-	@touch($p_entry['filename'], $p_entry['mtime']);
-
-
-
-PHP PHPIMAP:
-------------
-* In htdocs/includes/webklex/php-imap/vendor/nesbot/carbon/src/Carbon/Traits/Creator.php
-
-Replace:
-	self::setLastErrors(parent::getLastErrors());
-with:
-	if (parent::getLastErrors()) {
-      	self::setLastErrors(parent::getLastErrors());
-	}
-
-* In htdocs/includes/webklex/php-imap/src/Header.php, function getBoundary() (fix #40907: the greedy regex
-  also captured the next Content-Type parameters, e.g. boundary="X"; type="text/html", so MIME parts were not split)
-
-Replace:
-	$boundary = $this->find("/boundary\=(.*)/i");
-
-	if ($boundary === null) {
-		return null;
-	}
-
-	return $this->clearBoundaryString($boundary);
-with:
-	if (!preg_match('/boundary\s*=\s*(?:"([^"]*)"|([^;\s]+))/i', $this->raw, $matches)) {
-		return null;
-	}
-
-	$boundary = (isset($matches[2]) && $matches[2] !== '') ? $matches[2] : $matches[1];
-	$boundary = $this->clearBoundaryString($boundary);
-
-	return $boundary !== '' ? $boundary : null;
-
-* In htdocs/includes/webklex/php-imap/src/Client.php, functions connect() and authenticate(), to know which step
-  of the connection failed, add a suffix to the 4 messages "connection setup failed":
-	" - no imap function" (imap extension not loaded), " - connect exception" (ErrorException),
-	" - run exception" (RuntimeException), " - authenticate" (AuthFailedException)
-
-* In htdocs/includes/webklex/php-imap/src/Connection/Protocols/Protocol.php, function createStream(), to avoid a
-  hang when $stream is empty (the timeout is set a few lines after, once $stream is checked), replace:
-	stream_set_timeout($stream, $timeout);
-with:
-	//stream_set_timeout($stream, $timeout);
-
-* In htdocs/includes/webklex/php-imap/src/Query/WhereQuery.php, backport of where() and push_search_criteria()
-  from php-imap 3.0.0-alpha: in 2.7.2, where() with an array of criteria returned after the first element, so only
-  the first criterion was applied. Now where() loops on all criteria and calls the new push_search_criteria().
-
-
-
-PHP CKEDITOR:
--------------
-* In ckeditor/ckeditor/contents.css
-Replace:
-	body { ... margin: 20px;
-With
-	body { ... margin: 10px;
-
-* In ckeditor/ckeditor/ckeditor.js
-Replace:
-    d.items&&
-With
-    d&&d.items&&
-
-
-
-PHP ESCPOS:
------------
-Replace
-	private $connector;
-With
-	protected $connector;
-
-Replace
-	if (!is_resource($im)) {
-With
-	if (!is_resource($im) && !($im instanceof \GdImage)) {
-
-
-
-PHP SABRE:
-----------
-rm -fr ./htdocs/includes/sabre/sabre/bin;
-rm -fr ./htdocs/includes/sabre/sabre/*/bin;
-rm -fr ./htdocs/includes/sabre/sabre/*/*/bin;
-rm -fr ./htdocs/includes/sabre/sabre/*/*/*/bin;
-rm -fr ./htdocs/includes/sabre/sabre/*/*/*/*/bin;
-
-
-
-PHP NUSOAP:
------------
-* Line 1257 of file nusoap.php. Add:
-
-	libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only for libxml < 2.
-
-
-* Line 4346 of file nusoap.php
-
-	$rev = array();
-	preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
-	$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
-
-* Line 6566 of file nusoap.php, replace
-
-	if (count($attrs) > 0) {
-	with
-	if (is_array($attrs) && count($attrs) > 0) {
-
-
-
-PHP TCPDF:
-----------
-Embedded version: 6.11.4 (upgraded from 6.7.5 in 2026-09). Note: as of this
-version, upstream's own composer.json marks TCPDF "abandoned" in favor of
-tecnickcom/tc-lib-pdf - kept for now since Dolibarr (and the bundled TCPDI
-fork) still relies on TCPDF-specific internals; a migration off TCPDF
-entirely would be a separate, much larger effort.
-
-Upstream dropped tcpdf_parser.php and tcpdf_import.php from the package in
-this version. tcpdf_parser.php (TCPDF_PARSER) is still required by
-htdocs/core/lib/pdf.lib.php::pdf_getEncryption(), so our unmodified copy of
-the 6.7.5 file is kept alongside the upgraded library. tcpdf_import.php was
-unused anywhere in Dolibarr and was not kept.
-
-* Modify in tcpdf.php: make TCPDF::_out public.
-  (htdocs/core/lib/pdf.lib.php uses it as a public method)
-
-  Change:
-      protected function _out($s)
-  to
-      public function _out($s)
-
-  Change in method's _out phpdoc:
-
-      * @protected
-  to
-      * @public
-
-* Replace in tcpdf.php (remove 'imagekeys' from the $preserve array - keeping
-  it preserved across serialize/unserialize was found to break image display
-  on pages after the first one):
-		$preserve = array(
-			'file_id',
-			'state',
-			'bufferlen',
-			'buffer',
-			'cached_files',
-			'imagekeys',
-with
-		$preserve = array(
-			'file_id',
-			'state',
-			'bufferlen',
-			'buffer',
-			'cached_files',
-		// @CHANGE DOL
-		//          'imagekeys',
-
-* Replace in tcpdf.php (disable the "Powered by TCPDF" attribution link/text
-  written by Close() when the MAIN_PDF_DISABLE_TCPDF_LINK constant is set -
-  see issue #40445; property has no public setter upstream):
-		$this->tcpdflink = true;
-with
-		$this->tcpdflink = !getDolGlobalInt('MAIN_PDF_DISABLE_TCPDF_LINK');	// @CHANGE DOL
-
-* Replace in tcpdf.php:
-			if (!@this->fileExists($file)) {
-				return false;
-			}
-with
-			if (!@this->fileExists($file)) {
-				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
-				//var_dump($file.' '.(!@this->fileExists($file)));
-				//return false;
-                $tfile = str_replace(' ', '%20', $file);
-				if (@this->fileExists($tfile)) {
-					$file = $tfile;
-				}
-			}
-
-* In tcpdf.php, replace the body of the (upstream-native, since 6.11.4)
-  "allowLocalFiles && file:// prefix" branch of the HTML <img> src handling
-  (search for "allowLocalFiles && substr($imgsrc, 0, 7)"), so a
-  src="file://..." pointing at our own public URL base gets translated to
-  the matching local server path instead of being treated as a literal
-  filesystem path:
-				} elseif ( $this->allowLocalFiles && substr($imgsrc, 0, 7) === 'file://') {
-					// get image type from a local file path
-					$imgsrc = substr($imgsrc, 7);
-					$type = TCPDF_IMAGES::getImageFileType($imgsrc);
-				} elseif ($this->hasExtForbiddenProtocol($imgsrc)) {
-  with
-				} elseif ( $this->allowLocalFiles && substr($imgsrc, 0, 7) === 'file://') {
-					// @CHANGE LDR Add support for src="file://..." links
-					$imgsrc = str_replace('file://', '/', $imgsrc);
-					$imgsrc = urldecode($imgsrc);
-					$testscrtype = @parse_url($imgsrc);
-					if (empty($testscrtype['query'])) {
-						// convert URL to server path
-						$imgsrc = str_replace(K_PATH_URL, K_PATH_MAIN, $imgsrc);
-					} elseif (preg_match('|^https?://|', $imgsrc) !== 1) {
-						// convert URL to server path
-						$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
-					}
-				} elseif ($this->hasExtForbiddenProtocol($imgsrc)) {
-
-  allowLocalFiles defaults to false upstream (new in 6.11.4, opt-in on
-  purpose - it also gates a fileExists() check for "file://" paths); Dolibarr
-  enables it itself by calling $pdf->setAllowLocalFiles(true) right after
-  instantiating TCPDF/TCPDI in htdocs/core/lib/pdf.lib.php::pdf_getInstance(),
-  instead of hardcoding the default to true in the vendored file.
-
-  Before 6.11.4, this same "convert file://... to a local path" behavior was
-  a bespoke elseif branch inserted ahead of TCPDF's own image-src handling,
-  and needed a "$reg = array();" guard to avoid a warning on an unrelated
-  base64 data-URI branch. Both are obsolete: upstream now parses base64
-  data-URIs natively with its own properly-scoped $reg, and now has its own
-  (opt-in) file:// branch that this patch replaces the body of.
-
-* In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace:
-		if (strpos($filename, '://') === false) {
-with
-        if (strpos($filename, '//') === 0) {
-            // Share folder on a (windows) server
-            // e.g.: "//[MyServerName]/[MySharedFolder]/"
-            //
-            // nothing to change
-        }
-        elseif (strpos($filename, '://') === false)
-
-* In tecnickcom/tcpdf/include/barcodes/qrcode.php To avoid to have QRcode changed because generated with a random mask, replace:
-	define('QR_FIND_FROM_RANDOM', 2);
-with
-	define('QR_FIND_FROM_RANDOM', false);
-
-* Change line:
-	imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
-into
-	imagesetpixel($imgalpha, $xpx, $ypx, (int) $alpha);
-
-* Removed useless directories ("examples", "tools")
-
-* Optionally, removed all fonts except
-    dejavusans* (used by greek, arab, person, romanian, turkish),
-    freemono* (russian),
-    cid*+msungstdlight+stsongstdlight+uni2cid* (chinese),
-    helvetica* (all other languages),
-    zapfdingbats.php (for special chars like form checkboxes)
-
-* Optionally, made freemono the default monotype font if we removed courier
-In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
--       protected $default_monospaced_font = 'courier';
-+       protected $default_monospaced_font = 'freemono';
-
-* Add this at begin of tcpdf_autoconfig.php
-
-	// @CHANGE LDR DOCUMENT_ROOT fix for IIS Webserver
-	if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
-		if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['PHP_SELF'])) {
-			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
-		} elseif(isset($_SERVER['PATH_TRANSLATED'])) {
-			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
-		} else {
-			// define here your DOCUMENT_ROOT path if the previous fails (e.g. '/var/www')
-			$_SERVER['DOCUMENT_ROOT'] = '/';
-		}
-	}
-	$_SERVER['DOCUMENT_ROOT'] = str_replace('//', '/', $_SERVER['DOCUMENT_ROOT']);
-	if (substr($_SERVER['DOCUMENT_ROOT'], -1) != '/') {
-		$_SERVER['DOCUMENT_ROOT'] .= '/';
-	}
-
-
-
-PHP TCPDI:
-----------
-Add file fpdf_tpl.php 1.2.3
-
-Add file tcpdi.php
-
-Add file tcpdi_parser.php and replace:
-    require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
-with:
-    require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
-
-
-* Fix syntax error by replacing
-	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
-	with
-	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
-
-* Fix php fatal error on php 8.0 on tcpdi.php
-	while (list($k, $v) = each($value[1])) {
-with
-	foreach ($value[1] as $k => $v) {
-
-* Fix by replacing
-	if ($res[0] == PDF_TYPE_OBJECT)
-with
-	if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
-
-* Replace
-	public function Error($msg) {
-        die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
-    }
-with
-	public function Error($msg) {
-        // Respect K_TCPDF_THROW_EXCEPTION_ERROR like TCPDF does
-        if (defined('K_TCPDF_THROW_EXCEPTION_ERROR') && K_TCPDF_THROW_EXCEPTION_ERROR) {
-            throw new \Exception("TCPDI_PARSER ERROR [{$this->uniqueid}]: ".$msg);
-        }
-        // Default: exit program and print error
-        die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
-    }
-
-
-PHP JQUERYFILETREE:
--------------------
-* Remove directory htdocs/public/includes/jquery/plugins/jqueryFileTree/connectors
-
-
-
-PHP Mobile_DETECT:
-------------------
-Remplacer:
-
-array $headers = null,
-
-par
-
-$headers = null,
-
-
-
-PHP RESTLER:
-------------
-
-* Add line into Util.php to complete function
-
-    public static function getShortName($className)
-    {
-    	// @CHANGE LDR
-    	if (!is_string($className)) return;
-    	//var_dump($className);
-
-* Add line into Data/Text.php to complete function
-
-    public static function endsWith($haystack, $needle)
-    {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-    	// @CHANGE LDR
-        if (!is_string($haystack)) return false;
-
-* Replace
-
-	$loaders = array_unique(static::$rogueLoaders);
-
-	with
-
-	$loaders = array_unique(static::$rogueLoaders, SORT_REGULAR);
-
-* Replace CommentParser.php line 423
-	elseif (count($value) && is_numeric($value[0]))
-
-	with
-
-	elseif (count($value) && isset($value[0]) && is_numeric($value[0]))
-
-* Add CommentParser.php line 406 & 407 to remove a warning on api request in php 8.1
-	empty($value[0]) ? null :
-	empty($value[1]) ? null :
-
-* Add a test into AutoLoader.php to complete function loadThisLoader and test if property exists before calling it. For this replace code
-
-	if (false !== $file = $b::$loader[1]($className) && $this->exists($className, $b::$loader[1])) {
-        	return $file;
-        }
-
-	with:
-
-	//avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
-	//in case of multiple autoloader systems
-	if(property_exists($b, $loader[1])) {
-		if (false !== $file = $b::$loader[1]($className)
-			&& $this->exists($className, $b::$loader[1])) {
-			return $file;
-		}
-	}
-
-
-+With swagger 2 provided into /explorer:
-----------------------------------------
-
-Change content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
-
-
-
-PHP PARSEDOWN
--------------
-
-* Add support of css by adding in Parsedown.php:
-
-	// @CHANGE LDR
-	'class' => $Link['element']['attributes']['class']
-
-	...
-
-	// @CHANGE LDR
-	if (preg_match('/{([^}]+)}/', $remainder, $matches2)) {
-		$Element['attributes']['class'] = $matches2[1];
-       		$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
-    	}
-
-
-	// @CHANGE LDR
-	//$markup .= $this->{$Element['handler']}($Element['text']);
-	$markup .= preg_replace('/>{[^}]+}/', '>', $this->{$Element['handler']}($Element['text']));
-
-
-
-* Fix to avoid fatal error when mb_strlen not available:
-
-	// @CHANGE LDR Fix when mb_strlen is not available
-	//$shortage = 4 - mb_strlen($line, 'utf-8') % 4;
-	if (function_exists('mb_strlen')) $len = mb_strlen($line, 'utf-8');
-	else $len = strlen($line);
-	$shortage = 4 - $len % 4;
-
-
-
-PHP OAUTH
----------
-Restore old OAuth2/Service/Google.php file and OAuth2/Service/Microsoft.php and OAuth2/Service/Microsoft2.php
-
-Or add into Class Google of file OAuth2/Service/Google:
-
-    // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
-    public $approvalPrompt='auto';
-    public function setApprouvalPrompt($prompt)
-    {
-        if (!in_array($prompt, array('auto', 'force'), true)) {
-            // @todo Maybe could we rename this exception
-            throw new InvalidAccessTypeException('Invalid approuvalPrompt, expected either auto or force.');
-        }
-        $this->approvalPrompt = $prompt;
-    }
-
-
-Modify function
-
-    public function getAuthorizationEndpoint()
-    {
-		// LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
-		//return new Uri('https://accounts.google.com/o/oauth2/auth?access_type='.$this->accessType);
-		$url = 'https://accounts.google.com/o/oauth2/auth?'.($this->approvalPrompt?'approval_prompt='.$this->approvalPrompt.'&':'').'access_type='.$this->accessType;
-		return new Uri($url);
-	}
-
-Into OAuth/Common/HTTP/Client/CurlClient.php, add code
-
-        // @CHANGE DOL_LDR Add log
-        if (function_exists('getDolGlobalString') && getDolGlobalString('OAUTH_DEBUG')) {
-        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $endpoint->getAbsoluteUri()."\n", FILE_APPEND);
-        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $requestBody."\n", FILE_APPEND);
-        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $method."\n", FILE_APPEND);
-        	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", var_export($extraHeaders, true)."\n", FILE_APPEND);
-        	if (function_exists('dolChmod')) {
-        		dolChmod(DOL_DATA_ROOT . "/dolibarr_oauth.log");
-        	}
-        }
-
-
-JS JSGANTT:
------------
-* Replace in function JSGantt.taskLink
-    window.open(pRef, 'newwin', 'height=' + vHeight + ',width=' + vWidth);
-with
-    // @CHANGE DOLI To open in same window
-    //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
-    window.location.href=pRef
-
-* Replace '% Comp.' to have a smaller text column header
-    'comp': '%...'
-with
-    'comp': '%'
-
-
-
-JS JEDITABLE
-------------
-
-* <button type="submit" />  =>  <button class="button" type="submit" />
-* <button type="cancel" />  =>  <button class="button" type="cancel" />
-
-
-
-JS SELECT2
-----------
-
-Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug: https://github.com/select2/select2/issues/5832
-
-.select2-hidden-accessible {
-  margin: -10000px !important;                /* line to restore */
-}
-
-
-
-PHP MIKE42 ESCPOS:
-------------------
-* In htdocs/includes/mike42/escpos-php/src/Mike42/Escpos/GdEscposImage.php
-Replace:
-	if (!is_resource($im)) {
-With:
-	if (!($im instanceof \GdImage) && !is_resource($im)) {
-PHP 8.0+ returns GdImage objects from imagecreate*; the upstream guard with is_resource() alone fails on PHP 8 and throws 'Failed to load image' on receipts that contain an image.
+How to read this file
+---------------------
+Each library has a header block:
+
+    ####################################################################################################
+    # LIBRARY : name of the library
+    # PATH    : root directory of the library
+    ####################################################################################################
+
+Then each change is described with:
+
+    ==> FILE   : file modified (relative to the library PATH, unless a full path is given)
+        REASON : why the change was made
+        DIFF   :
+            - line(s) of the upstream version (to remove)
+            + line(s) of the Dolibarr version (to add)
+
+For all libraries, also search the code for the tag "@CHANGE" (and "DOL CHANGE", "LDR CHANGE") to find
+modified lines.
+
+
+
+####################################################################################################
+# LIBRARY : PCLZIP
+# PATH    : htdocs/includes/odtphp/zip/pclzip
+####################################################################################################
+
+==> FILE   : pclzip.lib.php
+    REASON : Avoid warning when touch() fails.
+    DIFF   :
+        -   touch($p_entry['filename'], $p_entry['mtime']);
+        +   @touch($p_entry['filename'], $p_entry['mtime']);
+
+
+
+####################################################################################################
+# LIBRARY : PHP-IMAP (webklex)
+# PATH    : htdocs/includes/webklex/php-imap
+####################################################################################################
+
+==> FILE   : vendor/nesbot/carbon/src/Carbon/Traits/Creator.php
+    REASON : getLastErrors() may return false.
+    DIFF   :
+        -   self::setLastErrors(parent::getLastErrors());
+        +   if (parent::getLastErrors()) {
+        +       self::setLastErrors(parent::getLastErrors());
+        +   }
+
+==> FILE   : src/Header.php, function getBoundary()
+    REASON : Fix #40907. The greedy regex also captured the next Content-Type parameters
+             (e.g. boundary="X"; type="text/html"), so MIME parts were not split.
+    DIFF   :
+        -   $boundary = $this->find("/boundary\=(.*)/i");
+        -
+        -   if ($boundary === null) {
+        -       return null;
+        -   }
+        -
+        -   return $this->clearBoundaryString($boundary);
+        +   if (!preg_match('/boundary\s*=\s*(?:"([^"]*)"|([^;\s]+))/i', $this->raw, $matches)) {
+        +       return null;
+        +   }
+        +
+        +   $boundary = (isset($matches[2]) && $matches[2] !== '') ? $matches[2] : $matches[1];
+        +   $boundary = $this->clearBoundaryString($boundary);
+        +
+        +   return $boundary !== '' ? $boundary : null;
+
+==> FILE   : src/Client.php, functions connect() and authenticate()
+    REASON : Know which step of the connection failed.
+    CHANGE : Add a suffix to the 4 messages "connection setup failed":
+                " - no imap function"   (imap extension not loaded)
+                " - connect exception"  (ErrorException)
+                " - run exception"      (RuntimeException)
+                " - authenticate"       (AuthFailedException)
+
+==> FILE   : src/Connection/Protocols/Protocol.php, function createStream()
+    REASON : Avoid a hang when $stream is empty (the timeout is set a few lines after, once $stream
+             is checked).
+    DIFF   :
+        -   stream_set_timeout($stream, $timeout);
+        +   //stream_set_timeout($stream, $timeout);
+
+==> FILE   : src/Query/WhereQuery.php, functions where() and push_search_criteria()
+    REASON : Backport from php-imap 3.0.0-alpha. In 2.7.2, where() with an array of criteria returned
+             after the first element, so only the first criterion was applied.
+    CHANGE : where() now loops on all criteria and calls the new push_search_criteria().
+
+
+
+####################################################################################################
+# LIBRARY : CKEDITOR (JS)
+# PATH    : htdocs/public/includes/ckeditor/ckeditor
+####################################################################################################
+
+==> FILE   : contents.css
+    REASON : Smaller margin in editor.
+    DIFF   :
+        -   body { ... margin: 20px;
+        +   body { ... margin: 10px;
+
+==> FILE   : ckeditor.js
+    REASON : Avoid JS error when d is null.
+    DIFF   :
+        -   d.items&&
+        +   d&&d.items&&
+
+
+
+####################################################################################################
+# LIBRARY : ESCPOS (mike42/escpos-php)
+# PATH    : htdocs/includes/mike42/escpos-php/src/Mike42/Escpos
+####################################################################################################
+
+==> FILE   : Printer.php
+    REASON : Allow child classes to access the connector.
+    DIFF   :
+        -   private $connector;
+        +   protected $connector;
+
+==> FILE   : GdEscposImage.php
+    REASON : PHP 8.0+ returns GdImage objects from imagecreate*. The upstream guard with is_resource()
+             alone fails on PHP 8 and throws 'Failed to load image' on receipts that contain an image.
+    DIFF   :
+        -   if (!is_resource($im)) {
+        +   if (!is_resource($im) && !($im instanceof \GdImage)) {
+
+
+
+####################################################################################################
+# LIBRARY : SABRE
+# PATH    : htdocs/includes/sabre/sabre
+####################################################################################################
+
+==> FILES  : all "bin" directories
+    REASON : Remove useless executables.
+    CHANGE :
+        rm -fr ./htdocs/includes/sabre/sabre/bin;
+        rm -fr ./htdocs/includes/sabre/sabre/*/bin;
+        rm -fr ./htdocs/includes/sabre/sabre/*/*/bin;
+        rm -fr ./htdocs/includes/sabre/sabre/*/*/*/bin;
+        rm -fr ./htdocs/includes/sabre/sabre/*/*/*/*/bin;
+
+
+
+####################################################################################################
+# LIBRARY : NUSOAP
+# PATH    : htdocs/includes/nusoap/lib
+####################################################################################################
+
+==> FILE   : nusoap.php (around line 1257)
+    REASON : Security. Avoid load of external entities (required only for libxml < 2.9).
+    DIFF   :
+        +   libxml_disable_entity_loader(true);
+
+==> FILE   : nusoap.php (around line 4346)
+    REASON : Avoid warning when revision is not found.
+    DIFF   :
+        +   $rev = array();
+            preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
+        +   $this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
+
+==> FILE   : nusoap.php (around line 6566)
+    REASON : Avoid fatal error with count() on a non array (PHP 8).
+    DIFF   :
+        -   if (count($attrs) > 0) {
+        +   if (is_array($attrs) && count($attrs) > 0) {
+
+
+
+####################################################################################################
+# LIBRARY : TCPDF
+# PATH    : htdocs/includes/tecnickcom/tcpdf
+####################################################################################################
+
+VERSION : 6.11.4 (upgraded from 6.7.5 in 2026-09).
+
+NOTES   :
+  - As of this version, upstream's own composer.json marks TCPDF "abandoned" in favor of
+    tecnickcom/tc-lib-pdf. It is kept for now since Dolibarr (and the bundled TCPDI fork) still relies
+    on TCPDF-specific internals. A migration off TCPDF entirely would be a separate, much larger effort.
+  - Upstream dropped tcpdf_parser.php and tcpdf_import.php from the package in this version.
+    tcpdf_parser.php (TCPDF_PARSER) is still required by htdocs/core/lib/pdf.lib.php::pdf_getEncryption(),
+    so our unmodified copy of the 6.7.5 file is kept alongside the upgraded library.
+    tcpdf_import.php was unused anywhere in Dolibarr and was not kept.
+
+==> FILE   : tcpdf.php, method _out()
+    REASON : htdocs/core/lib/pdf.lib.php uses TCPDF::_out as a public method.
+    DIFF   :
+        -    * @protected
+        +    * @public
+        ...
+        -   protected function _out($s)
+        +   public function _out($s)
+
+==> FILE   : tcpdf.php, array $preserve
+    REASON : Keeping 'imagekeys' preserved across serialize/unserialize was found to break image display
+             on pages after the first one.
+    DIFF   :
+            $preserve = array(
+                'file_id',
+                'state',
+                'bufferlen',
+                'buffer',
+                'cached_files',
+        -       'imagekeys',
+        +   // @CHANGE DOL
+        +   //  'imagekeys',
+
+==> FILE   : tcpdf.php, property tcpdflink
+    REASON : Disable the "Powered by TCPDF" attribution link/text written by Close() when the constant
+             MAIN_PDF_DISABLE_TCPDF_LINK is set (see issue #40445). The property has no public setter
+             upstream.
+    DIFF   :
+        -   $this->tcpdflink = true;
+        +   $this->tcpdflink = !getDolGlobalInt('MAIN_PDF_DISABLE_TCPDF_LINK');	// @CHANGE DOL
+
+==> FILE   : tcpdf.php, test of fileExists($file) for images
+    REASON : If we keep the "return false", the image is not visible on pages after the first one.
+             Also support file names with spaces.
+    DIFF   :
+            if (!@this->fileExists($file)) {
+        -       return false;
+        +       // DOL CHANGE If we keep this, the image is not visible on pages after the first one.
+        +       //var_dump($file.' '.(!@this->fileExists($file)));
+        +       //return false;
+        +       $tfile = str_replace(' ', '%20', $file);
+        +       if (@this->fileExists($tfile)) {
+        +           $file = $tfile;
+        +       }
+            }
+
+==> FILE   : tcpdf.php, HTML <img> src handling
+             (search for "allowLocalFiles && substr($imgsrc, 0, 7)")
+    REASON : Replace the body of the (upstream-native, since 6.11.4) "allowLocalFiles && file:// prefix"
+             branch, so a src="file://..." pointing at our own public URL base gets translated to the
+             matching local server path instead of being treated as a literal filesystem path.
+    DIFF   :
+            } elseif ( $this->allowLocalFiles && substr($imgsrc, 0, 7) === 'file://') {
+        -       // get image type from a local file path
+        -       $imgsrc = substr($imgsrc, 7);
+        -       $type = TCPDF_IMAGES::getImageFileType($imgsrc);
+        +       // @CHANGE LDR Add support for src="file://..." links
+        +       $imgsrc = str_replace('file://', '/', $imgsrc);
+        +       $imgsrc = urldecode($imgsrc);
+        +       $testscrtype = @parse_url($imgsrc);
+        +       if (empty($testscrtype['query'])) {
+        +           // convert URL to server path
+        +           $imgsrc = str_replace(K_PATH_URL, K_PATH_MAIN, $imgsrc);
+        +       } elseif (preg_match('|^https?://|', $imgsrc) !== 1) {
+        +           // convert URL to server path
+        +           $imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
+        +       }
+            } elseif ($this->hasExtForbiddenProtocol($imgsrc)) {
+    NOTES  :
+      - allowLocalFiles defaults to false upstream (new in 6.11.4, opt-in on purpose - it also gates a
+        fileExists() check for "file://" paths). Dolibarr enables it itself by calling
+        $pdf->setAllowLocalFiles(true) right after instantiating TCPDF/TCPDI in
+        htdocs/core/lib/pdf.lib.php::pdf_getInstance(), instead of hardcoding the default to true in
+        the vendored file.
+      - Before 6.11.4, this same "convert file://... to a local path" behavior was a bespoke elseif
+        branch inserted ahead of TCPDF's own image-src handling, and needed a "$reg = array();" guard
+        to avoid a warning on an unrelated base64 data-URI branch. Both are obsolete: upstream now
+        parses base64 data-URIs natively with its own properly-scoped $reg, and now has its own
+        (opt-in) file:// branch that this patch replaces the body of.
+
+==> FILE   : include/tcpdf_static.php, function fopenLocal()
+    REASON : Support shared folders on a (windows) server, e.g. "//[MyServerName]/[MySharedFolder]/".
+    DIFF   :
+        -   if (strpos($filename, '://') === false) {
+        +   if (strpos($filename, '//') === 0) {
+        +       // Share folder on a (windows) server
+        +       // e.g.: "//[MyServerName]/[MySharedFolder]/"
+        +       //
+        +       // nothing to change
+        +   }
+        +   elseif (strpos($filename, '://') === false)
+
+==> FILE   : include/barcodes/qrcode.php
+    REASON : Avoid to have the QRcode changed because generated with a random mask.
+    DIFF   :
+        -   define('QR_FIND_FROM_RANDOM', 2);
+        +   define('QR_FIND_FROM_RANDOM', false);
+
+==> FILE   : tcpdf.php
+    REASON : Avoid deprecation warning (float to int).
+    DIFF   :
+        -   imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
+        +   imagesetpixel($imgalpha, (int) $xpx, (int) $ypx, (int) $alpha);
+
+==> FILE   : tcpdf_autoconfig.php (at the beginning of the file)
+    REASON : DOCUMENT_ROOT fix for IIS Webserver.
+    DIFF   :
+        +   // @CHANGE LDR DOCUMENT_ROOT fix for IIS Webserver
+        +   if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
+        +       if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['PHP_SELF'])) {
+        +           $_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
+        +       } elseif(isset($_SERVER['PATH_TRANSLATED'])) {
+        +           $_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
+        +       } else {
+        +           // define here your DOCUMENT_ROOT path if the previous fails (e.g. '/var/www')
+        +           $_SERVER['DOCUMENT_ROOT'] = '/';
+        +       }
+        +   }
+        +   $_SERVER['DOCUMENT_ROOT'] = str_replace('//', '/', $_SERVER['DOCUMENT_ROOT']);
+        +   if (substr($_SERVER['DOCUMENT_ROOT'], -1) != '/') {
+        +       $_SERVER['DOCUMENT_ROOT'] .= '/';
+        +   }
+
+==> FILES  : directories "examples", "tools"
+    REASON : Useless.
+    CHANGE : Removed.
+
+==> FILES  : fonts/ (optional)
+    REASON : Reduce size of package.
+    CHANGE : Removed all fonts except:
+                dejavusans*                                     (greek, arab, persian, romanian, turkish)
+                freemono*                                       (russian)
+                cid* + msungstdlight + stsongstdlight + uni2cid* (chinese)
+                helvetica*                                      (all other languages)
+                zapfdingbats.php                                (special chars like form checkboxes)
+
+==> FILE   : tcpdf.php (optional)
+    REASON : Make freemono the default monotype font if we removed courier.
+    DIFF   :
+        -   protected $default_monospaced_font = 'courier';
+        +   protected $default_monospaced_font = 'freemono';
+
+
+
+####################################################################################################
+# LIBRARY : TCPDI
+# PATH    : htdocs/includes/tcpdi
+####################################################################################################
+
+==> FILES  : fpdf_tpl.php (1.2.3), tcpdi.php, tcpdi_parser.php
+    CHANGE : Added files.
+
+==> FILE   : tcpdi_parser.php
+    REASON : Use the tcpdf_filters.php of the TCPDF library.
+    DIFF   :
+        -   require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
+        +   require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
+
+==> FILE   : tcpdi_parser.php
+    REASON : Fix syntax error (misplaced parenthesis in count()).
+    DIFF   :
+        -   } elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
+        +   } elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
+
+==> FILE   : tcpdi.php
+    REASON : Fix PHP fatal error on PHP 8.0 (each() was removed).
+    DIFF   :
+        -   while (list($k, $v) = each($value[1])) {
+        +   foreach ($value[1] as $k => $v) {
+
+==> FILE   : tcpdi_parser.php
+    REASON : Avoid warning on undefined index.
+    DIFF   :
+        -   if ($res[0] == PDF_TYPE_OBJECT)
+        +   if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
+
+==> FILE   : tcpdi_parser.php, function Error()
+    REASON : Respect K_TCPDF_THROW_EXCEPTION_ERROR like TCPDF does.
+    DIFF   :
+            public function Error($msg) {
+        +       // Respect K_TCPDF_THROW_EXCEPTION_ERROR like TCPDF does
+        +       if (defined('K_TCPDF_THROW_EXCEPTION_ERROR') && K_TCPDF_THROW_EXCEPTION_ERROR) {
+        +           throw new \Exception("TCPDI_PARSER ERROR [{$this->uniqueid}]: ".$msg);
+        +       }
+        +       // Default: exit program and print error
+                die("<strong>TCPDI_PARSER ERROR [{$this->uniqueid}]: </strong>".$msg);
+            }
+
+
+
+####################################################################################################
+# LIBRARY : JQUERYFILETREE (JS)
+# PATH    : htdocs/public/includes/jquery/plugins/jqueryFileTree
+####################################################################################################
+
+==> FILES  : directory "connectors"
+    REASON : Security. Server side connectors are not used.
+    CHANGE : Removed.
+
+
+
+####################################################################################################
+# LIBRARY : MOBILE_DETECT
+# PATH    : htdocs/includes/mobiledetect/mobiledetectlib
+####################################################################################################
+
+==> FILE   : Mobile_Detect.php
+    REASON : Compatibility with PHP versions (implicit nullable typed parameter).
+    DIFF   :
+        -   array $headers = null,
+        +   $headers = null,
+
+
+
+####################################################################################################
+# LIBRARY : RESTLER
+# PATH    : htdocs/includes/restler/framework/Luracast/Restler
+####################################################################################################
+
+==> FILE   : Util.php, function getShortName()
+    REASON : Avoid error when $className is not a string.
+    DIFF   :
+            public static function getShortName($className)
+            {
+        +       // @CHANGE LDR
+        +       if (!is_string($className)) return;
+        +       //var_dump($className);
+
+==> FILE   : Data/Text.php, function endsWith()
+    REASON : Avoid error when $haystack is not a string.
+    DIFF   :
+            public static function endsWith($haystack, $needle)
+            {
+                $length = strlen($needle);
+                if ($length == 0) {
+                    return true;
+                }
+        +       // @CHANGE LDR
+        +       if (!is_string($haystack)) return false;
+
+==> FILE   : AutoLoader.php
+    REASON : array_unique() on an array of non string values.
+    DIFF   :
+        -   $loaders = array_unique(static::$rogueLoaders);
+        +   $loaders = array_unique(static::$rogueLoaders, SORT_REGULAR);
+
+==> FILE   : CommentParser.php (around line 423)
+    REASON : Avoid warning on undefined index.
+    DIFF   :
+        -   elseif (count($value) && is_numeric($value[0]))
+        +   elseif (count($value) && isset($value[0]) && is_numeric($value[0]))
+
+==> FILE   : CommentParser.php (around lines 406 & 407)
+    REASON : Remove a warning on API requests with PHP 8.1.
+    DIFF   :
+        +   empty($value[0]) ? null :
+        +   empty($value[1]) ? null :
+
+==> FILE   : AutoLoader.php, function loadThisLoader()
+    REASON : Avoid "PHP Fatal error: Uncaught Error: Access to undeclared static property:
+             Composer\\Autoload\\ClassLoader::$loader" in case of multiple autoloader systems.
+             Test that the property exists before calling it.
+    DIFF   :
+        -   if (false !== $file = $b::$loader[1]($className) && $this->exists($className, $b::$loader[1])) {
+        -       return $file;
+        -   }
+        +   //avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
+        +   //in case of multiple autoloader systems
+        +   if(property_exists($b, $loader[1])) {
+        +       if (false !== $file = $b::$loader[1]($className)
+        +           && $this->exists($className, $b::$loader[1])) {
+        +           return $file;
+        +       }
+        +   }
+
+==> FILE   : explorer/index.html
+    REASON : Use swagger 2 provided into /explorer.
+    CHANGE : Content of file changed.
+
+
+
+####################################################################################################
+# LIBRARY : PARSEDOWN
+# PATH    : htdocs/includes/parsedown
+####################################################################################################
+
+==> FILE   : Parsedown.php
+    REASON : Add support of css classes.
+    DIFF   :
+        +   // @CHANGE LDR
+        +   'class' => $Link['element']['attributes']['class']
+
+        ...
+
+        +   // @CHANGE LDR
+        +   if (preg_match('/{([^}]+)}/', $remainder, $matches2)) {
+        +       $Element['attributes']['class'] = $matches2[1];
+        +       $remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
+        +   }
+
+        ...
+
+        +   // @CHANGE LDR
+        -   $markup .= $this->{$Element['handler']}($Element['text']);
+        +   //$markup .= $this->{$Element['handler']}($Element['text']);
+        +   $markup .= preg_replace('/>{[^}]+}/', '>', $this->{$Element['handler']}($Element['text']));
+
+==> FILE   : Parsedown.php
+    REASON : Avoid fatal error when mb_strlen is not available.
+    DIFF   :
+        +   // @CHANGE LDR Fix when mb_strlen is not available
+        -   $shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+        +   //$shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+        +   if (function_exists('mb_strlen')) $len = mb_strlen($line, 'utf-8');
+        +   else $len = strlen($line);
+        +   $shortage = 4 - $len % 4;
+
+
+
+####################################################################################################
+# LIBRARY : OAUTH (PHPoAuthLib)
+# PATH    : htdocs/includes/OAuth
+####################################################################################################
+
+==> FILES  : OAuth2/Service/Google.php, OAuth2/Service/Microsoft.php, OAuth2/Service/Microsoft2.php
+    CHANGE : Restore the old files.
+             Or, for Google.php, apply the 2 changes below.
+
+==> FILE   : OAuth2/Service/Google.php, class Google
+    REASON : Add approval_prompt to force the prompt if value is set to 'force', so it forces return
+             of a "refresh token" in addition to the "standard token".
+    DIFF   :
+        +   // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+        +   public $approvalPrompt='auto';
+        +   public function setApprouvalPrompt($prompt)
+        +   {
+        +       if (!in_array($prompt, array('auto', 'force'), true)) {
+        +           // @todo Maybe could we rename this exception
+        +           throw new InvalidAccessTypeException('Invalid approuvalPrompt, expected either auto or force.');
+        +       }
+        +       $this->approvalPrompt = $prompt;
+        +   }
+
+==> FILE   : OAuth2/Service/Google.php, function getAuthorizationEndpoint()
+    REASON : Same as above.
+    DIFF   :
+            public function getAuthorizationEndpoint()
+            {
+        +       // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+        -       return new Uri('https://accounts.google.com/o/oauth2/auth?access_type='.$this->accessType);
+        +       //return new Uri('https://accounts.google.com/o/oauth2/auth?access_type='.$this->accessType);
+        +       $url = 'https://accounts.google.com/o/oauth2/auth?'.($this->approvalPrompt?'approval_prompt='.$this->approvalPrompt.'&':'').'access_type='.$this->accessType;
+        +       return new Uri($url);
+            }
+
+==> FILE   : OAuth/Common/Http/Client/CurlClient.php
+    REASON : Add debug log when OAUTH_DEBUG is set.
+    DIFF   :
+        +   // @CHANGE DOL_LDR Add log
+        +   if (function_exists('getDolGlobalString') && getDolGlobalString('OAUTH_DEBUG')) {
+        +       file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $endpoint->getAbsoluteUri()."\n", FILE_APPEND);
+        +       file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $requestBody."\n", FILE_APPEND);
+        +       file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $method."\n", FILE_APPEND);
+        +       file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", var_export($extraHeaders, true)."\n", FILE_APPEND);
+        +       if (function_exists('dolChmod')) {
+        +           dolChmod(DOL_DATA_ROOT . "/dolibarr_oauth.log");
+        +       }
+        +   }
+
+
+
+####################################################################################################
+# LIBRARY : JSGANTT (JS)
+# PATH    : htdocs/includes/jsgantt
+####################################################################################################
+
+==> FILE   : jsgantt.js, function JSGantt.taskLink
+    REASON : Open link in the same window.
+    DIFF   :
+        -   window.open(pRef, 'newwin', 'height=' + vHeight + ',width=' + vWidth);
+        +   // @CHANGE DOLI To open in same window
+        +   //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+        +   window.location.href=pRef
+
+==> FILE   : jsgantt.js
+    REASON : Have a smaller text column header for '% Comp.'.
+    DIFF   :
+        -   'comp': '%...'
+        +   'comp': '%'
+
+
+
+####################################################################################################
+# LIBRARY : JEDITABLE (JS)
+# PATH    : (jquery plugin jeditable)
+####################################################################################################
+
+==> FILE   : jquery.jeditable.js
+    REASON : Use Dolibarr button style.
+    DIFF   :
+        -   <button type="submit" />
+        +   <button class="button" type="submit" />
+        -   <button type="cancel" />
+        +   <button class="button" type="cancel" />
+
+
+
+####################################################################################################
+# LIBRARY : SELECT2 (JS)
+# PATH    : htdocs/includes/jquery/plugins/select2
+####################################################################################################
+
+==> FILE   : dist/css/select2.css (and select2.min.css)
+    REASON : Restore line removed between 4.0.5 and 4.0.6.
+             It generates this bug: https://github.com/select2/select2/issues/5832
+    DIFF   :
+            .select2-hidden-accessible {
+        +     margin: -10000px !important;
+            }
