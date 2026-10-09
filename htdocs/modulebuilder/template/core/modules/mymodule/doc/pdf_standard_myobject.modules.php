@@ -281,7 +281,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			// Definition of $dir and $file
 			if ($object->specimen) {
 				$dir = $dir_output;
-				$file = $dir."/SPECIMEN.pdf";
+				$file = $dir."/SPECIMEN.pdf";			// When building a SPECIMEN Pdf file, the name must always be "SPECIMEN.pdf"
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $dir_output."/".$objectref;

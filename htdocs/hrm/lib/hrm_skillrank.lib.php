@@ -158,6 +158,7 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 						$(this).addClass("selected");
 						$("#' . $inputname . '_' . $fk_skill . '").val(val);
 					}
+					$("#' . $inputname . '_' . $fk_skill . '").trigger("change");	/* So pages can react to the new value (ajax save) */
 				});
 
 			});
