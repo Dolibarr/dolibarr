@@ -1811,6 +1811,10 @@ if ($action == 'create') {
 						} else {
 							print img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description)."\n";
 						}
+					
+						$parameters = array('line' => $object->lines[$cursorline - 1], 'i' => $cursorline - 1, 'coldisplay' => &$coldisplay);
+						$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						print $hookmanager->resPrint;						
 						print '</td>';
 
 						// VAT
