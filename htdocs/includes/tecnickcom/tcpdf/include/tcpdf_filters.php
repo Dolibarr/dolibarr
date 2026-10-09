@@ -359,7 +359,6 @@ class TCPDF_FILTERS {
 			// If gzuncompress() failed, try again using the compress.zlib://
 			// wrapper to decode it in a file-based context.
 			// See: https://www.php.net/manual/en/function.gzuncompress.php#79042
-			// Issue: https://github.com/smalot/pdfparser/issues/592
 			$ztmp = tmpfile();
 			if (false != $ztmp) {
 				fwrite($ztmp, "\x1f\x8b\x08\x00\x00\x00\x00\x00".$data);
@@ -369,9 +368,9 @@ class TCPDF_FILTERS {
 			}
 		}
 
-		if (false === \is_string($decoded) || '' === $decoded) {
+		if (false === is_string($decoded) || '' === $decoded) {
 			// If the decoded string is empty, that means decoding failed.
-			throw new \Exception('decodeFilterFlateDecode: invalid data');
+			self::Error('decodeFilterFlateDecode: invalid code');
 		}
 		return $decoded;
 	}
