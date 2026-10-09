@@ -11003,6 +11003,13 @@ function getElementProperties($elementType)
 		$subelement = $elementType;
 		$table_element = ($elementType == 'position' ? 'hrm_job_user' : 'hrm_'.$elementType);
 		$subdir = '/'.$elementType;
+	} elseif ($elementType == 'evaluationdet') {
+		$classpath = 'hrm/class';
+		$classfile = 'evaluationdet';
+		$classname = 'EvaluationLine';	// Not the ucfirst() of the element, so it must be set explicitly
+		$module = 'hrm';
+		$subelement = 'evaluationdet';
+		$table_element = 'hrm_evaluationdet';
 	} elseif ($elementType == 'productlot') {
 		$module = 'productbatch';
 		$classpath = 'product/stock/class';
