@@ -59,6 +59,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/NamingContractValidator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/RightsSyncService.class.php';
+require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/DocumentFileMap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
@@ -1578,17 +1579,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
 			}
 		}
-		if (GETPOST('includedocgeneration', 'aZ09')) {
-			dol_mkdir($destdir.'/core/modules/'.dol_strtolower($module));
-			dol_mkdir($destdir.'/core/modules/'.dol_strtolower($module).'/doc');
-
-			foreach ([
-				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php',
-				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php',
-			] as $templateFile) {
-				$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
-			}
+		$docGenerationMode = DocumentGenerationMode::fromFlag((bool) GETPOST('includedocgeneration', 'aZ09'));
+		$docFileMap = new DocumentFileMap($ncObj);
+		$docDir = $destdir.'/core/modules/'.dol_strtolower($module).'/doc';
+		if (DocumentGenerationMode::isEnabled($docGenerationMode)) {
+			dol_mkdir($docDir);
 		}
+		$filetogenerate = array_merge($filetogenerate, $docFileMap->getFilesToCreate($docGenerationMode));
 		$class = null;
 		if (GETPOST('generatepermissions', 'aZ09')) {
 			$firstobjectname = 'myobject';
@@ -1676,23 +1673,61 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', '0', 0, 1);
 		}
 
-		// Edit the setup file and the card page
-		if (GETPOST('includedocgeneration', 'aZ09')) {
-			// Replace some var init into some files
-			$arrayreplacement = array(
-				'/\$includedocgeneration = 0;/' => '$includedocgeneration = 1;'
-			);
-			dolReplaceInFile($destdir.'/class/'.dol_strtolower($objectname).'.class.php', $arrayreplacement, '', '0', 0, 1);
-			dolReplaceInFile($destdir.'/'.dol_strtolower($objectname).'_card.php', $arrayreplacement, '', '0', 0, 1);
-
-			$arrayreplacement = array(
-				'/\'models\' => 0,/' => '\'models\' => 1,'
-			);
-
-			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', '0', 0, 1);
+		// Purge document model files left by a previous generation of the same object
+		if (!$error) {
+			foreach ($docFileMap->getFilesToDelete($docGenerationMode) as $docfiletodelete) {
+				if (dol_is_file($destdir.'/'.$docfiletodelete) && !dol_delete_file($destdir.'/'.$docfiletodelete, 1, 0, 1)) {
+					$error++;
+					dol_syslog("modulebuilder: failed to delete document model file ".$destdir.'/'.$docfiletodelete, LOG_ERR);
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorFailToDeleteFile", $docfiletodelete), null, 'errors');
+				}
+			}
+			if (!$error && !DocumentGenerationMode::isEnabled($docGenerationMode) && dol_is_dir($docDir) && dol_dir_is_emtpy($docDir)) {
+				dol_delete_dir($docDir);
+			}
 		}
 
-		// TODO Update entries '$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);'
+		// Keep or purge the document generation code of the class, card and list pages
+		if (!$error) {
+			$docgenerationpattern = DocumentGenerationMode::isEnabled($docGenerationMode) ? getModuleBuilderDocGenerationMarkerPattern() : getModuleBuilderDocGenerationBlockPattern();
+			foreach (['class/myobject.class.php', 'myobject_card.php', 'myobject_list.php'] as $templateFile) {
+				$docgenerationfile = $destdir.'/'.$ncObj->applyToFilename($templateFile);
+				if (dol_is_file($docgenerationfile) && !removePatternFromFile($docgenerationfile, $docgenerationpattern)) {
+					$error++;
+					dol_syslog("modulebuilder: failed to apply document generation mode '".$docGenerationMode."' in ".$docgenerationfile, LOG_ERR);
+				}
+			}
+		}
+
+		// Register the object document models into the module descriptor
+		if (!$error) {
+			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
+			if (DocumentGenerationMode::isEnabled($docGenerationMode)) {
+				$arrayreplacement = array(
+					'/\'models\' => 0,/' => '\'models\' => 1,'
+				);
+				dolReplaceInFile($moduledescriptorfile, $arrayreplacement, '', '0', 0, 1);
+			}
+
+			$descriptorcontent = file_get_contents($moduledescriptorfile);
+			if ($descriptorcontent === false) {
+				$error++;
+				dol_syslog("modulebuilder: failed to read ".$moduledescriptorfile, LOG_ERR);
+			} elseif (strpos($descriptorcontent, '/* BEGIN MODULEBUILDER DOCUMENT MODELS */') === false) {
+				// Descriptors generated before the DOCUMENT MODELS zone existed: nothing to register when documents are disabled
+				if (DocumentGenerationMode::isEnabled($docGenerationMode)) {
+					$langs->load("errors");
+					setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("DocumentModules"), "mod".$module."class.php"), null, 'warnings');
+				}
+			} else {
+				$descriptorcontent = setModuleBuilderDescriptorDocModelEntry($descriptorcontent, $objectname, GETPOST('includerefgeneration', 'aZ09') ? 1 : 0, DocumentGenerationMode::isEnabled($docGenerationMode) ? 1 : 0);
+				if (file_put_contents($moduledescriptorfile, $descriptorcontent) === false) {
+					$error++;
+					dol_syslog("modulebuilder: failed to write ".$moduledescriptorfile, LOG_ERR);
+				}
+			}
+		}
 
 
 		// Scan for object class files
@@ -2422,12 +2457,12 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 				'core/modules/mymodule/mod_myobject_advanced.php',
 				'core/modules/mymodule/mod_myobject_standard.php',
 				'core/modules/mymodule/modules_myobject.php',
-				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php',
-				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php',
 				'stats/myobject_index.php',
 			] as $templateFile) {
 				$filetodelete[$templateFile] = $ncObjDel->applyToFilename($templateFile);
 			}
+			$docFileMapDel = new DocumentFileMap($ncObjDel);
+			$filetodelete = array_merge($filetodelete, $docFileMapDel->getAll());
 			// Exceptions: target filenames differ from simple token substitution
 			$filetodelete['ajax/myobject.lib.php']         = 'ajax/' . $ncObjDel->objectNameLower . '.php';
 			$filetodelete['test/phpunit/MyObjectTest.php'] = 'test/phpunit/' . $ncObjDel->objectNameLower . 'Test.php';
@@ -2483,6 +2518,16 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 			// check if documentation has been generated
 			$file_doc = $dirins.'/'.dol_strtolower($module).'/doc/Documentation.asciidoc';
 			deletePropsAndPermsFromDoc($file_doc, $objectname);
+
+			$descriptorcontent = file_get_contents($moduledescriptorfile);
+			if ($descriptorcontent !== false) {
+				$newdescriptorcontent = removeModuleBuilderDescriptorDocModelEntry($descriptorcontent, $objectname);
+				if ($newdescriptorcontent !== $descriptorcontent && file_put_contents($moduledescriptorfile, $newdescriptorcontent) === false) {
+					dol_syslog("modulebuilder: failed to remove document models entry of ".$objectname." from ".$moduledescriptorfile, LOG_ERR);
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorFailToCreateFile", $moduledescriptorfile), null, 'warnings');
+				}
+			}
 
 			clearstatcache(true);
 			if (function_exists('opcache_invalidate')) {

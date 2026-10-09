@@ -583,7 +583,9 @@ llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-mymodule 
 $arrayofmassactions = array(
 	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	// BEGIN MODULEBUILDER DOCGENERATION
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	// END MODULEBUILDER DOCGENERATION
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if (!empty($permissiontodelete)) {
@@ -979,6 +981,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
+// BEGIN MODULEBUILDER DOCGENERATION
 if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
@@ -998,6 +1001,7 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 
 	print $formfile->showdocuments('massfilesarea_'.$object->module, '', $filedir, $urlsource, $genallowed, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
+// END MODULEBUILDER DOCGENERATION
 
 // End of page
 llxFooter();
