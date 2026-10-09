@@ -355,7 +355,7 @@ class TCPDF_FILTERS {
 	public static function decodeFilterFlateDecode($data) {
 		// initialize string to return
 		$decoded = @gzuncompress($data);
-		if (false === $decoded) {
+		if ($decoded === false) {
 			// If gzuncompress() failed, try again using the compress.zlib://
 			// wrapper to decode it in a file-based context.
 			// See: https://www.php.net/manual/en/function.gzuncompress.php#79042
