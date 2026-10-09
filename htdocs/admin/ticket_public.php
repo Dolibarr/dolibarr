@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -491,6 +492,26 @@ if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 
 	print '<tr class="liste_titre"><td>'.$langs->trans("Emails").'</td>';
 	print '<td class="left">';
+	print '</td>';
+	print '<td class="center width75">';
+	print '</td>';
+	print '</tr>';
+
+	// Enable/Disable auto email sending on creation
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoSendMailOnCreation").'</td>';
+	print '<td class="left">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('TICKET_SENDMAIL_ON_CREATION');
+	} else {
+		if (!getDolGlobalInt('TICKET_SENDMAIL_ON_CREATION')) {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_SENDMAIL_ON_CREATION&token='.newToken().'">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+		} else {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_SENDMAIL_ON_CREATION&token='.newToken().'">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+		}
+	}
+	print '</td>';
+	print '<td class="center width75">';
+	print $form->textwithpicto('', $langs->trans("TicketAutoSendMailOnCreationHelp"), 1, 'help');
 	print '</td>';
 	print '</tr>';
 
