@@ -79,7 +79,6 @@ $NBLINES = 4;
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'supplier_proposal', $id);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('supplier_proposalcard', 'globalcard'));
@@ -100,6 +99,7 @@ if ($id > 0 || !empty($ref)) {
 		dol_print_error('', $object->error);
 	}
 }
+$result = restrictedArea($user, 'supplier_proposal', $object->id);	// After the fetch: the page may be called with the ref only, the security check must be done on the object found
 
 // Common permissions
 $usercanread = $user->rights->supplier_proposal->lire;
