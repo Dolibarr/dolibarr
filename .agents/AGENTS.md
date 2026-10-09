@@ -15,9 +15,11 @@ Every modification must respect:
 - Do not break compatibility of PHP functions and methods
 - Do not introduce external dependencies without validation
 - Never rename existing functions or variables except if explicitly requested
+- Never remove commented code, even if it's deprecated, except if explicitly requested
 - Never remove blank lines from the code, even when multiple consecutive blank lines are present. 
 - Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
 - Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
+- Never use PHP native exec functions to call a CLI, but use instead the Dolibarr method Utils->executeCLI()
 - Never use PHP native functions when Dolibarr provides wrappers: time()→dol_now(), strtolower()→dol_strtolower(), strtoupper()→dol_strtoupper(), strlen()→dol_strlen(), mktime()→dol_mktime(), getdate()→dol_getdate(), strtotime()→dol_stringtotime(), ucfirst()→dol_ucfirst(), ucwords()→dol_ucwords(), substr()→dol_substr(), basename()→dol_basename()
 - Use Dolibarr hooks whenever possible
 - Respect existing naming conventions
@@ -48,6 +50,13 @@ Before writing any code, the agent **must**:
 - Check if the concerned object class extends `CommonObject` and use its built-in methods (fetch, create, update, delete, etc.)
 - Review the module's `modMyModule.class.php` for declared permissions and constants
 - Run a search to ensure no equivalent function already exists in the codebase
+
+---
+
+## File Creation (Tooling)
+
+- The `write_file` tool must creates files with permissions `664` (the web server www-data must be able to read them).
+- Pattern: `write_file` → `bash chmod 664 <path>`
 
 ---
 
@@ -105,10 +114,10 @@ Before writing any code, the agent **must**:
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
 - Use `$langs->trans()` for direct HTML output; use `$langs->transnoentities()` when the result is used into HTML escaped functions
-- Language files must be placed in `mymodule/langs/en_US/` (and other locales as needed)
-- All code comments and variables or functions names must be in English
+- Language files must be placed in `mymodule/langs/en_US/` (never change, update or translate other locales files, this is managed into an external tool)
 - Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
+- All code comments and variables or functions names must be in English
 
 ---
 
@@ -204,14 +213,14 @@ Before any modification, verify:
 ### Code check
 
 - If making a major change or adding an important function, add or update PHPUnit test files into `test/phpunit/` (check to have the entry into file `test/phpunit/AllTests.php`).
-- If code validation whith `phan` is expected, you must add the parameter `-k .phan/config.php -B dev/tools/phan/baseline.txt --quick` to the phan command line. For example:
-	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --minimum-target-php-version 7.2 [list_of_modified_file.php ...]`
 - If code validation with `phpstan` is expected, you must add the parameter `-a dev/build/phpstan/bootstrap_action.php` to the phpstan command line. For example:
 	`phpstan analyse --allow-older --no-progress -a dev/build/phpstan/bootstrap_action.php  [list_of_modified_file.php ...]`
+- Do not validate the code with `phan` as it is too slow, except if it is explicitly requested. In this case, you must add the parameter `-k .phan/config.php -B dev/tools/phan/baseline.txt --quick` to the phan command line. For example:
+	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --minimum-target-php-version 7.2 [list_of_modified_file.php ...]`
 
 ### Local Dolibarr Online test — Page Access
 
-You can find the URL of an online instance into file htdocs/conf/conf.php in parameter $dolibarr_main_url_root. 
+You can find the URL of an online instance into file `htdocs/conf/conf.php` in parameter `$dolibarr_main_url_root`. 
 You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database.
 
 Dolibarr requires a CSRF token and a session cookie. To access any authenticated page:
@@ -219,14 +228,16 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
 1. **GET the login page** (e.g. `index.php?mainmenu=home`) to obtain:
    - The CSRF token: extract the `name="token" value="..."` field from the HTML.
    - The session cookie: the `DOLSESSID_*` cookie set in the response headers.
-2. **POST the login form** to `index.php` with `token`, `username`, `password`, and `actionlogin=dologin`. Keep the cookie for subsequent requests.
+2. **POST the login form** to `index.php` with `token`, `username`, `password`, and `actionlogin=dologin`
+	- Ask the password if you need one (don't try to guess it from database).
+	- Keep the cookie for subsequent requests.
 3. **Reuse the session cookie** on all subsequent page requests — the session is now authenticated.
 
 ---
 
 ## Git Workflow
 
-- Never try to make commit or Pull request, except if it was explicitely requested. 
+- Never try to make commit or Pull request, except if it was explicitly requested. 
 - Branch strategy:
     - One branch per major version (bug fixes only)
     - `develop` branch for both fixes and new features
@@ -234,8 +245,8 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
     - Types: `NEW`, `FIX`, `CLOSE`, `QUAL`, `PERF`, `UIUX` (uppercase, so it appears in the ChangeLog)
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Do not update the `ChangeLog` file (this file will be generated by the maintener before the release from all commit titles)
-- When committing, keep your commit title short (never exceed 70 lines) on first line and add a line "Generated by" or "Co-authored-by:" to mention the AI agent name at the end of the rest of description. 
-- When making a Pull Request, keep the PR description short (never exceed 80 lines) and mention the AI agent name in the description with a line like `Submited with <AI agent name> (see commit comments for attributions)`
+- When committing, keep your commit title short (never exceed 70 lines) on first line and add a line "Generated by" xor "Co-authored-by:" to mention the AI agent name at the end of the rest of description. 
+- When making a Pull Request, keep the PR description short (never exceed 80 lines) and mention the AI agent name in the description with a line like `Submitted with <AI agent name>`
 - When fixing a security vulnerability, start PR title with `SEC:` and if you know the name of the vulnerability reporter or a tracking number, mention them in the PR title.
 - A pull request can contain database structure change only, or one new feature, or one bug fix, or a refactoring but never a mix of these. 
 - For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once. Never introduce new features or refactoring if the target branch is not develop.

@@ -68,7 +68,7 @@ $permissiontoedit = $user->hasRight('adherent', 'cotisation', 'creer'); // Used 
 $hookmanager->initHooks(array('subscriptioncard', 'globalcard'));
 
 // Security check
-$result = restrictedArea($user, 'subscription', 0); // TODO Check on object id
+$result = restrictedArea($user, 'subscription', $rowid);
 
 
 /*

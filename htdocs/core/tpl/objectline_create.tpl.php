@@ -124,6 +124,8 @@ if (!empty($extrafields)) {
 		$objectline = new FactureLigneRec($this->db);
 	} elseif ($this->table_element_line == 'facture_fourn_det_rec') {
 		$objectline = new FactureFournisseurLigneRec($this->db);
+	} elseif ($this->table_element_line == 'expeditiondet') {
+		$objectline = new ExpeditionLigne($this->db);
 	}
 }
 print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
@@ -702,13 +704,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 			return true;
 
 		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
+			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
+			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
@@ -732,7 +734,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 		}
 
 		// $("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formatted value
-		$("input[name='price_ht']:first").val(pricejs(price));
+		$("input[name='price_ht']:first").val(pricejs(price, 'MU'));
 
 		return true;
 	}
@@ -1020,7 +1022,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							}
 																						<?php
 									} else { ?>
-							jQuery('#dp_desc').text(proddesc);
+							jQuery('#dp_desc').val(proddesc);
 										<?php
 									} ?>
 									<?php
@@ -1314,7 +1316,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						<?php
 					} else {
 						?>
-				jQuery('#dp_desc').text(description);
+				jQuery('#dp_desc').val(description);
 						<?php
 					}
 				}
@@ -1362,7 +1364,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 						<?php
 					} else {
 						?>
-				jQuery('#dp_desc').text('');
+				jQuery('#dp_desc').val('');
 						<?php
 					}
 				}

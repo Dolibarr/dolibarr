@@ -164,7 +164,7 @@ print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style
 
 print '<span class="opacitymedium">';
 print $langs->trans("BackupDesc3", $dolibarr_main_db_name).'<br>';
-//print $langs->trans("BackupDescY").'<br>';
+print $langs->trans("BackupDescY").'<br>';
 print '</span>';
 
 print '<br>';
@@ -714,7 +714,7 @@ print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3<
 print '<br>';
 
 print '<span class="opacitymedium">';
-print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key or dolibarr_main_instance_unique_id').'<br>';
+print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key '.$langs->transnoentitiesnoconv("or").' dolibarr_main_instance_unique_id').'<br>';
 print '</span>';
 
 print '<br>';

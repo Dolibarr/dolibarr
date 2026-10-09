@@ -198,6 +198,11 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 				if (!$error) {
 					if ($idline > 0) {
 						$result = $supplierorderdispatch->fetch($idline);
+						if ($result > 0 && (int) $supplierorderdispatch->fk_reception !== (int) $object->id) {
+							// The line must be a line of the reception of the page
+							$supplierorderdispatch->error = $langs->trans('ErrorRecordNotFound');
+							$result = -1;
+						}
 						if ($result < 0) {
 							setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
 							$error++;
