@@ -334,14 +334,15 @@ if (empty($reshook)) {
 
 if ($action == 'update_extras' && $permissiontoadd) {
 	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+	$attribute_name = GETPOST('attribute', 'aZ09');
 
 	// Fill array 'array_options' with data from update form
-	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'restricthtml'));
+	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, $attribute_name);
 	if ($ret < 0) {
 		$error++;
 	}
 	if (!$error) {
-		$result = $tmpwarehouse->insertExtraFields();
+		$result = $tmpwarehouse->updateExtraField($attribute_name);
 		if ($result < 0) {
 			setEventMessages($tmpwarehouse->error, $tmpwarehouse->errors, 'errors');
 			$error++;

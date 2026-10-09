@@ -274,16 +274,17 @@ if (empty($reshook)) {
 
 	if ($action == 'update_extras' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
 			// Actions on extra fields
-			$result = $object->insertExtraFields('RECEPTION_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'RECEPTION_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;

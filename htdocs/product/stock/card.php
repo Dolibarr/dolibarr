@@ -249,14 +249,15 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'update_extras' && $user->hasRight('stock', 'creer')) {
 		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 		if (!$error) {
-			$result = $object->insertExtraFields();
+			$result = $object->updateExtraField($attribute_name);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
