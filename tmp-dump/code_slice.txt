@@ -1,0 +1,161 @@
+TOTAL_LINES=12283
+3131								case 'facturerec':
+3132									if ($this instanceof FactureRec) {
+3133										/** @var FactureLigneRec $line */
+3134										'@phan-var-force FactureLigneRec $line';
+3135										$this->updateline(
+3136											$line->id,
+3137											($line->description ? $line->description : $line->desc),
+3138											$line->subprice,
+3139											$line->qty,
+3140											$line->tva_tx,
+3141											$line->localtax1_tx,
+3142											$line->localtax2_tx,
+3143											$line->fk_product,
+3144											$line->remise_percent,
+3145											'HT',
+3146											$line->info_bits,
+3147											0,
+3148											0,
+3149											$line->product_type,
+3150											$line->rang,
+3151											$line->special_code,
+3152											$line->label,
+3153											$line->fk_unit,
+3154											$line->multicurrency_subprice,
+3155											0,
+3156											$line->date_start,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
+3157											$line->date_end,  // Ignore real issue with FactureLigneRec @phan-suppress-current-line PhanUndeclaredProperty
+3158											$line->fk_fournprice,
+3159											$line->pa_ht,
+3160											$line->fk_parent_line
+3161										);
+3162									}
+3163									break;
+3164								case 'supplier_proposal':
+3165									if ($this instanceof SupplierProposal) {
+3166										/** @var SupplierProposalLine $line */
+3167										'@phan-var-force SupplierProposalLine $line';
+3168										$this->updateline(
+3169											$line->id,
+3170											$line->subprice,
+3171											$line->qty,
+3172											$line->remise_percent,
+3173											$line->tva_tx,
+3174											$line->localtax1_tx,
+3175											$line->localtax2_tx,
+3176											($line->description ? $line->description : $line->desc),
+3177											'HT',
+3178											$line->info_bits,
+3179											$line->special_code,
+3180											$line->fk_parent_line,
+3181											$line->skip_update_total,
+3182											$line->fk_fournprice,
+3183											$line->pa_ht,
+3184											$line->label,
+3185											$line->product_type,
+3186											$line->array_options,
+3187											$line->ref_fourn,
+3188											(int) $line->fk_unit,
+3189											$line->multicurrency_subprice
+3190										);
+3191									}
+3192									break;
+3193								case 'order_supplier':
+3194									/** @var CommandeFournisseur $this */
+3195									/** @var CommandeFournisseurLigne $line */
+3196									'@phan-var-force CommandeFournisseur $this';
+3197									'@phan-var-force CommandeFournisseurLigne $line';
+3198									$this->updateline(
+3199										$line->id,
+3200										($line->description ? $line->description : $line->desc),
+3201										$line->subprice,
+3202										$line->qty,
+3203										$line->remise_percent,
+3204										$line->tva_tx,
+3205										$line->localtax1_tx,
+3206										$line->localtax2_tx,
+3207										'HT',
+3208										$line->info_bits,
+3209										$line->product_type,
+3210										0,
+3211										$line->date_start,
+3212										$line->date_end,
+3213										$line->array_options,
+3214										$line->fk_unit,
+3215										$line->multicurrency_subprice,
+3216										$line->ref_supplier
+3217									);
+3218									break;
+3219								case 'invoice_supplier':
+3220									/** @var FactureFournisseur $this */
+3221									/** @var SupplierInvoiceLine $line */
+3222									'@phan-var-force FactureFournisseur $this';
+3223									'@phan-var-force SupplierInvoiceLIne $line';
+3224									$this->updateline(
+3225										$line->id,
+3226										($line->description ? $line->description : $line->desc),
+3227										$line->subprice,
+3228										$line->tva_tx,
+3229										$line->localtax1_tx,
+3230										$line->localtax2_tx,
+3231										$line->qty,
+3232										0,
+3233										'HT',
+3234										$line->info_bits,
+3235										$line->product_type,
+3236										$line->remise_percent,
+3237										0,
+3238										$line->date_start,
+3239										$line->date_end,
+3240										$line->array_options,
+3241										$line->fk_unit,
+3242										$line->multicurrency_subprice,
+3243										$line->ref_supplier
+3244									);
+3245									break;
+3246								default:
+3247									dol_syslog(get_class($this).'::setMulticurrencyRate no updateline defined', LOG_DEBUG);
+3248									break;
+3249							}
+3250						}
+3251					}
+3252	
+3253					return 1;
+3254				} else {
+3255					dol_syslog(get_class($this).'::setMulticurrencyRate Error '.$sql.' - '.$this->db->error());
+3256					$this->error = $this->db->error();
+3257					return -1;
+3258				}
+3259			} else {
+3260				dol_syslog(get_class($this).'::setMulticurrencyRate, status of the object is incompatible');
+3261				$this->error = 'Status of the object is incompatible '.$this->status;
+3262				return -2;
+3263			}
+3264		}
+3265	
+3266		/**
+3267		 *  Change the payments terms
+3268		 *
+3269		 *  @param		int		$id					Id of new payment terms
+3270		 *  @param		float	$deposit_percent	% of deposit if needed by payment terms
+3271		 *  @return		int							>0 if OK, <0 if KO
+3272		 */
+3273		public function setPaymentTerms($id, $deposit_percent = null)
+3274		{
+3275			dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.formatLogObject($deposit_percent).')');
+3276			if ($this->status >= 0 || $this->element == 'societe') {
+3277				// TODO uniformize field name
+3278				$fieldname = 'fk_cond_reglement';
+3279				if ($this->element == 'societe') {
+3280					$fieldname = 'cond_reglement';
+3281				}
+3282				if (get_class($this) == 'Fournisseur') {
+3283					$fieldname = 'cond_reglement_supplier';
+3284				}
+3285	
+3286				if (empty($deposit_percent) || $deposit_percent < 0) {
+3287					$deposit_percent = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $id);
+3288				}
+3289	
+3290				if ($deposit_percent > 100) {
