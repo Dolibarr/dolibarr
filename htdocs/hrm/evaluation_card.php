@@ -166,7 +166,7 @@ if (empty($reshook)) {
 		// Levels are saved in database as soon as they are clicked (see core/ajax/updatefield.php)
 		$emptyTNote = true;
 		foreach ($object->lines as $line) {
-			if ((int) $line->rankorder != 0) {
+			if ($line->rankorder != "") {
 				$emptyTNote = false;
 				break;
 			}
@@ -614,7 +614,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$rank_desc = $langs->trans("NA");
 				}
 				if ($obj->userRankForSkill == 0) {
-					$rank = $langs->trans('-');
+					$rank = "-";
 				}
 				$Tab[$num]->userRankForSkill = '<span title="'.$rank_desc.'" class="radio_js_bloc_number TNote_1">' . $rank . '</span>';
 
